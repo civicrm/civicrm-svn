@@ -48,7 +48,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
         // Log in using webtestLogin() method
         $this->webtestLogin();
         // visit event search page
-        
+
         //give permissions to anonymous user 
         $this->changeAdminLinks();
         
@@ -131,12 +131,11 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
         $middleName = 'PCid'.substr( sha1( rand( ) ), 0, 7 );
         $email = substr(sha1(rand()), 0, 7) . '@example.org';
         $this->_testAddEventForPCP( $processorName, $campaignType, null, $firstName, $lastName, $middleName, $email );
-
+               
     }
 
     function _testAddEventForPCP( $processorName, $campaignType, $contributionPageId = null, $firstName, $lastName, $middleName, $email )
     {   
-
         // Go directly to the URL of the screen that you will be testing (New Event).
         $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
         
@@ -159,185 +158,139 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
         
     }
     
-    function _testAddEventInfo( $eventTitle, $eventDescription ) {
-      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-      // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
+    function _testAddEventInfo( $eventTitle, $eventDescription ) 
+    {
+        // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+        // button at the end of this page to show up, to make sure it's fully loaded.
+        $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
+        
+        // Let's start filling the form with values.
+        $this->select("event_type_id", "value=1");
+        
+        // Attendee role s/b selected now.
+        $this->select("default_role_id", "value=1");
+        
+        // Enter Event Title, Summary and Description
+        $this->type("title", $eventTitle);
+        $this->type("summary", "This is a great conference. Sign up now!");
+        
+        // Type description in ckEditor (fieldname, text to type, editor)
+        $this->fillRichTextField( "description", $eventDescription,'CKEditor' );
+        
+        // Choose Start and End dates.
+        // Using helper webtestFillDate function.
+        $this->webtestFillDateTime("start_date", "+1 week");
+        $this->webtestFillDateTime("end_date", "+1 week 1 day 8 hours ");
 
-      // Let's start filling the form with values.
-      $this->select("event_type_id", "value=1");
-      
-      // Attendee role s/b selected now.
-      $this->select("default_role_id", "value=1");
-      
-      // Enter Event Title, Summary and Description
-      $this->type("title", $eventTitle);
-      $this->type("summary", "This is a great conference. Sign up now!");
-
-      // Type description in ckEditor (fieldname, text to type, editor)
-      $this->fillRichTextField( "description", $eventDescription,'CKEditor' );
-
-      // Choose Start and End dates.
-      // Using helper webtestFillDate function.
-      $this->webtestFillDateTime("start_date", "+1 week");
-      $this->webtestFillDateTime("end_date", "+1 week 1 day 8 hours ");
-
-      $this->type("max_participants", "50");
-      $this->click("is_map");
-      $this->click("_qf_EventInfo_upload-bottom");      
+        $this->type("max_participants", "50");
+        $this->click("is_map");
+        $this->click("_qf_EventInfo_upload-bottom");      
+    }
+    
+    function _testAddLocation( $streetAddress ) 
+    {
+        // Wait for Location tab form to load
+        $this->waitForPageToLoad("30000");
+        $this->waitForElementPresent("_qf_Location_upload-bottom");
+        
+        // Fill in address fields
+        $streetAddress = "100 Main Street";
+        $this->type("address_1_street_address", $streetAddress);
+        $this->type("address_1_city", "San Francisco");
+        $this->type("address_1_postal_code", "94117");
+        $this->select("address_1_state_province_id", "value=1004");
+        $this->type("email_1_email", "info@civicrm.org");
+        
+        $this->click("_qf_Location_upload-bottom");      
+        
+        // Wait for "saved" status msg
+        $this->waitForPageToLoad('30000');
+        $this->waitForTextPresent("'Location' information has been saved.");       
   }
+    
+    function _testAddFees( $discount=false, $priceSet=false, $processorName = "PP Pro" )
+    {
+        // Go to Fees tab
+        $this->click("link=Fees");
+        $this->waitForElementPresent("_qf_Fee_upload-bottom");
+        $this->click("CIVICRM_QFID_1_2");
+        $this->select("payment_processor_id", "label=" . $processorName);
+        $this->select("contribution_type_id", "value=4");
+        if ( $priceSet) {
+            // get one - TBD
+        } else {
+            $this->type("label_1", "Member");
+            $this->type("value_1", "250.00");
+            $this->type("label_2", "Non-member");
+            $this->type("value_2", "325.00");          
+        }
+        
+        if ( $discount ) {
+            // enter early bird discounts TBD
+        }
+        
+        $this->click("_qf_Fee_upload-bottom");      
+      
+        // Wait for "saved" status msg
+        $this->waitForPageToLoad('30000');
+        $this->waitForTextPresent("'Fee' information has been saved.");      
+    }
+    
+    function _testAddOnlineRegistration( $registerIntro, $multipleRegistrations=false )
+    {
+        // Go to Online Registration tab
+        $this->click("link=Online Registration");
+        $this->waitForElementPresent("_qf_Registration_upload-bottom");
+        
+        $this->check("is_online_registration");
+        
+        $this->assertChecked("is_online_registration");
+        if ( $multipleRegistrations ){
+            $this->check("is_multiple_registrations");
+            $this->assertChecked("is_multiple_registrations");
+        }
+        
+        $this->fillRichTextField("intro_text", $registerIntro);
+        
+        // enable confirmation email
+        $this->click("CIVICRM_QFID_1_2");
+        $this->type("confirm_from_name", "Jane Doe");
+        $this->type("confirm_from_email", "jane.doe@example.org");
+      
+        $this->click("_qf_Registration_upload-bottom");
+        $this->waitForPageToLoad("30000");
+        $this->waitForTextPresent("'Registration' information has been saved.");
+    }
   
-  function _testAddEventInfoFromTemplate( $eventTitle, $eventDescription, $templateID, $eventTypeID ) {
-      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-      // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
-
-      // Let's start filling the form with values.
-      // Select event template. Use option value, not label - since labels can be translated and test would fail
-      $this->select("template_id", "value={$templateID}");
-      
-      // Wait for event type to be filled in (since page reloads)
-      $this->waitForPageToLoad('30000');
-      $this->verifySelectedValue("event_type_id", $eventTypeID);
-
-      // Attendee role s/b selected now.
-      $this->verifySelectedValue("default_role_id", "1");
-      
-      // Enter Event Title, Summary and Description
-      $this->type("title", $eventTitle);
-      $this->type("summary", "This is a great conference. Sign up now!");
-
-      // Type description in ckEditor (fieldname, text to type, editor)
-      $this->fillRichTextField( "description", $eventDescription,'CKEditor' );
-
-      // Choose Start and End dates.
-      // Using helper webtestFillDate function.
-      $this->webtestFillDateTime("start_date", "+1 week");
-      $this->webtestFillDateTime("end_date", "+1 week 1 day 8 hours ");
-
-      $this->type("max_participants", "50");
-      $this->click("is_map");
-      $this->click("_qf_EventInfo_upload-bottom");      
-  }
-  
-  function _testAddLocation( $streetAddress ) {
-      // Wait for Location tab form to load
-      $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent("_qf_Location_upload-bottom");
-
-      // Fill in address fields
-      $streetAddress = "100 Main Street";
-      $this->type("address_1_street_address", $streetAddress);
-      $this->type("address_1_city", "San Francisco");
-      $this->type("address_1_postal_code", "94117");
-      $this->select("address_1_state_province_id", "value=1004");
-      $this->type("email_1_email", "info@civicrm.org");
-
-      $this->click("_qf_Location_upload-bottom");      
-
-      // Wait for "saved" status msg
-      $this->waitForPageToLoad('30000');
-      $this->waitForTextPresent("'Location' information has been saved.");
-      
-  }
-  
-  function _testAddFees( $discount=false, $priceSet=false, $processorName = "PP Pro" ){
-      // Go to Fees tab
-      $this->click("link=Fees");
-      $this->waitForElementPresent("_qf_Fee_upload-bottom");
-      $this->click("CIVICRM_QFID_1_2");
-      $this->select("payment_processor_id", "label=" . $processorName);
-      $this->select("contribution_type_id", "value=4");
-      if ( $priceSet) {
-          // get one - TBD
-      } else {
-          $this->type("label_1", "Member");
-          $this->type("value_1", "250.00");
-          $this->type("label_2", "Non-member");
-          $this->type("value_2", "325.00");          
-      }
-
-      if ( $discount ) {
-          // enter early bird discounts TBD
-      }
-      
-      $this->click("_qf_Fee_upload-bottom");      
-
-      // Wait for "saved" status msg
-      $this->waitForPageToLoad('30000');
-      $this->waitForTextPresent("'Fee' information has been saved.");      
-  }
-  
-  function _testAddOnlineRegistration($registerIntro, $multipleRegistrations=false){
-      // Go to Online Registration tab
-      $this->click("link=Online Registration");
-      $this->waitForElementPresent("_qf_Registration_upload-bottom");
-
-      $this->check("is_online_registration");
-     
-      $this->assertChecked("is_online_registration");
-      if ( $multipleRegistrations ){
-          $this->check("is_multiple_registrations");
-          $this->assertChecked("is_multiple_registrations");
-      }
-      
-      $this->fillRichTextField("intro_text", $registerIntro);
-      
-      // enable confirmation email
-      $this->click("CIVICRM_QFID_1_2");
-      $this->type("confirm_from_name", "Jane Doe");
-      $this->type("confirm_from_email", "jane.doe@example.org");
-
-      $this->click("_qf_Registration_upload-bottom");
-      $this->waitForPageToLoad("30000");
-      $this->waitForTextPresent("'Registration' information has been saved.");
-  }
-  
-  function _testVerifyEventInfo( $eventTitle, $eventInfoStrings ){
-      // verify event input on info page
-      // start at Manage Events listing
-      $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
-      $this->click("link=$eventTitle");
-      
-      $this->waitForPageToLoad('30000');
-      // Look for Register button
-      $this->waitForElementPresent("link=Register Now");
-      
-      // Check for correct event info strings
-      $this->assertStringsPresent( $eventInfoStrings );
-  }
-
-  function _testVerifyRegisterPage( $registerStrings ){
-      // Go to Register page and check for intro text and fee levels
-      $this->click("link=Register Now");
-      $this->waitForElementPresent("_qf_Register_upload-bottom");
-      $this->assertStringsPresent( $registerStrings );
-      return $this->getLocation();
-  }
-  
-  function _testOnlineRegistration( $eventTitle, $pageId, $firstName, $lastName, $middleName, $email, $numberRegistrations=1, $campaignType, $anonymous=true ){
+  function _testOnlineRegistration( $eventTitle, $pageId, $firstName, $lastName, $middleName, $email, $numberRegistrations=1, $campaignType, $anonymous=true )
+  {
       $hash = substr(sha1(rand()), 0, 7);
-      $contributionAmount = 600 ;
-      
+      $contributionAmount = 600 ;     
       
       // registering online 
       if ( $anonymous ){
           $this->open($this->sboxPath . "civicrm/logout?reset=1");
           $this->waitForPageToLoad('30000');          
       }
+      
+      //participant registeration
+      $firstNameParticipants = 'Jane' . substr(sha1(rand()), 0, 7);
+      $lastNameParticipants = 'Smith'. substr(sha1(rand()), 0, 7);
+      $emailParticipants = 'jane' . substr(sha1(rand()), 0, 7) . "@example.org";
+          
       $registerUrl = "civicrm/event/register?id={$pageId}&reset=1";
       $this->open($this->sboxPath . $registerUrl);
       
       $this->select("additional_participants", "value=" . $numberRegistrations);
-      $this->type("email-5", "smith" . substr(sha1(rand()), 0, 7) . "@example.org" );
+      $this->type("email-5", $emailParticipants);
       
       $this->select("credit_card_type", "value=Visa");
       $this->type("credit_card_number", "4111111111111111");
       $this->type("cvv2", "000");
       $this->select("credit_card_exp_date[M]", "value=1");
       $this->select("credit_card_exp_date[Y]", "value=2020");
-      $this->type("billing_first_name", "Jane");
-      $this->type("billing_last_name", "Smith" . substr(sha1(rand()), 0, 7));
+      $this->type("billing_first_name", "{$firstNameParticipants}");
+      $this->type("billing_last_name", "{$lastNameParticipants}");
       $this->type("billing_street_address-5", "15 Main St.");
       $this->type(" billing_city-5", "San Jose");
       $this->select("billing_country_id-5", "value=1228");
@@ -351,7 +304,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
               $this->waitForPageToLoad('30000');
               // Look for Skip button
               $this->waitForElementPresent("_qf_Participant_{$i}_next_skip-Array");
-              $this->type("email-5", "smith" . substr(sha1(rand()), 0, 7) . "@example.org" );
+              $this->type("email-5", "{$firstName}" . substr(sha1(rand()), 0, 7) . "@example.org" );
               $this->click("_qf_Participant_{$i}_next");
           }
       }
@@ -365,20 +318,21 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
       $this->assertStringsPresent( $thankStrings );
       
-      //pcp workflow
+      //pcp creation via different user
       //$this->waitForElementPresent( "xpath=//[div@class='create_pcp_link-section']/a" );
       $this->open( $this->sboxPath . "civicrm/contribute/campaign?action=add&reset=1&pageId=".$pageId."&component=event" );
       $this->waitForElementPresent( "_qf_PCPAccount_next-bottom" );
       
       $cmsUserName = 'CmsUser'.substr( sha1( rand( ) ), 0, 7 );
+ 
       $this->type( "cms_name",  $cmsUserName);
       $this->click( "checkavailability" );
       $this->waitForTextPresent( 'This username is currently available' ); 
-      $this->type( 'cms_pass', $cmsUserName );
-      $this->type( 'cms_confirm_pass', $cmsUserName );
+//       $this->type( 'cms_pass', $cmsUserName );
+//       $this->type( 'cms_confirm_pass', $cmsUserName );
       // $this->assertTrue( $this->isTextPresent( 'This username is currently available' ), 'Missing text: ' . $text );
       $this->type( "first_name", $firstName );
-      $this->type( "last_name",  $lastName);  
+      $this->type( "last_name", $lastName );  
       $this->type( "email-Primary", $email ); 
       $this->click( "_qf_PCPAccount_next-bottom" );   
       $this->waitForElementPresent( "_qf_Campaign_upload-bottom" );
@@ -390,16 +344,16 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->click( "_qf_Campaign_upload-bottom" );
       $this->waitForPageToLoad("30000");
       
-      $this->open($this->sboxPath . 'user/logout');
-      $this->waitForPageToLoad("30000");      
-           
+//       $this->open($this->sboxPath . 'user/logout');
+//       $this->waitForPageToLoad("30000");    
+                
       //admin pcp approval
       //login to check contribution
       $this->open( $this->sboxPath );
       
       // Log in using webtestLogin() method
       $this->webtestLogin( );
-            
+      
       $this->open( $this->sboxPath . "civicrm/admin/pcp?reset=1&page_type=event" );
       $this->waitForElementPresent( "_qf_PCP_refresh" );
       $this->select( 'status_id',  'value=1' );
@@ -428,18 +382,21 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       }
       
       if( $campaignType == 'contribute' ) {
-      $this->click("amount_other");
-      $this->type("amount_other", $contributionAmount);
+          $this->click("amount_other");
+          $this->type("amount_other", $contributionAmount);
+          $feeLevel = null;
       }
       elseif( $campaignType == 'event' ){
-          $amount = '250.00';
-          $feeLevel = 'Member';
+          $contributionAmount = '250.00';
       }
       
-      $this->type( "email-5", $firstName . "@example.com" );
+      $firstNameDonar = 'Andrew' .substr( sha1( rand( ) ), 0, 7 );
+      $lastNameDonar = 'Roger' .substr( sha1( rand( ) ), 0, 7 );
+      $middleNameDonar = 'Nicholas' .substr( sha1( rand( ) ), 0, 7 );
+      $this->type( "email-5", $firstNameDonar . "@example.com" );
       
       $this->webtestAddCreditCardDetails( );
-      $this->webtestAddBillingDetails( $firstName, $middleName, $lastName );
+      $this->webtestAddBillingDetails( $firstNameDonar, $middleNameDonar, $lastNameDonar );
       
       if( $campaignType == 'contribute' ){
           $this->click("_qf_Main_upload-bottom");
@@ -451,7 +408,6 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad( '30000' );
       $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
       $this->click( "_qf_Confirm_next-bottom" );
-      
       
       if( $campaignType == 'contribute' ){
           $this->waitForTextPresent( "Your transaction has been processed successfully" );
@@ -466,19 +422,26 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       // Log in using webtestLogin() method
       $this->webtestLogin( );
 
+      if( $campaignType == 'event' ){
+          $this->_testParticipantSearchEventName( $eventTitle, $lastNameDonar, $firstNameDonar, $firstName, $lastName, $contributionAmount ); 
+      }
+      elseif( $campaignType == 'contribute' ){    
+          //$this->_testSearchTest( 'Andrew1577ff6', 'Roger46788c7', 'Ma13da', 'An4508a2b', '600.00' );
+          $this->_testSearchTest( $firstNameDonar, $lastNameDonar, $firstName, $lastName, $contributionAmount );
+      }
   }
   
-  function _testEventPcpAdd( $campaignType, $contributionPageId ){
-      
+  function _testEventPcpAdd( $campaignType, $contributionPageId )
+  {   
       $hash = substr(sha1(rand()), 0, 7);
       $isPcpApprovalNeeded = true;
-
+      
       // fill in step 9 (Enable Personal Campaign Pages)
       $this->click( 'link=Personal Campaigns' );
       $this->waitForElementPresent( 'pcp_active' );
       $this->click( 'pcp_active' );
       $this->waitForElementPresent( '_qf_Event_upload-bottom' );
-
+      
       $this->select( 'target_entity_type', "value={$campaignType}" );
      
       if( $campaignType=='contribute' && !empty($contributionPageId) )
@@ -495,40 +458,73 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
       $text = "'Event' information has been saved.";
       $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-                
+      
       // parse URL to grab the contribution page id
       $elements = $this->parseURL( );
       $pageId = $elements['queryString']['id'];
       return $pageId;
   }
-  
-  function _testParticipantSearchEventName( $eventName, $lastName , $firstName, $amount  , $feeLevel  ) {
+
+  function _testParticipantSearchEventName( $eventName, $lastNameDonar, $firstNameDonar, $firstNameCreator, $lastNameCreator, $amount ) 
+  {   
+      $sortName = $firstNameDonar . ', ' .$lastNameDonar;
       $this->open($this->sboxPath . "civicrm/event/search?reset=1");
       $this->waitForPageToLoad("30000");
-     
+      
       $this->typeKeys("event_name", $eventName);
-      $this->click("event_name");
+      $this->fireEvent("event_name");
       $this->waitForElementPresent("css=div.ac_results-inner li");
-      $this->click("css=div.ac_results-inner li");
-        
+      $this->click("css=div.ac_results-inner li");        
         
       $this->click( "_qf_Search_refresh" );
       $this->waitForPageToLoad("30000");
-      $sortName= $lastName.', '.$firstName;
       
       $this->click("xpath=//div[@id='participantSearch']/table/tbody//tr/td[@class='crm-participant-sort_name']/a[text()='{$sortName}']/../../td[11]/span/a[text()='View']" );
+      $this->waitForPageToLoad("30000");
       
-      $this->click( "xpath=//form[@id='ParticipantView']/div[@class='crm-event-participant-view-form-block']/table[@class='selector']/tbody/td[8]/span/a[text()='View']" );
-            
+      $this->waitForElementPresent("xpath=//table[@class='selector']/tbody/tr/td[8]/span/a[text()='View']");
+      $this->click( "xpath=//table[@class='selector']/tbody/tr/td[8]/span/a[text()='View']" );  
+      $this->waitForPageToLoad("30000");
+      
+      $this->webtestVerifyTabularData( 
+                                      array( 'From'            => "{$firstNameDonar} {$lastNameDonar}",
+                                             'Total Amount' => $amount,
+                                             'Contribution Status'     => 'Completed', 
+                                             'Soft Credit To'          => "{$firstNameCreator} {$lastNameCreator}",
+                                             )
+                                       );      
+  }
+  
+  function _testSearchTest( $firstName, $lastName, $pcpCreatorFirstName, $pcpCreatorLastName, $amount )
+  {     
+      $sortName    = "$pcpCreatorLastName, $pcpCreatorFirstName";
+      $displayName = "$firstName $lastName";
+      
+      // visit contact search page
+      $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
+      $this->waitForPageToLoad("30000");
+      
+      // fill name as first_name
+      $this->type("css=.crm-basic-criteria-form-block input#sort_name", $pcpCreatorFirstName);
+
+      // click to search
+      $this->click("_qf_Basic_refresh");
+      $this->waitForPageToLoad("30000");
+      
+      $this->click( "xpath=//div[@class='crm-search-results']/table/tbody//tr/td[3]/a[text()='{$sortName}']" );
+      $this->waitForPageToLoad("30000");
+      
+      $this->click("css=li#tab_contribute a");
+      $this->waitForElementPresent( "xpath=//div[@id='Contributions']/div/form[@id='Search']/div[@class='view-content']/table[2]/tbody/tr[@id='rowid']/td/a[text()='$displayName']" );
+      $this->click( "xpath=//div[@id='Contributions']/div/form[@id='Search']/div[@class='view-content']/table[2]/tbody/tr[@id='rowid']/td[7]/a[text()='View']" );
+      $this->waitForPageToLoad("30000");
+      
       $this->webtestVerifyTabularData( 
                                       array( 'From'            => "{$firstName} {$lastName}",
                                              'Total Amount' => $amount,
-                                             'Contribution Status'     => 'Completed 	    ', 
-                                             'Soft Credit To'           => '{$firstName} {$lastName}',
+                                             'Contribution Status'     => 'Completed', 
+                                             'Soft Credit To'          => "{$pcpCreatorFirstName} {$pcpCreatorLastName}",
                                              )
                                        );
-      
-  }
-
-  
+  }  
 }
