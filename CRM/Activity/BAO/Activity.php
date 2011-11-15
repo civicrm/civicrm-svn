@@ -164,7 +164,6 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         }
     
         require_once 'CRM/Core/Transaction.php';
-        CRM_Utils_Hook::pre( 'delete', 'Activity', $activity->id, $activity );
         $transaction = new CRM_Core_Transaction( );
         if ( is_array( CRM_Utils_Array::value( 'source_record_id', $params ) ) ) {
                     $sourceRecordIds = implode( ',', $params['source_record_id'] );
