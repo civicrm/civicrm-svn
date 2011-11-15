@@ -121,58 +121,54 @@ registration process.{/ts}
 You were registered by: {$payer.name}
 
 {if $customPre}
+{foreach from=$customPre item=customPr key=i}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{$customPre_grouptitle}
+{$customPre_grouptitle.$i}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{foreach from=$customPre item=value key=customName}
+{foreach from=$customPr item=customValue key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-{$customName}: {$value}
+ {$customName}: {$customValue}
 {/if}
+{/foreach}
 {/foreach}
 {/if}
 
 {if $customPost}
+{foreach from=$customPost item=customPos key=j}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{$customPost_grouptitle}
+{$customPost_grouptitle.$j} 
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{foreach from=$customPost item=value key=customName}
+{foreach from=$customPos item=customValue key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-{$customName}: {$value}
+ {$customName}: {$customValue}
 {/if}
+{/foreach}
 {/foreach}
 {/if}
 {if $customProfile}
 
-{foreach from=$customProfile item=value key=customName}
+{foreach from=$customProfile.profile item=eachParticipant key=participantID}
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{ts 1=$customName+1}Participant Information - Participant %1{/ts}
+{ts 1=$participantID+2}Participant Information - Participant %1{/ts}
 
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
-{foreach from=$value item=val key=field}
-{if $field eq 'additionalCustomPre' or $field eq 'additionalCustomPost' }
-{if $field eq 'additionalCustomPre' }
+{foreach from=$eachParticipant item=eachProfile key=pid}
 ----------------------------------------------------------{if $pricesetFieldsCount }--------------------{/if}
 
-{$additionalCustomPre_grouptitle}
+{$customProfile.title.$pid}
 ----------------------------------------------------------{if $pricesetFieldsCount }--------------------{/if}
 
-{else}
-----------------------------------------------------------{if $pricesetFieldsCount }--------------------{/if}
-
-{$additionalCustomPost_grouptitle}
-----------------------------------------------------------{if $pricesetFieldsCount }--------------------{/if}
-
-{/if}
+{foreach from=$eachProfile item=val key=field}
 {foreach from=$val item=v key=f}
-{$f}: {$v}
+{$field}: {$v}
 {/foreach}
-{/if}
+{/foreach}
 {/foreach}
 {/foreach}
 {/if}
