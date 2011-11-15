@@ -96,8 +96,8 @@ function _civicrm_api3_membership_delete_spec( &$params ) {
  */
 function civicrm_api3_membership_create($params)
 {
-
-    $error = _civicrm_api3_membership_check_params( $params );
+    civicrm_api3_verify_one_mandatory($params,null,array('membership_type_id','membership_type'));
+     $error = _civicrm_api3_membership_check_params( $params );
     if ( civicrm_error( $error ) ) {
       return $error;
     }
@@ -146,8 +146,8 @@ function civicrm_api3_membership_create($params)
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_membership_create_spec(){
-  //need to move all the cruft about handling unique fields into here - but which do we primarily support?
+function _civicrm_api3_membership_create_spec(&$params){
+  $params['contact_id']['api.required'] =1;
 }
 /**
  * Get contact membership record.
@@ -364,7 +364,6 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
  */
 function _civicrm_api3_membership_check_params( &$params ) {
 
-  civicrm_api3_verify_mandatory($params,null,array('contact_id',array('membership_type_id','membership_type')));
 
   $valid = true;
   $error = '';
