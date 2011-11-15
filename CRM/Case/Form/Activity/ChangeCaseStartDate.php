@@ -195,8 +195,9 @@ WHERE civicrm_case.id=  %1";
         	$oldActivity = $abao->retrieve( $oldParams, $oldActivityDefaults );
 
             // save the old values
-            civicrm_api_include( 'utils', false, 3 );
+          require_once 'api/v3/utils.php';
         	$openCaseParams = array();
+        	//@todo calling api functions directly is not supported
         	_civicrm_api3_object_to_array( $oldActivity, $openCaseParams );
 
         	// update existing revision 
