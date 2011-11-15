@@ -123,7 +123,7 @@ DELETE FROM civicrm_contact_type
         }
         $this->assertEquals( $contact->first_name, 'Bill', 'In line '. __LINE__ );
         $this->assertEquals( $contact->contact_type, 'Individual', 'In line '. __LINE__ );
-        $this->assertEquals( $contact->contact_sub_type, $this->student, 'In line '. __LINE__ );
+        $this->assertEquals( str_replace(CRM_Core_DAO::VALUE_SEPARATOR, '', $contact->contact_sub_type), $this->student, 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
         
         //check for Type:Organization, Subtype:Sponsor
@@ -137,7 +137,7 @@ DELETE FROM civicrm_contact_type
         }
         $this->assertEquals( $contact->organization_name, 'Conservation Corp', 'In line '. __LINE__ );
         $this->assertEquals( $contact->contact_type, 'Organization', 'In line '. __LINE__ );
-        $this->assertEquals( $contact->contact_sub_type, $this->sponsor, 'In line '. __LINE__ );
+        $this->assertEquals( str_replace(CRM_Core_DAO::VALUE_SEPARATOR, '', $contact->contact_sub_type), $this->sponsor, 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
     }
     
@@ -165,7 +165,7 @@ DELETE FROM civicrm_contact_type
         }
         $this->assertEquals( $updatedContact->id, $contact->id, 'In line '. __LINE__ );
         $this->assertEquals( $updatedContact->contact_type, 'Individual', 'In line '. __LINE__ );
-        $this->assertEquals( $updatedContact->contact_sub_type, $this->student, 'In line '. __LINE__ );
+        $this->assertEquals( str_replace(CRM_Core_DAO::VALUE_SEPARATOR, '', $updatedContact->contact_sub_type), $this->student, 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
         
         $params = array( 'organization_name' => 'Compumentor' ,     
@@ -186,7 +186,7 @@ DELETE FROM civicrm_contact_type
         }
         $this->assertEquals( $updatedContact->id, $contact->id, 'In line '. __LINE__ );
         $this->assertEquals( $updatedContact->contact_type, 'Organization', 'In line '. __LINE__ );
-        $this->assertEquals( $updatedContact->contact_sub_type, $this->sponsor, 'In line '. __LINE__ );
+        $this->assertEquals( str_replace(CRM_Core_DAO::VALUE_SEPARATOR, '', $updatedContact->contact_sub_type), $this->sponsor, 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
     }
     
@@ -216,7 +216,7 @@ DELETE FROM civicrm_contact_type
         }
         $this->assertEquals( $updatedContact->id, $contact->id, 'In line '. __LINE__ );
         $this->assertEquals( $updatedContact->contact_type, 'Individual', 'In line '. __LINE__ );
-        $this->assertEquals( $updatedContact->contact_sub_type,  $this->parent, 'In line '. __LINE__ );
+        $this->assertEquals( str_replace(CRM_Core_DAO::VALUE_SEPARATOR, '', $updatedContact->contact_sub_type),  $this->parent, 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
         
 
@@ -240,7 +240,7 @@ DELETE FROM civicrm_contact_type
         
         $this->assertEquals( $updatedContact->id, $contact->id, 'In line '. __LINE__ );
         $this->assertEquals( $updatedContact->contact_type, 'Organization', 'In line '. __LINE__ );
-        $this->assertEquals( $updatedContact->contact_sub_type, $this->team, 'In line '. __LINE__ );
+        $this->assertEquals( str_replace(CRM_Core_DAO::VALUE_SEPARATOR, '',$updatedContact->contact_sub_type), $this->team, 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
 
 
@@ -265,7 +265,7 @@ DELETE FROM civicrm_contact_type
         
         $this->assertEquals( $updatedContact->id, $contact->id, 'In line '. __LINE__ );
         $this->assertEquals( $updatedContact->contact_type, 'Individual', 'In line '. __LINE__ );
-        $this->assertEquals( $updatedContact->contact_sub_type, null, 'In line '. __LINE__ );
+        $this->assertEquals( $updatedContact->contact_sub_type, 'null', 'In line '. __LINE__ );
         CRM_Contact_BAO_Contact::deleteContact( $contact->id );
     }
 }
