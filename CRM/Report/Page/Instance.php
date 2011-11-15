@@ -80,6 +80,11 @@ class CRM_Report_Page_Instance extends CRM_Core_Page
         } else {
             require_once 'CRM/Core/OptionGroup.php';
             $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', "{$optionVal}", 'value' );
+            if ( empty( $templateInfo ) ) {
+                CRM_Core_Session::setStatus( ts( 'Could not find template for the instance.' ) );
+                return;
+            }
+
 
             $extKey = strpos($templateInfo['name'], '.');
 
