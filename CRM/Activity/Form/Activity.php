@@ -895,10 +895,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         
         if ( CRM_Utils_Array::value( 'followup_activity_type_id', $fields ) && !CRM_Utils_Array::value( 'followup_date', $fields ) ) {
-            $errors['followup_date'] = ts('Followup date is a required field.');
+            $errors['followup_date_time'] = ts('Followup date is a required field.');
         }
-        //Activity type is mandatory if subject is specified for an Follow-up activity, CRM-4515
-        if ( CRM_Utils_Array::value( 'followup_activity_subject',$fields ) && 
+        //Activity type is mandatory if subject or follow-up date is specified for an Follow-up activity, CRM-4515
+        if ( ( CRM_Utils_Array::value( 'followup_activity_subject',$fields ) || CRM_Utils_Array::value( 'followup_date',$fields ) ) && 
              ! CRM_Utils_Array::value( 'followup_activity_type_id', $fields ) ) {
             $errors['followup_activity_subject'] = ts('Follow-up Activity type is a required field.');
         } 
