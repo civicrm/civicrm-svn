@@ -251,7 +251,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             }
         }
            
-        civicrm_api_include( 'utils', false, 3 );
+
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
             require_once 'CRM/Core/Smarty/resources/String.php';
