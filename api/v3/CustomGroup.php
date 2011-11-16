@@ -100,7 +100,7 @@ function civicrm_api3_custom_group_create( $params )
 function _civicrm_api3_custom_group_create_spec(&$params){
   $params['extends']['api.required'] = 1;
   $params['title']['api.required'] = 1;
-  $params['style']['api.default'] = 'inline'; 
+  $params['style']['api.default'] = 'Inline'; 
 }
 
 /**
