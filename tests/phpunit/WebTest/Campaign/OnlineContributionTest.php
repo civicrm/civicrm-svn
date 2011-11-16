@@ -262,7 +262,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         
         // go to step 9
         $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Personal Campaigns']");
-        $this->waitForElementPresent( "_qf_PCP_next-bottom" );
+        $this->waitForElementPresent( "_qf_Contribute_next-bottom" );
         
         // fill in step 9 (Enable Personal Campaign Pages)
         $this->click( 'pcp_active' );
@@ -273,7 +273,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         $this->type( 'link_text', "'Create Personal Campaign Page' link text $contributionTitle" );
         
         // submit new contribution page
-        $this->click( '_qf_PCP_next-bottom' );
+        $this->click( '_qf_Contribute_next-bottom' );
         $this->waitForPageToLoad( '30000' );
         
         //get Url for Live Contribution Page
@@ -357,7 +357,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         $this->type( 'title', $contributionPageTitle );
         $this->click( "_qf_SearchContribution_refresh" );
         $this->waitForPageToLoad( '50000' );
-        $id = $this->getAttribute("//div[@id='configure_contribution_page']/table/tbody/tr/td/strong[text()='$contributionPageTitle']/../../td[5]/div/span/ul/li/a[text()='Title and Settings']@href");
+        $id = $this->getAttribute("//div[@id='configure_contribution_page']//table/tbody/tr/td/strong[text()='$contributionPageTitle']/../../td[5]/div/span/ul/li/a[text()='Title and Settings']@href");
         $id = explode( 'id=', $id );
         $registerUrl = "civicrm/contribute/transact?reset=1&id=$id[1]";
         return $registerUrl;
