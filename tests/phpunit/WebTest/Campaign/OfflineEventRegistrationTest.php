@@ -160,7 +160,7 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
         $this->open($this->sboxPath . "civicrm/event/manage&reset=1");
         $eventId = $this->registerUrl( );
         
-        $this->open($this->sboxPath . "civicrm/event/manage/eventInfo?reset=1&action=update&id=$eventId" );
+        $this->open($this->sboxPath . "civicrm/event/manage/settings?reset=1&action=update&id=$eventId" );
         $this->waitForElementPresent("_qf_EventInfo_cancel-bottom");
         
         // select campaign
@@ -267,7 +267,7 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
     {
         $this->open( $this->sboxPath . 'civicrm/event/manage?reset=1' );
         $this->waitForPageToLoad("30000");
-        $eventId = explode( '_', $this->getAttribute("//div[@id='event_status_id']/table/tbody/tr@id") );
+        $eventId = explode( '_', $this->getAttribute("//div[@id='event_status_id']//table/tbody/tr@id") );
         return $eventId[1];
     }
   
