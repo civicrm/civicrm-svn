@@ -2,7 +2,7 @@
  
 /*
  +--------------------------------------------------------------------+
- | FirstData Core Payment Module for CiviCRM version 4.0              |
+ | FirstData Core Payment Module for CiviCRM version 4.1              |
  +--------------------------------------------------------------------+
  | Licensed to CiviCRM under the Academic Free License version 3.0    |
  |                                                                    |
