@@ -20,7 +20,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
                 case 'update':
                 case 'replace':
                 case 'get':
-                        $metadata = _civicrm_api_get_fields($apiRequest['entity']);
+                        $metadata = _civicrm_api_get_fields($apiRequest['entity'], true);
                         if(empty($metadata['id']) && !empty($metadata[$apiRequest['entity'] . '_id'])){
                           $metadata['id'] = $metadata[$entity . '_id'];
                           $metadata['id']['api.aliases'] = array($entity . '_id');

@@ -895,8 +895,10 @@ function _civicrm_api3_generic_replace($entity, $params) {
 
 /*
  * returns fields allowable by api
+ * @param $entity string Entity to query
+ * @param bool $unique index by unique fields?
  */
-function _civicrm_api_get_fields($entity){
+function _civicrm_api_get_fields($entity, $unique = FALSE){
     $unsetIfEmpty= array ('dataPattern','headerPattern','default','export','import');
     $dao = _civicrm_api3_get_DAO ($entity);
     if (empty($dao)) {
@@ -907,6 +909,7 @@ function _civicrm_api_get_fields($entity){
     $d = new $dao();
     $fields= $d->fields();
     // replace uniqueNames by the normal names as the key
+    if(empty($unique)){
     foreach ($fields as $name => &$field) {
       //getting rid of unused attributes
       foreach ($unsetIfEmpty as $attr) {
@@ -923,6 +926,7 @@ function _civicrm_api_get_fields($entity){
       $fields[$field['name']] = $field;
       $fields[$field['name']]['uniqueName'] = $name;
       unset ($fields[$name]);
+    }
     }
     $fields += _civicrm_api_get_custom_fields($entity) ;
     return $fields;
@@ -1001,6 +1005,9 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
         }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('name', $values) && $field != $values['name']){
             $apiRequest['params'][$field] = CRM_Utils_Array::value($values['name'],$apiRequest['params']);
             // note that it would make sense to unset the original field here but tests need to be in place first
-        }
+        }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('uniquename', $values) && $field != $values['uniquename']){
+            $apiRequest['params'][$field] = CRM_Utils_Array::value($values['uniquename'],$apiRequest['params']);
+            // note that it would make sense to unset the original field here but tests need to be in place first
+       }
     }
 }
