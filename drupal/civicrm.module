@@ -988,7 +988,9 @@ function civicrm_civicrm_postProcess ( $formName, $form ) {
 }
 
 // XXX hack for Event/Cart to display civicrm messages to anonymous users
-function civicrm_init_foo( ) {
+// should we put this in a redirect. this causes issues with storing userID
+// in session etc and breaks navigation
+function civicrm_init_FIXME( ) {
     if ( ! civicrm_initialize( ) ) {
         return;
     }
