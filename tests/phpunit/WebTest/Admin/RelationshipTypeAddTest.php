@@ -48,7 +48,7 @@ class WebTest_Admin_RelationshipTypeAddTest extends CiviSeleniumTestCase
         $this->waitForPageToLoad( '30000' );
         
         //jump directly to relationship type selector.
-        $this->open( $this->sboxPath . 'civicrm/admin/reltype&reset=1&action=browse' );
+        $this->open( $this->sboxPath . 'civicrm/admin/reltype?reset=1&action=browse' );
         $this->waitForPageToLoad( '30000' );
 
         //load the form to add new relationship type.
@@ -92,7 +92,7 @@ class WebTest_Admin_RelationshipTypeAddTest extends CiviSeleniumTestCase
         $this->waitForPageToLoad( '30000' );
         
         //jump directly to relationship type selector.
-        $this->open( $this->sboxPath . 'civicrm/admin/reltype&reset=1&action=browse' );
+        $this->open( $this->sboxPath . 'civicrm/admin/reltype?reset=1&action=browse' );
         $this->waitForPageToLoad( '30000' );
 
         //validate form rules.
@@ -120,7 +120,7 @@ class WebTest_Admin_RelationshipTypeAddTest extends CiviSeleniumTestCase
         $this->click('_qf_RelationshipType_next-bottom');
         $this->waitForPageToLoad('30000');
 
-        $this->open( $this->sboxPath . 'civicrm/admin/reltype&reset=1&action=browse' );
+        $this->open( $this->sboxPath . 'civicrm/admin/reltype?reset=1&action=browse' );
         $this->waitForPageToLoad( '30000' );
         $this->click('link=Add Relationship Type');
         $this->waitForPageToLoad('30000');
