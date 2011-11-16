@@ -103,6 +103,7 @@ class CRM_Upgrade_Incremental_php_FourOne {
         $domainColumnNames = 
             array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => array( 
                                                                           'contact_view_options',
+                                                                          'contact_edit_options',
                                                                           'advanced_search_options',
                                                                           'user_dashboard_options',
                                                                           'address_options',
@@ -123,6 +124,8 @@ class CRM_Upgrade_Incremental_php_FourOne {
                                                                            ),
                    );
         
+
+
         $userColumnNames = array( CRM_Core_BAO_Setting::NAVIGATION_NAME => array(
                                                                                  'navigation',
                                                                                  ),
