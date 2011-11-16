@@ -26,9 +26,9 @@
  */
 
 
-require_once 'api/v3/Participant.php';
+require_once 'api/v3/DeprecatedUtils.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/ParticipantPayment.php';
+
 class api_v3_ParticipantTest extends CiviUnitTestCase
 {
 
@@ -695,7 +695,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
     {
         $params = array();
         $onDuplicate = array();
-        $participant = & _civicrm_api3_create_participant_formatted($params,$onDuplicate );
+        $participant = & _civicrm_api3_deprecated_create_participant_formatted($params,$onDuplicate );
         $this->assertEquals( $participant['error_message'] ,'Input Parameters empty' );
     }
 
@@ -709,7 +709,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         );
         require_once 'CRM/Event/Import/Parser.php';
         $onDuplicate = CRM_Event_Import_Parser::DUPLICATE_NOCHECK;
-        $participant = & _civicrm_api3_create_participant_formatted($params,$onDuplicate );
+        $participant = & _civicrm_api3_deprecated_create_participant_formatted($params,$onDuplicate );
         $this->assertEquals( $participant['is_error'],0);
     }
 
@@ -725,7 +725,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'version'			=> 3,
                         );
         $onDuplicate =11;
-        $participant = & _civicrm_api3_create_participant_formatted($params,$onDuplicate );
+        $participant = & _civicrm_api3_deprecated_create_participant_formatted($params,$onDuplicate );
         $this->assertEquals( $participant['is_error'],0);
     }
 
@@ -738,7 +738,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
                         'event_id'      => $this->_eventID,
                         );
         require_once 'CRM/Event/Import/Parser.php';
-        $participant = & _civicrm_api3_participant_check_params( $params );
+        $participant = & _civicrm_api3_deprecated_participant_check_params( $params );
         $this->assertEquals( $participant, true , 'Check the returned True');
     }
     

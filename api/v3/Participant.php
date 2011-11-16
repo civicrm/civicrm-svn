@@ -56,7 +56,7 @@
  */
 function civicrm_api3_participant_create($params)
 {
-        $errors= _civicrm_api3_participant_check_params( $params );
+        $errors= _civicrm_api3_deprecated_participant_check_params( $params );
         if ( civicrm_error( $errors ) ) {
             return $errors;
         }
@@ -178,25 +178,6 @@ function &civicrm_api3_participant_delete( $params )
 }
 
 
-/**
- * @deprecated - this is part of the import parser not the API & needs to be moved on out
- * @param <type> $params
- * @param <type> $onDuplicate
- * @return <type>
- */
-function _civicrm_api3_create_participant_formatted( $params , $onDuplicate )
-{
-    require_once 'CRM/Event/Import/Parser.php';
-    if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_NOCHECK) {
-        CRM_Core_Error::reset( );
-        $error = _civicrm_api3_participant_check_params( $params ,true );
-        if ( civicrm_error( $error ) ) {
-            return $error;
-        }
-    }
-
-    return civicrm_api3_participant_create( $params );
-}
 
 /**
  *
@@ -205,15 +186,6 @@ function _civicrm_api3_create_participant_formatted( $params , $onDuplicate )
  */
 function _civicrm_api3_participant_check_params( $params ,$checkDuplicate = false )
 {
-
-    //check if participant id is valid or not
-    if( CRM_Utils_Array::value( 'id', $params ) ) {
-        $participant = new CRM_Event_BAO_Participant();
-        $participant->id = $params['id'];
-        if ( !$participant->find( true )) {
-            return civicrm_api3_create_error( ts( 'Participant  id is not valid' ));
-        }
-    }
     require_once 'CRM/Contact/BAO/Contact.php';
     //check if contact id is valid or not
     if( CRM_Utils_Array::value( 'contact_id', $params ) ) {

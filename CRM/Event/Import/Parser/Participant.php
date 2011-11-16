@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Event/Import/Parser.php';
-
+require_once 'api/v3/DeprecatedUtils.php';
 /**
  * class to parse membership csv files
  */
@@ -275,7 +275,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
      */
     function import( $onDuplicate, &$values )
     {
-        require_once 'api/v3/Participant.php';
+
         // first make sure this is a valid line
         $response = $this->summary( $values );
         if ( $response != CRM_Event_Import_Parser::VALID ) {
@@ -376,7 +376,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                                  );
                     $participantValues = array( );
                     //@todo calling api functions directly is not supported
-                    $newParticipant = _civicrm_api3_participant_check_params( $formatted, $participantValues, false );
+                    $newParticipant = _civicrm_api3_deprecated_participant_check_params( $formatted, $participantValues, false );
                     if ( $newParticipant['error_message'] ) {
                         array_unshift( $values, $newParticipant['error_message'] ); 
                         return CRM_Event_Import_Parser::ERROR;
@@ -405,7 +405,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                     foreach($matchedIDs as $contactId) {
                         $formatted['contact_id'] = $contactId;
                         $formatted['version']    = 3;
-                        $newParticipant = _civicrm_api3_create_participant_formatted( $formatted, $onDuplicate );
+                        $newParticipant = _civicrm_api3_deprecated_create_participant_formatted( $formatted, $onDuplicate );
                     }
                 }  
                 
@@ -452,7 +452,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                 }
             }
             
-            $newParticipant = _civicrm_api3_create_participant_formatted( $formatted, $onDuplicate );
+            $newParticipant = _civicrm_api3_deprecated_create_participant_formatted( $formatted, $onDuplicate );
         }
         
         if ( is_array( $newParticipant ) && civicrm_error( $newParticipant ) ) {

@@ -1151,3 +1151,73 @@ function _civicrm_api3_deprecated_membership_format_params( $params, &$values, $
 
   return null;
 }
+/**
+ * @deprecated - this is part of the import parser not the API & needs to be moved on out
+ * @param <type> $params
+ * @param <type> $onDuplicate
+ * @return <type>
+ */
+function _civicrm_api3_deprecated_create_participant_formatted( $params , $onDuplicate )
+{
+    require_once 'CRM/Event/Import/Parser.php';
+    if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_NOCHECK) {
+        CRM_Core_Error::reset( );
+        $error = _civicrm_api3_deprecated_participant_check_params( $params ,true );
+        if ( civicrm_error( $error ) ) {
+            return $error;
+        }
+    }
+
+    return civicrm_api3_participant_create( $params );
+}
+
+/**
+ *
+ * @param <type> $params
+ * @return <type>
+ */
+function _civicrm_api3_deprecated_participant_check_params( $params ,$checkDuplicate = false )
+{
+
+    //check if participant id is valid or not
+    if( CRM_Utils_Array::value( 'id', $params ) ) {
+        $participant = new CRM_Event_BAO_Participant();
+        $participant->id = $params['id'];
+        if ( !$participant->find( true )) {
+            return civicrm_api3_create_error( ts( 'Participant  id is not valid' ));
+        }
+    }
+    require_once 'CRM/Contact/BAO/Contact.php';
+    //check if contact id is valid or not
+    if( CRM_Utils_Array::value( 'contact_id', $params ) ) {
+        $contact = new CRM_Contact_BAO_Contact();
+        $contact->id = $params['contact_id'];
+        if ( !$contact->find( true )) {
+            return civicrm_api3_create_error( ts( 'Contact id is not valid' ));
+        }
+    }
+
+    //check that event id is not an template
+    if( CRM_Utils_Array::value( 'event_id', $params ) ) {
+        $isTemplate = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'is_template' );
+        if ( !empty( $isTemplate ) ) {
+            return civicrm_api3_create_error( ts( 'Event templates are not meant to be registered' ));
+        }
+    }
+
+    $result = array( );
+    if( $checkDuplicate ) {
+        if( CRM_Event_BAO_Participant::checkDuplicate( $params, $result ) ) {
+            $participantID = array_pop( $result );
+
+            $error = CRM_Core_Error::createError( "Found matching participant record.",
+                                                  CRM_Core_Error::DUPLICATE_PARTICIPANT,
+                                                  'Fatal', $participantID );
+
+            return civicrm_api3_create_error( $error->pop( ),
+                                              array( 'contactID'     => $params['contact_id'],
+                                                     'participantID' => $participantID ) );
+        }
+    }
+    return true;
+}
