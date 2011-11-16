@@ -306,3 +306,24 @@ function civicrm_api3_job_process_membership( $params )
         return civicrm_api3_create_error( $result['messages'] );
     }
 }
+
+/*
+ * This api checks and updates the status of all survey respondants.
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ */
+function civicrm_api3_job_process_respondent( $params )
+{
+    require_once 'CRM/Campaign/BAO/Survey.php';
+    $result = CRM_Campaign_BAO_Survey::releaseRespondent( $params );
+    
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}

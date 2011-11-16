@@ -954,5 +954,60 @@ INNER JOIN  civicrm_survey survey ON ( activity.source_record_id = survey.id )
         
         return $interviewers;
     }
+
+    /** 
+     * Check and update the survey respondents.
+     *
+     * @return void
+     */
+    public function releaseRespondent( $params )
+    {
+        require_once 'CRM/Core/PseudoConstant.php';
+        require_once 'CRM/Campaign/BAO/Survey.php';
+        $activityStatus  = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        $reserveStatusId = array_search( 'Scheduled', $activityStatus ); 
+        $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+        $surveyActivityTypesIds = array_keys( $surveyActivityTypes );
+        
+        //retrieve all survey activities related to reserve action.
+        $releasedCount = 0;
+        if ( $reserveStatusId && !empty( $surveyActivityTypesIds ) ) {
+            $query = '
+    SELECT  activity.id as id, 
+            activity.activity_date_time as activity_date_time,
+            survey.id as surveyId,
+            survey.release_frequency as release_frequency
+      FROM  civicrm_activity activity
+INNER JOIN  civicrm_survey survey ON ( survey.id = activity.source_record_id ) 
+     WHERE  activity.is_deleted = 0 
+       AND  activity.status_id = %1 
+       AND  activity.activity_type_id IN ( ' . implode( ', ', $surveyActivityTypesIds ) . ' )';
+            $activity = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $reserveStatusId, 'Positive' ) ) );
+            $releasedIds = array( );
+            while ( $activity->fetch( ) ) {
+                if ( !$activity->release_frequency ) continue;
+                $reservedSeconds = CRM_Utils_Date::unixTime( $activity->activity_date_time );
+                $releasedSeconds = $activity->release_frequency * 24 * 3600;
+                $totalReservedSeconds = $reservedSeconds + $releasedSeconds;
+                if ( $totalReservedSeconds < time( ) ) $releasedIds[$activity->id] = $activity->id; 
+            }
+            
+            //released respondent.
+            if ( !empty( $releasedIds ) ) {
+                $query = '
+UPDATE  civicrm_activity
+   SET  is_deleted = 1
+ WHERE  id IN ( ' . implode( ', ', $releasedIds ) .' )';
+                CRM_Core_DAO::executeQuery( $query );
+                $releasedCount = count( $releasedIds );
+            }
+        }
+        
+        $rtnMsg = array( 'is_error' => 0,
+                         'messages' => "Number of respondents released = {$releasedCount}" );
+        
+        return $rtnMsg;
+        
+    }
     
 }
