@@ -320,6 +320,8 @@ ORDER BY parent_id, weight";
         // run the Navigation  through a hook so users can modify it
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::navigationMenu( $navigations );
+
+        $i18n = CRM_Core_I18n::singleton();
         
         //skip children menu item if user don't have access to parent menu item
         $skipMenuItems = array( );
@@ -334,7 +336,8 @@ ORDER BY parent_id, weight";
                 if ( !$value['attributes']['active'] ) {
                     $class = ', "attr": { "class" : "disabled"} ';
                 }
-                $navigationString .= ' { "attr": { "id" : "node_'.$key.'"}, "data": { "title":"'. $data. '"' .$class.'}';
+                $l10nName = $i18n->crm_translate($data, array('context' => 'menu'));
+                $navigationString .= ' { "attr": { "id" : "node_'.$key.'"}, "data": { "title":"'. $l10nName . '"' .$class.'}';
             } else {
             	// Home is a special case
                 if ($value['attributes']['name'] != 'Home') {

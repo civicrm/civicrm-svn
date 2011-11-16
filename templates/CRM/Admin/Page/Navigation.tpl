@@ -101,7 +101,7 @@
        
        }). bind("remove.jstree", function ( e,node ) {
             var menuName  = node.rslt.obj.find('a').first( ).text( );
-            var deleteMsg = {/literal}"Are you sure you want to delete this menu item: "{literal} + menuName + {/literal}" ? This action can not be undone."{literal};
+            var deleteMsg = {/literal}{ts}"Are you sure you want to delete this menu item:"{/ts} + " "{literal} + menuName + {/literal}" ? This action can not be undone."{literal};
       var isDelete  = confirm( deleteMsg );
           if ( isDelete ) {
               var nodeID  = node.rslt.obj.attr('id').replace("node_","");
