@@ -986,27 +986,3 @@ function civicrm_civicrm_postProcess ( $formName, $form ) {
         }
     }    
 }
-
-// XXX hack for Event/Cart to display civicrm messages to anonymous users
-// should we put this in a redirect. this causes issues with storing userID
-// in session etc and breaks navigation
-function civicrm_init_FIXME( ) {
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    }
-
-    if ( arg(0) != 'civicrm' ) {
-        require_once 'CRM/Core/Session.php';
-        $session = CRM_Core_Session::singleton( );
-        if ( $session->getStatus( false ) ) {
-            $status = $session->getStatus( true );
-            if ( is_array( $status ) ) {
-                foreach ( $status as $key => $value )  {
-                    drupal_set_message ( $value, $key );
-                }
-            } else {
-                drupal_set_message( $status, 'status' );
-            }
-        }
-    }
-}
