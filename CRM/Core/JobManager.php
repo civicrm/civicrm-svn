@@ -81,11 +81,11 @@ class CRM_Core_JobManager
                     $this->logEntry( 'Starting execution of ' . $job->name );
                     
                     try {
-                        $result = civicrm_api( $job->apiEntity, $job->apiAction, $job->apiParams );
+                        $result = civicrm_api( $job->api_entity, $job->api_action, $job->apiParams );
                     } catch (Exception $e) {
                         $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
                     }
-
+;
                     $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
                 }
             }
@@ -144,7 +144,7 @@ class CRM_Core_JobManager
         if( $this->currentJob ) {
             $dao->job_id = $this->currentJob->id;
             $dao->name = $this->currentJob->name;
-            $dao->command = $this->currentJob->command;
+            $dao->command = ts("Prefix:") . " " . $this->currentJob->api_prefix + " " . ts("Entity:") . " " + $this->currentJob->api_entity + " " . ts("Action:") . " " + $this->currentJob->api_action;
             $dao->data = "Parameters raw: \n\n" . $this->currentJob->parameters;
             if( $this->currentJob->apiParams ) {
                 $dao->data .= "\n\nParameters parsed: \n\n" . serialize( $this->currentJob->apiParams);
