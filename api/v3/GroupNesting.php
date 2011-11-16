@@ -97,13 +97,7 @@ function _civicrm_api3_group_nesting_create_spec(&$params){
 function civicrm_api3_group_nesting_delete( $params )
 {
 
-  $dao = new CRM_Contact_DAO_GroupNesting();
-  $dao->copyValues( $params );
-
-  if( $dao->delete( ) ) {
-    $result = array( 'is_error' => 0 );
-     return civicrm_api3_create_success($result,$params,'group_nesting','delete',$dao);
-  }
-   return civicrm_api3_create_error($result,$params,$dao);
+    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+  
 
 }
