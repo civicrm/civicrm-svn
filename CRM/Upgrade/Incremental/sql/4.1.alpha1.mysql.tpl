@@ -380,7 +380,9 @@ CREATE TABLE `civicrm_job` (
   `last_run` datetime DEFAULT NULL COMMENT 'When was this cron entry last run',
   `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Title of the job',
   `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Description of the job',
-  `command` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Full path to file containing job script',
+  `api_prefix` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Prefix of the job api call',
+  `api_entity` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Entity of the job api call',
+  `api_action` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Action of the job api call',
   `parameters` text COLLATE utf8_unicode_ci COMMENT 'List of parameters to the command.',
   `is_active` tinyint(4) DEFAULT NULL COMMENT 'Is this job active?',
   PRIMARY KEY (`id`),
@@ -403,16 +405,16 @@ CREATE TABLE `civicrm_job_log` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `civicrm_job`
-    ( domain_id, run_frequency, last_run, name, description, command, parameters, is_active ) 
+    ( domain_id, run_frequency, last_run, name, description, api_prefix, api_entity, api_action, parameters, is_active ) 
 VALUES 
-    ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Mailings scheduler{/ts}',          '{ts escape="sql" skip="true"}Sends out scheduled mailings{/ts}',                                         'civicrm_v3_mailing_process',           'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0),
-    ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Bounces fetcher{/ts}',             '{ts escape="sql" skip="true"}Fetches bounces from mailings and writes them to mailing statistics{/ts}', 'civicrm_v3_mailing_fetch_bounces',     'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0),
-    ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Activity processor{/ts}',          '{ts escape="sql" skip="true"}{/ts}',                                                                     'civicrm_v3_mailing_fetch_activities',  'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0),
-    ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Pledge record processor{/ts}',     '{ts escape="sql" skip="true"}Updates pledge records and sends out reminders{/ts}',                       'civicrm_api3_pledge_status_update',    'version=3\r\n', 0),
-    ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Address geocoder{/ts}',            '{ts escape="sql" skip="true"}Goes through addresses and geocodes them (requires Geocoding API on){/ts}', 'civicrm_api3_contact_geocode',         'version=3\r\n', 0),
-    ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Greeting updater{/ts}',            '{ts escape="sql" skip="true"}Goes through contact records and updates greeting settings{/ts}',           'civicrm_api3_contact_greeting_update', 'version=3\r\n', 0),
-    ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Report sender{/ts}',               '{ts escape="sql" skip="true"}Generates and sends out reports via email{/ts}',                            'civicrm_api3_contact_report',          'version=3\r\n', 0),
-    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Participant status processor{/ts}','{ts escape="sql" skip="true"}Adjusts event participant statuses based on time{/ts}',                     'civicrm_api3_participant_process',     'version=3\r\n', 0);
+    ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Mailings scheduler{/ts}',          '{ts escape="sql" skip="true"}Sends out scheduled mailings{/ts}',                                         'civicrm_api3', 'job', 'process_mailing',         'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0),
+    ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Bounces fetcher{/ts}',             '{ts escape="sql" skip="true"}Fetches bounces from mailings and writes them to mailing statistics{/ts}',  'civicrm_api3', 'job', 'fetch_bounces',           'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0),
+    ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Activity processor{/ts}',          '{ts escape="sql" skip="true"}{/ts}',                                                                     'civicrm_api3', 'job', 'fetch_activities',        'user=USERNAME\r\npassword=PASSWORD\r\nkey=SITE_KEY', 0),
+    ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Pledge record processor{/ts}',     '{ts escape="sql" skip="true"}Updates pledge records and sends out reminders{/ts}',                       'civicrm_api3', 'job', 'process_pledge',          'version=3\r\n', 0),
+    ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Address geocoder{/ts}',            '{ts escape="sql" skip="true"}Goes through addresses and geocodes them (requires Geocoding API on){/ts}', 'civicrm_api3', 'job', 'geocode_contact',         'version=3\r\n', 0),
+    ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Greeting updater{/ts}',            '{ts escape="sql" skip="true"}Goes through contact records and updates greeting settings{/ts}',           'civicrm_api3', 'job', 'greeting_update',         'version=3\r\n', 0),
+    ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Report sender{/ts}',               '{ts escape="sql" skip="true"}Generates and sends out reports via email{/ts}',                            'civicrm_api3', 'job', 'process_reports',         'version=3\r\n', 0),
+    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Participant status processor{/ts}','{ts escape="sql" skip="true"}Adjusts event participant statuses based on time{/ts}',                     'civicrm_api3', 'job', 'process_participant',     'version=3\r\n', 0);
 
 --CRM 9135
 ALTER TABLE civicrm_contribution_recur
