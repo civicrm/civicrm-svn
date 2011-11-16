@@ -235,10 +235,12 @@ function civicrm_get_api_version($desired_version = NULL) {
 
 
 /**
- * @param $entity
- * @param $rest_interface : boolean
+ * This function exists ONLY to support API v2 via the API wrapper (which is not actually supported :-)_
+ * It was put in basically as part of a big cock up & needs to be deleted but there are still a couple of functions
+ * that call it
+ * @param $entity deprecated
+ * @param $rest_interface deprecated
  * @deprecated
- *   In case of TRUE, we need to set the base path explicitly.
  */
 function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
 
