@@ -40,7 +40,7 @@
 /**
  * Files required for this package
  */
-require_once 'api/v3/utils.php';
+
 require_once 'CRM/Core/BAO/Note.php';
 
 /**
@@ -50,12 +50,12 @@ require_once 'CRM/Core/BAO/Note.php';
  * Required parameters : entity_id AND note
  *
  * @param   array  $params  an associative array of name/value property values of civicrm_note
- *
- * @return array note id if note is created otherwise is_error = 1
- * @access public
- * @example NoteCreate.php
  * {@getfields note_create}
- * {@example NoteCreate.php
+ * @return array API result array
+ * @access public
+ * @example NoteCreate.php Create example
+ *
+ * 
  */
 function civicrm_api3_note_create($params) {
 	
@@ -93,7 +93,7 @@ function _civicrm_api3_note_create_spec(&$params){
  *
  * This API is used for deleting a note
  *
- * @params  array  $noteID   array including id of the note to be deleted
+ * @params  array  $paramsarray including id of the note to be deleted
  * {@getfields note_delete}
  * @return null
  * @access public
@@ -108,9 +108,9 @@ function civicrm_api3_note_delete($params) {
 /**
  * Retrieve a specific note, given a set of input params
  *
- * @param  array   $params (reference ) input parameters
+ * @param  array   $params  input parameters
  *
- * @return array (reference ) array of properties,
+ * @return array  array of properties,
  * if error an array with an error id and error message
  * {@getfields note_get}
  * @static void
