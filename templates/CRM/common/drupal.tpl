@@ -86,6 +86,4 @@ cj(function() {
 });
 </script>
 {/literal}
-{* We need to set jquery $ object back to $*}
-
 </div> {* end crm-container div *}
