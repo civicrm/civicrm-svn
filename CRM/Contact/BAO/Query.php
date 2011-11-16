@@ -3674,11 +3674,50 @@ civicrm_relationship.start_date > {$today}
                         }
                     }
                 } else if ($sortByChar) { 
-                    $orderBy = " ORDER BY LEFT(contact_a.sort_name, 1) asc";
+                    $order = " ORDER BY LEFT(contact_a.sort_name, 1) asc";
                 } else {
-                    $orderBy = " ORDER BY contact_a.sort_name asc, contact_a.id";
+                    $order = " ORDER BY contact_a.sort_name asc, contact_a.id";
                 }
             }
+
+            $doOpt = true;
+            // hack for order clause
+            if ( $order ) {
+                $fieldStr = trim( str_replace( 'ORDER BY', '', $order ) );
+                $fieldOrder = explode( ' ', $fieldStr );
+                $field = $fieldOrder[0];
+                    
+                if ( $field ) {
+                    switch ( $field ) {
+                    case 'sort_name':
+                    case 'id':
+                    case 'contact_a.sort_name':
+                    case 'contact_a.id':
+                        break;
+
+                    case 'city':
+                    case 'postal_code':
+                        $this->_whereTables["civicrm_address"] = 1;
+                        $order = str_replace( $field, "civicrm_address.{$field}", $order );
+                        break;
+
+                    case 'country':
+                    case 'state_province':
+                        $this->_whereTables["civicrm_{$field}"] = 1;
+                        $order = str_replace( $field, "civicrm_{$field}.name", $order );
+                        break;
+
+                    case 'email':
+                        $this->_whereTables["civicrm_email"] = 1;
+                        $order = str_replace( $field, "civicrm_email.{$field}", $order );
+                        break;
+
+                    default:
+                        $doOpt = false;
+                    }
+                }
+            }
+
 
             if ( $rowCount > 0 && $offset >= 0 ) {
                 $limit = " LIMIT $offset, $rowCount ";
@@ -3692,48 +3731,6 @@ civicrm_relationship.start_date > {$today}
                     $limitSelect = ( $this->_useDistinct ) ?
                         'SELECT DISTINCT(contact_a.id) as id' :
                         'SELECT contact_a.id as id';
-                }
-
-                $doOpt = true;
-
-                // hack for order clause
-                // i have no idea what the below code does and how -- Lobo
-                // seems like the explode wont work nicely in many a case
-                // if we are the orderBy variable having the "ORDER BY" string
-                if ( $orderBy ) {
-                    $fieldStr = trim( str_replace( 'ORDER BY', '', $orderBy ) );
-                    $fieldOrder = explode( ' ', $fieldStr );
-                    $field = $fieldOrder[0];
-                    
-                    if ( $field ) {
-                        switch ( $field ) {
-                        case 'sort_name':
-                        case 'id':
-                        case 'contact_a.sort_name':
-                        case 'contact_a.id':
-                            break;
-
-                        case 'city':
-                        case 'postal_code':
-                            $this->_whereTables["civicrm_address"] = 1;
-                            $limitSelect .= ", civicrm_address.{$field} as {$field}";
-                            break;
-
-                        case 'country':
-                        case 'state_province':
-                            $this->_whereTables["civicrm_{$field}"] = 1;
-                            $limitSelect .= ", civicrm_{$field}.name as {$field}";
-                            break;
-
-                        case 'email':
-                            $this->_whereTables["civicrm_email"] = 1;
-                            $limitSelect .= ", civicrm_email.email as email";
-                            break;
-
-                        default:
-                            $doOpt = false;
-                        }
-                    }
                 }
 
                 if ( $doOpt ) {
@@ -3790,6 +3787,7 @@ civicrm_relationship.start_date > {$today}
         }
 
         $query = "$select $from $where $having $groupBy $order $limit";
+
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
         // CRM_Core_Error::debug('this', $this );
