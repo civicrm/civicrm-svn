@@ -50,7 +50,7 @@
         <div class="crm-section crm-error-message">{$error.message}</div>
     {/if}
     {if $code OR $mysql_code OR $errorDetails}
-        <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open crm-fatal-error-details-block">
+        <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-fatal-error-details-block" onclick="toggle(this);";>
          <div class="crm-accordion-header">
           <div class="icon crm-accordion-pointer"></div> 
         	{ts}Error Details{/ts}
@@ -71,6 +71,18 @@
     <p><a href="{$config->userFrameworkBaseURL}" title="{ts}Main Menu{/ts}">{ts}Return to home page.{/ts}</a></p>
 </div>
 </div> {* end crm-container div *}
+{literal}
+<script language="JavaScript">
+function toggle( element ) {
+    var className = element.className;
+    if ( className  == 'crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-fatal-error-details-block') {
+        element.className = 'crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open crm-fatal-error-details-block';
+    } else {
+        element.className = 'crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-fatal-error-details-block';
+    }
+}
+</script>
+{/literal}
 {if $config->userFramework != 'Joomla'}
 </body>
 </html>
