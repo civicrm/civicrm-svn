@@ -38,7 +38,7 @@
 require_once 'CRM/Core/BAO/Email.php';
 
 /**
- *  Add an Email for a contact
+ * Add an Email for a contact
  * 
  * Allowed @params array keys are:
  * 
@@ -49,17 +49,7 @@ require_once 'CRM/Core/BAO/Email.php';
  */
 function civicrm_api3_email_create( $params ) 
 {
-	
-    $emailBAO = CRM_Core_BAO_Email::add($params);
-    
-	 if ( is_a( $emailBAO, 'CRM_Core_Error' )) {
-		 return civicrm_api3_create_error( "Email is not created or updated ");
-	 } else {
-		 $values = array( );
-		 _civicrm_api3_object_to_array($emailBAO, $values[$emailBAO->id]);
-		 return civicrm_api3_create_success($values, $params,'email','create',$emailBAO );
-	 }
-
+    return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 /*
  * Adjust Metadata for Create action
@@ -85,22 +75,7 @@ function _civicrm_api3_email_create_spec(&$params){
  */
 function civicrm_api3_email_delete( $params ) 
 {
-
-    $emailID = CRM_Utils_Array::value( 'id', $params );
-
-    require_once 'CRM/Core/DAO/Email.php';
-    $emailDAO = new CRM_Core_DAO_Email();
-    $emailDAO->id = $emailID;
-    if ( $emailDAO->find( ) ) {
-		while ( $emailDAO->fetch() ) {
-			$emailDAO->delete();
-			return civicrm_api3_create_success();
-		}
-	} else {
-		return civicrm_api3_create_error( 'Could not delete email with id '.$emailID);
-	}
-    
-
+    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
 /**

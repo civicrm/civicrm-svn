@@ -80,17 +80,14 @@ function civicrm_api3_address_create( &$params )
 	  * create array for BAO (expects address params in as an
 	  * element in array 'address'
 	  */
-	 $paramsBAO = array( );
-	 $paramsBAO['contact_id'] = $params['contact_id'];
-	 unset ($params['contact_id']);
-	 $paramsBAO['address'][0] = $params;
-	 $addressBAO = CRM_Core_BAO_Address::create($paramsBAO, true);
+
+	 $addressBAO = CRM_Core_BAO_Address::add($params, true);
 	 if (empty( $addressBAO)) {
 		 return civicrm_api3_create_error( "Address is not created or updated ");
 	 } else {
 		 $values = array( );
-		 $values = _civicrm_api3_dao_to_array ($addressBAO[0], $params);
-		 return civicrm_api3_create_success($values, $params,'address',$addressBAO[0]);
+		 $values = _civicrm_api3_dao_to_array ($addressBAO, $params);
+		 return civicrm_api3_create_success($values, $params,'address',$addressBAO);
 	 }
 
 }
@@ -116,18 +113,8 @@ function _civicrm_api3_address_create_spec(&$params){
  */
 function civicrm_api3_address_delete( &$params ) 
 {
-
-    $addressDAO = new CRM_Core_DAO_Address();
-    $addressDAO->id = $params['id'];
-    if ( $addressDAO->find( ) ) {
-		while ( $addressDAO->fetch() ) {
-			$addressDAO->delete();
-			return civicrm_api3_create_success(1,$params,'activity',$addressDAO);
-		}
-	} else {
-		return civicrm_api3_create_error( 'Could not delete address with id '.$addressID);
-	}
-    
+    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+     
 }
 
 /**
@@ -146,6 +133,6 @@ function civicrm_api3_address_delete( &$params )
 
 function civicrm_api3_address_get(&$params) 
 {   
-	  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+	  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, true,'Address');
 }
 

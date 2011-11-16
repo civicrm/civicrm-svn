@@ -349,6 +349,7 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
     if(!empty($params['return']) && is_array($params['return'])){
       $dao->selectAdd( );
       foreach ($params['return'] as $returnValue ) {
+        if(in_array($returnValue,$fields))
         $dao->selectAdd( $returnValue);
       }
       $dao->selectAdd( 'id');
@@ -458,10 +459,19 @@ function _civicrm_api3_build_fields_array(&$dao, $unique = TRUE){
  * @static void
  * @access public
  */
-function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) {
+function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE, $entity = "") {
     $result = array();
     if (empty($dao) || !$dao->find() ) {
         return array();
+    }
+
+    //if custom fields are required we will endeavour to set them . NB passing $entity in might be a bit clunky / unrequired
+    if(!empty($entity) && CRM_Utils_Array::value('return', $params) && is_array($params['return'])){
+      foreach ($params['return'] as $return ) {
+        if(substr($return, 0,6) == 'custom'){
+          $custom = TRUE;
+        }
+      }
     }
 
 
@@ -477,7 +487,12 @@ function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE) 
             }
         }
         $result[$dao->id] = $tmp;
-    }
+        if(!empty($custom)){  
+           _civicrm_api3_custom_data_get($result[$dao->id],$entity,$dao->id);
+        }
+   }
+      
+
     return $result;
 }
 
@@ -639,13 +654,13 @@ function _civicrm_api3_api_check_permission($entity, $action, &$params, $throw =
  * @param array $params params from api
  * @param bool $returnAsSuccess return in api success format
  */
-function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE){
+function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE, $entity = ""){
     $bao = new $bao_name();
     _civicrm_api3_dao_set_filter ( $bao, $params, FALSE );
     if($returnAsSuccess){
-        return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params, FALSE),$params,$bao);
+        return civicrm_api3_create_success(_civicrm_api3_dao_to_array ($bao,$params, FALSE,$entity),$params,$bao);
     }else{
-        return _civicrm_api3_dao_to_array ($bao,$params, FALSE);
+        return _civicrm_api3_dao_to_array ($bao,$params, FALSE,$entity);
     }
 }
 
@@ -675,13 +690,29 @@ function _civicrm_api3_basic_create($bao_name, &$params){
 
 /*
  * Function to do a 'standard' api del - when the api is only doing a $bao::del then use this
+ * if api::del doesn't exist it will try DAO delete method
  */
 function _civicrm_api3_basic_delete($bao_name, &$params){
 
     civicrm_api3_verify_mandatory($params,null,array('id'));
     $args = array(&$params['id']);
-    $bao = call_user_func_array(array($bao_name, 'del'), $args);
-    return civicrm_api3_create_success( true );
+    if (method_exists($bao_name, 'del')) {
+      $bao = call_user_func_array(array($bao_name, 'del'), $args);
+      return civicrm_api3_create_success( true );
+    } elseif (method_exists($bao_name, 'delete')) {
+      $dao = new $bao_name();
+      $dao->id = $params['id'];
+      if ( $dao->find( ) ) {
+    	  while ( $dao->fetch() ) {
+			    $dao->delete();
+		      return civicrm_api3_create_success();
+		    }
+      }else {
+		   return civicrm_api3_create_error( 'Could not delete entity id '.$params['id']);
+      }
+    }
+
+    return civicrm_api3_create_error( 'no delete method found');
 }
 
 /*
