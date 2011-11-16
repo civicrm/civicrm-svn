@@ -536,9 +536,11 @@ ORDER BY parent_id, weight";
     static function createNavigation( $contactID ) 
     {
         $config = CRM_Core_Config::singleton();
+
         // For Joomla front end user, there is no need to create
         // navigation menu items, CRM-5349
-        if ($config->userFramework == 'Joomla' && $config->userFrameworkFrontend ) {
+        if ( $config->userFramework == 'Joomla' && 
+             $config->userFrameworkFrontend ) {
             return "<!-- $config->lcMessages -->";
         }
 
@@ -553,10 +555,11 @@ ORDER BY parent_id, weight";
 
         // FIXME: hack for CRM-5027: we need to prepend the navigation string with
         // (HTML-commented-out) locale info so that we rebuild menu on locale changes
-        if (!$navigation or substr($navigation, 0, 14) != "<!-- $config->lcMessages -->") {
+        if (! $navigation || 
+            substr($navigation, 0, 14) != "<!-- $config->lcMessages -->") {
             //retrieve navigation if it's not cached.       
             $navigation = self::buildNavigation( );
-            
+
             //add additional navigation items
             $logoutURL       = CRM_Utils_System::url( 'civicrm/logout', 'reset=1');
             $appendSring     = "<li id=\"menu-logout\" class=\"menumain\"><a href=\"{$logoutURL}\">" . ts('Logout') . "</a></li>";
