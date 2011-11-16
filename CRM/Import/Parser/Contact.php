@@ -1595,7 +1595,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         //get the prefix id etc if exists
         CRM_Contact_BAO_Contact::resolveDefaults($formatted, true);
         
-        require_once 'api/v3/Contact.php';
+        require_once 'api/v3/DeprecatedUtils.php';
         //@todo direct call to API function not supported. 
         // setting required check to false, CRM-2839
         // plus we do our own required check in import
@@ -1603,7 +1603,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                                      $dupeCheck,
                                                      true,
                                                      false );
-        require_once 'api/v3/DeprecatedUtils.php';
+
         if ( ( is_null( $error )                                                ) && 
              ( civicrm_error( _civicrm_api3_deprecated_validate_formatted_contact($formatted) ) ) ) {
                                

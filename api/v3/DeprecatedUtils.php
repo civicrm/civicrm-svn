@@ -1221,3 +1221,43 @@ function _civicrm_api3_deprecated_participant_check_params( $params ,$checkDupli
     }
     return true;
 }
+
+/**
+ * Ensure that we have the right input parameters for custom data
+ *
+ * @param array   $params          Associative array of property name/value
+ *                                 pairs to insert in new contact.
+ * @param string  $csType          contact subtype if exists/passed.
+ *
+ * @return null on success, error message otherwise
+ * @access public
+ */
+function _civicrm_api3_deprecated_contact_check_custom_params( $params, $csType = null )
+{
+    empty($csType) ? $onlyParent = true : $onlyParent = false;
+    
+    require_once 'CRM/Core/BAO/CustomField.php';
+    $customFields = CRM_Core_BAO_CustomField::getFields( $params['contact_type'],
+                                                         false,
+                                                         false,
+                                                         $csType,
+                                                         null,
+                                                         $onlyParent,
+                                                         false,
+                                                         false );
+    
+    foreach ($params as $key => $value) {
+        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+            /* check if it's a valid custom field id */
+            if ( !array_key_exists($customFieldID, $customFields)) {
+
+                $errorMsg = "Invalid Custom Field Contact Type: {$params['contact_type']}";
+                if ( !empty($csType) ) {
+                    $errorMsg .= " or Mismatched SubType: ". implode(', ', (array)$csType);  
+                }
+                return civicrm_api3_create_error( $errorMsg );  
+            }
+        }
+    }
+}
+
