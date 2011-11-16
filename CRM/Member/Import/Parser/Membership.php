@@ -344,9 +344,9 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             
             $formatValues[$key] = $field;
         }
-        require_once 'api/v3/Membership.php'; 
+        require_once 'api/v3/DeprecatedUtils.php'; 
         //TODO calling API function directly is unsupported. 
-        $formatError = _civicrm_api3_membership_format_params( $formatValues, $formatted, true);
+        $formatError = _civicrm_api3_deprecated_membership_format_params( $formatValues, $formatted, true);
                 
         if ( $formatError ) {
             array_unshift($values, $formatError['error_message']);

@@ -97,17 +97,27 @@ function _civicrm_api3_membership_delete_spec( &$params ) {
 function civicrm_api3_membership_create($params)
 {
     civicrm_api3_verify_one_mandatory($params,null,array('membership_type_id','membership_type'));
-     $error = _civicrm_api3_membership_check_params( $params );
-    if ( civicrm_error( $error ) ) {
-      return $error;
-    }
+    // check params for membership id during update
+    if ( CRM_Utils_Array::value( 'id', $params ) && !isset($params['skipStatusCal']) ) {
+    //don't calculate dates on exisiting membership - expect API use to pass them in
+    // or leave unchanged
+    $params['skipStatusCal'] = 1;
+  } else{
+  // also check for status id if override is set (during add/update)
+  if ( isset( $params['is_override'] ) &&
+     !CRM_Utils_Array::value( 'status_id', $params ) ) {
+      return civicrm_api3_create_error('Status ID required');
+  }
+  }
+
 
     $values  = array( );
     $error = _civicrm_api3_membership_format_params( $params, $values );
+    
     if ( civicrm_error( $error ) ) {
       return $error;
     }
-
+     _civicrm_api3_custom_format_params( $params, $values, 'Membership' );
     $params = array_merge( $params, $values );
 
     require_once 'CRM/Core/Action.php';
@@ -257,6 +267,9 @@ function civicrm_api3_membership_get($params)
 
 
 /**
+ * @deprecated
+ * Deprecated function to support membership create. Do not call this. It will be removed in favour of 
+ * wrapper layer formatting
  * take the input parameter list as specified in the data model and
  * convert it into the same format that we use in QF and BAO object
  *
@@ -328,71 +341,6 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
     }
   }
 
-  _civicrm_api3_custom_format_params( $params, $values, 'Membership' );
-
-
-  if ( $create ) {
-    // CRM_Member_BAO_Membership::create() handles membership_start_date,
-    // membership_end_date and membership_source. So, if $values contains
-    // membership_start_date, membership_end_date  or membership_source,
-    // convert it to start_date, end_date or source
-    $changes = array('membership_start_date' => 'start_date',
-                         'membership_end_date'   => 'end_date',
-                         'membership_source'     => 'source',
-    );
-
-    foreach ($changes as $orgVal => $changeVal) {
-      if ( isset($values[$orgVal]) ) {
-        $values[$changeVal] = $values[$orgVal];
-        unset($values[$orgVal]);
-      }
-    }
-  }
-
   return null;
-}
-
-/**
- * This function ensures that we have the right input membership parameters
- *
- *
- * @param array  $params       Associative array of property name/value
- *                             pairs to insert in new membership.
- *
- * @return bool|CRM_Utils_Error
- * @access private
- */
-function _civicrm_api3_membership_check_params( &$params ) {
-
-
-  $valid = true;
-  $error = '';
-
-  // check params for membership id during update
-  if ( CRM_Utils_Array::value( 'id', $params ) ) {
-    //don't calculate dates on exisiting membership - expect API use to pass them in
-    // or leave unchanged
-    $params['skipStatusCal'] = 1;
-    require_once 'CRM/Member/BAO/Membership.php';
-    $membership     = new CRM_Member_BAO_Membership();
-    $membership->id = $params['id'];
-    if ( !$membership->find( true ) ) {
-      return civicrm_api3_create_error( ts( 'Membership id is not valid' ));
-    }
-  } 
-
-  // also check for status id if override is set (during add/update)
-  if ( isset( $params['is_override'] ) &&
-  !CRM_Utils_Array::value( 'status_id', $params ) ) {
-    $valid  = false;
-    $error .= ' status_id';
-  }
-
-  if ( ! $valid ) {
-    return civicrm_api3_create_error( "Required fields not found for membership $error" );
-  }
-
-  return array();
-
 }
 

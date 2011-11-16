@@ -1056,4 +1056,98 @@ function _civicrm_api3_deprecated_validate_formatted_contact( &$params )
 
     return civicrm_api3_create_success( true );
 }
+/**
+ * take the input parameter list as specified in the data model and
+ * convert it into the same format that we use in QF and BAO object
+ *
+ * @param array  $params       Associative array of property name/value
+ *                             pairs to insert in new contact.
+ * @param array  $values       The reformatted properties that we can use internally
+ *
+ * @param array  $create       Is the formatted Values array going to
+ *                             be used for CRM_Member_BAO_Membership:create()
+ *
+ * @return array|error
+ * @access public
+ */
+function _civicrm_api3_deprecated_membership_format_params( $params, &$values, $create=false)
+{
 
+  $fields = CRM_Member_DAO_Membership::fields( );
+  _civicrm_api3_store_values( $fields, $params, $values );
+
+  foreach ($params as $key => $value) {
+    // ignore empty values or empty arrays etc
+    if ( CRM_Utils_System::isNull( $value ) ) {
+      continue;
+    }
+     
+    switch ($key) {
+      case 'membership_contact_id':
+        if (!CRM_Utils_Rule::integer($value)) {
+          return civicrm_api3_create_error("contact_id not valid: $value");
+        }
+        $dao = new CRM_Core_DAO();
+        $qParams = array();
+        $svq = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
+        $qParams);
+        if (!$svq) {
+          return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
+        }
+        $values['contact_id'] = $values['membership_contact_id'];
+        unset($values['membership_contact_id']);
+        break;
+
+      case 'membership_type_id':
+        if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipType( ) ) ) {
+          return civicrm_api3_create_error( 'Invalid Membership Type Id' );
+        }
+        $values[$key] = $value;
+        break;
+      case 'membership_type':
+        $membershipTypeId = CRM_Utils_Array::key( ucfirst( $value ),
+        CRM_Member_PseudoConstant::membershipType( ) );
+        if ( $membershipTypeId ) {
+          if ( CRM_Utils_Array::value( 'membership_type_id', $values ) &&
+          $membershipTypeId != $values['membership_type_id'] ) {
+            return civicrm_api3_create_error( 'Mismatched membership Type and Membership Type Id' );
+          }
+        } else {
+          return civicrm_api3_create_error( 'Invalid Membership Type' );
+        }
+        $values['membership_type_id'] = $membershipTypeId;
+        break;
+      case 'status_id':
+        if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipStatus( ) ) ) {
+          return civicrm_api3_create_error( 'Invalid Membership Status Id' );
+        }
+        $values[$key] = $value;
+        break;
+      default:
+        break;
+    }
+  }
+
+  _civicrm_api3_custom_format_params( $params, $values, 'Membership' );
+
+
+  if ( $create ) {
+    // CRM_Member_BAO_Membership::create() handles membership_start_date,
+    // membership_end_date and membership_source. So, if $values contains
+    // membership_start_date, membership_end_date  or membership_source,
+    // convert it to start_date, end_date or source
+    $changes = array('membership_start_date' => 'start_date',
+                         'membership_end_date'   => 'end_date',
+                         'membership_source'     => 'source',
+    );
+
+    foreach ($changes as $orgVal => $changeVal) {
+      if ( isset($values[$orgVal]) ) {
+        $values[$changeVal] = $values[$orgVal];
+        unset($values[$orgVal]);
+      }
+    }
+  }
+
+  return null;
+}
