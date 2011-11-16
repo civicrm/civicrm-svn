@@ -318,6 +318,11 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         if (defined('CIVICRM_TEMPLATE_COMPILEDIR')) {
             $this->templateCompileDir = CRM_Utils_File::addTrailingSlash(CIVICRM_TEMPLATE_COMPILEDIR);
 
+            // also make sure we create the config directory within this directory
+            // the below statement will create both the templates directory and the config and log directory
+            $this->configAndLogDir = CRM_Utils_File::baseFilePath( $this->templateCompileDir ) . 'ConfigAndLog' . DIRECTORY_SEPARATOR;
+            CRM_Utils_File::createDir( $this->configAndLogDir );
+
             // we're automatically prefixing compiled templates directories with country/language code
             global $tsLocale;
             if (!empty($tsLocale)) {
@@ -326,10 +331,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 $this->templateCompileDir .= CRM_Utils_File::addTrailingSlash($this->lcMessages);
             }
 
-            // also make sure we create the config directory within this directory
-            // the below statement will create both the templates directory and the config and log directory
-            $this->configAndLogDir = $this->templateCompileDir . 'ConfigAndLog' . DIRECTORY_SEPARATOR;
-            CRM_Utils_File::createDir( $this->configAndLogDir );
+            CRM_Utils_File::createDir( $this->templateCompileDir );
         } else if ( $loadFromDB ) {
             echo 'You need to define CIVICRM_TEMPLATE_COMPILEDIR in civicrm.settings.php';
             exit( );
@@ -422,7 +424,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         }
 
         $urlArray     = array('userFrameworkResourceURL', 'imageUploadURL');
-        $dirArray     = array('uploadDir','customFileUploadDir');
+        $dirArray     = array('uploadDir', 'customFileUploadDir');
         
         foreach($variables as $key => $value) {
             if ( in_array($key, $urlArray) ) {
