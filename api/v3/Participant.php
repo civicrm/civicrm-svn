@@ -56,10 +56,16 @@
  */
 function civicrm_api3_participant_create($params)
 {
-        $errors= _civicrm_api3_deprecated_participant_check_params( $params );
-        if ( civicrm_error( $errors ) ) {
-            return $errors;
+     //check that event id is not an template
+     // note that check duplicate check was removed as it wasn't actually being called.
+     //check contact exists removed as belongs @ wrapper layer
+     if( CRM_Utils_Array::value( 'event_id', $params ) ) {
+        $isTemplate = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'is_template' );
+        if ( !empty( $isTemplate ) ) {
+            return civicrm_api3_create_error( ts( 'Event templates are not meant to be registered' ));
         }
+     }
+
         $value = array();
         _civicrm_api3_custom_format_params( $params, $values, 'Participant' );
         $params = array_merge($values,$params);  
@@ -177,46 +183,3 @@ function &civicrm_api3_participant_delete( $params )
 
 }
 
-
-
-/**
- *
- * @param <type> $params
- * @return <type>
- */
-function _civicrm_api3_participant_check_params( $params ,$checkDuplicate = false )
-{
-    require_once 'CRM/Contact/BAO/Contact.php';
-    //check if contact id is valid or not
-    if( CRM_Utils_Array::value( 'contact_id', $params ) ) {
-        $contact = new CRM_Contact_BAO_Contact();
-        $contact->id = $params['contact_id'];
-        if ( !$contact->find( true )) {
-            return civicrm_api3_create_error( ts( 'Contact id is not valid' ));
-        }
-    }
-
-    //check that event id is not an template
-    if( CRM_Utils_Array::value( 'event_id', $params ) ) {
-        $isTemplate = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'is_template' );
-        if ( !empty( $isTemplate ) ) {
-            return civicrm_api3_create_error( ts( 'Event templates are not meant to be registered' ));
-        }
-    }
-
-    $result = array( );
-    if( $checkDuplicate ) {
-        if( CRM_Event_BAO_Participant::checkDuplicate( $params, $result ) ) {
-            $participantID = array_pop( $result );
-
-            $error = CRM_Core_Error::createError( "Found matching participant record.",
-                                                  CRM_Core_Error::DUPLICATE_PARTICIPANT,
-                                                  'Fatal', $participantID );
-
-            return civicrm_api3_create_error( $error->pop( ),
-                                              array( 'contactID'     => $params['contact_id'],
-                                                     'participantID' => $participantID ) );
-        }
-    }
-    return true;
-}
