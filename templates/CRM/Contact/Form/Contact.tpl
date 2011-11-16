@@ -226,7 +226,7 @@ function warnSubtypeDataLoss( )
    });
 
    if ( warning ) {
-      return confirm( 'One or more subtypes has been un-selected from the list. Any custom data associated with un-selected subtype would be removed. Click OK to proceed.' );
+      return confirm( 'One or more contact subtypes have been de-selected from the list for this contact. Any custom data associated with de-selected subtype will be removed. Click OK to proceed, or Cancel to review your changes before saving.' );
    }
    return true;
 }
