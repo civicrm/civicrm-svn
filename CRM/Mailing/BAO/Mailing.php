@@ -2340,8 +2340,6 @@ WHERE  civicrm_mailing_job.id = %1
         CRM_Mailing_BAO_Job::runJobs();
         CRM_Mailing_BAO_Job::runJobs_post();
 
-        sleep( 100 );
-
         // lets release the global cron lock if we do have one
         if ( $gotCronLock ) {
             $cronLock->release( );
