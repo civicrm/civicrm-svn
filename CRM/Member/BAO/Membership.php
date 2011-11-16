@@ -2562,5 +2562,50 @@ Message: {$msgTpl[$memType->renewal_msg_id]['details']}
         }
         return $contactMembershipType;
     }
+
+    public function updateMembershipReminderDate( $params )
+    {
+        require_once 'CRM/Member/PseudoConstant.php';
+        
+        //get all active statuses of membership.
+        $allStatuses = CRM_Member_PseudoConstant::membershipStatus( );
+        
+        //set membership reminder date if membership 
+        //record has one of the following status.  
+        $validStatus = array( 'New', 'Current', 'Grace' );
+        
+        $statusIds   = array( );
+        foreach ( $validStatus as $status ) {
+            $statusId = array_search( $status, $allStatuses );
+            if ( $statusId ) $statusIds[$statusId] = $statusId; 
+        }
+        
+        //we don't have valid status to check,
+        //therefore no need to proceed further.
+        if ( empty( $statusIds ) ) {
+            return;
+        }
+        
+        //set reminder date for all memberships,
+        //in case reminder date is missing and
+        //membership type has reminder day set.
+        
+        $query = '
+    UPDATE  civicrm_membership membership 
+INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id ) 
+INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_type_id )
+       SET  membership.reminder_date = DATE_SUB( membership.end_date, INTERVAL type.renewal_reminder_day + 1 DAY ) 
+     WHERE  membership.reminder_date IS NULL 
+       AND  contact.is_deleted = 0
+       AND  ( contact.is_deceased IS NULL OR contact.is_deceased = 0 )
+       AND  type.renewal_reminder_day IS NOT NULL 
+       AND  membership.status_id IN ( ' . implode( ' , ', $statusIds ) .' )';
+        
+        CRM_Core_DAO::executeQuery( $query );
+        
+        return array( 'is_error' => 0,
+                      'messages' => 'Membership(s) reminder date updated. (Done)' );
+        
+    }
     
 }

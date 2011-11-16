@@ -327,3 +327,26 @@ function civicrm_api3_job_process_respondent( $params )
         return civicrm_api3_create_error( $result['messages'] );
     }
 }
+
+
+/*
+ * This api checks and updates the status of all membership records for a given domain using the calc_membership_status and 
+ * update_contact_membership APIs.
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ */
+function civicrm_api3_job_process_membership_reminder_date( $params )
+{
+    require_once 'CRM/Member/BAO/Membership.php';
+    $result = CRM_Member_BAO_Membership::updateMembershipReminderDate( $params );
+    
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}
