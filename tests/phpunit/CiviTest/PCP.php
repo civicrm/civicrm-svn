@@ -50,18 +50,14 @@ class PCPBlock extends PHPUnit_Framework_Testcase
         
         
         foreach( $fieldsParams as $value ){
-            $api_version = civicrm_get_api_version();
-            if ($api_version === 2) {
-                require_once('api/v2/UFGroup.php');
-                $ufField = civicrm_uf_field_create($profileId , $value );
-            }
-            else {
+
+           
                 // we assume api v3.
                 $value['version'] = 3;
                 $value['uf_group_id'] = $profileId;
                 $ufField = civicrm_api( 'uf_field', 'create', $value );
             }
-        }
+        
         $joinParams =  array(
                              'module'       => 'Profile',
                              'entity_table' => 'civicrm_contribution_page',
@@ -98,15 +94,10 @@ class PCPBlock extends PHPUnit_Framework_Testcase
      */
     function delete( $params )
     {
-        $api_version = civicrm_get_api_version();
-        if ($api_version === 2) {
-            require_once('api/v2/UFGroup.php');
-            $resulProfile = civicrm_uf_group_delete($params['profileId']);
-        }
-        else {
+
             $delete_params = array('id' => $params['profileId']);
             $resulProfile = civicrm_api('uf_group', 'delete', $delete_params );
-        }
+        
 
         require_once 'CRM/Contribute/DAO/PCPBlock.php';
         $dao     = new CRM_Contribute_DAO_PCPBlock( );
