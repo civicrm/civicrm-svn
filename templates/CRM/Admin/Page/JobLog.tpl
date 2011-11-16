@@ -52,8 +52,8 @@
             <td class="crm-joblog-name">{$row.name}</td>
             <td class="crm-joblog-details">
                 <div class="crm-joblog-command">{$row.command}</div>
-                <div class="crm-joblog-description"><pre>{$row.description}</pre></div>
-	        <div class="crm-joblog-data"><pre>{$row.data}</pre></div>
+                {if $row.description}<div class="crm-joblog-description"><pre>{$row.description}</pre></div>{/if}
+	        {if $row.data}<div class="crm-joblog-data"><pre>{$row.data}</pre></div>{/if}
             </td>
         </tr>
         {/foreach}

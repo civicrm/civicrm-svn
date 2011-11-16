@@ -87,13 +87,13 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
                     $attributes['description'] );
 
         $this->add( 'text', 'api_prefix', ts( 'API Call Prefix' ),
-                    $attributes['command'], true );
+                    $attributes['api_prefix'], true );
 
         $this->add( 'text', 'api_entity', ts( 'API Call Entity' ),
-                    $attributes['command'], true );
+                    $attributes['api_entity'], true );
 
         $this->add( 'text', 'api_action', ts( 'API Call Action' ),
-                    $attributes['command'], true );
+                    $attributes['api_action'], true );
 
         $this->add( 'select', 'run_frequency', ts( 'Run frequency' ),
                     array( 'Daily' => ts('Daily'), 'Hourly' => ts('Hourly'), 'Always' => ts('Every time cron job is run') ) );
@@ -116,9 +116,10 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
         require_once 'api/api.php';
 
         civicrm_api_include( $fields['api_entity'] ) ;
+        $fname = civicrm_api_get_function_name( $fields['api_entity'], $fields['api_action'] );
         
-        if( ! function_exists( $fields['command'] ) ) {
-            $errors['command'] = ts( 'Given API command is not defined.' );
+        if( ! function_exists( $fname ) ) {
+            $errors['api_action'] = ts( 'Given API command is not defined.' );
         }
 
         if ( ! empty( $errors ) ) {

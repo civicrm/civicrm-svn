@@ -44,8 +44,63 @@
     <tr class="crm-job-form-block-run_frequency">
         <td class="label">{$form.run_frequency.label}</td><td>{$form.run_frequency.html}</td>
     </tr>
-    <tr class="crm-job-form-block-command">
-        <td class="label">{$form.command.label}</td><td>{$form.command.html}</td>
+    <tr class="crm-job-form-block-api_action">
+        <td class="label">{ts}API call:{/ts}</td>
+        <td>
+
+        <div id="fname"><br/>
+        </div>
+        {$form.api_prefix.html}
+        <select name="api_entity" type="text" id="api_entity" class="form-select required">
+          {crmAPI entity="Entity" action="get" var="entities" version=3}
+          {foreach from=$entities.values item=entity}
+            <option value="{$entity}"{if $entity eq 'Job'} selected="selected"{/if}>{$entity}</option>
+          {/foreach}
+        </select>
+        {$form.api_action.html}
+
+        <div class="description">{ts}Put in the API method name. You need to enter pieces of full API function name as described in the documentation.{/ts}</div>
+<script>
+{literal}
+  function assembleName( ) {
+
+    // dunno yet
+    var apiName = "";
+
+    // building prefix
+    var apiPrefixRaw = cj('#api_prefix').val();
+
+    if( apiPrefixRaw == '' ) {
+      cj('#fname').html( "<em>API name will start appearing here as you type in fields below.</em>" );
+      return;
+    }
+
+    if( apiPrefixRaw == 'civicrm_api3' ) { 
+      apiPrefix = 'api'
+    } else {
+      apiPrefix = apiPrefixRaw;
+    }
+
+    // building entity
+    var apiEntity = cj('#api_entity').val().replace( /([A-Z])/g, function($1) { 
+                                                   return $1.toLowerCase();
+                                                   });
+    // building action
+    var apiAction = cj('#api_action').val().replace(/(\_[a-z])/g, function($1) {return $1.toUpperCase().replace('_','');});
+    apiName = apiPrefix + '.' + apiEntity + '.' + apiAction;
+    cj('#fname').text( apiName );
+  }
+
+  // bind to different events to build API name live
+  cj(document).ready( function() { assembleName() } );
+  cj('#api_prefix').keyup( function() { assembleName() } );
+  cj('#api_entity').change( function() { assembleName() } );
+  cj('#api_action').keyup( function() { assembleName() } );
+
+{/literal}
+</script>
+
+</td>
     </tr>
     <tr class="crm-job-form-block-parameters">
         <td class="label">{$form.parameters.label}</td><td>{$form.parameters.html}</td>
