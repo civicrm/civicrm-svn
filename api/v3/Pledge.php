@@ -327,24 +327,3 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
    return array();
 }
 
-/**
- * Mass update pledge statuses
- *
- * @param  array   	  $params (reference ) input parameters
- *
- * @return boolean        true if success, else false
- * @static
- * @access public
- *
- */
-function civicrm_api3_pledge_status_update( $params ) {
-
-    $result = CRM_Pledge_BAO_Pledge::updatePledgeStatus( $params );
-    
-    if ( $result['is_error'] == 0 ) {
-        // experiment: detailed execution log is a result here
-        return civicrm_api3_create_success( $result['messages'] );
-    } else {
-        return civicrm_api3_create_error( $result['error_message'] );
-    }
-}
