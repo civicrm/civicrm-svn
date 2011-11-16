@@ -573,9 +573,11 @@ ORDER BY title asc
          }
          
          if ( $sortBy &&
-              $this->_sortByCharacter ) {
-             $clauses[] = 'title LIKE %3';
-             $params[3] = array( $this->_sortByCharacter . '%', 'String' );
+              $this->_sortByCharacter !== null ) {
+             $clauses[] = 
+                 "title LIKE '" . 
+                 strtolower(CRM_Core_DAO::escapeWildCardString($this->_sortByCharacter)) .
+                 "%'";
          }
          
          $campainIds = $this->get( 'campaign_id' );

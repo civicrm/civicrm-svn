@@ -1183,6 +1183,10 @@ SELECT contact_id
             $_dao = new CRM_Core_DAO( );
         }
 
+        return $_dao->escape( $string );
+    }
+
+    static function escapeWildCardString( $string ) {
         // CRM-9155
         // ensure we escape the single characters % and _ which are mysql wild
         // card characters and could come in via sortByCharacter
@@ -1192,7 +1196,7 @@ SELECT contact_id
             return '\\' . $string;
         }
 
-        return $_dao->escape( $string );
+        return self::escapeString( $string );
     }
 
     //Creates a test object, including any required objects it needs via recursion

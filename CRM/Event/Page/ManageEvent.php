@@ -392,8 +392,10 @@ ORDER BY start_date desc
 
         if ( $sortBy &&
              $this->_sortByCharacter !== null ) {
-            $clauses[] = 'title LIKE %6';
-            $params[6] = array( $this->_sortByCharacter . '%', 'String' );
+            $clauses[] = 
+                "title LIKE '" . 
+                strtolower(CRM_Core_DAO::escapeWildCardString($this->_sortByCharacter)) .
+                "%'";
         }
         
         $campainIds = $this->get( 'campaign_id' );

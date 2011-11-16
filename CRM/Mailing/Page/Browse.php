@@ -315,10 +315,11 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
         }
 
         if ( $sortBy &&
-             $this->_sortByCharacter !== null ||
-             $this->_sortByCharacter !== '' ) {
-            $clauses[] = 'name LIKE %2';
-            $params[2] = array( $this->_sortByCharacter . '%', 'String' );
+             $this->_sortByCharacter !== null ) {
+            $clauses[] = 
+                "name LIKE '" . 
+                strtolower(CRM_Core_DAO::escapeWildCardString($this->_sortByCharacter)) .
+                "%'";
         }
         
         $campainIds = $this->get( 'campaign_id' );

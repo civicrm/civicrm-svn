@@ -252,9 +252,11 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         $params      = $this->get('params') ? $this->get('params') : array();
 
         $title = '1';
-        if ( $this->_sortByCharacter ) {
-            $title       = ' cp.title LIKE %6';
-            $params['6'] = array( $this->_sortByCharacter . '%', 'String' );        
+        if ( $this->_sortByCharacter !== null ) {
+            $clauses[] = 
+                "cp.title LIKE '" . 
+                strtolower(CRM_Core_DAO::escapeWildCardString($this->_sortByCharacter)) .
+                "%'";
         }
 
         $query = "
