@@ -311,29 +311,26 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 foreach( $this->_priceSet['fields'] as $key => $val ) {
                     $isHavingMemid = false;
                     foreach ( $val['options'] as $keys => $values ) {
-                        if ( CRM_Utils_Array::value('membership_type_id', $values) ) {
-                            $isHavingMemid = true;
-                            if( in_array($values['membership_type_id'], $this->_currentMemberships) &&
-                                !in_array($values['membership_type_id'], $selectedCurrentMemTypes) ) {
-                                if ( $val['html_type'] == 'CheckBox') {
-                                    $this->_defaults["price_{$key}"][$keys] = 1;
-                                } else {
-                                    $this->_defaults["price_{$key}"] = $keys;
-                                }
-                                $selectedCurrentMemTypes[] = $values['membership_type_id'];
+                        $opMemTypeId = CRM_Utils_Array::value('membership_type_id', $values);
+                        if( $opMemTypeId &&
+                            in_array($opMemTypeId, $this->_currentMemberships) &&
+                            !in_array($opMemTypeId, $selectedCurrentMemTypes) ) {
+                            if ( $val['html_type'] == 'CheckBox') {
+                                $this->_defaults["price_{$key}"][$keys] = 1;
+                            } else {
+                                $this->_defaults["price_{$key}"] = $keys;
+                            }
+                            $selectedCurrentMemTypes[] = $values['membership_type_id'];
+                        } else if ( CRM_Utils_Array::value('is_default', $values) &&
+                                    !$opMemTypeId &&
+                                    (!isset($this->_defaults["price_{$key}"]) ||
+                                     ($val['html_type'] == 'CheckBox' && !isset($this->_defaults["price_{$key}"][$keys] ) ) ) ) {
+                            if ( $val['html_type'] == 'CheckBox') {
+                                $this->_defaults["price_{$key}"][$keys] = 1;
+                            } else {
+                                $this->_defaults["price_{$key}"] = $keys;
                             }
                         }
-                    }
-                    if( !$isHavingMemid ) {
-                        foreach ( $val['options'] as $keys => $values ) {
-                            if ( $values['is_default'] ) {
-                                if ( $val['html_type'] == 'CheckBox') {
-                                    $this->_defaults["price_{$key}"][$keys] = 1;
-                                } else {
-                                    $this->_defaults["price_{$key}"] = $keys;
-                                }
-                            }
-                        } 
                     }
                     
                 }
