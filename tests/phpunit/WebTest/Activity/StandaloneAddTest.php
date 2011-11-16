@@ -59,7 +59,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->webtestAddContact( "$firstName2", "Summerson", $firstName2 . "@summerson.com" );
 
       // Go directly to the URL of the screen that you will be testing (New Activity-standalone).
-      $this->open($this->sboxPath . "civicrm/activity&reset=1&action=add&context=standalone");
+      $this->open($this->sboxPath . "civicrm/activity?reset=1&action=add&context=standalone");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
