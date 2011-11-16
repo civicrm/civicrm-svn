@@ -1,17 +1,41 @@
 <?php
-
-define('CIVICRM_UF', 'UnitTests');
-
 if ( !empty( $GLOBALS['mysql_user'] ) ) {
     $dbName = ! empty( $GLOBALS['mysql_db'] ) ? $GLOBALS['mysql_db'] : 'civicrm_tests_dev';
     define( 'CIVICRM_DSN'          , "mysql://{$GLOBALS['mysql_user']}:{$GLOBALS['mysql_pass']}@{$GLOBALS['mysql_host']}/{$dbName}?new_link=true" );
 }
 
+
+/**
+ * Content Management System (CMS) Host:
+ *
+ * CiviCRM can be hosted in either Drupal, Joomla or WordPress.
+*/ 
+define('CIVICRM_UF', 'Drupal');
+
+
+/**
+ * File System Paths:
+ *
+ * $civicrm_root is the file system path on your server where the civicrm
+ * code is installed. Use an ABSOLUTE path (not a RELATIVE path) for this setting.
+ *
+ * CIVICRM_TEMPLATE_COMPILEDIR is the file system path where compiled templates are stored.
+ * These sub-directories and files are temporary caches and will be recreated automatically
+ * if deleted.
+ *
+ * IMPORTANT: The COMPILEDIR directory must exist,
+ * and your web server must have read/write access to these directories.
+ *
+ *
+ * EXAMPLE - Drupal:
+ * If the path to the Drupal home directory is /var/www/htdocs/drupal
+ * the $civicrm_root setting would be:
+ *      $civicrm_root = '/var/www/htdocs/drupal/sites/all/modules/civicrm/';
+ *
+ */ 
 global $civicrm_root;
+$civicrm_root = 'FIX THIS PATH';
 
-$civicrm_root = dirname( dirname( dirname( dirname( __FILE__ ) ) ) );
-
-// ADJUST THIS PATH!
 define( 'CIVICRM_TEMPLATE_COMPILEDIR', 'PLEASE ADJUST THIS PATH IN YOUR civicrm.settings.php.txt' );
 
 define( 'CIVICRM_SITE_KEY', 'phpunittestfakekey' );
