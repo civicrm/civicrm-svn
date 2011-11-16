@@ -241,7 +241,7 @@ function _civicrm_api3_get_DAO ($name) {
     if(strtolower($name) =='individual' || strtolower($name) =='household' ||strtolower($name) =='organization'){
         $name = 'Contact';
     }
-    return $dao[civicrm_api_get_camel_name($name,3)];
+    return $dao[_civicrm_api_get_camel_name($name,3)];
 }
 
 /*

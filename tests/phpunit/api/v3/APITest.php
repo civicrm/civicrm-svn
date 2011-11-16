@@ -156,7 +156,7 @@ class api_v3_APITest extends CiviUnitTestCase {
        'uf_join' => 'UFJoin',
      );
      foreach ($cases as $input => $expected) {
-       $actual = civicrm_api_get_camel_name($input);
+       $actual = _civicrm_api_get_camel_name($input);
        $this->assertEquals($expected, $actual, sprintf('input=%s expected=%s actual=%s', $input, $expected, $actual));
      }
    }

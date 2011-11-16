@@ -112,8 +112,8 @@ function _civicrm_api_resolve($apiRequest) {
     return $cache[$cachekey];
   }
   
-  $camelName = civicrm_api_get_camel_name($apiRequest['entity'], $apiRequest['version']);
-  $actionCamelName = civicrm_api_get_camel_name($apiRequest['action']);
+  $camelName = _civicrm_api_get_camel_name($apiRequest['entity'], $apiRequest['version']);
+  $actionCamelName = _civicrm_api_get_camel_name($apiRequest['action']);
     
   // Determine if there is an entity-specific implementation of the action
   $stdFunction = civicrm_api_get_function_name($apiRequest['entity'], $apiRequest['action'],$apiRequest['version']);
@@ -245,7 +245,7 @@ function civicrm_get_api_version($desired_version = NULL) {
 function civicrm_api_include($entity, $rest_interface = FALSE,$version = NULL) {
 
     $version = civicrm_get_api_version($version);
-    $camel_name = civicrm_api_get_camel_name($entity,$version);
+    $camel_name = _civicrm_api_get_camel_name($entity,$version);
     $file = 'api/v'. $version .'/'. $camel_name .'.php';
     if ( $rest_interface ) {
         $apiPath = substr( $_SERVER['SCRIPT_FILENAME'], 0, -15 );
@@ -283,7 +283,7 @@ function civicrm_error( $result )
     return false;
 }
 
-function civicrm_api_get_camel_name( $entity, $version = NULL ) 
+function _civicrm_api_get_camel_name( $entity, $version = NULL ) 
 {
     static $_map = null;
 
