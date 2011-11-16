@@ -240,7 +240,7 @@ SELECT  petition.id                         as id,
 
         // remove 'Unconfirmed' tag for this contact
         require_once 'CRM/Core/BAO/Setting.php';
-        $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CAMPAIGN_PREFERENCES_NAME,
+        $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                    'tag_unconfirmed',
                                                    null,
                                                    'Unconfirmed' );
@@ -339,7 +339,7 @@ AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
         $sql = "
             SELECT  activity_type_id,
             campaign_id,
-            title,
+            s.title,
             ov.label AS activity_type
             FROM  civicrm_survey s, civicrm_option_value ov, civicrm_option_group og
             WHERE s.id = " . $surveyId ."
@@ -499,7 +499,7 @@ AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
 
         // check if the group defined by CIVICRM_PETITION_CONTACTS exists, else create it
         require_once 'CRM/Core/BAO/Setting.php';
-        $petitionGroupName = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CONFIGURATION_PREFERENCES_NAME,
+        $petitionGroupName = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                             'petition_contacts',
                                                             null,
                                                             'Petition Contacts' );
