@@ -254,19 +254,19 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase
     public function testDelete()
     {
         // groups id=1 and id=2 loaded in setUp
-        $params = array( 'parent_group_id' => 1,
+        $getparams = array( 'parent_group_id' => 1,
                          'child_group_id' => 2,
-                         'version'  =>$this->_apiversion );
+                         'version'  =>$this->_apiversion ,
+                          );
 
-        $result =& civicrm_api('group_nesting', 'delete',$params);
+        $result = civicrm_api('group_nesting', 'get',$getparams);
+        $params = array('version' => 3, 'id' => $result['id']);
+        $result = civicrm_api('group_nesting', 'delete',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertAPISuccess( $result,'in line ' . __LINE__ );
+        $this->assertEquals(0, civicrm_api('group_nesting', 'getcount', $getparams));
 
-        // group nesting record with above combo of params
-        // has id = 1, asserting it's gone
-        $id = 1;
-        $this->assertDBState( 'CRM_Contact_DAO_GroupNesting', $id, $params, true );
-    }
+   }
 
 
     /**
