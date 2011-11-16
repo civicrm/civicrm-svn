@@ -86,7 +86,13 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
         $this->add( 'text', 'description', ts( 'Description' ),
                     $attributes['description'] );
 
-        $this->add( 'text', 'command', ts( 'API Call (command)' ),
+        $this->add( 'text', 'api_prefix', ts( 'API Call Prefix' ),
+                    $attributes['command'], true );
+
+        $this->add( 'text', 'api_entity', ts( 'API Call Entity' ),
+                    $attributes['command'], true );
+
+        $this->add( 'text', 'api_action', ts( 'API Call Action' ),
                     $attributes['command'], true );
 
         $this->add( 'select', 'run_frequency', ts( 'Run frequency' ),
@@ -109,14 +115,7 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
 
         require_once 'api/api.php';
 
-        // FIXME: hackish, bad and evil: need better way
-        // FIXME: civicrm_api_include bails out silently
-        // FIXME: if not found, so we're repeating whole thing
-        // FIXME: few times in case enitity name is two or more words
-        $pcs = split( '_', $fields['command']);
-        civicrm_api_include( $pcs[2] ) ;
-        if( !empty( $pcs[3] ) ) civicrm_api_include( $pcs[2] . '_' .  $pcs[3] );
-        if( !empty( $pcs[3] ) && !empty( $pcs[4] ) ) civicrm_api_include( $pcs[2] . '_' .  $pcs[3] .  '_' . $pcs[4] );
+        civicrm_api_include( $fields['api_entity'] ) ;
         
         if( ! function_exists( $fields['command'] ) ) {
             $errors['command'] = ts( 'Given API command is not defined.' );
@@ -171,14 +170,16 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
 
         $dao = new CRM_Core_DAO_Job( );
 
-        $dao->id         = $this->_id;
-        $dao->domain_id  = $domainID;
+        $dao->id            = $this->_id;
+        $dao->domain_id     = $domainID;
         $dao->run_frequency = $values['run_frequency'];
-        $dao->parameters = $values['parameters'];        
-        $dao->name                   = $values['name'];
-        $dao->command                   = $values['command'];
-        $dao->description            = $values['description'];        
-        $dao->is_active  = CRM_Utils_Array::value( 'is_active' , $values, 0 );
+        $dao->parameters    = $values['parameters'];        
+        $dao->name          = $values['name'];
+        $dao->api_prefix    = $values['api_prefix'];
+        $dao->api_entity    = $values['api_entity'];        
+        $dao->api_action    = $values['api_action'];        
+        $dao->description   = $values['description'];        
+        $dao->is_active     = CRM_Utils_Array::value( 'is_active' , $values, 0 );
 
         $dao->save( );
 
