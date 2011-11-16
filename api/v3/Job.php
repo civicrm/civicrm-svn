@@ -254,3 +254,55 @@ function civicrm_api3_job_fetch_activities( $params )
     return civicrm_api3_create_success($values, $params,'mailing','activities');
     $lock->release();
 }
+
+
+/**
+ * Process participant statuses
+ *
+ * @param  array   $params           (reference ) input parameters
+ *
+ * @return array (reference )        array of properties, if error an array with an error id and error message
+ * @access public
+ */
+function civicrm_api3_job_process_participant( $params )
+{
+        require_once 'CRM/Event/BAO/ParticipantStatusType.php';
+        $result = CRM_Event_BAO_ParticipantStatusType::process( $params );
+
+        if ( !$result['is_error'] ) {
+            return  civicrm_api3_create_success( implode( "\r\r", $result['messages'] ) );
+        } else {
+            return  civicrm_api3_create_error('Error while processing participant statuses');
+        }
+
+}
+
+
+/*
+ * This api checks and updates the status of all membership records for a given domain using the calc_membership_status and 
+ * update_contact_membership APIs.
+ *
+ * IMPORTANT: 
+ * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.  
+ * Verify that this value has been properly set from Administer > Configure > Domain Information
+ * If you want to use some other FROM email address, modify line 125 and set your valid email address.
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *                        now - the time to use, in YmdHis format
+ *                            - makes testing a bit simpler since we can simulate past/future time
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ */
+function civicrm_api3_job_process_membership( $params )
+{
+    require_once 'CRM/Member/BAO/Membership.php';
+    $result = CRM_Member_BAO_Membership::updateAllMembershipStatus( );
+    
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}

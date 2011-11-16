@@ -396,31 +396,3 @@ function _civicrm_api3_membership_check_params( &$params ) {
 
 }
 
-/*
- * This api checks and updates the status of all membership records for a given domain using the calc_membership_status and 
- * update_contact_membership APIs.
- *
- * IMPORTANT: 
- * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.  
- * Verify that this value has been properly set from Administer > Configure > Domain Information
- * If you want to use some other FROM email address, modify line 125 and set your valid email address.
- *
- * @param  array   	  $params (reference ) input parameters
- *                        now - the time to use, in YmdHis format
- *                            - makes testing a bit simpler since we can simulate past/future time
- *
- * @return boolean        true if success, else false
- * @static void
- * @access public
- */
-function civicrm_api3_membership_update_record( $params )
-{
-    require_once 'CRM/Member/BAO/Membership.php';
-    $result = CRM_Member_BAO_Membership::updateAllMembershipStatus( );
-    
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
-}
