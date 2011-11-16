@@ -725,8 +725,8 @@ WHERE  id = %1";
             if ( CRM_Utils_Array::value( 'visibility', $field ) == 'public' || 
                  !$validFieldsOnly ) {
                 $options = CRM_Utils_Array::value( 'options', $field );
-                $checklifetime = self::checkCurrentMembership( &$options, $userid );
                 if ( $className == 'CRM_Contribute_Form_Contribution_Main' && $component = 'membership' ) {
+                    $checklifetime = self::checkCurrentMembership( &$options, $userid );
                     if ( $checklifetime ) {
                         $form->assign( 'ispricelifetime', true );
                     } 
