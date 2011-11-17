@@ -167,10 +167,10 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Activity_upload");
 
       // Let's start filling the form with values.
-
+     
       // ...and verifying if the page contains properly formatted display name for chosen contact.
       $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__ );
-
+      
       // Now we're filling the "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
       $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);

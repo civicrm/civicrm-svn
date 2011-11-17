@@ -244,7 +244,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
     {
         $customGroupTitle = 'Custom_' . substr(sha1(rand()), 0, 4);
         // Go directly to the URL of the screen that you will be testing (New Custom Group).
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?reset=1" );
         
         //add new custom data
         $this->click("//a[@id='newCustomDataGroup']/span");

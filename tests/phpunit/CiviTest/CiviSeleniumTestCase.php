@@ -696,7 +696,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->waitForPageToLoad('30000');
             $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
             $text = "'MembershipBlock' information has been saved.";
-            $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+            //$this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
         
         // go to step 4 (thank-you and receipting)
@@ -730,8 +730,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->type('thankyou_title',    "TaF Thank-you Title $hash");
             $this->type('thankyou_text',     "TaF Thank-you Message $hash");
 
-            $this->click('_qf_Contribute_next');
-            $this->waitForElementPresent('_qf_Contribute_next-bottom'); 
+            //$this->click('_qf_Contribute_next');
+            $this->click('_qf_Contribute_next-bottom'); 
             $this->waitForPageToLoad('30000');
             $text = "'Friend' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
@@ -739,7 +739,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         if ( $profilePreId || $profilePostId ) {
             // fill in step 6 (Include Profiles)
-            $this->click('link=Profiles');
+            $this->click("css=li#tab_custom a");
             $this->waitForElementPresent('_qf_Custom_next-bottom');
           
             if ( $profilePreId )
@@ -798,8 +798,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         if ( $pcp ) {
             // fill in step 9 (Enable Personal Campaign Pages)
             $this->click('link=Personal Campaigns');
-            $this->waitForElementPresent('_qf_PCP_next-bottom');
-
+            $this->waitForElementPresent('_qf_Contribute_next-bottom');
             $this->click('pcp_active');
             if( !$isPcpApprovalNeeded ) $this->click('is_approval_needed');
             $this->type('notify_email', "$hash@example.name");
@@ -807,10 +806,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->type('tellfriend_limit', 7);
             $this->type('link_text', "'Create Personal Campaign Page' link text $hash");
 
-            $this->click('_qf_PCP_next');
-            $this->waitForElementPresent('_qf_PCP_next-bottom');
+            $this->click('_qf_Contribute_next-bottom');
+            //$this->waitForElementPresent('_qf_PCP_next-bottom');
             $this->waitForPageToLoad('30000');
-            $text = "'PCP' information has been saved.";
+            $text = "'Pcp' information has been saved.";
             $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
 

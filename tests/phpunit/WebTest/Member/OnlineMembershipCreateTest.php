@@ -116,7 +116,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->click('_qf_MembershipBlock_next');
         $this->waitForPageToLoad('30000');
         $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
-        $text = "'MembershipBlock' information has been saved.";
+        $text = "'Membership' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
     
         //logout
@@ -175,7 +175,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         // CRM-8141 signup for membership 2 with same anonymous user info (should create 2 separate membership records because membership orgs are different)
         //logout
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
         
         $this->_testOnlineMembershipSignup( $pageId, $memTypeId2, $firstName, $lastName );
@@ -186,7 +186,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->webtestLogin();
         
         //Find Member
-        $this->open($this->sboxPath . "civicrm/member/search&reset=1");
+        $this->open($this->sboxPath . "civicrm/member/search?reset=1");
         $this->waitForElementPresent("member_end_date_high");
         
         $this->type("sort_name", "$firstName $lastName" );

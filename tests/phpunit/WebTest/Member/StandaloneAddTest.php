@@ -51,7 +51,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       $membershipTypes = $this->webtestAddMembershipType();
       
       // now add membership
-      $this->open($this->sboxPath . "civicrm/member/add&reset=1&action=add&context=standalone");
+      $this->open($this->sboxPath . "civicrm/member/add?reset=1&action=add&context=standalone");
 
       $this->waitForElementPresent("_qf_Membership_upload");
 
@@ -108,7 +108,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       $membershipTypes = $this->webtestAddMembershipType();
       
       // add membership
-      $this->open($this->sboxPath . "civicrm/member/add&reset=1&action=add&context=standalone");
+      $this->open($this->sboxPath . "civicrm/member/add?reset=1&action=add&context=standalone");
       
       $this->waitForElementPresent("_qf_Membership_upload");
       

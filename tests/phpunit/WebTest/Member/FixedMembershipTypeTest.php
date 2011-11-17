@@ -98,7 +98,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( "The membership type 'Membership Type $title' has been saved." ) ); 
                 
         // Go directly to the URL of the screen that you will be testing (New Individual).
-        $this->open( $this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual" );
+        $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
         
         $firstName = "John_" . substr(sha1(rand()), 0, 7);
         
@@ -251,7 +251,7 @@ SELECT end_event_adjust_interval
         $this->assertTrue( $this->isTextPresent( "The membership type 'Membership Type $title' has been saved." ) ); 
                 
         // Go directly to the URL of the screen that you will be testing (New Individual).
-        $this->open( $this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual" );
+        $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
         
         $firstName = "John_" . substr(sha1(rand()), 0, 7);
         
@@ -405,7 +405,7 @@ SELECT end_event_adjust_interval
         $this->assertTrue( $this->isTextPresent( "The membership type 'Membership Type $title' has been saved." ) ); 
                 
         // Go directly to the URL of the screen that you will be testing (New Individual).
-        $this->open( $this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual" );
+        $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
         
         $firstName = "John_" . substr(sha1(rand()), 0, 7);
         
@@ -561,7 +561,7 @@ SELECT end_event_adjust_interval
         $this->assertTrue( $this->isTextPresent( "The membership type 'Membership Type $title' has been saved." ) ); 
                 
         // Go directly to the URL of the screen that you will be testing (New Individual).
-        $this->open( $this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual" );
+        $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
         
         $firstName = "John_" . substr(sha1(rand()), 0, 7);
         

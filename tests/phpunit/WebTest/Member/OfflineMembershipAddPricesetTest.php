@@ -86,7 +86,7 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
 
   function _testAddSet( $setTitle, $usedFor, $contributionType = null, $setHelp )
   {
-      $this->open($this->sboxPath . 'civicrm/admin/price&reset=1&action=add');
+      $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent('_qf_Set_next-bottom');
 

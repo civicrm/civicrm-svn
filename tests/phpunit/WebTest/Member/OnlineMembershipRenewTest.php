@@ -144,7 +144,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         }
 
         //logout
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
 
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
@@ -181,6 +181,8 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->click( "_qf_Confirm_next-bottom" );
         $this->waitForPageToLoad( '30000' );
         
+        $this->open( $this->sboxPath );
+        $this->webtestLogin();
         //Find Member
         $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
         $this->waitForElementPresent( "member_end_date_high" );

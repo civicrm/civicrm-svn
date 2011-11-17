@@ -48,7 +48,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       //----do create test mailing group 
       
       // Go directly to the URL of the screen that you will be testing (New Group).
-      $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/group/add?reset=1");
       $this->waitForElementPresent("_qf_Edit_upload");
 
       // make group name
@@ -98,7 +98,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
             
       // Go directly to Schedule and Send Mailing form
-      $this->open($this->sboxPath . "civicrm/mailing/send&reset=1");
+      $this->open($this->sboxPath . "civicrm/mailing/send?reset=1");
       $this->waitForElementPresent("_qf_Group_cancel");
       
       //-------select recipients----------
@@ -218,7 +218,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Members of $groupName"));
       
       // directly send schedule mailing -- not working right now
-      $this->open($this->sboxPath . "civicrm/mailing/queue&reset=1");
+      $this->open($this->sboxPath . "civicrm/mailing/queue?reset=1");
       $this->waitForPageToLoad("300000");
       
       //click report link of created mailing
