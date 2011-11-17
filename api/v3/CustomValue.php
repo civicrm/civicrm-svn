@@ -67,43 +67,43 @@ require_once 'CRM/Core/BAO/CustomValueTable.php';
  * 
  */
 function civicrm_api3_custom_value_create( $params ) {
-  civicrm_api3_verify_mandatory($params, null, array('entity_id'));
-  if(substr($params['entity_table'],0,7) == 'civicrm'){
-    $params['entity_table'] = substr($params['entity_table'],8,7);
-  }
-  $create = array('entityID' => $params['entity_id']);
-  // Translate names and
-  //Convert arrays to multi-value strings
-  $sp = CRM_Core_DAO::VALUE_SEPARATOR;
-  foreach ($params as $id => $param) {
-    if (is_array($param)) {
-      $param = $sp . implode($sp, $param) . $sp;
+    civicrm_api3_verify_mandatory($params, null, array('entity_id'));
+    if(substr($params['entity_table'],0,7) == 'civicrm'){
+        $params['entity_table'] = substr($params['entity_table'],8,7);
     }
-    list($c, $id) = explode('_', $id, 2);
-    if ($c != 'custom') {
-      continue;
+    $create = array('entityID' => $params['entity_id']);
+    // Translate names and
+    //Convert arrays to multi-value strings
+    $sp = CRM_Core_DAO::VALUE_SEPARATOR;
+    foreach ($params as $id => $param) {
+        if (is_array($param)) {
+            $param = $sp . implode($sp, $param) . $sp;
+        }
+        list($c, $id) = explode('_', $id, 2);
+        if ($c != 'custom') {
+            continue;
+        }
+        list($i, $n, $x) = explode(':', $id);
+        if (is_numeric($i)) {
+            $key = $i;
+            $x = $n;
+        } else {
+            // Lookup names if ID was not supplied
+            $key = CRM_Core_BAO_CustomField::getCustomFieldID($n, $i);
+            if (!$key) {
+                continue;
+            }
+        }
+        if ($x && is_numeric($x)) {
+            $key .= '_' . $x;
+        }
+        $create['custom_' . $key] = $param;
     }
-    list($i, $n, $x) = explode(':', $id);
-    if (is_numeric($i)) {
-      $key = $i;
-      $x = $n;
-    } else {
-      // Lookup names if ID was not supplied
-      $key = CRM_Core_BAO_CustomField::getCustomFieldID($i, $n);
-      if (!$key) {
-        continue;
-      }
+    $result = CRM_Core_BAO_CustomValueTable::setValues($create);
+    if ($result['is_error']) {
+        return civicrm_api3_create_error($result['error_message']);
     }
-    if ($x && is_numeric($x)) {
-      $key .= '_' . $x;
-    }
-    $create['custom_' . $key] = $param;
-  }
-  $result = CRM_Core_BAO_CustomValueTable::setValues($create);
-  if ($result['is_error']) {
-    return civicrm_api3_create_error($result['error_message']);
-  }
-  return civicrm_api3_create_success(true, $params);
+    return civicrm_api3_create_success(true, $params);
 }
 
 
