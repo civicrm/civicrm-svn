@@ -195,6 +195,208 @@ registration process.{/ts}</p>
        </td>
      </tr>
 
+     {if $event.is_monetary}
+
+      <tr>
+       <th {$headerStyle}>
+        {$event.fee_label}
+       </th>
+      </tr>
+
+      {if $lineItem}
+       {foreach from=$lineItem item=value key=priceset}
+        {if $value neq 'skip'}
+         {if $isPrimary}
+          {if $lineItem|@count GT 1} {* Header for multi participant registration cases. *}
+           <tr>
+            <td colspan="2" {$labelStyle}>
+             {ts 1=$priceset+1}Participant %1{/ts} {$part.$priceset.info}
+            </td>
+           </tr>
+          {/if}
+         {/if}
+         <tr>
+          <td colspan="2" {$valueStyle}>
+           <table> {* FIXME: style this table so that it looks like the text version (justification, etc.) *}
+            <tr>
+             <th>{ts}Item{/ts}</th>
+             <th>{ts}Qty{/ts}</th>
+             <th>{ts}Each{/ts}</th>
+             <th>{ts}Total{/ts}</th>
+	     {if  $pricesetFieldsCount }<th>{ts}Total Participants{/ts}</th>{/if}
+            </tr>
+            {foreach from=$value item=line}
+             <tr>
+              <td>
+              {if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description}<div>{$line.description|truncate:30:"..."}</div>{/if}
+              </td>
+              <td>
+               {$line.qty}
+              </td>
+              <td>
+               {$line.unit_price|crmMoney}
+              </td>
+              <td>
+               {$line.line_total|crmMoney}
+              </td>
+	      {if $pricesetFieldsCount }<td>{$line.participant_count}</td> {/if}
+             </tr>
+            {/foreach}
+           </table>
+          </td>
+         </tr>
+        {/if}
+       {/foreach}
+      {/if}
+
+      {if $amount && !$lineItem}
+       {foreach from=$amount item=amnt key=level}
+        <tr>
+         <td colspan="2" {$valueStyle}>
+          {$amnt.amount|crmMoney} {$amnt.label}
+         </td>
+        </tr>
+       {/foreach}
+      {/if}
+
+      {if $isPrimary}
+       <tr>
+        <td {$labelStyle}>
+         {ts}Total Amount{/ts}
+        </td>  
+        <td {$valueStyle}>
+         {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}
+        </td>
+       </tr>
+       {if $pricesetFieldsCount }
+     <tr>
+       <td {$labelStyle}> 
+      {ts}Total Participants{/ts}</td>   
+      <td {$valueStyle}>
+      {assign var="count" value= 0}	 
+      {foreach from=$lineItem item=pcount}
+      {assign var="lineItemCount" value=0}
+      {if $pcount neq 'skip'}
+        {foreach from=$pcount item=p_count}
+        {assign var="lineItemCount" value=$lineItemCount+$p_count.participant_count}
+        {/foreach}
+      {if $lineItemCount < 1 }
+        {assign var="lineItemCount" value=1}
+      {/if}	
+      {assign var="count" value=$count+$lineItemCount}
+      {/if}
+      {/foreach}
+     {$count}
+     </td> </tr>
+      {/if}
+       {if $is_pay_later}
+        <tr>
+         <td colspan="2" {$labelStyle}>
+          {$pay_later_receipt}
+         </td>
+        </tr>
+       {/if}
+
+       {if $register_date}
+        <tr>
+         <td {$labelStyle}>
+          {ts}Registration Date{/ts}
+         </td>
+         <td {$valueStyle}>
+          {$register_date|crmDate}
+         </td>
+        </tr>
+       {/if}
+
+       {if $receive_date}
+        <tr>
+         <td {$labelStyle}>
+          {ts}Transaction Date{/ts}
+         </td>
+         <td {$valueStyle}>
+          {$receive_date|crmDate}
+         </td>
+        </tr>
+       {/if}
+
+       {if $contributionTypeName}
+        <tr>
+         <td {$labelStyle}>
+          {ts}Contribution Type{/ts}
+         </td>
+         <td {$valueStyle}>
+          {$contributionTypeName}
+         </td>
+        </tr>
+       {/if}
+
+       {if $trxn_id}
+        <tr>
+         <td {$labelStyle}>
+          {ts}Transaction #{/ts}
+         </td>
+         <td {$valueStyle}>
+          {$trxn_id}
+         </td>
+        </tr>
+       {/if}
+
+       {if $paidBy}
+        <tr>
+         <td {$labelStyle}>
+          {ts}Paid By{/ts}
+         </td>
+         <td {$valueStyle}>
+         {$paidBy}
+         </td>
+        </tr>
+       {/if}
+
+       {if $checkNumber}
+        <tr>
+         <td {$labelStyle}>
+          {ts}Check Number{/ts}
+         </td>
+         <td {$valueStyle}>
+          {$checkNumber}
+         </td>
+        </tr>
+       {/if}
+
+       {if $contributeMode ne 'notify' and !$isAmountzero and !$is_pay_later and !$isOnWaitlist and !$isRequireApproval}
+        <tr>
+         <th {$headerStyle}>
+          {ts}Billing Name and Address{/ts}
+         </th>
+        </tr>
+        <tr>
+         <td colspan="2" {$valueStyle}>
+          {$billingName}<br />
+          {$address|nl2br}
+         </td>
+        </tr>
+       {/if}
+
+       {if $contributeMode eq 'direct' and !$isAmountzero and !$is_pay_later and !$isOnWaitlist and !$isRequireApproval}
+        <tr>
+         <th {$headerStyle}>
+          {ts}Credit Card Information{/ts}
+         </th>
+        </tr>
+        <tr>
+         <td colspan="2" {$valueStyle}>
+          {$credit_card_type}<br />
+          {$credit_card_number}<br />
+          {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}
+         </td>
+        </tr>
+       {/if}
+
+      {/if}
+
+     {/if} {* End of conditional section for Paid events *}
+
+
 {if $customPre}
 {foreach from=$customPre item=customPr key=i}
    <tr> <th {$headerStyle}>{$customPre_grouptitle.$i}</th></tr>
