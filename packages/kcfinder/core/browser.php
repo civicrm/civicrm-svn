@@ -32,7 +32,12 @@ class browser extends uploader {
             $this->get['dir'] = $dir;
         }
 
-        $thumbsDir = $this->config['uploadDir'] . "/" . $this->config['thumbsDir'];
+        if ( $this->config['thumbsDir'] == '.thumbs' ) {
+            $thumbsDir = $this->config['uploadDir'] . "/" . $this->config['thumbsDir'];
+        } else {
+            $thumbsDir = $this->config['thumbsDir'];
+        }
+        
         if ((
                 !is_dir($thumbsDir) &&
                 !@mkdir($thumbsDir, $this->config['dirPerms'])
