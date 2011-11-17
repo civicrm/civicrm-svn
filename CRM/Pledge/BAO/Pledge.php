@@ -899,7 +899,7 @@ SELECT  pledge.contact_id              as contact_id,
             // 1. update the pledge /pledge payment status. returns new status when an update happens
             $returnMessages[] = "Checking if status update is needed for Pledge Id: {$pledgeId} (current status is {$allStatus[$pledgeStatus[$pledgeId]]})";
 
-            $newStatus = CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeId, $paymentIds,
+            $newStatus = CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId, $paymentIds,
                                                                             array_search( 'Overdue', $allStatus ), null, 0, false, true );
             if ( $newStatus != $pledgeStatus[$pledgeId] ) {
                 $returnMessages[] =  "- status updated to: {$allStatus[$newStatus]}";

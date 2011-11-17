@@ -62,7 +62,7 @@ function civicrm_api3_job_geocode( $params )
     // available params:
     // 'start=', 'end=', 'geocoding=', 'parse=', 'throttle='
 
-    require_once 'CRM/Utils/Adress/BatchUpdate.php';
+    require_once 'CRM/Utils/Address/BatchUpdate.php';
     $gc = new CRM_Utils_Address_BatchUpdate( $params );
 
     
@@ -193,6 +193,7 @@ function civicrm_api3_job_update_greeting( $params )
  */
 function civicrm_api3_job_process_pledge( $params ) {
 
+    require_once 'CRM/Pledge/BAO/Pledge.php';
     $result = CRM_Pledge_BAO_Pledge::updatePledgeStatus( $params );
     
     if ( $result['is_error'] == 0 ) {
