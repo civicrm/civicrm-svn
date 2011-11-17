@@ -47,7 +47,7 @@ require_once 'CRM/Contact/BAO/RelationshipType.php';
  * @param  array $params   Associative array of property name/value pairs to insert in new relationship type.
  *
  * @return Newly created Relationship_type object
- * {getfields RelationshipType_create}
+ * {@getfields RelationshipType_create}
  * @access public
  * {@schema Contact/RelationshipType.xml}
  */
@@ -94,8 +94,8 @@ function _civicrm_api3_relationship_type_create_spec( &$params ) {
  * Function to get all relationship type
  * retruns  An array of Relationship_type
  * @access  public
- * {@example RelationshipType.php 0}
- * @example RelationshipType.php
+ * {@getfields RelationshipType_get}
+ * @example RelationshipTypeGet.php
  */
 function civicrm_api3_relationship_type_get( $params  )
 {
@@ -110,7 +110,8 @@ function civicrm_api3_relationship_type_get( $params  )
  *
  * @param  id of relationship type  $id
  *
- * @return boolean  true if success, else false
+ * @return array API Result Array
+ * {@getfields RelationshipType_delete}
  * @static void
  * @access public
  */
