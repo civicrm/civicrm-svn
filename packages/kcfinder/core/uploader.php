@@ -117,7 +117,8 @@ class uploader {
 
         // SET CMS INTEGRATION ATTRIBUTE
         if (isset($this->get['cms']) &&
-            in_array($this->get['cms'], array("drupal"))
+            //modifed for CIVICRM integration
+            in_array($this->get['cms'], array("drupal", "civicrm"))
         )
             $this->cms = $this->get['cms'];
 
@@ -137,6 +138,8 @@ class uploader {
             ini_set('session.cookie_domain', $_CONFIG['_sessionDomain']);
         switch ($this->cms) {
             case "drupal": break;
+            // ADDED for CIVICRM integration
+            case "civicrm": break;
             default: session_start(); break;
         }
 
@@ -245,7 +248,7 @@ class uploader {
                 break;
             }
         $this->localize($this->lang);
-
+        
         // CHECK & MAKE DEFAULT .htaccess
         if (isset($this->config['_check4htaccess']) &&
             $this->config['_check4htaccess']

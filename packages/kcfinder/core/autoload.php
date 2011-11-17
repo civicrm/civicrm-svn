@@ -40,6 +40,7 @@ if (ini_get("safe_mode"))
 if (isset($_GET['cms'])) {
     switch ($_GET['cms']) {
         case "drupal": require "integration/drupal.php";
+        case "civicrm": require "integration/civicrm.php";
     }
 }
 
