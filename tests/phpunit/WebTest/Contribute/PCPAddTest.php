@@ -51,13 +51,13 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
 
         $this->open( $this->sboxPath . 'civicrm/admin/domain?action=update&reset=1' );
         $this->waitForElementPresent( '_qf_Domain_cancel-bottom' );
-
+        $this->type( 'name', 'DefaultDomain' );
         $this->type( 'email_name', $firstName );
         $this->type( 'email_address', $email );
 
         $this->click( '_qf_Domain_next_view-bottom' );
         $this->waitForPageToLoad( '30000' );
-        $this->assertTrue( $this->isTextPresent( "Domain information for 'Default Domain Name' has been saved." ),
+        $this->assertTrue( $this->isTextPresent( "Domain information for 'DefaultDomain' has been saved." ),
                            "Status message didn't show up after saving!" );
         
         require_once 'ContributionPageAddTest.php';
@@ -107,7 +107,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
                                                      $isAprovalNeeded);        
         
         // logout
-        $this->open($this->sboxPath . "civicrm/logout&reset=1");
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
         // Wait for Login button to indicate we've logged out.
         $this->waitForElementPresent( "edit-submit" );
         
@@ -127,7 +127,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $this->click( "_qf_Confirm_next-bottom" );
         
         $this->waitForElementPresent( "thankyou_footer" );
-        $this->open( $this->sboxPath . "civicrm/contribute/campaign?action=add&reset=1&pageId=".$pageId );
+        $this->open( $this->sboxPath . "civicrm/contribute/campaign?action=add&reset=1&pageId=".$pageId."&component=contribute" );
         $this->waitForElementPresent( "_qf_PCPAccount_next-bottom" );
         
         $cmsUserName = 'CmsUser'.substr( sha1( rand( ) ), 0, 7 );
@@ -159,9 +159,10 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         
         $this->waitForPageToLoad("30000");
         // logout
-        $this->open($this->sboxPath . 'civicrm/logout&reset=1');
+        $this->open($this->sboxPath . 'civicrm/logout?reset=1');
         // Wait for Login button to indicate we've logged out.
         $this->waitForElementPresent( 'edit-submit' );
+        
         $this->open( $this->sboxPath . $pcpUrl );
         
         $this->waitForPageToLoad("30000");
@@ -187,7 +188,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $this->webtestLogin( );
         
         //Find Contribution
-        $this->open( $this->sboxPath . "civicrm/contribute/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/contribute/search?reset=1" );
         
         $this->waitForElementPresent( "contribution_date_low" );
         

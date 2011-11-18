@@ -165,7 +165,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->webtestLogin( );
         
         //Find Contribution
-        $this->open( $this->sboxPath . "civicrm/contribute/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/contribute/search?reset=1" );
         $this->type( "sort_name", $orgName );
         $this->click( "_qf_Search_refresh" );
         
@@ -254,9 +254,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                 
         // save the custom group
         $this->click("_qf_Group_next-bottom");
-        
         $this->waitForElementPresent("_qf_Field_next_new-bottom");
-        $this->assertTrue($this->isTextPresent("Your custom field set '$groupTitle' has been added. You can add custom fields now."), "Status message didn't show up after saving custom field set!");
+        $this->assertTrue($this->isTextPresent("Your custom field set '$groupTitle' has been added. You can add custom fields now.") );
         
         // add a custom field to the custom group
         $fieldTitle = "Custom Field " . substr(sha1(rand()), 0, 7);
@@ -266,8 +265,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->click( '_qf_Field_next-bottom' );
 
         $this->waitForPageToLoad( '30000' );
-        $this->assertTrue($this->isTextPresent("Your custom field '$fieldTitle' has been saved."), "Status message didn't show up after saving custom field set!");
-        $url = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[7]/span/a@href" ) );
+        $this->assertTrue($this->isTextPresent("Your custom field '$fieldTitle' has been saved.") );
+        $url = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[8]/span/a@href" ) );
         $fieldId = $url[1];
                 
         // Enable CiviCampaign module if necessary
@@ -285,15 +284,15 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         }
 
         // add the required Drupal permission
-        $this->open("{$this->sboxPath}admin/user/permissions");
+        $this->changeAdminLinks();
         $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-CiviCampaign');
+        $this->check('edit-2-administer-civicampaign');
         $this->click('edit-submit');
         $this->waitForPageToLoad();
         $this->assertTrue($this->isTextPresent('The changes have been saved.'));
         
         // Go directly to the URL of the screen that you will be add campaign
-        $this->open($this->sboxPath . "civicrm/campaign/add&reset=1");
+        $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
@@ -328,10 +327,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                                 
         $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
         $this->waitForPageToLoad("30000");
-
-        $this->click( "xpath=//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[7]/span/a[text()='Fields']" );
+        $this->click( "link=Reserved Profiles" );
+        
+        $this->click( "xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']" );
         $this->waitForPageToLoad("30000");
-
+        
         $this->click( "link=Add Field" );
         $this->waitForElementPresent( '_qf_Field_next-bottom' );
         $this->select( 'field_name[0]', 'value=Contribution' );
@@ -345,8 +345,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->click( 'field_name[1]' );
         $this->click( '_qf_Field_next-bottom' );
         $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field '{$fieldTitle}' has been saved to 'On Behalf Of Organization'." ),
-                          "Status message didn't show up after saving!" );
+        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field '{$fieldTitle}' has been saved to 'On Behalf Of Organization'." ) );
         
         // Open Page to create Organization
         $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization" );
@@ -477,7 +476,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( '30000' );
         
         //Find Contribution
-        $this->open( $this->sboxPath . "civicrm/contribute/search&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/contribute/search?reset=1" );
         $this->type( "sort_name", $orgName1 );
         $this->click( "_qf_Search_refresh" );
         $this->waitForPageToLoad( '30000' );
@@ -591,7 +590,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->click( "_qf_Group_next-bottom" );
         
         $this->waitForElementPresent( "_qf_Field_next_new-bottom" );
-        $this->assertTrue($this->isTextPresent( "Your custom field set '$groupTitle' has been added. You can add custom fields now." ), "Status message didn't show up after saving custom field set!" );
+        $this->assertTrue($this->isTextPresent( "Your custom field set '$groupTitle' has been added. You can add custom fields now." ) );
         
         // add a custom field to the custom group
         $fieldTitle = "Member Custom Field " . substr(sha1(rand()), 0, 7 );
@@ -601,8 +600,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->click( '_qf_Field_next-bottom' );
         
         $this->waitForPageToLoad( '30000' );
-        $this->assertTrue($this->isTextPresent( "Your custom field '$fieldTitle' has been saved."), "Status message didn't show up after saving custom field set!" );
-        $url = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[7]/span/a@href" ) );
+        $this->assertTrue($this->isTextPresent( "Your custom field '$fieldTitle' has been saved.") );
+        $url = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[8]/span/a@href" ) );
         $fieldId = $url[1];
         
         // get cid for login user
@@ -625,15 +624,15 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->open( "{$this->sboxPath}admin/user/permissions" );
+        $this->changeAdminLinks();
         $this->waitForElementPresent( 'edit-submit' );
-        $this->check( 'edit-2-administer-CiviCampaign' );
+        $this->check( 'edit-2-administer-civicampaign' );
         $this->click( 'edit-submit' );
         $this->waitForPageToLoad();
         $this->assertTrue( $this->isTextPresent( 'The changes have been saved.' ) );
         
         // Go directly to the URL of the screen that you will be add campaign
-        $this->open( $this->sboxPath . "civicrm/campaign/add&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/campaign/add?reset=1" );
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
@@ -668,8 +667,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         
         $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
         $this->waitForPageToLoad("30000");
-        
-        $this->click( "xpath=//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[7]/span/a[text()='Fields']" );
+        $this->click( "link=Reserved Profiles" );
+        $this->click( "xpath=//div[@id='uf_profile']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']" );
         $this->waitForPageToLoad("30000");
         
         $this->click( "link=Add Field" );
@@ -988,462 +987,4 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                            "Status message didn't show up after saving!" );
     }
 
-    
-    function testUserWithMoreThanOneRelationship( )
-    {
-        // This is the path where our testing install resides. 
-        // The rest of URL is defined in CiviSeleniumTestCase base class, in
-        // class attributes.
-        $this->open( $this->sboxPath );
-        
-        // Logging in. Remember to wait for page to load. In most cases,
-        // you can rely on 30000 as the value that allows your test to pass, however,
-        // sometimes your test might fail because of this. In such cases, it's better to pick one element
-        // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-        // page contents loaded and you can continue your test execution.
-        $this->webtestLogin( );
-        $this->waitForPageToLoad( '30000' );
-        
-        // get cid for login user
-        $this->open( $this->sboxPath . "civicrm/dashboard?reset=1" );
-        $userId = explode( '&cid=', $this->getAttribute( "xpath=//div[@id='recently-viewed']/ul/li/a@href" ) );
-        $userId = $userId[1];
-        
-        // Create new group
-        $groupName = $this->WebtestAddGroup( );
-        $this->open( $this->sboxPath . "civicrm/group?reset=1" );
-        $this->waitForPageToLoad( '30000' );
-        
-        $groupId = $this->getText( "xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]" );
-        
-        $this->open( $this->sboxPath . "civicrm/contact/view?reset=1&cid={$userId}" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->click( 'link=Edit' );
-        $this->waitForElementPresent( '_qf_Contact_cancel-bottom' );
-        $this->click( 'addressBlock' );
-        $this->waitForElementPresent( 'link=Another Address' );
-        
-        //Billing Info
-        $this->select( 'address_1_location_type_id', 'label=Billing' );
-        $this->type( 'address_1_street_address', '0121 Mount Highschool.' );
-        $this->type( 'address_1_city', "Shangai" );
-        $this->type( 'address_1_postal_code', "94129" );
-        $this->select( 'address_1_country_id', "value=1228" );
-        $this->select( 'address_1_state_province_id', "value=1004" );
-        $this->click( '_qf_Contact_upload_view-bottom' );
-        $this->waitForPageToLoad("30000");
-        
-        // add contact to group
-        // visit group tab
-        $this->click("css=li#tab_group a");
-        $this->waitForElementPresent("group_id");
-        
-        // add to group
-        $this->select("group_id", "label=$groupName");
-        $this->click("_qf_GroupContact_next");
-        $this->waitForPageToLoad("30000");
-        
-        $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
-        $this->waitForElementPresent( "_qf_Group_next-bottom" );
-        
-        // fill in a unique title for the c$groupIdustom group
-        $groupTitle = "Members Custom Group" . substr(sha1(rand()), 0, 7);
-        $this->type( "title", $groupTitle );
-        
-        // select the group this custom data set extends
-        $this->select( "extends[0]", "value=Membership" );
-        $this->waitForElementPresent( "extends[1]" );
-        
-        // save the custom group
-        $this->click( "_qf_Group_next-bottom" );
-        
-        $this->waitForElementPresent( "_qf_Field_next_new-bottom" );
-        $this->assertTrue($this->isTextPresent( "Your custom field set '$groupTitle' has been added. You can add custom fields now." ), "Status message didn't show up after saving custom field set!" );
-        
-        // add a custom field to the custom group
-        $fieldTitle = "Member Custom Field " . substr(sha1(rand()), 0, 7 );
-        $this->type( "label", $fieldTitle );
-        
-        $this->select( "data_type[1]", "value=Text" );
-        $this->click( '_qf_Field_next-bottom' );
-        
-        $this->waitForPageToLoad( '30000' );
-        $this->assertTrue($this->isTextPresent( "Your custom field '$fieldTitle' has been saved."), "Status message didn't show up after saving custom field set!" );
-        $url = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[7]/span/a@href" ) );
-        $fieldId = $url[1];
-        
-        // get cid for login user
-        $this->open( $this->sboxPath . "civicrm/dashboard?reset=1" );
-        $userId = explode( '&cid=', $this->getAttribute( "xpath=//div[@id='recently-viewed']/ul/li/a@href" ) );
-        $userId = $userId[1];
-        
-        // Enable CiviCampaign module if necessary
-        $this->open( $this->sboxPath . "civicrm/admin/setting/component?reset=1" );
-        $this->waitForPageToLoad( '30000' );
-        $this->waitForElementPresent( '_qf_Component_next-bottom' );
-        $enabledComponents = $this->getSelectOptions( 'enableComponents-t' );
-        if ( !in_array( "CiviCampaign", $enabledComponents ) ) {
-            $this->addSelection( 'enableComponents-f', "label=CiviCampaign" );
-            $this->click( "//option[@value='CiviCampaign']" );
-            $this->click( 'add' );
-            $this->click( '_qf_Component_next-bottom' );
-            $this->waitForPageToLoad( "30000" );          
-            $this->assertTrue( $this->isTextPresent( 'Your changes have been saved.' ) );    
-        }
-        
-        // add the required Drupal permission
-        $this->open( "{$this->sboxPath}admin/user/permissions" );
-        $this->waitForElementPresent( 'edit-submit' );
-        $this->check( 'edit-2-administer-CiviCampaign' );
-        $this->click( 'edit-submit' );
-        $this->waitForPageToLoad();
-        $this->assertTrue( $this->isTextPresent( 'The changes have been saved.' ) );
-        
-        // Go directly to the URL of the screen that you will be add campaign
-        $this->open( $this->sboxPath . "civicrm/campaign/add&reset=1" );
-        
-        // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-        // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent( "_qf_Campaign_next-bottom" );
-        
-        // Let's start filling the form with values.
-        $title = 'Campaign ' . substr(sha1(rand()), 0, 7);
-        $this->type( "title", $title );
-        
-        // select the campaign type
-        $this->select( "campaign_type_id", "value=2" );
-        
-        // fill in the description
-        $this->type( "description", "This is a test campaign" );
-        
-        // include groups for the campaign
-        $this->addSelection( "includeGroups-f", "label={$groupName}" );
-        $this->click( "//option[@value={$groupId}]" );
-        $this->click( "add" );
-        
-        // fill the end date for campaign
-        $this->webtestFillDate( "end_date", "+1 year" );
-        
-        // select campaign status
-        $this->select( "status_id", "value=2" );
-        
-        // click save
-        $this->click( "_qf_Campaign_next-bottom" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->assertTrue($this->isTextPresent( "Campaign {$title} has been saved."), "Status message didn't show up after saving!" );
-        
-        $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->click( "xpath=//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[7]/span/a[text()='Fields']" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->click( "link=Add Field" );
-        $this->waitForElementPresent( '_qf_Field_next-bottom' );
-        $this->select( 'field_name[0]', 'value=Membership' );
-        $this->select( 'field_name[1]', 'label=Campaign' );
-        $this->click( 'field_name[1]' );
-        $this->click( '_qf_Field_next_new-bottom' );
-        $this->waitForPageToLoad("30000");
-        $this->waitForElementPresent( '_qf_Field_cancel-bottom' );
-        
-        $this->select( 'field_name[0]', 'value=Membership' );
-        $this->select( 'field_name[1]', "label=$fieldTitle :: $groupTitle" );
-        $this->click( 'field_name[1]' );
-        $this->click( '_qf_Field_next-bottom' );
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue($this->isTextPresent( "Your CiviCRM Profile Field '{$fieldTitle}' has been saved to 'On Behalf Of Organization'." ),
-                          "Status message didn't show up after saving!");
-        
-        // Open Page to create Organization 1
-        $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization" );
-        $this->waitForElementPresent( "_qf_Contact_upload_view-bottom" );
-        $orgName1 = 'org1_' . substr( sha1( rand( ) ), 0, 7 );
-        
-        // Type Organization name
-        $this->type( "organization_name", $orgName1 );
-        
-        // Type Organizatio email for main
-        $this->type( "email_1_email", "{$orgName1}@example.com" );
-        $this->select( "email_1_location_type_id", "value=3" );
-        
-        // type phone no for main
-        $this->type( "phone_1_phone", substr( sha1( rand( ) ), 0, 4 ) );
-        $this->select( "phone_1_location_type_id", "value=3" );
-        
-        //address section    
-        $this->click( "addressBlock" );
-        $this->waitForElementPresent( "address_1_street_address" );
-        
-        //fill in address 1 for main
-        $this->select( "address_1_location_type_id", "value=3" );
-        $this->type( "address_1_street_address", "{$orgName1} street address" );
-        $this->type( "address_1_city", "{$orgName1} city" );
-        $this->type( "address_1_postal_code", "9999999999" );
-        $this->assertTrue( $this->isTextPresent( "- select - United States" ) );
-        $this->select( "address_1_state_province_id", "value=1019" );
-        $this->type( "address_1_geo_code_1", "1234" );
-        $this->type( "address_1_geo_code_2", "5678" );
-        
-        // Save the Organization
-        $this->click( "_qf_Contact_upload_view-bottom" );
-        $this->waitForPageToLoad( '30000' );
-        
-        // create second orzanization
-        $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization" );
-        $this->waitForElementPresent( "_qf_Contact_upload_view-bottom" );
-        $orgName2 = 'org2_' . substr( sha1( rand( ) ), 0, 7 );
-        
-        // Type Organization name
-        $this->type( "organization_name", $orgName2 );
-        
-        // Type Organizatio email for main
-        $this->type( "email_1_email", "{$orgName2}@example.com" );
-        $this->select("email_1_location_type_id", "value=3");
-        
-        // type phone no for main
-        $this->type( "phone_1_phone", substr( sha1( rand( ) ), 0, 4 ) );
-        $this->select("phone_1_location_type_id", "value=3");
-        
-        //address section    
-        $this->click("addressBlock");
-        $this->waitForElementPresent("address_1_street_address");
-        
-        //fill in address 1 for main
-        $this->select( "address_1_location_type_id", "value=3" );
-        $this->type( "address_1_street_address", "{$orgName2} street address" );
-        $this->type( "address_1_city", "{$orgName2} city" );
-        $this->type( "address_1_postal_code", "7777777777" );
-        $this->assertTrue( $this->isTextPresent( "- select - United States" ) );
-        $this->select( "address_1_state_province_id", "value=1019" );
-        $this->type( "address_1_geo_code_1", "1224" );
-        $this->type( "address_1_geo_code_2", "5628" );
-        
-        // Save the Organization
-        $this->click( "_qf_Contact_upload_view-bottom" );
-        $this->waitForPageToLoad( '30000' );
-        
-        
-        // create Membership type 
-        $title1 = "Membership Type" . substr(sha1(rand()), 0, 7);
-        $this->open( $this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->click( "link=Add Membership Type" );
-        $this->waitForElementPresent( '_qf_MembershipType_cancel-bottom' );
-        
-        $this->type( 'name', $title1 );
-        $this->type( 'member_org', $orgName1 );
-        $this->click( '_qf_MembershipType_refresh' );
-        $this->waitForElementPresent( "xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]" );
-        
-        $this->type( 'minimum_fee', '50' );
-        
-        $this->select( 'contribution_type_id', 'value=2' );
-        
-        $this->type( 'duration_interval', 1 );
-        $this->select( 'duration_unit', "label=year" );
-        
-        $this->select( 'period_type', "label=fixed" );
-        $this->waitForElementPresent( 'fixed_period_rollover_day[d]' );
-        
-        $this->select( 'fixed_period_start_day[M]', 'value=4' );
-        $this->select( 'fixed_period_rollover_day[M]', 'value=1' );
-        
-        $this->select( 'relationship_type_id', 'value=4_b_a' );
-        
-        $this->click( '_qf_MembershipType_upload-bottom' );
-        $this->waitForElementPresent( 'link=Add Membership Type' );
-        $this->assertTrue( $this->isTextPresent( "The membership type '$title1' has been saved." ) );
-        $typeUrl = explode( '&id=', $this->getAttribute( "xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[1][text()='{$title1}']/../td[10]/span/a[3]@href" ) );
-        $typeId = $typeUrl[1];
-        
-        // open contact
-        $this->open( $this->sboxPath . "civicrm/contact/view/rel?cid={$userId}&action=add&reset=1" );
-        $this->waitForPageToLoad( '30000' );
-        
-        // select relationship type
-        $this->click( "relationship_type_id" );
-        $this->select( "relationship_type_id", "value=4_a_b" );
-        
-        // search organization
-        $this->type( 'rel_contact',$orgName1 );
-        $this->click( "rel_contact" );
-        $this->waitForElementPresent( "css=div.ac_results-inner li" );
-        $this->click( "css=div.ac_results-inner li" );
-        $this->assertContains( $orgName1, $this->getValue( 'rel_contact' ), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('rel_contact' ) );
-        
-        // give permission
-        $this->click( "is_permission_a_b" );
-        $this->click( "is_permission_b_a" );
-        
-        // save relationship
-        $this->click( "details-save" );
-        
-        // open contact
-        $this->open( $this->sboxPath . "civicrm/contact/view/rel?cid={$userId}&action=add&reset=1" );
-        $this->waitForPageToLoad( '30000' );
-        
-        // select relationship type
-        $this->click( "relationship_type_id" );
-        $this->select( "relationship_type_id", "value=4_a_b" );
-        
-        // search organization
-        $this->type( 'rel_contact',$orgName2 );
-        $this->click( "rel_contact" );
-        $this->waitForElementPresent( "css=div.ac_results-inner li" );
-        $this->click( "css=div.ac_results-inner li" );
-        $this->assertContains( $orgName2, $this->getValue( 'rel_contact' ), "autocomplete expected $orgName2 but didn’t find it in " . $this->getValue('rel_contact' ) );
-        
-        // give permission
-        $this->click( "is_permission_a_b" );
-        $this->click( "is_permission_b_a" );
-        
-        // save relationship
-        $this->click( "details-save" );
-        
-        // create contribution page
-        $processorName = "Webtest Dummy" . substr( sha1( rand( ) ), 0, 7 );  
-        $processorType = 'Dummy';
-        $pageTitle = substr( sha1( rand( ) ), 0, 7 );
-        $rand = 2 * rand( 2, 50 );
-        $hash = substr(sha1(rand()), 0, 7);
-        $amountSection = false;
-        $payLater =  true;
-        $onBehalf = 'required';
-        $pledges = false;
-        $recurring = false;
-        $memberships = true;
-        $memPriceSetId = null;
-        $friend = true;
-        $profilePreId  = null;
-        $profilePostId = null;
-        $premiums = false;
-        $widget = false;
-        $pcp = false;
-        $honoreeSection = false; 
-        $isAddPaymentProcessor = true;
-        $isPcpApprovalNeeded = false;
-        $isSeparatePayment = false;
-        
-        // create contribution page with randomized title and default params
-        $pageId = $this->webtestAddContributionPage( $hash, 
-                                                     $rand, 
-                                                     $pageTitle, 
-                                                     $processorType, 
-                                                     $processorName, 
-                                                     $amountSection, 
-                                                     $payLater, 
-                                                     $onBehalf,
-                                                     $pledges, 
-                                                     $recurring, 
-                                                     $memberships, 
-                                                     $memPriceSetId,
-                                                     $friend, 
-                                                     $profilePreId,
-                                                     $profilePostId,
-                                                     $premiums, 
-                                                     $widget, 
-                                                     $pcp,
-                                                     $isAddPaymentProcessor,
-                                                     $isPcpApprovalNeeded,
-                                                     $isSeparatePayment,
-                                                     $honoreeSection );
-        
-        // set membership type
-        $this->open( $this->sboxPath . "civicrm/admin/contribute/membership?reset=1&action=update&id=" . $pageId );
-        $this->waitForElementPresent( "_qf_MembershipBlock_upload_done-bottom" );
-        $this->click( "membership_type[{$typeId}]" );
-        $this->click( "xpath=//div[@id='memberFields']//table[@class='report']/tbody//tr/td[1]/label[text()='{$title1}']/../../td[2]/input" );
-        $this->click( '_qf_MembershipBlock_upload_done-bottom' );
-        
-        //Open Live Membership Page
-        $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId );
-        $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-        $this->type( 'onbehalf_organization_name', $orgName1 );
-        $this->click( "onbehalf_organization_name" );
-        $this->waitForElementPresent( "css=div.ac_results-inner li" );
-        $this->click( "css=div.ac_results-inner li" );
-        $this->assertContains( $orgName1, $this->getValue( 'onbehalf_organization_name' ), 
-                               "autocomplete expected $orgName1 but didn’t find it in " . 
-                               $this->getValue('onbehalf_organization_name' ) );
-        sleep(5);
-        $this->click( 'onbehalf_member_campaign_id' );
-        $this->select( 'onbehalf_member_campaign_id', "label={$title}" );
-        $this->type( "onbehalf_custom_{$fieldId}", 'Test Subject' );
-        
-        // Credit Card Info
-        $this->select( "credit_card_type", "value=Visa" );
-        $this->type( "credit_card_number", "4111111111111111" );
-        $this->type( "cvv2", "000" );
-        $this->select( "credit_card_exp_date[M]", "value=1" );
-        $this->select( "credit_card_exp_date[Y]", "value=2020" );
-        
-        $this->click( "_qf_Main_upload-bottom" );
-        $this->waitForPageToLoad( '30000' );
-        $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
-        $this->click( "_qf_Confirm_next-bottom" );
-        $this->waitForPageToLoad( '30000' );
-        
-        //Find Membership for organization
-        $this->open( $this->sboxPath . "civicrm/member/search?reset=1" );
-        $this->type( "sort_name", $orgName1 );
-        $this->click( "_qf_Search_refresh" );
-        $this->waitForPageToLoad( '30000' );
-        $this->waitForElementPresent( "xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']" );
-        $this->click( "xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']" );
-        $this->waitForPageToLoad( '30000' );
-        $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
-        
-         //verify contrb created
-        $expected = array( 1   => $orgName1,  
-                           2   => $title1, 
-                           3   => 'New'
-                           ); 
-        foreach ( $expected as  $value => $label ) { 
-                    $this->verifyText( "xpath=//form[@id='MembershipView']/div[2]/div/table/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
-        }
-        
-        // find membership for contact in relationship
-        $this->open( $this->sboxPath ."civicrm/contact/view?reset=1&force=1&cid={$userId}" );
-        $this->waitForPageToLoad( '30000' );
-        $this->click( "css=li#tab_member a" );
-        $this->waitForElementPresent( "xpath=//div[@id='memberships']/div/table//tbody//tr/td[1][text()='{$title1}']" );
-        $this->click( "xpath=//div[@id='memberships']/div/table//tbody//tr/td[1][text()='{$title1}']/../td[7]/span/a[text()='View']" );
-        $this->waitForPageToLoad( '30000' );
-        
-         //verify contrb created
-        $expected = array(
-                          3   => $title1, 
-                          4   => 'New'
-                          ); 
-        foreach ( $expected as  $value => $label ) { 
-            $this->verifyText( "xpath=//form[@id='MembershipView']/div[2]/div/table/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
-        }
-        
-        $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
-        $this->waitForPageToLoad("30000");
-                
-        $this->click( "xpath=//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[7]/span/a[text()='Fields']" );
-        $this->waitForPageToLoad("30000");
-        
-        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='Campaign']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
-        $this->waitForElementPresent( '_qf_Field_next-bottom' );
-        
-        $this->click( '_qf_Field_next-bottom' );
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
-                           "Status message didn't show up after saving!" );
-        
-        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{$fieldTitle}']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
-        $this->waitForElementPresent( '_qf_Field_next-bottom' );
-        
-        $this->click( '_qf_Field_next-bottom' );
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
-                           "Status message didn't show up after saving!" );
-        
-    }
 }
