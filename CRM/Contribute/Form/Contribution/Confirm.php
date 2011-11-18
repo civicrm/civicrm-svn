@@ -1479,6 +1479,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     static function processPcpSoft( &$params, &$contribution ) {
         //add soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
         if ( CRM_Utils_Array::value( 'soft_credit_to', $params ) ) {
+            $contribSoftParams = array();
             foreach ( array ( 'pcp_display_in_roll', 'pcp_roll_nickname', 'pcp_personal_note', 'amount' ) as $val ) {
                 if ( CRM_Utils_Array::value( $val, $params ) ) {
                     $contribSoftParams[$val] = $params[$val];
@@ -1488,7 +1489,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $contribSoftParams['contact_id'] = $params['soft_credit_to'];
             // add contribution id
             $contribSoftParams['contribution_id'] = $contribution->id;
-                       
+            // add pcp id
+            $contribSoftParams['pcp_id'] = $params['pcp_made_through_id'];
+            
             require_once "CRM/Contribute/BAO/Contribution.php";
             $softContribution = CRM_Contribute_BAO_Contribution::addSoftContribution( $contribSoftParams );
         }
