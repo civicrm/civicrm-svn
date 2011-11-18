@@ -336,9 +336,9 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
                 }
             }
             $this->assign('isCustomGroupEmpty', $this->_isGroupEmpty);
-            $this->assign('defaultSubtypes', json_encode($this->_subtypes));
             $this->assign('gid', $this->_id);
         }
+        $this->assign('defaultSubtypes', json_encode($this->_subtypes));
         
         // help text
         $this->addWysiwyg( 'help_pre', ts('Pre-form Help'), $attributes['help_pre']);
