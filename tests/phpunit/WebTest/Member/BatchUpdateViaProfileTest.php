@@ -56,6 +56,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         // Add new individual using Quick Add block on the main page
         $firstName1 = "John_" . substr(sha1(rand()), 0, 7);
         $lastName   = "Smith_" . substr(sha1(rand()), 0, 7);
+        $Name1 = $lastName.', '.$firstName1;
         $this->webtestAddContact( $firstName1, $lastName, "$firstName1.$lastName@example.com" );
         $this->waitForPageToLoad("30000");
         
@@ -82,6 +83,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         
         // Add new individual using Quick Add block on the main page
         $firstName2 = "John_" . substr(sha1(rand()), 0, 7);
+        $Name2 = $lastName.', '.$firstName2;
         $this->webtestAddContact( $firstName2, $lastName, "$firstName2.$lastName@example.com" );
         $this->waitForPageToLoad("30000");
         
@@ -126,11 +128,11 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         $this->click( '_qf_PickProfile_next-bottom' );
 
         $this->waitForElementPresent( '_qf_Batch_back-bottom' );
-        $this->type( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[1]/td[3]/input", "This is test custom data text1" );
-        $this->select("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[1]/td[4]/select", "label=Current");
+        $this->type( "xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name1}']/../td[3]/input", "This is test custom data text1" );
+        $this->select("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name1}']/../td[4]/select", "label=Current");
 
-        $this->type( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input", "This is test custom data text2" );
-        $this->select("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[4]/select", "label=Grace");
+        $this->type( "xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name2}']/../td[3]/input", "This is test custom data text2" );
+        $this->select("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name2}']/../td[4]/select", "label=Grace");
 
         $this->click( '_qf_Batch_next-bottom' );
         $this->waitForElementPresent( '_qf_Result_done' );
@@ -138,13 +140,13 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( '_qf_Search_next_print' );
         
         // View Membership
-        $this->click( "xpath=//div[@id='memberSearch']/table/tbody/tr[1]/td[11]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='memberSearch']/table/tbody//tr/td[3]/a[text()='{$Name1}']/../../td[11]/span/a[text()='View']" );
         $this->waitForElementPresent( '_qf_MembershipView_cancel-bottom' );
         
         // Verify End date
         $verifyData = array(
                             'Membership Type' => $memTypeParams['membership_type'],
-                            'Status'          => 'Grace',
+                            'Status'          => 'Current',
                             'End date'        => $endDate
                             );
         foreach ( $verifyData as $label => $value ) {
@@ -156,13 +158,13 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( '_qf_Search_next_print' );
 
         // View Membership
-        $this->click( "xpath=//div[@id='memberSearch']/table/tbody/tr[2]/td[11]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='memberSearch']/table/tbody//tr/td[3]/a[text()='{$Name2}']/../../td[11]/span/a[text()='View']" );
         $this->waitForElementPresent( '_qf_MembershipView_cancel-bottom' );
         
         // Verify End date
         $verifyData = array(
                             'Membership Type' => $memTypeParams['membership_type'],
-                            'Status'          => 'Current',
+                            'Status'          => 'Grace',
                             'End date'        => $endDate
                             );
         foreach ( $verifyData as $label => $value ) {
@@ -183,6 +185,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
         $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
         // Wait for membership type select to reload
         $this->waitForTextPresent( $memTypeParams['membership_type'] );
+        sleep(3);
         $this->select("membership_type_id[1]", "label={$memTypeParams['membership_type']}");
         
         $sourceText = "Membership ContactAddTest Webtest";
