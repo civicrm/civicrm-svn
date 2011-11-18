@@ -21,4 +21,4 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-var cj = $.noConflict();
+var cj = $.noConflict(true);
