@@ -140,6 +140,8 @@ class HTML_QuickForm_TinyMCE extends HTML_QuickForm_textarea
         } else {
             // load tinyMCEeditor
             $config = CRM_Core_Config::singleton( );
+            $browseUrl = $config->userFrameworkResourceURL . 'packages/kcfinder/browse.php?opener=tinymce&cms=civicrm&type=';
+            
             // tinymce is wierd, it needs to be loaded initially along with jquery
             $html = null;
             $html .= sprintf( '<script type="text/javascript">
@@ -163,6 +165,7 @@ class HTML_QuickForm_TinyMCE extends HTML_QuickForm_textarea
         convert_urls : false,
         remove_script_host : false,
         width : "' . $this->Width .'%",
+        file_browser_callback: "openKCFinder",
         setup : function(ed) {
                  ed.onInit.addToTop( function(){ 
                     var height = cj("#" + ed.editorId).attr("height");
@@ -179,7 +182,23 @@ class HTML_QuickForm_TinyMCE extends HTML_QuickForm_textarea
         //remove the control if element is already having 
         tinyMCE.execCommand("mceRemoveControl", false,"' . $this->_attributes['id'] .'");
         tinyMCE.execCommand("mceAddControl"   , true, "' . $this->_attributes['id'] .'");
-        
+
+        function openKCFinder(field_name, url, type, win) {
+            tinyMCE.activeEditor.windowManager.open({
+                file: "'. $browseUrl .'" + type,
+                title: "KCFinder",
+                width: 700,
+                height: 500,
+                resizable: "yes",
+                inline: true,
+                close_previous: "no",
+                popup_css: false
+            }, {
+                window: win,
+                    input: field_name
+            });
+            return false;
+        }
 </script>' );
                         
             // include textarea as well (TinyMCE transforms it)
