@@ -79,6 +79,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase
                               'email-5'    => $email );
       $streetAddress = "100 Main Street";
       
+      //adding contact for membership sign up 
       $this->webtestAddContact( $firstName, $lastName, $email );
       $urlElements = $this->parseURL( );
       $cid = $urlElements['queryString']['cid'];
@@ -99,7 +100,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase
       //senario 2
       $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id={$membershipContributionPageId}&cid={$cid}" );
       $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-      $this->checkOptions( 'National_Membership_{$title}-section', 2 );// checking
+      $this->checkOptions( "National_Membership_{$title}-section", 2 );// checking
                                                                        // senario 1
       $this->_testDefaultSenarios( "National_Membership_{$title}-section", 4 );
       $this->_testDefaultSenarios( "Second_Membership_{$title}-section", 2 );
@@ -113,7 +114,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase
       //senario 3
       $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id={$membershipContributionPageId}&cid={$cid}" );
       $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-      $this->checkOptions( 'Second_Membership_{$title}-section', 2 );// checking
+      $this->checkOptions( "Second_Membership_{$title}-section", 2 );// checking
                                                                      // senario 2
       
       $this->_testDefaultSenarios( "National_Membership_{$title}-section", 3 );      
@@ -133,20 +134,13 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase
       $this->contactInfoFill( $firstName, $lastName, $email, $contactParams, $streetAddress );
       $this->click("_qf_Main_upload-bottom");
       $this->waitForPageToLoad('30000');
-      $this->waitForElementPresent("_qf_Confirm_next-bottom");
-      $this->click("_qf_Confirm_next-bottom");
+      $this->waitForElementPresent("_qf_Main_upload-bottom");
       $this->assertTrue( $this->isTextPresent( "You already have a lifetime membership and cannot select a membership with a shorter term." ) );
      
   }
   
   function contactInfoFill( $firstName, $lastName, $email, $contactParams, $streetAddress )
-  {
-      $this->type("street_address-1", $streetAddress);
-      $this->type("city-1", "San Francisco");
-      $this->type("postal_code-1", "94117");
-      $this->select("country-1", "value=1228");
-      $this->select("state_province-1", "value=1001");
-      
+  {   
       //Credit Card Info
       $this->select("credit_card_type", "value=Visa");
       $this->type("credit_card_number", "4111111111111111");
@@ -256,30 +250,17 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase
               break;
 
           case 'CheckBox':
-         //      $options = array( 1 => array( 'label'              => "$memTypeTitle1",
-//                                             'membership_type_id' => $memTypeId1,
-//                                             'amount'             => '100.00' ),
-//                                 2 => array( 'label'              => "$memTypeTitle2", 
-//                                             'membership_type_id' => $memTypeId2,
-//                                             'amount'             => '50.00' ),
-//                                 3 => array( 'label'              => "$memTypeTitle3", 
-//                                             'membership_type_id' => $memTypeId3,
-//                                             'amount'             => '1,200.00' )                                
-//                                 );
-              /// $this->addMultipleChoiceOptions( $options, $validateStrings );
-              $this->select( "membership_type_id_1", "value={$memTypeId1}" );
-              $this->type("option_label_1", $memTypeTitle1 ); 
-              $this->type("option_amount_1" , '100'  ); 
-              sleep(3);
-              $this->select( "membership_type_id_2", "value={$memTypeId2}" );
-              $this->type("option_label_2", $memTypeTitle2 ); 
-              $this->type("option_amount_2" , '200'  );
-              sleep(3);
-              $this->click( "link=another choice" );
-              $this->select( "membership_type_id_3", "value={$memTypeId3}" );
-              $this->type("option_label_3", $memTypeTitle3 ); 
-              $this->type("option_amount_3" , '300'  );
-              sleep(3);
+              $options = array( 1 => array( 'label'              => "$memTypeTitle1",
+                                            'membership_type_id' => $memTypeId1,
+                                            'amount'             => '100.00' ),
+                                2 => array( 'label'              => "$memTypeTitle2", 
+                                            'membership_type_id' => $memTypeId2,
+                                            'amount'             => '50.00' ),
+                                3 => array( 'label'              => "$memTypeTitle3", 
+                                            'membership_type_id' => $memTypeId3,
+                                            'amount'             => '1,200.00' )                                
+                                );
+              $this->addMultipleChoiceOptions( $options, $validateStrings );
               break;
               
           default:
@@ -291,24 +272,6 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase
           $this->assertTrue( $this->isTextPresent( "Price Field '{$label}' has been saved." ) );
       }
       return array( $memTypeTitle1, $memTypeTitle2, $memTypeTitle3 );
-  }
-  
-  function _testVerifyPriceSet( $validateStrings, $sid )
-  {
-      // verify Price Set at Preview page
-      // start at Manage Price Sets listing
-      $this->open($this->sboxPath . 'civicrm/admin/price?reset=1');
-      $this->waitForPageToLoad('30000');
-      
-      // Use the price set id ($sid) to pick the correct row
-      $this->click("css=tr#row_{$sid} a[title='Preview Price Set']");
-      
-      $this->waitForPageToLoad('30000');
-      // Look for Register button
-      $this->waitForElementPresent('_qf_Preview_cancel-bottom');
-      
-      // Check for expected price set field strings
-      $this->assertStringsPresent( $validateStrings );
   }
   
 }
