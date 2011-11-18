@@ -157,8 +157,8 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase
         $this->click('relationship_type_id');
         $this->select('relationship_type_id', 'label=Employee of');
        
-        $this->typeKeys( 'rel_contact', $title1);
-        $this->fireEvent('rel_contact', 'focus');
+        $this->typeKeys( 'contact_1', $title1);
+        $this->fireEvent('contact_1', 'focus');
         $this->waitForElementPresent('css=div.ac_results-inner li');
         $this->click('css=div.ac_results-inner li');
         
@@ -201,7 +201,6 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase
         $this->waitForElementPresent('css=div.action-link');
 
         $this->click("//li[@id='tab_rel']/a");
-        $this->click("//div[@id='squeeze']/div/div");
         $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");
         $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='Edit']");
         $matches = array();
@@ -230,7 +229,6 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase
         $this->click('css=li#tab_rel a');
         $this->waitForElementPresent('css=div.action-link');
         $this->click("//li[@id='tab_rel']/a");
-        $this->click("//div[@id='squeeze']/div/div");
         $this->waitForElementPresent("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span/a[text()='Edit']");
         $this->click("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span/a[text()='Edit']");
         $this->waitForElementPresent('is_active');
