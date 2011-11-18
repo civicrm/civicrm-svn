@@ -41,9 +41,10 @@ display_usage()
 	echo "  distmaker.sh OPTION"
 	echo 
 	echo "Options available:"
-	echo "  all - generate all available tarballs"
-	echo "  d5  - generate Drupal PHP5 module"
-	echo "  j5  - generate Joomla PHP5 module"
+	echo "  all  - generate all available tarballs"
+	echo "  d5   - generate Drupal7 PHP5 module"
+	echo "  d5.6 - generate Drupal6 PHP5 module"
+	echo "  j5   - generate Joomla PHP5 module"
 	echo "  wp5  - generate Wordpress PHP5 module"
 	echo
 	echo "You also need to have distmaker.conf file in place."
@@ -86,10 +87,16 @@ check_conf
 
 # Figure out what to do
 case $1 in
-	# DRUPAL PHP5
+	# DRUPAL7 PHP5
 	d5)
-	echo; echo "Generating Drupal PHP5 module"; echo;
+	echo; echo "Generating Drupal7 PHP5 module"; echo;
 	D5PACK=1
+	;;
+
+	# DRUPAL7 PHP5
+	d5.6)
+	echo; echo "Generating Drupal6 PHP5 module"; echo;
+	D56PACK=1
 	;;
 
 	# JOOMLA PHP5
@@ -108,6 +115,7 @@ case $1 in
 	all)
 	echo; echo "Generating all we've got."; echo;
 	D5PACK=1
+	D56PACK=1
 	J5PACK=1
 	WP5PACK=1
 	;;
@@ -129,8 +137,13 @@ $DM_PHP GenCode.php schema/Schema.xml $DM_VERSION
 cd $ORIGPWD
 
 if [ $D5PACK = 1 ]; then
-	echo; echo "Packaging for Drupal, PHP5 version"; echo;
+	echo; echo "Packaging for Drupal7, PHP5 version"; echo;
 	sh $P/dists/drupal_php5.sh
+fi
+
+if [ $D56PACK = 1 ]; then
+	echo; echo "Packaging for Drupal6, PHP5 version"; echo;
+	sh $P/dists/drupal6_php5.sh
 fi
 
 if [ $J5PACK = 1 ]; then
