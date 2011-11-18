@@ -159,7 +159,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=1&reset=1");
           $this->waitForPageToLoad("30000");
           
-          $this->waitForElementPresent("CIVICRM_QFID_1_10");
+          $this->waitForElementPresent("_qf_MembershipType_upload-bottom");
           $this->click("CIVICRM_QFID_1_10");
           
           $this->type("duration_interval", "1");
@@ -170,8 +170,8 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
           
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=2&reset=1");
           $this->waitForPageToLoad("30000");
-          
-          $this->waitForElementPresent("CIVICRM_QFID_1_10");
+
+          $this->waitForElementPresent("_qf_MembershipType_upload-bottom");
           $this->click("CIVICRM_QFID_1_10");
           
           $this->type("duration_interval", "1");
