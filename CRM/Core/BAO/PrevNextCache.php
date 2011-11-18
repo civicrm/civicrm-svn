@@ -173,7 +173,7 @@ DELETE     pn, c
 FROM       civicrm_cache c
 INNER JOIN civicrm_prevnext_cache pn ON c.path = pn.cacheKey
 WHERE      c.group_name = %1
-AND        c.created_date < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays day )
+AND        c.created_date < date_sub( NOW( ), INTERVAL %2 day )
 ";
         $params = array( 1 => array( 'CiviCRM Search PrevNextCache', 'String' ),
                          2 => array( $cacheTimeIntervalDays, 'Integer' ) );
