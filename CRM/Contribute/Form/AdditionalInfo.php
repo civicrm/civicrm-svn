@@ -105,20 +105,20 @@ class CRM_Contribute_Form_AdditionalInfo
         // add various amounts
         $element =& $form->add( 'text', 'non_deductible_amount', ts('Non-deductible Amount'),
                                 $attributes['non_deductible_amount'] );
-        $form->addRule('non_deductible_amount', ts('Please enter a valid amount.'), 'money');
+        $form->addRule('non_deductible_amount', ts('Please enter a valid monetary value for Non-deductible Amount.'), 'money');
         
         if ( $form->_online ) {
             $element->freeze( );
         }
         $element =& $form->add( 'text', 'fee_amount', ts('Fee Amount'), 
                                 $attributes['fee_amount'] );
-        $form->addRule('fee_amount', ts('Please enter a valid amount.'), 'money');
+        $form->addRule('fee_amount', ts('Please enter a valid monetary value for Fee Amount.'), 'money');
         if ( $form->_online ) {
             $element->freeze( );
         }
         $element =& $form->add( 'text', 'net_amount', ts('Net Amount'),
                                 $attributes['net_amount'] );
-        $form->addRule('net_amount', ts('Please enter a valid amount.'), 'money');
+        $form->addRule('net_amount', ts('Please enter a valid monetary value for Net Amount.'), 'money');
         if ( $form->_online ) {
             $element->freeze( );
         }

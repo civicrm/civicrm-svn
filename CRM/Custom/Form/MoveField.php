@@ -96,6 +96,10 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
 
         CRM_Utils_System::setTitle( ts( 'Custom Field Move: %1',
                                         array( 1 => $this->_srcFieldLabel ) ) );
+                                        
+        $session = CRM_Core_Session::singleton( );
+        $session->pushUserContext( CRM_Utils_System::url('civicrm/admin/custom/group/field', "reset=1&action=browse&gid={$this->_srcGID}") );
+
     }
 
     /**
@@ -153,8 +157,10 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
         $dstGroup  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                   $this->_dstGID,
                                                   'title' );
-        CRM_Core_Session::setStatus( ts("%1 has been moved to the custom set '%2'.", array( 1 => $this->_srcFieldLabel,
-                                                                                            2 => $dstGroup )) );
+        $srcUrl = CRM_Utils_System::url('civicrm/admin/custom/group/field', "reset=1&action=browse&gid={$this->_dstGID}");
+        CRM_Core_Session::setStatus( ts("%1 has been moved to the custom set <a href='%3'>%2</a>.", array( 1 => $this->_srcFieldLabel,
+                                                                                                           2 => $dstGroup,
+                                                                                                           3 => $srcUrl ) ) );
     }
 
 }
