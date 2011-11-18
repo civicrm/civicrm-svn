@@ -84,6 +84,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
       // Wait for membership type select to reload
       $this->waitForTextPresent( $memTypeParams['membership_type'] );
+      sleep(3);
       $this->select("membership_type_id[1]", "label={$memTypeParams['membership_type']}");
 
       $sourceText = "Membership ContactAddTest Webtest";
@@ -155,6 +156,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->select("membership_type_id[0]", "label={$lifeTimeMemTypeParams['member_org']}");
       // Wait for membership type select to reload
       $this->waitForTextPresent( $lifeTimeMemTypeParams['membership_type'] );
+      sleep(3);
       $this->select("membership_type_id[1]", "label={$lifeTimeMemTypeParams['membership_type']}");
       
       $this->waitForElementPresent("xpath=//form[@id='Membership']/div[2]/div[2]//table/tbody//tr[@class='crm-membership-form-block-end_date']/td[2]");
@@ -223,6 +225,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       
       // Wait for membership type select to reload
       $this->waitForTextPresent( $lifeTimeMemTypeParams['membership_type'] );
+      sleep(3);
       $this->select("membership_type_id[1]", "label={$lifeTimeMemTypeParams['membership_type']}");
       
       $sourceText = "Check Lifetime membership type webtest";
