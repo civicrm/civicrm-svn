@@ -661,7 +661,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $text = "'Amount' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
 
-        if ( ( $membershipTypes === true ) || ( is_array( $membershipTypes ) && !empty( $membershipTypes ) ) ) {
+        if ( $memPriceSetId || (( $membershipTypes === true ) || ( is_array( $membershipTypes ) && !empty( $membershipTypes ) )) ) {
             // go to step 3 (memberships)
             $this->click('link=Memberships');        
             $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');   
@@ -700,8 +700,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->click('_qf_MembershipBlock_next');
             $this->waitForPageToLoad('30000');
             $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
-            $text = "'MembershipBlock' information has been saved.";
-            //$this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
+            $text = "'MembershipBlock' information has been saved.";       
+            $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
         }
         
         // go to step 4 (thank-you and receipting)
