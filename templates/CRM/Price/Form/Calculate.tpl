@@ -43,7 +43,11 @@ var priceSet = price = Array( );
 cj("input,#priceset select,#priceset").each(function () {
 
   if ( cj(this).attr('price') ) {
-  switch( cj(this).attr('type') ) {
+  var eleType =  cj(this).attr('type');
+  if ( this.tagName == 'SELECT' ) {
+    eleType = 'select-one';
+  } 
+  switch( eleType ) {
     
   case 'checkbox':
     
