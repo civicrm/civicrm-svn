@@ -898,7 +898,7 @@ WHERE  v.option_group_id = g.id
         $participantParams = array('id'            => CRM_Utils_Array::value( 'participant_id', $params ),
                                    'contact_id'    => $contactID,
                                    'event_id'      => $this->_eventId ? $this->_eventId : $params['event_id'],
-                                   'status_id'     => CRM_Utils_Array::value( 'participant_status_id',
+                                   'status_id'     => CRM_Utils_Array::value( 'participant_status',
                                                                               $params, 1 ),
                                    'role_id'       => CRM_Utils_Array::value( 'participant_role_id',
                                                                               $params, $roleID ),
