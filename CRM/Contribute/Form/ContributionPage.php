@@ -345,7 +345,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
 
             case 'MembershipBlock':
                 $subPage = 'membership';
-                $subPageName = 'Membership';
+                $subPageName = 'MembershipBlock';
                 $nextPage = 'thankyou';
                 break;
 
