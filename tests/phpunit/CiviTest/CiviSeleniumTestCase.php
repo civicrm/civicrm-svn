@@ -107,36 +107,41 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      */
 
     
-	function webtest_civicrm_api($entity,$action, $params){
-		$CiviSeleniumSettings = new CiviSeleniumSettings;
-		$url_params = array_merge(array('json'=>1, 'key' => $CiviSeleniumSettings->sandboxSITEKEY, 'api_key'=> $CiviSeleniumSettings->apikey, 'action' => $action, 'entity' => $entity), $params);
-		$url_query = http_build_query($url_params);
-		$settingsBaseURL = parse_url($CiviSeleniumSettings->sandboxURL);
-		$url = $CiviSeleniumSettings->sandboxURL . '/sites/all/modules/civicrm/extern/rest.php?' . $url_query;    
-		$result = json_decode(file_get_contents(($url)), TRUE);
+	function webtest_civicrm_api($entity,$action, $params) {
+        if ( !isset($params['version']) ) $params['version'] = 3;
+
+        $result = civicrm_api($entity, $action, $params );
+        $this->assertTrue( !civicrm_error($result), 'Civicrm api error.' );
 		return $result;
 	}
 
 	function webtestGetFirstValueForOptionGroup($option_group_name){
-      	$result=$this->webtest_civicrm_api("OptionValue", "getvalue", array('option_group_name'=>$option_group_name,'option.limit'=>1,'return'=>'value'));
+      	$result = $this->webtest_civicrm_api("OptionValue", "getvalue", array('option_group_name' => $option_group_name,'option.limit' => 1,'return' => 'value'));
 		return $result['result'];
 	}
 
 	function webtestGetValidCountryID(){
-		$config_backend=$this->webtestGetConfig('countryLimit');
-		return current($config_backend);
+        static $_country_id;
+        if ( is_null($_country_id) ) {
+            $config_backend = $this->webtestGetConfig('countryLimit');
+            $_country_id = current($config_backend);
+        }
+		return $_country_id;
 	}
 
 	function webtestGetValidEntityID($entity){
 		//michaelmcandrew: would like to use getvalue but there is a bug for e.g. group where option.limit not working at the moment CRM-9110
-      	$result=$this->webtest_civicrm_api($entity, "get", array('option.limit'=>1,'return'=>'id'));
+      	$result = $this->webtest_civicrm_api($entity, "get", array('option.limit' => 1,'return' => 'id'));
 		return current(array_keys($result['values']));
 	}
 
 	function webtestGetConfig($field){
-      	$result=$this->webtest_civicrm_api("Domain", "getvalue", array('option.limit'=>1,'return'=>'config_backend'));
-		$config_backend = unserialize($result['result']);
-		return $config_backend[$field];
+        static $_config_backend;
+        if ( is_null($_config_backend) ) { 
+            $result = $this->webtest_civicrm_api("Domain", "getvalue", array('current_domain' => 1, 'option.limit' => 1,'return' => 'config_backend'));
+		    $_config_backend = unserialize($result);
+        }
+		return $_config_backend[$field];
 	}
 
 
