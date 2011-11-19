@@ -31,7 +31,7 @@ if (typeof $ == "undefined") {
 } 
 
 function toggleField (name,label,type) {
-  h = '<div><label>'+label+'</label><input name='+name+ ' id="'+name+ ' /></div>';
+  h = '<div><label>'+label+'</label><input name='+name+ ' id="'+name+ '" /></div>';
   if ( $('#extra #'+ name).length > 0) {
     $('#extra #'+ name).parent().remove();
   }
@@ -47,7 +47,7 @@ function buildForm (entity, action) {
     return;
   }
 
-  $().crmAPI (entity,'getFields',{version : 3}
+  cj().crmAPI (entity,'getFields',{version : 3}
              ,{ success:function (data){
                   h='<i>Available fields (click on it to add it to the query):</i>';
                   $.each(data.values, function(key, value) { 
@@ -55,7 +55,10 @@ function buildForm (entity, action) {
                     if (name == 'id') 
                       name = entity+'_id';
                     if (value.title == undefined) {
-                      value.title = value.name;
+                      if (value.name == undefined) 
+                        value.title = value.label;
+                      else
+                        value.title = value.name;
                     }
                     if (value.required == true) {
                       required = " required";
@@ -116,7 +119,7 @@ function runQuery(query) {
       $('#result').text(data);
     },'text');
     link="<a href='"+query+"' title='open in a new tab' target='_blank'>ajax query</a>&nbsp;";
-    var RESTquery = resourceBase +"/extern/rest.php?"+ query.substring(restURL.length,query.length) + "&user={youruser}&pwd={password}&key={yourkey}";
+    var RESTquery = resourceBase +"/extern/rest.php?"+ query.substring(restURL.length,query.length) + "&api_key={yoursitekey}&key={yourkey}";
     $("#link").html(link+"|<a href='"+RESTquery+"' title='open in a new tab' target='_blank'>REST query</a>.");
 
     var hashes = query.slice(query.indexOf('?') + 1).split('&');
