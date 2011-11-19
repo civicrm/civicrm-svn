@@ -980,8 +980,10 @@ function civicrm_install_set_drupal_perms() {
             array(
                   'access all custom data',
                   'access uploaded files',
-                  'profile listings and forms',
                   'make online contributions',
+                  'profile create',
+                  'profile edit',
+                  'profile view',
                   'register for events',
                   'view event info',
                   'view event participants',

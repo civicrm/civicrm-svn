@@ -723,12 +723,11 @@ SELECT g.*
  AND   g.is_active = 1
 ";
                 $dao = CRM_Core_DAO::executeQuery( $query );
-                $allGroupIDs = array();
+                $staticGroupIDs = array();
                 $cachedGroupIDs = array();
                 while ( $dao->fetch( ) ) {
                     // currently operation is restrcited to VIEW/EDIT
                     if ( $dao->where_clause ) {
-                        $allGroupIDs[] = $dao->id;
                         if ( $dao->select_tables ) {
                             $tmpTables = array();
                             foreach ( unserialize( $dao->select_tables ) as $tmpName => $tmpInfo ) {
@@ -751,6 +750,7 @@ SELECT g.*
                                 if ($tmpName == '`civicrm_group_contact-' . $dao->id . '`') {
                                     $tmpName = '`civicrm_group_contact-ACL`';
                                     $tmpInfo = str_replace('civicrm_group_contact-' . $dao->id, 'civicrm_group_contact-ACL', $tmpInfo);
+                                    $staticGroupIDs[] = $dao->id;
                                 }
                                 elseif ($tmpName == '`civicrm_group_contact_cache_' . $dao->id . '`') {
                                     $tmpName = '`civicrm_group_contact_cache-ACL`';
@@ -773,10 +773,10 @@ SELECT g.*
                     }
                 }
 
-                if ( $allGroupIDs ) {
-                    $clauses[] = '( `civicrm_group_contact-ACL`.group_id IN (' . join( ', ',  $allGroupIDs) . ') AND `civicrm_group_contact-ACL`.status IN ("Added") )';
+                if ( $staticGroupIDs ) {
+                    $clauses[] = '( `civicrm_group_contact-ACL`.group_id IN (' . join( ', ',  $staticGroupIDs) . ') AND `civicrm_group_contact-ACL`.status IN ("Added") )';
                 }
-
+                
                 if ( $cachedGroupIDs ) {
                     $clauses[] = '`civicrm_group_contact_cache-ACL`.group_id IN (' . join( ', ',  $cachedGroupIDs) . ')';
                 }
