@@ -85,7 +85,7 @@ class CRM_PCP_Form_Event extends CRM_Event_Form_ManageEvent
             $defaults['is_approval_needed']    = 1;
             $defaults['is_tellfriend_enabled'] = 1;
             $defaults['tellfriend_limit']      = 5;
-            $defaults['link_text']             = ts('Create your own event registration page');
+            $defaults['link_text']             = ts('Promote this event with a personal campaign page');
 
             if ( $ccReceipt = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $this->_id, 'cc_receipt' ) ) {
                 $defaults['notify_email']  = $ccReceipt;

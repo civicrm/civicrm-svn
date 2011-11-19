@@ -216,7 +216,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
         
         if ( $this->get('action') & CRM_Core_Action::ADD ) {
             $params['status_id'] = $approval_needed ? 1 : 2;
-            $approvalMessage     = $approval_needed ? ts('but requires administrator review before you can begin your fundraising efforts. You will receive an email confirmation shortly which includes a link to return to your fundraising page.') : ts('and is ready to use.');
+            $approvalMessage     = $approval_needed ? ts('but requires administrator review before you can begin promoting your campaign. You will receive an email confirmation shortly which includes a link to return to this page.') : ts('and is ready to use.');
         }
         
         $params['id'] = $this->_pageId;

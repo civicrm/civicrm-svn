@@ -37,7 +37,7 @@
 		<td class="label">{$form.intro_text.label}</td>
 		<td>
             {$form.intro_text.html|crmReplace:class:big}<br />
-            <span class="description">{ts}Introduce the campaign and why you're supporting it. This text will appear at the top of your personal page AND at the top of the main campaign contribution page when people make a contribution through your page.{/ts}</span>
+            <span class="description">{ts}Introduce the campaign and why you're supporting it. This text will appear at the top of your personal page AND at the top of the main contribution or event registration page.{/ts}</span>
         </td>
 	</tr>
 	<tr class="crm-contribution-form-block-goal_amount">
@@ -55,7 +55,7 @@
 	<tr class="crm-contribution-form-block-donate_link_text">
 		<td class="label">{$form.donate_link_text.label}</td>
 		<td>{$form.donate_link_text.html}<br />
-            <span class="description">{ts}The text for the contribute button.{/ts}</span>
+            <span class="description">{ts}The text for the contribute or register button.{/ts}</span>
 		</td>
 	</tr>
 	<tr class="crm-contribution-form-block-page_text">
@@ -71,7 +71,7 @@
 	<tr class="crm-contribution-form-block-is_honor_roll">
 		<td class="label">{$form.is_honor_roll.label}</td>
 		<td>{$form.is_honor_roll.html}
-		<span class="description">{ts}If this option is checked, an "honor roll" will be displayed with the names (or nicknames) of the people who donated through your fundraising page. (Donors will have the option to remain anonymous. Their names will NOT be listed.){/ts}</span></td>
+		<span class="description">{ts}If this option is checked, an "honor roll" will be displayed with the names (or nicknames) of the people who supported your campaign. (People will have the option to remain anonymous. Their names will NOT be listed.){/ts}</span></td>
 	</tr>
 
 	<tr class="crm-contribution-form-block-is_active">

@@ -150,18 +150,22 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
             $page_class = 'CRM_Event_DAO_Event';
             require_once "CRM/Event/PseudoConstant.php";
             $this->assign( 'pageName', CRM_Event_PseudoConstant::event( $pcpInfo['page_id'] ) );
+            CRM_Core_DAO::commonRetrieveAll( $page_class, 'id',
+                                             $pcpInfo['page_id'], $default, array( 'start_date', 'end_date', 'registration_start_date', 'registration_end_date' ) );
+
         } else if ($pcpBlock->entity_table == 'civicrm_contribution_page'){
             $page_class = 'CRM_Contribute_DAO_ContributionPage';
             require_once "CRM/Contribute/PseudoConstant.php";
             $this->assign( 'pageName', CRM_Contribute_PseudoConstant::contributionPage( $pcpInfo['page_id'], true ) );
-        }
+            CRM_Core_DAO::commonRetrieveAll( $page_class, 'id',
+                                             $pcpInfo['page_id'], $default, array( 'start_date', 'end_date' ) );
 
-        CRM_Core_DAO::commonRetrieveAll( $page_class, 'id',
-                                         $pcpInfo['page_id'], $default, array( 'start_date', 'end_date' ) );
+        }
 
         if ( $pcpInfo['contact_id'] == $session->get( 'userID' ) ) {
             $owner = $default[$pcpInfo['page_id']];
             $owner['status'] = CRM_Utils_Array::value( $pcpInfo['status_id'], $pcpStatus );
+            
             $this->assign('owner', $owner );
             
             require_once 'CRM/PCP/BAO/PCP.php';
@@ -228,10 +232,15 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
         if ( $achieved <= 100 ) {
             $this->assign('remaining', 100- $achieved );
         }
-        // make sure that we are between  registration start date and registration end date
-        $startDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'start_date', $owner ) );
-
-        $endDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'end_date', $owner ) );
+        // make sure that we are between contribution page start and end dates OR registration start date and end dates if they are set
+        if ( $pcpBlock->entity_table == 'civicrm_event' ) {
+            $startDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'registration_start_date', $owner ) );
+            $endDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'registration_end_date', $owner ) );
+        } else {
+            $startDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'start_date', $owner ) );
+            $endDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'end_date', $owner ) );            
+        }
+        
 
         $now = time( );
         $validDate = true;
@@ -242,7 +251,7 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
             $validDate = false;
         }
         
-        $this->assign( 'validDate', true  );
+        $this->assign( 'validDate', $validDate  );
 
         // form parent page url
         if ( $action == CRM_Core_Action::PREVIEW ) {

@@ -202,7 +202,8 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
                 // Setup Personal Campaign Page link uses pageId
                 $pageId =  $form->get( 'pageId' );
                 if ( $pageId ) {
-                    $args .= "&pageId=$pageId&action=add";
+                    $component = $form->get( 'component');
+                    $args .= "&pageId=$pageId&component=$component&action=add";
                 }
             }
         }

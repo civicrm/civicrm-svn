@@ -100,7 +100,9 @@ class CRM_PCP_Form_PCPAccount extends CRM_Core_Form
         
         // we do not want to display recently viewed items, so turn off
         $this->assign('displayRecent' , false );
-
+        
+        $this->assign('pcpComponent', $this->_component);
+        
         if( $this->_single ) {
             CRM_Utils_System::setTitle(ts('Update Contact Information'));
         }
