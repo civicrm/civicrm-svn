@@ -66,13 +66,11 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
       $this->click("_qf_Confirm_next_checkout");
       $this->waitForPageToLoad("30000");
       
-      $this->selectFrame('login');
-
       $this->waitForElementPresent( "Email" );
       $this->type("Email","custdeepak");
       $this->type("Passwd","deepak123");
 
-      $this->click("xpath=//input[@value='Sign in and continue']");
+      $this->click("xpath=//input[@id='signIn']");
       $this->waitForElementPresent( "bottomBuyButton" );
 
       $this->click("bottomBuyButton");
@@ -111,13 +109,11 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
       $this->click("_qf_Confirm_next_checkout");
       $this->waitForPageToLoad("30000");
       
-      $this->selectFrame('login');
-
       $this->waitForElementPresent( "Email" );
       $this->type("Email","custdeepak");
       $this->type("Passwd","deepak123");
 
-      $this->click("xpath=//input[@value='Sign in and continue']");
+      $this->click("xpath=//input[@id='signIn']");
       $this->waitForElementPresent( "bottomBuyButton" );
 
       $this->click("bottomBuyButton");
@@ -135,6 +131,8 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
           $hash = substr(sha1(rand()), 0, 7);
           $rand = 2 * rand(2, 50);
           $processorName = "Webtest Auto Renew Google Checkout" . $hash;
+          $this->webtestAddPaymentProcessor( $processorName, 'Google_Checkout' );
+          
           // -- start updating membership types 
           $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=1&reset=1");
           $this->waitForPageToLoad("30000");
@@ -195,7 +193,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
                                                        $premiums     ,
                                                        $widget       ,
                                                        $pcp          ,
-                                                       true 
+                                                       false 
                                                        );
         
           //make sure we do have required permissions.
