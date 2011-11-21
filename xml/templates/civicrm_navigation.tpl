@@ -119,7 +119,7 @@ VALUES
     ( @domainID, 'civicrm/case/search&reset=1',                             '{ts escape="sql" skip="true"}Find Cases{/ts}',         'Find Cases', 'access my cases and activities,access all cases and activities', 'OR',            @searchlastID, '1', NULL, 5 ), 
     ( @domainID, 'civicrm/contribute/search&reset=1',                       '{ts escape="sql" skip="true"}Find Contributions{/ts}', 'Find Contributions', 'access CiviContribute', '',  @searchlastID, '1', NULL, 6 ), 
     ( @domainID, 'civicrm/mailing&reset=1',                                 '{ts escape="sql" skip="true"}Find Mailings{/ts}',      'Find Mailings', 'access CiviMail', '',         @searchlastID, '1', NULL, 7 ), 
-    ( @domainID, 'civicrm/member/search&reset=1',                           '{ts escape="sql" skip="true"}Find Members{/ts}',       'Find Members', 'access CiviMember', '',        @searchlastID, '1', NULL, 8 ), 
+    ( @domainID, 'civicrm/member/search&reset=1',                           '{ts escape="sql" skip="true"}Find Memberships{/ts}',   'Find Memberships', 'access CiviMember', '',        @searchlastID, '1', NULL, 8 ), 
     ( @domainID, 'civicrm/event/search&reset=1',                            '{ts escape="sql" skip="true"}Find Participants{/ts}',  'Find Participants',  'access CiviEvent', '',   @searchlastID, '1', NULL, 9 ), 
     ( @domainID, 'civicrm/pledge/search&reset=1',                           '{ts escape="sql" skip="true"}Find Pledges{/ts}',       'Find Pledges', 'access CiviPledge', '',        @searchlastID, '1', NULL, 10 ),
     ( @domainID, 'civicrm/activity/search&reset=1',                         '{ts escape="sql" skip="true"}Find Activities{/ts}',    'Find Activities', NULL,  '',                   @searchlastID, '1', '1',  11 );
@@ -237,7 +237,7 @@ INSERT INTO civicrm_navigation
 VALUES    
     ( @domainID, 'civicrm/member&reset=1',                              '{ts escape="sql" skip="true"}Dashboard{/ts}',           'Dashboard',       'access CiviMember', '', @memberlastID, '1', NULL, 1 ), 
     ( @domainID, 'civicrm/member/add&reset=1&action=add&context=standalone', '{ts escape="sql" skip="true"}New Membership{/ts}', 'New Membership',  'access CiviMember,edit memberships', 'AND', @memberlastID, '1', NULL, 2 ), 
-    ( @domainID, 'civicrm/member/search&reset=1',                       '{ts escape="sql" skip="true"}Find Members{/ts}',        'Find Members',    'access CiviMember', '', @memberlastID, '1', NULL, 3 ), 
+    ( @domainID, 'civicrm/member/search&reset=1',                       '{ts escape="sql" skip="true"}Find Memberships{/ts}',    'Find Memberships','access CiviMember', '', @memberlastID, '1', NULL, 3 ), 
     ( @domainID, 'civicrm/member/import&reset=1',                       '{ts escape="sql" skip="true"}Import Memberships{/ts}',  'Import Members',  'access CiviMember,edit memberships', 'AND', @memberlastID, '1', 1, 4 ),
     ( @domainID, 'civicrm/admin/price&reset=1&action=add',              '{ts escape="sql" skip="true"}New Price Set{/ts}',       'New Price Set',   'access CiviMember,administer CiviCRM', 'AND',  @memberlastID, '1', NULL, 5 ),
     ( @domainID, 'civicrm/admin/price&reset=1',                         '{ts escape="sql" skip="true"}Manage Price Sets{/ts}',   'Manage Price Sets', 'access CiviMember,administer CiviCRM', 'AND',  @memberlastID, '1', NULL, 6 );
