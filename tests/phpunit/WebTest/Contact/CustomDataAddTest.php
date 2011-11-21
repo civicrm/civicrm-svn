@@ -51,10 +51,8 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing (New Custom Group).
-      $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1 ");
+      $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
 
-      //add new custom data
-      $this->click("//a[@id='newCustomDataGroup']/span");
       $this->waitForPageToLoad("30000");
       
       //fill custom group title
@@ -66,11 +64,11 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
       $this->click("extends[0]");
       $this->select("extends[0]", "value=Contact");
       $this->click("//option[@value='Contact']");
-      $this->click("//form[@id='Group']/div[2]/div[3]/span[1]/input");
-      $this->waitForPageToLoad("30000");
+      $this->click("_qf_Group_next-bottom");
+      $this->waitForElementPresent("_qf_Field_cancel-bottom");
 
       //Is custom group created?
-      $this->assertTrue($this->isTextPresent("Your custom field set '$customGroupTitle' has been added. You can add it custom fields now."));
+      $this->assertTrue($this->isTextPresent("Your custom field set '{$customGroupTitle}' has been added. You can add custom fields now."));
 
       //add custom field - alphanumeric checkbox
       $checkboxFieldLabel = 'custom_field'.substr(sha1(rand()), 0, 4);
