@@ -291,6 +291,7 @@ function civicrm_wp_frontend( ) {
    
     add_filter('the_content', 'civicrm_wp_invoke');
     add_filter('the_title', 'civicrm_set_blank');
+    add_filter('get_header', 'civicrm_turn_comments_off');
 }
 
 function civicrm_set_blank() {
@@ -299,6 +300,11 @@ function civicrm_set_blank() {
 
 function civicrm_set_frontendmessage() {
     return ts('You do not have permission to execute this url.');
+}
+
+function civicrm_turn_comments_off() {
+    global $post;
+    $post->comment_status="closed";
 }
 
 function civicrm_check_permission( $args ) {
