@@ -96,7 +96,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->webtestLogin( );
 
         // Find Participant
-        $this->open( $this->sboxPath . 'civicrm/event/search&reset=1' );
+        $this->open( $this->sboxPath . 'civicrm/event/search?reset=1' );
         $this->waitForElementPresent( 'participant_fee_amount_low' );
         $this->click( "event_name" );
         $this->typeKeys( "event_name",  $eventTitle );
@@ -260,7 +260,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->webtestLogin( );
         
         // Find Participant
-        $this->open( $this->sboxPath . 'civicrm/event/search&reset=1' );
+        $this->open( $this->sboxPath . 'civicrm/event/search?reset=1' );
         $this->waitForElementPresent( 'participant_fee_amount_low' );
         $this->click( "event_name" );
         $this->typeKeys( "event_name",  $eventTitle );
@@ -278,7 +278,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     }
      
     function _testAddSet( $setTitle  ) {
-        $this->open($this->sboxPath . 'civicrm/admin/price&reset=1&action=add');
+        $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
         $this->waitForPageToLoad('30000');
         $this->waitForElementPresent('_qf_Set_next-bottom');
         
@@ -308,7 +308,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     }
     
     function _testAddEvent( $params ) {
-        $this->open($this->sboxPath . 'civicrm/event/add&reset=1&action=add');
+        $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
         
         $this->waitForElementPresent('_qf_EventInfo_upload-bottom');
         
@@ -377,7 +377,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         
         // verify event input on info page
         // start at Manage Events listing
-        $this->open($this->sboxPath . 'civicrm/event/manage&reset=1');
+        $this->open($this->sboxPath . 'civicrm/event/manage?reset=1');
         $this->click('link='. $params['title']);
         
         $this->waitForPageToLoad('30000');
