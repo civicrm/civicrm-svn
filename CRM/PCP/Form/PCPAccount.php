@@ -256,7 +256,11 @@ class CRM_PCP_Form_PCPAccount extends CRM_Core_Form
                     $isPrimary = 0;
                    if ( $locTypeId == 'Primary') {
                        require_once "CRM/Core/BAO/LocationType.php";
-                       $locTypeId = & CRM_Core_BAO_LocationType::getDefault();
+                       $locTypeDefault = CRM_Core_BAO_LocationType::getDefault();
+                       $locTypeId = null;
+                       if ( $locTypeDefault ) {
+                           $locTypeId = $locTypeDefault->id;
+                       }
                        $isPrimary = 1;
                    }
 
