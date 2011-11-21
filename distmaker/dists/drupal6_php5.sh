@@ -47,22 +47,6 @@ for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz; do
 	cp $F $TRG/sql
 done
 
-# remove Quest
-find $TRG -depth -name 'Quest' -exec rm -r {} \;
-
-# delete SimpleTest
-if [ -d $TRG/packages/SimpleTest ] ; then
-  rm -rf $TRG/packages/SimpleTest
-fi
-if [ -d $TRG/packages/drupal ] ; then
-  rm -rf $TRG/packages/drupal
-fi
-
-# delete UFPDF's stuff not required on installations
-if [ -d $TRG/packages/ufpdf/ttf2ufm-src ] ; then
-  rm -rf $TRG/packages/ufpdf/ttf2ufm-src
-fi
-
 # copy docs
 cp $SRC/agpl-3.0.txt $TRG
 cp $SRC/gpl.txt $TRG 
