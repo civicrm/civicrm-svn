@@ -61,7 +61,7 @@
   </item>
   <item>
      <path>civicrm/member/search</path>
-     <title>Find Members</title>
+     <title>Find Memberships</title>
      <page_callback>CRM_Member_Controller_Search</page_callback>
      <access_arguments>access CiviMember</access_arguments>
      <page_type>1</page_type>

@@ -466,7 +466,7 @@ class CRM_Member_Form_Search extends CRM_Core_Form
      */
     public function getTitle( ) 
     {
-        return ts('Find Members');
+        return ts('Find Memberships');
     }
    
 }
