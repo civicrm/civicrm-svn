@@ -72,8 +72,8 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->assertTrue(  $this->isTextPresent( "{$eventTitle5}" ) ); 
 
       //go to block listing to enable Upcomming Events Block
-      $this->open($this->sboxPath . 'admin/build/block');
-      $this->select('edit-civicrm-6-region','value=right');
+      $this->open($this->sboxPath . 'admin/structure/block');
+      $this->select('edit-blocks-civicrm-6-region','value=sidebar_second');
       $this->click('edit-submit');  
       $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("The block settings have been updated.");
@@ -87,8 +87,8 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->assertTrue(  $this->isTextPresent( "{$eventTitle5}" ) );  
   
       //go to block listing to disable Upcomming Events Block
-      $this->open($this->sboxPath . 'admin/build/block');
-      $this->select('edit-civicrm-6-region','value=-1');
+      $this->open($this->sboxPath . 'admin/structure/block');
+      $this->select('edit-blocks-civicrm-6-region','value=-1');
       $this->click('edit-submit');  
       $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("The block settings have been updated.");
@@ -97,7 +97,7 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
   function _testCreateEvent( $eventTitle, $startdate, $enddate )
   {
       // Go directly to the URL of the screen that you will be testing (New Event).
-      $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
+      $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
       
       // $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
       $eventDescription = "Here is a description for this conference.";

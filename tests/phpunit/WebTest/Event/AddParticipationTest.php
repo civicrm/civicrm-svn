@@ -160,7 +160,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $displayName = "$firstName Anderson";
       
       // add custom data for participant role
-      $this->open($this->sboxPath . 'civicrm/admin/custom/group&reset=1 ');
+      $this->open($this->sboxPath . 'civicrm/admin/custom/group?reset=1 ');
       $this->waitForPageToLoad('30000');
 
       //add new custom data

@@ -71,7 +71,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
  
   function _testAddSet( $setTitle, $usedFor, $setHelp )
   {
-      $this->open($this->sboxPath . 'civicrm/admin/price&reset=1&action=add');
+      $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent('_qf_Set_next-bottom');
 
@@ -205,7 +205,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->webtestAddPaymentProcessor($processorName);
       
       // Go directly to the URL of the screen that you will be testing (New Event).
-      $this->open($this->sboxPath . 'civicrm/event/add&reset=1&action=add');
+      $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
       
       $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
       $email = 'Smith' . substr(sha1(rand()), 0, 7). '@example.com';
@@ -272,13 +272,13 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       
       // verify event input on info page
       // start at Manage Events listing
-      $this->open($this->sboxPath . 'civicrm/event/manage&reset=1');
+      $this->open($this->sboxPath . 'civicrm/event/manage?reset=1');
       $this->click("link=$eventTitle");
       
       $this->waitForPageToLoad('30000');
       $eventInfoUrl = $this->getLocation();
             
-      $this->open($this->sboxPath . 'civicrm/logout&reset=1');
+      $this->open($this->sboxPath . 'civicrm/logout?reset=1');
       $this->waitForPageToLoad('30000'); 
       $this->open( $eventInfoUrl );
       $this->click('link=Register Now');
@@ -319,7 +319,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->webtestLogin( );
       
       //Find Participant
-      $this->open( $this->sboxPath . 'civicrm/event/search&reset=1' );
+      $this->open( $this->sboxPath . 'civicrm/event/search?reset=1' );
       
       $this->waitForElementPresent( '_qf_Search_refresh' );
       
@@ -380,7 +380,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->webtestAddPaymentProcessor($processorName);
       
       // Go directly to the URL of the screen that you will be testing (New Event).
-      $this->open($this->sboxPath . 'civicrm/event/add&reset=1&action=add');
+      $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
       
       $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
       $email = 'Smith' . substr(sha1(rand()), 0, 7). '@example.com';
@@ -447,7 +447,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       
       // verify event input on info page
       // start at Manage Events listing
-      $this->open($this->sboxPath . 'civicrm/event/manage&reset=1');
+      $this->open($this->sboxPath . 'civicrm/event/manage?reset=1');
       $this->click("link=$eventTitle");
       
       $this->waitForPageToLoad('30000');
