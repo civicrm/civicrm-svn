@@ -116,7 +116,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->click('_qf_MembershipBlock_next');
         $this->waitForPageToLoad('30000');
         $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
-        $text = "'Membership' information has been saved.";
+        $text = "'MembershipBlock' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
     
         //logout
