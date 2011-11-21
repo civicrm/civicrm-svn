@@ -171,7 +171,7 @@ SELECT  count( id ) as statusCount
             $upgradeFrom = str_replace( '4.0.', '3.4.', $currentVer );
             
             // check for changed message templates
-            self::checkMessageTemplate( &$template, &$preUpgradeMessage, $upgradeTo, $upgradeFrom );
+            self::checkMessageTemplate( $template, $preUpgradeMessage, $upgradeTo, $upgradeFrom );
 
             if ( $upgrade->multilingual && 
                  version_compare( $upgradeFrom, '3.4.beta3'  ) == -1 &&
