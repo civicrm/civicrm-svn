@@ -390,11 +390,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->select( "relationship_type_id", "value=4_a_b" );
         
         // search organization
-        $this->type( 'rel_contact',$orgName1 );
-        $this->click( "rel_contact" );
+        $this->type( 'contact_1',$orgName1 );
+        $this->click( "contact_1" );
         $this->waitForElementPresent( "css=div.ac_results-inner li" );
         $this->click( "css=div.ac_results-inner li" );
-        $this->assertContains( $orgName1, $this->getValue( 'rel_contact' ), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('rel_contact' ) );
+        $this->assertContains( $orgName1, $this->getValue( 'contact_1' ), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('contact_1' ) );
         
         // give permission
         $this->click( "is_permission_a_b" );
@@ -498,25 +498,24 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         
         $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
         $this->waitForPageToLoad("30000");
-
-        $this->click( "xpath=//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[7]/span/a[text()='Fields']" );
+        $this->click( "link=Reserved Profiles" );
+        
+        $this->click( "xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']" );
         $this->waitForPageToLoad("30000");
 
-        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='Campaign']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
+        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='Campaign']/../td[9]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
         $this->waitForElementPresent( '_qf_Field_next-bottom' );
 
         $this->click( '_qf_Field_next-bottom' );
         $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
-                           "Status message didn't show up after saving!" );
+        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), "Status message didn't show up after saving!" );
 
-        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{#}']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
+        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{$fieldTitle}']/../td[9]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
         $this->waitForElementPresent( '_qf_Field_next-bottom' );
         
         $this->click( '_qf_Field_next-bottom' );
         $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
-                           "Status message didn't show up after saving!" );
+        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), "Status message didn't show up after saving!" );
     }
 
     
@@ -668,7 +667,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
         $this->waitForPageToLoad("30000");
         $this->click( "link=Reserved Profiles" );
-        $this->click( "xpath=//div[@id='uf_profile']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']" );
+        $this->click( "xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']" );
         $this->waitForPageToLoad("30000");
         
         $this->click( "link=Add Field" );
@@ -800,11 +799,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->select( "relationship_type_id", "value=4_a_b" );
         
         // search organization
-        $this->type( 'rel_contact',$orgName1 );
-        $this->click( "rel_contact" );
+        $this->type( 'contact_1',$orgName1 );
+        $this->click( "contact_1" );
         $this->waitForElementPresent( "css=div.ac_results-inner li" );
         $this->click( "css=div.ac_results-inner li" );
-        $this->assertContains( $orgName1, $this->getValue( 'rel_contact' ), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('rel_contact' ) );
+        $this->assertContains( $orgName1, $this->getValue( 'contact_1' ), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('contact_1' ) );
         
         // give permission
         $this->click( "is_permission_a_b" );
@@ -822,11 +821,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->select( "relationship_type_id", "value=4_a_b" );
         
         // search organization
-        $this->type( 'rel_contact',$orgName2 );
-        $this->click( "rel_contact" );
+        $this->type( 'contact_1',$orgName2 );
+        $this->click( "contact_1" );
         $this->waitForElementPresent( "css=div.ac_results-inner li" );
         $this->click( "css=div.ac_results-inner li" );
-        $this->assertContains( $orgName2, $this->getValue( 'rel_contact' ), "autocomplete expected $orgName2 but didn’t find it in " . $this->getValue('rel_contact' ) );
+        $this->assertContains( $orgName2, $this->getValue( 'contact_1' ), "autocomplete expected $orgName2 but didn’t find it in " . $this->getValue('contact_1' ) );
         
         // give permission
         $this->click( "is_permission_a_b" );
@@ -847,6 +846,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $pledges = false;
         $recurring = false;
         $memberships = true;
+        $memPriceSetId = null;
         $friend = true;
         $profilePreId  = null;
         $profilePostId = null;
@@ -870,6 +870,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                                                      $pledges, 
                                                      $recurring, 
                                                      $memberships, 
+                                                     $memPriceSetId,
                                                      $friend, 
                                                      $profilePreId,
                                                      $profilePostId,
@@ -895,6 +896,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->click( "onbehalf_organization_name" );
         $this->waitForElementPresent( "css=div.ac_results-inner li" );
         $this->click( "css=div.ac_results-inner li" );
+        sleep(5);
         $this->assertContains( $orgName1, $this->getValue( 'onbehalf_organization_name' ), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('onbehalf_organization_name' ) );
         
         $this->select( 'onbehalf_member_campaign_id', "label={$title}" );
@@ -951,11 +953,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         
         $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
         $this->waitForPageToLoad("30000");
-                
-        $this->click( "xpath=//div[@id='uf_profile']/div[2]/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[7]/span/a[text()='Fields']" );
+        $this->click( "link=Reserved Profiles" );        
+        $this->click( "xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']" );
         $this->waitForPageToLoad("30000");
         
-        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='Campaign']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
+        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='Campaign']/../td[9]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
         $this->waitForElementPresent( '_qf_Field_next-bottom' );
         
         $this->click( '_qf_Field_next-bottom' );
@@ -963,12 +965,12 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
                            "Status message didn't show up after saving!" );
         
-        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{$fieldTitle}']/../td[10]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
+        $this->click( "xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{$fieldTitle}']/../td[9]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']" );
         $this->waitForElementPresent( '_qf_Field_next-bottom' );
         
         $this->click( '_qf_Field_next-bottom' );
         $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ), 
+        $this->assertTrue( $this->isTextPresent( 'Selected Profile Field has been deleted.' ),
                            "Status message didn't show up after saving!" );
 
         $this->open( $this->sboxPath . "civicrm/contact/view?reset=1&cid={$userId}" );
@@ -983,7 +985,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
                                             $this->getConfirmation()) );
         $this->chooseOkOnNextConfirmation( );
         $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( 'Selected relationship has been deleted successfully.' ), 
+        $this->assertTrue( $this->isTextPresent( 'Selected relationship has been deleted successfully.' ),
                            "Status message didn't show up after saving!" );
     }
 
