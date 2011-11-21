@@ -184,6 +184,7 @@ registration process.{/ts}</p>
        </td>
       </tr>
      {/if}
+    {if $payer.name}
      <tr>
        <th {$headerStyle}>
          {ts}You were registered by:{/ts}
@@ -194,7 +195,7 @@ registration process.{/ts}</p>
 	 {$payer.name}
        </td>
      </tr>
-
+     {/if}
      {if $event.is_monetary}
 
       <tr>
