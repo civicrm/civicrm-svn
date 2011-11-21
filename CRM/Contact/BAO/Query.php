@@ -3562,7 +3562,7 @@ civicrm_relationship.start_date > {$today}
                           $sortByChar = false, $groupContacts = false,
                           $returnQuery = false,
                           $additionalWhereClause = null, $sortOrder = null,
-                          $additionalFromClause = null ) 
+                          $additionalFromClause = null, $skipOrderAndLimit = false ) 
     {
         require_once 'CRM/Core/Permission.php';
 
@@ -3786,7 +3786,11 @@ civicrm_relationship.start_date > {$today}
             $this->filterRelatedContacts( $from, $where, $having );
         }
 
-        $query = "$select $from $where $having $groupBy $order $limit";
+        if ( $skipOrderAndLimit ) {
+            $query = "$select $from $where $having $groupBy";
+        } else {
+            $query = "$select $from $where $having $groupBy $order $limit";
+        }
 
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);

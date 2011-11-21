@@ -286,7 +286,10 @@ WHERE  id = %1
                 $query->_useGroupBy = false;
                 $searchSQL =& $query->searchQuery( 0, 0, null,
                                                    false, false,
-                                                   false, true, true, null );
+                                                   false, true,
+                                                   true,
+                                                   null, null, null,
+                                                   true );
             }
             $groupID = CRM_Utils_Type::escape($groupID, 'Integer');
             $sql = $searchSQL . 
