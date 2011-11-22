@@ -56,8 +56,8 @@ class WebTest_Contact_AddContactsToEventAdvancedSearchTest extends CiviSeleniumT
       $this->waitForElementPresent( '_qf_Advanced_refresh' );
       $this->click( '_qf_Advanced_refresh' );	   
 
-      $this->waitForElementPresent( 'CIVICRM_QFID_ts_all_8' );	 
-      $this->click( 'CIVICRM_QFID_ts_all_8' );
+      $this->waitForElementPresent( 'CIVICRM_QFID_ts_all_12' );	 
+      $this->click( 'CIVICRM_QFID_ts_all_12' );
 
       $this->select('task', "label=Add Contacts to Event");	   
       $this->click( 'Go' );
