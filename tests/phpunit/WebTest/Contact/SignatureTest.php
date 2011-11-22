@@ -160,8 +160,8 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
       
       // Select your Editor
-      $this->click('wysiwyg_editor');
-      $this->select('wysiwyg_editor', "label=$editor");
+      $this->click('editor_id');
+      $this->select('editor_id', "label=$editor");
       $this->click('_qf_Display_next-bottom');
       $this->waitForPageToLoad('30000');
   }
