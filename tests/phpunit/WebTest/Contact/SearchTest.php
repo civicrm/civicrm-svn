@@ -159,7 +159,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("css=.msgok");
 
       // visit contact search page
-      $this->open($this->sboxPath . "civicrm/contact/search&reset=1");
+      $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
       $this->waitForPageToLoad("30000");
 
       // fill name as first_name
@@ -212,7 +212,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
   }
 
   function addGroup( $groupName = 'New Group', $parentGroupName = "- select -") {
-      $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+      $this->open($this->sboxPath . "civicrm/group/add?reset=1");
       
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
@@ -303,7 +303,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
 
 
       // visit contact search page
-      $this->open($this->sboxPath . "civicrm/contact/search&reset=1");
+      $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
       $this->waitForPageToLoad("30000");
       
       
