@@ -246,7 +246,11 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
     function buildQuickForm( ) 
     {
         // text for sort_name 
-        $this->addElement('text', 'sort_name', ts('Contributor Name or Email'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );
+        $this->addElement('text', 
+                          'sort_name', 
+                          ts('Contributor Name or Email'), 
+                          CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 
+                                                     'sort_name') );
         
         require_once 'CRM/Contribute/BAO/Query.php';
         CRM_Contribute_BAO_Query::buildSearchForm( $this );
@@ -259,7 +263,11 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
         $rows = $this->get( 'rows' ); 
         if ( is_array( $rows ) ) {
             if ( !$this->_single ) {
-                $this->addElement( 'checkbox', 'toggleSelect', null, null, array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this);" ) ); 
+                $this->addElement( 'checkbox',
+                                   'toggleSelect', 
+                                   null, 
+                                   null, 
+                                   array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this);" ) ); 
                 foreach ($rows as $row) { 
                     $this->addElement( 'checkbox', $row['checkbox'], 
                                        null, null, 

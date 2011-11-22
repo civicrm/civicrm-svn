@@ -1045,7 +1045,7 @@ function _civicrm_api3_deprecated_validate_formatted_contact( &$params )
                         return civicrm_api3_create_error( 'Invalid value for custom field \'' .
                                                           CRM_Utils_Array::value( 'name', $custom ). '\'');
                     }
-                    if ( $custom['type'] == 'Date' ) {
+                    if ( CRM_Utils_Array::value( 'type', $custom ) == 'Date' ) {
                         $params['custom'][$key][$fieldId]['value'] =
                             str_replace( '-', '', $params['custom'][$key][$fieldId]['value'] );
                     }

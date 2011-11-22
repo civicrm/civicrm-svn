@@ -723,8 +723,8 @@ AND    u.status = 1
      * @static
      */
     function languageNegotiationURL( $url, 
-                                            $addLanguagePart    = true, 
-                                            $removeLanguagePart = false ) 
+                                     $addLanguagePart    = true, 
+                                     $removeLanguagePart = false ) 
     {
         if ( empty( $url ) ) return $url;
         
