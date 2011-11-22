@@ -50,9 +50,10 @@ require_once 'CRM/Pledge/BAO/PledgePayment.php';
  * @todo possibly add ability to add payment if there are less payments than pledge installments
  * @todo possibily add ability to recalc dates if the schedule is changed
  * 
- * @param  array   $params           (reference ) input parameters
- *
- * @return array (reference )        pledge_id of created or updated record
+ * @param  array   $params    input parameters
+ * {@getfields PledgePayment_create}
+ * @example PledgePaymentCreate.php
+ * @return array API Result
  * @static void
  * @access public
  */
@@ -91,9 +92,10 @@ function _civicrm_api3_pledge_payment_create_spec(&$params){
 /**
  * Delete a pledge Payment - Note this deletes the contribution not just the link
  *
- * @param  array   $params           (reference ) input parameters
- *
- * @return boolean        true if success, else false
+ * @param  array   $params     input parameters
+ * {@getfields PledgePayment_delete}
+ * @example PledgePaymentDelete.php
+ * @return array API result
  * @static void
  * @access public
  */
@@ -111,11 +113,9 @@ function civicrm_api3_pledge_payment_delete( $params ) {
 /**
  * Retrieve a set of pledges, given a set of input params
  *
- * @param  array   $params           (reference ) input parameters
- * @param array    $returnProperties Which properties should be included in the
- *                                   returned pledge object. If NULL, the default
- *                                   set of properties will be included.
- *
+ * @param  array   $params     input parameters
+ * {@getfields PledgePayment_get}
+ * @example PledgePaymentGet.php *
  * @return array (reference )        array of pledges, if error an array with an error id and error message
  * @static void
  * @access public
