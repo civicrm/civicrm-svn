@@ -182,7 +182,7 @@ class CRM_Logging_Differ
                 require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
                 eval("\$dao = new $daos[$table];");
                 foreach ($dao->fields() as $field) {
-                    $titles[$table][$field['name']] = CRM_Utils_Array::value('title',$fields);
+                    $titles[$table][$field['name']] = CRM_Utils_Array::value('title',$field);
 
                     if ($field['type'] == CRM_Utils_Type::T_BOOLEAN) {
                         $values[$table][$field['name']] = array('0' => ts('false'), '1' => ts('true'));
