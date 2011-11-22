@@ -106,6 +106,7 @@ class WebTest_Mailing_AddMailingWithMessageTemplateTest extends CiviSeleniumTest
       
       $this->click("template");
       $this->select("template", "label=$msgTitle");
+      sleep(5);
       $this->click("xpath=id('Upload')/div[2]/fieldset[@id='compose_id']/div[2]/div[1]");
       $this->click( 'subject' );
       
