@@ -36,8 +36,8 @@
 
 require_once 'CRM/Import/Parser.php';
 //@todo calling api functions directly is not supported
- require_once 'api/v3/utils.php';
-
+require_once 'api/v3/utils.php';
+require_once 'api/v3/Contact.php';
 /**
  * class to parse contact csv files
  */
