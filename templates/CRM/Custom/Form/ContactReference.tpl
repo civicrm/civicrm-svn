@@ -49,7 +49,7 @@ cj( function( ) {
 
 function validate{/literal}{$element_name|replace:']':''|replace:'[':'_'|replace:'-':'_'}{literal}( Data, position ) {
   if ( Data[1] == 'error' ) {
-    cj(this.elementId).parent().append("<span id='"+ (this.elementId).substr(1) +"_error' class='hiddenElement messages crm-error'>" + "{/literal}{ts}Invalide parameters for contact search.{/ts}{literal}" + "</span>");
+    cj(this.elementId).parent().append("<span id='"+ (this.elementId).substr(1) +"_error' class='hiddenElement messages crm-error'>" + "{/literal}{ts}Invalid parameters for contact search.{/ts}{literal}" + "</span>");
     cj(this.elementId + '_error').fadeIn(800).fadeOut(5000, function( ){ cj(this).remove(); });
     Data[1] = '';
   }
