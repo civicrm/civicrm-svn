@@ -65,7 +65,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $displayName = "$firstName Anderson";
       
       // Go directly to the URL of the screen that you will be testing (New Household).
-      $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Household");
+      $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Household");
       
       //fill in Household name
       $this->click("household_name");
@@ -88,8 +88,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->select('relationship_type_id', "label={$params['label_b_a']}");
       
       //fill in the individual
-      $this->typeKeys( 'rel_contact', $sortName );
-      $this->fireEvent("rel_contact", "focus");
+      $this->typeKeys( 'contact_1', $sortName );
+      $this->fireEvent( 'contact_1', 'focus' );
       $this->waitForElementPresent("css=div.ac_results-inner li");
       $this->click("css=div.ac_results-inner li");
       
@@ -183,8 +183,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->select('relationship_type_id', "label={$params['label_b_a']}");
       
       //fill in the individual
-      $this->typeKeys( 'rel_contact', $sortName );
-      $this->fireEvent("rel_contact", "focus");
+      $this->typeKeys( 'contact_1', $sortName );
+      $this->fireEvent('contact_1', 'focus');
       
       $this->waitForElementPresent("css=div.ac_results-inner li");
       $this->click("css=div.ac_results-inner li");
@@ -285,8 +285,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->select( 'relationship_type_id', "label={$params['label_b_a']}" );
       
       //fill in the individual
-      $this->typeKeys( 'rel_contact', $sortName );
-      $this->fireEvent( "rel_contact", "focus" );
+      $this->typeKeys( 'contact_1', $sortName );
+      $this->fireEvent( 'contact_1', 'focus' );
       
       $this->waitForElementPresent( "css=div.ac_results-inner li" );
       $this->click( "css=div.ac_results-inner li" );
