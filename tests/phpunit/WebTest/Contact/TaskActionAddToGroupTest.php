@@ -50,7 +50,7 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
 	  $cids = array( );
 	  for ( $i = 0; $i < 2; $i++ ) {
 	      // logout before calling included test, to avoid impossible repeated login
-          $this->open( $this->sboxPath . "civicrm/logout&reset=1" );
+          $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
 
           // create new contact
 		  WebTest_Contact_AddTest::testIndividualAdd();
