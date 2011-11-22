@@ -709,6 +709,9 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                      null, false, null,
                      "search", "advanced" );' );
         }
+        
+        $selector->setKey( $this->controller->_key );
+
         $controller = new CRM_Contact_Selector_Controller( $selector ,
                                                            $this->get( CRM_Utils_Pager::PAGE_ID ),
                                                            $this->get( CRM_Utils_Sort::SORT_ID  ),
