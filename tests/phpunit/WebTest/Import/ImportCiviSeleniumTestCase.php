@@ -236,6 +236,11 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
           $this->select('subType', 'label=' . $other['contactSubtype'] );
       }
 
+      if ( isset($other['dedupe']) ) {
+          $this->waitForElementPresent("dedupe");
+          $this->select('dedupe', 'value=' . $other['dedupe'] );
+      }      
+      
       // Use already created mapping
       $existingMapping = null;
       if ( isset($other['useMappingName']) ) {
