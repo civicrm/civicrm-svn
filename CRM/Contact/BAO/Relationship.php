@@ -316,15 +316,11 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             }
         }
         
+        $contactSubType = array();
         if ( $contactId ) {
-            $contact     = new CRM_Contact_BAO_Contact();
-            $contact->id = $contactId;
-            if ( $contact->find(true) ) {
-                $contactType = $contact->contact_type;
-                if ( $contact->contact_sub_type ) {
-                    $contactSubType = $contact->contact_sub_type;
-                }
-            } 
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $contactType    = CRM_Contact_BAO_Contact::getContactType( $contactId );
+            $contactSubType = CRM_Contact_BAO_Contact::getContactSubType( $contactId );
         }
 
         foreach ($allRelationshipType as $key => $value) {
@@ -332,7 +328,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             if ( ( ( ! $value['contact_type_a'] ) || $value['contact_type_a'] == $contactType ) &&
                  // the other contact type is required or present or matches
                  ( ( ! $value['contact_type_b'] ) || ( ! $otherContactType ) || $value['contact_type_b'] == $otherContactType ) &&
-                 ( ( $value['contact_sub_type_a'] == $contactSubType ) || 
+                 ( in_array( $value['contact_sub_type_a'], $contactSubType ) || 
                    ( (!$value['contact_sub_type_b'] && !$value['contact_sub_type_a']) && !$onlySubTypeRelationTypes) ) ) {
                 $relationshipType[ $key . '_a_b' ] =  $value[ "{$column}_a_b" ];
                      
@@ -341,7 +337,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             if ( ( ( ! $value['contact_type_b'] ) || $value['contact_type_b'] == $contactType ) &&
                  ( ( ! $value['contact_type_a'] ) || ( ! $otherContactType ) || $value['contact_type_a'] == $otherContactType ) &&
                  ( ( (!$value['contact_sub_type_a'] && !$value['contact_sub_type_b']) && !$onlySubTypeRelationTypes) 
-                   || ( $value['contact_sub_type_b'] == $contactSubType ) ) ) {
+                   || in_array( $value['contact_sub_type_b'], $contactSubType ) ) ) {
                 $relationshipType[ $key . '_b_a' ] = $value[ "{$column}_b_a" ];
             }
             
