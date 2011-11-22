@@ -44,7 +44,7 @@
     <tr>
 		<th>{ts}Page Title{/ts}</th>
 		<th>{ts}Supporter{/ts}</th>
-		<th id="sortable">{ts}Contribution Page{/ts}</th>
+		<th id="sortable">{ts}Contribution Page / Event{/ts}</th>
 		<th id="start_date">{ts}Starts{/ts}</th>
 		<th id="end_date">{ts}Ends{/ts}</th>
 		<th>{ts}Status{/ts}</th>
@@ -55,7 +55,7 @@
 	</thead>
 	<tbody>
 	{foreach from=$rows item=row}
-	<tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}">
+	<tr id="row_{$row.id}" class="{$row.class}">
         	<td><a href="{crmURL p='civicrm/pcp/info' q="reset=1&id=`$row.id` " fe='true'}" title="{ts}View Personal Campaign Page{/ts}" target="_blank">{$row.title}</a></td>
 		<td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.supporter_id`"}" title="{ts}View contact record{/ts}">{$row.supporter}</a></td>
 		<td><a href="{$row.page_url}" title="{ts}View page{/ts}" target="_blank">{$row.page_title}</td>

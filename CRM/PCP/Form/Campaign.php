@@ -49,7 +49,11 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
     {
         // we do not want to display recently viewed items, so turn off
         $this->assign( 'displayRecent' , false );
-        $this->_component = $this->controller->get('component');
+        
+        // component null in controller object - fix? dgg
+        // $this->_component = $this->controller->get('component');
+        $this->_component = CRM_Utils_Request::retrieve( 'component', 'String', $this );
+        $this->assign( 'component', $this->_component );
         
         $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this );
         $this->assign( 'context', $this->_context );
@@ -85,6 +89,8 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
         
         if ( $this->get('action') & CRM_Core_Action::ADD ) {
             $defaults['is_active'] = 1;
+            $defaults['is_honor_roll'] = 1;
+            $defaults['is_thermometer'] = 1;
         }
         
         $this->_contactID    = CRM_Utils_Array::value( 'contact_id', $defaults );
@@ -110,7 +116,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
         $attributes = array( );
         if ( $this->_component == 'event') {
           if ( $this->get('action') & CRM_Core_Action::ADD ) {
-              $attributes = array('value' => ts('Sign up Now'), 'onClick' => 'select();');
+              $attributes = array('value' => ts('Join Us'), 'onClick' => 'select();');
           }
           $this->add('text', 'donate_link_text', ts('Sign up Button'), $attributes);
         }

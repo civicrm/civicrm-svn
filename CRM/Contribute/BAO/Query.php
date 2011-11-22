@@ -690,7 +690,7 @@ class CRM_Contribute_BAO_Query
         $form->add('select', 'contribution_pcp_made_through_id', 
                    ts( 'Personal Campaign Page' ),
                    array( '' => ts( '- select -' ) ) +
-                   CRM_Contribute_PseudoConstant::pcPage( 'contribute' ) );
+                   CRM_Contribute_PseudoConstant::pcPage( ) );
         
         $status = array( );
         

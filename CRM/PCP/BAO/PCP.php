@@ -422,18 +422,26 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
             }
         }
         $page->assign( 'pcp', true );
-        $page->add( 'checkbox', 'pcp_display_in_roll', ts('Show my contribution in the public honor roll'), null, null,
-                    array('onclick' => "showHideByValue('pcp_display_in_roll','','nameID|nickID|personalNoteID','block','radio',false); pcpAnonymous( );")
-                    );
-        $extraOption = array('onclick' =>"return pcpAnonymous( );");
-        $elements = array( );
-        $elements[] =& $page->createElement('radio', null, '', ts( 'Include my name and message'), 0, $extraOption );
-        $elements[] =& $page->createElement('radio', null, '', ts( 'List my contribution anonymously'), 1, $extraOption );
-        $page->addGroup( $elements, 'pcp_is_anonymous', null, '&nbsp;&nbsp;&nbsp;' );
-        $page->_defaults['pcp_is_anonymous'] = 0;
+        
+        // build honor roll fields for registration form if supporter has honor roll enabled for their PCP
+        if ( $pcpInfo['is_honor_roll'] ) {
+            $page->assign( 'is_honor_roll', true );
+            $page->add( 'checkbox', 'pcp_display_in_roll', ts('Show my support in the public honor roll'), null, null,
+                        array('onclick' => "showHideByValue('pcp_display_in_roll','','nameID|nickID|personalNoteID','block','radio',false); pcpAnonymous( );")
+                        );
+            $extraOption = array('onclick' =>"return pcpAnonymous( );");
+            $elements = array( );
+            $elements[] =& $page->createElement('radio', null, '', ts( 'Include my name and message'), 0, $extraOption );
+            $elements[] =& $page->createElement('radio', null, '', ts( 'List my support anonymously'), 1, $extraOption );
+            $page->addGroup( $elements, 'pcp_is_anonymous', null, '&nbsp;&nbsp;&nbsp;' );
+            $page->_defaults['pcp_is_anonymous'] = 0;
 
-        $page->add( 'text', 'pcp_roll_nickname', ts('Name'), array( 'maxlength' => 30 ) );
-        $page->add( 'textarea', "pcp_personal_note", ts( 'Personal Note' ), array( 'style' => 'height: 3em; width: 40em;' ) );
+            $page->add( 'text', 'pcp_roll_nickname', ts('Name'), array( 'maxlength' => 30 ) );
+            $page->add( 'textarea', "pcp_personal_note", ts( 'Personal Note' ), array( 'style' => 'height: 3em; width: 40em;' ) );
+            
+        } else {
+            $page->assign( 'is_honor_roll', false );
+        }
     }
 
     /*

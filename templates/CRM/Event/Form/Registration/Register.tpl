@@ -101,7 +101,7 @@
     {/if}
 {/if}
 
-{if $pcp}
+{if $pcp && $is_honor_roll }
     <fieldset class="crm-group pcp-group">
         <div class="crm-section pcp-section">
             <div class="crm-section display_in_roll-section">
@@ -184,6 +184,7 @@
 
 {literal} 
 <script type="text/javascript">
+    {/literal}{if $pcp && $is_honor_roll }pcpAnonymous();{/if}{literal}
 
     function allowParticipant( ) { 		
 	{/literal}{if $allowGroupOnWaitlist}{literal}
@@ -298,5 +299,30 @@
          showHidePaymentInfo( );
       {/literal}{/if}{literal}
     }
+    
+    {/literal}{if $pcp && $is_honor_roll }{literal}
+    function pcpAnonymous( ) {
+        // clear nickname field if anonymous is true
+        if ( document.getElementsByName("pcp_is_anonymous")[1].checked ) { 
+            document.getElementById('pcp_roll_nickname').value = '';
+        }
+        if ( ! document.getElementsByName("pcp_display_in_roll")[0].checked ) { 
+            hide('nickID', 'block');
+            hide('nameID', 'block');
+    	hide('personalNoteID', 'block');
+        } else {
+            if ( document.getElementsByName("pcp_is_anonymous")[0].checked ) {
+                show('nameID', 'block');
+                show('nickID', 'block');
+    	        show('personalNoteID', 'block');
+            } else {
+                show('nameID', 'block');
+                hide('nickID', 'block');
+    	    hide('personalNoteID', 'block');
+            }
+        }
+    }
+    {/literal}{/if}{literal}
+
 </script>
 {/literal} 

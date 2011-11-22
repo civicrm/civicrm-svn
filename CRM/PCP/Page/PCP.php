@@ -237,16 +237,17 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
             $pages['contribute'][$cpages->id]['end_date']   = $cpages->end_date;
         }
 
-        // get all event pages
-        $query = "SELECT id, title, start_date, end_date 
+        // get all event pages. pcp campaign start and end dates for event related pcp's use the online registration start and end dates,
+        // altho if target is contribution page this might not be correct. fixme? dgg
+        $query = "SELECT id, title, start_date, end_date, registration_start_date, registration_end_date 
                   FROM civicrm_event 
                   WHERE is_template IS NULL OR is_template != 1";
         $epages = CRM_Core_DAO::executeQuery( $query );
         while ( $epages->fetch() ) {
             $pages['event'][$epages->id]['id']         = $epages->id;
             $pages['event'][$epages->id]['title']      = $epages->title;
-            $pages['event'][$epages->id]['start_date'] = $epages->start_date;
-            $pages['event'][$epages->id]['end_date']   = $epages->end_date;
+            $pages['event'][$epages->id]['start_date'] = $epages->registration_start_date;
+            $pages['event'][$epages->id]['end_date']   = $epages->registration_end_date;
         }
         
         $params      = $this->get('params') ? $this->get('params') : array();
@@ -325,6 +326,7 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
                 'page_id'      => $page_id,
                 'page_title'   => $title,
                 'page_url'     => $pageUrl,
+                'page_type'    => $page_type,
                 'action'       => CRM_Core_Action::formLink(self::links(), $action,
                                                     array('id' => $pcp->id)),
                 'title'        => $pcp->title,

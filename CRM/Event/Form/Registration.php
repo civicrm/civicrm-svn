@@ -499,7 +499,6 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         if ( $pcpId ) {
             require_once 'CRM/PCP/BAO/PCP.php';
             $pcp = CRM_PCP_BAO_PCP::handlePcp($pcpId, 'event', $this->_values['event']);
-            
             $this->_pcpId    = $pcp['pcpId'];
             $this->_pcpBlock = $pcp['pcpBlock'];
             $this->_pcpInfo  = $pcp['pcpInfo'];
