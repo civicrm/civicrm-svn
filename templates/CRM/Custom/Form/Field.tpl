@@ -171,8 +171,9 @@ function custom_option_html_type( ) {
             <td class="label">{$form.group_id.label}</td>	
             <td class="html-adjust">
               {$form.group_id.html}
-	      &nbsp;&nbsp;<span><a href="javascript:toggleContactRefFilter('Advance')">{ts}Advanced Filter{/ts}</a></span>
-	    </td>
+	          &nbsp;&nbsp;<span><a href="javascript:toggleContactRefFilter('Advance')">{ts}Advanced Filter{/ts}</a></span>
+	          <div class="messages status"><div class="icon alert-icon"></div> {ts}If this field is included in a profile, the auto-complete search results will be available to any user with "Profile: Listings" permission. Keep this in mind if you are planning on using this field in front-end profile, event registration or contribution forms (so that you do not unintentionally expose contact data).{/ts}
+	        </td>
         </tr>	
 	<tr id='field_advance_filter'>
             <td class="label">{$form.filter.label}</td>	
