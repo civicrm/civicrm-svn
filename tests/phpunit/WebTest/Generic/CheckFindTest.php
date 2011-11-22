@@ -41,7 +41,7 @@ class WebTest_Generic_CheckFindTest extends CiviSeleniumTestCase
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing.
-      $this->open($this->sboxPath . "civicrm/contact/search&reset=1");
+      $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
       $this->waitForElementPresent("_qf_Basic_refresh");
       $this->click("//input[@name='_qf_Basic_refresh' and @value='Search']");
       $this->waitForPageToLoad("30000");

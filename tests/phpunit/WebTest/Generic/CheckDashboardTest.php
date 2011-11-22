@@ -63,11 +63,11 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase
       $this->click("link=Configure Your Dashboard");
       $this->waitForElementPresent("dashlets-header-col-0");
       $this->mouseDownAt($widgetConfigureID,"");
-      sleep(1);
+      sleep(3);
       $this->mouseMoveAt("existing-dashlets-col-1","");
-      sleep(1);
+      sleep(3);
       $this->mouseUpAt("existing-dashlets-col-1","");
-      sleep(1);
+      sleep(3);
       $this->click("link=Done");
       $this->waitForElementPresent("link=Configure Your Dashboard");
       $this->waitForTextPresent("$widgetTitle");
@@ -76,6 +76,7 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase
       $this->click("css=li#widget-1 a.fullscreen-icon");
       $this->waitForElementPresent("ui-dialog-title-crm-dashlet-container");
       $this->assertTrue($this->isTextPresent($widgetTitle)); 
+      sleep(5);
       $this->click("link=close");
   }
 
@@ -111,12 +112,12 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase
       $this->_testAddDashboardElement($widgetConfigureID, $widgetEnabledSelector, $widgetTitle);
 
       // If CiviCase enabled, click 'more' link for context menu pop-up in the widget selector
-      if ( $this->isElementPresent( "//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span[2][text()='more ']") ) {
+      if ( $this->isElementPresent( "//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span[text()='more ']") ) {
           // click 'Delete Activity' link
-          $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']");
+          $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span[text()='more ']/ul/li[2]/a[text()='Delete']");
       } else {
           // click 'Delete Activity' link
-          $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span/a[3]");
+          $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span//a[text()='Delete']");
       }
       $this->waitForPageToLoad("30000");
       $this->waitForElementPresent("_qf_Activity_next-bottom");

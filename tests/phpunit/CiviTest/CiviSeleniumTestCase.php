@@ -990,7 +990,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         // Select the activity type from the activity dropdown
         $this->select("other_activity", "label=Meeting");
         
-        $this->waitForElementPresent("_qf_Activity_upload");
+        $this->waitForElementPresent("_qf_Activity_upload-bottom");
 
         $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__ );
 
@@ -1009,9 +1009,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         // ...and verifying if the page contains properly formatted display name for chosen contact.
         $this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__ );
-
-        // Since we're here, let's check if screen help is being displayed properly
-        $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
 
         // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
         $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
@@ -1036,12 +1033,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         // Scheduling follow-up.
         $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
         $this->select( "followup_activity_type_id", "value=1" );
-        $this->type( "interval", "1" );
-        $this->select( "interval_unit","value=day" ); 
+        $this->webtestFillDateTime('followup_date','+2 month 11:10PM');
         $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
 
         // Clicking save.
-        $this->click("_qf_Activity_upload");
+        $this->click("_qf_Activity_upload-bottom");
         $this->waitForPageToLoad("30000");
 
         // Is status message correct?
