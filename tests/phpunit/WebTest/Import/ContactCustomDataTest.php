@@ -53,21 +53,26 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
         $this->webtestLogin();
         
         $firstName1 = 'Ma_' . substr(sha1(rand()), 0, 7);
-             
         // Add a custom group and custom field
         $customDataParams = $this->_addCustomData( );
         
-        // Edit default strict rule
+        // Add New Strict Rule
+        $newRuleTitle ='IndividualStrict_' . substr(sha1(rand()), 0, 7);      
         $this->open( $this->sboxPath . "civicrm/contact/deduperules?reset=1" );
         $this->waitForPageToLoad( "30000" );
         
-        $this->click( "xpath=//div[@id='browseValues']//table/tbody//tr/td[2][text()='Individual']/../td[3][text()='Strict']/../td[5]/span/a[2][text()='Edit Rule']" );
-        $this->waitForElementPresent( '_qf_DedupeRules_cancel-bottom' );
-
-        // Set custom field as the parameter for dupe checking
-        $this->select( 'where_0', "label=$customDataParams[1]" );
+        $this->click( "xpath=//div[@class='action-link']/a" );
+        $this->waitForElementPresent( '_qf_DedupeRules_next-bottom' );
+        $this->type( 'title', $newRuleTitle );
+        $this->select( 'level', 'label=Strict' );
+        $this->select( "where_0", "label=$customDataParams[1]" );
         $this->click( '_qf_DedupeRules_next-bottom' );
+        $this->waitForPageToLoad( "30000" );
+        $this->assertTrue( $this->isTextPresent( "The rule '{$newRuleTitle}' has been saved." ) );
 
+        $rgId = explode( '&rgid=', $this->getAttribute( "xpath=//div[@id='browseValues']//table/tbody//tr/td[text()='{$newRuleTitle}']/../td[3][text()='Strict']/../td[5]/span/a[text()='Use Rule']@href") );
+        $rgId = explode('&', $rgId[1]);
+        
         // Add Contact
         $firstName2 = 'An_' . substr(sha1(rand()), 0, 7);
         $this->webtestAddContact( $firstName2, "Summerson" );
@@ -79,8 +84,8 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
         $this->click( 'link=Expand all tabs' );
         
         // Fill custom data
-        $this->waitForElementPresent( "{$customDataParams[0]}_-1" );
-        $this->type( "{$customDataParams[0]}_-1", 'This is a test field' );
+        $this->waitForElementPresent( "{$customDataParams[0]}_1" );
+        $this->type( "{$customDataParams[0]}_1", 'This is a test field' );
         $this->click( '_qf_Contact_upload_view' );
                 
         // Get sample import data.
@@ -89,6 +94,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
         // Import and check Individual contacts in Skip mode.
         $other = array( 'saveMapping'           => true,
                         'callbackImportSummary' => 'checkDuplicateContacts',
+                        'dedupe'                => $rgId[0]
                         );
         
         // Check duplicates
@@ -139,7 +145,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     function _addCustomData( )
     {
         // Go directly to the URL of the screen that you will be testing (New Custom Group).
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?reset=1" );
         
         //add new custom data
         $this->click("//a[@id='newCustomDataGroup']/span");
@@ -185,4 +191,5 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
 
         return array( "custom_{$customFieldId}", $customField, $customGroupTitle );
     }
+
 }
