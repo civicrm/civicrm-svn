@@ -1167,7 +1167,7 @@ function _civicrm_api3_deprecated_create_participant_formatted( $params , $onDup
             return $error;
         }
     }
-
+    require_once "api/v3/Participant.php";
     return civicrm_api3_participant_create( $params );
 }
 
