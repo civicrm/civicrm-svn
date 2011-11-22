@@ -80,5 +80,5 @@ Total: {$total|crmMoney:$currency|string_format:"%10s"}
 ===========================================================
 {$credit_card_type}
 {$credit_card_number}
-{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}
+{ts}Expires{/ts}: {$credit_card_exp_date.M}/{$credit_card_exp_date.Y}
 {/if}
