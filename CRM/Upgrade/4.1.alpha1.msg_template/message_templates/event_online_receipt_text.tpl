@@ -118,8 +118,9 @@ registration process.{/ts}
 {$email}
 {/if}
 
+{if $payer.name}
 You were registered by: {$payer.name}
-
+{/if}
 {if $event.is_monetary} {* This section for Paid events only.*}
 
 ==========================================================={if $pricesetFieldsCount }===================={/if}
@@ -179,7 +180,7 @@ You were registered by: {$payer.name}
 {ts}Total Participants{/ts}: {$count}
 {/if}
   
-{if $is_pay_later }
+{if $is_pay_later}
 
 ==========================================================={if $pricesetFieldsCount }===================={/if}
 
@@ -231,8 +232,6 @@ You were registered by: {$payer.name}
 {/if}
 {/if}
 {/if} {* End of conditional section for Paid events *}
-
-
 
 {if $customPre}
 {foreach from=$customPre item=customPr key=i}
