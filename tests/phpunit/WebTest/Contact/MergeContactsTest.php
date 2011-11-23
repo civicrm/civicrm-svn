@@ -263,7 +263,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->assertTrue($this->isTextPresent("$lastName, " . $firstName), "Contact not found in line " . __LINE__ );
         
         // Since we're here, let's check if screen help is being displayed properly
-        // $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
+        $this->assertTrue($this->isTextPresent("Assigned activities will appear in their Activities listing at CiviCRM Home"));
         
         // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
         // For simple input fields we can use field id as selector
