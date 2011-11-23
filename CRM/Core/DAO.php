@@ -1010,7 +1010,7 @@ FROM   civicrm_domain
      *                                        on which basis to copy
      * @param array  $newData                 array of all the fields & values 
      *                                        to be copied besides the other fields
-     * @param string $fieldsFix               array of fields that you want to prefix/suffix
+     * @param string $fieldsFix               array of fields that you want to prefix/suffix/replace
      * @param string $blockCopyOfDependencies fields that you want to block from
      *                                        getting copied
      * 

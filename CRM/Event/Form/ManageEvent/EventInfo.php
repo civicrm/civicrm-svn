@@ -309,8 +309,6 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $params['is_share' ]       = CRM_Utils_Array::value('is_share', $params, false);
         $params['default_role_id'] = CRM_Utils_Array::value('default_role_id', $params, false);
         $params['id']              = $this->_id;
-
-  
         
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Event', false, false, 
                                                              CRM_Utils_Array::value( 'event_type_id', $params ) );
@@ -382,6 +380,13 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                     CRM_Friend_BAO_Friend::addTellAFriend( $tafParams );
                 }
             }
+        
+            //copy pcp settings
+            CRM_Core_DAO::copyGeneric( 'CRM_PCP_DAO_PCPBlock', 
+                                       array( 'entity_id'    => $params['template_id'],
+                                              'entity_table' => 'civicrm_event'),
+                                       array( 'entity_id'    => $event->id ),
+                                       array( 'replace'      => array( 'target_entity_id' => $event->id ) ) );
         }
         
         $this->set( 'id', $event->id );

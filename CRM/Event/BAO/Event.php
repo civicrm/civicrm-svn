@@ -912,7 +912,8 @@ WHERE civicrm_event.is_active = 1
         $copyPCP        =& CRM_Core_DAO::copyGeneric( 'CRM_PCP_DAO_PCPBlock', 
                                                       array( 'entity_id'    => $id,
                                                              'entity_table' => 'civicrm_event'),
-                                                      array( 'entity_id'    => $copyEvent->id ) );
+                                                      array( 'entity_id'    => $copyEvent->id ),
+                                                      array( 'replace'      => array( 'target_entity_id' => $copyEvent->id ) ) );
         
         require_once 'CRM/Core/BAO/OptionGroup.php';
         //copy option Group and values
