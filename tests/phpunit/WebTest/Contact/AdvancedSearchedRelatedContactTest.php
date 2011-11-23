@@ -49,7 +49,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
         $this->webtestAddPaymentProcessor($processorName);
         
         // Go directly to the URL of the screen that you will be testing (New Event).
-        $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
+        $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
         
         $eventTitle = 'My Conference - '.substr(sha1(rand()), 0, 7);
         $eventDescription = "Here is a description for this conference.";
