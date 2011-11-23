@@ -190,9 +190,9 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
 
   public function get_main_event_participants()
   {
-    return array_values(array_reduce($this->get_main_events_in_carts(), function &($sum, $event_in_cart) {
-      //XXX list of references
-      return $sum += $event_in_cart->participants;
+    //TODO return a list of references
+    return array_values(array_reduce($this->get_main_events_in_carts(), function ($sum, $event_in_cart) {
+      return array_merge($sum, $event_in_cart->participants);
     },
     array()
     ));

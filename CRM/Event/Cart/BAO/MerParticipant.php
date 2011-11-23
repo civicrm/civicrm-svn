@@ -98,7 +98,7 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
 
   function get_participant_index( )
   {
-    if (!$this->cart) {
+    if (!isset($this->cart)) {
         $this->cart = CRM_Event_Cart_BAO_Cart::find_by_id($this->cart_id);
         $this->cart->load_associations();
     }

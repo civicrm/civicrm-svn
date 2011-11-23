@@ -88,7 +88,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
     $fields = $this->_submitValues;
 
     foreach ( $this->cart->get_main_events_in_carts( ) as $event_in_cart ) {
-      $price_set_id = CRM_Event_BAO_Event::usesPriceSet( "civicrm_event", $event_in_cart->event_id );
+      $price_set_id = CRM_Event_BAO_Event::usesPriceSet( $event_in_cart->event_id );
       if ( $price_set_id ) {
         $priceField = new CRM_Price_DAO_Field( );
         $priceField->price_set_id = $price_set_id;
@@ -260,7 +260,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
      $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
      $mail = $strtolower( trim( $mail ) );
 
-     $query .= " 
+     $query = " 
 SELECT     contact_id
 FROM       civicrm_email
 WHERE      email = %1";
