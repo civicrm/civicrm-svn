@@ -52,8 +52,9 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
       $this->webtestLogin();
       
       // Go directly to the URL of New Individual.
-      $this->open($this->sboxPath . 'civicrm/contact/add&reset=1&ct=Individual');
-           
+      $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual');
+      $this->waitForElementPresent( 'first_name' );
+
       $email = substr(sha1(rand()), 0, 7) . '@example.com';
       
       // fill in first name
@@ -162,7 +163,8 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
       
       //create oranization
       $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Organization');
-      
+      $this->waitForElementPresent( 'organization_name' );
+
       // get value for organization contact 
       $organizationName  = 'org_' . substr(sha1(rand()), 0, 7);
       $organizationEmail = substr(sha1(rand()), 0, 7) . '@example.org';
@@ -262,7 +264,8 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
       
       // create household
       $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Household');
-      
+      $this->waitForElementPresent( 'household_name' );
+
       // get values for household contact 
       $householdName  = 'household_' . substr(sha1(rand()), 0, 7);
       $householdEmail = substr(sha1(rand()), 0, 7) . '@example.com';
