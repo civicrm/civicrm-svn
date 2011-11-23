@@ -622,7 +622,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       
       $this->assertTrue( $this->isTextPresent( "Survey Title = $surveyTitle" ) );
       $this->assertTrue( $this->isTextPresent( "Q1 = $field1" ) );
-      $this->assertTrue( $this->isTextPresent( "$value1, $value2" ) );
+      $this->assertTrue( $this->isTextPresent( "$value1" ) );
       
       // use GOTV (campaign/gotv) to mark the respondents as voted
       $this->open( $this->sboxPath . "civicrm/campaign/gotv?reset=1" );
