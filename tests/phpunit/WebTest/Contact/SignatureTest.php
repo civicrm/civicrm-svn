@@ -56,8 +56,15 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       // Select Your Editor
       $this->_selectEditor('TinyMCE');
       
-      // Click on Edit of Current User
-      $this->click("xpath=id('recently-viewed')/ul/li/ul/li/a[2]");
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
+
+      // Get contact id from url.
+      $matches = array();
+      preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
+      $contactId  = $matches[1];
+      
+      $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid={$contactId}");
       $this->waitForPageToLoad('30000');
       
       $this->click("//tr[@id='Email_Block_1']/td[1]/div[2]/div[1]");
@@ -113,8 +120,15 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       // Select Your Editor
       $this->_selectEditor('CKEditor');
       
-      // Click on Edit of Current User
-      $this->click("xpath=id('recently-viewed')/ul/li/ul/li/a[2]");
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
+
+      // Get contact id from url.
+      $matches = array();
+      preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
+      $contactId  = $matches[1];
+      
+      $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid={$contactId}");
       $this->waitForPageToLoad('30000');
       
       $this->click("//tr[@id='Email_Block_1']/td[1]/div[2]/div[1]");
