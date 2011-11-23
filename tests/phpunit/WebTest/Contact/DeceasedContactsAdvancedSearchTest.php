@@ -81,13 +81,14 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
 
       // Remove contacts from group
       $this->waitForElementPresent( 'Go' );
-      $this->assertTrue( $this->isTextPresent( '3 Contacts' ) );
+      $this->assertTrue( $this->isTextPresent( '2 Contacts' ) );
       $this->click( "xpath=//form[@id='Advanced']/div[3]/div/div[2]/table/thead/tr/th/input" );
-      $this->select( 'task', 'Remove Contacts from Group' );
+     
+      $this->select( 'task', 'label=Remove Contacts from Group' );
       $this->click( "xpath=//div[@id='search-status']/table/tbody/tr[3]/td/ul/input[2]" );
       $this->waitForElementPresent( '_qf_RemoveFromGroup_back-bottom' );
-      $this->assertTrue( $this->isTextPresent( 'Number of selected contacts: 3' ) );
-      $this->select( 'group_id', "{$groupName}" );
+      $this->assertTrue( $this->isTextPresent( 'Number of selected contacts: 2' ) );
+      $this->select( 'group_id', "label={$groupName}" );
       $this->click( '_qf_RemoveFromGroup_next-bottom' );
       $this->waitForPageToLoad( '30000' );
       $this->assertTrue( $this->isTextPresent( "Removed Contact(s) from {$groupName}" ) );
@@ -100,7 +101,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
       
       // Check if non-deceased contacts are still present
       $this->waitForElementPresent( 'Go' );
-      $this->assertTrue( $this->isTextPresent( '2 Contacts' ) );
+      $this->assertTrue( $this->isTextPresent( '3 Contacts' ) );
   }
 
   function _testAddContact( $firstName, $lastName, $email, $groupName, $deceased = false )
