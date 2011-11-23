@@ -119,7 +119,7 @@
   {else}
       <div class="status message">
          {capture assign=docURL}{crmURL p="civicrm/admin/member/membershipType" q="reset=1"}{/capture}
-         {ts 1=$docURL}You need to have at least one <a href="%1">Membership Type</a> to enable Member Signup.{/ts}
+         {ts 1=$docURL}You need to have at least one <a href="%1">Membership Type</a> with 'Public' visibility in order to enable self-service Membership Signup and Renewal.{/ts}
       </div>
   {/if} 
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
