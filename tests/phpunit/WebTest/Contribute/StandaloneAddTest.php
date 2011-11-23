@@ -60,7 +60,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->webtestAddContact( $softCreditFname, $softCreditLname, false );
 
       // Go directly to the URL of the screen that you will be testing (New Contribution-standalone).
-      $this->open($this->sboxPath . "civicrm/contribute/add&reset=1&context=standalone");
+      $this->open($this->sboxPath . "civicrm/contribute/add?reset=1&context=standalone");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
