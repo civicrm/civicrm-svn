@@ -458,7 +458,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $surveyProfile = "Survey Profile $title";
       $this->type( 'title', $surveyProfile );
       $this->click( '_qf_Group_next-bottom' );
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad("60000");
       $this->waitForElementPresent( '_qf_Field_cancel-bottom' );
       $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile '$surveyProfile' has been added. You can add fields to this profile now. " ) );
 

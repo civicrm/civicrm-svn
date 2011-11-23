@@ -3743,6 +3743,9 @@ civicrm_relationship.start_date > {$today}
                     $this->_simpleFromClause = self::fromClause( $this->_whereTables, null, null,
                                                                  $this->_primaryLocation, $this->_mode );
 
+                    if ( $additionalFromClause ) {
+                      $this->_simpleFromClause .= "\n" . $additionalFromClause;
+                    }
                     // if we are doing a transform, do it here
                     // CRM-7969
                     $having = null;
