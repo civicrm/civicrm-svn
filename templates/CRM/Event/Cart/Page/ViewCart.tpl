@@ -24,7 +24,7 @@
 </table>
 {if $events_count > 0}
     <div class="action-link section register_link-section">
-        <a href="{$checkout_url}" title="Check Out" class="button crm-check-out-button"><span>{ts}Check Out{/ts}</span></a>
+        <a href="{crmURL p='civicrm/event/cart_checkout' }" title="Check Out" class="button crm-check-out-button"><span>{ts}Check Out{/ts}</span></a>
     </div>
 {/if}
 <a href="{crmURL p="civicrm/event/ical" q="reset=1&page=1&html=1"}">&laquo; Back to Event List</a>
