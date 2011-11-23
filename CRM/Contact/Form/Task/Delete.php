@@ -151,7 +151,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
             // also fix the user context stack in case the user hits cancel
 			$context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'basic' );
 			if ( $context == 'search' && CRM_Utils_Rule::qfKey( $this->_searchKey ) ) {
-                $urlParams .= "&context=$context&key=$this->_searchKey";
+                $urlParams = "&context=$context&key=$this->_searchKey";
 			} else {
 			    $urlParams = '';
 			}

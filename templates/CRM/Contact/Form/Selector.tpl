@@ -63,7 +63,7 @@
               {$row.status}</td>
             {/if}
             <td>{$row.contact_type}</td>
-            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&key=`$qfKey`"}">{$row.sort_name}</a></td>
+            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&key=`$qfKey`&context=`$context`"}">{$row.sort_name}</a></td>
             {foreach from=$row item=value key=key} 
                {if ($key neq "checkbox") and ($key neq "action") and ($key neq "contact_type") and ($key neq "status") and ($key neq "sort_name") and ($key neq "contact_id") and ($key neq "contact_sub_type")}
                 <td>
@@ -93,7 +93,7 @@
                 {$row.status}</td>
             {/if}
             <td>{$row.contact_type}</td>	
-            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&key=`$qfKey`"}">{if $row.is_deleted}<del>{/if}{$row.sort_name}{if $row.is_deleted}</del>{/if}</a></td>
+            <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&key=`$qfKey`&context=`$context`"}">{if $row.is_deleted}<del>{/if}{$row.sort_name}{if $row.is_deleted}</del>{/if}</a></td>
             {if $action eq 512 or $action eq 256}
               {if !empty($columnHeaders.street_address)}
 	        <td><span title="{$row.street_address}">{$row.street_address|mb_truncate:22:"...":true}</span></td>
@@ -152,9 +152,9 @@
  {literal}
 cj(document).ready( function() {
 var url         = "{/literal}{crmURL p='civicrm/contact/view/changeaction' q='reset=1&action=add&cid=changeid&context=changeaction' h=0}{literal}";
-var activityUrl = "{/literal}{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=activity&reset=1&cid=changeid' h=0}{literal}";
-var emailUrl    = "{/literal}{crmURL p='civicrm/contact/view/activity' q='atype=3&action=add&reset=1&cid=changeid' h=0}{literal}";
-var contactUrl  = "{/literal}{crmURL p='civicrm/contact/changeaction' q='reset=1&cid=changeid' h=0}{literal}";
+var activityUrl = "{/literal}{crmURL p='civicrm/contact/view' q="action=browse&selectedChild=activity&reset=1&cid=changeid&context=`$context`" h=0}{literal}";
+var emailUrl    = "{/literal}{crmURL p='civicrm/contact/view/activity' q="atype=3&action=add&reset=1&cid=changeid&context=`$context`" h=0}{literal}";
+var contactUrl  = "{/literal}{crmURL p='civicrm/contact/changeaction' q="reset=1&cid=changeid&key=`$qfKey`&context=`$context`" h=0}{literal}";
 // Show menu when contact row is right clicked
 cj(".selector tr").contextMenu({
       menu: 'contactMenu'
@@ -175,8 +175,13 @@ cj(".selector tr").contextMenu({
             break;
         }
         eval( 'locationUrl = locationUrl.replace( /changeid/, contactId );');
-        var destination = "{/literal}{crmURL q='force=1' h=0}{literal}";
-        window.location = locationUrl + '&civicrmDestination=' + encodeURIComponent(destination);
+        // we do not need civicrmDestination for edit and view links (edit goes to view and then search results breadcrumb is available)
+        if ( action == 'add' || action == 'view') {
+            window.location = locationUrl;            
+        } else {
+            var destination = "{/literal}{crmURL q="qfKey=`$qfKey`" h=0}{literal}";
+            window.location = locationUrl + '&civicrmDestination=' + encodeURIComponent(destination);            
+        }
    });
 
     cj('.selector').crmrowhighlighter( );
