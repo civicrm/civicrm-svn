@@ -373,15 +373,15 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     
     function _testRemoveProfile( $eventPageId )
     {
-        $this->open($this->sboxPath . "civicrm/event/manage/eventInfo?reset=1&action=update&id=" . $eventPageId );
+        $this->open($this->sboxPath . "civicrm/event/manage/settings?reset=1&action=update&id=" . $eventPageId );
         
         // Go to Online Contribution tab
         $this->click("link=Online Registration");
         $this->waitForElementPresent("_qf_Registration_upload-bottom");
-        $this->select("additional_custom_post_id_multiple_1" , "value=");
-        $this->select("additional_custom_post_id_multiple_2" , "value=");
-        $this->select("additional_custom_post_id_multiple_3" , "value=");
-        $this->select("additional_custom_post_id_multiple_4" , "value=");
+        $this->select("additional_custom_post_id_multiple_1" , "value=none");
+        $this->select("additional_custom_post_id_multiple_2" , "value=none");
+        $this->select("additional_custom_post_id_multiple_3" , "value=none");
+        $this->select("additional_custom_post_id_multiple_4" , "value=none");
         $this->click("_qf_Registration_upload-bottom");
         $this->waitForPageToLoad('30000');
     }
@@ -737,6 +737,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
         $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
         $this->click("_qf_Confirm_next-bottom");
+        $this->waitForPageToLoad('30000');
     }
     
     function _testEventRegistrationAfterRemoving( $eventPageId , $customId , $firstName2 , $lastName2 , $participantfname2 , $participantlname2 , $email3 , $email4 )
