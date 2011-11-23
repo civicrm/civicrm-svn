@@ -69,6 +69,9 @@ class CRM_Mailing_BAO_Query
     static function where( &$query ) {
         $grouping = null;
         foreach ( array_keys( $query->_params ) as $id ) {
+            if ( !CRM_Utils_Array::value(0, $query->_params[$id]) ) {
+                continue;
+            }
             if ( substr( $query->_params[$id][0], 0, 8 ) == 'mailing_' ) {
                 if ( $query->_mode == CRM_Contact_BAO_QUERY::MODE_CONTACTS ) {
                     $query->_useDistinct = true;

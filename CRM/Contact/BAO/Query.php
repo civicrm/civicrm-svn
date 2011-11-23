@@ -487,6 +487,9 @@ class CRM_Contact_BAO_Query
     function buildParamsLookup( ) 
     {
         foreach ( $this->_params as $value ) {
+            if ( !CRM_Utils_Array::value(0, $value) ) {
+                continue;
+            }
             $cfID = CRM_Core_BAO_CustomField::getKeyID( $value[0] );
             if ( $cfID ) {
                 if ( ! array_key_exists( $cfID, $this->_cfIDs ) ) {
@@ -1483,6 +1486,9 @@ class CRM_Contact_BAO_Query
             $activity = false;
 
             foreach ( array_keys( $this->_params ) as $id ) {
+                if ( !CRM_Utils_Array::value(0, $this->_params[$id]) ) {
+                    continue;
+                }
                 // check for both id and contact_id
                 if ( $this->_params[$id][0] == 'id' || $this->_params[$id][0] == 'contact_id' ) {
                     if ( $this->_params[$id][1] == 'IS NULL' ||
