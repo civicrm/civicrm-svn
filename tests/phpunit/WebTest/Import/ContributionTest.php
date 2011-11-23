@@ -43,7 +43,10 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
         list( $headers, $rows ) = $this->_contributionIndividualCSVData( );
         
         // Create and import csv from provided data and check imported data.
-        $fieldMapper = array( 'mapper[0][0]' => 'email' );
+        $fieldMapper = array( 'mapper[0][0]' => 'email',
+                              'mapper[2][0]' => 'contribution_type',
+                              'mapper[4][0]' => 'total_amount'
+                              );
         $this->importCSVComponent( 'Contribution', $headers, $rows, 'Individual', 'Insert new contributions', $fieldMapper );
     }
     
@@ -55,7 +58,10 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
         
         // Get sample import data.
         list($headers, $rows) = $this->_contributionOrganizationCSVData( );
-        $fieldMapper = array( 'mapper[0][0]' => 'organization_name' );
+        $fieldMapper = array( 'mapper[0][0]' => 'organization_name', 
+                              'mapper[2][0]' => 'contribution_type',
+                              'mapper[4][0]' => 'total_amount'
+                              );
         $this->importCSVComponent( 'Contribution', $headers, $rows, 'Organization', 'Insert new contributions', $fieldMapper );
     }
     
@@ -67,7 +73,10 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
         
         // Get sample import data.
         list($headers, $rows) = $this->_contributionHouseholdCSVData( );
-        $fieldMapper = array( 'mapper[0][0]' => 'household_name' );
+        $fieldMapper = array( 'mapper[0][0]' => 'household_name',
+                              'mapper[2][0]' => 'contribution_type',
+                              'mapper[4][0]' => 'total_amount'
+                              );
         $this->importCSVComponent( 'Contribution', $headers, $rows, 'Household', 'Insert new contributions', $fieldMapper );
     }
     
