@@ -196,10 +196,9 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         // Scheduling follow-up.
         $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
         $this->select( "followup_activity_type_id", "value=1" );
-        $this->type( "interval", "1" );
-        $this->select( "interval_unit","value=day" ); 
+        $this->webtestFillDateTime('followup_date','+2 months 10:00AM');
         $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
-        
+
         // Clicking save.
         $this->click("_qf_Activity_upload-bottom");
         $this->waitForPageToLoad("30000");
