@@ -133,7 +133,10 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
                              'total_amount'           => '400'
                              )
                        );
-        $fieldMapper = array( 'mapper[0][0]' => 'external_identifier' );
+        $fieldMapper = array( 'mapper[0][0]' => 'external_identifier',
+                              'mapper[2][0]' => 'contribution_type',
+                              'mapper[4][0]' => 'total_amount'                              
+                              );
         return array( $headers, $rows, $fieldMapper );
     }
     
@@ -227,7 +230,10 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
                              )
                        );
          
-        $fieldMapper = array( 'mapper[0][0]' => 'external_identifier' );
+        $fieldMapper = array( 'mapper[0][0]' => 'external_identifier',
+                              'mapper[2][0]' => 'contribution_type',
+                              'mapper[4][0]' => 'total_amount'
+                              );
         
         return array( $headers, $rows, $fieldMapper );
     }
@@ -241,7 +247,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
      */
     function _addContact( $firstName, $lastName, $externalId ) 
     {
-        $this->open( $this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual" );
+        $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
         
         //fill in first name
         $this->type( "first_name", $firstName );
@@ -286,7 +292,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
                                  );
         }
         
-        $this->open( $this->sboxPath . "civicrm/event/add&reset=1&action=add" );
+        $this->open( $this->sboxPath . "civicrm/event/add?reset=1&action=add" );
         
         $this->waitForElementPresent( "_qf_EventInfo_upload-bottom" );
         
@@ -350,7 +356,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
         
         // verify event input on info page
         // start at Manage Events listing
-        $this->open( $this->sboxPath . "civicrm/event/manage&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/event/manage?reset=1" );
         $this->click( "link=". $params['title'] );
         
         $this->waitForPageToLoad( '30000' );
