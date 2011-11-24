@@ -711,7 +711,7 @@ AND civicrm_group_contact.group_id = %2";
         $sql = "
 SELECT    cOther.group_id
 FROM      civicrm_group_contact cOther
-LEFT JOIN civicrm_group_contact cMain ON cOther.group_id = cMain.group_id AND cMain.contact_id != cOther.contact_id
+LEFT JOIN civicrm_group_contact cMain ON cOther.group_id = cMain.group_id AND cMain.contact_id = %1
 WHERE     cOther.contact_id = %2
 AND       cMain.contact_id IS NULL
 ";

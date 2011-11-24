@@ -50,6 +50,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
 
         // edit the default Fuzzy rule
         $this->open( $this->sboxPath . "civicrm/contact/deduperules?action=update&id=1" );
+        $this->waitForElementPresent( 'threshold' );
         $this->click( "threshold" );
         $this->type( "threshold", "10" );
         $this->click( "_qf_DedupeRules_next-bottom" );
@@ -59,7 +60,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
         $this->waitForPageToLoad( "30000" );
 
-        //contact details section
+        // add contact1
         //select prefix
         $prefix = 'Mr.';
         $this->click( "prefix_id" );
@@ -74,7 +75,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->type( 'last_name', $lastName );
         
         //fill in email id
-        $this->type( 'email_1_email', "$firstName.$lastName@example.com" );
+        $this->type( 'email_1_email', "{$firstName}.{$lastName}@example.com" );
 
         //fill in billing email id
         $this->click( 'addEmail' );
@@ -106,7 +107,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
         $this->addActivity( $firstName, $lastName, $subject );
                 
-        // Go directly to the URL of New Individual.
+        // contact2: duplicate of contact1.
         $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
         
         //fill in first name
@@ -223,10 +224,10 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->assertChecked( "check_3" );
     }  
 
-    function addActivity( $firstName, $lastName, $subject ) 
+    function addActivity( $firstName, $lastName, $subject )
     {
         $withContact = substr(sha1(rand()), 0, 7);
-        $this->webtestAddContact( $withContact, "Anderson", $withContact . "@anderson.name" ); 
+        $this->webtestAddContact( $withContact, "Anderson", $withContact . "@anderson.name" );
         
         $this->click( "css=li#tab_activity a" );
         
@@ -286,7 +287,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->select("status_id", "value=1");
         
         // Setting priority.
-        $this->select("priority_id", "value=1");   
+        $this->select("priority_id", "value=1");
         
         // Clicking save.
         $this->click("_qf_Activity_upload");
