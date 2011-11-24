@@ -464,7 +464,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 		'total_amount'      => $params['amount'],
 		'fee_amount'        => CRM_Utils_Array::value( 'fee_amount', $result ),
 		'net_amount'        => CRM_Utils_Array::value( 'net_amount', $result, $params['amount'] ), 
-		'currency'          => $params['currencyID'],
+		'currency'          => CRM_Utils_Array::value( 'currencyID', $params ),
 		'payment_processor' => $this->_paymentProcessor['payment_processor_type'],
 		'trxn_id'           => $result['trxn_id'],
 	  );
@@ -523,7 +523,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 		  'net_amount' => $params['amount'],
 		  'invoice_id' => "{$params['invoiceID']}-$index",
 		  'trxn_id' => $sub_trxn_id,
-		  'currency' => $params['currencyID'],
+		  'currency' => CRM_Utils_Array::value( 'currencyID', $params ),
 		  'source' => $event_in_cart->event->title,
 		  'contribution_status_id' => array_search( 'Completed', $contribution_statuses ),
 		  'payment_instrument_id' => $payment_instrument_id,
