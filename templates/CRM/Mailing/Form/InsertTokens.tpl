@@ -212,14 +212,14 @@ function selectValue( val ) {
 	if ( isMailing ) { 
  	  cj('div.html').hover( 
 	  function( ) {
-	     if ( cj('#'+ html_message).tinymce() ) {
-	     cj('#'+ html_message).tinymce().onKeyUp.add(function() {
+	     if ( tinyMCE.get(html_message) ) {
+	     tinyMCE.get(html_message).onKeyUp.add(function() {
  	        verify( );
   	     });
 	     }
           },
 	  function( ) {
-	     if ( cj('#'+ html_message).tinymce() ) {
+	     if ( tinyMCE.get(html_message) ) {
 	       if ( tinyMCE.get(html_message).getContent() ) {
                  verify( );
                } 
