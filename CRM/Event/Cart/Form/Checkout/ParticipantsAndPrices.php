@@ -51,7 +51,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
   {
     $price_fields_for_event = array();
     $base_field_name = "event_{$event->id}_amount";
-    $price_set_id = CRM_Price_BAO_Set::getFor( "civicrm_event", $event->id );
+    $price_set_id = CRM_Price_BAO_Set::getFor( 'civicrm_event', $event->id );
     if ( $price_set_id === false && $event->is_monetary) {
       require_once 'CRM/Utils/Money.php';
       //$fee_data = array();
@@ -62,8 +62,8 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
           $choices[] = $this->createElement( 'radio', null, '', CRM_Utils_Money::format( $fee['value']) . ' ' . $fee['label'], $fee['amount_id'] );
         }
       }
-      $this->addGroup( $choices, $base_field_name, t("Price Levels"));
-      $this->addRule($base_field_name, ts("Select at least one option from Price Levels"), 'required');
+      $this->addGroup( $choices, $base_field_name, ts('Price Levels'));
+      $this->addRule($base_field_name, ts('Select at least one option from Price Levels'), 'required');
       $price_fields_for_event[] = $base_field_name;
     } elseif ($price_set_id) {
       $price_sets = CRM_Price_BAO_Set::getSetDetail( $price_set_id, true );
@@ -238,10 +238,10 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
       }
       // still add the employer id of the signed in user  //???
       $contact_params = array(
-        'email-Primary' => $fields['email'],
-        'first_name' => $fields['first_name'],
-        'last_name' => $fields['last_name'],
-        'is_deleted' => true,
+                              'email-Primary' => CRM_Utils_Array::value( 'email', $fields ),
+                              'first_name' => CRM_Utils_Array::value( 'first_name', $fields ),
+                              'last_name' => CRM_Utils_Array::value( 'last_name', $fields ),
+                              'is_deleted' => true,
       );
       $no_fields = array( );
       $contact_id = CRM_Contact_BAO_Contact::createProfileContact( $contact_params, $no_fields, null, $add_to_groups );
