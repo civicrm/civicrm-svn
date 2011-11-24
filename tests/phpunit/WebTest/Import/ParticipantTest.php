@@ -50,7 +50,12 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
         list($headers, $rows) = $this->_participantIndividualCSVData( );
         
         // Create and import csv from provided data and check imported data.
-        $fieldMapper = array( 'mapper[0][0]' => 'email' );
+        $fieldMapper = array( 'mapper[0][0]' => 'email',
+                              'mapper[1][0]' => 'event_id',
+                              'mapper[2][0]' => 'participant_fee_level',
+                              'mapper[4][0]' => 'participant_status_id'
+                              );
+
         $this->importCSVComponent( 'Event', $headers, $rows, 'Individual', 'Skip', $fieldMapper );
     }
     
@@ -71,7 +76,12 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
         list($headers, $rows) = $this->_participantOrganizationCSVData( );
         
         // Create and import csv from provided data and check imported data.
-        $fieldMapper = array( 'mapper[0][0]' => 'organization_name' );
+        $fieldMapper = array( 'mapper[0][0]' => 'organization_name',
+                              'mapper[1][0]' => 'event_id',
+                              'mapper[2][0]' => 'participant_fee_level',
+                              'mapper[4][0]' => 'participant_status_id'
+                              );
+          
         $this->importCSVComponent( 'Event', $headers, $rows, 'Organization', 'Skip', $fieldMapper );
     }
 
@@ -92,7 +102,12 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
         list($headers, $rows) = $this->_participantHouseholdCSVData( );
         
         // Create and import csv from provided data and check imported data.
-        $fieldMapper = array( 'mapper[0][0]' => 'household_name' );
+        $fieldMapper = array( 'mapper[0][0]' => 'household_name',
+                              'mapper[1][0]' => 'event_id',
+                              'mapper[2][0]' => 'participant_fee_level',
+                              'mapper[4][0]' => 'participant_status_id'
+                              );
+        
         $this->importCSVComponent( 'Event', $headers, $rows, 'Household', 'Skip', $fieldMapper );
     }
 
@@ -253,7 +268,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
                                  );
         }
 
-        $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
+        $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
         
         $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
         
@@ -317,7 +332,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
         
         // verify event input on info page
         // start at Manage Events listing
-        $this->open($this->sboxPath . "civicrm/event/manage&reset=1");
+        $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
         $this->click("link=". $params['title']);
         
         $this->waitForPageToLoad('30000');
