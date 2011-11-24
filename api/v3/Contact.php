@@ -300,7 +300,7 @@ function civicrm_api3_contact_delete( $params )
 
 
 
-function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true )
+function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true, $dedupeRuleGroupID = null )
 {    if(isset($params['id']) && is_numeric($params['id'])){
        $requiredCheck = false;
     }
@@ -376,7 +376,7 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
             $dedupeParams['check_permission'] = $params['check_permission'];
         }
 
-        $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']));
+        $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Strict', array(), $dedupeRuleGroupID));
         
         if ( $ids != null ) {
             if ( $dupeErrorArray ) {

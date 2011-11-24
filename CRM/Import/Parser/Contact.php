@@ -1602,7 +1602,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $error = _civicrm_api3_contact_check_params( $formatted,
                                                      $dupeCheck,
                                                      true,
-                                                     false );
+                                                     false,
+                                                     $dedupeRuleGroupID );
 
         if ( ( is_null( $error )                                                ) && 
              ( civicrm_error( _civicrm_api3_deprecated_validate_formatted_contact($formatted) ) ) ) {
