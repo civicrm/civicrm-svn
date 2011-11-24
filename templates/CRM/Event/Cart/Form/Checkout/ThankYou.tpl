@@ -2,15 +2,15 @@
 
 <div class="crm-block crm-event-thankyou-form-block">
   <p>
-    This is your receipt of payment made for the following event registration made at {$site_name}.
+    {ts}This is your confirmation of registration for the following event(s).{/ts}
   </p>
   <p>
-    Your order number is <strong>#{$trxn_id}</strong>. Please print this confirmation for your records. You will receieve a confirmation email with the information below.  Information about the workshops will be sent separately to each participant. Here's a summary of your transaction placed on {$transaction->trxn_date|date_format:"%D %I:%M %p %Z"}:
+    {ts 1=$transaction->trxn_date|crmDate}Your order number is <strong>#{$trxn_id}</strong>. Please print this confirmation for your records. You will also receieve a confirmation email with the information below.  Event registration information will be sent separately to each participant. Here's a summary of your transaction placed on %1{/ts}:
   </p>
   {if $payment_required}
     <div class="crm-group billing_name_address-group">
       <div class="header-dark">
-	{ts}Billing Name and Address{/ts}
+	    {ts}Billing Name and Address{/ts}
       </div>
       <div class="crm-section no-label billing_name-section">
 		<div class="content">{$billing_name}</div>
@@ -41,16 +41,16 @@
     <thead>
       <tr style="border-bottom: 1px solid #ccc">
 		<th class="event-title">
-		  Event
+		  {ts}Event{/ts}
 		</th>
 		<th class="participants-column">
-		  Participants
+		  {ts}Participants{/ts}
 		</th>
 		<th class="cost">
-		  Price
+		  {ts}Price{/ts}
 		</th>
 		<th class="amount">
-		  Total
+		  {ts}Total{/ts}
 		</th>
       </tr>
     </thead>
@@ -93,10 +93,10 @@
 			</div>
 		  {/if}
 		  {if $line_item.num_waiting_participants > 0}
-			Waitlisted:<br/>
+			{ts}Waitlisted{/ts}:<br/>
 			<div class="participants" style="padding-left: 10px;">
 			  {foreach from=$line_item.waiting_participants item=participant}
-			  {$participant->first_name} {$participant->last_name}<br />
+			    {$participant->first_name} {$participant->last_name}<br />
 			  {/foreach}
 			</div>
 		  {/if}
@@ -118,7 +118,7 @@
 	  <td>
 	  </td>
 	  <td>
-	    Subtotal:
+	    {ts}Subtotal{/ts}:
 	  </td>
 	  <td>
 	    &nbsp;{$sub_total|crmMoney:$currency|string_format:"%10s"}
@@ -145,7 +145,7 @@
 	<td>
 	</td>
 	<td class="total">
-	  <strong>Total:</strong>
+	  <strong>{ts}Total{/ts}:</strong>
 	</td>
 	<td class="total">
 	  <strong>&nbsp;{$total|crmMoney:$currency|string_format:"%10s"}</strong>
@@ -153,5 +153,4 @@
       </tr>
     </tfoot>
   </table>
-  <p>If you have questions about the status of your registration or purchase please contact us at {$site_contact}.</p>
 </div>

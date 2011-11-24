@@ -64,8 +64,6 @@ class CRM_Event_Cart_Form_Checkout_ThankYou extends CRM_Event_Cart_Form_Cart
 	$this->assign( 'sub_total', $this->sub_total );
 	$this->assign( 'total', $this->get( 'total' ) );
 	$this->assign( 'trxn_id', $this->get( 'trxn_id' ) );
-        // XXX Configure yourself
-	//$this->assign( 'site_name', "" );
 	//$this->assign( 'site_contact', "" );
   }
 
