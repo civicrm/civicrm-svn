@@ -41,7 +41,11 @@ class WebTest_Import_ActivityTest extends ImportCiviSeleniumTestCase {
         
         // Get sample import data.
         list( $headers, $rows ) = $this->_activityCSVData( );
-        $fieldMapper = array( 'mapper[0][0]' => 'target_contact_id' , 'mapper[1][0]' => 'activity_name');
+        $fieldMapper = array( 'mapper[0][0]' => 'target_contact_id',
+                              'mapper[1][0]' => 'activity_name',
+                              'mapper[2][0]' => 'activity_subject',
+                              'mapper[3][0]' => 'activity_date_time'
+                              );
         $this->importCSVComponent( 'Activity', $headers, $rows, null, null, $fieldMapper );
     }
     
