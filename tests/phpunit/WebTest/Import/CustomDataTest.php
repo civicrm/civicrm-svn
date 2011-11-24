@@ -68,7 +68,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
         $id2  = $url2[1];
 
         // Get sample import data.
-        list($headers, $rows) = $this->_individualCustomCSVData( $customGroupTitle, $firstName1, $firstName2,
+        list($headers, $rows, $customDataVerify) = $this->_individualCustomCSVData( $customGroupTitle, $firstName1, $firstName2,
                                                                  $id1, $id2 );
 
         // Import and check Individual contacts in Skip mode.
@@ -86,6 +86,20 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
         $this->click( "xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']" );
         $this->waitForPageToLoad("30000");
+        
+        for ( $cnt = 0; $cnt < 2; $cnt++ ) {
+            foreach ( $customDataVerify['rows'][$cnt] as $key => $values ) {
+                $rows[$cnt][$key] = $values;
+            }
+        }
+
+        $CGTableId = preg_replace('/\s/','_',trim($customGroupTitle));
+        if( $this->isElementPresent( "xpath=//table[@id='{$CGTableId}_0']" ) ){
+            $this->click( "xpath=//table[@id='{$CGTableId}_0']/tbody/tr[@class='columnheader']/td[@class='grouplabel']/a" );
+        }
+        else if( $this->isElementPresent( "xpath=//table[@id='{$CGTableId}_1']" ) ){
+        $this->click( "xpath=//table[@id='{$CGTableId}_1']/tbody/tr[@class='columnheader']/td[@class='grouplabel']/a" );
+        }
         
         // Verify if custom data added
         $cnt = 1;
@@ -105,7 +119,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
      */
     function _individualCustomCSVData( $customGroupTitle, $firstName1, $firstName2, $id1, $id2 ) 
     {
-        $customDataParams = $this->_addCustomData( $customGroupTitle, $id1, $id2 );
+        list($customDataParams, $customDataVerify) = $this->_addCustomData( $customGroupTitle, $id1, $id2 );
         
         $headers = array( 'first_name'  => 'First Name',
                           'last_name'   => 'Last Name',
@@ -135,13 +149,13 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
             }
         }
         
-        return array($headers, $rows);
+        return array($headers, $rows, $customDataVerify);
     }
 
     function _addCustomData( $customGroupTitle, $id1, $id2 )
     {
         // Go directly to the URL of the screen that you will be testing (New Custom Group).
-        $this->open( $this->sboxPath . "civicrm/admin/custom/group&reset=1" );
+        $this->open( $this->sboxPath . "civicrm/admin/custom/group?reset=1" );
         
         //add new custom data
         $this->click("//a[@id='newCustomDataGroup']/span");
@@ -307,18 +321,24 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
                                           "custom_{$contactReferenceFieldId}" => "$contactReferenceLabel :: $customGroupTitle" ),
                                    'rows'    => 
                                    array( 0 => array( "custom_{$dateFieldId}"             => date( 'Y-m-d' ),
-                                                      "custom_{$radioFieldId}"            => $radioOptionLabel2,
-                                                      "custom_{$multiSelectFieldId}"      => $multiSelectOptionLabel3,
+                                                      "custom_{$radioFieldId}"            => '2',
+                                                      "custom_{$multiSelectFieldId}"      => '3',
                                                       "custom_{$contactReferenceFieldId}" => $id1,
                                                       ),
                                           1 => array( "custom_{$dateFieldId}"             => date('Y-m-d', mktime( 0, 0, 0, 4, 5, date( 'Y' ) ) ),
-                                                      "custom_{$radioFieldId}"            => $radioOptionLabel1,
-                                                      "custom_{$multiSelectFieldId}"      => $multiSelectOptionLabel2,
+                                                      "custom_{$radioFieldId}"            => '1',
+                                                      "custom_{$multiSelectFieldId}"      => '2',
                                                       "custom_{$contactReferenceFieldId}" => $id2,
                                                       ),
                                           ),
                                    );
 
-        return $customDataParams;
+        $customDataVerify = $customDataParams;
+        $customDataVerify['rows'][0]["custom_{$radioFieldId}"] = $radioOptionLabel2;
+        $customDataVerify['rows'][1]["custom_{$radioFieldId}"] = $radioOptionLabel1;
+        $customDataVerify['rows'][0]["custom_{$multiSelectFieldId}"] = $multiSelectOptionLabel3;
+        $customDataVerify['rows'][1]["custom_{$multiSelectFieldId}"] = $multiSelectOptionLabel2;
+         
+        return array($customDataParams, $customDataVerify);
     }
 }
