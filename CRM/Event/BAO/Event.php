@@ -915,6 +915,11 @@ WHERE civicrm_event.is_active = 1
                                                       array( 'entity_id'    => $copyEvent->id ),
                                                       array( 'replace'      => array( 'target_entity_id' => $copyEvent->id ) ) );
         
+        $copyReminder =& CRM_Core_DAO::copyGeneric( 'CRM_Core_DAO_ActionSchedule', 
+                                                    array( 'entity_value' => $id,
+                                                           'mapping_id'   => 3 ),
+                                                    array( 'entity_value' => $copyEvent->id ) );
+        
         require_once 'CRM/Core/BAO/OptionGroup.php';
         //copy option Group and values
         $copyEvent->default_fee_id = CRM_Core_BAO_OptionGroup::copyValue('event', 
@@ -943,6 +948,7 @@ WHERE civicrm_event.is_active = 1
             }
         }
         
+
         //copy custom data
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $extends   = array('event');
