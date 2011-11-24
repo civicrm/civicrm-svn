@@ -312,6 +312,12 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                         CRM_Import_Parser_Contact::addToErrorMsg('End Date', $errorMessage);
                     } 
                     break;
+                case 'membership_type_id':
+                    if ( !is_numeric($val) ) {
+                        unset($params['membership_type_id']);
+                        $params['membership_type'] = $val;
+                    }
+                    break;      
                 case  'is_override':
                     $params[$key] = CRM_Utils_String::strtobool( $val );
                     break;
