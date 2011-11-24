@@ -111,6 +111,7 @@ class CRM_Utils_System {
         }
 
         unset( $qs['snippet'] );
+        unset( $qs['section'] );
 
         if ( $skipUFVar ) {
             $config = CRM_Core_Config::singleton( );
