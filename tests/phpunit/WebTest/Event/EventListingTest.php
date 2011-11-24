@@ -125,7 +125,10 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
           $this->webtestFillDateTime("start_date",$startdate); 
       }
       
-      if ( $enddate ) {
+      if ( $enddate == 'now' ) {
+          // to avoid time zone difference problem between selenium-test & drupal
+          $this->webtestFillDate("end_date",$enddate); 
+      } else if ( $enddate ) {
           $this->webtestFillDateTime("end_date",$enddate); 
       }
 
