@@ -231,8 +231,9 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
                        );
          
         $fieldMapper = array( 'mapper[0][0]' => 'external_identifier',
-                              'mapper[2][0]' => 'contribution_type',
-                              'mapper[4][0]' => 'total_amount'
+                              'mapper[1][0]' => 'event_id',
+                              'mapper[2][0]' => 'participant_fee_level',
+                              'mapper[4][0]' => 'participant_status_id'
                               );
         
         return array( $headers, $rows, $fieldMapper );
