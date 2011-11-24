@@ -85,7 +85,8 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       $this->click("//div[@id='crm-contact-actions-link']/span");
       $this->click('link=Send an Email');
       $this->waitForPageToLoad('30000');
-      sleep(5);
+      sleep(10);
+
       $this->click('subject');
       $subject = 'Subject_' . substr(sha1(rand()), 0, 7);
       $this->type('subject', $subject);
@@ -149,7 +150,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       $this->click("//div[@id='crm-contact-actions-link']/span");
       $this->click('link=Send an Email');
       $this->waitForPageToLoad('30000');
-      sleep(5);
+      sleep(10);
       
       $this->click('subject');
       $subject = 'Subject_' . substr(sha1(rand()), 0, 7);
