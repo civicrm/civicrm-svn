@@ -105,8 +105,6 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          // click save
          $this->click( "_qf_Edit_next" );
          $this->waitForPageToLoad( "30000" );
-         $this->waitForElementPresent( "_qf_Edit_next" );
-
          $this->isTextPresent( "A record already exists with the same information." );
      }
 
@@ -168,10 +166,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          // click save
          $this->click( "_qf_Edit_next" );
          $this->waitForPageToLoad( "30000" );
-         $this->waitForElementPresent( "_qf_Edit_next" );
-
          $this->isTextPresent( "A record already exists with the same information." );
-         
      }
 }
 ?>
