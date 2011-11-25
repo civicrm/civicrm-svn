@@ -328,17 +328,6 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = fal
  * 
  */
 function civicrm_api3_contribution_transact($params) {
-
-		civicrm_api3_verify_mandatory ( $params );
-		
-		$values = array ();
-		
-		require_once 'CRM/Contribute/BAO/Contribution.php';
-		$error = _civicrm_api3_contribute_format_params ( $params, $values );
-		if (civicrm_error ( $error )) {
-			return $error;
-		}
-		
 		$required = array ('amount' );
 		foreach ( $required as $key ) {
 			if (! isset ( $params [$key] )) {
