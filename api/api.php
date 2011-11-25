@@ -72,9 +72,15 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if (CRM_Utils_Array::value( 'is_error', $result, 0 ) == 0) {
         _civicrm_api_call_nested_api($apiRequest['params'], $result, $apiRequest['action'],$apiRequest['entity'],$apiRequest['version']);
     }
-     if(CRM_Utils_Array::value('format.smarty', $apiRequest['params']) || CRM_Utils_Array::value('format_smarty', $apiRequest['params']) ){
+    if(CRM_Utils_Array::value('format.smarty', $apiRequest['params']) || CRM_Utils_Array::value('format_smarty', $apiRequest['params']) ){
      // return _civicrm_api_parse_result_through_smarty($result,$apiRequest['params']);
     }
+    if (function_exists ('xdebug_time_index') && CRM_Utils_Array::value('debug', $apiRequest['params'])) {
+      $result['xdebug']['peakMemory']=xdebug_peak_memory_usage();
+      $result['xdebug']['memory'] =xdebug_memory_usage();
+      $result['xdebug']['timeIndex']=xdebug_time_index();
+    }
+
     return $result;
   } catch (PEAR_Exception $e) {
     if(CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1){
@@ -83,6 +89,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $err= civicrm_api3_create_error( $e->getMessage(),null,$apiRequest['params'] );
     if ($apiRequest['params']['debug']) {
       $err['trace'] = $e->getTraceSafe();
+    } else {
+      $err['tip'] = "add debug=1 to your API call to have more info about the error";
     }
     return $err;
   } catch (Exception $e) {
