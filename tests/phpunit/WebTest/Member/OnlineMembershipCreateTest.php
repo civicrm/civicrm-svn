@@ -72,7 +72,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $profilePreId  = 1;
         $profilePostId = null;
         $premiums      = true;
-        $widget        = true;
+        $widget        = false;
         $pcp           = true;
 
         $contributionTitle = "Title $hash";
