@@ -172,9 +172,8 @@ function civicrm_api3_contribution_get($params) {
 		if (empty ( $returnProperties )) {
 			$returnProperties = CRM_Contribute_BAO_Query::defaultReturnProperties ( CRM_Contact_BAO_Query::MODE_CONTRIBUTE );
 		}
-		
+
 		$newParams = & CRM_Contact_BAO_Query::convertFormValues ( $inputParams );
-		
 		$query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null,
                                             false, false, CRM_Contact_BAO_Query::MODE_CONTRIBUTE );
 		list ( $select, $from, $where, $having ) = $query->query ();
@@ -204,6 +203,9 @@ function civicrm_api3_contribution_get($params) {
  */
 function _civicrm_api3_contribution_get_spec(&$params){
   $params['contribution_test']['api.default'] =0;
+  $params['contact_id'] = $params['contribution_contact_id'];
+  $params['contact_id']['api.aliases'] = array('contribution_contact_id');
+  unset($params['contribution_contact_id']);
 }
 
 
@@ -234,22 +236,7 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = fal
 		}
 		
 		switch ($key) {
-			
-			case 'contribution_contact_id' :
-				if (! CRM_Utils_Rule::integer ( $value )) {
-					return civicrm_api3_create_error ( "contact_id not valid: $value" );
-				}
-				$dao = new CRM_Core_DAO ();
-				$qParams = array ();
-				$svq = $dao->singleValueQuery ( "SELECT id FROM civicrm_contact WHERE id = $value", $qParams );
-				if (! $svq) {
-					return civicrm_api3_create_error ( "Invalid Contact ID: There is no contact record with contact_id = $value." );
-				}
 				
-				$values ['contact_id'] = $values ['contribution_contact_id'];
-				unset ( $values ['contribution_contact_id'] );
-				break;
-			
 		
 			case 'non_deductible_amount' :
 			case 'total_amount' :

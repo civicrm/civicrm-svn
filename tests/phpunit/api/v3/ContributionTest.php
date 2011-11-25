@@ -112,7 +112,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $params = array('contribution_id'=>$this->_contribution['id'],
                          'version'								=> $this->_apiversion,                         );        
         $contribution =& civicrm_api('contribution', 'get', $params);
-        $this->assertAPISuccess($contribution);
+        $this->assertAPISuccess($contribution,'In line ' . __LINE__);
         $this->documentMe($params,$contribution,__FUNCTION__,__FILE__); 
         $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'],$this->_individualId,'In line ' . __LINE__ ); 
         $this->assertEquals($contribution['values'][$contribution['id']]['contribution_type_id'],$this->_contributionTypeId);        
@@ -128,37 +128,36 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $p['trxn_id'] = '3847';
         $p['invoice_id'] = '3847';
 
-        $contribution2 = civicrm_api('contribution', 'create', $p);
-        
+        $contribution2 = civicrm_api('contribution', 'create', $p)      ;
+        $this->assertAPISuccess($contribution2,'In line ' . __LINE__);
 
-        $this->assertAPISuccess($contribution2);
-
-        $params = array( 'version'=> $this->_apiversion,);        
+        $params = array( 'version'=> $this->_apiversion,);  
+        // now we have 2 - test getcount      
         $contribution =& civicrm_api('contribution', 'getcount', array( 'version'=> $this->_apiversion,));
-
         $this->assertEquals(2, $contribution )  ;  
-    
+          //test id only format    
         $contribution =& civicrm_api('contribution', 'get', array
                                                   ('version'=> $this->_apiversion,
                                                    'id' => $this->_contribution['id'], 
                                                    'format.only_id' => 1));  
-        $this->assertEquals($this->_contribution['id'], $contribution )  ;   
+        $this->assertEquals($this->_contribution['id'], $contribution )  ; 
+        //test id only format  
         $contribution =& civicrm_api('contribution', 'get', array
                                                   ('version'=> $this->_apiversion,
                                                    'id' => $contribution2['id'], 
                                                    'format.only_id' => 1));  
         $this->assertEquals($contribution2['id'], $contribution )  ;    
-        $contribution =& civicrm_api('contribution', 'get', array( 'version'=> $this->_apiversion,'id' => $this->contribution));
-   
-        $this->assertAPISuccess($contribution);
-    
-        $this->assertEquals(2, $contribution['count'] )  ;
+        $contribution = civicrm_api('contribution', 'get', array( 'version'=> $this->_apiversion,
+        																													'id' => $this->_contribution['id']));
+       //test id as field
+        $this->assertAPISuccess($contribution,'In line ' . __LINE__);   
+        $this->assertEquals(1, $contribution['count'] ,'In line ' . __LINE__)  ;
        // $this->assertEquals($this->_contribution['id'], $contribution['id'] )  ;  
- 
-        $contribution = civicrm_api('contribution', 'get', array( 'version'=> $this->_apiversion,'id' => $this->contribution, 'contact_id' => $this->_individualId));
-        $this->assertAPISuccess($contribution);
+        //test get by contact id works
+        $contribution = civicrm_api('contribution', 'get', array( 'version'=> $this->_apiversion, 'contact_id' => $this->_individualId));
+        $this->assertAPISuccess($contribution,'In line ' . __LINE__ . "get with contact_id" . print_r(array( 'version'=> $this->_apiversion, 'contact_id' => $this->_individualId), true));
         
-        $this->assertEquals(2, $contribution['count'] )  ; 
+        $this->assertEquals(2, $contribution['count'],'In line ' . __LINE__ )  ; 
         civicrm_api('Contribution','Delete',array( 'id' => $this->_contribution['id'] ,
                           'version'         => $this->_apiversion));
         civicrm_api('Contribution','Delete',array( 'id' => $contribution2['id'] ,
@@ -262,6 +261,57 @@ class api_v3_ContributionTest extends CiviUnitTestCase
 
 
     }
+    /*
+     * Create test with unique field name on source
+     */
+    function testCreateContributionSourceInvalidContac()
+    {
+
+       $params = array(
+                        'contact_id'             => 999,                              
+                        'receive_date'           => date('Ymd'),
+                        'total_amount'           => 100.00,
+                        'contribution_type_id'   => $this->_contributionTypeId,
+                        'payment_instrument_id'  => 1,
+                        'non_deductible_amount'  => 10.00,
+                        'fee_amount'             => 50.00,
+                        'net_amount'             => 90.00,
+                        'trxn_id'                => 12345,
+                        'invoice_id'             => 67890,
+                        'contribution_source'                 => 'SSF',
+                        'contribution_status_id' => 1,
+                        'version' =>$this->_apiversion,
+                        );
+        
+        $contribution= civicrm_api('contribution', 'create', $params);
+        $this->assertEquals($contribution['error_message'],'contact_id is not valid : 999', 'In line ' . __LINE__ );
+
+
+    }
+    function testCreateContributionSourceInvalidContContac()
+    {
+
+       $params = array(
+                        'contribution_contact_id'  => 999,                              
+                        'receive_date'           => date('Ymd'),
+                        'total_amount'           => 100.00,
+                        'contribution_type_id'   => $this->_contributionTypeId,
+                        'payment_instrument_id'  => 1,
+                        'non_deductible_amount'  => 10.00,
+                        'fee_amount'             => 50.00,
+                        'net_amount'             => 90.00,
+                        'trxn_id'                => 12345,
+                        'invoice_id'             => 67890,
+                        'contribution_source'                 => 'SSF',
+                        'contribution_status_id' => 1,
+                        'version' =>$this->_apiversion,
+                        );
+        
+        $contribution= civicrm_api('contribution', 'create', $params);
+        $this->assertEquals($contribution['error_message'],'contact_id is not valid : 999', 'In line ' . __LINE__ );
+
+
+    }  
     function testCreateContributionWithNote()
     {
        $description = "Demonstrates creating contribution with Note Entity";
