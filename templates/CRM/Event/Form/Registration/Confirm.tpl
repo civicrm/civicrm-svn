@@ -40,7 +40,7 @@
         </div>
     {else}
         <div id="help">
-        {ts}Please verify the information below. Click <strong>Go Back</strong> if you need to make changes.{/ts}
+        {ts}Please verify the information below. Click the <strong>Go Back</strong> button at the bottom of the page if you need to make changes.{/ts}
         {if $contributeMode EQ 'notify' and !$is_pay_later and ! $isAmountzero }
             {if $paymentProcessor.payment_processor_type EQ 'Google_Checkout'}
                 {ts 1=$paymentProcessor.processorName}Click the <strong>%1</strong> button to checkout to Google, where you will select your payment method and complete the registration.{/ts}
@@ -236,7 +236,7 @@
     {if $contributeMode NEQ 'notify'} {* In 'notify mode, contributor is taken to processor payment forms next *}
     <div class="messages status section continue_message-section">
         <p>
-        {ts}Your registration will not be submitted until you click the <strong>Continue</strong> button. Please click the button one time only.{/ts}
+        {ts}Your registration will not be submitted until you click the <strong>Continue</strong> button. Please click the button one time only. If you need to change any details, click the Go Back button below to return to the previous screen.{/ts}
         </p>
     </div>
     {/if}    
