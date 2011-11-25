@@ -72,7 +72,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
       foreach ( $price_set['fields'] as $field ) {
         $index++;
         $field_name = "event_{$event->id}_price_{$field['id']}";
-        CRM_Price_BAO_Field::addQuickFormElement( $this, $field_name, $field['id'] );
+        CRM_Price_BAO_Field::addQuickFormElement( $this, $field_name, $field['id'], false );
         $price_fields_for_event[] = $field_name;
       }
     }
