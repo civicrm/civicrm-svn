@@ -86,8 +86,8 @@ function civicrm_api3_event_create( $params )
  */
 function _civicrm_api3_event_create_spec(&$params){
   $params['event_type_id']['api.required'] =1;;
-  $params['event_start_date']['api.required'] =1;
-  $params['event_title']['api.required'] =1;
+  $params['start_date']['api.required'] =1;
+  $params['title']['api.required'] =1;
 }
 
 /**
