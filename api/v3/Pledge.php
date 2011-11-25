@@ -238,12 +238,7 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
     $values['id'] = $params['pledge_id'];
     unset($values['pledge_id']);
   }
-  if ( array_key_exists( 'status_id', $params ) ){
-    $values['pledge_status_id'] = $params['status_id'];
-  }
-  if ( empty( $values['status_id'] ) && !empty($values['pledge_status_id']) ){
-    $values['status_id'] = $values['pledge_status_id'];
-  }
+
   if (empty($values['id'])){
     //at this point both should be the same so unset both if not set - passing in empty
     //value causes crash rather creating new - do it before next section as null values ignored in 'switch'
