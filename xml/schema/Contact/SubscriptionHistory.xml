@@ -62,7 +62,7 @@
     <field>
         <name>status</name>
         <type>enum</type>
-        <values>Added, Removed, Pending</values>
+        <values>Added, Removed, Pending, Deleted</values>
         <comment>The state of the contact within the group</comment>
        <add>1.1</add>
     </field>
