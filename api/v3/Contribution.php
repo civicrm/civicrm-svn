@@ -64,7 +64,7 @@ function civicrm_api3_contribution_create($params) {
 		if (civicrm_error ( $error )) {
 			return $error;
 		}
-		
+		_civicrm_api3_custom_format_params ( $params, $values, 'Contribution' );
 		$values ["contact_id"] = $params ["contact_id"];
 		$values ["source"] = CRM_Utils_Array::value ( 'source', $params );
 		
@@ -299,20 +299,8 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = fal
 		$values ['note'] = $params ['note'];
 	}
 	
-	_civicrm_api3_custom_format_params ( $params, $values, 'Contribution' );
-	
-	if ($create) {
-		// CRM_Contribute_BAO_Contribution::add() handles contribution_source
-		// So, if $values contains contribution_source, convert it to source
-		$changes = array ('contribution_source' => 'source' );
-		
-		foreach ( $changes as $orgVal => $changeVal ) {
-			if (isset ( $values [$orgVal] )) {
-				$values [$changeVal] = $values [$orgVal];
-				unset ( $values [$orgVal] );
-			}
-		}
-	}
+
+
 	
 	return array ();
 }

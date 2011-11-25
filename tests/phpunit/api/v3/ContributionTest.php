@@ -232,6 +232,36 @@ class api_v3_ContributionTest extends CiviUnitTestCase
         $this->contributionGetnCheck($params,$contribution['id']);   
 
     }
+    /*
+     * Create test with unique field name on source
+     */
+    function testCreateContributionSource()
+    {
+
+       $params = array(
+                        'contact_id'             => $this->_individualId,                              
+                        'receive_date'           => date('Ymd'),
+                        'total_amount'           => 100.00,
+                        'contribution_type_id'   => $this->_contributionTypeId,
+                        'payment_instrument_id'  => 1,
+                        'non_deductible_amount'  => 10.00,
+                        'fee_amount'             => 50.00,
+                        'net_amount'             => 90.00,
+                        'trxn_id'                => 12345,
+                        'invoice_id'             => 67890,
+                        'contribution_source'                 => 'SSF',
+                        'contribution_status_id' => 1,
+                        'version' =>$this->_apiversion,
+                        );
+        
+        $contribution= civicrm_api('contribution', 'create', $params);
+ 
+        $this->assertAPISuccess($contribution, 'In line ' . __LINE__ );                              
+        $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'],100.00, 'In line ' . __LINE__ );
+        $this->assertEquals($contribution['values'][$contribution['id']]['source'],'SSF', 'In line ' . __LINE__ );
+
+
+    }
     function testCreateContributionWithNote()
     {
        $description = "Demonstrates creating contribution with Note Entity";
