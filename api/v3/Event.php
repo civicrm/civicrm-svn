@@ -48,11 +48,11 @@
  *
  * This API is used for creating a Event
  *
- * @param  array   $params           (reference ) input parameters
+ * @param  array   $params   input parameters
  * Allowed @params array keys are:
  * {@getfields event_create}
  *
- * @return array of newly created event property values.
+ * @return array API result Array.
  * @access public
 */
 function civicrm_api3_event_create( $params )
@@ -95,10 +95,10 @@ function _civicrm_api3_event_create_spec(&$params){
  *
  *
  * @param  array  $params     an associative array of name/value property values of civicrm_event
- *
+ * {@getfields event_get}
  * @return  Array of all found event property values.
  * @access public
- * {@getfields event_get}
+ * 
  */
 
 function civicrm_api3_event_get( $params )
