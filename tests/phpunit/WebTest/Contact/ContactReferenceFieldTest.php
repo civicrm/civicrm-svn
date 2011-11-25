@@ -173,8 +173,9 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
         $this->open($this->sboxPath . "civicrm/admin/custom/group?action=preview&reset=1&id={$customGroupId}");
         $this->waitForPageToLoad("30000");
                 
-        $this->typeKeys( "custom_{$contactRefFieldID1}_-1", "Anderson" );
+        $this->type( "custom_{$contactRefFieldID1}_-1", "Anderson" );
         $this->fireEvent("custom_{$contactRefFieldID1}_-1", "focus");
+        $this->click("custom_{$contactRefFieldID1}_-1");
         $this->waitForElementPresent("css=div.ac_results-inner li");
         $this->assertTrue( $this->isTextPresent( "{$contact1}@example.com" ) );
         $this->assertTrue( !($this->isTextPresent( "{$contact2}@example.com" )) );
@@ -183,8 +184,9 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
         $this->open($this->sboxPath . "civicrm/admin/custom/group?action=preview&reset=1&id={$customGroupId}");
         $this->waitForPageToLoad("30000");
 
-        $this->typeKeys( "custom_{$contactRefFieldID2}_-1", $org1 );
+        $this->type( "custom_{$contactRefFieldID2}_-1", $org1 );
         $this->fireEvent("custom_{$contactRefFieldID2}_-1", "focus");
+        $this->click("custom_{$contactRefFieldID2}_-1");
         $this->waitForElementPresent("css=div.ac_results-inner li");
         $this->assertTrue( $this->isTextPresent( "{$org1}@example.com" ) );
          
