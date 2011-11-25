@@ -138,6 +138,13 @@ function &civicrm_api3_create_error( $msg, $data = null,&$dao = null )
     if(is_object ($dao)){
         $dao->free();
     }
+    if(is_array($dao) && $msg == 'DB Error: constraint violation'){
+      try{
+       _civicrm_api3_validate_fields($dao['entity'], $dao['action'], $dao['params'], True);
+      } catch (Exception $e) {
+        $msg = $e->getMessage();
+      }
+    }
     return CRM_Core_Error::createAPIError( $msg, $data );
 }
 
@@ -765,7 +772,7 @@ function _civicrm_api3_custom_data_get(&$returnArray,$entity,$entity_id ,$groupI
  * @param array $params -
  * all variables are the same as per civicrm_api
  */
-function _civicrm_api3_validate_fields($entity, $action, &$params) {
+function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = NULL) {
     //skip any entities without working getfields functions
     $skippedEntities = array('entity', 'mailinggroup', 'customvalue', 'custom_value', 'mailing_group');
     if (in_array(strtolower($entity), $skippedEntities) || strtolower ( $action ) == 'getfields'){
@@ -781,6 +788,11 @@ function _civicrm_api3_validate_fields($entity, $action, &$params) {
             _civicrm_api3_validate_date($params,$fieldname,$fieldInfo);
             break;
         }
+   if(!empty($errorMode) && strtolower($action) == 'create' 
+      && CRM_Utils_Array::value('FKClassName', $fieldInfo) 
+      && CRM_Utils_Array::value($fieldname, $params)){
+            _civicrm_api3_validate_constraint($params,$fieldname,$fieldInfo);
+   }
 
 
 	}
@@ -814,7 +826,24 @@ function _civicrm_api3_validate_date(&$params,&$fieldname,&$fieldInfo){
     }
 
 }
-
+/*
+ * Validate foreign constraint fields being passed into API.
+ *
+ * @param array $params params from civicrm_api
+ * @param string $fieldname uniquename of field being checked
+ * @param array $fieldinfo array of fields from getfields function
+ */
+function _civicrm_api3_validate_constraint(&$params,&$fieldname,&$fieldInfo){
+     $file = str_replace ('_','/',$fieldInfo['FKClassName']).".php";
+     require_once ($file);
+     $dao = new $fieldInfo['FKClassName'];
+     $dao->id = $params[$fieldname];
+     $dao->selectAdd( );
+     $dao->selectAdd('id' );
+     if(!$dao->find()){
+       throw new exception ($fieldname .  " is not valid : " . $params[$fieldname]);
+      }
+}
 /**
  * Generic implementation of the "replace" action.
  *
@@ -1005,8 +1034,8 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
         }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('name', $values) && $field != $values['name']){
             $apiRequest['params'][$field] = CRM_Utils_Array::value($values['name'],$apiRequest['params']);
             // note that it would make sense to unset the original field here but tests need to be in place first
-        }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('uniquename', $values) && $field != $values['uniquename']){
-            $apiRequest['params'][$field] = CRM_Utils_Array::value($values['uniquename'],$apiRequest['params']);
+        }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('uniqueName', $values) && $field != $values['uniqueName']){
+          $apiRequest['params'][$field] = CRM_Utils_Array::value($values['uniqueName'],$apiRequest['params']);
             // note that it would make sense to unset the original field here but tests need to be in place first
        }
     }

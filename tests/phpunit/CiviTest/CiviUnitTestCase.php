@@ -669,7 +669,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         
         $result = civicrm_api( 'MembershipType', 'Delete', $params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete membership type' );
+            throw new Exception( 'Could not delete membership type'. $result['error_message'] );
         }
         return;
     }
@@ -678,7 +678,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     {
         $result = civicrm_api( 'Membership', 'Delete', array( 'version' => 3,'id' => $membershipID ));
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete membership' );
+            throw new Exception( 'Could not delete membership' . $result['error_message']);
         }
         return;
     }

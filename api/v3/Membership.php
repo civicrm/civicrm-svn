@@ -296,20 +296,6 @@ function _civicrm_api3_membership_format_params( $params, &$values, $create=fals
     }
      
     switch ($key) {
-      case 'membership_contact_id':
-        if (!CRM_Utils_Rule::integer($value)) {
-          return civicrm_api3_create_error("contact_id not valid: $value");
-        }
-        $dao = new CRM_Core_DAO();
-        $qParams = array();
-        $svq = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
-        $qParams);
-        if (!$svq) {
-          return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
-        }
-        $values['contact_id'] = $values['membership_contact_id'];
-        unset($values['membership_contact_id']);
-        break;
 
       case 'membership_type_id':
         if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipType( ) ) ) {

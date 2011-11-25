@@ -428,6 +428,25 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         $this->assertEquals($this->_contactID,$result['values'][$result['id']]['contact_id']," in line " . __LINE__ );
         $this->assertEquals($result['id'],$result['values'][$result['id']]['id']," in line " . __LINE__ );
     }
+     /*
+      * Check for useful message if contact doesn't exist
+      */
+    function testMembershipCreateWithInvalidContact( ) 
+    {
+        $params = array(
+                        'contact_id'         => 999,  
+                        'membership_type_id' => $this->_membershipTypeID,
+                        'join_date'          => '2006-01-21',
+                        'start_date'         => '2006-01-21',
+                        'end_date'           => '2006-12-21',
+                        'source'             => 'Payment',
+                        'is_override'        => 1,
+                        'status_id'          => $this->_membershipStatusID ,                      
+                        'version'				    => $this->_apiversion,                        );
+
+        $result = civicrm_api('membership','create', $params );
+        $this->assertEquals('contact_id is not valid : 999',$result['error_message']);
+  }
  
     /**
      * check with complete array + custom field 
@@ -617,7 +636,6 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         //membership_contact_id as string
         $params = array(
                         'membership_contact_id' => 'Invalid',
-                        'contact_id'         => $this->_contactID,  
                         'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2011-01-21',
                         'start_date'         => '2010-01-21',
@@ -652,7 +670,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
     {
         $params = array(
                         'membership_contact_id' => $this->_contactID,
-                        'contact_id'            => $this->_contactID,  
+                         
                         'membership_type_id'    => $this->_membershipTypeID,
                         'join_date'             => '2011-01-21',
                         'start_date'            => '2010-01-21',
@@ -664,7 +682,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase
 
         $result = civicrm_api('membership','create', $params );
 
-        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertAPISuccess( $result, ' in line ' . __LINE__ );
         $result = civicrm_api('Membership','Delete',array( 'id'       =>   $result['id'] ,
                                                            'version'  => $this->_apiversion,));  
     }
