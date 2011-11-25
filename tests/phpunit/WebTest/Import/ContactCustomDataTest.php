@@ -66,6 +66,8 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
         $this->type( 'title', $newRuleTitle );
         $this->select( 'level', 'label=Strict' );
         $this->select( "where_0", "label=$customDataParams[1]" );
+        $this->type( 'weight_0','10' );
+        $this->type( 'threshold','10' );
         $this->click( '_qf_DedupeRules_next-bottom' );
         $this->waitForPageToLoad( "30000" );
         $this->assertTrue( $this->isTextPresent( "The rule '{$newRuleTitle}' has been saved." ) );
