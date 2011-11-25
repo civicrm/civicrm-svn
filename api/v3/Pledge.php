@@ -196,15 +196,9 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
   $values['sequential'] =  CRM_Utils_Array::value('sequential', $params,0);
 
 
-  //add back the fields we know of that got dropped by the previous function
-  if (!empty($params['pledge_create_date'])){
-    //pledge_create_date will not be formatted by the format params function so change back to create_date
-    $values['create_date'] = $params['pledge_create_date'];
-  }else{
 
     //create_date may have been dropped by the $fields function so retrieve it
     $values['create_date'] = CRM_Utils_Array::value('create_date',$params);
-  }
 
     //field has been renamed - don't lose it! Note that this must be called
     // installment amount not pledge_installment_amount, pledge_original_installment_amount
