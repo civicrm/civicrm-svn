@@ -1,3 +1,14 @@
+===============================================================================================
+README TO INSTALL CIVICRM IN WORDPRESS 3.3.X
+===============================================================================================
+
+A. INSTALL USING ZIP FILE
+
+Follow the intructions mentioned in the below url:
+http://wiki.civicrm.org/confluence/display/CRMDOC41/WordPress+Installation+Guide+for+CiviCRM+4.1
+
+
+B. SUBVERSION INSTALL
 
 1. Install WordPress and get it working
 
