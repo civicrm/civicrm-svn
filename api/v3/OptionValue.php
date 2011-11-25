@@ -80,9 +80,7 @@ function civicrm_api3_option_value_create( $params )
  */
 function _civicrm_api3_option_value_create_spec(&$params){
   $params['is_active']['api.default'] = 1;
-  $params['modified_date']['api.default'] = "now";
-  $params['note']['api.required'] =1;
-  $params['entity_id']['api.required'] =1;
+
 }
 /**
  * Deletes an existing OptionValue
