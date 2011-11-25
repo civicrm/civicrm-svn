@@ -245,7 +245,7 @@ function civicrm_cms_base( ) {
         $crmDirLevels = str_replace( $cmsPath,      '', str_replace( '\\', '/', $_SERVER['SCRIPT_FILENAME'] ) );
         $baseURL      = str_replace( $crmDirLevels, '', str_replace( '\\', '/', $baseURL ) );
     } else if ( $installType == 'wordpress' ) { 
-        $baseURL = str_replace( home_url(), '', site_url() );
+        $baseURL = str_replace( $url, '', site_url() );
     } else { 
         for ( $i = 1; $i <= $numPrevious; $i++ ) {
             $baseURL = dirname( $baseURL );
