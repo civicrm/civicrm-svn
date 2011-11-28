@@ -39,6 +39,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
 require_once 'CRM/Contribute/Form/AdditionalInfo.php';
 require_once 'CRM/Custom/Form/CustomData.php';
+require_once 'CRM/Core/OptionGroup.php';
 
 /**
  * This class generates form components for processing a contribution 
@@ -1484,7 +1485,7 @@ WHERE  contribution_id = {$this->_id}
                 $params['receipt_date'] = date("Y-m-d");
             }
 
-            if ( $params['contribution_status_id'] == 3 ) {
+            if ( $params['contribution_status_id'] == CRM_Core_OptionGroup::getValue( 'contribution_status', 'Cancelled', 'name' ) ) {
                 if ( CRM_Utils_System::isNull( CRM_Utils_Array::value( 'cancel_date', $params ) ) ) {
                     $params['cancel_date'] = date("Y-m-d");
                 }
@@ -1492,9 +1493,14 @@ WHERE  contribution_id = {$this->_id}
                 $params['cancel_date'] = $params['cancel_reason'] = 'null';
             }
             
+            // Set is_pay_later flag for back-office offline Pending status contributions CRM-8996
+            if ( $params['contribution_status_id'] == CRM_Core_OptionGroup::getValue( 'contribution_status', 'Pending', 'name' ) ) {
+                $params['is_pay_later'] = 1;
+            }
+            
             $ids['contribution'] = $params['id'] = $this->_id;
             
-            //Add Additinal common information  to formatted params
+            //Add Additional common information  to formatted params
             CRM_Contribute_Form_AdditionalInfo::postProcessCommon( $formValues, $params );
             
             //create contribution.
