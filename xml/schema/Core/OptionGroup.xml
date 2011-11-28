@@ -45,6 +45,7 @@
   <field>
        <name>is_reserved</name>
        <type>boolean</type>
+       <default>1</default>
        <comment>Is this a predefined system option group (i.e. it can not be deleted)?</comment>
        <add>1.5</add>
   </field>
