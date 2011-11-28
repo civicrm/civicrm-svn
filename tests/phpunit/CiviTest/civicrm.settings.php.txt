@@ -41,6 +41,34 @@ define( 'CIVICRM_TEMPLATE_COMPILEDIR', 'PLEASE ADJUST THIS PATH IN YOUR civicrm.
 define( 'CIVICRM_SITE_KEY', 'phpunittestfakekey' );
 
 /**
+ * Site URLs:
+ *
+ * This section defines absolute and relative URLs to access the host CMS (Drupal or Joomla) resources.
+ *
+ * IMPORTANT: Trailing slashes should be used on all URL settings.
+ *
+ *
+ * EXAMPLE - Drupal Installations:
+ * If your site's home url is http://www.example.com/drupal/
+ * these variables would be set as below. Modify as needed for your install.
+ *
+ * CIVICRM_UF_BASEURL - home URL for your site:
+ *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/drupal/' );
+ *
+ * EXAMPLE - Joomla Installations:
+ * If your site's home url is http://www.example.com/joomla/
+ *
+ * CIVICRM_UF_BASEURL - home URL for your site:
+ * Administration site:
+ *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/joomla/administrator/' );
+ * Front-end site:
+ *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/joomla/' );
+ *
+ */
+define( 'CIVICRM_UF_BASEURL'      , 'http://FIX ME' );
+
+
+/**
  * 
  * Do not change anything below this line. Keep as is
  *
