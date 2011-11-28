@@ -1596,7 +1596,10 @@ WHERE  contribution_id = {$this->_id}
                 $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/contact/view',
                                                                     "reset=1&cid={$this->_contactID}&selectedChild=contribute" ) );
             }
-        } else if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
+        } else if ( $this->_context == 'contribution' && $this->_mode && $buttonName == $this->getButtonName( 'upload', 'new' ) )  {
+          $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
+                                                              "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}&mode={$this->_mode}") );
+         } else if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
             $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
                                                                 "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}") );
         }
