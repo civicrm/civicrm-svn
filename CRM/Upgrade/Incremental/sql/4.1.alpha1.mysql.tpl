@@ -423,14 +423,6 @@ VALUES
 ALTER TABLE civicrm_contribution_recur
  ADD is_email_receipt TINYINT (4) COMMENT 'if true, receipt is automatically emailed to contact on each successful payment' AFTER payment_processor_id;
 
-#Other tasks
-# 1) Change the civicrm/admin/pcp?reset=1 navigation item to civicrm/admin/pcp?reset=1&context=contribute
-# 2) Add navigation item for civicrm/admin/pcp?reset=1&context=event
-
-#TODO
-# 1) Need to get the default filtes to apply on the Manage Personal Contribution Pages forms (taken frrom the contect argument)
-# 2) Lots of testing!
-
 -- /*****   Civicrm Multi-Event Registration   ***********/ 
 
 CREATE TABLE civicrm_event_carts (
