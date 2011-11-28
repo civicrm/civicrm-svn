@@ -171,6 +171,11 @@ class CRM_Contact_Page_AJAX
         if ( $name )  {
             $params['sort_name'] = $name;
         }
+        
+        $params['sort'] = 'sort_name';
+
+// tell api to skip permission chk. dgg
+$params['check_permissions'] = 0;
 
         $contact = civicrm_api('Contact', 'Get', $params);
         
