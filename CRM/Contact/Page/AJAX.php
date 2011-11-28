@@ -117,14 +117,14 @@ class CRM_Contact_Page_AJAX
         $name   = CRM_Utils_Type::escape( $name, 'String' );
         $action = CRM_Utils_Type::escape( CRM_Utils_Array::value('action', $_GET), 'String' );
 
-        if ( !empty($action) &&
-             !in_array($action, array('get', 'lookup')) ) {
+        if ( ! empty( $action ) &&
+             ! in_array($action, array('get', 'lookup')) ) {
             echo "$name|error\n";
             CRM_Utils_System::civiExit( );
         }
         
         if ( !empty($action) && $action == 'lookup' ) {
-            // Check permissions 
+            // Check permissions, FIXME
             $access = false;
             if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
                  CRM_Core_Permission::check( 'view all contacts' ) ||
@@ -178,7 +178,7 @@ class CRM_Contact_Page_AJAX
         $params['check_permissions'] = 0;
 
         $contact = civicrm_api('Contact', 'Get', $params);
-        
+
         if ( CRM_Utils_Array::value('is_error', $contact) ) {
             echo "$name|error\n";
             CRM_Utils_System::civiExit( );
@@ -278,9 +278,6 @@ class CRM_Contact_Page_AJAX
     
     static function relationship( ) 
     {
-        // CRM_Core_Error::debug_var( 'GET' , $_GET , true, true );
-        // CRM_Core_Error::debug_var( 'POST', $_POST, true, true );
-  
         $relType         = CRM_Utils_Array::value( 'rel_type', $_POST );
         $relContactID    = CRM_Utils_Array::value( 'rel_contact', $_POST );
         $sourceContactID = CRM_Utils_Array::value( 'contact_id', $_POST );
