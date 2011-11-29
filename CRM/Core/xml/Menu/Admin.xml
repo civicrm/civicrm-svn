@@ -579,8 +579,8 @@
      <title>Scheduled Jobs</title>
      <desc>Managing periodially running tasks.</desc>
      <page_callback>CRM_Admin_Page_Job</page_callback>
-     <access_arguments>access CiviCRM,administer CiviCRM</access_arguments>     
-     <adminGroup>Manage</adminGroup>
+     <access_arguments>access CiviCRM,administer CiviCRM</access_arguments>
+     <adminGroup>System Settings</adminGroup>
      <icon>admin/small/13.png</icon>
      <weight>1370</weight>
   </item>
