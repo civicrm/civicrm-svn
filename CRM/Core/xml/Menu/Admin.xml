@@ -518,6 +518,15 @@
      <weight>100</weight>
   </item>
   <item>
+     <path>civicrm/admin/options</path>
+     <title>Option Groups</title>
+     <desc>Access all meta-data option groups.</desc>
+     <page_callback>CRM_Admin_Page_OptionGroup</page_callback>
+     <adminGroup>System Settings</adminGroup>
+     <icon>admin/small/01.png</icon>
+     <weight>105</weight>
+  </item>
+  <item>
      <path>civicrm/admin/mapping</path>
      <title>Import/Export Mappings</title>
      <desc>Import and Export mappings allow you to easily run the same job multiple times. This option allows you to rename or delete existing mappings.</desc>
@@ -619,16 +628,6 @@
      <page_callback>CRM_Admin_Page_Admin</page_callback>
      <is_ssl>true</is_ssl>
      <weight>9000</weight>
-  </item>
-  <item>
-     <path>civicrm/admin/options</path>
-     <title>Option Groups</title>
-     <page_callback>CRM_Admin_Page_OptionGroup</page_callback>
-  </item>
-  <item>
-     <path>civicrm/admin/optionGroup</path>
-     <title>Option Groups</title>
-     <page_callback>CRM_Admin_Page_OptionGroup</page_callback>
   </item>
   <item>
      <path>civicrm/admin/optionValue</path>
