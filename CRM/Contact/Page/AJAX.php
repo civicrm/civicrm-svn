@@ -44,7 +44,7 @@ class CRM_Contact_Page_AJAX
     {
         // if context is 'customfield' 
         if ( CRM_Utils_Array::value( 'context', $_GET ) == 'customfield' ) {
-            return self::getContactListCustomField( );
+            return self::contactReference( );
         }
 
         $name   = CRM_Utils_Array::value( 's', $_GET );
@@ -112,28 +112,23 @@ class CRM_Contact_Page_AJAX
         CRM_Utils_System::civiExit( );
     } 
     
-    static function getContactListCustomField( ) {
+    static function contactReference( ) {
         $name   = CRM_Utils_Array::value( 's', $_GET );
         $name   = CRM_Utils_Type::escape( $name, 'String' );
-        $action = CRM_Utils_Type::escape( CRM_Utils_Array::value('action', $_GET), 'String' );
+        $cfID   = CRM_Utils_Type::escape( $_GET['id'], 'Positive' );
 
-        if ( ! empty( $action ) &&
-             ! in_array($action, array('get', 'lookup')) ) {
-            echo "$name|error\n";
-            CRM_Utils_System::civiExit( );
-        }
+        // add filter criteria
+        $filter = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField', $cfID, 'filter' );
+
+        if ( $filter ) {
+            $filterParams = array();
+            parse_str( $filter, $filterParams  );
         
-        if ( !empty($action) && $action == 'lookup' ) {
-            // Check permissions, FIXME
-            $access = false;
-            if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
-                 CRM_Core_Permission::check( 'view all contacts' ) ||
-                 CRM_Core_Permission::check( 'profile listings and forms' ) ||
-                 CRM_Core_Permission::check( 'profile listings' ) ) {
-                $access = true;
-            }
-            if ( !$access ) {
-                echo "$name|$name\n";
+            $action = CRM_Utils_Array::value('action', $filterParams );
+
+            if ( ! empty( $action ) &&
+                ! in_array($action, array('get', 'lookup')) ) {
+                echo "$name|error\n";
                 CRM_Utils_System::civiExit( );
             }
         }
@@ -141,6 +136,7 @@ class CRM_Contact_Page_AJAX
         require_once 'CRM/Core/BAO/Setting.php';
         $list   = array_keys( CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                   'contact_autocomplete_options' ), '1' );
+        
         $return = array_unique(array_merge(array('sort_name'), $list));
         
         $config = CRM_Core_Config::singleton( );
@@ -176,6 +172,11 @@ class CRM_Contact_Page_AJAX
 
         // tell api to skip permission chk. dgg
         $params['check_permissions'] = 0;
+
+        // add filter variable to params
+        if ( !empty( $filterParams ) ) {
+            $params = array_merge( $params, $filterParams );     
+        }
 
         $contact = civicrm_api('Contact', 'Get', $params);
 

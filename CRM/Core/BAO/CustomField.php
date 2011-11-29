@@ -901,12 +901,10 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             
             static $customUrls = array( );
             if ( $field->data_type == 'ContactReference' )  {
-                $urlParams = "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1&context=customfield&id={$field->id}";
-                if ( $field->filter ) {
-                    $urlParams .= '&'.$field->filter;
-                }
-                
-                $customUrls[$elementName] = CRM_Utils_System::url( 'civicrm/ajax/rest',
+                //$urlParams = "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1&context=customfield&id={$field->id}";
+                $urlParams = "context=customfield&id={$field->id}";
+               
+                $customUrls[$elementName] = CRM_Utils_System::url( 'civicrm/ajax/contactref',
                                                                    $urlParams,
                                                                    false, null, false );                
                
