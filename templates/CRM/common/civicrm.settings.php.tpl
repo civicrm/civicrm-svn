@@ -32,15 +32,18 @@
 /**
  * Content Management System (CMS) Host:
  *
- * CiviCRM can be hosted in either Drupal, Joomla or WordPress.
+ * CiviCRM can be hosted in either Drupal 6 or 7, Joomla or WordPress.
  *
- * Settings for Drupal 6.x:
+ * Settings for Drupal 7.x:
  *      define( 'CIVICRM_UF'        , 'Drupal' );
  *
- * Settings for Joomla 1.5.x:
+ * Settings for Drupal 6.x:
+ *      define( 'CIVICRM_UF'        , 'Drupal6' );
+ *
+ * Settings for Joomla 1.6.x:
  *      define( 'CIVICRM_UF'        , 'Joomla' );
  *
- * Settings for Wordpress:
+ * Settings for WordPress 3.3.x:
  *      define( 'CIVICRM_UF'        , 'WordPress' );
  *
  * You may have issues with images in CiviCRM. If this is the case, be sure
