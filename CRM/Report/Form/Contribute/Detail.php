@@ -49,7 +49,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
     protected $_summary      = null;
 
     protected $_customGroupExtends = array( 'Contribution' );
-
+    protected $_exposeContactID = true;
+    
     function __construct( ) {
         $this->_columns = 
             array( 'civicrm_contact'      =>

@@ -98,7 +98,11 @@ class CRM_Report_Form extends CRM_Core_Form {
     protected $_options = array( );
 
     protected $_defaults = array( );
-
+    /*
+     * By default most reports hide contact id. 
+     * Setting this to true makes it available
+     */
+    protected $_exposeContactID = false;
     /**
      * Set of statistic fields
      *
@@ -223,7 +227,11 @@ class CRM_Report_Form extends CRM_Core_Form {
         if ( $this->_tagFilter ) {
             $this->buildTagFilter( );
         }
-        
+        if ($this->_exposeContactID){
+          $this->_columns['civicrm_contact']['fields']['exposed_id'] = array(   'name' => 'id',
+										'title' => 'Contact ID',
+                    'no_repeat' => true);
+        }
         if( $this->_groupFilter){
            $this->buildGroupFilter();
         }

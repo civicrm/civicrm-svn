@@ -49,6 +49,8 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
     
     protected $_customGroupExtends = array( 'Membership' );
     protected $_customGroupGroupBy = false;
+    protected $_exposeContactID = true;
+        
     function __construct( ) {
         $this->_columns = 
             array( 'civicrm_contact' =>
