@@ -151,6 +151,15 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
     }
     
     function select( ) {
+  	  foreach ( $this->_columns as $tableName => $table ) {
+	
+	        if ( CRM_Utils_Array::value( 'total_paid', $this->_params['fields'] ) ) {
+                            $this->_totalPaid = true;
+
+                            unset( $this->_params['fields']['total_paid'] );
+				  }
+       }
+   
       parent::select();
     }
     
