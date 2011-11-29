@@ -229,7 +229,7 @@ class CRM_Core_BAO_ConfigSetting
             }
 
             // since language field won't be present before upgrade.
-            if ( CRM_Utils_Array::value( 'q', $_GET ) == 'civicrm/upgrade' ) {
+            if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'civicrm/upgrade' ) {
                 return;
             }
 
