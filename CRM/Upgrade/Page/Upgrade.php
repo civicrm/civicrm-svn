@@ -254,7 +254,9 @@ SELECT  count( id ) as statusCount
                                 }
 
                                 // set post-upgrade-message if any
-                                $versionObject->setPostUpgradeMessage( $postUpgradeMessage, $currentVer, $latestVer );
+                                if ( is_callable(array($versionObject, 'setPostUpgradeMessage')) ) {
+                                    $versionObject->setPostUpgradeMessage( $postUpgradeMessage, $currentVer, $latestVer );
+                                }
                             }
 
                             if ( is_callable(array($versionObject, $phpFunctionName)) ) {
