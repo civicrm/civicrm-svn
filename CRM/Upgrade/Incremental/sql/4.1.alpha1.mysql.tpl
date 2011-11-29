@@ -318,9 +318,9 @@ VALUES
 ('civicrm_participant', 'civicrm_event', 'Event Name', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts');
 
 INSERT INTO civicrm_option_group
-      (name, {localize field='description'}description{/localize}, is_reserved, is_active)
+      (name, {localize field='title'}title{/localize}, {localize field='description'}description{/localize}, is_reserved, is_active)
 VALUES
-      ('event_contacts', {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, 0, 1);
+      ('event_contacts', {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, 1, 1);
 
 SELECT @option_group_id_ere := max(id) from civicrm_option_group where name = 'event_contacts';
 
@@ -473,9 +473,9 @@ ALTER TABLE civicrm_event
     ADD slot_label_id int unsigned DEFAULT NULL COMMENT 'Subevent slot label. Implicit FK to civicrm_option_value where option_group = conference_slot.';
 
 INSERT INTO 
-   `civicrm_option_group` (`name`, `description`, `is_reserved`, `is_active`)
+   `civicrm_option_group` (`name`, {localize field='title'}`title`{/localize}, {localize field='description'}`description`{/localize}, `is_reserved`, `is_active`)
 VALUES 
-   ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 0, 1);
+   ('conference_slot'               , {localize}'{ts escape="sql"}Conference Slot{/ts}'{/localize}, {localize}'{ts escape="sql"}Conference Slot{/ts}'{/localize}                    , 1, 1);
 
 SELECT @msg_tpl_workflow_event := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_event';
 SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_event;
