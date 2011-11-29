@@ -44,6 +44,29 @@ require_once 'api/v3/utils.php';
 
 
 /**
+ * Dumb wrapper to exexute scheduled jobs. Always creates success - errors 
+ * and results are handled in the job log.
+ *
+ * @param  array   	  $params (reference ) input parameters
+ *
+ * @return array API Result Array
+ * 
+ * @static void
+ * @access public
+ *
+ */
+function civicrm_api3_job_execute( $params )
+{
+
+    require_once 'CRM/Core/JobManager.php';
+    $facility = new CRM_Core_JobManager();
+    $facility->execute();
+                        
+    // always creates success - results are handled elsewhere
+    return civicrm_api3_create_success( );
+}
+
+/**
  * Geocode group of contacts based on given params
  *
  * @param  array   	  $params (reference ) input parameters
