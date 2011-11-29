@@ -73,7 +73,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
                                                                     'name'  => ts('Log entries'),
                                                                     'url'   => 'civicrm/admin/joblog',
                                                                     'qs'    => 'jid=%%id%%&reset=1',
-                                                                    'title' => ts('Edit Scheduled Job') 
+                                                                    'title' => ts('See log entries for this Scheduled Job') 
                                                                     ),
 
                                   CRM_Core_Action::UPDATE  => array(
@@ -125,7 +125,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
     function run()
     {
         // set title and breadcrumb
-        CRM_Utils_System::setTitle(ts('Settings - Scheduled Job'));
+        CRM_Utils_System::setTitle(ts('Settings - Scheduled Jobs'));
         $breadCrumb = array( array('title' => ts('Administration'), 
                                    'url'   => CRM_Utils_System::url( 'civicrm/admin', 
                                                                      'reset=1' )) );
