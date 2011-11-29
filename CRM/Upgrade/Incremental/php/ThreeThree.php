@@ -115,9 +115,9 @@ WHERE id = %2
 
         // now modify the config so that the directories are stored in option group/value
         // CRM-6914
-        require_once 'CRM/Core/BAO/ConfigSetting.php';
-        $params = array( );
-        CRM_Core_BAO_ConfigSetting::add( $parambs );
+        // require_once 'CRM/Core/BAO/ConfigSetting.php';
+        // $params = array( );
+        // CRM_Core_BAO_ConfigSetting::add( $parambs );
     }
     
     function upgrade_3_3_beta1( $rev ) 
