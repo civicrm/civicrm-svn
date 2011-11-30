@@ -91,7 +91,7 @@ UPDATE civicrm_contact SET contact_sub_type = CONCAT('', contact_sub_type, '')
 INSERT INTO `civicrm_dashboard` 
     ( `domain_id`, {localize field='label'}`label`{/localize}, `url`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `fullscreen_url`, `is_fullscreen`, `is_reserved`) 
     VALUES 
-    ( @domainID, '{localize}Case Dashboard Dashlet{/localize}', 'civicrm/dashlet/casedashboard&reset=1&snippet=4', 'access CiviCase', NULL , 0, 0, 1, 4, 'civicrm/dashlet/casedashboard&reset=1&snippet=4&context=dashletFullscreen', 1, 1);
+    ( @domainID, {localize}'Case Dashboard Dashlet'{/localize}, 'civicrm/dashlet/casedashboard&reset=1&snippet=4', 'access CiviCase', NULL , 0, 0, 1, 4, 'civicrm/dashlet/casedashboard&reset=1&snippet=4&context=dashletFullscreen', 1, 1);
 
 -- CRM-9059 Admin menu rebuild
 SELECT @domainID := min(id) FROM civicrm_domain;
@@ -254,21 +254,32 @@ VALUES
 ALTER TABLE `civicrm_report_instance` ADD `grouprole` VARCHAR( 1024 ) NULL AFTER `permission`;
 
 -- CRM-8762 Fix option_group table
-ALTER TABLE civicrm_option_group CHANGE `label` `title` varchar(255);
 ALTER TABLE civicrm_option_group CHANGE `is_reserved` `is_reserved` TINYINT DEFAULT 1;
-UPDATE civicrm_option_group SET `title` = `description` WHERE `title` IS NULL;
 UPDATE civicrm_option_group SET `is_reserved` = 1;
+{if $multilingual}
+  {foreach from=$locales item=locale}
+    UPDATE civicrm_option_group SET label_{$locale} = description_{$locale} WHERE label_{$locale} IS NULL;
+  {/foreach}
+{else}
+  UPDATE civicrm_option_group SET `label` = `description` WHERE `label` IS NULL;
+{/if}
 
 -- CRM-9112
-ALTER TABLE `civicrm_dedupe_rule_group` ADD `title` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'Label of the rule group';
+{if $multilingual}
+  {foreach from=$locales item=locale}
+    ALTER TABLE `civicrm_dedupe_rule_group` ADD title_{$locale} VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'Label of the rule group';
+    UPDATE `civicrm_dedupe_rule_group` SET title_{$locale} = `name`;
+  {/foreach}
+{else}
+  ALTER TABLE `civicrm_dedupe_rule_group` ADD `title` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'Label of the rule group';
+{/if}
 ALTER TABLE `civicrm_dedupe_rule_group` ADD `is_reserved` TINYINT( 4 ) NULL DEFAULT NULL COMMENT 'Is this a reserved rule - a rule group that has been optimized and cannot be changed by the admin';
 
-UPDATE `civicrm_dedupe_rule_group` SET `title` = `name`;
 UPDATE `civicrm_dedupe_rule_group` SET `name` = CONCAT( REPLACE( `name`, '-', '' ), '-', id );
 
 -- the fuzzy default dedupe rules
 INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved) 
-VALUES ('Individual', 20, 'Fuzzy', 1, 'IndividualFuzzy', '{localize}Individual Fuzzy In-built{/localize}', 1);
+VALUES ('Individual', 20, 'Fuzzy', 1, 'IndividualFuzzy', {localize}'Individual Fuzzy In-built'{/localize}, 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
@@ -278,14 +289,14 @@ VALUES (@drgid, 'civicrm_contact', 'first_name', 5),
 
 -- the strict dedupe rules
 INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved) 
-VALUES ('Individual', 10, 'Strict', 1, 'IndividualStrict', '{localize}Individual Strict In-built{/localize}', 1);
+VALUES ('Individual', 10, 'Strict', 1, 'IndividualStrict', {localize}'Individual Strict In-built'{/localize}, 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_email', 'email', 10);
 
 INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved)
-VALUES ('Individual', 15, 'Strict', 0, 'IndividualComplete', '{localize}Individual Complete Inbuilt{/localize}', 1);
+VALUES ('Individual', 15, 'Strict', 0, 'IndividualComplete', {localize}'Individual Complete Inbuilt'{/localize}, 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
@@ -296,8 +307,16 @@ VALUES (@drgid, 'civicrm_contact', 'first_name',     '5'),
        (@drgid, 'civicrm_contact', 'suffix_id',      '1');
 
 -- CRM-9120
-ALTER TABLE `civicrm_location_type` ADD `display_name` VARCHAR( 64 ) DEFAULT NULL  COMMENT 'Location Type Display Name.' AFTER `name`;
-UPDATE `civicrm_location_type` SET `display_name` = `name`;
+{if $multilingual}
+  {foreach from=$locales item=locale}
+    ALTER TABLE `civicrm_location_type` ADD display_name_{$locale} VARCHAR( 64 ) DEFAULT NULL  COMMENT 'Location Type Display Name.' AFTER `name`;
+    UPDATE `civicrm_location_type` SET display_name_{$locale} = `name`;
+  {/foreach}
+{else}
+  ALTER TABLE `civicrm_location_type` ADD `display_name` VARCHAR( 64 ) DEFAULT NULL  COMMENT 'Location Type Display Name.' AFTER `name`;
+  UPDATE `civicrm_location_type` SET `display_name` = `name`;
+{/if}
+
 
 -- CRM-9125
 ALTER TABLE `civicrm_contribution_recur` ADD `contribution_type_id` int(10) unsigned NULL COMMENT 'FK to Contribution Type';
@@ -318,7 +337,7 @@ VALUES
 ('civicrm_participant', 'civicrm_event', 'Event Name', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts');
 
 INSERT INTO civicrm_option_group
-      (name, {localize field='title'}title{/localize}, {localize field='description'}description{/localize}, is_reserved, is_active)
+      (name, {localize field='label'}label{/localize}, {localize field='description'}description{/localize}, is_reserved, is_active)
 VALUES
       ('event_contacts', {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, 1, 1);
 
@@ -467,9 +486,9 @@ ALTER TABLE civicrm_participant
 
 SELECT @pending_id                 := MAX(id) + 1 FROM civicrm_participant_status_type;
 INSERT INTO civicrm_participant_status_type
-  (id,          name,                         label,                                                       class,      is_reserved, is_active, is_counted, weight,      visibility_id)
+  (id,          name,                         {localize field='label'}label{/localize},                                                       class,      is_reserved, is_active, is_counted, weight,      visibility_id)
 VALUES
-  (@pending_id, 'Pending in cart',            '{ts escape="sql"}Pending in cart{/ts}',                     'Pending',  1,           1,         0,          @pending_id, 2            );
+  (@pending_id, 'Pending in cart',            {localize}'{ts escape="sql"}Pending in cart{/ts}'{/localize},                     'Pending',  1,           1,         0,          @pending_id, 2            );
 
 
 ALTER TABLE civicrm_event
@@ -478,7 +497,7 @@ ALTER TABLE civicrm_event
     ADD slot_label_id int unsigned DEFAULT NULL COMMENT 'Subevent slot label. Implicit FK to civicrm_option_value where option_group = conference_slot.';
 
 INSERT INTO 
-   `civicrm_option_group` (`name`, {localize field='title'}`title`{/localize}, {localize field='description'}`description`{/localize}, `is_reserved`, `is_active`)
+   `civicrm_option_group` (`name`, {localize field='label'}`label`{/localize}, {localize field='description'}`description`{/localize}, `is_reserved`, `is_active`)
 VALUES 
    ('conference_slot'               , {localize}'{ts escape="sql"}Conference Slot{/ts}'{/localize}, {localize}'{ts escape="sql"}Conference Slot{/ts}'{/localize}                    , 1, 1);
 
@@ -486,12 +505,20 @@ SELECT @msg_tpl_workflow_event := MAX(id)     FROM civicrm_option_group WHERE na
 SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_event;
 
 INSERT INTO civicrm_option_value
-  (option_group_id,         name,                         label,                                         value,   weight)
+  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
 VALUES
-  (@msg_tpl_workflow_event, 'event_registration_receipt', '{ts escape="sql"}Events - Receipt only{/ts}', @weight, @weight);
+  (@msg_tpl_workflow_event, 'event_registration_receipt', {localize}'{ts escape="sql"}Events - Receipt only{/ts}'{/localize}, @weight, @weight);
 
 {* SELECT @tpl_ovid_$vName := MAX(id) FROM civicrm_option_value WHERE option_group_id = @tpl_ogid_$gName AND name = '$vName'; *}
 {* INSERT INTO civicrm_msg_template *}
 
 -- CRM-8532
 UPDATE `civicrm_dashboard` SET url = REPLACE( url, 'snippet=4', 'snippet=5' ), fullscreen_url = REPLACE( fullscreen_url, 'snippet=4', 'snippet=5' );
+
+{if $multilingual}
+  {foreach from=$locales item=locale}
+    ALTER TABLE civicrm_option_group CHANGE label_{$locale} title_{$locale} varchar(255);
+  {/foreach}
+{else}
+  ALTER TABLE civicrm_option_group CHANGE label title varchar(255);
+{/if}

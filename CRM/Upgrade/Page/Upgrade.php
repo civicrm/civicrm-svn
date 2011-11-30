@@ -259,6 +259,8 @@ SELECT  count( id ) as statusCount
                                 }
                             }
 
+                            $upgrade->setSchemaStructureTables( $rev );
+
                             if ( is_callable(array($versionObject, $phpFunctionName)) ) {
                                 $versionObject->$phpFunctionName( $rev );
                             } else {

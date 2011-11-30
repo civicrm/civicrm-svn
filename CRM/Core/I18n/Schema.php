@@ -266,22 +266,7 @@ class CRM_Core_I18n_Schema
     static function rebuildMultilingualSchema($locales, $version = null)
     {
         if ($version) {
-            // fetch all the SchemaStructure versions we ship and sort by version
-            $schemas = array();
-            foreach (scandir(dirname(__FILE__)) as $file) {
-                $matches = array();
-                if (preg_match('/^SchemaStructure_([0-9a-z_]+)\.php$/', $file, $matches)) {
-                    $schemas[] = str_replace('_', '.', $matches[1]);
-                }
-            }
-            usort($schemas, 'version_compare');
-
-            // find the latest schema structure older than (or equal to) $version
-            do {
-                $latest = array_pop($schemas);
-            } while (version_compare($latest, $version, '>'));
-            $latest = str_replace('.', '_', $latest);
-
+            $latest =  self::getLatestSchema( $version );
             $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
             require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
         } else {
@@ -340,12 +325,9 @@ class CRM_Core_I18n_Schema
      * @return string        the rewritten query
      */
     static function rewriteQuery($query)
-    {
-        static $tables = null;
-        if ($tables === null) {
-            $tables = CRM_Core_I18n_SchemaStructure::tables();
-        }
+    {     
         global $dbLocale;
+        $tables = self::schemaStructureTables( );
         foreach ($tables as $table) {
             $query = preg_replace("/([^'\"])({$table})([^_'\"])/", "\\1\\2{$dbLocale}\\3", $query);
         }
@@ -354,6 +336,41 @@ class CRM_Core_I18n_Schema
         return $query;
     }
 
+    static function schemaStructureTables($version = null, $force = false) {
+        static $_tables = null;
+        if ($_tables === null || $force) {
+            if ($version) {
+                $latest =  self::getLatestSchema( $version );
+                $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
+                require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
+                eval("\$tables  =& $class::tables();");
+            } else {
+                $tables = CRM_Core_I18n_SchemaStructure::tables();
+            }
+            $_tables = $tables;         
+        }
+        return $_tables;
+    }
+
+    static function getLatestSchema( $version ) {
+        // fetch all the SchemaStructure versions we ship and sort by version
+        $schemas = array();
+        foreach (scandir(dirname(__FILE__)) as $file) {
+            $matches = array();
+            if (preg_match('/^SchemaStructure_([0-9a-z_]+)\.php$/', $file, $matches)) {
+                $schemas[] = str_replace('_', '.', $matches[1]);
+            }
+        }
+        usort($schemas, 'version_compare');
+        
+        // find the latest schema structure older than (or equal to) $version
+        do {
+            $latest = array_pop($schemas);
+        } while (version_compare($latest, $version, '>'));
+        
+        return str_replace('.', '_', $latest);     
+    }
+    
     /**
      * CREATE INDEX queries for a given locale and table
      *

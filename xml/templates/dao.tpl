@@ -219,8 +219,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
        */
       function getTableName( ) {ldelim}
         {if $table.localizable}
-          global $dbLocale;
-          return self::$_tableName . $dbLocale;
+          return CRM_Core_DAO::getLocaleTableName( self::$_tableName );
         {else}
           return self::$_tableName;
         {/if}

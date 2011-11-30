@@ -135,6 +135,18 @@ class CRM_Core_DAO extends DB_DataObject
         $this->joinAdd  ( );
     }
 
+    static function getLocaleTableName( $tableName ) {
+        global $dbLocale;
+        if ( $dbLocale ) {
+            require_once 'CRM/Core/I18n/Schema.php';
+            $tables = CRM_Core_I18n_Schema::schemaStructureTables();
+            if ( in_array($tableName, $tables) ) {
+                return $tableName . $dbLocale;
+            }
+        }
+        return $tableName;
+    }
+
     /**
      * Execute a query by the current DAO, localizing it along the way (if needed).
      *

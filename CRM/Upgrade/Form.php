@@ -292,6 +292,13 @@ SET    version = '$version'
         return $this->multilingual;
     }
 
+    function setSchemaStructureTables( $rev ) {
+      if ( $this->multilingual ) {
+        require_once 'CRM/Core/I18n/Schema.php';
+        CRM_Core_I18n_Schema::schemaStructureTables($rev, true);
+      }  
+    }
+
     function processSQL( $rev ) {
         $sqlFile = implode( DIRECTORY_SEPARATOR, 
                             array(dirname(__FILE__), 'Incremental', 
