@@ -334,8 +334,13 @@ ALTER TABLE civicrm_action_schedule ADD `recipient_listing` varchar(128) COLLATE
   
   
 -- CRM-8534
-ALTER TABLE civicrm_pcp_block DROP FOREIGN KEY FK_civicrm_pcp_block_entity_id;
-ALTER TABLE civicrm_pcp DROP FOREIGN KEY FK_civicrm_pcp_contribution_page_id;
+ALTER TABLE civicrm_pcp_block 
+      DROP FOREIGN KEY FK_civicrm_pcp_block_entity_id,
+      DROP INDEX FK_civicrm_pcp_block_entity_id;
+
+ALTER TABLE civicrm_pcp 
+      DROP FOREIGN KEY FK_civicrm_pcp_contribution_page_id,
+      DROP INDEX FK_civicrm_pcp_contribution_page_id;
 
 ALTER TABLE `civicrm_pcp` 
   ADD `page_type` VARCHAR( 64 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'contribute' AFTER `contribution_page_id`;
