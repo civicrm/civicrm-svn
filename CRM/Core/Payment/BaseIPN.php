@@ -77,8 +77,8 @@ class CRM_Core_Payment_BaseIPN {
     function createContact( &$input, &$ids, &$objects ) {
         $params    = array( );
         $billingID = $ids['billing'];
-        $lookup    = array( "first_name"                  ,
-                            "last_name"                   ,
+        $lookup    = array( 'first_name'                  ,
+                            'last_name'                   ,
                             "street_address-{$billingID}" ,
                             "city-{$billingID}"           ,
                             "state-{$billingID}"          ,
@@ -568,7 +568,7 @@ LIMIT 1;";
         self::updateRecurLinkedPledge( $contribution);
 
         // create an activity record
-        require_once "CRM/Activity/BAO/Activity.php";
+        require_once 'CRM/Activity/BAO/Activity.php';
         if ( $input['component'] == 'contribute' ) {
             //CRM-4027
             $targetContactID = null;
@@ -596,7 +596,7 @@ LIMIT 1;";
     
     function getBillingID( &$ids ) {
         // get the billing location type
-        require_once "CRM/Core/PseudoConstant.php";
+        require_once 'CRM/Core/PseudoConstant.php';
         $locationTypes  = CRM_Core_PseudoConstant::locationType( );
         // CRM-8108 remove the ts around the Billing locationtype
         //$ids['billing'] =  array_search( ts('Billing'),  $locationTypes );
@@ -723,18 +723,18 @@ LIMIT 1;";
             
             $idParams = array( 'id' => $honarID, 'contact_id' => $honarID );
             
-            require_once "CRM/Contact/BAO/Contact.php";
+            require_once 'CRM/Contact/BAO/Contact.php';
             CRM_Contact_BAO_Contact::retrieve( $idParams, $honorDefault, $honorIds );
             
-            require_once "CRM/Core/PseudoConstant.php";
+            require_once 'CRM/Core/PseudoConstant.php';
             $honorType = CRM_Core_PseudoConstant::honor( );
             $prefix    = CRM_Core_PseudoConstant::individualPrefix();
             
             $template->assign( 'honor_block_is_active', 1 );
-            $template->assign( 'honor_prefix',     $prefix[$honorDefault["prefix_id"]] );
-            $template->assign( 'honor_first_name', CRM_Utils_Array::value( "first_name", $honorDefault ) );
-            $template->assign( 'honor_last_name',  CRM_Utils_Array::value( "last_name", $honorDefault ) );
-            $template->assign( 'honor_email',      CRM_Utils_Array::value( "email", $honorDefault["email"][1] ) );
+            $template->assign( 'honor_prefix',     $prefix[$honorDefault['prefix_id']] );
+            $template->assign( 'honor_first_name', CRM_Utils_Array::value( 'first_name', $honorDefault ) );
+            $template->assign( 'honor_last_name',  CRM_Utils_Array::value( 'last_name', $honorDefault ) );
+            $template->assign( 'honor_email',      CRM_Utils_Array::value( 'email', $honorDefault['email'][1] ) );
             $template->assign( 'honor_type',       $honorType[$contribution->honor_type_id] );
         }
 
@@ -814,10 +814,12 @@ LIMIT 1;";
         $template->assign( 'address', CRM_Utils_Address::format( $input ) );
         if ( $input['component'] == 'event' ) { 
             require_once 'CRM/Core/OptionGroup.php';
-            $participant_role = CRM_Core_OptionGroup::values('participant_role');
-
-            $values['event']['participant_role'] = $participant_role[$participant->role_id];
-
+            $participantRoles = CRM_Event_PseudoConstant::participantRole();
+            $viewRoles = array( );
+            foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $participant->role_id) as $k => $v ) {
+                $viewRoles[] = $participantRoles[$v];
+            }
+            $values['event']['participant_role'] = implode( ', ', $viewRoles );
             $template->assign( 'event', $values['event'] );
             $template->assign( 'location', $values['location'] );
             $template->assign( 'customPre', $values['custom_pre_id'] );
@@ -829,7 +831,7 @@ LIMIT 1;";
             }
             
             $values['params'] = array( );
-            require_once "CRM/Event/BAO/Event.php";
+            require_once 'CRM/Event/BAO/Event.php';
             //to get email of primary participant.
             $primaryEmail = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Email',  $participant->contact_id, 'email', 'contact_id' );  
             $primaryAmount[] = array( 'label' => $participant->fee_level.' - '.$primaryEmail, 'amount' => $participant->fee_amount);
@@ -855,7 +857,7 @@ LIMIT 1;";
                     //if additional participant dont have email
                     //use display name.
                     if ( !$additionalParticipantInfo ) {
-                        require_once "CRM/Contact/BAO/Contact.php";
+                        require_once 'CRM/Contact/BAO/Contact.php';
                         $additionalParticipantInfo = CRM_Contact_BAO_Contact::displayName( $additional->contact_id ); 
                     }
                     $amount[0] = array( 'label' => $additional->fee_level, 'amount' =>  $additional->fee_amount );
