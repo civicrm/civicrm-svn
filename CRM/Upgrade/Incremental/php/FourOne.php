@@ -50,8 +50,11 @@ class CRM_Upgrade_Incremental_php_FourOne {
     function setPostUpgradeMessage( &$postUpgradeMessage, $currentVer, $latestVer ) {
         if ( version_compare( $currentVer, '4.1.alpha1' ) < 0 ) {
             $postUpgradeMessage .= '<br />' . ts( 'The CiviCRM Administration menu structure has been re-organized during this upgrade to make it easier to find things and reduce the number of keystrokes. If you have customized this portion of the navigation menu - you should take a few minutes to review the changes. You may need to reimplement or move your customizations.' );
-
+            
             $postUpgradeMessage .= '<br />' . ts( 'Yahoo recently discontinued their geocoding and mapping API service. If you previously used Yahoo, you will need to select and configure an alternate service in order to continue using geocoding/mapping tools.' );
+            
+            $postUpgradeMessage .= '<br />' . ts( 'We have integrated KCFinder with CKEditor and TinyMCE, which enables user to upload images. Note that all the images uploaded using KCFinder will be public.' );
+
         }
     }
 
