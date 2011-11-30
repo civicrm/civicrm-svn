@@ -458,7 +458,7 @@ class CRM_Core_Permission {
                    'merge duplicate contacts'          => $prefix . ts( 'merge duplicate contacts' ),
                    'view all notes'                    => $prefix . ts( 'view all notes' ),
                    'access AJAX API'                   => $prefix . ts( 'access AJAX API' ),
-                   'access contact reference fields'   => $prefix . ts( 'access Contact Reference Fields' )
+                   'access contact reference fields'   => $prefix . ts( 'access contact reference fields' )
                );
        
         return $permissions;

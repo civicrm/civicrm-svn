@@ -117,12 +117,19 @@ class CRM_Contact_Page_AJAX
         $name   = CRM_Utils_Type::escape( $name, 'String' );
         $cfID   = CRM_Utils_Type::escape( $_GET['id'], 'Positive' );
 
-        // add filter criteria
-        $filter = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField', $cfID, 'filter' );
-
-        if ( $filter ) {
+        // check that this is a valid, active custom field of Contact Reference type
+        $params = array( 'id' => $cfID );
+        $returnProperties = array( 'filter', 'data_type', 'is_active');
+        $fldValues = array();
+        CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_CustomField', $params, $cf, $returnProperties );
+        if ( ! $cf['id'] || ! $cf['is_active'] || $cf['data_type'] =! 'ContactReference') {
+            echo "$name|error\n";
+            CRM_Utils_System::civiExit( );            
+        }
+        
+        if ( $cf['filter'] ) {
             $filterParams = array();
-            parse_str( $filter, $filterParams  );
+            parse_str( $cf['filter'], $filterParams  );
         
             $action = CRM_Utils_Array::value('action', $filterParams );
 
