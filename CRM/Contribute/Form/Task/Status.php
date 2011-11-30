@@ -84,20 +84,6 @@ AND    {$this->_componentClause}";
             CRM_Core_Error::statusBounce(ts('Please select only online contributions with Pending status.'));
         }
 
-        // ensure that all contributions are generated online by pay later
-        $query = "
-SELECT DISTINCT( source ) as source
-FROM   civicrm_contribution
-WHERE  {$this->_componentClause}";
-        $dao = CRM_Core_DAO::executeQuery( $query,
-                                           CRM_Core_DAO::$_nullArray );
-        while ( $dao->fetch( ) ) {
-            if ( strpos( $dao->source, ts( 'Online Contribution' ) ) === false &&
-                 strpos( $dao->source, ts( 'Online Event Registration' ) ) === false ) {
-                CRM_Core_Error::statusBounce( "<strong>Update Pending Contribution Status</strong> can only be used for pending online contributions (made using the 'Pay Later' option). The Source for these contributions starts with 'Online ...'. Please de-select any offline contributions and try again." );
-            }
-        }
-
         // we have all the contribution ids, so now we get the contact ids
         parent::setContactIDs( );
         $this->assign( 'single', $this->_single );
