@@ -998,10 +998,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 } else {
                     $detailName = "website-{$id}-{$fieldName}";
                     $url = CRM_Utils_System::fixURL( $details->$detailName );
-                    $websiteTypeId  = "website-{$id}-website_type_id";
-                    $websiteType    = $websiteTypes[$details->$websiteTypeId];
-                    if ( $details->$detailName ) {
-                        $values[$index] = "<a href=\"$url\">{$details->$detailName} ( {$websiteType} )</a>";
+                   if ( $details->$detailName ) {
+                       $websiteTypeId  = "website-{$id}-website_type_id";
+                       $websiteType    = $websiteTypes[$details->$websiteTypeId];
+                       $values[$index] = "<a href=\"$url\">{$details->$detailName} ( {$websiteType} )</a>";
                     } else {
                         $values[$index] = '';
                     }
