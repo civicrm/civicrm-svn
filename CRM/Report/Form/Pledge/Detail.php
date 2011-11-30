@@ -41,7 +41,6 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
     protected $_summary = null;
     protected $_totalPaid = false;
     protected $_customGroupExtends = array( 'Pledge' , 'Individual');
-    protected $_exposeContactID = true;
     
     function __construct( ) {
         $this->_columns = 
