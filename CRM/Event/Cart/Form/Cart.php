@@ -22,9 +22,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
     $locationTypes = CRM_Core_PseudoConstant::locationType( );
     $this->_bltID = array_search( 'Billing', $locationTypes);
     $this->assign('bltID', $this->_bltID);
-    $this->description = "Online payment for " . implode( ", ", $event_titles ) . ".";
-    if (self::is_administrator()) { $this->description .= " (by administrator)";
-    }
     if (!isset($this->discounts)) {
       $this->discounts = array();
     }
@@ -125,7 +122,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 
   static function find_or_create_contact($fields = array())
   {
-    $contact = self::matchAnyContactOnEmail( $fields['email'] );
+    $contact = self::matchAnyContactOnEmail( CRM_Utils_Array::value('email', $fields) );
     if ($contact == null) {
       require_once 'CRM/Contact/BAO/Group.php';
 
@@ -140,8 +137,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
       // still add the employer id of the signed in user  //???
       $contact_params = array(
         'email-Primary' => CRM_Utils_Array::value('email', $fields, null),
-        'first_name' => CRM_Utils_Array::value('first_name', $fields, null),
-        'last_name' => CRM_Utils_Array::value('last_name', $fields, null),
         'is_deleted' => CRM_Utils_Array::value('is_deleted', $fields, true),
       );
       $no_fields = array( );
@@ -161,7 +156,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
      $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
      $mail = $strtolower( trim( $mail ) );
 
-     $query .= " 
+     $query = " 
 SELECT     contact_id
 FROM       civicrm_email
 WHERE      email = %1";

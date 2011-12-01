@@ -14,8 +14,6 @@ class CRM_Event_Cart_Form_MerParticipant extends CRM_Core_Form
   {
     $textarea_size = array('size' => 30, 'maxlength' => 60);
     $form->add('text', $this->email_field_name(), ts('Email Address'), $textarea_size, true);
-    $form->add('text', $this->html_field_name('first_name'), ts('First Name'), $textarea_size, true);
-    $form->add('text', $this->html_field_name('last_name'), ts('Last Name'), $textarea_size, true);
 
     list(
       $custom_fields_pre,
@@ -89,12 +87,13 @@ class CRM_Event_Cart_Form_MerParticipant extends CRM_Core_Form
 
   function setDefaultValues()
   {
-     $this->participant->load_temporary_name();
     $defaults = array(
       $this->html_field_name('email') => $this->participant->email,
-      $this->html_field_name('first_name') => $this->participant->first_name,
-      $this->html_field_name('last_name') => $this->participant->last_name,
     );
+    list($custom_fields_pre, $custom_fields_post) = $this->get_participant_custom_data_fields($this->participant->event_id);
+    $all_fields = $custom_fields_pre + $custom_fields_post;
+    require_once 'CRM/Core/BAO/UFGroup.php';
+    CRM_Core_BAO_UFGroup::setProfileDefaults( $this->participant->contact_id, $all_fields, $defaults );
     return $defaults;
   }
 }

@@ -422,6 +422,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	$params = $this->_submitValues;
 	$contribution_statuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
+        //XXX
         $this->payer_contact_id = self::find_or_create_contact(array(
           'email' => $params['billing_contact_email'],
           'first_name' => $params['billing_first_name'],

@@ -5,8 +5,6 @@ require_once('CRM/Event/BAO/Participant.php');
 class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
 {
   public $email = null;
-  public $first_name = null;
-  public $last_name = null;
 
     //XXX
   function __construct($participant = null)
@@ -16,8 +14,6 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
     $this->copyValues($a);
 
     $this->email = CRM_Utils_Array::value('email', $participant);
-    $this->first_name = CRM_Utils_Array::value('first_name', $participant);
-    $this->last_name = CRM_Utils_Array::value('last_name', $participant);
   }
 
   public static function create( $params )
@@ -93,7 +89,7 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
 
   function load_associations()
   {
-      $this->load_temporary_name();
+      //$this->load_temporary_name();
   }
 
   function get_participant_index( )
@@ -121,33 +117,5 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
   {
     require_once('CRM/Event/Cart/Form/MerParticipant.php');
     return new CRM_Event_Cart_Form_MerParticipant($this);
-  }
-
-//TODO figure out a better solution
-  function store_temporary_name()
-  {
-    $session = CRM_Core_Session::singleton( );
-    $cart_contacts = $session->get('cart_contacts');
-    if (!isset($cart_contacts)) $cart_contacts = array();
-
-    $cart_contacts[$this->contact_id] = array(
-        'email' => $this->email,
-        'first_name' => $this->first_name,
-        'last_name' => $this->last_name,
-    );
-    $session->set('cart_contacts', $cart_contacts);
-  }
-
-  function load_temporary_name()
-  {
-    $session = CRM_Core_Session::singleton( );
-    $cart_contacts = $session->get('cart_contacts');
-    if (isset($cart_contacts) && isset($cart_contacts[$this->contact_id]))
-    {
-      $saved = $cart_contacts[$this->contact_id];
-      $this->email = $saved['email'];
-      $this->first_name = $saved['first_name'];
-      $this->last_name = $saved['last_name'];
-    }
   }
 }

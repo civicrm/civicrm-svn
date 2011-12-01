@@ -34,6 +34,25 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
       'isDefault' => true )
       )
     );
+
+    if ($this->cid) {
+      $params = array( 'id' => $this->cid );
+      $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
+      $contact_values = array();
+      CRM_Core_DAO::storeValues($contact, $contact_values);
+      $this->assign( 'contact', $contact_values );
+    }
+  }
+
+  function preProcess()
+  {
+    parent::preProcess();
+
+    $this->cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+    if (!isset($this->cid) || $this->cid > 0) {
+      //TODO users with permission can default to another contact
+      $this->cid = self::getContactID();
+    }
   }
 
   static function primary_email_from_contact( $contact )
@@ -147,20 +166,18 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
     require_once 'CRM/Event/Cart/Form/MerParticipant.php';
     foreach ( $this->cart->get_main_event_participants() as $participant )
     {
-        if ($participant->contact_id == self::getContactID()
-          && empty($participant->email)
-          && !CRM_Event_Cart_Form_Cart::is_administrator()
-          && ($participant->get_participant_index() == 1))
+        $form = $participant->get_form();
+        if (empty($participant->email)
+          //&& !CRM_Event_Cart_Form_Cart::is_administrator()
+          && ($participant->get_participant_index() == 1)
+          && ($this->cid != 0))
         {
           require_once 'CRM/Contact/BAO/Contact.php';
-          $defaults = array( );
-          $params = array( 'id' => self::getContactID() );
-          $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
+          $d = array( );
+          $params = array( 'id' => $this->cid );
+          $contact = CRM_Contact_BAO_Contact::retrieve( $params, $d );
           $participant->email = self::primary_email_from_contact( $contact );
-          $participant->first_name = $contact->first_name;
-          $participant->last_name = $contact->last_name;
         }
-        $form = $participant->get_form();
         $defaults += $form->setDefaultValues();
     }
     return $defaults;
@@ -192,11 +209,8 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
           'contact_id' => $contact_id,
           //'registered_by_id' => $this->cart->user_id,
           'email' => $fields['email'],
-          'first_name' => $fields['first_name'],
-          'last_name' => $fields['last_name'],
         );
         $participant = new CRM_Event_Cart_BAO_MerParticipant($participant_params);
-        $participant->store_temporary_name();
         $participant->save();
         $this->cart->add_participant_to_cart($participant);
 

@@ -2,6 +2,11 @@
 
 {capture assign='reqMark'}<span class="marker"  title="{ts}This field is required.{/ts}">*</span>{/capture}
 
+{if $contact}
+<div class="messages status">
+    {ts 1=$contact.display_name}Welcome %1{/ts}. (<a href="{crmURL p='civicrm/event/cart_checkout' q="&cid=0&reset=1"}" title="{ts}Click here to register a different person for this event.{/ts}">{ts 1=$contact.display_name}Not %1, or want to register a different person{/ts}</a>?)</div>
+{/if}
+
 {foreach from=$events_in_carts key=index item=event_in_cart}
  {if !$event_in_cart.main_conference_event_id}
   {assign var=event_id value=$event_in_cart->event_id}
