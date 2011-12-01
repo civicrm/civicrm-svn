@@ -11,24 +11,37 @@ class CRM_Event_Cart_Form_Checkout_ThankYou extends CRM_Event_Cart_Form_Cart
 
   function buildLineItems( )
   {
-	$not_waiting_participants = array( );
-	$waiting_participants = array( );
 	foreach ( $this->cart->events_in_carts as $event_in_cart ) {
 	  $event_in_cart->load_location( );
 	}
 	$line_items = $this->get( 'line_items' );
-	foreach ( $line_items as $line_item ) {
-	  foreach ( $this->cart->events_in_carts as $event_in_cart ) {
-		if ($line_item['event_id'] == $event_in_cart->event_id) {
-		  $line_item['event'] = $event_in_cart->event;
-		  $line_item['num_participants'] = $event_in_cart->num_not_waiting_participants();
-		  $line_item['participants'] = $event_in_cart->not_waiting_participants();
-		  $line_item['num_waiting_participants'] = $event_in_cart->num_waiting_participants();
-		  $line_item['waiting_participants'] = $event_in_cart->waiting_participants();
-		  $line_item['location'] = $event_in_cart->location;
-                  $line_item['class'] = $event_in_cart->event->parent_event_id ? 'subevent' : null;
-		}
-	  }
+	foreach ( $line_items as $line_item )
+        {
+          $event_in_cart = $this->cart->get_event_in_cart_by_event_id($line_item['event_id']);
+
+          $not_waiting_participants = array();
+          foreach ($event_in_cart->not_waiting_participants() as $participant)
+          {
+            $not_waiting_participants[] = array(
+              'display_name' => CRM_Contact_BAO_Contact::displayName($participant->contact_id),
+            );
+          }
+          $waiting_participants = array();
+          foreach ($event_in_cart->waiting_participants() as $participant)
+          {
+            $waiting_participants[] = array(
+              'display_name' => CRM_Contact_BAO_Contact::displayName($participant->contact_id),
+            );
+          }
+
+          $line_item['event'] = $event_in_cart->event;
+          $line_item['num_participants'] = count($not_waiting_participants);
+          $line_item['participants'] = $not_waiting_participants;
+          $line_item['num_waiting_participants'] = count($waiting_participants);
+          $line_item['waiting_participants'] = $waiting_participants;
+          $line_item['location'] = $event_in_cart->location;
+          $line_item['class'] = $event_in_cart->event->parent_event_id ? 'subevent' : null;
+
 	  $this->sub_total += $line_item['amount'];
 	  $this->line_items[] = $line_item;
 	}

@@ -34,7 +34,7 @@
 	  {if $line_item.num_participants > 0}
 	    <div class="participants" style="padding-left: 10px;">
 	      {foreach from=$line_item.participants item=participant}
-			{$participant->first_name} {$participant->last_name}<br />
+			{$participant.display_name}<br />
 	      {/foreach}
 	    </div>
 	  {/if}
@@ -42,7 +42,7 @@
 	    Waitlisted:<br/>
 	    <div class="participants" style="padding-left: 10px;">
 	      {foreach from=$line_item.waiting_participants item=participant}
-			{$participant->first_name} {$participant->last_name}<br />
+			{$participant.display_name}<br />
 	      {/foreach}
 	    </div>
 	  {/if}

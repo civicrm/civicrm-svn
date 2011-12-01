@@ -93,7 +93,11 @@ class CRM_Event_Cart_Form_MerParticipant extends CRM_Core_Form
     list($custom_fields_pre, $custom_fields_post) = $this->get_participant_custom_data_fields($this->participant->event_id);
     $all_fields = $custom_fields_pre + $custom_fields_post;
     require_once 'CRM/Core/BAO/UFGroup.php';
-    CRM_Core_BAO_UFGroup::setProfileDefaults( $this->participant->contact_id, $all_fields, $defaults );
+    $flat = array();
+    CRM_Core_BAO_UFGroup::setProfileDefaults( $this->participant->contact_id, $all_fields, $flat );
+    foreach ($flat as $name => $field) {
+      $defaults["field[{$this->participant->id}][{$name}]"] = $field;
+    }
     return $defaults;
   }
 }

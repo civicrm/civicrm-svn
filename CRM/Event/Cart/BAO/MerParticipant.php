@@ -89,7 +89,9 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
 
   function load_associations()
   {
-      //$this->load_temporary_name();
+    require_once 'CRM/Contact/BAO/Contact.php';
+    $contact_details = CRM_Contact_BAO_Contact::getContactDetails($this->contact_id);
+    $this->email = $contact_details[1];
   }
 
   function get_participant_index( )

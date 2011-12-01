@@ -137,25 +137,24 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
         }
       }
       
-      foreach ( $event_in_cart->participants as $mer_participant ) {
-        $contact = self::matchAnyContactOnEmail( $mer_participant->email );
-        if ($contact != null) {
+      foreach ( $event_in_cart->participants as $mer_participant )
+      {
+          $participant_fields = $fields['event'][$event_in_cart->event_id]['participant'][$mer_participant->id];
+          $contact_id = self::find_or_create_contact($participant_fields);
+
           require_once('CRM/Event/BAO/Participant.php');
           $participant = new CRM_Event_BAO_Participant();
           $participant->event_id = $event_in_cart->event_id;
-          $participant->contact_id = $mer_participant->contact_id;
+          $participant->contact_id = $contact_id;
           $num_found = $participant->find();
           if ($num_found > 0)
           {
-            require_once('CRM/Event/Cart/Form/MerParticipant.php');
-            $participant->fetch();
-            $participant_form = CRM_Event_Cart_Form_MerParticipant::get_form($participant);
-            $this->_errors[$participant_form->html_field_name('email')] = "The participant {$mer_participant->email} is already registered for {$event_in_cart->event->title} ({$event_in_cart->event->start_date}).";
+            $form = $mer_participant->get_form();
+            $this->_errors[$form->html_field_name('email')] = ts("The participant %1 is already registered for %2 (%3).", array(1 => $participant_fields['email'], 2 => $event_in_cart->event->title, 3 => $event_in_cart->event->start_date));
           }
-        }
       }
     }
-    return empty( $this->_errors ) ? true : $this->_errors;
+    return empty( $this->_errors );
   }
 
   public function setDefaultValues( )
@@ -176,6 +175,8 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
           $d = array( );
           $params = array( 'id' => $this->cid );
           $contact = CRM_Contact_BAO_Contact::retrieve( $params, $d );
+          $participant->contact_id = $this->cid;
+          $participant->save();
           $participant->email = self::primary_email_from_contact( $contact );
         }
         $defaults += $form->setDefaultValues();
@@ -217,7 +218,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
         if (array_key_exists('field', $this->_submitValues)) {
           $custom_fields = array_merge($participant->get_form()->get_participant_custom_data_fields());
 
-          CRM_Contact_BAO_Contact::createProfileContact($this->_submitValues['field'][$participant_id], $custom_fields, $contact->contact_id);
+          CRM_Contact_BAO_Contact::createProfileContact($this->_submitValues['field'][$participant_id], $custom_fields, $contact_id);
         }
       }
     }

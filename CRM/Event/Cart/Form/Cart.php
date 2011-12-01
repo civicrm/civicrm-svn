@@ -122,8 +122,13 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 
   static function find_or_create_contact($fields = array())
   {
-    $contact = self::matchAnyContactOnEmail( CRM_Utils_Array::value('email', $fields) );
-    if ($contact == null) {
+    require_once 'CRM/Dedupe/Finder.php';
+    $dedupe_params = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
+    $dedupe_params['check_permission'] = false;
+    $ids = CRM_Dedupe_Finder::dupesByParams($dedupe_params, 'Individual');
+
+    if (empty($ids))
+    {
       require_once 'CRM/Contact/BAO/Group.php';
 
       //XXX
@@ -147,29 +152,8 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
       return $contact_id;
     }
     else {
-      return $contact->contact_id;
+      return array_pop($ids);
     }
-  }
-
-  static function &matchAnyContactOnEmail($mail) 
-  {
-     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-     $mail = $strtolower( trim( $mail ) );
-
-     $query = " 
-SELECT     contact_id
-FROM       civicrm_email
-WHERE      email = %1";
-     $p = array( 1 => array( $mail, 'String' ) );
-     $query .= " ORDER BY is_primary DESC";
-     
-     $dao =& CRM_Core_DAO::executeQuery( $query, $p );
-
-     if ( $dao->fetch() ) {
-        return $dao;
-     }
-     require_once('CRM/Contact/BAO/Contact.php');
-     return CRM_Contact_BAO_Contact::matchContactOnEmail($mail);
   }
 
   function getValuesForPage( $page_name )

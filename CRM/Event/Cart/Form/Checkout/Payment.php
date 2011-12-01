@@ -191,11 +191,21 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
   {
       $amount = 0;
       $cost = 0;
-      $not_waiting_participants = $event_in_cart->not_waiting_participants();
-      foreach ($not_waiting_participants as $participant)
+      $not_waiting_participants = array();
+      foreach ($event_in_cart->not_waiting_participants() as $participant)
       {
           $amount += $participant->cost;
           $cost = max($cost, $participant->cost);
+          $not_waiting_participants[] = array(
+            'display_name' => CRM_Contact_BAO_Contact::displayName($participant->contact_id),
+          );
+      }
+      $waiting_participants = array();
+      foreach ($event_in_cart->waiting_participants() as $participant)
+      {
+          $waiting_participants[] = array(
+            'display_name' => CRM_Contact_BAO_Contact::displayName($participant->contact_id),
+          );
       }
       $this->line_items[] = array( 
             'amount' => $amount,
@@ -203,8 +213,8 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
             'event' => $event_in_cart->event,
             'participants' => $not_waiting_participants,
             'num_participants' => count($not_waiting_participants),
-            'num_waiting_participants' => $event_in_cart->num_waiting_participants( ),
-            'waiting_participants' => $event_in_cart->waiting_participants( ),
+            'num_waiting_participants' => count($waiting_participants),
+            'waiting_participants' => $waiting_participants,
             'class' => $class,
       );
       
