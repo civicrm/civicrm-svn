@@ -106,6 +106,15 @@ class CRM_Event_Form_ManageEvent_TabHeader {
                                             )
                       );
 
+        // check if we're in shopping cart mode for events
+        require_once 'CRM/Core/BAO/Setting.php';
+        $enableCart = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME,
+                                                      'enable_cart' );
+
+        if ( !$enableCart ) {
+            unset( $tabs['conference'] ); 
+        }        
+
         $eventID = $form->getVar( '_id' );
 
         $fullName  = $form->getVar( '_name' );      

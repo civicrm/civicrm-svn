@@ -287,6 +287,12 @@ ORDER BY start_date desc
         $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
         $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
         $this->assign('findParticipants', $findParticipants);
+
+        // check if we're in shopping cart mode for events
+        require_once 'CRM/Core/BAO/Setting.php';
+        $enableCart = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME,
+                                                      'enable_cart' );
+        $this->assign('eventCartEnabled', $enableCart );
     }
     
     /**

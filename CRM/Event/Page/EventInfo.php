@@ -269,6 +269,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                     
                     $this->assign( 'registerText', $registerText );
                     $this->assign( 'registerURL', $url    );
+                    $this->assign( 'eventCartEnabled', $enable_cart );
                 }
             } else if ( CRM_Core_Permission::check( 'register for events' ) ) {
                 $this->assign( 'registerClosed', true );
