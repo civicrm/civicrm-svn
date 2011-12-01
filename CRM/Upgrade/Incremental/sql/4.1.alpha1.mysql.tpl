@@ -115,6 +115,8 @@ UPDATE civicrm_navigation SET weight = 14 WHERE name = 'CiviMail' AND parent_id 
 UPDATE civicrm_navigation SET weight = 15 WHERE name = 'CiviMember' AND parent_id = @adminlastID;
 UPDATE civicrm_navigation SET weight = 16 WHERE name = 'CiviReport' AND parent_id = @adminlastID;
 
+DELETE FROM civicrm_navigation WHERE name = 'Administration Console';
+
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
