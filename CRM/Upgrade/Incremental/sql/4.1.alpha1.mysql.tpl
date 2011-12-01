@@ -339,7 +339,8 @@ VALUES
 INSERT INTO civicrm_option_group
       (name, {localize field='label'}label{/localize}, {localize field='description'}description{/localize}, is_reserved, is_active)
 VALUES
-      ('event_contacts', {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, 1, 1);
+      ('event_contacts', {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, {localize}'{ts escape="sql"}Event Recipients{/ts}'{/localize}, 1, 1),
+      ('contact_reference_options', {localize}'{ts escape="sql"}Contact Reference Autocomplete Options{/ts}'{/localize}, {localize}'{ts escape="sql"}Contact Reference Autocomplete Options{/ts}'{/localize}, 1, 1);
 
 SELECT @option_group_id_ere := max(id) from civicrm_option_group where name = 'event_contacts';
 
@@ -504,10 +505,10 @@ VALUES
 SELECT @option_group_id_conference_slot := max(id) from civicrm_option_group where name = 'conference_slot';
 
 INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES
-   (@option_group_id_conference_slot, '{ts escape="sql"}Morning Sessions{/ts}', 1, '{ts escape="sql"}Morning Sessions{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_conference_slot, '{ts escape="sql"}Evening Sessions{/ts}', 2, '{ts escape="sql"}Evening Sessions{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL);
+   (@option_group_id_conference_slot, {localize}'{ts escape="sql"}Morning Sessions{/ts}'{/localize}, 1, '{ts escape="sql"}Morning Sessions{/ts}', NULL, 0, NULL, 1, {localize}'{ts escape="sql"}NULL{/ts}'{/localize}, 0, 0, 1, NULL, NULL),
+   (@option_group_id_conference_slot, {localize}'{ts escape="sql"}Evening Sessions{/ts}'{/localize}, 2, '{ts escape="sql"}Evening Sessions{/ts}', NULL, 0, NULL, 2, {localize}'{ts escape="sql"}NULL{/ts}'{/localize}, 0, 0, 1, NULL, NULL);
 
 SELECT @msg_tpl_workflow_event := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_event';
 SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_event;
