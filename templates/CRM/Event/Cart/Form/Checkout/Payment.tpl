@@ -104,3 +104,5 @@
 <div id="crm-submit-buttons" class="crm-submit-buttons">
   {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
+
+{include file="CRM/Event/Cart/Form/viewCartLink.tpl"}

@@ -23,7 +23,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
     {
       $this->price_fields_for_event[$event_in_cart->event_id] = $this->build_price_options($event_in_cart->event);
     }
-    $this->addElement('text', 'discountcode', ts('If you have a discount code, enter it here'));
+    $this->addElement('text', 'discountcode', ts('If you have a discount code, enter it here')); //XXX
     $this->assign( 'events_in_carts', $this->cart->get_main_events_in_carts() );
     $this->assign( 'price_fields_for_event', $this->price_fields_for_event );
     $this->addButtons( 
@@ -62,11 +62,12 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
           $choices[] = $this->createElement( 'radio', null, '', CRM_Utils_Money::format( $fee['value']) . ' ' . $fee['label'], $fee['amount_id'] );
         }
       }
+      //TODO get configured price levels label
       $this->addGroup( $choices, $base_field_name, ts('Price Levels'));
       $this->addRule($base_field_name, ts('Select at least one option from Price Levels'), 'required');
       $price_fields_for_event[] = $base_field_name;
     } elseif ($price_set_id) {
-      $price_sets = CRM_Price_BAO_Set::getSetDetail( $price_set_id, true );
+      $price_sets = CRM_Price_BAO_Set::getSetDetail( $price_set_id, true, true );
       $price_set = $price_sets[$price_set_id];
       $index = -1;
       foreach ( $price_set['fields'] as $field ) {
@@ -165,26 +166,13 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
     return $defaults;
   }
 
-  function preProcess( )
-  {
-    //TODO decouple
-    if ( $this->getContactID() === NULL ) {
-      CRM_Core_Session::setStatus( ts( "You must log in or create an account to register for events." ) );
-      return CRM_Utils_System::redirect( "/user?destination=civicrm/event/cart_checkout&reset=1" );
-    }
-    else {
-      parent::preProcess( );
-      $this->load_form_values();
-    }
-  }
-
-  function load_form_values()
+  function postProcess()
   {
     if (!array_key_exists('event', $this->_submitValues)) return;
     foreach ( $this->_submitValues['event'] as $event_id => $participants ) {
       foreach ($participants['participant'] as $participant_id => $fields) {
 	require_once 'CRM/Contact/BAO/Contact.php';
-        $contact_id = self::find_or_create_contact($fields['email']);
+        $contact_id = self::find_or_create_contact($fields);
 
         $participant = $this->cart->get_event_in_cart_by_event_id($event_id)->get_participant_by_id($participant_id);
         if ($participant->contact_id && $contact_id != $participant->contact_id)
@@ -220,59 +208,5 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
       }
     }
     $this->cart->save();
-  }
-
-  static function find_or_create_contact($email)
-  {
-    $contact = self::matchAnyContactOnEmail( $email );
-    if ($contact == null) {
-      require_once 'CRM/Contact/BAO/Group.php';
-
-      //XXX
-      $params = array( 'name' => 'RegisteredByOther' );
-      $values = array( );
-      $group = CRM_Contact_BAO_Group::retrieve( $params, $values );
-      $add_to_groups = array( );
-      if ( $group != null ) {
-        $add_to_groups[] = $group->id;
-      }
-      // still add the employer id of the signed in user  //???
-      $contact_params = array(
-                              'email-Primary' => CRM_Utils_Array::value( 'email', $fields ),
-                              'first_name' => CRM_Utils_Array::value( 'first_name', $fields ),
-                              'last_name' => CRM_Utils_Array::value( 'last_name', $fields ),
-                              'is_deleted' => true,
-      );
-      $no_fields = array( );
-      $contact_id = CRM_Contact_BAO_Contact::createProfileContact( $contact_params, $no_fields, null, $add_to_groups );
-      if (!$contact_id) {
-        CRM_Core_Error::displaySessionError("Could not create or match that a contact with that email address.  Please contact the webmaster.");
-      }
-      return $contact_id;
-    }
-    else {
-      return $contact->contact_id;
-    }
-  }
-
-  static function &matchAnyContactOnEmail($mail) 
-  {
-     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-     $mail = $strtolower( trim( $mail ) );
-
-     $query = " 
-SELECT     contact_id
-FROM       civicrm_email
-WHERE      email = %1";
-     $p = array( 1 => array( $mail, 'String' ) );
-     $query .= " ORDER BY is_primary DESC";
-     
-     $dao =& CRM_Core_DAO::executeQuery( $query, $p );
-
-     if ( $dao->fetch() ) {
-        return $dao;
-     }
-     require_once('CRM/Contact/BAO/Contact.php');
-     return CRM_Contact_BAO_Contact::matchContactOnEmail($mail);
   }
 }

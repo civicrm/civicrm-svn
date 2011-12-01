@@ -12,6 +12,7 @@
     <div class="slot_options">
       <ul class="indented">
         {$form.$field_name.html}
+        <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$field_name}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
       </ul>
     </div>
   </fieldset>
@@ -49,3 +50,5 @@ for (var radio_id in session_options)
 <div id="crm-submit-buttons" class="crm-submit-buttons">
   {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
+
+{include file="CRM/Event/Cart/Form/viewCartLink.tpl"}

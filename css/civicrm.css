@@ -716,7 +716,8 @@ div.spacer,
 #crm-container ul.indented {
     padding-left: 3em;
 }
-#crm-container tr.subevent td.event-title {
+#crm-container tr.subevent td.event-title,
+#crm-container tr.subevent td.event-info {
     padding-left: 3em;
 }
 

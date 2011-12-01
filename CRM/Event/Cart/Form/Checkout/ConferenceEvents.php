@@ -130,7 +130,10 @@ EOS;
 	foreach ( $this->events_by_slot as $slot_name => $events ) {
 	  $slot_index++;
 	  $field_name = "slot_$slot_index";
-	  $session_event_id = $params[$field_name];
+	  $session_event_id = CRM_Utils_Array::value($field_name, $params, null);
+          if (!$session_event_id) {
+            continue;
+          }
           $event_in_cart = $this->cart->add_event( $session_event_id );
 
 	  $values = array( );

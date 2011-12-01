@@ -41,6 +41,8 @@
   {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 
+{include file="CRM/Event/Cart/Form/viewCartLink.tpl"}
+
 {literal}
 <script type="text/javascript">
 //<![CDATA[
@@ -69,7 +71,7 @@ function add_participant( cart_id, event_id ) {
 function delete_participant( event_id, participant_id )
 {
   cj('#event_' + event_id + '_participant_' + participant_id).remove();
-  cj.get("/civicrm/ajax/event/remove_participant_from_cart?&id=" + participant_id);
+  cj.get("/civicrm/ajax/event/remove_participant_from_cart?id=" + participant_id);
 }
 
 

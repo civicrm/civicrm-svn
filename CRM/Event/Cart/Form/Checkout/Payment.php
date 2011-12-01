@@ -140,7 +140,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	  'type' => 'next',
 	);
 
-  	if (self::is_administrator()) {
+        if ($this->total > 0) {
 		$this->add('text', 'billing_contact_email', 'Billing Email','', true );
   	}
 	$this->addButtons( $buttons );
@@ -374,14 +374,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 		$errors['_qf_default'] = $error;
 	  }
 
-	  // Validate that the billing contact email is valid
-	  if ( CRM_Utils_Array::value( 'billing_contact_email', $fields ) ) {
-		  $contact_details = CRM_Contact_BAO_Contact::matchContactOnEmail( $fields['billing_contact_email'] );
-		  if ($contact_details == NULL) {
-			  $errors['billing_contact_email'] = ts( "Billing contact email does not appear to belong to a valid user." );
-		  }
-	  }
-	  
 	  foreach ( $self->_fields as $name => $field ) {
 		if ( $field['is_required'] && CRM_Utils_System::isNull( CRM_Utils_Array::value( $name, $fields ) ) ) {
 		  $errors[$name] = ts( '%1 is a required field.', array( 1 => $field['title'] ) );
@@ -429,18 +421,14 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	$trxn = null;
 	$params = $this->_submitValues;
 	$contribution_statuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
-	if (self::is_administrator()) {
-	  $contact_details = CRM_Contact_BAO_Contact::matchContactOnEmail( $params['billing_contact_email'] );
-          if ($contact_details == null)
-          {
-            array('email-Primary' => $params['billing_contact_email']);
-            CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, null, $add_to_groups );
-            $contact_details = CRM_Contact_BAO_Contact::matchContactOnEmail( $params['billing_contact_email'] );
-          }
-	  $this->payer_contact_id = $contact_details->contact_id;
-	} else {
-	  $this->payer_contact_id = self::getContactID( );
-	}
+
+        $this->payer_contact_id = self::find_or_create_contact(array(
+          'email' => $params['billing_contact_email'],
+          'first_name' => $params['billing_first_name'],
+          'last_name' => $params['billing_last_name'],
+          'is_deleted' => false,
+        ));
+
 	$now = date( 'YmdHis' );
 	$params['invoiceID'] = md5(uniqid(rand(), true));
 	if ($this->payment_required)
@@ -583,27 +571,29 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	require_once 'CRM/Contact/BAO/Contact.php';
 	require_once 'CRM/Event/Cart/BAO/MerParticipant.php';
 
-	$defaults = array( );
 	$defaults = parent::setDefaultValues();
 
-        $params = array( 'id' => self::getContactID() );
-        $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
+        $config = CRM_Core_Config::singleton();
+        $default_country = new CRM_Core_DAO_Country();
+        $default_country->iso_code = $config->defaultContactCountry();
+        $default_country->find(true);
+        $defaults["billing_country_id-{$this->_bltID}"] = $default_country->id;
 
-	$billing_address = CRM_Event_Cart_BAO_MerParticipant::billing_address_from_contact($contact);
+        if (self::getContactID())
+        {
+          $params = array( 'id' => self::getContactID() );
+          $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
+          $billing_address = CRM_Event_Cart_BAO_MerParticipant::billing_address_from_contact($contact);
 
-	if ($billing_address != null) {
-	    $defaults["billing_street_address-{$this->_bltID}"] = $billing_address['street_address'];
-	    $defaults["billing_city-{$this->_bltID}"] = $billing_address['city'];
-	    $defaults["billing_postal_code-{$this->_bltID}"] = $billing_address['postal_code'];
-	    $defaults["billing_state_province_id-{$this->_bltID}"] = $billing_address['state_province_id'];
-	    $defaults["billing_country_id-{$this->_bltID}"] = $billing_address['country_id'];
-	} else {
-	    $config = CRM_Core_Config::singleton();
-	    $default_country = new CRM_Core_DAO_Country();
-	    $default_country->iso_code = $config->defaultContactCountry();
-	    $default_country->find(true);
-	    $defaults["billing_country_id-{$this->_bltID}"] = $default_country->id;
-	}
+          if ($billing_address != null) {
+              $defaults["billing_street_address-{$this->_bltID}"] = $billing_address['street_address'];
+              $defaults["billing_city-{$this->_bltID}"] = $billing_address['city'];
+              $defaults["billing_postal_code-{$this->_bltID}"] = $billing_address['postal_code'];
+              $defaults["billing_state_province_id-{$this->_bltID}"] = $billing_address['state_province_id'];
+              $defaults["billing_country_id-{$this->_bltID}"] = $billing_address['country_id'];
+          }
+        }
+
 	return $defaults;
       }
 }

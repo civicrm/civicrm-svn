@@ -17,13 +17,7 @@ class CRM_Event_Cart_Page_AddToCart extends CRM_Core_Page {
     $cart = CRM_Event_Cart_BAO_Cart::find_or_create_for_current_session( );
     $event_in_cart = $cart->add_event($this->_id);
 
-    if ($event_in_cart->is_parent_event())
-    {
-	drupal_set_message( ts("<b>%1</b> has been added to your cart. Please select the sessions you want to attend.", array(1 => $event_in_cart->event->title) ) );
-	return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/cart_checkout', "_qf_ConferenceEvents_display=1", true, null, false ) );
-    } else {
-	drupal_set_message( ts("<b>%1</b> has been added to your cart. <a href='/civicrm/event/view_cart'>View your cart.</a>", array(1 => $event_in_cart->event->title) ) );
-    }
+    drupal_set_message( ts("<b>%1</b> has been added to your cart. <a href='/civicrm/event/view_cart'>View your cart.</a>", array(1 => $event_in_cart->event->title) ) );
 
     return CRM_Utils_System::redirect( $_SERVER['HTTP_REFERER'] );
   }

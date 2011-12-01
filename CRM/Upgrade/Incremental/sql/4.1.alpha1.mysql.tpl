@@ -501,6 +501,14 @@ INSERT INTO
 VALUES 
    ('conference_slot'               , {localize}'{ts escape="sql"}Conference Slot{/ts}'{/localize}, {localize}'{ts escape="sql"}Conference Slot{/ts}'{/localize}                    , 1, 1);
 
+SELECT @option_group_id_conference_slot := max(id) from civicrm_option_group where name = 'conference_slot';
+
+INSERT INTO 
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+VALUES
+   (@option_group_id_conference_slot, '{ts escape="sql"}Morning Sessions{/ts}', 1, '{ts escape="sql"}Morning Sessions{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_conference_slot, '{ts escape="sql"}Evening Sessions{/ts}', 2, '{ts escape="sql"}Evening Sessions{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL);
+
 SELECT @msg_tpl_workflow_event := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_event';
 SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_event;
 

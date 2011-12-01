@@ -56,7 +56,7 @@
     </thead>
     <tbody>
       {foreach from=$line_items item=line_item}
-      <tr class="event-line-item">
+      <tr class="event-line-item {$line_item.class}">
 		<td class="event-info">
 		  <div class="event-title"><strong>{$line_item.event->title}</strong></div>
 		  {if $line_item.event->is_show_location}

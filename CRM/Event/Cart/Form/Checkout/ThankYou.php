@@ -26,6 +26,7 @@ class CRM_Event_Cart_Form_Checkout_ThankYou extends CRM_Event_Cart_Form_Cart
 		  $line_item['num_waiting_participants'] = $event_in_cart->num_waiting_participants();
 		  $line_item['waiting_participants'] = $event_in_cart->waiting_participants();
 		  $line_item['location'] = $event_in_cart->location;
+                  $line_item['class'] = $event_in_cart->event->parent_event_id ? 'subevent' : null;
 		}
 	  }
 	  $this->sub_total += $line_item['amount'];

@@ -8,11 +8,6 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
   public $associations_loaded = false;
   public $events_in_carts = array( /* event_in_cart_id => $event_in_cart */ );
 
-  function __construct( )
-  {
-    parent::__construct( );
-  }
-
   public static function add( &$params )
   {
     $cart = new CRM_Event_Cart_BAO_Cart( );
@@ -190,12 +185,12 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
 
   public function get_main_event_participants()
   {
-    //TODO return a list of references
-    return array_values(array_reduce($this->get_main_events_in_carts(), function ($sum, $event_in_cart) {
-      return array_merge($sum, $event_in_cart->participants);
-    },
-    array()
-    ));
+    $participants = array();
+    foreach ($this->get_main_events_in_carts() as $event_in_cart)
+    {
+      $participants = array_merge($participants, $event_in_cart->participants);
+    }
+    return $participants;
   }
 
   public function load_associations( )

@@ -22,6 +22,12 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
     $locationTypes = CRM_Core_PseudoConstant::locationType( );
     $this->_bltID = array_search( 'Billing', $locationTypes);
     $this->assign('bltID', $this->_bltID);
+    $this->description = "Online payment for " . implode( ", ", $event_titles ) . ".";
+    if (self::is_administrator()) { $this->description .= " (by administrator)";
+    }
+    if (!isset($this->discounts)) {
+      $this->discounts = array();
+    }
   }
 
   function loadCart( )
@@ -46,7 +52,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 		$participant = CRM_Event_Cart_BAO_MerParticipant::create( array(
                       'cart_id' => $this->cart->id,
 		      'event_id' => $event_in_cart->event_id,
-		      'contact_id' => $this->getContactID( ),
+		      'contact_id' => self::find_or_create_contact(),
 		) );
                 $participant->save();
 		$event_in_cart->add_participant( $participant );
@@ -115,6 +121,60 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 	// check if the user is registered and we have a contact ID
 	$session = CRM_Core_Session::singleton( );
 	return $session->get( 'userID' );
+  }
+
+  static function find_or_create_contact($fields = array())
+  {
+    $contact = self::matchAnyContactOnEmail( $fields['email'] );
+    if ($contact == null) {
+      require_once 'CRM/Contact/BAO/Group.php';
+
+      //XXX
+      $params = array( 'name' => 'RegisteredByOther' );
+      $values = array( );
+      $group = CRM_Contact_BAO_Group::retrieve( $params, $values );
+      $add_to_groups = array( );
+      if ( $group != null ) {
+        $add_to_groups[] = $group->id;
+      }
+      // still add the employer id of the signed in user  //???
+      $contact_params = array(
+        'email-Primary' => CRM_Utils_Array::value('email', $fields, null),
+        'first_name' => CRM_Utils_Array::value('first_name', $fields, null),
+        'last_name' => CRM_Utils_Array::value('last_name', $fields, null),
+        'is_deleted' => CRM_Utils_Array::value('is_deleted', $fields, true),
+      );
+      $no_fields = array( );
+      $contact_id = CRM_Contact_BAO_Contact::createProfileContact( $contact_params, $no_fields, null, $add_to_groups );
+      if (!$contact_id) {
+        CRM_Core_Error::displaySessionError("Could not create or match a contact with that email address.  Please contact the webmaster.");
+      }
+      return $contact_id;
+    }
+    else {
+      return $contact->contact_id;
+    }
+  }
+
+  static function &matchAnyContactOnEmail($mail) 
+  {
+     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+     $mail = $strtolower( trim( $mail ) );
+
+     $query .= " 
+SELECT     contact_id
+FROM       civicrm_email
+WHERE      email = %1";
+     $p = array( 1 => array( $mail, 'String' ) );
+     $query .= " ORDER BY is_primary DESC";
+     
+     $dao =& CRM_Core_DAO::executeQuery( $query, $p );
+
+     if ( $dao->fetch() ) {
+        return $dao;
+     }
+     require_once('CRM/Contact/BAO/Contact.php');
+     return CRM_Contact_BAO_Contact::matchContactOnEmail($mail);
   }
 
   function getValuesForPage( $page_name )
