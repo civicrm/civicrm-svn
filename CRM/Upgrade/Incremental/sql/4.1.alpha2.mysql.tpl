@@ -10,3 +10,6 @@ VALUES
   (@option_group_id_acConRef, {localize}'{ts escape="sql"}City{/ts}'{/localize}            , 5, 'city'          , 0, 5,  1 ),
   (@option_group_id_acConRef, {localize}'{ts escape="sql"}State/Province{/ts}'{/localize}  , 6, 'state_province', 0, 6,  1 ),
   (@option_group_id_acConRef, {localize}'{ts escape="sql"}Country{/ts}'{/localize}         , 7, 'country'       , 0, 7,  1 );
+
+-- CRM-9253
+INSERT IGNORE INTO civicrm_country (id, name,iso_code,region_id,is_province_abbreviated) VALUES("1247", "South Sudan", "SS", "5", "0");
