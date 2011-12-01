@@ -186,6 +186,7 @@ VALUES
    ('postal_greeting'               , '{ts escape="sql"}Postal Greeting Type{/ts}'               , 1, 1),
    ('addressee'                     , '{ts escape="sql"}Addressee Type{/ts}'                     , 1, 1),
    ('contact_autocomplete_options'  , '{ts escape="sql"}Autocomplete Contact Search{/ts}'        , 1, 1),
+   ('contact_reference_options'     , '{ts escape="sql"}Contact Reference Autocomplete Options{/ts}', 1, 1),
    ('account_type'                  , '{ts escape="sql"}Account type{/ts}'                       , 1, 1),
    ('website_type'                  , '{ts escape="sql"}Website Type{/ts}'                       , 1, 1),
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 1, 1),
@@ -251,6 +252,7 @@ SELECT @option_group_id_postalGreeting := max(id) from civicrm_option_group wher
 SELECT @option_group_id_addressee      := max(id) from civicrm_option_group where name = 'addressee';
 SELECT @option_group_id_report         := max(id) from civicrm_option_group where name = 'report_template';
 SELECT @option_group_id_acsOpt         := max(id) from civicrm_option_group where name = 'contact_autocomplete_options';
+SELECT @option_group_id_acConRef       := max(id) from civicrm_option_group where name = 'contact_reference_options';
 SELECT @option_group_id_accTp          := max(id) from civicrm_option_group where name = 'account_type';
 SELECT @option_group_id_website        := max(id) from civicrm_option_group where name = 'website_type';
 SELECT @option_group_id_tuf            := max(id) from civicrm_option_group where name = 'tag_used_for';
@@ -459,6 +461,13 @@ VALUES
   (@option_group_id_acsOpt, '{ts escape="sql"}City{/ts}'            , 5, 'city'          , NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_acsOpt, '{ts escape="sql"}State/Province{/ts}'  , 6, 'state_province', NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_acsOpt, '{ts escape="sql"}Country{/ts}'         , 7, 'country'       , NULL, 0, NULL, 7, NULL, 0, 0, 1, NULL, NULL),
+
+  (@option_group_id_acConRef, '{ts escape="sql"}Email Address{/ts}'   , 2, 'email'         , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_acConRef, '{ts escape="sql"}Phone{/ts}'           , 3, 'phone'         , NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_acConRef, '{ts escape="sql"}Street Address{/ts}'  , 4, 'street_address', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_acConRef, '{ts escape="sql"}City{/ts}'            , 5, 'city'          , NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_acConRef, '{ts escape="sql"}State/Province{/ts}'  , 6, 'state_province', NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_acConRef, '{ts escape="sql"}Country{/ts}'         , 7, 'country'       , NULL, 0, NULL, 7, NULL, 0, 0, 1, NULL, NULL),
 
   (@option_group_id_adOpt, '{ts escape="sql"}Street Address{/ts}'    ,  1, 'street_address', NULL, 0, NULL,  1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_adOpt, '{ts escape="sql"}Addt'l Address 1{/ts}'  ,  2, 'supplemental_address_1', NULL, 0, NULL,  2, NULL, 0, 0, 1, NULL, NULL),

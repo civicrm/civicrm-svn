@@ -93,7 +93,7 @@
   <item>
      <path>civicrm/ajax/rest</path>
      <page_callback>CRM_Utils_REST::ajax</page_callback>
-     <access_arguments>access CiviCRM,access AJAX API</access_arguments>
+     <access_arguments>access CiviCRM;access AJAX API</access_arguments>
   </item>
   <item>
      <path>civicrm/api/json</path>
