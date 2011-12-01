@@ -172,10 +172,11 @@ function custom_option_html_type( ) {
             <td class="html-adjust">
               {$form.group_id.html}
 	          &nbsp;&nbsp;<span><a href="javascript:toggleContactRefFilter('Advance')">{ts}Advanced Filter{/ts}</a></span>
-	          <div class="messages status"><div class="icon alert-icon"></div> {ts}If this field is included in a profile, the auto-complete search results will be available to any user with "Profile: Listings" permission. Keep this in mind if you are planning on using this field in front-end profile, event registration or contribution forms (so that you do not unintentionally expose contact data).{/ts}
+              {capture assign=searchPreferences}{crmURL p="civicrm/admin/setting/search" q="reset=1"}{/capture}
+	          <div class="messages status"><div class="icon alert-icon"></div> {ts 1=$searchPreferences}If you are planning on using this field in front-end profile, event registration or contribution forms, you should 'Limit List to Group' or configure an 'Advanced Filter'  (so that you do not unintentionally expose your entire set of contacts). Users must have either 'access contact reference fields' OR 'access CiviCRM' permission in order to use contact reference autocomplete fields. You can assign 'access contact reference fields' to the anonymous role if you want un-authenticated visitors to use this field. Use <a href='%1'>Search Preferences - Contact Reference Options</a> to control the fields included in the search results.{/ts}
 	        </td>
         </tr>	
-	<tr id='field_advance_filter'>
+	    <tr id='field_advance_filter'>
             <td class="label">{$form.filter.label}</td>	
             <td class="html-adjust">
               {$form.filter.html}

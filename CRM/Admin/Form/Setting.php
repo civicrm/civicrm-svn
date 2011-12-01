@@ -72,17 +72,28 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
             $list = array_flip( CRM_Core_OptionGroup::values( 'contact_autocomplete_options', 
                                                               false, false, true, null, 'name' ) );
 
+            $cRlist = array_flip( CRM_Core_OptionGroup::values( 'contact_reference_options', 
+                                                                false, false, true, null, 'name' ) );
+
             require_once "CRM/Core/BAO/Setting.php";
             $listEnabled = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                'contact_autocomplete_options' );
+            $cRlistEnabled = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                               'contact_reference_options' );
 
             $autoSearchFields = array();
             if ( !empty( $list ) && !empty( $listEnabled ) ) { 
                 $autoSearchFields = array_combine($list, $listEnabled);
             }
+
+            $cRSearchFields = array();
+            if ( !empty( $cRlist ) && !empty( $cRlistEnabled ) ) { 
+                $cRSearchFields = array_combine($cRlist, $cRlistEnabled);
+            }
             
-            //Set sort_name for default
+            //Set defaults for autocomplete and contact reference options
             $this->_defaults['autocompleteContactSearch'] = array( '1' => 1 ) + $autoSearchFields;
+            $this->_defaults['autocompleteContactReference'] = array( '1' => 1 ) + $cRSearchFields;
         }
         return $this->_defaults;
     }
@@ -141,6 +152,20 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
             CRM_Core_BAO_Setting::setItem( $value,
                                            CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'contact_autocomplete_options' );
+        }
+
+        // save autocomplete contact reference options
+        if ( CRM_Utils_Array::value( 'autocompleteContactReference', $params ) ) {
+            $value = 
+                CRM_Core_DAO::VALUE_SEPARATOR .
+                implode( CRM_Core_DAO::VALUE_SEPARATOR,
+                         array_keys( $params['autocompleteContactReference'] ) ) .
+                CRM_Core_DAO::VALUE_SEPARATOR;
+
+            require_once 'CRM/Core/BAO/Setting.php';
+            CRM_Core_BAO_Setting::setItem( $value,
+                                           CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                           'contact_reference_options' );
         }
         
         // update time for date formats when global time is changed

@@ -49,7 +49,7 @@ class CRM_Admin_Form_Setting_Search extends  CRM_Admin_Form_Setting
      * @access public
      */
     public function buildQuickForm( ) {
-        CRM_Utils_System::setTitle(ts('Settings - Contacts Search'));
+        CRM_Utils_System::setTitle(ts('Settings - Search Preferences'));
 
         $this->addYesNo( 'includeWildCardInName'   , ts( 'Automatic Wildcard' ));
         $this->addYesNo( 'includeEmailInName'      , ts( 'Include Email' ));
@@ -67,12 +67,23 @@ class CRM_Admin_Form_Setting_Search extends  CRM_Admin_Form_Setting
 
         $this->add( 'select', 'defaultSearchProfileID', ts('Default Contact Search Profile'),
                     array('' => ts('- select -')) + $profiles );
+
+        // Autocomplete for Contact Search (quick search etc.)
         require_once 'CRM/Core/OptionGroup.php';
         $options = array( ts('Contact Name') => 1 ) + array_flip( CRM_Core_OptionGroup::values( 'contact_autocomplete_options', 
                                                                                                 false, false, true ) );
         $this->addCheckBox( 'autocompleteContactSearch', ts('Autocomplete Contact Search'), $options, 
                             null, null, null, null, array( '&nbsp;&nbsp;' ) );
         $element = $this->getElement( 'autocompleteContactSearch' );
+        $element->_elements[0]->_flagFrozen = true;
+
+        // Autocomplete for Contact Reference (custom fields)
+        require_once 'CRM/Core/OptionGroup.php';
+        $optionsCR = array( ts('Contact Name') => 1 ) + array_flip( CRM_Core_OptionGroup::values( 'contact_reference_options', 
+                                                                                                false, false, true ) );
+        $this->addCheckBox( 'autocompleteContactReference', ts('Contact Reference Options'), $optionsCR, 
+                            null, null, null, null, array( '&nbsp;&nbsp;' ) );
+        $element = $this->getElement( 'autocompleteContactReference' );
         $element->_elements[0]->_flagFrozen = true;
         parent::buildQuickForm();    
     }

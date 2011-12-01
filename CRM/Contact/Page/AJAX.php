@@ -142,7 +142,7 @@ class CRM_Contact_Page_AJAX
 
         require_once 'CRM/Core/BAO/Setting.php';
         $list   = array_keys( CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-                                                                  'contact_autocomplete_options' ), '1' );
+                                                                  'contact_reference_options' ), '1' );
         
         $return = array_unique(array_merge(array('sort_name'), $list));
         

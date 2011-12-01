@@ -332,7 +332,7 @@
 <item>
      <path>civicrm/ajax/contactref</path>
      <page_callback>CRM_Contact_Page_AJAX::contactReference</page_callback>
-     <access_arguments>access contact reference fields</access_arguments>
+     <access_arguments>access contact reference fields; access CiviCRM</access_arguments>
 </item>
 <item>
    <path>civicrm/dashlet/myCases</path>
