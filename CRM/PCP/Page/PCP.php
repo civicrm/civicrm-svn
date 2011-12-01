@@ -228,7 +228,7 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         $allowToDelete = CRM_Core_Permission::check( 'delete in CiviContribute' );
 
         // get all contribution pages
-        $query = "SELECT id, title, start_date, end_date FROM civicrm_contribution_page";
+        $query = "SELECT id, title, start_date, end_date FROM civicrm_contribution_page WHERE (1)";
         $cpages = CRM_Core_DAO::executeQuery( $query );
         while ( $cpages->fetch() ) {
             $pages['contribute'][$cpages->id]['id']         = $cpages->id;
