@@ -1673,3 +1673,40 @@ AND        e.email LIKE %2
                      2 => array( "%{$emailDomain}", 'String' ) );
     return CRM_Core_DAO::singleValueQuery( $sql, $params );
 }
+
+/**
+ * From the forum topic: http://forum.civicrm.org/index.php/topic,22430.0.html
+ * This has come up a few times and i felt compelled to investigate and scratch the itch.
+ * Here is a sample implementation of the ACL hook that suppresses profiles in the my account page
+ * Note that none of the roles involved can have the global profile view or edit permssion
+ * since those permissions trump the ACL. Also for sanity sake, these profiles
+ * should probably be restricted only to the My Account scenario:
+ */
+function civicrm_civicrm_aclGroup( $type, $contactID, $tableName, &$allGroups, &$currentGroups ) {
+    global $user;
+    $userRoles = $user->roles;
+
+    // based on the above value, choose which profile
+    // to retain for this user
+    // role name => profile name
+    $allProfiles = array( 'member'    => 'Member Profile',       
+                          'supporter' => 'Supporter Profile',    
+                          'major'     => 'Major Donor Profile',  
+                          'real big'  => 'Real Big Donor Profile'
+                          );
+
+    // first find the ids of all the profiles
+    $profileIDs = array( );
+    foreach ( $allProfiles as $roleName => $profileName ) {
+        $profileIDs[$profileName] = array_search( $profileName, $allGroups );
+    }
+
+    foreach ( $allProfiles as $roleName => $profileName ) {
+        if ( array_search( $roleName, $userRoles ) !== false ) {
+            unset( $profileIDs[$profileName] );
+        }
+    }
+
+    $currentGroups = array_diff( array_keys  ( $allGroups ),
+                                 array_values( $profileIDs ) );
+}
