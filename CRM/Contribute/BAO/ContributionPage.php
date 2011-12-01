@@ -81,7 +81,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         // get the amounts and the label
         require_once 'CRM/Core/OptionGroup.php';  
         $values['amount'] = array( );
-        CRM_Core_OptionGroup::getAssoc( "civicrm_contribution_page.amount.{$id}", $values['amount'], true );
+        CRM_Core_OptionGroup::getAssoc( "civicrm_contribution_page.amount.{$id}", 
+                                        $values['amount'], true );
 
         // get the profile ids
         require_once 'CRM/Core/BAO/UFJoin.php'; 
@@ -89,7 +90,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                                'entity_table' => 'civicrm_contribution_page',   
                                'entity_id'    => $id );   
         list( $values['custom_pre_id'],
-              $values['custom_post_id'] ) = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams ); 
+              $customPostIds ) = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
+        $values['custom_post_id'] = $customPostIds[0];
 
         // add an accounting code also
         if ( $values['contribution_type_id'] ) {
