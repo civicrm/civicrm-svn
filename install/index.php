@@ -54,14 +54,22 @@ if ( !in_array($installType, array('drupal', 'wordpress')) ) {
 
 global $crmPath;
 global $installDirPath;
+global $installURLPath;
 if ( $installType == 'drupal' ) {
     $crmPath        = dirname ( dirname( $_SERVER['SCRIPT_FILENAME'] ) );
-    $installDirPath = '';
+    $installDirPath =  $installURLPath = '';
 } elseif ( $installType == 'wordpress' ) {
     $crmPath =  WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR;
     $installDirPath =  WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
+        'civicrm' . DIRECTORY_SEPARATOR .
+        'civicrm' . DIRECTORY_SEPARATOR .
+        'install' . DIRECTORY_SEPARATOR;
+    
+    $installURLPath = site_url() . DIRECTORY_SEPARATOR .
+        'wp-content' . DIRECTORY_SEPARATOR .
+        'plugins' . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR .
         'install' . DIRECTORY_SEPARATOR;
@@ -829,7 +837,7 @@ class Installer extends InstallRequirements {
         @ob_clean();
 
         if ( !$this->errors ) {
-            global $installType;
+            global $installType, $installURLPath;
 
             $output = null;
             if ( $installType == 'drupal' &&
@@ -905,7 +913,7 @@ class Installer extends InstallRequirements {
                 $output .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
                 $output .= '<head>';
                 $output .= '<title>CiviCRM Installed</title>';
-                $output .= '<link rel="stylesheet" type="text/css" href="template.css" />';
+                $output .= '<link rel="stylesheet" type="text/css" href=' . $installURLPath .'"template.css" />';
                 $output .= '</head>';
                 $output .= '<body>';
                 $output .= '<div style="padding: 1em;"><p class="good">CiviCRM has been successfully installed</p>';

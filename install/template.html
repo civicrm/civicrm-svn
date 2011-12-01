@@ -11,16 +11,17 @@ function hide(id) {
 	document.getElementById(id).style.display = 'none';
 }
 </script>
-<link rel="stylesheet" type="text/css" href="template.css" />
+<link rel="stylesheet" type="text/css" href=<?php echo $installURLPath . "template.css"?> />
 </head>
 
 <body>
 <div id="All">
-<p style="float: right"><b>Version <?php echo "{$civicrm_version['version']} {$civicrm_version['cms']}" ?></b></p>
+    <div style="float: right"><b>Version <?php echo "{$civicrm_version['version']} {$civicrm_version['cms']}" ?></b></br>
+    <span><img src=<?php echo $installURLPath . "block_small.png"?> /></span>
+    </div>
 <h1>CiviCRM Installer</h1>
-<p>Thanks for choosing to use CiviCRM!  Please follow the instructions below to get CiviCRM
-installed.</p>
-
+<div>Thanks for choosing to use CiviCRM!  Please follow the instructions below to get CiviCRM installed.</div>
+</br><br>
 <form name="civicrm_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
 <?php if(isset($hasErrorOtherThanDatabase)) { ?>
 <p class="error">You aren't currently able to install the software.  Please <a style="color: #CCF" href="#requirements">see below</a> for details.</p>
@@ -39,7 +40,7 @@ installed.</p>
 	
 	<span id="saving_top" style="display: none">
 	&nbsp;
-	<img src="network-save.gif" />
+    <img src=<?php echo $installURLPath . "network-save.gif"?> />
 	(this will take a few minutes)
 	</span>
 </p>
