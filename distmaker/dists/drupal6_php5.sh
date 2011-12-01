@@ -14,7 +14,7 @@ else
 	. $CFFILE	
 fi
 
-RSYNCOPTIONS="-avC --exclude=svn"
+RSYNCOPTIONS="-avC --exclude=svn --include=core"
 RSYNCCOMMAND="$DM_RSYNC $RSYNCOPTIONS"
 SRC=$DM_SOURCEDIR
 TRG=$DM_TMPDIR/civicrm

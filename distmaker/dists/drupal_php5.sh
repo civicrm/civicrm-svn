@@ -14,7 +14,7 @@ else
 	. $CFFILE	
 fi
 
-RSYNCOPTIONS="-avC --exclude=svn"
+RSYNCOPTIONS="-avC --exclude=svn --include=core"
 RSYNCCOMMAND="$DM_RSYNC $RSYNCOPTIONS"
 SRC=$DM_SOURCEDIR
 TRG=$DM_TMPDIR/civicrm
@@ -70,4 +70,4 @@ tar czf $DM_TARGETDIR/civicrm-$DM_VERSION-drupal.tar.gz --exclude l10n --exclude
 tar czf $DM_TARGETDIR/civicrm-$DM_VERSION-l10n.tar.gz --exclude '*.po' --exclude pot civicrm/l10n civicrm/sql/civicrm_*.??_??.mysql
 
 # clean up
-rm -rf $TRG
+#rm -rf $TRG
