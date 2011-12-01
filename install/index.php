@@ -67,9 +67,7 @@ if ( $installType == 'drupal' ) {
         'civicrm' . DIRECTORY_SEPARATOR .
         'install' . DIRECTORY_SEPARATOR;
     
-    $installURLPath = site_url() . DIRECTORY_SEPARATOR .
-        'wp-content' . DIRECTORY_SEPARATOR .
-        'plugins' . DIRECTORY_SEPARATOR .
+    $installURLPath = WP_PLUGIN_URL . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR .
         'install' . DIRECTORY_SEPARATOR;
