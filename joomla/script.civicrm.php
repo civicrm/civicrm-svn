@@ -78,6 +78,8 @@ class Com_CiviCRMInstallerScript {
                     <li>' . $event. '</li>
                 </ul>
             </p>
+           <p><strong>We have integrated KCFinder with CKEditor and TinyMCE, which enables user to upload images. Note that all the images uploaded using KCFinder will be public.</strong>
+            </p>
            <p><strong>Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href="' . $registerSiteURL . '" target="_blank">fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check Keep in Touch to receive technical updates (a low volume  mailing list).</strong></p>
         </td>
     </tr>
