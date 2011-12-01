@@ -833,15 +833,16 @@ class Installer extends InstallRequirements {
         require_once $installDirPath . 'civicrm.php';
         civicrm_main( $config );
 
-        // clean output
-        @ob_clean();
-
         if ( !$this->errors ) {
             global $installType, $installURLPath;
 
             $output = null;
             if ( $installType == 'drupal' &&
                  version_compare(VERSION, '7.0-rc1') >= 0) {
+                 
+                // clean output
+                @ob_clean();
+     
                 $output .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
                 $output .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
                 $output .= '<head>';
@@ -909,11 +910,14 @@ class Installer extends InstallRequirements {
                 $output .= '</html>';
                 echo $output;
             } elseif ( $installType == 'drupal' && version_compare(VERSION, '6.0')  >= 0 ) {
+                // clean output
+                @ob_clean();
+ 
                 $output .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
                 $output .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
                 $output .= '<head>';
                 $output .= '<title>CiviCRM Installed</title>';
-                $output .= '<link rel="stylesheet" type="text/css" href=' . $installURLPath .'"template.css" />';
+                $output .= '<link rel="stylesheet" type="text/css" href="template.css" />';
                 $output .= '</head>';
                 $output .= '<body>';
                 $output .= '<div style="padding: 1em;"><p class="good">CiviCRM has been successfully installed</p>';
@@ -959,8 +963,8 @@ class Installer extends InstallRequirements {
 
                 echo $output;
             } elseif ( $installType == 'wordpress' ) {
-                echo '<div>CiviCRM Installed</div>';
-                echo '<div style="padding: 1em;"><p class="good">CiviCRM has been successfully installed</p>';
+                echo '<h1>CiviCRM Installed</h1>';
+                echo '<div style="padding: 1em;"><p style="background-color: #0C0; border: 1px #070 solid; color: white;">CiviCRM has been successfully installed</p>';
                 echo '<ul>';
                 $docLinkConfig = CRM_Utils_System::docURL2( 'Configuring a New Site', false, 'here' );
                 if (!function_exists('ts')) {

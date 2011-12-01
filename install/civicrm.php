@@ -34,9 +34,6 @@
  *
  */
 
-
-
-
 function civicrm_setup( $filesDirectory ) {
     global $crmPath, $sqlPath, $pkgPath, $tplPath;
     global $compileDir;
