@@ -91,8 +91,12 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                                'entity_id'    => $id );   
         list( $values['custom_pre_id'],
               $customPostIds ) = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
-        $values['custom_post_id'] = $customPostIds[0];
-
+        
+        if (!empty($customPostIds)) {
+            $values['custom_post_id'] = $customPostIds[0];
+        } else {
+            $values['custom_post_id'] = '';
+        }
         // add an accounting code also
         if ( $values['contribution_type_id'] ) {
             $values['accountingCode'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
@@ -116,7 +120,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
      */
     static function sendMail( $contactID, &$values, $isTest = false, $returnMessageText = false, $fieldTypes = null ) 
     {
-        require_once "CRM/Core/BAO/UFField.php";
+        require_once 'CRM/Core/BAO/UFField.php';
         $gIds = $params = array( );
         $email = null;
         if ( isset( $values['custom_pre_id'] ) ) {
@@ -233,7 +237,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 self::buildCustomDisplay( $postID, 'customPost', $userID, $template, $params['custom_post_id'] );
             }
 
-            require_once "CRM/Contribute/PseudoConstant.php";
+            require_once 'CRM/Contribute/PseudoConstant.php';
             $title = isset($values['title']) ? $values['title'] : CRM_Contribute_PseudoConstant::contributionPage($values['contribution_page_id']);
 
             // set email in the template here
@@ -504,7 +508,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         
         
         //copy option group and values 
-        require_once "CRM/Core/BAO/OptionGroup.php";
+        require_once 'CRM/Core/BAO/OptionGroup.php';
         $copy->default_amount_id = CRM_Core_BAO_OptionGroup::copyValue('contribution', 
                                                                        $id, 
                                                                        $copy->id, 
