@@ -3,9 +3,65 @@ Sponsors and key contributors for 4.1
 ************************************************
 The following people and organizations sponsored and/or contributed new and improved features for the 4.1 release.
 
-Tom Kirkpatrick - Personal Campaign Pages - System Seed: http://www.systemseed.com/
-Adam Wight - Add to Cart Event Registration - Giant Rabbit: http://giantrabbit.com/
-Progressive Technology Project - CiviCampaign - http://progressivetech.org/
+Adam Wight
+Andrew Harris
+Alice Aguilar
+Andre Gurgel
+Brian Shaugnessy
+Coleman Watts
+Dave D
+Dave Moreton
+Eileen McNaughton
+Erik Brower
+Erik Hommel
+Henry Bennett
+Jamie McClelland
+Jim Taylor
+Jonathan Mark
+Joe Murray
+Marianela Zucotti Bozzano
+Michael McAndrew
+Steve Colson
+Stuart Gaston
+Tim Otten
+Tom Kirkpatrick
+Xavier Dutoit
+
+AGH Strategies
+Amigos Library Services
+Association for Learning Technology
+Attendee Management
+Benton Consulting
+Circle Interactive
+CivicActions
+Community Builders
+EE-atWork
+Fuzion (NZ)
+Giant Rabbit
+Kindling Trust
+Korlon
+International Mountain Biking Association
+International Society for Bayesian Analysis
+Josiesque Designs
+Michigan Parents for Schools
+New York State Senate
+Nonprofit Association of Oregon
+Nonprofit Solutions
+Powered by Action
+Progressive Technology Project
+Resolutions Northwest
+River Pool at Beacon
+Rooty Hollow
+San Francisco Baykeeper
+Scotland's Colleges
+Switchback
+System Seed
+Tech to the People
+The San Francisco Orff-Schulwerk
+Third Sector Design
+Voluntary Action Westminster
+Vpod Schweiz
+Woven
 
 ************************************************
 Sponsors for 3.4 / 4.0 Make-it-Happen Projects
