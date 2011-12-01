@@ -38,10 +38,11 @@
     <tr>
 {if $config->userFramework EQ 'Drupal'}
         <td class="nowrap"><a href="{$ufAccessURL}" id="adminAccess">&raquo; {ts}Drupal Access Control{/ts}</a></td>
-{else}
-        <td class="nowrap"><a href="{$ufAccessURL}" {$jAccessParams} id="adminAccess">&raquo; {ts}Joomla Access Control{/ts}</a></td>
-{/if}
         <td>{ts}Grant access to CiviCRM components and other CiviCRM permissions.{/ts}</td>
+{elseif $config->userFramework EQ 'Joomla'}
+        <td class="nowrap"><a href="{$ufAccessURL}" {$jAccessParams} id="adminAccess">&raquo; {ts}Joomla Access Control{/ts}</a></td>
+        <td>{ts}Grant access to CiviCRM components and other CiviCRM permissions.{/ts}</td>
+{/if}
     </tr>
     <tr><td colspan="2" class="separator"><strong>{ts}Use following steps if you need to control View and/or Edit permissions for specific contact groups, specific profiles or specific custom data fields.{/ts}</strong></td></tr>
 <tr>
