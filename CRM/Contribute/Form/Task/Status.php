@@ -34,6 +34,7 @@
  */
 
 require_once 'CRM/Contribute/Form/Task.php';
+require_once 'CRM/Contribute/PseudoConstant.php';
 
 /**
  * This class provides the functionality to email a group of
@@ -217,7 +218,7 @@ AND    co.id IN ( $contribIDs )";
      */
     public function postProcess() {    
         $params = $this->controller->exportValues( $this->_name );
-        $statusID = $params['contribution_status_id'];
+        $statusID = CRM_Utils_Array::value( 'contribution_status_id', $params );
 
         require_once 'CRM/Core/Payment/BaseIPN.php';
         $baseIPN = new CRM_Core_Payment_BaseIPN( );
@@ -249,18 +250,22 @@ AND    co.id IN ( $contribIDs )";
 
             $contribution =& $objects['contribution'];
 
-            if ( $statusID == 3 ) {
+            $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 
+                                                                                       'name' );
+        
+            if ( $statusID == array_search( 'Cancelled', $contributionStatuses ) ) {
                 $baseIPN->cancelled( $objects, $transaction );
                 $transaction->commit( );
                 continue;
-            } else if ( $statusID == 4 ) {
+            } else if ( $statusID == array_search( 'Failed', $contributionStatuses ) ) {
                 $baseIPN->failed( $objects, $transaction );
                 $transaction->commit( );
                 continue;
             }
 
             // status is not pending
-            if ( $contribution->contribution_status_id != 2 ) {
+            if ( $contribution->contribution_status_id != array_search( 'Pending', 
+                                                                        $contributionStatuses ) ) {
                 $transaction->commit( );
                 continue;
             }
