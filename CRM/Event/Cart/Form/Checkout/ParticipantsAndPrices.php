@@ -81,8 +81,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
           $choices[] = $this->createElement( 'radio', null, '', CRM_Utils_Money::format( $fee['value']) . ' ' . $fee['label'], $fee['amount_id'] );
         }
       }
-      //TODO get configured price levels label
-      $this->addGroup( $choices, $base_field_name, ts('Price Levels'));
+      $this->addGroup( $choices, $base_field_name, $event->fee_label);
       $this->addRule($base_field_name, ts('Select at least one option from Price Levels'), 'required');
       $price_fields_for_event[] = $base_field_name;
     } elseif ($price_set_id) {
