@@ -345,12 +345,30 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton();
         
+        // get permission and include them here
+        // does not scale, but rearranging code for now
+        // FIXME in a future release
+        $permissions = CRM_Event_BAO_Event::checkPermission( );
+        $validEventIDs = '';
+        if ( empty( $permissions[CRM_Core_Permission::VIEW] ) ) {
+            $eventSummary['total_events'] = 0;
+            return $eventSummary;
+        }
+        else {
+            $validEventIDs = 
+                " AND civicrm_event.id IN ( " .
+                implode( ',', array_values( $permissions[CRM_Core_Permission::VIEW] ) )
+                . " ) ";
+        }
+
         // We're fetching recent and upcoming events (where start date is 7 days ago OR later)
-        $query = "SELECT count(id) as total_events
-                  FROM   civicrm_event e
-                  WHERE  e.is_active=1 AND
-                        ( e.is_template IS NULL OR e.is_template = 0) AND
-                        e.start_date >= DATE_SUB( NOW(), INTERVAL 7 day );";
+        $query = "
+SELECT     count(id) as total_events
+FROM       civicrm_event
+WHERE      civicrm_event.is_active = 1 AND
+           ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0) AND
+           civicrm_event.start_date >= DATE_SUB( NOW(), INTERVAL 7 day )
+           $validEventIDs";
         
         $dao = CRM_Core_DAO::executeQuery( $query );
         
@@ -380,18 +398,6 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         $optionGroupId = null;
         if ( $optionGroupDAO->find( true ) ) {
             $optionGroupId = $optionGroupDAO->id;
-        }
-
-        // get permission and include them here
-        // does not scale, but rearranging code for now
-        // FIXME in a future release
-        $permissions = CRM_Event_BAO_Event::checkPermission( );
-        $validEventIDs = '';
-        if ( ! empty( $permissions[CRM_Core_Permission::VIEW] ) ) {
-            $validEventIDs = 
-                " AND civicrm_event.id IN ( " .
-                implode( ',', array_values( $permissions[CRM_Core_Permission::VIEW] ) )
-                . " ) ";
         }
 
         $query = "
