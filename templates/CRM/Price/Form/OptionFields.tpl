@@ -43,7 +43,7 @@
         <th>{ts}Amount{/ts} {if $useForEvent}{help id="id-negative-options"}{/if}</th>
     {if $useForEvent}
 	    <th>{ts}Participant Count{/ts} {help id="id-participant-count"}</th>
-	    <th>{ts}Max Participant{/ts}</th>
+	    <th>{ts}Max Participant{/ts} {help id="id-participant-max"}</th>
 	{/if}
         <th>{ts}Weight{/ts}</th>
 	    <th>{ts}Active?{/ts}</th>

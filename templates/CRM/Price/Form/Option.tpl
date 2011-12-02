@@ -55,11 +55,11 @@
             </tr>
             <tr class="crm-price-option-form-block-count">
                 <td class="label">{$form.count.label}</td>
-                <td>{$form.count.html}</td>
+                <td>{$form.count.html} {help id="id-participant-count" file="CRM/Price/Page/Field.hlp"}</td>
             </tr>
             <tr class="crm-price-option-form-block-max_value">
                 <td class="label">{$form.max_value.label}</td>
-                <td>{$form.max_value.html}</td>
+                <td>{$form.max_value.html} {help id="id-participant-max" file="CRM/Price/Page/Field.hlp"}</td>
             </tr>
             <tr class="crm-price-option-form-block-weight">
                <td class="label">{$form.weight.label}</td>
