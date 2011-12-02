@@ -360,7 +360,7 @@ class InstallRequirements {
                                           'sites'  . CIVICRM_DIRECTORY_SEPARATOR .
                                           $siteDir );
         } elseif ( $installType == 'wordpress' ) {
-            // make sure that we can write to plugins/civicrm  and plugins/civicrm/files/
+            // make sure that we can write to plugins/civicrm  and plugins/files/
             $writableDirectories = array( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'files', $cmsPath );
         }
 
