@@ -215,7 +215,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
         $participant->save();
         $this->cart->add_participant_to_cart($participant);
 
-        if (array_key_exists('field', $this->_submitValues)) {
+        if (array_key_exists('field', $this->_submitValues) && array_key_exists($participant_id, $this->_submitValues['field'])) {
           $custom_fields = array_merge($participant->get_form()->get_participant_custom_data_fields());
 
           CRM_Contact_BAO_Contact::createProfileContact($this->_submitValues['field'][$participant_id], $custom_fields, $contact_id);

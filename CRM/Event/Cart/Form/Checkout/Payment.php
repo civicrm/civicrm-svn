@@ -439,6 +439,30 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
           'last_name' => $params['billing_last_name'],
           'is_deleted' => false,
         ));
+        $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                              $this->payer_contact_id,
+                                              'contact_type' );
+        $addToGroups = array( );
+        $billing_fields = array
+        (
+            "billing_first_name" => 1,
+            "billing_middle_name" => 1,
+            "billing_last_name" => 1,
+            "billing_street_address-{$this->_bltID}" => 1,
+            "billing_city-{$this->_bltID}" => 1,
+            "billing_state_province_id-{$this->_bltID}" => 1,
+            "billing_postal_code-{$this->_bltID}" => 1,
+            "billing_country_id-{$this->_bltID}" => 1,
+        );
+        CRM_Contact_BAO_Contact::createProfileContact(
+            $params,
+            $billing_fields,
+            $this->payer_contact_id,
+            $addToGroups,
+            null,
+            $ctype,
+            true
+        );
 
 	$now = date( 'YmdHis' );
 	$params['invoiceID'] = md5(uniqid(rand(), true));
