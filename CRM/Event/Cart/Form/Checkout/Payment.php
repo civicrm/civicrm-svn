@@ -618,6 +618,24 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
         {
           $params = array( 'id' => self::getContactID() );
           $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
+
+          foreach ( $contact->email as $email ) {
+            if ( $email['is_billing'] ) {
+              $defaults["billing_contact_email"] = $email['email'];
+            }
+          }
+          if (!CRM_Utils_Array::value('billing_contact_email', $defaults)) {
+            foreach ( $contact->email as $email ) {
+              if ( $email['is_primary'] ) {
+                $defaults["billing_contact_email"] = $email['email'];
+              }
+            }
+          }
+
+          $defaults["billing_first_name"] = $contact->first_name;
+          $defaults["billing_middle_name"] = $contact->middle_name;
+          $defaults["billing_last_name"] = $contact->last_name;
+
           $billing_address = CRM_Event_Cart_BAO_MerParticipant::billing_address_from_contact($contact);
 
           if ($billing_address != null) {
