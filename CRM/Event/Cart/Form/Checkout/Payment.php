@@ -453,7 +453,11 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
             "billing_state_province_id-{$this->_bltID}" => 1,
             "billing_postal_code-{$this->_bltID}" => 1,
             "billing_country_id-{$this->_bltID}" => 1,
+            "address_name-{$this->_bltID}" => 1,
+            "email-{$this->_bltID}" => 1,
         );
+
+        
         CRM_Contact_BAO_Contact::createProfileContact(
             $params,
             $billing_fields,
