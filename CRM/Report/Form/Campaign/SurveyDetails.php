@@ -788,7 +788,7 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
              cf.option_group_id
        FROM  civicrm_custom_group cg 
 INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
-      WHERE  cf.id IN ( '. implode( ' , ',  $responseFieldIds ).' )';   
+      WHERE  cf.id IN ( '. implode( ' , ',  $responseFieldIds ).' )  ORDER BY cf.weight';   
         $response = CRM_Core_DAO::executeQuery( $query );
         $fildCnt = 1;
         while ( $response->fetch( ) ) {
