@@ -1015,7 +1015,7 @@ class CRM_Utils_System {
         } 
 
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userFramework == 'Standalone' ) {
+        if ( $config->userFramework == 'WordPress' ) {
             session_write_close();
         }
 
