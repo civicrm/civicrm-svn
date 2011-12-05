@@ -70,4 +70,4 @@ tar czf $DM_TARGETDIR/civicrm-$DM_VERSION-drupal.tar.gz --exclude l10n --exclude
 tar czf $DM_TARGETDIR/civicrm-$DM_VERSION-l10n.tar.gz --exclude '*.po' --exclude pot civicrm/l10n civicrm/sql/civicrm_*.??_??.mysql
 
 # clean up
-#rm -rf $TRG
+rm -rf $TRG
