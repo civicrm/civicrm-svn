@@ -111,7 +111,11 @@ class CRM_Admin_Page_Options extends CRM_Core_Page_Basic
         } else {
             CRM_Utils_System::setTitle(ts("%1 Options", array(1 => self::$_GName)));
         }
-        if ( in_array( self::$_gName, array('from_email_address', 'email_greeting', 'postal_greeting', 'addressee', 'case_status', 'encounter_medium', 'case_type') ) ) {
+        if ( in_array( self::$_gName, 
+                       array('from_email_address', 'email_greeting',
+                             'postal_greeting', 'addressee',
+                             'case_status', 'encounter_medium',
+                             'case_type') ) ) {
             $this->assign( 'showIsDefault', true );
         }
         if ( self::$_gName == 'participant_status' ) {
