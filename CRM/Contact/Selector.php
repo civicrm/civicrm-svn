@@ -375,8 +375,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 require_once 'CRM/Core/PseudoConstant.php';
                 $locationTypes = CRM_Core_PseudoConstant::locationType( );
 
-                CRM_Core_Error::debug( $this->_fields );
-
                 foreach ( $this->_fields as $name => $field ) { 
                     if ( CRM_Utils_Array::value( 'in_selector', $field ) &&
                          ! in_array( $name, $skipFields ) ) {
