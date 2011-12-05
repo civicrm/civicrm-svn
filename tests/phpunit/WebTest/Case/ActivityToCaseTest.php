@@ -1,36 +1,35 @@
 <?php
 
-/*
- +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License along with this program; if not, contact CiviCRM LLC       |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
-*/
+  /*
+   +--------------------------------------------------------------------+
+   | CiviCRM version 4.1                                                |
+   +--------------------------------------------------------------------+
+   | Copyright CiviCRM LLC (c) 2004-2011                                |
+   +--------------------------------------------------------------------+
+   | This file is a part of CiviCRM.                                    |
+   |                                                                    |
+   | CiviCRM is free software; you can copy, modify, and distribute it  |
+   | under the terms of the GNU Affero General Public License           |
+   | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+   |                                                                    |
+   | CiviCRM is distributed in the hope that it will be useful, but     |
+   | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+   | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+   | See the GNU Affero General Public License for more details.        |
+   |                                                                    |
+   | You should have received a copy of the GNU Affero General Public   |
+   | License along with this program; if not, contact CiviCRM LLC       |
+   | at info[AT]civicrm[DOT]org. If you have questions about the        |
+   | GNU Affero General Public License or the licensing of CiviCRM,     |
+   | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+   +--------------------------------------------------------------------+
+  */
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-
  
 class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
-
+    
     protected function setUp()
     {
         parent::setUp();
@@ -55,7 +54,6 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
             $this->click( '_qf_Component_next-bottom' );
             $this->waitForPageToLoad( '30000' );          
         }
-
         // let's give full CiviCase permissions to demo user (registered user).
         $this->changeAdminLinks( );
         $this->waitForElementPresent( 'edit-submit' );
@@ -88,7 +86,6 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         
         // Fill in other form values. We'll use a case type which is included in CiviCase sample data / xml files.
         $caseTypeLabel = "Adult Day Care Referral";
-
         $subject = "Safe daytime setting - senior female";
         $this->select( 'medium_id', 'value=1' );
         $this->type( 'activity_location' , 'Main offices' );
@@ -105,7 +102,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         // echo 'Today is ' . $today;
         $this->type( 'duration', "20" );
         $this->click( '_qf_Case_upload-bottom' );
-
+        
         // We should be at manage case screen
         $this->waitForPageToLoad( '30000' );
         $this->waitForElementPresent( '_qf_CaseView_cancel-bottom' );
@@ -113,7 +110,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         // Is status message correct?
         $this->assertTextPresent( "Case opened successfully.", "Save successful status message didn't show up after saving!" );
         $customGroupTitle = 'Custom_' . substr(sha1(rand()), 0, 7);
-
+        
         $this->_testAddNewActivity( $firstName, $subject, $customGroupTitle, $contactName );
     }
     
@@ -121,7 +118,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
     {
         $customDataParams = $this->_addCustomData( $customGroupTitle );
         //$customDataParams = array( 'optionLabel_47d58', 'custom_8_-1' );
-
+        
         // Adding Adding contact with randomized first name for test testContactContextActivityAdd
         // We're using Quick Add block on the main page for this.
         $firstName1 = substr(sha1(rand()), 0, 7);
@@ -143,18 +140,18 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("_qf_Activity_upload-bottom");
         
         // Let's start filling the form with values.
-
+        
         // ...and verifying if the page contains properly formatted display name for chosen contact.
         $this->assertTrue( $this->isTextPresent( "Anderson, " . $firstName2 ), "Contact not found in line " . __LINE__ );
-       
+        
         // Now we're filling the "Assigned To" field.
         // Typing contact's name into the field (using typeKeys(), not type()!)...
         $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
-       
+        
         // ...waiting for drop down with results to show up...
         $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
         $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
- 
+        
         //..need to use mouseDownAt on first result (which is a li element), click does not work
         $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
         
@@ -163,7 +160,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         
         // ...and verifying if the page contains properly formatted display name for chosen contact.
         $this->assertTrue( $this->isTextPresent( "Summerson, " . $firstName1 ), "Contact not found in line " . __LINE__ );
-         
+        
         // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
         $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
         // For simple input fields we can use field id as selector
@@ -188,17 +185,17 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         // Setting priority.
         $this->select("priority_id", "value=1");   
         
-         $textField = 'This is test custom data';
+        $textField = 'This is test custom data';
         $this->click( $customGroupTitle );
         $this->click( "xpath=//div[@id='{$customGroupTitle}']/table/tbody/tr[2]/td[2]/table/tbody/tr/td[1]/input" );
         $this->type( $customDataParams[1], $textField );
-              
+        
         // Scheduling follow-up.
         $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
         $this->select( "followup_activity_type_id", "value=1" );
         $this->webtestFillDateTime('followup_date','+2 months 10:00AM');
         $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
-
+        
         // Clicking save.
         $this->click("_qf_Activity_upload-bottom");
         $this->waitForPageToLoad("30000");
@@ -212,7 +209,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->click( "xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]/span[2]/ul/li/a[text()='File On Case']" );
         $this->waitForElementPresent( "css=div#fileOnCaseDialog" );
         $this->waitForElementPresent( 'case_activity_subject' );
-
+        
         // file activity on case
         $this->type( 'unclosed_cases', $firstName );
         $this->click( 'unclosed_cases' );
@@ -221,16 +218,16 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->assertContains( $firstName, $this->getValue( 'unclosed_cases' ), 
                                "autocomplete expected $firstName but didn’t find it in " . 
                                $this->getValue( 'unclosed_cases' ) );
-
+        
         $this->click( "xpath=//div[@class='ui-dialog-buttonset']/button/span[text()='Ok']" );
         $this->waitForPageToLoad("30000");
         $this->waitForElementPresent( "xpath=//div[@id='Activities']//table/tbody/tr[1]/td[8]/span/a[text()='View']" );
-
+        
         // verify if custom data is present
         $this->open( $this->sboxPath . "civicrm/case?reset=1" );
         $this->waitForPageToLoad("30000");
         $this->click( "xpath=//table[@class='caseSelector']/tbody//tr/td[2]/a[text()='{$contactName}']/../../td[9]/span/a[text()='Manage']" );
-
+        
         $this->waitForElementPresent( '_qf_CaseView_cancel-bottom' );
         $this->waitForElementPresent( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]" );
         
@@ -238,11 +235,31 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
         $this->waitForElementPresent( 'view-activity' );
         $this->waitForElementPresent( "css=table#crm-activity-view-table tr.crm-case-activityview-form-block-groupTitle" );
-
+        
         $this->isTextPresent( $customDataParams[0] );
         $this->isTextPresent( $textField );
+        $this->click( "xpath=//div[@class='ui-dialog-buttonset']/button/span[text()='Done']" );
+        $this->waitForElementPresent( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]" );
+        
+        $this->click( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody//tr/td[2]/a[text()='{$subject}']/../../td[6]/a[text()='Scheduled']" );
+        
+        $this->waitForElementPresent( "css=div#changeStatusDialog" );
+        $this->waitForElementPresent( 'activity_change_status' );
+        
+        // change activity status
+        $this->select( 'activity_change_status', 'value=2');
+        $this->click( "xpath=//div[@class='ui-dialog-buttonset']/button/span[text()='Ok']" );
+        $this->waitForPageToLoad("30000");
+        $this->open( $this->sboxPath . "civicrm/case?reset=1" );
+        $this->waitForPageToLoad("30000");
+        $this->click( "xpath=//table[@class='caseSelector']/tbody//tr/td[2]/a[text()='{$contactName}']/../../td[9]/span/a[text()='Manage']" );
+        $this->waitForElementPresent( '_qf_CaseView_cancel-bottom' );
+        $this->waitForElementPresent( "xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]" );
+        $this->click( "xpath=//div[@id='activities']//table[@id='activities-selector']//a[text()='{$subject}']" );
+        $this->waitForElementPresent( 'view-activity' );
+        $this->waitForElementPresent( "css=table#crm-activity-view-table tr.crm-case-activityview-form-block-groupTitle" );
     }
-
+    
     function _addCustomData( $customGroupTitle )
     {
         // Go directly to the URL of the screen that you will be testing (New Custom Group).
@@ -305,10 +322,10 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         // create another custom field - text field
         $this->click("//a[@id='newCustomField']/span");
         $this->waitForPageToLoad("30000");
-
+        
         $textFieldLabel = 'Custom Field Text_' . substr(sha1(rand()), 0, 4); 
         $this->type( 'label', $textFieldLabel );
-
+        
         //enter pre help msg
         $this->type( 'help_pre', "this is field pre help");
         
@@ -326,7 +343,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( "Your custom field '$textFieldLabel' has been saved." ) );
         $textFieldId = explode( '&id=', $this->getAttribute( "xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$textFieldLabel']/../td[8]/span/a[text()='Edit Field']/@href" ) );
         $textFieldId = $textFieldId[1];
-
+        
         return array( $radioOptionLabel1, "custom_{$textFieldId}_-1" );
     }
 }
