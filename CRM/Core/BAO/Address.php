@@ -349,16 +349,18 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
         $asp = CRM_Core_BAO_Setting::getItem(  CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME,
                                                'address_standardization_provider' );
         // clean up the address via USPS web services if enabled
-        if ($asp === 'USPS') {
+        if ( $asp === 'USPS' &&
+             $params['country_id'] == 1228 ) {
             require_once 'CRM/Utils/Address/USPS.php';
             CRM_Utils_Address_USPS::checkAddress( $params );
 
             // do street parsing again if enabled, since street address might have changed
             require_once 'CRM/Core/BAO/Setting.php';
-            $parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', 
-                                                          CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-                                                                                              'address_options' ), 
-                                                          false );
+            $parseStreetAddress = 
+                CRM_Utils_Array::value( 'street_address_parsing', 
+                                        CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                                            'address_options' ), 
+                                        false );
 
             if ( $parseStreetAddress && !empty( $params['street_address']) ) {
                 foreach ( array( 'street_number', 'street_name', 'street_unit', 'street_number_suffix' ) as $fld ) {
