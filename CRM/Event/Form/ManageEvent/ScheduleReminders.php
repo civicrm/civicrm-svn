@@ -206,11 +206,11 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
             $errors['subject'] = ts('Subject is a required field.');
         }
 
-        if ( ( CRM_Utils_Array::value( 'recipient', $fields ) == 1 ||
-               CRM_Utils_Array::value( 'recipient', $fields ) == 2 ) && 
-               CRM_Utils_System::isNull( $fields['recipient_listing'] ) ) {
-            $errors['recipient_listing'] = ts('Recipient Listing is a required field.');
-        }
+        // if ( ( CRM_Utils_Array::value( 'recipient', $fields ) == 1 ||
+        //        CRM_Utils_Array::value( 'recipient', $fields ) == 2 ) && 
+        //        CRM_Utils_System::isNull( $fields['recipient_listing'] ) ) {
+        //     $errors['recipient_listing'] = ts('Recipient Listing is a required field.');
+        // }
 
         if ( !CRM_Utils_System::isNull( $fields['absolute_date'] ) ) {
             if (CRM_Utils_Date::format( CRM_Utils_Date::processDate( $fields['absolute_date'], null ) ) < CRM_Utils_Date::format(date('YmdHi00')) ) {
