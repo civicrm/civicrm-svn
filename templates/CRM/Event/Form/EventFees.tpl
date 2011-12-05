@@ -281,8 +281,13 @@ function checkEmail( ) {
      
      function fillTotalAmount( totalAmount ) {
           if ( !totalAmount ) {
-     	      var eventFeeBlockValues = {/literal}{$eventFeeBlockValues}{literal};
-	      totalAmount = eval('eventFeeBlockValues.amount_id_'+{/literal}{$form.amount.value}{literal});
+	      var amountVal = {/literal}{if $form.amount.value}{$form.amount.value}{else}0{/if}{literal};
+	      if ( amountVal > 0 ) {
+     	        var eventFeeBlockValues = {/literal}{$eventFeeBlockValues}{literal};
+	        totalAmount = eval('eventFeeBlockValues.amount_id_'+ amountVal);
+              } else {
+	        totalAmount = '';
+	      }
 	  }
           cj('#total_amount').val( totalAmount );
      }
