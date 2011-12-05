@@ -32,14 +32,14 @@
      &nbsp;{ts}Registration is closed for this event{/ts}
   </div>
 {/if}
-{if !$config->userFrameworkFrontend}
+{if call_user_func(array('CRM_Core_Permission','check'), 'access CiviEvent')} 
 <div class="crm-actions-ribbon crm-event-manage-tab-actions-ribbon">
 	<ul id="actions">
 {if call_user_func(array('CRM_Core_Permission','check'), 'edit all events')} 
 
 	<li><div id="crm-event-links-wrapper">
-	      <div id="crm-event-links-link"><span><div class="icon dropdown-icon"></div>{ts}Edit Event{/ts}</span></div>
-	      <div class="ac_results" id="crm-event-links-list">
+	      <div id="crm-event-configure-link"><span title="{ts}Configure this event.{/ts}"><div class="icon settings-icon"></div></span></div>
+	      <div class="ac_results" id="crm-event-links-list" style="margin-left: -25px;">
 	      	   <div class="crm-event-links-list-inner">
 	      	   	<ul>
         		    <li><a title="{ts}Info and Settings{/ts}" href="{crmURL p='civicrm/event/manage/settings' q="reset=1&action=update&id=`$event.id`"}">{ts}Info and Settings{/ts}</a></li>
@@ -59,8 +59,8 @@
 
 {/if}
 <li><div id="crm-participant-wrapper">
-	      <div id="crm-participant-link"><span><div class="icon dropdown-icon"></div>{ts}Find Participants{/ts}</span></div>
-	      <div class="ac_results" id="crm-participant-list">
+	      <div id="crm-participant-links"><span title="{ts}Participant listing links.{/ts}"><div class="icon search-icon"></div></div>
+	      <div class="ac_results" id="crm-participant-list" style="margin-left: -25px;">
 	      	   <div class="crm-participant-list-inner">
 	      	   	<ul>
                     {if $findParticipants.statusCounted}
@@ -211,13 +211,13 @@ cj('body').click(function() {
     cj('#crm-participant-list').hide();
 });
 
-cj('#crm-event-links-link').click(function(event) {
+cj('#crm-event-configure-link').click(function(event) {
     cj('#crm-event-links-list').toggle();
     cj('#crm-participant-list').hide();
     event.stopPropagation();
 });
 
-cj('#crm-participant-link').click(function(event) {
+cj('#crm-participant-links').click(function(event) {
     cj('#crm-participant-list').toggle();
     cj('#crm-event-links-list').hide();
     event.stopPropagation();
