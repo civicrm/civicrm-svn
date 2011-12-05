@@ -80,15 +80,31 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
 
         $this->addElement('text', 'dashboardCacheTimeout', ts('Dashboard cache timeout'),
                           array( 'size' => 3, 'maxlength' => 5 ) );
+        $this->addElement('text', 'checksumTimeout' , ts('CheckSum Lifespan'),
+                          array( 'size' => 2, 'maxlength' => 8 ) );
         $this->addElement('text','recaptchaOptions', ts('Recaptcha Options'),
                           array( 'size' => 64, 'maxlength' => 64 ) );
 
         $this->addRule('maxAttachments', ts('Value should be a positive number') , 'positiveInteger');
         $this->addRule('maxFileSize', ts('Value should be a positive number') , 'positiveInteger');
+        $this->addRule('checksumTimeout', ts('Value should be a positive number') , 'positiveInteger');
        
         parent::buildQuickForm();    
     }
 
+    function setDefaultValues()
+    {
+        parent::setDefaultValues();
+
+        require_once 'CRM/Core/BAO/Setting.php';
+        $this->_defaults['checksumTimeout'] = 
+            CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                           'checksum_timeout',
+                                           null,
+                                           7 );
+        return $this->_defaults;
+    }
+            
     public function postProcess()
     {
         parent::postProcess();

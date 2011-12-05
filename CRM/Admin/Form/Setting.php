@@ -133,12 +133,6 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
     }
 
     public function commonProcess( &$params ) {
-        require_once "CRM/Core/BAO/ConfigSetting.php";
-        CRM_Core_BAO_ConfigSetting::add($params);
-
-        // also delete the CRM_Core_Config key from the database
-        $cache = CRM_Utils_Cache::singleton( );
-        $cache->delete( 'CRM_Core_Config' );
 
         // save autocomplete search options
         if ( CRM_Utils_Array::value( 'autocompleteContactSearch', $params ) ) {
@@ -152,6 +146,8 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
             CRM_Core_BAO_Setting::setItem( $value,
                                            CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'contact_autocomplete_options' );
+
+            unset( $params['autocompleteContactSearch'] );
         }
 
         // save autocomplete contact reference options
@@ -166,16 +162,39 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
             CRM_Core_BAO_Setting::setItem( $value,
                                            CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'contact_reference_options' );
+
+            unset( $params['autocompleteContactReference'] );
         }
-        
+
+        // save checksum timeout
+        if ( CRM_Utils_Array::value( 'checksumTimeout', $params ) ) {
+            require_once 'CRM/Core/BAO/Setting.php';
+            CRM_Core_BAO_Setting::setItem( $params['checksumTimeout'],
+                                           CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                           'checksum_timeout' );
+        }
+            
         // update time for date formats when global time is changed
         if ( CRM_Utils_Array::value( 'timeInputFormat', $params ) ) {
-            $query = "UPDATE civicrm_preferences_date SET time_format = " . $params['timeInputFormat'] . " 
-                      WHERE time_format IS NOT NULL AND time_format <> ''";
-            
-            CRM_Core_DAO::executeQuery( $query );
+            $query = "
+UPDATE civicrm_preferences_date 
+SET    time_format = %1
+WHERE  time_format IS NOT NULL 
+AND    time_format <> ''
+";
+            $sqlParams = array( 1 => array( $params['timeInputFormat'], 'String' ) );
+            CRM_Core_DAO::executeQuery( $query, $sqlParams );
+
+            unset( $params['timeInputFormat'] );
         }
         
+        require_once "CRM/Core/BAO/ConfigSetting.php";
+        CRM_Core_BAO_ConfigSetting::add($params);
+
+        // also delete the CRM_Core_Config key from the database
+        $cache = CRM_Utils_Cache::singleton( );
+        $cache->delete( 'CRM_Core_Config' );
+
         CRM_Core_Session::setStatus( ts('Your changes have been saved.') );
     }
 

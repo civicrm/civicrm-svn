@@ -78,13 +78,7 @@ class CRM_Core_BAO_ConfigSetting
         // unset any of the variables we read from file that should not be stored in the database
         // the username and certpath are stored flat with _test and _live
         // check CRM-1470
-        $skipVars = array( 'dsn', 'templateCompileDir',
-                           'userFrameworkDSN', 
-                           'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
-                           'userPermissionClass', 'userFrameworkURLVar', 'userFrameworkVersion',
-                           'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
-                           'qfKey', 'gettextResourceDir', 'cleanURL',
-                           'locale_custom_strings', 'localeCustomStrings' );
+        $skipVars = self::skipVars( );
         foreach ( $skipVars as $var ) {
             unset( $params[$var] );
         }
@@ -215,13 +209,7 @@ class CRM_Core_BAO_ConfigSetting
                 return;
             }
 
-            $skipVars = array( 'dsn', 'templateCompileDir',
-                               'userFrameworkDSN', 
-                               'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
-                              'userPermissionClass', 'userFrameworkURLVar', 'userFrameworkVersion',
-                               'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
-                               'qfKey', 'gettextResourceDir', 'cleanURL',
-                               'locale_custom_strings', 'localeCustomStrings' );
+            $skipVars = self::skipVars( );
             foreach ( $skipVars as $skip ) {
                 if ( array_key_exists( $skip, $defaults ) ) {
                     unset( $defaults[$skip] );
@@ -631,4 +619,17 @@ WHERE  id = %1
         return true;
     }
 
+    static function skipVars( ) {
+        return array( 'dsn', 'templateCompileDir',
+                      'userFrameworkDSN', 
+                      'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
+                      'userPermissionClass', 'userFrameworkURLVar', 'userFrameworkVersion',
+                      'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
+                      'qfKey', 'gettextResourceDir', 'cleanURL',
+                      'locale_custom_strings', 'localeCustomStrings',
+                      'autocompleteContactSearch',
+                      'autocompleteContactReference',
+                      'checksumTimeout',
+                      );
+    }
 }

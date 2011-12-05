@@ -142,13 +142,14 @@ WHERE  id IN ( $idString )
      * @param int    $ts         timestamp that checksum was generated
      * @param int    $live       life of this checksum in hours/ 'inf' for infinite
      * @param string $hash       contact hash, if sent, prevents a query in inner loop
+     *
      * @return array ( $cs, $ts, $live )
      * @static
      * @access public
      */
     static function generateChecksum( $contactID, $ts = null, $live = null, $hash = null ) 
     {
-        // return an empty string if we dont get a contactID
+        // return a warning message if we dont get a contactID
         // this typically happens when we do a message preview
         // or an anon mailing view - CRM-8298
         if ( ! $contactID ) {
@@ -170,9 +171,16 @@ WHERE  id IN ( $idString )
         if ( ! $ts ) {
             $ts = time( );
         }
-        
+
+        echo "L: $live<p>";
         if ( ! $live ) {
-            $live = 24 * 7;
+            require_once 'CRM/Core/BAO/Setting.php';
+            $days = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                   'checksum_timeout',
+                                                   null,
+                                                   7 );
+            $live = 24 * $days;
+            echo "$days, $live<P>";
         }
 
         $cs = md5( "{$hash}_{$contactID}_{$ts}_{$live}" );
@@ -215,7 +223,7 @@ WHERE  id IN ( $idString )
         
         // checksum matches so now check timestamp
         $now = time( );
-        return ( $inputTS + ( $inputLF * 60 * 60 ) >= $now ) ? true : false;
+        return ( $inputTS + ( $inputLF * 60 * 60 ) >= $now );
     }
 
     /**

@@ -34,6 +34,14 @@
     </table>
 
     <table class="form-layout">
+        <tr class="crm-miscellaneous-form-block-checksumTimeout">
+            <td class="label">{$form.checksumTimeout.label}</td>
+            <td>{$form.checksumTimeout.html}<br />
+                <span class="description">{ts}The number of days before a personalized (hashed) link will expire.{/ts}</span></td>
+        </tr>
+    </table>
+
+    <table class="form-layout">
         <tr class="crm-miscellaneous-form-block-contactUndelete">
           <td class="label">{$form.contactUndelete.label}</td>
           <td>
