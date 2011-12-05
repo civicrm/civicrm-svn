@@ -132,8 +132,8 @@
 		</tr>
 		<tr class="crm-event-manage-eventinfo-form-block-is_share">
 			<td>&nbsp;</td>
-			<td>{$form.is_share.html} {$form.is_share.label}<br />
-			<span class="description">{ts}When enabled, links will appear allowing people to share this event through social media.{/ts}</span></td>
+			<td>{$form.is_share.html} {$form.is_share.label} {help id="id-is_share"}<br />
+			<span class="description">{ts}When enabled, links allowing people to share this event with their social network will be displayed (e.g. Facebook "Like", Google+, and Twitter).{/ts}</span></td>
 		</tr>
 		<tr class="crm-event-manage-eventinfo-form-block-is_active">
 			<td>&nbsp;</td>
