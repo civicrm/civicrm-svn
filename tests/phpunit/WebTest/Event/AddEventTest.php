@@ -357,4 +357,29 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
       $this->assertStringsPresent( $thankStrings );
   }
+
+  function _testAddReminder( $eventTitle ) {
+      // Go to Schedule Reminders tab
+      $this->click('css=li#tab_reminder a');
+      $this->waitForElementPresent("_qf_ScheduleReminders_upload-bottom");
+      $this->type("title", "Event Reminder for ". $eventTitle);
+      $this->select( 'entity', 'label=Registered' );
+      
+      $this->select( 'start_action_offset', 'label=1' );
+      $this->select( 'start_action_condition', 'label=after' );
+      $this->click( 'is_repeat' );
+      $this->select( 'repetition_frequency_interval', 'label=2' );
+      $this->select( 'end_date', 'label=Event End Date' );
+      $this->click( 'recipient' );
+      $this->select( 'recipient', 'label=Participant Role' );
+      //  $this->select( 'recipient_listing', 'value=1' );
+      
+      // Fill Subject
+      $subject = 'subject' . substr( sha1( rand( ) ), 0, 4 );
+      $this->type( 'subject', $subject );
+    
+      //click on save
+      $this->click( '_qf_ScheduleReminders_upload-bottom' );
+      $this->waitForPageToLoad('30000');
+  }
 }
