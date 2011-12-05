@@ -96,7 +96,6 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase
         $this->assertEquals( $params['is_thermometer'], $pcp->is_thermometer, 'Check for is_thermometer.' );
         $this->assertEquals( $params['is_honor_roll'], $pcp->is_honor_roll, 'Check for is_honor_roll.' );
         $this->assertEquals( $params['goal_amount'], $pcp->goal_amount, 'Check for goal_amount.' );
-        $this->assertEquals( $params['referer'], $pcp->referer, 'Check for referer.' );
         $this->assertEquals( $params['is_active'], $pcp->is_active, 'Check for is_active.' );
         
         // Delete our test object
@@ -125,7 +124,6 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase
         $this->assertEquals( $params['is_thermometer'], $pcp->is_thermometer, 'Check for is_thermometer.' );
         $this->assertEquals( $params['is_honor_roll'], $pcp->is_honor_roll, 'Check for is_honor_roll.' );
         $this->assertEquals( $params['goal_amount'], $pcp->goal_amount, 'Check for goal_amount.' );
-        $this->assertEquals( $params['referer'], $pcp->referer, 'Check for referer.' );
         $this->assertEquals( $params['is_active'], $pcp->is_active, 'Check for is_active.' );
 
         // Delete our test object
@@ -197,7 +195,6 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase
             'is_thermometer' => 1,
             'is_honor_roll' => 1,
             'goal_amount' => 10000.00,
-            'referer' => 'referrer value',
             'is_active' => 1,
             );
         
