@@ -89,6 +89,11 @@ class CRM_Member_Form_MembershipTest extends CiviUnitTestCase
                            'In line ' . __LINE__  );
         $this->assertTrue( array_key_exists( 'membership_type_id', $rc ),
                            'In line ' . __LINE__  );
+
+        $params['membership_type_id'] = array(1 => 3);
+        $rc = $obj->formRule( $params, $files, $obj );
+        $this->assertType( 'array', $rc,
+                           'In line ' . __LINE__  );
         $this->assertTrue( array_key_exists( 'join_date', $rc ),
                            'In line ' . __LINE__  );
     }
