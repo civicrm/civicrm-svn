@@ -42,7 +42,7 @@ require_once 'CRM/Utils/System/Base.php';
 class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
     function __construct() {
-      $this->is_joomla = TRUE;
+        $this->is_drupal = false;
     }
     
     /**

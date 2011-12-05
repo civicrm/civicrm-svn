@@ -42,7 +42,7 @@ require_once 'CRM/Utils/System/Base.php';
 class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
 
     function __construct() {
-      $this->is_drupal = TRUE;
+      $this->is_drupal = true;
       $this->supports_form_extensions = TRUE;
     }
 

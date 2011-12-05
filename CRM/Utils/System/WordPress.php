@@ -41,7 +41,7 @@ require_once 'CRM/Utils/System/Base.php';
  */
 class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     function __construct() {
-      $this->is_wordpress = TRUE;
+        $this->is_drupal = false;
     }
  
     /**
