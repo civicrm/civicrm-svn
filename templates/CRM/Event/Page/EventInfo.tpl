@@ -84,12 +84,26 @@
 {/if}
 <div class="vevent crm-block crm-event-info-form-block">
 	<div class="event-info">
-	
 	{if $event.summary}
-	    <div class="crm-section event_summary-section">{$event.summary}</div>
+	    <div class="crm-section event_summary-section">
+        	{if $allowRegistration}
+                <div class="action-link section register_link-section register_link-top">
+                    <a href="{$registerURL}" title="{$registerText}" class="button crm-register-button"><span>{$registerText}</span></a>
+                </div>
+            {/if}
+            {$event.summary}
+	    </div>
 	{/if}
 	{if $event.description}
-	    <div class="crm-section event_description-section summary">{$event.description}</div>
+	    <div class="crm-section event_description-section summary">
+            {* Put the top register link to the right of description if no summary *}
+        	{if $allowRegistration && !$event.summary}
+                <div class="action-link section register_link-section register_link-top">
+                    <a href="{$registerURL}" title="{$registerText}" class="button crm-register-button"><span>{$registerText}</span></a>
+                </div>
+            {/if}
+	        {$event.description}
+	    </div>
 	{/if}
 	<div class="crm-section event_date_time-section">
 	    <div class="label"><label>{ts}When{/ts}</label></div>
@@ -189,7 +203,7 @@
     {include file="CRM/Custom/Page/CustomDataView.tpl"}
         
 	{if $allowRegistration}
-        <div class="action-link section register_link-section">
+        <div class="action-link section register_link-section register_link-bottom">
             <a href="{$registerURL}" title="{$registerText}" class="button crm-register-button"><span>{$registerText}</span></a>
         </div>
     {/if}

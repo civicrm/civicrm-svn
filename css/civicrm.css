@@ -2097,6 +2097,11 @@ div.grippie {
     margin: 4px 0px 4px 2px;
 }
 
+#crm-container .register_link-top {
+    float: right;
+    margin-left: 8px;
+}
+
 .crm-clear-link {
     margin-left: .5em;
 }
