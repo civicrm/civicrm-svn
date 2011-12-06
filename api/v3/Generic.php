@@ -17,6 +17,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
         $entity = strtolower($apiRequest['entity']);// should this be passed in already lower?
         // defaults based on data model and API policy
         switch (strtolower($apiRequest['params']['action'])) {
+                case 'getfields':
+                  return civicrm_api3_create_success(_civicrm_api_get_fields($apiRequest['entity']));
                 case 'create':
                 case 'update':
                 case 'replace':
