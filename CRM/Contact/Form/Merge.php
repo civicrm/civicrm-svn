@@ -285,7 +285,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         // handle location blocks.
         $locationBlocks = array( 'email', 'phone', 'address' );
-
+        require_once 'CRM/Utils/Address.php';
+        
         foreach ( $locationBlocks as $block ) {
             foreach ( array( 'main', 'other' ) as $locBlocks ) {
                 $cnt       = 1;
@@ -295,18 +296,35 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 if ( $count ) {
                     if ( $count > $cnt ) {
                         foreach ( $values['values'] as $value ) {
-                            $locations[$locBlocks][$block][$cnt] = $value;
+                            if ($block =='address' ) {
+                                CRM_Core_BAO_Address::fixAddress( $value);
+                                $display = CRM_Utils_Address::format($value);
+                                $locations[$locBlocks][$block][$cnt] = $value;
+                                $locations[$locBlocks][$block][$cnt]['display'] = $display;
+                                
+                            } else {
+                                $locations[$locBlocks][$block][$cnt] = $value;
+                            }
+
                             $cnt++;
                         }
                     } else {
                         $id = $values['id'];
-                        $locations[$locBlocks][$block][$cnt] = $values['values'][$id];
+                            if ($block =='address' ) {
+                                CRM_Core_BAO_Address::fixAddress( $values['values'][$id]);
+                                $display = CRM_Utils_Address::format($values['values'][$id]);
+                                $locations[$locBlocks][$block][$cnt] = $values['values'][$id];
+                                $locations[$locBlocks][$block][$cnt]['display'] = $display;
+                                
+                            } else {
+                                $locations[$locBlocks][$block][$cnt] = $values['values'][$id];
+                            }
                     }
                 }
             }
         }
-        
-        $allLocationTypes   = CRM_Core_PseudoConstant::locationType( );
+
+        $allLocationTypes = CRM_Core_PseudoConstant::locationType( );
         
         $mainLocAddress = array();
         foreach ( array( 'Email', 'Phone', 'IM', 'OpenID', 'Address' ) as $block ) {
