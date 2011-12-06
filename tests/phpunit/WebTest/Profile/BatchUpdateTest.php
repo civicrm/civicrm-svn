@@ -65,7 +65,12 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         $customDataArr = $this->_addCustomData( $profileFor );
         $this->_addProfile( $profileTitle, $customDataArr, $profileFor );
         
-        //edition to be done here
+        //setting ckeditor as WYSIWYG
+        $this->open( $this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1" );
+        $this->waitForElementPresent( '_qf_Display_next-bottom' );
+        $this->select( 'editor_id', 'CKEditor' );
+        $this->click( '_qf_Display_next-bottom' );
+        $this->waitForPageToLoad("30000");
         
         // Find Contact
         $this->open( $this->sboxPath . "civicrm/contact/search?reset=1" );
@@ -229,6 +234,54 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
             $assertCheck = false;        
         
         $this->assertTrue($assertCheck, 'copy rows for field two failed[radio button]');
+        
+        //test with tinymce editor
+        $this->open( $this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1" );
+        $this->waitForElementPresent( '_qf_Display_next-bottom' );
+        $this->select( 'editor_id', 'TinyMCE' );
+        $this->click( '_qf_Display_next-bottom' );
+        $this->waitForPageToLoad("30000");
+        
+        // Find Contact
+        $this->open( $this->sboxPath . "civicrm/contact/search?reset=1" );
+        $this->waitForElementPresent( '_qf_Basic_refresh' );
+        $this->type( 'sort_name', $lastName );
+        $this->click( '_qf_Basic_refresh' );
+        $this->waitForElementPresent( '_qf_Basic_next_print' );
+        
+        // Batch Update Via Profile
+        $this->waitForElementPresent( 'CIVICRM_QFID_ts_all_4' );
+        $this->click( 'CIVICRM_QFID_ts_all_4' );
+        
+        $this->select( 'task', "label=Batch Update via Profile" );
+        $this->click( 'Go' );
+        $this->waitForElementPresent( '_qf_PickProfile_next' );
+
+        $this->select( 'uf_group_id', "label={$profileTitle}" );
+        $this->click( '_qf_PickProfile_next' );
+
+        $this->waitForElementPresent( '_qf_Batch_next' );
+        
+        $this->isElementPresent("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name2}']");
+        $this->isElementPresent("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name1}']");
+        
+        $richTextAreaIdOne = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[5]/textarea/@id");
+        $richTextAreaIdTwo = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[5]/textarea/@id");
+        
+        $this->selectFrame("css=td.mceIframeContainer iframe#{$richTextAreaIdOne}_ifr");
+        $this->type("//html/body", 'this is intro text');
+        $this->selectFrame('relative=top');
+        
+        $this->click( "xpath=//table[@class='crm-copy-fields']/thead/tr/td[5]/img" );
+        sleep(5);
+    
+        if( $this->getValue($richTextAreaIdOne) == $this->getValue($richTextAreaIdTwo) ){
+            $assertCheck = true;
+        }
+        else
+            $assertCheck = false;
+        
+        $this->assertTrue($assertCheck, 'Rich Text Area coping failed [TinyMCE]');
         
         //campaign test for interview 
         // Enable CiviCampaign module if necessary
