@@ -96,18 +96,18 @@ function civicrm_member_roles_permission()
 /**
  * Implementation of hook_user_login().
  */
-function civicrm_member_roles_user_login( &$edit, &$account ) {
+function civicrm_member_roles_user_login( &$edit, $account ) {
     civicrm_member_roles_sync_user( $account );
 }
 
 /**
  * Implementation of hook_user_logout().
  */
-function civicrm_member_roles_user_logout( &$account ) {
+function civicrm_member_roles_user_logout( $account ) {
     civicrm_member_roles_sync_user( $account );
 }
 
-function civicrm_member_roles_sync_user( &$account) 
+function civicrm_member_roles_sync_user( $account) 
 {
     if ( ! civicrm_initialize( ) ) {
         return;
