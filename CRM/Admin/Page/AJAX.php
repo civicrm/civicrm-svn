@@ -201,6 +201,12 @@ class CRM_Admin_Page_AJAX
                 $status .= '<br /><br />' . ts('WARNING - Disabling an option which has been assigned to existing records will result in that option being cleared when the record is edited.');
                 break;
 
+            case 'CRM_Contribute_BAO_ContributionRecur':
+                $status = ts('Are you sure you want to cancel the recurring contribution?');
+                $status .= '<br /><br />' . ts('WARNING - Cancelling a recurring contribution should only be used if your gateway payment is not capable of sending this information automatically to CiviCRM.');
+
+                break;
+    
             default:
                 $status = ts('Are you sure you want to disable this record?');
                 break;

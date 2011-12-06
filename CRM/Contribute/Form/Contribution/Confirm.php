@@ -1272,11 +1272,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         
         $recurParams = array( );
         $config = CRM_Core_Config::singleton( );
-        $recurParams['contact_id']         = $contactID;
-        $recurParams['amount']             = $params['amount'];
-        $recurParams['frequency_unit']     = $params['frequency_unit'];
-        $recurParams['frequency_interval'] = $params['frequency_interval'];
-        $recurParams['installments']       = $params['installments'];
+        $recurParams['contact_id']           = $contactID;
+        $recurParams['amount']               = $params['amount'];
+        $recurParams['frequency_unit']       = $params['frequency_unit'];
+        $recurParams['frequency_interval']   = $params['frequency_interval'];
+        $recurParams['installments']         = $params['installments'];
+        $recurParams['contribution_type_id'] = $params['contribution_type_id'];
         
         $recurParams['is_test'] = 0;
         if ( ( $form->_action & CRM_Core_Action::PREVIEW ) || 
