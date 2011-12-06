@@ -220,6 +220,7 @@ VALUES
                    array( array( 'uploadDir', null ),
                           array( 'imageUploadDir', null ),
                           array( 'customFileUploadDir', null ),
+                          array( 'customTemplateDir', null ),
                           array( 'customPHPPathDir', null ),
                           array( 'extensionsDir', null ),
                           ),
@@ -286,7 +287,25 @@ AND    v.is_active = 1
             
         }
     }
-    
+
+    function upgrade_4_1_alpha2( $rev ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+        $dao = new CRM_Core_DAO_Setting();
+        $dao->group_name = 'Directory Preferences';
+        $dao->name = 'customTemplateDir';
+        if ( !($dao->find(true)) ) {
+            $dao->domain_id = CRM_Core_Config::domainID( );
+            $dao->created_date = date( 'YmdHis' );
+            $dao->is_domain = 0;
+            $dao->save();
+        }
+        $dao->free();
+
+        // Do the regular upgrade
+        $upgrade = new CRM_Upgrade_Form;
+        $upgrade->processSQL($rev);
+    }
+
     function getTemplateMessage( ) {
         return "Blah";
     }
