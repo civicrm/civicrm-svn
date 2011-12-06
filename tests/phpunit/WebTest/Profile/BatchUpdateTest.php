@@ -99,19 +99,19 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         
         $this->click( "xpath=//table[@class='crm-copy-fields']/thead/tr/td[2]/img" );
         sleep(5);
-        if( $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[2]" ) && 
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[3]" )&&
+        if( $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[2]" )&& 
             !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[4]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[6]" )&&
             
-            //verification for second field second contact
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[2]" ) && 
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[3]" )&&
+            //verification for second field first row
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[2]" )&& 
             !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[4]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[6]" )&&
             
-            //verification for first field first contact
-            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[2]" ) && 
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[3]" )&&
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[4]" )
+            //verification for first field second row
+            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[2]" )&& 
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[4]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[6]" )
             )
             {
                 $assertCheck = true;
@@ -123,19 +123,19 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         
         $this->click( "xpath=//table[@class='crm-copy-fields']/thead/tr/td[3]/img" );
         sleep(5);
-        if( $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[2]" ) && 
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[3]" )&&
+        if( $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[2]" )&& 
             !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[4]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[6]" )&&
             
-            //verification for second field second contact
-            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[2]" ) && 
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[3]" )&&
+            //verification for second field first row
+            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[2]" )&& 
             !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[4]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[6]" )&&
             
-            //verification for first field first contact
-            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[2]" ) && 
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[3]" )&&
-            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[4]" )
+            //verification for first field second row
+            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[2]" )&& 
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[4]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[6]" )
             )
             {
                 $assertCheck = true;
@@ -143,9 +143,10 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         else 
             $assertCheck = false;        
         
-        $this->assertTrue($assertCheck, 'copy rows for field two failed');        
-        $dateElementIdFirstRow = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name2}']/../td[4]/input/@id");
-        $dateElementIdSecondRow = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name1}']/../td[4]/input/@id");
+        $this->assertTrue($assertCheck, 'copy rows for field two failed');
+        
+        $dateElementIdFirstRow = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[4]/input/@id");
+        $dateElementIdSecondRow = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[4]/input/@id");
         
         $this->webtestFillDateTime($dateElementIdFirstRow, "+1 week");
         $this->click( "xpath=//table[@class='crm-copy-fields']/thead/tr/td[4]/img" );
@@ -159,8 +160,8 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         
         $this->assertTrue($assertCheck, 'date / time coping failed');
         
-        $richTextAreaIdOne = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name1}']/../td[5]/textarea/@id");
-        $richTextAreaIdTwo = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name1}']/../td[5]/textarea/@id");
+        $richTextAreaIdOne = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[5]/textarea/@id");
+        $richTextAreaIdTwo = $this->getAttribute("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[5]/textarea/@id");
         
         $this->fillRichTextField( $richTextAreaIdOne,'This is Test Introductory Message','CKEditor' );
         $this->click( "xpath=//table[@class='crm-copy-fields']/thead/tr/td[5]/img" );
@@ -172,10 +173,250 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         else
             $assertCheck = false;
         
-        $this->assertTrue($assertCheck, 'Rich Text Area coping failed');       
+        $this->assertTrue($assertCheck, 'Rich Text Area coping failed');  
         
-        //campaign test for interview remaining
+        // selecting first check of profile
+        $this->click( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[6]/input" );
+        // selecting second check of profile
+        $this->click( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[7]/input" );
+        // clicking copy values to rows of first check and verifying
+        // if other radio Profile Field radio buttons are affected
         
+        $this->click( "xpath=//table[@class='crm-copy-fields']/thead/tr/td[6]/img" );
+        sleep(5);
+        if( $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[7]/input" )&& 
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[7]/input[2]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[7]/input[3]" )&&
+            
+            //verification for second field first row
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[7]/input" )&& 
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[7]/input[2]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[7]/input[3]" )&&
+            
+            //verification for first field second row
+            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[6]/input" )&& 
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[6]/input[2]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[6]/input[3]" )
+            )
+            {
+                $assertCheck = true;
+            }
+        else 
+            $assertCheck = false;
+        
+        $this->assertTrue($assertCheck, 'copy rows for field one failed[radio button]');
+        
+        $this->click( "xpath=//table[@class='crm-copy-fields']/thead/tr/td[7]/img" );
+        sleep(5);
+        if( $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[7]/input" )&& 
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[7]/input[2]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[7]/input[3]" )&&
+            
+            //verification for second field first row
+            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[7]/input" )&& 
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[7]/input[2]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[7]/input[3]" )&&
+            
+            //verification for first field second row
+            $this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[6]/input" )&& 
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[6]/input[2]" )&&
+            !$this->isChecked( "xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[6]/input[3]" )
+            )
+            {
+                $assertCheck = true;
+            }
+        else 
+            $assertCheck = false;        
+        
+        $this->assertTrue($assertCheck, 'copy rows for field two failed[radio button]');
+        
+        //campaign test for interview 
+        // Enable CiviCampaign module if necessary
+        $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent("_qf_Component_next-bottom");
+        $enabledComponents = $this->getSelectOptions("enableComponents-t");
+        if (! in_array( "CiviCampaign", $enabledComponents ) ) {
+            $this->addSelection("enableComponents-f", "label=CiviCampaign");
+            $this->click("//option[@value='CiviCampaign']");
+            $this->click("add");
+            $this->click("_qf_Component_next-bottom");
+            $this->waitForPageToLoad("30000");          
+            $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
+        }
+        
+        //Adding a survey
+        $this->open( $this->sboxPath . "civicrm/survey/add?reset=1" );
+        $this->waitForElementPresent( '_qf_Survey_next-bottom' );
+        $surveyTitle = "BatchUpdateTest Survey" . substr(sha1(rand()), 0, 7);
+        $this->type( "title", $surveyTitle );
+        $this->select( 'activity_type_id', 'label=Survey' );
+        $this->select( 'profile_id', "label={$profileTitle}" );
+        $this->click('CIVICRM_QFID_1_2');
+        $this->type( 'option_label_1', 'option1' ); 
+        $this->type( 'option_value_1', 'option1' );
+        $this->type( 'option_label_2', 'option2' );
+        $this->type( 'option_value_2', 'option2' );
+        $this->click( '_qf_Survey_next-bottom' );
+        $this->waitForPageToLoad('30000');
+        
+        //Reserve and interview responsedents
+        $this->waitForElementPresent( "xpath=//table[@id='surveys']/tbody//tr/td[2][text()='{$surveyTitle}']/../td[@class='crm-campaign-voterLinks']/span/ul/li/a" );
+        $this->click( "xpath=//table[@id='surveys']/tbody//tr/td[2][text()='{$surveyTitle}']/../td[@class='crm-campaign-voterLinks']/span/ul/li/a" );
+        $this->waitForPageToLoad('30000');
+        $this->click( "xpath=//div[@id='search_form_reserve']/div" );
+        $this->waitForElementPresent( 'sort_name' );
+        $lastName = 'Smith_a69231b';
+        $this->type( 'sort_name', $lastName );
+        $this->waitForElementPresent( '_qf_Search_refresh' );
+        $this->click( '_qf_Search_refresh' );
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent( 'Go' );
+        $this->click( 'CIVICRM_QFID_ts_all_4' );
+        $this->click( 'Go' );
+        $this->waitForElementPresent( '_qf_Reserve_next_reserveToInterview-top' );
+        $this->click( '_qf_Reserve_next_reserveToInterview-top' );
+        $this->waitForElementPresent( '_qf_Interview_cancel_interview' );
+        
+        $this->isElementPresent("xpath=//table[@id='voterRecords']/tbody//tr/td[text()='{$Name2}']");
+        $this->isElementPresent("xpath=//table[@id='voterRecords']/tbody//tr/td[text()='{$Name1}']");
+        
+        //edition to be done here
+        // selecting first check of profile
+        $this->click( "xpath=//table[@id='voterRecords']/tbody/tr/td[3]/input[2]" );
+        // selecting second check of profile
+        $this->click( "xpath=//table[@id='voterRecords']/tbody/tr/td[4]/input[2]" );
+        // clicking copy values to rows of first check and verifying
+        // if other check Profile Field check box are affected
+        
+        $this->click( "xpath=//table[@id='voterRecords']/thead/tr/th[3]/div/img" );
+        sleep(5);
+        if( $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[4]/input[2]" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[4]/input[4]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[4]/input[6]" )&&
+            
+            //verification for second field first row
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[4]/input[2]" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[4]/input[4]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[4]/input[6]" )&&
+            
+            //verification for first field second row
+            $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[3]/input[2]" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[3]/input[4]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[3]/input[6]" )
+            )
+            {
+                $assertCheck = true;
+            }
+        else 
+            $assertCheck = false;
+        
+        $this->assertTrue($assertCheck, 'copy rows for field one failed for inteview (campaign)');
+        
+        $this->click( "xpath=//table[@id='voterRecords']/thead/tr/th[4]/div/img" );
+        sleep(5);
+        if( $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[4]/input[2]" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[4]/input[4]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[4]/input[6]" )&&
+            
+            //verification for second field first row
+            $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[4]/input[2]" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[4]/input[4]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[4]/input[6]" )&&
+            
+            //verification for first field second row
+            $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[3]/input[2]" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[3]/input[4]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[3]/input[6]" )
+            )
+            {
+                $assertCheck = true;
+            }
+        else 
+            $assertCheck = false;        
+        
+        $this->assertTrue($assertCheck, 'copy rows for field two failed for inteview (campaign)'); 
+        
+        $dateElementIdFirstRow = $this->getAttribute("xpath=//table[@id='voterRecords']/tbody/tr/td[5]/input/@id");
+        $dateElementIdSecondRow = $this->getAttribute("xpath=//table[@id='voterRecords']/tbody/tr[2]/td[5]/input/@id");
+        
+        $this->webtestFillDateTime($dateElementIdFirstRow, "+1 week");
+        $this->click( "xpath=//table[@id='voterRecords']/thead/tr/th[5]/div/img" );
+        sleep(5);
+        
+        if( $this->getValue("{$dateElementIdFirstRow}_time") == $this->getValue("{$dateElementIdSecondRow}_time") && $this->getValue("{$dateElementIdFirstRow}_display") == $this->getValue("{$dateElementIdSecondRow}_display")){
+            $assertCheck = true;
+        }
+        else
+            $assertCheck = false;        
+        
+        $this->assertTrue($assertCheck, 'date / time coping failed for inteview (campaign)');
+        
+        $this->type( "xpath=//table[@id='voterRecords']/tbody/tr/td[@class='note']/input",'This is Test Introductory Message' );
+        $this->click( "xpath=//table[@id='voterRecords']/thead/tr/th[8]/div/img" );
+        sleep(5);
+        
+        if($this->getValue("xpath=//table[@id='voterRecords']/tbody/tr/td[@class='note']/input") == $this->getValue("xpath=//table[@id='voterRecords']/tbody/tr[2]/td[@class='note']/input")){
+            $assertCheck = true;
+        }
+        else
+            $assertCheck = false;
+        
+        $this->assertTrue($assertCheck, 'Note Custom field coping failed');
+        
+        $this->click( "xpath=//table[@id='voterRecords']/tbody/tr/td[6]/input" );
+        // selecting second check of profile
+        $this->click( "xpath=//table[@id='voterRecords']/tbody/tr/td[7]/input" );
+        // clicking copy values to rows of first check and verifying
+        // if other radio Profile Field radio buttons are affected
+        
+        $this->click( "xpath=//table[@id='voterRecords']/thead/tr/th[6]/div/img" );
+        sleep(5);
+        if( $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[7]/input" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[7]/input[2]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[7]/input[3]" )&&
+            
+            //verification for second field first row
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[7]/input" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[7]/input[2]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[7]/input[3]" )&&
+            
+            //verification for first field second row
+            $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[6]/input" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[6]/input[2]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[6]/input[3]" )
+            )
+            {
+                $assertCheck = true;
+            }
+        else 
+            $assertCheck = false;
+        
+        $this->assertTrue($assertCheck, 'copy rows for field one failed for inteview (campaign)[radio button]');
+        
+        $this->click( "xpath=//table[@id='voterRecords']/thead/tr/th[7]/div/img" );
+        sleep(5);
+        if( $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[7]/input" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[7]/input[2]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr/td[7]/input[3]" )&&
+            
+            //verification for second field first row
+            $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[7]/input" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[7]/input[2]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[7]/input[3]" )&&
+            
+            //verification for first field second row
+            $this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[6]/input" )&& 
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[6]/input[2]" )&&
+            !$this->isChecked( "xpath=//table[@id='voterRecords']/tbody/tr[2]/td[6]/input[3]" )
+            )
+            {
+                $assertCheck = true;
+            }
+        else 
+            $assertCheck = false;        
+        
+        $this->assertTrue($assertCheck, 'copy rows for field two failed for inteview (campaign)[radio button]'); 
     }
     
     function _addProfile( $profileTitle, $customDataArr, $profileFor ) 
@@ -340,6 +581,69 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         //Is custom field created
         $this->assertTrue( $this->isTextPresent( "Your custom field '$richTextField' has been saved." ) );
         $returnArray[4] = array( $customGroupTitle,$richTextField );
+               
+        // create another custom field - Integer Radio
+        $this->click("//a[@id='newCustomField']/span");
+        $this->waitForPageToLoad("30000");
+        
+        //create radio button field
+        //for radio 1
+        $radioLabel1 = 'Custom Radio One Text_' . substr(sha1(rand()), 0, 4); 
+        $this->type( 'label', $radioLabel1 );
+        $this->click( 'data_type[0]' );
+        $this->select( 'data_type[0]', "label=Alphanumeric" );
+        $this->select( 'data_type[1]', "label=Radio" );
+        
+        // enter radio options
+        $radioOneOptionLabel1 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+        $this->type( 'option_label_1', $radioOneOptionLabel1 );
+        $this->type( 'option_value_1', 1 );
+        $radioOneOptionLabel2 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+        $this->type( 'option_label_2', $radioOneOptionLabel2 );
+        $this->type( 'option_value_2', 2 );
+        $this->click("link=another choice");
+        $radioOneOptionLabel3 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+        $this->type( 'option_label_3', $radioOneOptionLabel3 );
+        $this->type( 'option_value_3', 3 );
+        
+        //clicking save
+        $this->click( '_qf_Field_next' );
+        $this->waitForPageToLoad( '30000' );
+        
+        //Is custom field created
+        $this->assertTrue( $this->isTextPresent( "Your custom field '$radioLabel1' has been saved." ) );
+        $returnArray[5] = array( $customGroupTitle, $radioLabel1 );
+        
+        // create another custom field - Integer Radio
+        $this->click("//a[@id='newCustomField']/span");
+        $this->waitForPageToLoad("30000");
+        
+        //for radio 2
+        $radioLabel2 = 'Custom Radio Two Text_' . substr(sha1(rand()), 0, 4); 
+        $this->type( 'label', $radioLabel2 );
+        $this->click( 'data_type[0]' );
+        $this->select( 'data_type[0]', "label=Alphanumeric" );
+        $this->select( 'data_type[1]', "label=Radio" );
+        
+        // enter radio options
+        $radioTwoOptionLabel1 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+        $this->type( 'option_label_1', $radioTwoOptionLabel1 );
+        $this->type( 'option_value_1', 1 );
+        $radioTwoOptionLabel2 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+        $this->type( 'option_label_2', $radioTwoOptionLabel2 );
+        $this->type( 'option_value_2', 2 );
+        $this->click("link=another choice");
+        $radioTwoOptionLabel3 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+        $this->type( 'option_label_3', $radioTwoOptionLabel3 );
+        $this->type( 'option_value_3', 3 );
+        
+        //clicking save
+        $this->click( '_qf_Field_next' );
+        $this->waitForPageToLoad( '30000' );
+        
+        //Is custom field created
+        $this->assertTrue( $this->isTextPresent( "Your custom field '$radioLabel2' has been saved." ) );
+        $returnArray[6] = array( $customGroupTitle,$radioLabel2 );
         
         return $returnArray;
     }
