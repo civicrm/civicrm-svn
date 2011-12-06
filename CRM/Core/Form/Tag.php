@@ -113,7 +113,7 @@ class CRM_Core_Form_Tag
                     case 'civicrm_activity':
                         if ( !empty( $form->_submitValues['activity_taglist'] ) && 
                             CRM_Utils_Array::value( $parentId, $form->_submitValues['activity_taglist']) ) {
-                            $allTags = CRM_Core_Pseudoconstant::tag( );
+                            $allTags = CRM_Core_PseudoConstant::tag( );
                             $tagIds  = explode( ',', $form->_submitValues['activity_taglist'][$parentId] );
                             foreach( $tagIds as $tagId ) {
                                 if ( is_numeric( $tagId ) ) {
@@ -130,7 +130,7 @@ class CRM_Core_Form_Tag
                     case 'civicrm_case':
                         if ( !empty( $form->_submitValues['case_taglist'] ) && 
                            CRM_Utils_Array::value( $parentId, $form->_submitValues['case_taglist']) ) {
-                           $allTags = CRM_Core_Pseudoconstant::tag( );
+                           $allTags = CRM_Core_PseudoConstant::tag( );
                            $tagIds  = explode( ',', $form->_submitValues['case_taglist'][$parentId] );
                            foreach( $tagIds as $tagId ) {
                                if ( is_numeric( $tagId ) ) {

@@ -569,7 +569,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
         
         $results = null;
         //delete activity record
-        $activityTypes = CRM_Core_Pseudoconstant::activityType( true, false, false, 'name' );
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, false, false, 'name' );
         
         require_once 'CRM/Activity/BAO/Activity.php';
         $params = array( 'source_record_id' => $membershipId,

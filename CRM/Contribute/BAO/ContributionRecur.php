@@ -273,7 +273,7 @@ SELECT p.payment_processor_id
         $recurDAO->contact_id =  $contactId;
         $recurDAO->find( );
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $contributionStatus = CRM_Contribute_Pseudoconstant::contributionStatus( );
+        $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
 
         while( $recurDAO->fetch( ) ) {
             $params[$recurDAO->id]['id']                        = $recurDAO->id;

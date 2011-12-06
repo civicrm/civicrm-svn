@@ -67,7 +67,7 @@ class CRM_Admin_Form_Preferences_Member extends CRM_Admin_Form_Preferences
      */
     function buildQuickForm( )
     {
-        require_once 'CRM/Contribute/Pseudoconstant.php';
+        require_once 'CRM/Contribute/PseudoConstant.php';
         
         $this->add('select', 'default_renewal_contribution_page', 
                     ts( 'Default Online Membership Renewal Page' ),
