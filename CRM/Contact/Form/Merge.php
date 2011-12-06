@@ -320,14 +320,16 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 } else {
                     $locValue[$moniker][$name] = true; 
                     foreach ( $blockValue as $count => $blkValues ) {
-                        $fldName   = $name;
+                        $fldName = $name;
                         $locTypeId = $blkValues['location_type_id'];
                         if ( $name == 'im' ) $fldName = 'name';
                         if ( $name == 'address' ) $fldName = 'display';
-                        $locLabel[$moniker][$name][$count] = $blkValues[$fldName];
+                        $locLabel[$moniker][$name][$count] = CRM_Utils_Array::value($fldName, 
+                                                                                    $blkValues);
                         $locTypes[$moniker][$name][$count] = $locTypeId;
                         if ( $moniker == 'main' && $name == 'address' ) {
-                            $mainLocAddress["main_$locTypeId"] = $blkValues[$fldName];
+                            $mainLocAddress["main_$locTypeId"] = CRM_Utils_Array::value($fldName, 
+                                                                                        $blkValues);
                             $this->_locBlockIds['main']['address'][$locTypeId] = $blkValues['id'];
                         } else {
                             $this->_locBlockIds[$moniker][$name][$count] = $blkValues['id'];
