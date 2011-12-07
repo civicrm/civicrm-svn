@@ -306,6 +306,12 @@ AND    v.is_active = 1
         $upgrade->processSQL($rev);
     }
 
+    function upgrade_4_1_alpha3( $rev ) {
+        $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->assign( 'addWightForActivity', !(CRM_Core_DAO::checkFieldExists('civicrm_activity', 'weight')) );
+        $upgrade->processSQL( $rev );
+    }
+
     function getTemplateMessage( ) {
         return "Blah";
     }
