@@ -304,6 +304,9 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
                     $attributes = $this->getVar( '_attributes' );
                     $subPage = strtolower(basename( CRM_Utils_Array::value('action', $attributes) ));
                     break;
+                case 'EventInfo':
+                    $subPage = 'settings';
+                    break;
                 case 'ScheduleReminders':
                     $subPage = 'reminder';
                     break;
@@ -316,7 +319,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
                                             array(1 => ( $subPage == 'friend' )?'Friend':$className ) ) );
             
             $this->postProcessHook( );
-            
+
             if ( $this->controller->getButtonName('submit') == "_qf_{$className}_upload_done" ) {
                 if ( $this->_isTemplate ) {
                     CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/eventTemplate', 
