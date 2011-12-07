@@ -328,17 +328,18 @@ FROM   {$this->_componentTable}
      */
     public function postProcess( ) 
     {
-        $exportOption = $this->controller->exportValue( $this->_name, 'exportOption' );
-        $params = $this->_submitValues;
+        $params = $this->controller->exportValues( $this->_name );
+        $exportOption = $params['exportOption'];
         $mergeSameAddress   = CRM_Utils_Array::value( 'mergeOption', $params ) == self::EXPORT_MERGE_SAME_ADDRESS ? 1 : 0;
         $mergeSameHousehold = CRM_Utils_Array::value( 'mergeOption', $params ) == self::EXPORT_MERGE_HOUSEHOLD ? 1 : 0;
+
         $this->set('mergeSameAddress', $mergeSameAddress );
         $this->set('mergeSameHousehold', $mergeSameHousehold );
 
         // instead of increasing the number of arguments to exportComponents function, we 
         // will send $exportParams as another argument, which is an array and suppose to contain 
         // all submitted options or any other argument
-        $exportParams = $this->controller->exportValues( $this->_name );
+        $exportParams = $params;
         
         if ( !empty( $this->_greetingOptions ) ) {
             foreach ( $this->_greetingOptions as $key => $value ) {
@@ -352,7 +353,7 @@ FROM   {$this->_componentTable}
             }
         }
         
-        $mappingId = $this->controller->exportValue( $this->_name, 'mapping' ); 
+        $mappingId = CRM_Utils_Array::value( 'mapping', $params );
         if ( $mappingId ) {
             $this->set('mappingId', $mappingId);
         } else {

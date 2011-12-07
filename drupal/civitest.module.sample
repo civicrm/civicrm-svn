@@ -1682,7 +1682,11 @@ AND        e.email LIKE %2
  * since those permissions trump the ACL. Also for sanity sake, these profiles
  * should probably be restricted only to the My Account scenario:
  */
-function civicrm_civicrm_aclGroup( $type, $contactID, $tableName, &$allGroups, &$currentGroups ) {
+function civitest_civicrm_aclGroup( $type, $contactID, $tableName, &$allGroups, &$currentGroups ) {
+    if ( $tableName != 'civicrm_uf_group' ) {
+        return;
+    }
+
     global $user;
     $userRoles = $user->roles;
 
