@@ -1075,7 +1075,7 @@ function _civicrm_api3_deprecated_membership_format_params( $params, &$values, $
 
   $fields = CRM_Member_DAO_Membership::fields( );
   _civicrm_api3_store_values( $fields, $params, $values );
-
+  
   foreach ($params as $key => $value) {
     // ignore empty values or empty arrays etc
     if ( CRM_Utils_System::isNull( $value ) ) {
@@ -1123,11 +1123,24 @@ function _civicrm_api3_deprecated_membership_format_params( $params, &$values, $
         }
         $values[$key] = $value;
         break;
-      default:
+    case 'membership_status':
+        $membershipStatusId = CRM_Utils_Array::key( ucfirst( $value ),
+                                                  CRM_Member_PseudoConstant::membershipStatus( ) );
+        if ( $membershipStatusId ) {
+            if ( CRM_Utils_Array::value( 'status_id', $values ) &&
+                 $membershipStatusId != $values['status_id'] ) {
+                return civicrm_api3_create_error( 'Mismatched membership Status and Membership Status Id' );
+            }
+        } else {
+            return civicrm_api3_create_error( 'Invalid Membership Status' );
+        }
+        $values['status_id'] = $membershipStatusId;
+        break;
+    default:
         break;
     }
   }
-
+  
   _civicrm_api3_custom_format_params( $params, $values, 'Membership' );
 
 

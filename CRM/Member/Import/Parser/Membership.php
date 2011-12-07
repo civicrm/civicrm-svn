@@ -317,6 +317,12 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                         unset($params['membership_type_id']);
                         $params['membership_type'] = $val;
                     }
+                    break;  
+                case 'status_id':
+                    if ( !is_numeric($val) ) {
+                        unset($params['status_id']);
+                        $params['membership_status'] = $val;
+                    }
                     break;      
                 case  'is_override':
                     $params[$key] = CRM_Utils_String::strtobool( $val );
