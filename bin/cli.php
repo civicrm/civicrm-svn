@@ -131,7 +131,7 @@ class civicrm_Cli {
         require_once ('CRM/Core/Config.php');
         $this->_config = CRM_Core_Config::singleton( );
 
-        $class = 'CRM_Utils_system_' . $this->_config->userFramework;
+        $class = 'CRM_Utils_System_' . $this->_config->userFramework;
         $cms = new $class();
 //        if( !$cms->loadBootstrap( array(), false, false )) {
 //            $this->_log( ts("Failed to bootstrap CMS"));
