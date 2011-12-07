@@ -329,6 +329,7 @@ FROM   {$this->_componentTable}
     public function postProcess( ) 
     {
         $exportOption = $this->controller->exportValue( $this->_name, 'exportOption' );
+        $params = $this->_submitValues;
         $mergeSameAddress   = CRM_Utils_Array::value( 'mergeOption', $params ) == self::EXPORT_MERGE_SAME_ADDRESS ? 1 : 0;
         $mergeSameHousehold = CRM_Utils_Array::value( 'mergeOption', $params ) == self::EXPORT_MERGE_HOUSEHOLD ? 1 : 0;
         $this->set('mergeSameAddress', $mergeSameAddress );

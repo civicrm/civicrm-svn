@@ -379,15 +379,21 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                 $setId = false;
             }
           
-            $relationKey = CRM_Utils_Array::key( 'Household Member of', $contactRelationshipTypes );
+            //also merge Head of Household
+            $relationKeyMOH = CRM_Utils_Array::key( 'Household Member of', $contactRelationshipTypes );
+            $relationKeyHOH = CRM_Utils_Array::key( 'Head of Household for', $contactRelationshipTypes );
+
             foreach ( $returnProperties as $key => $value ) {
                 if ( !array_key_exists( $key, $contactRelationshipTypes ) ) {
-                    $returnProperties[$relationKey][$key] = $value;
+                    $returnProperties[$relationKeyMOH][$key] = $value;
+                    $returnProperties[$relationKeyHOH][$key] = $value;
                 }
             }
             
-            unset( $returnProperties[$relationKey]['location_type'] );
-            unset( $returnProperties[$relationKey]['im_provider'] );
+            unset( $returnProperties[$relationKeyMOH]['location_type'] );
+            unset( $returnProperties[$relationKeyMOH]['im_provider'] );
+            unset( $returnProperties[$relationKeyHOH]['location_type'] );
+            unset( $returnProperties[$relationKeyHOH]['im_provider'] );
         }
                 
         $allRelContactArray = $relationQuery = array();
@@ -526,7 +532,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
         }
         
         $header = $addPaymentHeader = false;
-        
+
         $paymentDetails = array( );
         if ( $paymentFields ) {
             //special return properties for event and members
@@ -920,7 +926,8 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
 
             // merge the records if they have corresponding households
             if ( $mergeSameHousehold ) {
-                self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKey );
+                self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKeyMOH );
+                self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKeyHOH );
             }
             
             // fix the headers for rows with relationship type
@@ -1497,6 +1504,7 @@ WHERE  id IN ( $deleteIDString )
         $prefixColumn = $prefix .'_';
         $allKeys = array_keys( $sqlColumns );
         $replaced = array( );
+        $headerRows = array_values($headerRows);
 
         // name map of the non standard fields in header rows & sql columns
         $mappingFields = array (
@@ -1523,6 +1531,7 @@ WHERE  id IN ( $deleteIDString )
         }
         $query = "UPDATE $exportTempTable SET ";
        
+        $clause = array();
         foreach( $replaced as $from => $to ) {
             $clause[] = "$from = $to ";
             unset( $sqlColumns[$to] );
