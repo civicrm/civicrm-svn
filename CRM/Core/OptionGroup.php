@@ -186,6 +186,7 @@ WHERE  v.option_group_id = g.id
         foreach ($names as $postName => $value) {
             // See if $params field is in $names array (i.e. is a value that we need to lookup)
             if ( $postalName = CRM_Utils_Array::value( $postName, $params )  ) {
+                $postValues = array( );
                 // params[$postName] may be a Ctrl+A separated value list
                 if ( is_string ( $postalName ) && 
                      strpos( $postalName, CRM_Core_DAO::VALUE_SEPARATOR ) ) {
