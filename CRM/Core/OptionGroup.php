@@ -182,18 +182,21 @@ WHERE  v.option_group_id = g.id
      */
     static function lookupValues( &$params, &$names, $flip = false ) 
     {
-        require_once "CRM/Core/BAO/CustomOption.php";
+        require_once 'CRM/Core/BAO/CustomOption.php';
         foreach ($names as $postName => $value) {
             // See if $params field is in $names array (i.e. is a value that we need to lookup)
-            if ( CRM_Utils_Array::value( $postName, $params ) ) {
+            if ( $postalName = CRM_Utils_Array::value( $postName, $params )  ) {
                 // params[$postName] may be a Ctrl+A separated value list
-                if ( strpos( $params[$postName], CRM_Core_DAO::VALUE_SEPARATOR ) ) {
+                if ( is_string ( $postalName ) && 
+                     strpos( $postalName, CRM_Core_DAO::VALUE_SEPARATOR ) ) {
                     // eliminate the ^A frm the beginning and end if present
-                    if ( substr( $params[$postName], 0, 1 ) == CRM_Core_DAO::VALUE_SEPARATOR ) {
+                    if ( substr( $postalName, 0, 1 ) == CRM_Core_DAO::VALUE_SEPARATOR ) {
                         $params[$postName] = substr( $params[$postName], 1, -1 );
                     }
+                    $postValues = explode(CRM_Core_DAO::VALUE_SEPARATOR, $params[$postName]);
+                } elseif ( is_array( $postalName ) ) {
+                    $postValues = $postalName;
                 }
-                $postValues = explode(CRM_Core_DAO::VALUE_SEPARATOR, $params[$postName]);
                 $newValue = array( );
                 foreach ($postValues as $postValue) {
                     if ( ! $postValue ) {
