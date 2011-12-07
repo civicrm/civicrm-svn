@@ -308,7 +308,7 @@ FROM   {$this->_componentTable}
             foreach ( $greetings as $key => $value ) {
                 $otherOption = CRM_Utils_Array::value( $key, $params );
                 
-                if ( ( CRM_Utils_Array::value( $otherOption, $self->_greetingOptions[$key] ) == 'Other' ) &&
+                if ( ( CRM_Utils_Array::value( $otherOption, $self->_greetingOptions[$key] ) == ts('Other') ) &&
                      !CRM_Utils_Array::value( $value, $params ) ) {
                     
                     $label = ucwords( str_replace( '_', ' ', $key ) );
@@ -344,7 +344,9 @@ FROM   {$this->_componentTable}
         if ( !empty( $this->_greetingOptions ) ) {
             foreach ( $this->_greetingOptions as $key => $value ) {
                 if ( $option = CRM_Utils_Array::value( $key, $exportParams ) ) {
-                    if ( $this->_greetingOptions[$key][$option] == 'Other' ) {
+                    if ( $this->_greetingOptions[$key][$option] == ts('Other') ) {
+                        $exportParams[$key] = $exportParams["{$key}_other"];
+                    } else if ( $this->_greetingOptions[$key][$option] == ts('List of names') ) { 
                         $exportParams[$key] = '';
                     } else {
                         $exportParams[$key] = $this->_greetingOptions[$key][$option];
