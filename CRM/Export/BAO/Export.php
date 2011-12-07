@@ -763,9 +763,9 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                                 $fieldValue = '';
                             }
                             $field = $field. '_';
-                            if ( $relationField == 'id' ) {
+                            if ( is_object( $relDAO ) && $relationField == 'id' ) {
                                 $row[$field .$relationField] = $relDAO->contact_id;
-                            } else  if ( is_array( $relationValue ) && $relationField == 'location' ) {
+                            } else  if ( is_object( $relDAO ) && is_array( $relationValue ) && $relationField == 'location' ) {
                                 foreach ( $relationValue as $ltype => $val ) {
                                     foreach ( array_keys( $val ) as $fld ) {
                                         $type     = explode( '-', $fld );
