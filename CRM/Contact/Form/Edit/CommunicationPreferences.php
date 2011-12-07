@@ -66,6 +66,10 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
         // we take labels from SelectValues
         $privacy = $commPreff = $commPreference = array( );
         $privacyOptions = CRM_Core_SelectValues::privacy( );
+        
+        // we add is_opt_out as a separate checkbox below for display and help purposes so remove it here
+        unset($privacyOptions['is_opt_out']);
+        
         foreach ( $privacyOptions as $name => $label) {
             $privacy[] = HTML_QuickForm::createElement('advcheckbox', $name, null, $label );
         }
