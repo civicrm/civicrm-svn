@@ -118,7 +118,7 @@ class CRM_Contact_Form_Task_AddToHousehold extends CRM_Contact_Form_Task {
         if ( CRM_Utils_Array::value( '_qf_AddToHousehold_refresh', $_POST ) ) {
             $searchParams['contact_type'] = array('Household' => 'Household');
             $searchParams['rel_contact' ] = $params['name'];
-            self::search( $form, $searchParams );
+            self::search( $this, $searchParams );
             $this->set( 'searchDone', 1 );
             return;
         }
@@ -197,7 +197,7 @@ class CRM_Contact_Form_Task_AddToHousehold extends CRM_Contact_Form_Task {
         if ( isset( $form->_contactId ) ) {
             $excludedContactIds[] = $form->_contactId;
         }
-
+        
         if ( CRM_Utils_Array::value( 'relationship_type_id', $params ) ) {
             $relationshipType = new CRM_Contact_DAO_RelationshipType( );
             list( $rid, $direction ) = explode( '_', $params['relationship_type_id'], 2 );
