@@ -274,24 +274,9 @@ class CRM_Contact_Form_Edit_Address
                     continue;
                 }
                 
-                if ( $countryId = CRM_Utils_Array::value( 'country_id', $addressValues ) ) {
-                    if ( !array_key_exists( $countryId, CRM_Core_PseudoConstant::country( ) ) ) { 
-                        $countryId = null;
-                        $errors["address[$instance][country_id]"] = ts('Enter a valid country name.');
-                    }
-                } 
-                
-                if ( $stateProvinceId = CRM_Utils_Array::value( 'state_province_id', $addressValues  ) ) {
-                    // hack to skip  - type first letter(s) - for state_province
-                    // CRM-2649
-                    if ( $stateProvinceId != ts('- type first letter(s) -') ) {
-                        if ( !array_key_exists( $stateProvinceId, CRM_Core_PseudoConstant::stateProvince( false, false ) ) ) {
-                            $stateProvinceId = null;
-                            $errors["address[$instance][state_province_id]"] = ts('Please select a valid State/Province name.');
-                        }
-                    }
-                }
-                
+                $countryId = CRM_Utils_Array::value( 'country_id', $addressValues );
+                $stateProvinceId = CRM_Utils_Array::value( 'state_province_id', $addressValues );
+
                 //do check for mismatch countries 
                 if ( $stateProvinceId && $countryId ) {
                     $stateProvinceDAO = new CRM_Core_DAO_StateProvince( );
