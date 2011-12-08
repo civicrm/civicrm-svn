@@ -74,6 +74,10 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         } elseif ( $this->_action & (CRM_Core_Action::UPDATE ) ) { 
             $this->_mappingID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', 
                                                              $this->_id, 'mapping_id' );
+            $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this ); 
+            if ( $this->_context == 'event') {
+                $this->_eventId = CRM_Utils_Request::retrieve( 'eventId', 'Integer', $this );
+            }
         }
         
         if ( !empty($_POST) && CRM_Utils_Array::value('entity', $_POST) ) {
@@ -429,6 +433,13 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         if ( $this->_action & CRM_Core_Action::UPDATE ) { 
             $status = ts( "Your Reminder titled %1 has been updated." , 
                           array( 1 => "<strong>{$values['title']}</strong>") );
+            
+            if ( $this->_context == 'event' && $this->_eventId ) {
+                $url = CRM_Utils_System::url( 'civicrm/event/manage/reminder', 
+                                              "reset=1&action=update&id={$this->_eventId}" );
+                $session = CRM_Core_Session::singleton( ); 
+                $session->pushUserContext( $url );
+            }
         }
         CRM_Core_Session::setStatus( $status );
 
