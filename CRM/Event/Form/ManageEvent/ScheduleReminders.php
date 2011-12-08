@@ -94,6 +94,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     function setDefaultValues( )
     {
         $defaults = array();
+        $defaults['is_active'] = 1;
         return $defaults;
     }
     
