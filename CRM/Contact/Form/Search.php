@@ -401,14 +401,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         }
 
         if ( $this->_context === 'smog' ) {
-            // need to figure out how to freeze a bunch of checkboxes, hack for now
-            if ( $this->_action != CRM_Core_Action::ADVANCED ) {
-                //Fix ME
-                //$this->_groupElement->freeze( );
-            }
-            
             if ( ! empty( $this->_groupID ) ) {
-                // also set the group title
+                // set the group title
                 $groupValues = array( 'id' => $this->_groupID, 'title' => $this->_group[$this->_groupID] );
                 $this->assign_by_ref( 'group', $groupValues );
 
@@ -418,6 +412,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             
                 //get the saved search mapping id
                 if ( $ssID ) {
+                    $this->_ssID = $ssID;
                     $ssMappingId = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', $ssID, 'mapping_id' );
                     $this->assign( 'ssMappingID', $ssMappingId );
                 }
@@ -433,13 +428,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             $this->addGroup( $group_contact_status,
                              'group_contact_status', ts( 'Group Status' ) );
             
-            /* 
-             * commented out to fix CRM-4268
-             *
-             * $this->addGroupRule( 'group_contact_status',
-             *                  ts( 'Please select at least Group Status value.' ), 'required', null, 1 );
-            */
-
             $this->assign( 'permissionedForGroup', false );
             if ( ! empty( $this->_groupID ) ) {
                 // Set dynamic page title for 'Show Members of Group'
