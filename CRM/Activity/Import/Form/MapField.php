@@ -382,7 +382,10 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
      */
     static function formRule( $fields ) 
     {
-        $errors       = array( );
+        $errors                = array( );
+        // define so we avoid notices below
+        $errors['_qf_default'] = '';
+        
         $fieldMessage = null;
         if (!array_key_exists('savedMapping', $fields)) {
             $importKeys = array();
@@ -448,6 +451,9 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
             }
         }
 
+        if ( empty( $errors['_qf_default'] ) ) {
+             unset( $errors['_qf_default'] );
+        }
         if ( !empty($errors) ) {
             if (!empty($errors['saveMappingName'])) {
                 $_flag = 1;
