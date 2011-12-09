@@ -307,11 +307,75 @@ AND    v.is_active = 1
     }
 
     function upgrade_4_1_alpha3( $rev ) {
+        //CRM-9311
+        require_once 'CRM/Core/BAO/Setting.php';
+        require_once 'CRM/Core/OptionGroup.php';
+        $groupNames = array( 'directory_preferences', 'url_preferences' );
+        foreach($groupNames as $groupName){
+            CRM_Core_OptionGroup::deleteAssoc( $groupName ); 
+        }            
+        
+        $domainCols =  
+            array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME =>
+                   array( 'contact_ajax_check_similar',
+                          'activity_assignee_notification'
+                          ),
+                   CRM_Core_BAO_Setting::CAMPAIGN_PREFERENCES_NAME =>
+                   array(  'tag_unconfirmed',
+                           'petition_contacts'
+                           ),
+                   CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME =>
+                   array(  'enable_cart'
+                           ),
+                   CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
+                   array( 'profile_double_optin',
+                          'profile_add_to_group_double_optin',
+                          'track_civimail_replies',
+                          'civimail_workflow',
+                          'civimail_server_wide_lock'
+                          ),
+                   CRM_Core_BAO_Setting::MEMBER_PREFERENCES_NAME =>
+                   array(  'default_renewal_contribution_page'
+                           ),
+                   CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME =>
+                   array( 'is_enabled',
+                          'uniq_email_per_site',
+                          'domain_group_id',
+                          'event_price_set_domain_id'
+                          ),
+                   CRM_Core_BAO_Setting::DIRECTORY_PREFERENCES_NAME =>
+                   array(  'uploadDir',
+                           'imageUploadDir',
+                           'customFileUploadDir',
+                           'customTemplateDir',
+                           'customPHPPathDir',
+                           'extensionsDir'
+                          ),
+                   CRM_Core_BAO_Setting::URL_PREFERENCES_NAME =>
+                   array( 'userFrameworkResourceURL',
+                          'imageUploadURL',
+                          'customCSSURL' 
+                          )
+                   );
+        
+        $arrGroupNames = array_keys($domainCols);
+        $groupNames = implode("','",$arrGroupNames);
+        $arrNames = array( );
+        foreach( $domainCols as $groupName => $names ){
+            $arrNames[] = implode( "','", $names );
+        }
+        $name = implode( "','", $arrNames );
+        
+        $sql = "
+        Update civicrm_setting set is_domain = 1 where is_domain = 0 and group_name in ( '{$groupNames}' ) and name in ('{$name}')";
+        
+        CRM_Core_DAO::executeQuery( $sql );
+        
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->assign( 'addWightForActivity', !(CRM_Core_DAO::checkFieldExists('civicrm_activity', 'weight')) );
         $upgrade->processSQL( $rev );
     }
-
+    
     function getTemplateMessage( ) {
         return "Blah";
     }
