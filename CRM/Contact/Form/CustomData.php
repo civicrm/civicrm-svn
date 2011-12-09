@@ -128,7 +128,7 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
             return CRM_Custom_Form_CustomData::preProcess( $this );
         }
 
-		$this->_groupID = CRM_Utils_Request::retrieve( 'groupId', 'Positive', $this, true );
+		$this->_groupID = CRM_Utils_Request::retrieve( 'groupID', 'Positive', $this, true );
 		$this->_tableID  = CRM_Utils_Request::retrieve( 'tableId', 'Positive', $this, true );
 
 		require_once 'CRM/Contact/BAO/Contact.php';
