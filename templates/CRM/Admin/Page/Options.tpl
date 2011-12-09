@@ -98,6 +98,8 @@
             <th>
                 {if $gName eq "redaction_rule"}
                     {ts}Replacement{/ts}
+                {elseif $gName eq "activity_type"}
+                    {ts}Activity Type ID{/ts}
                 {else}
                     {ts}Value{/ts}
                 {/if}
