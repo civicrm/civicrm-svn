@@ -24,10 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {htxt id='id-used_for'}
-{ts}Profiles can be used in many different ways{/ts}:<br />
+{ts}Profiles can be used in many different ways (and a single profile can be used in multiple contexts){/ts}:<br />
     <ul class="left-alignment">
-    <li>{ts}You can collect additional information about a donor or event participant by including a profile in Online Contribution Pages and Event Registration forms.{/ts}</li> 
-    <li>{ts}Check <strong>Profile</strong> if you want it to use this profile for customized listings and view screens for the civicrm/profile path.{/ts}</li>
+    <li>{ts}You can collect additional information about a donor or event participant by including profiles directly in Online Contribution Pages and Event Registration forms. When using a profile in this manner you do not need to check any of the "Used For" checkboxes.{/ts}</li> 
+    <li>{ts}Check <strong>Standalone Form or Directory</strong> if you want it to use this profile for custom forms, or contact listing and view screens (from the civicrm/profile path).{/ts}</li>
     <li>{ts}Check <strong>Search Results</strong> to use this profile to display an alternate set of results columns for CiviCRM Basic and Advanced Search.{/ts}</li>
     {if $config->userSystem->supports_form_extensions EQ '1'}
         <li>{ts}Check <strong>User Registration</strong> if you want this Profile to be included in the New Account registration form.{/ts}</li>
