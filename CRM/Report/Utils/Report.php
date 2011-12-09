@@ -229,15 +229,17 @@ WHERE  inst.report_id = %1";
     static function add2group( &$form , $groupID ) {
 
         if ( is_numeric( $groupID ) && isset( $form->_aliases['civicrm_contact'] ) ) {
-
             require_once 'CRM/Contact/BAO/GroupContact.php';
-            $sql = "SELECT DISTINCT {$form->_aliases['civicrm_contact']}.id AS contact_id {$form->_from} {$form->_where} ";
+            $select = "SELECT DISTINCT {$form->_aliases['civicrm_contact']}.id AS addtogroup_contact_id, ";
+            $select = str_ireplace( 'SELECT SQL_CALC_FOUND_ROWS ', $select, $form->_select );
+
+            $sql = "{$select} {$form->_from} {$form->_where} {$form->_groupBy} {$form->_having} {$form->_orderBy}";
             $dao = CRM_Core_DAO::executeQuery( $sql );
 
             $contact_ids = array();                        
             // Add resulting contacts to group
             while ( $dao->fetch( ) ) {
-                $contact_ids[] = $dao->contact_id;
+                $contact_ids[$dao->addtogroup_contact_id] = $dao->addtogroup_contact_id;
             }
 
             CRM_Contact_BAO_GroupContact::addContactsToGroup( $contact_ids, $groupID );

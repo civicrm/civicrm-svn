@@ -185,13 +185,10 @@ class CRM_Report_Form extends CRM_Core_Form {
     protected $_csvSupported       = true;
     protected $_add2groupSupported = true;
     protected $_groups             = null;
-    protected $_having             = null;
     protected $_rowsFound          = null;
-    protected $_select             = null;        
     protected $_selectAliases      = array();
     protected $_rollup             = null;
     protected $_limit              = null;
-    protected $_orderBy            = null;
     protected $_sections           = null;
     protected $_autoIncludeIndexedFieldsAsOrderBys = 0;
     
@@ -217,6 +214,10 @@ class CRM_Report_Form extends CRM_Core_Form {
      * @var array
      */
     protected $_selectedTables;
+
+    public $_having      = null;
+    public $_select      = null;
+    public $_orderBy     = null;
 
     /**
      * 
