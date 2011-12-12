@@ -1693,7 +1693,7 @@ SELECT  display_name
         $id = $session->get('userID');
         if ( $id ) { 
             $activityParams['source_contact_id']   = $id;
-            $activityParams['assignee_contact_id'] = $activity->contact_id;
+            $activityParams['target_contact_id'] = $activity->contact_id;
         }
 
         if (is_a(self::create($activityParams), 'CRM_Core_Error')) {
