@@ -96,7 +96,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         // FIXME: we should do this in one place together with Form/MapField.php
         $this->_contactIdIndex        = -1;
         $this->_activityTypeIndex     = -1;
-        $this->_activityLabelIndex     = -1;
+        $this->_activityLabelIndex    = -1;
         $this->_activityDateIndex     = -1;
         
         $index = 0;

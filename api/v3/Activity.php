@@ -193,7 +193,7 @@ function civicrm_api3_activity_create( $params ) {
  */
 function _civicrm_api3_activity_create_spec(&$params){
     $params['source_contact_id']['api.required'] = 1;
-    $params['id'] = $params['activity_id'];
+    $params['id'] = CRM_Utils_Array::value( 'activity_id', $params );
     unset ($params['activity_id']);
     $params['assignee_contact_id'] = array('name' => 'assignee_id',
                                            'title' => 'assigned to',
@@ -354,7 +354,7 @@ SELECT  count(*)
         $activityTypeIdInList = array_search( ($activityName ? $activityName : $activityLabel), $activityTypes );
 
         if ( !$activityTypeIdInList ) {
-            $errorString = $activityName ? "Invalid Activity Name" : "Invalid Activity Label";
+            $errorString = $activityName ? "Invalid Activity Name" : "Invalid Activity Type Label";
             return civicrm_api3_create_error(  $errorString  );
         } else if ( $activityTypeId && ( $activityTypeId != $activityTypeIdInList ) ) {
             return civicrm_api3_create_error(  'Mismatch in Activity'  );

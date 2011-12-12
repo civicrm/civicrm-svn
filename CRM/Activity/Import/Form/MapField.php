@@ -540,7 +540,6 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
                 $updateMappingFields->mapping_id = $params['mappingId'];
                 $updateMappingFields->column_number = $i;
 
-                list($id, $first, $second) = explode('_', $mapperKeys[$i][0]);
                 $updateMappingFields->name = $mapper[$i];
                 $updateMappingFields->save();                
             }
@@ -560,7 +559,6 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
                 $saveMappingFields->mapping_id = $saveMapping->id;
                 $saveMappingFields->column_number = $i;                             
                 
-                list($id, $first, $second) = explode('_', $mapperKeys[$i][0]);
                 $saveMappingFields->name = $mapper[$i];
                 $saveMappingFields->save();
             }
