@@ -10,5 +10,7 @@ $ scripts/phpunit -u db_username -pdb_password -h db_host WebTest_Contact_AddTes
 $ scripts/phpunit -u db_username -pdb_password -h db_host WebTest_AllTests
 $ scripts/phpunit -u db_username -pdb_password -h db_host api_v3_AllTests
 
+You can also specify database name using "-bdb_name" option. If database name is not specified it will
+use "civicrm_tests_dev" as default db for all the tests.
 
 
