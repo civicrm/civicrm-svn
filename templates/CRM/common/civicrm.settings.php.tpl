@@ -234,11 +234,14 @@ define( 'CIVICRM_MEMCACHE_PREFIX', '' );
  *
  */
 
-$include_path = '.'        . PATH_SEPARATOR .
+$include_path = '.'           . PATH_SEPARATOR .
                 $civicrm_root . PATH_SEPARATOR .
                 $civicrm_root . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR .
                 get_include_path( );
-set_include_path( $include_path );
+if ( set_include_path( $include_path ) === false ) {
+   echo "Could not set the include path<p>";
+   exit( );
+}
 
 if ( function_exists( 'variable_get' ) && variable_get('clean_url', '0') != '0' ) {
     define( 'CIVICRM_CLEANURL', 1 );
