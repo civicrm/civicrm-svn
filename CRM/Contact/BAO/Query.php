@@ -2015,7 +2015,7 @@ class CRM_Contact_BAO_Query
         // add group_contact table if group table is present
         if ( CRM_Utils_Array::value( 'civicrm_group', $tables ) &&
             !CRM_Utils_Array::value('civicrm_group_contact', $tables)) {
-            $tables['civicrm_group_contact'] = 1;
+            $tables['civicrm_group_contact'] = " LEFT JOIN civicrm_group_contact ON civicrm_group_contact.contact_id = contact_a.id AND civicrm_group_contact.status = 'Added'";
         }
 
         // add group_contact and group table is subscription history is present

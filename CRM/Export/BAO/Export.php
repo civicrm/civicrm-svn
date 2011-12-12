@@ -1603,8 +1603,12 @@ LIMIT $offset, $limit
 
                 $componentDetails[] = $row;
             }
-            CRM_Core_Report_Excel::writeCSVFile( self::getExportFileName( 'csv', $exportMode ), $headerRows,
-                                                 $componentDetails, null, $writeHeader );
+
+            CRM_Core_Report_Excel::writeCSVFile( self::getExportFileName( 'csv', $exportMode ),
+                                                 $headerRows,
+                                                 $componentDetails,
+                                                 null,
+                                                 $writeHeader );
             $writeHeader = false;
             $offset += $limit;
         }
