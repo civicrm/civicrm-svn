@@ -185,7 +185,7 @@ class CRM_Core_DAO extends DB_DataObject
      * @return void 
      * @access public
      */
-    function factory($table) 
+    function factory($table = '') 
     {
         if ( ! isset( self::$_factory ) ) {
             return parent::factory($table);
