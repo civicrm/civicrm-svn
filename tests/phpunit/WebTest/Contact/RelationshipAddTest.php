@@ -317,5 +317,71 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase
       $this->assertTrue( $this->isTextPresent( $params['label_b_a'] ) );
      
   }  
+
+  function testRelationshipAddNewIndividualTest( )
+  {
+      $this->open( $this->sboxPath );
+      
+      $this->webtestLogin( );
+      
+      //create a relationship type between different contact types
+      $params = array( 'label_a_b'       => 'Board Member of '.rand( ),
+                       'label_b_a'       => 'Board Member is'.rand( ),
+                       'contact_type_a'  => 'Individual',
+                       'contact_type_b'  => 'Organization',
+                       'description'     => 'Board members of organizations.' );
+      
+      $this->webtestAddRelationshipType( $params );
+      
+      //create a New Individual
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
+      $sortName    = "Anderson, $firstName";
+      $displayName = "$firstName Anderson";
+            
+      // visit relationship tab of the Individual
+      $this->click("css=li#tab_rel a");
+      
+      // wait for add Relationship link
+      $this->waitForElementPresent('link=Add Relationship');
+      $this->click('link=Add Relationship');
+      
+      //choose the created relationship type 
+      $this->waitForElementPresent("relationship_type_id");
+      $this->select('relationship_type_id', "label={$params['label_a_b']}");
+      
+      // create a new organization
+      $orgName = 'WestsideCoop' . substr(sha1(rand()), 0, 7);
+      $this->webtestNewDialogContact( $orgName, "", "info@" . $orgName . ".com", 5 );
+      
+      $this->waitForElementPresent("quick-save");
+      
+      //fill in the relationship start date
+      $this->webtestFillDate('start_date' , '-2 year' );
+      
+      $description = "Long-standing board member.";
+      $this->type("description", $description );
+      
+      //save the relationship
+      //$this->click("_qf_Relationship_upload");
+      $this->click("quick-save");
+      $this->waitForElementPresent("current-relationships");
+      
+      //check the status message
+      $this->assertTrue($this->isTextPresent("1 new relationship record created."));
+      
+      $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
+      $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
+      
+      $this->waitForPageToLoad("300000"); 
+      $this->webtestVerifyTabularData(
+                                      array(
+                                            'Description'         => $description,
+                                            'Status'	          => 'Enabled'
+                                            )
+                                      );
+      $this->assertTrue( $this->isTextPresent( $params['label_a_b'] ) );
+   }
+
 }
 ?>
