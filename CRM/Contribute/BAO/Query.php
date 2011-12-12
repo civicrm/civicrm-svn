@@ -586,7 +586,8 @@ class CRM_Contribute_BAO_Query
         return $from;
     }
 
-    static function defaultReturnProperties( $mode ) 
+    static function defaultReturnProperties( $mode,
+                                             $includeCustomFields = true ) 
     {
         $properties = null;
         if ( $mode & CRM_Contact_BAO_Query::MODE_CONTRIBUTE ) {
@@ -630,12 +631,14 @@ class CRM_Contribute_BAO_Query
                                 'contribution_campaign_id'=> 1
                                 );
 
-            // also get all the custom contribution properties
-            require_once "CRM/Core/BAO/CustomField.php";
-            $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Contribution');
-            if ( ! empty( $fields ) ) {
-                foreach ( $fields as $name => $dontCare ) {
-                    $properties[$name] = 1;
+            if ( $includeCustomFields ) {
+                // also get all the custom contribution properties
+                require_once "CRM/Core/BAO/CustomField.php";
+                $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Contribution');
+                if ( ! empty( $fields ) ) {
+                    foreach ( $fields as $name => $dontCare ) {
+                        $properties[$name] = 1;
+                    }
                 }
             }
         }
