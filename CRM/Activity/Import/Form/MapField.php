@@ -191,7 +191,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
             $this->assign( 'rowDisplayCount', 2 );
         }
         $highlightedFields = array();
-        $requiredFields    = array( 'activity_date_time', 'activity_type_id', 'activity_name', 'target_contact_id','activity_subject' );
+        $requiredFields    = array( 'activity_date_time', 'activity_type_id', 'activity_label', 'target_contact_id','activity_subject' );
         foreach ( $requiredFields as $val ) {
             $highlightedFields[] = $val;
         }
@@ -425,7 +425,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
                         }
                         
                     } elseif ($field == 'activity_type_id' ) {
-                        if(in_array('activity_name', $importKeys)) {
+                        if(in_array('activity_label', $importKeys)) {
                             continue;
                         } else {
                             $errors['_qf_default'] .= ts('Missing required field: Provide %1 or %2', 

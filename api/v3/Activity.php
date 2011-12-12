@@ -83,7 +83,7 @@ function civicrm_api3_activity_create( $params ) {
                                       null,
                                       array('source_contact_id',
                                             array('subject','activity_subject'),
-                                            array('activity_name','activity_type_id')));
+                                            array('activity_name','activity_type_id', 'activity_label')));
     }
 
     $errors = array( );
@@ -342,17 +342,24 @@ SELECT  count(*)
     require_once 'CRM/Core/PseudoConstant.php';
     $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name', true );
     $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
+    $activityName   = ucfirst( $activityName );
+    $activityLabel  = CRM_Utils_Array::value( 'activity_label', $params );
+    if ( $activityLabel ) {
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
+    }
+
     $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
 
-    if ( $activityName ) {
-        $activityNameId = array_search( ucfirst( $activityName ), $activityTypes );
+    if ( $activityName || $activityLabel ) {
+        $activityTypeIdInList = array_search( ($activityName ? $activityName : $activityLabel), $activityTypes );
 
-        if ( !$activityNameId ) {
-            return civicrm_api3_create_error(  'Invalid Activity Name'  );
-        } else if ( $activityTypeId && ( $activityTypeId != $activityNameId ) ) {
+        if ( !$activityTypeIdInList ) {
+            $errorString = $activityName ? "Invalid Activity Name" : "Invalid Activity Label";
+            return civicrm_api3_create_error(  $errorString  );
+        } else if ( $activityTypeId && ( $activityTypeId != $activityTypeIdInList ) ) {
             return civicrm_api3_create_error(  'Mismatch in Activity'  );
         }
-        $params['activity_type_id'] = $activityNameId;
+        $params['activity_type_id'] = $activityTypeIdInList;
     } else if ( $activityTypeId &&
                 !array_key_exists( $activityTypeId, $activityTypes ) ) {
         return civicrm_api3_create_error( 'Invalid Activity Type ID' );
