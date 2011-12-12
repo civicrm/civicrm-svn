@@ -330,8 +330,12 @@ WHERE     c.id IN ( $contributionIDs )";
                 }
                 $rows[$dao->contribution_id]['membership'][] = $dao->membership_id;
             }
-            $rows[$dao->contribution_id]['participant'] = $dao->participant_id;
-            $rows[$dao->contribution_id]['event']       = $dao->event_id;
+            if ( $dao->participant_id ) {
+                $rows[$dao->contribution_id]['participant'] = $dao->participant_id;
+            }
+            if ( $dao->event_id ) {
+                $rows[$dao->contribution_id]['event']       = $dao->event_id;
+            }
         }
         return $rows;
     }
