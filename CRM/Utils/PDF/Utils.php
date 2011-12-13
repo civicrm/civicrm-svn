@@ -69,7 +69,7 @@ class CRM_Utils_PDF_Utils {
         $html = "
 <html>
   <head>
-    <style>body { margin: {$t}{$metric} {$r}{$metric} {$b}{$metric} {$l}{$metric}; }</style>
+    <style>@page { margin: {$t}{$metric} {$r}{$metric} {$b}{$metric} {$l}{$metric}; }</style>
     <style type=\"text/css\">@import url({$config->userFrameworkResourceURL}css/print.css);</style>
   </head>
   <body>
