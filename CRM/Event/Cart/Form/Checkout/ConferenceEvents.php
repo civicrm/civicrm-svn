@@ -18,6 +18,7 @@ class CRM_Event_Cart_Form_Checkout_ConferenceEvents extends CRM_Event_Cart_Form_
         $this->conference_event = $event_in_cart->event;
         $this->main_participant = $event_in_cart->get_participant_by_id($participant_id);
         $this->contact_id = $this->main_participant->contact_id;
+        $this->main_participant->display_name = CRM_Contact_BAO_Contact::displayName($this->contact_id);
 
 	$events = new CRM_Event_BAO_Event();
 	$query = <<<EOS

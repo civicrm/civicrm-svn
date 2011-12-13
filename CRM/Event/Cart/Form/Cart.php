@@ -101,11 +101,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
         //XXX when do we query 'cid' ?
 	$tempID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
 
-	// force to ignore the authenticated user /XXX any admin
-	if ( $tempID === '0' ) {
-	  return;
-	}
-
 	//check if this is a checksum authentication
 	$userChecksum = CRM_Utils_Request::retrieve( 'cs', 'String', $this );
 	if ( $userChecksum ) {

@@ -10,6 +10,17 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
 {
   public $price_fields_for_event;
 
+  function preProcess()
+  {
+    parent::preProcess();
+
+    $this->cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+    if (!isset($this->cid) || $this->cid > 0) {
+      //TODO users with permission can default to another contact
+      $this->cid = self::getContactID();
+    }
+  }
+
   function buildQuickForm( )
   {
     $this->price_fields_for_event = array();
@@ -41,17 +52,6 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
       $contact_values = array();
       CRM_Core_DAO::storeValues($contact, $contact_values);
       $this->assign( 'contact', $contact_values );
-    }
-  }
-
-  function preProcess()
-  {
-    parent::preProcess();
-
-    $this->cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
-    if (!isset($this->cid) || $this->cid > 0) {
-      //TODO users with permission can default to another contact
-      $this->cid = self::getContactID();
     }
   }
 
@@ -145,11 +145,15 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
           $participant = new CRM_Event_BAO_Participant();
           $participant->event_id = $event_in_cart->event_id;
           $participant->contact_id = $contact_id;
-          $num_found = $participant->find();
-          if ($num_found > 0)
+          $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
+          $participant->find();
+          while ($participant->fetch())
           {
-            $form = $mer_participant->get_form();
-            $this->_errors[$form->html_field_name('email')] = ts("The participant %1 is already registered for %2 (%3).", array(1 => $participant_fields['email'], 2 => $event_in_cart->event->title, 3 => $event_in_cart->event->start_date));
+            if (array_key_exists($participant->status_id, $statusTypes))
+            {
+              $form = $mer_participant->get_form();
+              $this->_errors[$form->html_field_name('email')] = ts("The participant %1 is already registered for %2 (%3).", array(1 => $participant_fields['email'], 2 => $event_in_cart->event->title, 3 => $event_in_cart->event->start_date));
+            }
           }
       }
     }
