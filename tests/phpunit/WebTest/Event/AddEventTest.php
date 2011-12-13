@@ -377,9 +377,13 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       // Fill Subject
       $subject = 'subject' . substr( sha1( rand( ) ), 0, 4 );
       $this->type( 'subject', $subject );
-    
+      $this->type("html_message", "This is the test HTML version here!!!");
+      $this->type("text_message", "This is the test text version here!!!");
       //click on save
       $this->click( '_qf_ScheduleReminders_upload-bottom' );
-      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("link=Add Reminder");
+       
   }
+
+ 
 }
