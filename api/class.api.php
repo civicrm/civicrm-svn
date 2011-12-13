@@ -1,8 +1,10 @@
 <?php
 /**
  * This class allows to consume the API, either from within a module that knows civicrm already:
+ require_once('api/class/api.php');
  $api = new civicrm_api3();
 or from any code on the same server as civicrm
+  require_once('/your/civi/folder/api/class.api.php');
   $api = new civicrm_api3 (array('conf_path'=> '/your/path/to/your/civicrm/or/joomla/site)); //the path to civicrm.settings.php
 or to query a remote server via the rest api
   $api = new civicrm_api3 (array ('server' => 'http://example.org','api_key'=>'theusersecretkey','key'=>'thesitesecretkey'));
