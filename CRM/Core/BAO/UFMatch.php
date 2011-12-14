@@ -267,7 +267,7 @@ WHERE  contact_id = %1
             if ( ! $found ) {
                 if ( $config->userSystem->is_drupal ) {
                     $mail = 'mail';
-                } elseif ( $uf = 'WordPress' ) {
+                } elseif ( $uf == 'WordPress' ) {
                     $mail = 'user_email';
                 } else {
                     $mail = 'email';
