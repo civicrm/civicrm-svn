@@ -27,7 +27,7 @@
     {ts}You can configure scheduled jobs (cron tasks) for your CiviCRM installation.{/ts}
 </div>
 
-{if $action eq 1 or $action eq 2 or $action eq 8 or $action eq 128}
+{if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/Job.tpl"}
 {else}
 

@@ -67,9 +67,6 @@ class CRM_Core_JobManager
      */
     public function execute( ) {
     
-    
-    
-    
         $this->logEntry( 'Starting scheduled jobs execution' );
         require_once 'CRM/Utils/System.php';
         if( !CRM_Utils_System::authenticateKey( FALSE ) ) {
@@ -83,12 +80,10 @@ class CRM_Core_JobManager
         foreach( $this->jobs as $job ) {
             if( $job->is_active ) {
                 if( $job->needsRunning( ) ) {
-                    $this->currentJob = $job;
-                    $job->saveLastRun();
                     $this->executeJob( $job );
                 }
             }
-            $this->currentJob = FALSE;
+
         }
         $this->logEntry( 'Finishing scheduled jobs execution.' );
     }
@@ -103,23 +98,23 @@ class CRM_Core_JobManager
     public function __destruct( ) {
     }
 
-    public function executeJobById( $id ) {
+    public function executeJobById( $id ) {    
         $job = $this->_getJob( $id );
         $this->executeJob( $job );
     }
 
 
     public function executeJob( $job ) {
-
-
-
+        $this->currentJob = $job;    
         $this->logEntry( 'Starting execution of ' . $job->name );
+        $job->saveLastRun();
         try {
             $result = civicrm_api( $job->api_entity, $job->api_action, $job->apiParams );
         } catch (Exception $e) {
             $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
         }
         $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );    
+        $this->currentJob = FALSE;        
     }
 
     /*

@@ -44,7 +44,7 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
     protected $_id     = null;
 
     function preProcess( ) {
-    
+
         parent::preProcess( );
 
         CRM_Utils_System::setTitle(ts('Manage - Scheduled Jobs'));
@@ -77,18 +77,6 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
             return;
         }
 
-        if ($this->_action & CRM_Core_Action::EXPORT ) { 
-            $this->addButtons(array(
-                                    array ('type'      => 'next',
-                                           'name'      => ts('Execute'),
-                                           'isDefault' => true),
-                                    array ('type'      => 'cancel',
-                                           'name'      => ts('Cancel')),
-                                    )
-                              );        
-            return;
-        }
-        
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Job' );
 
         $this->add( 'text', 'name', ts( 'Name' ),
@@ -173,16 +161,6 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
     {
     
         CRM_Utils_System::flushCache( 'CRM_Core_DAO_Job' );
-
-        // using Export action for Execute. Doh.
-        if ( $this->_action & CRM_Core_Action::EXPORT ) { 
-            require_once 'CRM/Core/JobManager.php';
-            $jm = new CRM_Core_JobManager();
-            $jm->executeJob( $this->_id );
-            CRM_Core_Session::setStatus( ts('Selected Scheduled Job has been executed. See the log for details.') );
-            return;
-        }
-
 
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             CRM_Core_BAO_Job::del( $this->_id );
