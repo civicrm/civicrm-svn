@@ -486,11 +486,12 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     /**
      * retrieve a mailer to send any mail from the applciation
      *
-     * @param
+     * @param boolean $persist open a persistent smtp connection, should speed up mailings
+     *
      * @access private
      * @return object
      */
-    static function &getMailer() 
+    static function &getMailer( $persist = false ) 
     {
         if ( ! isset( self::$_mail ) ) {
             require_once "CRM/Core/BAO/Setting.php";
@@ -524,6 +525,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 // also set the timeout value, lets set it to 30 seconds
                 // CRM-7510
                 $params['timeout'] = 30;
+
+                // CRM-9349
+                $params['persist'] = $persist;
 
                 self::$_mail = Mail::factory( 'smtp', $params );
             } elseif ($mailingInfo['outBound_option'] == 1) {
