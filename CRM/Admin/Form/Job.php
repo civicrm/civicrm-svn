@@ -44,6 +44,7 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
     protected $_id     = null;
 
     function preProcess( ) {
+
         parent::preProcess( );
 
         CRM_Utils_System::setTitle(ts('Manage - Scheduled Jobs'));
@@ -75,7 +76,7 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
         if ($this->_action & CRM_Core_Action::DELETE ) { 
             return;
         }
-        
+
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Job' );
 
         $this->add( 'text', 'name', ts( 'Name' ),
@@ -158,6 +159,7 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
      */
     public function postProcess() 
     {
+    
         CRM_Utils_System::flushCache( 'CRM_Core_DAO_Job' );
 
         if ( $this->_action & CRM_Core_Action::DELETE ) {
