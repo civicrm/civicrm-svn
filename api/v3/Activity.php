@@ -192,7 +192,6 @@ function civicrm_api3_activity_create( $params ) {
  * and is used for pre-filling defaults and ensuring mandatory requirements are met.
  */
 function _civicrm_api3_activity_create_spec(&$params){
-    $params['source_contact_id']['api.required'] = 1;
     $params['id'] = CRM_Utils_Array::value( 'activity_id', $params );
     unset ($params['activity_id']);
     $params['assignee_contact_id'] = array('name' => 'assignee_id',
@@ -304,7 +303,7 @@ function _civicrm_api3_activity_check_params ( & $params)
     if(!empty($contactIDFields)){
         $contactIds = array();
         foreach ($contactIDFields as $fieldname => $contactfield) {
-            if(empty($contactfield))break;
+            if(empty($contactfield))continue;
             if(is_array($contactfield)) {
                 foreach ($contactfield as $contactkey => $contactvalue) {
                     $contactIds[$contactvalue] = $contactvalue;
