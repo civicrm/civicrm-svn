@@ -66,32 +66,31 @@ class CRM_Core_JobManager
      * 
      */
     public function execute( ) {
+    
+    
+    
+    
         $this->logEntry( 'Starting scheduled jobs execution' );
         require_once 'CRM/Utils/System.php';
-       if( !CRM_Utils_System::authenticateKey( FALSE ) ) {
-           $this->logEntry( 'Could not authenticate the site key.' );
-       }
+        if( !CRM_Utils_System::authenticateKey( FALSE ) ) {
+            $this->logEntry( 'Could not authenticate the site key.' );
+            
+            
+        }
         require_once 'api/api.php';
 
+        // it's not asynchronous at this stage
         foreach( $this->jobs as $job ) {
             if( $job->is_active ) {
                 if( $job->needsRunning( ) ) {
                     $this->currentJob = $job;
                     $job->saveLastRun();
-                    $this->logEntry( 'Starting execution of ' . $job->name );
-                    
-                    try {
-                        $result = civicrm_api( $job->api_entity, $job->api_action, $job->apiParams );
-                    } catch (Exception $e) {
-                        $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
-                    }
-;
-                    $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
+                    $this->executeJob( $job );
                 }
             }
             $this->currentJob = FALSE;
         }
-        $this->logEntry( 'Finishing scheduled jobs execution.' );        
+        $this->logEntry( 'Finishing scheduled jobs execution.' );
     }
 
     /*
@@ -102,6 +101,25 @@ class CRM_Core_JobManager
      * 
      */
     public function __destruct( ) {
+    }
+
+    public function executeJobById( $id ) {
+        $job = $this->_getJob( $id );
+        $this->executeJob( $job );
+    }
+
+
+    public function executeJob( $job ) {
+
+
+
+        $this->logEntry( 'Starting execution of ' . $job->name );
+        try {
+            $result = civicrm_api( $job->api_entity, $job->api_action, $job->apiParams );
+        } catch (Exception $e) {
+            $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
+        }
+        $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );    
     }
 
     /*
@@ -121,10 +139,32 @@ class CRM_Core_JobManager
         $dao->find();
         require_once 'CRM/Core/ScheduledJob.php';
         while ($dao->fetch()) {
+            $temp = array();
             CRM_Core_DAO::storeValues( $dao, $temp);
             $jobs[$dao->id] = new CRM_Core_ScheduledJob( $temp );
         }
         return $jobs;
+    }
+
+    /*
+     * Retrieves specific job from the database by id
+     * and creates ScheduledJob object.
+     * 
+     * @param void
+     * @access private
+     * 
+     */
+    private function _getJob( $id ) {
+        require_once 'CRM/Core/DAO/Job.php';
+        $dao = new CRM_Core_DAO_Job();
+        $dao->id = $id;
+        $dao->find();
+        require_once 'CRM/Core/ScheduledJob.php';
+        while ($dao->fetch()) {
+            CRM_Core_DAO::storeValues( $dao, $temp);
+            $job = new CRM_Core_ScheduledJob( $temp );
+        }
+        return $job;
     }
 
 

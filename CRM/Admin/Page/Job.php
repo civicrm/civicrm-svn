@@ -85,7 +85,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
                                   CRM_Core_Action::EXPORT  => array(
                                                                     'name'  => ts('Execute now'),
                                                                     'url'   => 'civicrm/admin/job',
-                                                                    'qs'    => 'action=export&id=%%id%%&reset=1',
+                                                                    'qs'    => 'action=export&id=%%id%%',
                                                                     'title' => ts('Execute Scheduled Job Now') 
                                                                     ),                                                                    
                                   CRM_Core_Action::DISABLE => array(
@@ -126,7 +126,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
     {
         // set title and breadcrumb
         CRM_Utils_System::setTitle(ts('Settings - Scheduled Jobs'));
-        $breadCrumb = array( array('title' => ts('Administration'), 
+        $breadCrumb = array( array('title' => ts('Scheduled Jobs'), 
                                    'url'   => CRM_Utils_System::url( 'civicrm/admin', 
                                                                      'reset=1' )) );
         CRM_Utils_System::appendBreadCrumb( $breadCrumb );
