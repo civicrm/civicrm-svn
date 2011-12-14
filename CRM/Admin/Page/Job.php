@@ -126,10 +126,22 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
     {
         // set title and breadcrumb
         CRM_Utils_System::setTitle(ts('Settings - Scheduled Jobs'));
-        $breadCrumb = array( array('title' => ts('Administration'), 
+        $breadCrumb = array( array('title' => ts('Scheduled Jobs'), 
                                    'url'   => CRM_Utils_System::url( 'civicrm/admin', 
                                                                      'reset=1' )) );
         CRM_Utils_System::appendBreadCrumb( $breadCrumb );
+        
+        $this->_id = CRM_Utils_Request::retrieve('id', 'String',
+                                                   $this, false, 0);
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String',
+                                                   $this, false, 0);
+    
+        if( $this->_action == 'export' ) {
+            $session = CRM_Core_Session::singleton( );
+            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin/job', 'reset=1' ) );
+        }
+
+
         return parent::run();
     }
 
@@ -142,6 +154,15 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
      */
     function browse($action=null)
     {
+
+        // using Export action for Execute. Doh.
+        if ( $this->_action & CRM_Core_Action::EXPORT ) { 
+            require_once 'CRM/Core/JobManager.php';
+            $jm = new CRM_Core_JobManager();
+            $jm->executeJobById( $this->_id );
+
+            CRM_Core_Session::setStatus( ts('Selected Scheduled Job has been executed. See the log for details.') );
+        }
 
         require_once 'CRM/Core/JobManager.php';
         $sj = new CRM_Core_JobManager();
