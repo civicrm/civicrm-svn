@@ -24,27 +24,27 @@
  +--------------------------------------------------------------------+
 *}
 <div id="help">
-    {ts}You can configure scheduled jobs (cron tasks) for your CiviCRM installation..{/ts} {$docLink}
+    {ts}You can configure scheduled jobs (cron tasks) for your CiviCRM installation.{/ts}
 </div>
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/Job.tpl"}
 {else}
 
-{if $rows}
+  {if $rows}
 
-        {if $action ne 1 and $action ne 2}
+      {if $action ne 1 and $action ne 2}
         <div class="action-link">
           <a href="{crmURL q="action=add&reset=1"}" id="newJob" class="button"><span><div class="icon add-icon"></div>{ts}Add New Scheduled Job{/ts}</span></a>
           <a href="{crmURL p='civicrm/admin/joblog' q="reset=1"}" id="jobLog" class="button"><span><div class="icon add-icon"></div>{ts}See the log{/ts}</span></a>
         </div>
-        {/if}
+      {/if}
 
 <div id="ltype">
         {strip}
         {* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
-        <table class="selector">
+        <br/><table class="selector">
         <tr class="columnheader">
             <th >{ts}Name (Frequency)/Description{/ts}</th>
             <th >{ts}Command/Parameters{/ts}</th>
