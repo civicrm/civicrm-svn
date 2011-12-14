@@ -72,12 +72,14 @@ class CRM_Friend_Form_Event extends CRM_Event_Form_ManageEvent
             $this->_friendId          = CRM_Utils_Array::value( 'id', $defaults );
             $defaults['tf_title']     = CRM_Utils_Array::value( 'title', $defaults );
             $defaults['tf_is_active'] = CRM_Utils_Array::value( 'is_active', $defaults );
+            $defaults['tf_thankyou_title'] = CRM_Utils_Array::value( 'thankyou_title', $defaults );
+            $defaults['tf_thankyou_text']  = CRM_Utils_Array::value( 'thankyou_text', $defaults );
         }
         
         if ( !$this->_friendId ) {
             $defaults['intro'] = ts('Help us spread the word about this event. Use the space below to personalize your email message - let your friends know why you\'re attending. Then fill in the name(s) and email address(es) and click \'Send Your Message\'.');
             $defaults['suggested_message'] = ts('Thought you might be interested in checking out this event. I\'m planning on attending.');
-            $defaults['thankyou_text'] = ts('Thanks for spreading the word about this event to your friends.');
+            $defaults['tf_thankyou_text'] = ts('Thanks for spreading the word about this event to your friends.');
             $defaults['tf_title'] = ts('Tell a Friend');
             $defaults['thankyou_title'] = ts('Thanks for Spreading the Word');
         }
@@ -115,6 +117,8 @@ class CRM_Friend_Form_Event extends CRM_Event_Form_ManageEvent
         $formValues['entity_id'   ] = $this->_id;
         $formValues['title'       ] = $formValues['tf_title'];
         $formValues['is_active'   ] = CRM_Utils_Array::value( 'tf_is_active', $formValues, false );
+        $formValues['thankyou_title'] = CRM_Utils_Array::value( 'tf_thankyou_title', $formValues );
+        $formValues['thankyou_text']  = CRM_Utils_Array::value( 'tf_thankyou_text', $formValues );
 
         if ( ($this->_action & CRM_Core_Action::UPDATE) && $this->_friendId ) {
             $formValues['id'] = $this->_friendId ;
