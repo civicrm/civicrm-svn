@@ -17,7 +17,7 @@ if (!defined("CIVICRM_DSN")) {
     if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
       echo "OR set it in your shell:\n \$export CIVICRM_TEST_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
     } else {
-      echo "OR set it in your shell:\n SETX CIVICRM_TEST_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n
+      echo "OR set it in your shell:\n SETX CIVICRM_TEST_DSN mysql://db_username:db_password@localhost/civicrm_tests_dev \n
       (you will need to open a new command shell before it takes effect)";
     }
 echo "\n\n
