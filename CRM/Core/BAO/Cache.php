@@ -247,7 +247,8 @@ SELECT TABLE_NAME as tableName
 FROM   INFORMATION_SCHEMA.TABLES
 WHERE  TABLE_SCHEMA = %1 
 AND    ( TABLE_NAME LIKE 'civicrm_task_action_temp_%' 
- OR      TABLE_NAME LIKE 'civicrm_export_temp_%' )
+ OR      TABLE_NAME LIKE 'civicrm_export_temp_%'
+ OR      TABLE_NAME LIKE 'civicrm_import_job_%' )
 AND    CREATE_TIME < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays day )
 ";
 
