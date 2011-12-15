@@ -15,7 +15,7 @@ if (!defined("CIVICRM_DSN")) {
   } else {
     echo "\nFATAL: no DB connection configured (CIVICRM_DSN). \nYou can either edit " . __FILE__ . " (user guide inside)\n"; 
     if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-      echo "OR set it in your shell:\n \$ CIVICRM_TEST_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
+      echo "OR set it in your shell:\n \$export CIVICRM_TEST_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
     } else {
       echo "OR set it in your shell:\n SETX CIVICRM_TEST_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n
       (you will need to open a new command shell before it takes effect)";
@@ -29,6 +29,15 @@ grant SUPER on *.* to db_username@localhost identified by 'db_password';\n";
     die ("");
   }
 }
+
+
+require_once "DB.php";
+$dsninfo = DB::parseDSN(CIVICRM_DSN);
+
+$GLOBALS['mysql_host'] = $dsninfo['hostspec'];
+$GLOBALS['mysql_user'] = $dsninfo['username'];
+$GLOBALS['mysql_pass'] = $dsninfo['password'];
+$GLOBALS['mysql_db'] = $dsninfo['database'];
 
 
 /**

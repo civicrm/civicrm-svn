@@ -51,7 +51,8 @@ if ( file_exists( '/etc/timezone' ) ) {
 ini_set('memory_limit', '2G');
 
 error_reporting( E_ALL );
-//  print_r(get_declared_classes());
+require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+
 $needle= "tests".DIRECTORY_SEPARATOR."phpunit".DIRECTORY_SEPARATOR;
 if (empty($argv[1])) {
   die ("The test file to run is mandatory.\n Usage: php tests/bin/run.php tests/phpunit/api/v3/SyntaxConformanceAllEntitiesTest.php\n");
@@ -65,5 +66,7 @@ require_once 'PHPUnit/Util/Filter.php';
 PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 require 'PHPUnit/TextUI/Command.php';
 define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
-require_once($argv[0]);
-PHPUnit_TextUI_Command::main( );
+
+$command = new PHPUnit_TextUI_Command;
+$command->run($_SERVER['argv'], true);
+

@@ -51,9 +51,12 @@ if ( file_exists( '/etc/timezone' ) ) {
 ini_set('memory_limit', '2G');
 
 error_reporting( E_ALL );
+
+require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+
 if (empty($argv[1])) {
   $_SERVER['argv'][1] = "api_v3_AllTests";
-  echo ("Running all api v3 tests.\n Alternate Usage: php tests/bin/api3.php [Entity] [Action]\n eg. php tests/bin/api3.php Contact\n or  php tests/bin/api3.php Contact Get\n");
+  echo ("Running all api v3 tests.\n Tip: you can also limit the tests to one action: php tests/bin/api3.php [Entity] [Action]\n eg. php tests/bin/api3.php Contact\n or  php tests/bin/api3.php Contact Get\n");
 } else {
   if (strtolower ($argv[1]) === $argv[1])
     die ("FATAL: entity name (and action) must be CamelCased.\n Usage: php tests/bin/api3.php Contact #not contact.\n");
@@ -66,7 +69,7 @@ if (empty($argv[1])) {
     $_SERVER['argc']++;
   } else {
     $_SERVER['argv'][1] = $className;
-    echo ("Running all api tests for ".$argv[1]."\n Alternate Usage: php tests/bin/api3.php [Entity] [Action]\n eg. php tests/bin/api3.php ".$argv[1]." Get");
+    echo ("Running all api tests for ".$argv[1]."\n Tip: you can also limit the tests to one entity: php tests/bin/api3.php [Entity] [Action]\n eg. php tests/bin/api3.php ".$argv[1]." Get");
   }
 }
 
@@ -74,4 +77,6 @@ require_once 'PHPUnit/Util/Filter.php';
 PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 require 'PHPUnit/TextUI/Command.php';
 define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
-PHPUnit_TextUI_Command::main( );
+
+$command = new PHPUnit_TextUI_Command;
+$command->run($_SERVER['argv'], true);
