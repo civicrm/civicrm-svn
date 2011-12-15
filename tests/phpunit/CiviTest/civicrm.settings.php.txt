@@ -5,15 +5,7 @@
 
 //define( 'CIVICRM_DSN'          , "mysql://db_username:db_password@localhost/civicrm_tests_dev" );
 
-
-/*
-To setup the database:
-mysql -uroot -p
-create database civicrm_tests_dev;
-grant ALL on civicrm_tests_dev.* to db_username@localhost identified by 'db_password';
-grant SUPER on *.* to db_username@localhost identified by 'db_password'; 
-
-*/
+//--- you shouldn't have to modify anything under this line, but might want to put the compiled templates CIVICRM_TEMPLATE_COMPILEDIR in a different folder than our default location ----------
 
 
 if (!defined("CIVICRM_DSN")) {
@@ -21,13 +13,19 @@ if (!defined("CIVICRM_DSN")) {
   if (!empty ($dsn)) {
     define("CIVICRM_DSN",$dsn);
   } else {
-    echo "FATAL: no DB connection configured (CIVICRM_DSN). \nPlease edit " . __FILE__ . " (user guide inside)\n"; 
+    echo "\nFATAL: no DB connection configured (CIVICRM_DSN). \nYou can either edit " . __FILE__ . " (user guide inside)\n"; 
     if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-      echo "You can set it in your shell:\n \$ CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
+      echo "OR set it in your shell:\n \$ CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
     } else {
-      echo "You can set it in your shell:\n SETX CIVICRM_DSN mysql://db_username:db_password@localhost/civicrm_tests_dev \n
+      echo "OR set it in your shell:\n SETX CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n
       (you will need to open a new command shell before it takes effect)";
     }
+echo "\n\n
+If you haven't done so already, you need to create (once) a database dedicated to the unit tests:
+mysql -uroot -p
+create database civicrm_tests_dev;
+grant ALL on civicrm_tests_dev.* to db_username@localhost identified by 'db_password';
+grant SUPER on *.* to db_username@localhost identified by 'db_password';\n";
     die ("");
   }
 }
