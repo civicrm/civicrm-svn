@@ -726,7 +726,7 @@ WHERE  id = %1";
                  !$validFieldsOnly ) {
                 $options = CRM_Utils_Array::value( 'options', $field );
                 if ( $className == 'CRM_Contribute_Form_Contribution_Main' && $component = 'membership' ) {
-                    $checklifetime = self::checkCurrentMembership( &$options, $userid );
+                    $checklifetime = self::checkCurrentMembership( $options, $userid );
                     if ( $checklifetime ) {
                         $form->assign( 'ispricelifetime', true );
                     } 
