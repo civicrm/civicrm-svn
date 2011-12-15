@@ -25,6 +25,8 @@ if (!defined("CIVICRM_DSN")) {
   } else {
     echo "FATAL: no DB connection configured (CIVICRM_DSN). \nPlease edit " . __FILE__ . " (user guide inside)\n"; 
     echo "You can set it in your shell: \$ CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
+    echo "For Windows machines the command is SET CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n
+    (you will need to open a new command shell before it takes effect)";
     die ("");
   }
 }
