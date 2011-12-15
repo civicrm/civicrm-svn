@@ -317,7 +317,6 @@ class api_v3_PledgeTest extends CiviUnitTestCase
         
         unset ($params['pledge_original_installment_amount']);
         $result=& civicrm_api('pledge','create',$params);
-        print_r(civicrm_api('Pledge', 'Get', array('version' => 3,  'sequential' => 1)));
         $pledgeDetails = civicrm_api('Pledge', 'Get', array('version' => 3, 'id' => $result['id'], 'sequential' => 1));
         $pledge = $pledgeDetails['values'][0];
         $this->assertEquals(0, $result['is_error'], "in line " . __LINE__);
