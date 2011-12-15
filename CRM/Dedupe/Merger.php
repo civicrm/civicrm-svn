@@ -525,6 +525,56 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         return $diffs;
     }
+
+    /**
+     * Function to merge two given contacts, a superset of moveAllBelongings() function. 
+     *
+     */
+    function merge( $mainId, $otherId, $migrationInfo = array(), $mode = 'safe' )
+    {
+        // Based on biasing algorithm decide if to flip $mainId and $otherId.
+
+        // For a merge from UI, $migrationInfo is equivalent to $formValues submitted for a pair of contacts.
+
+        // For an auto merge, if $migrationInfo is empty fill it based on $mode. $migrationInfo structure should 
+        // be exactly same as $formValues submitted during a UI merge.
+        // _buildMigationInfo( $migrationInfo );
+
+        // A hook to modify $mainId, $otherId or $migrationInfo. $contacts could be flipped here and 
+        // $migrationInfo could be modified.
+        // hook::alterMigrationInfo($mainId, $otherId, $migrationInfo)
+
+        // If $mode is safe and there is any conflict skip the merge.
+        // $conflict = isConflict($migrationInfo);
+
+        // moveAllBelongings( $mainId, $otherId, $migrationInfo );
+    }
+
+    /**
+     * Based on the provided two contact_ids and a set of tables, move the belongings of the 
+     * other contact to the main one - be it Location / CustomFields or Contact .. related info.
+     * A superset of moveContactBelongings() function.
+     * 
+     */
+    function moveAllBelongings( $mainId, $otherId, $migrationInfo )
+    {
+        // process location blocks.
+
+        // compute $moveTables from $migrationInfo.
+
+        // compute $tableOperations from $migrationInfo.
+   
+        // move contact belongings
+        // CRM_Dedupe_Merger::moveContactBelongings( $mainId, $otherId, $moveTables, $tableOperations );
+
+        // move custom fields
+
+        // delete $otherId
+
+        // update PrevNextCache
+
+        // update $mainId using createProfileContact if any
+    }
 }
 
 
