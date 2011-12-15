@@ -1,7 +1,5 @@
 <?php
 
-//
-//$civicrm_tests_dev.* to db_username@localhost identified by 'db_password';
 // Set a variable on your shell $export CIVICRM_DSN= mysql://db_username:db_password@localhost/civicrm_tests_dev
 // or modify and uncomment the configuration string under with your own config 
 
@@ -9,7 +7,7 @@
 
 
 /*
-To setup the db
+To setup the database:
 mysql -uroot -p
 create database civicrm_tests_dev;
 grant ALL on civicrm_tests_dev.* to db_username@localhost identified by 'db_password';
@@ -24,9 +22,12 @@ if (!defined("CIVICRM_DSN")) {
     define("CIVICRM_DSN",$dsn);
   } else {
     echo "FATAL: no DB connection configured (CIVICRM_DSN). \nPlease edit " . __FILE__ . " (user guide inside)\n"; 
-    echo "You can set it in your shell: \$ CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
-    echo "For Windows machines the command is SET CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n
-    (you will need to open a new command shell before it takes effect)";
+    if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+      echo "You can set it in your shell:\n \$ CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
+    } else {
+      echo "You can set it in your shell:\n SET CIVICRM_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n
+      (you will need to open a new command shell before it takes effect)";
+    }
     die ("");
   }
 }
@@ -48,9 +49,12 @@ $civicrm_root = dirname (dirname (dirname (dirname( __FILE__ ) )));
 //define( 'CIVICRM_TEMPLATE_COMPILEDIR', 'the/absolute/path/' );
 
 if (!defined("CIVICRM_TEMPLATE_COMPILEDIR")) {
-  if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
-    die ("FATAL: you need to define CIVICRM_TEMPLATE_COMPILEDIR in ". __FILE__);
-  define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/tmp/civi/' );
+  if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    // die ("FATAL: you need to define CIVICRM_TEMPLATE_COMPILEDIR in ". __FILE__);
+    define( 'CIVICRM_TEMPLATE_COMPILEDIR', getenv ('TMP') . DIRECTORY_SEPARATOR . 'civi' . DIRECTORY_SEPARATOR );
+  } else {
+    define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/tmp/civi/' );
+  }
 }
 
 define( 'CIVICRM_SITE_KEY', 'phpunittestfakekey' );
