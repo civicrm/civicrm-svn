@@ -558,7 +558,210 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      */
     function moveAllBelongings( $mainId, $otherId, $migrationInfo )
     {
-        // process location blocks.
+        // FIXME: 
+        // $this->_locBlockIds = ??
+        // $this->_qfZeroBug = ??
+        // $this->_locBlockIds
+        // $this->_contactType
+        // for operation use class constant
+
+        // preprocess to compute $submitted, $locBlocks, $tableOperations vars.
+        // $submitted contains contact table & custom related data.
+        // $locBlocks is a format required for location migration.
+        // $tableOperations - rel_table related add operations
+        $relTables = CRM_Dedupe_Merger::relTables();
+        $moveTables = $locBlocks = $tableOperations = array( );
+        foreach ( $migrationInfo as $key => $value ) {
+            if ($value == $this->_qfZeroBug) $value = '0';
+            if ((in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or 
+                 substr($key, 0, 12) == 'move_custom_') and $value != null) {
+                $submitted[substr($key, 5)] = $value;
+            } elseif (substr($key, 0, 14) == 'move_location_' and $value != null) {
+                $locField   = explode( '_',  $key );
+                $fieldName  = $locField[2];
+                $fieldCount = $locField[3];
+                $operation  = CRM_Utils_Array::value( 'operation', $migrationInfo['location'][$fieldName][$fieldCount] );
+                // default operation is overwrite.
+                if ( !$operation ) {
+                    $operation = 2; 
+                }
+                
+                $locBlocks[$fieldName][$fieldCount]['operation'] = $operation;
+                $locBlocks[$fieldName][$fieldCount]['locTypeId'] = 
+                    CRM_Utils_Array::value( 'locTypeId', $migrationInfo['location'][$fieldName][$fieldCount] );
+            } elseif (substr($key, 0, 15) == 'move_rel_table_' and $value == '1') {
+                $moveTables = array_merge($moveTables, $relTables[substr($key, 5)]['tables']);
+                if ( array_key_exists('operation', $migrationInfo) ) {
+                    foreach ( $relTables[substr($key, 5)]['tables'] as $table ) {
+                        if ( array_key_exists($key, $migrationInfo['operation']) ) {
+                            $tableOperations[$table] = $migrationInfo['operation'][$key];
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // migrate location blocks:
+        if ( !empty( $locBlocks ) ) {
+            $locComponent = array( 'email'   => 'Email',
+                                   'phone'   => 'Phone',
+                                   'im'      => 'IM',
+                                   'openid'  => 'OpenID',
+                                   'address' => 'Address' );
+            
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $primaryBlockIds = CRM_Contact_BAO_Contact::getLocBlockIds( $mainId, array( 'is_primary' => 1 ) );
+            $billingBlockIds = CRM_Contact_BAO_Contact::getLocBlockIds( $mainId, array( 'is_billing' => 1 ) );
+            
+            foreach ( $locBlocks as $name => $block ) {
+                if ( !is_array($block) || CRM_Utils_System::isNull($block) ) continue; 
+                $daoName = $locComponent[$name];
+                $primaryDAOId = (array_key_exists($name, $primaryBlockIds) )?array_pop($primaryBlockIds[$name]):null;
+                $billingDAOId = (array_key_exists($name, $billingBlockIds) )?array_pop($billingBlockIds[$name]):null;
+                
+                foreach ( $block as $blkCount => $values ) {
+                    $locTypeId      = CRM_Utils_Array::value( 'locTypeId', $values, 1 );
+                    $operation      = CRM_Utils_Array::value( 'operation', $values, 2 );
+                    $otherBlockId   = CRM_Utils_Array::value( $blkCount,   $this->_locBlockIds['other'][$name] );
+                    
+                    // keep 1-1 mapping for address - loc type.
+                    $idKey = $blkCount;
+                    if ( $name == 'address' ) $idKey = $locTypeId;  
+
+                    $mainBlockId = CRM_Utils_Array::value( $idKey, $this->_locBlockIds['main'][$name] );
+                    
+                    if ( !$otherBlockId ) continue;
+                    
+                    // for the block which belongs to other-contact, link the contact to main-contact
+                    require_once "CRM/Core/DAO/{$daoName}.php";
+                    eval("\$otherBlockDAO = new CRM_Core_DAO_$daoName();");
+                    $otherBlockDAO->id = $otherBlockId;
+                    $otherBlockDAO->contact_id = $mainId;
+                    $otherBlockDAO->location_type_id = $locTypeId;
+                    
+                    // if main contact already has primary & billing, set the falgs to 0.
+                    if ( $primaryDAOId ) $otherBlockDAO->is_primary = 0;
+                    if ( $billingDAOId ) $otherBlockDAO->is_billing = 0;
+                    
+                    // overwrite - need to delete block which belongs to  main-contact.
+                    if ( $mainBlockId && ($operation == 2) ) {
+                        eval("\$deleteDAO = new CRM_Core_DAO_$daoName();");
+                        $deleteDAO->id = $mainBlockId;
+                        $deleteDAO->find( true );
+                        
+                        // if we about to delete a primary / billing block, set the flags for new block 
+                        // that we going to assign to main-contact
+                        if ( $primaryDAOId && ($primaryDAOId == $deleteDAO->id) ) $otherBlockDAO->is_primary = 1;
+                        if ( $billingDAOId && ($billingDAOId == $deleteDAO->id) ) $otherBlockDAO->is_billing = 1;
+                        
+                        $deleteDAO->delete( );
+                        $deleteDAO->free( );
+                    }
+                    
+                    $otherBlockDAO->update( );
+                    $otherBlockDAO->free( );
+                }
+            }
+        }
+
+        // FIXME: fix gender, prefix and postfix, so they're edible by createProfileContact()
+        $names['gender']            = array( 'newName' => 'gender_id',          'groupName' => 'gender' );
+        $names['individual_prefix'] = array( 'newName' => 'prefix_id',          'groupName' => 'individual_prefix' );
+        $names['individual_suffix'] = array( 'newName' => 'suffix_id',          'groupName' => 'individual_suffix' );
+        $names['addressee']         = array( 'newName' => 'addressee_id',       'groupName' => 'addressee' );
+        $names['email_greeting']    = array( 'newName' => 'email_greeting_id',  'groupName' => 'email_greeting' );
+        $names['postal_greeting']   = array( 'newName' => 'postal_greeting_id', 'groupName' => 'postal_greeting' );
+        CRM_Core_OptionGroup::lookupValues( $submitted, $names, true );
+
+        // FIXME: fix custom fields so they're edible by createProfileContact()
+        $cgTree = CRM_Core_BAO_CustomGroup::getTree( $this->_contactType, CRM_Core_DAO::$_nullObject, null, -1 );
+        
+        $cFields = array( );
+        foreach ( $cgTree as $key => $group ) {
+            if (!isset($group['fields'])) continue;
+            foreach ( $group['fields'] as $fid => $field ) {
+                $cFields[$fid]['attributes'] = $field;
+            }
+        }
+        
+        if ( !isset( $submitted ) ) {
+            $submitted = array();
+        }
+        foreach ( $submitted as $key => $value ) {
+            if ( substr( $key, 0, 7 ) == 'custom_' ) {
+                $fid = (int) substr($key, 7);
+                $htmlType = $cFields[$fid]['attributes']['html_type'];
+                switch ( $htmlType ) {
+                    
+                case 'File':
+                    $customFiles[] = $fid;
+                    unset($submitted["custom_$fid"]);
+                    break;
+
+                case 'Select Country':
+                case 'Select State/Province':
+                    $submitted[$key] = CRM_Core_BAO_CustomField::getDisplayValue($value, $fid, $cFields);
+                    break;
+                    
+                case 'CheckBox':
+                case 'AdvMulti-Select':
+                case 'Multi-Select':
+                case 'Multi-Select Country':
+                case 'Multi-Select State/Province':
+                    // Merge values from both contacts for multivalue fields, CRM-4385
+                    // get the existing custom values from db.
+                    require_once 'CRM/Core/BAO/CustomValueTable.php';
+                    $customParams = array( 'entityID' => $this->_cid, $key => true );
+                    $customfieldValues = CRM_Core_BAO_CustomValueTable::getValues( $customParams ); 
+                    if ( CRM_Utils_array::value( $key, $customfieldValues ) ) {
+                        $existingValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $customfieldValues[$key] );
+                        if ( is_array( $existingValue ) && !empty( $existingValue ) ) {
+                            $mergeValue = $submmtedCustomValue = array( );
+                            if ( $value ) {
+                                $submmtedCustomValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
+                            }
+                            
+                            //hack to remove null and duplicate values from array.
+                            foreach ( array_merge( $submmtedCustomValue, $existingValue ) as $k => $v ) {
+                                if ( $v != '' && !in_array( $v, $mergeValue ) ) {
+                                    $mergeValue[] = $v;
+                                }
+                            }
+                            
+                            //keep state and country as array format. 
+                            //for checkbox and m-select format w/ VALUE_SEPARATOR
+                            if ( in_array( $htmlType, array( 'CheckBox', 'Multi-Select', 'AdvMulti-Select' ) ) ) {
+                                $submitted[$key] = 
+                                    CRM_Core_DAO::VALUE_SEPARATOR .
+                                    implode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                             $mergeValue ) .
+                                    CRM_Core_DAO::VALUE_SEPARATOR;
+                            } else {
+                                $submitted[$key] = $mergeValue; 
+                            }
+                        }
+                    } else if ( in_array( $htmlType, array( 'Multi-Select Country', 'Multi-Select State/Province' ) ) ) {
+                        //we require submitted values should be in array format
+                        if ( $value ) {
+                            $mergeValueArray = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );   
+                            //hack to remove null values from array.
+                            $mergeValue = array( );
+                            foreach (  $mergeValueArray as $k => $v ) {
+                                if ( $v != '' ) {
+                                    $mergeValue[] = $v;
+                                }
+                            }
+                            $submitted[$key] = $mergeValue; 
+                        }
+                    }
+                    break;
+                    
+                default:
+                    break;
+                }
+            }
+        }
 
         // compute $moveTables from $migrationInfo.
 
