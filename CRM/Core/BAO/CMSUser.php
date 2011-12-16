@@ -210,15 +210,6 @@ class CRM_Core_BAO_CMSUser
         $config  = CRM_Core_Config::singleton( );
         
         $ufID = $config->userSystem->createUser( $params, $mail );
-        if ($config->userSystem->is_drupal == 1 
-                    && (variable_get('user_register', TRUE ) == 1) 
-                    && !variable_get('user_email_verification', TRUE )) {
-                // Don't create drupal UF match record at this point if drupal user verification required
-                $contact = array('email' => $params[$mail] );
-                if ( self::userExists( $contact ) ) {
-                    return $ufID;
-                }
-         }
 
         //if contact doesn't already exist create UF Match
         if ( $ufID !== false &&
