@@ -119,8 +119,8 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
     $destination = $destination['values'][$to_group_id];
 
     //assert that the moved custom field is missing from the source fieldset
-    $this->assertElementNotContainsText("css=#" . $source['name'] . "_0", $fields['values'][$field_to_move]['label'], "Moved value still displays in the old fieldset on the contact record");
-    $this->assertElementContainsText("css=#" . $destination['name'] . "_1", $fields['values'][$field_to_move]['label'], "Moved value does not display in the new fieldset on the contact record");
+    $this->assertElementNotContainsText("css=div." . $source['name'], $fields['values'][$field_to_move]['label'], "Moved value still displays in the old fieldset on the contact record");
+    $this->assertElementContainsText("css=div." . $destination['name'], $fields['values'][$field_to_move]['label'], "Moved value does not display in the new fieldset on the contact record");
   }
 
   //moves a field from one field to another
@@ -283,18 +283,15 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
     //clicking save
     $this->click("_qf_Field_next");
     $this->waitForPageToLoad("30000");
-sleep(15);
+
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$fieldLabel' has been saved."), "Field was not created successfully");
 
     //get the custom id of the custom field that was just created
     $results = $this->webtest_civicrm_api( "CustomField", "get", array( 'label' => $fieldLabel, 'custom_group_id' => $group_id ) );
+
     //While there _technically_ could be two fields with the same name, its highly unlikely
-    //so assert that exactly one result is return
-    print_r($results);
-    CRM_Core_Error::debug('fieldLabel', $fieldLabel);    
-    crm_core_error::debug('$group_id', $group_id);
-    
+    //so assert that exactly one result is return    
     $this->assertTrue( $results['count'] == 1, "Could not uniquely get custom field id");
     return $results['id'];
   }
