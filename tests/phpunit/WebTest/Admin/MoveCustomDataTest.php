@@ -49,15 +49,16 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin( );
    
-    $cid_all = $this->_createContact( );
-    $cid_from_missing  = $this->_createContact( );
-    $cid_to_missing  = $this->_createContact( );
+    $cid_all = $this->_createContact( "all_data", "move_custom_data" );
+    $cid_from_missing  = $this->_createContact( "source_missing", "move_custom_data" );
+    $cid_to_missing  = $this->_createContact( "destination_missing", "move_custom_data" );
     
     $from_group_id = $this->_buildCustomFieldSet( "source" ); 
+    $to_group_id = $this->_buildCustomFieldSet( "destination" ); 
+
     $this->_fillCustomDataForContact( $cid_all, $from_group_id );
     $this->_fillCustomDataForContact( $cid_to_missing, $from_group_id );
 
-    $to_group_id = $this->_buildCustomFieldSet( "destination" ); 
     $this->_fillCustomDataForContact( $cid_all, $to_group_id );
     $this->_fillCustomDataForContact( $cid_from_missing, $to_group_id );
 
@@ -119,8 +120,8 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
     $destination = $destination['values'][$to_group_id];
 
     //assert that the moved custom field is missing from the source fieldset
-    $this->assertElementNotContainsText("css=div." . $source['name'], $fields['values'][$field_to_move]['label'], "Moved value still displays in the old fieldset on the contact record");
-    $this->assertElementContainsText("css=div." . $destination['name'], $fields['values'][$field_to_move]['label'], "Moved value does not display in the new fieldset on the contact record");
+    $this->assertElementNotContainsText("css=div." . $source['name'] , $fields['values'][$field_to_move]['label'], "Moved value still displays in the old fieldset on the contact record");
+    $this->assertElementContainsText("css=div." . $destination['name'] , $fields['values'][$field_to_move]['label'], "Moved value does not display in the new fieldset on the contact record");
   }
 
   //moves a field from one field to another
@@ -152,9 +153,10 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
   }
 
   //create a contact and return the contact id
-  function _createContact( ) {
-    //dont care about the contacts info, so defaults are ok
-    $this->webtestAddContact( );
+  function _createContact( $firstName = "John", $lastName="Doe") {
+    $firstName .= "_".substr(sha1(rand()), 0, 5);
+    $lastName  .= "_".substr(sha1(rand()), 0, 5);
+    $this->webtestAddContact( $firstName, $lastName );
     $url = $this->parseURL( );
     $cid = $url['queryString']['cid'];
     $this->assertType('numeric', $cid);
@@ -201,9 +203,11 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
   //creates a new custom group and fields in that group, and returns the group Id
   function _buildCustomFieldset( $prefix ) {
     $group_id = $this->_createCustomGroup( $prefix );
-    $field_ids[] = $this->_addCustomFieldToGroup( $group_id, 0, "CheckBox", $prefix );
-    $field_ids[] = $this->_addCustomFieldToGroup( $group_id, 0, "Radio", $prefix );
-    $field_ids[] = $this->_addCustomFieldToGroup( $group_id, 0, "Text", $prefix );
+    $field_ids[] = $this->_addCustomFieldToGroup( $group_id, 'Alphanumeric', "CheckBox", $prefix );
+    $field_ids[] = $this->_addCustomFieldToGroup( $group_id, 'Alphanumeric', "Radio", $prefix );
+    $field_ids[] = $this->_addCustomFieldToGroup( $group_id, 'Alphanumeric', "Text", $prefix );
+    $field_ids[] = $this->_addCustomFieldToGroup( $group_id, 'Note', "Text", $prefix );
+    $field_ids[] = $this->_addCustomFieldToGroup( $group_id, 'Date', "Date", $prefix );
     return $group_id;
   }
 
@@ -236,12 +240,80 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
       return $group_id;
   }
 
-  function _addCustomFieldToGroup( $group_id, $type='0', $widget='CheckBox', $prefix='' ) {
+  //Adds a new custom field to a specfied custom field group, using the given
+  //datatype and widget.
+  function _addCustomFieldToGroup( $group_id, $type='Alphanumeric', $widget='CheckBox', $prefix='' ) {
+    //A mapping of data type names to integer keys
+    $type_map = array(
+      'alphanumeric'      => array(
+        'id' => 0,
+        'widgets' => array('Text', 'Select', 'Radio', 'CheckBox', 'Multi-Select' ), 
+        'options' => array('option_01', 'option_02', 'option_03', 'option_04', 'option_05', 'option_06', 'option_07', 'option_08', 'option_09', 'option_10'),
+      ),
+      'integer'           => array(
+        'id' => 1,
+        'widgets' => array('Text', 'Select', 'Radio' ), 
+        'options' => array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+      ),
+      'number'            => array(
+        'id' => 2,
+        'widgets' => array('Text', 'Select', 'Radio' ), 
+        'options' => array(1.01, 2.02, 3.03, 4.04, 5.05, 6.06, 7.07, 8.08. 9.09, 10.1),
+      ),
+      'money'             => array(
+        'id' => 3,
+        'widgets' => array('Text', 'Select', 'Radio' ), 
+        'options' => array(1.01, 2.02, 3.03, 4.04, 5.05, 6.06, 7.07, 8.08. 9.09, 10.1),
+      ),
+      'note'              => array(
+        'id' => 4,
+        'widgets' => array('TextArea' ), 
+      ),
+      'date'              => array(
+        'id' => 5,
+        'widgets' => array( 'Date' ), 
+      ),
+      'yes or no'         => array(
+        'id' => 6,
+        'widgets' => array( 'Radio' ), 
+      ),
+      //'state/province'    => array(
+      //  'id' => 7,
+      //),
+      //'country'           => array(
+      //  'id' => 8,
+      //),
+      //'link'              => array(
+      //  'id' => 10,
+      //),
+      //'contact reference' => array(
+      //  'id' => 11,
+      //),
+      //'file' => 9, hahaha im not doing files.
+    );
+
+    //downcase the type
+    $type = strtolower($type);
+
+    //make sure that a supported html type was entered
+    if( ! isset( $type_map[$type] ) ) {
+      $this->fail("The custom field html type $type is not supported.  Supported types are: " . implode(", ", array_keys($type_map) ));
+    }
+    $html_type_id = $type_map[$type]['id']; 
+
+    //make sure the widget type can be used for this data type
+    //if an invalid widget is selected and only 1 widget is available, use that
+    if( ! in_array( $widget,  $type_map[$type]['widgets'] ) ) {
+      if( count( $type_map[$type]['widgets'] ) == 1 ) {
+        $widget = $type_map[$type]['widgets'][0];
+      } else {
+        $this->fail("Cannot use $widget for $type fields.  Available widgets are: " . implode(", ", $type_map[$type]['widgets'] ) );
+      } 
+    }
 
     //Go to the add custom field page for the given group id
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field/add?action=add&reset=1&gid=" . $group_id);
     $this->waitForPageToLoad("30000");
-
 
     //Do common setup for all field types
 
@@ -261,21 +333,26 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //Fill in the html type and widget type
     $this->click("data_type[0]");
-    $this->select("data_type[0]", "value=" . $type);
-    $this->click("//option[@value='" . $type ."']");
+    $this->select("data_type[0]", "value=" . $html_type_id);
+    $this->click("//option[@value='" . $html_type_id ."']");
     $this->click("data_type[1]");
     $this->select("data_type[1]", "value=" . $widget);
     $this->click("//option[@value='" . $widget ."']");
 
-    //fill in specific ellements for different widgets
+    //fill in specific elements for different widgets
     switch($widget) {
     case 'CheckBox':
-      $this->_createFieldOptions();
+      $this->_createFieldOptions(rand(3,7), 'option', $type_map[$type]['options']);
       $this->type("options_per_line", "2");
       break;
     case 'Radio':
-      $this->_createFieldOptions();
+      $this->_createFieldOptions(rand(3,7), 'option', $type_map[$type]['options']);
       $this->type("options_per_line", "1");
+      break;
+    case 'Date':
+      $this->click("date_format");
+      $this->select("date_format", "value=yy-mm-dd") ;
+      $this->click("//option[@value='yy-mm-dd']");
       break;
       //TODO allow for more things....
     }
@@ -289,23 +366,24 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //get the custom id of the custom field that was just created
     $results = $this->webtest_civicrm_api( "CustomField", "get", array( 'label' => $fieldLabel, 'custom_group_id' => $group_id ) );
-
     //While there _technically_ could be two fields with the same name, its highly unlikely
-    //so assert that exactly one result is return    
+    //so assert that exactly one result is return
     $this->assertTrue( $results['count'] == 1, "Could not uniquely get custom field id");
     return $results['id'];
   }
 
+  //Populates $count options for a custom field on the add custom field page
   function _createFieldOptions( $count = 3, $prefix = "option", $values = array( ) ) {
     $count = $count > 10 ? 10 : $count; //Only support up to 10 options on the creation form
 
     for($i = 1; $i <= $count; $i++) {
       $label = $prefix . '_' . substr(sha1(rand()), 0, 6);
       $this->type("option_label_" . $i, $label );
-      $this->type("option_value_" . $i,  $i);
+      $this->type("option_value_" . $i,  ( isset($values[$i] ) ? $values[$i] : $i ));
     }
   }
 
+  //randomly generates data for a specific custom field 
   function _fillCustomDataForContact( $contact_id, $group_id ) {
     //edit the given contact
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid=" . $contact_id );
@@ -317,6 +395,21 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
     //get the custom fields for the group
     $fields = $this->webtest_civicrm_api("CustomField", "get", array( 'custom_group_id' => $group_id ) );
     $fields = $fields['values'];
+
+    //we need the id the contact's record in the table for this custom group.
+    //Recent (4.0.6+, i think?) versions of the api return this when getting
+    //custom data for a contact.  So we do that.
+    $field_ids = array_keys($fields);
+    $contact = $this->webtest_civicrm_api("Contact", "get", array( 'contact_id' => $contact_id, 'return.custom_' . $field_ids[0] => 1 ) );
+    $group = $this->webtest_civicrm_api("CustomGroup", "get", array( 'id' => $group_id, 'return.table_name' => 1 ) );
+
+    //if the contact has not been saved since this fieldset has been creative,
+    //the form uses id = -1. In this case the table pk wont be in the api results
+    if( isset( $contact['values'][$contact_id][ $group['values'][$group_id]['table_name']."_id" ] ) ) {
+      $table_pk = $contact['values'][$contact_id][ $group['values'][$group_id]['table_name']."_id" ]; 
+    } else {
+      $table_pk = -1;
+    }
 
     //fill a value in for each field
     foreach($fields as $field_id => $field) {
@@ -331,7 +424,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
         //gonna go ahead and assume its an alphanumeric text question.  This
         //will really only work if the custom data group has not yet been
         //filled out for this contact
-        $this->type("custom_" . $field['id'] . '_-1', sha1(rand()));
+        $this->type("custom_" . $field['id'] . '_' . $table_pk, sha1(rand()));
       }
     } 
 
@@ -341,7 +434,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //assert success
     $this->assertTrue($this->isTextPresent("record has been saved"), "Contact Record could not be saved");
-
   }
+
 }
 ?>
