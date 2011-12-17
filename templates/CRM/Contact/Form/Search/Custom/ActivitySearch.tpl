@@ -49,7 +49,6 @@
             {/foreach}
         </table>
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-        </table>
 </div>
 </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
