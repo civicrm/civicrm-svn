@@ -60,6 +60,8 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         if ( civicrm_wp_in_civicrm( ) ) {
             global $civicrm_wp_title;
             $civicrm_wp_title = $pageTitle;
+            $template = CRM_Core_Smarty::singleton( );
+            $template->assign( 'pageTitle', $pageTitle );
         }
     }
     
@@ -75,7 +77,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      */
     function appendBreadCrumb( $breadCrumbs ) {
         $breadCrumb = wp_get_breadcrumb( );
-
+        
         if ( is_array( $breadCrumbs ) ) {
             foreach ( $breadCrumbs as $crumbs ) {
                 if ( stripos($crumbs['url'], 'id%%') ) {
@@ -91,7 +93,11 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
                 $breadCrumb[]  = "<a href=\"{$crumbs['url']}\">{$crumbs['title']}</a>";
             }
         }
+        
+        $template = CRM_Core_Smarty::singleton( );
+        $template->assign_by_ref( 'breadcrumb', $breadCrumb );
         wp_set_breadcrumb( $breadCrumb );
+        
     }
 
     /**
