@@ -385,7 +385,15 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       //click on save
       $this->click( '_qf_ScheduleReminders_upload-bottom' );
       $this->waitForElementPresent("link=Add Reminder");
-       
+
+      $this->waitForElementPresent("link=Edit");
+
+      //verify the fields for Event Reminder selector
+      $this->verifyText("xpath=//table[@class='display']/tbody/tr/td[1]", 'Event Reminder for '. $eventTitle);
+      $this->verifyText("xpath=//table[@class='display']/tbody/tr/td[4]", 'Registered' );
+      $this->verifyText("xpath=//table[@class='display']/tbody/tr/td[5]", 'Yes' );
+      $this->verifyText("xpath=//table[@class='display']/tbody/tr/td[6]", 'Yes' );
+
   }
 
  
