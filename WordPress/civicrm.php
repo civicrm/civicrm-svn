@@ -428,11 +428,14 @@ function civicrm_wp_in_civicrm( ) {
 }
 
 function wp_get_breadcrumb( ) {
-    return;
+    global $wp_set_breadCrumb;
+    return $wp_set_breadCrumb;
 }
 
-function wp_set_breadcrumb( ) {
-    return;
+function wp_set_breadcrumb( $breadCrumb ) {
+    global $wp_set_breadCrumb;
+    $wp_set_breadCrumb = $breadCrumb;
+    return $wp_set_breadCrumb;
 }
 
 function t( $str, $sub = null ) {
