@@ -91,6 +91,7 @@ class CRM_Contact_Page_AJAX
                          'employee_id' => $employee_id,
                          'cid'         => $cid,
                          'rel'         => $rel,
+                         'context'     => $context,
                          'version'     => 3
                        );
         
