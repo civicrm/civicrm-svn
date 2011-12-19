@@ -1684,8 +1684,12 @@ WHERE     c.id = $contributionId";
         while ( $dao->fetch( ) ) {
             $componentDetails['component']    = $dao->participant_id ? 'event' : 'contribute';
             $componentDetails['contact_id']   = $dao->contact_id;
-            $componentDetails['event']        = $dao->event_id;
-            $componentDetails['participant']  = $dao->participant_id;
+            if ( $dao->event_id ) {
+                $componentDetails['event']    = $dao->event_id;
+            }
+            if ( $dao->participant_id ) {
+                $componentDetails['participant'] = $dao->participant_id;
+            }
             if ( $dao->membership_id ) {
                 if ( ! isset( $componentDetails['membership'] ) ) {
                     $componentDetails['membership'] = $componentDetails['membership_type'] = array( );

@@ -297,8 +297,6 @@ class CRM_Utils_REST
       $key = CRM_Utils_array::value( 'key', $_REQUEST );
       if (empty($key))
         return self::error( "FATAL: mandatory param 'key' missing. More info at: " . $docLink );
-
-      return self::error( 'FATAL: invalid mandatory param \'key\' (site key). More info at: ' . $docLink );
     }
     require_once 'CRM/Utils/Request.php';
 
@@ -521,7 +519,6 @@ class CRM_Utils_REST
         return self::error( 'Unknown function invocation.' );
       }
     
-
     $result = self::process( $args, false );
 
     echo self::output( $result );

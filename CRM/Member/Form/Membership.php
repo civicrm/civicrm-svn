@@ -1050,7 +1050,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
         if ( CRM_Utils_Array::value( 'record_contribution', $formValues ) ) {
             $recordContribution = array( 'total_amount', 'contribution_type_id', 'payment_instrument_id', 
-                                         'trxn_id', 'contribution_status_id', 'check_number', 'campaign_id' );
+                                         'trxn_id', 'contribution_status_id', 'check_number', 'campaign_id', 'receive_date' );
             
             foreach ( $recordContribution as $f ) {
                 $params[$f] = CRM_Utils_Array::value( $f, $formValues );
@@ -1068,6 +1068,10 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $params['skipStatusCal'] = true;
                 $params['is_pay_later']  = 1;
                 $this->assign('is_pay_later', 1);
+            }
+
+            if ( CRM_Utils_Array::value( 'receive_date', $params ) ) {
+                $params['receive_date'] = CRM_Utils_Date::processDate( $params['receive_date'] );
             }
             if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
                 $params['receipt_date'] = CRM_Utils_Array::value('receive_date',  $params);
