@@ -264,7 +264,7 @@ class CRM_Contact_Form_Edit_Address
      * @access public
      * @static
      */
-    static function formRule( $fields, $files )
+    static function formRule( $fields )
     {
         $errors = array( );
         // check for state/county match if not report error to user.

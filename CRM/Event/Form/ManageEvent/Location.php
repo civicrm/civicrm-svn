@@ -168,9 +168,8 @@ class CRM_Event_Form_ManageEvent_Location extends CRM_Event_Form_ManageEvent
      */
     static function formRule( $fields ) 
     {
-        $errors = array( );
         // check for state/country mapping
-        CRM_Contact_Form_Edit_Address::formRule($fields, $errors);
+        $errors = CRM_Contact_Form_Edit_Address::formRule($fields);
 
         return empty($errors) ? true : $errors;
     }    
