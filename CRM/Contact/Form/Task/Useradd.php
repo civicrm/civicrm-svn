@@ -101,13 +101,18 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
         $element = $this->add( 'text', 'name' , ts('Full Name') , array('class' => 'huge') );
         $element->freeze( );
         $this->add( 'text', 'cms_name' , ts('Username') ,  array('class' => 'huge') );
+        $this->addRule('cms_name','Username is required','required' );
         $this->addRule('cms_name','Enter a valid username','minlength', 2);
         $this->add('password', 'cms_pass' , ts('Password') ,  array('class' => 'huge'));
         $this->add('password', 'cms_confirm_pass' , ts('Confirm Password') ,  array('class' => 'huge') );
+        $this->addRule('cms_pass','Password is required','required' );
         $this->addRule(array('cms_pass','cms_confirm_pass'), 'ERROR: Password mismatch', 'compare');
         $element = $this->add('text', 'email' , ts('Email:') ,  array('class' => 'huge') );
         $element->freeze();
         $this->add('hidden', 'contactID');
+
+        //add a rule to check username uniqueness
+        $this->addFormRule( array( 'CRM_Contact_Form_Task_Useradd', 'usernameRule' ) );
 
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
@@ -130,9 +135,18 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
         // store the submitted values in an array
         $params = $this->exportValues();
 
-        
         CRM_Core_BAO_CMSUser::create($params, 'email');
-        CRM_Core_Session::setStatus( ts('User has been added.') );
+        CRM_Core_Session::setStatus( ts('User has been added.'));
     
     }//end of function
+
+    public function usernameRule( $params ) {
+      $config   = CRM_Core_Config::singleton();
+      $errors = array();
+      $check_params = array( 'name' => $params['cms_name']);
+      $config->userSystem->checkUserNameEmailExists( $check_params , $errors );
+
+      return empty($errors) ? true : $errors;
+
+    }
 }

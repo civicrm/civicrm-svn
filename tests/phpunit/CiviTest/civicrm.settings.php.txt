@@ -1,8 +1,48 @@
 <?php
+
+// Set a variable on your shell $export CIVICRM_TEST_DSN= mysql://db_username:db_password@localhost/civicrm_tests_dev
+// or modify and uncomment the configuration string under with your own config 
+
+//define( 'CIVICRM_DSN'          , "mysql://db_username:db_password@localhost/civicrm_tests_dev" );
+
+//--- you shouldn't have to modify anything under this line, but might want to put the compiled templates CIVICRM_TEMPLATE_COMPILEDIR in a different folder than our default location ----------
+
 if ( !empty( $GLOBALS['mysql_user'] ) ) {
-    $dbName = ! empty( $GLOBALS['mysql_db'] ) ? $GLOBALS['mysql_db'] : 'civicrm_tests_dev';
-    define( 'CIVICRM_DSN'          , "mysql://{$GLOBALS['mysql_user']}:{$GLOBALS['mysql_pass']}@{$GLOBALS['mysql_host']}/{$dbName}?new_link=true" );
+  $dbName = ! empty( $GLOBALS['mysql_db'] ) ? $GLOBALS['mysql_db'] : 'civicrm_tests_dev';
+  define( 'CIVICRM_DSN'          , "mysql://{$GLOBALS['mysql_user']}:{$GLOBALS['mysql_pass']}@{$GLOBALS['mysql_host']}/{$dbName}?new_link=true" );
 }
+
+
+if (!defined("CIVICRM_DSN")) {
+  $dsn= getenv("CIVICRM_TEST_DSN");
+  if (!empty ($dsn)) {
+    define("CIVICRM_DSN",$dsn);
+  } else {
+    echo "\nFATAL: no DB connection configured (CIVICRM_DSN). \nYou can either edit " . __FILE__ . " (user guide inside)\n"; 
+    if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+      echo "OR set it in your shell:\n \$export CIVICRM_TEST_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
+    } else {
+      echo "OR set it in your shell:\n SETX CIVICRM_TEST_DSN mysql://db_username:db_password@localhost/civicrm_tests_dev \n
+      (you will need to open a new command shell before it takes effect)";
+    }
+echo "\n\n
+If you haven't done so already, you need to create (once) a database dedicated to the unit tests:
+mysql -uroot -p
+create database civicrm_tests_dev;
+grant ALL on civicrm_tests_dev.* to db_username@localhost identified by 'db_password';
+grant SUPER on *.* to db_username@localhost identified by 'db_password';\n";
+    die ("");
+  }
+}
+
+
+require_once "DB.php";
+$dsninfo = DB::parseDSN(CIVICRM_DSN);
+
+$GLOBALS['mysql_host'] = $dsninfo['hostspec'];
+$GLOBALS['mysql_user'] = $dsninfo['username'];
+$GLOBALS['mysql_pass'] = $dsninfo['password'];
+$GLOBALS['mysql_db'] = $dsninfo['database'];
 
 
 /**
@@ -13,30 +53,21 @@ if ( !empty( $GLOBALS['mysql_user'] ) ) {
 define('CIVICRM_UF', 'Drupal');
 
 
-/**
- * File System Paths:
- *
- * $civicrm_root is the file system path on your server where the civicrm
- * code is installed. Use an ABSOLUTE path (not a RELATIVE path) for this setting.
- *
- * CIVICRM_TEMPLATE_COMPILEDIR is the file system path where compiled templates are stored.
- * These sub-directories and files are temporary caches and will be recreated automatically
- * if deleted.
- *
- * IMPORTANT: The COMPILEDIR directory must exist,
- * and your web server must have read/write access to these directories.
- *
- *
- * EXAMPLE - Drupal:
- * If the path to the Drupal home directory is /var/www/htdocs/drupal
- * the $civicrm_root setting would be:
- *      $civicrm_root = '/var/www/htdocs/drupal/sites/all/modules/civicrm/';
- *
- */ 
 global $civicrm_root;
-$civicrm_root = 'FIX THIS PATH';
+$civicrm_root = dirname (dirname (dirname (dirname( __FILE__ ) )));
 
-define( 'CIVICRM_TEMPLATE_COMPILEDIR', 'PLEASE ADJUST THIS PATH IN YOUR civicrm.settings.php.txt' );
+// set this to a temporary directory. it defaults to /tmp/civi on linux
+// TODO: set an sensible default folder in windows
+//define( 'CIVICRM_TEMPLATE_COMPILEDIR', 'the/absolute/path/' );
+
+if (!defined("CIVICRM_TEMPLATE_COMPILEDIR")) {
+  if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    // die ("FATAL: you need to define CIVICRM_TEMPLATE_COMPILEDIR in ". __FILE__);
+    define( 'CIVICRM_TEMPLATE_COMPILEDIR', getenv ('TMP') . DIRECTORY_SEPARATOR . 'civi' . DIRECTORY_SEPARATOR );
+  } else {
+    define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/tmp/civi/' );
+  }
+}
 
 define( 'CIVICRM_SITE_KEY', 'phpunittestfakekey' );
 

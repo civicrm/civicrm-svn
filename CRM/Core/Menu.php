@@ -579,6 +579,13 @@ UNION (
             }
         }
         
+        if ( strstr( $path, 'report/instance' ) ) {
+            $args = explode( '/', $path );
+            if( is_numeric( end($args) ) ) {
+                $menuPath['path'] .= '/'.end($args);
+            }
+        }
+
         // *FIXME* : hack for 2.1 -> 2.2 upgrades.
         if ( $path == 'civicrm/upgrade' ) {
             $menuPath['page_callback']         = 'CRM_Upgrade_Page_Upgrade';

@@ -444,6 +444,7 @@ ORDER BY parent_id, weight";
         $navID      = $value['attributes']['navID'];
         $active     = $value['attributes']['active'];
         $menuName   = $value['attributes']['name'];
+        $target     = CRM_Utils_Array::value( 'target', $value['attributes'] );
         
         if ( in_array( $parentID, $skipMenuItems ) || !$active ) {
             $skipMenuItems[] = $navID;
@@ -519,9 +520,13 @@ ORDER BY parent_id, weight";
         }
               
         if ( $makeLink ) {
-            return $name = "<a href=\"{$url}\">{$name}</a>";
+            if ( $target ) {
+                $name = "<a href=\"{$url}\" target=\"{$target}\">{$name}</a>";
+            } else {
+                $name = "<a href=\"{$url}\">{$name}</a>";
+            }
         }
- 
+        
         return $name;
     }
           

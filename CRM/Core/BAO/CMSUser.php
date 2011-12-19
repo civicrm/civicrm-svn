@@ -75,6 +75,9 @@ class CRM_Core_BAO_CMSUser
             $mail = 'email'; 
             $name = 'name';
             // TODO: Insert code here to populate $rows for Joomla;
+        } else if ( $config->userFramework == 'WordPress' ) {
+            $id = 'ID';
+            $mail = 'user_email';
         } else { 
             CRM_Core_Error::fatal( 'CMS user creation not supported for this framework' ); 
         } 
@@ -139,8 +142,36 @@ class CRM_Core_BAO_CMSUser
                     $match->free();
                 }
             }
-        }
-        
+        } else if ($config->userFramework == 'WordPress') {
+            $uf              = $config->userFramework;
+            $contactCount    = 0;
+            $contactCreated  = 0;
+            $contactMatching = 0;
+            
+            global $wpdb;
+            $wpUserIds = $wpdb->get_col(
+                                        $wpdb->prepare( "SELECT $wpdb->users.ID FROM $wpdb->users" )
+                                        );
+            
+            foreach ( $wpUserIds as $wpUserId ) {
+                $wpUserData = get_userdata( $wpUserId );
+                $contactCount++;
+                if ($match = CRM_Core_BAO_UFMatch::synchronizeUFMatch( $wpUserData,
+                                                                       $wpUserData->$id,
+                                                                       $wpUserData->$mail,
+                                                                       $uf,
+                                                                       1,
+                                                                       'Individual',
+                                                                       true ) ) {
+                    $contactCreated++;
+                } else {
+                    $contactMatching++;
+                }
+                if (is_object($match)) {
+                    $match->free();
+                }
+            }        
+        }        
         //end of schronization code
         $status = ts('Synchronize Users to Contacts completed.');
         $status .= ' ' . 
@@ -154,7 +185,7 @@ class CRM_Core_BAO_CMSUser
                    array('count' => $contactMatching,
                          'plural' => 'Found %count matching contact records.'));
         }
-
+        
         $status .= 
             ' ' . 
             ts('Created one new contact record.',
@@ -179,15 +210,6 @@ class CRM_Core_BAO_CMSUser
         $config  = CRM_Core_Config::singleton( );
         
         $ufID = $config->userSystem->createUser( $params, $mail );
-        if ($config->userSystem->is_drupal == 1 
-                    && (variable_get('user_register', TRUE ) == 1) 
-                    && !variable_get('user_email_verification', TRUE )) {
-                // Don't create drupal UF match record at this point if drupal user verification required
-                $contact = array('email' => $params[$mail] );
-                if ( self::userExists( $contact ) ) {
-                    return $ufID;
-                }
-         }
 
         //if contact doesn't already exist create UF Match
         if ( $ufID !== false &&

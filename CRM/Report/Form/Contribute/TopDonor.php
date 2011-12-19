@@ -292,6 +292,27 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         $this->endPostProcess( $rows );
     }
     
+    function add2group( $groupID ) {
+        if ( is_numeric( $groupID ) ) {
+            require_once 'CRM/Contact/BAO/GroupContact.php';
+
+            $sql = " 
+{$this->_select} {$this->_from}  {$this->_where} {$this->_groupBy} 
+ORDER BY civicrm_contribution_total_amount_sum DESC
+) as abc {$this->_outerCluase}";
+            $dao = CRM_Core_DAO::executeQuery( $sql );
+
+            $contact_ids = array();                        
+            // Add resulting contacts to group
+            while ( $dao->fetch( ) ) {
+                $contact_ids[$dao->civicrm_contact_id] = $dao->civicrm_contact_id;
+            }
+
+            CRM_Contact_BAO_GroupContact::addContactsToGroup( $contact_ids, $groupID );
+            CRM_Core_Session::setStatus( ts("Listed contact(s) have been added to the selected group."));
+        } 
+    }
+
     function limit( $rowCount = CRM_Report_Form::ROW_COUNT_LIMIT ) {
         require_once 'CRM/Utils/Pager.php';
         // lets do the pager if in html mode

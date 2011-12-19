@@ -20,7 +20,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
     function setUp()    {
        parent::setUp();
        
-       $this->toBeImplemented['get'] = array ('ParticipantPayment', 'Profile','CustomValue','Website','Constant');
+       $this->toBeImplemented['get'] = array ('ParticipantPayment', 'Profile','CustomValue','Website','Constant','Job');
        $this->toBeImplemented['create'] = array ('SurveyRespondant','OptionGroup','UFMatch','LocationType');
        $this->toBeImplemented['delete'] = array ('MembershipPayment','OptionGroup','SurveyRespondant','UFJoin','UFMatch','LocationType');
        $this->onlyIDNonZeroCount['get'] = array( 'ActivityType', 'Entity', 'Domain' );
@@ -267,9 +267,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase
        entities that don't need a delete action
      */
     public function testNotImplemented_delete ($Entity) {
-        $result = civicrm_api ($Entity,'Delete',array('version' => 3));
-        $this->assertEquals( 1, $result['is_error'], 'In line ' . __LINE__ );
-         $this->assertContains ("API ($Entity,Delete) does not exist",$result['error_message']);
+        $nonExistantID = 151416349;
+        $result = civicrm_api($Entity, 'Delete', array('version' => 3, 'id' => $nonExistantID));
+        $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__ );
+        $this->assertContains("API ($Entity,Delete) does not exist", $result['error_message']);
     }
 
     /**

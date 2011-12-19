@@ -47,7 +47,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
 
     private $_contactIdIndex;
     private $_activityTypeIndex;
-    private $_activityNameIndex;
+    private $_activityLabelIndex;
     private $_activityDateIndex;
 
     /**
@@ -79,8 +79,8 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         $fields = array_merge( CRM_Activity_BAO_Activity::importableFields( ), 
                                CRM_Activity_BAO_ActivityTarget::import( ) );
         
-        $fields = array_merge( $fields, array( 'activity_name' => array( 'title'         => ts('Activity Type Label' ),
-                                                                         'headerPattern' => '/(activity.)?type label?/i') ) );
+        $fields = array_merge( $fields, array( 'activity_label' => array( 'title'         => ts('Activity Type Label' ),
+                                                                          'headerPattern' => '/(activity.)?type label?/i') ) );
         
         foreach ($fields as $name => $field) {
             $field['type']          = CRM_Utils_Array::value( 'type', $field, CRM_Utils_Type::T_INT );
@@ -96,7 +96,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         // FIXME: we should do this in one place together with Form/MapField.php
         $this->_contactIdIndex        = -1;
         $this->_activityTypeIndex     = -1;
-        $this->_activityNameIndex     = -1;
+        $this->_activityLabelIndex    = -1;
         $this->_activityDateIndex     = -1;
         
         $index = 0;
@@ -106,8 +106,8 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             case 'external_identifier':
                 $this->_contactIdIndex        = $index;
                 break;
-            case 'activity_name' :
-                $this->_activityNameIndex     = $index;
+            case 'activity_label' :
+                $this->_activityLabelIndex     = $index;
                 break;
             case 'activity_type_id' :
                 $this->_activityTypeIndex     = $index;
@@ -162,11 +162,11 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         $index = -1;
         $errorRequired = false;
         
-        if ( $this->_activityTypeIndex > -1 && $this->_activityNameIndex > -1 ) {
+        if ( $this->_activityTypeIndex > -1 && $this->_activityLabelIndex > -1 ) {
             array_unshift($values, ts('Please select either Activity Type ID OR Activity Type Label.'));
             return CRM_Activity_Import_Parser::ERROR;
-        } elseif ( $this->_activityNameIndex > -1 ) {
-            $index = $this->_activityNameIndex;
+        } elseif ( $this->_activityLabelIndex > -1 ) {
+            $index = $this->_activityLabelIndex;
         } elseif ( $this->_activityTypeIndex > -1 ) {
             $index = $this->_activityTypeIndex;
         }
@@ -242,9 +242,9 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             return $response;
         }
         $params =& $this->getActiveFieldParams( );
-        $activityName = array_search( 'activity_name',$this->_mapperKeys);
-        if ( $activityName ) {
-            $params = array_merge( $params, array( 'activity_name' => $values[$activityName]) );
+        $activityLabel = array_search( 'activity_label',$this->_mapperKeys);
+        if ( $activityLabel ) {
+            $params = array_merge( $params, array( 'activity_label' => $values[$activityLabel]) );
         }
         //for date-Formats
         $session = CRM_Core_Session::singleton();

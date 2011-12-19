@@ -172,7 +172,6 @@ WHERE  id IN ( $idString )
             $ts = time( );
         }
 
-        echo "L: $live<p>";
         if ( ! $live ) {
             require_once 'CRM/Core/BAO/Setting.php';
             $days = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
@@ -180,7 +179,6 @@ WHERE  id IN ( $idString )
                                                    null,
                                                    7 );
             $live = 24 * $days;
-            echo "$days, $live<P>";
         }
 
         $cs = md5( "{$hash}_{$contactID}_{$ts}_{$live}" );

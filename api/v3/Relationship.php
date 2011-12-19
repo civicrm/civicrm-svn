@@ -101,6 +101,7 @@ function _civicrm_api3_relationship_create_spec(&$params){
   $params['contact_id_a']['api.required'] = 1;
   $params['contact_id_b']['api.required'] = 1;
   $params['relationship_type_id']['api.required'] = 1;
+  $params['is_active']['api.default'] = 1;
 }
 /**
  * Delete a relationship 

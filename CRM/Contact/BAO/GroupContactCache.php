@@ -247,7 +247,7 @@ WHERE  id = %1
         $customClass = null;
         if ( $savedSearchID ) {
             require_once 'CRM/Contact/BAO/SavedSearch.php';
-            $ssParams = CRM_Contact_BAO_SavedSearch::getSearchParams($savedSearchID);
+            $ssParams   = CRM_Contact_BAO_SavedSearch::getSearchParams($savedSearchID);
 
             // rectify params to what proximity search expects if there is a value for prox_distance
             // CRM-7021
@@ -278,10 +278,18 @@ WHERE  id = %1
                 $searchSQL   = $customClass->contactIDs( );
                 $idName = 'contact_id';
             } else {
+                $formValues = CRM_Contact_BAO_SavedSearch::getFormValues( $savedSearchID );
+
                 require_once 'CRM/Contact/BAO/Query.php';
+
                 $query = new CRM_Contact_BAO_Query($ssParams, $returnProperties, null,
                                                     false, false, 1,
-                                                    true, true, false );
+                                                    true, true,
+                                                   false,
+                                                   CRM_Utils_Array::value( 'display_relationship_type',
+                                                                           $formValues ),
+                                                   CRM_Utils_Array::value( 'operator',
+                                                                           $formValues, 'AND' ) );
                 $query->_useDistinct = false;
                 $query->_useGroupBy = false;
                 $searchSQL =& $query->searchQuery( 0, 0, null,

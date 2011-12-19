@@ -683,7 +683,9 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                     if ( $field == 'im_provider' && property_exists( $dao, 'provider_id' ) )  {
                         $dao->im_provider = $dao->provider_id;
                     }
+
                     //build row values (data)
+                    $fieldValue = null;
                     if ( property_exists( $dao, $field ) ) {
                         $fieldValue = $dao->$field;
                         // to get phone type from phone type id
@@ -700,16 +702,14 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                                 $viewRoles[] = $participantRoles[$v];
                             }
                             $fieldValue = implode( ',', $viewRoles );
+                        } else if ( $field == 'master_id' ) {
+                            $masterAddressId = null;
+                            if ( isset( $dao->master_id ) ) {
+                                $masterAddressId = $dao->master_id;
+                            }
+                            // get display name of contact that address is shared.
+                            $fieldValue = CRM_Contact_BAO_Contact::getMasterDisplayName( $masterAddressId, $dao->contact_id );
                         }
-                    } else if ( $field == 'master_id' ) {
-                        $masterAddressId = null;
-                        if ( isset( $dao->master_id ) ) {
-                            $masterAddressId = $dao->master_id;
-                        }
-                        // get display name of contact that address is shared.
-                        $fieldValue = CRM_Contact_BAO_Contact::getMasterDisplayName( $masterAddressId, $dao->contact_id );
-                    } else {
-                        $fieldValue = '';
                     }
                 
                     if ( $field == 'id' ) {
@@ -823,7 +823,8 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                                 $row[$field . $relationField] = '';             
                             }
                         }
-                    } else if ( isset( $fieldValue ) && $fieldValue != '' ) {
+                    } else if ( isset( $fieldValue ) &&
+                                $fieldValue != '' ) {
                         //check for custom data
                         if ( $cfID = CRM_Core_BAO_CustomField::getKeyID( $field ) ) {
                             $row[$field] = CRM_Core_BAO_CustomField::getDisplayValue( $fieldValue, $cfID, $query->_options );
@@ -1603,8 +1604,12 @@ LIMIT $offset, $limit
 
                 $componentDetails[] = $row;
             }
-            CRM_Core_Report_Excel::writeCSVFile( self::getExportFileName( 'csv', $exportMode ), $headerRows,
-                                                 $componentDetails, null, $writeHeader );
+
+            CRM_Core_Report_Excel::writeCSVFile( self::getExportFileName( 'csv', $exportMode ),
+                                                 $headerRows,
+                                                 $componentDetails,
+                                                 null,
+                                                 $writeHeader );
             $writeHeader = false;
             $offset += $limit;
         }

@@ -75,6 +75,6 @@ function civicrm_requirements($phase) {
  * Update CiviCRM module weight
  */
 function civicrm_update_7400(&$sandbox) {
-    return array(update_sql("UPDATE {system} SET weight = 100 WHERE name = 'civicrm'"));
+    db_query("UPDATE {system} SET weight = 100 WHERE name = 'civicrm'");
 }
 

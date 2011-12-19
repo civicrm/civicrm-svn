@@ -315,9 +315,18 @@ WHERE     c.id IN ( $contributionIDs )";
         while ( $dao->fetch( ) ) {
             $rows[$dao->contribution_id]['component']   = $dao->participant_id ? 'event' : 'contribute';
             $rows[$dao->contribution_id]['contact']     = $dao->contact_id;
-            $rows[$dao->contribution_id]['membership'][] = $dao->membership_id;
-            $rows[$dao->contribution_id]['participant'] = $dao->participant_id;
-            $rows[$dao->contribution_id]['event']       = $dao->event_id;
+            if ( $dao->membership_id ) {
+                if ( ! array_key_exists('membership', $rows[$dao->contribution_id]) ) {
+                    $rows[$dao->contribution_id]['membership'] = array( );
+                }
+                $rows[$dao->contribution_id]['membership'][] = $dao->membership_id;
+            }
+            if ( $dao->participant_id ) {
+                $rows[$dao->contribution_id]['participant'] = $dao->participant_id;
+            }
+            if ( $dao->event_id ) {
+                $rows[$dao->contribution_id]['event']       = $dao->event_id;
+            }
         }
         return $rows;
     }

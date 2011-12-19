@@ -60,7 +60,7 @@
                </tr>
                </thead>
                {foreach from=$rows item=row}
-                 <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+                 <tr id="row_{$row.id}" class="{if NOT $row.is_active} disabled{/if}">
                      <td><strong>{$row.title}</strong></td>
                      <td>{$row.id}</td>
                      <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>

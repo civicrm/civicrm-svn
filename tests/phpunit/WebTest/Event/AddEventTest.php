@@ -60,6 +60,8 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $streetAddress = "100 Main Street";
       $this->_testAddLocation( $streetAddress );
       
+      $this->_testAddReminder( $eventTitle );
+
       $this->_testAddFees( false, false, $processorName );
       
       // intro text for registration page
@@ -377,9 +379,14 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       // Fill Subject
       $subject = 'subject' . substr( sha1( rand( ) ), 0, 4 );
       $this->type( 'subject', $subject );
-    
+      $this->fillRichTextField("html_message", "This is the test HTML version here!!!",'CKEditor' );
+      
+      $this->type("text_message", "This is the test text version here!!!");
       //click on save
       $this->click( '_qf_ScheduleReminders_upload-bottom' );
-      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("link=Add Reminder");
+       
   }
+
+ 
 }

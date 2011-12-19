@@ -1939,6 +1939,7 @@ class HTML_QuickForm extends HTML_Common
                              'description',
                              'intro',
                              'thankyou_text',
+                             'tf_thankyou_text',
                              'intro_text',
                              'page_text',
                              'body_text',

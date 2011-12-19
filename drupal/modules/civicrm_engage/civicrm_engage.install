@@ -141,7 +141,7 @@ function civcrm_engage_set_autocomplete_options() {
                                                                      true, null, true 
                                                                      );
   $contact_autocomplete_options['phone'] = 1;
-  CRM_Core_BAO_Setting::setValue(
+  CRM_Core_BAO_Setting::setValueOption(
                                  CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                  'contact_autocomplete_options',
                                  $contact_autocomplete_options

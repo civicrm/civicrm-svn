@@ -130,6 +130,14 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
                     } else {
                         $params['auth']     = false;
                     }
+
+                    // set the localhost value, CRM-3153, CRM-9332
+                    $params['localhost'] = $_SERVER['SERVER_NAME'];
+
+                    // also set the timeout value, lets set it to 30 seconds
+                    // CRM-7510, CRM-9332
+                    $params['timeout'] = 30;
+
                     $mailerName = 'smtp';
                 } elseif ($formValues['outBound_option'] == 1) {
                     $subject = "Test for Sendmail settings";

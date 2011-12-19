@@ -315,8 +315,19 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->waitForElementPresent("css=div#contact-dialog-1");
         $this->waitForElementPresent('_qf_Edit_next');
 
-        $this->type('first_name', $fname);
-        $this->type('last_name',  $lname);
+        switch ($type) {
+        case 4:
+            $this->type('first_name', $fname);
+            $this->type('last_name',  $lname);
+            break;
+        case 5:
+            $this->type('organization_name', $fname);
+            break;
+        case 6:
+            $this->type('household_name', $fname);
+            break;
+        }      
+
         $this->type('email-Primary', $email);
         $this->click('_qf_Edit_next');
 

@@ -207,6 +207,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         //get the campaigns.
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaignSummary( $params );
         if ( !empty( $campaigns ) ) {
+            $config = CRM_Core_Config::singleton( );
             $campaignType    = CRM_Campaign_PseudoConstant::campaignType( );
             $campaignStatus  = CRM_Campaign_PseudoConstant::campaignStatus( );
             $properties      = array( 'id', 'name', 'title', 'status_id', 'description', 

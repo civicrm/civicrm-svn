@@ -40,7 +40,6 @@ require_once 'CRM/Core/Selector/API.php';
 require_once 'CRM/Utils/Pager.php';
 require_once 'CRM/Utils/Sort.php';
 
-require_once 'CRM/Contact/BAO/Query.php';
 
 /**
  * This class is used to retrieve and display a range of
@@ -176,6 +175,9 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                          $context = 'search',
                          $compContext = null ) 
     {
+        require_once 'CRM/Contact/BAO/Query.php';
+        require_once 'CRM/Contribute/BAO/Query.php';
+        
         // submitted form values
         $this->_queryParams =& $queryParams;
 
@@ -189,8 +191,12 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         // type of selector
         $this->_action = $action;
 
-        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
-                                                   CRM_Contact_BAO_Query::MODE_CONTRIBUTE );
+        $this->_query = 
+            new CRM_Contact_BAO_Query( $this->_queryParams, 
+                                       CRM_Contribute_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_CONTRIBUTE,
+                                                                                          false ),
+                                       null, false, false,
+                                       CRM_Contact_BAO_Query::MODE_CONTRIBUTE );
         $this->_query->_distinctComponentClause = " civicrm_contribution.id";
         $this->_query->_groupByComponentClause  = " GROUP BY civicrm_contribution.id ";
     }//end of constructor

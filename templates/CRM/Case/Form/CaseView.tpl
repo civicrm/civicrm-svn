@@ -966,6 +966,7 @@ function buildCaseActivities( filterSearch ) {
             "aoColumns"  : columns,
 	    	"bProcessing": true,
             "bJQueryUI": true,
+            "asStripClasses" : [ "odd-row", "even-row" ],
             "sPaginationType": "full_numbers",
             "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
             "bServerSide": true,

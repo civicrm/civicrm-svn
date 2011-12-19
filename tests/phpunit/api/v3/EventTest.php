@@ -461,7 +461,7 @@ class api_v3_EventTest extends CiviUnitTestCase
       $description = "demonstrate use of getfields to interogate api";
       $params = array('version' => 3, 'action' => 'create');
       $result = civicrm_api('event', 'getfields',$params);
-      $this->assertEquals(1, $result['values']['event_title']['api.required']);
+      $this->assertEquals(1, $result['values']['title']['api.required'], 'in line ' . __LINE__);
     }
     function testgetfieldsDelete(){
       $description = "demonstrate use of getfields to interogate api";

@@ -191,7 +191,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
             $this->assign( 'rowDisplayCount', 2 );
         }
         $highlightedFields = array();
-        $requiredFields    = array( 'activity_date_time', 'activity_type_id', 'activity_name', 'target_contact_id','activity_subject' );
+        $requiredFields    = array( 'activity_date_time', 'activity_type_id', 'activity_label', 'target_contact_id','activity_subject' );
         foreach ( $requiredFields as $val ) {
             $highlightedFields[] = $val;
         }
@@ -382,7 +382,10 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
      */
     static function formRule( $fields ) 
     {
-        $errors       = array( );
+        $errors                = array( );
+        // define so we avoid notices below
+        $errors['_qf_default'] = '';
+        
         $fieldMessage = null;
         if (!array_key_exists('savedMapping', $fields)) {
             $importKeys = array();
@@ -422,7 +425,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
                         }
                         
                     } elseif ($field == 'activity_type_id' ) {
-                        if(in_array('activity_name', $importKeys)) {
+                        if(in_array('activity_label', $importKeys)) {
                             continue;
                         } else {
                             $errors['_qf_default'] .= ts('Missing required field: Provide %1 or %2', 
@@ -448,6 +451,9 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
             }
         }
 
+        if ( empty( $errors['_qf_default'] ) ) {
+             unset( $errors['_qf_default'] );
+        }
         if ( !empty($errors) ) {
             if (!empty($errors['saveMappingName'])) {
                 $_flag = 1;
@@ -534,7 +540,6 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
                 $updateMappingFields->mapping_id = $params['mappingId'];
                 $updateMappingFields->column_number = $i;
 
-                list($id, $first, $second) = explode('_', $mapperKeys[$i][0]);
                 $updateMappingFields->name = $mapper[$i];
                 $updateMappingFields->save();                
             }
@@ -554,7 +559,6 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
                 $saveMappingFields->mapping_id = $saveMapping->id;
                 $saveMappingFields->column_number = $i;                             
                 
-                list($id, $first, $second) = explode('_', $mapperKeys[$i][0]);
                 $saveMappingFields->name = $mapper[$i];
                 $saveMappingFields->save();
             }

@@ -1,8 +1,10 @@
 <?php
 /**
  * This class allows to consume the API, either from within a module that knows civicrm already:
+ require_once('api/class/api.php');
  $api = new civicrm_api3();
 or from any code on the same server as civicrm
+  require_once('/your/civi/folder/api/class.api.php');
   $api = new civicrm_api3 (array('conf_path'=> '/your/path/to/your/civicrm/or/joomla/site)); //the path to civicrm.settings.php
 or to query a remote server via the rest api
   $api = new civicrm_api3 (array ('server' => 'http://example.org','api_key'=>'theusersecretkey','key'=>'thesitesecretkey'));
@@ -13,8 +15,8 @@ no matter how initialised and if civicrm is local or remote, you use the class t
 
 so to get the individual contacts
   if ($api->Contact->Get(array('contact_type'=>'Individual','return'=>'sort_name,current_employer')) {
-    echo "\n contacts found " . $api->attr('count');
-    foreach ($api->values() as $c) {
+    echo "\n contacts found " . $api->count; // each key of the result array is an attribute of the api
+    foreach ($api->values as $c) {
        echo "\n".$c->sort_name. " working for ". $c->current_employer;
     }
 
@@ -25,18 +27,20 @@ so to get the individual contacts
 
 or to create an event
   if ($api->Event->Create(array('title'=>'Test','event_type_id' => 1,'is_public' => 1,'start_date' => 19430429))) {
-    echo "created event id:". $api->attr('id');
+    echo "created event id:". $api->id;
   } else {
     echo $api->errorMsg();
   }
 
-To make it easier, the get method can either take an associative array $params, or simply an id
+To make it easier, the Actions can either take for input an associative array $params, or simply an id
 $api->Activity->Get (42);
-
 being the same as:
-
 $api->Activity->Get (array('id'=>42));
 
+you can too get the result like what civicrm_api does, but as an object instead of an array (eg $entity->attribute  instead of $entity['attribute']
+  $result = $api->result;
+
+echo $api;// is the json encoded result
 
  */
 
@@ -82,11 +86,9 @@ class civicrm_api3  {
     }
   }
 
-  public function __get($entity) {
-    //TODO check if it's a valid entity
-    $this->currentEntity = $entity;
-    return $this;
-
+  public function __toString()
+  {
+     return json_encode($this->lastResult);
   }
 
   public function __call($action, $params) {
@@ -113,7 +115,7 @@ class civicrm_api3  {
       $fields .= "&$k=".urlencode($v);
     }
     if (function_exists('curl_init')) {
-      //set the url, number of POST vars, POST data
+      //to make it easier to debug but avoid leaking info, entity&action are the url, the rest is in the POST
       $ch = curl_init();
       curl_setopt($ch,CURLOPT_URL,$query);
       curl_setopt($ch,CURLOPT_POST,count($params)+2);
@@ -124,7 +126,7 @@ class civicrm_api3  {
       $result = curl_exec($ch);
       curl_close($ch);
       return json_decode ($result);
-    } else { // not good, all in get when should be post
+    } else { // not good, all in get when should be in post.
       $result = file_get_contents($query.'&'.$fields);
       return json_decode ($result);
     }
@@ -133,6 +135,9 @@ class civicrm_api3  {
   function call ($entity,$action='Get',$params = array()) {
     if (is_int($params)) 
       $params = array ('id'=> $params);
+    elseif (is_string($params))
+      $params = json_decode ($params);
+
     if (!isset ($params['version']))
       $params['version'] = 3;
     if (!isset ($params['sequential']))
@@ -141,22 +146,17 @@ class civicrm_api3  {
     if (!$this->local) {
       $this->lastResult= $this->remoteCall ($entity,$action,$params);
     } else {
-      $this->ping ();// necessary only when the caller runs a long time (eg a bot)
       // easiest to convert a multi-dimentional array into an object
       $this->lastResult= json_decode ( json_encode (civicrm_api ($entity,$action,$params) ));
     }
-/*    if ($this->lastResult->count == 1 && count($this->lastResult->values)== 1) {
-      $this->lastResult->values = array_shift($this->lastResult->values);
-}
- */
     $this->input=array();//reset the input to be ready for a new call
     if (property_exists ($this->lastResult,'is_error'))
       return !$this->lastResult->is_error;
     return true;// getsingle doesn't have is_error
   }
 
+  //* helper method for long running programs (eg bots)
   function ping () {
-return;
     global $_DB_DATAOBJECT;
     foreach ($_DB_DATAOBJECT['CONNECTIONS'] as &$c) {
       if (!$c->connection->ping()) {
@@ -172,6 +172,7 @@ return;
   function errorMsg () {
     return $this->lastResult->error_message;
   }
+
   function init () {
     CRM_Core_DAO::init( $this->cfg->dsn );
   }
@@ -189,15 +190,43 @@ return;
     } else {
       $this->input[$name] = $value;
     }
+    return $this;
   }
 
   public function is_error() {
     return (property_exists ($this->lastResult,'is_error') && $this->lastResult->is_error);
   }
+
   public function is_set($name) {
     return (isset ($this->lastResult->$name));
   }
 
+/*  public function __set($name, $value)    {
+     echo "Setting '$name' to '$value'\n";
+  }
+ */
+
+  public function __get($name) {
+    //TODO, test if valid entity
+    if (strtolower($name) !== $name) {//cheap and dumb test to differenciate call to $api->Entity->Action & value retrieval
+      $this->currentEntity = $name;
+      return $this;
+    }
+
+    if ($name === 'result')
+      return $this->lastResult;
+    if ($name === 'values')
+      return $this->lastResult->values;
+
+    if (property_exists ($this->lastResult,$name)) 
+      return $this->lastResult->$name;
+
+    $this->currentEntity = $name;
+    return $this;
+}
+
+                       
+  // or use $api->value
   public function values () {
     if (is_array ($this->lastResult))
       return $this->lastResult['values'];
@@ -205,6 +234,7 @@ return;
       return $this->lastResult->values;
   }
 
+  // or use $api->result
   public function result () {
     return $this->lastResult;
   }

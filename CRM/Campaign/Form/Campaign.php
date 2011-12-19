@@ -281,10 +281,10 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $this->addElement('checkbox', 'is_active', ts('Is Active?') );
         
         $this->addButtons(array(
-                                array ('type'      => 'next',
+                                array ('type'      => 'upload',
                                        'name'      => ts('Save'),
                                        'isDefault' => true),
-                                array ('type'      => 'next',
+                                array ('type'      => 'upload',
                                        'name'      => ts('Save and New'),
                                        'subName'   => 'new'),
                                 array ('type'      => 'cancel',
@@ -378,7 +378,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         }
         
         $buttonName = $this->controller->getButtonName( );
-        if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
+        if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Campaign.'));
             $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/add', 'reset=1&action=add' ) );
             
