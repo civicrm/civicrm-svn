@@ -558,21 +558,16 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      */
     function moveAllBelongings( $mainId, $otherId, $migrationInfo )
     {
-        // FIXME: 
-        // $this->_locBlockIds = ??
-        // $this->_qfZeroBug = ??
-        // $this->_locBlockIds
-        // $this->_contactType
-        // for operation use class constant
-
         // preprocess to compute $submitted, $locBlocks, $tableOperations vars.
         // $submitted contains contact table & custom related data.
         // $locBlocks is a format required for location migration.
         // $tableOperations - rel_table related add operations
-        $relTables = CRM_Dedupe_Merger::relTables();
+
+        $qfZeroBug  = 'e8cddb72-a257-11dc-b9cc-0016d3330ee9';
+        $relTables  = CRM_Dedupe_Merger::relTables();
         $moveTables = $locBlocks = $tableOperations = array( );
         foreach ( $migrationInfo as $key => $value ) {
-            if ($value == $this->_qfZeroBug) $value = '0';
+            if ($value == $qfZeroBug) $value = '0';
             if ((in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or 
                  substr($key, 0, 12) == 'move_custom_') and $value != null) {
                 $submitted[substr($key, 5)] = $value;
@@ -602,7 +597,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         }
 
 
-        // migrate location blocks:
+        // **** Do location related migration:
         if ( !empty( $locBlocks ) ) {
             $locComponent = array( 'email'   => 'Email',
                                    'phone'   => 'Phone',
@@ -623,13 +618,13 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 foreach ( $block as $blkCount => $values ) {
                     $locTypeId      = CRM_Utils_Array::value( 'locTypeId', $values, 1 );
                     $operation      = CRM_Utils_Array::value( 'operation', $values, 2 );
-                    $otherBlockId   = CRM_Utils_Array::value( $blkCount,   $this->_locBlockIds['other'][$name] );
+                    $otherBlockId   = CRM_Utils_Array::value( $blkCount,   $migrationInfo['other_info']['loc_block_ids'][$name] );
                     
                     // keep 1-1 mapping for address - loc type.
                     $idKey = $blkCount;
                     if ( $name == 'address' ) $idKey = $locTypeId;  
 
-                    $mainBlockId = CRM_Utils_Array::value( $idKey, $this->_locBlockIds['main'][$name] );
+                    $mainBlockId = CRM_Utils_Array::value( $idKey, $migrationInfo['main_info']['loc_block_ids'][$name] );
                     
                     if ( !$otherBlockId ) continue;
                     
@@ -665,6 +660,14 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             }
         }
 
+        // **** Do tables related migrations
+        if ( !empty( $moveTables ) ) {
+            CRM_Dedupe_Merger::moveContactBelongings( $mainId, $otherId, $moveTables, $tableOperations );
+        }
+        
+        // **** Do contact related migrations
+        CRM_Dedupe_Merger::moveContactBelongings( $mainId, $otherId );
+
         // FIXME: fix gender, prefix and postfix, so they're edible by createProfileContact()
         $names['gender']            = array( 'newName' => 'gender_id',          'groupName' => 'gender' );
         $names['individual_prefix'] = array( 'newName' => 'prefix_id',          'groupName' => 'individual_prefix' );
@@ -675,7 +678,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         CRM_Core_OptionGroup::lookupValues( $submitted, $names, true );
 
         // FIXME: fix custom fields so they're edible by createProfileContact()
-        $cgTree = CRM_Core_BAO_CustomGroup::getTree( $this->_contactType, CRM_Core_DAO::$_nullObject, null, -1 );
+        $cgTree = CRM_Core_BAO_CustomGroup::getTree( $migrationInfo['main_info']['contact_type'], 
+                                                     CRM_Core_DAO::$_nullObject, null, -1      );
         
         $cFields = array( );
         foreach ( $cgTree as $key => $group ) {
@@ -712,7 +716,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     // Merge values from both contacts for multivalue fields, CRM-4385
                     // get the existing custom values from db.
                     require_once 'CRM/Core/BAO/CustomValueTable.php';
-                    $customParams = array( 'entityID' => $this->_cid, $key => true );
+                    $customParams = array( 'entityID' => $mainId, $key => true );
                     $customfieldValues = CRM_Core_BAO_CustomValueTable::getValues( $customParams ); 
                     if ( CRM_Utils_array::value( $key, $customfieldValues ) ) {
                         $existingValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $customfieldValues[$key] );
@@ -763,20 +767,86 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             }
         }
 
-        // compute $moveTables from $migrationInfo.
+        // **** Do file custom fields related migrations
+        // FIXME: move this someplace else (one of the BAOs) after discussing
+        // where to, and whether CRM_Core_BAO_File::delete() shouldn't actually,
+        // like, delete a file...
+        require_once 'CRM/Core/BAO/File.php';
+        require_once 'CRM/Core/DAO/CustomField.php';
+        require_once 'CRM/Core/DAO/CustomGroup.php';
+        require_once 'CRM/Core/DAO/EntityFile.php';
+        require_once 'CRM/Core/Config.php';
 
-        // compute $tableOperations from $migrationInfo.
-   
-        // move contact belongings
-        // CRM_Dedupe_Merger::moveContactBelongings( $mainId, $otherId, $moveTables, $tableOperations );
+        if ( !isset( $customFiles ) ) {
+            $customFiles = array();
+        }
+        foreach ( $customFiles as $customId ) {
+            list( $tableName, $columnName, $groupID ) = CRM_Core_BAO_CustomField::getTableColumnGroup( $customId );
 
-        // move custom fields
+            // get the contact_id -> file_id mapping
+            $fileIds = array();
+            $sql = "SELECT entity_id, {$columnName} AS file_id FROM {$tableName} WHERE entity_id IN ({$mainId}, {$otherId})";
+            $dao = CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+            while ($dao->fetch()) {
+                $fileIds[$dao->entity_id] = $dao->file_id;
+            }
+            $dao->free();
 
-        // delete $otherId
+            // delete the main contact's file
+            if ( !empty($fileIds[$mainId]) ) {
+                CRM_Core_BAO_File::delete($fileIds[$mainId], $mainId, $customId);
+            }
+            
+            // move the other contact's file to main contact
+            $sql = "UPDATE {$tableName} SET {$columnName} = {$fileIds[$otherId]} WHERE entity_id = {$mainId}";
+            CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+            $sql = "UPDATE civicrm_entity_file SET entity_id = {$mainId} WHERE entity_table = '{$tableName}' AND file_id = {$fileIds[$otherId]}";
+            CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+        }
+        
+        // move view only custom fields CRM-5362
+        $viewOnlyCustomFields = array( );
+        foreach ( $submitted as $key => $value ) {
+            $fid = (int) substr($key, 7);
+            if ( array_key_exists( $fid, $cFields ) && 
+                 CRM_Utils_Array::value( 'is_view', $cFields[$fid]['attributes'] ) ) {
+                $viewOnlyCustomFields[$key] = $value;
+            }
+        }
 
-        // update PrevNextCache
+        // special case to set values for view only, CRM-5362
+        if ( !empty( $viewOnlyCustomFields ) ) {
+            require_once 'CRM/Core/BAO/CustomValueTable.php';
+            $viewOnlyCustomFields['entityID'] = $mainId;
+            CRM_Core_BAO_CustomValueTable::setValues( $viewOnlyCustomFields );
+        }
 
-        // update $mainId using createProfileContact if any
+        // **** Delete other contact & update prev-next caching
+        $otherParams = array( 'contact_id' => $otherId,
+                              'id'         => $otherId,
+                              'version'    => 3 );
+        if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) && 
+             CRM_Core_Permission::check( 'delete contacts' ) ) {
+            // if ext id is submitted then set it null for contact to be deleted
+            if ( CRM_Utils_Array::value( 'external_identifier', $submitted ) ) {
+                $query = "UPDATE civicrm_contact SET external_identifier = null WHERE id = {$otherId}";
+                CRM_Core_DAO::executeQuery( $query );
+            }
+            
+            civicrm_api( 'contact', 'delete', $otherParams );
+            CRM_Core_BAO_PrevNextCache::deleteItem( $otherId );
+        }
+/*         else { */
+/*             CRM_Core_Session::setStatus( ts('Do not have sufficient permission to delete duplicate contact.') ); */
+/*         } */
+
+        // **** Update contact related info for the main contact
+        if ( !empty( $submitted ) ) {
+            $submitted['contact_id'] = $mainId;
+            CRM_Contact_BAO_Contact::createProfileContact( $submitted, CRM_Core_DAO::$_nullArray, $mainId );
+        }
+
+        return true;
     }
 }
 
