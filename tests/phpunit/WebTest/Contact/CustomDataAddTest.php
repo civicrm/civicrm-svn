@@ -221,7 +221,6 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
       $this->click("data_type[1]");
       $this->select("data_type[1]", "value=Text");
-
  
       //enter pre help message
       $this->type("help_pre", "this is field pre help");
@@ -263,8 +262,9 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
       $this->type("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]/../following-sibling::td/input", "12345678.98");
       $this->click("_qf_Contact_upload_view");
       $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent("address_1_street_address");
-    
+
+      //verify the money custom field value in the proper format
+      $this->verifyText("xpath=//table//tbody/tr/td[text()='$moneyTextFieldLabel']/following-sibling::td", '12,345,678.98' );
   }  
 }
 ?>
