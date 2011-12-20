@@ -91,10 +91,11 @@ class CRM_Core_Permission_WordPress {
         // for administrators give them all permissions
         if ( current_user_can('super admin') ||
              current_user_can('administrator') ||
-             current_user_can('editor') ) {
+             current_user_can('editor') ||
+             current_user_can('author') ) {
             return true;
         }
-
+        
         static $otherPerms = null;
         if ( ! $otherPerms ) {
             $otherPerms = array( 'access CiviMail subscribe/unsubscribe pages' => 1,
