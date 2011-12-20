@@ -1810,11 +1810,6 @@ class CRM_Contact_BAO_Query
                     $op    = 'LIKE';
                 }
 
-                $type = null;
-                if ( CRM_Utils_Array::value( 'type', $field ) ) {
-                    $type = CRM_Utils_Type::typeToString( $field['type'] );
-                }
-
                 if ( isset( $locType[1] ) &&
                      is_numeric( $locType[1] ) ) {
                     $setTables = false;
@@ -1845,8 +1840,7 @@ class CRM_Contact_BAO_Query
 
                     $this->_where[$grouping][] = self::buildClause( $fieldName,
                                                                     $op,
-                                                                    $value,
-                                                                    $type );
+                                                                    $value );
                     $this->_qill[$grouping][]  = "$field[title] $op $value";
                 }
                 
@@ -4207,7 +4201,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
      * @return where clause for the query
      * @access public
      */
-    function buildClause( $field, $op, $value = null, $dataType = null ) 
+    function buildClause( $field, $op, $value = null, $dataType = null )
     {
         $op = trim( $op );
         $clause = "$field $op";
@@ -4221,7 +4215,16 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         case 'IN':
             if ( isset($dataType) ) {
                 $value = CRM_Utils_Type::escape( $value, "String" );
-                $values = explode ( ',', CRM_Utils_Array::value( 0, explode(')',CRM_Utils_Array::value( 1, explode('(', $value ) ) ) ) );
+                $values = explode ( ',',
+                                    CRM_Utils_Array::value( 0,
+                                                            explode( ')',
+                                                                     CRM_Utils_Array::value( 1,
+                                                                                             explode('(',
+                                                                                                     $value )
+                                                                                             )
+                                                                     )
+                                                            )
+                                    );
                 // supporting multiple values in IN clause
                 $val = array();
                 foreach ( $values as $v ) {
@@ -4235,9 +4238,10 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         default:
             if ( isset($dataType) ) {
                 $value = CRM_Utils_Type::escape( $value, $dataType );
-            }
-            if ( $dataType == 'String' ) {
-                $value = "'" . strtolower( $value ) . "'";
+
+                if ( $dataType == 'String' ) {
+                    $value = "'" . strtolower( $value ) . "'";
+                }
             }
             return "$clause $value";
         }
