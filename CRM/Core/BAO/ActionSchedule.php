@@ -245,11 +245,19 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             case 'event_start_date':
                 $sel4[$entityDateStart] = ts('Event Start Date');
                 break;
+
+	    case 'membership_join_date':
+                $sel4[$entityDateStart] = ts('Membership Join Date');
+                break;
             }
 
             switch ($entityDateEnd) {
             case 'event_end_date':
                 $sel4[$entityDateEnd] = ts('Event End Date');
+                break;
+		
+	    case 'membership_end_date':
+                $sel4[$entityDateStart] = ts('Membership End Date');
                 break;
             }
 
