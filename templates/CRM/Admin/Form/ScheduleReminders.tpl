@@ -245,10 +245,10 @@
 	     cj('#is_recipient_listing').val('');
 	  }
 	  
-	  if (entityMapping[entity] == 'civicrm_participant') {
-	     cj("#recipientLabel").text("Additional Recipient(s)");
+	  if (entityMapping[entity] == 'civicrm_activity') {
+	     cj("#recipientLabel").text("Recipient(s)");
 	  } else {
- 	     cj("#recipientLabel").text("Recipient(s)");
+ 	     cj("#recipientLabel").text("Additional Recipient(s)");
 	  }
      }
      function buildSelect( selectID ) {
