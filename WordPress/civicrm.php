@@ -276,22 +276,23 @@ function civicrm_wp_frontend( ) {
     if ( isset( $_GET['q'] ) ) {
         $args = explode( '/', trim( $_GET['q'] ) );
     }
-   
+    
+    add_filter('get_header', 'civicrm_turn_comments_off');
+    add_filter('get_header', 'civicrm_set_post_blank');
+    
     // check permission
     if ( ! civicrm_check_permission( $args ) ) {
         add_filter('the_content', 'civicrm_set_frontendmessage');
         return;
     }
-
+    
     require_once 'wp-includes/pluggable.php';
-
+    
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
     // but best way is to check other plugin implementation :) 
-   
+    
     add_filter('the_content', 'civicrm_wp_invoke');
-    add_filter('the_title', 'civicrm_set_blank');
-    add_filter('get_header', 'civicrm_turn_comments_off');
 }
 
 function civicrm_set_blank() {
@@ -300,6 +301,13 @@ function civicrm_set_blank() {
 
 function civicrm_set_frontendmessage() {
     return ts('You do not have permission to execute this url.');
+}
+
+function civicrm_set_post_blank(){
+    global $post;
+    $post->post_type = ''; //to hide posted on 
+    $post->post_title = '';//to hide post title
+    add_action('edit_post_link' , 'civicrm_set_blank');//hide the edit link
 }
 
 function civicrm_turn_comments_off() {
@@ -414,12 +422,7 @@ function civicrm_wp_main( ) {
     } else {
         add_action( 'admin_print_styles' , 'civicrm_wp_styles' );
     }
-
     add_action( 'wp_print_scripts', 'civicrm_wp_scripts' );
- 
-    add_filter( 'the_title' , 'civicrm_wp_set_title' );
-    add_filter( 'wp_title'  , 'civicrm_wp_set_title' );
-
 }
 
 function civicrm_wp_in_civicrm( ) {
