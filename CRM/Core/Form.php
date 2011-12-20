@@ -989,8 +989,17 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             // get actual format
             $params = array( 'name' => $attributes['formatType'] );
             $values = array( );
-            CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_PreferencesDate', $params, $values );
-            
+
+            // cache date information
+            static $dateFormat;
+            $key = "dateFormat_". str_replace(' ', '_', $attributes['formatType'] );
+            if ( !CRM_Utils_Array::value( $key, $dateFormat ) ) { 
+                CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_PreferencesDate', $params, $values );
+                $dateFormat[$key] = $values;
+            } else {
+                $values = $dateFormat[$key];
+            }
+
             if ( $values['date_format'] ) {
                 $attributes['format']  = $values['date_format'];
             }

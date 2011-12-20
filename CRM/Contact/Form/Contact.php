@@ -479,7 +479,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         // get the default location type
         require_once 'CRM/Core/BAO/LocationType.php';
-        
         $locationType = CRM_Core_BAO_LocationType::getDefault( );
         
         // unset primary location type
