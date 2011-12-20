@@ -1810,11 +1810,6 @@ class CRM_Contact_BAO_Query
                     $op    = 'LIKE';
                 }
 
-                $type = null;
-                if ( CRM_Utils_Array::value( 'type', $field ) ) {
-                    $type = CRM_Utils_Type::typeToString( $field['type'] );
-                }
-
                 if ( isset( $locType[1] ) &&
                      is_numeric( $locType[1] ) ) {
                     $setTables = false;
@@ -1842,6 +1837,10 @@ class CRM_Contact_BAO_Query
                         }
                     }
 
+                    $type = null;
+                    if ( CRM_Utils_Array::value( 'type', $field ) ) {
+                        $type = CRM_Utils_Type::typeToString( $field['type'] );
+                    }
 
                     $this->_where[$grouping][] = self::buildClause( $fieldName,
                                                                     $op,
