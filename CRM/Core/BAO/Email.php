@@ -61,12 +61,14 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email
 
         // since we're setting bulkmail for 1 of this contact's emails, first reset all their emails to is_bulkmail false
         // (only 1 email address can have is_bulkmail = true)
-        if ( $email->is_bulkmail != 'null' && $params['contact_id']) {
+        if ( $email->is_bulkmail != 'null' && 
+             $params['contact_id']         &&
+             ! self::isMultipleBulkMail( ) ) {
             $sql = "
 UPDATE civicrm_email 
-SET is_bulkmail = 0
-WHERE 
-contact_id = {$params['contact_id']}";
+SET    is_bulkmail = 0
+WHERE  contact_id = {$params['contact_id']}
+";
             CRM_Core_DAO::executeQuery( $sql );
         }
 
@@ -257,6 +259,15 @@ ORDER BY e.is_primary DESC, email_id ASC ";
             }
         }
         return $fromEmailValues;
+    }
+
+    static function isMultipleBulkMail( ) {
+        require_once 'CRM/Core/BAO/Setting.php';
+        return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                              'civimail_multiple_bulk_emails',
+                                              null,
+                                              false );
+        
     }
 }
 

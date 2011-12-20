@@ -69,17 +69,37 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
         if (! $q) {
             return false;
         }
+        require_once 'CRM/Core/BAO/Email.php';
+
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-        $contact = new CRM_Contact_BAO_Contact();
-        $contact->id = $q->contact_id;
-        $contact->is_opt_out = true;
-        $contact->save();
-        
+
+        $now = date('YmdHis');
+        if ( CRM_Core_BAO_Email::isMultipleBulkMail( ) ) {
+            $email = new CRM_Core_BAO_Email( );
+            $email->id        = $q->email_id;
+            if ( $email->find( true ) ) {
+                $sql = "
+UPDATE civicrm_email
+SET    on_hold   = 2,
+       hold_date = %1
+WHERE  email     = %2
+";
+                $sqlParams = array( 1 => array( $now         , 'Timestamp' ),
+                                    2 => array( $email->email, 'String' ) );
+                CRM_Core_DAO::executeQuery( $sql, $sqlParams );
+            }
+        } else {
+            $contact = new CRM_Contact_BAO_Contact();
+            $contact->id = $q->contact_id;
+            $contact->is_opt_out = true;
+            $contact->save();
+        }
+
         $ue = new CRM_Mailing_Event_BAO_Unsubscribe();
         $ue->event_queue_id = $queue_id;
         $ue->org_unsubscribe = 1;
-        $ue->time_stamp = date('YmdHis');
+        $ue->time_stamp = $now;
         $ue->save();
 
         $shParams = array(
