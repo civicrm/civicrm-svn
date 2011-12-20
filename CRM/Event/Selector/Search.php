@@ -188,8 +188,12 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
         // type of selector
         $this->_action = $action;
 
-        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
-                                                    CRM_Contact_BAO_Query::MODE_EVENT );
+        require_once 'CRM/Event/BAO/Query.php';
+        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams,
+                                                   CRM_Event_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_EVENT,
+                                                                                                 false ),
+                                                   null, false, false,
+                                                   CRM_Contact_BAO_Query::MODE_EVENT );
         $this->_query->_distinctComponentClause = " civicrm_participant.id";
         $this->_query->_groupByComponentClause  = " GROUP BY civicrm_participant.id ";
     }//end of constructor

@@ -346,7 +346,8 @@ class CRM_Member_BAO_Query
         return $from;
     }
     
-    static function defaultReturnProperties( $mode ) 
+    static function defaultReturnProperties( $mode,
+                                             $includeCustomFields = true ) 
     {
         $properties = null;
         if ( $mode & CRM_Contact_BAO_Query::MODE_MEMBER ) {
@@ -369,16 +370,18 @@ class CRM_Member_BAO_Query
                                 'member_campaign_id'     => 1
                                 );
 
-            // also get all the custom membership properties
-            require_once "CRM/Core/BAO/CustomField.php";
-            $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Membership');
-            if ( ! empty( $fields ) ) {
-                foreach ( $fields as $name => $dontCare ) {
-                    $properties[$name] = 1;
+            if ( $includeCustomFields ) {
+                // also get all the custom membership properties
+                require_once "CRM/Core/BAO/CustomField.php";
+                $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Membership');
+                if ( ! empty( $fields ) ) {
+                    foreach ( $fields as $name => $dontCare ) {
+                        $properties[$name] = 1;
+                    }
                 }
             }
-            
         }
+
         return $properties;
     }
 

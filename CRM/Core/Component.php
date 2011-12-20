@@ -257,7 +257,8 @@ class CRM_Core_Component
         return $from;
     }
 
-    static function &defaultReturnProperties( $mode ) 
+    static function &defaultReturnProperties( $mode,
+                                              $includeCustomFields = true ) 
     {
         $info = self::_info( );
 
@@ -265,7 +266,7 @@ class CRM_Core_Component
         foreach( $info as $name => $comp ) {
             if( $comp->usesSearch( ) ) {
                 $bqr = $comp->getBAOQueryObject( );
-                $properties = $bqr->defaultReturnProperties( $mode );
+                $properties = $bqr->defaultReturnProperties( $mode, $includeCustomFields );
                 if( $properties ) {
                     return $properties;
                 }

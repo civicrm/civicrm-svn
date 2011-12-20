@@ -506,7 +506,8 @@ class CRM_Event_BAO_Query
         return (isset($this->_qill)) ? $this->_qill : "";
     }
    
-    static function defaultReturnProperties( $mode ) 
+    static function defaultReturnProperties( $mode,
+                                             $includeCustomFields = true ) 
     {
         $properties = null;
         if ( $mode & CRM_Contact_BAO_Query::MODE_EVENT ) {
@@ -536,16 +537,18 @@ class CRM_Event_BAO_Query
                                 'participant_campaign_id'      => 1
                                   );
        
-            // also get all the custom participant properties
-            require_once "CRM/Core/BAO/CustomField.php";
-            $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Participant');
-            if ( ! empty( $fields ) ) {
-                foreach ( $fields as $name => $dontCare ) {
-                    $properties[$name] = 1;
+            if ( $includeCustomFields ) {
+                // also get all the custom participant properties
+                require_once "CRM/Core/BAO/CustomField.php";
+                $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Participant');
+                if ( ! empty( $fields ) ) {
+                    foreach ( $fields as $name => $dontCare ) {
+                        $properties[$name] = 1;
+                    }
                 }
             }
         }
-
+        
         return $properties;
     }
 

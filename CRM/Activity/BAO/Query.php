@@ -569,7 +569,9 @@ class CRM_Activity_BAO_Query
         $showHide->addShow( 'caseActivityForm_show' );
     }
     
-    static function defaultReturnProperties( $mode ) 
+    static function defaultReturnProperties( $mode,
+                                             $includeCustomFields = true ) 
+
     {
         $properties = null;
         if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
@@ -593,15 +595,18 @@ class CRM_Activity_BAO_Query
                                 'activity_engagement_level' => 1,
                             );
             
-            // also get all the custom activity properties
-            require_once "CRM/Core/BAO/CustomField.php";
-            $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Activity');
-            if ( ! empty( $fields ) ) {
-                foreach ( $fields as $name => $dontCare ) {
-                    $properties[$name] = 1;
+            if ( $includeCustomFields ) {
+                // also get all the custom activity properties
+                require_once "CRM/Core/BAO/CustomField.php";
+                $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Activity');
+                if ( ! empty( $fields ) ) {
+                    foreach ( $fields as $name => $dontCare ) {
+                        $properties[$name] = 1;
+                    }
                 }
             }
         }
+
         return $properties;
     }
 

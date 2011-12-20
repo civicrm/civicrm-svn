@@ -3403,10 +3403,10 @@ civicrm_relationship.start_date > {$today}
         	// add activity return properties
         	if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
         		require_once 'CRM/Activity/BAO/Query.php';
-        		self::$_defaultReturnProperties[$mode] = CRM_Activity_BAO_Query::defaultReturnProperties( $mode );
+        		self::$_defaultReturnProperties[$mode] = CRM_Activity_BAO_Query::defaultReturnProperties( $mode, false );
         	} else {
             	require_once 'CRM/Core/Component.php';
-            	self::$_defaultReturnProperties[$mode] = CRM_Core_Component::defaultReturnProperties( $mode );
+            	self::$_defaultReturnProperties[$mode] = CRM_Core_Component::defaultReturnProperties( $mode, false );
             }
 
             if ( empty( self::$_defaultReturnProperties[$mode] ) ) {

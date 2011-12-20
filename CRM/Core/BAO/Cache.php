@@ -226,7 +226,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         // clean up all sessions older than $cacheTimeIntervalDays days
         $cacheTimeIntervalDays  = 2;
 
-        if ( mt_rand( 1, 100000 ) % 1396 == 0 ) {
+        if ( mt_rand( 1, 100000 ) % $cacheCleanUpNumber == 0 ) {
 
             // delete all PrevNext caches
             require_once 'CRM/Core/BAO/PrevNextCache.php';

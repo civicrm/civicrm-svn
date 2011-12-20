@@ -235,7 +235,8 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
         return $from;
     }
     
-    static function defaultReturnProperties( $mode ) 
+    static function defaultReturnProperties( $mode,
+                                             $includeCustomFields = true ) 
     {
         $properties = null;
         if ( $mode & CRM_Contact_BAO_Query::MODE_CAMPAIGN ) {

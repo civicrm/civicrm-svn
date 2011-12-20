@@ -109,7 +109,10 @@ class CRM_Mailing_BAO_Query
         return $from;
     }
 
-    static function defaultReturnProperties( $mode ) {
+    static function defaultReturnProperties( $mode,
+                                             $includeCustomFields = true )
+    {
+
         $properties = null;
         if ( $mode & CRM_Contact_BAO_Query::MODE_MAILING ) {
             $properties = array('mailing_id' => 1);
