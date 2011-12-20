@@ -160,7 +160,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                     $sel4[$entityDateStart] = ts('Membership End Date');
                     break;
                 }
-                
+    
                 switch ($entityRecipient) {
                 case 'activity_contacts':
                     $activityContacts = CRM_Core_PseudoConstant::activityContacts();
@@ -173,6 +173,10 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                     $sel5[$entityRecipient] = $eventContacts + $options;
                     $recipientMapping += CRM_Core_PseudoConstant::eventContacts('name');
                     break;
+
+ 		case NULL:
+                    $sel5[$entityRecipient] = $options;
+                    break; 
                     
                 }    
             }
@@ -273,7 +277,6 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                 $sel5[$id] = $eventContacts + $options;
                 $recipientMapping += CRM_Core_PseudoConstant::eventContacts('name');
                 break;
-                
             }
             
         }
