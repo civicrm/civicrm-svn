@@ -571,6 +571,30 @@ class CRM_Core_SelectValues
         }
         return $tokens;
     }
+
+    /**
+     * different type of Membership Tokens
+     *
+     * @static
+     * return array
+     */
+    static function &membershipTokens( ) 
+    {
+        static $tokens = null;
+
+        if (! $tokens ) {
+            $tokens = array( 
+                            '{membership.id}' => ts('Membership ID'),
+                            '{membership.status}' => ts('Membership Status'),
+			    '{membership.type}' => ts('Membership Type'),
+			    '{membership.start_date}' => ts('Membership Start Date'),
+			    '{membership.join_date}' => ts('Membership Join Date'),
+			    '{membership.end_date}' => ts('Membership End Date'),
+			    '{membership.fee}' => ts('Membership Fee'),
+                          );
+        }
+        return $tokens;
+    }
  
     /**
      * different type of Event Tokens
