@@ -157,7 +157,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                     break;
 
 		case 'membership_end_date':
-                    $sel4[$entityDateStart] = ts('Membership End Date');
+                    $sel4[$entityDateEnd] = ts('Membership End Date');
                     break;
                 }
     
@@ -261,7 +261,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                 break;
 		
 	    case 'membership_end_date':
-                $sel4[$entityDateStart] = ts('Membership End Date');
+                $sel4[$entityDateEnd] = ts('Membership End Date');
                 break;
             }
 
