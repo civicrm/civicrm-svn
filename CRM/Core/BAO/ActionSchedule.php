@@ -277,6 +277,10 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                 $sel5[$id] = $eventContacts + $options;
                 $recipientMapping += CRM_Core_PseudoConstant::eventContacts('name');
                 break;
+
+ 	    case NULL:
+                $sel5[$id] = $options;
+                break;
             }
             
         }
@@ -300,6 +304,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
     {
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
+	require_once 'CRM/Member/PseudoConstant.php';
 
         $activity_type = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
         asort($activity_type);
@@ -307,14 +312,20 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         $event_type = CRM_Event_PseudoConstant::eventType();
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
         $civicrm_participant_status_type = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+	$civicrm_membership_status = CRM_Member_PseudoConstant::membershipStatus();
+	$civicrm_membership_type = CRM_Member_PseudoConstant::membershipType();
+
         krsort($activity_type);
         krsort($activity_status);
         krsort($event_type);
         krsort($civicrm_event);
         krsort($civicrm_participant_status_type);
+	krsort($civicrm_membership_status);
+	krsort($civicrm_membership_type);
 
         $entity = array ( 'civicrm_activity'    => 'Activity',
-                          'civicrm_participant' => 'Event');
+                          'civicrm_participant' => 'Event',
+			  'civicrm_membership'  => 'Member' );
 
         $query ="
 SELECT 
