@@ -432,13 +432,13 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	$params = $this->_submitValues;
 	$contribution_statuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
-        //XXX
         $this->payer_contact_id = self::find_or_create_contact(array(
           'email' => $params['billing_contact_email'],
           'first_name' => $params['billing_first_name'],
           'last_name' => $params['billing_last_name'],
           'is_deleted' => false,
         ));
+
         $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                               $this->payer_contact_id,
                                               'contact_type' );
@@ -457,7 +457,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
             "email-{$this->_bltID}" => 1,
         );
 
-        
+        $params["email-{$this->_bltID}"] = $params['billing_contact_email'];
         CRM_Contact_BAO_Contact::createProfileContact(
             $params,
             $billing_fields,
@@ -618,7 +618,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
         $default_country->find(true);
         $defaults["billing_country_id-{$this->_bltID}"] = $default_country->id;
 
-        if (self::getContactID())
+        if (self::getContactID() && !self::is_administrator())
         {
           $params = array( 'id' => self::getContactID() );
           $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );

@@ -10,7 +10,7 @@ SELECT sub_event.* FROM civicrm_participant main_participant
     JOIN civicrm_event sub_event ON sub_event.parent_event_id = main_participant.event_id
     JOIN civicrm_participant sub_participant ON sub_participant.event_id = sub_event.id
     LEFT JOIN
-        civicrm_option_value slot ON sub_event.slot_label_id = slot.id
+        civicrm_option_value slot ON sub_event.slot_label_id = slot.value
     LEFT JOIN
         civicrm_option_group og ON slot.option_group_id = og.id
   WHERE
