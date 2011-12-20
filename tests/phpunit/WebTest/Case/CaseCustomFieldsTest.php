@@ -230,6 +230,7 @@ class WebTest_Case_CaseCustomFieldsTest extends CiviSeleniumTestCase {
         $this->webtestVerifyTabularData($openCaseChangeData);
         $this->click( "xpath=//div[@class='ui-dialog-buttonset']/button/span[text()='Done']" );
         sleep(2);
+        $this->_testAdvansearchCaseData( $customId, $custFname, $custMname, $custLname ); 
         $this->_testDeleteCustomData( $customGrpId1, $customId );
         
     }
@@ -309,4 +310,22 @@ class WebTest_Case_CaseCustomFieldsTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
     }
     
+    function _testAdvansearchCaseData( $customId, $custFname, $custMname, $custLname ) {
+        $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
+        
+        // search casecontact
+        $this->waitForPageToLoad("30000");
+        $this->waitForElementPresent( "_qf_Advanced_refresh" ); 
+        $this->click("CiviCase");
+        sleep(2);
+        $cusId_1 = 'custom_'.$customId[0];
+        $cusId_2 = 'custom_'.$customId[1];
+        $cusId_3 = 'custom_'.$customId[2];
+        $this->type("{$cusId_1}",$custFname);
+        $this->type("{$cusId_2}",$custMname);
+        $this->type("{$cusId_3}",$custLname);
+        $this->click("_qf_Advanced_refresh");
+        $this->waitForPageToLoad("300000");
+        $this->assertTrue( $this->isTextPresent( '1 Contact' ) );
+    }
 }
