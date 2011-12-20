@@ -72,13 +72,15 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
     static function getSelection( $id = null  ) 
     {
         $mapping  = self::getMapping( $id );
-
         require_once 'CRM/Core/PseudoConstant.php';
         require_once 'CRM/Event/PseudoConstant.php';
+	require_once 'CRM/Member/PseudoConstant.php';
         $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
         $activityStatus = CRM_Core_PseudoConstant::activityStatus();
+	$memberStatus = CRM_Member_PseudoConstant::membershipStatus();
         $event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
         $activityType = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
+	$memberType = CRM_Member_PseudoConstant::membershipType();
         asort($activityType);
         $eventType = CRM_Event_PseudoConstant::eventType();
 
@@ -110,6 +112,9 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             } elseif( $entityValue == 'civicrm_event' &&
                 $value['entity'] == 'civicrm_participant' ) {
                 $val = ts('Event Name');
+            } elseif( $entityValue == 'civicrm_membership_type' &&
+                $value['entity'] == 'civicrm_membership' ) {
+                $val = ts('Membership');
             }
             $sel1[$key] = $val;
             
@@ -125,6 +130,10 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             case 'civicrm_event':
                 $sel2[$key] = $valueLabel + $event;
                 break;
+
+ 	    case 'civicrm_membership_type':
+                $sel2[$key] = $valueLabel + $memberType; 
+                break;
             }
 
             if ( $key == $id ) {
@@ -136,11 +145,19 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                 case 'event_start_date':
                     $sel4[$entityDateStart] = ts('Event Start Date');
                     break;
+
+ 	        case 'membership_join_date':
+                    $sel4[$entityDateStart] = ts('Membership Join Date');
+                    break;
                 }
                 
                 switch ($entityDateEnd) {
                 case 'event_end_date':
                     $sel4[$entityDateEnd] = ts('Event End Date');
+                    break;
+
+		case 'membership_end_date':
+                    $sel4[$entityDateStart] = ts('Membership End Date');
                     break;
                 }
                 
@@ -173,11 +190,16 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                     $vval = $statusLabel + $activityStatus;
                 }
                 break;
-
            
             case 'civicrm_participant_status_type':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
                     $vval = $statusLabel + $participantStatus;
+                }
+                break;
+
+  	    case 'civicrm_membership_status':
+                foreach( $sel3[$id] as $kkey => &$vval ) {
+                    $vval = $statusLabel + $memberStatus;
                 }
                 break;
             }
