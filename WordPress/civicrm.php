@@ -58,7 +58,7 @@ if ( civicrm_wp_in_civicrm() ) {
 define('WP_DEBUG', true);
 
 function civicrm_wp_add_menu_items( ) {
-    add_menu_page( 'CiviCRM', 'CiviCRM', 'edit_posts', 'CiviCRM', 'civicrm_wp_invoke' );
+    add_menu_page( 'CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke' );
     add_options_page( 'CiviCRM Settings', 'CiviCRM Settings', 'manage_options', 'civicrm-settings', 'civicrm_db_settings');
 }
 
@@ -385,8 +385,23 @@ function civicrm_check_permission( $args ) {
     return false;
 }
 
+function wp_civicrm_capability( ){
+    global $wp_roles;
+    if ( !isset( $wp_roles ) ){
+        $wp_roles = new WP_Roles();
+    }
+    
+    //access civicrm page menu link to particular roles
+    $roles = array( 'super admin', 'administrator', 'editor' );
+    foreach( $roles as $role ){
+        if ( !in_array( 'access_civicrm_nav_link', $wp_roles->get_role( $role )->capabilities ) ){
+            $wp_roles->add_cap( $role, 'access_civicrm_nav_link' );
+        }
+    }
+}
 
 function civicrm_wp_main( ) {
+    add_action('init', 'wp_civicrm_capability');
     if ( is_admin() ) {
         add_action( 'admin_menu', 'civicrm_wp_add_menu_items' );
 
@@ -401,7 +416,7 @@ function civicrm_wp_main( ) {
             }
         }
     }
-  
+    
     add_action( 'user_register'   , 'civicrm_user_register'  );
     add_action( 'profile_update'  , 'civicrm_profile_update' );
 
