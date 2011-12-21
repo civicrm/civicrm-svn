@@ -443,6 +443,18 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         return $actionSchedule->save( );
     }
   
+    /**
+     * Takes a bunch of params that are needed to match certain criteria and
+     * retrieves the relevant objects. It also stores all the retrieved
+     * values in the default array
+     *
+     * @param array $params   (reference ) an assoc array of name/value pairs
+     * @param array $values (reference ) an assoc array to hold the flattened values
+     *
+     * @return object CRM_Core_DAO_ActionSchedule object on success, null otherwise
+     * @access public
+     * @static
+     */ 
     static function retrieve( &$params, &$values ) 
     {
         if ( empty ( $params ) ) {
@@ -485,6 +497,15 @@ LEFT JOIN civicrm_action_mapping cam ON (cam.id = cas.mapping_id)
         CRM_Core_Error::fatal( ts( 'Invalid value passed to delete function.' ) );
     }
 
+    /**	
+     * update the is_active flag in the db
+     *
+     * @param int      $id        id of the database record
+     * @param boolean  $is_active value we want to set the is_active field
+     *
+     * @return Object             DAO object on success, null otherwise
+     * @static
+     */
     static function setIsActive( $id, $is_active ) {
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_ActionSchedule', $id, 'is_active', $is_active );
     }

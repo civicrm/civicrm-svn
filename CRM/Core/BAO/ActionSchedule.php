@@ -80,17 +80,21 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
     static function getSelection( $id = null  ) 
     {
         $mapping  = self::getMapping( $id );
+
         require_once 'CRM/Core/PseudoConstant.php';
-        require_once 'CRM/Event/PseudoConstant.php';
-	require_once 'CRM/Member/PseudoConstant.php';
-        $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus();
-	$memberStatus = CRM_Member_PseudoConstant::membershipStatus();
-        $event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
+	$activityStatus = CRM_Core_PseudoConstant::activityStatus(); 
         $activityType = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
-	$memberType = CRM_Member_PseudoConstant::membershipType();
+
+	require_once 'CRM/Event/PseudoConstant.php';
+	$participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+	$event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
+	$eventType = CRM_Event_PseudoConstant::eventType();
+		
+	require_once 'CRM/Member/PseudoConstant.php';
+	$membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
+	$membershipType = CRM_Member_PseudoConstant::membershipType();
+
         asort($activityType);
-        $eventType = CRM_Event_PseudoConstant::eventType();
 
         $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
         $options = array( 'manual' => ts('Choose Recipient(s)'), 
@@ -104,8 +108,8 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         foreach ( $mapping as $value ) {
             $entityValue  = CRM_Utils_Array::value('entity_value', $value );
             $entityStatus = CRM_Utils_Array::value('entity_status', $value );
-           
             $entityRecipient = CRM_Utils_Array::value('entity_recipient', $value );
+
             $valueLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -'));
             $key = CRM_Utils_Array::value('id', $value);
             $entityMapping[$key] = CRM_Utils_Array::value('entity', $value);
@@ -139,7 +143,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                 break;
 
  	    case 'civicrm_membership_type':
-                $sel2[$key] = $valueLabel + $memberType; 
+                $sel2[$key] = $valueLabel + $membershipType; 
                 break;
             }
 
@@ -193,7 +197,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
 
   	    case 'civicrm_membership_status':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
-                    $vval = $statusLabel + $memberStatus;
+                    $vval = $statusLabel + $membershipStatus;
                 }
                 break;
             }
@@ -212,16 +216,13 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
     static function getSelection1( $id = null ) 
     {
         $mapping  = self::getMapping( $id );
-
-        require_once 'CRM/Core/PseudoConstant.php';
-        require_once 'CRM/Event/PseudoConstant.php';
-        $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
         $sel4 = $sel5 = array();
         $options = array( 'manual' => ts('Choose Recipient(s)'), 
                           'group'  => ts('Select a Group')  );
         
         $recipientMapping = array_combine(array_keys($options), array_keys($options));
-        
+
+	require_once 'CRM/Core/PseudoConstant.php';        
         foreach ( $mapping as $value ) {
             $entityRecipient = CRM_Utils_Array::value( 'entity_recipient', $value );
             $key = CRM_Utils_Array::value( 'id', $value );
@@ -250,7 +251,6 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                 $sel5[$id] = $options;
                 break;
             }
-            
         }
        
         return array( 'sel4' => $sel4,
@@ -271,26 +271,19 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
     static function &getList( $namesOnly = false, $entityValue = null, $id = null ) 
     {
         require_once 'CRM/Core/PseudoConstant.php';
-        require_once 'CRM/Event/PseudoConstant.php';
-	require_once 'CRM/Member/PseudoConstant.php';
-
         $activity_type = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
-        asort($activity_type);
         $activity_status = CRM_Core_PseudoConstant::activityStatus();
+
+        require_once 'CRM/Event/PseudoConstant.php';
         $event_type = CRM_Event_PseudoConstant::eventType();
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
         $civicrm_participant_status_type = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+
+	require_once 'CRM/Member/PseudoConstant.php';
 	$civicrm_membership_status = CRM_Member_PseudoConstant::membershipStatus();
 	$civicrm_membership_type = CRM_Member_PseudoConstant::membershipType();
 
-        krsort($activity_type);
-        krsort($activity_status);
-        krsort($event_type);
-        krsort($civicrm_event);
-        krsort($civicrm_participant_status_type);
-	krsort($civicrm_membership_status);
-	krsort($civicrm_membership_type);
-
+        asort($activity_type);
         $entity = array ( 'civicrm_activity'    => 'Activity',
                           'civicrm_participant' => 'Event',
 			  'civicrm_membership'  => 'Member' );
@@ -574,7 +567,6 @@ WHERE   cas.entity_value = $id AND
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
         $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
         
-        require_once 'CRM/Core/DAO/ActionMapping.php';
         $mapping = new CRM_Core_DAO_ActionMapping( );
         $mapping->id = $mappingID;
         $mapping->find( true );
@@ -683,7 +675,6 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         $actionSchedule->find( );
 
         while ( $actionSchedule->fetch( ) ) {
-            require_once 'CRM/Core/DAO/ActionMapping.php';
             $mapping = new CRM_Core_DAO_ActionMapping( );
             $mapping->id = $mappingID;
             $mapping->find( true );

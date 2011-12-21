@@ -1738,8 +1738,7 @@ ORDER BY name";
      *
      * @access public
      * @static
-     *
-     * @param boolean $all - get All activity Contacts - default is to get only active ones.
+     * @param string $column db column name/label.
      *
      * @return array - array reference of all  activity Contacts
      *
@@ -1760,8 +1759,7 @@ ORDER BY name";
      *
      * @access public
      * @static
-     *
-     * @param boolean $all - get All event Contacts - default is to get only active ones.
+     * @param string $column db column name/label.
      *
      * @return array - array reference of all  event Contacts
      *
