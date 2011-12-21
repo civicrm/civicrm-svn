@@ -66,9 +66,17 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         $_action_mapping = $mapping;
 
         return $mapping;
-    }
-
-
+     }
+    
+    /**
+     * Retrieve list of selections/drop downs for Scheduled Reminder form
+     *
+     * @param bool    $id    mapping id 
+     *
+     * @return array  associated array of all the drop downs in the form
+     * @static
+     * @access public
+     */
     static function getSelection( $id = null  ) 
     {
         $mapping  = self::getMapping( $id );
@@ -99,8 +107,8 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
            
             $entityRecipient = CRM_Utils_Array::value('entity_recipient', $value );
             $valueLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -'));
-            $key = $value['id'];
-            $entityMapping[$key] = $value['entity'];
+            $key = CRM_Utils_Array::value('id', $value);
+            $entityMapping[$key] = CRM_Utils_Array::value('entity', $value);
                             
             if( $entityValue == 'activity_type' &&
                 $value['entity'] == 'civicrm_activity' ) {
@@ -166,9 +174,9 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         $sel3 = $sel2;
 
         foreach ( $mapping as $value ) {
-            $entityStatus = $value['entity_status'];
+            $entityStatus = CRM_Utils_Array::value('entity_status', $value);
             $statusLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_status_label', $value) ) .' -'));
-            $id = $value['id'];
+            $id =  CRM_Utils_Array::value('id', $value);
                       
             switch ($entityStatus) {
             case 'activity_status':

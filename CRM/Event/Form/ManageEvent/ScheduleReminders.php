@@ -39,7 +39,7 @@ require_once 'CRM/Event/Form/ManageEvent.php';
 require_once 'CRM/Core/BAO/ActionSchedule.php';
 
 /**
- * This class generates form components for processing Event  
+ * This class generates form components for scheduling reminders for Event  
  * 
  */
 class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_ManageEvent
@@ -208,12 +208,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
             $errors['subject'] = ts('Subject is a required field.');
         }
 
-        // if ( ( CRM_Utils_Array::value( 'recipient', $fields ) == 1 ||
-        //        CRM_Utils_Array::value( 'recipient', $fields ) == 2 ) && 
-        //        CRM_Utils_System::isNull( $fields['recipient_listing'] ) ) {
-        //     $errors['recipient_listing'] = ts('Recipient Listing is a required field.');
-        // }
-
         if ( !CRM_Utils_System::isNull( $fields['absolute_date'] ) ) {
             if (CRM_Utils_Date::format( CRM_Utils_Date::processDate( $fields['absolute_date'], null ) ) < CRM_Utils_Date::format(date('YmdHi00')) ) {
                 $errors['absolute_date'] = ts('Absolute date cannot be earlier than the current time.');
@@ -305,10 +299,8 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
             $params['end_frequency_interval'] = 'null';
             $params['end_action'] = 'null';
             $params['end_date'] = 'null';
-        }
-        
-        
-        $params['name']   = CRM_Utils_String::munge($params['title'], '_', 64 );
+        }        
+        $params['name'] = CRM_Utils_String::munge($params['title'], '_', 64 );
         
         $composeFields = array ( 'template', 'saveTemplate',
                                  'updateTemplate', 'saveTemplateName' );
