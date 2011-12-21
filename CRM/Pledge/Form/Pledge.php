@@ -348,9 +348,9 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         $js =  array( 'onblur'  => "calculatedPaymentAmount( );",
                       'onkeyup' => "calculatedPaymentAmount( );");
         
-        $element =& $this->add( 'text', 'amount', ts('Total Pledge Amount'),
-                                array_merge( $attributes['pledge_amount'], $js ), true );
-        $this->addRule( 'amount', ts('Please enter a valid monetary amount.'), 'money');
+        $element = $this->addMoney( 'amount', ts('Total Pledge Amount'), true, 
+		   		    array_merge( $attributes['pledge_amount'],$js ), true );
+
         if ( $this->_id && 
              !$this->_isPending ) {
             $element->freeze( );
