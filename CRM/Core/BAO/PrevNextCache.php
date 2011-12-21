@@ -118,6 +118,25 @@ WHERE  cacheKey     = %3 AND
         CRM_Core_DAO::executeQuery( $sql, $params );
     }
 
+    function deletePair( $id1, $id2, $cacheKey = null, $isViceVersa = false, $entityTable = 'civicrm_contact' )
+    {
+        $sql = "DELETE FROM civicrm_prevnext_cache WHERE  entity_table = %1";
+        $params = array( 1 => array( $entityTable, 'String' ) );
+
+        $pair = !$isViceVersa ? "entity_id1 = %2 AND entity_id2 = %3" : 
+            "(entity_id1 = %2 AND entity_id2 = %3) OR (entity_id1 = %3 AND entity_id2 = %2)";
+        $sql .= " AND ( {$pair} )";
+        $params[2] = array( $id1, 'Integer' );
+        $params[3] = array( $id2, 'Integer' );
+        
+        if ( isset( $cacheKey ) ) {
+            $sql .= " AND cacheKey LIKE %4";
+            $params[4] = array( "{$cacheKey}%", 'String' );
+        }
+
+        CRM_Core_DAO::executeQuery( $sql, $params );
+    }
+
     function retrieve( $cacheKey, $join = null, $where = null, $offset = 0, $rowCount = 0 ) 
     {
         $query = "
