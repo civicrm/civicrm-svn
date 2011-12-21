@@ -96,8 +96,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         foreach ( $mapping as $value ) {
             $entityValue  = CRM_Utils_Array::value('entity_value', $value );
             $entityStatus = CRM_Utils_Array::value('entity_status', $value );
-            $entityDateStart = CRM_Utils_Array::value('entity_date_start', $value );
-            $entityDateEnd = CRM_Utils_Array::value('entity_date_end', $value );
+           
             $entityRecipient = CRM_Utils_Array::value('entity_recipient', $value );
             $valueLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -'));
             $key = $value['id'];
@@ -137,30 +136,13 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             }
 
             if ( $key == $id ) {
-                switch ($entityDateStart) {
-                case 'activity_date_time':
-                    $sel4[$entityDateStart] = ts('Activity Date Time');
-                    break;
-                    
-                case 'event_start_date':
-                    $sel4[$entityDateStart] = ts('Event Start Date');
-                    break;
-
- 	        case 'membership_join_date':
-                    $sel4[$entityDateStart] = ts('Membership Join Date');
-                    break;
-                }
-                
-                switch ($entityDateEnd) {
-                case 'event_end_date':
-                    $sel4[$entityDateEnd] = ts('Event End Date');
-                    break;
-
-		case 'membership_end_date':
-                    $sel4[$entityDateEnd] = ts('Membership End Date');
-                    break;
-                }
-    
+	        if ( $startDate = CRM_Utils_Array::value( 'entity_date_start', $value ) ) {
+	    	   $sel4[$startDate] = ucwords( str_replace( '_', ' ', $startDate ) ); 
+		}
+		if ( $endDate = CRM_Utils_Array::value( 'entity_date_end', $value ) ) {
+		   $sel4[$endDate] = ucwords( str_replace( '_', ' ', $endDate ) );
+                } 
+  
                 switch ($entityRecipient) {
                 case 'activity_contacts':
                     $activityContacts = CRM_Core_PseudoConstant::activityContacts();
@@ -219,8 +201,6 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                      ); 
     }
 
-
-
     static function getSelection1( $id = null ) 
     {
         $mapping  = self::getMapping( $id );
@@ -235,36 +215,16 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         $recipientMapping = array_combine(array_keys($options), array_keys($options));
         
         foreach ( $mapping as $value ) {
+            $entityRecipient = CRM_Utils_Array::value( 'entity_recipient', $value );
+            $key = CRM_Utils_Array::value( 'id', $value );
 
-            $entityDateStart = $value['entity_date_start'];
-            $entityDateEnd = $value['entity_date_end'];
-            $entityRecipient = $value['entity_recipient'];
-            $key = $value['id'];
-
-            switch ($entityDateStart) {
-            case 'activity_date_time':
-                $sel4[$entityDateStart] = ts('Activity Date Time');
-                break;
-
-            case 'event_start_date':
-                $sel4[$entityDateStart] = ts('Event Start Date');
-                break;
-
-	    case 'membership_join_date':
-                $sel4[$entityDateStart] = ts('Membership Join Date');
-                break;
-            }
-
-            switch ($entityDateEnd) {
-            case 'event_end_date':
-                $sel4[$entityDateEnd] = ts('Event End Date');
-                break;
-		
-	    case 'membership_end_date':
-                $sel4[$entityDateEnd] = ts('Membership End Date');
-                break;
-            }
-
+	    if ( $startDate = CRM_Utils_Array::value( 'entity_date_start', $value ) ) {
+	       $sel4[$startDate] = ucwords( str_replace( '_', ' ', $startDate ) ); 
+	    }
+	    if ( $endDate = CRM_Utils_Array::value( 'entity_date_end', $value ) ) {
+	       $sel4[$endDate] = ucwords( str_replace( '_', ' ', $endDate ) );
+            } 
+  
             switch ($entityRecipient) {
             case 'activity_contacts':
                 $activityContacts = CRM_Core_PseudoConstant::activityContacts();
