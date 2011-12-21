@@ -558,11 +558,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         // moveAllBelongings( $mainId, $otherId, $migrationInfo );
     }
 
-    function getRowsElementsInfo( $mainId, $otherId )
+    function getRowsElementsAndInfo( $mainId, $otherId )
     { 
         $qfZeroBug   = 'e8cddb72-a257-11dc-b9cc-0016d3330ee9';
         $mainParams  = array( 'contact_id' => $mainId,  'return.display_name' => 1, 'return.contact_sub_type' => 1 ); 
         $otherParams = array( 'contact_id' => $otherId, 'return.display_name' => 1, 'return.contact_sub_type' => 1 );
+        $mainParams['version'] = $otherParams['version'] = 3;
 
         // FIXME: check if this is reqd any more with api v3
         foreach (CRM_Dedupe_Merger::$validFields as $field) {
@@ -783,10 +784,10 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         }
 
         // handle custom fields
-        $mainTree  = CRM_Core_BAO_CustomGroup::getTree($main['contact_type'], $this, $mainId, -1,
-                                                       CRM_Utils_Array::value('contact_sub_type', $main));
-        $otherTree = CRM_Core_BAO_CustomGroup::getTree($main['contact_type'], $this, $otherId, -1,
-                                                       CRM_Utils_Array::value('contact_sub_type', $other));
+        $mainTree  = CRM_Core_BAO_CustomGroup::getTree( $main['contact_type'], CRM_Core_DAO::$_nullObject, $mainId, -1,
+                                                        CRM_Utils_Array::value('contact_sub_type', $main) );
+        $otherTree = CRM_Core_BAO_CustomGroup::getTree( $main['contact_type'], CRM_Core_DAO::$_nullObject, $otherId, -1,
+                                                        CRM_Utils_Array::value('contact_sub_type', $other) );
         if (!isset($diffs['custom'])) $diffs['custom'] = array();
 
         foreach ($otherTree as $gid => $group) {
@@ -811,7 +812,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                         foreach ( $otherTree[$gid]['fields'][$fid]['customValue'] as $valueId => $values ) {
                             $rows["move_custom_$fid"]['other'] = CRM_Core_BAO_CustomGroup::formatCustomValues( $values,
                                                                                                                $field, true);
-                            $value = $values['data'] ? $values['data'] : $this->_qfZeroBug;
+                            $value = $values['data'] ? $values['data'] : $qfZeroBug;
                         }
                     }
                     $rows["move_custom_$fid"]['title'] = $field['label'];
@@ -821,12 +822,14 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             }
         }
 
-        return array( 'rows'             => $rows,
-                      'elements'         => $elements,
-                      'relTableElements' => $relTableElements,
-                      'mainLocAddress'   => $mainLocAddress,
-                      'locBlockIds'      => $locBlockIds,
-                      'relTables'        => $relTables );
+        return array( 'rows'               => $rows,
+                      'elements'           => $elements,
+                      'rel_table_elements' => $relTableElements,
+                      'main_loc_address'   => $mainLocAddress,
+                      'loc_block_ids'      => $locBlockIds,
+                      'rel_tables'         => $relTables,
+                      'main_details'       => $main,
+                      'other_details'      => $other );
     }
 
     /**

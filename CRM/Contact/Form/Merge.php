@@ -185,29 +185,14 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Core_Error::statusBounce( $message );
         }
         
-        $diffs = CRM_Dedupe_Merger::findDifferences($cid, $oid);
-                
-        $mainParams  = array( 'contact_id' => $cid, 'return.display_name' => 1, 'return.contact_sub_type' => 1 ); 
-        $otherParams = array( 'contact_id' => $oid, 'return.display_name' => 1, 'return.contact_sub_type' => 1 );
+        $rowsElementsAndInfo = CRM_Dedupe_Merger::getRowsElementsAndInfo( $cid, $oid );
+        $main  =& $rowsElementsAndInfo['main_details'];
+        $other =& $rowsElementsAndInfo['other_details'];
 
-        $mainParams['version'] = $otherParams['version'] = 3;
-
-        // API 2 has to have the requested fields spelt-out for it
-        foreach (CRM_Dedupe_Merger::$validFields as $field) {
-            $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
-        }
-
-        $main  = civicrm_api( 'contact', 'get', $mainParams );
-                
-        //CRM-4524
-        $main  = reset( $main['values'] );
         if ( $main['contact_id'] != $cid ) {
             CRM_Core_Error::fatal( ts( 'The main contact record does not exist' ) );
         }
 
-        $other = civicrm_api( 'contact', 'get', $otherParams );
-        //CRM-4524
-        $other = reset( $other['values'] );
         if ( $other['contact_id'] != $oid ) {
             CRM_Core_Error::fatal( ts( 'The other contact record does not exist' ) );
         }
@@ -216,11 +201,13 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( null, true, '' );
 
         $this->assign('contact_type', $main['contact_type']);
-        if(isset($main['contact_sub_type'])) {
-            $this->assign('main_contact_subtype',  CRM_Utils_Array::value( 'contact_sub_type', $subtypes[$main['contact_sub_type']] ) );
+        if( isset($main['contact_sub_type']) ) {
+            $this->assign('main_contact_subtype',  
+                          CRM_Utils_Array::value( 'contact_sub_type', $subtypes[$main['contact_sub_type']] ) );
         }
-        if(isset($other['contact_sub_type'])) {
-            $this->assign('other_contact_subtype', CRM_Utils_Array::value( 'contact_sub_type', $subtypes[$other['contact_sub_type']] ) );
+        if( isset($other['contact_sub_type']) ) {
+            $this->assign('other_contact_subtype', 
+                          CRM_Utils_Array::value( 'contact_sub_type', $subtypes[$other['contact_sub_type']] ) );
         }
         $this->assign('main_name',    $main['display_name']);
         $this->assign('other_name',   $other['display_name']);
@@ -233,239 +220,28 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->_contactType = $main['contact_type'];
         $this->addElement('checkbox', 'toggleSelect', null, null, array('onclick' => "return toggleCheckboxVals('move_',this);"));
 
-        require_once 'CRM/Contact/DAO/Contact.php';
-        $fields = CRM_Contact_DAO_Contact::fields();
+        $this->assign( 'mainLocAddress', json_encode( $rowsElementsAndInfo['main_loc_address'] ) );        
+        $this->assign( 'rows', $rowsElementsAndInfo['rows'] );
 
-        // FIXME: there must be a better way
-        foreach (array('main', 'other') as $moniker) {
-            $contact =& $$moniker;
-            $specialValues[$moniker] = array('preferred_communication_method' => CRM_Utils_array::value('preferred_communication_method', $contact));
-            $names = array('preferred_communication_method' => array('newName'   => 'preferred_communication_method_display',
-                                                                     'groupName' => 'preferred_communication_method'));
-            CRM_Core_OptionGroup::lookupValues($specialValues[$moniker], $names);
-        }
-        foreach ( CRM_Core_OptionValue::getFields() as $field => $params ) {
-            $fields[$field]['title'] = $params['title'];
-        }
+        $this->_locBlockIds = $rowsElementsAndInfo['loc_block_ids'];
 
-        if (!isset($diffs['contact'])) $diffs['contact'] = array();
-        foreach ($diffs['contact'] as $field) {
-            foreach (array('main', 'other') as $moniker) {
-                $contact =& $$moniker;
-                $value = CRM_Utils_Array::value( $field, $contact );
-                $label = isset( $specialValues[$moniker][$field] ) ? $specialValues[$moniker]["{$field}_display"] : $value;
-                if ( CRM_Utils_Array::value( 'type', $fields[$field] ) && $fields[$field]['type'] == CRM_Utils_Type::T_DATE ) {
-                    if ( $value ) {
-                        $value = str_replace( '-', '', $value );
-                        $label = CRM_Utils_Date::customFormat( $label );
-                    } else {
-                        $value = "null";
-                    }
-                } elseif ( CRM_Utils_Array::value( 'type', $fields[$field] ) && $fields[$field]['type'] == CRM_Utils_Type::T_BOOLEAN ) {
-                    if ( $label === '0' ) {
-                        $label = ts('[ ]');
-                    }
-                    if ( $label === '1' ) {
-                        $label = ts('[x]');
-                    }
-                }
-                $rows["move_$field"][$moniker] = $label;
-                if ( $moniker == 'other' ) {
-                    if ( $value === null ) {
-                        $value = 'null';
-                    }
-                    if ( $value === 0 or $value === '0' ) {
-                        $value = $this->_qfZeroBug;
-                    }
-                    $this->addElement( 'advcheckbox', "move_$field", null, null, null, $value );
-                }
-            }
-            $rows["move_$field"]['title'] = $fields[$field]['title'];
-        }
-        
-        // handle location blocks.
-        $locationBlocks = array( 'email', 'phone', 'address' );
-        require_once 'CRM/Utils/Address.php';
-        
-        foreach ( $locationBlocks as $block ) {
-            foreach ( array( 'main', 'other' ) as $locBlocks ) {
-                $cnt       = 1;
-                $blockName = "{$locBlocks}Params";
-                $values    = civicrm_api( $block, 'get', $$blockName );
-                $count     = $values['count'];
-                if ( $count ) {
-                    if ( $count > $cnt ) {
-                        foreach ( $values['values'] as $value ) {
-                            if ($block =='address' ) {
-                                CRM_Core_BAO_Address::fixAddress( $value);
-                                $display = CRM_Utils_Address::format($value);
-                                $locations[$locBlocks][$block][$cnt] = $value;
-                                $locations[$locBlocks][$block][$cnt]['display'] = $display;
-                                
-                            } else {
-                                $locations[$locBlocks][$block][$cnt] = $value;
-                            }
-
-                            $cnt++;
-                        }
-                    } else {
-                        $id = $values['id'];
-                            if ($block =='address' ) {
-                                CRM_Core_BAO_Address::fixAddress( $values['values'][$id]);
-                                $display = CRM_Utils_Address::format($values['values'][$id]);
-                                $locations[$locBlocks][$block][$cnt] = $values['values'][$id];
-                                $locations[$locBlocks][$block][$cnt]['display'] = $display;
-                                
-                            } else {
-                                $locations[$locBlocks][$block][$cnt] = $values['values'][$id];
-                            }
-                    }
-                }
-            }
+        // add elements
+        foreach ( $rowsElementsAndInfo['elements'] as $element ) {
+            $this->addElement( $element[0], 
+                               $element[1], 
+                               array_key_exists('2', $element) ? $element[2] : null, 
+                               array_key_exists('3', $element) ? $element[3] : null, 
+                               array_key_exists('4', $element) ? $element[4] : null, 
+                               array_key_exists('5', $element) ? $element[5] : null );
         }
 
-        $allLocationTypes = CRM_Core_PseudoConstant::locationType( );
-        
-        $mainLocAddress = array();
-        foreach ( array( 'Email', 'Phone', 'IM', 'OpenID', 'Address' ) as $block ) {
-            $name = strtolower( $block );
-            foreach ( array('main', 'other') as $moniker ) {
-                $blockValue = CRM_Utils_Array::value( $name, $locations[$moniker], array( ) );
-                
-                if ( empty( $blockValue ) ) {
-                    $locValue[$moniker][$name] = 0;
-                    $locLabel[$moniker][$name] = $locTypes[$moniker][$name] = array( );
-                } else {
-                    $locValue[$moniker][$name] = true; 
-                    foreach ( $blockValue as $count => $blkValues ) {
-                        $fldName = $name;
-                        $locTypeId = $blkValues['location_type_id'];
-                        if ( $name == 'im' ) $fldName = 'name';
-                        if ( $name == 'address' ) $fldName = 'display';
-                        $locLabel[$moniker][$name][$count] = CRM_Utils_Array::value($fldName, 
-                                                                                    $blkValues);
-                        $locTypes[$moniker][$name][$count] = $locTypeId;
-                        if ( $moniker == 'main' && $name == 'address' ) {
-                            $mainLocAddress["main_$locTypeId"] = CRM_Utils_Array::value($fldName, 
-                                                                                        $blkValues);
-                            $this->_locBlockIds['main']['address'][$locTypeId] = $blkValues['id'];
-                        } else {
-                            $this->_locBlockIds[$moniker][$name][$count] = $blkValues['id'];
-                        }
-                    }
-                }
-            }
-            
-            if ( $locValue['other'][$name] != 0 ) {
-                foreach ( $locLabel['other'][$name] as $count => $value ) {
-                    $locTypeId = $locTypes['other'][$name][$count];
-                    $rows["move_location_{$name}_$count"]['other'] = $value;
-                    $rows["move_location_{$name}_$count"]['main']  = CRM_Utils_Array::value( $count, 
-                                                                                             $locLabel['main'][$name] );
-                    $rows["move_location_{$name}_$count"]['title'] = ts( '%1:%2:%3',
-                                                                         array( 1 => $block, 
-                                                                                2 => $count, 
-                                                                                3 => $allLocationTypes[$locTypeId] ) );
-                    
-                    $this->addElement( 'advcheckbox', "move_location_{$name}_{$count}" );
-                    
-                    // make sure default location type is always on top
-                    $mainLocTypeId  = CRM_Utils_Array::value( $count, $locTypes['main'][$name], $locTypeId );
-                    $locTypeValues  = $allLocationTypes;
-                    $defaultLocType = array( $mainLocTypeId => $locTypeValues[$mainLocTypeId] );
-                    unset($locTypeValues[$mainLocTypeId]);
-                    
-                    // keep 1-1 mapping for address - location type.
-                    $js = null;
-                    if ( $name == 'address' && !empty( $mainLocAddress ) ) {
-                        $js = array( 'onChange' => "mergeAddress( this, $count );" );
-                    }
-                    
-                    $this->addElement( 'select', "location[{$name}][$count][locTypeId]", null, 
-                                       $defaultLocType + $locTypeValues, $js );
-                    
-                    if ( $name != 'address' ) {
-                        $this->addElement( 'advcheckbox', "location[{$name}][$count][operation]", null, ts('add new') );
-                    }
-                }
-            }
+        // add related table elements
+        foreach ( $rowsElementsAndInfo['rel_table_elements'] as $relTableElement ) {
+            $element = $this->addElement( $relTableElement[0], $relTableElement[1] );
+            $element->setChecked(true);
         }
-        $this->assign( 'mainLocAddress', json_encode( $mainLocAddress ) );        
-        
-        // handle custom fields
-        $mainTree  = CRM_Core_BAO_CustomGroup::getTree($this->_contactType, $this, $this->_cid, -1,CRM_Utils_Array::value('contact_sub_type', $main));
-        $otherTree = CRM_Core_BAO_CustomGroup::getTree($this->_contactType, $this, $this->_oid, -1,CRM_Utils_Array::value('contact_sub_type', $other));
-        if (!isset($diffs['custom'])) $diffs['custom'] = array();
-        foreach ($otherTree as $gid => $group) {
-            $foundField = false;
-            if ( ! isset( $group['fields'] ) ) {
-                continue;
-            }
 
-            foreach ($group['fields'] as $fid => $field) {
-                if (in_array($fid, $diffs['custom'])) {
-                    if (!$foundField) {
-                        $rows["custom_group_$gid"]['title'] = $group['title'];
-                        $foundField = true;
-                    }
-                    if ( is_array( $mainTree[$gid]['fields'][$fid]['customValue'] ) ) {
-                        foreach ( $mainTree[$gid]['fields'][$fid]['customValue'] as $valueId => $values ) {
-                            $rows["move_custom_$fid"]['main']  = CRM_Core_BAO_CustomGroup::formatCustomValues( $values,
-                                                                                                               $field, true);
-                        }
-                    }
-                    if ( is_array( $otherTree[$gid]['fields'][$fid]['customValue'] ) ) {
-                        foreach ( $otherTree[$gid]['fields'][$fid]['customValue'] as $valueId => $values ) {
-                            $rows["move_custom_$fid"]['other'] = CRM_Core_BAO_CustomGroup::formatCustomValues( $values,
-                                                                                                               $field, true);
-                            $value = $values['data'] ? $values['data'] : $this->_qfZeroBug;
-                        }
-                    }
-                    $rows["move_custom_$fid"]['title'] = $field['label'];
-                    
-                    $this->addElement('advcheckbox', "move_custom_$fid", null, null, null, $value);
-                }
-            }
-        }
-        
-        $this->assign('rows', $rows);
-        
-        // add the related tables and unset the ones that don't sport any of the duplicate contact's info
-        $relTables = CRM_Dedupe_Merger::relTables();
-        $activeRelTables = CRM_Dedupe_Merger::getActiveRelTables($oid);
-        $activeMainRelTables = CRM_Dedupe_Merger::getActiveRelTables($cid);
-        foreach ($relTables as $name => $null) {
-            if ( !in_array( $name, $activeRelTables ) &&  
-                 !( ( $name == 'rel_table_users' ) && in_array( $name, $activeMainRelTables ) ) ) {
-                unset($relTables[$name]);
-                continue;
-            }
-            $el = $this->addElement('checkbox', "move_$name");
-            $el->setChecked (true);
-            $relTables[$name]['main_url']  = str_replace('$cid', $cid, $relTables[$name]['url']);
-            $relTables[$name]['other_url'] = str_replace('$cid', $oid, $relTables[$name]['url']);
-            if ( $name == 'rel_table_users' ) {
-                $relTables[$name]['main_url']    = str_replace('%ufid', $mainUfId,  $relTables[$name]['url']);
-                $relTables[$name]['other_url']   = str_replace('%ufid', $otherUfId, $relTables[$name]['url']);
-                $find = array( '$ufid', '$ufname');
-                if($mainUser) {
-                    $replace = array( $mainUfId, $mainUser->name );
-                    $relTables[$name]['main_title']  = str_replace( $find, $replace, $relTables[$name]['title']);
-                }
-                if($otherUser) {
-                    $replace = array( $otherUfId, $otherUser->name );
-                    $relTables[$name]['other_title'] = str_replace( $find, $replace, $relTables[$name]['title']);
-                }
-            }
-            if ( $name == 'rel_table_memberships' ) {
-                $this->addElement('checkbox', "operation[move_{$name}][add]", null, ts('add new'));
-            }
-        }
-        foreach ($relTables as $name => $null) {
-            $relTables["move_$name"] = $relTables[$name];
-            unset($relTables[$name]);
-        }
-        $this->assign('rel_tables', $relTables);
+        $this->assign( 'rel_tables', $rowsElementsAndInfo['rel_tables'] );
         $this->assign( 'userContextURL', $session->readUserContext( ) );
     }
     
