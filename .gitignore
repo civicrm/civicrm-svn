@@ -92,7 +92,6 @@ civicrm-version.php
 civicrm-version.txt
 civicrm.config.php
 install/langs.php
-l10n
 packages/.channels
 packages/.depdb
 packages/.depdblock
