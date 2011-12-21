@@ -510,7 +510,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
         $mapMask = $mask & 4095; // mask value to hide map link if there are not lat/long
         
-        $gc = CRM_Core_SelectValues::groupContactStatus();
+        if ( $this->_searchContext == 'smog' ) {
+            $gc = CRM_Core_SelectValues::groupContactStatus();
+        }
 
         if ( $this->_ufGroupID ) {
             require_once 'CRM/Core/PseudoConstant.php';
@@ -727,7 +729,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
                 // allow components to add more actions
                 CRM_Core_Component::searchAction( $row, $result->contact_id );
-                
 
                 require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
                 $row['contact_type' ] = 
