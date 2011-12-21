@@ -219,7 +219,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
             
             //building payment params
             $paymentParams['pledge_id'] = $pledge->id;
-            $paymentKeys = array( 'amount', 'installments', 'scheduled_date', 'frequency_unit',
+            $paymentKeys = array( 'amount', 'installments', 'scheduled_date', 'frequency_unit', 'currency',
                                   'frequency_day', 'frequency_interval', 'contribution_id', 'installment_amount', 'actual_amount' );
             foreach ( $paymentKeys as $key ) {
                 $paymentParams[$key] = CRM_Utils_Array::value( $key, $params, null );               
@@ -538,17 +538,17 @@ WHERE  $whereCond
         $honor_block_is_active = false;
         //make sure we have values for it
         if (  CRM_Utils_Array::value( 'honor_type_id', $params ) &&
-              ( ( ! empty( $params["honor_first_name"] ) && ! empty( $params["honor_last_name"] ) ) ||
-                ( ! empty( $params["honor_email"] ) ) ) ) {
+              ( ( ! empty( $params['honor_first_name'] ) && ! empty( $params['honor_last_name'] ) ) ||
+                ( ! empty( $params['honor_email'] ) ) ) ) {
             $honor_block_is_active = true;
-            require_once "CRM/Core/PseudoConstant.php";
+            require_once 'CRM/Core/PseudoConstant.php';
             $prefix = CRM_Core_PseudoConstant::individualPrefix();
             $honor  = CRM_Core_PseudoConstant::honor( );             
-            $form->assign("honor_type",$honor[$params["honor_type_id"]]);
-            $form->assign("honor_prefix",$prefix[$params["honor_prefix_id"]]);
-            $form->assign("honor_first_name",$params["honor_first_name"]);
-            $form->assign("honor_last_name",$params["honor_last_name"]);
-            $form->assign("honor_email",$params["honor_email"]);
+            $form->assign('honor_type',$honor[$params['honor_type_id']]);
+            $form->assign('honor_prefix',$prefix[$params['honor_prefix_id']]);
+            $form->assign('honor_first_name',$params['honor_first_name']);
+            $form->assign('honor_last_name',$params['honor_last_name']);
+            $form->assign('honor_email',$params['honor_email']);
         }
         $form->assign('honor_block_is_active', $honor_block_is_active );
         
@@ -588,7 +588,7 @@ WHERE  $whereCond
             $pledgeParams = array( array( 'pledge_id', '=', $params['id'], 0, 0 ) );   
             $customGroup = array(); 
             // retrieve custom data
-            require_once "CRM/Core/BAO/UFGroup.php";
+            require_once 'CRM/Core/BAO/UFGroup.php';
             foreach ( $groupTree as $groupID => $group ) {
                 $customFields = $customValues = array( );
                 if ( $groupID == 'info' ) {
@@ -647,7 +647,7 @@ WHERE  $whereCond
 
         //check if activity record exist for this pledge
         //Acknowledgment, if exist do not add activity.
-        require_once "CRM/Activity/DAO/Activity.php";
+        require_once 'CRM/Activity/DAO/Activity.php';
         $activityType = 'Pledge Acknowledgment';
         $activity = new CRM_Activity_DAO_Activity( );
         $activity->source_record_id = $params['id'];
