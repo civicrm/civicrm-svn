@@ -513,6 +513,18 @@ WHERE   cas.entity_value = $id AND
         return $actionSchedule->save( );
     }
   
+    /**
+     * Takes a bunch of params that are needed to match certain criteria and
+     * retrieves the relevant objects. It also stores all the retrieved
+     * values in the default array
+     *
+     * @param array $params   (reference ) an assoc array of name/value pairs
+     * @param array $values (reference ) an assoc array to hold the flattened values
+     *
+     * @return object CRM_Core_DAO_ActionSchedule object on success, null otherwise
+     * @access public
+     * @static
+     */ 
     static function retrieve( &$params, &$values ) 
     {
         if ( empty ( $params ) ) {
@@ -555,7 +567,17 @@ WHERE   cas.entity_value = $id AND
         CRM_Core_Error::fatal( ts( 'Invalid value passed to delete function.' ) );
     }
 
-    static function setIsActive( $id, $is_active ) {
+    /**	
+     * update the is_active flag in the db
+     *
+     * @param int      $id        id of the database record
+     * @param boolean  $is_active value we want to set the is_active field
+     *
+     * @return Object             DAO object on success, null otherwise
+     * @static
+     */
+    static function setIsActive( $id, $is_active ) 
+    {
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_ActionSchedule', $id, 'is_active', $is_active );
     }
 
@@ -733,9 +755,6 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                     $rList = implode( ',', $rList );
 
                     switch ( $recipientOptions[$actionSchedule->recipient] ) {
-                    case 'Participant Status':
-                        $where[]  = "e.status_id IN ({$rList})";
-                        break;
                     case 'Participant Role':
                         $where[]  = "e.role_id IN ({$rList})";
                         break;
@@ -888,9 +907,7 @@ WHERE  action_date_time IS NULL AND action_schedule_id = %1";
                  if ( !CRM_Utils_Array::value($recipientType, $eventContacts) ) {
                      return $options;
                  }
-                 if ( $eventContacts[$recipientType] == 'Participant Status' ) {
-                     $options = CRM_Event_PseudoConstant::participantStatus();
-                 } else if ( $eventContacts[$recipientType] == 'Participant Role' ) {
+                 if ( $eventContacts[$recipientType] == 'Participant Role' ) {
                      $options = CRM_Event_PseudoConstant::participantRole();
                  }
             break;
