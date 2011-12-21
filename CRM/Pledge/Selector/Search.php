@@ -84,7 +84,8 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                                 'pledge_is_test',
                                 'pledge_contribution_page_id',
                                 'pledge_contribution_type',
-                                'pledge_campaign_id'
+                                'pledge_campaign_id',
+				'pledge_currency'
                                  );
 
     /** 
@@ -286,6 +287,7 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                                                false, false, 
                                                false, 
                                                $this->_additionalClause );
+					    
          // process the result of the query
          $rows = array( );
 
@@ -350,7 +352,6 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
              $rows[] = $row;
              
          }
-         
          return $rows;
      }
      

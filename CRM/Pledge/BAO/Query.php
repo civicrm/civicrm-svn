@@ -194,6 +194,13 @@ class CRM_Pledge_BAO_Query
             $query->_element['pledge_campaign_id'] = 1;
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         }
+
+	if ( CRM_Utils_Array::value( 'pledge_currency', $query->_returnProperties ) ) {
+            $query->_select['pledge_currency'] = "civicrm_pledge.currency as pledge_currency";
+            $query->_element['pledge_currency'] = 1;
+            $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
+        }
+
     }
     
     static function where( &$query ) 
@@ -494,6 +501,7 @@ class CRM_Pledge_BAO_Query
                                 'pledge_contribution_type'        => 1,
                                 'pledge_frequency_interval'       => 1,
                                 'pledge_frequency_unit'           => 1,
+				'pledge_currency'                 => 1,		
                                 'pledge_campaign_id'              => 1
                                  );
         }
