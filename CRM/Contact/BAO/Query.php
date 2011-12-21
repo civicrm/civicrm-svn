@@ -3681,7 +3681,7 @@ civicrm_relationship.start_date > {$today}
                         }
                     }
                 } else if ($sortByChar) { 
-                    $order = " ORDER BY LEFT(contact_a.sort_name, 1) asc";
+                    $order = " ORDER BY UPPER(LEFT(contact_a.sort_name, 1)) asc";
                 } else {
                     $order = " ORDER BY contact_a.sort_name asc, contact_a.id";
                 }
