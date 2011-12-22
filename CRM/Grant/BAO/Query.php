@@ -267,7 +267,7 @@ class CRM_Grant_BAO_Query
         return (isset($this->_qill)) ? $this->_qill : "";
     }
    
-    static function defaultReturnProperties( $mode
+    static function defaultReturnProperties( $mode,
                                              $includeCustomFields = true )
     {
         $properties = null;
