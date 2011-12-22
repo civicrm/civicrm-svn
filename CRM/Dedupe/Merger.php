@@ -532,14 +532,16 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      * Function to merge two given contacts, a superset of moveAllBelongings() function. 
      *
      */
-    function batchMerge( $cacheKeyString, $mode = 'safe' )
+    function batchMerge( $rgid, $gid = null, $mode = 'safe' )
     {
-        // Number of dupes to be extracted from PrevNextCache & merged at a time
-        $batchLimit = 5;
+        $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Dedupe_DAO_RuleGroup', $rgid, 'contact_type' );
+        $cacheKeyString  = "merge {$contactType}";
+        $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
+        $cacheKeyString .= $gid  ? "_{$gid}"  : '_0';
 
         $join  = "LEFT JOIN civicrm_dedupe_exception de ON ( pn.entity_id1 = de.contact_id1 AND 
                                                              pn.entity_id2 = de.contact_id2 )";
-        $where = "de.id IS NULL LIMIT {$batchLimit}";
+        $where = "de.id IS NULL LIMIT 1";
 
         require_once 'CRM/Core/BAO/PrevNextCache.php';
         $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
@@ -549,7 +551,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 $otherId = $dupes['dstID'];
 
                 // Based on biasing algorithm decide if to flip $mainId and $otherId.
-                // CRM_Dedupe_Merger::biasFlip( $mainId, $otherId )
+                CRM_Dedupe_Merger::biasFlip( $mainId, $otherId );
 
                 // Generate $migrationInfo. The structure should be exactly same as 
                 // $formValues submitted during a UI merge for a pair of contacts.
@@ -567,21 +569,39 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 // go ahead with merge if there is no conflict
                 if ( !CRM_Dedupe_Merger::skipMerge( $mainId, $otherId, $migrationInfo, $mode ) ) {
                     CRM_Dedupe_Merger::moveAllBelongings( $mainId, $otherId, $migrationInfo );
-                } else {
-                    // delete entry from PrevNextCache table so we don't consider the pair next time
-                    CRM_Core_BAO_PrevNextCache::deletePair( $mainId, $otherId, $cacheKeyString );
                 }
+
+                // in any case delete entry from PrevNextCache table so we don't consider the pair next time
+                CRM_Core_BAO_PrevNextCache::deletePair( $mainId, $otherId, $cacheKeyString );
 
                 CRM_Core_DAO::freeResult( );
             }
-            //$dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
+            $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
         }
     }
 
-    function skipMerge( $mainId, $otherId, $migrationInfo, $mode = 'safe' )
+    function skipMerge( $mainId, $otherId, &$migrationInfo, $mode = 'safe' )
     {        
-        // FIXME: algorithm to decide / detect / resolve conflict.
+        // FIXME: algorithm to decide / detect / resolve conflict
+        foreach ( $migrationInfo as $key => $val ) {
+            if ( $val === "null" ) {
+                unset($migrationInfo[$key]);
+            }
+        }
+        
+        // TODO: handle conflict case
+
         return false;
+    }
+
+    function biasFlip( &$mainId, &$otherId )
+    {       
+        // Make sure $mainId < $otherId 
+        if ( $mainId > $otherId ) {
+            $tempId  = $otherId;
+            $otherId = $mainId;
+            $mainId  = $tempId;
+        }
     }
 
     function getRowsElementsAndInfo( $mainId, $otherId )
@@ -599,14 +619,14 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $main  = civicrm_api( 'contact', 'get', $mainParams );
         $main  = reset( $main['values'] ); //CRM-4524
         if ( $main['contact_id'] != $mainId ) {
-            // The main contact record does not exist
+            // FIXME: The main contact record does not exist
             return false;
         }
 
         $other = civicrm_api( 'contact', 'get', $otherParams );
         $other = reset( $other['values'] ); //CRM-4524
         if ( $other['contact_id'] != $otherId ) {
-            //The other contact record does not exist
+            // FIXME: The other contact record does not exist
             return false;
         }
 
@@ -1178,6 +1198,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             civicrm_api( 'contact', 'delete', $otherParams );
             CRM_Core_BAO_PrevNextCache::deleteItem( $otherId );
         }
+        // FIXME: else part
 /*         else { */
 /*             CRM_Core_Session::setStatus( ts('Do not have sufficient permission to delete duplicate contact.') ); */
 /*         } */
