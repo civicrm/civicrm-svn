@@ -743,8 +743,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->type('intro',             "TaF Introduction $hash");
             $this->type('suggested_message', "TaF Suggested Message $hash");
             $this->type('general_link',      "TaF Info Page Link $hash");
-            $this->type('thankyou_title',    "TaF Thank-you Title $hash");
-            $this->type('thankyou_text',     "TaF Thank-you Message $hash");
+            $this->type('tf_thankyou_title',    "TaF Thank-you Title $hash");
+            $this->type('tf_thankyou_text',     "TaF Thank-you Message $hash");
 
             //$this->click('_qf_Contribute_next');
             $this->click('_qf_Contribute_next-bottom'); 

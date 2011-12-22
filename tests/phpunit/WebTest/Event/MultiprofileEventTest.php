@@ -156,7 +156,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
         
         // Log in using webtestLogin() method
-        $this->webtestLogin();
+        $this->webtestLogin( true );
         
         // add the required Drupal permission
         $this->changeAdminLinks( );

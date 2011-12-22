@@ -65,7 +65,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
       
       $this->click("_qf_Confirm_next_checkout");
       $this->waitForPageToLoad("30000");
-      
+
       $this->waitForElementPresent( "Email" );
       $this->type("Email","custdeepak");
       $this->type("Passwd","deepak123");

@@ -216,8 +216,8 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         $this->type( 'intro',             "TaF Introduction $contributionTitle" );
         $this->type( 'suggested_message', "TaF Suggested Message $contributionTitle" );
         $this->type( 'general_link',      "TaF Info Page Link $contributionTitle" );
-        $this->type( 'thankyou_title',    "TaF Thank-you Title $contributionTitle" );
-        $this->type( 'thankyou_text',     "TaF Thank-you Message $contributionTitle" );
+        $this->type( 'tf_thankyou_title',    "TaF Thank-you Title $contributionTitle" );
+        $this->type( 'tf_thankyou_text',     "TaF Thank-you Message $contributionTitle" );
         
         $this->click( '_qf_Contribute_next-bottom' );
         $this->waitForPageToLoad( '30000' );
