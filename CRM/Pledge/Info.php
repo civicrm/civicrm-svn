@@ -101,7 +101,7 @@ class CRM_Pledge_Info extends CRM_Core_Component_Info
              CRM_Core_Permission::check('edit pledges') ) {
             $shortCuts = 
                 array_merge($shortCuts, array( array( 'path'  => 'civicrm/pledge/add',
-                                                      'query' => "reset=1&action=add&context=standalone",
+                                                      'query' => 'reset=1&action=add&context=standalone',
                                                       'ref'   => 'new-pledge',
                                                       'title' => ts('Pledge') ) ));
         }
