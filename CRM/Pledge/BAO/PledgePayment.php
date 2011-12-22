@@ -65,7 +65,7 @@ SELECT    civicrm_pledge_payment.id id,
           reminder_count,
           actual_amount, 
           receive_date,
-	  civicrm_pledge_payment.currency,
+	      civicrm_pledge_payment.currency,
           civicrm_option_value.name as status,
           civicrm_option_value.label as label,
           civicrm_contribution.id as contribution_id
@@ -93,7 +93,7 @@ WHERE     pledge_id = %1
             $paymentDetails[$payment->id]['label'           ] = $payment->label;
             $paymentDetails[$payment->id]['id'              ] = $payment->id;
             $paymentDetails[$payment->id]['contribution_id' ] = $payment->contribution_id;
-	    $paymentDetails[$payment->id]['currency'        ] = $payment->currency;
+            $paymentDetails[$payment->id]['currency'        ] = $payment->currency;
         }
         
         return $paymentDetails;

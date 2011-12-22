@@ -108,10 +108,9 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
                     	 array ( 'READONLY' => true,
                          'style' => "background-color:#EBECE4" ),
                     	 true,
-			 'currency',
-			 null, true );
+                         'currency',
+                         null, true );
         
-	//$this->addRule( 'scheduled_amount', ts('Please enter a valid monetary amount.'), 'money');
         $optionTypes = array( '1' => ts( 'Adjust Pledge Payment Schedule?' ),
                               '2' => ts( 'Adjust Total Pledge Amount?') );
         $element = $this->addRadio( 'option_type', 

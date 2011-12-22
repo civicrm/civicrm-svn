@@ -575,7 +575,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
         //format amount
         $params['amount'] = CRM_Utils_Rule::cleanMoney( CRM_Utils_Array::value( 'amount', $formValues ) );
-	$params['currency'] = CRM_Utils_Array::value( 'currency', $formValues );
+        $params['currency'] = CRM_Utils_Array::value( 'currency', $formValues );
         $params['original_installment_amount'] = ( $params['amount'] / $params['installments'] );
 
         $dates = array( 'create_date', 'start_date', 'acknowledge_date', 'cancel_date' );

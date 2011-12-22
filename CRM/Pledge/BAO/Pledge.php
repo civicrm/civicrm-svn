@@ -361,20 +361,26 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         $whereCond = implode( ' AND ', $where );
         
         $query = "
-SELECT sum( amount ) as pledge_amount, count( id ) as pledge_count
+SELECT sum( amount ) as pledge_amount, count( id ) as pledge_count, currency
 FROM   civicrm_pledge
 WHERE  $whereCond AND is_test=0
+GROUP BY  currency
 ";
         $start = substr( $startDate, 0, 8 );
         $end   = substr( $endDate, 0, 8 );
-       
+        $pCount = 0;
+        $pamount = array();
+        require_once 'CRM/Utils/Money.php';
         $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-        if ( $dao->fetch( ) ) {
-            $pledge_amount = array( 'pledge_amount' => $dao->pledge_amount,
-                                    'pledge_count'  => $dao->pledge_count,
-                                    'purl'          => CRM_Utils_System::url( 'civicrm/pledge/search',
-                                                                              "reset=1&force=1&pstatus={$statusId}&pstart={$start}&pend={$end}&test=0"));
+        while ( $dao->fetch( ) ) {
+            $pCount    += $dao->pledge_count;
+            $pamount[]  = CRM_Utils_Money::format( $dao->pledge_amount, $dao->currency );
         }
+        
+        $pledge_amount = array( 'pledge_amount' => implode( ', ', $pamount ),
+                                'pledge_count'  => $pCount,
+                                'purl'          => CRM_Utils_System::url( 'civicrm/pledge/search',
+                                                                          "reset=1&force=1&pstatus={$statusId}&pstart={$start}&pend={$end}&test=0"));
         
         $where = array( );
         $statusId = array_search( $status, $allStatus);
@@ -418,20 +424,30 @@ WHERE  $whereCond AND is_test=0
         $whereCond = implode( ' AND ', $where );
         
         $query = "
-SELECT $select
+SELECT $select, cp.currency
 FROM $from
 WHERE  $whereCond 
+GROUP BY  cp.currency
 ";
         if ( $select ) {
             // CRM_Core_Error::debug($status . ' start:' . $startDate . '- end:' . $endDate, $query);
             $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-            if ( $dao->fetch( ) ) {
-                return array_merge( $pledge_amount, array( 'received_amount' => $dao->received_pledge,
-                                                           'received_count'  => $dao->received_count,
+            $amount = array( );
+            $count  = 0;
+            
+       	    while ( $dao->fetch( ) ) {
+             	$count    += $dao->received_count;
+            	$amount[]  = CRM_Utils_Money::format( $dao->received_pledge, $dao->currency );
+            }
+            
+            if ( $count ) {
+                return array_merge( $pledge_amount, array( 'received_amount' => implode( ', ', $amount ),
+                                                           'received_count'  => $count,
                                                            'url'             => CRM_Utils_System::url( 'civicrm/pledge/search',
-                                                                                                       "reset=1&force=1&status={$statusId}&start={$start}&end={$end}&test=0")));
-            } 
-        }else {
+                                                                                                       "reset=1&force=1&status={$statusId}&start={$start}&end={$end}&test=0") ) );
+            }
+            
+        } else {
             return $pledge_amount;
         }
         return null;
