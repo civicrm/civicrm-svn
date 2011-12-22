@@ -574,7 +574,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $isAddPaymentProcessor = true,
                                          $isPcpApprovalNeeded = false,
                                          $isSeparatePayment = false,
-                                         $honoreeSection = true
+                                         $honoreeSection = true,
+                                         $allowOtherAmmount = true
                                          ) 
     {
         if ( !$pageTitle ) {
@@ -654,11 +655,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                 $this->click("recur_frequency_unit[week]");
                 $this->click("recur_frequency_unit[year]");
             }
-
-            $this->click('is_allow_other_amount');
-            $this->type('min_amount', $rand / 2);
-            $this->type('max_amount', $rand * 10);
-
+            if( $allowOtherAmmount ){
+                
+                $this->click('is_allow_other_amount');
+                $this->type('min_amount', $rand / 2);
+                $this->type('max_amount', $rand * 10);
+            }
             $this->type('label_1', "Label $hash");
             $this->type('value_1', "$rand");
       
