@@ -58,7 +58,7 @@ class CRM_Upgrade_Incremental_php_FourOne {
         }
     }
 
-    function upgrade_4_1_alpha1( $rev ) {
+    function upgrade_4_1_beta1( $rev ) {
     	$config = CRM_Core_Config::singleton( );
         if ( in_array( 'CiviCase', $config->enableComponents ) ) {
             require_once 'CRM/Case/BAO/Case.php';
