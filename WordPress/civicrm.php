@@ -274,7 +274,7 @@ function civicrm_wp_styles( ) {
     return;
 }
 
-function civicrm_wp_frontend( ) {
+function civicrm_wp_frontend( $shortcode = false ) {
     if ( ! civicrm_wp_initialize( ) ) {
         return;
     }
@@ -282,13 +282,22 @@ function civicrm_wp_frontend( ) {
     if ( isset( $_GET['q'] ) ) {
         $args = explode( '/', trim( $_GET['q'] ) );
     }
-    
-    add_filter('get_header', 'civicrm_turn_comments_off');
-    add_filter('get_header', 'civicrm_set_post_blank');
+
+    if ( $shortcode ) {
+        civicrm_turn_comments_off( );
+        civicrm_set_post_blank( );
+    } else {
+        add_filter('get_header', 'civicrm_turn_comments_off');
+        add_filter('get_header', 'civicrm_set_post_blank');
+    }
     
     // check permission
     if ( ! civicrm_check_permission( $args ) ) {
-        add_filter('the_content', 'civicrm_set_frontendmessage');
+        if ( $shortcode ) {
+            civicrm_set_frontendmessage( );
+        } else {
+            add_filter('the_content', 'civicrm_set_frontendmessage');
+        }
         return;
     }
     
@@ -297,8 +306,12 @@ function civicrm_wp_frontend( ) {
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
     // but best way is to check other plugin implementation :) 
-    
-    add_filter('the_content', 'civicrm_wp_invoke');
+
+    if ( $shortcode ) {
+        civicrm_wp_invoke( );
+    } else {
+        add_filter('the_content', 'civicrm_wp_invoke');
+    }
 }
 
 function civicrm_set_blank() {
@@ -412,6 +425,9 @@ function civicrm_wp_main( ) {
     if ( is_admin() ) {
         add_action( 'admin_menu', 'civicrm_wp_add_menu_items' );
 
+        //Adding "embed form" button
+        //add_action('media_buttons_context', 'civicrm_add_form_button');
+
         // check if settings file exist, do not show configuration link on
         // install / settings page
         if ( isset( $_GET['page'] ) && $_GET['page'] != 'civicrm-settings' ) {
@@ -426,6 +442,10 @@ function civicrm_wp_main( ) {
     
     add_action( 'user_register'   , 'civicrm_user_register'  );
     add_action( 'profile_update'  , 'civicrm_profile_update' );
+
+    add_shortcode( 'civicrm_contribution'  , 'civicrm_contribution_page' );
+    add_shortcode( 'civicrm_event_info'    , 'civicrm_event_info'        );
+    add_shortcode( 'civicrm_event_register', 'civicrm_event_register'    );
 
     if ( ! civicrm_wp_in_civicrm( ) ) {
         return;
@@ -445,6 +465,46 @@ function civicrm_wp_main( ) {
         add_action( 'admin_print_styles' , 'civicrm_wp_styles' );
     }
     add_action( 'wp_print_scripts', 'civicrm_wp_scripts' );
+}
+
+function civicrm_add_form_button( $context ) {
+    $image_btn = GFCommon::get_base_url() . "/images/form-button.png";
+    $out = '<a href="#TB_inline?width=480&inlineId=select_gravity_form" class="thickbox" id="add_gform" title="' . __("Add Gravity Form", 'gravityforms') . '"><img src="'.$image_btn.'" alt="' . __("Add Gravity Form", 'gravityform') . '" /></a>';
+    return $context . $out;
+}
+
+function civicrm_run_shortcode( $q, $args ) {
+    foreach ( $args as $key => $value ) {
+        $_GET[$key] = $value;
+    }
+    $_GET['q'    ] = $q;
+    $_GET['reset'] = 1;
+
+    return civicrm_wp_frontend( true );
+}
+
+function civicrm_contribution_page( $atts ) {
+    extract( shortcode_atts( array( 'id' => 0 ),
+                             $atts ) );
+
+    return civicrm_run_shortcode( 'civicrm/contribute/transact',
+                                  array( 'id' => $id ) );
+}
+
+function civicrm_event_info( $atts ) {
+    extract( shortcode_atts( array( 'id' => 0 ),
+                             $atts ) );
+
+    return civicrm_run_shortcode( 'civicrm/event/info',
+                                  array( 'id' => $id ) );
+}
+
+function civicrm_event_register( $atts ) {
+    extract( shortcode_atts( array( 'id' => 0 ),
+                             $atts ) );
+
+    return civicrm_run_shortcode( 'civicrm/event/register',
+                                  array( 'id' => $id ) );
 }
 
 function civicrm_wp_in_civicrm( ) {
