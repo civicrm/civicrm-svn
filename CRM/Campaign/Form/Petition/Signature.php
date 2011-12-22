@@ -72,7 +72,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      * 
      * @var boolean 
      */ 
-    protected $_ctype;   
+    protected $_ctype = 'Individual';   
 
     /** 
      * The contact profile id attached with this petition
