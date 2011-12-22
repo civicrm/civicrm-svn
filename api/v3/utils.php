@@ -62,7 +62,7 @@ function _civicrm_api3_initialize($useException = true )
  *
  */
 function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoptions = array() ) {
-    $keys = array( );
+    $keys = array(array());
     foreach ($keyoptions as $key){
         $keys[0][] = $key;
     }
