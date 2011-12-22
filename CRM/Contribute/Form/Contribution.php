@@ -313,7 +313,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                 $payParams = array( 'id' => $this->_ppID );
                 
                 CRM_Pledge_BAO_PledgePayment::retrieve( $payParams, $this->_pledgeValues['pledgePayment'] );
-                $this->_pledgeID = CRM_Utils_Array::value( 'pledge_id', $this->_pledgeValues['pledgePayment'] );
+		$this->_pledgeID = CRM_Utils_Array::value( 'pledge_id', $this->_pledgeValues['pledgePayment'] );
                 $paymentStatusID = CRM_Utils_Array::value( 'status_id', $this->_pledgeValues['pledgePayment'] );
                 $this->_id = CRM_Utils_Array::value( 'contribution_id', $this->_pledgeValues['pledgePayment'] );
         
@@ -494,6 +494,7 @@ WHERE  contribution_id = {$this->_id}
             $defaults['honor_type_id'] = CRM_Utils_Array::value( 'honor_type_id', $this->_pledgeValues );
             $defaults['honor_contact_id'] = CRM_Utils_Array::value( 'honor_contact_id', $this->_pledgeValues );
             $defaults['contribution_type_id'] = CRM_Utils_Array::value( 'contribution_type_id', $this->_pledgeValues );
+            $defaults['currency'] = CRM_Utils_Array::value( 'currency', $this->_pledgeValues );
             $defaults['option_type'] = 1;
         }
         
@@ -639,7 +640,7 @@ WHERE  contribution_id = {$this->_id}
         if ( $this->_ppID && CRM_Utils_Array::value( 'campaign_id', $this->_pledgeValues ) ) {
             $defaults['campaign_id'] = $this->_pledgeValues['campaign_id'];
         }
-        
+
         return $defaults;
     }
     
