@@ -185,8 +185,14 @@ function civicrm_get_ctype( $default = null )
 }
 
 function civicrm_wp_invoke( ) {
-    if ( ! civicrm_wp_initialize( ) ) {
+    static $alreadyInvoked = false;
+    if ( $alreadyInvoked ) {
         return;
+    }
+
+    $alreadyInvoked = true;
+    if ( ! civicrm_wp_initialize( ) ) {
+        return '';
     }
 
     if ( isset( $_GET['q'] ) ) {
