@@ -58,7 +58,7 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $processorName = "Webtest Dummy" . substr( sha1( rand( ) ), 0, 7 );  
       $processorType = 'Dummy';
       $pageTitle = substr( sha1( rand( ) ), 0, 7 );
-      $rand = 2 * rand( 2, 50 );
+      $rand = 2 * rand( 10, 50 );
       $hash = substr(sha1(rand()), 0, 7);
       $amountSection = true;
       $payLater =  false;

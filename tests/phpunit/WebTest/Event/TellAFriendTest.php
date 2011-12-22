@@ -44,7 +44,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
         
         // Log in using webtestLogin() method
-        $this->webtestLogin();
+        $this->webtestLogin( true );
         
         // Go directly to the URL of the screen that you will be testing (New Event).
         $this->open($this->sboxPath . "civicrm/event/add&reset=1&action=add");
