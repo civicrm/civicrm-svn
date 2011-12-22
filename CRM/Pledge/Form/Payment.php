@@ -103,13 +103,15 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         //add various dates
         $this->addDate( 'scheduled_date', ts('Scheduled Date'), true );
         
-        $this->add( 'text',
-                    'scheduled_amount', 
-                    ts('Scheduled Amount'),
-                    array ( 'READONLY' => true,
-                            'style'    => "background-color:#EBECE4" ),
-                    true );
-        $this->addRule( 'scheduled_amount', ts('Please enter a valid monetary amount.'), 'money');
+        $this->addMoney( 'scheduled_amount', 
+                    	 ts('Scheduled Amount'), true,
+                    	 array ( 'READONLY' => true,
+                         'style' => "background-color:#EBECE4" ),
+                    	 true,
+			 'currency',
+			 null, true );
+        
+	//$this->addRule( 'scheduled_amount', ts('Please enter a valid monetary amount.'), 'money');
         $optionTypes = array( '1' => ts( 'Adjust Pledge Payment Schedule?' ),
                               '2' => ts( 'Adjust Total Pledge Amount?') );
         $element = $this->addRadio( 'option_type', 

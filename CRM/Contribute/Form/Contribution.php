@@ -956,7 +956,7 @@ WHERE  contribution_id = {$this->_id}
                                         ts('Total Amount'),
                                         ($hasPriceSets)?false:true,
                                         $attributes['total_amount'],
-                                        true );
+                                        true, 'currency', null, true );
         }
         
         $element = $this->add( 'text', 'source', ts('Source'), CRM_Utils_Array::value('source',$attributes) );

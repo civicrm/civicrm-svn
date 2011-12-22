@@ -1084,12 +1084,13 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                        $attributes = null,
                        $addCurrency = true,
                        $currencyName = 'currency',
-                       $defaultCurrency = null ) {
+                       $defaultCurrency = null,
+		       $freezeCurrency = false ) {
         $element = $this->add( 'text', $name, $label, $attributes, $required );
         $this->addRule( $name, ts('Please enter a valid amount.'), 'money');
         
         if ( $addCurrency ) {
-            $this->addCurrency( $currencyName, null, true, $defaultCurrency );
+            $ele = $this->addCurrency( $currencyName, null, true, $defaultCurrency, $freezeCurrency );
         }
         
         return $element;
@@ -1101,11 +1102,15 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     function addCurrency( $name  = 'currency', 
                           $label = null,
                           $required = true,
-                          $defaultCurrency = null ) {
+                          $defaultCurrency = null,
+			  $freezeCurrency = false ) {
         require_once 'CRM/Core/OptionGroup.php';
         $currencies = CRM_Core_OptionGroup::values( 'currencies_enabled' );
         if ( !$required ) $currencies = array( ''=> ts( '- select -' ) ) + $currencies;
-        $this->add( 'select', $name, $label, $currencies, $required );
+        $ele = $this->add( 'select', $name, $label, $currencies, $required );
+	if ( $freezeCurrency ) {
+	       $ele->freeze();
+	    }   
         if ( !$defaultCurrency ) {
             $config = CRM_Core_Config::singleton( );
             $defaultCurrency = $config->defaultCurrency;
