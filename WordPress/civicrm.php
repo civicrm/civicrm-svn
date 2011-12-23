@@ -426,7 +426,11 @@ function civicrm_wp_main( ) {
         add_action( 'admin_menu', 'civicrm_wp_add_menu_items' );
 
         //Adding "embed form" button
-        //add_action('media_buttons_context', 'civicrm_add_form_button');
+        if ( in_array( basename($_SERVER['PHP_SELF']),
+                       array('post.php', 'page.php', 'page-new.php', 'post-new.php') ) ) {
+            add_action('media_buttons_context', 'civicrm_add_form_button');
+            add_action('admin_footer'         , 'civicrm_add_form_button_html' );
+        }
 
         // check if settings file exist, do not show configuration link on
         // install / settings page
@@ -468,9 +472,80 @@ function civicrm_wp_main( ) {
 }
 
 function civicrm_add_form_button( $context ) {
-    $image_btn = GFCommon::get_base_url() . "/images/form-button.png";
-    $out = '<a href="#TB_inline?width=480&inlineId=select_gravity_form" class="thickbox" id="add_gform" title="' . __("Add Gravity Form", 'gravityforms') . '"><img src="'.$image_btn.'" alt="' . __("Add Gravity Form", 'gravityform') . '" /></a>';
+    if ( ! civicrm_wp_initialize( ) ) {
+        return '';
+    }
+
+    $config = CRM_Core_Config::singleton( );
+    $imageBtnURL = $config->resourceBase . 'i/contact_ind.gif';
+    $out = '<a href="#TB_inline?width=480&inlineId=select_civicrm_id" class="thickbox" id="add_civi" title="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '"><img src="'.$imageBtnURL.'" alt="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '" /></a>';
     return $context . $out;
+}
+
+function civicrm_add_form_button_html( ) {
+    $title = _e( "Please choose a Contribution or Event Page", "CiviCRM" );
+
+    $sql = "
+SELECT id, title
+FROM   civicrm_contribution_page
+WHERE  is_active = 1
+";
+
+    echo <<<EOT
+        <script>
+            function InsertForm(){
+                var form_id = jQuery("#add_form_id").val();
+                if(form_id == ""){
+                    alert( $title );
+                    return;
+                }
+
+                var form_name = jQuery("#add_form_id option[value='" + form_id + "']").text().replace(/[\[\]]/g, '');
+                var form_component = jQuery("#form_component").val( );
+                var form_id = jQuery("#form_component").val( );
+
+                window.send_to_editor("[civicrm_" + form_component + " id=\"" + form_id + "\"]");
+            }
+        </script>
+
+        <div id="select_civicrm_id" style="display:none;">
+            <div class="wrap">
+                <div>
+                    <div style="padding:15px 15px 0 15px;">
+                        <h3 style="color:#5A5A5A!important; font-family:Georgia,Times New Roman,Times,serif!important; font-size:1.8em!important; font-weight:normal!important;">
+                             $title
+                        </h3>
+                        <span>
+                            $title
+                        </span>
+                    </div>
+                    <div style="padding:15px 15px 0 15px;">
+                        <select id="add_form_id">
+                            <option value="">  <?php _e("Select a Form", "gravityforms"); ?>  </option>
+                            <?php
+                                $forms = RGFormsModel::get_forms(1, "title");
+                                foreach($forms as $form){
+                                    ?>
+                                    <option value="<?php echo absint($form->id) ?>"><?php echo esc_html($form->title) ?></option>
+                                    <?php
+                                }
+                            ?>
+                        </select> <br/>
+                        <div style="padding:8px 0 0 0; font-size:11px; font-style:italic; color:#5A5A5A"><?php _e("Can't find your form? Make sure it is active.", "gravityforms"); ?></div>
+                    </div>
+                    <div style="padding:15px 15px 0 15px;">
+                        <input type="checkbox" id="display_title" checked='checked' /> <label for="display_title"><?php _e("Display form title", "gravityforms"); ?></label> &nbsp;&nbsp;&nbsp;
+                        <input type="checkbox" id="display_description" checked='checked' /> <label for="display_description"><?php _e("Display form description", "gravityforms"); ?></label>&nbsp;&nbsp;&nbsp;
+                        <input type="checkbox" id="gform_ajax" /> <label for="gform_ajax"><?php _e("Enable AJAX", "gravityforms"); ?></label>
+                    </div>
+                    <div style="padding:15px;">
+                        <input type="button" class="button-primary" value="Insert Form" onclick="InsertForm();"/>&nbsp;&nbsp;&nbsp;
+                    <a class="button" style="color:#bbb;" href="#" onclick="tb_remove(); return false;"><?php _e("Cancel", "gravityforms"); ?></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+EOT;
 }
 
 function civicrm_run_shortcode( $q, $args ) {
