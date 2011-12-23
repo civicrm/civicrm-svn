@@ -549,22 +549,19 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             foreach ( $dupePairs as $dupes ) {
                 $mainId  = $dupes['srcID'];
                 $otherId = $dupes['dstID'];
+                // make sure $mainId is the one with lower id number
+                if ( $mainId > $otherId ) {
+                    $mainId  = $dupes['dstID'];
+                    $otherId = $dupes['srcID'];
+                }
 
-                // Based on biasing algorithm decide if to flip $mainId and $otherId.
-                CRM_Dedupe_Merger::biasFlip( $mainId, $otherId );
-
-                // Generate $migrationInfo. The structure should be exactly same as 
+                // Generate var $migrationInfo. The variable structure is exactly same as 
                 // $formValues submitted during a UI merge for a pair of contacts.
                 $rowsElementsAndInfo = CRM_Dedupe_Merger::getRowsElementsAndInfo( $mainId, $otherId );
                 
                 $migrationInfo =& $rowsElementsAndInfo['migration_info'];
-                // FIXME: validate if array looks fine
-                
                 $migrationInfo['main_details']  =& $rowsElementsAndInfo['main_details'];
                 $migrationInfo['other_details'] =& $rowsElementsAndInfo['other_details'];
-                
-                // A hook to modify $migrationInfo based on $mode
-                // hook::alterMigrationInfo($mainId, $otherId, $migrationInfo, $mode)
                 
                 // go ahead with merge if there is no conflict
                 if ( !CRM_Dedupe_Merger::skipMerge( $mainId, $otherId, $migrationInfo, $mode ) ) {
@@ -581,27 +578,25 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
     }
 
     function skipMerge( $mainId, $otherId, &$migrationInfo, $mode = 'safe' )
-    {        
-        // FIXME: algorithm to decide / detect / resolve conflict
+    {
+        $migrationData = array( 'old_migration_info' => $migrationInfo, 'mode' => $mode );
+
+        //  FIXME: algorithm to decide / detect / resolve conflict
         foreach ( $migrationInfo as $key => $val ) {
             if ( $val === "null" ) {
                 unset($migrationInfo[$key]);
             }
         }
-        
-        // TODO: handle conflict case
 
-        return false;
-    }
+        // A hook to implement other algorithms for choosing which contact to bias to when 
+        // there's a conflict (to handle "gotchas"). $migrationInfo could be modified here
+        // which helps decide if to merge a field or not.
+        $migrationData['new_migration_info'] = $migrationInfo;
+        CRM_Utils_Hook::merge( 'batch', $migrationData, $mainId, $otherId );
+        $migrationInfo = $migrationData['new_migration_info'];
 
-    function biasFlip( &$mainId, &$otherId )
-    {       
-        // Make sure $mainId < $otherId 
-        if ( $mainId > $otherId ) {
-            $tempId  = $otherId;
-            $otherId = $mainId;
-            $mainId  = $tempId;
-        }
+        // also allow hook to decide if to skip this merge or not
+        return array_key_exists('skip_merge', $migrationInfo) ? (bool) $migrationInfo['skip_merge'] : false;
     }
 
     function getRowsElementsAndInfo( $mainId, $otherId )
