@@ -223,7 +223,8 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->assign( 'mainLocAddress', json_encode( $rowsElementsAndInfo['main_loc_address'] ) );        
         $this->assign( 'rows', $rowsElementsAndInfo['rows'] );
 
-        $this->_locBlockIds = $rowsElementsAndInfo['loc_block_ids'];
+        $this->_locBlockIds = array( 'main'  => $rowsElementsAndInfo['main_details']['loc_block_ids'],
+                                     'other' => $rowsElementsAndInfo['other_details']['loc_block_ids'] );
 
         // add elements
         foreach ( $rowsElementsAndInfo['elements'] as $element ) {
@@ -294,10 +295,10 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             $session->resetScope( 'selectedSearchContactIds' );
         }
 
-        $formValues['main_info'] = array();
-        $formValues['main_info']['contact_type']   = $this->_contactType;
-        $formValues['main_info']['loc_block_ids']  = $this->_locBlockIds['main'];
-        $formValues['other_info']['loc_block_ids'] = $this->_locBlockIds['other'];
+        $formValues['main_details'] = $formValues['other_details'] = array();
+        $formValues['main_details']['contact_type']   = $this->_contactType;
+        $formValues['main_details']['loc_block_ids']  = $this->_locBlockIds['main'];
+        $formValues['other_details']['loc_block_ids'] = $this->_locBlockIds['other'];
 
         CRM_Dedupe_Merger::moveAllBelongings( $this->_cid, $this->_oid, $formValues );
 

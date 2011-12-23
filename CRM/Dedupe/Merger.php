@@ -545,11 +545,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         require_once 'CRM/Core/BAO/PrevNextCache.php';
         $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
+
         while ( !empty($dupePairs) ) {
             foreach ( $dupePairs as $dupes ) {
                 $mainId  = $dupes['srcID'];
                 $otherId = $dupes['dstID'];
-                // make sure $mainId is the one with lower id number
+                // make sure that $mainId is the one with lower id number
                 if ( $mainId > $otherId ) {
                     $mainId  = $dupes['dstID'];
                     $otherId = $dupes['srcID'];
@@ -560,8 +561,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 $rowsElementsAndInfo = CRM_Dedupe_Merger::getRowsElementsAndInfo( $mainId, $otherId );
                 
                 $migrationInfo =& $rowsElementsAndInfo['migration_info'];
+
+                // add additional details that we might need to resolve conflicts
                 $migrationInfo['main_details']  =& $rowsElementsAndInfo['main_details'];
                 $migrationInfo['other_details'] =& $rowsElementsAndInfo['other_details'];
+                $migrationInfo['main_loc_address'] =& $rowsElementsAndInfo['main_loc_address'];
+                $migrationInfo['rows']             =& $rowsElementsAndInfo['rows'];
                 
                 // go ahead with merge if there is no conflict
                 if ( !CRM_Dedupe_Merger::skipMerge( $mainId, $otherId, $migrationInfo, $mode ) ) {
@@ -573,18 +578,51 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
                 CRM_Core_DAO::freeResult( );
             }
-            $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
+            //$dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
         }
     }
 
     function skipMerge( $mainId, $otherId, &$migrationInfo, $mode = 'safe' )
     {
-        $migrationData = array( 'old_migration_info' => $migrationInfo, 'mode' => $mode );
+        $migrationData = array( 'old_migration_info' => $migrationInfo,
+                                'mode'               => $mode );
 
         //  FIXME: algorithm to decide / detect / resolve conflict
+
+        $allLocationTypes = CRM_Core_PseudoConstant::locationType( );
+
         foreach ( $migrationInfo as $key => $val ) {
             if ( $val === "null" ) {
+                // Rule: no overwriting with empty values
                 unset($migrationInfo[$key]);
+                continue;
+            } elseif ( substr($key, 0, 14) == 'move_location_' and $val != null ) {
+                $locField   = explode( '_',  $key );
+                $fieldName  = $locField[2];
+                $fieldCount = $locField[3];
+
+                // Rule: resolve address conflict if any -
+                if ( $fieldName == 'address' ) {
+                    $mainNewLocTypeId = $migrationInfo['location'][$fieldName][$fieldCount]['locTypeId'];
+                    if ( array_key_exists( "main_{$mainNewLocTypeId}", $migrationInfo['main_loc_address'] ) ) {
+                        // main loc already has some address for the loc-type. Its a overwrite situation.
+
+                        // look for next available loc-type
+                        $newTypeId = null;
+                        foreach ( $allLocationTypes as $typeId => $typeLabel ) {
+                            if ( !array_key_exists( "main_{$typeId}", $migrationInfo['main_loc_address'] ) ) {
+                                $newTypeId = $typeId;
+                            }
+                        }
+                        if ( $newTypeId ) {
+                            // try insert address at new available loc-type
+                            $migrationInfo['location'][$fieldName][$fieldCount]['locTypeId'] = $newTypeId;
+                        } else if ( $mode == 'safe' ) {
+                            // skip this merge
+                            return true;
+                        } // go ahead with merge assuming overwrite
+                    }
+                }
             }
         }
 
@@ -767,7 +805,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                                                                 3 => $allLocationTypes[$locTypeId] ) );
                     
                     $elements[] = array( 'advcheckbox', "move_location_{$name}_{$count}" );
-                    $migrationInfo["move_location_{$name}_{$count}"] = $count;
+                    $migrationInfo["move_location_{$name}_{$count}"] = 1;
 
                     // make sure default location type is always on top
                     $mainLocTypeId  = CRM_Utils_Array::value( $count, $locTypes['main'][$name], $locTypeId );
@@ -782,11 +820,13 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     }
                     $elements[] = array( 'select', "location[{$name}][$count][locTypeId]", null, 
                                          $defaultLocType + $locTypeValues, $js );
-                    $migrationInfo['location'][$name][$count]['locTypeId'] = $count;
+                    // keep location-type-id same as that of other-contact
+                    $migrationInfo['location'][$name][$count]['locTypeId'] = $locTypeId;
 
                     if ( $name != 'address' ) {
                         $elements[] = array( 'advcheckbox', "location[{$name}][$count][operation]", null, ts('add new') );
-                        $migrationInfo['location'][$name][$count]['operation'] = $value;
+                        // always use add operation
+                        $migrationInfo['location'][$name][$count]['operation'] = 1;
                     }
                 }
             }
@@ -891,15 +931,19 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             }
         }
 
-        return array( 'rows'               => $rows,
-                      'elements'           => $elements,
-                      'rel_table_elements' => $relTableElements,
-                      'main_loc_address'   => $mainLocAddress,
-                      'loc_block_ids'      => $locBlockIds,
-                      'rel_tables'         => $relTables,
-                      'main_details'       => $main,
-                      'other_details'      => $other,
-                      'migration_info'     => $migrationInfo );
+        $result = array( 'rows'               => $rows,
+                         'elements'           => $elements,
+                         'rel_table_elements' => $relTableElements,
+                         'main_loc_address'   => $mainLocAddress,
+                         'rel_tables'         => $relTables,
+                         'main_details'       => $main,
+                         'other_details'      => $other,
+                         'migration_info'     => $migrationInfo );
+
+        $result['main_details']['loc_block_ids']  = $locBlockIds['main'];
+        $result['other_details']['loc_block_ids'] = $locBlockIds['other'];
+
+        return $result;
     }
 
     /**
