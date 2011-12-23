@@ -185,9 +185,14 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
 
         if ( $config->userFrameworkFrontend ) {
             $script = 'index.php';
+            // when shortcode is inlcuded in page
             if ( get_query_var('page_id') ) {
                 $pageID = "{$separator}page_id=" . get_query_var('page_id');
+            } else if ( get_query_var('p') ) {
+                // when shortcode is inserted in post
+                $pageID = "{$separator}p=" . get_query_var('p');
             }
+ 
         } 
 
         if (isset($fragment)) {

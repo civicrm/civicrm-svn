@@ -524,7 +524,6 @@ OR       ( start_date >= $now )
     while ( $dao->fetch() ) {
         $eventPages[$dao->id] = $dao->title;
     }
-print_r( $eventPages );
 ?>
         <script>
             function InsertCiviFrontPages( ) {
