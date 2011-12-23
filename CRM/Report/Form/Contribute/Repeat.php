@@ -481,17 +481,20 @@ LEFT  JOIN (
 
         foreach ( $checkDate as $date_range => $range_data ) {
             foreach ( $range_data as $key => $value ) {
-
                 if ( CRM_Utils_Date::isDate( $value ) ) {
                     $errorCount[$date_range][$key]['valid'   ] = 'true';
                     $errorCount[$date_range][$key]['is_empty'] = 'false';
                 } else {
                     $errorCount[$date_range][$key]['valid'   ] = 'false';
                     $errorCount[$date_range][$key]['is_empty'] = 'true';
-                    foreach ( $value as $v ) {
-                        if ( $v ) {
-                            $errorCount[$date_range][$key]['is_empty'] = 'false';
+                    if ( is_array ( $value ) ) {
+                        foreach ( $value as $v ) {
+                            if ( $v ) {
+                                $errorCount[$date_range][$key]['is_empty'] = 'false';
+                            }
                         }
+                    } elseif ( !isset( $value ) ) {
+                        $errorCount[$date_range][$key]['is_empty'] = 'false';
                     }
                 }
             }
