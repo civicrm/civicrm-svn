@@ -505,6 +505,26 @@ OR       ( start_date <= $now AND end_date >= $now )
         $contributionPages[$dao->id] = $dao->title;
     }
 
+    $sql = "
+SELECT id, title
+FROM   civicrm_event
+WHERE  is_active = 1
+AND ( is_template = 0 OR is_template IS NULL )
+AND    (
+         ( start_date IS NULL AND end_date IS NULL )
+OR       ( start_date <= $now AND end_date IS NULL )
+OR       ( start_date IS NULL AND end_date >= $now )
+OR       ( start_date <= $now AND end_date >= $now )
+OR       ( start_date >= $now )
+       )
+";
+
+    $dao = CRM_Core_DAO::executeQuery( $sql );
+    $eventPages = array();
+    while ( $dao->fetch() ) {
+        $eventPages[$dao->id] = $dao->title;
+    }
+print_r( $eventPages );
 ?>
         <script>
             function InsertCiviFrontPages( ) {
@@ -514,18 +534,20 @@ OR       ( start_date <= $now AND end_date >= $now )
                     return;
                 }
 
+                var action;
                 var component = jQuery("#add_civicomponent_id").val( );
                 switch ( component ) {
                     case 'contribution':
-                        var pid = jQuery("#add_contributepage_id").val();
-                    break;
+                        var pid  = jQuery("#add_contributepage_id").val();
+                        var mode = jQuery("input[name='component_mode']").val( );
+                        break;
                     case 'event':
-                        var pid = jQuery("#add_eventpage_id").val();
-                    break;
+                        var pid    = jQuery("#add_eventpage_id").val();
+                        var action = jQuery("input[name='event-action']").val( );
+                        var mode   = jQuery("input[name='component_mode']").val( );
+                        break;
                 }
                 
-                var mode           = jQuery("#add_component_mode").val( );
-                var action         = jQuery("#add_component_action").val( );
                 
                 // [ civicrm component=contribution/event/profile id=N mode=test/live action=info/register/create/search/edit/view ] 
                 var shortcode = '[civicrm component="' + component + '" id="' + pid + '"';
@@ -547,12 +569,16 @@ OR       ( start_date <= $now AND end_date >= $now )
                     var component = jQuery(this).val();
                     switch ( component ) {
                         case 'contribution':
-                            jQuery('#add_contributepage_id').show();
-                            jQuery('#add_component_mode').show();
+                            jQuery('#contribution-section').show();
+                            jQuery('#event-section').hide();
+                            jQuery('#component-section').show();
+                            jQuery('#action-section-event').hide();
                             break;
                         case 'event':
-                            jQuery('#add_contributepage_id').hide();
-                            jQuery('#add_component_mode').show();
+                            jQuery('#contribution-section').hide();
+                            jQuery('#event-section').show();
+                            jQuery('#component-section').show();
+                            jQuery('#action-section-event').show();
                             break;
                     }
                 });
@@ -576,21 +602,44 @@ OR       ( start_date <= $now AND end_date >= $now )
                             <option value="contribution">Contribution Page</option>
                             <option value="event">Event Page</option>
                         </select>
-                        <select id="add_contributepage_id" style="display:none;">
+
+                         <span id="contribution-section" style="display:none;">
+                            <select id="add_contributepage_id">
                             <?php
-                                $contributionPages;
                                 foreach($contributionPages as $key => $value ) {
                                     ?>
                                     <option value="<?php echo absint( $key ) ?>"><?php echo esc_html( $value ) ?></option>
                                     <?php
                                 }
                             ?>
-                        </select>
-
-                        <select id="add_component_mode" style="display:none;">
-                            <option value="live">Live Page</option>
-                            <option value="test">Test Drive</option>
-                        </select>
+                            </select>
+                        </span>
+                        
+                        <span id="event-section" style="display:none;">
+                            <select id="add_eventpage_id">
+                            <?php
+                                foreach($eventPages as $key => $value ) {
+                                    ?>
+                                    <option value="<?php echo absint( $key ) ?>"><?php echo esc_html( $value ) ?></option>
+                                    <?php
+                                }
+                            ?>
+                            </select>
+                        </span>
+                        <br>
+                        <span id="action-section-event" style="display:none;">
+                           <div style="padding:15px 15px 0 15px;"> 
+                            <input type="radio" name="event_action" value="info" checked="checked"/> Event Info Page
+                            <input type="radio" name="event_action" value="register" /> Event Registration Page
+                           </div>
+                        </span>
+                        <br/>
+                        <span id="component-section" style="display:none;">
+                           <div style="padding:15px 15px 0 15px;"> 
+                            <input type="radio" name="component_mode" value="live" checked="checked"/> Live Page
+                            <input type="radio" name="component_mode" value="test" /> Test Drive
+                           </div>
+                        </span>
                         <br/>
                         <div style="padding:8px 0 0 0; font-size:11px; font-style:italic; color:#5A5A5A"><?php _e("Can't find your form? Make sure it is active.", "gravityforms"); ?></div>
                     </div>
