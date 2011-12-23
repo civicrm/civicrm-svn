@@ -939,6 +939,7 @@ WHERE  contribution_id = {$this->_id}
                 if ( $this->_online ) $element->freeze( );
             }
             $this->assign( 'hasPriceSets', $hasPriceSets );
+            $currencyFreeze = false;
             if ( $this->_online || $this->_ppID ) {
                 
                 $attributes['total_amount'] = array_merge( $attributes['total_amount'], array (
@@ -950,13 +951,15 @@ WHERE  contribution_id = {$this->_id}
                                             null, 
                                             $optionTypes,
                                             array(), '<br/>' );
+                
+                $currencyFreeze = true;
             }
             
             $element = $this->addMoney( 'total_amount',
                                         ts('Total Amount'),
                                         ($hasPriceSets)?false:true,
                                         $attributes['total_amount'],
-                                        true, 'currency', null, true );
+                                        true, 'currency', null, $currencyFreeze );
         }
         
         $element = $this->add( 'text', 'source', ts('Source'), CRM_Utils_Array::value('source',$attributes) );
