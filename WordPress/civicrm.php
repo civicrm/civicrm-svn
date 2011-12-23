@@ -479,8 +479,8 @@ function civicrm_add_form_button( $context ) {
     }
 
     $config = CRM_Core_Config::singleton( );
-    $imageBtnURL = $config->resourceBase . 'i/contact_ind.gif';
-    $out = '<a href="#TB_inline?width=480&inlineId=select_civicrm_id" class="thickbox" id="add_civi" title="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '"><img src="'.$imageBtnURL.'" alt="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '" /></a>';
+    $imageBtnURL = $config->resourceBase . 'i/widget/logo.png';
+    $out = '<a href="#TB_inline?width=480&inlineId=civicrm_frontend_pages" class="thickbox" id="add_civi" title="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '"><img src="'.$imageBtnURL.'" hieght="15" width="15" alt="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '" /></a>';
     return $context . $out;
 }
 
@@ -500,63 +500,112 @@ OR       ( start_date IS NULL AND end_date >= $now )
 OR       ( start_date <= $now AND end_date >= $now )
        )
 ";
-    
 
-    echo <<<EOT
+    $dao = CRM_Core_DAO::executeQuery( $sql );
+    $contributionPages = array();
+    while ( $dao->fetch() ) {
+        $contributionPages[$dao->id] = $dao->title;
+    }
+
+?>
         <script>
-            function InsertForm(){
-                var form_id = jQuery("#add_form_id").val();
-                if(form_id == ""){
-                    alert( $title );
+            function InsertCiviFrontPages( ) {
+                var form_id = jQuery("#add_civicomponent_id").val();
+                if (form_id == ""){
+                    alert ('Please select a frontend element.');
                     return;
                 }
 
-                var form_name = jQuery("#add_form_id option[value='" + form_id + "']").text().replace(/[\[\]]/g, '');
-                var form_component = jQuery("#form_component").val( );
-                var form_id = jQuery("#form_component").val( );
+                var component = jQuery("#add_civicomponent_id").val( );
+                switch ( component ) {
+                    case 'contribution':
+                        var pid = jQuery("#add_contributepage_id").val();
+                    break;
+                    case 'event':
+                        var pid = jQuery("#add_eventpage_id").val();
+                    break;
+                }
+                
+                var mode           = jQuery("#add_component_mode").val( );
+                var action         = jQuery("#add_component_action").val( );
+                
+                // [ civicrm component=contribution/event/profile id=N mode=test/live action=info/register/create/search/edit/view ] 
+                var shortcode = '[civicrm component="' + component + '" id="' + pid + '"';
+                
+                if ( mode ) {
+                    shortcode = shortcode + ' mode="'+ mode +'"';
+                }
 
-                window.send_to_editor("[civicrm_" + form_component + " id=\"" + form_id + "\"]");
+                if ( action ) {
+                    shortcode = shortcode + ' action="'+ action +'"';
+                }
+
+                shortcode = shortcode + ']';
+                window.send_to_editor( shortcode );
             }
+
+            jQuery(function() {
+                jQuery('#add_civicomponent_id').change(function(){
+                    var component = jQuery(this).val();
+                    switch ( component ) {
+                        case 'contribution':
+                            jQuery('#add_contributepage_id').show();
+                            jQuery('#add_component_mode').show();
+                            break;
+                        case 'event':
+                            jQuery('#add_contributepage_id').hide();
+                            jQuery('#add_component_mode').show();
+                            break;
+                    }
+                });
+            });
         </script>
 
-        <div id="select_civicrm_id" style="display:none;">
+        <div id="civicrm_frontend_pages" style="display:none;">
             <div class="wrap">
                 <div>
                     <div style="padding:15px 15px 0 15px;">
                         <h3 style="color:#5A5A5A!important; font-family:Georgia,Times New Roman,Times,serif!important; font-size:1.8em!important; font-weight:normal!important;">
-                             $title
+                        <?php echo $title; ?>
                         </h3>
                         <span>
-                            $title
+                            <?php echo $title; ?> 
                         </span>
                     </div>
                     <div style="padding:15px 15px 0 15px;">
-                        <select id="add_form_id">
-                            <option value="">  <?php _e("Select a Form", "gravityforms"); ?>  </option>
+                        <select id="add_civicomponent_id">
+                            <option value="">  <?php _e("Select a frontend elment."); ?>  </option>
+                            <option value="contribution">Contribution Page</option>
+                            <option value="event">Event Page</option>
+                        </select>
+                        <select id="add_contributepage_id" style="display:none;">
                             <?php
-                                $forms = RGFormsModel::get_forms(1, "title");
-                                foreach($forms as $form){
+                                $contributionPages;
+                                foreach($contributionPages as $key => $value ) {
                                     ?>
-                                    <option value="<?php echo absint($form->id) ?>"><?php echo esc_html($form->title) ?></option>
+                                    <option value="<?php echo absint( $key ) ?>"><?php echo esc_html( $value ) ?></option>
                                     <?php
                                 }
                             ?>
-                        </select> <br/>
+                        </select>
+
+                        <select id="add_component_mode" style="display:none;">
+                            <option value="live">Live Page</option>
+                            <option value="test">Test Drive</option>
+                        </select>
+                        <br/>
                         <div style="padding:8px 0 0 0; font-size:11px; font-style:italic; color:#5A5A5A"><?php _e("Can't find your form? Make sure it is active.", "gravityforms"); ?></div>
                     </div>
-                    <div style="padding:15px 15px 0 15px;">
-                        <input type="checkbox" id="display_title" checked='checked' /> <label for="display_title"><?php _e("Display form title", "gravityforms"); ?></label> &nbsp;&nbsp;&nbsp;
-                        <input type="checkbox" id="display_description" checked='checked' /> <label for="display_description"><?php _e("Display form description", "gravityforms"); ?></label>&nbsp;&nbsp;&nbsp;
-                        <input type="checkbox" id="gform_ajax" /> <label for="gform_ajax"><?php _e("Enable AJAX", "gravityforms"); ?></label>
-                    </div>
                     <div style="padding:15px;">
-                        <input type="button" class="button-primary" value="Insert Form" onclick="InsertForm();"/>&nbsp;&nbsp;&nbsp;
-                    <a class="button" style="color:#bbb;" href="#" onclick="tb_remove(); return false;"><?php _e("Cancel", "gravityforms"); ?></a>
+                        <input type="button" class="button-primary" value="Insert Form" onclick="InsertCiviFrontPages();"/>&nbsp;&nbsp;&nbsp;
+                    <a class="button" style="color:#bbb;" href="#" onclick="tb_remove(); return false;"><?php _e("Cancel"); ?></a>
                     </div>
                 </div>
             </div>
         </div>
-EOT;
+
+<?php
+
 }
 
 function civicrm_run_shortcode( $q, $args ) {
