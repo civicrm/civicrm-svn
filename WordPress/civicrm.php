@@ -279,6 +279,10 @@ function civicrm_wp_frontend( $shortcode = false ) {
         return;
     }
 
+    // set the frontend part for civicrm code
+    $config = CRM_Core_Config::singleton( );
+    $config->userFrameworkFrontend = true;
+
     if ( isset( $_GET['q'] ) ) {
         $args = explode( '/', trim( $_GET['q'] ) );
     }
@@ -485,11 +489,20 @@ function civicrm_add_form_button( $context ) {
 function civicrm_add_form_button_html( ) {
     $title = _e( "Please choose a Contribution or Event Page", "CiviCRM" );
 
+    $now = date( "Ymdhis" );
+
     $sql = "
 SELECT id, title
 FROM   civicrm_contribution_page
 WHERE  is_active = 1
+AND    (
+         ( start_date IS NULL AND end_date IS NULL )
+OR       ( start_date <= $now AND end_date IS NULL )
+OR       ( start_date IS NULL AND end_date >= $now )
+OR       ( start_date <= $now AND end_date >= $now )
+       )
 ";
+    
 
     echo <<<EOT
         <script>

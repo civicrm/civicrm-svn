@@ -176,10 +176,19 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
                  $fragment = null, $htmlize = true,
                  $frontend = false ) {
         $config = CRM_Core_Config::singleton( );
-        $script =  'index.php';
+        $script = '';
+        $separator = $htmlize ? '&amp;' : '&';
+ 		$pageID    = '';
 
         require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
+
+        if ( $config->userFrameworkFrontend ) {
+            $script = 'index.php';
+            if ( get_query_var('page_id') ) {
+                $pageID = "{$separator}page_id=" . get_query_var('page_id');
+            }
+        } 
 
         if (isset($fragment)) {
             $fragment = '#'. $fragment;
@@ -196,38 +205,20 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
             $base .= 'wp-admin/admin.php';
         }
         
-        $script = '';
-        $separator = $htmlize ? '&amp;' : '&';
-
-        if (! $config->cleanURL ) {
-            if ( isset( $path ) ) {
-                if ( isset( $query ) ) {
-                    return $base . $script .'?page=CiviCRM&q=' . $path . $separator . $query . $fragment;
-                } else {
-                    return $base . $script .'?page=CiviCRM&q=' . $path . $fragment;
-                }
+        if ( isset( $path ) ) {
+            if ( isset( $query ) ) {
+                return $base . $script .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
             } else {
-                if ( isset( $query ) ) {
-                    return $base . $script .'?'. $query . $fragment;
-                } else {
-                    return $base . $fragment;
-                }
+                return $base . $script .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
             }
         } else {
-            if ( isset( $path ) ) {
-                if ( isset( $query ) ) {
-                    return $base . $path .'?'. $query . $fragment;
-                } else {
-                    return $base . $path . $fragment;
-                }
+            if ( isset( $query ) ) {
+                return $base . $script .'?'. $query . $pageID . $fragment;
             } else {
-                if ( isset( $query ) ) {
-                    return $base . $script .'?'. $query . $fragment;
-                } else {
-                    return $base . $fragment;
-                }
+                return $base . $fragment;
             }
         }
+        
     }
 
     /**
