@@ -538,12 +538,12 @@ OR       ( start_date >= $now )
                 switch ( component ) {
                     case 'contribution':
                         var pid  = jQuery("#add_contributepage_id").val();
-                        var mode = jQuery("input[name='component_mode']").val( );
+                        var mode = jQuery("input[name='component_mode']:checked").val( );
                         break;
                     case 'event':
                         var pid    = jQuery("#add_eventpage_id").val();
-                        var action = jQuery("input[name='event_action']").val( );
-                        var mode   = jQuery("input[name='component_mode']").val( );
+                        var action = jQuery("input[name='event_action']:checked").val( );
+                        var mode   = jQuery("input[name='component_mode']:checked").val( );
                         break;
                 }
                 
@@ -627,14 +627,14 @@ OR       ( start_date >= $now )
                         <br>
                         <span id="action-section-event" style="display:none;">
                            <div style="padding:15px 15px 0 15px;"> 
-                            <input type="radio" name="event_action" value="info" /> Event Info Page
+                            <input type="radio" name="event_action" value="info" checked="checked" /> Event Info Page
                             <input type="radio" name="event_action" value="register" /> Event Registration Page
                            </div>
                         </span>
                         <br/>
                         <span id="component-section" style="display:none;">
                            <div style="padding:15px 15px 0 15px;"> 
-                            <input type="radio" name="component_mode" value="live" /> Live Page
+                            <input type="radio" name="component_mode" value="live" checked="checked"/> Live Page
                             <input type="radio" name="component_mode" value="test" /> Test Drive
                            </div>
                         </span>
