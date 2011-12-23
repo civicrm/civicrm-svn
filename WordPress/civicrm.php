@@ -449,9 +449,7 @@ function civicrm_wp_main( ) {
     add_action( 'user_register'   , 'civicrm_user_register'  );
     add_action( 'profile_update'  , 'civicrm_profile_update' );
 
-    add_shortcode( 'civicrm_contribution'  , 'civicrm_contribution_page' );
-    add_shortcode( 'civicrm_event_info'    , 'civicrm_event_info'        );
-    add_shortcode( 'civicrm_event_register', 'civicrm_event_register'    );
+    add_shortcode( 'civicrm', 'civicrm_shortcode_handler' );
 
     if ( ! civicrm_wp_in_civicrm( ) ) {
         return;
@@ -608,38 +606,56 @@ OR       ( start_date <= $now AND end_date >= $now )
 
 }
 
-function civicrm_run_shortcode( $q, $args ) {
-    foreach ( $args as $key => $value ) {
-        $_GET[$key] = $value;
+function civicrm_shortcode_handler( $atts ) {
+    extract( shortcode_atts( array( 'component' => 'contribution',
+                                    'action'    => null,
+                                    'mode'      => null,
+                                    'id'        => null,
+                                    'cid'       => null,
+                                    'gid'       => null,
+                                    'cs'        => null ),
+                             $atts ) );
+
+    $args = array( 'reset' => 1,
+                   'id'    => $id );
+    
+    switch ( $component ) {
+    case 'contribution':
+        $args['q' ] = 'civicrm/contribute/transact';
+        break;
+
+    case 'event':
+        switch ( $action ) {
+        case 'register':
+            $args['q' ]     = 'civicrm/event/register';
+            if ( $mode == 'preview' ) {
+                $args['action'] = $mode;
+            }
+            break;
+
+        case 'info':
+            $args['q' ] = 'civicrm/event/info';
+            break;
+
+        default:
+            echo 'Do not know how to handle this shortcode<p>';
+            return;
+        }
+        break;
+
+    default:
+        echo 'Do not know how to handle this shortcode<p>';
+        return;
+        
     }
-    $_GET['q'    ] = $q;
-    $_GET['reset'] = 1;
+
+    foreach ( $args as $key => $value ) {
+        if ( $value !== null ) {
+            $_GET[$key] = $value;
+        }
+    }
 
     return civicrm_wp_frontend( true );
-}
-
-function civicrm_contribution_page( $atts ) {
-    extract( shortcode_atts( array( 'id' => 0 ),
-                             $atts ) );
-
-    return civicrm_run_shortcode( 'civicrm/contribute/transact',
-                                  array( 'id' => $id ) );
-}
-
-function civicrm_event_info( $atts ) {
-    extract( shortcode_atts( array( 'id' => 0 ),
-                             $atts ) );
-
-    return civicrm_run_shortcode( 'civicrm/event/info',
-                                  array( 'id' => $id ) );
-}
-
-function civicrm_event_register( $atts ) {
-    extract( shortcode_atts( array( 'id' => 0 ),
-                             $atts ) );
-
-    return civicrm_run_shortcode( 'civicrm/event/register',
-                                  array( 'id' => $id ) );
 }
 
 function civicrm_wp_in_civicrm( ) {
