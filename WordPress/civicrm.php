@@ -55,8 +55,6 @@ if ( civicrm_wp_in_civicrm() ) {
     $_GET['mode'] = 'wordpress';
 }
 
-define('WP_DEBUG', true);
-
 function civicrm_wp_add_menu_items( ) {
     add_menu_page( 'CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke' );
     add_options_page( 'CiviCRM Settings', 'CiviCRM Settings', 'manage_options', 'civicrm-settings', 'civicrm_db_settings');
