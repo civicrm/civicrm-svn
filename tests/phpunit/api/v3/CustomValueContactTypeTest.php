@@ -99,7 +99,17 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
       $tablesToTruncate = array( 'civicrm_contact' );
       $this->quickCleanup( $tablesToTruncate, true );     
   }
+    function testGetFields() {
+      $result = civicrm_api('Contact', 'getfields', array('version' => 3));
+      $this->assertArrayHasKey("custom_{$this->IndividualField[id]}", $result['values'], 'If This fails there is probably a cachine issue - failure in line' . __LINE__ . print_r(array_keys($result['values']), true));
+      $result = civicrm_api('Contact', 'getfields', array('version' => 3, 'action' => 'create', 'contact_type' => 'Individual'), 'in line' . __LINE__);;
+      $this->assertArrayHasKey("custom_{$this->IndividualField[id]}", $result['values']);
+      $result = civicrm_api('Contact', 'getfields', array('version' => 3, 'action' => 'create', 'contact_type' => 'Organization'));
+      $this->assertArrayNotHasKey("custom_{$this->IndividualField[id]}", $result['values'], 'in line' . __LINE__ . print_r(array_keys($result['values']), true));
+      $result = civicrm_api('Relationship', 'getfields', array('version' => 3, 'action' => 'create'), 'in line' . __LINE__);;
+      $this->assertArrayNotHasKey("custom_{$this->IndividualField[id]}", $result['values']);
 
+    }
   /**
    * Add  Custom data of Contact Type : Individual to a Contact type: Organization
    */
@@ -110,6 +120,7 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_type'      => 'Organization',
                         "custom_{$this->IndividualField[id]}" => 'Test String', 
                         'version'		=>$this->_apiversion, 
+                        'debug' => 1,
     );
 
     $contact =& civicrm_api('contact','create',  $params );

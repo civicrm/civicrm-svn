@@ -927,7 +927,7 @@ function _civicrm_api3_generic_replace($entity, $params) {
  * @param $entity string Entity to query
  * @param bool $unique index by unique fields?
  */
-function _civicrm_api_get_fields($entity, $unique = FALSE){
+function _civicrm_api_get_fields($entity, $unique = FALSE, &$params = array()){
     $unsetIfEmpty= array ('dataPattern','headerPattern','default','export','import');
     $dao = _civicrm_api3_get_DAO ($entity);
     if (empty($dao)) {
@@ -957,7 +957,7 @@ function _civicrm_api_get_fields($entity, $unique = FALSE){
       unset ($fields[$name]);
     }
     }
-    $fields += _civicrm_api_get_custom_fields($entity) ;
+    $fields += _civicrm_api_get_custom_fields($entity, $params) ;
     return $fields;
 }
 
@@ -965,10 +965,20 @@ function _civicrm_api_get_fields($entity, $unique = FALSE){
  * Return an array of fields for a given entity - this is the same as the BAO function but
  * fields are prefixed with 'custom_' to represent api params
  */
-function _civicrm_api_get_custom_fields($entity){
+function _civicrm_api_get_custom_fields($entity, &$params){
     require_once 'CRM/Core/BAO/CustomField.php';
     $customfields = array();
-    $customfields = CRM_Core_BAO_CustomField::getFields($entity) ;
+    if(strtolower($entity) == 'contact'){
+      $entity = $params['contact_type'];
+    }
+    $customfields = CRM_Core_BAO_CustomField::getFields($entity ,                                                        false,
+                                                         false,
+                                                         CRM_Utils_Array::value('contact_subtype', $params, false),
+                                                         null,
+                                                         empty($params['contact_subtype']),
+                                                         false,
+                                                         false ) ;
+                                                      
     foreach ($customfields as $key => $value) {
         $customfields['custom_' . $key] = $value;
         unset($customfields[$key]);
