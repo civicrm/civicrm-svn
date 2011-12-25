@@ -149,9 +149,14 @@ function civicrm_engage_civicrm_config( &$config ) {
 /**
  * Implementation of hook_perm().
  */
-function civicrm_engage_perm() 
+function civicrm_engage_permission() 
 {
-    return array('access civiengage settings');
+    return array(
+                 'access civiengage settings' => 
+                 array( 'title' => t('Access CiviCRM engage setting'), 
+                        'description' => t('Access CiviCRM engage setting.'),
+                        )
+                 );
 }
 
 function civicrm_engage_menu() {
