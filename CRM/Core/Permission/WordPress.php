@@ -89,6 +89,10 @@ class CRM_Core_Permission_WordPress {
      */
     static function check( $str ) {
         // for administrators give them all permissions
+        if ( !function_exists('current_user_can') ){
+            return true;
+        }
+        
         if ( current_user_can('super admin') ||
              current_user_can('administrator') ||
              current_user_can('editor') ) {
