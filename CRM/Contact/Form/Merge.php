@@ -118,7 +118,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             }
             
             $this->assign( 'mainUfId', $mainUfId );
-            $this->assign( 'mainUfName', $mainUser->name );
+            $this->assign( 'mainUfName', $mainUser ? $mainUser->name : null );
         }
 
         $flipUrl = CRM_Utils_system::url( 'civicrm/contact/merge', 
@@ -159,7 +159,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             }
         
             $this->assign( 'otherUfId', $otherUfId );
-            $this->assign( 'otherUfName', $otherUser->name );
+            $this->assign( 'otherUfName', $otherUser ? $otherUser->name : null );
         }
         
         $cmsUser = ( $mainUfId && $otherUfId ) ? true : false;  

@@ -33,6 +33,8 @@
  *
  */
 
+require_once 'CRM/Core/BAO/CustomGroup.php';
+
 class CRM_Dedupe_Merger
 {
     // FIXME: this should be auto-generated from the schema
@@ -528,32 +530,68 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         return $diffs;
     }
 
-    /**
-     * Function to merge two given contacts, a superset of moveAllBelongings() function. 
+    /** 
+     * Function to batch merge a set of contacts based on rule-group and group.
+     * 
+     * @param  int     $rgid        rule group id
+     * @param  int     $gid         group id
+     * @param  array   $cacheParams prev-next-cache params based on which next pair of contacts are computed.
+     *                              Generally used with batch-merge.
+     * @param  string  $mode        helps decide how to behave when there are conflicts. 
+     *                              A 'safe' value skips the merge if there are no conflicts. Does a force merge otherwise.
+     * @param  boolean $autoFlip   wether to let api decide which contact to retain and which to delete.
+     * 
      *
-     */
-    function batchMerge( $rgid, $gid = null, $mode = 'safe' )
+     * @static void
+     * @access public
+     */ 
+    function batchMerge( $rgid, $gid = null, $mode = 'safe', $autoFlip = true )
     {
         $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Dedupe_DAO_RuleGroup', $rgid, 'contact_type' );
         $cacheKeyString  = "merge {$contactType}";
         $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
         $cacheKeyString .= $gid  ? "_{$gid}"  : '_0';
-
         $join  = "LEFT JOIN civicrm_dedupe_exception de ON ( pn.entity_id1 = de.contact_id1 AND 
                                                              pn.entity_id2 = de.contact_id2 )";
         $where = "de.id IS NULL LIMIT 1";
 
         require_once 'CRM/Core/BAO/PrevNextCache.php';
-        $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
+        $dupePairs   = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
+        $cacheParams = array( 'cache_key_string' => $cacheKeyString,
+                              'join'             => $join,
+                              'where'            => $where );
+        CRM_Dedupe_Merger::merge( $dupePairs, $cacheParams, $mode, $autoFlip );
+    }
+
+    /** 
+     * Function to merge given set of contacts. Performs core operation.
+     * 
+     * @param  array   $dupePairs   set of pair of contacts for whom merge is to be done.
+     * @param  array   $cacheParams prev-next-cache params based on which next pair of contacts are computed.
+     *                              Generally used with batch-merge.
+     * @param  string  $mode       helps decide how to behave when there are conflicts. 
+     *                             A 'safe' value skips the merge if there are no conflicts. Does a force merge otherwise.
+     * @param  boolean $autoFlip   wether to let api decide which contact to retain and which to delete.
+     * 
+     *
+     * @static void
+     * @access public
+     */ 
+    function merge( $dupePairs = array(), $cacheParams = array(), $mode = 'safe', $autoFlip = true ) {
+        $cacheKeyString = CRM_Utils_Array::value( 'cache_key_string', $cacheParams );
 
         while ( !empty($dupePairs) ) {
             foreach ( $dupePairs as $dupes ) {
-                $mainId  = $dupes['srcID'];
-                $otherId = $dupes['dstID'];
+                $mainId  = $dupes['dstID'];
+                $otherId = $dupes['srcID'];
                 // make sure that $mainId is the one with lower id number
-                if ( $mainId > $otherId ) {
-                    $mainId  = $dupes['dstID'];
-                    $otherId = $dupes['srcID'];
+                if ( $autoFlip && ($mainId > $otherId) ) {
+                    $mainId  = $dupes['srcID'];
+                    $otherId = $dupes['dstID'];
+                }
+                if ( !$mainId || !$otherId ) {
+                    // return error
+                    return false;
                 }
 
                 // Generate var $migrationInfo. The variable structure is exactly same as 
@@ -578,17 +616,38 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
                 CRM_Core_DAO::freeResult( );
             }
-            //$dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
+
+            if ( $cacheKeyString ) {
+                // retrieve next pair of dupes
+                $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, 
+                                                                   $cacheParams['join'], 
+                                                                   $cacheParams['where'] );
+            } else {
+                // do not proceed. Terminate the loop
+                unset( $dupePairs );
+            }
         }
+        return true;
     }
 
+    /** 
+     * A function which uses various rules / algorithms for choosing which contact to bias to 
+     * when there's a conflict (to handle "gotchas"). Plus the safest route to merge.
+     * 
+     * @param  int     $mainId         main contact with whom merge has to happen
+     * @param  int     $otherId        duplicate contact which would be deleted after merge operation
+     * @param  array   $migrationInfo  array of information about which elements to merge.
+     * @param  string  $mode           helps decide how to behave when there are conflicts. 
+     *                                 A 'safe' value skips the merge if there are no conflicts. 
+     *                                 Does a force merge otherwise.
+     *
+     * @static void
+     * @access public
+     */ 
     function skipMerge( $mainId, $otherId, &$migrationInfo, $mode = 'safe' )
     {
         $migrationData = array( 'old_migration_info' => $migrationInfo,
                                 'mode'               => $mode );
-
-        //  FIXME: algorithm to decide / detect / resolve conflict
-
         $allLocationTypes = CRM_Core_PseudoConstant::locationType( );
 
         foreach ( $migrationInfo as $key => $val ) {
@@ -637,6 +696,15 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         return array_key_exists('skip_merge', $migrationInfo) ? (bool) $migrationInfo['skip_merge'] : false;
     }
 
+    /** 
+     * A function to build an array of information required by merge function and the merge UI.
+     * 
+     * @param  int     $mainId         main contact with whom merge has to happen
+     * @param  int     $otherId        duplicate contact which would be deleted after merge operation
+     *
+     * @static void
+     * @access public
+     */ 
     function getRowsElementsAndInfo( $mainId, $otherId )
     { 
         $qfZeroBug   = 'e8cddb72-a257-11dc-b9cc-0016d3330ee9';
@@ -951,17 +1019,17 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      * other contact to the main one - be it Location / CustomFields or Contact .. related info.
      * A superset of moveContactBelongings() function.
      * 
+     * @param  int     $mainId         main contact with whom merge has to happen
+     * @param  int     $otherId        duplicate contact which would be deleted after merge operation
+     *
+     * @static void
+     * @access public
      */
     function moveAllBelongings( $mainId, $otherId, $migrationInfo )
     {
         if ( empty($migrationInfo) ) {
             return false;
         }
-
-        // preprocess to compute $submitted, $locBlocks, $tableOperations vars.
-        // $submitted contains contact table & custom related data.
-        // $locBlocks is a format required for location migration.
-        // $tableOperations - rel_table related add operations
 
         $qfZeroBug  = 'e8cddb72-a257-11dc-b9cc-0016d3330ee9';
         $relTables  = CRM_Dedupe_Merger::relTables();
@@ -1078,7 +1146,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $names['postal_greeting']   = array( 'newName' => 'postal_greeting_id', 'groupName' => 'postal_greeting' );
         CRM_Core_OptionGroup::lookupValues( $submitted, $names, true );
 
-        // FIXME: fix custom fields so they're edible by createProfileContact()
+        // fix custom fields so they're edible by createProfileContact()
         $cgTree = CRM_Core_BAO_CustomGroup::getTree( $migrationInfo['main_details']['contact_type'], 
                                                      CRM_Core_DAO::$_nullObject, null, -1      );
         

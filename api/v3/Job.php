@@ -374,3 +374,38 @@ function civicrm_api3_job_process_membership_reminder_date( $params )
         return civicrm_api3_create_error( $result['messages'] );
     }
 }
+
+/** 
+ * Merges given pair of duplicate contacts.
+ * 
+ * @param  array   $params   input parameters
+ *
+ * Allowed @params array keys are:
+ * {int     $rgid        rule group id}
+ * {int     $gid         group id}
+ * {string  mode        helps decide how to behave when there are conflicts. 
+ *                      A 'safe' value skips the merge if there are no conflicts. Does a force merge otherwise.}
+ * {boolean auto_flip   wether to let api decide which contact to retain and which to delete.}
+ * 
+ * @return array  API Result Array
+ *
+ * @static void
+ * @access public
+ */ 
+function civicrm_api3_process_batch_merge( $params )
+{
+    $rgid = CRM_Utils_Array::value( 'rgid', $params );
+    $gid  = CRM_Utils_Array::value( 'gid',  $params );
+
+    $mode     = CRM_Utils_Array::value( 'mode', $params, 'safe' );
+    $autoFlip = CRM_Utils_Array::value( 'auto_flip', $params, true );
+
+    require_once 'CRM/Dedupe/Merger.php';
+    $result = CRM_Dedupe_Merger::batchMerge( $rgid, $gid, $mode, $autoFlip );
+
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
+}
