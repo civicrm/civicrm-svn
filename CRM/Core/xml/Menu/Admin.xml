@@ -332,7 +332,7 @@
   </item>
   <item>
      <path>civicrm/admin/pdfFormats</path>
-     <title>Pring Page (PDF) Formats</title>
+     <title>Print Page (PDF) Formats</title>
      <desc>Configure PDF Page Formats that can be assigned to Message Templates when creating PDF letters.</desc>
      <page_callback>CRM_Admin_Page_PdfFormats</page_callback>
      <adminGroup>Communications</adminGroup>
