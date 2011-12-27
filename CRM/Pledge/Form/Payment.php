@@ -143,7 +143,7 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         $params = array( );
         $formValues['scheduled_date'] = CRM_Utils_Date::processDate( $formValues['scheduled_date'] );
         $params['scheduled_date']     = CRM_Utils_Date::format( $formValues['scheduled_date'] );
-       
+        $params['currency']           = CRM_Utils_Array::value( 'currency', $formValues );
         $now = date( 'Ymd' );
         $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         

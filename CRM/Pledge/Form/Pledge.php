@@ -412,7 +412,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         if ( $this->_id &&
              !$this->_isPending ) {
             $eachPaymentAmount = $this->_values['original_installment_amount'];
-            //CRM_CORE_ERROR::DEBUG($this->_values);
             $this->assign('currency' , $this->_values['currency'] );
             $this->assign('eachPaymentAmount' , $eachPaymentAmount );
             $this->assign('hideCalender' , true );
