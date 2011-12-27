@@ -359,7 +359,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                             // Show user link to oldest Pending or Overdue pledge payment
                             require_once 'CRM/Utils/Date.php';
                             require_once 'CRM/Utils/Money.php';
-                            $ppAmountDue = CRM_Utils_Money::format($payments['amount']);
+                            $ppAmountDue = CRM_Utils_Money::format($payments['amount'],$payments['currency']);
                             $ppSchedDate = CRM_Utils_Date::customFormat( CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', $payments['id'], 'scheduled_date' ) );
                             if ( $this->_mode ) {
                                 $ppUrl = CRM_Utils_System::url( 'civicrm/contact/view/contribution',
