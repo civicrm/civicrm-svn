@@ -250,7 +250,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         require_once 'CRM/Utils/Money.php';
         $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
         $title = CRM_Contact_BAO_Contact::displayName( $pledge->contact_id ) . 
-                 ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format( $pledge->amount ) . 
+                 ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format( $pledge->amount, $pledge->currency ) . 
                  ' - ' . $contributionTypes[$pledge->contribution_type_id] . ')';
 
         // add the recently created Pledge
@@ -671,10 +671,10 @@ GROUP BY  cp.currency
                                                                       $activityType,
                                                                       'name' );
         $config  = CRM_Core_Config::singleton();
-        $money   = $config->defaultCurrencySymbol;
-        $details = 'Total Amount '.$money. $params['total_pledge_amount'].' To be paid in '.
-            $params['installments'].' installments of '.$money.$params['scheduled_amount'].' every '.
-            $params['frequency_interval'].' '.$params['frequency_unit'].'(s)' ;
+
+        $details = 'Total Amount '. CRM_Utils_Money::format( $params['total_pledge_amount'], $params['currency'] ) .' To be paid in '.
+                   $params['installments'].' installments of '. CRM_Utils_Money::format( $params['scheduled_amount'], $params['currency'] )
+                   .' every '. $params['frequency_interval'].' '.$params['frequency_unit'].'(s)' ;
         
         if ( ! $activity->find( ) ) {
             $activityParams = array( 'subject'            => $subject,
