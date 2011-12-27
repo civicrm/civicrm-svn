@@ -49,7 +49,17 @@ class CRM_Utils_Hook_Joomla extends CRM_Utils_Hook {
            JPluginHelper::importPlugin('civicrm');
            
            $app = JFactory::getApplication();
-           $app->triggerEvent($fnSuffix,array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5));                      
+           $result = $app->triggerEvent($fnSuffix,array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5));
+           if ( ! empty( $result ) ) {
+               // collapse result returned from hooks
+               // CRM-9XXX
+               $finalResult = array( );
+               foreach ( $result as $res ) {
+                   $finalResult = array_merge( $finalResult, $res );
+               }
+               $result = $finalResult;
+           }
+           return $result;
        }
    }
 }
