@@ -348,9 +348,16 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         $js =  array( 'onblur'  => "calculatedPaymentAmount( );",
                       'onkeyup' => "calculatedPaymentAmount( );");
         
-        $element = $this->addMoney( 'amount', ts('Total Pledge Amount'), true, 
-		   		    array_merge( $attributes['pledge_amount'],$js ), true );
+        $currencyFreeze = false;
+        if ( $this->_id &&
+             !$this->_isPending ) {
+            $currencyFreeze = true;
+        }
 
+        $element = $this->addMoney( 'amount', ts('Total Pledge Amount'), true, 
+                                    array_merge( $attributes['pledge_amount'],$js ), true,
+                                    'currency', null, $currencyFreeze);
+        
         if ( $this->_id && 
              !$this->_isPending ) {
             $element->freeze( );
@@ -405,6 +412,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         if ( $this->_id &&
              !$this->_isPending ) {
             $eachPaymentAmount = $this->_values['original_installment_amount'];
+            //CRM_CORE_ERROR::DEBUG($this->_values);
+            $this->assign('currency' , $this->_values['currency'] );
             $this->assign('eachPaymentAmount' , $eachPaymentAmount );
             $this->assign('hideCalender' , true );
         }
