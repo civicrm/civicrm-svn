@@ -665,7 +665,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             $params['id'] = $pledge->id;
             $params['acknowledge_date'] = $pledge->acknowledge_date;
             $params['is_test'] = $pledge->is_test;
-            
+            $params['currency'] = $pledge->currency;
             // retrieve 'from email id' for acknowledgement
             $params['from_email_id'] = $formValues['from_email_address'];
                         

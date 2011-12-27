@@ -46,7 +46,7 @@
        {ts}Total Pledge Amount{/ts}
       </td>
       <td {$valueStyle}>
-       {$total_pledge_amount|crmMoney}
+       {$total_pledge_amount|crmMoney:$currency}
       </td>
      </tr>
      <tr>
@@ -56,7 +56,7 @@
      </tr>
      <tr>
       <td colspan="2" {$valueStyle}>
-       <p>{ts 1=$scheduled_amount|crmMoney 2=$frequency_interval 3=$frequency_unit 4=$installments}%1 every %2 %3 for %4 installments.{/ts}</p>
+       <p>{ts 1=$scheduled_amount|crmMoney:$currency 2=$frequency_interval 3=$frequency_unit 4=$installments}%1 every %2 %3 for %4 installments.{/ts}</p>
 
        {if $frequency_day}
         <p>{ts 1=$frequency_day 2=$frequency_unit}Payments are due on day %1 of the %2.{/ts}</p>
@@ -72,7 +72,7 @@
          {ts 1=$count}Payment %1{/ts}
         </td>
         <td {$valueStyle}>
-         {$payment.amount|crmMoney} {if $payment.status eq 1}{ts}paid{/ts} {$payment.receive_date|truncate:10:''|crmDate}{else}{ts}due{/ts} {$payment.due_date|truncate:10:''|crmDate}{/if}
+         {$payment.amount|crmMoney:$currency} {if $payment.status eq 1}{ts}paid{/ts} {$payment.receive_date|truncate:10:''|crmDate}{else}{ts}due{/ts} {$payment.due_date|truncate:10:''|crmDate}{/if}
         </td>
        </tr>
        {assign var="count" value=`$count+1`}

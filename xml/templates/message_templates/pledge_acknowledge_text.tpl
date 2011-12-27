@@ -7,13 +7,13 @@
 
 ===========================================================
 {ts}Pledge Received{/ts}: {$create_date|truncate:10:''|crmDate}
-{ts}Total Pledge Amount{/ts}: {$total_pledge_amount|crmMoney}
+{ts}Total Pledge Amount{/ts}: {$total_pledge_amount|crmMoney:$currency}
 
 ===========================================================
 {ts}Payment Schedule{/ts}
 
 ===========================================================
-{ts 1=$scheduled_amount|crmMoney 2=$frequency_interval 3=$frequency_unit 4=$installments}%1 every %2 %3 for %4 installments.{/ts}
+{ts 1=$scheduled_amount|crmMoney:$currency 2=$frequency_interval 3=$frequency_unit 4=$installments}%1 every %2 %3 for %4 installments.{/ts}
 
 {if $frequency_day}
 
@@ -24,7 +24,7 @@
 {assign var="count" value="1"}
 {foreach from=$payments item=payment}
 
-{ts 1=$count}Payment %1{/ts}: {$payment.amount|crmMoney} {if $payment.status eq 1}{ts}paid{/ts} {$payment.receive_date|truncate:10:''|crmDate}{else}{ts}due{/ts} {$payment.due_date|truncate:10:''|crmDate}{/if}
+{ts 1=$count}Payment %1{/ts}: {$payment.amount|crmMoney:$currency} {if $payment.status eq 1}{ts}paid{/ts} {$payment.receive_date|truncate:10:''|crmDate}{else}{ts}due{/ts} {$payment.due_date|truncate:10:''|crmDate}{/if}
 {assign var="count" value=`$count+1`}
 {/foreach}
 {/if}

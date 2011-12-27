@@ -538,7 +538,7 @@ GROUP BY  cp.currency
 
         //assign pledge fields value to template.
         $pledgeFields = array( 'create_date', 'total_pledge_amount', 'frequency_interval', 'frequency_unit', 
-                               'installments', 'frequency_day','scheduled_amount' );
+                               'installments', 'frequency_day','scheduled_amount', 'currency' );
         foreach ( $pledgeFields as $field ) {
             if ( CRM_Utils_Array::value( $field, $params ) ) {
                 $form->assign( $field, $params[$field] );
