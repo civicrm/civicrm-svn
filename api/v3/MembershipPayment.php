@@ -86,14 +86,14 @@ function _civicrm_api3_membership_payment_create_spec(&$params){
  * Retrieve one / all contribution(s) / membership(s) linked to a
  * membership / contrbution.
  *
- * @param  array   $params           (reference ) input parameters
+ * @param  array   $params  input parameters
  *
- * @return array (reference )        array of properties, if error an array with an error id and error message
+ * @return array  array of properties, if error an array with an error id and error message
  *  @example MembershipPaymentGet
  * {@getfields MembershipPayment_get}
  * @access public
  */
-function &civicrm_api3_membership_payment_get( $params ) {
+function civicrm_api3_membership_payment_get( $params ) {
 
 
     return _civicrm_api3_basic_get('CRM_Member_DAO_MembershipPayment', $params);
