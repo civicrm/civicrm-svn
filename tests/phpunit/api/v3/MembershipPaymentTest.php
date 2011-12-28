@@ -45,7 +45,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         $this->_contributionTypeID  = $this->contributionTypeCreate();
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID );
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
-        
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true,  true, true, 'name' );    
     }
     
     function tearDown() 
@@ -54,6 +54,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         $params = array( 'id' => $this->_membershipTypeID );
         $this->membershipTypeDelete( $params );
         $this->membershipStatusDelete( $this->_membershipStatusID );
+        civicrm_api('contact','delete', array('version' => API_LATEST_VERSION, 'id' => $this->_contactID));
     }
     
     ///////////////// civicrm_membership_payment_create methods
