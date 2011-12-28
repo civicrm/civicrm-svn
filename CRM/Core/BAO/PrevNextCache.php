@@ -108,13 +108,15 @@ WHERE  cacheKey     = %3 AND
             $sql .= " AND ( entity_id1 = %2 OR
                             entity_id2 = %2 )";
             $params[2] = array( $id, 'Integer' );
+        } else {
+            // don't empty dupe caching. Since this is what batch-merging based on.
+            $sql .= " AND cacheKey NOT LIKE 'merge%'";
         }
         
         if ( isset( $cacheKey ) ) {
             $sql .= " AND cacheKey LIKE %3";
             $params[3] = array( "{$cacheKey}%", 'String' );
         }
-
         CRM_Core_DAO::executeQuery( $sql, $params );
     }
 

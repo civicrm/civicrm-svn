@@ -806,5 +806,9 @@ function civicrm_api3_contact_merge( $params )
                                'dstID' => CRM_Utils_Array::value( 'other_id', $params ) ) );
     $result = CRM_Dedupe_Merger::merge( $dupePairs, array(), $mode, $autoFlip );
 
-    return civicrm_api3_create_success( $result );
+    if ( $result['is_error'] == 0 ) {
+        return civicrm_api3_create_success( );
+    } else {
+        return civicrm_api3_create_error( $result['messages'] );
+    }
 }

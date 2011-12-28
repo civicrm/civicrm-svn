@@ -392,7 +392,7 @@ function civicrm_api3_job_process_membership_reminder_date( $params )
  * @static void
  * @access public
  */ 
-function civicrm_api3_process_batch_merge( $params )
+function civicrm_api3_job_process_batch_merge( $params )
 {
     $rgid = CRM_Utils_Array::value( 'rgid', $params );
     $gid  = CRM_Utils_Array::value( 'gid',  $params );
