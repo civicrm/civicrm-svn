@@ -50,7 +50,7 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase
     function setUp( ) 
     {  
         $this->_apiversion = 3;
-        CRM_Core_PseudoConstant::flush('activityType');
+        CRM_Core_PseudoConstant::activityType( true,  true, true, 'name' );  
         parent::setUp();
     }
     
