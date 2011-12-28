@@ -46,6 +46,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
 {   protected $_params;
     protected $_entity;
     protected $_apiversion;
+    protected $followup_activity_type_value;
     /**
      *  Test setup for every test
      *
@@ -73,12 +74,12 @@ class api_v3_CaseTest extends CiviUnitTestCase
 
         $this->quickCleanup( $tablesToTruncate );
 
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
- 
+        $activityTypes = civicrm_api('option_value', 'get', array('version' => API_LATEST_VERSION, 'option_group_id' => 2, 
+        																						'name' => 'Follow Up',
+                    																'label' =>  'Follow Up',
+                                                    'sequential' => 1 )); 
+        $this->followup_activity_type_value = $activityTypes['values'][0]['value'];
+        $this->followup_activity_type_id = $activityTypes['id'];
         //  Insert a row in civicrm_contact creating contact 17
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -86,31 +87,9 @@ class api_v3_CaseTest extends CiviUnitTestCase
                                                                          dirname(__FILE__)
                                                                          . '/dataset/contact_17.xml') );
  
-        //  Insert a row in civicrm_option_group creating option group
-        //  activity_type 
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/option_group_activity.xml') );
  
-        //  Insert a row in civicrm_option_value creating
-        //  activity_type 5
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_activity.xml') );
 
-        //  Insert a row in civicrm_option_value creating option_group
-        //  case_type
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_group_case.xml') );
-
-        //  Insert a row in civicrm_option_value creating
+           //  Insert a row in civicrm_option_value creating
         //  case_types
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -226,6 +205,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
      */
     function tearDown()
     {
+
         $tablesToTruncate = array( 'civicrm_contact', 
                                    'civicrm_activity',
                                    'civicrm_case',
@@ -299,7 +279,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $result =& civicrm_api('case','create', $params );
         
         $params = array( 'case_id' => 1,
-                         'activity_type_id' => 14, // follow up
+                         'activity_type_id' => $this->followup_activity_type_value, // follow up
                          'subject' => 'Test followup',
                          'source_contact_id' => $this->_loggedInUser,
                          'target_contact_id' => $this->_params['contact_id'],
