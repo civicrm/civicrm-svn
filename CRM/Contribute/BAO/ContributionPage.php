@@ -294,7 +294,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                                           'entity_table' => 'civicrm_contribution_page',   
                                           'entity_id'    => $values['id'] );   
                 $OnBehalfProfile = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
-                $profileId       = $OnBehalfProfile[0]; 
+                $profileId       = $OnBehalfProfile[0];
+                $userID = $contactID; 
                 self::buildCustomDisplay( $profileId, 'onBehalfProfile' , $userID, $template,
                                           $params['onbehalf_profile'], $fieldTypes );
             }
