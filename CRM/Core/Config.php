@@ -288,6 +288,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             global $mainframe;
             $dbprefix = $mainframe ? $mainframe->getCfg( 'dbprefix' ) : 'jos_';
             $this->userFrameworkUsersTableName = $dbprefix . 'users';
+        } elseif ( $userFramework == 'WordPress' ) {
+            global $wpdb;
+            $this->userFrameworkUsersTableName = $wpdb->prefix . 'users'; 
         }
 
     }
