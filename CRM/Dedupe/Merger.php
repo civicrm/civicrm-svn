@@ -538,7 +538,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      * @param  array   $cacheParams prev-next-cache params based on which next pair of contacts are computed.
      *                              Generally used with batch-merge.
      * @param  string  $mode        helps decide how to behave when there are conflicts. 
-     *                              A 'safe' value skips the merge if there are no conflicts. Does a force merge otherwise.
+     *                              A 'safe' value skips the merge if there are any un-resolved conflicts. 
+     *                              Does a force merge otherwise.
      * @param  boolean $autoFlip   wether to let api decide which contact to retain and which to delete.
      * 
      *
@@ -570,7 +571,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      * @param  array   $cacheParams prev-next-cache params based on which next pair of contacts are computed.
      *                              Generally used with batch-merge.
      * @param  string  $mode       helps decide how to behave when there are conflicts. 
-     *                             A 'safe' value skips the merge if there are no conflicts. Does a force merge otherwise.
+     *                             A 'safe' value skips the merge if there are any un-resolved conflicts. 
+     *                             Does a force merge otherwise (aggressive mode).
      * @param  boolean $autoFlip   wether to let api decide which contact to retain and which to delete.
      * 
      *
@@ -642,24 +644,40 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      * @param  int     $otherId        duplicate contact which would be deleted after merge operation
      * @param  array   $migrationInfo  array of information about which elements to merge.
      * @param  string  $mode           helps decide how to behave when there are conflicts. 
-     *                                 A 'safe' value skips the merge if there are no conflicts. 
-     *                                 Does a force merge otherwise.
+     *                                 A 'safe' value skips the merge if there are any un-resolved conflicts. 
+     *                                 Does a force merge otherwise (aggressive mode).
      *
      * @static void
      * @access public
      */ 
     function skipMerge( $mainId, $otherId, &$migrationInfo, $mode = 'safe' )
     {
+        $conflicts     = array();
         $migrationData = array( 'old_migration_info' => $migrationInfo,
                                 'mode'               => $mode );
         $allLocationTypes = CRM_Core_PseudoConstant::locationType( );
 
         foreach ( $migrationInfo as $key => $val ) {
             if ( $val === "null" ) {
-                // Rule: no overwriting with empty values
+                // Rule: no overwriting with empty values in any mode
                 unset($migrationInfo[$key]);
                 continue;
-            } elseif ( substr($key, 0, 14) == 'move_location_' and $val != null ) {
+            } else if ( ( in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or 
+                          substr($key, 0, 12) == 'move_custom_' ) and $val != null ) {
+                // Rule: if both main-contact has other-contact, let $mode decide if to merge a 
+                // particular field or not
+                if ( !empty($migrationInfo['rows'][$key]['main']) ) {
+                    // if main also has a value its a conflict
+                    if ( $mode == 'safe' ) {
+                        // note it down & lets wait for response from the hook. 
+                        // For no response skip this merge
+                        $conflicts[$key] = null;
+                    } else if ( $mode == 'aggressive' ) {
+                        // let the main-field be overwritten
+                        continue;
+                    }
+                }
+            } else if ( substr($key, 0, 14) == 'move_location_' and $val != null ) {
                 $locField   = explode( '_',  $key );
                 $fieldName  = $locField[2];
                 $fieldCount = $locField[3];
@@ -681,23 +699,43 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                             // try insert address at new available loc-type
                             $migrationInfo['location'][$fieldName][$fieldCount]['locTypeId'] = $newTypeId;
                         } else if ( $mode == 'safe' ) {
-                            // skip this merge
-                            return true;
-                        } // go ahead with merge assuming overwrite
+                            // note it down & lets wait for response from the hook. 
+                            // For no response skip this merge
+                            $conflicts[$key] = null;
+                        } else if ( $mode == 'aggressive' ) {
+                            // let the loc-type-id be same as that of other-contact & go ahead 
+                            // with merge assuming aggressive mode
+                            continue;
+                        }
                     }
+                } else if ( $migrationInfo['rows'][$key]['main'] == $migrationInfo['rows'][$key]['other'] ) {
+                    // for loc blocks other than address like email, phone .. if values are same no point in merging
+                    // and adding redundant value
+                    unset($migrationInfo[$key]);
                 }
             }
         }
 
         // A hook to implement other algorithms for choosing which contact to bias to when 
-        // there's a conflict (to handle "gotchas"). $migrationInfo could be modified here
-        // which helps decide if to merge a field or not.
-        $migrationData['new_migration_info'] = $migrationInfo;
+        // there's a conflict (to handle "gotchas"). fields_in_conflict could be modified here
+        // merge happens with new values filled in here. For a particular field / row not to be merged
+        // field should be unset from fields_in_conflict.
+        $migrationData['fields_in_conflict'] = $conflicts;
         CRM_Utils_Hook::merge( 'batch', $migrationData, $mainId, $otherId );
-        $migrationInfo = $migrationData['new_migration_info'];
+        $conflicts = $migrationData['fields_in_conflict'];
 
-        // also allow hook to decide if to skip this merge or not
-        return array_key_exists('skip_merge', $migrationInfo) ? (bool) $migrationInfo['skip_merge'] : false;
+        if ( !empty($conflicts) ) {
+            foreach ( $conflicts as $key => $val ) {
+                if ( $val == null and $mode == 'safe' ) {
+                    // un-resolved conflicts still present. Lets skip this merge.
+                    return true;
+                } else {
+                    // copy over the resolved values
+                    $migrationInfo[$key] = $val;
+                }
+            }
+        }
+        return false;
     }
 
     /** 
@@ -755,7 +793,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $diffs = CRM_Dedupe_Merger::findDifferences($mainId, $otherId);
 
         if ( !isset($diffs['contact']) ) $diffs['contact'] = array();
-        $rows = $elements = $relTableElements = array();
+        $rows = $elements = $relTableElements = $migrationInfo = array();
 
         foreach ($diffs['contact'] as $field) {
             foreach (array('main', 'other') as $moniker) {
@@ -835,7 +873,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         $allLocationTypes = CRM_Core_PseudoConstant::locationType( );
         
-        $mainLocAddress = array();
+        $mainLocAddress = $locBlockIds = array();
+        $locBlockIds['main'] = $locBlockIds['other'] = array();
         foreach ( array( 'Email', 'Phone', 'IM', 'OpenID', 'Address' ) as $block ) {
             $name = strtolower( $block );
             foreach ( array('main', 'other') as $moniker ) {
@@ -988,11 +1027,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                                                                                                $field, true);
                         }
                     }
+                    $value = "null";
                     if ( CRM_Utils_Array::value( 'customValue', $otherTree[$gid]['fields'][$fid] ) ) {
                         foreach ( $otherTree[$gid]['fields'][$fid]['customValue'] as $valueId => $values ) {
                             $rows["move_custom_$fid"]['other'] = CRM_Core_BAO_CustomGroup::formatCustomValues( $values,
                                                                                                                $field, true);
-                            $value = $values['data'] ? $values['data'] : $qfZeroBug;
+                            $value = $values['data'] ? $values['data'] : $value;
                         }
                     }
                     $rows["move_custom_$fid"]['title'] = $field['label'];
@@ -1190,7 +1230,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     // get the existing custom values from db.
                     require_once 'CRM/Core/BAO/CustomValueTable.php';
                     $customParams = array( 'entityID' => $mainId, $key => true );
-                    $customfieldValues = CRM_Core_BAO_CustomValueTable::getValues( $customParams ); 
+                    $customfieldValues = CRM_Core_BAO_CustomValueTable::getValues( $customParams );
                     if ( CRM_Utils_array::value( $key, $customfieldValues ) ) {
                         $existingValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $customfieldValues[$key] );
                         if ( is_array( $existingValue ) && !empty( $existingValue ) ) {
