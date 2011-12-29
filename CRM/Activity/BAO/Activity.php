@@ -2237,7 +2237,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         // format the params
         $params['offset']   = ( $params['page'] - 1) * $params['rp'] ;
         $params['rowCount'] = $params['rp'];
-        $params['sort']     = $params['sortBy'];
+        $params['sort']     = CRM_Utils_Array::value( 'sortBy', $params );
         $params['caseId']   = null;
         $context = CRM_Utils_Array::value('context', $params);
  
