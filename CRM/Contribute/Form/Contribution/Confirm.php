@@ -1065,7 +1065,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         require_once 'CRM/Contribute/BAO/Contribution.php';
         
         //create an contribution address
-        if ( $form->_contributeMode != 'notify' && !CRM_Utils_Array::value('is_pay_later', $params) ) {  
+        if ( $form->_contributeMode != 'notify' 
+            && !CRM_Utils_Array::value('is_pay_later', $params) 
+            && CRM_Utils_Array::value( 'is_monetary', $form->_values ) ) {
             $contribParams['address_id']  = CRM_Contribute_BAO_Contribution::createAddress( $params, $form->_bltID );
         }
 
