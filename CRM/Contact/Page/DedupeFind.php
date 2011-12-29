@@ -94,7 +94,18 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
             if ( $action & CRM_Core_Action::RENEW ) {
                 // do a batch merge if requested 
                 require_once 'CRM/Dedupe/Merger.php';
-                CRM_Dedupe_Merger::batchMerge( $rgid, $gid );
+                $result  = CRM_Dedupe_Merger::batchMerge( $rgid, $gid );
+                $message = '';
+                if ( count($result['merged']) >= 1 ) {
+                    $message = ts("%1 pairs of duplicates were merged", array( 1 => count($result['merged']) ));
+                }
+                if ( count($result['skipped']) >= 1 ) {
+                    $message  = $message ? "{$message} and " : '';
+                    $message .= ts("%1 pairs of duplicates were skipped due to conflict", 
+                                   array( 1 => count($result['skipped']) ));
+                }
+                $message .= ts(" during the batch merge process with safe mode.");
+                CRM_Core_Session::setStatus( $message );
             } // and then continue with listing operation
 
             $this->action = CRM_Core_Action::UPDATE;

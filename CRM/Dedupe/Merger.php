@@ -561,7 +561,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $cacheParams = array( 'cache_key_string' => $cacheKeyString,
                               'join'             => $join,
                               'where'            => $where );
-        CRM_Dedupe_Merger::merge( $dupePairs, $cacheParams, $mode, $autoFlip );
+        return CRM_Dedupe_Merger::merge( $dupePairs, $cacheParams, $mode, $autoFlip );
     }
 
     /** 
