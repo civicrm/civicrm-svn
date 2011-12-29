@@ -86,9 +86,17 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
         }
         
         if ( $action & CRM_Core_Action::UPDATE || 
-             $action & CRM_Core_Action::BROWSE ) {
+             $action & CRM_Core_Action::BROWSE ||
+             $action & CRM_Core_Action::RENEW  ) {
             $cid  = CRM_Utils_Request::retrieve( 'cid',  'Positive', $this, false, 0 );
             $rgid = CRM_Utils_Request::retrieve( 'rgid', 'Positive', $this, false, 0 );
+
+            if ( $action & CRM_Core_Action::RENEW ) {
+                // do a batch merge if requested 
+                require_once 'CRM/Dedupe/Merger.php';
+                CRM_Dedupe_Merger::batchMerge( $rgid, $gid );
+            } // and then continue with listing operation
+
             $this->action = CRM_Core_Action::UPDATE;
             
             //calculate the $contactType

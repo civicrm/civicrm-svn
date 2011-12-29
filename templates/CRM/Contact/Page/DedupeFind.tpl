@@ -52,6 +52,12 @@
 {if $context eq 'search'}
    <a href="{$backURL}" class="button"><span>&raquo; {ts}Done{/ts}</span></a>
 {else}
+   {if $gid}
+      {capture assign=backURL}{crmURL p="civicrm/contact/dedupefind" q="reset=1&rgid=`$rgid`&gid=`$gid`&action=renew" a=1}{/capture}
+   {else}
+      {capture assign=backURL}{crmURL p="civicrm/contact/dedupefind" q="reset=1&rgid=`$rgid`&action=renew" a=1}{/capture}
+   {/if}
+   <a href="{$backURL}" class="button"><span>&raquo; {ts}Batch Merge Results{/ts}</span></a>
    {capture assign=backURL}{crmURL p="civicrm/contact/dedupefind" q="reset=1&rgid=`$rgid`&action=preview" a=1}{/capture}
    <a href="{$backURL}" class="button"><span>&raquo; {ts}Done{/ts}</span></a>
 {/if}
