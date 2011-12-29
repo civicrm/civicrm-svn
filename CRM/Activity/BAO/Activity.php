@@ -2277,18 +2277,19 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
 
                 if ( isset( $values['mailingId'] ) ) {
                     $contactActivities[$activityId]['target_contact'  ] = CRM_Utils_System::href( $values['recipients'], 'civicrm/mailing/report',  "mid={$values['source_record_id']}&reset=1&cid={$values['source_contact_id']}&context=activitySelector" );
-                } elseif( $values['recipients'] ) {
+                } elseif( CRM_Utils_Array::value( 'recipients', $values ) ) {
                     $contactActivities[$activityId]['target_contact'  ] = $values['recipients'];
                 } elseif ( !$values['target_contact_name'] )  {
                     $contactActivities[$activityId]['target_contact'] = '<em>n/a</em>';
                 } elseif ( !empty( $values['target_contact_name'] ) ) {                              
                     $count = 0;
+                    $contactActivities[$activityId]['target_contact'] = '';
                     foreach ( $values['target_contact_name'] as $tcID => $tcName ) {
                         if ( $tcID && $count < 5 ) {
-                            $contactActivities[$activityId]['target_contact'  ] .= CRM_Utils_System::href( $tcName, 'civicrm/contact/view', "reset=1&cid={$tcID}" );
+                            $contactActivities[$activityId]['target_contact'] .= CRM_Utils_System::href( $tcName, 'civicrm/contact/view', "reset=1&cid={$tcID}" );
                             $count++;
                             if ( $count ) {
-                                $contactActivities[$activityId]['target_contact'  ] .= ";&nbsp;";
+                                $contactActivities[$activityId]['target_contact'] .= ";&nbsp;";
                             }
                         }
                     }
