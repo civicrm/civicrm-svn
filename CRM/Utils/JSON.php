@@ -102,32 +102,29 @@ class CRM_Utils_JSON
 
     static function encodeDataTableSelector( $params, $sEcho, $iTotal, $iFilteredTotal, $selectorElements )
     {
-
-    $sOutput  = '{';
-	$sOutput .= '"sEcho": '.intval($sEcho).', ';
-	$sOutput .= '"iTotalRecords": '.$iTotal.', ';
-	$sOutput .= '"iTotalDisplayRecords": '.$iFilteredTotal.', ';
-	$sOutput .= '"aaData": [ ';
-    foreach( $params as $key => $value) {
-        $addcomma = false;
-        $sOutput .= "[";
-        foreach ( $selectorElements as $element ) {
-            if ( $addcomma )  $sOutput .= ",";
-            //$sOutput .= '"'.addslashes($value[$element]).'"';
+        $sOutput  = '{';
+        $sOutput .= '"sEcho": '.intval($sEcho).', ';
+        $sOutput .= '"iTotalRecords": '.$iTotal.', ';
+        $sOutput .= '"iTotalDisplayRecords": '.$iFilteredTotal.', ';
+        $sOutput .= '"aaData": [ ';
+        foreach( $params as $key => $value) {
+            $addcomma = false;
+            $sOutput .= "[";
+            foreach ( $selectorElements as $element ) {
+                if ( $addcomma )  $sOutput .= ",";
+                //$sOutput .= '"'.addslashes($value[$element]).'"';
             
-            //CRM-7130 --lets addslashes to only double quotes, 
-            //since we are using it to quote the field value.
-            $sOutput .= '"'. addcslashes( $value[$element], '"\\') . '"';
+                //CRM-7130 --lets addslashes to only double quotes, 
+                //since we are using it to quote the field value.
+                $sOutput .= '"'. addcslashes( $value[$element], '"\\') . '"';
             
-            $addcomma = true;
+                $addcomma = true;
+            }
+            $sOutput .= "],";
         }
-        $sOutput .= "],";
-    }
-    $sOutput  = substr_replace( $sOutput, "", -1 );
-	$sOutput .= '] }';
+        $sOutput  = substr_replace( $sOutput, "", -1 );
+        $sOutput .= '] }';
 
-    return $sOutput;
-
+        return $sOutput;
     }  
-
 }
