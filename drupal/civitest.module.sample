@@ -1222,6 +1222,9 @@ function civitest_civicrm_navigationMenu( &$params ) {
  *          an array of tables and their fields referencing civicrm_contact.contact_id with entity_id;
  *          each table in the array has this format:
  *                'TABLE-NAME' => array('entity_table-COLUMN-NAME' => 'entity_id-COLUMN-NAME')
+ *      'batch':
+ *          an array of migration info that will be transfered from other-contact to main-contact during a 
+ *          batch merge process. fields_in_conflict could be modified / resolved here.
  * @param int $mainId  contact_id of the contact that survives the merge (only when $type == 'sqls')
  * @param int $otherId contact_id of the contact that will be absorbed and deleted (only when $type == 'sqls')
  * @param array $tables when $type is "sqls", an array of tables as it may have been handed to the calling function
@@ -1276,6 +1279,12 @@ function civitest_civicrm_merge ( $type, &$data, $mainId = NULL, $otherId = NULL
             }
         break;
     
+        case 'batch':
+            // $data is an array of migration info that will be transfered from other-contact to main-contact during a 
+            // batch merge process. fields_in_conflict could be modified / resolved here.
+            // $data['fields_in_conflict'] could be looked into and filled with proper values which will help
+            // resolve conflict & allow batch merge process to run without any problems / conflicts.
+        break;
     }
 }
 
