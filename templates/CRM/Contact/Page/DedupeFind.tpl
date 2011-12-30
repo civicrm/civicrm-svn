@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $action eq 2 || $action eq 16}
+{if $action eq 2 || $action eq 16 || $action eq 32768}
 <div class="form-item">
   <table class='pagerDisplay'>
     <thead>
