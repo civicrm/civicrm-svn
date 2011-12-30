@@ -160,9 +160,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
             
             $this->_params['organization_name'] = $this->_params['onbehalf']['organization_name'];
-            $addressBlocks = array( 'street_address', 'city', 
-                                    'state_province', 'postal_code', 'country' );
-
+            $addressBlocks = array( 'street_address', 'city', 'state_province',
+                                    'postal_code', 'country', 'supplemental_address_1',
+                                    'supplemental_address_2', 'supplemental_address_3',
+                                    'postal_code_suffix', 'geo_code_1', 'geo_code_2', 'address_name' );
+            
             $blocks = array( 'email', 'phone', 'im', 'url', 'openid' );
             
             foreach ( $this->_params['onbehalf'] as $loc => $value ) {
