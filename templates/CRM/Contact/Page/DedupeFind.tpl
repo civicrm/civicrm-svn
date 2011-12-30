@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $action eq 2 || $action eq 16 || $action eq 32768}
+{if $action eq 2 || $action eq 16}
 <div class="form-item">
   <table class='pagerDisplay'>
     <thead>
@@ -57,7 +57,8 @@
    {else}
       {capture assign=backURL}{crmURL p="civicrm/contact/dedupefind" q="reset=1&rgid=`$rgid`&action=renew" a=1}{/capture}
    {/if}
-   <a href="{$backURL}" class="button"><span>&raquo; {ts}Batch Merge Results{/ts}</span></a>
+   <a href="{$backURL}" onclick="return confirm('This will run batch merge process on the listed duplicates. If sure you would like to run this operation, click OK to proceed.');" class="button"><span>&raquo; {ts}Batch Merge Duplicates{/ts}</span></a>
+
    {capture assign=backURL}{crmURL p="civicrm/contact/dedupefind" q="reset=1&rgid=`$rgid`&action=preview" a=1}{/capture}
    <a href="{$backURL}" class="button"><span>&raquo; {ts}Done{/ts}</span></a>
 {/if}
