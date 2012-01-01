@@ -47,6 +47,10 @@ class api_v3_CaseTest extends CiviUnitTestCase
     protected $_entity;
     protected $_apiversion;
     protected $followup_activity_type_value;
+    protected $case_activity_type_value;
+    protected $caseStatusGroup;
+    protected $caseTypeGroup;
+    protected $optionValues;
     /**
      *  Test setup for every test
      *
@@ -57,8 +61,39 @@ class api_v3_CaseTest extends CiviUnitTestCase
     {
         $this->_apiversion =3;
         $this->_entity = 'case';
-        //  Connect to the database
+      
         parent::setUp();
+        // CRM-9404 - set-up is a bit cumbersome but had to put something in place to set up activity types & case types
+        //. Using XML was causing breakage as id numbers were changing over time
+        // & was really hard to troubleshoot as involved truncating option_value table to mitigate this & not leaving DB in a 
+        // state where tests could run afterwards without re-loading.
+        $this->caseStatusGroup = civicrm_api('option_group', 'get', array('version' => API_LATEST_VERSION,'name' => 'case_status', 'format.only_id' => 1));
+        $this->caseTypeGroup = civicrm_api('option_group', 'get', array('version' => API_LATEST_VERSION,'name' => 'case_type', 'format.only_id' => 1));
+        $caseTypes = civicrm_api('option_value', 'Create', array('version' => API_LATEST_VERSION, 
+        																						'option_group_id' => $this->caseTypeGroup , 
+        																						'name' => 'housing_support',
+                    																'label'=>"Housing Support",  
+                                                    'sequential' => 1, 
+                                                    'description' => 'Help homeless individuals obtain temporary and long-term housing',                                              
+                                                     )); 
+        
+        $this->case_activity_type_value = $caseTypes['values'][0]['value'];
+        $this->optionValues[] =$caseTypes['id'];
+        $optionValues = array('Medical evaluation' => 'Medical evaluation',
+                              'Mental health evaluation'=>"Mental health evaluation",
+                              'Secure temporary housing' => 'Secure temporary housing' ,
+                              'Long-term housing plan' => 'Long-term housing plan' ,
+                              'ADC referral'         => 'ADC referral' ,
+                              'Income and benefits stabilization' => 'Income and benefits stabilization' ,       );
+        foreach ($optionValues as $name => $label) {
+                 $activityTypes = civicrm_api('option_value', 'Create', array('version' => API_LATEST_VERSION, 
+        																						'option_group_id' => 2 , 
+        																						'name' => $name,
+                    																'label'=> $label, 
+                                                    'component_id' => 7, 
+                                                     )); 
+        $this->optionValues[] = $activityTypes['id'];// store for cleanup
+        }
         $tablesToTruncate = array( 'civicrm_activity',
                                    'civicrm_contact',
                                    'civicrm_custom_group',
@@ -79,7 +114,6 @@ class api_v3_CaseTest extends CiviUnitTestCase
                     																'label' =>  'Follow Up',
                                                     'sequential' => 1 )); 
         $this->followup_activity_type_value = $activityTypes['values'][0]['value'];
-        $this->followup_activity_type_id = $activityTypes['id'];
         //  Insert a row in civicrm_contact creating contact 17
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -89,21 +123,8 @@ class api_v3_CaseTest extends CiviUnitTestCase
  
  
 
-           //  Insert a row in civicrm_option_value creating
-        //  case_types
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_case.xml') );
+   
 
-        //  Insert a row in civicrm_option_value creating
-        //  case-specific activity_types
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_case_activity.xml') );
 
         //Create relationship types
         $relTypeParams = array(
@@ -185,7 +206,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $this->assertTrue( $enableResult, 'Cannot enable CiviCase in line ' . __LINE__);
 
         $this->_params = array( 
-                'case_type_id' => 1,
+                'case_type_id' => $this->case_activity_type_value,
                 'subject' => 'Test case',
                 'contact_id' => 17,
                 'version' => $this->_apiversion);
@@ -194,6 +215,11 @@ class api_v3_CaseTest extends CiviUnitTestCase
         $this->createLoggedInUser( );
         $session = CRM_Core_Session::singleton( );
         $this->_loggedInUser = $session->get( 'userID' );
+        /// note that activityType options are cached by the FULL set of options you pass in
+        // ie. because Activity api includes campaign in it's call cache is not flushed unless
+        // included in this call. Also note flush function doesn't work on this property as it sets to null not empty array
+        CRM_Core_PseudoConstant::activityType( true,  true, true, 'name', true);
+       
     }
 
 
@@ -205,7 +231,9 @@ class api_v3_CaseTest extends CiviUnitTestCase
      */
     function tearDown()
     {
-
+      foreach ($this->optionValues as $id) {
+          civicrm_api('option_value','delete',array('version' => API_LATEST_VERSION, 'id' => $id));
+      }
         $tablesToTruncate = array( 'civicrm_contact', 
                                    'civicrm_activity',
                                    'civicrm_case',
@@ -255,15 +283,12 @@ class api_v3_CaseTest extends CiviUnitTestCase
      */
     function testCaseCreate( )
     {
-        
+ 
         $params = $this->_params;
-        $result =& civicrm_api('case','create', $params );
+        $result = civicrm_api('case','create', $params );
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);
 
-        $this->assertEquals( $result['is_error'], 0,
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
-
-
-        $result =& civicrm_api('case','get', $params );
+        $result = civicrm_api('case','get', $params );
 // TODO: There's more things we could check
         $this->assertEquals( $result['values'][$result['id']]['id'], 1,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['case_type_id'], $params['case_type_id'],'in line ' . __LINE__);
@@ -276,8 +301,8 @@ class api_v3_CaseTest extends CiviUnitTestCase
     {
         // Create a case first
         $params = $this->_params;
-        $result =& civicrm_api('case','create', $params );
-        
+        $result = civicrm_api('case','create', $params );
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);     
         $params = array( 'case_id' => 1,
                          'activity_type_id' => $this->followup_activity_type_value, // follow up
                          'subject' => 'Test followup',
@@ -285,10 +310,8 @@ class api_v3_CaseTest extends CiviUnitTestCase
                          'target_contact_id' => $this->_params['contact_id'],
                          'version' => $this->_apiversion,
                        );
-        $result =& civicrm_api('activity','create', $params );
-
-        $this->assertEquals( $result['is_error'], 0,
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
+        $result = civicrm_api('activity','create', $params );
+        $this->assertAPISuccess($result, 'in line ' . __LINE__ . print_r($params, true));
         $this->assertEquals( $result['values'][$result['id']]['activity_type_id'], $params['activity_type_id'],'in line ' . __LINE__);
 
         // might need this for other tests that piggyback on this one
@@ -328,7 +351,7 @@ class api_v3_CaseTest extends CiviUnitTestCase
                          'subject' => 'New subject',
                          'version' => $this->_apiversion,
                        );
-        $result =& civicrm_api('activity','create', $params );
+        $result = civicrm_api('activity','create', $params );
 
         $this->assertEquals( $result['is_error'], 0,
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
