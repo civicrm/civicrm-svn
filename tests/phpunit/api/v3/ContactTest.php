@@ -79,7 +79,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
   function tearDown( ) {
     // truncate a few tables
     $tablesToTruncate = array( 'civicrm_contact',
-                               'civicrm_email' );
+                               'civicrm_email',
+                               'civicrm_contribution' );
         
     $this->quickCleanup( $tablesToTruncate );
   }
@@ -1210,8 +1211,6 @@ class api_v3_ContactTest extends CiviUnitTestCase
                              'non_deductible_amount'  => 10.00,
                              'fee_amount'             => 50.00,
                              'net_amount'             => 90.00,
-                             'trxn_id'                => 12345,
-                             'invoice_id'             => 67890,
                              'source'                 => 'SSF',
                              'contribution_status_id' => 1,
                             ),
@@ -1224,8 +1223,6 @@ class api_v3_ContactTest extends CiviUnitTestCase
                              'non_deductible_amount'  => 10.00,
                              'fee_amount'             => 50.00,
                              'net_amount'             => 90.00,
-                             'trxn_id'                => 12335,
-                             'invoice_id'             => 67830,
                              'source'                 => 'SSF',
                              'contribution_status_id' => 1,
                              ),
