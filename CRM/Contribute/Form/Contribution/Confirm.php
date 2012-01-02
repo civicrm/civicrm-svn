@@ -1383,13 +1383,16 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         foreach ( $behalfOrganization as $locFld => $value ) {
             if ( in_array( $locFld, array( 'phone', 'email', 'address' ) ) ) {
                 $locTypeId = array_keys( $value );
-                if ( $locTypeId[0] == 'Primary' ) {
-                    $locTypeId[0] = 1;
-                    $behalfOrganization[$locFld][$locTypeId[0]]['email'] = $value['Primary']['email'];
-                    unset( $behalfOrganization[$locFld]['Primary'] );
+                foreach ( $locTypeId as $locVal ){
+                    $locVal = ($locVal == 'Primary' ) ? 1 : $locVal;
+                    
+                    if( $locVal==1 ){
+                        $behalfOrganization[$locFld][$locVal] = $value['Primary'];
+                        unset( $behalfOrganization[$locFld]['Primary'] );
+                    }
+                    $behalfOrganization[$locFld][$locVal]['is_primary'] = 1;
+                    $behalfOrganization[$locFld][$locVal]['location_type_id'] = $locVal; 
                 }
-                $behalfOrganization[$locFld][$locTypeId[0]]['is_primary'] = 1;
-                $behalfOrganization[$locFld][$locTypeId[0]]['location_type_id'] = $locTypeId[0];
             }
         }
         
