@@ -657,7 +657,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      */
     function clearTempTables( ) {
         // CRM-5645
-        $dao = new CRM_Core_DAO( );
+        $dao = CRM_Core_DAO::executeQuery("SELECT DATABASE();");
         $query = "
 SELECT TABLE_NAME as tableName
 FROM   INFORMATION_SCHEMA.TABLES
