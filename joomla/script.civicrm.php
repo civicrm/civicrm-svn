@@ -146,7 +146,12 @@ class Com_CiviCRMInstallerScript {
 
     function postflight($type, $parent) {
         // set the default permissions
-        $this->setDefaultPermissions( );
+        // only on new install
+        global $civicrmUpgrade;
+        
+        if ( ! $civicrmUpgrade ) {
+            $this->setDefaultPermissions( );
+        }
     }
 
     function setDefaultPermissions( ) {
