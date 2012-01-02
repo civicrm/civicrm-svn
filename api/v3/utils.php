@@ -176,14 +176,15 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
                 $dao = new $d();
             }
         }
-        if(is_object ($dao)){
-            $allFields = array_keys($dao->fields());
-            $paramFields = array_keys($params);
-            $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential','rowCount','option_offset','option_limit','option_sort'));
-            if ($undefined)
+
+        $apiFields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => $action)+ $params);
+        $allFields = array_keys($apiFields['values']);
+        $paramFields = array_keys($params);
+        $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential','rowCount','option_offset','option_limit','custom', 'option_sort'));
+        if ($undefined)
                 $result['undefined_fields'] = array_merge ($undefined);
-        }
-    }
+        
+         }
     if(is_object ($dao)){
         $dao->free();
     }
@@ -971,11 +972,12 @@ function _civicrm_api_get_custom_fields($entity, &$params){
     if(strtolower($entity) == 'contact'){
       $entity = $params['contact_type'];
     }
-    $customfields = CRM_Core_BAO_CustomField::getFields($entity ,                                                        false,
+    $customfields = CRM_Core_BAO_CustomField::getFields($entity ,
                                                          false,
-                                                         CRM_Utils_Array::value('contact_subtype', $params, false),
+                                                         false,
+                                                         CRM_Utils_Array::value('contact_sub_type', $params, false),
                                                          null,
-                                                         empty($params['contact_subtype']),
+                                                         empty($params['contact_sub_type']),
                                                          false,
                                                          false ) ;
                                                       
