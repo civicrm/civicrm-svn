@@ -147,6 +147,7 @@ class Com_CiviCRMInstallerScript {
     function postflight($type, $parent) {
         // set the default permissions
         // only on new install
+        // CRM-9418
         global $civicrmUpgrade;
         
         if ( ! $civicrmUpgrade ) {
