@@ -201,9 +201,9 @@ AND    {$this->_componentClause}";
             $ids['contribution']      = $contribID;
             $ids['contributionRecur'] = null;
             $ids['contributionPage']  = null;
-            $ids['membership']        = $detail['membership'];
-            $ids['participant']       = $detail['participant'];
-            $ids['event']             = $detail['event'];
+            $ids['membership']        = CRM_Utils_Array::value( 'membership', $detail );
+            $ids['participant']       = CRM_Utils_Array::value( 'participant', $detail );
+            $ids['event']             = CRM_Utils_Array::value( 'event', $detail );
 
             if ( ! $baseIPN->validateData( $input, $ids, $objects, false ) ) {
                 CRM_Core_Error::fatal( );
