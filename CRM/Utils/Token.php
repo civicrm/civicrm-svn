@@ -937,6 +937,7 @@ class CRM_Utils_Token
         }
 
         $custom = array( );
+        require_once 'CRM/Core/BAO/CustomField.php'; 
         foreach ( $returnProperties as $name => $dontCare ) {
             $cfID = CRM_Core_BAO_CustomField::getKeyID( $name );
             if ( $cfID ) {
