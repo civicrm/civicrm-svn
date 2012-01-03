@@ -67,7 +67,7 @@
    <a href="{$backURL}" onclick="return confirm('This will reset cache and recompute duplicate list. Click OK to proceed.');" class="button"><span>&raquo; {ts}Reset Cache{/ts}</span></a>
    <div style="clear: both;"></div>
 
-   {capture assign=backURL}{crmURL p="civicrm/contact/dedupefind" q="reset=1&rgid=`$rgid`&action=preview" a=1}{/capture}
+   {capture assign=backURL}{crmURL p="civicrm/contact/deduperules" q="reset=1" a=1}{/capture}
    <a href="{$backURL}" class="button"><span>&raquo; {ts}Done{/ts}</span></a>
 {/if}
 <div style="clear: both;"></div>
