@@ -232,10 +232,9 @@ class CRM_Core_Page_AJAX_Location
     
 
     function jqCounty( $config ) {
-        if ( ! isset( $_GET['_value'] ) ||
-        empty( $_GET['_value'] ) ) {
+        if ( CRM_Utils_System::isNull( $_GET['_value'] ) ) {
             $elements = array( array( 'name'  => ts('- select state -'),
-                'value' => '' ) );
+                                      'value' => '' ) );
         } else {
 
             require_once 'CRM/Core/PseudoConstant.php';
