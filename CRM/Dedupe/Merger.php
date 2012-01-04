@@ -34,6 +34,7 @@
  */
 
 require_once 'CRM/Core/BAO/CustomGroup.php';
+require_once 'CRM/Core/BAO/UFMatch.php';
 
 class CRM_Dedupe_Merger
 {
@@ -960,7 +961,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $mainId );
         $mainUser = null;
         if ( $mainUfId ) {
-            if ( $config->userSystem->is_drupal == '1' ) {//d6 compatible
+            if ( $config->userSystem->is_drupal == '1' && function_exists($mainUser) ) {//d6 compatible
                 $mainUser = user_load( $mainUfId );
             } else if ( $config->userFramework == 'Joomla' ) {
                 $mainUser = JFactory::getUser( $mainUfId );
@@ -969,7 +970,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $otherUfId = CRM_Core_BAO_UFMatch::getUFId( $otherId );
         $otherUser = null;
         if ( $otherUfId ) {
-            if ( $config->userSystem->is_drupal == '1' ) {//d6 compatible
+            if ( $config->userSystem->is_drupal == '1' && function_exists($mainUser) ) {//d6 compatible
                 $otherUser = user_load( $otherUfId );
             } else if ( $config->userFramework == 'Joomla' ) {
                 $otherUser = JFactory::getUser( $otherUfId );
