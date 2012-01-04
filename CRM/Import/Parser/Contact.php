@@ -1888,6 +1888,16 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
         }
         
+        // to check if not update mode and unset the fields with empty value.
+        if ( !$this->_updateWithId ) { 
+            foreach ( $formatted['custom'] as $customKey => $customvalue ) {
+                $emptyValue = CRM_Utils_Array::value( 'value', $customvalue );
+                if ( empty($emptyValue) ) {
+                    unset($formatted['custom'][$customKey]);
+                }
+            }
+        }
+        
         // parse street address, CRM-5450
         if ( $this->_parseStreetAddress ) {
             require_once 'CRM/Core/BAO/Address.php';
