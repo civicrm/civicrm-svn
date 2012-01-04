@@ -119,10 +119,13 @@ class CRM_Custom_Form_Option extends CRM_Core_Form
             if ( $fieldDefaults['html_type'] == 'CheckBox' 
                  || $fieldDefaults['html_type'] == 'Multi-Select' 
                  || $fieldDefaults['html_type'] == 'AdvMulti-Select' ) {
-                $defaultCheckValues = explode( CRM_Core_DAO::VALUE_SEPARATOR,
-                                               substr( $fieldDefaults['default_value'], 1, -1 ) );
-                if ( in_array( $defaults['value'], $defaultCheckValues ) ) 
-                    $defaults['default_value'] = 1;
+                if ( CRM_Utils_Array::value( 'default_value', $fieldDefaults ) ) {         
+                    $defaultCheckValues = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                                   substr( $fieldDefaults['default_value'], 1, -1 ) );
+                    if ( in_array( $defaults['value'], $defaultCheckValues ) ) { 
+                        $defaults['default_value'] = 1;
+                    }
+                }
             } else {
                 if( CRM_Utils_Array::value( 'default_value', $fieldDefaults ) == CRM_Utils_Array::value( 'value', $defaults ) ) {
                     $defaults['default_value'] = 1;
