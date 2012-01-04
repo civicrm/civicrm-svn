@@ -548,6 +548,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       sleep(5);
       
       // select group
+      $this->click( 'campaignGroupsSelect1' );
       $this->select( 'campaignGroupsSelect1', "label=$groupName" );
       $this->click( '_qf_Search_refresh' );
 
@@ -588,6 +589,9 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       // search for the respondents
       // select survey
       $this->select( 'campaign_survey_id', "label=$surveyTitle" );
+
+      // need to wait for Groups field to reload dynamically
+      sleep(5);
       
       // select group
       $this->click( 'campaignGroupsSelect1' );
@@ -634,6 +638,8 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       // search for the respondents
       // select survey
       $this->select( 'campaign_survey_id', "label=$surveyTitle" );
+      // need to wait for Groups field to reload dynamically
+      sleep(5);
       
       // select group
       $this->click( 'campaignGroupsSelect1' );
