@@ -161,7 +161,8 @@ LEFT JOIN  civicrm_option_group ON
 WHERE     
 	       civicrm_option_group.name = 'event_type' AND
            ( ce.is_template IS NULL OR ce.is_template = 0) AND 
-           ce.id IN ($ids);";
+           ce.id IN ($ids) AND
+           ce.is_active = 1;";
                 $crmDAO = CRM_Core_DAO::executeQuery( $queryString );
                 while ( $crmDAO->fetch() ) {
                     $usedBy[$table][$crmDAO->id]['title']     = $crmDAO->title;
@@ -177,7 +178,8 @@ WHERE
                 $queryString = "SELECT cp.id as id, cp.title as title, cp.start_date as startDate, cp.end_date as endDate,ct.name as type
 FROM      civicrm_contribution_page cp, civicrm_contribution_type ct
 WHERE     ct.id = cp.contribution_type_id AND 
-          cp.id IN ($ids);";
+          cp.id IN ($ids) AND                                                                                                                                                    
+          cp.is_active = 1;";
                 $crmDAO = CRM_Core_DAO::executeQuery( $queryString );
                 while ( $crmDAO->fetch() ) {
                     $usedBy[$table][$crmDAO->id]['title']     = $crmDAO->title;
