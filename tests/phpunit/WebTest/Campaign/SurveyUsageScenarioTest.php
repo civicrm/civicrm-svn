@@ -546,7 +546,6 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
       // need to wait for Groups field to reload dynamically
       sleep(5);
-//      $this->waitForTextPresent( $groupName );
       
       // select group
       $this->select( 'campaignGroupsSelect1', "label=$groupName" );
