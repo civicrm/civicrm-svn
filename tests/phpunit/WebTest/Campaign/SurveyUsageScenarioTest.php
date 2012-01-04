@@ -107,7 +107,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Campaign_next-bottom");
+      $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
       // Let's start filling the form with values.
       $this->type("title", "Campaign $title");
@@ -130,7 +130,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->select("status_id", "value=2");
 
       // click save
-      $this->click("_qf_Campaign_next-bottom");
+      $this->click("_qf_Campaign_upload-bottom");
       $this->waitForPageToLoad("30000");
       
       $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
@@ -543,6 +543,10 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       // search for the respondents
       // select survey
       $this->select( 'campaign_survey_id', "label=$surveyTitle" );
+
+      // need to wait for Groups field to reload dynamically
+      sleep(5);
+//      $this->waitForTextPresent( $groupName );
       
       // select group
       $this->select( 'campaignGroupsSelect1', "label=$groupName" );

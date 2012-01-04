@@ -109,7 +109,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Campaign_next-bottom");
+      $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
       // Let's start filling the form with values.
       $campaignTitle = "Campaign $title";
@@ -133,7 +133,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->select("status_id", "value=2");
 
       // click save
-      $this->click("_qf_Campaign_next-bottom");
+      $this->click("_qf_Campaign_upload-bottom");
       $this->waitForPageToLoad("30000");
       
       $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
@@ -181,7 +181,6 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       
       // ...need to use mouseDownAt on first result (which is a li element), click does not work
       $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
-     
       // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
       
