@@ -35,6 +35,24 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
     }
     function testOnlineMembershipCreate()
     {
+        //login with admin credentials & make sure we do have required permissions.
+        $this->webtestLogin( true );
+
+        //check for online contribution and profile listings permissions
+        $this->changeAdminLinks( );
+        if ( !$this->isChecked( "edit-1-make-online-contributions" ) ) {
+            $this->click( "edit-1-make-online-contributions" );
+        }
+        if ( !$this->isChecked( "edit-1-profile-listings-and-forms" ) ) {
+            $this->click( "edit-1-profile-listings-and-forms" ); 
+        }
+        $this->click( "edit-submit" );
+        $this->waitForPageToLoad( "30000" );
+        
+        // now logout and login with admin credentials
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
+        $this->waitForPageToLoad('30000'); 
+
         // a random 7-char string and an even number to make this pass unique
         $hash = substr(sha1(rand()), 0, 7);
         $rand = 2 * rand(2, 50);
@@ -48,17 +66,6 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         // We need a payment processor
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
-        
-        //check for online contribution and profile listings permissions
-        $this->changeAdminLinks( );
-        if ( !$this->isChecked( "edit-1-make-online-contributions" ) ) {
-            $this->click( "edit-1-make-online-contributions" );
-        }
-        if ( !$this->isChecked( "edit-1-profile-listings-and-forms" ) ) {
-            $this->click( "edit-1-profile-listings-and-forms" ); 
-        }
-        $this->click( "edit-submit" );
-        $this->waitForPageToLoad( "30000" );
         
         // create contribution page with randomized title and default params
         
