@@ -2295,7 +2295,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
                     }
                 }
                 
-                if ( !empty( $values['assignee_contact_name'] ) )  {
+                if ( empty( $values['assignee_contact_name'] ) )  {
                     $contactActivities[$activityId]['assignee_contact'] = '<em>n/a</em>';
                 } elseif ( !empty( $values['assignee_contact_name'] ) ) {                              
                     $count = 0;
