@@ -469,6 +469,13 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
             $assertCheck = false;        
         
         $this->assertTrue($assertCheck, 'copy rows for field two failed for inteview (campaign)[radio button]'); 
+        
+        //change the editor back to ckeditor
+        $this->open( $this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1" );
+        $this->waitForElementPresent( '_qf_Display_next-bottom' );
+        $this->select( 'editor_id', 'CKEditor' );
+        $this->click( '_qf_Display_next-bottom' );
+        $this->waitForPageToLoad("30000");
     }
     
     function _addProfile( $profileTitle, $customDataArr, $profileFor ) 
