@@ -60,9 +60,11 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
         $this->type("edit-name",$role2);          
         $this->click("edit-add");
         $this->open($this->sboxPath . "admin/people/permissions/roles" );
-        sleep(3);
+
+        $this->waitForElementPresent("xpath=//table[@id='user-roles']/tbody//tr/td[1][text()='{$role1}']");
         $roleid = explode( '/', $this->getAttribute( "xpath=//table[@id='user-roles']/tbody//tr/td[1][text()='{$role1}']/../td[4]/a[text()='edit permissions']/@href" ) );
         $roleId1 = end($roleid);
+        $this->waitForElementPresent("xpath=//table[@id='user-roles']/tbody//tr/td[1][text()='{$role2}']");
         $roleid = explode( '/', $this->getAttribute( "xpath=//table[@id='user-roles']/tbody//tr/td[1][text()='{$role2}']/../td[4]/a[text()='edit permissions']/@href" ) );
         $roleId2 = end($roleid);
         
