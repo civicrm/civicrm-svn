@@ -67,22 +67,9 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          $this->waitForTextPresent( "Your Individual contact record has been saved." );
 
          // lets give profile related permision to anonymous user.
-         $this->changeAdminLinks();
-         $this->waitForElementPresent("edit-submit");
-
-         $this->check( "edit-1-profile-create" );
-         $this->check( "edit-1-profile-edit" );
-         $this->check( "edit-1-profile-listings" );
-         $this->check( "edit-1-profile-view" );
+         $permission = array('edit-1-profile-create','edit-1-profile-edit','edit-1-profile-listings','edit-1-profile-view');
+         $this->changePermissions( $permission );
          
-         // save permission
-         $this->click("edit-submit");
-         $this->waitForPageToLoad("30000");
-         $this->assertTrue( $this->isTextPresent( "The changes have been saved." ) );
-
-         // logout and sign as anonymous.
-         $this->open( $this->sboxPath ."civicrm/logout?reset=1" );
-
          // submit dupe using profile/create as anonymous
          $this->open( $this->sboxPath . "civicrm/profile/create?gid=4&reset=1" );
          $this->waitForPageToLoad( "30000" );

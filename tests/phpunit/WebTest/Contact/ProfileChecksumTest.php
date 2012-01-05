@@ -117,19 +117,8 @@ class WebTest_Contact_ProfileChecksumTest extends CiviSeleniumTestCase {
       $profileId = $this->_testCreateContactProfile($fields, $profileName);
       
       // Check for profile create/edit permissions.
-      $this->changeAdminLinks();
-      $this->waitForPageToLoad("30000");
-      if (!$this->isChecked("edit-1-profile-edit")) {
-        $this->click("edit-1-profile-edit");
-      }
-      if (!$this->isChecked("edit-1-profile-create")) {
-        $this->click("edit-1-profile-create"); 
-      }
-      if (!$this->isChecked("edit-1-access-all-custom-data")) {
-          $this->click("edit-1-access-all-custom-data"); 
-      }      
-      $this->click("edit-submit");
-      $this->waitForPageToLoad("60000");
+      $permission = array('edit-1-profile-edit','edit-1-profile-create','edit-1-access-all-custom-data');
+      $this->changePermissions( $permission );
       
       // Get checksum of the newly created contact.
       require_once 'CRM/Contact/BAO/Contact/Utils.php';
