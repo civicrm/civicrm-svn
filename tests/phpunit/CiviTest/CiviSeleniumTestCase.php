@@ -1177,7 +1177,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->check($value);
         }
         $this->click('edit-submit');
-        $this->waitForPageToLoad( '3000' );
+        $this->waitForPageToLoad( '30000' );
         $this->assertTrue($this->isTextPresent('The changes have been saved.'));
         $this->open( $this->sboxPath . "user/logout" );
         $this->waitForPageToLoad( '30000' );
