@@ -46,13 +46,10 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       $this->webtestLogin();
 
       // add the required Drupal permission
-      $this->changeAdminLinks( );
-      $this->waitForElementPresent('edit-submit');
-      $this->check('edit-1-make-online-contributions');
-      $this->click('edit-submit');
-      $this->waitForPageToLoad();
-      $this->assertTrue($this->isTextPresent('The changes have been saved.'));
       
+      $permissions = array('edit-1-make-online-contributions');
+      $this->changePermissions( $permissions );
+            
       $title            = substr(sha1(rand()), 0, 7);
       $setTitle         = "Membership Fees - $title";
       $usedFor          = 'Membership';

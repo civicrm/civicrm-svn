@@ -420,15 +420,8 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
         
         //check for online contribution and profile listings permissions
-        $this->changeAdminLinks( );
-        if ( !$this->isChecked( "edit-1-make-online-contributions" ) ) {
-            $this->click( "edit-1-make-online-contributions" );
-        }
-        if ( !$this->isChecked( "edit-1-profile-listings-and-forms" ) ) {
-            $this->click( "edit-1-profile-listings-and-forms" ); 
-        }
-        $this->click( "edit-submit" );
-        $this->waitForPageToLoad( "30000" );
+        $permissions = array("edit-1-make-online-contributions", "edit-1-profile-listings-and-forms" );
+        $this->changePermissions( $permissions );
         
         // create contribution page with randomized title and default params
         $hash          = substr(sha1(rand()), 0, 7);

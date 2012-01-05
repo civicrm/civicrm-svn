@@ -39,16 +39,9 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->webtestLogin( true );
 
         //check for online contribution and profile listings permissions
-        $this->changeAdminLinks( );
-        if ( !$this->isChecked( "edit-1-make-online-contributions" ) ) {
-            $this->click( "edit-1-make-online-contributions" );
-        }
-        if ( !$this->isChecked( "edit-1-profile-listings-and-forms" ) ) {
-            $this->click( "edit-1-profile-listings-and-forms" ); 
-        }
-        $this->click( "edit-submit" );
-        $this->waitForPageToLoad( "30000" );
-        
+        $permissions = array("edit-1-make-online-contributions", "edit-1-profile-listings-and-forms");
+        $this->changePermissions( $permissions );
+                
         // now logout and login with admin credentials
         $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000'); 
