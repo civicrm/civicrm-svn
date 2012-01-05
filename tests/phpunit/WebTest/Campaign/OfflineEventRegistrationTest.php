@@ -95,15 +95,30 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
             $this->waitForPageToLoad("30000");          
             $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
         }
-        
+
+        // now logout and login with admin credentials
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
+        $this->waitForPageToLoad('30000'); 
+
+        //make sure we do have required permissions.
+        $this->webtestLogin( true );
+ 
         // add the required Drupal permission
         $this->changeAdminLinks( );
         $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-civicampaign');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
+        if ( !$this->isChecked("edit-2-administer-civicampaign") ) {
+            $this->check('edit-2-administer-civicampaign');
+            $this->click('edit-submit');
+            $this->waitForPageToLoad("30000");
+        }
         $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+
+        // now logout and do membership test that way
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
+        $this->waitForPageToLoad('30000'); 
         
+        $this->webtestLogin(  );
+
         $this->open( $this->sboxPath . 'civicrm/campaign?reset=1' );
         $this->waitForElementPresent("link=Add Campaign");
         if ( $this->isTextPresent('No campaigns found.') ) {
