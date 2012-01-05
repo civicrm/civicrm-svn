@@ -99,13 +99,9 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->changeAdminLinks();
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-civicampaign');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-
+        $permissions = array('edit-2-administer-civicampaign');
+        $this->changePermissions( $permissions );
+        
         $this->open( $this->sboxPath . 'civicrm/campaign?reset=1' );
         $this->waitForElementPresent("link=Add Campaign");
         if ( $this->isTextPresent('No campaigns found.') ) {

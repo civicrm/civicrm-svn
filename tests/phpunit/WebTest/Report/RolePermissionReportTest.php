@@ -72,17 +72,13 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
         $user2 = $this->_testCreateUser( $roleId2 ); 
         
         // let's give full CiviReport permissions.
-        $this->changeAdminLinks( );
-        $this->waitForElementPresent("edit-submit");
-        $this->check("edit-2-access-civireport");
-        $this->check("edit-2-view-all-contacts");
-        $this->check("edit-2-administer-civicrm");
-        $this->check("edit-2-access-civicrm");
-        
-        // save permissions
-        $this->click("edit-submit");
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue($this->isTextPresent("The changes have been saved." ) );
+        $permissions = array(
+                             "edit-2-access-civireport",
+                             "edit-2-view-all-contacts",
+                             "edit-2-administer-civicrm",
+                             "edit-2-access-civicrm"
+                             );
+        $this->changePermissions( $permissions );
         
         // change report setting to for a particular role
         $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");

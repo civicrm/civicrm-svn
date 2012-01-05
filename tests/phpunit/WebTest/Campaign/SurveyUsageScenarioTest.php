@@ -95,13 +95,9 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       }
 
       // add the required Drupal permission
-      $this->changeAdminLinks();
-      $this->waitForElementPresent('edit-submit');
-      $this->check('edit-2-administer-civicampaign');
-      $this->click('edit-submit');
-      $this->waitForPageToLoad();
-      $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-
+      $permissions = array('edit-2-administer-civicampaign');
+      $this->changePermissions( $permissions );
+      
       // Go directly to the URL of the screen that you will be testing
       $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 

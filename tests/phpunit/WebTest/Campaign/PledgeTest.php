@@ -72,13 +72,11 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->changeAdminLinks();
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-access-civipledge');
-        $this->check('edit-2-edit-pledges');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        $permissions = array(
+                             'edit-2-access-civipledge',
+                             'edit-2-edit-pledges'
+                             );
+        $this->changePermissions( $permissions );
         
         $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');          

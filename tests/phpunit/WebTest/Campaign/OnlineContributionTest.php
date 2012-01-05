@@ -101,14 +101,12 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->changeAdminLinks();
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-civicampaign');
-        $this->check('edit-1-make-online-contributions');
-        $this->check('edit-1-profile-listings-and-forms');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        $permissions = array(
+                             'edit-2-administer-civicampaign',
+                             'edit-1-make-online-contributions',
+                             'edit-1-profile-listings-and-forms'
+                             );
+        $this->changePermissions( $permissions );
         
         // Go directly to the URL of the screen that you will be testing
         $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
