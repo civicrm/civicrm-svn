@@ -301,12 +301,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->changeAdminLinks();
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-civicampaign');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        $permission = array('edit-2-administer-civicampaign');
+        $this->changePermissions( $permission );
         
         // Go directly to the URL of the screen that you will be add campaign
         $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
@@ -581,12 +577,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->changeAdminLinks();
-        $this->waitForElementPresent( 'edit-submit' );
-        $this->check( 'edit-2-administer-civicampaign' );
-        $this->click( 'edit-submit' );
-        $this->waitForPageToLoad();
-        $this->assertTrue( $this->isTextPresent( 'The changes have been saved.' ) );
+        $permission = array('edit-2-administer-civicampaign');
+        $this->changePermissions( $permission );
         
         // Go directly to the URL of the screen that you will be add campaign
         $this->open( $this->sboxPath . "civicrm/campaign/add?reset=1" );
