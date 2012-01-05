@@ -50,15 +50,9 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
         // visit event search page
 
         //give permissions to anonymous user 
-        $this->changeAdminLinks();
+        $permission = array('edit-1-profile-listings-and-forms','edit-1-access-all-custom-data','edit-1-register-for-events','edit-1-make-online-contributions');
+        $this->changePermissions( $permission );
         
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-1-profile-listings-and-forms');        
-        $this->check('edit-1-access-all-custom-data');
-        $this->check('edit-1-register-for-events');
-        $this->check('edit-1-make-online-contributions');
-        $this->click('edit-submit');
-        $this->waitForTextPresent('The changes have been saved');
         // set domain values
         $domainNameValue = 'civicrm organization ';
         $firstName  = 'Ma'.substr( sha1( rand( ) ), 0, 4 );

@@ -81,12 +81,8 @@ class WebTest_Case_CaseCustomFieldsTest extends CiviSeleniumTestCase {
         $cusId_3 = 'custom_'.$customId[2].'_-1';
         
         // let's give full CiviCase permissions.
-        $this->changeAdminLinks( );
-        $this->waitForElementPresent("edit-submit");
-        $this->check("edit-2-access-all-cases-and-activities");
-        $this->check("edit-2-access-my-cases-and-activities");
-        $this->check("edit-2-administer-civicase");
-        $this->check("edit-2-delete-in-civicase");
+        $permission = array('edit-2-access-all-cases-and-activities','edit-2-access-my-cases-and-activities','edit-2-administer-civicase','edit-2-delete-in-civicase');
+        $this->changePermissions( $permission );
         
         // save permissions
         $this->click("edit-submit");

@@ -75,11 +75,8 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $registerUrl = $this->getLocation( );
         
         // give permissions for event registration
-        $this->changeAdminLinks( );
-        $this->waitForElementPresent( 'edit-submit' ); 
-        $this->check( "edit-1-register-for-events" );
-        $this->click( "edit-submit" );
-        $this->waitForPageToLoad( '30000' );
+        $permission = array('edit-1-register-for-events');
+        $this->changePermissions( $permission );
         
         // register as an anonymous user
         $this->open( $this->sboxPath . "civicrm/logout?reset=1" );

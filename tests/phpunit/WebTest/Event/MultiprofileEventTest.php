@@ -159,13 +159,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->webtestLogin( true );
         
         // add the required Drupal permission
-        $this->changeAdminLinks( );
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-1-access-all-custom-data');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-        
+        $permission = array('edit-1-access-all-custom-data');
+        $this->changePermissions( $permission );
+       
         $customGrp1 = "Custom Data1_" . substr(sha1(rand()), 0, 7);
         $firstName = 'Ma' . substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An' . substr( sha1( rand( ) ), 0, 7 );
