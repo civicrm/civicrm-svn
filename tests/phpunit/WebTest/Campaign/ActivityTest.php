@@ -55,13 +55,9 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       }
 
       // add the required Drupal permission
-      $this->changeAdminLinks();
-      $this->waitForElementPresent('edit-submit');
-      $this->check('edit-2-administer-civicampaign');
-      $this->click('edit-submit');
-      $this->waitForPageToLoad();
-      $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-
+      $permissions = array('edit-2-administer-civicampaign');
+      $this->changePermissions( $permissions );
+      
       // now logout and login with admin credentials
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
       $this->waitForPageToLoad('30000'); 
