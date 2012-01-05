@@ -1166,4 +1166,22 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->open("{$this->sboxPath}admin/user/permissions"); 
         }   
     } 
+    
+    function changePermissions( $permission ) {
+        $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
+        $this->waitForPageToLoad( '30000' );
+        $this->webtestLogin( true ); 
+        $this->changeAdminLinks( );
+        $this->waitForElementPresent('edit-submit');
+        foreach ( $permission as $key => $value ) {
+            $this->check($value);
+        }
+        $this->click('edit-submit');
+        $this->waitForPageToLoad();
+        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        $this->open( $this->sboxPath . "user/logout" );
+        $this->waitForPageToLoad( '30000' );
+        $this->webtestLogin( );
+        $this->waitForPageToLoad( '30000' );
+    }
 }
