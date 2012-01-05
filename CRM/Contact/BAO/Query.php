@@ -3041,7 +3041,7 @@ WHERE  id IN ( $groupIDs )
 
             $stateProvince = CRM_Core_PseudoConstant::stateProvince();
             foreach ( $value as $id ) {
-                $names[] = $stateProvince[$id];
+                $names[] = CRM_Utils_Array::value( $id, $stateProvince );
             }
         } else {
             $inputClause = array( );
