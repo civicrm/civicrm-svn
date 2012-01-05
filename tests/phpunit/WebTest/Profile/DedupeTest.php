@@ -45,7 +45,7 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          // sometimes your test might fail because of this. In such cases, it's better to pick one element
          // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
          // page contents loaded and you can continue your test execution.
-         $this->webtestLogin( );  
+         $this->webtestLogin( true );  
 
          // Go directly to the URL of the screen that you will beadding New Individual.
          $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
