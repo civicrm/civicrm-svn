@@ -319,7 +319,6 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
         $this->click( "xpath=//div[@id='search_form_reserve']/div" );
         $this->waitForElementPresent( 'sort_name' );
-        $lastName = 'Smith_a69231b';
         $this->type( 'sort_name', $lastName );
         $this->waitForElementPresent( '_qf_Search_refresh' );
         $this->click( '_qf_Search_refresh' );
