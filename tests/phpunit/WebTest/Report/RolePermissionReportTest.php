@@ -46,7 +46,7 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
         // sometimes your test might fail because of this. In such cases, it's better to pick one element
         // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
         // page contents loaded and you can continue your test execution.
-        $this->webtestLogin( );
+        $this->webtestLogin( true );
         
         //create new roles
         $role1 = 'role1'.substr(sha1(rand()), 0, 7);
@@ -70,6 +70,8 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
         
         $user1 = $this->_testCreateUser( $roleId1 ); 
         $user2 = $this->_testCreateUser( $roleId2 ); 
+        $this->open( $this->sboxPath . "user/logout" );
+        $this->waitForPageToLoad( '30000' );
         
         // let's give full CiviReport permissions.
         $permissions = array(
