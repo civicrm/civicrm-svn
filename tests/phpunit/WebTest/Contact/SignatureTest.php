@@ -71,6 +71,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       
       // HTML format message
       $signature = 'Contact Signature in html';
+      $this->fireEvent( 'mceIframeContainer', 'focus' );
       $this->fillRichTextField('mceIframeContainer', $signature,'TinyMCE');
       
       // TEXT Format Message
@@ -136,6 +137,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       
       // HTML format message
       $signature = 'Contact Signature in html';
+      $this->fireEvent( 'email_1_signature_html', 'focus' );
       $this->fillRichTextField('email_1_signature_html', $signature);
       
       // TEXT Format Message
