@@ -40,7 +40,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
         
         // Log in as admin first to verify permissions for CiviCase
-        $this->webtestLogin( true );
+        $this->webtestLogin( );
         
         // Enable CiviCase module if necessary
         $this->open( $this->sboxPath . "civicrm/admin/setting/component?reset=1" );
@@ -58,11 +58,6 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
         // let's give full CiviCase permissions to demo user (registered user).
         $permission = array('edit-2-access-all-cases-and-activities','edit-2-access-my-cases-and-activities','edit-2-administer-civicase','edit-2-delete-in-civicase');
         $this->changePermissions( $permission );
-        
-        // save permissions
-        $this->click( 'edit-submit' );
-        $this->waitForPageToLoad( '30000' );
-        $this->assertTrue( $this->isTextPresent( 'The changes have been saved.' ) );
         
         // Go directly to the URL of the screen that you will be testing (New Case-standalone).
         $this->open( $this->sboxPath . "civicrm/case/add?reset=1&action=add&atype=13&context=standalone" );

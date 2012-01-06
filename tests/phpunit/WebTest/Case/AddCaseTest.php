@@ -47,7 +47,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->open( $this->sboxPath );
 
     // Log in as admin first to verify permissions for CiviCase
-    $this->webtestLogin( true );
+    $this->webtestLogin( );
 
     // Enable CiviCase module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
@@ -66,18 +66,6 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $permission = array('edit-2-access-all-cases-and-activities','edit-2-access-my-cases-and-activities','edit-2-administer-civicase','edit-2-delete-in-civicase');
     $this->changePermissions( $permission );
     
-    // save permissions
-    $this->click("edit-submit");
-    $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("The changes have been saved."));
-
-    $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');          
-
-    // Log in as demo user
-    $this->open( $this->sboxPath );
-    $this->webtestLogin( );
-
     // Go to reserved New Individual Profile to set value for logged in user's contact name (we'll need that later)
     $this->open($this->sboxPath . "civicrm/profile/edit?reset=1&gid=4");
     $testUserFirstName = "Testuserfirst";

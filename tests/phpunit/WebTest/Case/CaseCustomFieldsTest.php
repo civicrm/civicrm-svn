@@ -84,11 +84,6 @@ class WebTest_Case_CaseCustomFieldsTest extends CiviSeleniumTestCase {
         $permission = array('edit-2-access-all-cases-and-activities','edit-2-access-my-cases-and-activities','edit-2-administer-civicase','edit-2-delete-in-civicase');
         $this->changePermissions( $permission );
         
-        // save permissions
-        $this->click("edit-submit");
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue($this->isTextPresent("The changes have been saved."));
-        
         // Go to reserved New Individual Profile to set value for logged in user's contact name (we'll need that later)
         $this->open($this->sboxPath . "civicrm/profile/edit?reset=1&gid=4");
         $testUserFirstName = "Testuserfirst";
