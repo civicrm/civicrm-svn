@@ -523,7 +523,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 }
 
                 // set the localhost value, CRM-3153
-                $params['localhost'] = $_SERVER['SERVER_NAME'];
+                $params['localhost'] = CRM_Utils_Array::value( 'SERVER_NAME', $_SERVER, 'localhost' );
 
                 // also set the timeout value, lets set it to 30 seconds
                 // CRM-7510

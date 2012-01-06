@@ -973,7 +973,7 @@ function _civicrm_api_get_custom_fields($entity, &$params){
     require_once 'CRM/Core/BAO/CustomField.php';
     $customfields = array();
     if(strtolower($entity) == 'contact'){
-      $entity = $params['contact_type'];
+        $entity = CRM_Utils_Array::value( 'contact_type', $params );
     }
     $customfields = CRM_Core_BAO_CustomField::getFields($entity ,
                                                          false,
