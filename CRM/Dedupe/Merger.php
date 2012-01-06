@@ -33,8 +33,11 @@
  *
  */
 
+require_once 'CRM/Contact/BAO/GroupContact.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
 require_once 'CRM/Core/BAO/UFMatch.php';
+require_once 'CRM/Case/BAO/Case.php';
+require_once 'CRM/Contact/BAO/Contact.php';
 
 class CRM_Dedupe_Merger
 {
@@ -1130,7 +1133,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                    'openid'  => 'OpenID',
                                    'address' => 'Address' );
             
-            require_once 'CRM/Contact/BAO/Contact.php';
             $primaryBlockIds = CRM_Contact_BAO_Contact::getLocBlockIds( $mainId, array( 'is_primary' => 1 ) );
             $billingBlockIds = CRM_Contact_BAO_Contact::getLocBlockIds( $mainId, array( 'is_billing' => 1 ) );
             
