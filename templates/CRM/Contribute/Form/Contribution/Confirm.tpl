@@ -45,6 +45,9 @@
             {/if}
         </p> 
     </div>
+    <div id="crm-submit-buttons" class="crm-submit-buttons">
+        {include file="CRM/common/formButtons.tpl" location="top"}
+    </div>
     {if $is_pay_later}
         <div class="bold pay_later_receipt-section">{$pay_later_receipt}</div>
     {/if}
