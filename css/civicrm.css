@@ -2127,7 +2127,7 @@ div.grippie {
     margin:0 0 0 0px;
     padding:1px 8px 2px 4px;
 }
-#crm-container .crm-button-type-cancel {margin-left:20px;}
+#crm-container .crm-button-type-cancel, #crm-container .crm-button-type-back {margin-left:20px;}
 #crm-container .crm-button-type-cancel input { color:#E6E6DC!important; }
 
 #crm-container a.button,
@@ -3132,7 +3132,9 @@ div#crm-toolTip
 }
 
 /* Special styling for specific form buttons */
-#crm-container span.crm-button_qf_Main_upload input {
+#crm-container span.crm-button_qf_Main_upload input,
+#crm-container span.crm-button_qf_Confirm_next input,
+#crm-container span.crm-button_qf_Register_upload input {
     font-size: 1.2em;
 }
 
