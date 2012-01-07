@@ -47,7 +47,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
         // class attributes.
         $this->open( $this->sboxPath );
         
-        // Log in as admin first to verify permissions for CiviGrant
+        // Log in as admin first to verify permissions for CiviCampaign
         $this->webtestLogin( true );        
 
         // Enable CiviCampaign module if necessary
