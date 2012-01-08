@@ -264,7 +264,8 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
       $permission = array('edit-1-access-civimail-subscribeunsubscribe-pages');
       $this->changePermissions( $permission );
-      
+      $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
+ 
       // build forward url
       $forwardUrl = "civicrm/mailing/forward?reset=1&jid={$eventQueue->job_id}&qid={$eventQueue->id}&h={$eventQueue->hash}";
       $this->open($this->sboxPath . $forwardUrl);
