@@ -258,12 +258,14 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         
         // Enable tell a friend feature
         $this->check( 'tf_is_active' );
-        $this->waitForElementPresent( 'thankyou_text' );
+        $this->waitForElementPresent( 'tf_thankyou_text' );
         
         // Modify the messages
         $this->type( 'intro', "This is $subject Test intro text" );
         $this->type( 'suggested_message', "$subject Test Message. This is amazing!" );
-        $this->type( 'thankyou_text', $thankYouMsg );
+        
+        $this->type( 'tf_thankyou_title', 'Test thank you title' );
+        $this->type( 'tf_thankyou_text', $thankYouMsg );
         
         $this->click( '_qf_Event_upload_done-bottom' );
         $this->waitForElementPresent( "xpath=//div[@id='event_status_id']//div[@class='dataTables_wrapper']/table/tbody//tr/td[1]/a[text()='$eventTitle']" );
