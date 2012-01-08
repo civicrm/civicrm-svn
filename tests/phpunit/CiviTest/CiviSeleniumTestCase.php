@@ -271,7 +271,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->waitForElementPresent("xpath=//td[@id='cke_contents_{$fieldName}']/iframe");
             $this->runScript( "CKEDITOR.instances['{$fieldName}'].setData('<p>{$text}</p>');" );
         } else if ( $editor == 'TinyMCE') {
-            $this->selectFrame("css=td.{$fieldName} iframe");
+            $this->selectFrame("xpath=//iframe[@id='{$fieldName}_ifr']");
             $this->type("//html/body", $text);
         } else {
             $this->fail( "Unknown editor value: $editor, failing (in CiviSeleniumTestCase::fillRichTextField ..." );
