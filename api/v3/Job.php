@@ -304,16 +304,14 @@ function civicrm_api3_job_process_participant( $params )
 
 /*
  * This api checks and updates the status of all membership records for a given domain using the calc_membership_status and 
- * update_contact_membership APIs.
+ * update_contact_membership APIs. It also sends renewal reminders if those have been configured for your membership types.
  *
  * IMPORTANT: 
  * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.  
  * Verify that this value has been properly set from Administer > Configure > Domain Information
- * If you want to use some other FROM email address, modify line 125 and set your valid email address.
+ * If you want to use some other FROM email address, modify line 2341 in CRM/Member/BAO/Membership.php and set your valid email address.
  *
- * @param  array   	  $params (reference ) input parameters
- *                        now - the time to use, in YmdHis format
- *                            - makes testing a bit simpler since we can simulate past/future time
+ * @param  array   	  $params (reference ) input parameters NOT USED
  *
  * @return boolean        true if success, else false
  * @static void
@@ -354,10 +352,10 @@ function civicrm_api3_job_process_respondent( $params )
 
 
 /*
- * This api checks and updates the status of all membership records for a given domain using the calc_membership_status and 
- * update_contact_membership APIs.
+ * This api sets the renewal reminder date for memberships which do not have one set yet. Useful for memberships which were
+ * added prior to the reminder date property being set for a given membership type (and hence do not have a reminder date set). 
  *
- * @param  array   	  $params (reference ) input parameters
+ * @param  array   	  $params (reference ) - NOT USED for this api
  *
  * @return boolean        true if success, else false
  * @static void
