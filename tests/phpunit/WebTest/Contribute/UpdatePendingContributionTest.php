@@ -26,8 +26,6 @@
 */
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-
-
  
 class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestCase {
 
@@ -98,9 +96,6 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
         $softCreditLname = substr( sha1( rand( ) ), 0, 7 );
         $this->webtestAddContact( $softCreditFname, $softCreditLname, false );
  
-        // Add new Financial Account
-       
-
         // Go directly to the URL of the screen that you will be testing (New Contribution-standalone).
         $this->open( $this->sboxPath . "civicrm/contribute/add?reset=1&context=standalone" );
 
@@ -136,8 +131,9 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
         $this->type( "trxn_id", "P20901X1" . rand( 100, 10000 ) );
       
         // soft credit
-        $this->typeKeys( "soft_credit_to", $softCreditFname );
+        $this->type( "soft_credit_to", $softCreditFname );
         $this->fireEvent( "soft_credit_to", "focus" );
+        $this->click('soft_credit_to');
         $this->waitForElementPresent( "css=div.ac_results-inner li" );
         $this->click( "css=div.ac_results-inner li" );
 
