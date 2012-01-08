@@ -136,7 +136,7 @@ class WebTest_Case_CaseCustomFieldsTest extends CiviSeleniumTestCase {
         $this->select("medium_id", "value=1");
         $location = "Main offices";
         $this->type("activity_location", $location);
-        $details = "65 year old female needs safe location during the day for herself and her dog. She's in good health but somewhat disoriented.";
+        $details = "65 year old female needs safe location during the day for herself and her dog. She is in good health but somewhat disoriented.";
         $this->fillRichTextField( "activity_details", $details,'CKEditor' );
         $this->type("activity_subject", $subject);
         
