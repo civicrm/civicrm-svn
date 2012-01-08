@@ -422,6 +422,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
 
     function webtestAddCreditCardDetails( ) {
+        $this->waitForElementPresent('credit_card_type');
         $this->select('credit_card_type', 'label=Visa');
         $this->type('credit_card_number', '4807731747657838');
         $this->type('cvv2', '123');

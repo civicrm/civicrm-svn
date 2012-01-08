@@ -94,7 +94,7 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
       $this->open($this->sboxPath . 'civicrm/contribute/search?reset=1');
       $this->waitForElementPresent('contribution_currency_type');
 
-      $this->type('sort_name', "$firstName $lastName" );
+      $this->type('sort_name', "$lastName, $firstName" );
       $this->click('contribution_test');
       $this->click('_qf_Search_refresh');
 
@@ -114,6 +114,5 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
           $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
                              preg_quote( $value ) );   
       }
-          
   }
 }
