@@ -39,14 +39,11 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          // The rest of URL is defined in CiviSeleniumTestCase base class, in
          // class attributes.
          $this->open( $this->sboxPath );
-         
-         // Logging in. Remember to wait for page to load. In most cases,
-         // you can rely on 30000 as the value that allows your test to pass, however,
-         // sometimes your test might fail because of this. In such cases, it's better to pick one element
-         // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-         // page contents loaded and you can continue your test execution.
-         $this->webtestLogin( true );  
 
+         // lets give profile related permision to anonymous user.
+         $permission = array('edit-1-profile-create','edit-1-profile-edit','edit-1-profile-listings','edit-1-profile-view');
+         $this->changePermissions( $permission );
+ 
          // Go directly to the URL of the screen that you will beadding New Individual.
          $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
          
@@ -66,10 +63,6 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
          $this->click( "_qf_Contact_upload_view" );
          $this->waitForTextPresent( "Your Individual contact record has been saved." );
 
-         // lets give profile related permision to anonymous user.
-         $permission = array('edit-1-profile-create','edit-1-profile-edit','edit-1-profile-listings','edit-1-profile-view');
-         $this->changePermissions( $permission );
-         
          // submit dupe using profile/create as anonymous
          $this->open( $this->sboxPath . "civicrm/profile/create?gid=4&reset=1" );
          $this->waitForPageToLoad( "30000" );
