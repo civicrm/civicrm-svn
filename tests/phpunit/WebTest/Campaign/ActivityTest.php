@@ -98,7 +98,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
       // Let's start filling the form with values.
-      $campaignTitle = "Campaign $title";
+      $campaignTitle = "Campaign ". $title;
       $this->type( "title", $campaignTitle );
 
       // select the campaign type
@@ -229,8 +229,11 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_Activity_cancel-bottom');
 
       // verify Activity created
-      $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ), "/label" );
+      $expected = array( 5   => $campaignTitle  
+                         ); 
+      foreach ( $expected as  $value => $label ) { 
+          $this->verifyText( "xpath=id( 'Activity' )/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
+      }
   }
-
   
 }
