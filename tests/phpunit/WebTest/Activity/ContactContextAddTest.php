@@ -74,6 +74,7 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
 
       // Now we're filling the "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
+      $this->fireEvent( 'assignee_contact_id', 'focus' );
       $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
       // ...waiting for drop down with results to show up...
