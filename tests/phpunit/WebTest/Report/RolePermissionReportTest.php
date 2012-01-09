@@ -71,7 +71,7 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
         $user1 = $this->_testCreateUser( $roleId1 ); 
         $user2 = $this->_testCreateUser( $roleId2 ); 
         $this->open( $this->sboxPath . "user/logout" );
-        $this->waitForPageToLoad( '30000' );
+        $this->waitForPageToLoad( '30000' ); 
         
         // let's give full CiviReport permissions.
         $permissions = array(
@@ -105,9 +105,25 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
         $this->open($this->sboxPath . "civicrm/report/list?reset=1" );
         $this->waitForPageToLoad('30000');
         $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
+        $this->waitForPageToLoad( '30000' );
         
+        //delete roles
+        $this->webtestLogin( true );
+        $this->open( $this->sboxPath . "admin/people/permissions/roles" );
+        $this->_roleDelete( $role1 );
+        $this->_roleDelete( $role2 );
     }  
     
+    function _roleDelete( $role ){
+        $this->waitForElementPresent("xpath=//table[@id='user-roles']/tbody//tr/td[text()='{$role}']/..//td/a[text()='edit role']");
+        $this->click("xpath=//table[@id='user-roles']/tbody//tr/td[text()='{$role}']/..//td/a[text()='edit role']");
+        $this->waitForElementPresent('edit-delete');
+        $this->click('edit-delete');
+        $this->waitForPageToLoad( '30000' );
+        $this->click("edit-submit");
+        $this->waitForTextPresent("The role has been deleted.");
+    }
+     
     function _testCreateUser( $roleid ) {
         
         // Go directly to the URL of the screen that will Create User Authentically.
