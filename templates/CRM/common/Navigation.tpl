@@ -41,6 +41,9 @@
 <script type="text/javascript">
 //CRM-6776, enter-to-submit functionality is broken for IE due to hidden field
 cj( document ).ready( function( ) {
+   cj("#civicrm-menu >li").each(function(i){ 
+      cj(this).attr("tabIndex",i+2); 
+   });
    var htmlContent = '';
       if ( cj.browser.msie ) {
           if( cj.browser.version.substr( 0,1 ) == '7' ) {

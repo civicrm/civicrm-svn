@@ -3185,3 +3185,10 @@ div#crm-toolTip
 #crm-container h4.finalconf-item          { border-top:1px solid #ccc; padding:8px 0 8px 10px; margin:0; }
 #crm-container div.finalconf-itemdesc     { font-style:italic; padding:6px 12px 6px 12px; color:#666; float:right; width:60%; }
 #crm-container h4.finalconf-btm           { border-bottom:1px solid #ccc; margin-bottom:20px; }
+
+
+/*Screen Reader Accessibility additions*/
+#crm-container a.whiteanchor{
+  color:white;
+}
+

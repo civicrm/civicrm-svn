@@ -49,12 +49,10 @@ var checkSimilar =  {$checkSimilar};
              return;
            }
            var msg="<tr id='lastname_msg'><td colspan='5'><div class='messages status'><div class='icon inform-icon'></div>";
-
-           if (data.length ==1) {
+           if ( data.length == 1 ) {
              msg = msg + "{/literal}{ts}There is a contact with a similar last name. If the person you were trying to add is listed below, click on their name to view or edit their record{/ts}{literal}";  
            } else {
-             // ideally, should use a merge with data.length
-             msg = msg + "{/literal}{ts}There are contacts with a similar last name. If the person you were trying to add is listed below, click on their name to view or edit their record{/ts}{literal}";
+             msg = msg + "{/literal}{ts}There are "+ data.length +" contacts with a similar last name({/ts}<a href='#' onclick='cj(\"#lastname_msg\").remove();cj(\"#current_employer\").focus();'>{ts}Click here{/ts}</a> {ts}to Skip and move to next form field). If the person you were trying to add is listed below, click on their name to view or edit their record{/ts}{literal}";
            }
            msg = msg+ '<table class="matching-contacts-actions">';
            cj.each(data, function(i,contact){
@@ -62,7 +60,7 @@ var checkSimilar =  {$checkSimilar};
 	     if ( !(contact.email) ) {
 	       contact.email = '';
 	     }
-             msg = msg + '<tr><td><a href="'+viewIndividual+contact.contact_id+'">'+ contact.display_name +'</a></td><td>'+contact.email+'</td><td class="action-items"><a class="action-item action-item-first" href="'+viewIndividual+contact.contact_id+'">{/literal}{ts}View{/ts}{literal}</a><a class="action-item" href="'+editIndividual+contact.contact_id+'">{/literal}{ts}Edit{/ts}{literal}</a></td></tr>';
+             msg = msg + '<tr><td><a href="'+viewIndividual+contact.contact_id+'" target="_blank">'+ contact.display_name +'</a></td><td>'+contact.email+'</td><td class="action-items"><a class="action-item action-item-first" href="'+viewIndividual+contact.contact_id+'">{/literal}{ts}View{/ts}{literal}</a><a class="action-item" href="'+editIndividual+contact.contact_id+'">{/literal}{ts}Edit{/ts}{literal}</a></td></tr>';
 	   }
            });
            msg = msg+ '</table>';
@@ -128,6 +126,7 @@ var checkSimilar =  {$checkSimilar};
 <script type="text/javascript">
 var dataUrl        = "{/literal}{$employerDataURL}{literal}";
 var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
+cj('#current_employer').attr("title","Current employer auto complete");
 cj('#current_employer').autocomplete( dataUrl, { 
                                       width        : 250, 
                                       selectFirst  : false,

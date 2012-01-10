@@ -30,7 +30,7 @@
 	<div class="crm-accordion-wrapper crm-address-accordion {if $cd_edit.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
 		<div class="crm-accordion-header">
 			<div id="custom{$group_id}" class="icon crm-accordion-pointer"></div> 
-			{$cd_edit.title}
+                        <a href="#" class="whiteanchor">{$cd_edit.title}</a>
 			</div><!-- /.crm-accordion-header -->
 			
 			<div id="customData{$group_id}" class="crm-accordion-body">

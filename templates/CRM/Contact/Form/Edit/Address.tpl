@@ -31,7 +31,7 @@
 <div id = "addressBlockId" class="crm-accordion-wrapper crm-address-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
-	{$title}
+        <a href="#" class="whiteanchor">{$title}</a>
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body" id="addressBlock">
 {/if}
