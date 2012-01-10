@@ -99,13 +99,9 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->changeAdminLinks();
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-civicampaign');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-
+        $permissions = array('edit-2-administer-civicampaign');
+        $this->changePermissions( $permissions );
+        
         $this->open( $this->sboxPath . 'civicrm/campaign?reset=1' );
         $this->waitForElementPresent("link=Add Campaign");
         if ( $this->isTextPresent('No campaigns found.') ) {
@@ -143,7 +139,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         $this->select("status_id", "value=2");
         
         // click save
-        $this->click("_qf_Campaign_next-bottom");
+        $this->click("_qf_Campaign_upload-bottom");
         $this->waitForPageToLoad("30000");
         
         $this->assertTrue($this->isTextPresent("Campaign $campaignTitle has been saved."),
@@ -285,7 +281,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent("_qf_Campaign_next-bottom");
+        $this->waitForElementPresent("_qf_Campaign_upload-bottom");
         
         // Let's start filling the form with values.
         $pastTitle = substr(sha1(rand()), 0, 7);
@@ -313,7 +309,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
         $this->select("status_id", "value=3");
         
         // click save
-        $this->click("_qf_Campaign_next-bottom");
+        $this->click("_qf_Campaign_upload-bottom");
         $this->waitForPageToLoad("30000");
         
         $this->assertTrue($this->isTextPresent("Campaign $pastCampaignTitle has been saved."), 

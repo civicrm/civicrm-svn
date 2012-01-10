@@ -675,10 +675,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
     
     function membershipDelete( $membershipID )
-    {
-        $result = civicrm_api( 'Membership', 'Delete', array( 'version' => 3,'id' => $membershipID ));
+    {   
+        $deleteParams =  array( 'version' => 3,'id' => $membershipID );
+        $result = civicrm_api( 'Membership', 'Delete', $deleteParams );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            throw new Exception( 'Could not delete membership' . $result['error_message']);
+            throw new Exception( 'Could not delete membership ' . $result['error_message'] . " params were " .print_r($deleteParams ,true));
         }
         return;
     }

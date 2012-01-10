@@ -60,6 +60,8 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         if ( civicrm_wp_in_civicrm( ) ) {
             global $civicrm_wp_title;
             $civicrm_wp_title = $pageTitle;
+            $template = CRM_Core_Smarty::singleton( );
+            $template->assign( 'pageTitle', $pageTitle );
         }
     }
     
@@ -75,7 +77,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      */
     function appendBreadCrumb( $breadCrumbs ) {
         $breadCrumb = wp_get_breadcrumb( );
-
+        
         if ( is_array( $breadCrumbs ) ) {
             foreach ( $breadCrumbs as $crumbs ) {
                 if ( stripos($crumbs['url'], 'id%%') ) {
@@ -91,7 +93,11 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
                 $breadCrumb[]  = "<a href=\"{$crumbs['url']}\">{$crumbs['title']}</a>";
             }
         }
+        
+        $template = CRM_Core_Smarty::singleton( );
+        $template->assign_by_ref( 'breadcrumb', $breadCrumb );
         wp_set_breadcrumb( $breadCrumb );
+        
     }
 
     /**
@@ -170,10 +176,24 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
                  $fragment = null, $htmlize = true,
                  $frontend = false ) {
         $config = CRM_Core_Config::singleton( );
-        $script =  'index.php';
+        $script = '';
+        $separator = $htmlize ? '&amp;' : '&';
+ 		$pageID    = '';
 
         require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
+
+        if ( $config->userFrameworkFrontend ) {
+            $script = 'index.php';
+            // when shortcode is inlcuded in page
+            if ( get_query_var('page_id') ) {
+                $pageID = "{$separator}page_id=" . get_query_var('page_id');
+            } else if ( get_query_var('p') ) {
+                // when shortcode is inserted in post
+                $pageID = "{$separator}p=" . get_query_var('p');
+            }
+ 
+        } 
 
         if (isset($fragment)) {
             $fragment = '#'. $fragment;
@@ -190,38 +210,20 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
             $base .= 'wp-admin/admin.php';
         }
         
-        $script = '';
-        $separator = $htmlize ? '&amp;' : '&';
-
-        if (! $config->cleanURL ) {
-            if ( isset( $path ) ) {
-                if ( isset( $query ) ) {
-                    return $base . $script .'?page=CiviCRM&q=' . $path . $separator . $query . $fragment;
-                } else {
-                    return $base . $script .'?page=CiviCRM&q=' . $path . $fragment;
-                }
+        if ( isset( $path ) ) {
+            if ( isset( $query ) ) {
+                return $base . $script .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
             } else {
-                if ( isset( $query ) ) {
-                    return $base . $script .'?'. $query . $fragment;
-                } else {
-                    return $base . $fragment;
-                }
+                return $base . $script .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
             }
         } else {
-            if ( isset( $path ) ) {
-                if ( isset( $query ) ) {
-                    return $base . $path .'?'. $query . $fragment;
-                } else {
-                    return $base . $path . $fragment;
-                }
+            if ( isset( $query ) ) {
+                return $base . $script .'?'. $query . $pageID . $fragment;
             } else {
-                if ( isset( $query ) ) {
-                    return $base . $script .'?'. $query . $fragment;
-                } else {
-                    return $base . $fragment;
-                }
+                return $base . $fragment;
             }
         }
+        
     }
 
     /**
@@ -279,6 +281,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
 
     function permissionDenied( ) {
+        CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
     }
 
     function logout( ) {

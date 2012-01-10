@@ -66,6 +66,7 @@ done
 cp $SRC/agpl-3.0.txt $TRG/civicrm/civicrm
 cp $SRC/gpl.txt $TRG/civicrm/civicrm
 cp $SRC/README.txt $TRG/civicrm/civicrm
+cp $SRC/civicrm.config.php $TRG/civicrm/civicrm
 
 # final touch
 echo "<?php

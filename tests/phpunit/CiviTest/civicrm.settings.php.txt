@@ -57,12 +57,10 @@ global $civicrm_root;
 $civicrm_root = dirname (dirname (dirname (dirname( __FILE__ ) )));
 
 // set this to a temporary directory. it defaults to /tmp/civi on linux
-// TODO: set an sensible default folder in windows
 //define( 'CIVICRM_TEMPLATE_COMPILEDIR', 'the/absolute/path/' );
 
 if (!defined("CIVICRM_TEMPLATE_COMPILEDIR")) {
   if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-    // die ("FATAL: you need to define CIVICRM_TEMPLATE_COMPILEDIR in ". __FILE__);
     define( 'CIVICRM_TEMPLATE_COMPILEDIR', getenv ('TMP') . DIRECTORY_SEPARATOR . 'civi' . DIRECTORY_SEPARATOR );
   } else {
     define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/tmp/civi/' );

@@ -44,8 +44,10 @@ require_once 'Utils.php';
  */
 class api_v3_ActivityTest extends CiviUnitTestCase
 {   protected $_params;
+    protected $_params2;
     protected $_entity;
     protected $_apiversion;
+    protected $test_activity_type_value;
     /**
      *  Test setup for every test
      *
@@ -66,11 +68,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
 
         $this->quickCleanup( $tablesToTruncate );
 
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
+
  
         //  Insert a row in civicrm_contact creating contact 17
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
@@ -79,30 +77,35 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                                                                          dirname(__FILE__)
                                                                          . '/dataset/contact_17.xml') );
  
-        //  Insert a row in civicrm_option_group creating option group
-        //  activity_type 
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/option_group_activity.xml') );
- 
-        //  Insert a row in civicrm_option_value creating
-        //  activity_type 5
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_activity.xml') );
+        //create activity types
+        $activityTypes = civicrm_api('option_value', 'create', array('version' => API_LATEST_VERSION, 'option_group_id' => 2, 
+        																						'name' => 'Test activity type',
+                    																'label' =>  'Test activity type',
+                                                    'sequential' => 1 ));
+        $this->test_activity_type_value = $activityTypes['values'][0]['value'];
+        $this->test_activity_type_id = $activityTypes['id'];
         $this->_params = array( 
                 'source_contact_id' => 17,
-                'activity_type_id' => 1,
+                'activity_type_id' => $this->test_activity_type_value,
                 'subject' => 'test activity type id',
                 'activity_date_time' => '2011-06-02 14:36:13',
                 'status_id' => 2,
                 'priority_id' => 1, 
+                'duration'            => 120,
+                'location'            => 'Pensulvania',
+                'details'             => 'a test activity',
                 'version' => $this->_apiversion);
-
+        $this->_params2 = array(
+                        'source_contact_id'   => 17,
+                        'subject'             => 'Eat & drink',
+                        'activity_date_time'  => date('Ymd'),
+                        'duration'            => 120,
+                        'location'            => 'Napier',
+                        'details'             => 'discuss & eat',
+                        'status_id'           => 1,
+                        'activity_type_id' => $this->test_activity_type_value,
+                        'version' => $this->_apiversion
+                        );
         // create a logged in USER since the code references it for source_contact_id
         $this->createLoggedInUser( );
     }
@@ -120,6 +123,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                                    'civicrm_activity',
                                    );
         $this->quickCleanup( $tablesToTruncate, true );
+        civicrm_api('option_value', 'delete', array('version' => 3, 'id' => $this->test_activity_type_id ));
     }
 
     
@@ -303,7 +307,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'location'            => 'Pensulvania',
                         'details'             => 'a test activity',
                         'status_id'           => 1,
-                        'activity_type_id'    => 6,
+                        'activity_type_id'    => 699,
                         'version' => $this->_apiversion
                         );
 
@@ -320,31 +324,18 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityCreate( )
     {
-        $params = array(
-                        'source_contact_id'   => 17,
-                        'subject'             => 'Make-it-Happen Meeting',
-                        'activity_date_time'  => '20110316',
-                        'duration'            => 120,
-                        'location'            => 'Pensulvania',
-                        'details'             => 'a test activity',
-                        'status_id'           => 1,
-                        'activity_name'       => 'Test activity type',
-                        'version'             => $this->_apiversion,
-                        'priority_id'         => 1,
-                        );
         
-        $result =& civicrm_api('activity','create', $params );
-
-        $this->assertEquals( $result['is_error'], 0,
-                             "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) .' in line ' . __LINE__ );
-        $result =& civicrm_api('activity','get', $params );
+        $result =& civicrm_api('activity','create', $this->_params );
+        $this->assertAPISuccess($result, ' in line ' . __LINE__ );
+        $result =& civicrm_api('activity','get', $this->_params );
+        $this->assertAPISuccess($result, ' in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['source_contact_id'], 17,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['duration'], 120 ,'in line ' . __LINE__);
-        $this->assertEquals( $result['values'][$result['id']]['subject'], 'Make-it-Happen Meeting','in line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], '2011-03-16 00:00:00'   ,'in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['subject'], 'test activity type id','in line ' . __LINE__ );
+        $this->assertEquals( $result['values'][$result['id']]['activity_date_time'], '2011-06-02 14:36:13'   ,'in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['location'], 'Pensulvania','in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['details'], 'a test activity' ,'in line ' . __LINE__);
-        $this->assertEquals( $result['values'][$result['id']]['status_id'], 1,'in line ' . __LINE__ );
+        $this->assertEquals( $result['values'][$result['id']]['status_id'], 2,'in line ' . __LINE__ );
         $this->assertEquals( $result['values'][$result['id']]['id'], $result['id'],'in line ' . __LINE__ );
     }
     /**
@@ -541,27 +532,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityCreateBadTextStatus( )
     {
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
-                             
-        //  Insert a row in civicrm_option_group creating 
-        //  an activity_status option group
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/option_group_activity.xml') );
-
-        //  Insert rows in civicrm_option_value defining activity status
-        //  values of 'Scheduled', 'Completed', 'Cancelled'
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_activity.xml') );
 
         $params = array(
                         'source_contact_id'   => 17,
@@ -587,27 +557,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityCreateTextStatus( )
     {
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
-                             
-        //  Insert a row in civicrm_option_group creating 
-        //  an activity_status option group
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/option_group_activity.xml') );
 
-        //  Insert rows in civicrm_option_value defining activity status
-        //  values of 'Scheduled', 'Completed', 'Cancelled'
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_activity.xml') );
 
         $params = array(
                         'source_contact_id'   => 17,
@@ -652,17 +602,14 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         //  13
         $decription = "Function demonstrates getting asignee_contact_id & using it to get the contact";
         $subfile = 'ReturnAssigneeContact';
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/activity_4_13.xml') );
+        $activity =& civicrm_api('activity','create', $this->_params );
 
         $contact = civicrm_api('Contact','Create',array('display_name' => "The Rock", 
         																								'contact_type' => 'Individual', 
         																								'version' => 3, 
-        																								'api.activity.create' => array('id' => 13, 'assignee_contact_id' => '$value.id',)));                                                            
-        $params = array( 'activity_id' => 13,
+        																								'api.activity.create' => array('id' =>  $activity['id'], 'assignee_contact_id' => '$value.id',))); 
+                                                           
+        $params = array( 'activity_id' => $activity['id'],
                          'version'			=> $this->_apiversion,
                          'sequential'  =>1,
                          'return.assignee_contact_id' => 1,
@@ -672,13 +619,14 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);     
         
         $this->assertAPISuccess($result);
-        $this->assertEquals( 13, $result['id'],  'In line ' . __LINE__ );
+
+        $this->assertEquals( $activity['id'], $result['id'],  'In line ' . __LINE__ );
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
 
         $this->assertEquals( $contact['id'], $result['values'][0]['assignee_contact_id'][0],  'In line ' . __LINE__ );
     
         $this->assertEquals( 17, $result['values'][0]['api.contact.get']['values'][0]['contact_id'],  'In line ' . __LINE__ );
-        $this->assertEquals( 1, $result['values'][0]['activity_type_id'],'In line ' . __LINE__ );
+        $this->assertEquals( $this->test_activity_type_value, $result['values'][0]['activity_type_id'],'In line ' . __LINE__ );
         $this->assertEquals( "test activity type id",$result['values'][0]['subject'], 'In line ' . __LINE__ );
     }
     
@@ -768,20 +716,21 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $params['custom_'.$ids['custom_field_id']]  =  "custom string";
  
         $result = civicrm_api($this->_entity,'create', $params);
+        $this->assertAPISuccess($result, ' in line ' . __LINE__);
         //  Retrieve the test value
         $params = array( 
-                         'activity_type_id' => 1,
+                         'activity_type_id' => $this->test_activity_type_value,
                          'version' =>3, 
                          'sequential' =>1,
                          'return.custom_'.$ids['custom_field_id'] => 1);
         $result = civicrm_api('activity', 'get' ,  $params, true );
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( 0, $result['is_error'], "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertAPISuccess($result, ' in line ' . __LINE__);
         $this->assertEquals("custom string", $result['values'][0]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
 
         
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
-        $this->assertEquals( 1, $result['values'][0]['activity_type_id'], 'In line ' . __LINE__ );
+        $this->assertEquals( $this->test_activity_type_value, $result['values'][0]['activity_type_id'], 'In line ' . __LINE__ );
         $this->assertEquals( 'test activity type id', $result['values'][0]['subject'],'In line ' . __LINE__ );
         $this->customFieldDelete($ids['custom_field_id']);
         $this->customGroupDelete($ids['custom_group_id']);
@@ -800,17 +749,19 @@ class api_v3_ActivityTest extends CiviUnitTestCase
         $result = civicrm_api($this->_entity,'create', $params);
         //  Retrieve the test value
         $params = array( 'contact_id' =>  $this->_params ['source_contact_id'],
-                         'activity_type_id' => 1,
+                         'activity_type_id' => $this->test_activity_type_value,
                          'version' =>3, 
                          'sequential' =>1,
+        
                          'return.custom_'.$ids['custom_field_id'] => 1);
         $result = civicrm_api('activity', 'get' ,  $params, true );
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
         $this->assertEquals( 0, $result['is_error'], "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
         $this->assertEquals("custom string", $result['values'][0]['custom_' .$ids['custom_field_id'] ],' in line ' . __LINE__);
   
         $this->assertEquals( 17, $result['values'][0]['source_contact_id'], 'In line ' . __LINE__ );
-        $this->assertEquals( 1, $result['values'][0]['activity_type_id'], 'In line ' . __LINE__ );
+        $this->assertEquals( $this->test_activity_type_value, $result['values'][0]['activity_type_id'], 'In line ' . __LINE__ );
         $this->assertEquals( 'test activity type id', $result['values'][0]['subject'],'In line ' . __LINE__ );
         $this->assertEquals( $result['values'][0]['id'], $result['id'],'in line ' . __LINE__ );
  
@@ -870,16 +821,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testDeleteActivity( )
     {
-        //  Insert rows in civicrm_activity creating activities 4 and
-        //  13 
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/activity_4_13.xml') );
-        $params = array( 'id' => 13,
-                         'activity_type_id' => 1 ,
-                         'version' => $this->_apiversion,);
+        $result =& civicrm_api('activity','create', $this->_params );
+        $params = array( 'id' => $result['id'],
+                          'version' => $this->_apiversion,);
         
         $result =& civicrm_api('activity','delete',$params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
@@ -972,37 +916,26 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityUpdate( )
     {
-        //  Insert rows in civicrm_activity creating activities 4 and 13
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/activity_4_13.xml') );
+        $result =& civicrm_api('activity','create', $this->_params );
 
         $params = array(
-                        'id'                  => 4,
+                        'id'                  => $result['id'],
                         'subject'             => 'Make-it-Happen Meeting',
                         'activity_date_time'  => '20091011123456',
                         'duration'            => 120,
                         'location'            => '21, Park Avenue',
                         'details'             => 'Lets update Meeting',
                         'status_id'           => 1,
-                        'activity_name'       => 'Test activity type',
                         'source_contact_id'   => 17,
                         'priority_id'         => 1,
                         'version'							=>$this->_apiversion,
                         );
 
         $result = civicrm_api('activity', 'create' ,  $params );
-
-        //  civicrm_activity should show new values
-        $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                       dirname( __FILE__ )
-                                                                       . '/dataset/activity_4_13_updated.xml' );
-        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataset(
-                                                                       $this->_dbconn );
-        $actual->addTable( 'civicrm_activity' );
-        $expected->assertEquals( $actual );
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);
+        //hack on date comparison - really we should make getAndCheck smarter to handle dates
+        $params['activity_date_time'] = '2009-10-11 12:34:56'; 
+        $this->getAndCheck($params, $result['id'], 'activity');
     }
     
     /**
@@ -1030,7 +963,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         'custom_'.$ids['custom_field_id']           => 'custom string', 
                         );
         $result = civicrm_api('activity', 'create' ,  $params );
-
+            
         $activityId = $result['id'];
         $this->assertEquals( 0, $result['is_error'],
                              "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
@@ -1161,36 +1094,25 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityUpdateNotDate( )
     {
-        //  Insert rows in civicrm_activity creating activities 4 and 13
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/activity_4_13.xml') );
-        //  
+        $result =& civicrm_api('activity','create', $this->_params );
+
         $params = array(
-                        'id'                  => 4,
-                        'subject'             => 'Updated Make-it-Happen Meeting',
+                        'id'                  => $result['id'],
+                        'subject'             => 'Make-it-Happen Meeting',
                         'duration'            => 120,
                         'location'            => '21, Park Avenue',
                         'details'             => 'Lets update Meeting',
                         'status_id'           => 1,
-                        'activity_name'       => 'Test activity type',
                         'source_contact_id'   => 17,
                         'priority_id'         => 1,
                         'version'							=>$this->_apiversion,
                         );
 
         $result = civicrm_api('activity', 'create' ,  $params );
-
-        //  civicrm_activity should show new values except date
-        $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                       dirname( __FILE__ )
-                                                                       . '/dataset/activity_4_13_updated_not_date.xml' );
-        $actual = new PHPUnit_Extensions_Database_DataSet_QueryDataset(
-                                                                       $this->_dbconn );
-        $actual->addTable( 'civicrm_activity' );
-        $expected->assertEquals( $actual );
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);
+        //hack on date comparison - really we should make getAndCheck smarter to handle dates
+        $params['activity_date_time'] = $this->_params['activity_date_time']; 
+        $this->getAndCheck($params, $result['id'], 'activity');
     }
     
     /**
@@ -1198,36 +1120,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityUpdateWithStatus( )
     {
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
-
-        //  Insert a row in civicrm_option_group creating 
-        //  an activity_status option group
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                                                                             dirname(__FILE__)
-                                                                             . '/dataset/option_group_activity.xml') );
-
-        //  Insert rows in civicrm_option_value defining activity status
-        //  values of 'Scheduled', 'Completed', 'Cancelled'
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/option_value_activity.xml') );  
-                                                         
-        //  Insert a row in civicrm_activity creating activity 1
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/activity_type_5.xml') );
+        $activity = civicrm_api('activity', 'create', $this->_params);   
+        $this->assertAPISuccess($activity,"In line " . __LINE__  );                                              
         $params = array(
-                        'id'                  => 4,
+                        'id'                  => $activity['id'],
                         'source_contact_id'   => 17,
                         'subject'             => 'Hurry update works', 
                         'status_id'           => 1,
@@ -1236,13 +1132,13 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         );
 
         $result = civicrm_api('activity', 'create' ,  $params );
-        $this->assertNotContains( 'is_error', $result );
-        $this->assertEquals( $result['id'] , 4, "In line " . __LINE__ );
-        $this->assertEquals( $result['values'][4]['source_contact_id'] , 17,
+        $this->assertAPISuccess($result,"In line " . __LINE__  );
+        $this->assertEquals( $result['id'] , $activity['id'], "In line " . __LINE__ );
+        $this->assertEquals( $result['values'][$activity['id']]['source_contact_id'] , 17,
                              "In line " . __LINE__ );
-        $this->assertEquals( $result['values'][4]['subject'], 'Hurry update works',
+        $this->assertEquals( $result['values'][$activity['id']]['subject'], 'Hurry update works',
                              "In line " . __LINE__ );
-        $this->assertEquals( $result['values'][4]['status_id'], 1,
+        $this->assertEquals( $result['values'][$activity['id']]['status_id'], 1,
                              "In line " . __LINE__ );
     }
 
@@ -1253,16 +1149,11 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivityUpdateKeepSource( )
     {
-        //  Insert rows in civicrm_activity creating activities 4 and 13
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/activity_4_13.xml') );
+        $activity =& civicrm_api('activity','create', $this->_params );
         //  Updating the activity but not providing anything for the source contact
         //  (It was set as 17 earlier.)
         $params = array(
-                        'id'                  => 4,
+                        'id'                  => $activity['id'],
                         'subject'             => 'Updated Make-it-Happen Meeting',
                         'duration'            => 120,
                         'location'            => '21, Park Avenue',
@@ -1274,8 +1165,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase
                         );
 
         $result = civicrm_api('activity', 'create' ,  $params );
-
-        $findactivity = civicrm_api( 'Activity','Get',array('id' => 4, 'version' => 3) );
+        $this->assertAPISuccess($result,'in line ' . __LINE__);
+        $findactivity = civicrm_api( 'Activity','Get',array('id' => $activity['id'], 'version' => 3) );
         
         $this->assertAPISuccess($findactivity);
         $this->assertEquals( 17, $findactivity['values'][$findactivity['id']]['source_contact_id'], 'In line ' . __LINE__ );
@@ -1286,24 +1177,19 @@ class api_v3_ActivityTest extends CiviUnitTestCase
      */
     function testActivitiesContactGet()
     {
-        //  Insert rows in civicrm_activity creating activities 4 and 13
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/dataset/activity_4_13.xml') );
+        $activity =& civicrm_api('activity','create', $this->_params );
+        $activity2 =& civicrm_api('activity','create', $this->_params2 );       
         //  Get activities associated with contact 17
         $params = array( 'contact_id' => 17 ,
                          'version'    => $this->_apiversion);
         $result = civicrm_api('activity', 'get' ,  $params );
 
-        $this->assertEquals( 0, $result['is_error'], "Error message: " . CRM_Utils_Array::value( 'error_message', $result ) );
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);
         $this->assertEquals( 2, $result['count'],'In line ' . __LINE__ );
-        $this->assertEquals( 1, $result['values'][4]['activity_type_id'] , 'In line ' . __LINE__ );
-        $this->assertEquals( 4, $result['values'][4]['id'] , 'In line ' . __LINE__ );
-        $this->assertEquals( 'Test activity type', $result['values'][4]['activity_name'],'In line ' . __LINE__ );
-        $this->assertEquals( 'Test activity type', $result['values'][13]['activity_name'],'In line ' . __LINE__ );
-        $this->assertEquals( $result['values'][$result['id']]['id'], $result['id'],'in line ' . __LINE__ );
+        $this->assertEquals( $this->test_activity_type_value, $result['values'][$activity['id'] ]['activity_type_id'] , 'In line ' . __LINE__ );
+        $this->assertEquals( 'Test activity type', $result['values'][$activity['id'] ]['activity_name'],'In line ' . __LINE__ );
+        $this->assertEquals( 'Test activity type', $result['values'][$activity2['id'] ]['activity_name'],'In line ' . __LINE__ );
+
     
     }
 /*

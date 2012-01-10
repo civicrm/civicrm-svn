@@ -71,29 +71,24 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       // handle permissions early
 
       // let's give permission 'sign CiviCRM Petition' to anonymous user.
-      $this->changeAdminLinks();
-      $this->waitForElementPresent("edit-submit");
-      $this->check("edit-1-sign-civicrm-petition");
-      // give profile related permision
-      $this->check("edit-1-profile-create");
-      $this->check("edit-1-profile-edit");
-      $this->check("edit-1-profile-listings");
-      $this->check("edit-1-profile-view");
-
-      // now give full permissions to CiviPetition to registered user
-      $this->check("edit-2-administer-civicampaign");
-      $this->check("edit-2-manage-campaign");
-      $this->check("edit-2-gotv-campaign-contacts");
-      $this->check("edit-2-interview-campaign-contacts");
-      $this->check("edit-2-release-campaign-contacts");
-      $this->check("edit-2-reserve-campaign-contacts");
-      $this->check("edit-2-sign-civicrm-petition");
+      $permissions = array(
+                           // give profile related permision
+                           "edit-1-sign-civicrm-petition",
+                           "edit-1-profile-create",
+                           "edit-1-profile-edit",
+                           "edit-1-profile-listings",
+                           "edit-1-profile-view",
+                           // now give full permissions to CiviPetition to registered user
+                           "edit-2-administer-civicampaign",
+                           "edit-2-manage-campaign",
+                           "edit-2-gotv-campaign-contacts",
+                           "edit-2-interview-campaign-contacts",
+                           "edit-2-release-campaign-contacts",
+                           "edit-2-reserve-campaign-contacts",
+                           "edit-2-sign-civicrm-petition"
+                           );
+      $this->changePermissions( $permissions );
       
-      // save permission
-      $this->click("edit-submit");
-      $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("The changes have been saved."));
-
       /////////////// Create Campaign ///////////////////////////////
       
       // Go directly to the URL of the screen that you will be add campaign
@@ -101,7 +96,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Campaign_next-bottom");
+      $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
       // Let's start filling the form with values.
       $title = substr(sha1(rand()), 0, 7);
@@ -125,7 +120,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->select("status_id", "value=2");
 
       // click save
-      $this->click("_qf_Campaign_next-bottom");
+      $this->click("_qf_Campaign_upload-bottom");
       $this->waitForPageToLoad("30000");
       
       $this->assertTrue($this->isTextPresent("Campaign $title Campaign has been saved."), "Status message didn't show up after saving!");

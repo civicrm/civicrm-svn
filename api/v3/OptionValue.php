@@ -58,8 +58,7 @@ function civicrm_api3_option_value_create( $params )
     if ( !array_key_exists ('weight', $params)) {
       $params ['weight'] = $params['value']; // no idea why that's a "mandatory" field
     }
-    civicrm_api3_verify_mandatory ($params,'CRM_Core_BAO_OptionValue');
-    
+   
 
     if (CRM_Utils_Array::value('id', $params)){
       $ids             = array( 'optionValue' => $params['id'] );

@@ -124,7 +124,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
       case 'config':
            if (user_access('access CiviEvent') && $data !== NULL && $data !== '') {
            return civicrm_views_href( $data,
-                                            'civicrm/event/manage',
+                                            'civicrm/event/manage/eventInfo',
                                             "action=update&id={$values->{$this->aliases['id']}}&reset=1" );
            }
 

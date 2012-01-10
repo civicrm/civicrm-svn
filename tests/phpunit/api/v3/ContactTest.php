@@ -79,7 +79,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
   function tearDown( ) {
     // truncate a few tables
     $tablesToTruncate = array( 'civicrm_contact',
-                               'civicrm_email' );
+                               'civicrm_email',
+                               'civicrm_contribution' );
         
     $this->quickCleanup( $tablesToTruncate );
   }
@@ -1210,8 +1211,6 @@ class api_v3_ContactTest extends CiviUnitTestCase
                              'non_deductible_amount'  => 10.00,
                              'fee_amount'             => 50.00,
                              'net_amount'             => 90.00,
-                             'trxn_id'                => 12345,
-                             'invoice_id'             => 67890,
                              'source'                 => 'SSF',
                              'contribution_status_id' => 1,
                             ),
@@ -1224,8 +1223,6 @@ class api_v3_ContactTest extends CiviUnitTestCase
                              'non_deductible_amount'  => 10.00,
                              'fee_amount'             => 50.00,
                              'net_amount'             => 90.00,
-                             'trxn_id'                => 12335,
-                             'invoice_id'             => 67830,
                              'source'                 => 'SSF',
                              'contribution_status_id' => 1,
                              ),
@@ -1238,6 +1235,8 @@ class api_v3_ContactTest extends CiviUnitTestCase
  
 
     $result = civicrm_api('Contact','create',$params);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);  
+    $this->assertAPISuccess($result['values'][$result['id']]['api.contribution.create'] , 'in line ' . __LINE__);  
     $params = array('id' => $result['id'], 'version' => 3, 
     								'api.website.getValue' => array('return' => 'url'), 
     								'api.Contribution.getCount' => array(  
@@ -1246,8 +1245,7 @@ class api_v3_ContactTest extends CiviUnitTestCase
                       'api.Membership.getCount' => array());
     $result = civicrm_api('Contact','Get',$params);
     $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
-    $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
-    . " error message: " . CRM_Utils_Array::value('error_message', $result) );
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $this->assertEquals( 1, $result['id'], "In line " . __LINE__ );
     $this->assertEquals(2,$result['values'][$result['id']]['api.Contribution.getCount'], "In line " . __LINE__); 
     $this->assertEquals(0,$result['values'][$result['id']]['api.Note.get']['is_error'], "In line " . __LINE__);

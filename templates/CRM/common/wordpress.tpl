@@ -59,6 +59,17 @@ var cj = jQuery.noConflict(); $ = cj;
     {include file="CRM/common/Navigation.tpl" }
 {/if}
 
+{if $breadcrumb}
+    <div class="breadcrumb">
+      {foreach from=$breadcrumb item=crumb key=key}
+        {if $key != 0}
+           &raquo;
+        {/if}
+      {$crumb}
+      {/foreach}
+    </div>
+{/if}
+	
 {* temporary hack to fix wysiysg editor failure if js compression is on *}
 {if $defaultWysiwygEditor eq 1}
     <script type="text/javascript" src="{$config->resourceBase}packages/tinymce/jscripts/tiny_mce/jquery.tinymce.js"></script>
@@ -83,6 +94,11 @@ var cj = jQuery.noConflict(); $ = cj;
 </div>
 {/if}
 
+{if $pageTitle}
+	<div class="crm-title">
+		<h1 class="title">{if $isDeleted}<del>{/if}{$pageTitle}{if $isDeleted}</del>{/if}</h1>
+	</div>    
+{/if}
 {*{include file="CRM/common/langSwitch.tpl"}*}
 
 <div class="clear"></div>

@@ -35,6 +35,17 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
     }
     function testOnlineMembershipCreate()
     {
+        //login with admin credentials & make sure we do have required permissions.
+        $this->webtestLogin( true );
+
+        //check for online contribution and profile listings permissions
+        $permissions = array("edit-1-make-online-contributions", "edit-1-profile-listings-and-forms");
+        $this->changePermissions( $permissions );
+                
+        // now logout and login with admin credentials
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
+        $this->waitForPageToLoad('30000'); 
+
         // a random 7-char string and an even number to make this pass unique
         $hash = substr(sha1(rand()), 0, 7);
         $rand = 2 * rand(2, 50);
@@ -49,32 +60,23 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         // We need a payment processor
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
         
-        //check for online contribution and profile listings permissions
-        $this->changeAdminLinks( );
-        if ( !$this->isChecked( "edit-1-make-online-contributions" ) ) {
-            $this->click( "edit-1-make-online-contributions" );
-        }
-        if ( !$this->isChecked( "edit-1-profile-listings-and-forms" ) ) {
-            $this->click( "edit-1-profile-listings-and-forms" ); 
-        }
-        $this->click( "edit-submit" );
-        $this->waitForPageToLoad( "30000" );
-
         // create contribution page with randomized title and default params
-        $amountSection = false;
-        $payLater      = false; 
-        $onBehalf      = false;
-        $pledges       = false; 
-        $recurring     = false;
-        $memberships   = true;
-        $memPriceSetId = null;
-        $friend        = true; 
-        $profilePreId  = 1;
-        $profilePostId = null;
-        $premiums      = true;
-        $widget        = false;
-        $pcp           = true;
-
+        
+        $amountSection     = true;
+        $payLater          = true;
+        $allowOtherAmmount = false;
+        $onBehalf          = false;
+        $pledges           = false; 
+        $recurring         = false;
+        $memberships       = true;
+        $memPriceSetId     = null;
+        $friend            = true; 
+        $profilePreId      = 1;
+        $profilePostId     = null;
+        $premiums          = true;
+        $widget            = false;
+        $pcp               = true;
+        $isSeparatePayment = true;
         $contributionTitle = "Title $hash";
         $pageId = $this->webtestAddContributionPage( $hash, 
                                                      $rand, 
@@ -93,21 +95,26 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
                                                      $profilePostId,
                                                      $premiums     ,
                                                      $widget       ,
-                                                     $pcp          
+                                                     $pcp          ,
+                                                     true          ,
+                                                     false         ,
+                                                     $isSeparatePayment,
+                                                     true          ,
+                                                     false     
                                                      );
-
-
+        
+        
         // create two new membership types
         $memTypeParams1 = $this->webtestAddMembershipType( );
         $memTypeTitle1  = $memTypeParams1['membership_type'];
         $memTypeId1     = explode( '&id=', $this->getAttribute( "xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[10]/span/a[3]@href" ) );
         $memTypeId1     = $memTypeId1[1];
-
+        
         $memTypeParams2 = $this->webtestAddMembershipType( );
         $memTypeTitle2  = $memTypeParams2['membership_type'];
         $memTypeId2     = explode( '&id=', $this->getAttribute( "xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[10]/span/a[3]@href" ) );
         $memTypeId2     = $memTypeId2[1];
-
+        
         // edit contribution page memberships tab to add two new membership types
         $this->open($this->sboxPath . "civicrm/admin/contribute/membership?reset=1&action=update&id={$pageId}");
         $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');   
@@ -118,7 +125,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
         $text = "'MembershipBlock' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-    
+        
         //logout
         $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
@@ -127,8 +134,8 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
         
-        $this->_testOnlineMembershipSignup( $pageId, $memTypeId1, $firstName, $lastName );
-
+        //$this->_testOnlineMembershipSignup( $pageId, $memTypeId1, $firstName, $lastName );
+        $this->_testOnlineMembershipSignup( $pageId, $memTypeId1, $firstName, $lastName, $payLater );
         //login to check membership
         $this->open( $this->sboxPath );
         
@@ -154,6 +161,10 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
                             'Membership Type'=> $memTypeTitle1,
                             'Source' => 'Online Contribution:'.' '.$contributionTitle,
                             );
+        if( $payLater )
+            $verifyData['Status'] = 'Pending';
+        else
+            $verifyData['Status'] = 'New';
         foreach ( $verifyData as $label => $value ) {
             $this->verifyText( "xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
                                preg_quote( $value ) );   
@@ -168,6 +179,10 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
                             'From'=> $firstName.' '.$lastName,
                             'Total Amount'=> '$ 100.00',
                             );
+        if( $payLater )
+            $verifyData['Contribution Status'] = 'Pending : Pay Later';
+        else
+            $verifyData['Contribution Status'] = 'Completed';
         foreach ( $verifyData as $label => $value ) {
             $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
                                preg_quote( $value ) );   
@@ -178,7 +193,8 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
         
-        $this->_testOnlineMembershipSignup( $pageId, $memTypeId2, $firstName, $lastName );
+        //$this->_testOnlineMembershipSignup( $pageId, $memTypeId2, $firstName, $lastName );
+        $this->_testOnlineMembershipSignup( $pageId, $memTypeId2, $firstName, $lastName, $payLater);
         //login to check membership
         $this->open( $this->sboxPath );
         
@@ -194,10 +210,11 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         $this->waitForPageToLoad('30000');
         $this->assertTrue( $this->isTextPresent( '2 Results' ), 'Missing text: ' . '2 Results' ); 
-
+        
     }  
-
-    function _testOnlineMembershipSignup( $pageId, $memTypeId, $firstName, $lastName )
+    
+    //function _testOnlineMembershipSignup( $pageId, $memTypeId, $firstName, $lastName )
+    function _testOnlineMembershipSignup( $pageId, $memTypeId, $firstName, $lastName, $payLater )
     {
         //Open Live Contribution Page
         $makeContribUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
@@ -206,6 +223,9 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
         // Select membership type 1
         $this->check( "name=selectMembership value={$memTypeId}" );
+        $this->check( "name=amount value=no_thanks" );
+        if( $payLater )
+            $this->check( "name=is_pay_later value=1" );
         $this->type("email-5", $firstName . "@example.com");
         
         $this->type("first_name", $firstName);
@@ -217,22 +237,23 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->type("postal_code-1", "94117");
         $this->select("country-1", "value=1228");
         $this->select("state_province-1", "value=1001");
-        
-        //Credit Card Info
-        $this->select("credit_card_type", "value=Visa");
-        $this->type("credit_card_number", "4111111111111111");
-        $this->type("cvv2", "000");
-        $this->select("credit_card_exp_date[M]", "value=1");
-        $this->select("credit_card_exp_date[Y]", "value=2020");
-        
-        //Billing Info
-        $this->type("billing_first_name", $firstName."billing");
-        $this->type("billing_last_name", $lastName."billing" );
-        $this->type("billing_street_address-5", "15 Main St.");
-        $this->type(" billing_city-5", "San Jose");
-        $this->select("billing_country_id-5", "value=1228");
-        $this->select("billing_state_province_id-5", "value=1004");
-        $this->type("billing_postal_code-5", "94129");  
+        if( !$payLater ){
+            //Credit Card Info
+            $this->select("credit_card_type", "value=Visa");
+            $this->type("credit_card_number", "4111111111111111");
+            $this->type("cvv2", "000");
+            $this->select("credit_card_exp_date[M]", "value=1");
+            $this->select("credit_card_exp_date[Y]", "value=2020");
+            
+            //Billing Info
+            $this->type("billing_first_name", $firstName."billing");
+            $this->type("billing_last_name", $lastName."billing" );
+            $this->type("billing_street_address-5", "15 Main St.");
+            $this->type(" billing_city-5", "San Jose");
+            $this->select("billing_country_id-5", "value=1228");
+            $this->select("billing_state_province_id-5", "value=1004");
+            $this->type("billing_postal_code-5", "94129"); 
+        } 
         $this->click("_qf_Main_upload-bottom");
         
         $this->waitForPageToLoad('30000');

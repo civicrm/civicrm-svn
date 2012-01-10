@@ -62,7 +62,7 @@ function _civicrm_api3_initialize($useException = true )
  *
  */
 function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoptions = array() ) {
-    $keys = array( );
+    $keys = array(array());
     foreach ($keyoptions as $key){
         $keys[0][] = $key;
     }
@@ -176,14 +176,18 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
                 $dao = new $d();
             }
         }
-        if(is_object ($dao)){
-            $allFields = array_keys($dao->fields());
-            $paramFields = array_keys($params);
-            $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential','rowCount','option_offset','option_limit','option_sort'));
-            if ($undefined)
-                $result['undefined_fields'] = array_merge ($undefined);
+
+        $apiFields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => $action)+ $params);
+        $allFields = array();
+        if(is_array(CRM_Utils_Array::value('values', $apiFields))){
+          $allFields = array_keys($apiFields['values']);
         }
-    }
+        $paramFields = array_keys($params);
+        $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential','rowCount','option_offset','option_limit','custom', 'option_sort'));
+        if ($undefined)
+                $result['undefined_fields'] = array_merge ($undefined);
+        
+         }
     if(is_object ($dao)){
         $dao->free();
     }
@@ -927,7 +931,7 @@ function _civicrm_api3_generic_replace($entity, $params) {
  * @param $entity string Entity to query
  * @param bool $unique index by unique fields?
  */
-function _civicrm_api_get_fields($entity, $unique = FALSE){
+function _civicrm_api_get_fields($entity, $unique = FALSE, &$params = array()){
     $unsetIfEmpty= array ('dataPattern','headerPattern','default','export','import');
     $dao = _civicrm_api3_get_DAO ($entity);
     if (empty($dao)) {
@@ -957,7 +961,7 @@ function _civicrm_api_get_fields($entity, $unique = FALSE){
       unset ($fields[$name]);
     }
     }
-    $fields += _civicrm_api_get_custom_fields($entity) ;
+    $fields += _civicrm_api_get_custom_fields($entity, $params) ;
     return $fields;
 }
 
@@ -965,10 +969,21 @@ function _civicrm_api_get_fields($entity, $unique = FALSE){
  * Return an array of fields for a given entity - this is the same as the BAO function but
  * fields are prefixed with 'custom_' to represent api params
  */
-function _civicrm_api_get_custom_fields($entity){
+function _civicrm_api_get_custom_fields($entity, &$params){
     require_once 'CRM/Core/BAO/CustomField.php';
     $customfields = array();
-    $customfields = CRM_Core_BAO_CustomField::getFields($entity) ;
+    if(strtolower($entity) == 'contact'){
+        $entity = CRM_Utils_Array::value( 'contact_type', $params );
+    }
+    $customfields = CRM_Core_BAO_CustomField::getFields($entity ,
+                                                         false,
+                                                         false,
+                                                         CRM_Utils_Array::value('contact_sub_type', $params, false),
+                                                         null,
+                                                         empty($params['contact_sub_type']),
+                                                         false,
+                                                         false ) ;
+                                                      
     foreach ($customfields as $key => $value) {
         $customfields['custom_' . $key] = $value;
         unset($customfields[$key]);
@@ -985,6 +1000,7 @@ function _civicrm_api3_getdefaults($apiRequest) {
                           'getfields',
                           array('version' => 3,
                                 'action' => $apiRequest['action']));
+
     foreach ($result['values'] as $field => $values){
         if (CRM_Utils_Array::value('api.default',$values)){
             $defaults[$field] =$values['api.default'];

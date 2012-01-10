@@ -65,7 +65,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
       
       $this->click("_qf_Confirm_next_checkout");
       $this->waitForPageToLoad("30000");
-      
+
       $this->waitForElementPresent( "Email" );
       $this->type("Email","custdeepak");
       $this->type("Passwd","deepak123");
@@ -196,14 +196,13 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
                                                        false 
                                                        );
         
+          // now logout and login with admin credentials
+          $this->open($this->sboxPath . "civicrm/logout?reset=1");
+          $this->waitForPageToLoad('30000'); 
+
           //make sure we do have required permissions.
-          $this->changeAdminLinks( );
-          $this->waitForElementPresent("edit-submit");
-          if ( !$this->isChecked("edit-1-make-online-contributions") ) {
-              $this->click("edit-1-make-online-contributions");
-              $this->click("edit-submit");
-              $this->waitForPageToLoad("30000");
-          }
+          $permissions = array( "edit-1-make-online-contributions" );
+          $this->changePermissions( $permissions );
 
           // now logout and do membership test that way
           $this->open($this->sboxPath . "civicrm/logout?reset=1");

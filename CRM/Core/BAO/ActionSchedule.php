@@ -330,17 +330,21 @@ WHERE   cas.entity_value = $id AND
             $list[$dao->id]['start_action_condition'] = $dao->start_action_condition;
             $list[$dao->id]['entityDate'] = ucwords(str_replace('_', ' ', $dao->entityDate));
             $list[$dao->id]['absolute_date'] = $dao->absolute_date;
+
             $status = $dao->entityStatus;
-            $statusIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityStatusIds);
-            foreach ($$status as $key => $val) {
-                $statusIds = str_replace($key, $val, $statusIds);
+ 	    $statusArray = explode( CRM_Core_DAO::VALUE_SEPARATOR, $dao->entityStatusIds );
+	    foreach ( $statusArray as &$s ) {
+                $s = CRM_Utils_Array::value( $s, $$status );
             }
+	    $statusIds = implode( ', ', $statusArray );
             
             $value = $dao->entityValue;
-            $valueIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ', $dao->entityValueIds);
-            foreach ($$value as $key => $val) {
-              $valueIds = str_replace($key, $val, $valueIds);
+	    $valueArray = explode( CRM_Core_DAO::VALUE_SEPARATOR, $dao->entityValueIds );
+	    foreach ( $valueArray as &$v ) {
+                $v = CRM_Utils_Array::value( $v, $$value );
             }
+	    $valueIds = implode( ', ', $valueArray );
+
             $list[$dao->id]['entity']     = $entity[$dao->entity];
             $list[$dao->id]['value']      = $valueIds;
             $list[$dao->id]['status']     = $statusIds;

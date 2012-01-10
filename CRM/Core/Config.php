@@ -288,6 +288,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             global $mainframe;
             $dbprefix = $mainframe ? $mainframe->getCfg( 'dbprefix' ) : 'jos_';
             $this->userFrameworkUsersTableName = $dbprefix . 'users';
+        } elseif ( $userFramework == 'WordPress' ) {
+            global $wpdb;
+            $this->userFrameworkUsersTableName = $wpdb->prefix . 'users'; 
         }
 
     }
@@ -520,7 +523,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 }
 
                 // set the localhost value, CRM-3153
-                $params['localhost'] = $_SERVER['SERVER_NAME'];
+                $params['localhost'] = CRM_Utils_Array::value( 'SERVER_NAME', $_SERVER, 'localhost' );
 
                 // also set the timeout value, lets set it to 30 seconds
                 // CRM-7510
@@ -654,7 +657,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      */
     function clearTempTables( ) {
         // CRM-5645
-        $dao = new CRM_Core_DAO( );
+        $dao = CRM_Core_DAO::executeQuery("SELECT DATABASE();");
         $query = "
 SELECT TABLE_NAME as tableName
 FROM   INFORMATION_SCHEMA.TABLES

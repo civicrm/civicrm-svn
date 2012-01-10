@@ -679,6 +679,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         require_once( str_replace('_', DIRECTORY_SEPARATOR, $this->_modeValue['selectorName'] ) . '.php' );
         $this->_selectorName = $this->_modeValue['selectorName'];
 
+        $setDynamic = false;
         if ( strpos( $this->_selectorName, 'CRM_Contact_Selector' ) !== false ) {
             eval( '$selector = new ' . $this->_selectorName . 
                   '( $this->_customSearchClass,
@@ -689,7 +690,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                      false, true,
                      $this->_context,
                      $this->_contextMenu );' );
-            
+            $setDynamic = true;
         } else {
             eval( '$selector = new ' . $this->_selectorName . 
                   '( $this->_params,
@@ -707,7 +708,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                            $this,
                                                            CRM_Core_Selector_Controller::TRANSFER );
         $controller->setEmbedded( true );
-        $controller->setDynamicAction( true );
+        $controller->setDynamicAction( $setDynamic );
         
         if ( $this->_force ) {
 
@@ -727,7 +728,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                                $sortID,
                                                                CRM_Core_Action::VIEW, $this, CRM_Core_Selector_Controller::TRANSFER );
             $controller->setEmbedded( true );
-            $controller->setDynamicAction( true );
+            $controller->setDynamicAction( $setDynamic );
         }
         
         $controller->moveFromSessionToTemplate();
@@ -800,7 +801,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             if ( $this->get( 'isAdvanced' ) ) {
                 $searchChildGroups = false;
             }
-            
+
+            $setDynamic = false;
             if ( strpos( $this->_selectorName, 'CRM_Contact_Selector' ) !== false ) { 
                 eval( '$selector = new ' . $this->_selectorName . 
                       '( $this->_customSearchClass,
@@ -812,6 +814,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                          $searchChildGroups,
                          $this->_context,
                          $this->_contextMenu );' );
+                $setDynamic = true;
             } else {
                 eval( '$selector = new ' . $this->_selectorName . 
                       '( $this->_params,
@@ -827,7 +830,9 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             // we need this in most cases except when just pager or sort values change, which
             // we'll ignore for now
             $config = CRM_Core_Config::singleton( );
-            if ( $config->includeAlphabeticalPager ) {
+            // do this only for contact search
+            if ( $setDynamic &&
+                 $config->includeAlphabeticalPager ) {
                 if ( $this->_reset ||
                      ( $this->_sortByCharacter === null || $this->_sortByCharacter == '' ) ) {
                     $aToZBar = CRM_Utils_PagerAToZ::getAToZBar( $selector, $this->_sortByCharacter );
@@ -847,7 +852,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                                $this,
                                                                $output );
             $controller->setEmbedded( true );
-            $controller->setDynamicAction( true );
+            $controller->setDynamicAction( $setDynamic );
             $controller->run();
         }
     }

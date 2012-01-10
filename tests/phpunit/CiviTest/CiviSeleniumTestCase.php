@@ -267,15 +267,17 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      */
 
     function fillRichTextField( $fieldName, $text = 'Typing this text into editor.', $editor = 'CKEditor' ) {
+        // make sure cursor focuses on the field
+        $this->fireEvent( $fieldName, 'focus' );
         if ( $editor == 'CKEditor') {
-            $this->waitForElementPresent("css=td#cke_contents_{$fieldName} iframe");
-            $this->selectFrame("css=td#cke_contents_{$fieldName} iframe");
+            $this->waitForElementPresent("xpath=//td[@id='cke_contents_{$fieldName}']/iframe");
+            $this->runScript( "CKEDITOR.instances['{$fieldName}'].setData('<p>{$text}</p>');" );
         } else if ( $editor == 'TinyMCE') {
-            $this->selectFrame("css=td.{$fieldName} iframe");
+            $this->selectFrame("xpath=//iframe[@id='{$fieldName}_ifr']");
+            $this->type("//html/body", $text);
         } else {
             $this->fail( "Unknown editor value: $editor, failing (in CiviSeleniumTestCase::fillRichTextField ..." );
         }
-        $this->type("//html/body", $text);
         $this->selectFrame('relative=top');
     }
 
@@ -422,6 +424,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
 
     function webtestAddCreditCardDetails( ) {
+        $this->waitForElementPresent('credit_card_type');
         $this->select('credit_card_type', 'label=Visa');
         $this->type('credit_card_number', '4807731747657838');
         $this->type('cvv2', '123');
@@ -574,7 +577,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $isAddPaymentProcessor = true,
                                          $isPcpApprovalNeeded = false,
                                          $isSeparatePayment = false,
-                                         $honoreeSection = true
+                                         $honoreeSection = true,
+                                         $allowOtherAmmount = true
                                          ) 
     {
         if ( !$pageTitle ) {
@@ -654,11 +658,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                 $this->click("recur_frequency_unit[week]");
                 $this->click("recur_frequency_unit[year]");
             }
-
-            $this->click('is_allow_other_amount');
-            $this->type('min_amount', $rand / 2);
-            $this->type('max_amount', $rand * 10);
-
+            if( $allowOtherAmmount ){
+                
+                $this->click('is_allow_other_amount');
+                $this->type('min_amount', $rand / 2);
+                $this->type('max_amount', $rand * 10);
+            }
             $this->type('label_1', "Label $hash");
             $this->type('value_1', "$rand");
       
@@ -743,8 +748,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->type('intro',             "TaF Introduction $hash");
             $this->type('suggested_message', "TaF Suggested Message $hash");
             $this->type('general_link',      "TaF Info Page Link $hash");
-            $this->type('thankyou_title',    "TaF Thank-you Title $hash");
-            $this->type('thankyou_text',     "TaF Thank-you Message $hash");
+            $this->type('tf_thankyou_title',    "TaF Thank-you Title $hash");
+            $this->type('tf_thankyou_text',     "TaF Thank-you Message $hash");
 
             //$this->click('_qf_Contribute_next');
             $this->click('_qf_Contribute_next-bottom'); 
@@ -1161,4 +1166,22 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->open("{$this->sboxPath}admin/user/permissions"); 
         }   
     } 
+    
+    function changePermissions( $permission ) {
+        $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
+        $this->waitForPageToLoad( '30000' );
+        $this->webtestLogin( true ); 
+        $this->changeAdminLinks( );
+        $this->waitForElementPresent('edit-submit');
+        foreach ( $permission as $key => $value ) {
+            $this->check($value);
+        }
+        $this->click('edit-submit');
+        $this->waitForPageToLoad( '30000' );
+        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        $this->open( $this->sboxPath . "user/logout" );
+        $this->waitForPageToLoad( '30000' );
+        $this->webtestLogin( );
+        $this->waitForPageToLoad( '30000' );
+    }
 }

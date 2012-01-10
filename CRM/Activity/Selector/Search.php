@@ -184,7 +184,11 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
         
         // type of selector
         $this->_action = $action;
-        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
+        require_once 'CRM/Activity/BAO/Query.php';
+        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, 
+                                                   CRM_Activity_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_ACTIVITY,
+                                                                                                    false ),
+                                                   null, false, false,
                                                    CRM_Contact_BAO_Query::MODE_ACTIVITY );
         $this->_query->_distinctComponentClause = '( civicrm_activity.id )';
         $this->_query->_groupByComponentClause  = " GROUP BY civicrm_activity.id ";

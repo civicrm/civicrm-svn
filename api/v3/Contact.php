@@ -140,7 +140,7 @@ function civicrm_api3_contact_create( $params )
      
     }
 
-    return civicrm_api3_create_success($values,$params,'contact');
+    return civicrm_api3_create_success($values,$params,'Contact', 'create');
     
     return civicrm_api3_contact_update( $params, $create_new );
 

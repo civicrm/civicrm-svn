@@ -270,7 +270,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                                                                 $skipOnHold,
                                                                 $skipDeceased,
                                                                 null,
-                                                                $tokens,
+                                                                $messageToken,
                                                                 'CRM_Contact_Form_Task_PDFLetterCommon' );
             if ( civicrm_error( $contact ) ) {
                 $notSent[] = $contactId;

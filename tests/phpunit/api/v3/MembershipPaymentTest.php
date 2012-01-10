@@ -45,7 +45,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         $this->_contributionTypeID  = $this->contributionTypeCreate();
         $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID );
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );
-        
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true,  true, true, 'name' );    
     }
     
     function tearDown() 
@@ -54,6 +54,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
         $params = array( 'id' => $this->_membershipTypeID );
         $this->membershipTypeDelete( $params );
         $this->membershipStatusDelete( $this->_membershipStatusID );
+        civicrm_api('contact','delete', array('version' => API_LATEST_VERSION, 'id' => $this->_contactID));
     }
     
     ///////////////// civicrm_membership_payment_create methods
@@ -105,22 +106,24 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase
                         'end_date'           => '2006-12-21',
                         'source'             => 'Payment',
                         'is_override'        => 1,
-                        'status_id'          => $this->_membershipStatusID
+                        'status_id'          => $this->_membershipStatusID,
+                        'version'            => API_LATEST_VERSION,
                         );
-        $ids = array();
-        $membership = CRM_Member_BAO_Membership::create( $params, $ids );
+
+        $membership = civicrm_api('membership', 'create',$params);
+        $this->assertAPISuccess($membership, "membership created in line " . __LINE__);
         
         $params = array(
                         'contribution_id'    => $contribution->id,  
-                        'membership_id'      => $membership->id,
+                        'membership_id'      => $membership['id'],
                         'version'						 => $this->_apiversion,
                         );
         $result = civicrm_api('membership_payment','create', $params);
         $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
-        $this->assertEquals( $result['values'][$result['id']]['membership_id'],$membership->id ,'Check Membership Id in line ' . __LINE__);
+        $this->assertEquals( $result['values'][$result['id']]['membership_id'],$membership['id'] ,'Check Membership Id in line ' . __LINE__);
         $this->assertEquals( $result['values'][$result['id']]['contribution_id'],$contribution->id ,'Check Contribution Id in line ' . __LINE__);
         $this->contributionDelete( $contribution->id );
-        $this->membershipDelete( $membership->id );
+        $this->membershipDelete( $membership['id'] );
         
     }    
     

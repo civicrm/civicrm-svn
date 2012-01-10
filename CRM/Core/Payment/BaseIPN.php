@@ -1104,7 +1104,8 @@ LIMIT 1;";
                    
           $paymentDetails = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $pledgeId);        
           $paymentDetails['contribution_id'] = $contribution->id;
-
+          $paymentDetails['status_id']= $contribution->contribution_status_id;
+          $paymentDetails['actual_amount']= $contribution->total_amount;
           require_once 'CRM/Pledge/BAO/PledgePayment.php';// put contribution against it
           $payment = CRM_Pledge_BAO_PledgePayment::add($paymentDetails);
           $paymentIDs[] = $payment->id;                              

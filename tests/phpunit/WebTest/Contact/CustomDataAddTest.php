@@ -215,12 +215,12 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
       $moneyTextFieldLabel = 'money'.substr(sha1(rand()), 0, 4);
       $this->click("label");
       $this->type("label", $moneyTextFieldLabel);
+      $this->waitForElementPresent("data_type[0]");	
       $this->click("data_type[0]");
-      $this->select("data_type[0]", "value=Money");
+      $this->select("data_type[0]", "label=Money");
 
       $this->click("data_type[1]");
       $this->select("data_type[1]", "value=Text");
-
  
       //enter pre help message
       $this->type("help_pre", "this is field pre help");
@@ -258,12 +258,13 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
       $this->type("email_1_email", $emailId);
       
       //fill custom values for the contact
-      $this->click("xpath=//table//tr/td/label[text()=\"$checkboxOptionLabel2\"]");
-      $this->click("xpath=//table//tr/td/label[text()=\"$radioOptionLabel3\"]");
+      $this->click("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]");
+      $this->type("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]/../following-sibling::td/input", "12345678.98");
       $this->click("_qf_Contact_upload_view");
       $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent("address_1_street_address");
-    
+
+      //verify the money custom field value in the proper format
+      $this->verifyText("xpath=//table//tbody/tr/td[text()='$moneyTextFieldLabel']/following-sibling::td", '12,345,678.98' );
   }  
 }
 ?>

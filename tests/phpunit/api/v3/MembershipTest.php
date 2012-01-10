@@ -53,7 +53,8 @@ class api_v3_MembershipTest extends CiviUnitTestCase
         require_once 'CRM/Member/PseudoConstant.php';
         CRM_Member_PseudoConstant::membershipType( $this->_membershipTypeID , true );
         CRM_Member_PseudoConstant::membershipStatus( null, null, 'name', true );
-        
+        CRM_Core_PseudoConstant::activityType( true,  true, true, 'name' );  
+      
         $this->_entity = 'Membership';
         $this->_params = array(
                         'contact_id'         => $this->_contactID,  

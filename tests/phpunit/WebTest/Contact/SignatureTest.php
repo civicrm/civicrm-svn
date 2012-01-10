@@ -52,17 +52,18 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
-      
-      // Select Your Editor
-      $this->_selectEditor('TinyMCE');
-      
-      $firstName = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
 
+      $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+      $this->click("//div[@id='recently-viewed']/ul/li/a");   
+      $this->waitForPageToLoad('30000');
+ 
       // Get contact id from url.
       $matches = array();
       preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
       $contactId  = $matches[1];
+
+      // Select Your Editor
+      $this->_selectEditor('TinyMCE');
       
       $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid={$contactId}");
       $this->waitForPageToLoad('30000');
@@ -71,11 +72,13 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       
       // HTML format message
       $signature = 'Contact Signature in html';
-      $this->fillRichTextField('mceIframeContainer', $signature,'TinyMCE');
-      
+
+      $this->fireEvent( 'email_1_signature_html', 'focus' );
+      $this->fillRichTextField( 'email_1_signature_html', $signature, 'TinyMCE' );
+
       // TEXT Format Message
       $this->type('email_1_signature_text','Contact Signature in text');
-      $this->click('_qf_Contact_upload_view');
+      $this->click('_qf_Contact_upload_view-top');
       $this->waitForPageToLoad('30000');
       
       // Is status message correct?
@@ -99,8 +102,8 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       
       // Go for Activity Search
       $this->_checkActivity($subject, $signature);
-      
   }
+
   /*
    *  Test Signature in CKEditor.
    */
@@ -117,17 +120,18 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
-      
-      // Select Your Editor
-      $this->_selectEditor('CKEditor');
-      
-      $firstName = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
 
+      $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+      $this->click("//div[@id='recently-viewed']/ul/li/a");   
+      $this->waitForPageToLoad('30000');
+ 
       // Get contact id from url.
       $matches = array();
       preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
       $contactId  = $matches[1];
+ 
+      // Select Your Editor
+      $this->_selectEditor('CKEditor');
       
       $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid={$contactId}");
       $this->waitForPageToLoad('30000');
@@ -136,11 +140,12 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       
       // HTML format message
       $signature = 'Contact Signature in html';
-      $this->fillRichTextField('email_1_signature_html', $signature);
+      $this->fireEvent( 'email_1_signature_html', 'focus' );
+      $this->fillRichTextField('email_1_signature_html', $signature, 'CKEditor');
       
       // TEXT Format Message
       $this->type('email_1_signature_text','Contact Signature in text');
-      $this->click('_qf_Contact_upload_view');
+      $this->click('_qf_Contact_upload_view-top');
       $this->waitForPageToLoad('30000'); 
       
       // Is status message correct?
@@ -164,8 +169,8 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
       
       // Go for Activity Search
       $this->_checkActivity($subject, $signature);
-      
   }
+
   /*
    * Helper function to select Editor.
    */  

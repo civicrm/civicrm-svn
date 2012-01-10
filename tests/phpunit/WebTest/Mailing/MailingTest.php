@@ -262,17 +262,10 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       $eventQueue->contact_id = $contactId;
       $eventQueue->find(true);
 
-      $this->changeAdminLinks();
-      if ( !$this->isChecked( "edit-1-access-civimail-subscribeunsubscribe-pages" ) ) {
-          $this->click( "edit-1-access-civimail-subscribeunsubscribe-pages" );
-      }
-      $this->click( "edit-submit" );
-      $this->waitForPageToLoad( "30000" );
-      $this->open($this->sboxPath . "civicrm/logout?reset=1");
-      $this->waitForPageToLoad('30000');
-      $this->open( $this->sboxPath );
-      $this->waitForPageToLoad('30000');
-
+      $permission = array('edit-1-access-civimail-subscribeunsubscribe-pages');
+      $this->changePermissions( $permission );
+      $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
+ 
       // build forward url
       $forwardUrl = "civicrm/mailing/forward?reset=1&jid={$eventQueue->job_id}&qid={$eventQueue->id}&h={$eventQueue->hash}";
       $this->open($this->sboxPath . $forwardUrl);

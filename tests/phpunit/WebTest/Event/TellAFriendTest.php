@@ -44,7 +44,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
         
         // Log in using webtestLogin() method
-        $this->webtestLogin();
+        $this->webtestLogin( true );
         
         // Go directly to the URL of the screen that you will be testing (New Event).
         $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
@@ -75,11 +75,8 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $registerUrl = $this->getLocation( );
         
         // give permissions for event registration
-        $this->changeAdminLinks( );
-        $this->waitForElementPresent( 'edit-submit' ); 
-        $this->check( "edit-1-register-for-events" );
-        $this->click( "edit-submit" );
-        $this->waitForPageToLoad( '30000' );
+        $permission = array('edit-1-register-for-events');
+        $this->changePermissions( $permission );
         
         // register as an anonymous user
         $this->open( $this->sboxPath . "civicrm/logout?reset=1" );
@@ -261,12 +258,14 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         
         // Enable tell a friend feature
         $this->check( 'tf_is_active' );
-        $this->waitForElementPresent( 'thankyou_text' );
+        $this->waitForElementPresent( 'tf_thankyou_text' );
         
         // Modify the messages
         $this->type( 'intro', "This is $subject Test intro text" );
         $this->type( 'suggested_message', "$subject Test Message. This is amazing!" );
-        $this->type( 'thankyou_text', $thankYouMsg );
+        
+        $this->type( 'tf_thankyou_title', 'Test thank you title' );
+        $this->type( 'tf_thankyou_text', $thankYouMsg );
         
         $this->click( '_qf_Event_upload_done-bottom' );
         $this->waitForElementPresent( "xpath=//div[@id='event_status_id']//div[@class='dataTables_wrapper']/table/tbody//tr/td[1]/a[text()='$eventTitle']" );

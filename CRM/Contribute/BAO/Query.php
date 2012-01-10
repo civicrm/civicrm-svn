@@ -78,7 +78,7 @@ class CRM_Contribute_BAO_Query
         if ( $query->_mode & CRM_Contact_BAO_Query::MODE_CONTRIBUTE ) {
             $query->_select['contribution_id'] = "civicrm_contribution.id as contribution_id";
             $query->_element['contribution_id'] = 1;
-            $query->_tables['civicrm_contribution'] = 1;
+            $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         }
 
         // get contribution_type

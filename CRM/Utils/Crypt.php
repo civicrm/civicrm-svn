@@ -62,6 +62,9 @@ class CRM_Utils_Crypt {
         }
 
         $string = base64_decode( $string );
+        if ( empty( $string ) ) {
+            return $string;
+        }
 
         if ( function_exists( 'mcrypt_module_open' ) &&
              defined( 'CIVICRM_SITE_KEY' ) ) {

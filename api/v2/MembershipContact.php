@@ -274,6 +274,7 @@ function _civicrm_membership_format_params( &$params, &$values, $create=false)
         case 'join_date':
         case 'start_date':
         case 'end_date':    
+        case 'reminder_date':
         case 'membership_start_date':
         case 'membership_end_date':
             if (!CRM_Utils_Rule::date($value)) {

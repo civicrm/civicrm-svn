@@ -470,14 +470,17 @@ class api_v3_PledgeTest extends CiviUnitTestCase
 
     }
     /*
-     * test to make sure empty get returns nothing (relies on tests doing OK cleanup) so good to have last as a 
-     * check on them.
+     * test to make sure empty get returns nothing 
+     * Note that the function gives incorrect results if no pledges exist as it does a 
+     * contact search instead - test only checks that the get finds the one existing
      */
      function testGetEmpty(){
+      $result = civicrm_api('pledge','create',$this->_params);
       $result = civicrm_api('pledge','get',array('version' => 3));
       $this->assertAPISuccess($result, "This test is failing because it's acting like a contact get when no params set. Not sure the fix");
-      $this->assertEquals(0, $result['count'], 'in line ' . __LINE__ );
-
+      $this->assertEquals(1, $result['count'], 'in line ' . __LINE__ );
+      $pledgeID = array( 'id' => $result['id'], 'version' => 3 );
+      $pledge =& civicrm_api('pledge','delete',$pledgeID);
     }
 
 }

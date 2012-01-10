@@ -85,30 +85,30 @@ function civicrm_views_data() {
     // Load enabled optional components
     if( isset($enabled['CiviCampaign']) ) {
       include_once 'components/civicrm.campaign.inc';
-      _civicrm_campaign_data (&$data, $enabled);
+      _civicrm_campaign_data ($data, $enabled);
      }    
     // Though not explicitly effectively CiviPledge depends on CiviContribute
     // so they share an include file
     if( isset($enabled['CiviContribute']) ||
         isset($enabled['CiviPledge']) ) {
       include_once 'components/civicrm.contribute.inc';
-      _civicrm_contribute_data (&$data, $enabled);
+      _civicrm_contribute_data ($data, $enabled);
     }    
     if( isset($enabled['CiviEvent']) ) {
       include_once 'components/civicrm.event.inc';
-      _civicrm_event_data (&$data,$enabled);
+      _civicrm_event_data ($data,$enabled);
     }
     if( isset($enabled['CiviGrant']) ) {
       include_once 'components/civicrm.grant.inc';
-      _civicrm_grant_data (&$data, $enabled);
+      _civicrm_grant_data ($data, $enabled);
     }
     if( isset($enabled['CiviMail']) ) {
       include_once 'components/civicrm.mail.inc';
-      _civicrm_mail_data (&$data, $enabled);
+      _civicrm_mail_data ($data, $enabled);
      }
     if( isset($enabled['CiviMember']) ) {
       include_once 'components/civicrm.member.inc';
-      _civicrm_member_data (&$data, $enabled);
+      _civicrm_member_data ($data, $enabled);
     }
     
     return $data;

@@ -293,7 +293,11 @@ class CRM_Contact_Form_Search_Criteria {
                         + CRM_Core_PseudoConstant::$select( );
                     $element = $form->addElement('select', $name, $title, $selectElements );   
                 } else if ( $select == 'county' ) { 
-                    if ( $form->_submitValues['state_province'] ) {
+                    if ( !CRM_Utils_System::isNull( $form->_submitValues['state_province'] )  ) {
+                        $key = array_search('',$form->_submitValues['state_province']); 
+                        if(!CRM_Utils_System::isNull($key)) {
+                            unset($form->_submitValues['state_province'][$key]);
+                        }
                         $selectElements = array( '' => ts('- select -') ) 
                             + CRM_Core_PseudoConstant::countyForState( $form->_submitValues['state_province']   );
                     }

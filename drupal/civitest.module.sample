@@ -1397,7 +1397,7 @@ function civitest_civicrm_import( $object, $usage, &$objectRef, $params ) {
             
 			//lookup tag; create new if nonexist
 			$tag = civicrm_api( 'Tag', 'get', $params );
-			if ( civicrm_api3_error( $tag ) ) {
+			if ( civicrm_error( $tag ) ) {
 			    $tag = civicrm_api( 'Tag', 'create', $params );
 			    $tagid = $tag['id'];
 			} else {

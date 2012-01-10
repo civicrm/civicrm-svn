@@ -87,7 +87,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       return 0;
     }
     $err= civicrm_api3_create_error( $e->getMessage(),null,$apiRequest );
-    if ($apiRequest['params']['debug']) {
+    if (CRM_Utils_Array::value('debug', $apiRequest['params'] ) ) {
       $err['trace'] = $e->getTraceSafe();
     } else {
       $err['tip'] = "add debug=1 to your API call to have more info about the error";

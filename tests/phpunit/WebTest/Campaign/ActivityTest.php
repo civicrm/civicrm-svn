@@ -38,17 +38,25 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
 
   function testCreateCampaign()
   {
-      // This is the path where our testing install resides. 
-      // The rest of URL is defined in CiviSeleniumTestCase base class, in
-      // class attributes.
-      $this->open( $this->sboxPath );
+      $this->webtestLogin( true );
 
-      // Logging in. Remember to wait for page to load. In most cases,
-      // you can rely on 30000 as the value that allows your test to pass, however,
-      // sometimes your test might fail because of this. In such cases, it's better to pick one element
-      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-      // page contents loaded and you can continue your test execution.
-      $this->webtestLogin();
+      // Enable CiviCampaign module if necessary
+      $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("_qf_Component_next-bottom");
+      $enabledComponents = $this->getSelectOptions("enableComponents-t");
+      if (! in_array( "CiviCampaign", $enabledComponents ) ) {
+          $this->addSelection("enableComponents-f", "label=CiviCampaign");
+          $this->click("//option[@value='CiviCampaign']");
+          $this->click("add");
+          $this->click("_qf_Component_next-bottom");
+          $this->waitForPageToLoad("30000");          
+          $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
+      }
+
+      // add the required Drupal permission
+      $permissions = array('edit-2-administer-civicampaign');
+      $this->changePermissions( $permissions );
       
       // Create new group
       $title = substr(sha1(rand()), 0, 7);
@@ -82,37 +90,15 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->click("_qf_GroupContact_next");
       $this->waitForPageToLoad("30000");
 
-      // Enable CiviCampaign module if necessary
-      $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-      $this->waitForPageToLoad('30000');
-      $this->waitForElementPresent("_qf_Component_next-bottom");
-      $enabledComponents = $this->getSelectOptions("enableComponents-t");
-      if (! in_array( "CiviCampaign", $enabledComponents ) ) {
-          $this->addSelection("enableComponents-f", "label=CiviCampaign");
-          $this->click("//option[@value='CiviCampaign']");
-          $this->click("add");
-          $this->click("_qf_Component_next-bottom");
-          $this->waitForPageToLoad("30000");          
-          $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
-      }
-
-      // add the required Drupal permission
-      $this->changeAdminLinks();
-      $this->waitForElementPresent('edit-submit');
-      $this->check('edit-2-administer-civicampaign');
-      $this->click('edit-submit');
-      $this->waitForPageToLoad();
-      $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-
       // Go directly to the URL of the screen that you will be testing
       $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Campaign_next-bottom");
+      $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
       // Let's start filling the form with values.
-      $campaignTitle = "Campaign $title";
+      $campaignTitle = "Campaign ". $title;
       $this->type( "title", $campaignTitle );
 
       // select the campaign type
@@ -133,7 +119,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->select("status_id", "value=2");
 
       // click save
-      $this->click("_qf_Campaign_next-bottom");
+      $this->click("_qf_Campaign_upload-bottom");
       $this->waitForPageToLoad("30000");
       
       $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
@@ -173,6 +159,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       
       // Now we're filling the "Assigned To" field.
       // Typing contact's name into the field (using typeKeys(), not type()!)...
+      $this->fireEvent( 'assignee_contact_id', 'focus' );
       $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
       // ...waiting for drop down with results to show up...
@@ -181,7 +168,6 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       
       // ...need to use mouseDownAt on first result (which is a li element), click does not work
       $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
-     
       // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
       
@@ -243,8 +229,11 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_Activity_cancel-bottom');
 
       // verify Activity created
-      $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ), "/label" );
+      $expected = array( 5   => $campaignTitle  
+                         ); 
+      foreach ( $expected as  $value => $label ) { 
+          $this->verifyText( "xpath=id( 'Activity' )/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
+      }
   }
-
   
 }

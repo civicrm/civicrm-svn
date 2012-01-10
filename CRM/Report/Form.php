@@ -218,6 +218,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     public $_having      = null;
     public $_select      = null;
     public $_orderBy     = null;
+    public $_groupBy     = null;
 
     /**
      * 
@@ -1770,7 +1771,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
     }
 
     function groupBy( ) {
-        $this->_groupBy = "";
+        $groupBys = array();
         if ( CRM_Utils_Array::value( 'group_bys', $this->_params ) &&
              is_array($this->_params['group_bys']) &&
              !empty($this->_params['group_bys']) ) {
@@ -1778,12 +1779,16 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                 if ( array_key_exists('group_bys', $table) ) {
                     foreach ( $table['group_bys'] as $fieldName => $field ) {
 								if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
-                                    $this->_groupBy[] = $field['dbAlias'];
+                                    $groupBys[] = $field['dbAlias'];
 								}
                     }
                 }
             }
         } 
+
+        if ( ! empty( $groupBys ) ) {
+            $this->_groupBy = "GROUP BY " . implode( ', ', $groupBys );
+        }
     }
 
     function orderBy( ) {

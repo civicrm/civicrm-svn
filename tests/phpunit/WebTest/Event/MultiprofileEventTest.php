@@ -156,16 +156,12 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath );
         
         // Log in using webtestLogin() method
-        $this->webtestLogin();
+        $this->webtestLogin( true );
         
         // add the required Drupal permission
-        $this->changeAdminLinks( );
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-1-access-all-custom-data');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
-        
+        $permission = array('edit-1-access-all-custom-data');
+        $this->changePermissions( $permission );
+       
         $customGrp1 = "Custom Data1_" . substr(sha1(rand()), 0, 7);
         $firstName = 'Ma' . substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An' . substr( sha1( rand( ) ), 0, 7 );
@@ -704,7 +700,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->type( "custom_".$customId[2], "lname_custom1" );
         
         $this->type( "middle_name", "xyz" );
-        $this->click( "CIVICRM_QFID_2_4");
+        $this->click( "name=gender value=2");
         $this->select("participant_role","value=2");
         
         $this->click("_qf_Register_upload-bottom");
@@ -786,7 +782,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->type( "custom_".$customId[2], "lname_custom1" );
         
         $this->type( "middle_name", "xyz" );
-        $this->click( "CIVICRM_QFID_2_4");
+        $this->click( "name=gender value=2");
         $this->select("participant_role","value=2");
         
         $this->click("_qf_Register_upload-bottom");

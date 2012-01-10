@@ -96,24 +96,39 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
 
   function tearDown( )
   {
-      $tablesToTruncate = array( 'civicrm_contact' );
+      $tablesToTruncate = array( 'civicrm_contact', 'civicrm_cache' );
       $this->quickCleanup( $tablesToTruncate, true );     
   }
+  /*
+   * Test that custom fields is returned for correct contact type only
+   */
+    function testGetFields() {
+      $result = civicrm_api('Contact', 'getfields', array('version' => 3));
+      $this->assertArrayHasKey("custom_{$this->IndividualField[id]}", $result['values'], 'If This fails there is probably a cachine issue - failure in line' . __LINE__ . print_r(array_keys($result['values']), true));
+      $result = civicrm_api('Contact', 'getfields', array('version' => 3, 'action' => 'create', 'contact_type' => 'Individual'), 'in line' . __LINE__);;
+      $this->assertArrayHasKey("custom_{$this->IndividualField[id]}", $result['values']);
+      $result = civicrm_api('Contact', 'getfields', array('version' => 3, 'action' => 'create', 'contact_type' => 'Organization'));
+      $this->assertArrayNotHasKey("custom_{$this->IndividualField[id]}", $result['values'], 'in line' . __LINE__ . print_r(array_keys($result['values']), true));
+      $result = civicrm_api('Relationship', 'getfields', array('version' => 3, 'action' => 'create'), 'in line' . __LINE__);;
+      $this->assertArrayNotHasKey("custom_{$this->IndividualField[id]}", $result['values']);
 
+    }
   /**
    * Add  Custom data of Contact Type : Individual to a Contact type: Organization
    */
   function testAddIndividualCustomDataToOrganization() {
 
     $params = array(
-                        'contact_id'           => $this->organization ,
+                        'id'           => $this->organization ,
                         'contact_type'      => 'Organization',
                         "custom_{$this->IndividualField[id]}" => 'Test String', 
                         'version'		=>$this->_apiversion, 
+                        'debug' => 1,
     );
 
-    $contact =& civicrm_api('contact','create',  $params );
-    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization' );
+    $contact = civicrm_api('contact','create',  $params );
+    $this->assertTrue(is_array($contact ['undefined_fields']), __LINE__);
+    $this->assertTrue(in_array("custom_{$this->IndividualField[id]}", $contact['undefined_fields']), __LINE__);
   }
 
 
@@ -160,12 +175,14 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_type'      => 'Organization',
                         "custom_{$this->IndiStudentField[id]}" => 'Test String',  
                 				'version'		=>$this->_apiversion, 
+												'debug' => 1,
     );
 
-    $contact =& civicrm_api('contact','create',  $params );
-
-    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Organization or Mismatched SubType: Sponsor', 'In line '. __LINE__  );
+    $contact = civicrm_api('contact','create',  $params );
+    $this->assertTrue(is_array($contact ['undefined_fields']), __LINE__);
+    $this->assertTrue(in_array("custom_{$this->IndiStudentField[id]}", $contact['undefined_fields']), __LINE__);
   }
+     
 
   /**
    * Add valid custom data to a Contact Type : Individual Subtype: Student
@@ -200,11 +217,18 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_type' => 'Individual',
                         "custom_{$this->IndiStudentField[id]}" => 'Test String',
                         'version'  =>  $this->_apiversion,
+ 												'debug' => 1,
     );
 
-    $contact =& civicrm_api('contact','create',  $params );
-    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual' , 'In line '. __LINE__ );
-  }
+    $contact = civicrm_api('contact','create',  $params );
+    $this->assertTrue(is_array($contact ['undefined_fields']), __LINE__);
+    $this->assertTrue(in_array("custom_{$this->IndiStudentField[id]}", $contact['undefined_fields']), __LINE__);
+    $params['contact_sub_type'] = 'Student';
+    $contact = civicrm_api('contact','create',  $params );
+ 
+    $this->assertTrue(!is_array( $contact['undefined_fields']) || !in_array("custom_{$this->IndiStudentField[id]}", $contact['undefined_fields']), __LINE__);
+  
+ }
 
   /**
    * Add custom data of Individual Student to a Contact Type : Individual - parent
@@ -216,11 +240,11 @@ class api_v3_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_type' => 'Individual',
                         "custom_{$this->IndiStudentField[id]}" => 'Test String',
                         'version'		    =>$this->_apiversion, 
-    );
-
-    $contact =& civicrm_api('contact','create',  $params );
-    $this->assertEquals( $contact['error_message'], 'Invalid Custom Field Contact Type: Individual or Mismatched SubType: Parent' );
-  }
+                        'debug'   => 1,);
+    $contact = civicrm_api('contact','create',  $params );
+    $this->assertTrue(is_array($contact ['undefined_fields']), __LINE__);
+    $this->assertTrue(in_array("custom_{$this->IndiStudentField[id]}", $contact['undefined_fields']), __LINE__);
+   }
 
 
 

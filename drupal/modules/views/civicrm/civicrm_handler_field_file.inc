@@ -55,7 +55,7 @@ class civicrm_handler_field_file extends views_handler_field {
                       );
       $file = civicrm_api( 'File', 'get', $params );
 
-      if ( !civicrm_api3_error( $file ) ) {
+      if ( !civicrm_error( $file ) ) {
           $filepath = file_directory_path() . '/civicrm/custom/' . $file['values'][$file_id]['uri'];
           $v = clone $values; // Prevent affecting the original
           $v->{$this->field_alias} = $filepath;

@@ -319,7 +319,6 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
         $this->click( "xpath=//div[@id='search_form_reserve']/div" );
         $this->waitForElementPresent( 'sort_name' );
-        $lastName = 'Smith_a69231b';
         $this->type( 'sort_name', $lastName );
         $this->waitForElementPresent( '_qf_Search_refresh' );
         $this->click( '_qf_Search_refresh' );
@@ -470,6 +469,13 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
             $assertCheck = false;        
         
         $this->assertTrue($assertCheck, 'copy rows for field two failed for inteview (campaign)[radio button]'); 
+        
+        //change the editor back to ckeditor
+        $this->open( $this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1" );
+        $this->waitForElementPresent( '_qf_Display_next-bottom' );
+        $this->select( 'editor_id', 'CKEditor' );
+        $this->click( '_qf_Display_next-bottom' );
+        $this->waitForPageToLoad("30000");
     }
     
     function _addProfile( $profileTitle, $customDataArr, $profileFor ) 

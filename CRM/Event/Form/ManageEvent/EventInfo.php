@@ -387,6 +387,12 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                                               'entity_table' => 'civicrm_event'),
                                        array( 'entity_id'    => $event->id ),
                                        array( 'replace'      => array( 'target_entity_id' => $event->id ) ) );
+            
+            //copy event schedule remainder
+            CRM_Core_DAO::copyGeneric( 'CRM_Core_DAO_ActionSchedule', 
+                                       array( 'entity_value'    => $params['template_id'] ),
+                                       array( 'entity_value'    => $event->id ) );
+
         }
         
         $this->set( 'id', $event->id );

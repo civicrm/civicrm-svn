@@ -6,6 +6,8 @@
 class CRM_Utils_System_Base {
     var $is_drupal = FALSE;
     var $is_joomla = FALSE;
+    var $is_wordpress = FALSE;
+
     /*
      * Does the CMS allow CMS forms to be extended by hooks
      */

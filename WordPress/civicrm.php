@@ -55,10 +55,8 @@ if ( civicrm_wp_in_civicrm() ) {
     $_GET['mode'] = 'wordpress';
 }
 
-define('WP_DEBUG', true);
-
 function civicrm_wp_add_menu_items( ) {
-    add_menu_page( 'CiviCRM', 'CiviCRM', 'edit_posts', 'CiviCRM', 'civicrm_wp_invoke' );
+    add_menu_page( 'CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke' );
     add_options_page( 'CiviCRM Settings', 'CiviCRM Settings', 'manage_options', 'civicrm-settings', 'civicrm_db_settings');
 }
 
@@ -185,8 +183,14 @@ function civicrm_get_ctype( $default = null )
 }
 
 function civicrm_wp_invoke( ) {
-    if ( ! civicrm_wp_initialize( ) ) {
+    static $alreadyInvoked = false;
+    if ( $alreadyInvoked ) {
         return;
+    }
+
+    $alreadyInvoked = true;
+    if ( ! civicrm_wp_initialize( ) ) {
+        return '';
     }
 
     if ( isset( $_GET['q'] ) ) {
@@ -268,30 +272,48 @@ function civicrm_wp_styles( ) {
     return;
 }
 
-function civicrm_wp_frontend( ) {
+function civicrm_wp_frontend( $shortcode = false ) {
     if ( ! civicrm_wp_initialize( ) ) {
         return;
     }
 
+    // set the frontend part for civicrm code
+    $config = CRM_Core_Config::singleton( );
+    $config->userFrameworkFrontend = true;
+
     if ( isset( $_GET['q'] ) ) {
         $args = explode( '/', trim( $_GET['q'] ) );
     }
-   
+
+    if ( $shortcode ) {
+        civicrm_turn_comments_off( );
+        civicrm_set_post_blank( );
+    } else {
+        add_filter('get_header', 'civicrm_turn_comments_off');
+        add_filter('get_header', 'civicrm_set_post_blank');
+    }
+    
     // check permission
     if ( ! civicrm_check_permission( $args ) ) {
-        add_filter('the_content', 'civicrm_set_frontendmessage');
+        if ( $shortcode ) {
+            civicrm_set_frontendmessage( );
+        } else {
+            add_filter('the_content', 'civicrm_set_frontendmessage');
+        }
         return;
     }
-
+    
     require_once 'wp-includes/pluggable.php';
-
+    
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
     // but best way is to check other plugin implementation :) 
-   
-    add_filter('the_content', 'civicrm_wp_invoke');
-    add_filter('the_title', 'civicrm_set_blank');
-    add_filter('get_header', 'civicrm_turn_comments_off');
+
+    if ( $shortcode ) {
+        civicrm_wp_invoke( );
+    } else {
+        add_filter('the_content', 'civicrm_wp_invoke');
+    }
 }
 
 function civicrm_set_blank() {
@@ -300,6 +322,13 @@ function civicrm_set_blank() {
 
 function civicrm_set_frontendmessage() {
     return ts('You do not have permission to execute this url.');
+}
+
+function civicrm_set_post_blank(){
+    global $post;
+    $post->post_type = ''; //to hide posted on 
+    $post->post_title = '';//to hide post title
+    add_action('edit_post_link' , 'civicrm_set_blank');//hide the edit link
 }
 
 function civicrm_turn_comments_off() {
@@ -377,10 +406,33 @@ function civicrm_check_permission( $args ) {
     return false;
 }
 
+function wp_civicrm_capability( ){
+    global $wp_roles;
+    if ( !isset( $wp_roles ) ){
+        $wp_roles = new WP_Roles();
+    }
+    
+    //access civicrm page menu link to particular roles
+    $roles = array( 'super admin', 'administrator', 'editor' );
+    
+    foreach( $roles as $role ){
+        if ( is_array( $wp_roles->get_role( $role )->capabilities ) && !array_key_exists( 'access_civicrm_nav_link', $wp_roles->get_role( $role )->capabilities ) ){
+            $wp_roles->add_cap( $role, 'access_civicrm_nav_link' );
+        }
+    }
+}
 
 function civicrm_wp_main( ) {
+    add_action('init', 'wp_civicrm_capability');
     if ( is_admin() ) {
         add_action( 'admin_menu', 'civicrm_wp_add_menu_items' );
+
+        //Adding "embed form" button
+        if ( in_array( basename($_SERVER['PHP_SELF']),
+                       array('post.php', 'page.php', 'page-new.php', 'post-new.php') ) ) {
+            add_action('media_buttons_context', 'civicrm_add_form_button');
+            add_action('admin_footer'         , 'civicrm_add_form_button_html' );
+        }
 
         // check if settings file exist, do not show configuration link on
         // install / settings page
@@ -393,9 +445,11 @@ function civicrm_wp_main( ) {
             }
         }
     }
-  
+    
     add_action( 'user_register'   , 'civicrm_user_register'  );
     add_action( 'profile_update'  , 'civicrm_profile_update' );
+
+    add_shortcode( 'civicrm', 'civicrm_shortcode_handler' );
 
     if ( ! civicrm_wp_in_civicrm( ) ) {
         return;
@@ -414,12 +468,241 @@ function civicrm_wp_main( ) {
     } else {
         add_action( 'admin_print_styles' , 'civicrm_wp_styles' );
     }
-
     add_action( 'wp_print_scripts', 'civicrm_wp_scripts' );
- 
-    add_filter( 'the_title' , 'civicrm_wp_set_title' );
-    add_filter( 'wp_title'  , 'civicrm_wp_set_title' );
+}
 
+function civicrm_add_form_button( $context ) {
+    if ( ! civicrm_wp_initialize( ) ) {
+        return '';
+    }
+
+    $config = CRM_Core_Config::singleton( );
+    $imageBtnURL = $config->resourceBase . 'i/widget/logo.png';
+    $out = '<a href="#TB_inline?width=480&inlineId=civicrm_frontend_pages" class="thickbox" id="add_civi" title="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '"><img src="'.$imageBtnURL.'" hieght="15" width="15" alt="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '" /></a>';
+    return $context . $out;
+}
+
+function civicrm_add_form_button_html( ) {
+    $title = _e( "Please choose a Contribution or Event Page", "CiviCRM" );
+
+    $now = date( "Ymdhis" );
+
+    $sql = "
+SELECT id, title
+FROM   civicrm_contribution_page
+WHERE  is_active = 1
+AND    (
+         ( start_date IS NULL AND end_date IS NULL )
+OR       ( start_date <= $now AND end_date IS NULL )
+OR       ( start_date IS NULL AND end_date >= $now )
+OR       ( start_date <= $now AND end_date >= $now )
+       )
+";
+
+    $dao = CRM_Core_DAO::executeQuery( $sql );
+    $contributionPages = array();
+    while ( $dao->fetch() ) {
+        $contributionPages[$dao->id] = $dao->title;
+    }
+
+    $sql = "
+SELECT id, title
+FROM   civicrm_event
+WHERE  is_active = 1
+AND ( is_template = 0 OR is_template IS NULL )
+AND    (
+         ( start_date IS NULL AND end_date IS NULL )
+OR       ( start_date <= $now AND end_date IS NULL )
+OR       ( start_date IS NULL AND end_date >= $now )
+OR       ( start_date <= $now AND end_date >= $now )
+OR       ( start_date >= $now )
+       )
+";
+
+    $dao = CRM_Core_DAO::executeQuery( $sql );
+    $eventPages = array();
+    while ( $dao->fetch() ) {
+        $eventPages[$dao->id] = $dao->title;
+    }
+?>
+        <script>
+            function InsertCiviFrontPages( ) {
+                var form_id = jQuery("#add_civicomponent_id").val();
+                if (form_id == ""){
+                    alert ('Please select a frontend element.');
+                    return;
+                }
+
+                var action;
+                var component = jQuery("#add_civicomponent_id").val( );
+                switch ( component ) {
+                    case 'contribution':
+                        var pid  = jQuery("#add_contributepage_id").val();
+                        var mode = jQuery("input[name='component_mode']:checked").val( );
+                        break;
+                    case 'event':
+                        var pid    = jQuery("#add_eventpage_id").val();
+                        var action = jQuery("input[name='event_action']:checked").val( );
+                        var mode   = jQuery("input[name='component_mode']:checked").val( );
+                        break;
+                }
+                
+                // [ civicrm component=contribution/event/profile id=N mode=test/live action=info/register/create/search/edit/view ] 
+                var shortcode = '[civicrm component="' + component + '" id="' + pid + '"';
+                
+                if ( mode ) {
+                    shortcode = shortcode + ' mode="'+ mode +'"';
+                }
+
+                if ( action ) {
+                    shortcode = shortcode + ' action="'+ action +'"';
+                }
+
+                shortcode = shortcode + ']';
+                window.send_to_editor( shortcode );
+            }
+
+            jQuery(function() {
+                jQuery('#add_civicomponent_id').change(function(){
+                    var component = jQuery(this).val();
+                    switch ( component ) {
+                        case 'contribution':
+                            jQuery('#contribution-section').show();
+                            jQuery('#event-section').hide();
+                            jQuery('#component-section').show();
+                            jQuery('#action-section-event').hide();
+                            break;
+                        case 'event':
+                            jQuery('#contribution-section').hide();
+                            jQuery('#event-section').show();
+                            jQuery('#component-section').show();
+                            jQuery('#action-section-event').show();
+                            break;
+                    }
+                });
+            });
+        </script>
+
+        <div id="civicrm_frontend_pages" style="display:none;">
+            <div class="wrap">
+                <div>
+                    <div style="padding:15px 15px 0 15px;">
+                        <h3 style="color:#5A5A5A!important; font-family:Georgia,Times New Roman,Times,serif!important; font-size:1.8em!important; font-weight:normal!important;">
+                        <?php echo $title; ?>
+                        </h3>
+                        <span>
+                            <?php echo $title; ?> 
+                        </span>
+                    </div>
+                    <div style="padding:15px 15px 0 15px;">
+                        <select id="add_civicomponent_id">
+                            <option value="">  <?php _e("Select a frontend elment."); ?>  </option>
+                            <option value="contribution">Contribution Page</option>
+                            <option value="event">Event Page</option>
+                        </select>
+
+                         <span id="contribution-section" style="display:none;">
+                            <select id="add_contributepage_id">
+                            <?php
+                                foreach($contributionPages as $key => $value ) {
+                                    ?>
+                                    <option value="<?php echo absint( $key ) ?>"><?php echo esc_html( $value ) ?></option>
+                                    <?php
+                                }
+                            ?>
+                            </select>
+                        </span>
+                        
+                        <span id="event-section" style="display:none;">
+                            <select id="add_eventpage_id">
+                            <?php
+                                foreach($eventPages as $key => $value ) {
+                                    ?>
+                                    <option value="<?php echo absint( $key ) ?>"><?php echo esc_html( $value ) ?></option>
+                                    <?php
+                                }
+                            ?>
+                            </select>
+                        </span>
+                        <br>
+                        <span id="action-section-event" style="display:none;">
+                           <div style="padding:15px 15px 0 15px;"> 
+                            <input type="radio" name="event_action" value="info" checked="checked" /> Event Info Page
+                            <input type="radio" name="event_action" value="register" /> Event Registration Page
+                           </div>
+                        </span>
+                        <br/>
+                        <span id="component-section" style="display:none;">
+                           <div style="padding:15px 15px 0 15px;"> 
+                            <input type="radio" name="component_mode" value="live" checked="checked"/> Live Page
+                            <input type="radio" name="component_mode" value="test" /> Test Drive
+                           </div>
+                        </span>
+                        <br/>
+                        <div style="padding:8px 0 0 0; font-size:11px; font-style:italic; color:#5A5A5A"><?php _e("Can't find your form? Make sure it is active.", "gravityforms"); ?></div>
+                    </div>
+                    <div style="padding:15px;">
+                        <input type="button" class="button-primary" value="Insert Form" onclick="InsertCiviFrontPages();"/>&nbsp;&nbsp;&nbsp;
+                    <a class="button" style="color:#bbb;" href="#" onclick="tb_remove(); return false;"><?php _e("Cancel"); ?></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<?php
+
+}
+
+function civicrm_shortcode_handler( $atts ) {
+    extract( shortcode_atts( array( 'component' => 'contribution',
+                                    'action'    => null,
+                                    'mode'      => null,
+                                    'id'        => null,
+                                    'cid'       => null,
+                                    'gid'       => null,
+                                    'cs'        => null ),
+                             $atts ) );
+
+    $args = array( 'reset' => 1,
+                   'id'    => $id );
+    
+    switch ( $component ) {
+    case 'contribution':
+        $args['q' ] = 'civicrm/contribute/transact';
+        break;
+
+    case 'event':
+        switch ( $action ) {
+        case 'register':
+            $args['q' ]     = 'civicrm/event/register';
+            if ( $mode == 'preview' ) {
+                $args['action'] = $mode;
+            }
+            break;
+
+        case 'info':
+            $args['q' ] = 'civicrm/event/info';
+            break;
+
+        default:
+            echo 'Do not know how to handle this shortcode<p>';
+            return;
+        }
+        break;
+
+    default:
+        echo 'Do not know how to handle this shortcode<p>';
+        return;
+        
+    }
+
+    foreach ( $args as $key => $value ) {
+        if ( $value !== null ) {
+            $_GET[$key] = $value;
+        }
+    }
+
+    return civicrm_wp_frontend( true );
 }
 
 function civicrm_wp_in_civicrm( ) {
@@ -428,11 +711,14 @@ function civicrm_wp_in_civicrm( ) {
 }
 
 function wp_get_breadcrumb( ) {
-    return;
+    global $wp_set_breadCrumb;
+    return $wp_set_breadCrumb;
 }
 
-function wp_set_breadcrumb( ) {
-    return;
+function wp_set_breadcrumb( $breadCrumb ) {
+    global $wp_set_breadCrumb;
+    $wp_set_breadCrumb = $breadCrumb;
+    return $wp_set_breadCrumb;
 }
 
 function t( $str, $sub = null ) {

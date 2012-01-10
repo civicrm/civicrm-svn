@@ -61,22 +61,8 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
         }
 
         // let's give full CiviGrant permissions to demo user (registered user).
-        $this->changeAdminLinks( );
-        $this->waitForElementPresent("edit-submit");
-        $this->check("edit-2-access-civigrant");
-        $this->check("edit-2-edit-grants");
-        $this->check("edit-2-delete-in-civigrant");
-
-        // save permissions
-        $this->click("edit-submit");
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue($this->isTextPresent("The changes have been saved."));        
-        $this->open($this->sboxPath . "civicrm/logout?reset=1");
-        $this->waitForPageToLoad('30000');          
-
-        // Log in as demo user
-        $this->open( $this->sboxPath );
-        $this->webtestLogin( );
+        $permission = array('edit-2-access-civigrant','edit-2-edit-grants','edit-2-delete-in-civigrant');
+        $this->changePermissions( $permission );
         
         // create unique name
         $name      = substr(sha1(rand()), 0, 7);

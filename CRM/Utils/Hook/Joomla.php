@@ -38,23 +38,28 @@ require_once 'CRM/Utils/Hook.php';
 
 class CRM_Utils_Hook_Joomla extends CRM_Utils_Hook {
 
-    function invoke( $numParams,
-                     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-                     $fnSuffix ) {
-        // ensure that we are running in a joomla context
-        // we've not yet figured out how to bootstrap joomla, so we should
-        // not execute hooks if joomla is not loaded
-        if ( defined( '_JEXEC' ) ) {
-            //Invoke the Joomla plugin system to observe to civicrm events.
-            JPluginHelper::importPlugin('civicrm');
-            
-            $app = JFactory::getApplication();
-            $app->triggerEvent( $fnSuffix,
-                                array( &$arg1, &$arg2, &$arg3, &$arg4, &$arg5 ) );
-            
-            return $this->commonInvoke( $numParams,
-                                       $arg1, $arg2, $arg3, $arg4, $arg5,
-                                        $fnSuffix, 'joomla' );
-        }
-    }
+   static function invoke( $numParams,
+                           &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+                           $fnSuffix ) {
+       // ensure that we are running in a joomla context
+       // we've not yet figured out how to bootstrap joomla, so we should
+       // not execute hooks if joomla is not loaded
+       if ( defined( '_JEXEC' ) ) {
+           //Invoke the Joomla plugin system to observe to civicrm events.
+           JPluginHelper::importPlugin('civicrm');
+           
+           $app = JFactory::getApplication();
+           $result = $app->triggerEvent($fnSuffix,array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5));
+           if ( ! empty( $result ) ) {
+               // collapse result returned from hooks
+               // CRM-9XXX
+               $finalResult = array( );
+               foreach ( $result as $res ) {
+                   $finalResult = array_merge( $finalResult, $res );
+               }
+               $result = $finalResult;
+           }
+           return $result;
+       }
+   }
 }

@@ -101,21 +101,19 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         }
         
         // add the required Drupal permission
-        $this->changeAdminLinks();
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-civicampaign');
-        $this->check('edit-1-make-online-contributions');
-        $this->check('edit-1-profile-listings-and-forms');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        $permissions = array(
+                             'edit-2-administer-civicampaign',
+                             'edit-1-make-online-contributions',
+                             'edit-1-profile-listings-and-forms'
+                             );
+        $this->changePermissions( $permissions );
         
         // Go directly to the URL of the screen that you will be testing
         $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent("_qf_Campaign_next-bottom");
+        $this->waitForElementPresent("_qf_Campaign_upload-bottom");
         
         // Let's start filling the form with values.
         $campaignTitle = "Campaign $title";
@@ -139,7 +137,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         $this->select("status_id", "value=2");
         
         // click save
-        $this->click("_qf_Campaign_next-bottom");
+        $this->click("_qf_Campaign_upload-bottom");
         $this->waitForPageToLoad("30000");
         
         $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
@@ -216,8 +214,8 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         $this->type( 'intro',             "TaF Introduction $contributionTitle" );
         $this->type( 'suggested_message', "TaF Suggested Message $contributionTitle" );
         $this->type( 'general_link',      "TaF Info Page Link $contributionTitle" );
-        $this->type( 'thankyou_title',    "TaF Thank-you Title $contributionTitle" );
-        $this->type( 'thankyou_text',     "TaF Thank-you Message $contributionTitle" );
+        $this->type( 'tf_thankyou_title',    "TaF Thank-you Title $contributionTitle" );
+        $this->type( 'tf_thankyou_text',     "TaF Thank-you Message $contributionTitle" );
         
         $this->click( '_qf_Contribute_next-bottom' );
         $this->waitForPageToLoad( '30000' );

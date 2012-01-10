@@ -95,15 +95,24 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
             $this->waitForPageToLoad("30000");          
             $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
         }
-        
+
+        // now logout and login with admin credentials
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
+        $this->waitForPageToLoad('30000'); 
+
+        //make sure we do have required permissions.
+        $this->webtestLogin( true );
+ 
         // add the required Drupal permission
-        $this->changeAdminLinks( );
-        $this->waitForElementPresent('edit-submit');
-        $this->check('edit-2-administer-civicampaign');
-        $this->click('edit-submit');
-        $this->waitForPageToLoad();
-        $this->assertTrue($this->isTextPresent('The changes have been saved.'));
+        $permissions = array("edit-2-administer-civicampaign" );
+        $this->changePermissions( $permissions );
+
+        // now logout and do membership test that way
+        $this->open($this->sboxPath . "civicrm/logout?reset=1");
+        $this->waitForPageToLoad('30000'); 
         
+        $this->webtestLogin(  );
+
         $this->open( $this->sboxPath . 'civicrm/campaign?reset=1' );
         $this->waitForElementPresent("link=Add Campaign");
         if ( $this->isTextPresent('No campaigns found.') ) {
@@ -118,7 +127,7 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
         
         // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
         // button at the end of this page to show up, to make sure it's fully loaded.
-        $this->waitForElementPresent("_qf_Campaign_next-bottom");
+        $this->waitForElementPresent("_qf_Campaign_upload-bottom");
         
         // Let's start filling the form with values.
         $campaignTitle = "Campaign $title";
@@ -142,7 +151,7 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
         $this->select("status_id", "value=2");
         
         // click save
-        $this->click("_qf_Campaign_next-bottom");
+        $this->click("_qf_Campaign_upload-bottom");
         $this->waitForPageToLoad("30000");
         
         $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 

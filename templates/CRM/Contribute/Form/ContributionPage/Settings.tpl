@@ -82,10 +82,10 @@
         </td>
     </tr>
 	<tr class="crm-contribution-contributionpage-settings-form-block-intro_text">
-	    <td class ="label">{$form.intro_text.label}<br />{help id="id-intro_msg"}</td><td>{$form.intro_text.html}</td>
+	    <td class ="label">{$form.intro_text.label}<br /> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='intro_text' id=$contributionPageID}{/if} {help id="id-intro_msg"}</td><td>{$form.intro_text.html}</td>
 	</tr>
 	<tr class="crm-contribution-contributionpage-settings-form-block-footer_text">
-	    <td class ="label">{$form.footer_text.label}<br />{help id="id-footer_msg"}</td><td>{$form.footer_text.html}</td>
+	    <td class ="label">{$form.footer_text.label}<br /> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='footer_text' id=$contributionPageID}{/if} {help id="id-footer_msg"}</td><td>{$form.footer_text.html}</td>
 	</tr>
 	<tr class="crm-contribution-contributionpage-settings-form-block-goal_amount">
 	    <td class ="label">{$form.goal_amount.label}</td><td>{$form.goal_amount.html} {help id="id-goal_amount"}</td>

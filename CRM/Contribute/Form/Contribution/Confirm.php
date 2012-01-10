@@ -160,9 +160,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
             
             $this->_params['organization_name'] = $this->_params['onbehalf']['organization_name'];
-            $addressBlocks = array( 'street_address', 'city', 
-                                    'state_province', 'postal_code', 'country' );
-
+            $addressBlocks = array( 'street_address', 'city', 'state_province',
+                                    'postal_code', 'country', 'supplemental_address_1',
+                                    'supplemental_address_2', 'supplemental_address_3',
+                                    'postal_code_suffix', 'geo_code_1', 'geo_code_2', 'address_name' );
+            
             $blocks = array( 'email', 'phone', 'im', 'url', 'openid' );
             
             foreach ( $this->_params['onbehalf'] as $loc => $value ) {
@@ -1065,7 +1067,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         require_once 'CRM/Contribute/BAO/Contribution.php';
         
         //create an contribution address
-        if ( $form->_contributeMode != 'notify' && !CRM_Utils_Array::value('is_pay_later', $params) ) {  
+        if ( $form->_contributeMode != 'notify' 
+            && !CRM_Utils_Array::value('is_pay_later', $params) 
+            && CRM_Utils_Array::value( 'is_monetary', $form->_values ) ) {
             $contribParams['address_id']  = CRM_Contribute_BAO_Contribution::createAddress( $params, $form->_bltID );
         }
 
@@ -1379,13 +1383,16 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         foreach ( $behalfOrganization as $locFld => $value ) {
             if ( in_array( $locFld, array( 'phone', 'email', 'address' ) ) ) {
                 $locTypeId = array_keys( $value );
-                if ( $locTypeId[0] == 'Primary' ) {
-                    $locTypeId[0] = 1;
-                    $behalfOrganization[$locFld][$locTypeId[0]]['email'] = $value['Primary']['email'];
-                    unset( $behalfOrganization[$locFld]['Primary'] );
+                foreach ( $locTypeId as $locVal ){
+                    $locVal = ($locVal == 'Primary' ) ? 1 : $locVal;
+                    
+                    if( $locVal==1 ){
+                        $behalfOrganization[$locFld][$locVal] = $value['Primary'];
+                        unset( $behalfOrganization[$locFld]['Primary'] );
+                    }
+                    $behalfOrganization[$locFld][$locVal]['is_primary'] = 1;
+                    $behalfOrganization[$locFld][$locVal]['location_type_id'] = $locVal; 
                 }
-                $behalfOrganization[$locFld][$locTypeId[0]]['is_primary'] = 1;
-                $behalfOrganization[$locFld][$locTypeId[0]]['location_type_id'] = $locTypeId[0];
             }
         }
         

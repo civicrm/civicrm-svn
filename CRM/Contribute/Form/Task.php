@@ -108,6 +108,7 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
                 }
             }
         } else {
+            require_once 'CRM/Contact/BAO/Query.php';
             $queryParams =  $form->get( 'queryParams' );
             $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_CONTRIBUTE);

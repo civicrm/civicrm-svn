@@ -121,7 +121,9 @@ class CRM_Utils_PagerAToZ
         }
 
         $AToZBar = array_merge ( $AToZBar, $dynamicAlphabets );
+        sort( $AToZBar, SORT_STRING );
         $AToZBar = array_unique( $AToZBar );
+        
         //get the current path
         $path = CRM_Utils_System::currentPath() ;
 

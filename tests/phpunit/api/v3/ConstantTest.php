@@ -67,12 +67,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
         //  Connect to the database
         parent::setUp();
         $this->_apiversion = 3;
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__) . '/../../CiviTest/truncate-option.xml') );
-                             
+                            
 
     }
 
@@ -91,29 +86,14 @@ class api_v3_ConstantTest extends CiviUnitTestCase
      */
     public function testActivityStatus()
     {
-        //  Insert a row in civicrm_option_group creating 
-        //  an activity_status option group
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                              dirname(__FILE__)
-                              . '/dataset/option_group_activity.xml') );
-
-        //  Insert rows in civicrm_option_value defining activity status
-        //  values of 'Scheduled', 'Completed', 'Cancelled'
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                              dirname(__FILE__)
-                              . '/dataset/option_value_activity.xml') );
 
         $result = civicrm_api('constant', 'get',  array( 'name' => 'activityStatus',
                                                      'version' => $this->_apiversion,) );
 
-        $this->assertEquals( 3,  $result['count'] , "In line " . __LINE__  );
+        $this->assertTrue(   $result['count'] > 5, "In line " . __LINE__  );
         $this->assertContains( 'Scheduled', $result['values'], "In line " . __LINE__  );
         $this->assertContains( 'Completed',  $result['values'], "In line " . __LINE__  );
-        $this->assertContains( 'Canceled',  $result['values'], "In line " . __LINE__  );
+        $this->assertContains( 'Cancelled',  $result['values'], "In line " . __LINE__  );
         
         $this->assertTrue( empty( $result['is_error'] ),
                            "In line " . __LINE__  );
@@ -124,26 +104,13 @@ class api_v3_ConstantTest extends CiviUnitTestCase
      */
     public function testActivityType()
     {
-        //  Insert 'activity_type' option group
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_group_activity.xml') );
-
-        //  Insert some activity type values
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/option_value_activity.xml') );
 
         $parameters = array( true, false, true );
 
         $result = civicrm_api('constant', 'get',  array( 'name' => 'activityType',
                                                      'version' => $this->_apiversion,) );
-        $this->assertEquals( 2,  $result['count'] , "In line " . __LINE__  );
-        $this->assertContains( 'Test activity type',  $result['values'], "In line " . __LINE__  );
+        $this->assertTrue(  $result['count'] > 2, "In line " . __LINE__  );
+        $this->assertContains( 'Meeting',  $result['values'], "In line " . __LINE__  );
         $this->assertTrue( empty( $result['is_error'] ),
                            "In line " . __LINE__  );
     } 
@@ -156,23 +123,13 @@ class api_v3_ConstantTest extends CiviUnitTestCase
         // needed to get rid of cached values from previous tests
         CRM_Core_Pseudoconstant::flush( 'locationType' );
 
-        $dataset = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                             dirname(__FILE__)
-                             . '/dataset/location_type_data.xml');
 
-        //  We don't want default set, we want our own, so clean up first
-        $tr = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $tr->execute( $this->_dbconn, $dataset );
-
-        //  Insert default location type values
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn, $dataset );
 
         $params =array( 'name' => 'locationType',
                                                      'version' => $this->_apiversion,);
         $result = civicrm_api('constant', 'get',  $params );       
         $this->documentMe($params,$result,__FUNCTION__,__FILE__);  
-        $this->assertEquals( 4,  $result['count'], "In line " . __LINE__  );
+        $this->assertTrue(  $result['count'] > 3, "In line " . __LINE__  );
         $this->assertContains( 'Home',  $result['values'], "In line " . __LINE__  );
         $this->assertContains( 'Work',  $result['values'], "In line " . __LINE__  );
         $this->assertContains( 'Main',  $result['values'], "In line " . __LINE__  );
@@ -188,19 +145,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
      */
     public function testPhoneType()
     {
-        //  Insert 'phone_type' option group
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet( dirname(__FILE__)
-                                                                              . '/dataset/option_group_phone_type.xml') );
-        
-        //  Insert some phone type option values
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet( dirname(__FILE__)
-                                                                          . '/dataset/option_value_phone_type.xml') );
-        
-        $parameters = array( true, false, true );
+          $parameters = array( true, false, true );
         $result = civicrm_api('constant', 'get',  array( 'name' => 'phoneType',
                                                      'version' => $this->_apiversion,) );       
         
@@ -220,17 +165,7 @@ class api_v3_ConstantTest extends CiviUnitTestCase
      */
     public function testmailProtocol()
     {
-        //  Insert 'mail_protocol' option group
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet( dirname(__FILE__)
-                                                                              . '/dataset/option_group_mail_protocol.xml') );
-        
-        //  Insert some mail protocol option values
-        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet( dirname(__FILE__)
-                                                                          . '/dataset/option_value_mail_protocol.xml') );
+
         
         $parameters = array( true, false, true );
 

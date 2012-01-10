@@ -629,7 +629,7 @@ class CRM_Core_Extensions
         }
 
         $extdir = file_get_contents( self::PUBLIC_EXTENSIONS_REPOSITORY );
-        var_dump( $extdir );
+        
         if( $extdir === FALSE ) {
             CRM_Core_Session::setStatus( ts('The CiviCRM public extensions directory at %1 could not be contacted - please check your webserver can make external HTTP requests or contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array( 1 => self::PUBLIC_EXTENSIONS_REPOSITORY ) ) );
         }

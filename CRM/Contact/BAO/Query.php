@@ -1810,11 +1810,6 @@ class CRM_Contact_BAO_Query
                     $op    = 'LIKE';
                 }
 
-                $type = null;
-                if ( CRM_Utils_Array::value( 'type', $field ) ) {
-                    $type = CRM_Utils_Type::typeToString( $field['type'] );
-                }
-
                 if ( isset( $locType[1] ) &&
                      is_numeric( $locType[1] ) ) {
                     $setTables = false;
@@ -1842,6 +1837,10 @@ class CRM_Contact_BAO_Query
                         }
                     }
 
+                    $type = null;
+                    if ( CRM_Utils_Array::value( 'type', $field ) ) {
+                        $type = CRM_Utils_Type::typeToString( $field['type'] );
+                    }
 
                     $this->_where[$grouping][] = self::buildClause( $fieldName,
                                                                     $op,
@@ -3042,7 +3041,7 @@ WHERE  id IN ( $groupIDs )
 
             $stateProvince = CRM_Core_PseudoConstant::stateProvince();
             foreach ( $value as $id ) {
-                $names[] = $stateProvince[$id];
+                $names[] = CRM_Utils_Array::value( $id, $stateProvince );
             }
         } else {
             $inputClause = array( );
@@ -3403,10 +3402,10 @@ civicrm_relationship.start_date > {$today}
         	// add activity return properties
         	if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
         		require_once 'CRM/Activity/BAO/Query.php';
-        		self::$_defaultReturnProperties[$mode] = CRM_Activity_BAO_Query::defaultReturnProperties( $mode );
+        		self::$_defaultReturnProperties[$mode] = CRM_Activity_BAO_Query::defaultReturnProperties( $mode, false );
         	} else {
             	require_once 'CRM/Core/Component.php';
-            	self::$_defaultReturnProperties[$mode] = CRM_Core_Component::defaultReturnProperties( $mode );
+            	self::$_defaultReturnProperties[$mode] = CRM_Core_Component::defaultReturnProperties( $mode, false );
             }
 
             if ( empty( self::$_defaultReturnProperties[$mode] ) ) {
@@ -3682,7 +3681,7 @@ civicrm_relationship.start_date > {$today}
                         }
                     }
                 } else if ($sortByChar) { 
-                    $order = " ORDER BY LEFT(contact_a.sort_name, 1) asc";
+                    $order = " ORDER BY UPPER(LEFT(contact_a.sort_name, 1)) asc";
                 } else {
                     $order = " ORDER BY contact_a.sort_name asc, contact_a.id";
                 }

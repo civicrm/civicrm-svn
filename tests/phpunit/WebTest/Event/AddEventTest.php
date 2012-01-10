@@ -26,8 +26,6 @@
 */
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-
-
  
 class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
 
@@ -71,14 +69,14 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
 
       $eventInfoStrings = array( $eventTitle, $eventDescription, $streetAddress );
       $this->_testVerifyEventInfo( $eventTitle, $eventInfoStrings );
-      
+     
       $registerStrings = array("250.00 Member", "325.00 Non-member", $registerIntro );
       $registerUrl = $this->_testVerifyRegisterPage( $registerStrings );
       
       $numberRegistrations = 3;
       $anonymous = true;
       $this->_testOnlineRegistration( $registerUrl, $numberRegistrations, $anonymous );
-      
+
   }
 
   function testAddPaidEventWithTemplate()
@@ -117,7 +115,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       
       $registerStrings = array("250.00 Member", "325.00 Non-member", $registerIntro );
       $this->_testVerifyRegisterPage( $registerStrings );
-      
+
   }
   
   function testAddFreeEventWithTemplate()
@@ -385,7 +383,20 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       //click on save
       $this->click( '_qf_ScheduleReminders_upload-bottom' );
       $this->waitForElementPresent("link=Add Reminder");
-       
+
+      $this->waitForElementPresent("link=Edit");
+
+      $verifyText = array ( 1 => 'Event Reminder for '. $eventTitle,
+      		    	    3 => '1 hour after Event Start Date',
+      		    	    4 => 'Registered',
+			    5 => 'Yes',
+			    6 => 'Yes'
+      		    	  );
+
+      //verify the fields for Event Reminder selector
+      foreach ( $verifyText as $key => $value ) {
+      	  $this->verifyText("xpath=//table[@class='display']/tbody/tr/td[$key]", $value );
+      }
   }
 
  

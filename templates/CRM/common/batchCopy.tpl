@@ -71,19 +71,29 @@ function copyFieldValues( fname ) {
         // handle checkbox
         // get the entity id of first element
         var firstEntityId = firstElement.parent().parent().attr('entity_id');
-       
-        // lets uncheck all the checkbox except first one
-        cj('.crm-copy-fields [type=checkbox][name^="field["][name*="[' + fname +']"][type=checkbox]:not([name^="field['+ firstEntityId +']['+ fname +']["])').removeProp('checked');
+    
+        var firstCheckElement = cj('.crm-copy-fields [type=checkbox][name^="field['+ firstEntityId +']['+ fname +']"][type!=hidden]');
         
-        //here for each checkbox for first row, check if it is checked and set remaining checkboxes
-        cj('.crm-copy-fields [type=checkbox][name^="field['+ firstEntityId +']['+ fname +']"][type!=hidden]').each(function() {
-            if (cj(this).prop('checked') ) {
-                var elementName = cj(this).attr('name');
-                var correctIndex = elementName.split('field['+ firstEntityId +']['+ fname +'][');
-                correctIndexValue = correctIndex[1].replace(']', '');
-                cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true);
+        if ( firstCheckElement.length > 1 ) {
+            // lets uncheck all the checkbox except first one
+            cj('.crm-copy-fields [type=checkbox][name^="field["][name*="[' + fname +']"][type=checkbox]:not([name^="field['+ firstEntityId +']['+ fname +']["])').removeProp('checked');
+        
+            //here for each checkbox for first row, check if it is checked and set remaining checkboxes
+            firstCheckElement.each(function() {
+               if (cj(this).prop('checked') ) {
+                 var elementName = cj(this).attr('name');
+                 var correctIndex = elementName.split('field['+ firstEntityId +']['+ fname +'][');
+                 correctIndexValue = correctIndex[1].replace(']', '');
+                 cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true);
+               }
+            });
+        } else {
+            if ( firstCheckElement.prop('checked') ) {
+                cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']"][type!=hidden]').prop('checked',true);
+            } else {
+                cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']"][type!=hidden]').prop('checked',false);
             }
-        });
+        }
     } else if ( editor ) {
         var firstElementId = firstElement.attr('id');
         switch ( editor ) {

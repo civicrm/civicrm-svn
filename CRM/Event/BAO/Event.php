@@ -729,11 +729,15 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
             // also get events with end_date <= requested end
             $endDate        =  CRM_Utils_Type::escape( $end, 'Date' );
             $dateCondition .= " AND ( civicrm_event.end_date <= '{$endDate}' ) ";
-        } else {
+        }
+        
+        // CRM-9421 and CRM-8620 Default mode for ical/rss feeds. No start or end filter passed. Need to exclude old events with only start date
+        // and not exclude events in progress (start <= today and end >= today). DGG
+        if ( empty( $start ) && empty( $end ) ) {
             // get events with end date >= today, not sure of this logic
             // but keeping this for backward compatibility as per issue CRM-5133
-            $endDate        = date( "Y-m-d G:i:s" );
-            $dateCondition .= " AND ( civicrm_event.end_date >= '{$endDate}' OR civicrm_event.end_date IS NULL ) ";
+            $today          = date( "Y-m-d G:i:s" );
+            $dateCondition .= " AND ( civicrm_event.end_date >= '{$today}' OR civicrm_event.start_date >= '{$today}' ) ";
         }
         
         if ( $type ) {

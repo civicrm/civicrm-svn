@@ -218,7 +218,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             if ( $preID = CRM_Utils_Array::value( 'custom_pre_id', $values ) ) {
                 if ( CRM_Utils_Array::value( 'related_contact', $values ) ) {
                     $preProfileTypes = CRM_Core_BAO_UFGroup::profileGroups( $preID );
-                    if ( in_array('Individual', $preProfileTypes ) ) {
+                    if ( in_array('Individual', $preProfileTypes ) || in_array('Contact', $postProfileTypes ) ) {
                         //Take Individual contact ID
                         $userID = CRM_Utils_Array::value( 'related_contact', $values );
                     }
@@ -229,7 +229,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             if ( $postID = CRM_Utils_Array::value( 'custom_post_id', $values ) ) {
                 if ( CRM_Utils_Array::value( 'related_contact', $values ) ) {
                     $postProfileTypes = CRM_Core_BAO_UFGroup::profileGroups( $postID );
-                    if ( in_array('Individual', $postProfileTypes ) ) {
+                    if ( in_array('Individual', $postProfileTypes ) || in_array('Contact', $postProfileTypes ) ) {
                         //Take Individual contact ID
                         $userID = CRM_Utils_Array::value( 'related_contact', $values );
                     }
@@ -294,7 +294,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                                           'entity_table' => 'civicrm_contribution_page',   
                                           'entity_id'    => $values['id'] );   
                 $OnBehalfProfile = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
-                $profileId       = $OnBehalfProfile[0]; 
+                $profileId       = $OnBehalfProfile[0];
+                $userID = $contactID; 
                 self::buildCustomDisplay( $profileId, 'onBehalfProfile' , $userID, $template,
                                           $params['onbehalf_profile'], $fieldTypes );
             }

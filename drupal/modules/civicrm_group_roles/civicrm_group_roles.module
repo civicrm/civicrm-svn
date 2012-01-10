@@ -286,7 +286,7 @@ function civicrm_role_granted_by_other_group($contact_id, $rid, $group_id)
   $params = array( 'version'=> 3, 'contact_id' => $contact_id );
   $result = civicrm_api('group_contact', 'get', $params);
   
-  if ( civicrm_api3_error($result ) ) {
+  if ( civicrm_error($result ) ) {
       return true;
   } 
   else {
