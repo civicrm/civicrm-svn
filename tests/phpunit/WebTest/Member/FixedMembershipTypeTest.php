@@ -88,7 +88,9 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $this->select( 'period_type', "label=fixed" );
         $this->waitForElementPresent( 'fixed_period_rollover_day[d]' );
         
+        // fixed period start set to April 1
         $this->select( 'fixed_period_start_day[M]', 'value=4' );
+        // rollover date set to Jan 31
         $this->select( 'fixed_period_rollover_day[M]', 'value=1' );
         
         $this->click( 'relationship_type_id', 'value=4_b_a' );
@@ -143,9 +145,18 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
         $currentMonth = date( 'm' );
         $previousYear = $currentYear - 1;
         $nextYear     = $currentYear + 1;
+
+        $todayDate    = date('Y-m-d'); 
+        
+        // the member-since date we will type in to membership form
         $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 3, 25, $currentYear ) ); 
+        
+        // expected calc'd start date
         $startDate    = date('Y-m-d', mktime( 0, 0, 0, 4, 1,  $previousYear  ) );
+        
+        // expected calc'd end date
         $endDate      = date('Y-m-d', mktime( 0, 0, 0, 3, 31, $nextYear ) );
+
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
@@ -156,11 +167,15 @@ SELECT end_event_adjust_interval
   FROM civicrm_membership_status 
  WHERE start_event = 'join_date'
    AND name = 'New'";
-        $endInterval  = CRM_Core_DAO::singleValueQuery( $query ) + 3;
+        $endInterval  = CRM_Core_DAO::singleValueQuery( $query );
         
-        $status = 'New';
-        if ( $currentMonth >= $endInterval ) {
-            $status = 'Current';
+        // Add endInterval to March 25 (join date month above) to get end of New status period
+        $endNewStatus = date('Y-m-d', mktime( 0, 0, 0, $endInterval+3, 25, $currentYear ) ); 
+        
+        $status = 'Current';
+        // status will be 'New' if today is >= join date and <= endNewStatus date
+        if ( ( strtotime( $todayDate ) >= strtotime( $joinDate ) ) && ( strtotime( $todayDate ) <= strtotime( $endNewStatus ) ) ) {
+            $status = 'New';
         }
         
         // fill in Join Date
@@ -195,8 +210,7 @@ SELECT end_event_adjust_interval
     function testMembershipTypeScenario2( ) 
     {
         // Scenario 2
-        // Rollover Date < Start Date 
-        // Join Date < Start Date and Join Date < Rollover Date
+        // Rollover Date < Join Date 
 
 
         // This is the path where our testing install resides. 
@@ -286,7 +300,7 @@ SELECT end_event_adjust_interval
         $this->waitForTextPresent( "Membership Type {$title}" );
         $this->select( 'membership_type_id[1]', "label=Membership Type {$title}");
         
-        $sourceText = "Membership ContactAddTest with Fixed Membership Type";
+        $sourceText = "Membership ContactAddTest with Fixed Membership Type Scenario 2";
         // fill in Source
         $this->type( 'source', $sourceText );
         
@@ -297,9 +311,17 @@ SELECT end_event_adjust_interval
         $currentYear  = date( 'Y' );
         $currentMonth = date( 'm' );
         $previousYear = $currentYear - 1;
-        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 15, $currentYear ) ); 
+
+        $todayDate    = date('Y-m-d'); 
+
+        // the member-since date we will type in to membership form
+        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 7, 15, $currentYear ) );
+        
+        // expected calc'd start date 
         $startDate    = date('Y-m-d', mktime( 0, 0, 0, 9, 1,  $previousYear  ) );
-        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 8, 31, $currentYear + 1 ) );
+
+        // expected calc'd end date
+        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 8, 31, $currentYear + 2 ) );
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
@@ -310,11 +332,15 @@ SELECT end_event_adjust_interval
   FROM civicrm_membership_status 
  WHERE start_event = 'join_date'
    AND name = 'New'";
-        $endInterval  = CRM_Core_DAO::singleValueQuery( $query ) + 1;
+        $endInterval  = CRM_Core_DAO::singleValueQuery( $query );
         
-        $status = 'New';
-        if ( $currentMonth >= $endInterval ) {
-            $status = 'Current';
+        // Add endInterval to July 15 (join date month above) to get end of New status period
+        $endNewStatus = date('Y-m-d', mktime( 0, 0, 0, $endInterval+7, 15, $currentYear ) ); 
+        
+        $status = 'Current';
+        // status will be 'New' if today is >= join date and <= endNewStatus date
+        if ( ( strtotime( $todayDate ) >= strtotime( $joinDate ) ) && ( strtotime( $todayDate ) <= strtotime( $endNewStatus ) ) ) {
+            $status = 'New';
         }
         
         // fill in Join Date
@@ -349,8 +375,8 @@ SELECT end_event_adjust_interval
     function testMembershipTypeScenario3( )
     {
         // Scenario 3
-        // Start Date < Rollover Date 
-        // Join Date < Start Date and Join Date < Rollover Date
+        // Standard Fixed scenario - Jan 1 Fixed Period Start and October 31 rollover
+        // Join Date is later than Rollover Date 
 
 
         // This is the path where our testing install resides. 
@@ -388,14 +414,13 @@ SELECT end_event_adjust_interval
         
         $this->select( 'contribution_type_id', 'value=2' );
         
-        $this->type( 'duration_interval', 3 );
+        $this->type( 'duration_interval', 1 );
         $this->select( 'duration_unit', "label=year" );
         
         $this->select( 'period_type', "label=fixed" );
         $this->waitForElementPresent( 'fixed_period_rollover_day[d]' );
         
-        $this->select( 'fixed_period_start_day[M]', 'value=6' );
-        $this->select( 'fixed_period_rollover_day[M]', 'value=8' );
+        $this->select( 'fixed_period_rollover_day[M]', 'value=10' );
         $this->select( 'fixed_period_rollover_day[d]', 'value=31' );
         
         $this->click( 'relationship_type_id', 'value=4_b_a' );
@@ -441,7 +466,7 @@ SELECT end_event_adjust_interval
         $this->select( 'membership_type_id[1]', "label=Membership Type {$title}");
 
         
-        $sourceText = "Membership ContactAddTest with Fixed Membership Type";
+        $sourceText = "Membership ContactAddTest with Fixed Membership Type Scenario 3";
         // fill in Source
         $this->type( 'source', $sourceText );
 
@@ -452,10 +477,11 @@ SELECT end_event_adjust_interval
         $currentYear  = date( 'Y' );
         $currentMonth = date( 'm' );
         $previousYear = $currentYear - 1;
-        $nextYear     = $currentYear + 2;
-        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 5,  $currentYear ) ); 
-        $startDate    = date('Y-m-d', mktime( 0, 0, 0, 6, 1,  $previousYear  ) );
-        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 5, 31, $nextYear ) );
+        $nextYear     = $currentYear + 1;
+        $todayDate    = date('Y-m-d'); 
+        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 11, 15,  $currentYear ) ); 
+        $startDate    = date('Y-m-d', mktime( 0, 0, 0, 1, 1,  $currentYear  ) );
+        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 12, 31, $nextYear ) );
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
@@ -466,11 +492,15 @@ SELECT end_event_adjust_interval
   FROM civicrm_membership_status 
  WHERE start_event = 'join_date'
    AND name = 'New'";
-        $endInterval  = CRM_Core_DAO::singleValueQuery( $query ) + 1;
+        $endInterval  = CRM_Core_DAO::singleValueQuery( $query );
         
-        $status = 'New';
-        if ( $currentMonth >= $endInterval ) {
-            $status = 'Current';
+        // Add endInterval to Nov 15 (join date month above) to get end of New status period
+        $endNewStatus = date('Y-m-d', mktime( 0, 0, 0, $endInterval-1, 15, $nextYear ) ); 
+        
+        $status = 'Current';
+        // status will be 'New' if today is >= join date and <= endNewStatus date
+        if ( ( strtotime( $todayDate ) >= strtotime( $joinDate ) ) && ( strtotime( $todayDate ) <= strtotime( $endNewStatus ) ) ) {
+            $status = 'New';
         }
         
         // fill in Join Date
@@ -505,8 +535,8 @@ SELECT end_event_adjust_interval
     function testMembershipTypeScenario4( )
     {
         // Scenario 4
-        // Rollover Date < Start Date 
-        // Join Date > Start Date and Join Date > Rollover Date
+        // Standard Fixed scenario - Jan 1 Fixed Period Start and October 31 rollover
+        // Join Date is earlier than Rollover Date 
 
         
         // This is the path where our testing install resides. 
@@ -550,9 +580,9 @@ SELECT end_event_adjust_interval
         $this->select( 'period_type', "label=fixed" );
         $this->waitForElementPresent( 'fixed_period_rollover_day[d]' );
         
-        $this->select( 'fixed_period_start_day[M]', 'value=4' );
-        $this->select( 'fixed_period_rollover_day[M]', 'value=1' );
-        $this->select( 'fixed_period_rollover_day[d]', 'value=1' );
+        $this->select( 'fixed_period_start_day[M]', 'value=1' );
+        $this->select( 'fixed_period_rollover_day[M]', 'value=10' );
+        $this->select( 'fixed_period_rollover_day[d]', 'value=31' );
         
         $this->click( 'relationship_type_id', 'value=4_b_a' );
         
@@ -594,7 +624,7 @@ SELECT end_event_adjust_interval
         $this->select( 'membership_type_id[0]', "label=Organization $title" );
         $this->select( 'membership_type_id[1]', "label=Membership Type $title");
         
-        $sourceText = "Membership ContactAddTest with Fixed Membership Type";
+        $sourceText = "Membership ContactAddTest with Fixed Membership Type Scenario 4";
         // fill in Source
         $this->type( 'source', $sourceText );
         
@@ -605,9 +635,14 @@ SELECT end_event_adjust_interval
         $currentYear  = date( 'Y' );
         $currentMonth = date( 'm' );
         $nextYear     = $currentYear + 1;
-        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 4, 5, $currentYear ) ); 
-        $startDate    = date('Y-m-d', mktime( 0, 0, 0, 4, 1, $currentYear  ) );
-        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 3, 31, $nextYear ) );
+        $todayDate    = date('Y-m-d'); 
+
+        // the member-since date we will type in to membership form
+        $joinDate     = date('Y-m-d', mktime( 0, 0, 0, 1, 15, $currentYear ) ); 
+
+        // expected calc'd start and end dates
+        $startDate    = date('Y-m-d', mktime( 0, 0, 0, 1, 1, $currentYear  ) );
+        $endDate      = date('Y-m-d', mktime( 0, 0, 0, 12, 31, $currentYear ) );
         $configVars   = new CRM_Core_Config_Variables( );        
         foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $date ) {
             $$date = CRM_Utils_Date::customFormat( $$date, $configVars->dateformatFull ); 
@@ -618,11 +653,15 @@ SELECT end_event_adjust_interval
   FROM civicrm_membership_status 
  WHERE start_event = 'join_date'
    AND name = 'New'";
-        $endInterval  = CRM_Core_DAO::singleValueQuery( $query ) + 4;
+        $endInterval  = CRM_Core_DAO::singleValueQuery( $query );
         
-        $status = 'New';
-        if ( $currentMonth >= $endInterval ) {
-            $status = 'Current';
+        // Add endInterval to Jan 6 (join date month above) to get end of New status period
+        $endNewStatus = date('Y-m-d', mktime( 0, 0, 0, $endInterval+1, 15, $currentYear ) ); 
+
+        $status = 'Current';
+        // status will be 'New' if today is >= join date and <= endNewStatus date
+        if ( ( strtotime( $todayDate ) >= strtotime( $joinDate ) ) && ( strtotime( $todayDate ) <= strtotime( $endNewStatus ) ) ) {
+            $status = 'New';
         }
         
         // fill in Join Date
