@@ -18,7 +18,7 @@
       {foreach from=$event_in_cart->participants item=participant}
 	{include file="CRM/Event/Cart/Form/Checkout/Participant.tpl"}
       {/foreach}
-      <a class="link-add" href="#" onclick="add_participant({$event_in_cart->event_cart->id}, {$event_in_cart->event_id}); return false;">Add Another Participant</a>
+      <a class="link-add" href="#" onclick="add_participant({$event_in_cart->event_cart->id}, {$event_in_cart->event_id}); return false;">{ts}Add Another Participant{/ts}</a>
     </div>
     {if $event_in_cart->event->is_monetary }
       <div class="price_choices crm-section">
@@ -32,7 +32,7 @@
 	{/foreach}
       </div>
     {else}
-      <p>There is no charge for this event.</p>
+      <p>{ts}There is no charge for this event.{/ts}</p>
     {/if}
   </fieldset>
  {/if}
@@ -83,7 +83,7 @@ function delete_participant( event_id, participant_id )
 //XXX missing
 cj('#ajax_error').ajaxError(
   function( e, xrh, settings, exception ) {
-    cj(this).append('<div class="error">Error adding a participant at ' + settings.url + ': ' + exception);
+    cj(this).append('<div class="error">{/literal}{ts}Error adding a participant at{/ts}{literal} ' + settings.url + ': ' + exception);
   }
 );
 //]]>

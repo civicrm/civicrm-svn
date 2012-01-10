@@ -170,17 +170,22 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
     {
         $form = $participant->get_form();
         if (empty($participant->email)
-          //&& !CRM_Event_Cart_Form_Cart::is_administrator()
+          && !CRM_Event_Cart_Form_Cart::is_administrator()
           && ($participant->get_participant_index() == 1)
           && ($this->cid != 0))
         {
           require_once 'CRM/Contact/BAO/Contact.php';
-          $d = array( );
+          $defaults = array( );
           $params = array( 'id' => $this->cid );
-          $contact = CRM_Contact_BAO_Contact::retrieve( $params, $d );
+          $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
           $participant->contact_id = $this->cid;
           $participant->save();
           $participant->email = self::primary_email_from_contact( $contact );
+        } elseif ($this->cid == 0
+          && $participant->contact_id == self::getContactID())
+        {
+          $participant->email = null;
+          $participant->contact_id = self::find_or_create_contact(array());
         }
         $defaults += $form->setDefaultValues();
     }

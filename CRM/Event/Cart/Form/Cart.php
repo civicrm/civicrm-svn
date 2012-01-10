@@ -22,6 +22,12 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
     $locationTypes = CRM_Core_PseudoConstant::locationType( );
     $this->_bltID = array_search( 'Billing', $locationTypes);
     $this->assign('bltID', $this->_bltID);
+
+    $event_titles = array();
+    foreach ($this->cart->get_main_events_in_carts() as $event_in_cart)
+    {
+      $event_titles[] = $event_in_cart->event->title;
+    }
     if (!isset($this->discounts)) {
       $this->discounts = array();
     }

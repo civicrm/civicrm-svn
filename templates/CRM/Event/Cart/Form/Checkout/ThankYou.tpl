@@ -2,15 +2,15 @@
 
 <div class="crm-block crm-event-thankyou-form-block">
   <p>
-    {ts}This is your confirmation of registration for the following event(s).{/ts}
+    {ts 1=$site_name}This is your receipt of payment made for the following event registration made at %1.{/ts}
   </p>
   <p>
-    {ts 1=$transaction->trxn_date|crmDate}Your order number is <strong>#{$trxn_id}</strong>. Please print this confirmation for your records. You will also receieve a confirmation email with the information below.  Event registration information will be sent separately to each participant. Here's a summary of your transaction placed on %1{/ts}:
+    {ts 1=$transaction->trxn_id 2=$transaction->trxn_date|date_format:"%D %I:%M %p %Z"}Your order number is <strong>#%1</strong>. Please print this confirmation for your records. You will receieve a confirmation email with the information below.  Information about the workshops will be sent separately to each participant. Here's a summary of your transaction placed on %2:{/ts}
   </p>
   {if $payment_required}
     <div class="crm-group billing_name_address-group">
       <div class="header-dark">
-	    {ts}Billing Name and Address{/ts}
+	{ts}Billing Name and Address{/ts}
       </div>
       <div class="crm-section no-label billing_name-section">
 		<div class="content">{$billing_name}</div>
@@ -24,18 +24,20 @@
 		<div class="clear"></div>
       </div>
     </div>
-    <div class="crm-group credit_card-group">
-      <div class="header-dark">
-		{ts}Credit Card Information{/ts}
+    {if !$is_pay_later}
+      <div class="crm-group credit_card-group">
+        <div class="header-dark">
+                  {ts}Credit Card Information{/ts}
+        </div>
+        <div class="crm-section no-label credit_card_details-section">
+                  <div class="content">{$credit_card_type}</div>
+                  <div class="content">{$credit_card_number}</div>
+                  <div class="content">{ts}Expires{/ts}: {$credit_card_exp_date.M}/{$credit_card_exp_date.Y}
+                    <div class="clear"></div>
+                  </div>
+        </div>
       </div>
-      <div class="crm-section no-label credit_card_details-section">
-		<div class="content">{$credit_card_type}</div>
-		<div class="content">{$credit_card_number}</div>
-		<div class="content">{ts}Expires{/ts}: {$credit_card_exp_date.M}/{$credit_card_exp_date.Y}
-		  <div class="clear"></div>
-		</div>
-      </div>
-    </div>
+    {/if}
   {/if}
   <table>
     <thead>
@@ -93,7 +95,7 @@
 			</div>
 		  {/if}
 		  {if $line_item.num_waiting_participants > 0}
-			{ts}Waitlisted{/ts}:<br/>
+			{ts}Waitlisted:{/ts}<br/>
 			<div class="participants" style="padding-left: 10px;">
 			  {foreach from=$line_item.waiting_participants item=participant}
 			    {$participant.display_name}<br />
@@ -153,4 +155,5 @@
       </tr>
     </tfoot>
   </table>
+  <p>{ts 1=$site_contact}If you have questions about the status of your registration or purchase please contact us at %1.{/ts}</p>
 </div>
