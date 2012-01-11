@@ -57,7 +57,15 @@ class civicrm_Cli {
 
     public function callApi( ) {
         require_once 'api/api.php';
-        $result = civicrm_api($this->_entity, $this->_action, $this->_params);
+        if( strtolower($this->_entity) == 'job' ) {
+            if( ! $this->_user ) {
+              $this->_log( ts("Jobs called from cli.php require valid user and password as parameter", array('1' => $this->_user )));
+              return false;
+            }        
+            $result = civicrm_api($this->_entity, $this->_action, $this->_params);
+        } else {
+            $result = civicrm_api($this->_entity, $this->_action, $this->_params);
+        }
         if($result['is_error'] != 0) {
             $this->_log( $result['error_message'] );
             return false;
