@@ -57,15 +57,9 @@ class civicrm_Cli {
 
     public function callApi( ) {
         require_once 'api/api.php';
-        if( strtolower($this->_entity) == 'job' ) {
-            if( ! $this->_user ) {
-              $this->_log( ts("Jobs called from cli.php require valid user and password as parameter", array('1' => $this->_user )));
-              return false;
-            }        
-            $result = civicrm_api($this->_entity, $this->_action, $this->_params);
-        } else {
-            $result = civicrm_api($this->_entity, $this->_action, $this->_params);
-        }
+
+        $result = civicrm_api($this->_entity, $this->_action, $this->_params);
+
         if($result['is_error'] != 0) {
             $this->_log( $result['error_message'] );
             return false;
@@ -111,6 +105,8 @@ class civicrm_Cli {
           $this->_site = $value;
         } elseif ($arg == '-u' || $arg == '--user') {
           $this->_user = $value;
+        } elseif ($arg == '-p' || $arg == '--password') {
+          $this->_password = $value;          
         } elseif ($arg == '-o' || $arg == '--output') {
           $this->_output = true;
         } else {
@@ -139,12 +135,22 @@ class civicrm_Cli {
         require_once ('CRM/Core/Config.php');
         $this->_config = CRM_Core_Config::singleton( );
 
+        require_once ('CRM/Utils/System.php' );
         $class = 'CRM_Utils_System_' . $this->_config->userFramework;
+
         $cms = new $class();
-//        if( !$cms->loadBootstrap( array(), false, false )) {
-//            $this->_log( ts("Failed to bootstrap CMS"));
-//            return false;
-//        }
+        if( !CRM_Utils_System::loadBootstrap( array(), false, false )) {
+            $this->_log( ts("Failed to bootstrap CMS"));
+            return false;
+        }
+
+        if( strtolower($this->_entity) == 'job' ) {
+            if( ! $cms->authenticate( $this->_user, $this->_password ) ) {
+              $this->_log( ts("Jobs called from cli.php require valid user and password as parameter", array('1' => $this->_user )));
+              return false;
+            }        
+        } 
+
         if(!empty($this->_user)) {
           if( !$cms->loadUser( $this->_user ) ) {
             $this->_log( ts("Failed to login as %1", array('1' => $this->_user )));
