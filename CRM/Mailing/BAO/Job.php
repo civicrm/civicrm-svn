@@ -290,7 +290,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
        require_once 'CRM/Core/Lock.php';
 
-       // For reach of the "Parent Jobs" we find, we split them into 
+       // For each of the "Parent Jobs" we find, we split them into 
        // X Number of child jobs
        while ($job->fetch()) {
            // still use job level lock for each child job
