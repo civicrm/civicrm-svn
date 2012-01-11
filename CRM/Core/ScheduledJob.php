@@ -39,6 +39,7 @@
 class CRM_Core_ScheduledJob
 {
 
+    var $version = 3;
 
     var $name = null;
 
