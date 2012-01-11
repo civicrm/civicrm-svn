@@ -32,7 +32,7 @@
 {/if}
 
 <div class="action-link">
-  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList" class="button"><span><div class="icon add-icon"></div>{ts}Back to jobs list{/ts}</span></a>
+  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList-top" class="button"><span><div class="icon back-icon"></div>{ts}Back to Scheduled Jobs Listing{/ts}</span></a>
 </div>
 
 {if $rows}
@@ -53,7 +53,7 @@
             <td class="crm-joblog-details">
                 <div class="crm-joblog-command">{$row.command}</div>
                 {if $row.description}<div class="crm-joblog-description"><pre>{$row.description}</pre></div>{/if}
-	        {if $row.data}<div class="crm-joblog-data"><pre>{$row.data}</pre></div>{/if}
+	            {if $row.data}<div class="crm-joblog-data"><pre>{$row.data}</pre></div>{/if}
             </td>
         </tr>
         {/foreach}
@@ -63,9 +63,9 @@
 </div>
 {elseif $action ne 1}
     <div class="messages status">
-      <div class="icon inform-icon"></div>
+      <div class="icon inform-icon"></div>&nbsp;
       {if $jobId}
-          {ts}This scheduled job does have any log entries.{/ts}
+        {ts}This scheduled job does not have any log entries.{/ts}
       {else}
         {ts}There are no scheduled job log entries.{/ts}
       {/if}
@@ -73,5 +73,5 @@
 {/if}
 
 <div class="action-link">
-  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList" class="button"><span><div class="icon add-icon"></div>{ts}Back to jobs list{/ts}</span></a>
+  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList-bottom" class="button"><span><div class="icon back-icon"></div>{ts}Back to Scheduled Jobs Listing{/ts}</span></a>
 </div>

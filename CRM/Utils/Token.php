@@ -907,6 +907,7 @@ class CRM_Utils_Token
         }
 
         $params = array( );
+        require_once 'CRM/Core/Form.php';
         foreach ( $contactIDs  as $key => $contactID ) {
             $params[] = array( CRM_Core_Form::CB_PREFIX . $contactID,
                                '=', 1, 0, 0);

@@ -901,7 +901,7 @@ Group By  componentId";
     {
         $contactType = $params['ct'];
         $greeting = $params['gt'];
-        $valueID = $id = $params['id'];        
+        $valueID = $id = CRM_Utils_Array::value( 'id', $params);        
         
         // if valueID is not passed use default value 
         if ( !$valueID ) {
@@ -920,7 +920,7 @@ Group By  componentId";
         $allGreetings   = CRM_Core_PseudoConstant::greeting( $filter );            
         $originalGreetingString = $greetingString = CRM_Utils_Array::value( $valueID, $allGreetings );
         if ( !$greetingString ) {
-            CRM_Core_Error::fatal( ts('Incorrect greeting value id %1.', array( 1 => $valueID ) ) );
+            CRM_Core_Error::fatal( ts('Incorrect greeting value id %1, or no default greeting for this contact type and greeting type.', array( 1 => $valueID ) ) );
         }
         
         // build return properties based on tokens

@@ -175,7 +175,7 @@ function civicrm_api3_job_update_greeting( $params )
 {
     require_once 'CRM/Contact/BAO/Contact/Utils.php';
     
-    civicrm_api3_verify_mandatory($params,null,array('ct', 'gt', 'id'));
+    civicrm_api3_verify_mandatory($params,null,array('ct', 'gt'));
 
     // FIXME: verify_type along the lines of: $id = CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
  
@@ -191,10 +191,6 @@ function civicrm_api3_job_update_greeting( $params )
         return civicrm_api3_create_error( ts('Invalid greeting type (gt) parameter value') );
     }
 
-    if (  in_array( $params['gt'], array( 'email_greeting', 'postal_greeting' ) ) && $params['ct'] == 'Organization' ) {
-        return civicrm_api3_create_error( ts('You cannot use %1 for contact type %2.', array( 1 => $params['gt'], 2 => $params['ct']) ) );
-    }
-            
     $result = CRM_Contact_BAO_Contact_Utils::updateGreeting( $params );
     
     if ( $result['is_error'] == 0 ) {
