@@ -650,14 +650,17 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $this->assertAPISuccess($result, 'in line ' .__LINE__ );
         $this->assertEquals( $result['count'], 1,'in line ' .__LINE__ );
         $params = array( 'contact_id_a' => $this->_cId_a ,
-                          'version'     => $this->_apiversion);      
+                          'version'     => $this->_apiversion); 
+        $result = civicrm_api('relationship','get',$params );     
         $this->assertAPISuccess($result, 'in line ' .__LINE__ );
         $this->assertEquals( $result['count'], 1,'in line ' .__LINE__ );
         // contact_id_a is wrong so should be no matches
         $params = array( 'contact_id_a' => $this->_cId_b ,
-                          'version'     => $this->_apiversion);      
+                          'version'     => $this->_apiversion);  
+        $result = civicrm_api('relationship','get',$params );    
         $this->assertAPISuccess($result, 'in line ' .__LINE__ );
         $this->assertEquals( $result['count'], 0,'in line ' .__LINE__ );
+     
         
     }
     /**
