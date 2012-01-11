@@ -134,7 +134,6 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
         
-        //$this->_testOnlineMembershipSignup( $pageId, $memTypeId1, $firstName, $lastName );
         $this->_testOnlineMembershipSignup( $pageId, $memTypeId1, $firstName, $lastName, $payLater );
         //login to check membership
         $this->open( $this->sboxPath );
@@ -193,7 +192,6 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
         
-        //$this->_testOnlineMembershipSignup( $pageId, $memTypeId2, $firstName, $lastName );
         $this->_testOnlineMembershipSignup( $pageId, $memTypeId2, $firstName, $lastName, $payLater);
         //login to check membership
         $this->open( $this->sboxPath );
@@ -213,7 +211,6 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
     }  
     
-    //function _testOnlineMembershipSignup( $pageId, $memTypeId, $firstName, $lastName )
     function _testOnlineMembershipSignup( $pageId, $memTypeId, $firstName, $lastName, $payLater )
     {
         //Open Live Contribution Page
