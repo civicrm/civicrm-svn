@@ -1238,6 +1238,7 @@ WHERE  contribution_id = {$this->_id}
             // all the payment processors expect the name and address to be in the 
             // so we copy stuff over to first_name etc. 
             $paymentParams = $this->_params;
+            $paymentParams['contactID']           = $this->_contactID;
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
@@ -1284,7 +1285,6 @@ WHERE  contribution_id = {$this->_id}
                                                                                      false, 
                                                                                      true, 
                                                                                      false );
-                $paymentParams['contactID']           = $this->_contactID;
                 $paymentParams['contributionID'    ]  = $contribution->id;
                 $paymentParams['contributionTypeID']  = $contribution->contribution_type_id;
                 $paymentParams['contributionPageID']  = $contribution->contribution_page_id;

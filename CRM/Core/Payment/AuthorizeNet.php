@@ -315,7 +315,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         $fields['x_amount']         = $this->_getParam( 'amount' );
         $fields['x_currency_code']  = $this->_getParam( 'currencyID' );
         $fields['x_description']    = $this->_getParam( 'description' );
-
+        $fields['x_cust_id']        = $this->_getParam( 'contactID' );
         if ( $this->_getParam( 'paymentType' ) == 'AIM' ) {
             $fields['x_relay_response'] = 'FALSE';
             // request response in CSV format
