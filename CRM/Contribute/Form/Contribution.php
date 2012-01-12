@@ -1221,9 +1221,9 @@ WHERE  contribution_id = {$this->_id}
                 $this->_params['pcp_made_through_id'] = $params['pcp_made_through_id'];
             } 
             
-            $this->_params['pcp_display_in_roll'] = $params['pcp_display_in_roll'];
-            $this->_params['pcp_roll_nickname'] = $params['pcp_roll_nickname'];
-            $this->_params['pcp_personal_note'] = $params['pcp_personal_note'];
+            $this->_params['pcp_display_in_roll'] = CRM_Utils_Array::value('pcp_display_in_roll', $params);
+            $this->_params['pcp_roll_nickname'] = CRM_Utils_Array::value('pcp_roll_nickname', $params);
+            $this->_params['pcp_personal_note'] = CRM_Utils_Array::value('pcp_personal_note', $params);
             
             //Add common data to formatted params
             CRM_Contribute_Form_AdditionalInfo::postProcessCommon( $params, $this->_params );
