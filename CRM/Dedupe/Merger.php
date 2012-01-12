@@ -531,6 +531,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             if ($key1 != $key2) $diffs['custom'][] = $key;
         }
 
+        unset($main, $other, $mainEvs, $otherEvs);
         return $diffs;
     }
 
@@ -615,7 +616,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
                 // Generate var $migrationInfo. The variable structure is exactly same as 
                 // $formValues submitted during a UI merge for a pair of contacts.
-                $rowsElementsAndInfo = CRM_Dedupe_Merger::getRowsElementsAndInfo( $mainId, $otherId );
+                $rowsElementsAndInfo =& CRM_Dedupe_Merger::getRowsElementsAndInfo( $mainId, $otherId );
                 
                 $migrationInfo =& $rowsElementsAndInfo['migration_info'];
 
@@ -633,10 +634,13 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     $result['skipped'][] = array( 'main_d' => $mainId, 'other_id' => $otherId );
                 }
 
-                // in any case delete entry from PrevNextCache table so we don't consider the pair next time
+                // delete entry from PrevNextCache table so we don't consider the pair next time
+                // pair may have been flipped, so make sure we delete using both orders
                 CRM_Core_BAO_PrevNextCache::deletePair( $mainId, $otherId, $cacheKeyString );
+                CRM_Core_BAO_PrevNextCache::deletePair( $otherId, $mainId, $cacheKeyString );
 
                 CRM_Core_DAO::freeResult( );
+                unset($rowsElementsAndInfo, $migrationInfo);
             }
 
             if ( $cacheKeyString ) {
@@ -763,7 +767,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
      * @static void
      * @access public
      */ 
-    function getRowsElementsAndInfo( $mainId, $otherId )
+    function &getRowsElementsAndInfo( $mainId, $otherId )
     { 
         $qfZeroBug   = 'e8cddb72-a257-11dc-b9cc-0016d3330ee9';
         $mainParams  = array( 'contact_id' => $mainId,  'return.display_name' => 1, 'return.contact_sub_type' => 1 ); 
@@ -789,8 +793,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             return false;
         }
 
+        static $fields = array();
         require_once 'CRM/Contact/DAO/Contact.php';
-        $fields = CRM_Contact_DAO_Contact::fields();
+        if ( empty($fields) ) {
+            $fields = CRM_Contact_DAO_Contact::fields();
+            CRM_Core_DAO::freeResult( );
+        }
 
         // FIXME: there must be a better way
         foreach (array('main', 'other') as $moniker) {
@@ -802,12 +810,16 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                  'groupName' => 'preferred_communication_method'));
             CRM_Core_OptionGroup::lookupValues($specialValues[$moniker], $names);
         }
-        foreach ( CRM_Core_OptionValue::getFields() as $field => $params ) {
+
+        static $optionValueFields = array();
+        if ( empty($optionValueFields) ) {
+            $optionValueFields = CRM_Core_OptionValue::getFields();
+        }
+        foreach ( $optionValueFields as $field => $params ) {
             $fields[$field]['title'] = $params['title'];
         }
 
         $diffs = CRM_Dedupe_Merger::findDifferences($mainId, $otherId);
-
         if ( !isset($diffs['contact']) ) $diffs['contact'] = array();
         $rows = $elements = $relTableElements = $migrationInfo = array();
 
@@ -1023,6 +1035,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                                         CRM_Utils_Array::value('contact_sub_type', $main) );
         $otherTree = CRM_Core_BAO_CustomGroup::getTree( $main['contact_type'], CRM_Core_DAO::$_nullObject, $otherId, -1,
                                                         CRM_Utils_Array::value('contact_sub_type', $other) );
+        CRM_Core_DAO::freeResult( );
         if (!isset($diffs['custom'])) $diffs['custom'] = array();
 
         foreach ($otherTree as $gid => $group) {
@@ -1058,7 +1071,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 }
             }
         }
-
         $result = array( 'rows'               => $rows,
                          'elements'           => $elements,
                          'rel_table_elements' => $relTableElements,
@@ -1070,6 +1082,10 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         $result['main_details']['loc_block_ids']  = $locBlockIds['main'];
         $result['other_details']['loc_block_ids'] = $locBlockIds['other'];
+
+        // unset all vars to avoid any possible leaks
+        unset( $diffs, $contact, $mainTree, $otherTree, $rows, 
+               $elements, $relTableElements, $mainLocAddress, $relTables, $main, $other, $migrationInfo );
 
         return $result;
     }
@@ -1191,6 +1207,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         // **** Do tables related migrations
         if ( !empty( $moveTables ) ) {
             CRM_Dedupe_Merger::moveContactBelongings( $mainId, $otherId, $moveTables, $tableOperations );
+            unset( $moveTables, $tableOperations );
         }
         
         // **** Do contact related migrations
@@ -1206,9 +1223,14 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         CRM_Core_OptionGroup::lookupValues( $submitted, $names, true );
 
         // fix custom fields so they're edible by createProfileContact()
-        $cgTree = CRM_Core_BAO_CustomGroup::getTree( $migrationInfo['main_details']['contact_type'], 
-                                                     CRM_Core_DAO::$_nullObject, null, -1      );
-        
+        static $treeCache = array();
+        if ( !array_key_exists($migrationInfo['main_details']['contact_type'], $treeCache) ) {
+            $treeCache[$migrationInfo['main_details']['contact_type']] = 
+                CRM_Core_BAO_CustomGroup::getTree( $migrationInfo['main_details']['contact_type'], 
+                                                   CRM_Core_DAO::$_nullObject, null, -1      );
+        }
+        $cgTree =& $treeCache[$migrationInfo['main_details']['contact_type']];
+
         $cFields = array( );
         foreach ( $cgTree as $key => $group ) {
             if (!isset($group['fields'])) continue;
@@ -1373,6 +1395,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         if ( !empty( $submitted ) ) {
             $submitted['contact_id'] = $mainId;
             CRM_Contact_BAO_Contact::createProfileContact( $submitted, CRM_Core_DAO::$_nullArray, $mainId );
+            unset($submitted);
         }
 
         return true;
