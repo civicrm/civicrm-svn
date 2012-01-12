@@ -1,5 +1,24 @@
 <?php
 
+function civitest_civicrm_pre( $op, $objectName, $objectId, &$objectRef ) {
+    // Sample implementation of pre hook on line item row create. Available as of 4.1 beta3
+    if ( $objectName == 'LineItem' && $op == 'create' ) {        
+        //if text type field and quantity is greater than 5, let's apply a discount
+        if ( $objectRef['html_type'] == 'Text' &&
+             $objectRef['qty'] > 5 ) {
+
+            //5% discount
+            $discount = 1 - 0.05;
+
+            $objectRef['unit_price'] = $objectRef['unit_price'] * $discount;
+            $objectRef['line_total'] = $objectRef['line_total'] * $discount;
+            
+            //we would also need to update the total amount
+            //we know the table impacted with $objectRef['entity_table']
+            //and the contrib/event id with $objectRef['entity_id']
+        }
+    }
+}
 
 function civitest_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
     // only interested in the profile object and create operation for now
