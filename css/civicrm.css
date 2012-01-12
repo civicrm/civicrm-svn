@@ -2900,6 +2900,9 @@ table.crm-info-panel .label  {
     #mainTabContainer li.disabled a:link {
         color: #999999 !important;
     }
+    #crm-container tr.crm-job{
+        text-decoration: none !important;
+    }
 
 #crm-container table.selector td {
     border-right:1px dotted #DDDDDD;

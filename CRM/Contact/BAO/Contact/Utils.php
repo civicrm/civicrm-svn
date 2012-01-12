@@ -901,7 +901,8 @@ Group By  componentId";
     {
         $contactType = $params['ct'];
         $greeting = $params['gt'];
-        $valueID = $id = CRM_Utils_Array::value( 'id', $params);        
+        $valueID = $id = CRM_Utils_Array::value( 'id', $params );
+        $force =         CRM_Utils_Array::value( 'force', $params );      
         
         // if valueID is not passed use default value 
         if ( !$valueID ) {
@@ -932,10 +933,9 @@ Group By  componentId";
             $greetingsReturnProperties = array_fill_keys( array_values( $tokens ), 1 );
         }
         
-        //process all contacts only when force pass. 
-        $force = CRM_Utils_Request::retrieve( 'force', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+        // Process ALL contacts only when force=1 or force=2 is passed. Else only contacts with NULL greeting or addressee value are updated.
         $processAll = $processOnlyIdSet = false;
-        if ( in_array( $force, array( 1, 'true' ) ) ) {
+        if ( $force == 1 ) {
             $processAll = true;
         } elseif ( $force == 2 ) {
             $processOnlyIdSet = true;
