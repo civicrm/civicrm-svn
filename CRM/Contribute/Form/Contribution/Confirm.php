@@ -1329,11 +1329,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
      */
     function createHonorContact(  ) {
         $params = $this->controller->exportValues( 'Main' );
-       
+        
         // return if we dont have enough information
-        if ( empty( $params['honor_first_name'] ) &&
-             empty( $params['honor_last_name' ] ) &&
-             empty( $params['honor_email'] ) ) {
+        if ( CRM_Utils_Array::value( 'honor_first_name', $params ) &&
+             CRM_Utils_Array::value( 'honor_last_name', $params ) &&
+             CRM_Utils_Array::value( 'honor_email', $params ) ) {
             return null;
         }
         
@@ -1347,10 +1347,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $prefix = CRM_Core_PseudoConstant::individualPrefix();
         $honorType = CRM_Core_PseudoConstant::honor( );
         $this->assign('honor_type',       $honorType[$params['honor_type_id']]);
-        $this->assign('honor_prefix',     $prefix[$params['honor_prefix_id']]);
-        $this->assign('honor_first_name', $params['honor_first_name']);
-        $this->assign('honor_last_name',  $params['honor_last_name']);
-        $this->assign('honor_email',      $params['honor_email']);
+        $this->assign('honor_prefix',     $prefix[CRM_Utils_Array::value( 'honor_prefix_id', $params )]);
+        $this->assign('honor_first_name', CRM_Utils_Array::value( 'honor_first_name', $params ));
+        $this->assign('honor_last_name',  CRM_Utils_Array::value( 'honor_last_name', $params ));
+        $this->assign('honor_email',      CRM_Utils_Array::value( 'honor_email', $params ));
         
         //create honoree contact
         require_once 'CRM/Contribute/BAO/Contribution.php';
