@@ -92,7 +92,7 @@ function civicrm_api3_job_geocode( $params )
     $result = $gc->run();
 
     if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
+        return civicrm_api3_create_success( $result['messages'] );
     } else {
         return civicrm_api3_create_error( $result['messages'] );
     }
