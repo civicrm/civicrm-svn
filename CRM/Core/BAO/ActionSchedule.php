@@ -634,6 +634,14 @@ INNER JOIN civicrm_option_group og ON og.name = 'event_type'
 INNER JOIN civicrm_option_value ov ON ev.event_type_id = ov.value AND ov.option_group_id = og.id";
             }
 
+            if ( $mapping->entity == 'civicrm_membership' ) {
+                $tokenEntity = 'membership';
+                $tokenFields = array( 'fee', 'membership_id', 'join_date', 'start_date', 'end_date', 'status', 'type' );
+                $extraSelect = ", mt.minimum_fee as fee, e.id as membership_id , e.join_date, e.start_date, e.end_date, ms.name as status, mt.name as type"; 
+                $extraJoin   = "                                                                                                                                                 INNER JOIN civicrm_membership_type mt ON e.membership_type_id = mt.id
+ INNER JOIN civicrm_membership_status ms ON e.status_id = ms.id";
+            }
+
             $query = "
 SELECT reminder.id as reminderID, reminder.*, e.id as entityID, e.* {$extraSelect} 
 FROM  civicrm_action_log reminder
@@ -641,6 +649,7 @@ INNER JOIN {$mapping->entity} e ON e.id = reminder.entity_id
 {$extraJoin}
 WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
 {$extraWhere}";
+
             $dao   = CRM_Core_DAO::executeQuery( $query,
                                                  array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
             
@@ -716,8 +725,9 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
             $status = implode( ',', $status );
         
             require_once 'CRM/Core/OptionGroup.php';
-            $recipientOptions = CRM_Core_OptionGroup::values( $mapping->entity_recipient );
-
+            if (!CRM_Utils_System::isNull($mapping->entity_recipient)) {
+                $recipientOptions = CRM_Core_OptionGroup::values( $mapping->entity_recipient );
+            }
             $from = "{$mapping->entity} e";
 
             if ( $mapping->entity == 'civicrm_activity' ) {
@@ -777,6 +787,17 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                 
                 $dateField = str_replace('event_', 'r.', $actionSchedule->start_action_date);
             }
+
+            if ( $mapping->entity == 'civicrm_membership' ) {
+                $contactField = "e.contact_id";
+                
+                // build where clause
+                if ( !empty($status) ) {
+                    $where[]  = "e.status_id IN ({$status})";
+                }
+
+                $dateField = str_replace('membership_', 'e.', $actionSchedule->start_action_date);
+            }
             
             if ( $actionSchedule->group_id ) {
                 $join[]  = "INNER JOIN civicrm_group_contact grp ON {$contactField} = grp.contact_id AND grp.status = 'Added'";
@@ -822,6 +843,7 @@ INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_sche
 {$joinClause}
 LEFT JOIN {$reminderJoinClause}
 {$whereClause} AND {$startEventClause}";
+            
             CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
 
             // if repeat is turned ON:
@@ -871,10 +893,8 @@ WHERE  action_date_time IS NULL AND action_schedule_id = %1";
         $now = $now ? CRM_Utils_Time::setTime( $now ) : CRM_Utils_Time::getTime( );
 
         $mappings = self::getMapping( );
-
         foreach ( $mappings as $mappingID => $mapping ) {
             self::buildRecipientContacts( $mappingID, $now );
-
             self::sendMailings( $mappingID, $now );
         }
 
