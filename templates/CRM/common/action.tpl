@@ -28,6 +28,9 @@
 cj('#crm-container')
     .live('click', function(event) {
         if (cj(event.target).is('.btn-slide')) {
+            var currentActive = cj('#crm-container .btn-slide-active');
+            currentActive.children().hide();
+            currentActive.removeClass('btn-slide-active');
             cj(event.target).children().show();
             cj(event.target).addClass('btn-slide-active');
         } else {
