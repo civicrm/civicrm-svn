@@ -63,14 +63,8 @@
   {/if} 
 </tr>
 <tr>
-   <td>
-          {$form.activity_date_low.label}<br/>
-	  {include file="CRM/common/jcalendar.tpl" elementName=activity_date_low} 
-   </td>
-   <td>
-   	  {$form.activity_date_high.label}<br/>
-	  {include file="CRM/common/jcalendar.tpl" elementName=activity_date_high}
-   </td>
+        <tr><td><label>{ts}Activity Dates{/ts}</label></td></tr>
+	{include file="CRM/Core/DateRange.tpl" fieldName="activity_date" from='_low' to='_high'} 
 </tr>
 <tr>
    <td>

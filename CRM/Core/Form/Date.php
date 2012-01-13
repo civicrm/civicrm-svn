@@ -87,7 +87,7 @@ Class CRM_Core_Form_Date
      * @static
      * @access public
      */
-    static function buildDateRange( &$form, $fieldName, $count = 1, $required = false, $addReportFilters = true ) {
+    static function buildDateRange( &$form, $fieldName, $count = 1, $from = '_from', $to = '_to', $fromLabel = 'From:', $required = false, $addReportFilters = true ) {
         $selector = array (ts('Choose Date Range'),
                            'this.year'        => ts('This Year'),
                            'this.fiscal_year' => ts('This Fiscal Year'),
@@ -151,7 +151,7 @@ Class CRM_Core_Form_Date
                    $required,
                    array('onclick' => "showAbsoluteRange(this.value, '{$fieldName}_relative');"));
         
-        $form->addDateRange($fieldName);
+        $form->addDateRange($fieldName, $from, $to, $fromLabel);
     }
 
 }

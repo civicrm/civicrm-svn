@@ -403,14 +403,12 @@ class CRM_Member_BAO_Query
 
         $form->addElement( 'text', 'member_source', ts( 'Source' ) );
  
-        $form->addDate( 'member_join_date_low', ts('Member Since - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'member_join_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
-
-        $form->addDate( 'member_start_date_low', ts('Start Date - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'member_start_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
-
-        $form->addDate( 'member_end_date_low', ts('End Date - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'member_end_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
+        require_once 'CRM/Core/Form/Date.php';
+        CRM_Core_Form_Date::buildDateRange( $form, 'member_join_date', 1, '_low', '_high', ts('From'),  false, false );
+                
+        CRM_Core_Form_Date::buildDateRange( $form, 'member_start_date', 1, '_low', '_high', ts('From'),  false, false );
+        
+        CRM_Core_Form_Date::buildDateRange( $form, 'member_end_date', 1, '_low', '_high', ts('From'),  false, false );
 
         $form->addElement( 'checkbox', 'member_test' , ts( 'Find Test Memberships?' ) );
         $form->addElement( 'checkbox', 'member_pay_later', ts( 'Find Pay Later Memberships?' ) );

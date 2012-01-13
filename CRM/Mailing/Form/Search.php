@@ -46,8 +46,8 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
         $this->add( 'text', 'mailing_name', ts( 'Mailing Name' ),
                     CRM_Core_DAO::getAttribute('CRM_Mailing_DAO_Mailing', 'title') );
                     
-        $this->addDate( 'mailing_from', ts('From'), false, array( 'formatType' => 'searchDate') );
-        $this->addDate( 'mailing_to', ts('To'), false, array( 'formatType' => 'searchDate') );
+        require_once 'CRM/Core/Form/Date.php';
+        CRM_Core_Form_Date::buildDateRange( $this, 'mailing', 1, '_from', '_to', ts('From'),  false, false );
         
         $this->add( 'text', 'sort_name', ts( 'Created or Sent by' ), 
                     CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );
@@ -76,6 +76,9 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
 
     function postProcess( ) {
         $params = $this->controller->exportValues( $this->_name );
+
+        require_once "CRM/Contact/BAO/Query.php";
+        CRM_Contact_BAO_Query::fixDateValues( $params["mailing_relative"], $params['mailing_from'], $params['mailing_to'] );
         
         $parent = $this->controller->getParent( );
         if ( ! empty( $params ) ) {

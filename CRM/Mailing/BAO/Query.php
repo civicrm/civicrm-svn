@@ -199,9 +199,10 @@ class CRM_Mailing_BAO_Query
     static function buildSearchForm( &$form ) {
         // mailing selectors
         $form->addElement( 'text', 'mailing_name', ts('Mailing Name'), CRM_Core_DAO::getAttribute('CRM_Mailing_DAO_Mailing', 'name') );
-        $form->addDate( 'mailing_date_low', ts('Mailing Date - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'mailing_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
-
+        
+        require_once 'CRM/Core/Form/Date.php';
+        CRM_Core_Form_Date::buildDateRange( $form, 'mailing_date', 1, '_low', '_high', ts('From'),  false, false );
+                
         // event filters
         require_once('CRM/Mailing/PseudoConstant.php');
         $form->addRadio( 'mailing_delivery_status', ts('Delivery Status'), CRM_Mailing_PseudoConstant::yesNoOptions('bounce'));

@@ -1169,11 +1169,18 @@ class CRM_Contact_BAO_Query
         
         return $result;
     }
-
+    
+    static function fixDateValues( $relative, &$from, &$to )
+    { 
+        if ( $relative ){ 
+            require_once 'CRM/Utils/Date.php';
+            list($from, $to) = CRM_Utils_Date::getFromTo( $relative, $from, $to );
+        }
+    }
+    
     static function convertFormValues( &$formValues, $wildcard = 0, $useEquals = false ) 
     {
         $params = array( );
-
         if ( empty( $formValues ) ) {
             return $params;
         }
@@ -1192,7 +1199,21 @@ class CRM_Contact_BAO_Query
                 if ( $formValues['email_on_hold']['on_hold'] ){
                     $params[] = array( 'on_hold', '=', $formValues['email_on_hold']['on_hold'], 0, 0 );
                 }
-            } else {
+            } else if ( preg_match('/_date_relative$/', $id) || $id == 'event_relative' ) {
+                if ($id == 'event_relative') {
+                    $fromRange = 'event_start_date_low';
+                    $toRange = 'event_end_date_high';
+                } else {
+                    $dateComponent = explode( '_date_relative', $id );
+                    $fromRange = "{$dateComponent[0]}_date_low";
+                    $toRange = "{$dateComponent[0]}_date_high";
+                }
+                               
+              if ( array_key_exists( $fromRange, $formValues ) && array_key_exists( $toRange, $formValues ) ) {
+                  CRM_Contact_BAO_Query::fixDateValues( $formValues[$id], $formValues[$fromRange], $formValues[$toRange] );
+                  continue;
+              }
+             } else {
                 $values = CRM_Contact_BAO_Query::fixWhereValues( $id, $values, $wildcard, $useEquals );
                 
                 if ( ! $values ) {
@@ -3795,13 +3816,13 @@ civicrm_relationship.start_date > {$today}
         if ( $this->_displayRelationshipType ) {
             $this->filterRelatedContacts( $from, $where, $having );
         }
-
+         
         if ( $skipOrderAndLimit ) {
             $query = "$select $from $where $having $groupBy";
         } else {
             $query = "$select $from $where $having $groupBy $order $limit";
         }
-
+        
         // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
         // CRM_Core_Error::debug('this', $this );

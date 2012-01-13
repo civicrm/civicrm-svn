@@ -543,21 +543,16 @@ class CRM_Pledge_BAO_Query
     }
 
     static function buildSearchForm( &$form ) 
-    {
+    { 
+        require_once 'CRM/Core/Form/Date.php';
         // pledge related dates
-        $form->addDate( 'pledge_start_date_low', ts('Payments Start Date - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'pledge_start_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
-
-        $form->addDate( 'pledge_end_date_low', ts('Payments Ended Date - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'pledge_end_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
-
-        $form->addDate( 'pledge_create_date_low', ts('Pledge Made - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'pledge_create_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
-
+        CRM_Core_Form_Date::buildDateRange( $form, 'pledge_start_date', 1, '_low', '_high', ts('From'),  false, false );
+        CRM_Core_Form_Date::buildDateRange( $form, 'pledge_end_date', 1, '_low', '_high', ts('From'),  false, false );
+        CRM_Core_Form_Date::buildDateRange( $form, 'pledge_create_date', 1, '_low', '_high', ts('From'),  false, false );
+        
         // pledge payment related dates 
-        $form->addDate( 'pledge_payment_date_low', ts('Payment Scheduled - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'pledge_payment_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
-
+        CRM_Core_Form_Date::buildDateRange( $form, 'pledge_payment_date', 1, '_low', '_high', ts('From'),  false, false );
+                
         $form->addElement( 'checkbox', 'pledge_test' , ts( 'Find Test Pledges?' ) );
 
         require_once 'CRM/Utils/Money.php';

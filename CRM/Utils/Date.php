@@ -694,6 +694,31 @@ class CRM_Utils_Date
             return true;
         }
         return false;
+    }    
+    
+    /**
+     * Function to get start date and end from  
+     * the given relative term and unit
+     * 
+     * @param  date  $relative  eg: term.unit 
+     *
+     * @return array start date, end date
+     * @static
+     */
+    static function getFromTo( $relative, $from, $to )
+    {
+        if ( $relative ) {
+            list( $term, $unit ) = explode( '.', $relative );
+            $dateRange = self::relativeToAbsolute( $term, $unit );
+            $from = $dateRange['from'];
+            //Take only Date Part, Sometime Time part is also present in 'to'
+            $to   = substr($dateRange['to'], 0, 8);
+        }
+        
+        $from = self::processDate( $from );
+        $to   = self::processDate( $to, '235959' );
+        
+        return array($from, $to);
     }
     
     /**

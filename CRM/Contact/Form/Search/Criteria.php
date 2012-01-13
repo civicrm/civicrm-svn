@@ -380,8 +380,9 @@ class CRM_Contact_Form_Search_Criteria {
         $dates  = array( 1 => ts( 'Added' ), 2 => ts( 'Modified' ) );
         $form->addRadio( 'log_date', null, $dates, null, '<br />');
         
-        $form->addDate( 'log_date_low', ts('Between'),false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'log_date_high',ts('and'), false, array( 'formatType' => 'searchDate') );
+        require_once 'CRM/Core/Form/Date.php';
+        CRM_Core_Form_Date::buildDateRange( $form, 'log_date', 1, '_low', '_high', ts('From'),  false, false );
+
     }
     
     static function task( &$form ) {
@@ -448,12 +449,11 @@ class CRM_Contact_Form_Search_Criteria {
                                                                  array( 'id' => "civicrm_gender_{$var}_{$key}" ) );
         }
         $form->addGroup($genderOptions, 'gender', ts('Gender'));
-         
-        $form->addDate( 'birth_date_low', ts('Birth Dates - From'), false, array( 'formatType' => 'birth') );
-        $form->addDate( 'birth_date_high', ts('To'), false, array( 'formatType' => 'birth') );
+        
+        require_once 'CRM/Core/Form/Date.php';
+        CRM_Core_Form_Date::buildDateRange( $form, 'birth_date', 1, '_low', '_high', ts('From'),  false, false );
 
-        $form->addDate( 'deceased_date_low', ts('Deceased Dates - From'), false, array( 'formatType' => 'birth') );
-        $form->addDate( 'deceased_date_high', ts('To'), false, array( 'formatType' => 'birth') );
+        CRM_Core_Form_Date::buildDateRange( $form, 'deceased_date', 1, '_low', '_high', ts('From'),  false, false );
 
 		
 		// radio button for is_deceased

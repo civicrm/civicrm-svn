@@ -191,7 +191,7 @@
                     {if $field.operatorType & 4}
                         <tr class="report-contents crm-report crm-report-criteria-filter crm-report-criteria-filter-{$tableName}">
                             <td class="label report-contents">{$field.title}</td>
-                            {include file="CRM/Core/DateRange.tpl" fieldName=$fieldName}
+                            {include file="CRM/Core/DateRange.tpl" fieldName=$fieldName from='_from' to='_to'}
                         </tr>
                     {elseif $form.$fieldOp.html}
                         <tr class="report-contents crm-report crm-report-criteria-filter crm-report-criteria-filter-{$tableName}" {if $field.no_display} style="display: none;"{/if}>

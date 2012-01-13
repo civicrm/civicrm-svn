@@ -26,12 +26,8 @@
 <div id="demographics" class="form-item">
     <table class="form-layout">
        <tr>
-        <td>
-            {$form.birth_date_low.label|replace:'-':'<br />'}&nbsp;&nbsp; 
-	        {include file="CRM/common/jcalendar.tpl" elementName=birth_date_low}&nbsp;&nbsp;&nbsp;
-            {$form.birth_date_high.label}&nbsp;&nbsp;
-            {include file="CRM/common/jcalendar.tpl" elementName=birth_date_high}
-        </td>
+       	  <tr><td><label>{ts}Birth Dates{/ts}</label></td></tr>
+	  {include file="CRM/Core/DateRange.tpl" fieldName="birth_date" from='_low' to='_high'}
        </tr>
        <tr>
 	 <td>
@@ -41,12 +37,8 @@
          </td>
       </tr>
       <tr>
-        <td>
-           {$form.deceased_date_low.label|replace:'-':'<br />'}&nbsp;&nbsp;
-           {include file="CRM/common/jcalendar.tpl" elementName=deceased_date_low}&nbsp;&nbsp;&nbsp;
-           {$form.deceased_date_high.label}&nbsp;&nbsp;
-           {include file="CRM/common/jcalendar.tpl" elementName=deceased_date_high}
-        </td>    
+          <tr><td><label>{ts}Deceased Dates{/ts}</label></td></tr>
+	  {include file="CRM/Core/DateRange.tpl" fieldName="deceased_date" from='_low' to='_high'}
       </tr>
       <tr>
          <td>

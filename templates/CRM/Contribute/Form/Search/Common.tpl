@@ -23,12 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<tr>
-	<td>{$form.contribution_date_low.label} <br />
-	{include file="CRM/common/jcalendar.tpl" elementName=contribution_date_low}</td>
-
-	<td>{$form.contribution_date_high.label}<br />
-	{include file="CRM/common/jcalendar.tpl" elementName=contribution_date_high}</td>
+<tr>	
+	<tr><td><label>{ts}Contribution Dates{/ts}</label></td></tr>
+	{include file="CRM/Core/DateRange.tpl" fieldName="contribution_date" from='_low' to='_high'}
 </tr>
 <tr>
 	<td><label>{ts}Contribution Amounts{/ts}</label> <br />

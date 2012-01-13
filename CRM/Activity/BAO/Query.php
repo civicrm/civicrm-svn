@@ -496,8 +496,9 @@ class CRM_Activity_BAO_Query
         foreach ( $activityOptions as $activityID => $activity ) {
             $form->_activityElement =& $form->addElement( 'checkbox', "activity_type_id[$activityID]", null, $activity,array('onClick' => 'showCustomData( this.id );'));
         }
-        $form->addDate( 'activity_date_low', ts( 'Activity Dates - From' ), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'activity_date_high', ts( 'To' ), false, array( 'formatType' => 'searchDate') );
+             
+        require_once 'CRM/Core/Form/Date.php';
+        CRM_Core_Form_Date::buildDateRange( $form, 'activity_date', 1, '_low', '_high', ts('From'),  false, false );
         
         $activityRoles  = array( 1 => ts( 'Created by' ), 2 => ts( 'Assigned to' ) );
         $form->addRadio( 'activity_role', null, $activityRoles, null, '<br />');
