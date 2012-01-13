@@ -43,6 +43,7 @@ class CRM_Utils_Address_BatchUpdate
     var $end = null;
     var $geocoding = 1;
     var $parse = 1;
+    var $throttle = 0;
 
     var $returnMessages = array();
     var $returnError = 0;
