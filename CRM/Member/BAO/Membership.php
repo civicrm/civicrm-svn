@@ -2328,7 +2328,9 @@ WHERE      civicrm_membership.is_test = 0";
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
         
         $today = date( "Y-m-d" );
-        $count = 0;
+        $processCount = 0;
+        $updateCount = 0;
+        $reminderCount = 0;
 
         require_once 'CRM/Core/Smarty.php';
         $smarty = CRM_Core_Smarty::singleton();
@@ -2341,7 +2343,8 @@ WHERE      civicrm_membership.is_test = 0";
         $fromEmailAddress = $domainFromEmail;
         
         while ( $dao->fetch( ) ) {
-            echo ".";
+            // echo ".";
+            $processCount++;
             
             /**
             $count++;
@@ -2432,6 +2435,7 @@ WHERE      civicrm_membership.is_test = 0";
                     
                     //process member record.
                     civicrm_api( 'membership', 'create', $memParams );
+                    $updateCount++;
                 }
             }
             
@@ -2469,6 +2473,8 @@ WHERE      civicrm_membership.is_test = 0";
                             // we could not send an email, for now we ignore
                             // CRM-3406
                             // at some point we might decide to do something
+                        } else {
+                            $reminderCount++;
                         }
                         
                         //set membership reminder date to NULL since we've sent the reminder.
@@ -2524,6 +2530,10 @@ Message: {$msgTpl[$memType->renewal_msg_id]['details']}
             }
             // CRM_Core_Error::debug( 'fEnd', count( $GLOBALS['_DB_DATAOBJECT']['RESULTS'] ) );
         }
+        $result['is_error'] = 0;
+        $result['messages'] = ts('Processed %1 membership records. Updated %2 records. Sent %3 renewal reminders.', array( 1=> $processCount, 2 => $updateCount, 3 => $reminderCount ) );
+        return $result;        
+        
     }
     
     /** The function returns the membershiptypes for a particular contact

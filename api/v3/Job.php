@@ -319,7 +319,7 @@ function civicrm_api3_job_process_membership( $params )
     $result = CRM_Member_BAO_Membership::updateAllMembershipStatus( );
     
     if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
+        return civicrm_api3_create_success( $result['messages'] );
     } else {
         return civicrm_api3_create_error( $result['messages'] );
     }
