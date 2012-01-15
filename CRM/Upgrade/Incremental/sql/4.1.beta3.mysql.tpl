@@ -15,3 +15,10 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
     ( @domainID, 'civicrm/admin/job&reset=1', '{ts escape="sql" skip="true"}Scheduled Jobs{/ts}', 'Scheduled Jobs', 'administer CiviCRM', '', @systemSettingsID, '1', NULL, 15 );
+
+-- CRM-9468
+-- update Serbia/Montenegro provinces
+UPDATE civicrm_state_province SET country_id = 1243 WHERE id = 5112;
+UPDATE civicrm_state_province SET country_id = 1242 WHERE id = 5113;
+UPDATE civicrm_state_province SET country_id = 1242 WHERE id = 5114;
+UPDATE civicrm_state_province SET country_id = 1242 WHERE id = 5115;
