@@ -369,7 +369,9 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
      */
     function getTotalCount($action)
     {
-        return $this->_query->searchQuery( 0, 0, null, true , null, null, null, null);
+        $additionalWhereClause = 'contact_a.is_deleted = 0';
+        return $this->_query->searchQuery( 0, 0, null, true , null, null, null, 
+                                           null, $additionalWhereClause);
     }
 
     /**
@@ -424,7 +426,9 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
        
         $sort->_vars = $varArray;
 
-        $result = $this->_query->searchQuery( $offset, $rowCount, $sort ,null , null, null, null, null);
+        $additionalWhereClause = 'contact_a.is_deleted = 0';
+        $result = $this->_query->searchQuery( $offset, $rowCount, $sort ,null , null, 
+                                              null, null, null, $additionalWhereClause);
         // process the result of the query
         $rows = array( );
 
