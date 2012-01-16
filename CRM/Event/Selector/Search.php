@@ -430,7 +430,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
         if ( ! isset( self::$_columnHeaders ) ) {
             self::$_columnHeaders = array(
                                           array('name'      => ts('Event'),
-                                                'sort'      => 'title',
+                                                'sort'      => 'event_title',
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array(
