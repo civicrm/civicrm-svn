@@ -109,7 +109,7 @@ class CRM_Friend_Form extends CRM_Core_Form
    SELECT  pcp.title, 
            contrib.campaign_id
      FROM  civicrm_pcp pcp
-LEFT JOIN  civicrm_contribution_page contrib ON ( pcp.contribution_page_id = contrib.id )  
+LEFT JOIN  civicrm_contribution_page contrib ON ( pcp.page_id = contrib.id )  
     WHERE  pcp.id = %1';
             $pcp = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $this->_entityId, 'Positive' ) ) );
             while ( $pcp->fetch( ) ) {
@@ -190,8 +190,7 @@ LEFT JOIN  civicrm_contribution_page contrib ON ( pcp.contribution_page_id = con
                               true );
         $email->freeze( );
 
-        $this->add('textarea', 'suggested_message', ts('Your Message'), CRM_Core_DAO::getAttribute('CRM_Friend_DAO_Friend', 'suggested_message'), true);
-        
+       $this->addWysiwyg('suggested_message', ts('Your Message'), CRM_Core_DAO::getAttribute('CRM_Friend_DAO_Friend', 'suggested_message'));
         $friend = array();
         $mailLimit = self::NUM_OPTION;
         if ( $this->_entityTable == 'civicrm_pcp' ) {
