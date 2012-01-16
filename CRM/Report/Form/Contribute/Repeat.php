@@ -158,14 +158,17 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
                                 array( 'title'   => ts( 'Range One Amount' ),
                                        'type'    => CRM_Utils_Type::T_INT,
                                        'operatorType' => CRM_Report_Form::OP_INT,
-                                       'name'    => 'receive_date',
-                                       'dbAlias' => 'contribution1_total_amount_sum' ),
+                                       'name'    => 'total_amount',
+                                       //'dbAlias' => 'contribution1_total_amount_sum' 
+                                       ),
                                 'total_amount2'  =>
                                 array( 'title'   => ts( 'Range Two Amount' ),
                                        'type'    => CRM_Utils_Type::T_INT,
                                        'operatorType' => CRM_Report_Form::OP_INT,
-                                       'name'    => 'receive_date',
-                                       'dbAlias' => 'contribution2_total_amount_sum' ),
+                                       'name'    => 'total_amount',
+                                       //'name'    => 'receive_date',
+                                       //'dbAlias' => 'contribution2_total_amount_sum' 
+                                       ),
                                 'percentage_change'  =>
                                 array( 'title'   => ts( 'Percentage Change' ),
                                        'type'    => CRM_Utils_Type::T_INT,
@@ -215,7 +218,7 @@ contribution2_total_amount_count, contribution2_total_amount_sum',
     }
 
     function select( ) {
-        $select = $uni = array( );
+        $select = array( );
         $append = null;
 
         // since contact fields not related to contribution type
@@ -231,23 +234,17 @@ SUM(contribution1_total_amount_sum)   as contribution1_total_amount_sum';
             $this->_columns['civicrm_contribution']['fields']['total_amount2']['clause'] = '
 SUM(contribution2_total_amount_count) as contribution2_total_amount_count,
 SUM(contribution2_total_amount_sum)   as contribution2_total_amount_sum';
+            $this->_columns['civicrm_contribution']['fields']['total_amount1']['clause'] = '';
+            $this->_columns['civicrm_contribution']['fields']['total_amount2']['clause'] = '';
         }
 
         foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('group_bys', $table) ) {
-                foreach ( $table['group_bys'] as $fieldName => $field ) {
-                    if ( CRM_Utils_Array::value( $fieldName, $this->_params['group_bys'] ) ) {
-                        $uni[]  = "{$field['dbAlias']}";
-                    }
-                }
-            }
-
             if ( array_key_exists('fields', $table) ) {
                 foreach ( $table['fields'] as $fieldName => $field ) {
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
                         if ( isset($field['clause']) ) {
-                            $select[] = $field['clause'];
+                            //$select[] = $field['clause'];
 
                             // FIXME: dirty hack for setting columnHeaders
                             $this->_columnHeaders["{$field['alias']}_{$field['name']}_sum"]['type']    =
@@ -273,11 +270,6 @@ SUM(contribution2_total_amount_sum)   as contribution2_total_amount_sum';
             }
         }
 
-        if ( count($uni) >= 1 ) {
-            $select[] = "CONCAT_WS('_', {$append}" . implode( ', ', $uni ) . ") AS uni";
-            $this->_columnHeaders["uni"] = array('no_display' => true);
-        }
-
         $this->_select = "SELECT " . implode( ', ', $select ) . " ";
     }
 
@@ -301,9 +293,9 @@ SUM(contribution2_total_amount_sum)   as contribution2_total_amount_sum';
             $this->_groupBy = "GROUP BY " . implode( ', ', $this->_groupBy );
 
             // Set default sort order
-            if(count($this->_params['group_bys']) == 1 && !empty($this->_params['group_bys']['id'])) {
-              $this->_groupBy .= ' ORDER BY contact_civireport.sort_name';
-            }
+/*             if(count($this->_params['group_bys']) == 1 && !empty($this->_params['group_bys']['id'])) { */
+/*               $this->_groupBy .= ' ORDER BY contact_civireport.sort_name'; */
+/*             } */
         }
     }
 
@@ -317,19 +309,32 @@ SUM(contribution2_total_amount_sum)   as contribution2_total_amount_sum';
                 $this->dateClause( $this->_columns['civicrm_contribution']['filters'][$fieldName]['dbAlias'],
                                    $relative, $from, $to );
         }
+        $contriParams1 = $contriParams2 = '';
+        foreach (array('contribution_status_id', 'contribution_type_id') as $field) {
+            if ( isset( $this->_params[$field . '_value'] ) ) {
+                $ingroup =  implode("," , $this->_params[$field . '_value']);
+                $IN = $this->_params[$field . '_op'] != 'in' ? 'NOT IN' : 'IN';
+                $contriParams1 .= $ingroup ? " AND contribution1.$field $IN ( $ingroup )" : '';
+                $contriParams2 .= $ingroup ? " AND contribution2.$field $IN ( $ingroup )" : '';
+            }
+        }
 
         list($fromTable, $fromAlias, $fromCol) = $this->groupBy( true );
         $from = "$fromTable $fromAlias";
 
         if ( $fromTable == 'civicrm_contact' ) {
             $contriCol  = "contact_id";
+            $dateClause = "(({$receive_date1}) OR ({$receive_date2})) $contriParams1 AND contribution1.is_test = 0";
+            $dateClause = str_replace( array('contribution1', 'contribution2'), 
+                                       $this->_aliases['civicrm_contribution'], $dateClause );
             $from .= "
 LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id
 LEFT JOIN civicrm_email   {$this->_aliases['civicrm_email']}
        ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND {$this->_aliases['civicrm_email']}.is_primary = 1
 LEFT JOIN civicrm_phone   {$this->_aliases['civicrm_phone']}
-       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1";
-
+       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1
+INNER JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
+       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$dateClause}";
         } else if ( $fromTable == 'civicrm_contribution_type' ) {
             $contriCol  = "contribution_type_id";
         } else if ( $fromTable == 'civicrm_contribution' ) {
@@ -342,41 +347,27 @@ INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']} ON {$this->_alia
             $contriCol = "contact_id";
         }
 
-        $contriParams1 = $contriParams2 = '';
-        foreach (array('contribution_status_id', 'contribution_type_id') as $field) {
-            if ( isset( $this->_params[$field . '_value'] ) ) {
-                $ingroup =  implode("," , $this->_params[$field . '_value']);
-                $IN = $this->_params[$field . '_op'] != 'in' ? 'NOT IN' : 'IN';
-                $contriParams1 .= $ingroup ? " AND contribution1.$field $IN ( $ingroup )" : '';
-                $contriParams2 .= $ingroup ? " AND contribution2.$field $IN ( $ingroup )" : '';
-            }
-        }
+        $this->_from = "FROM $from";
 
-        $this->_from = "
-FROM $from
+        $this->_contributionQuery1 = "
+SELECT contribution1.$contriCol,
+       sum( contribution1.total_amount ) AS contribution1_total_amount_sum,
+       count( * ) AS contribution1_total_amount_count
+FROM   civicrm_contribution contribution1
+WHERE  ( $receive_date1 ) $contriParams1 AND contribution1.is_test = 0
+GROUP BY contribution1.$contriCol";
 
-LEFT  JOIN (
-   SELECT contribution1.$contriCol,
-          sum( contribution1.total_amount ) AS contribution1_total_amount_sum,
-          count( * ) AS contribution1_total_amount_count
-   FROM   civicrm_contribution contribution1
-   WHERE  ( $receive_date1 ) $contriParams1 AND contribution1.is_test = 0
-   GROUP BY contribution1.$contriCol
-) contribution1 ON $fromAlias.$fromCol = contribution1.$contriCol
-
-LEFT  JOIN (
-   SELECT contribution2.$contriCol,
-          sum( contribution2.total_amount ) AS contribution2_total_amount_sum,
-          count( * ) AS contribution2_total_amount_count
-   FROM   civicrm_contribution contribution2
-   WHERE  ( $receive_date2 ) $contriParams2 AND contribution2.is_test = 0
-   GROUP BY contribution2.$contriCol
-) contribution2 ON $fromAlias.$fromCol = contribution2.$contriCol
-";
+        $this->_contributionQuery2 = "
+SELECT contribution2.$contriCol,
+       sum( contribution2.total_amount ) AS contribution2_total_amount_sum,
+       count( * ) AS contribution2_total_amount_count
+FROM   civicrm_contribution contribution2
+WHERE  ( $receive_date2 ) $contriParams2 AND contribution2.is_test = 0
+GROUP BY contribution2.$contriCol";
     }
 
     function where( ) {
-        $clauses = array('!(contribution1_total_amount_count IS NULL AND contribution2_total_amount_count IS NULL)');
+        $clauses = array();
 
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('filters', $table) ) {
@@ -407,7 +398,7 @@ LEFT  JOIN (
             unset($clauses['total_amount2']);
         }
 
-        $this->_where = "WHERE " . implode( ' AND ', $clauses );
+        $this->_where = !empty($clauses) ? ("WHERE " . implode( ' AND ', $clauses ))  : '';
     }
 
     function formRule ( $fields, $files, $self ) {
@@ -552,11 +543,42 @@ LEFT  JOIN (
 
         $sql  = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy} {$this->_limit}";
         $dao  = CRM_Core_DAO::executeQuery( $sql );
-        $rows = array( );
-
         while ( $dao->fetch( ) ) {
             foreach ( $this->_columnHeaders as $key => $value ) {
-                $rows[$dao->uni][$key] = $dao->$key;
+                if ( property_exists($dao, $key) && $dao->$key ) {
+                    $rows[$dao->contact_civireport_id][$key] = $dao->$key;
+                } else {
+                    $rows[$dao->contact_civireport_id][$key] = null;
+                }
+            }
+        }
+        if ( $this->_limit && ($this->_limit != '') ) {
+            $sql    = "SELECT FOUND_ROWS();";
+            $this->_rowsFound = CRM_Core_DAO::singleValueQuery( $sql );
+        }
+
+        $contactIds = array_keys( $rows );
+        $contactIds = implode( ",", $contactIds );
+
+        $sql =
+            str_replace('WHERE ', 'WHERE contribution1.contact_id IN (' . $contactIds . ') AND ', $this->_contributionQuery1);
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+        while ( $dao->fetch( ) ) {
+            foreach ( $this->_columnHeaders as $key => $value ) {
+                if ( property_exists($dao, $key) && $dao->$key ) {
+                    $rows[$dao->contact_id][$key] = $dao->$key;
+                }
+            }
+        }
+
+        $sql =
+            str_replace('WHERE ', 'WHERE contribution2.contact_id IN (' . $contactIds . ') AND ', $this->_contributionQuery2);
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+        while ( $dao->fetch( ) ) {
+            foreach ( $this->_columnHeaders as $key => $value ) {
+                if ( property_exists($dao, $key) && $dao->$key ) {
+                    $rows[$dao->contact_id][$key] = $dao->$key;
+                }
             }
         }
 
@@ -602,7 +624,21 @@ LEFT  JOIN (
         unset($this->_columnHeaders['contribution1_total_amount_count'],
               $this->_columnHeaders['contribution2_total_amount_count']);
 
-        $this->formatDisplay( $rows );
+        // take care of paging
+        if ( $this->_rowsFound ) {
+            $params = array( 'total'        => $this->_rowsFound,
+                             'rowCount'     => CRM_REPORT_FORM::ROW_COUNT_LIMIT,
+                             'status'       => ts( 'Records' ) . ' %%StatusMessage%%',
+                             'buttonBottom' => 'PagerBottomButton',
+                             'buttonTop'    => 'PagerTopButton',
+                             'pageID'       => $this->get( CRM_Utils_Pager::PAGE_ID ) );
+            require_once 'CRM/Utils/Pager.php';
+            $pager = new CRM_Utils_Pager( $params );
+            $this->assign_by_ref( 'pager', $pager );
+        }
+
+        // call formatDisplay with pager = false
+        $this->formatDisplay( $rows, false );
 
         // assign variables to templates
         $this->doTemplateAssignment( $rows );
