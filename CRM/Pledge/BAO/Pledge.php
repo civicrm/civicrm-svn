@@ -848,6 +848,7 @@ SELECT  pledge.contact_id              as contact_id,
         payment.scheduled_date         as scheduled_date,
         pledge.create_date             as create_date,
         payment.id                     as payment_id,
+        pledge.currency                as currency,
         pledge.contribution_page_id    as contribution_page_id,
         payment.reminder_count         as reminder_count,
         pledge.max_reminders           as max_reminders,
@@ -896,6 +897,7 @@ SELECT  pledge.contact_id              as contact_id,
                                                       'pledge_status'           => $dao->pledge_status,
                                                       'payment_status'          => $dao->payment_status,
                                                       'is_test'                 => $dao->is_test,
+                                                      'currency'                => $dao->currency,
                                                       'campaign_id'             => $dao->campaign_id
                                                       );
             
@@ -1005,7 +1007,7 @@ SELECT  pledge.contact_id              as contact_id,
                         $template->assign( 'scheduled_payment_date' , $details['scheduled_date'       ] );            
                         $template->assign( 'amount'                 , $details['amount'               ] );            
                         $template->assign( 'create_date'            , $details['create_date'          ] );   
-
+                        $template->assign( 'currency'               , $details['currency'             ] );
                         require_once 'CRM/Core/BAO/MessageTemplates.php';
                         list ($mailSent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
                             array(
