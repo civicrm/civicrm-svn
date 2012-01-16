@@ -115,12 +115,16 @@ AND     ( g.cache_date IS NULL OR
     static function store( &$groupID, &$values ) {
         $processed = false;
 
+        // sort the values so we put group IDs in front and hence optimize
+        // mysql storage (or so we think) CRM-9493
+        sort( $values );
+
         // to avoid long strings, lets do BULK_INSERT_COUNT values at a time
         while ( ! empty( $values ) ) {
             $processed = true;
             $input = array_splice( $values, 0, CRM_Core_DAO::BULK_INSERT_COUNT );
             $str   = implode( ',', $input );
-            $sql = "REPLACE INTO civicrm_group_contact_cache (group_id,contact_id) VALUES $str;";
+            $sql = "INSERT IGNORE INTO civicrm_group_contact_cache (group_id,contact_id) VALUES $str;";
             CRM_Core_DAO::executeQuery( $sql );
         }
 
