@@ -450,7 +450,12 @@ function civicrm_wp_main( ) {
     add_action( 'profile_update'  , 'civicrm_profile_update' );
 
     add_shortcode( 'civicrm', 'civicrm_shortcode_handler' );
-
+    
+    if ( civicrm_wp_shortcode_access( ) ){
+        add_action( 'wp_print_styles' , 'civicrm_wp_styles' );
+        add_action( 'wp_print_scripts', 'civicrm_wp_scripts' );
+    }
+    
     if ( ! civicrm_wp_in_civicrm( ) ) {
         return;
     }
@@ -708,6 +713,18 @@ function civicrm_shortcode_handler( $atts ) {
 function civicrm_wp_in_civicrm( ) {
     return ( isset( $_GET['page'] ) &&
              $_GET['page'] == 'CiviCRM' ) ? true : false;
+}
+
+function civicrm_wp_shortcode_access( ){
+    if ( isset($_GET['p']) ) {
+        $currentPostId = $_GET['p'];
+    } elseif ( isset($_GET['page_id']) ) {
+        $currentPostId = $_GET['page_id'];
+    } else {
+        return false;
+    }
+    $currentPost = get_post( $currentPostId );
+    return preg_match( '/\[civicrm/', $currentPost->post_content );
 }
 
 function wp_get_breadcrumb( ) {
