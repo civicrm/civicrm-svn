@@ -65,6 +65,7 @@ function civicrm_api3_relationship_create( $params ) {
         }
 
         $ids = array( );
+        require_once 'CRM/Core/Action.php';
         $action = CRM_Core_Action::ADD;
         require_once 'CRM/Utils/Array.php';
 
