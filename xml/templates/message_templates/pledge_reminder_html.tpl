@@ -38,7 +38,7 @@
        {ts}Amount Due{/ts}
       </td>
       <td {$valueStyle}>
-       {$amount_due|crmMoney}
+       {$amount_due|crmMoney:$currency}
       </td>
      </tr>
     </table>
@@ -77,7 +77,7 @@
        {ts}Total Pledge Amount{/ts}
       </td>
       <td {$valueStyle}>
-       {$amount|crmMoney}
+       {$amount|crmMoney:$currency}
       </td>
      </tr>
      <tr>
@@ -85,7 +85,7 @@
        {ts}Total Paid{/ts}
       </td>
       <td {$valueStyle}>
-       {$amount_paid|crmMoney}
+       {$amount_paid|crmMoney:$currency}
       </td>
      </tr>
     </table>

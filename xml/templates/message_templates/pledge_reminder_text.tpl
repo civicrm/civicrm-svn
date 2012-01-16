@@ -6,7 +6,7 @@
 {ts}Payment Due{/ts}
 
 ===========================================================
-{ts}Amount Due{/ts}: {$amount_due|crmMoney}
+{ts}Amount Due{/ts}: {$amount_due|crmMoney:$currency}
 {ts}Due Date{/ts}: {$scheduled_payment_date|truncate:10:''|crmDate}
 
 {if $contribution_page_id}
@@ -23,8 +23,8 @@ Click this link to go to a web page where you can make your payment online:
 
 ===========================================================
 {ts}Pledge Received{/ts}: {$create_date|truncate:10:''|crmDate}
-{ts}Total Pledge Amount{/ts}: {$amount|crmMoney}
-{ts}Total Paid{/ts}: {$amount_paid|crmMoney}
+{ts}Total Pledge Amount{/ts}: {$amount|crmMoney:$currency}
+{ts}Total Paid{/ts}: {$amount_paid|crmMoney:$currency}
 
 {ts 1=$domain.phone 2=$domain.email}Please contact us at %1 or send email to %2 if you have questions
 or need to modify your payment schedule.{/ts}
