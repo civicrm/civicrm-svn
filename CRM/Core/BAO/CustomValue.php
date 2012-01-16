@@ -71,8 +71,12 @@ class CRM_Core_BAO_CustomValue extends CRM_Core_DAO
             return CRM_Utils_Rule::numeric($value);
             
         case 'Date':
-            return CRM_Utils_Rule::date($value);
-            
+                if ( is_numeric($value) ) {
+                    return CRM_Utils_Rule::dateTime($value);
+                } else {
+                    return CRM_Utils_Rule::date($value);
+                }
+                
         case 'Boolean':
             return CRM_Utils_Rule::boolean($value);
             

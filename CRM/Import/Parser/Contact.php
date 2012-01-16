@@ -1807,7 +1807,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 //we should not update Date to null, CRM-4062
                 if ( $val && ( $customFields[$customFieldID]['data_type'] == 'Date' ) ) {
                     self::formatCustomDate( $params, $formatted, $dateType, $key );
-                    unset( $params[$key] );
                 } else if ( $customFields[$customFieldID]['data_type'] == 'Boolean' ) {
                     $params[$key] = CRM_Utils_String::strtoboolstr( $val );
                 }
@@ -1891,7 +1890,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         // to check if not update mode and unset the fields with empty value.
         if ( !$this->_updateWithId ) { 
             foreach ( $formatted['custom'] as $customKey => $customvalue ) {
-                $emptyValue = CRM_Utils_Array::value( 'value', $customvalue );
+                $emptyValue = CRM_Utils_Array::value( 'value', $customvalue[-1] );
                 if ( empty($emptyValue) ) {
                     unset($formatted['custom'][$customKey]);
                 }
