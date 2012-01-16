@@ -1340,14 +1340,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         //assign to template for email reciept
         $honor_block_is_active = $this->get( 'honor_block_is_active');
         
-        $this->assign('honor_block_is_active', $honor_block_is_active );
-        $this->assign('honor_block_title', $this->_values['honor_block_title'] );
+        $this->assign( 'honor_block_is_active', $honor_block_is_active );
+        $this->assign( 'honor_block_title', CRM_Utils_Array::value( 'honor_block_title' , $this->_values) );
         
         require_once 'CRM/Core/PseudoConstant.php';
         $prefix = CRM_Core_PseudoConstant::individualPrefix();
         $honorType = CRM_Core_PseudoConstant::honor( );
         $this->assign('honor_type',       $honorType[$params['honor_type_id']]);
-        $this->assign('honor_prefix',     $prefix[CRM_Utils_Array::value( 'honor_prefix_id', $params )]);
+        $this->assign('honor_prefix',     CRM_Utils_Array::value( CRM_Utils_Array::value( 'honor_prefix_id', $params ), $prefix ) );
         $this->assign('honor_first_name', CRM_Utils_Array::value( 'honor_first_name', $params ));
         $this->assign('honor_last_name',  CRM_Utils_Array::value( 'honor_last_name', $params ));
         $this->assign('honor_email',      CRM_Utils_Array::value( 'honor_email', $params ));
