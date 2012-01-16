@@ -943,35 +943,38 @@ Group By  componentId";
         
         //FIXME : apiQuery should handle these clause.
         $filterContactFldIds = $filterIds = array( );
-        if ( !$processAll ) {
-            $idFldName = $displayFldName = null;
-            if ( $greeting == 'email_greeting' || $greeting == 'postal_greeting' ||  $greeting == 'addressee' ) {
-                $idFldName = $greeting . '_id';
-                $displayFldName = $greeting . '_display';
-            }
-
-            if ( $idFldName ) {
-                $sql = "
-SELECT DISTINCT id, $idFldName
-  FROM civicrm_contact 
- WHERE contact_type = %1 
-   AND ( {$idFldName} IS NULL OR 
-         ( {$idFldName} IS NOT NULL AND {$displayFldName} IS NULL ) )
-   ";
-                $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $contactType, 'String' ) ) );
-                while ( $dao->fetch( ) ) {
-                    $filterContactFldIds[$dao->id] = $dao->$idFldName;
-
-                    if (!CRM_Utils_System::isNull( $dao->$idFldName)) {
-                        $filterIds[$dao->id] = $dao->$idFldName;
-                    }
-                }
-              
-            }
-            if ( empty( $filterContactFldIds ) ) {
-                $filterContactFldIds[] = 0;
-            }
+        
+        $idFldName = $displayFldName = null;
+        if ( $greeting == 'email_greeting' || $greeting == 'postal_greeting' ||  $greeting == 'addressee' ) {
+            $idFldName = $greeting . '_id';
+            $displayFldName = $greeting . '_display';
         }
+        
+        if ( $idFldName ) {
+            
+            // if $force == 1 then update all contacts else only
+            // those with NULL greeting or addressee value CRM-9476
+            if ( $processAll ){
+                $sql = "SELECT DISTINCT id, $idFldName FROM civicrm_contact WHERE contact_type = %1 ";
+            } else {
+                $sql = "SELECT DISTINCT id, $idFldName FROM civicrm_contact WHERE contact_type = %1
+                     AND ( {$idFldName} IS NULL OR ( {$idFldName} IS NOT NULL AND {$displayFldName} IS NULL ) ) ";
+            }
+            
+            $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $contactType, 'String' ) ) );
+            while ( $dao->fetch( ) ) {
+                $filterContactFldIds[$dao->id] = $dao->$idFldName;
+                
+                if (!CRM_Utils_System::isNull( $dao->$idFldName)) {
+                    $filterIds[$dao->id] = $dao->$idFldName;
+                }
+            }
+            
+        }
+        if ( empty( $filterContactFldIds ) ) {
+            $filterContactFldIds[] = 0;
+        }
+        
         // retrieve only required contact information
         require_once 'CRM/Utils/Token.php';
         $extraParams[] = array( 'contact_type', '=', $contactType, 0, 0 );
