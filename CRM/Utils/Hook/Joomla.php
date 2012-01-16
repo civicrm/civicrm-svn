@@ -55,6 +55,9 @@ class CRM_Utils_Hook_Joomla extends CRM_Utils_Hook {
                // CRM-9XXX
                $finalResult = array( );
                foreach ( $result as $res ) {
+                   if ( ! is_array( $res ) ) {
+                       $res = array( $res );
+                   }
                    $finalResult = array_merge( $finalResult, $res );
                }
                $result = $finalResult;
