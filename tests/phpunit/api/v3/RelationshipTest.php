@@ -222,6 +222,33 @@ class api_v3_RelationshipTest extends CiviUnitTestCase
         $params['id'] = $relationship['result']['id'] ; 
         $result = & civicrm_api('relationship','delete',$params );
     } 
+    /**
+     * check relationship already exists
+     */
+    function testRelationshipCreateUpdateAlreadyExists( )
+    {
+        $params = array( 'contact_id_a'         => $this->_cId_a,
+                         'contact_id_b'         => $this->_cId_b,
+                         'relationship_type_id' => $this->_relTypeID,
+                         'start_date'           => '2008-12-20',
+                         'end_date'             => null,
+                         'is_active'            => 1,
+                         'version'							=> $this->_apiversion,
+                         );
+        $relationship = civicrm_api('relationship','create',$params );
+        
+        $params = array( 'id'         => $relationship['id'],
+                         'is_active'            => 0,
+                         'version'							=> $this->_apiversion,
+                         );
+        $result = civicrm_api('relationship','create',$params );
+
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);
+        $result = civicrm_api('relationship','get',$params );
+        $this->assertEquals(0,$result['values'][$result['id']]['is_active'], 'in line ' . __LINE__);
+        $params['id'] = $relationship['result']['id'] ; 
+        $result = & civicrm_api('relationship','delete',$params );
+    } 
 
     /**
      * check relationship creation
