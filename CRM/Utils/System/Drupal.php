@@ -554,10 +554,10 @@ AND    u.status = 1
      * @param $loadUser boolean load cms user?
      * @param $throwError throw error on failure?
      */
-    function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true )
+    function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true, $realPath = null )
     {
         //take the cms root path.
-        $cmsPath = $this->cmsRootPath( );
+        $cmsPath = $this->cmsRootPath( $realPath );
         
         if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
             if ( $throwError ) {
@@ -646,11 +646,16 @@ AND    u.status = 1
         return false;
     }
     
-    function cmsRootPath( ) 
+    function cmsRootPath( $scriptFilename = null ) 
     {
         $cmsRoot = $valid = null;
+
+        if( !is_null( $scriptFilename ) ) {
+            $path = $scriptFilename;
+        } else {
+            $path = $_SERVER['SCRIPT_FILENAME'];
+        }
         
-        $path = $_SERVER['SCRIPT_FILENAME'];
         if ( function_exists( 'drush_get_context' ) ) {
             // drush anyway takes care of multisite install etc
             return drush_get_context('DRUSH_DRUPAL_ROOT');
@@ -681,7 +686,7 @@ AND    u.status = 1
             //remove one directory level.
             array_pop( $pathVars );
         } while ( count( $pathVars ) ); 
-        
+
         return ( $valid ) ? $cmsRoot : null;
     }
     

@@ -139,7 +139,7 @@ class civicrm_Cli {
         $class = 'CRM_Utils_System_' . $this->_config->userFramework;
 
         $cms = new $class();
-        if( !CRM_Utils_System::loadBootstrap( array(), false, false )) {
+        if( !CRM_Utils_System::loadBootstrap( array(), false, false, $civicrm_root )) {
             $this->_log( ts("Failed to bootstrap CMS"));
             return false;
         }

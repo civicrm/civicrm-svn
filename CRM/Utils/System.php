@@ -1091,13 +1091,13 @@ class CRM_Utils_System {
      * @param $params   array with uid name and pass
      * @param $loadUser boolean load user or not
      */
-    static function loadBootStrap( $params = array( ), $loadUser = true , $throwError = true )
+    static function loadBootStrap( $params = array( ), $loadUser = true , $throwError = true, $realPath = null )
     {
         if ( !is_array($params) ) {
             $params = array( ); 
         }
         $config = CRM_Core_Config::singleton();
-        return $config->userSystem->loadBootStrap($params, $loadUser, $throwError);
+        return $config->userSystem->loadBootStrap($params, $loadUser, $throwError, $realPath);
     }
     
     /**
