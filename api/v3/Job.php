@@ -269,7 +269,7 @@ function civicrm_api3_job_fetch_activities( $params )
     if ( ! CRM_Utils_Mail_EmailProcessor::processActivities() )  { 
        return civicrm_api3_create_error( "Process Activities failed");
     }
-    //   FIXME: processBounces doesn't return true/false on success/failure
+    //   FIXME: processActivities doesn't return true/false on success/failure
     $values = array( );
     return civicrm_api3_create_success($values, $params,'mailing','activities');
     $lock->release();

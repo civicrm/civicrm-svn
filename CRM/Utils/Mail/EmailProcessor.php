@@ -86,17 +86,22 @@ class CRM_Utils_Mail_EmailProcessor {
      *
      * @return void
      */
-    static function processActivities() {
-        require_once 'CRM/Core/DAO/MailSettings.php';
-        $dao = new CRM_Core_DAO_MailSettings;
-        $dao->domain_id = CRM_Core_Config::domainID( );
-        $dao->is_default = false;
-        $dao->find( );
+     static function processActivities() {
+         require_once 'CRM/Core/DAO/MailSettings.php';
+         $dao = new CRM_Core_DAO_MailSettings;
+         $dao->domain_id = CRM_Core_Config::domainID( );
+         $dao->is_default = false;
+         $dao->find( );
+         $found = false;
+         while ( $dao->fetch() ) {
+             $found = true;
+             self::_process(false,$dao);
+         }  
+         if ( ! $found ) {
+             CRM_Core_Error::fatal( ts( 'No mailboxes have been configured for Email to Activity Processing' ) );
+         }
 
-        while ( $dao->fetch() ) {
-            self::_process(false,$dao);
-        }
-    }
+     }
 
     /**
      * Process the mailbox for all the settings from civicrm_mail_settings
