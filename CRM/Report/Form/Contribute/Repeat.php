@@ -292,17 +292,36 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
     }
 
     function from( ) {
-        $this->_from = "
-FROM civicrm_contact {$this->_aliases['civicrm_contact']}
+        list($fromTable, $fromAlias, $fromCol) = $this->groupBy( true );
+        $from = "$fromTable $fromAlias";
+
+        if ( $fromTable == 'civicrm_contact' ) {
+            $contriCol  = "contact_id";
+            $from .= "
 LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id
 LEFT JOIN civicrm_email   {$this->_aliases['civicrm_email']}
        ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND {$this->_aliases['civicrm_email']}.is_primary = 1
 LEFT JOIN civicrm_phone   {$this->_aliases['civicrm_phone']}
-       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1
+       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1";
+
+        } else if ( $fromTable == 'civicrm_contribution_type' ) {
+            $contriCol  = "contribution_type_id";
+        } else if ( $fromTable == 'civicrm_contribution' ) {
+            $contriCol  = $fromCol;
+        } else if ( $fromTable == 'civicrm_address' ) {
+            $from .= "
+INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']} ON {$this->_aliases['civicrm_address']}.contact_id = {$this->_aliases['civicrm_contact']}.id";
+            $fromAlias = $this->_aliases['civicrm_contact'];
+            $fromCol   = "id";
+            $contriCol = "contact_id";
+        }
+
+        $this->_from = "
+FROM $from
 LEFT JOIN civicrm_temp_civireport_repeat1 {$this->_aliases['civicrm_contribution']}1
-       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}1.contact_id
+       ON $fromAlias.$fromCol = {$this->_aliases['civicrm_contribution']}1.$contriCol
 LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution']}2
-       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}2.contact_id";
+       ON $fromAlias.$fromCol = {$this->_aliases['civicrm_contribution']}2.$contriCol";
     }
 
     function whereContribution( $replaceAliasWith = 'contribution1' ) {
@@ -346,7 +365,7 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
     }
 
     function where( ) {
-        $clauses = array( "atleast_one_amount" => "!({$this->_aliases['civicrm_contribution']}1.contact_id IS NULL AND {$this->_aliases['civicrm_contribution']}2.contact_id IS NULL)");
+        $clauses = array( "atleast_one_amount" => "!({$this->_aliases['civicrm_contribution']}1.total_amount_count IS NULL AND {$this->_aliases['civicrm_contribution']}2.total_amount_count IS NULL)");
 
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('filters', $table) && $tableName != 'civicrm_contribution' ) {
@@ -505,44 +524,53 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
     function postProcess( ) {
         $this->beginPostProcess( );
 
+        list($fromTable, $fromAlias, $fromCol) = $this->groupBy( true );
+        if ( $fromTable == 'civicrm_contact' ) {
+            $contriCol  = "contact_id";
+        } else if ( $fromTable == 'civicrm_contribution_type' ) {
+            $contriCol  = "contribution_type_id";
+        } else if ( $fromTable == 'civicrm_contribution' ) {
+            $contriCol  = $fromCol;
+        } else if ( $fromTable == 'civicrm_address' ) {
+            $contriCol = "contact_id";
+        }
+
         $subWhere = $this->whereContribution();
         $subContributionQuery1 = "
-SELECT contribution1.contact_id,
+SELECT contribution1.{$contriCol},
        sum( contribution1.total_amount ) AS total_amount_sum,
        count( * ) AS total_amount_count
 FROM   civicrm_contribution contribution1
 {$subWhere}
-GROUP BY contribution1.contact_id";
+GROUP BY contribution1.{$contriCol}";
 
         $subWhere = $this->whereContribution( 'contribution2' );
         $subContributionQuery2 = "
-SELECT contribution2.contact_id,
+SELECT contribution2.{$contriCol},
        sum( contribution2.total_amount ) AS total_amount_sum,
        count( * ) AS total_amount_count
 FROM   civicrm_contribution contribution2
 {$subWhere}
-GROUP BY contribution2.contact_id";
+GROUP BY contribution2.{$contriCol}";
 
         $sql = "
 CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat1 ( 
-contact_id int unsigned,
-total_amount_sum int unsigned,
-total_amount_count int unsigned          
+{$contriCol} int unsigned,
+total_amount_sum int,
+total_amount_count int          
 ) ENGINE=HEAP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci";
         CRM_Core_DAO::executeQuery( $sql );
         $sql = "INSERT INTO civicrm_temp_civireport_repeat1 {$subContributionQuery1}";
-        CRM_Core_Error::debug( 't1 $sql', $sql );
         CRM_Core_DAO::executeQuery( $sql );
 
         $sql = "
 CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat2 ( 
-contact_id int unsigned,
-total_amount_sum int unsigned,
-total_amount_count int unsigned          
+{$contriCol} int unsigned,
+total_amount_sum int,
+total_amount_count int          
 ) ENGINE=HEAP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci";
         CRM_Core_DAO::executeQuery( $sql );
         $sql = "INSERT INTO civicrm_temp_civireport_repeat2 {$subContributionQuery2}";
-        CRM_Core_Error::debug( 't2 $sql', $sql );
         CRM_Core_DAO::executeQuery( $sql );
 
         $this->select  ( );
@@ -551,17 +579,15 @@ total_amount_count int unsigned
         $this->groupBy ( );
         $this->limit   ( );
 
-        $sql  = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy} {$this->_limit}";
-        CRM_Core_Error::debug( '$sql1', $sql );
-        $dao  = CRM_Core_DAO::executeQuery( $sql );
+        $count = 0;
+        $sql   = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy} {$this->_limit}";
+        $dao   = CRM_Core_DAO::executeQuery( $sql );
+        $rows  = array();
         while ( $dao->fetch( ) ) {
             foreach ( $this->_columnHeaders as $key => $value ) {
-                if ( property_exists($dao, $key) && $dao->$key ) {
-                    $rows[$dao->contact_civireport_id][$key] = $dao->$key;
-                } else {
-                    $rows[$dao->contact_civireport_id][$key] = null;
-                }
+                $rows[$count][$key] = $dao->$key;
             }
+            $count++;
         }
 
         // FIXME: calculate % using query
