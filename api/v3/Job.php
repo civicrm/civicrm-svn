@@ -174,7 +174,7 @@ function civicrm_api3_job_mail_report( $params )
 function civicrm_api3_job_update_greeting( $params )
 {
     require_once 'CRM/Contact/BAO/Contact/Utils.php';
-    
+
     civicrm_api3_verify_mandatory($params,null,array('ct', 'gt'));
 
     // FIXME: verify_type along the lines of: $id = CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );

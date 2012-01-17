@@ -475,7 +475,8 @@ AND    u.status = 1
         if(function_exists('user_load_by_name')) {
             // >= d7 approach
             $user = user_load_by_name($username);
-        }
+        } 
+        
         if(empty($user->uid)) return false;
 
         require_once('CRM/Core/BAO/UFMatch.php');

@@ -105,7 +105,7 @@ class CRM_Core_JobManager
 
 
     public function executeJob( $job ) {
-        $this->currentJob = $job;    
+        $this->currentJob = $job;
         $this->logEntry( 'Starting execution of ' . $job->name );
         $job->saveLastRun();
         try {
@@ -113,8 +113,8 @@ class CRM_Core_JobManager
         } catch (Exception $e) {
             $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
         }
-        $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );    
-        $this->currentJob = FALSE;        
+        $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
+        $this->currentJob = FALSE;
     }
 
     /*
@@ -128,7 +128,7 @@ class CRM_Core_JobManager
     private function _getJobs( ) {
         $jobs = array();
         require_once 'CRM/Core/DAO/Job.php';
-        require_once 'CRM/Core/DAO/JobLog.php';        
+        require_once 'CRM/Core/DAO/JobLog.php';
         $dao = new CRM_Core_DAO_Job();
         $dao->orderBy('name');
         $dao->find();
