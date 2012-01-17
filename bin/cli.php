@@ -145,18 +145,22 @@ class civicrm_Cli {
         }
 
         if( strtolower($this->_entity) == 'job' ) {
-            if( ! $cms->authenticate( $this->_user, $this->_password ) ) {
+            if( ! $cms->authenticate( $this->_user, $this->_password, false, $civicrm_root ) ) {
               $this->_log( ts("Jobs called from cli.php require valid user and password as parameter", array('1' => $this->_user )));
               return false;
             }
         }
 
+
+        
         if(!empty($this->_user)) {
           if( !$cms->loadUser( $this->_user ) ) {
             $this->_log( ts("Failed to login as %1", array('1' => $this->_user )));
             return false;
           }
         }
+
+        
         return true;
     }
 

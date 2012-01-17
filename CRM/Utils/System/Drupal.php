@@ -400,10 +400,12 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
      *               array( contactID, ufID, unique string ) if success
      * @access public
      */
-     function authenticate( $name, $password, $loadCMSBootstrap = false ) {
+     function authenticate( $name, $password, $loadCMSBootstrap = false, $realPath = null ) {
         require_once 'DB.php';
         
         $config = CRM_Core_Config::singleton( );
+
+
         
         $dbDrupal = DB::connect( $config->userFrameworkDSN );
         if ( DB::isError( $dbDrupal ) ) {
@@ -412,6 +414,8 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
 
         $account = $userUid = $userMail = null;
         require_once 'CRM/Core/BAO/UFMatch.php';
+
+
         
         if ( $loadCMSBootstrap ) {
             $bootStrapParams = array( );
@@ -419,7 +423,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
                 $bootStrapParams = array( 'name' => $name,
                                           'pass' => $password ); 
             }
-            CRM_Utils_System::loadBootStrap( $bootStrapParams );
+            CRM_Utils_System::loadBootStrap( $bootStrapParams, true, true, $realPath );
 
             global $user;
             if ( $user ) {
@@ -430,7 +434,8 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
             // CRM-8638
             // SOAP cannot load drupal bootstrap and hence we do it the old way
             // Contact CiviSMTP folks if we run into issues with this :)
-            $cmsPath = self::cmsRootPath( );
+            $cmsPath = self::cmsRootPath( $realPath );
+
             require_once( "$cmsPath/includes/bootstrap.inc" );
             require_once( "$cmsPath/includes/password.inc" );
             
@@ -558,7 +563,7 @@ AND    u.status = 1
     {
         //take the cms root path.
         $cmsPath = $this->cmsRootPath( $realPath );
-        
+
         if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
             if ( $throwError ) {
                 echo '<br />Sorry, could not able to locate bootstrap.inc.';
@@ -586,6 +591,8 @@ AND    u.status = 1
 
         // seems like we've bootstrapped drupal
         $config = CRM_Core_Config::singleton( );
+
+
 
         // lets also fix the clean url setting
         // CRM-6948
@@ -648,6 +655,7 @@ AND    u.status = 1
     
     function cmsRootPath( $scriptFilename = null ) 
     {
+
         $cmsRoot = $valid = null;
 
         if( !is_null( $scriptFilename ) ) {
