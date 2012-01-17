@@ -72,6 +72,9 @@ class api_v3_EmailTest extends CiviUnitTestCase
         $get = civicrm_api('email','create',$this->_params + array('debug' => 1));
         $this->assertAPISuccess($get, 'In line ' . __LINE__ );
         $this->assertEquals($get['count'],1);
+                $get = civicrm_api('email','create',$this->_params + array('debug' => 1, 'action' => 'get'));
+        $this->assertAPISuccess($get, 'In line ' . __LINE__ );
+        $this->assertEquals($get['count'],1);
         $delresult = civicrm_api('email','delete',array('id'=> $result['id'], 'version' => 3));
         $this->assertAPISuccess($delresult, 'In line ' . __LINE__ );
 
