@@ -1004,7 +1004,7 @@ SELECT  pledge.contact_id              as contact_id,
 
                         // 3. update pledge payment details                                                                     
                         if ( $mailSent ) {
-                            CRM_Pledge_BAO_Payment::updateReminderDetails( $paymentId );
+                            CRM_Pledge_BAO_PledgePayment::updateReminderDetails( $paymentId );
                             $activityType = 'Pledge Reminder';
                             $activityParams = array( 'subject'            => $subject,
                                                      'source_contact_id'  => $contactId,
