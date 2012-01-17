@@ -1,6 +1,8 @@
--- Fix invalid api action in Job table and insert missing job
+-- Fix invalid api actions in Job table and insert missing job
 UPDATE `civicrm_job`
 SET api_action = 'process_membership_reminder_date' WHERE api_action = 'process_process_membership_reminder_date';
+UPDATE `civicrm_job`
+SET api_action = 'mail_report' WHERE api_action = 'mail_reports';
 
 SELECT @domainID := min(id) FROM civicrm_domain;
 INSERT INTO `civicrm_job`

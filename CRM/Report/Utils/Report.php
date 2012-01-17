@@ -324,7 +324,7 @@ WHERE  inst.report_id = %1";
         $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', $optionVal, 'value' );
         $obj = new CRM_Report_Page_Instance();
         $is_error = 0;
-        if ( strstr($templateInfo['name'], '_Form') ) {
+        if ( strstr( CRM_Utils_Array::value( 'name', $templateInfo ), '_Form') ) {
             $instanceInfo = array( );
             CRM_Report_BAO_Instance::retrieve( array('id' => $instanceId), $instanceInfo );
             
