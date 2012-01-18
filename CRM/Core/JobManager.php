@@ -44,6 +44,8 @@ class CRM_Core_JobManager
     
     var $currentJob = null;
 
+    var $singleRunParams = array();
+
     /*
      * Class constructor
      * 
@@ -103,7 +105,7 @@ class CRM_Core_JobManager
         $this->executeJob( $job );
     }
 
-    public function executeJobById( $id ) {    
+    public function executeJobById( $id ) {
         $job = $this->_getJob( $id );
         $this->executeJob( $job );
     }
@@ -113,8 +115,15 @@ class CRM_Core_JobManager
         $this->currentJob = $job;
         $this->logEntry( 'Starting execution of ' . $job->name );
         $job->saveLastRun();
+        
+        if( array_key_exists( $job->api_entity . '_' . $job->api_action, $singleRunParams ) ) {
+            $params = $singleRunParams[$job->api_entity . '_' . $job->api_action];
+        } else {
+            $params = $job->apiParams;
+        }
+        
         try {
-            $result = civicrm_api( $job->api_entity, $job->api_action, $job->apiParams );
+            $result = civicrm_api( $job->api_entity, $job->api_action, $params );
         } catch (Exception $e) {
             $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
         }
@@ -155,7 +164,7 @@ class CRM_Core_JobManager
      * 
      */
     private function _getJob( $id = null, $entity = null, $action = null ) {
-        if( is_null( $id ) && is_null( $name ) ) {
+        if( is_null( $id ) && is_null( $action ) ) {
             CRM_Core_Error::fatal( 'You need to provide either id or name to use this method' );
         }
         require_once 'CRM/Core/DAO/Job.php';
@@ -170,6 +179,10 @@ class CRM_Core_JobManager
             $job = new CRM_Core_ScheduledJob( $temp );
         }
         return $job;
+    }
+
+    public function setSingleRunParams( $entity, $job, $params ) {
+        $this->singleRunParams[ $entity . '_' . $job] = $params;
     }
 
 

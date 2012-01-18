@@ -48,8 +48,8 @@ if( $job === null ) {
     foreach( $_REQUEST as $name => $value ) {
         if( ! in_array( $name, $ignored ) ) {
             $params[$name] = CRM_Utils_Request::retrieve( $name, 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
-            var_dump( $params );
         }
     }
+    $facility->setSingleRunParams( 'job', $job, $params );
     $facility->executeJobByAction( 'job', $job );
 }
