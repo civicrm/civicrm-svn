@@ -215,7 +215,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
 
-      $firstName1 = 'AA' . substr(sha1(rand()), 0, 5);
+      $firstName1 = 'aa' . substr(sha1(rand()), 0, 5);
       $this->webtestAddContact( $firstName1, "Smith", "{$firstName1}.smith@example.org" );
       
       $sortName1    = "Smith, {$firstName1}";
@@ -231,7 +231,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
       $this->click("_qf_GroupContact_next");
       $this->waitForPageToLoad("30000");
 
-      $firstName2 = 'BB' . substr(sha1(rand()), 0, 5);
+      $firstName2 = 'bb' . substr(sha1(rand()), 0, 5);
       
       $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual');
       $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
