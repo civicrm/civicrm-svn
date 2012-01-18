@@ -167,6 +167,14 @@ class CRM_Utils_VersionCheck
                 }
 
                 $fp = fopen($cachefile, 'w');
+                if ( ! $fp ) {
+                    require_once 'CRM/Core/Session.php';
+                    $message = ts( 'Do not have permission to write to file: %1',
+                                   array( 1 => $cachefile ) );
+                    CRM_Core_Session::setStatus( $message );
+                    return;
+                }
+
                 fwrite($fp, $this->latestVersion);
                 fclose($fp);
             }
