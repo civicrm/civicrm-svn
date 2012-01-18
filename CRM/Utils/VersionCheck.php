@@ -166,7 +166,7 @@ class CRM_Utils_VersionCheck
                     return;
                 }
 
-                $fp = fopen($cachefile, 'w');
+                $fp = @fopen($cachefile, 'w');
                 if ( ! $fp ) {
                     require_once 'CRM/Core/Session.php';
                     $message = ts( 'Do not have permission to write to file: %1',
