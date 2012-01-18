@@ -240,9 +240,9 @@ AND    co.id IN ( $contribIDs )";
             $ids['contribution']      = $row['contribution_id'];
             $ids['contributionRecur'] = null;
             $ids['contributionPage']  = null;
-            $ids['membership']        = $details[$row['contribution_id']]['membership'];
-            $ids['participant']       = $details[$row['contribution_id']]['participant'];
-            $ids['event']             = $details[$row['contribution_id']]['event'];
+            $ids['membership']        = CRM_Utils_Array::value( 'membership', $details[$row['contribution_id']] );
+            $ids['participant']       = CRM_Utils_Array::value( 'participant', $details[$row['contribution_id']] );
+            $ids['event']             = CRM_Utils_Array::value( 'event', $details[$row['contribution_id']] );
 
             if ( ! $baseIPN->validateData( $input, $ids, $objects, false ) ) {
                 CRM_Core_Error::fatal( );
