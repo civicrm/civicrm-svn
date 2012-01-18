@@ -98,6 +98,11 @@ class CRM_Core_JobManager
     public function __destruct( ) {
     }
 
+    public function executeJobByAction( $entity, $action ) {
+        $job = $this->_getJob( null, $entity, $action );
+        $this->executeJob( $job );
+    }
+
     public function executeJobById( $id ) {    
         $job = $this->_getJob( $id );
         $this->executeJob( $job );
@@ -149,10 +154,15 @@ class CRM_Core_JobManager
      * @access private
      * 
      */
-    private function _getJob( $id ) {
+    private function _getJob( $id = null, $entity = null, $action = null ) {
+        if( is_null( $id ) && is_null( $name ) ) {
+            CRM_Core_Error::fatal( 'You need to provide either id or name to use this method' );
+        }
         require_once 'CRM/Core/DAO/Job.php';
         $dao = new CRM_Core_DAO_Job();
         $dao->id = $id;
+        $day->api_enitity = $entity;
+        $dao->api_action = $name;
         $dao->find();
         require_once 'CRM/Core/ScheduledJob.php';
         while ($dao->fetch()) {

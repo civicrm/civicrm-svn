@@ -28,10 +28,28 @@
 
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php'; 
+require_once 'CRM/Utils/Request.php'; 
 $config = CRM_Core_Config::singleton(); 
 
 CRM_Utils_System::authenticateScript( true );
 
+var_dump( 'Retrieving' );
+$job = CRM_Utils_Request::retrieve( 'job', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+
+
 require_once 'CRM/Core/JobManager.php';
 $facility = new CRM_Core_JobManager();
-$facility->execute();
+
+if( $job === null ) {
+    $facility->execute();
+} else {
+    $ignored = array( "name", "pass", "key", "job" );
+    $params = array();
+    foreach( $_REQUEST as $name => $value ) {
+        if( ! in_array( $name, $ignored ) ) {
+            $params[$name] = CRM_Utils_Request::retrieve( $name, 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+            var_dump( $params );
+        }
+    }
+    $facility->executeJobByAction( 'job', $job );
+}
