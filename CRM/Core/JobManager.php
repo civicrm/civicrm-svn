@@ -67,11 +67,11 @@ class CRM_Core_JobManager
      * @access private
      * 
      */
-    public function execute( ) {
+    public function execute( $auth = true ) {
     
         $this->logEntry( 'Starting scheduled jobs execution' );
         require_once 'CRM/Utils/System.php';
-        if( !CRM_Utils_System::authenticateKey( FALSE ) ) {
+        if( $auth && !CRM_Utils_System::authenticateKey( false ) ) {
             $this->logEntry( 'Could not authenticate the site key.' );
         }
         require_once 'api/api.php';
