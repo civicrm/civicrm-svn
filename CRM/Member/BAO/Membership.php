@@ -1165,6 +1165,10 @@ AND civicrm_membership.is_test = %2";
                                                                              $premiumParams, $contactID,
                                                                              $contributionTypeId, 
                                                                              'membership' );
+
+            // Save the contribution ID so that I can be used in email receipts
+            // For example, if you need to generate a tax receipt for the donation only.
+            $form->_values['contribution_other_id'] = $result[1]->id;
         } else {
             // create the CMS contact here since we normally do this under processConfirm
             CRM_Contribute_BAO_Contribution_Utils::createCMSUser( $membershipParams,

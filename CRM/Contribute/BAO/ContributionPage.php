@@ -242,15 +242,16 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
 
             // set email in the template here
             $tplParams = array(
-                'email'            => $email,
-                'receiptFromEmail' => CRM_Utils_Array::value( 'receipt_from_email', $values ),
-                'contactID'        => $contactID,
-                'contributionID'   => $values['contribution_id'],
-                'membershipID'     => CRM_Utils_Array::value('membership_id', $values),
-                'lineItem'         => CRM_Utils_Array::value('lineItem',      $values), // CRM-5095
-                'priceSetID'       => CRM_Utils_Array::value('priceSetID',    $values), // CRM-5095
-                'title'            => $title,
-                'isShare'          => CRM_Utils_Array::value('is_share',    $values)
+                'email'               => $email,
+                'receiptFromEmail'    => CRM_Utils_Array::value( 'receipt_from_email', $values ),
+                'contactID'           => $contactID,
+                'contributionID'      => $values['contribution_id'],
+                'contributionOtherID' => $values['contribution_other_id'],
+                'membershipID'        => CRM_Utils_Array::value('membership_id', $values),
+                'lineItem'            => CRM_Utils_Array::value('lineItem',      $values), // CRM-5095
+                'priceSetID'          => CRM_Utils_Array::value('priceSetID',    $values), // CRM-5095
+                'title'               => $title,
+                'isShare'             => CRM_Utils_Array::value('is_share',    $values)
             );
 
             if ( $contributionTypeId = CRM_Utils_Array::value('contribution_type_id', $values ) ) {
