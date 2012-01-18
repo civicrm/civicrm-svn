@@ -1086,6 +1086,11 @@ LIMIT 1;";
            } 
         } else {
             //payment is not already linked - if it is linked with a pledge we need to create a link.
+            // return if it is not recurring contribution
+            if ( !$contribution->contribution_recur_id ) {
+                return;
+            }
+
             require_once 'CRM/Contribute/DAO/Contribution.php';
             $relatedContributions = new CRM_Contribute_DAO_Contribution( );
             $relatedContributions->contribution_recur_id = $contribution->contribution_recur_id ;
