@@ -1317,6 +1317,10 @@ class CRM_Utils_System {
         require_once 'CRM/Core/JobManager.php';
         $facility = new CRM_Core_JobManager();
         $facility->execute( false );
+
+        $redirectUrl = self::url( 'civicrm/admin/job', 'reset=1' );
+        CRM_Utils_System::redirect( $redirectUrl );
+        
     }
     
 }
