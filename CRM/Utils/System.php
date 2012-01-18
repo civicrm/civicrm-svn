@@ -1319,6 +1319,7 @@ class CRM_Utils_System {
         $facility->execute( false );
 
         $redirectUrl = self::url( 'civicrm/admin/job', 'reset=1' );
+        CRM_Core_Session::setStatus( ts('Scheduled jobs have been executed according to individual timing settings. Please check log for messages.') );
         CRM_Utils_System::redirect( $redirectUrl );
         
     }
