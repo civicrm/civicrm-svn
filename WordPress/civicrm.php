@@ -103,9 +103,13 @@ function civicrm_wp_initialize( ) {
         $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
                         'civicrm' . DIRECTORY_SEPARATOR .
                         'civicrm.settings.php';
-
-        $error = include_once( $settingsFile );
-
+        
+        if( !file_exists($settingsFile) ){
+            $error = false;
+        } else {
+            $error = include_once( $settingsFile );
+        }
+        
         // get ready for problems
         $installLink    = admin_url() . "options-general.php?page=civicrm-settings";
         $docLinkInstall = "http://wiki.civicrm.org/confluence/display/CRMDOC/WordPress+Installation+Guide";
@@ -123,7 +127,12 @@ function civicrm_wp_initialize( ) {
         }
         
         // this does pretty much all of the civicrm initialization
-        $error = include_once( 'CRM/Core/Config.php' );
+        if ( !file_exists( $civicrm_root.'CRM/Core/Config.php' )  ){
+            $error = false;
+        } else {
+            $error = include_once( 'CRM/Core/Config.php' );
+        }
+
         if ( $error == false ) {
             $failure = true;
             //FIX ME
