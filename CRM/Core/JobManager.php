@@ -73,8 +73,6 @@ class CRM_Core_JobManager
         require_once 'CRM/Utils/System.php';
         if( !CRM_Utils_System::authenticateKey( FALSE ) ) {
             $this->logEntry( 'Could not authenticate the site key.' );
-            
-            
         }
         require_once 'api/api.php';
 
@@ -116,12 +114,14 @@ class CRM_Core_JobManager
         $this->logEntry( 'Starting execution of ' . $job->name );
         $job->saveLastRun();
         
-        if( array_key_exists( $job->api_entity . '_' . $job->api_action, $singleRunParams ) ) {
-            $params = $singleRunParams[$job->api_entity . '_' . $job->api_action];
+        $singleRunParamsKey = strtolower( $job->api_entity . '_' . $job->api_action );
+
+        if( array_key_exists( $singleRunParamsKey, $this->singleRunParams ) ) {
+            $params = $this->singleRunParams[$singleRunParamsKey];
         } else {
             $params = $job->apiParams;
         }
-        
+
         try {
             $result = civicrm_api( $job->api_entity, $job->api_action, $params );
         } catch (Exception $e) {
@@ -170,9 +170,9 @@ class CRM_Core_JobManager
         require_once 'CRM/Core/DAO/Job.php';
         $dao = new CRM_Core_DAO_Job();
         $dao->id = $id;
-        $day->api_enitity = $entity;
-        $dao->api_action = $name;
-        $dao->find();
+        $dao->api_entity = $entity;
+        $dao->api_action = $action;
+        $dao->find();        
         require_once 'CRM/Core/ScheduledJob.php';
         while ($dao->fetch()) {
             CRM_Core_DAO::storeValues( $dao, $temp);
@@ -183,6 +183,7 @@ class CRM_Core_JobManager
 
     public function setSingleRunParams( $entity, $job, $params ) {
         $this->singleRunParams[ $entity . '_' . $job] = $params;
+        $this->singleRunParams[ $entity . '_' . $job]['version'] = '3';
     }
 
 
@@ -198,22 +199,35 @@ class CRM_Core_JobManager
         $dao = new CRM_Core_DAO_JobLog( );
 
         $dao->domain_id  = $domainID;
-        $dao->description = $message;        
+        $dao->description = substr( $message, 0, 235 );
+        if( strlen( $message ) > 235 ) $dao->description .= " (...)";
         if( $this->currentJob ) {
             $dao->job_id = $this->currentJob->id;
             $dao->name = $this->currentJob->name;
             $dao->command = ts("Prefix:") . " " . $this->currentJob->api_prefix + " " . ts("Entity:") . " " + $this->currentJob->api_entity + " " . ts("Action:") . " " + $this->currentJob->api_action;
-            $dao->data = "Parameters raw: \n\n" . $this->currentJob->parameters;
-            if( $this->currentJob->apiParams ) {
-                $dao->data .= "\n\nParameters parsed: \n\n" . serialize( $this->currentJob->apiParams);
+            $data = "";
+            if( !empty( $this->currentJob->parameters ) ) {
+                $data .= "\n\nParameters raw (from db settings): \n" . $this->currentJob->parameters;
             }
+            $singleRunParamsKey = strtolower( $this->currentJob->api_entity . '_' . $this->currentJob->api_action );
+            if( array_key_exists( $singleRunParamsKey, $this->singleRunParams ) ) {
+                $data .= "\n\nParameters raw (from cron.php request): \n" . serialize( $this->singleRunParams[$singleRunParamsKey]);
+                $data .= "\n\nParameters parsed (and passed): \n" . serialize( $this->singleRunParams[$singleRunParamsKey] );
+            } else {
+                $data .= "\n\nParameters parsed (and passed to API method): \n" . serialize( $this->currentJob->apiParams);
+            }
+            
+            $data .= "\n\nFull message: \n" . $message;
+            
+            $dao->data = $data;
+            
         }
         $dao->save( );
     }
 
     private function _apiResultToMessage( $apiResult ) {
         $status = $apiResult['is_error'] ? ts('Failure') : ts('Success');
-        $message =  $apiResult['is_error'] ? ', Error message: ' . $apiResult['error_message'] : "\n\r" . $apiResult['values'];
+        $message =  $apiResult['is_error'] ? ', Error message: ' . $apiResult['error_message'] : " (" . $apiResult['values'] . ")";
         return $status . $message;
     }
 

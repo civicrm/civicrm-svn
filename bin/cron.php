@@ -33,7 +33,6 @@ $config = CRM_Core_Config::singleton();
 
 CRM_Utils_System::authenticateScript( true );
 
-var_dump( 'Retrieving' );
 $job = CRM_Utils_Request::retrieve( 'job', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
 
 
