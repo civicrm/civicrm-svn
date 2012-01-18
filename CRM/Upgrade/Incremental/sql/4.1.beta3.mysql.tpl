@@ -10,6 +10,10 @@ INSERT INTO `civicrm_job`
 VALUES 
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Process Survey Respondents{/ts}',   '{ts escape="sql" skip="true"}Releases reserved survey respondents when they have been reserved for longer than the Release Frequency days specified for that survey.{/ts}','civicrm_api3', 'job', 'process_respondent','version=3\r\n', 0);
 
+-- Job table was initially delivered with invalid and not-used parameters. Clearing them out. Most jobs do not need any parameters.
+UPDATE `civicrm_job`
+SET parameters = NULL;
+
 -- Insert Schedule Jobs admin menu item
 SELECT @systemSettingsID := id     FROM civicrm_navigation where name = 'System Settings';
 

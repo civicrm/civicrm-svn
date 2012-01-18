@@ -188,7 +188,7 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                             if ( is_array( $results['updatedParticipantIds'] ) && !empty( $results['updatedParticipantIds'] ) ) {
                                 foreach ( $results['updatedParticipantIds'] as $processedId ) {
                                     $expiredParticipantCount += 1;   
-                                    $returnMessages[] .= "<br /><br />- status updated to: Expired";
+                                    $returnMessages[] .= "<br />Status updated to: Expired";
                                     
                                     //mailed participants.
                                     if ( is_array( $results['mailedParticipants'] ) && 
@@ -256,7 +256,7 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                                             if ( $values['requires_approval'] ) {
                                                 $waitingApprovalCount += 1;
                                                 $returnMessages[] .=  "<br /><br />- status updated to: Awaiting approval";
-                                                $returnMessages[] .=  "<br />Will send you Confirmation Mail when registration get approved.";
+                                                $returnMessages[] .=  "<br />Will send you Confirmation Mail when registration gets approved.";
                                             } else {
                                                 $waitingConfirmCount += 1;  
                                                 $returnMessages[] .=  "<br /><br />- status updated to: Pending from waitlist";
