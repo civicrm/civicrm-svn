@@ -45,6 +45,9 @@ class CRM_Core_JobManager
     var $currentJob = null;
 
     var $singleRunParams = array();
+    
+    var $_source = null;
+    
 
     /*
      * Class constructor
@@ -181,9 +184,11 @@ class CRM_Core_JobManager
         return $job;
     }
 
-    public function setSingleRunParams( $entity, $job, $params ) {
-        $this->singleRunParams[ $entity . '_' . $job] = $params;
-        $this->singleRunParams[ $entity . '_' . $job]['version'] = '3';
+    public function setSingleRunParams( $entity, $job, $params, $source = null ) {
+        $this->_source = $source;
+        $key = strtolower( $entity . '_' . $job );
+        $this->singleRunParams[ $key ] = $params;
+        $this->singleRunParams[ $key ]['version'] = '3';
     }
 
 
@@ -211,8 +216,8 @@ class CRM_Core_JobManager
             }
             $singleRunParamsKey = strtolower( $this->currentJob->api_entity . '_' . $this->currentJob->api_action );
             if( array_key_exists( $singleRunParamsKey, $this->singleRunParams ) ) {
-                $data .= "\n\nParameters raw (from cron.php request): \n" . serialize( $this->singleRunParams[$singleRunParamsKey]);
-                $data .= "\n\nParameters parsed (and passed): \n" . serialize( $this->singleRunParams[$singleRunParamsKey] );
+                $data .= "\n\nParameters raw (" . $this->_source . "): \n" . serialize( $this->singleRunParams[$singleRunParamsKey]);
+                $data .= "\n\nParameters parsed (and passed to API method): \n" . serialize( $this->singleRunParams[$singleRunParamsKey] );
             } else {
                 $data .= "\n\nParameters parsed (and passed to API method): \n" . serialize( $this->currentJob->apiParams);
             }

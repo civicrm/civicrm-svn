@@ -35,7 +35,6 @@ CRM_Utils_System::authenticateScript( true );
 
 $job = CRM_Utils_Request::retrieve( 'job', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
 
-
 require_once 'CRM/Core/JobManager.php';
 $facility = new CRM_Core_JobManager();
 
@@ -49,6 +48,6 @@ if( $job === null ) {
             $params[$name] = CRM_Utils_Request::retrieve( $name, 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
         }
     }
-    $facility->setSingleRunParams( 'job', $job, $params );
+    $facility->setSingleRunParams( 'job', $job, $params, 'From cron.php' );
     $facility->executeJobByAction( 'job', $job );
 }

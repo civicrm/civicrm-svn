@@ -36,6 +36,7 @@ class civicrm_Cli {
     var $_entity = null;
     var $_action = null;
     var $_output = false;
+    var $_joblog = false;
     var $_config;
 
     // optional arguments
@@ -58,7 +59,14 @@ class civicrm_Cli {
     public function callApi( ) {
         require_once 'api/api.php';
 
-        $result = civicrm_api($this->_entity, $this->_action, $this->_params);
+        if( $this->_joblog ) {
+            require_once 'CRM/Core/JobManager.php';
+            $facility = new CRM_Core_JobManager();
+            $facility->setSingleRunParams( $this->_entity, $this->_action, $this->_params, 'From Cli.php' );
+            $facility->executeJobByAction( $this->_entity, $this->_action );
+        } else {
+            $result = civicrm_api($this->_entity, $this->_action, $this->_params);
+        }
 
         if($result['is_error'] != 0) {
             $this->_log( $result['error_message'] );
@@ -109,6 +117,8 @@ class civicrm_Cli {
           $this->_password = $value;          
         } elseif ($arg == '-o' || $arg == '--output') {
           $this->_output = true;
+        } elseif ($arg == '-j' || $arg == '--joblog') {
+          $this->_joblog = true;
         } else {
           // all other arguments are parameters
           $key = ltrim($arg,'--');
@@ -150,8 +160,6 @@ class civicrm_Cli {
               return false;
             }
         }
-
-
         
         if(!empty($this->_user)) {
           if( !$cms->loadUser( $this->_user ) ) {
@@ -159,7 +167,6 @@ class civicrm_Cli {
             return false;
           }
         }
-
         
         return true;
     }
