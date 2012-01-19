@@ -319,7 +319,9 @@ WHERE  inst.report_id = %1";
 
         $messages = array( );
         $messages[] =  "Report Mail Triggered...";
-
+        
+        // Hack to get cron submit instance,since its not part of cron url anymore.  
+        $_GET['instanceId'] = $instanceId;
         require_once 'CRM/Core/OptionGroup.php';
         $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', $optionVal, 'value' );
         $obj = new CRM_Report_Page_Instance();
