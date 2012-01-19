@@ -295,7 +295,7 @@ class CRM_Friend_Form extends CRM_Core_Form
             if ( $linkText = CRM_PCP_BAO_PCP::getPcpBlockStatus( $defaults['entity_id'], $defaults['entity_table'] ) ) {
                 
                 $linkTextUrl = CRM_Utils_System::url( 'civicrm/contribute/campaign',
-                                                     "action=add&reset=1&pageId={$defaults['entity_id']}",
+                                                     "action=add&reset=1&pageId={$defaults['entity_id']}&component=contribute",
                                                      false, null, true,
                                                      true );
                 $this->assign( 'linkTextUrl', $linkTextUrl );
