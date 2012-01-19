@@ -79,9 +79,9 @@ class CRM_Friend_Form extends CRM_Core_Form
         $this->_action   = CRM_Utils_Request::retrieve( 'action', 'String'  , $this );
         $this->_entityId = CRM_Utils_Request::retrieve( 'eid'   , 'Positive', $this, true );       
         
-        $page = CRM_Utils_Request::retrieve( 'page', 'String', $this, true );
+        $component = CRM_Utils_Request::retrieve( 'component', 'String', $this, true );
         
-        if ( in_array( $page, array( 'contribution', 'event' ) ) ) {
+        if ( in_array( $component, array( 'contribute', 'event' ) ) ) {
             $values = array( );
             $params = array( 'id' => $this->_entityId );
             CRM_Core_DAO::commonRetrieve( 'CRM_Contribute_DAO_ContributionPage', 
@@ -89,8 +89,8 @@ class CRM_Friend_Form extends CRM_Core_Form
             $this->_title      = CRM_Utils_Array::value( 'title',       $values );
             $this->_campaignId = CRM_Utils_Array::value( 'campaign_id', $values );
             $this->_entityTable = 'civicrm_contribution_page';
-            if ( $page == 'event' ) $this->_entityTable = 'civicrm_event'; 
-        } else if ( $page == 'pcp' ) {
+            if ( $component == 'event' ) $this->_entityTable = 'civicrm_event'; 
+        } else if ( $component == 'pcp' ) {
             $this->_pcpBlockId = CRM_Utils_Request::retrieve( 'blockId', 'Positive', $this, true ); 
             
             $values = array( );
@@ -122,7 +122,7 @@ LEFT JOIN  civicrm_contribution_page contrib ON ( pcp.contribution_page_id = con
         } else {
             CRM_Core_Error::fatal( ts( 'page argument missing or invalid' ) );
         }
-        $this->assign('context', $page);
+        $this->assign('context', $component);
 
         $session = CRM_Core_Session::singleton( );
         $this->_contactID = $session->get( 'userID' );

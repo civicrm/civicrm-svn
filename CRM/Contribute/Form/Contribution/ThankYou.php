@@ -230,13 +230,13 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         if ( $this->_pcpId ) {
             if ( $this->_pcpBlock['is_tellfriend_enabled'] ) {
                 $this->assign( 'friendText', ts('Tell a Friend') );
-                $subUrl = "eid={$this->_pcpId}&blockId={$this->_pcpBlock['id']}&page=pcp";
+                $subUrl = "eid={$this->_pcpId}&blockId={$this->_pcpBlock['id']}&component=pcp";
                 $tellAFriend = true;
             }
         } else if ( CRM_Utils_Array::value( 'is_active', $data ) ) {               
             $friendText = $data['title'];
             $this->assign( 'friendText', $friendText );
-            $subUrl = "eid={$this->_id}&page=contribution";
+            $subUrl = "eid={$this->_id}&component=contribute";
             $tellAFriend = true;
         }
 
