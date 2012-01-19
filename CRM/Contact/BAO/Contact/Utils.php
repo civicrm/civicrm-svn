@@ -1015,10 +1015,17 @@ Group By  componentId";
                               END;"; 
             if ( !empty( $contactIds ) ) {
                 // need to update greeting _id field.
+                // reset greeting _custom
+                $resetCustomGreeting = '';
+                if ( $valueID != 4 ) {
+                    $resetCustomGreeting = ", {$greeting}_custom = NULL ";
+                }
+
                 $queryString = "
 UPDATE civicrm_contact 
-   SET {$greeting}_id = {$valueID} 
- WHERE id IN (" . implode( ',', $contactIds ) . ")";
+SET {$greeting}_id = {$valueID}
+    {$resetCustomGreeting} 
+WHERE id IN (" . implode( ',', $contactIds ) . ")";
                 CRM_Core_DAO::executeQuery( $queryString );
             }
             
