@@ -1813,8 +1813,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $chkVal = array();
                     $checkVal = explode(",",$val);
                     foreach ($checkVal as $ckey => $cvalue ) {
-                        trim($cvalue);
-                        $chkVal[$cvalue] = 1;
+                        $chkVal[trim($cvalue)] = 1;
                     }
                     $params[$key] = $chkVal;
                 } else if ( $val && $customFields[$customFieldID]['html_type'] == 'Multi-Select' ) {
