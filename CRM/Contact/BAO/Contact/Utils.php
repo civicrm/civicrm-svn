@@ -912,7 +912,7 @@ Group By  componentId";
             $defaulValueID = CRM_Core_OptionGroup::values( $greeting, null, null, null, 
                                                            " AND is_default = 1 AND ( filter = {$filter} OR filter = 0 )",
                                                            "value");
-            $valueID = array_pop( $defaulValueID );
+            $valueID = $id = array_pop( $defaulValueID );
         }
         
         $filter =  array( 'contact_type'  => $contactType, 
@@ -951,7 +951,6 @@ Group By  componentId";
         }
         
         if ( $idFldName ) {
-            
             // if $force == 1 then update all contacts else only
             // those with NULL greeting or addressee value CRM-9476
             if ( $processAll ){
@@ -960,7 +959,7 @@ Group By  componentId";
                 $sql = "SELECT DISTINCT id, $idFldName FROM civicrm_contact WHERE contact_type = %1
                      AND ( {$idFldName} IS NULL OR ( {$idFldName} IS NOT NULL AND {$displayFldName} IS NULL ) ) ";
             }
-            
+
             $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $contactType, 'String' ) ) );
             while ( $dao->fetch( ) ) {
                 $filterContactFldIds[$dao->id] = $dao->$idFldName;
@@ -969,8 +968,8 @@ Group By  componentId";
                     $filterIds[$dao->id] = $dao->$idFldName;
                 }
             }
-            
         }
+
         if ( empty( $filterContactFldIds ) ) {
             $filterContactFldIds[] = 0;
         }
@@ -991,34 +990,26 @@ Group By  componentId";
                 continue;
             }
 
-            if ( $processOnlyIdSet ) { 
-                if ( !array_key_exists( $contactID, $filterIds ) ) {
-                    continue;
-                }
-                if ( $id ) {
-                    $greetingString = $originalGreetingString;
-                    $contactIds[] = $contactID;
-                } else {
-                    if ( $greetingBuffer = CRM_Utils_Array::value($filterContactFldIds[$contactID], $allGreetings) ) {
-                        $greetingString = $greetingBuffer;
-                    }  
-                }
-                $allContactIds[] = $contactID;
+            if ( $processOnlyIdSet && !array_key_exists( $contactID, $filterIds )  ) { 
+                continue;
+            }
+            
+            if ( $id ) {
+                $greetingString = $originalGreetingString;
+                $contactIds[] = $contactID;
             } else {
-                $greetingString = $originalGreetingString;	 
                 if ( $greetingBuffer = CRM_Utils_Array::value($filterContactFldIds[$contactID], $allGreetings) ) {
                     $greetingString = $greetingBuffer;
-                } else {
-                    $contactIds[] = $contactID;  
-                }
+                }  
             }
+
             CRM_Utils_Token::replaceGreetingTokens($greetingString, $contactDetails, $contactID, 'CRM_UpdateGreeting' );
             $greetingString = CRM_Core_DAO::escapeString( $greetingString );
             $cacheFieldQuery .= " WHEN {$contactID} THEN '{$greetingString}' ";
             
             $allContactIds[] = $contactID;
         }
-        
+
         if ( !empty( $allContactIds ) ) {
             $cacheFieldQuery .= " ELSE {$greeting}_display
                               END;"; 
@@ -1034,9 +1025,5 @@ UPDATE civicrm_contact
             // now update cache field
             CRM_Core_DAO::executeQuery( $cacheFieldQuery );
         }
-
-
     }    
-
-
 }
