@@ -1809,6 +1809,18 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     self::formatCustomDate( $params, $formatted, $dateType, $key );
                 } else if ( $customFields[$customFieldID]['data_type'] == 'Boolean' ) {
                     $params[$key] = CRM_Utils_String::strtoboolstr( $val );
+                } else if ( $val && $customFields[$customFieldID]['html_type'] == 'CheckBox' ) {
+                    $chkVal = array();
+                    $checkVal = explode(",",$val);
+                    foreach ($checkVal as $ckey => $cvalue ) {
+                        trim($cvalue);
+                        $chkVal[$cvalue] = 1;
+                    }
+                    $params[$key] = $chkVal;
+                } else if ( $val && $customFields[$customFieldID]['html_type'] == 'Multi-Select' ) {
+                    $selectVal = array();
+                    $selectVal = explode(",",$val);
+                    $params[trim($key)] = $selectVal;
                 }
             }
             
