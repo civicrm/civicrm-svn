@@ -108,9 +108,9 @@ class CRM_Friend_Form extends CRM_Core_Form
             $sql = '
    SELECT  pcp.title, 
            contrib.campaign_id
-     FROM  civicrm_pcp pcp
-LEFT JOIN  civicrm_contribution_page contrib ON ( pcp.contribution_page_id = contrib.id )  
-    WHERE  pcp.id = %1';
+  FROM  civicrm_pcp pcp
+    INNER JOIN  civicrm_contribution_page contrib ON ( pcp.page_id = contrib.id AND pcp.page_type = "contribute" )  
+  WHERE  pcp.id = %1';
             $pcp = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $this->_entityId, 'Positive' ) ) );
             while ( $pcp->fetch( ) ) {
                 $this->_title      = $pcp->title;
