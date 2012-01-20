@@ -2323,6 +2323,12 @@ ORDER BY cg.weight, cf.weight";
                 $this->_columns[$curTable]['extends']  = $customDAO->extends;
                 $this->_columns[$curTable]['grouping'] = $customDAO->table_name;
                 $this->_columns[$curTable]['group_title'] = $customDAO->title;
+
+                foreach ( array('fields', 'filters', 'group_bys') as $colKey ) {
+                    if ( ! array_key_exists($colKey, $this->_columns[$curTable] ) ) {
+                        $this->_columns[$curTable][$colKey] = array();
+                    }
+                }
             }
             $fieldName = 'custom_' . $customDAO->cf_id;
 
@@ -2433,13 +2439,16 @@ ORDER BY cg.weight, cf.weight";
             } 
 
             if ( $addFields ) {
-                $this->_columns[$curTable]['fields']  = $curFields;
+                $this->_columns[$curTable]['fields'] = 
+                    array_merge( $this->_columns[$curTable]['fields'], $curFields );
             }
             if ( $this->_customGroupFilters ) {
-                $this->_columns[$curTable]['filters'] = $curFilters;
+                $this->_columns[$curTable]['filters'] = 
+                    array_merge( $this->_columns[$curTable]['filters'], $curFilters );
             }
             if (  $this->_customGroupGroupBy ) {
-                $this->_columns[$curTable]['group_bys'] = $curFields;
+                $this->_columns[$curTable]['group_bys'] = 
+                    array_merge( $this->_columns[$curTable]['group_bys'], $curFields );
             } 
         }
     }
