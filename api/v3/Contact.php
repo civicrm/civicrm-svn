@@ -598,7 +598,7 @@ function civicrm_api3_contact_quicksearch( $params )
         }
     } 
     
-    $select = array( 'sort_name' );
+    $select = $actualSelectElements = array( 'sort_name' );
     $where  = '';
     $from   = array( );
     foreach( $list as $value ) {
@@ -612,13 +612,14 @@ function civicrm_api3_contact_quicksearch( $params )
             $suffix     = 'sts';
         case 'phone':                
         case 'email':
-            $select[] = ( $value == 'address' ) ? $selectText : $value;
+            $actualSelectElements[] = $select[] = ( $value == 'address' ) ? $selectText : $value;
             $from[$value] = "LEFT JOIN civicrm_{$value} {$suffix} ON ( cc.id = {$suffix}.contact_id AND {$suffix}.is_primary = 1 ) ";
             break;
 
         case 'country':
         case 'state_province':
-            $select[] = "{$suffix}.name";
+            $select[] = "{$suffix}.name as {$value}";
+            $actualSelectElements[] = "{$suffix}.name";
             if ( ! in_array( 'address', $from ) ) {
                 $from ['address'] = 'LEFT JOIN civicrm_address sts ON ( cc.id = sts.contact_id AND sts.is_primary = 1) ';
             }
@@ -630,6 +631,10 @@ function civicrm_api3_contact_quicksearch( $params )
     $config = CRM_Core_Config::singleton( );
     $as = $select;
     $select = implode( ', ', $select );
+    $actualSelectElements = implode( ', ', $actualSelectElements );
+    $selectAliases = $from;
+    unset( $selectAliases['address'] );
+    $selectAliases = implode( ', ', array_keys( $selectAliases ) );
     $from   = implode( ' ' , $from   );
     $limit = CRM_Utils_Array::value( 'limit', $params, 10);
 
@@ -662,7 +667,7 @@ function civicrm_api3_contact_quicksearch( $params )
                 }
 
                 // get current employer details
-                $dao = CRM_Core_DAO::executeQuery( "SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+                $dao = CRM_Core_DAO::executeQuery( "SELECT cc.id as id, CONCAT_WS( ' :: ', {$actualSelectElements} ) as data, sort_name
                     FROM civicrm_contact cc {$from} WHERE cc.contact_type = \"Organization\" AND cc.id = {$currentEmployer} AND cc.sort_name LIKE '$strSearch'" );
                 if ( $dao->fetch( ) ) {
                     $currEmpDetails = array( 'id'   => $dao->id,
@@ -717,16 +722,16 @@ function civicrm_api3_contact_quicksearch( $params )
 
     //CRM-5954
     $query = "
-        SELECT DISTINCT(id), data, {$select}
+        SELECT DISTINCT(id), data, {$selectAliases}
         FROM   (
-            ( SELECT 0 as exactFirst, cc.id as id, {$select},CONCAT_WS( ' :: ', {$select} ) as data
+            ( SELECT 0 as exactFirst, cc.id as id, {$select},CONCAT_WS( ' :: ', {$actualSelectElements} ) as data
             FROM   civicrm_contact cc {$from}
     {$aclFrom}
     {$additionalFrom} {$includeEmailFrom}
     {$exactWhereClause}
     LIMIT 0, {$limit} )
     UNION
-    ( SELECT 1 as exactFirst, cc.id as id, {$select}, CONCAT_WS( ' :: ', {$select} ) as data
+    ( SELECT 1 as exactFirst, cc.id as id, {$select}, CONCAT_WS( ' :: ', {$actualSelectElements} ) as data
     FROM   civicrm_contact cc {$from}
     {$aclFrom}
     {$additionalFrom} {$includeEmailFrom}
