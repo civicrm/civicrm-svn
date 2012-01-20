@@ -301,7 +301,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
                                                                                 ),
                                              CRM_Core_Action::DETACH => array ( 'name'  => ts('Tell Friends'),
                                                                                'url'   => 'civicrm/friend',
-                                                                               'qs'    => 'eid=%%pcpId%%&blockId=%%pcpBlock%%&reset=1&page=pcp&component=%%pageComponent%%',
+                                                                               'qs'    => 'eid=%%pcpId%%&blockId=%%pcpBlock%%&reset=1&pcomponent=pcp&component=%%pageComponent%%',
                                                                                'title' => ts('Tell Friends')
                                                                                ),
                                              CRM_Core_Action::BROWSE => array ( 'name'  => ts('Update Contact Information'),
@@ -638,7 +638,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
             if ( $pcpBlockInfo['is_tellfriend_enabled'] ) {
                 $pcpTellFriendURL = 
                     CRM_Utils_System::url('civicrm/friend', 
-                                          "reset=1&eid=$pcpId&blockId=$blockId&page=pcp",
+                                          "reset=1&eid=$pcpId&blockId=$blockId&pcomponent=pcp",
                                           true, null, false, true);
                 $tplParams['pcpTellFriendURL'] = $pcpTellFriendURL;
             }
