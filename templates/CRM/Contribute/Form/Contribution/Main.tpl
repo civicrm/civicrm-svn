@@ -125,7 +125,7 @@ function clearAmountOther() {
         		{if $is_email_receipt}
         		    {ts}You will receive an email receipt for each recurring contribution. The receipts will include a link you can use if you decide to modify or cancel your future contributions.{/ts} 
         		{/if}
-        		</p>
+        		</span></p>
 		    </div>
 	    </div>
 	{/if} 
