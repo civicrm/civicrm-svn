@@ -25,7 +25,7 @@
 *}
 <feed xmlns='http://www.w3.org/2005/Atom'
     xmlns:gd='http://schemas.google.com/g/2005'>
-  <id>{crmURL p='civicrm/admin/event' q="reset=1&page=1&gData=1"}</id>
+  <id>{crmURL p='civicrm/admin/event' q="reset=1&list=1&gData=1"}</id>
   <title type='text'>{ts}CiviEvent Public Calendar{/ts}</title>
   <subtitle type='text'>{ts}Listing of current and upcoming public events.{/ts}</subtitle>
   <generator>CiviCRM</generator>
