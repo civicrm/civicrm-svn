@@ -215,7 +215,7 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
         } elseif ( $params['entity_table'] == 'civicrm_pcp' ) {
             $mailParams['email_from'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Email', $params['source_contact_id'],
                                                                      'email', 'contact_id' );
-            $urlPath = 'civicrm/contribute/pcp/info';
+            $urlPath = 'civicrm/pcp/info';
             $mailParams['module'] = 'contribute';
         } 
 

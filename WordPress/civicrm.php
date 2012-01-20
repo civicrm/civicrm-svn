@@ -372,10 +372,15 @@ function civicrm_check_permission( $args ) {
         return true;
     }
 
-    // a contribution page / pcp page
+    // a contribution page 
     if ( in_array( 'CiviContribute', $config->enableComponents ) ) {
         if ( $arg1 == 'contribute' &&
             in_array( $arg2, array( 'transact', 'campaign', 'pcp') ) ) {
+            return true;
+        }
+        
+        if ( $arg1 == 'pcp' &&
+            in_array( $arg2, array( 'info') ) ) {
             return true;
         }
     }
@@ -391,6 +396,11 @@ function civicrm_check_permission( $args ) {
         if ( $arg1 == 'contact' &&
              $arg2 == 'map'     &&
              $arg3 == 'event'   ) {
+            return true;
+        }
+
+        if ( $arg1 == 'pcp' &&
+            in_array( $arg2, array( 'info') ) ) {
             return true;
         }
     }
