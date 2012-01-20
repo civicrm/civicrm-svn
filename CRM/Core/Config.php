@@ -547,7 +547,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 self::$_mail = Mail::factory( 'mail', $params );
             } else {
                 CRM_Core_Session::setStatus( ts( 'There is no valid SMTP server Setting Or SendMail path setting. Click <a href=\'%1\'>Administer CiviCRM >> Global Settings</a> to set the OutBound Email.', array( 1 => CRM_Utils_System::url('civicrm/admin/setting', 'reset=1'))));
- 
             }
         }
         return self::$_mail;
