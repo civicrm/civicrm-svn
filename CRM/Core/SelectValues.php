@@ -566,7 +566,7 @@ class CRM_Core_SelectValues
                             '{activity.activity_id}' => ts('Activity ID'),
                             '{activity.subject}' => ts('Activity Subject'),
                             '{activity.details}' => ts('Activity Details'),
-                            
+                            '{activity.activity_date_time}' => ts('Activity Date Time'),
                           );
         }
         return $tokens;
