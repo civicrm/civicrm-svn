@@ -218,7 +218,7 @@ class CRM_Core_Page_AJAX_Location
         require_once 'CRM/Core/PseudoConstant.php';
         $result = CRM_Core_PseudoConstant::stateProvinceForCountry( $_GET['_value'] );
 
-        $elements = array( array( 'name'  => ts('- select a state-'),
+        $elements = array( array( 'name'  => ts('- select a state -'),
             'value' => '' ) );
         foreach ( $result as $id => $name ) {
             $elements[] = array( 'name'  => $name,
