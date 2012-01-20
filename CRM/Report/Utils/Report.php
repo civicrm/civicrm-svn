@@ -196,8 +196,9 @@ WHERE  inst.report_id = %1";
         $displayRows = array();
         $value       = null;
         foreach ( $rows as $row ) {
-            foreach ( $columnHeaders as $k => $v ){
-                if ( $value = CRM_Utils_Array::value( $v, $row ) ) {
+            foreach ( $columnHeaders as $k => $v ) {
+                $value = CRM_Utils_Array::value( $v, $row );
+                if ( isset( $value ) ) {
                     // Remove HTML, unencode entities, and escape quotation marks.
                     $value = 
                         str_replace('"', '""', html_entity_decode(strip_tags($value)));
