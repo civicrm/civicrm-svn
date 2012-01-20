@@ -365,10 +365,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                  $this->_amount <= 0.0              || $this->_params['is_pay_later'] ||
                  ( $this->_separateMembershipPayment && $this->_amount <= 0.0 ) ) {
                 $contribButton = ts('Continue >>');
-                $this->assign( 'button', 'Continue' );
+                $this->assign( 'button', ts('Continue') );
             } else {
                 $contribButton = ts('Make Contribution');
-                $this->assign( 'button', 'Make Contribution' );
+                $this->assign( 'button', ts('Make Contribution') );
             }
             $this->addButtons(array(
                                     array ( 'type'      => 'next',
