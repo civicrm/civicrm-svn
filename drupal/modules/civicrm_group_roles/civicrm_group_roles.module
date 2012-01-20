@@ -49,13 +49,12 @@ function civicrm_group_roles_help($section, $args = array() )
  */
 function civicrm_group_roles_user($op, $edit, &$user, $category = NULL) 
 {
-    //$debug_mode = TRUE;
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    } 
     if ($op == 'login' OR $op == 'after_update' OR $op == 'insert') {
+        if ( ! civicrm_initialize( ) ) {
+            return;
+        } 
         
-        //get user's roles, ignoring built-in roles
+        // get user's roles, ignoring built-in roles
         if ($op == 'insert') { // $user->roles isn't set on insert, we have to get them from the form directly...
             $all = user_roles(TRUE);
             $rids = $edit['roles']; //the insert form only stores role ids. :-P
