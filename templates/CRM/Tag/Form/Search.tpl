@@ -34,8 +34,8 @@
 #crm-container td #Tag ul {ldelim}margin:0 0 0.5em;padding:0{rdelim}
 #crm-container td #Tag li {ldelim}padding-bottom:0;margin:0 0 0 0.5em;{rdelim}
 
-#Tag .tree .expandable .hit {ldelim}background:url('{$config->resourceBase}/i/expandable.gif') no-repeat left 3px;cursor:pointer{rdelim}
-#Tag .tree .collapsable .hit {ldelim}background:url('{$config->resourceBase}/i/collapsable.gif') no-repeat left 3px;cursor:pointer{rdelim}
+#Tag .tree .expandable .hit {ldelim}background:url('{$config->resourceBase}i/expandable.gif') no-repeat left 3px;cursor:pointer{rdelim}
+#Tag .tree .collapsable .hit {ldelim}background:url('{$config->resourceBase}i/collapsable.gif') no-repeat left 3px;cursor:pointer{rdelim}
 #Tag #tagtree .highlighted {ldelim}background-color:lightgrey;{rdelim}
 </style>
 <script type="text/javascript">
