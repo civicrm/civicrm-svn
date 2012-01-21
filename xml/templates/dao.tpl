@@ -73,7 +73,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
 
      /**
       * static instance to hold the values that can
-      * be imported / apu
+      * be imported
       *
       * @var array
       * @static
@@ -82,7 +82,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
 
       /**
        * static instance to hold the values that can
-       * be exported / apu
+       * be exported
        *
        * @var array
        * @static
