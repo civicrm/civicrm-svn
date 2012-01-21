@@ -98,5 +98,6 @@
             <td>{$form.is_uf_link.html} {$form.is_uf_link.label} {help id='id-is_uf_link' file="CRM/UF/Form/Group.hlp"}</td>
         </tr>
     </table>
+    </div><!-- / .crm-block -->
   </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
