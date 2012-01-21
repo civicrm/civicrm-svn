@@ -236,10 +236,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $defaults['is_active'] = 1;
         }
         
-        $otherModules = array( );
+        $otherModules = array_values( CRM_Core_BAO_UFGroup::getUFJoinRecord( $this->_gid ) );
+        $this->assign( 'otherModules', $otherModules );
+ 
         if ( $this->_action & CRM_Core_Action::ADD ) {
-            $otherModules = array_values( CRM_Core_BAO_UFGroup::getUFJoinRecord( $this->_gid ) );
-            $this->assign( 'otherModules', $otherModules );
             $fieldValues = array('uf_group_id' => $this->_gid);
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_UFField', $fieldValues);
         }
@@ -550,7 +550,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $sel->setOptions( array( $sel1, $sel2, $sel3, $sel4 ) );
         
         $visibleValues = array();
-        if(in_array( 'Search Profile', $otherModules ) ) {
+        if ( in_array( 'Search Profile', $otherModules ) ) {
             $visibleValues['Public Pages and Listings'] = 'Public Pages and Listings';
         } else { 
             $visibleValues = CRM_Core_SelectValues::ufVisibility( );

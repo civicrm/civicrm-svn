@@ -98,19 +98,19 @@
 <script type="text/javascript">
 var otherModule = new Array( );
 {/literal}{foreach from=$otherModules item="mval" key="mkey"}{literal}
-      otherModule[{/literal}{$mkey}{literal}] = '{/literal}{$mval}{literal}';
-    {/literal}{/foreach}{literal}
+    otherModule[{/literal}{$mkey}{literal}] = '{/literal}{$mval}{literal}';
+{/literal}{/foreach}{literal}
 
- window.onload = function(){  
-        if( cj.inArray( "Profile", otherModule ) > -1 && cj.inArray( "Search Profile", otherModule ) == -1 ){       
+cj( function() {
+   if ( cj.inArray( "Profile", otherModule ) > -1 && cj.inArray( "Search Profile", otherModule ) == -1 ){       
         cj('#profile_visibility').show();
-          } else if( cj.inArray( "Search Profile", otherModule ) > -1 ){
-          cj('#profile_visibility').show();
-          cj("#in_selector").attr('checked',true);
-          } else if( cj.inArray( "Profile", otherModule ) == -1 && cj.inArray( "Search Profile", otherModule ) == -1 ){
-            cj('#profile_visibility').hide();
-          }                         
-}
+   } else if( cj.inArray( "Search Profile", otherModule ) > -1 ){
+        cj('#profile_visibility').show();
+        cj("#in_selector").attr('checked',true);
+   } else if( cj.inArray( "Profile", otherModule ) == -1 && cj.inArray( "Search Profile", otherModule ) == -1 ){
+        cj('#profile_visibility').hide();
+   }                         
+});
 
 function showLabel( ) {
     var labelValue = '';
