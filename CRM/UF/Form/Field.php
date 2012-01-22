@@ -120,6 +120,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             
             $session = CRM_Core_Session::singleton( ); 
             $session->pushUserContext( $url );
+            $breadCrumb     = array( array( 'title' => ts( 'CiviCRM Profile Fields' ),
+                                            'url'   => $url) );
+            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
         }
 
         $showBestResult = CRM_Utils_Request::retrieve( 'sbr', 'Positive', CRM_Core_DAO::$_nullArray );
