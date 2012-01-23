@@ -555,7 +555,9 @@ PRIMARY KEY ( id ),
             }
         } else {
             $campaignIds = $campaign;
-            $campaignTitles[$campId] = $allCampaigns[$campaignIds];
+            if(array_key_exists($campaignIds,$allCampaigns)) {
+              $campaignTitles[$campaignIds] = $allCampaigns[$campaignIds];
+            }
         }
         $query->_qill[$grouping][] = ts( 'Campaigns %1', 
                                          array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $campaignTitles );
