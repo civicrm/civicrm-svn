@@ -313,7 +313,7 @@ WHERE  inst.report_id = %1";
         // hack for now, CRM-8358
         $_GET['instanceId'] = $instanceId;
         $_GET['sendmail']   = CRM_Utils_Array::value( 'sendmail', $params, 1 );
-        $_GET['output']     = CRM_Utils_Array::value( 'output', $params, 1 );
+        $_GET['output']     = CRM_Utils_Array::value( 'output', $params, false );
         $_GET['reset']      = CRM_Utils_Array::value( 'reset',  $params, 1 );
 
         $optionVal = self::getValueFromUrl( $instanceId );
