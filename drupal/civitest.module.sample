@@ -1820,3 +1820,12 @@ function civitest_civicrm_contactListQuery( &$query, $name, $context, $id ) {
         FROM {$quickSearchTempTable}";
 
 }
+
+function civitest_civicrm_alterContent( &$content,
+                                        $context,
+                                        $tplName,
+                                        &$object ) {
+    // u can modify the content programmatically
+    // similar to as described in this blog post
+    // http://civicrm.org/blogs/dave-greenberg/now-its-easier-add-custom-behaviors-templates
+}

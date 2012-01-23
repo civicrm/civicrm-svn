@@ -829,4 +829,21 @@ abstract class CRM_Utils_Hook {
                                            'civicrm_alterMailingLabelParams' );
     }
 
+    /**
+     * This hooks allows alteration of generated page content
+     *
+     * @param $content  previously generated content
+     * @param $context  context of content - page or form
+     * @param $tplName  the file name of the tpl
+     * @param $object   a reference to the page or form object
+     *
+     * @access public
+     */
+    static function alterContent( &$content, $context, $tplName, &$object ) {
+        $context = str_replace(array(DIRECTORY_SEPARATOR,".tpl"),array("_",""),$context);
+        return self::singleton( )->invoke( 4, $content, $context, $tplName, $object,
+                                           self::$_nullObject,
+                                           'civicrm_alterContent' );
+    }
+
 }
