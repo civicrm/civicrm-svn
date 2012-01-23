@@ -57,8 +57,8 @@ packages/jquery/plugins/jquery.mousewheel.pack.js
 
 packages/jquery/plugins/jquery.toolTip.js
 
-packages/jquery/plugins/DataTables-1.7.6/media/css/demo_table_jui.css
-packages/jquery/plugins/DataTables-1.7.6/media/js/jquery.dataTables.min.js
+packages/jquery/plugins/DataTables/media/css/demo_table_jui.css
+packages/jquery/plugins/DataTables/media/js/jquery.dataTables.min.js
 
 packages/jquery/plugins/jquery.dashboard.js
 packages/jquery/css/dashboard.css
