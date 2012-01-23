@@ -313,7 +313,8 @@ WHERE  inst.report_id = %1";
         // hack for now, CRM-8358
         $_GET['instanceId'] = $instanceId;
         $_GET['sendmail']   = CRM_Utils_Array::value( 'sendmail', $params, 1 );
-        $_GET['output']     = CRM_Utils_Array::value( 'output', $params, false );
+        // if cron is run from terminal --output is reserved, and therefore we would provide another name 'format'
+        $_GET['output']     = CRM_Utils_Array::value( 'format', $params, CRM_Utils_Array::value( 'output', $params, 'pdf' ) );
         $_GET['reset']      = CRM_Utils_Array::value( 'reset',  $params, 1 );
 
         $optionVal = self::getValueFromUrl( $instanceId );
@@ -340,8 +341,12 @@ WHERE  inst.report_id = %1";
                                                        'default'    => 'null' ) );
             $messages[] = $wrapper->run( $templateInfo['name'], null, $arguments );
         } else {
-            $messages[] = 'Did not find valid instance to execute';
             $is_error = 1;
+            if ( !$instanceId ) {
+                $messages[] = 'Required parameter missing: instanceId';
+            } else {
+                $messages[] = 'Did not find valid instance to execute';
+            }
         }
 
         $result = array(

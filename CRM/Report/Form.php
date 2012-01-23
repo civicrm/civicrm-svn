@@ -2093,23 +2093,42 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
 
             if ( $this->_sendmail ) {
                 require_once 'CRM/Report/Utils/Report.php';
+                require_once 'CRM/Utils/File.php';
+                $config = CRM_Core_Config::singleton();
                 $attachments = array();
+
                 if ( $this->_outputMode == 'csv' ) {
                     $content = $this->_formValues['report_header'] .
                         '<p>' . ts('Report URL') . ": {$url}</p>" .
                         '<p>' . ts('The report is attached as a CSV file.') . '</p>' .
                         $this->_formValues['report_footer'] ;
 
-                    require_once 'CRM/Utils/File.php';
-                    $config = CRM_Core_Config::singleton();
-                    $csvFilename = 'Report.csv';
-                    $csvFullFilename = $config->templateCompileDir . CRM_Utils_File::makeFileName( $csvFilename );
+                    $csvFullFilename = $config->templateCompileDir . CRM_Utils_File::makeFileName( 'CiviReport.csv' );
                     $csvContent = CRM_Report_Utils_Report::makeCsv( $this, $rows );
                     file_put_contents( $csvFullFilename, $csvContent);
                     $attachments[] = array(
-                        'fullPath'  => $csvFullFilename,
-                        'mime_type' => 'text/csv',
-                        'cleanName' => $csvFilename,
+                                           'fullPath'  => $csvFullFilename,
+                                           'mime_type' => 'text/csv',
+                                           'cleanName' => 'CiviReport.csv',
+                                           );
+                }
+                if ( $this->_outputMode == 'pdf' ) {
+                    // generate PDF content
+                    require_once 'CRM/Utils/PDF/Utils.php';          
+                    $pdfFullFilename = $config->templateCompileDir . CRM_Utils_File::makeFileName( 'CiviReport.pdf' );
+                    file_put_contents( $pdfFullFilename, 
+                                       CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf", 
+                                                                      true, array('orientation' => 'landscape') ) );
+                    // generate Email Content
+                    $content = $this->_formValues['report_header'] .
+                        '<p>' . ts('Report URL') . ": {$url}</p>" .
+                        '<p>' . ts('The report is attached as a PDF file.') . '</p>' .
+                        $this->_formValues['report_footer'] ;
+
+                    $attachments[] = array(
+                        'fullPath'  => $pdfFullFilename,
+                        'mime_type' => 'application/pdf',
+                        'cleanName' => 'CiviReport.pdf',
                     );
                 }
 
