@@ -769,6 +769,7 @@ AND    status IN ( 'Scheduled', 'Running', 'Paused' )
             }
         
             $activity = array('source_contact_id'    => $mailing->scheduled_id,
+                              'target_contact_id'    => array_unique( $targetParams ), // CRM-9519
                               'target_contact_id'    => $targetParams,
                               'activity_type_id'     => $activityTypeID,
                               'source_record_id'     => $this->mailing_id,
@@ -794,6 +795,18 @@ AND    civicrm_activity.source_record_id = %2";
         
             if ( $activityID ) {
                 $activity['id'] = $activityID;  
+
+                require_once 'CRM/Core/BAO/Email.php';
+                // CRM-9519
+                if ( CRM_Core_BAO_Email::isMultipleBulkMail( ) ) {
+                    // make sure we don't attempt to duplicate the target activity
+                    foreach ( $activity['target_contact_id'] as $key => $targetID ) {
+                        $sql = "SELECT id FROM civicrm_activity_target WHERE activity_id = $activityID AND target_contact_id = $targetID;";
+                        if ( CRM_Core_DAO::singleValueQuery($sql) ) {
+                            unset($activity['target_contact_id'][$key]);
+                        }
+                    } 
+                }
             }
 
             require_once 'CRM/Activity/BAO/Activity.php';
