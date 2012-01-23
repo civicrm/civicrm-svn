@@ -165,7 +165,7 @@ LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
              {$this->_aliases['civicrm_contact']}.id 
 
 LEFT JOIN civicrm_contribution_page {$this->_aliases['civicrm_contribution_page']}
-          ON {$this->_aliases['civicrm_pcp']}.contribution_page_id = 
+          ON {$this->_aliases['civicrm_pcp']}.page_id = 
              {$this->_aliases['civicrm_contribution_page']}.id";
     }
     
