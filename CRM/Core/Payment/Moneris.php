@@ -133,7 +133,7 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
                          'pan'        => $params['credit_card_number'],
                          'expdate'    => substr($expiry_string,2,4),
                          'crypt_type' => '7',
-                         'cust_id'    => $params['contact_id']
+                         'cust_id'    => $params['contactID']
                          );
         
         // Allow further manipulation of params via custom hooks
