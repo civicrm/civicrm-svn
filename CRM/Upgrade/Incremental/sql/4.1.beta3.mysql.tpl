@@ -28,3 +28,6 @@ UPDATE civicrm_state_province SET country_id = 1243 WHERE id = 5112;
 UPDATE civicrm_state_province SET country_id = 1242 WHERE id = 5113;
 UPDATE civicrm_state_province SET country_id = 1242 WHERE id = 5114;
 UPDATE civicrm_state_province SET country_id = 1242 WHERE id = 5115;
+
+-- CRM-9523
+ALTER TABLE `civicrm_note` MODIFY `privacy` VARCHAR(255);
