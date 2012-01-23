@@ -30,4 +30,4 @@ UPDATE civicrm_state_province SET country_id = 1242 WHERE id = 5114;
 UPDATE civicrm_state_province SET country_id = 1242 WHERE id = 5115;
 
 -- CRM-9523
-ALTER TABLE `civicrm_note` MODIFY `privacy` VARCHAR(255);
+ALTER TABLE `civicrm_note` MODIFY `privacy` VARCHAR(255) COMMENT 'Foreign Key to Note Privacy Level (which is an option value pair and hence an implicit FK)';
