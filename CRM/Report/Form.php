@@ -1179,10 +1179,10 @@ class CRM_Report_Form extends CRM_Core_Form {
         return null;
     }
 
-   static function getFromTo( $relative, $from, $to,$fromtime =  null, $totime = null ) {
-     if(empty($totime)){
-       $totime = '235959';
-     }
+    static function getFromTo( $relative, $from, $to,$fromtime =  null, $totime = null ) {
+        if( empty($totime) ){
+            $totime = '235959';
+        }
         require_once 'CRM/Utils/Date.php';
         //FIX ME not working for relative 
         if ( $relative ) {
