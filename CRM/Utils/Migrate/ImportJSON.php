@@ -40,12 +40,11 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function run( $file ) {
-        
         $json =  file_get_contents($file);
         $decodedContacts = json_decode($json);
         
         $this->mapContacts( $decodedContacts );  
-        
+
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
     }
@@ -65,16 +64,57 @@ class CRM_Utils_Migrate_ImportJSON {
             
             /*save contact centric data*/
             //save address
-            $this->copyAddressData( &$contact, $dao, $save  ) ;
+            $this->copyAddressData( &$contact, $dao, $save ) ;
+            
+            //save phone
+            //$this->copyPhoneData( &$contact, $dao, $save ) ;
+            
+            //save email
+            $this->copyEmailData( &$contact, $dao, $save  ) ;
             
             //save note object
-            $this->copyNoteData( &$contact, $dao, $save  ) ;
+            $this->copyNoteData( &$contact, $dao, $save ) ;
             
         }
 
         return true;
     }
+    
+    function copyEmailData( &$contact, $dao, $save = false ) {
+        require_once 'CRM/Core/DAO/Email.php';
+        require_once 'CRM/Utils/System.php';
+        if ( !CRM_Utils_System::isNull( $contact->email ) ) {
+            if ( is_array ( $contact->email ) ) {
+                //multiple emails per contact
+                foreach ( $contact->email as $emailString ) {
+                    $emailDAO = new CRM_Core_DAO_Email;
+                    list( $locationType, $email ) = explode(': ', $emailString);
+                    
+                    //FIXME : need to look up location type
+                    $emailDAO->email = (string ) $email;
+                    $emailDAO->contact_id = $dao->id;
 
+                    if ( $save ) {
+                        $emailDAO->save( );
+                    }
+                }
+            } else {
+                list( $locationType, $email ) = explode(': ', $contact->email);
+                $emailDAO = new CRM_Core_DAO_Email;
+
+                //FIXME : need to look up location type
+                $emailDAO->email = (string ) $email;
+                $emailDAO->contact_id = $dao->id;
+                $emailDAO->is_primary = 1;
+                if ( $save ) {
+                    $emailDAO->save( );
+                }
+            }
+        }
+
+        return true;
+    }
+    
     function copyAddressData( &$contact, $dao, $save = false ) {
         require_once 'CRM/Core/BAO/Address.php';
         $addressDAO = new CRM_Core_DAO_Address;
@@ -85,6 +125,7 @@ class CRM_Utils_Migrate_ImportJSON {
                 if ( $name == 'street_address' ) {
                     $addressDAO->$name = (string ) $contact->$name;
                     $parsedAddress = CRM_Core_BAO_Address::parseStreetAddress( $addressDAO->street_address  );
+
                     foreach( $parsedAddress as $column => $value ) {
                         $addressDAO->$column = $parsedAddress[$column];
                     }
@@ -127,6 +168,7 @@ class CRM_Utils_Migrate_ImportJSON {
         
         foreach ( $contacts as $contact ) {
             $this->copyContactData( $contact, true );
+
         }
     }
     
