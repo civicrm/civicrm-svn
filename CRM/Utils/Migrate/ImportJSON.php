@@ -44,7 +44,7 @@ class CRM_Utils_Migrate_ImportJSON {
         $decodedContacts = json_decode($json);
         
         $this->mapContacts( $decodedContacts );  
-
+        
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
     }
@@ -67,19 +67,38 @@ class CRM_Utils_Migrate_ImportJSON {
             $this->copyAddressData( &$contact, $dao, $save ) ;
             
             //save phone
-            //$this->copyPhoneData( &$contact, $dao, $save ) ;
+            $this->copyPhoneData( &$contact, $dao, $save ) ;
             
             //save email
             $this->copyEmailData( &$contact, $dao, $save  ) ;
             
             //save note object
             $this->copyNoteData( &$contact, $dao, $save ) ;
-            
         }
 
         return true;
     }
-    
+
+    function copyPhoneData( &$contact, $dao, $save = false ) {
+        require_once 'CRM/Core/DAO/Phone.php';
+        require_once 'CRM/Utils/System.php';
+        if ( !CRM_Utils_System::isNull( $contact->phone ) ) {
+            foreach ( $contact->phone as $phoneString ) {
+                list( $locationType, $phone, $phoneType ) = explode( ' ', $phoneString );
+                $locationType = substr( $locationType, 0, -1 );
+                $phoneType =substr( $phoneType, 1, -1 ); 
+                
+                //FIXME : need to look up location type & phone type
+                $phoneDAO = new CRM_Core_DAO_Phone;
+                $phoneDAO->phone = $phone;
+                $phoneDAO->contact_id = $dao->id;
+                if ( $save ) {
+                    $phoneDAO->save( );
+                }
+            }
+        }
+    }
+
     function copyEmailData( &$contact, $dao, $save = false ) {
         require_once 'CRM/Core/DAO/Email.php';
         require_once 'CRM/Utils/System.php';
@@ -114,6 +133,7 @@ class CRM_Utils_Migrate_ImportJSON {
 
         return true;
     }
+
     
     function copyAddressData( &$contact, $dao, $save = false ) {
         require_once 'CRM/Core/BAO/Address.php';
@@ -121,11 +141,10 @@ class CRM_Utils_Migrate_ImportJSON {
         $found = false;
         $fields =& $addressDAO->fields( );
         foreach ( $fields as $name => $dontCare ) {
-            if ( isset( $contact->$name )  ) {
+            if (  isset( $contact->$name )  ) {
                 if ( $name == 'street_address' ) {
                     $addressDAO->$name = (string ) $contact->$name;
                     $parsedAddress = CRM_Core_BAO_Address::parseStreetAddress( $addressDAO->street_address  );
-
                     foreach( $parsedAddress as $column => $value ) {
                         $addressDAO->$column = $parsedAddress[$column];
                     }
@@ -164,11 +183,12 @@ class CRM_Utils_Migrate_ImportJSON {
         return true;
     }
 
+
+
     function mapContacts( &$contacts ) {
         
         foreach ( $contacts as $contact ) {
             $this->copyContactData( $contact, true );
-
         }
     }
     
