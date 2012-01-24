@@ -64,6 +64,14 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             return;
         }
 
+        // "null" value for example is passed by dedupe merge in order to empty. 
+        // Display name computation shouldn't consider such values.
+        foreach ( array('first_name', 'middle_name', 'last_name') as $displayField ) {
+            if ( $params[$displayField] == "null" ) {
+                $params[$displayField] = '';
+            }
+        }
+
         $sortName   = $displayName = '';
         $firstName  = CRM_Utils_Array::value('first_name'   , $params, '');
         $middleName = CRM_Utils_Array::value('middle_name'  , $params, '');
