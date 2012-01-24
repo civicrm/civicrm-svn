@@ -40,8 +40,7 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function run( $file ) {
-               
-        $file = "/users/yashodha/svn/civicrm/CRM/Utils/Migrate/contact.json";
+
         $json =  file_get_contents($file);
         $decodedContacts = json_decode($json);
         
@@ -52,7 +51,7 @@ class CRM_Utils_Migrate_ImportJSON {
         CRM_Core_Config::clearDBCache( );
     }
 
-    function copyContactData( &$contact ) {
+    function copyContactData( &$contact, $save = false ) {
         require_once 'CRM/Contact/DAO/Contact.php';
         $dao = new CRM_Contact_DAO_Contact;
         $fields =& $dao->fields( );
