@@ -40,11 +40,12 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function run( $file ) {
+        
         $json =  file_get_contents($file);
         $decodedContacts = json_decode($json);
         
         $this->mapContacts( $decodedContacts );  
-
+        
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
     }
@@ -75,18 +76,28 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function copyAddressData( &$contact, $dao, $save = false ) {
-        require_once 'CRM/Core/DAO/Address.php';
+        require_once 'CRM/Core/BAO/Address.php';
         $addressDAO = new CRM_Core_DAO_Address;
         $found = false;
         $fields =& $addressDAO->fields( );
         foreach ( $fields as $name => $dontCare ) {
-            if (  isset( $contact->$name )  && $name != 'contact_id' ) {
-                $addressDAO->$name = (string ) $contact->$name;
-                $addressDAO->contact_id = $dao->id;
-                $found = true;
+            if ( isset( $contact->$name )  ) {
+                if ( $name == 'street_address' ) {
+                    $addressDAO->$name = (string ) $contact->$name;
+                    $parsedAddress = CRM_Core_BAO_Address::parseStreetAddress( $addressDAO->street_address  );
+                    foreach( $parsedAddress as $column => $value ) {
+                        $addressDAO->$column = $parsedAddress[$column];
+                    }
+                    $addressDAO->contact_id = $dao->id;
+                    $found = true;
+                } elseif ( $name != 'contact_id' ) {
+                    $addressDAO->$name = (string ) $contact->$name;
+                    $addressDAO->contact_id = $dao->id;
+                    $found = true;
+                }
+
             }
         }
-        
         if ( $save && $found ) {
             $addressDAO->save( );
         }
