@@ -40,12 +40,11 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function run( $file ) {
-
+               
         $json =  file_get_contents($file);
         $decodedContacts = json_decode($json);
         
         $this->mapContacts( $decodedContacts );  
-        EXIT();
 
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
@@ -61,18 +60,39 @@ class CRM_Utils_Migrate_ImportJSON {
                 $dao->$name = (string ) $contact->$name;
             }
         }
+        
         if ( $save ) {
             $dao->save( );
+            
+            //save note object
+            self::copyNoteData( &$contact, $dao, $save  ) ;
         }
 
         return true;
     }
 
+    function copyNoteData( &$contact, $dao, $save = false ) {
+        require_once 'CRM/Core/DAO/Note.php';
+        $noteDAO = new CRM_Core_DAO_Note;
+        $fields =& $noteDAO->fields( );
+
+        if ( isset( $contact->note ) ) {
+            $noteDAO->note = (string ) $contact->note;
+            $noteDAO->entity_id = $dao->id;
+            $noteDAO->entity_table = 'civicrm_contact';
+        }
+        
+        if ( $save ) {
+            $noteDAO->save( );
+        }
+     
+        return true;
+    }
+    
     function mapContacts( &$contacts ) {
         
         foreach ( $contacts as $contact ) {
-            $this->copyContactData( $contact );
-            CRM_CORE_ERROR::DEBUG( "contact", $contact );
+            $this->copyContactData( $contact, true );
         }
     }
     
