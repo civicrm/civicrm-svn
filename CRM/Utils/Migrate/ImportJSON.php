@@ -40,7 +40,6 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function run( $file ) {
-               
         $json =  file_get_contents($file);
         $decodedContacts = json_decode($json);
         
@@ -60,14 +59,37 @@ class CRM_Utils_Migrate_ImportJSON {
                 $dao->$name = (string ) $contact->$name;
             }
         }
-        
         if ( $save ) {
             $dao->save( );
             
+            /*save contact centric data*/
+            //save address
+            $this->copyAddressData( &$contact, $dao, $save  ) ;
+            
             //save note object
-            self::copyNoteData( &$contact, $dao, $save  ) ;
+            $this->copyNoteData( &$contact, $dao, $save  ) ;
+            
         }
 
+        return true;
+    }
+
+    function copyAddressData( &$contact, $dao, $save = false ) {
+        require_once 'CRM/Core/DAO/Address.php';
+        $addressDAO = new CRM_Core_DAO_Address;
+        $found = false;
+        $fields =& $addressDAO->fields( );
+        foreach ( $fields as $name => $dontCare ) {
+            if (  isset( $contact->$name )  && $name != 'contact_id' ) {
+                $addressDAO->$name = (string ) $contact->$name;
+                $addressDAO->contact_id = $dao->id;
+                $found = true;
+            }
+        }
+        
+        if ( $save && $found ) {
+            $addressDAO->save( );
+        }
         return true;
     }
 
@@ -75,20 +97,21 @@ class CRM_Utils_Migrate_ImportJSON {
         require_once 'CRM/Core/DAO/Note.php';
         $noteDAO = new CRM_Core_DAO_Note;
         $fields =& $noteDAO->fields( );
-
+        $found = false;
+        
         if ( isset( $contact->note ) ) {
             $noteDAO->note = (string ) $contact->note;
             $noteDAO->entity_id = $dao->id;
             $noteDAO->entity_table = 'civicrm_contact';
+            $found = true;
         }
         
-        if ( $save ) {
+        if ( $save && $found ) {
             $noteDAO->save( );
         }
-     
         return true;
     }
-    
+
     function mapContacts( &$contacts ) {
         
         foreach ( $contacts as $contact ) {
