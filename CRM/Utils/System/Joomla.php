@@ -435,22 +435,24 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
             }
             CRM_Utils_System::loadBootStrap( $bootStrapParams );
         }
-
-        $JUserTable =& JTable::getInstance( 'User' , 'JTable' );
+                
+        jimport('joomla.application.component.helper');
+        jimport( 'joomla.database.table');
+         
+        $JUserTable =& JTable::getInstance( 'User', 'JTable' );
         
         $db     = $JUserTable->getDbo();
         $query  = $db->getQuery(true);
-        $query->select( 'username, email' );
+        $query->select( 'id, username, email, password' );
         $query->from($JUserTable->getTableName());
         $query->where('(LOWER(username) = LOWER(\''.$name.'\')) AND (block = 0)');
         $db->setQuery($query, 0, $limit);
         $users = $db->loadAssocList();
-        
+
         $row = array();;
         if (count($users)) {
             $row = $users[0];
         }
-        
 
         $user = null;
         require_once 'CRM/Core/BAO/UFMatch.php';
@@ -538,6 +540,17 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true )
     {
         // load BootStrap here if needed
+        // We are a valid Joomla entry point.
+        define('_JEXEC', 1);
+
+        // Setup the base path related constant.
+        $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
+
+        // Get the framework.
+        require $joomlaBase . '/libraries/import.php';
+        require $joomlaBase . '/configuration.php';
+        jimport( 'joomla.application.cli' );
+
         return true;
     }
     
