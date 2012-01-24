@@ -56,7 +56,7 @@
         <td class="crm-locationType-vcard_name">{$row.vcard_name}</td>	
       	<td class="crm-locationType-description">{$row.description}</td>
         <td id="row_{$row.id}_status" class="crm-locationType-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-      	<td class="crm-locationType-is_default" >{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
+      	<td class="crm-locationType-is_default" >{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
         <td>{$row.action|replace:'xx':$row.id}</td>
     </tr>
     {/foreach}

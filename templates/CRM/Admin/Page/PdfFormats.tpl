@@ -52,7 +52,7 @@
         <tr id="row_{$row.id}" class="crm-pdfFormat {cycle values="odd-row,even-row"} {$row.class}">
             <td class="crm-pdfFormat-name">{$row.name}</td>
             <td class="crm-pdfFormat-description">{$row.description}</td>
-            <td class="crm-pdfFormat-is_default">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
+            <td class="crm-pdfFormat-is_default">{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
 	        <td class="crm-pdfFormat-order nowrap">{$row.order}</td>
 	        <td class="order hiddenElement">{$row.weight}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>

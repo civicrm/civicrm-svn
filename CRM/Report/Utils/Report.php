@@ -150,7 +150,7 @@ WHERE  inst.report_id = %1";
         $params['toEmail'    ] = CRM_Utils_Array::value( 'email_to', $instanceInfo );
         $params['cc'         ] = CRM_Utils_Array::value( 'email_cc', $instanceInfo );
         $params['subject'    ] = CRM_Utils_Array::value( 'email_subject', $instanceInfo );
-        if ( !is_array($instanceInfo['attachments']) ) {
+        if ( !CRM_Utils_Array::value( 'attachments', $instanceInfo ) ) {
             $instanceInfo['attachments'] = array();
         }
         $params['attachments'] = array_merge(CRM_Utils_Array::value( 'attachments', $instanceInfo ), $attachments);
@@ -196,8 +196,9 @@ WHERE  inst.report_id = %1";
         $displayRows = array();
         $value       = null;
         foreach ( $rows as $row ) {
-            foreach ( $columnHeaders as $k => $v ){
-                if ( $value = CRM_Utils_Array::value( $v, $row ) ) {
+            foreach ( $columnHeaders as $k => $v ) {
+                $value = CRM_Utils_Array::value( $v, $row );
+                if ( isset( $value ) ) {
                     // Remove HTML, unencode entities, and escape quotation marks.
                     $value = 
                         str_replace('"', '""', html_entity_decode(strip_tags($value)));
@@ -307,24 +308,23 @@ WHERE  inst.report_id = %1";
         require_once 'CRM/Report/Page/Instance.php';
         require_once 'CRM/Utils/Wrapper.php';
 
-        $sendmail     = CRM_Utils_Array::value( 'sendmail', $params, 1 );
-        $instanceId   = CRM_Utils_Array::value( 'instanceId', $params );
-        $resetVal     = CRM_Utils_Array::value( 'reset', $params, 1 );
+        $instanceId = CRM_Utils_Array::value( 'instanceId', $params );
 
         // hack for now, CRM-8358
-        $_REQUEST['sendmail'] = $sendmail;
-        $_REQUEST['reset']    = $resetVal;
+        $_GET['instanceId'] = $instanceId;
+        $_GET['sendmail']   = CRM_Utils_Array::value( 'sendmail', $params, 1 );
+        // if cron is run from terminal --output is reserved, and therefore we would provide another name 'format'
+        $_GET['output']     = CRM_Utils_Array::value( 'format', $params, CRM_Utils_Array::value( 'output', $params, 'pdf' ) );
+        $_GET['reset']      = CRM_Utils_Array::value( 'reset',  $params, 1 );
 
-        $optionVal    = self::getValueFromUrl( $instanceId );
-
-        $messages = array( );
-        $messages[] =  "Report Mail Triggered...";
-
+        $optionVal = self::getValueFromUrl( $instanceId );
+        $messages  = array( "Report Mail Triggered..." );
+        
         require_once 'CRM/Core/OptionGroup.php';
         $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', $optionVal, 'value' );
         $obj = new CRM_Report_Page_Instance();
         $is_error = 0;
-        if ( strstr($templateInfo['name'], '_Form') ) {
+        if ( strstr( CRM_Utils_Array::value( 'name', $templateInfo ), '_Form') ) {
             $instanceInfo = array( );
             CRM_Report_BAO_Instance::retrieve( array('id' => $instanceId), $instanceInfo );
             
@@ -341,8 +341,12 @@ WHERE  inst.report_id = %1";
                                                        'default'    => 'null' ) );
             $messages[] = $wrapper->run( $templateInfo['name'], null, $arguments );
         } else {
-            $messages[] = 'Did not find valid instance to execute';
             $is_error = 1;
+            if ( !$instanceId ) {
+                $messages[] = 'Required parameter missing: instanceId';
+            } else {
+                $messages[] = 'Did not find valid instance to execute';
+            }
         }
 
         $result = array(

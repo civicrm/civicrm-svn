@@ -66,7 +66,11 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
 
         //check for  profile create     
         $this->assertTrue( $this->isTextPresent("Your CiviCRM Profile '$profileTitle' has been added. You can add fields to this profile now") );
-
+        
+        // Get profile id (gid) from URL
+        $elements = $this->parseURL( );
+        $profileId = $elements['queryString']['gid'];
+        
         // Add Last Name field.
         $this->click('field_name[0]');
         $this->select('field_name[0]', 'value=Individual');
@@ -147,6 +151,25 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[3][text()='$lastName']");
         $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[4][text()='jhon@$lastName.com']");
         $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[5][text()='Education']");
+        
+        // Go back to Profile fields admin
+        $this->open($this->sboxPath . 'civicrm/admin/uf/group/field?reset=1&action=browse&gid=' . $profileId);
+        $this->waitForPageToLoad('30000');
+
+        // Edit first profile field
+        $this->waitForElementPresent("xpath=//table/tbody/tr[1]/td[9]");
+        $this->click("xpath=//table/tbody/tr[1]/td[9]/span[1]/a[1]");
+        
+        // Verify that visibility field is present in edit form
+        $this->waitForPageToLoad('30000');
+        $this->waitForElementPresent('_qf_Field_next-bottom');
+
+        // sleep 5 to make sure jQuery is not hiding field after page load
+        sleep(5);
+        $this->assertTrue( $this->isElementPresent("visibility"), 'Visibility field not present when editing existing profile field.' );
+        $this->assertTrue( $this->isTextPresent("Is this field hidden from other users") ); 
+        $this->select('visibility', 'value=Public Pages and Listings');
+        
     }
 }
 ?>

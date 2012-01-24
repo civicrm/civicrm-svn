@@ -372,8 +372,6 @@ WHERE     pledge_id = %1
                                                                     'id'
                                                                     );
 
-crm_core_error::debug('$paymentContributionId', $paymentContributionId);
-
             if ( ! $paymentContributionId ) {
                 $editScheduled = true;
             }
@@ -384,8 +382,6 @@ crm_core_error::debug('$paymentContributionId', $paymentContributionId);
             if ( $pledgeStatusID == array_search( 'Cancelled', $allStatus ) ) {
                 $paymentStatusID = $pledgeStatusID ;
             }
-            
-            crm_core_error::debug('$paymentStatusID', $paymentStatusID);
             
             self::updatePledgePayments( $pledgeID, $paymentStatusID, $paymentIDs, $actualAmount, $paymentContributionId ,$isScriptUpdate );
         }

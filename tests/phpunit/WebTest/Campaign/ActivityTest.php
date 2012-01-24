@@ -229,11 +229,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent('_qf_Activity_cancel-bottom');
 
       // verify Activity created
-      $expected = array( 5   => $campaignTitle  
-                         ); 
-      foreach ( $expected as  $value => $label ) { 
-          $this->verifyText( "xpath=id( 'Activity' )/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote( $label ) ); 
-      }
+      $this->verifyText( "xpath=id( 'Activity' )/div[2]/table[1]/tbody/tr[5]/td[2]", preg_quote( $campaignTitle ) ); 
   }
   
 }

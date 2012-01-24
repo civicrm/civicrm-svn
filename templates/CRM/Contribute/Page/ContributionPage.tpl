@@ -53,10 +53,10 @@
                  <th id="sortable">{ts}Title{/ts}</th>
             	 <th>{ts}ID{/ts}</th>
             	 <th>{ts}Enabled?{/ts}</th>
-		 {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
-		 <th>{ts}Campaign{/ts}</th>
-		 {/if}
-		 <th></th>
+		         {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
+		         <th>{ts}Campaign{/ts}</th>
+		        {/if}
+		        <th></th>
                </tr>
                </thead>
                {foreach from=$rows item=row}
@@ -64,18 +64,18 @@
                      <td><strong>{$row.title}</strong></td>
                      <td>{$row.id}</td>
                      <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-		     {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
-		     <td>{$row.campaign}</td>
-		     {/if}
-		     <td class="crm-contribution-page-actions right nowrap">
+		      {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
+		      <td>{$row.campaign}</td>
+		      {/if}
+		      <td class="crm-contribution-page-actions right nowrap">
 		
-			{if $row.configureActionLinks}	
-		  	<div class="crm-contribution-page-configure-actions">
+			 {if $row.configureActionLinks}	
+		  	 <div class="crm-contribution-page-configure-actions">
 		       	     {$row.configureActionLinks|replace:'xx':$row.id}
-		  	</div>
-                  	{/if}
+		  	 </div>
+             {/if}
 
-                  	{if $row.contributionLinks}	
+            {if $row.contributionLinks}	
 		  	<div class="crm-contribution-online-contribution-actions">
 		       	     {$row.contributionLinks|replace:'xx':$row.id}
 		  	</div>
@@ -88,16 +88,16 @@
 		  	{/if}
 
 		  	<div class="crm-contribution-page-more">
-                       	     {$row.action|replace:'xx':$row.id}
-                  	</div>
+                    {$row.action|replace:'xx':$row.id}
+            </div>
 
-		     </td>
+		  </td>
 
-            	 </tr>
-               {/foreach}
-	     </table>
+         </tr>
+         {/foreach}
+	    </table>
         
-             {/strip}
+        {/strip}
     	</div>
     {else}
 	{if $isSearch eq 1}

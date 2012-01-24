@@ -18,27 +18,10 @@
 	    </div>
 	  </div>
 
-	  <div class="participant-info crm-section form-item">
-	    <div class="label">
-              {$form.event.$event_id.participant.$participant_id.first_name.label}
-	    </div>
-	    <div class="edit-value content">
-              {$form.event.$event_id.participant.$participant_id.first_name.html}
-	    </div>
-	  </div>
-
-	  <div class="participant-info crm-section form-item">
-	    <div class="label">
-              {$form.event.$event_id.participant.$participant_id.last_name.label}
-	    </div>
-	    <div class="edit-value content">
-              {$form.event.$event_id.participant.$participant_id.last_name.html}
-	    </div>
-	  </div>
-
           {assign var=post value="event[`$event_id`][participant][`$participant_id`][customPost]"}
+          <div style="clear:left"></div>
           {include file="CRM/UF/Form/Block.tpl" fields=$custom.$post form=$form.field.$participant_id}
 	</div>
     <!--if $form_participant->participant_index > 0-->
-    <a class="link-delete" href="#" onclick="delete_participant({$event_id}, {$participant_id}); return false;">Delete {$form->name}</a>
+    <a class="link-delete" href="#" onclick="delete_participant({$event_id}, {$participant_id}); return false;">{ts}Delete{/ts} {$form->name}</a>
   </fieldset>

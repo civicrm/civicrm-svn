@@ -303,7 +303,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 
                 $isDefault = null;
                 if ( $surveysData[$sid]['is_default'] ) {
-                    $isDefault = '<img src="'. $config->resourceBase. '/i/check.gif" alt="'. ts( 'Default' ). '" />';
+                    $isDefault = '<img src="'. $config->resourceBase. 'i/check.gif" alt="'. ts( 'Default' ). '" />';
                 }
                 $surveysData[$sid]['is_default'] = $isDefault;
                     
@@ -375,7 +375,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 $petitionsData[$pid]['isActive'] = $isActive;
                 $isDefault = null;
                 if ( $petitionsData[$pid]['is_default'] ) {
-                    $isDefault = '<img src="'. $config->resourceBase. '/i/check.gif" alt="'. ts( 'Default' ). '" />';
+                    $isDefault = '<img src="'. $config->resourceBase. 'i/check.gif" alt="'. ts( 'Default' ). '" />';
                 }
                 $petitionsData[$pid]['is_default'] = $isDefault;
                 

@@ -1564,7 +1564,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             if ( !$contactId ) {
                 if ( $onBehalf ) {
                     if ( substr( $name, -1 ) == ']' ) { 
-                        $providerName = substr( $name, 0, $name.length - 1).'-provider_id]';
+                        $providerName = substr( $name, 0, -1 ).'-provider_id]';
                     }
                     $form->add('select', $providerName, null, 
                                array('' => ts('- select -')) + CRM_Core_PseudoConstant::IMProvider(), $required);
@@ -1705,7 +1705,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             //Website type select
             if ( $onBehalf ) {
                 if ( substr( $name, -1 ) == ']' ) { 
-                    $websiteTypeName = substr( $name, 0, $name.length - 1).'-website_type_id]';
+                    $websiteTypeName = substr( $name, 0, -1 ).'-website_type_id]';
                 }
                 $form->addElement('select', $websiteTypeName, null, CRM_Core_PseudoConstant::websiteType( ) );
             } else {
@@ -1967,7 +1967,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             } else {
                                 $timeElement = $fldName.'_time';
                                 if ( substr( $fldName, -1 ) == ']' ) { 
-                                    $timeElement = substr( $fldName, 0, $fldName.length - 1).'_time]';
+                                    $timeElement = substr( $fldName, 0, -1 ).'_time]';
                                 }
                                 list( $defaults[$fldName], $defaults[$timeElement] ) = 
                                     CRM_Utils_Date::setDateDefaults( $details[$name], null, $dateFormat, $field['time_format'] );

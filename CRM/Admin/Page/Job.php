@@ -70,7 +70,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
         if (!(self::$_links)) {
             self::$_links = array(
                                   CRM_Core_Action::FOLLOWUP  => array(
-                                                                    'name'  => ts('Log entries'),
+                                                                    'name'  => ts('View Job Log'),
                                                                     'url'   => 'civicrm/admin/joblog',
                                                                     'qs'    => 'jid=%%id%%&reset=1',
                                                                     'title' => ts('See log entries for this Scheduled Job') 
@@ -83,7 +83,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
                                                                     'title' => ts('Edit Scheduled Job') 
                                                                     ),
                                   CRM_Core_Action::EXPORT  => array(
-                                                                    'name'  => ts('Execute now'),
+                                                                    'name'  => ts('Execute Now'),
                                                                     'url'   => 'civicrm/admin/job',
                                                                     'qs'    => 'action=export&id=%%id%%&reset=1',
                                                                     'title' => ts('Execute Scheduled Job Now') 

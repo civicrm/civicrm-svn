@@ -687,18 +687,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
       civicrm_api('contact', 'delete', array('id' => $result['id'], 'version' => $this->_apiversion));
     }
     
-    ///////////////// civicrm_create_participant_formatted methods
-    /**
-     * Test civicrm_participant_formatted Empty  params type
-     */
-    function testParticipantFormattedEmptyParams()
-    {
-        $params = array();
-        $onDuplicate = array();
-        $participant = & _civicrm_api3_deprecated_create_participant_formatted($params,$onDuplicate );
-        $this->assertEquals( $participant['error_message'] ,'Input Parameters empty' );
-    }
-
     function testParticipantFormattedwithDuplicateParams()
     {
         $participantContact = $this->individualCreate(null );

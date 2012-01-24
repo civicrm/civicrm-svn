@@ -50,6 +50,9 @@ function participant_create_expectedresult(){
           'discount_id' => '',
           'fee_currency' => '',
           'campaign_id' => '',
+          'discount_amount' => '',
+          'cart_id' => '',
+          'must_wait' => '',
         ),
     ),
 );

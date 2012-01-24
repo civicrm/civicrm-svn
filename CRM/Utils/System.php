@@ -1091,13 +1091,13 @@ class CRM_Utils_System {
      * @param $params   array with uid name and pass
      * @param $loadUser boolean load user or not
      */
-    static function loadBootStrap( $params = array( ), $loadUser = true , $throwError = true )
+    static function loadBootStrap( $params = array( ), $loadUser = true , $throwError = true, $realPath = null )
     {
         if ( !is_array($params) ) {
             $params = array( ); 
         }
         $config = CRM_Core_Config::singleton();
-        return $config->userSystem->loadBootStrap($params, $loadUser, $throwError);
+        return $config->userSystem->loadBootStrap($params, $loadUser, $throwError, $realPath);
     }
     
     /**
@@ -1316,7 +1316,12 @@ class CRM_Utils_System {
     static function executeScheduledJobs( ) {
         require_once 'CRM/Core/JobManager.php';
         $facility = new CRM_Core_JobManager();
-        $facility->execute();
+        $facility->execute( false );
+
+        $redirectUrl = self::url( 'civicrm/admin/job', 'reset=1' );
+        CRM_Core_Session::setStatus( ts('Scheduled jobs have been executed according to individual timing settings. Please check log for messages.') );
+        CRM_Utils_System::redirect( $redirectUrl );
+        
     }
     
 }

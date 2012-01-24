@@ -1,5 +1,24 @@
 <?php
 
+function civitest_civicrm_pre( $op, $objectName, $objectId, &$objectRef ) {
+    // Sample implementation of pre hook on line item row create. Available as of 4.1 beta3
+    if ( $objectName == 'LineItem' && $op == 'create' ) {        
+        //if text type field and quantity is greater than 5, let's apply a discount
+        if ( $objectRef['html_type'] == 'Text' &&
+             $objectRef['qty'] > 5 ) {
+
+            //5% discount
+            $discount = 1 - 0.05;
+
+            $objectRef['unit_price'] = $objectRef['unit_price'] * $discount;
+            $objectRef['line_total'] = $objectRef['line_total'] * $discount;
+            
+            //we would also need to update the total amount
+            //we know the table impacted with $objectRef['entity_table']
+            //and the contrib/event id with $objectRef['entity_id']
+        }
+    }
+}
 
 function civitest_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
     // only interested in the profile object and create operation for now
@@ -1722,4 +1741,100 @@ function civitest_civicrm_aclGroup( $type, $contactID, $tableName, &$allGroups, 
 
     $currentGroups = array_diff( array_keys  ( $allGroups ),
                                  array_values( $profileIDs ) );
+}
+
+/**
+ * An optimized version to speed up the contact autocomplete for large DB's
+ * does not obey the settings from the UI. Does name check followed by email 
+ * if needed. Adds email + city to output if they exist
+ */
+function civitest_civicrm_contactListQuery( &$query, $name, $context, $id ) {
+    //create temp table for storing result set
+    $randomNum = md5( uniqid( ) );
+    $quickSearchTempTable = "civicrm_temp_quick_search_{$randomNum}";
+    $sql = "CREATE TEMPORARY TABLE {$quickSearchTempTable} ( 
+            contact_id int unsigned,
+            data varchar(255),
+            PRIMARY KEY ( contact_id )
+        ) ENGINE=HEAP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci
+        ";
+        
+    CRM_Core_DAO::executeQuery( $sql );
+
+    // find the match from contact table
+    $sql = "
+        SELECT id, sort_name
+        FROM civicrm_contact 
+        WHERE sort_name LIKE '$name%'
+        AND is_deleted = 0
+        ORDER BY sort_name LIMIT 0, 10";
+    
+    $dao = CRM_Core_DAO::executeQuery( $sql );
+    $result = array();
+    while ( $dao->fetch() ) {
+        $result[$dao->id] = $dao->sort_name;
+    }
+    
+    // if matches found less than 10, try to match from email table
+    if ( $dao->N < 10 ) {
+        // find the match from email table
+        $sql = "
+            SELECT contact_id, email
+            FROM civicrm_email 
+            WHERE email LIKE '$name%'
+            ORDER BY email LIMIT 0, 10";
+    
+        $dao = CRM_Core_DAO::executeQuery( $sql );
+        while ( $dao->fetch() ) {
+            if ( !array_key_exists( $dao->contact_id, $result ) ) {
+                $result[$dao->contact_id] = $dao->email;
+            }
+        }
+    }
+
+    // find email addresses, cities for these contacts
+    $ids = array();
+    foreach($result as $id => $value) { $ids[] = $id; }
+    $ids = implode(", ", $ids);
+    $sql = "
+        SELECT civicrm_contact.id, civicrm_email.email, civicrm_address.city 
+        FROM civicrm_contact, civicrm_email, civicrm_address 
+        WHERE civicrm_contact.id = civicrm_email.contact_id 
+        AND civicrm_contact.id = civicrm_address.contact_id 
+        AND civicrm_email.is_primary = 1 
+        AND civicrm_address.is_primary = 1 
+        AND civicrm_contact.id IN ( $ids )";
+    $dao = CRM_Core_DAO::executeQuery( $sql );
+    while($dao->fetch()) {
+        $result[$dao->id] .= " :: ".$dao->email." :: ".$dao->city;
+    }
+
+    // insert into temp table
+    if ( !empty( $result ) ) {
+        foreach( $result as $cid => $value ) {
+            $value = addslashes($value);
+            $insertSQL[] = "( {$cid}, '{$value}' )";
+        }
+        $insertValues = implode( ',', $insertSQL );
+        $sql = "INSERT INTO {$quickSearchTempTable}
+                (contact_id, data )
+                VALUES
+                {$insertValues}
+                ";
+        CRM_Core_DAO::executeQuery( $sql );
+    }
+
+    // return final query
+    $query = "SELECT data, contact_id as id
+        FROM {$quickSearchTempTable}";
+
+}
+
+function civitest_civicrm_alterContent( &$content,
+                                        $context,
+                                        $tplName,
+                                        &$object ) {
+    // u can modify the content programmatically
+    // similar to as described in this blog post
+    // http://civicrm.org/blogs/dave-greenberg/now-its-easier-add-custom-behaviors-templates
 }

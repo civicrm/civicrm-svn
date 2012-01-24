@@ -895,7 +895,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             
             $hiddenEleName = $elementName . '_id';
             if ( substr( $elementName, -1 ) == ']' ) { 
-                $hiddenEleName = substr( $elementName, 0, $elementName.length - 1 ).'_id]';
+                $hiddenEleName = substr( $elementName, 0, -1 ).'_id]';
             }
             $qf->addElement( 'hidden', $hiddenEleName, '', array( 'id' =>  str_replace( array( ']', '[' ), array(''  , '_' ), $hiddenEleName ) ) );
             

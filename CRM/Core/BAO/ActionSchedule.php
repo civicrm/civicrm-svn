@@ -405,9 +405,10 @@ WHERE   cas.entity_value = $id AND
                 $tokens = $dummy_mail->getTokens();
                 
                 if ( $$bodyType ) {
+                    CRM_Utils_Token::replaceGreetingTokens( $$bodyType, null, $contact['contact_id'] );
                     $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, true, $tokens[$value], true );
                     $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, false, $tokens[$value], false, true );
-                    $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value], true );
+                    $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value], true, false );
                     $$bodyType = CRM_Utils_Token::replaceHookTokens ( $$bodyType, $contact , $categories, true );
                 }
             }

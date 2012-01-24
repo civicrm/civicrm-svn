@@ -44,6 +44,11 @@ class CRM_Core_JobManager
     
     var $currentJob = null;
 
+    var $singleRunParams = array();
+    
+    var $_source = null;
+    
+
     /*
      * Class constructor
      * 
@@ -65,14 +70,12 @@ class CRM_Core_JobManager
      * @access private
      * 
      */
-    public function execute( ) {
+    public function execute( $auth = true ) {
     
         $this->logEntry( 'Starting scheduled jobs execution' );
         require_once 'CRM/Utils/System.php';
-        if( !CRM_Utils_System::authenticateKey( FALSE ) ) {
+        if( $auth && !CRM_Utils_System::authenticateKey( false ) ) {
             $this->logEntry( 'Could not authenticate the site key.' );
-            
-            
         }
         require_once 'api/api.php';
 
@@ -98,23 +101,37 @@ class CRM_Core_JobManager
     public function __destruct( ) {
     }
 
-    public function executeJobById( $id ) {    
+    public function executeJobByAction( $entity, $action ) {
+        $job = $this->_getJob( null, $entity, $action );
+        $this->executeJob( $job );
+    }
+
+    public function executeJobById( $id ) {
         $job = $this->_getJob( $id );
         $this->executeJob( $job );
     }
 
 
     public function executeJob( $job ) {
-        $this->currentJob = $job;    
+        $this->currentJob = $job;
         $this->logEntry( 'Starting execution of ' . $job->name );
         $job->saveLastRun();
+        
+        $singleRunParamsKey = strtolower( $job->api_entity . '_' . $job->api_action );
+
+        if( array_key_exists( $singleRunParamsKey, $this->singleRunParams ) ) {
+            $params = $this->singleRunParams[$singleRunParamsKey];
+        } else {
+            $params = $job->apiParams;
+        }
+
         try {
-            $result = civicrm_api( $job->api_entity, $job->api_action, $job->apiParams );
+            $result = civicrm_api( $job->api_entity, $job->api_action, $params );
         } catch (Exception $e) {
             $this->logEntry( 'Error while executing ' . $job->name . ': ' . $e->getMessage() );
         }
-        $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );    
-        $this->currentJob = FALSE;        
+        $this->logEntry( 'Finished execution of ' . $job->name . ' with result: ' . $this->_apiResultToMessage( $result )  );
+        $this->currentJob = FALSE;
     }
 
     /*
@@ -128,7 +145,7 @@ class CRM_Core_JobManager
     private function _getJobs( ) {
         $jobs = array();
         require_once 'CRM/Core/DAO/Job.php';
-        require_once 'CRM/Core/DAO/JobLog.php';        
+        require_once 'CRM/Core/DAO/JobLog.php';
         $dao = new CRM_Core_DAO_Job();
         $dao->orderBy('name');
         $dao->find();
@@ -149,17 +166,29 @@ class CRM_Core_JobManager
      * @access private
      * 
      */
-    private function _getJob( $id ) {
+    private function _getJob( $id = null, $entity = null, $action = null ) {
+        if( is_null( $id ) && is_null( $action ) ) {
+            CRM_Core_Error::fatal( 'You need to provide either id or name to use this method' );
+        }
         require_once 'CRM/Core/DAO/Job.php';
         $dao = new CRM_Core_DAO_Job();
         $dao->id = $id;
-        $dao->find();
+        $dao->api_entity = $entity;
+        $dao->api_action = $action;
+        $dao->find();        
         require_once 'CRM/Core/ScheduledJob.php';
         while ($dao->fetch()) {
             CRM_Core_DAO::storeValues( $dao, $temp);
             $job = new CRM_Core_ScheduledJob( $temp );
         }
         return $job;
+    }
+
+    public function setSingleRunParams( $entity, $job, $params, $source = null ) {
+        $this->_source = $source;
+        $key = strtolower( $entity . '_' . $job );
+        $this->singleRunParams[ $key ] = $params;
+        $this->singleRunParams[ $key ]['version'] = '3';
     }
 
 
@@ -175,22 +204,39 @@ class CRM_Core_JobManager
         $dao = new CRM_Core_DAO_JobLog( );
 
         $dao->domain_id  = $domainID;
-        $dao->description = $message;        
+        $dao->description = substr( $message, 0, 235 );
+        if( strlen( $message ) > 235 ) $dao->description .= " (...)";
         if( $this->currentJob ) {
             $dao->job_id = $this->currentJob->id;
             $dao->name = $this->currentJob->name;
             $dao->command = ts("Prefix:") . " " . $this->currentJob->api_prefix + " " . ts("Entity:") . " " + $this->currentJob->api_entity + " " . ts("Action:") . " " + $this->currentJob->api_action;
-            $dao->data = "Parameters raw: \n\n" . $this->currentJob->parameters;
-            if( $this->currentJob->apiParams ) {
-                $dao->data .= "\n\nParameters parsed: \n\n" . serialize( $this->currentJob->apiParams);
+            $data = "";
+            if( !empty( $this->currentJob->parameters ) ) {
+                $data .= "\n\nParameters raw (from db settings): \n" . $this->currentJob->parameters;
             }
+            $singleRunParamsKey = strtolower( $this->currentJob->api_entity . '_' . $this->currentJob->api_action );
+            if( array_key_exists( $singleRunParamsKey, $this->singleRunParams ) ) {
+                $data .= "\n\nParameters raw (" . $this->_source . "): \n" . serialize( $this->singleRunParams[$singleRunParamsKey]);
+                $data .= "\n\nParameters parsed (and passed to API method): \n" . serialize( $this->singleRunParams[$singleRunParamsKey] );
+            } else {
+                $data .= "\n\nParameters parsed (and passed to API method): \n" . serialize( $this->currentJob->apiParams);
+            }
+            
+            $data .= "\n\nFull message: \n" . $message;
+            
+            $dao->data = $data;
+            
         }
         $dao->save( );
     }
 
     private function _apiResultToMessage( $apiResult ) {
         $status = $apiResult['is_error'] ? ts('Failure') : ts('Success');
-        $message =  $apiResult['is_error'] ? ', Error message: ' . $apiResult['error_message'] : "\n\r" . $apiResult['values'];
+        $msg = CRM_Utils_Array::value( 'error_message', $apiResult, 'empty error_message!');
+        $vals = CRM_Utils_Array::value( 'values', $apiResult, 'empty values!');
+        if( is_array( $msg ) ) $msg = serialize( $msg );
+        if( is_array( $vals ) ) $vals = serialize( $vals );
+        $message =  $apiResult['is_error'] ? ', Error message: ' . $msg : " (" . $vals . ")";
         return $status . $message;
     }
 

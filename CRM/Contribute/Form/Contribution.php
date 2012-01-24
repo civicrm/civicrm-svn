@@ -1225,9 +1225,9 @@ WHERE  contribution_id = {$this->_id}
                 $this->_params['pcp_made_through_id'] = $params['pcp_made_through_id'];
             } 
             
-            $this->_params['pcp_display_in_roll'] = $params['pcp_display_in_roll'];
-            $this->_params['pcp_roll_nickname'] = $params['pcp_roll_nickname'];
-            $this->_params['pcp_personal_note'] = $params['pcp_personal_note'];
+            $this->_params['pcp_display_in_roll'] = CRM_Utils_Array::value('pcp_display_in_roll', $params);
+            $this->_params['pcp_roll_nickname'] = CRM_Utils_Array::value('pcp_roll_nickname', $params);
+            $this->_params['pcp_personal_note'] = CRM_Utils_Array::value('pcp_personal_note', $params);
             
             //Add common data to formatted params
             CRM_Contribute_Form_AdditionalInfo::postProcessCommon( $params, $this->_params );
@@ -1242,6 +1242,7 @@ WHERE  contribution_id = {$this->_id}
             // all the payment processors expect the name and address to be in the 
             // so we copy stuff over to first_name etc. 
             $paymentParams = $this->_params;
+            $paymentParams['contactID']           = $this->_contactID;
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
@@ -1288,7 +1289,6 @@ WHERE  contribution_id = {$this->_id}
                                                                                      false, 
                                                                                      true, 
                                                                                      false );
-                $paymentParams['contactID']           = $this->_contactID;
                 $paymentParams['contributionID'    ]  = $contribution->id;
                 $paymentParams['contributionTypeID']  = $contribution->contribution_type_id;
                 $paymentParams['contributionPageID']  = $contribution->contribution_page_id;

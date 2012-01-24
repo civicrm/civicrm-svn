@@ -54,7 +54,7 @@
           <td>{$survey.release_frequency}</td>
           <td>{$survey.max_number_of_contacts}</td>
           <td>{$survey.default_number_of_contacts}</td>
-          <td>{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
+          <td>{if $survey.is_default}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
           <td id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
  	  <td class="crm-report-optionList-action">{$survey.action}</td>
         </tr>

@@ -55,6 +55,7 @@
      <path>civicrm/admin/uf/group/field</path>
      <title>CiviCRM Profile Fields</title>
      <page_callback>CRM_UF_Page_Field</page_callback>
+     <skipBreadcrumb>true</skipBreadcrumb> 
      <weight>21</weight>
   </item>
   <item>

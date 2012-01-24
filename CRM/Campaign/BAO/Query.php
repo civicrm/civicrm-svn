@@ -524,13 +524,17 @@ PRIMARY KEY ( id ),
         $campaign  = CRM_Utils_Array::value( 'campaign', $params );
         $tableName = CRM_Utils_Array::value( 'tableName', $params );
         $grouping  = CRM_Utils_Array::value( 'grouping',  $params );
-        foreach ( array( 'current_campaign', 'past_campaign' ) as $ignore ) {
-            $index = array_search( $ignore, $campaign );
-            if ( $index !== false ) unset( $campaign[$index] );
-        }
-        
         if ( CRM_Utils_System::isNull( $campaign ) || empty( $tableName ) ) {
             return; 
+        }
+
+        // fixme - what is the purpose of this code? $campaign should be
+        // an integer, not an array
+        if(is_array($campaign)) {
+          foreach ( array( 'current_campaign', 'past_campaign' ) as $ignore ) {
+              $index = array_search( $ignore, $campaign );
+              if ( $index !== false ) unset( $campaign[$index] );
+          }
         }
         
         require_once 'CRM/Contact/BAO/Query.php';
@@ -551,7 +555,9 @@ PRIMARY KEY ( id ),
             }
         } else {
             $campaignIds = $campaign;
-            $campaignTitles[$campId] = $allCampaigns[$value];
+            if(array_key_exists($campaignIds,$allCampaigns)) {
+              $campaignTitles[$campaignIds] = $allCampaigns[$campaignIds];
+            }
         }
         $query->_qill[$grouping][] = ts( 'Campaigns %1', 
                                          array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $campaignTitles );

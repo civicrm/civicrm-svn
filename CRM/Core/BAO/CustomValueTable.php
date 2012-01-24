@@ -586,7 +586,7 @@ AND    cf.id IN ( $fieldIDList )
 
         // first collect all the ids. The format is:
         // custom_ID
-        $fieldsIDs = array( );
+        $fieldIDs = array( );
         foreach ( $params as $n => $v ) {
             $key = $idx = null;
             if ( substr( $n, 0, 7 ) == 'custom_' ) {

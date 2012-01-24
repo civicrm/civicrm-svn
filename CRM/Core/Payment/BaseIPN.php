@@ -520,12 +520,13 @@ LIMIT 1;";
         }
 
         $contribution->contribution_status_id  = 1;
-        $contribution->is_test      = $input['is_test'];
-        $contribution->fee_amount   = CRM_Utils_Array::value( 'fee_amount', $input, 0 );
-        $contribution->net_amount   = CRM_Utils_Array::value( 'net_amount', $input, 0 );
-        $contribution->trxn_id      = $input['trxn_id'];
-        $contribution->receive_date = CRM_Utils_Date::isoToMysql($contribution->receive_date);
-        $contribution->cancel_date  = 'null';
+        $contribution->is_test       = $input['is_test'];
+        $contribution->fee_amount    = CRM_Utils_Array::value( 'fee_amount', $input, 0 );
+        $contribution->net_amount    = CRM_Utils_Array::value( 'net_amount', $input, 0 );
+        $contribution->trxn_id       = $input['trxn_id'];
+        $contribution->receive_date  = CRM_Utils_Date::isoToMysql($contribution->receive_date);
+        $contribution->thankyou_date = CRM_Utils_Date::isoToMysql($contribution->thankyou_date);
+        $contribution->cancel_date   = 'null';
         
         if ( CRM_Utils_Array::value('check_number', $input) ) {
             $contribution->check_number = $input['check_number'];
@@ -728,10 +729,12 @@ LIMIT 1;";
             
             require_once 'CRM/Core/PseudoConstant.php';
             $honorType = CRM_Core_PseudoConstant::honor( );
-            $prefix    = CRM_Core_PseudoConstant::individualPrefix();
             
             $template->assign( 'honor_block_is_active', 1 );
-            $template->assign( 'honor_prefix',     $prefix[$honorDefault['prefix_id']] );
+            if ( CRM_Utils_Array::value( 'prefix_id', $honorDefault ) ) {
+                $prefix    = CRM_Core_PseudoConstant::individualPrefix();
+                $template->assign( 'honor_prefix',     $prefix[$honorDefault['prefix_id']] );
+            }
             $template->assign( 'honor_first_name', CRM_Utils_Array::value( 'first_name', $honorDefault ) );
             $template->assign( 'honor_last_name',  CRM_Utils_Array::value( 'last_name', $honorDefault ) );
             $template->assign( 'honor_email',      CRM_Utils_Array::value( 'email', $honorDefault['email'][1] ) );
@@ -1062,60 +1065,63 @@ LIMIT 1;";
      * If the contribution has a pledge_payment record pledge, then update the pledge_payment record & pledge based on that linkage.
      * 
      * If a previous contribution in the recurring contribution sequence is linked with a pledge then we assume this contribution
-     * should be  linked with the same pledge also. Currently only back-office users can apply a recurring payment to a pledge & it should be assumed they
+     * should be  linked with the same pledge also. Currently only back-office users can apply a recurring payment to a pledge & 
+     * it should be assumed they
      * do so with the intention that all payments will be linked
      * 
      * The pledge payment record should already exist & will need to be updated with the new contribution ID.
      * If not the contribution will also need to be linked to the pledge
      */
-    function updateRecurLinkedPledge( &$contribution){
-
+    function updateRecurLinkedPledge( &$contribution ) {
         $returnProperties = array( 'id', 'pledge_id' );
         $paymentDetails = array();
         $paymentIDs = array( );
-        require_once 'CRM/Core/DAO.php';
+        
         require_once 'CRM/Pledge/BAO/PledgePayment.php';
-        if(CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $contribution->id, 
+        if ( CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $contribution->id, 
                                               $paymentDetails, $returnProperties )) {
            foreach ( $paymentDetails as $key => $value ) {
                $paymentIDs[] = $value['id'];
                $pledgeId     = $value['pledge_id'];  
-          } 
-                                                
-        }else{
-          //payment is not already linked - if it is linked with a pledge we need to create a link.
-          require_once 'CRM/Contribute/DAO/Contribution.php';
-          $relatedContributions = new CRM_Contribute_DAO_Contribution( );
-          $relatedContributions->contribution_recur_id = $contribution->contribution_recur_id ;
-          $relatedContributions->find(  ) ;
-          require_once 'CRM/Core/DAO.php';
-          while($relatedContributions->fetch()){
-             CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $relatedContributions->id, 
-                                              $paymentDetails, $returnProperties ) ;
+           } 
+        } else {
+            //payment is not already linked - if it is linked with a pledge we need to create a link.
+            // return if it is not recurring contribution
+            if ( !$contribution->contribution_recur_id ) {
+                return;
+            }
+
+            require_once 'CRM/Contribute/DAO/Contribution.php';
+            $relatedContributions = new CRM_Contribute_DAO_Contribution( );
+            $relatedContributions->contribution_recur_id = $contribution->contribution_recur_id ;
+            $relatedContributions->find(  ) ;
             
-           }
-          if(empty($paymentDetails)){
-           return; // payment is not linked with a pledge and neither are any other contributions on this
-          }
-          foreach ( $paymentDetails as $key => $value ) {
-            $pledgeId     = $value['pledge_id'];  
-          }    
-          // we have a pledge now we need to get the oldest unpaid payment
-                   
-          $paymentDetails = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $pledgeId);        
-          $paymentDetails['contribution_id'] = $contribution->id;
-          $paymentDetails['status_id']= $contribution->contribution_status_id;
-          $paymentDetails['actual_amount']= $contribution->total_amount;
-          require_once 'CRM/Pledge/BAO/PledgePayment.php';// put contribution against it
-          $payment = CRM_Pledge_BAO_PledgePayment::add($paymentDetails);
-          $paymentIDs[] = $payment->id;                              
-       }
+            while ( $relatedContributions->fetch() ) {
+                CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $relatedContributions->id, 
+                                              $paymentDetails, $returnProperties ) ;
+            }
+            
+            if ( empty($paymentDetails) ) {
+                return; // payment is not linked with a pledge and neither are any other contributions on this
+            }
+            
+            foreach ( $paymentDetails as $key => $value ) {
+                $pledgeId     = $value['pledge_id'];  
+            }    
+            
+            // we have a pledge now we need to get the oldest unpaid payment
+            $paymentDetails = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $pledgeId );        
+            $paymentDetails['contribution_id'] = $contribution->id;
+            $paymentDetails['status_id']       = $contribution->contribution_status_id;
+            $paymentDetails['actual_amount']   = $contribution->total_amount;
+            
+            // put contribution against it
+            $payment = CRM_Pledge_BAO_PledgePayment::add($paymentDetails);
+            $paymentIDs[] = $payment->id;                              
+        }
 
-       // update pledge and corresponding payment statuses
-
-       CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId, $paymentIDs, $contribution->contribution_status_id ,null,$contribution->total_amount);
-     }
-    
+        // update pledge and corresponding payment statuses
+        CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId, $paymentIDs, $contribution->contribution_status_id,
+                                                                 null, $contribution->total_amount );
+    }
 }
-
-

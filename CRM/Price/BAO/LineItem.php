@@ -59,9 +59,19 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem
      */
     static function create ( &$params )
     {
+        //create mode only as we don't support editing line items
+		require_once 'CRM/Utils/Hook.php';
+        
+		CRM_Utils_Hook::pre( 'create', 'LineItem', $params['entity_id'], $params );
+        
         $lineItemBAO = new CRM_Price_BAO_LineItem( );
         $lineItemBAO->copyValues( $params );
-        return $lineItemBAO->save( );
+        
+        $return = $lineItemBAO->save( );
+		
+        CRM_Utils_Hook::post( 'create', 'LineItem', $params['entity_id'], $params ); 
+		
+        return $return;
     }
 
     /**

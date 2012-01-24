@@ -79,8 +79,8 @@
   </field>
   <field>
        <name>privacy</name>
-       <type>int</type>
-       <length>10</length>
+       <type>varchar</type>
+       <length>255</length>
        <comment>Foreign Key to Note Privacy Level (which is an option value pair and hence an implicit FK)</comment>
        <add>3.3</add>
   </field>

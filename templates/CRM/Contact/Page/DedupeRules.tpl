@@ -51,7 +51,7 @@
                     <td>{$row.contact_type_display}</td>	
                     <td>{$row.level}</td>	
                     {if $row.is_default}
-                        <td><img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /></td>    
+                        <td><img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /></td>    
                     {else}
                         <td></td>
                     {/if}

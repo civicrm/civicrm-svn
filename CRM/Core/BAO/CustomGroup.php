@@ -1055,7 +1055,7 @@ SELECT $select
                         } else {
                             $timeElement = $elementName . '_time';
                             if ( substr( $elementName, -1 ) == ']' ) { 
-                                $timeElement = substr( $elementName, 0, $$elementName.length - 1).'_time]';
+                                $timeElement = substr( $elementName, 0, -1 ).'_time]';
                             }
                             list( $defaults[$elementName], $defaults[ $timeElement ] ) = 
                             CRM_Utils_Date::setDateDefaults( $value, null, $field['date_format'], $field['time_format'] );
@@ -1086,7 +1086,7 @@ SELECT $select
                 case 'Autocomplete-Select':
                     $hiddenEleName = $elementName . '_id';
                     if ( substr( $elementName, -1 ) == ']' ) { 
-                        $hiddenEleName = substr( $elementName, 0, $elementName.length - 1 ).'_id]';
+                        $hiddenEleName = substr( $elementName, 0, -1 ).'_id]';
                     }
                     if ($field['data_type'] == "ContactReference") {
                         require_once 'CRM/Contact/BAO/Contact.php';

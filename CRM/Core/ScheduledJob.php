@@ -39,8 +39,11 @@
 class CRM_Core_ScheduledJob
 {
 
+    var $version = 3;
 
     var $name = null;
+
+    var $apiParams = array();
 
     var $remarks = array();
 
@@ -56,9 +59,19 @@ class CRM_Core_ScheduledJob
             $this->$name = $param;
         }
 
+        // version is set to 3 by default - if different number 
+        // defined in params, it's replaced later on, however, 
+        // it's practically useles, since it seems none of api v2
+        // will work properly in cron job setup. It might become
+        // useful when/if api v4 starts to emerge and will need
+        // testing in the cron job setup. To permanenty require
+        // hardcoded api version, it's enough to move below line
+        // under following if block.
+        $this->apiParams = array( 'version' => $this->version );
+
         if( !empty( $this->parameters ) ) {
             $lines = split( "\n", $this->parameters );
-            $this->apiParams = array();
+
             foreach( $lines as $line ) {
                 $pair = split( "=", $line );
                 if( empty($pair[0]) || empty($pair[1]) ) {
@@ -66,7 +79,6 @@ class CRM_Core_ScheduledJob
                     break;
                 }
                 $this->apiParams[ trim($pair[0]) ] = trim($pair[1]);
-
             }
         }
     }                                                          

@@ -60,6 +60,7 @@ function civicrm_api3_relationship_create( $params ) {
         require_once 'CRM/Contact/BAO/Relationship.php';
         _civicrm_api3_relationship_format_params( $params, $values );
         $ids = array( );
+        require_once 'CRM/Core/Action.php';
         $action = CRM_Core_Action::ADD;
         require_once 'CRM/Utils/Array.php';
 

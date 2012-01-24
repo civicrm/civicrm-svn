@@ -263,9 +263,9 @@ class CRM_Report_Form extends CRM_Core_Form {
         $this->_id = $this->get( 'instanceId' );
         if ( !$this->_id ) {
             $this->_id  = CRM_Report_Utils_Report::getInstanceID( );
-	     if ( !$this->_id ) {
-	         $this->_id  = CRM_Report_Utils_Report::getInstanceIDForPath( );
-	     }
+            if ( !$this->_id ) {
+                $this->_id  = CRM_Report_Utils_Report::getInstanceIDForPath( );
+            }
         }
 
         // set qfkey so that pager picks it up and use it in the "Next > Last >>" links.
@@ -2102,23 +2102,42 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
 
             if ( $this->_sendmail ) {
                 require_once 'CRM/Report/Utils/Report.php';
+                require_once 'CRM/Utils/File.php';
+                $config = CRM_Core_Config::singleton();
                 $attachments = array();
+
                 if ( $this->_outputMode == 'csv' ) {
                     $content = $this->_formValues['report_header'] .
                         '<p>' . ts('Report URL') . ": {$url}</p>" .
                         '<p>' . ts('The report is attached as a CSV file.') . '</p>' .
                         $this->_formValues['report_footer'] ;
 
-                    require_once 'CRM/Utils/File.php';
-                    $config = CRM_Core_Config::singleton();
-                    $csvFilename = 'Report.csv';
-                    $csvFullFilename = $config->templateCompileDir . CRM_Utils_File::makeFileName( $csvFilename );
+                    $csvFullFilename = $config->templateCompileDir . CRM_Utils_File::makeFileName( 'CiviReport.csv' );
                     $csvContent = CRM_Report_Utils_Report::makeCsv( $this, $rows );
                     file_put_contents( $csvFullFilename, $csvContent);
                     $attachments[] = array(
-                        'fullPath'  => $csvFullFilename,
-                        'mime_type' => 'text/csv',
-                        'cleanName' => $csvFilename,
+                                           'fullPath'  => $csvFullFilename,
+                                           'mime_type' => 'text/csv',
+                                           'cleanName' => 'CiviReport.csv',
+                                           );
+                }
+                if ( $this->_outputMode == 'pdf' ) {
+                    // generate PDF content
+                    require_once 'CRM/Utils/PDF/Utils.php';          
+                    $pdfFullFilename = $config->templateCompileDir . CRM_Utils_File::makeFileName( 'CiviReport.pdf' );
+                    file_put_contents( $pdfFullFilename, 
+                                       CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf", 
+                                                                      true, array('orientation' => 'landscape') ) );
+                    // generate Email Content
+                    $content = $this->_formValues['report_header'] .
+                        '<p>' . ts('Report URL') . ": {$url}</p>" .
+                        '<p>' . ts('The report is attached as a PDF file.') . '</p>' .
+                        $this->_formValues['report_footer'] ;
+
+                    $attachments[] = array(
+                        'fullPath'  => $pdfFullFilename,
+                        'mime_type' => 'application/pdf',
+                        'cleanName' => 'CiviReport.pdf',
                     );
                 }
 
@@ -2128,13 +2147,9 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                 } else {
                     CRM_Core_Session::setStatus( ts("Report mail could not be sent.") );
                 }
-                if ( $this->get( 'instanceId' ) ) {
-                    CRM_Utils_System::civiExit( );
-                } 
 
                 CRM_Utils_System::redirect( CRM_Utils_System::url( CRM_Utils_System::currentPath(), 
                                                                    'reset=1' ) );
-         
             } else if ( $this->_outputMode == 'print' ) {
                 echo $content;
             } else {
@@ -2332,6 +2347,12 @@ ORDER BY cg.weight, cf.weight";
                 $this->_columns[$curTable]['extends']  = $customDAO->extends;
                 $this->_columns[$curTable]['grouping'] = $customDAO->table_name;
                 $this->_columns[$curTable]['group_title'] = $customDAO->title;
+
+                foreach ( array('fields', 'filters', 'group_bys') as $colKey ) {
+                    if ( ! array_key_exists($colKey, $this->_columns[$curTable] ) ) {
+                        $this->_columns[$curTable][$colKey] = array();
+                    }
+                }
             }
             $fieldName = 'custom_' . $customDAO->cf_id;
 
@@ -2442,13 +2463,16 @@ ORDER BY cg.weight, cf.weight";
             } 
 
             if ( $addFields ) {
-                $this->_columns[$curTable]['fields']  = $curFields;
+                $this->_columns[$curTable]['fields'] = 
+                    array_merge( $this->_columns[$curTable]['fields'], $curFields );
             }
             if ( $this->_customGroupFilters ) {
-                $this->_columns[$curTable]['filters'] = $curFilters;
+                $this->_columns[$curTable]['filters'] = 
+                    array_merge( $this->_columns[$curTable]['filters'], $curFilters );
             }
             if (  $this->_customGroupGroupBy ) {
-                $this->_columns[$curTable]['group_bys'] = $curFields;
+                $this->_columns[$curTable]['group_bys'] = 
+                    array_merge( $this->_columns[$curTable]['group_bys'], $curFields );
             } 
         }
     }
@@ -2631,7 +2655,9 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                 }
                 if ( array_key_exists('filters', $table) ) {
                     foreach ( $table['filters'] as $filterName => $filter ) {
-                        if ( CRM_Utils_Array::value( "{$filterName}_value", $this->_params ) ) {
+                        if ( CRM_Utils_Array::value( "{$filterName}_value", $this->_params ) ||
+                             CRM_Utils_Array::value( "{$filterName}_op", $this->_params ) == 'nll' ||
+                             CRM_Utils_Array::value( "{$filterName}_op", $this->_params ) == 'nnll' ) {
                             $this->_selectedTables[] = $tableName;
                             break;
                         }

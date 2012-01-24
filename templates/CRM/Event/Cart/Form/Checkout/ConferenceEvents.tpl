@@ -28,9 +28,9 @@ for (var radio_id in session_options)
   cj("#"+radio_id +","+ label_sel).wrapAll("<li>");
   if (info.session_full) {
     cj("#"+radio_id).attr('disabled', 'disabled');
-    cj("#"+radio_id).after('<span class="error">Session is Full: </span>');
+    cj("#"+radio_id).after('<span class="error">{/literal}{ts}Session is Full{/ts}{literal}: </span>');
   }
-  var more = cj('<a href="#">more info</a>').click(function(event) {
+  var more = cj('<a href="#">{/literal}{ts}more info{/ts}{literal}</a>').click(function(event) {
     event.preventDefault();
     var nfo = cj(this).data("session_info");//F-!
     cj("<div style='font-size: 90%;'>" + nfo.session_description + "</div>").dialog({

@@ -88,7 +88,7 @@
                 <td class="crm-membership-end_date">{$activeMember.end_date|crmDate}</td>
                 <td class="crm-membership-status">{$activeMember.status}</td>
                 <td class="crm-membership-source">{$activeMember.source}</td>
-                <td class="crm-membership-auto_renew">{if $activeMember.auto_renew}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Auto-renew{/ts}" /> {/if}</td>
+                <td class="crm-membership-auto_renew">{if $activeMember.auto_renew}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Auto-renew{/ts}" /> {/if}</td>
 		<td>
                     {$activeMember.action|replace:'xx':$activeMember.id}
                     {if $activeMember.owner_membership_id}
@@ -128,7 +128,7 @@
                 <td class="crm-membership-end_date">{$inActiveMember.end_date|crmDate}</td>
                 <td class="crm-membership-status">{$inActiveMember.status}</td>
                 <td class="crm-membership-source">{$inActiveMember.source}</td>
-                <td class="crm-membership-auto_renew">{if $inActiveMember.auto_renew}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Auto-renew{/ts}" /> {/if}</td>
+                <td class="crm-membership-auto_renew">{if $inActiveMember.auto_renew}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Auto-renew{/ts}" /> {/if}</td>
 		<td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}
 		    {if $inActiveMember.owner_membership_id}
                         &nbsp;|&nbsp;

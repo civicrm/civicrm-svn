@@ -32,7 +32,7 @@
 {/if}
 
 <div class="action-link">
-  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList" class="button"><span><div class="icon add-icon"></div>{ts}Back to jobs list{/ts}</span></a>
+  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList-top" class="button"><span><div class="icon back-icon"></div>{ts}Back to Scheduled Jobs Listing{/ts}</span></a>
 </div>
 
 {if $rows}
@@ -44,7 +44,7 @@
         <tr class="columnheader">
             <th >{ts}Date{/ts}</th>
             <th >{ts}Job Name{/ts}</th>
-            <th >{ts}Command{/ts}/{ts}Description{/ts}/{ts}Additional information{/ts}</th>
+            <th >{ts}Command{/ts}/{ts}Job Status{/ts}/{ts}Additional Information{/ts}</th>
         </tr>
         {foreach from=$rows item=row}
         <tr id="row_{$row.id}" class="crm-job {cycle values="odd-row,even-row"} {$row.class}">
@@ -52,8 +52,8 @@
             <td class="crm-joblog-name">{$row.name}</td>
             <td class="crm-joblog-details">
                 <div class="crm-joblog-command">{$row.command}</div>
-                {if $row.description}<div class="crm-joblog-description"><pre>{$row.description}</pre></div>{/if}
-	        {if $row.data}<div class="crm-joblog-data"><pre>{$row.data}</pre></div>{/if}
+                {if $row.description}<div class="crm-joblog-description"><span class="bold">Summary</span><br/>{$row.description}</div>{/if}
+	            {if $row.data}<div class="crm-joblog-data" style="border-top:1px solid #ccc; margin-top: 10px;"><span class="bold">Details</span><br/><pre>{$row.data}</pre></div>{/if}
             </td>
         </tr>
         {/foreach}
@@ -63,9 +63,9 @@
 </div>
 {elseif $action ne 1}
     <div class="messages status">
-      <div class="icon inform-icon"></div>
+      <div class="icon inform-icon"></div>&nbsp;
       {if $jobId}
-          {ts}This scheduled job does have any log entries.{/ts}
+        {ts}This scheduled job does not have any log entries.{/ts}
       {else}
         {ts}There are no scheduled job log entries.{/ts}
       {/if}
@@ -73,5 +73,5 @@
 {/if}
 
 <div class="action-link">
-  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList" class="button"><span><div class="icon add-icon"></div>{ts}Back to jobs list{/ts}</span></a>
+  <a href="{crmURL p='civicrm/admin/job' q="reset=1"}" id="jobsList-bottom" class="button"><span><div class="icon back-icon"></div>{ts}Back to Scheduled Jobs Listing{/ts}</span></a>
 </div>

@@ -826,7 +826,7 @@ class CRM_Utils_Token
      * @access public
      * @static
      */
-    public static function &replaceComponentTokens( &$str, $contact, $components, $escapeSmarty = false )
+    public static function &replaceComponentTokens( &$str, $contact, $components, $escapeSmarty = false , $returnEmptyToken = true )
     {
         if ( !is_array($components) || empty($contact) ) {
             return $str;
@@ -840,6 +840,9 @@ class CRM_Utils_Token
             foreach ( $tokens as $token ) {
                 if ( self::token_match( $name, $token, $str ) && isset( $contact[$name.'.'.$token] ) ) {
                     self::token_replace( $name, $token, $contact[$name.'.'.$token], $str, $escapeSmarty );    
+                } elseif( !$returnEmptyToken ){
+                    //replacing empty token 
+                    self::token_replace( $name, $token, "", $str, $escapeSmarty );
                 }
             }
         }  
@@ -907,6 +910,7 @@ class CRM_Utils_Token
         }
 
         $params = array( );
+        require_once 'CRM/Core/Form.php';
         foreach ( $contactIDs  as $key => $contactID ) {
             $params[] = array( CRM_Core_Form::CB_PREFIX . $contactID,
                                '=', 1, 0, 0);

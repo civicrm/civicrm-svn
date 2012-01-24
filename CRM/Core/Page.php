@@ -178,6 +178,10 @@ class CRM_Core_Page {
             }
             CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
 
+            //its time to call the hook.
+            require_once 'CRM/Utils/Hook.php';
+            CRM_Utils_Hook::alterContent( $content, 'page', $pageTemplateFile, $this );
+
             if ( $this->_print == CRM_Core_Smarty::PRINT_PDF ) {
                 require_once 'CRM/Utils/PDF/Utils.php';
                 CRM_Utils_PDF_Utils::html2pdf( $content, "{$this->_name}.pdf", false,
@@ -192,6 +196,10 @@ class CRM_Core_Page {
         $content = self::$_template->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' );
 
         CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
+
+        //its time to call the hook.
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::alterContent( $content, 'page', $pageTemplateFile, $this );
 
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print );
         return;

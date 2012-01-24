@@ -103,9 +103,13 @@ function civicrm_wp_initialize( ) {
         $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
                         'civicrm' . DIRECTORY_SEPARATOR .
                         'civicrm.settings.php';
-
-        $error = include_once( $settingsFile );
-
+        
+        if( !file_exists($settingsFile) ){
+            $error = false;
+        } else {
+            $error = include_once( $settingsFile );
+        }
+        
         // get ready for problems
         $installLink    = admin_url() . "options-general.php?page=civicrm-settings";
         $docLinkInstall = "http://wiki.civicrm.org/confluence/display/CRMDOC/WordPress+Installation+Guide";
@@ -123,7 +127,12 @@ function civicrm_wp_initialize( ) {
         }
         
         // this does pretty much all of the civicrm initialization
-        $error = include_once( 'CRM/Core/Config.php' );
+        if ( !file_exists( $civicrm_root.'CRM/Core/Config.php' )  ){
+            $error = false;
+        } else {
+            $error = include_once( 'CRM/Core/Config.php' );
+        }
+
         if ( $error == false ) {
             $failure = true;
             //FIX ME
@@ -363,10 +372,15 @@ function civicrm_check_permission( $args ) {
         return true;
     }
 
-    // a contribution page / pcp page
+    // a contribution page 
     if ( in_array( 'CiviContribute', $config->enableComponents ) ) {
         if ( $arg1 == 'contribute' &&
             in_array( $arg2, array( 'transact', 'campaign', 'pcp') ) ) {
+            return true;
+        }
+        
+        if ( $arg1 == 'pcp' &&
+            in_array( $arg2, array( 'info') ) ) {
             return true;
         }
     }
@@ -382,6 +396,11 @@ function civicrm_check_permission( $args ) {
         if ( $arg1 == 'contact' &&
              $arg2 == 'map'     &&
              $arg3 == 'event'   ) {
+            return true;
+        }
+
+        if ( $arg1 == 'pcp' &&
+            in_array( $arg2, array( 'info') ) ) {
             return true;
         }
     }
@@ -445,12 +464,16 @@ function civicrm_wp_main( ) {
             }
         }
     }
-    
+
     add_action( 'user_register'   , 'civicrm_user_register'  );
     add_action( 'profile_update'  , 'civicrm_profile_update' );
 
     add_shortcode( 'civicrm', 'civicrm_shortcode_handler' );
 
+    if ( !is_admin( ) ) {
+        add_filter('get_header', 'civicrm_wp_shortcode_includes');
+    }
+    
     if ( ! civicrm_wp_in_civicrm( ) ) {
         return;
     }
@@ -708,6 +731,14 @@ function civicrm_shortcode_handler( $atts ) {
 function civicrm_wp_in_civicrm( ) {
     return ( isset( $_GET['page'] ) &&
              $_GET['page'] == 'CiviCRM' ) ? true : false;
+}
+
+function civicrm_wp_shortcode_includes( ){
+    global $post;
+    if ( preg_match( '/\[civicrm/', $post->post_content ) ) {
+        add_action( 'wp_print_styles' , 'civicrm_wp_styles' );
+        add_action( 'wp_print_scripts', 'civicrm_wp_scripts' );
+    }
 }
 
 function wp_get_breadcrumb( ) {

@@ -290,7 +290,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
        require_once 'CRM/Core/Lock.php';
 
-       // For reach of the "Parent Jobs" we find, we split them into 
+       // For each of the "Parent Jobs" we find, we split them into 
        // X Number of child jobs
        while ($job->fetch()) {
            // still use job level lock for each child job
@@ -577,9 +577,12 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 
             if ( is_a( $result, 'PEAR_Error' ) ) {
                 // CRM-9191
-                if ( strpos( $result['message'], 'Failed to write to socket' ) !== false ) {
+                $message = $result->getMessage( );
+                if ( strpos( $message,
+                             'Failed to write to socket' ) !== false ) {
                     // lets log this message and code
-                    CRM_Core_Error::debug_log_message( "SMTP Socket Error. Message: {$result['message']}, Code: {$result['code']}" );
+                    $code    = $result->getCode( );
+                    CRM_Core_Error::debug_log_message( "SMTP Socket Error. Message: $message, Code: $code" );
 
                     // these are socket write errors which most likely means smtp connection errors
                     // lets skip them

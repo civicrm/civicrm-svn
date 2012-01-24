@@ -169,7 +169,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
     //if ( array_key_exists ('debug',$params) && is_object ($dao)) {
     if ( is_array($params) && array_key_exists ('debug',$params)) {
         if(!is_object ($dao)){
-            $d = _civicrm_api3_get_DAO ($params['entity']);
+            $d = _civicrm_api3_get_DAO( CRM_Utils_Array::value('entity', $params) );
             if (!empty($d)) {
                 $file = str_replace ('_','/',$d).".php";
                 require_once ($file);
@@ -252,7 +252,7 @@ function _civicrm_api3_get_DAO ($name) {
     if(strtolower($name) =='individual' || strtolower($name) =='household' ||strtolower($name) =='organization'){
         $name = 'Contact';
     }
-    return $dao[_civicrm_api_get_camel_name($name,3)];
+    return CRM_Utils_Array::value( _civicrm_api_get_camel_name($name, 3), $dao );
 }
 
 /*

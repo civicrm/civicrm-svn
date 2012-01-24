@@ -124,9 +124,11 @@ class CRM_Contact_BAO_RelationshipType extends CRM_Contact_DAO_RelationshipType 
         // if label B to A is blank, insert the value label A to B for it
         if (!strlen(trim($strName = CRM_Utils_Array::value( 'name_b_a', $params)))) {
             $relationshipType->name_b_a  = CRM_Utils_Array::value( 'name_a_b' , $params);
+        }
+        if (!strlen(trim($strName = CRM_Utils_Array::value( 'label_b_a', $params)))) {
             $relationshipType->label_b_a = CRM_Utils_Array::value( 'label_a_b', $params);
         }
-        
+
         $relationshipType->id = CRM_Utils_Array::value( 'relationshipType', $ids );
 
         return $relationshipType->save( );

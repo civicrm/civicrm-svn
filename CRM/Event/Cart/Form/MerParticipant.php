@@ -38,14 +38,19 @@ class CRM_Event_Cart_Form_MerParticipant extends CRM_Core_Form
     )));
   }
 
-  function get_participant_custom_data_fields()
+  function get_profile_groups($event_id)
   {
     require_once 'CRM/Core/BAO/UFJoin.php'; 
     $ufJoinParams = array( 'entity_table' => 'civicrm_event',   
                            'module'       => 'CiviEvent',
-                           'entity_id'    => $this->participant->event_id );
-    list( $custom_pre_id, $custom_post_id ) =
-        CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams ); 
+                           'entity_id'    => $event_id );
+    $group_ids = CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams ); 
+    return $group_ids;
+  }
+
+  function get_participant_custom_data_fields()
+  {
+    list( $custom_pre_id, $custom_post_id ) = self::get_profile_groups($this->participant->event_id);
 
     require_once 'CRM/Core/BAO/UFGroup.php'; 
     $pre_fields = $post_fields = array();

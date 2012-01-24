@@ -416,9 +416,12 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
         $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params, 1 );
         $query   = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $fields );
         
+        $additionalWhereClause = 'contact_a.is_deleted = 0';
+        
         $ids = $query->searchQuery( 0, 0, null, 
                                     false, false, false, 
-                                    true, false );                            
+                                    true, false,
+                                    $additionalWhereClause );                            
 
         $contactIds = explode( ',', $ids );
         

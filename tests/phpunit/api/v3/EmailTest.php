@@ -7,9 +7,12 @@ class api_v3_EmailTest extends CiviUnitTestCase
     protected $_apiversion;
     protected $_contactID;
     protected $_locationType;
+    protected $_entity;
+    protected $_params;
     function setUp() 
     {
         $this->_apiversion = 3;
+        $this->_entity = 'Email';
         parent::setUp();
         $this->_contactID    = $this->organizationCreate(null);
         $this->_locationType = $this->locationTypeCreate(null);
@@ -19,6 +22,13 @@ class api_v3_EmailTest extends CiviUnitTestCase
             'description'      => 'Another Location Type',
             'is_active'        => 1,
         ));
+        $this->_params = array('contact_id' => $this->_contactID,
+                        'location_type_id' => $this->_locationType->id,
+                        'email'            => 'api@a-team.com',
+                        'is_primary'       =>1,
+                        'version'          =>$this->_apiversion,
+        //TODO email_type_id
+         );
     }
 
     function tearDown() 
@@ -28,14 +38,7 @@ class api_v3_EmailTest extends CiviUnitTestCase
         $this->locationTypeDelete( $this->_locationType2->id );
     }
    public function testCreateEmail () {
-        $params = array('contact_id' => $this->_contactID,
-                        'location_type_id' => $this->_locationType->id,
-                        'email'            => 'api@a-team.com',
-                        'is_primary'       =>1,
-                        'version'          =>$this->_apiversion,
-        //TODO email_type_id
-         );
-         
+        $params = $this->_params;
          //check there are no emails to start with
         $get = civicrm_api('email','get',array('version' => 3,
                                       'location_type_id' => $this->_locationType->id,));
@@ -60,6 +63,22 @@ class api_v3_EmailTest extends CiviUnitTestCase
   
    }    
     
+   public function testGetEmail () {
+        $result = civicrm_api('email','create',$this->_params);
+        $this->assertAPISuccess($result, 'create email in line ' . __LINE__);
+        $get = civicrm_api('email','create',$this->_params);
+        $this->assertAPISuccess($get, 'In line ' . __LINE__ );
+        $this->assertEquals($get['count'],1);
+        $get = civicrm_api('email','create',$this->_params + array('debug' => 1));
+        $this->assertAPISuccess($get, 'In line ' . __LINE__ );
+        $this->assertEquals($get['count'],1);
+                $get = civicrm_api('email','create',$this->_params + array('debug' => 1, 'action' => 'get'));
+        $this->assertAPISuccess($get, 'In line ' . __LINE__ );
+        $this->assertEquals($get['count'],1);
+        $delresult = civicrm_api('email','delete',array('id'=> $result['id'], 'version' => 3));
+        $this->assertAPISuccess($delresult, 'In line ' . __LINE__ );
+
+    }
     public function testDeleteEmail () {
         $params = array('contact_id' => $this->_contactID,
                         'location_type_id' => $this->_locationType->id,

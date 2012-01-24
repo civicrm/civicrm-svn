@@ -242,15 +242,16 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
 
             // set email in the template here
             $tplParams = array(
-                'email'            => $email,
-                'receiptFromEmail' => CRM_Utils_Array::value( 'receipt_from_email', $values ),
-                'contactID'        => $contactID,
-                'contributionID'   => $values['contribution_id'],
-                'membershipID'     => CRM_Utils_Array::value('membership_id', $values),
-                'lineItem'         => CRM_Utils_Array::value('lineItem',      $values), // CRM-5095
-                'priceSetID'       => CRM_Utils_Array::value('priceSetID',    $values), // CRM-5095
-                'title'            => $title,
-                'isShare'          => CRM_Utils_Array::value('is_share',    $values)
+                'email'               => $email,
+                'receiptFromEmail'    => CRM_Utils_Array::value( 'receipt_from_email', $values ),
+                'contactID'           => $contactID,
+                'contributionID'      => $values['contribution_id'],
+                'contributionOtherID' => CRM_Utils_Array::value('contribution_other_id', $values),
+                'membershipID'        => CRM_Utils_Array::value('membership_id', $values),
+                'lineItem'            => CRM_Utils_Array::value('lineItem',      $values), // CRM-5095
+                'priceSetID'          => CRM_Utils_Array::value('priceSetID',    $values), // CRM-5095
+                'title'               => $title,
+                'isShare'             => CRM_Utils_Array::value('is_share',    $values)
             );
 
             if ( $contributionTypeId = CRM_Utils_Array::value('contribution_type_id', $values ) ) {
@@ -600,7 +601,7 @@ WHERE entity_table = 'civicrm_contribution_page'
                            'amount',
                            'membership',
                            'custom',
-                           'thankYou',
+                           'thankyou',
                            'friend',
                            'pcp',
                            'widget',
@@ -612,7 +613,7 @@ WHERE entity_table = 'civicrm_contribution_page'
            amount_block_is_active as amount, 
            civicrm_membership_block.id as membership,
            civicrm_uf_join.id as custom,
-           civicrm_contribution_page.thankyou_title as thankYou,
+           civicrm_contribution_page.thankyou_title as thankyou,
            civicrm_tell_friend.id as friend,
            civicrm_pcp_block.id as pcp,
            civicrm_contribution_widget.id as widget,
