@@ -2138,13 +2138,9 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                 } else {
                     CRM_Core_Session::setStatus( ts("Report mail could not be sent.") );
                 }
-                if ( $this->get( 'instanceId' ) ) {
-                    CRM_Utils_System::civiExit( );
-                } 
 
                 CRM_Utils_System::redirect( CRM_Utils_System::url( CRM_Utils_System::currentPath(), 
                                                                    'reset=1' ) );
-         
             } else if ( $this->_outputMode == 'print' ) {
                 echo $content;
             } else {
