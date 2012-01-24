@@ -840,7 +840,6 @@ abstract class CRM_Utils_Hook {
      * @access public
      */
     static function alterContent( &$content, $context, $tplName, &$object ) {
-        $context = str_replace(array(DIRECTORY_SEPARATOR,".tpl"),array("_",""),$context);
         return self::singleton( )->invoke( 4, $content, $context, $tplName, $object,
                                            self::$_nullObject,
                                            'civicrm_alterContent' );
