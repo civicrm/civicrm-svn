@@ -59,9 +59,9 @@ class CRM_Utils_Migrate_ImportJSON {
         CRM_Core_Config::clearDBCache( );
     }
 
-    function migrateDump( &$contact, $daoName, $save = false, $lookUpMapping = false ) {
+    function migrateDump( &$chunk, $daoName, $save = false, $lookUpMapping = false ) {
         if ( $lookUpMapping ) {
-            $mappingMS = array();
+            $lookUp = array();
             foreach ($lookUpMapping  as $columnName => $tableName ) {
                 $query = "SELECT master_id, slave_id
 FROM civicrm_migration_mapping
@@ -69,32 +69,32 @@ WHERE entity_table = '{$tableName}'
 ";
                 
                 $dao = CRM_Core_DAO::executeQuery( $query );
-                $mappingMS[$columnName] = array();
+                $lookUp[$columnName] = array();
                 while ( $dao->fetch( ) ) {
-                    $mappingMS[$columnName][$dao->slave_id] = $dao->master_id;
+                    $lookUp[$columnName][$dao->slave_id] = $dao->master_id;
                 }
             }
         }
         
+        $saveMapping = false;
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
         eval( '$object   = new ' . $daoName . '( );' );
         $tableName = $object->__table;
-        $columns = $contact[0];
-        foreach ( $contact as $key => $value ) {
+        $columns = $chunk[0];
+        foreach ( $chunk as $key => $value ) {
             if ( $key ) {
                 eval( '$object   = new ' . $daoName . '( );' );
                 foreach ( $columns as $k => $column) {
                     if ( $column == 'id') {
                         $childId = $value[$k];
                     } else {
-                        if ($mappingMS) {
-                            if (array_key_exists( $column, $mappingMS ) ) {
-                                $object->$column = $mappingMS[$column][$value[$k]];
-                            crm_core_error::debug('mm',$mappingMS[$column]);
+                        if ( $lookUp ) {
+                            if (array_key_exists( $column, $lookUp ) ) {
+                                $object->$column = $lookUp[$column][$value[$k]];
                             } else {
                                 $object->$column = $value[$k];
                             }
-                            //exit;
+                            
                         } else {
                             $object->$column = $value[$k];
                         }
@@ -105,11 +105,11 @@ WHERE entity_table = '{$tableName}'
                 
                 //dump into mapping DB 
                 $mapValue[] = "( $masterId, $childId, '$tableName' )";
-                $mapping = true;
+                $saveMapping = true;
             }
         }
         
-        if ( $mapping ) { 
+        if ( $saveMapping ) { 
             $insert = "INSERT INTO civicrm_migration_mapping (master_id, slave_id, entity_table ) VALUES ";
             $mapValues = implode( ",\n",$mapValue );
             
