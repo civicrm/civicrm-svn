@@ -67,7 +67,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         // "null" value for example is passed by dedupe merge in order to empty. 
         // Display name computation shouldn't consider such values.
         foreach ( array('first_name', 'middle_name', 'last_name') as $displayField ) {
-            if ( $params[$displayField] == "null" ) {
+            if ( array_key_exists($displayField, $params) && $params[$displayField] == "null" ) {
                 $params[$displayField] = '';
             }
         }
