@@ -853,18 +853,28 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.ac
                 $values[$activityID]['campaign'] = $allCampaigns[$dao->campaign_id];
             }
 
+            if ( !CRM_Utils_Array::value( 'assignee_contact_name', $values[$activityID] ) ) {
+                $values[$activityID]['assignee_contact_name'] = array( );
+            }
+           
+            if ( !CRM_Utils_Array::value( 'target_contact_name', $values[$activityID] ) ) {
+                $values[$activityID]['target_contact_name'  ] = array( );
+            }
+
             if ( !$bulkActivityTypeID || ($bulkActivityTypeID != $dao->activity_type_id) ) {
                 // build array of target / assignee names
-                $values[$activityID]['target_contact_name'][$dao->target_contact_id]     = $dao->target_contact_name;
-                $values[$activityID]['assignee_contact_name'][$dao->assignee_contact_id] = $dao->assignee_contact_name;
-                
+                if ( $dao->target_contact_id ) {
+                    $values[$activityID]['target_contact_name'][$dao->target_contact_id]     = $dao->target_contact_name;
+                }
+                if ( $dao->assignee_contact_id ) {
+                    $values[$activityID]['assignee_contact_name'][$dao->assignee_contact_id] = $dao->assignee_contact_name;
+                }
+
                 // case related fields
                 $values[$activityID]['case_id']      = $dao->case_id;
                 $values[$activityID]['case_subject'] = $dao->case_subject;
             } else {
                 $values[$activityID]['recipients'] = ts('(recipients)');
-                $values[$activityID]['target_contact_name']   = '';
-                $values[$activityID]['assignee_contact_name'] = '';
                 $values[$activityID]['mailingId']             = '';
                 if ( $accessCiviMail && in_array( $dao->source_record_id, $mailingIDs ) ) {
                     $values[$activityID]['mailingId'] = 
