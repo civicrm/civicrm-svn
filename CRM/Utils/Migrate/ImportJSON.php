@@ -41,8 +41,9 @@ class CRM_Utils_Migrate_ImportJSON {
 
     function run( $file ) {
         $json =  file_get_contents($file);
+        
         $decodedContacts = json_decode($json);
-
+        
         $contactDump = $decodedContacts->contact;
         $emailDump = $decodedContacts->email;
         $phoneDump = $decodedContacts->phone;
@@ -52,6 +53,9 @@ class CRM_Utils_Migrate_ImportJSON {
         //migrate contact data
         $this->migrateDump( $contactDump , 'CRM_Contact_DAO_Contact', true );
         $this->migrateDump( $emailDump , 'CRM_Core_DAO_Email', true, array('contact_id' => 'civicrm_contact') );  
+        $this->migrateDump( $phoneDump , 'CRM_Core_DAO_Phone', true, array('contact_id' => 'civicrm_contact') );
+        $this->migrateDump( $addressDump , 'CRM_Core_DAO_Address', true, array('contact_id' => 'civicrm_contact') );
+        $this->migrateDump( $noteDump , 'CRM_Core_DAO_Note', true, array('contact_id' => 'civicrm_contact') );
         //migrate email data
         EXIT();
 
