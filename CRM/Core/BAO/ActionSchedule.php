@@ -808,6 +808,7 @@ LEFT JOIN {$reminderJoinClause}
                 $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
                         "({$dateField}, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
 
+
                 if ( $actionSchedule->repetition_frequency_unit == 'day' ) {
                     $hrs = 24 * $actionSchedule->repetition_frequency_interval;
                 } else if ( $actionSchedule->repetition_frequency_unit == 'week' ) {
@@ -823,25 +824,29 @@ LEFT JOIN {$reminderJoinClause}
                 $groupByClause     = "GROUP BY reminder.contact_id, reminder.entity_id, reminder.entity_table"; 
                 $selectClause     .= ", MAX(reminder.action_date_time) as latest_log_time";
 
-                // Note this query tries to insert MAX(reminder.action_date_time) in place of is_error
-                $query = "
-INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_schedule_id, is_error)
-{$selectClause} 
+$sqlInsertValues = "{$selectClause} 
 {$fromClause} 
 {$joinClause}
 INNER JOIN {$reminderJoinClause}
 {$whereClause} AND {$repeatEventClause}
 {$groupByClause}
 {$havingClause}";
-                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
 
-                // just to clean is_error values
-                $query = "
-UPDATE civicrm_action_log 
-SET    is_error = 0 
-WHERE  action_date_time IS NULL AND action_schedule_id = %1";
-                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
-            }
+         $valsqlInsertValues  = CRM_Core_DAO::executeQuery( $sqlInsertValues, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+
+         $arrValues = array();
+         while ($valsqlInsertValues->fetch()){
+            $arrValues[] = "( {$valsqlInsertValues->contact_id}, {$valsqlInsertValues->entity_id}, '{$valsqlInsertValues->entity_table}',{$valsqlInsertValues->action_schedule_id} )";
+         }
+
+         $valString = implode(',', $arrValues);
+
+         if( $valString ) {
+              $query = "
+              INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_schedule_id) VALUES ". $valString;
+              CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+   }
+             }
         }
     }
 
