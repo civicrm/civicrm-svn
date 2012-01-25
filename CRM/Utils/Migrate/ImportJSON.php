@@ -41,6 +41,7 @@ class CRM_Utils_Migrate_ImportJSON {
 
     function run( $file ) {
         $json =  file_get_contents($file);
+
         $decodedContacts = json_decode($json);
 
         $contact = $decodedContacts->contact;
@@ -48,14 +49,16 @@ class CRM_Utils_Migrate_ImportJSON {
         $phone   = $decodedContacts->phone;
         $address = $decodedContacts->address;
         $note    = $decodedContacts->note;
-        
+        $relationship = $decodedContacts->relationship;
+
         //migrate contact data
         $this->migrateContacts( $contact );
         $this->migrateEmails( $email );
         $this->migratePhones( $phone );
         $this->migrateAddresses( $address );
         $this->migrateNotes( $note );
-
+        $this->migrateRelationships( $relationship );
+        
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
     }
@@ -65,7 +68,7 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function migrateEmails( &$email ) {
-        $this->migrateDump( $emailDump , 
+        $this->migrateDump( $email , 
                             'CRM_Core_DAO_Email', 
                             true, 
                             array('contact_id' => 'civicrm_contact') );  
@@ -92,7 +95,19 @@ class CRM_Utils_Migrate_ImportJSON {
                             array('contact_id' => 'civicrm_contact') );
     }
 
+    function migrateRelationships( &$relationship ) {
+        $this->migrateDump( $relationship  ,
+                            'CRM_Contact_DAO_Relationship',
+                            true,
+                            array('contact_id_a' => 'civicrm_contact',
+                                  'contact_id_b' => 'civicrm_contact') );
+        //FIXME: need to look up for rel type id
+    }
+
+
+
     function migrateDump( &$chunk, $daoName, $save = false, $lookUpMapping = false ) {
+
         if ( $lookUpMapping ) {
             $lookUp = array();
             foreach ($lookUpMapping  as $columnName => $tableName ) {
@@ -147,6 +162,7 @@ WHERE entity_table = '{$tableName}'
             $mapValues = implode( ",\n",$mapValue );
             
             $sql = $insert . $mapValues;
+            //crm_core_error::debug($sql);
             CRM_Core_DAO::executeQuery( $sql );
         }
     }
