@@ -2301,6 +2301,11 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
                             if ( $count ) {
                                 $contactActivities[$activityId]['target_contact'] .= ";&nbsp;";
                             }
+                            
+                            if ( $count == 4 ) {
+                                $contactActivities[$activityId]['target_contact'] .= "(". ts ('more') .")";
+                                break;
+                            }
                         }
                     }
                 }
@@ -2315,6 +2320,11 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
                             $count++;
                             if ( $count ) {
                                 $contactActivities[$activityId]['assignee_contact'  ] .= ";&nbsp;";
+                            }
+
+                            if ( $count == 4 ) {
+                                $contactActivities[$activityId]['assignee_contact'] .= "(". ts ('more') .")";
+                                break;
                             }
                         }
                     }
