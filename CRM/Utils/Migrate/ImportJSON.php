@@ -40,14 +40,48 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function run( $file ) {
+
         $json =  file_get_contents($file);
         $decodedContacts = json_decode($json);
         
-        $this->mapContacts( $decodedContacts );  
+        $contactDump = $decodedContacts->contact;
+        $emailDump = $decodedContacts->email;
+        $phoneDump = $decodedContacts->phone;
+        $addressDump = $decodedContacts->address;
+        $noteDump = $decodedContacts->note;
+
+        $this->migratecontactDump($contactDump);
         
+        EXIT();
+
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
     }
+
+
+    function migratecontactDump( &$contact ) {
+        require_once 'CRM/Contact/DAO/Contact.php';
+        $dao = new CRM_Contact_DAO_Contact;
+
+        $columns = $contact[0];
+        unset($contact[0]);
+
+        foreach ( $contact as $key => $value ) {
+            foreach ( $columns as $k => $col) {
+                if ( $col == 'id') {
+                    $childId = $value[$k];
+                } else {
+                    $dao->$col = $value[$k];
+                }
+            }
+            $dao->save( );
+            
+            $migratedId = $dao->id;
+           
+        }
+        
+    }
+
 
     function copyContactData( &$contact, $save = false ) {
         require_once 'CRM/Contact/DAO/Contact.php';
@@ -64,21 +98,21 @@ class CRM_Utils_Migrate_ImportJSON {
             
             /*save contact centric data*/
             //save address
-            $this->copyAddressData( &$contact, $dao, $save ) ;
+            //$this->copyAddressData( &$contact, $dao, $save ) ;
             
             //save phone
             $this->copyPhoneData( &$contact, $dao, $save ) ;
             
             //save email
-            $this->copyEmailData( &$contact, $dao, $save  ) ;
+            //$this->copyEmailData( &$contact, $dao, $save  ) ;
             
             //save note object
-            $this->copyNoteData( &$contact, $dao, $save ) ;
+            //$this->copyNoteData( &$contact, $dao, $save ) ;
+            
         }
 
         return true;
     }
-
     function copyPhoneData( &$contact, $dao, $save = false ) {
         require_once 'CRM/Core/DAO/Phone.php';
         require_once 'CRM/Utils/System.php';
@@ -103,6 +137,7 @@ class CRM_Utils_Migrate_ImportJSON {
         require_once 'CRM/Core/DAO/Email.php';
         require_once 'CRM/Utils/System.php';
         if ( !CRM_Utils_System::isNull( $contact->email ) ) {
+            crm_core_error::Debug('c', $contact->email);
             if ( is_array ( $contact->email ) ) {
                 //multiple emails per contact
                 foreach ( $contact->email as $emailString ) {
@@ -145,6 +180,7 @@ class CRM_Utils_Migrate_ImportJSON {
                 if ( $name == 'street_address' ) {
                     $addressDAO->$name = (string ) $contact->$name;
                     $parsedAddress = CRM_Core_BAO_Address::parseStreetAddress( $addressDAO->street_address  );
+                    //crm_Core_error::debug('$parsedAddress',$parsedAddress);
                     foreach( $parsedAddress as $column => $value ) {
                         $addressDAO->$column = $parsedAddress[$column];
                     }
@@ -189,6 +225,7 @@ class CRM_Utils_Migrate_ImportJSON {
         
         foreach ( $contacts as $contact ) {
             $this->copyContactData( $contact, true );
+            //crm_core_error::Debug('c', $contact);
         }
     }
     
