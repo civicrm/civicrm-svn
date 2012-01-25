@@ -40,48 +40,84 @@ class CRM_Utils_Migrate_ImportJSON {
     }
 
     function run( $file ) {
-
         $json =  file_get_contents($file);
         $decodedContacts = json_decode($json);
-        
+
         $contactDump = $decodedContacts->contact;
         $emailDump = $decodedContacts->email;
         $phoneDump = $decodedContacts->phone;
         $addressDump = $decodedContacts->address;
         $noteDump = $decodedContacts->note;
-
-        $this->migratecontactDump($contactDump);
         
+        //migrate contact data
+        $this->migrateDump( $contactDump , 'CRM_Contact_DAO_Contact', true );
+        $this->migrateDump( $emailDump , 'CRM_Core_DAO_Email', true, array('contact_id' => 'civicrm_contact') );  
+        //migrate email data
         EXIT();
 
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
     }
 
-
-    function migratecontactDump( &$contact ) {
-        require_once 'CRM/Contact/DAO/Contact.php';
-        $dao = new CRM_Contact_DAO_Contact;
-
-        $columns = $contact[0];
-        unset($contact[0]);
-
-        foreach ( $contact as $key => $value ) {
-            foreach ( $columns as $k => $col) {
-                if ( $col == 'id') {
-                    $childId = $value[$k];
-                } else {
-                    $dao->$col = $value[$k];
+    function migrateDump( &$contact, $daoName, $save = false, $lookUpMapping = false ) {
+        if ( $lookUpMapping ) {
+            $mappingMS = array();
+            foreach ($lookUpMapping  as $columnName => $tableName ) {
+                $query = "SELECT master_id, slave_id
+FROM civicrm_migration_mapping
+WHERE entity_table = '{$tableName}'
+";
+                
+                $dao = CRM_Core_DAO::executeQuery( $query );
+                $mappingMS[$columnName] = array();
+                while ( $dao->fetch( ) ) {
+                    $mappingMS[$columnName][$dao->slave_id] = $dao->master_id;
                 }
             }
-            $dao->save( );
-            
-            $migratedId = $dao->id;
-           
         }
         
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+        eval( '$object   = new ' . $daoName . '( );' );
+        $tableName = $object->__table;
+        $columns = $contact[0];
+        foreach ( $contact as $key => $value ) {
+            if ( $key ) {
+                eval( '$object   = new ' . $daoName . '( );' );
+                foreach ( $columns as $k => $column) {
+                    if ( $column == 'id') {
+                        $childId = $value[$k];
+                    } else {
+                        if ($mappingMS) {
+                            if (array_key_exists( $column, $mappingMS ) ) {
+                                $object->$column = $mappingMS[$column][$value[$k]];
+                            crm_core_error::debug('mm',$mappingMS[$column]);
+                            } else {
+                                $object->$column = $value[$k];
+                            }
+                            //exit;
+                        } else {
+                            $object->$column = $value[$k];
+                        }
+                    }
+                }
+                
+                $object->save( );                                                                                                                                                                $masterId = $object->id;
+                
+                //dump into mapping DB 
+                $mapValue[] = "( $masterId, $childId, '$tableName' )";
+                $mapping = true;
+            }
+        }
+        
+        if ( $mapping ) { 
+            $insert = "INSERT INTO civicrm_migration_mapping (master_id, slave_id, entity_table ) VALUES ";
+            $mapValues = implode( ",\n",$mapValue );
+            
+            $sql = $insert . $mapValues;
+            CRM_Core_DAO::executeQuery( $sql );
+        }
     }
-
+    
 
     function copyContactData( &$contact, $save = false ) {
         require_once 'CRM/Contact/DAO/Contact.php';
