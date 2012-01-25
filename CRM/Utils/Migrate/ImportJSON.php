@@ -41,23 +41,55 @@ class CRM_Utils_Migrate_ImportJSON {
 
     function run( $file ) {
         $json =  file_get_contents($file);
-        
         $decodedContacts = json_decode($json);
-        $contactDump = $decodedContacts->contact;
-        $emailDump = $decodedContacts->email;
-        $phoneDump = $decodedContacts->phone;
-        $addressDump = $decodedContacts->address;
-        $noteDump = $decodedContacts->note;
+
+        $contact = $decodedContacts->contact;
+        $email   = $decodedContacts->email;
+        $phone   = $decodedContacts->phone;
+        $address = $decodedContacts->address;
+        $note    = $decodedContacts->note;
         
         //migrate contact data
-        $this->migrateDump( $contactDump , 'CRM_Contact_DAO_Contact', true );
-        $this->migrateDump( $emailDump , 'CRM_Core_DAO_Email', true, array('contact_id' => 'civicrm_contact') );  
-        $this->migrateDump( $phoneDump , 'CRM_Core_DAO_Phone', true, array('contact_id' => 'civicrm_contact') );
-        $this->migrateDump( $addressDump , 'CRM_Core_DAO_Address', true, array('contact_id' => 'civicrm_contact') );
-        $this->migrateDump( $noteDump , 'CRM_Core_DAO_Note', true, array('contact_id' => 'civicrm_contact') );
+        $this->migrateContacts( $contact );
+        $this->migrateEmails( $email );
+        $this->migratePhones( $phone );
+        $this->migrateAddresses( $address );
+        $this->migrateNotes( $note );
 
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
+    }
+    
+    function migrateContacts( &$contact ) {
+        $this->migrateDump( $contact , 'CRM_Contact_DAO_Contact', true );
+    }
+
+    function migrateEmails( &$email ) {
+        $this->migrateDump( $emailDump , 
+                            'CRM_Core_DAO_Email', 
+                            true, 
+                            array('contact_id' => 'civicrm_contact') );  
+    }
+    
+    function migratePhones( &$phone ) {
+        $this->migrateDump( $phone , 
+                            'CRM_Core_DAO_Phone', 
+                            true, 
+                            array('contact_id' => 'civicrm_contact') );
+    }
+
+    function migrateAddresses( &$address ) {
+        $this->migrateDump( $address ,
+                            'CRM_Core_DAO_Address', 
+                            true, 
+                            array('contact_id' => 'civicrm_contact') );
+    }
+    
+    function migrateNotes( &$note ) {
+        $this->migrateDump( $note ,
+                            'CRM_Core_DAO_Note',
+                            true, 
+                            array('contact_id' => 'civicrm_contact') );
     }
 
     function migrateDump( &$chunk, $daoName, $save = false, $lookUpMapping = false ) {
@@ -118,7 +150,5 @@ WHERE entity_table = '{$tableName}'
             CRM_Core_DAO::executeQuery( $sql );
         }
     }
-    
-
-       
+           
 }
