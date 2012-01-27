@@ -480,8 +480,8 @@ class CRM_Core_Extensions
     public function getTemplateName( $clazz ) {
         $this->populate();
         $e = $this->_extByKey;
-        $file = (string) $e[$key]->file;
         $key = $this->classToKey( $clazz );
+        $file = (string) $e[$key]->file;
         return (string) $e[$key]->file . '.tpl' ;
     }    
 
