@@ -100,7 +100,7 @@ function civicrm_engage_add_contact_subtypes() {
   $existing_types = CRM_Contact_BAO_ContactType::subTypeInfo( );   
   while(list($k) = each($existing_types)) {
     if(array_key_exists($k,$create)) {
-      drupal_set_message(t("Not creating $k, already exists."));
+      drupal_set_message(t("Not creating @type, already exists.", array("@type" => $k)));
       unset($create[$k]);
     }
   }
