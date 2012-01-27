@@ -346,10 +346,10 @@ AND        f.column_name = %2
                                      2 => array( $columnName, 'String' ) );
                     $cfID = CRM_Core_DAO::singleValueQuery( $sql, $params );
                     if ( ! $cfID ) {
-                        CRM_Core_Error::fatal( ts( "Could not find custom field for %1, %2, %3<p>",
+                        CRM_Core_Error::fatal( ts( "Could not find custom field for %1, %2, %3",
                                                    array( 1 => $profileField->field_name,
                                                           2 => $tableName,
-                                                          3 => $columnName ) ) );
+                                                          3 => $columnName ) ) . "<br />" );
                     }
                     $profileField->field_name = "custom_{$cfID}";
                 }
