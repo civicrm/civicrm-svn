@@ -97,7 +97,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             $entityDateStart = CRM_Utils_Array::value('entity_date_start', $value );
             $entityDateEnd = CRM_Utils_Array::value('entity_date_end', $value );
             $entityRecipient = CRM_Utils_Array::value('entity_recipient', $value );
-            $valueLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -'));
+            $valueLabel = array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -');
             $key = $value['id'];
             $entityMapping[$key] = $value['entity'];
                             
@@ -164,7 +164,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
 
         foreach ( $mapping as $value ) {
             $entityStatus = $value['entity_status'];
-            $statusLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_status_label', $value) ) .' -'));
+            $statusLabel = array('- '. strtolower( CRM_Utils_Array::value('entity_status_label', $value) ) .' -');
             $id = $value['id'];
                       
             switch ($entityStatus) {
