@@ -232,16 +232,16 @@ class CRM_Utils_Address_BatchUpdate
             }
         }
     
-        $this->returnMessages[] = ts( "Addresses Evaluated: $totalAddresses\n" );        
+        $this->returnMessages[] = ts( "Addresses Evaluated: %1", array( 1 => $totalAddresses ) ) . "\n";
         if ( $processGeocode ) {
-            $this->returnMessages[] = ts( "Addresses Geocoded : $totalGeocoded\n" );
+            $this->returnMessages[] = ts( "Addresses Geocoded: %1", array( 1 => $totalGeocoded ) ) . "\n";
         }
         if ( $parseStreetAddress ) {
-            $this->returnMessages[] = ts( "Street Addresses Parsed : $totalAddressParsed\n" );
+            $this->returnMessages[] = ts( "Street Addresses Parsed: %1", array( 1 => $totalAddressParsed ) ) . "\n";
             if ( $unparseableContactAddress ) {
-                $this->returnMessages[] = ts( "<br />\nFollowing is the list of contacts whose address is not parsed :<br />\n");
+                $this->returnMessages[] = "<br />\n" . ts( "Following is the list of contacts whose address is not parsed:" ) . "<br />\n";
                 foreach ( $unparseableContactAddress as $contactLink ) {
-                    $this->returnMessages[] = ts("%1<br />\n", array( 1 => $contactLink ) );
+                    $this->returnMessages[] = $contactLink . "<br />\n";
                 }
             }
         }
