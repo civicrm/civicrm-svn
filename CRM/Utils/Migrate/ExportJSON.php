@@ -475,7 +475,6 @@ AND    entity_table = 'civicrm_contact'
             $sql = "
 SELECT id 
 FROM civicrm_contact
-LIMIT 5
 ";
         }
 
@@ -497,7 +496,7 @@ LIMIT 5
         file_put_contents( $fileName,
                            $json );
         
-        print_r( json_decode( $json ) );
+        // print_r( json_decode( $json ) );
     }
 
 }

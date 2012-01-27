@@ -36,7 +36,13 @@
 
 class CRM_Utils_Migrate_ImportJSON {
 
+    protected $_lookupCache;
+
+    protected $_saveMapping;
+
     function __construct( ) {
+        $this->_lookupCache = array( );
+        $this->_saveMapping = array( );
     }
 
     function run( $file ) {
@@ -44,133 +50,131 @@ class CRM_Utils_Migrate_ImportJSON {
 
         $decodedContacts = json_decode($json);
 
-        $contact = $decodedContacts->contact;
-        $email   = $decodedContacts->email;
-        $phone   = $decodedContacts->phone;
-        $address = $decodedContacts->address;
-        $note    = $decodedContacts->note;
-        $relationship = $decodedContacts->relationship;
-        $activity = $decodedContacts->activity;
-        $activityTarget = $decodedContacts->activity_target;
-        $activityAssignment = $decodedContacts->activity_assignment;
+        $contact = $decodedContacts->civicrm_contact;
+        $email   = $decodedContacts->civicrm_email;
+        $phone   = $decodedContacts->civicrm_phone;
+        $address = $decodedContacts->civicrm_address;
+        $note    = $decodedContacts->civicrm_note;
+        $relationship = $decodedContacts->civicrm_relationship;
+        $activity = $decodedContacts->civicrm_activity;
+        $activityTarget = $decodedContacts->civicrm_activity_target;
+        $activityAssignment = $decodedContacts->civicrm_activity_assignment;
         
 
         //migrate contact data
-        $this->migrateContacts( $contact );
+        $this->contacts( $contact );
         
         //migrate contact centric data
-        $this->migrateEmails( $email );
-        $this->migratePhones( $phone );
-        $this->migrateAddresses( $address );
-        $this->migrateNotes( $note );
-        $this->migrateRelationships( $relationship );
-        $this->migrateActivities( $activity,  $activityTarget, $activityAssignment );
+        $this->emails( $email );
+        $this->phones( $phone );
+        $this->addresses( $address );
+        $this->notes( $note );
+        $this->relationships( $relationship );
+        $this->activities( $activity,  $activityTarget, $activityAssignment );
         
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
     }
     
-    function migrateContacts( &$contact ) {
-        $this->migrateDump( $contact , 'CRM_Contact_DAO_Contact', true );
+    function contacts( &$contact ) {
+        $this->dump( $contact ,
+                     'CRM_Contact_DAO_Contact',
+                     true,
+                     array( 'id' => 'civicrm_contact' ) );
     }
 
-    function migrateEmails( &$email ) {
-        $this->migrateDump( $email , 
-                            'CRM_Core_DAO_Email', 
-                            true, 
-                            array('contact_id' => 'civicrm_contact') );  
-    }
-    
-    function migratePhones( &$phone ) {
-        $this->migrateDump( $phone , 
-                            'CRM_Core_DAO_Phone', 
-                            true, 
-                            array('contact_id' => 'civicrm_contact') );
+    function emails( &$email ) {
+        $this->dump( $email, 
+                     'CRM_Core_DAO_Email', 
+                     true, 
+                     array('contact_id' => 'civicrm_contact') );
     }
 
-    function migrateAddresses( &$address ) {
-        $this->migrateDump( $address ,
-                            'CRM_Core_DAO_Address', 
-                            true, 
-                            array('contact_id' => 'civicrm_contact') );
+    function phones( &$phone ) {
+        $this->dump( $phone,
+                     'CRM_Core_DAO_Phone', 
+                     true, 
+                     array('contact_id' => 'civicrm_contact') );
     }
     
-    function migrateNotes( &$note ) {
-        $this->migrateDump( $note ,
-                            'CRM_Core_DAO_Note',
-                            true, 
-                            array('contact_id' => 'civicrm_contact') );
+    function addresses( &$address ) {
+        $this->dump( $address ,
+                     'CRM_Core_DAO_Address', 
+                     true, 
+                     array('contact_id' => 'civicrm_contact') );
     }
-
-    function migrateRelationships( &$relationship ) {
-        $this->migrateDump( $relationship  ,
-                            'CRM_Contact_DAO_Relationship',
-                            true,
-                            array('contact_id_a' => 'civicrm_contact',
-                                  'contact_id_b' => 'civicrm_contact') );
+    
+    function notes( &$note ) {
+        $this->dump( $note ,
+                     'CRM_Core_DAO_Note',
+                     true, 
+                     array('contact_id' => 'civicrm_contact') );
     }
-
-
-    function migrateActivities( $activity,  $activityTarget, $activityAssignment ) {
-        $this->migrateDump( $activity ,
-                            'CRM_Activity_DAO_Activity',
-                            true,
-                            array('source_contact_id' => 'civicrm_contact',
-                                  ) );
-   
-        $this->migrateDump( $activityTarget ,
-                            'CRM_Activity_DAO_ActivityTarget',
-                            true,
-                            array( 'target_contact_id' => 'civicrm_contact',
-                                   'activity_id'       => 'civicrm_activity'
-                                  ) );
+    
+    function relationships( &$relationship ) {
+        $this->dump( $relationship  ,
+                     'CRM_Contact_DAO_Relationship',
+                     true,
+                     array('contact_id_a' => 'civicrm_contact',
+                           'contact_id_b' => 'civicrm_contact') );
+    }
+    
+    
+    function activities( $activity,  $activityTarget, $activityAssignment ) {
+        $this->dump( $activity ,
+                     'CRM_Activity_DAO_Activity',
+                     true,
+                     array('source_contact_id' => 'civicrm_contact',
+                           ) );
         
-        $this->migrateDump( $activityAssignment ,
-                            'CRM_Activity_DAO_ActivityAssignment',
-                            true,
-                            array( 'assignee_contact_id' => 'civicrm_contact',
-                                   'activity_id'         => 'civicrm_activity'
-                                  ) );
-    }
-
-    function migrateDump( &$chunk, $daoName, $save = false, $lookUpMapping = false ) {
-
-        if ( $lookUpMapping ) {
-            $lookUp = array();
-            foreach ($lookUpMapping  as $columnName => $tableName ) {
-                $query = "SELECT master_id, slave_id
-FROM civicrm_migration_mapping
-WHERE entity_table = '{$tableName}'
-";
-                
-                $dao = CRM_Core_DAO::executeQuery( $query );
-                $lookUp[$columnName] = array();
-                while ( $dao->fetch( ) ) {
-                    $lookUp[$columnName][$dao->slave_id] = $dao->master_id;
-                }
-            }
-        }
+        $this->dump( $activityTarget ,
+                     'CRM_Activity_DAO_ActivityTarget',
+                     true,
+                     array( 'target_contact_id' => 'civicrm_contact',
+                            'activity_id'       => 'civicrm_activity'
+                            ) );
         
-        $saveMapping = false;
+        $this->dump( $activityAssignment ,
+                     'CRM_Activity_DAO_ActivityAssignment',
+                     true,
+                     array( 'assignee_contact_id' => 'civicrm_contact',
+                            'activity_id'         => 'civicrm_activity'
+                            )
+                     );
+    }
+    
+    function dump( &$chunk, $daoName, $save = false, $lookUpMapping = null ) {
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
         eval( '$object   = new ' . $daoName . '( );' );
         $tableName = $object->__table;
-        $columns = $chunk[0];
 
+        if ( is_array( $lookUpMapping ) ) {
+            $lookUpMapping['id'] = $tableName;
+        } else {
+            $lookUpMapping = array( 'id' => $tableName );
+        }
+
+        foreach ($lookUpMapping  as $columnName => $tableName ) {
+            $this->populateCache( $tableName );
+        }
+
+        $saveMapping = false;
+        $columns = $chunk[0];
         foreach ( $chunk as $key => $value ) {
             if ( $key ) {
                 eval( '$object   = new ' . $daoName . '( );' );
                 foreach ( $columns as $k => $column) {
                     if ( $column == 'id') {
-                        $childId = $value[$k];
+                        $childID  = $value[$k];
+                        $masterID = CRM_Utils_Array::value( $value[$k],
+                                                            $this->_lookupCache[$tableName],
+                                                            null );
+                        if ( $masterID ) {
+                            $object->id = $masterID;
+                        }
                     } else {
-                        if ( $lookUp ) {
-                            if (array_key_exists( $column, $lookUp ) ) {
-                                $object->$column = $lookUp[$column][$value[$k]];
-                            } else {
-                                $object->$column = $value[$k];
-                            }
-                            
+                        if (array_key_exists( $column, $lookUpMapping ) ) {
+                            $object->$column = $this->_lookupCache[$lookUpMapping[$column]][$value[$k]];
                         } else {
                             $object->$column = $value[$k];
                         }
@@ -178,22 +182,48 @@ WHERE entity_table = '{$tableName}'
                 }
                 
                 $object->save();
-                $masterId = $object->id;
-                
-                //dump into mapping DB 
-                $mapValue[] = "( $masterId, $childId, '$tableName' )";
-                $saveMapping = true;
+                if ( ! $masterID ) {
+                    $this->_lookupCache[$tableName][$childID] = $object->id;
+                    $this->_saveMapping[$tableName] = true;
+                }
             }
         }
-        
-        if ( $saveMapping ) { 
-            $insert = "INSERT INTO civicrm_migration_mapping (master_id, slave_id, entity_table ) VALUES ";
-            $mapValues = implode( ",\n",$mapValue );
-            
-            $sql = $insert . $mapValues;
+    }
 
-            CRM_Core_DAO::executeQuery( $sql );
+    function saveCache( ) {
+        $sql = "INSERT INTO civicrm_migration_mapping (master_id, slave_id, entity_table ) VALUES ";
+
+        foreach ( $this->_lookupCache as $tableName =>& $values ) {
+            if ( ! $this->_saveMapping[$tableName] ) {
+                continue;
+            }
+
+            $mapValues = array( );
+            CRM_Core_DAO::executeQuery( "DELETE FROM civicrm_migration_mapping where entity_table = '$tableName'" );
+            foreach ( $values as $childID => $masterID ) {
+                $mapValues[] = "($masterID,$childID,'$tableName')";
+            }
+            $insertSQL = $sql . implode( ",\n", $mapValues );
+            CRM_Core_DAO::executeQuery( $insertSQL );
         }
     }
-           
+
+    function populateCache( $tableName ) {
+        if ( isset( $this->_lookupCache[$tableName] ) ) {
+            return;
+        }
+
+        $this->_lookupCache[$tableName] = array();
+        $this->_saveMapping[$tableName] = false;
+
+        $query = "SELECT master_id, slave_id
+FROM civicrm_migration_mapping
+WHERE entity_table = '{$tableName}'
+";
+        
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while ( $dao->fetch( ) ) {
+            $this->_lookupCache[$dao->slave_id] = $dao->master_id;
+        }
+    }
 }
