@@ -612,7 +612,7 @@ SELECT count(*)
                     if ( strpos($fields['filter'], 'entity=') !== false ) {
                         $errors['filter'] = ts( "Please do not include entity parameter (entity is always 'contact')" );
                     } else if ( strpos($fields['filter'], 'action=') === false ) {
-                        $errors['filter'] = ts("please specify 'action' parameter, it should be 'lookup' or 'get'" );
+                        $errors['filter'] = ts( "Please specify 'action' parameter, it should be 'lookup' or 'get'" );
                     } else if ( strpos($fields['filter'], 'action=get') === false &&
                                 strpos($fields['filter'], 'action=lookup') === false ) {
                         $errors['filter'] = ts( "Only 'get' and 'lookup' actions are supported." );

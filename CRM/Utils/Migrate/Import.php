@@ -80,10 +80,10 @@ class CRM_Utils_Migrate_Import {
             if ( isset( $xml->$keyName ) ) {
                 $dao->$keyName = (string ) $xml->$keyName;
                 if ( $dao->find( true ) ) {
-                    CRM_Core_Session::setStatus( ts( "Found %1, %2, %3<p>",
+                    CRM_Core_Session::setStatus( ts( "Found %1, %2, %3",
                                                      array( 1 => $keyName, 
                                                             2 => $dao->$keyName,
-                                                            3 => $dao->__table ) ) );
+                                                            3 => $dao->__table ) ) . "<br />" );
                     return false;
                 }
             }

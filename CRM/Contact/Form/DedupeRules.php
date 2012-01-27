@@ -181,7 +181,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
         }
         
         if ( !$fieldSelected ) {
-            $errors['_qf_default'] = ts('Please select atleast one field.');
+            $errors['_qf_default'] = ts( 'Please select at least one field.' );
         }
 
         return empty($errors) ? true : $errors;

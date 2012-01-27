@@ -219,7 +219,7 @@
   </item>
   <item>
      <path>civicrm/admin/setting/search</path>
-     <title>Search Preferenes</title>
+     <title>Search Preferences</title>
      <page_callback>CRM_Admin_Form_Setting_Search</page_callback>
      <adminGroup>Customize Data and Screens</adminGroup>
      <icon>admin/small/36.png</icon>
