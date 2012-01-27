@@ -50,100 +50,105 @@ class CRM_Utils_Migrate_ImportJSON {
 
         $decodedContacts = json_decode($json);
 
-        $contact = $decodedContacts->civicrm_contact;
-        $email   = $decodedContacts->civicrm_email;
-        $phone   = $decodedContacts->civicrm_phone;
-        $address = $decodedContacts->civicrm_address;
-        $note    = $decodedContacts->civicrm_note;
-        $relationship = $decodedContacts->civicrm_relationship;
-        $activity = $decodedContacts->civicrm_activity;
-        $activityTarget = $decodedContacts->civicrm_activity_target;
-        $activityAssignment = $decodedContacts->civicrm_activity_assignment;
-        
-
         //migrate contact data
-        $this->contacts( $contact );
-        
-        //migrate contact centric data
-        $this->emails( $email );
-        $this->phones( $phone );
-        $this->addresses( $address );
-        $this->notes( $note );
-        $this->relationships( $relationship );
-        $this->activities( $activity,  $activityTarget, $activityAssignment );
+        $this->contact     ( $decodedContacts->civicrm_contact      );
+        $this->email       ( $decodedContacts->civicrm_email        );
+        $this->phone       ( $decodedContacts->civicrm_phone        );
+        $this->address     ( $decodedContacts->civicrm_address      );
+        $this->note        ( $decodedContacts->civicrm_note         );
+        $this->relationship( $decodedContacts->civicrm_relationship );
+        $this->activity    ( $decodedContacts->civicrm_activity,
+                             $decodedContacts->civicrm_activity_target,
+                             $decodedContacts->civicrm_activity_assignment );
+        $this->group       ( $decodedContacts->civicrm_group,
+                             $decodedContacts->civicrm_group_contact );
+        $this->tag         ( $decodedContacts->civicrm_tag,
+                              $decodedContacts->civicrm_entity_tag );
         
         // clean up all caches etc
         CRM_Core_Config::clearDBCache( );
     }
     
-    function contacts( &$contact ) {
-        $this->dump( $contact ,
-                     'CRM_Contact_DAO_Contact',
-                     true,
-                     array( 'id' => 'civicrm_contact' ) );
+    function contact( &$contact ) {
+        $this->restore( $contact ,
+                        'CRM_Contact_DAO_Contact',
+                        array( 'id' => 'civicrm_contact' ) );
     }
 
-    function emails( &$email ) {
-        $this->dump( $email, 
-                     'CRM_Core_DAO_Email', 
-                     true, 
-                     array('contact_id' => 'civicrm_contact') );
+    function email( &$email ) {
+        $this->restore( $email, 
+                        'CRM_Core_DAO_Email', 
+                        array('contact_id' => 'civicrm_contact' ) );
     }
 
-    function phones( &$phone ) {
-        $this->dump( $phone,
-                     'CRM_Core_DAO_Phone', 
-                     true, 
-                     array('contact_id' => 'civicrm_contact') );
+    function phone( &$phone ) {
+        $this->restore( $phone,
+                        'CRM_Core_DAO_Phone', 
+                        array('contact_id' => 'civicrm_contact' ) );
     }
     
-    function addresses( &$address ) {
-        $this->dump( $address ,
-                     'CRM_Core_DAO_Address', 
-                     true, 
-                     array('contact_id' => 'civicrm_contact') );
+    function address( &$address ) {
+        $this->restore( $address ,
+                        'CRM_Core_DAO_Address', 
+                        array('contact_id' => 'civicrm_contact' ) );
     }
     
-    function notes( &$note ) {
-        $this->dump( $note ,
-                     'CRM_Core_DAO_Note',
-                     true, 
-                     array('contact_id' => 'civicrm_contact') );
+    function note( &$note ) {
+        $this->restore( $note ,
+                        'CRM_Core_DAO_Note',
+                        array('contact_id' => 'civicrm_contact' ) );
     }
     
-    function relationships( &$relationship ) {
-        $this->dump( $relationship  ,
-                     'CRM_Contact_DAO_Relationship',
-                     true,
-                     array('contact_id_a' => 'civicrm_contact',
-                           'contact_id_b' => 'civicrm_contact') );
+    function relationship( &$relationship ) {
+        $this->restore( $relationship  ,
+                        'CRM_Contact_DAO_Relationship',
+                        array('contact_id_a' => 'civicrm_contact',
+                              'contact_id_b' => 'civicrm_contact' ) );
     }
     
     
-    function activities( $activity,  $activityTarget, $activityAssignment ) {
-        $this->dump( $activity ,
-                     'CRM_Activity_DAO_Activity',
-                     true,
-                     array('source_contact_id' => 'civicrm_contact',
-                           ) );
+    function activity( $activity,  $activityTarget, $activityAssignment ) {
+        $this->restore( $activity ,
+                        'CRM_Activity_DAO_Activity',
+                        array('source_contact_id' => 'civicrm_contact' ) );
         
-        $this->dump( $activityTarget ,
-                     'CRM_Activity_DAO_ActivityTarget',
-                     true,
-                     array( 'target_contact_id' => 'civicrm_contact',
-                            'activity_id'       => 'civicrm_activity'
-                            ) );
+        $this->restore( $activityTarget ,
+                        'CRM_Activity_DAO_ActivityTarget',
+                        array( 'target_contact_id' => 'civicrm_contact',
+                               'activity_id'       => 'civicrm_activity'
+                               ) );
         
-        $this->dump( $activityAssignment ,
-                     'CRM_Activity_DAO_ActivityAssignment',
-                     true,
-                     array( 'assignee_contact_id' => 'civicrm_contact',
-                            'activity_id'         => 'civicrm_activity'
-                            )
-                     );
+        $this->restore( $activityAssignment ,
+                        'CRM_Activity_DAO_ActivityAssignment',
+                        array( 'assignee_contact_id' => 'civicrm_contact',
+                               'activity_id'         => 'civicrm_activity'
+                               )
+                        );
     }
-    
-    function dump( &$chunk, $daoName, $save = false, $lookUpMapping = null ) {
+
+    function group( $group, $groupContact ) {
+        $this->restore( $group,
+                        'CRM_Contact_DAO_Group' );
+
+        $this->restore( $groupContact,
+                        'CRM_Contact_DAO_GroupContact',
+                        array( 'group_id'   => 'civicrm_group',
+                               'contact_id' => 'civicrm_contact' ) );
+    }
+
+    function tag( $tag, $entityTag ) {
+        $this->restore( $tag,
+                        'CRM_Core_DAO_Tag',
+                        array( 'created_id' => 'civicrm_contact',
+                               'parent_id'  => 'civicrm_tag' ) );
+
+        $this->restore( $entityTag,
+                        'CRM_Core_DAO_EntityTag',
+                        array( 'entity_id' => 'civicrm_contact',
+                               'tag_id'    => 'civicrm_tag' ) );
+    }
+
+    function restore( &$chunk, $daoName, $lookUpMapping = null ) {
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
         eval( '$object   = new ' . $daoName . '( );' );
         $tableName = $object->__table;
@@ -164,7 +169,7 @@ class CRM_Utils_Migrate_ImportJSON {
             if ( $key ) {
                 eval( '$object   = new ' . $daoName . '( );' );
                 foreach ( $columns as $k => $column) {
-                    if ( $column == 'id') {
+                    if ( $column == 'id' ) {
                         $childID  = $value[$k];
                         $masterID = CRM_Utils_Array::value( $value[$k],
                                                             $this->_lookupCache[$tableName],
@@ -201,7 +206,7 @@ class CRM_Utils_Migrate_ImportJSON {
             $mapValues = array( );
             CRM_Core_DAO::executeQuery( "DELETE FROM civicrm_migration_mapping where entity_table = '$tableName'" );
             foreach ( $values as $childID => $masterID ) {
-                $mapValues[] = "($masterID,$childID,'$tableName')";
+                $mapValues[] = "($masterID,$childID,'$tableName' )";
             }
             $insertSQL = $sql . implode( ",\n", $mapValues );
             CRM_Core_DAO::executeQuery( $insertSQL );
