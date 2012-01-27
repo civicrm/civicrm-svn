@@ -26,7 +26,7 @@
 {if $confirm}
     <div class="messages status">
           <div class="icon inform-icon"></div>&nbsp;
-          <label>{$display_name} ({$email})</label> {ts}has been successfully removed.{/ts}
+          <label>{$display_name} ({$email})</label> {ts}has been successfully removed from the specified mailing list(s).{/ts}
     </div>
 {else}
     <div>
