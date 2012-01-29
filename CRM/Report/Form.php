@@ -217,6 +217,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     public $_having      = null;
     public $_select      = null;
+    public $_columnHeaders = array( );
     public $_orderBy     = null;
     public $_groupBy     = null;
 
@@ -1475,7 +1476,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
     function select( ) {
         $select = array( );
 
-        $this->_columnHeaders = array( );
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('fields', $table) ) {
                 foreach ( $table['fields'] as $fieldName => $field ) {

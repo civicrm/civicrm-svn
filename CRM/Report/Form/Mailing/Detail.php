@@ -48,14 +48,15 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                   'dao' => 'CRM_Contact_DAO_Contact',
                   'fields' => 
                   array(
-                        'id' => 
-                        array( 
+                        'contact_id' => 
+                        array('name'  => 'id', 
                               'title' => ts('Contact ID'),
                               'required'  => true, 
                                ), 						
                         'sort_name' => 
                         array( 
-                              'title' => ts( 'Contact Name' )
+                              'title' => ts( 'Contact Name' ),
+                              'required'  => true, 
                                ),
                         ),
                   'filters' => 
@@ -108,7 +109,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
 							  
 		$this->_columns['civicrm_mailing_event_bounce'] = 
             array(
-                  'dao' => 'CRM_Mailing_DAO_Mailing',
+                  'dao'    => 'CRM_Mailing_Event_DAO_Bounce',
                   'fields' => 
                   array(
                         'bounce_reason' => 
@@ -116,9 +117,6 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                               'title' => ts('Bounce Reason'),
                               ),
                         ),
-                  'order_bys'  =>
-                  array( 'bounce_reason' =>
-                         array( 'title' => ts( 'Bounce Reason') ) ),
                   'grouping' => 'mailing-fields' 
                   );
 		
@@ -144,22 +142,19 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                               'options'  => self::bounce_type(),
                               ),
                         ),
-                  'order_bys'  =>
-                  array( 'bounce_name' =>
-                         array( 'name' => 'name',
-                                'title' => ts( 'Bounce Type') ) ),
                   'grouping' => 'mailing-fields' 
                   );
 
 		$this->_columns['civicrm_mailing_event_delivered'] = 
             array(
-                  'dao' => 'CRM_Mailing_DAO_Mailing',
+                  'dao' => 'CRM_Mailing_Event_DAO_Delivered',
                   'fields' => 
                   array(
                         'delivered_id' => 
                         array(
-                              'name'  => 'delivery_status',
+                              'name'  => 'id',
                               'title' => ts('Delivery Status'),
+                              'default' => true,
                               ),
                         ),
                   'filters' => 
@@ -175,35 +170,39 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                                                        'bounced'    => 'Bounced' ),
                               ),
                         ),
+                  'grouping'  => 'mailing-fields',		
                   );
 
 		$this->_columns['civicrm_mailing_event_unsubscribe'] = 
             array(
-                  'dao'    => 'CRM_Mailing_DAO_Mailing',
+                  'dao'    => 'CRM_Mailing_Event_DAO_Unsubscribe',
                   'fields' => 
                   array(
                         'unsubscribe_id' => 
                         array(
                               'name' => 'id',
                               'title' => ts('Unsubscribe'),
+                              'default' => true,
                               ),
                         ),
                   'filters' => 
                   array(
-                        'unsubscribe_status' => 
+                        'is_unsubscribed' => 
                         array(
-                              'name' => 'unsubscribe_status',
+                              'name'  => 'id',
                               'title' => ts('Unsubscribed'),
                               'type'      => CRM_Utils_Type::T_INT,
                               'operatorType' => CRM_Report_Form::OP_SELECT,
                               'options'   => array( '' => ts('Any'), '0' => ts('No'), '1' => ts('Yes') ), 
+                              'clause'    => 'mailing_event_unsubscribe_civireport.id IS NULL',
                               ),
                         ),
+                  'grouping'  => 'mailing-fields',		
                   );
 
 		$this->_columns['civicrm_mailing_event_reply'] = 
             array(
-                  'dao'    => 'CRM_Mailing_DAO_Mailing',
+                  'dao'    => 'CRM_Mailing_Event_DAO_Reply',
                   'fields' => 
                   array(
                         'reply_id' => 
@@ -216,18 +215,20 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                   array(
                         'is_replied' => 
                         array(
-                              'name' => 'is_replied',
+                              'name' => 'id',
                               'title' => ts('Replied'),
                               'type'      => CRM_Utils_Type::T_INT,
                               'operatorType' => CRM_Report_Form::OP_SELECT,
                               'options'   => array( '' => ts('Any'), '0' => ts('No'), '1' => ts('Yes') ), 
+                              'clause'    => 'mailing_event_reply_civireport.id IS NULL',
                               ),
                         ),
+                  'grouping'  => 'mailing-fields',		
                   );
 
 		$this->_columns['civicrm_mailing_event_forward'] = 
             array(
-                  'dao' => 'CRM_Mailing_DAO_Mailing',
+                  'dao' => 'CRM_Mailing_Event_DAO_Forward',
                   'fields' => 
                   array(
                         'forward_id' => 
@@ -240,13 +241,15 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                   array(
                         'is_forwarded' => 
                         array(
-                              'name' => 'is_forwarded',
-                              'title' => ts('Replied'),
+                              'name' => 'id',
+                              'title' => ts('Forwarded'),
                               'type'      => CRM_Utils_Type::T_INT,
                               'operatorType' => CRM_Report_Form::OP_SELECT,
                               'options'   => array( '' => ts('Any'), '0' => ts('No'), '1' => ts('Yes') ), 
+                              'clause'    => 'mailing_event_forward_civireport.id IS NULL',
                               ),
                         ),
+                  'grouping'  => 'mailing-fields',		
                   );
 
 		$this->_columns['civicrm_email']  = 
@@ -257,7 +260,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                         'email' => 
                         array( 
                               'title' => ts( 'Email' ),
-                              'no_repeat'  => true,
+                              //'default'  => true,
                               'required' => true,
                                ),
                         'on_hold' => 
@@ -308,69 +311,115 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
     
     function select( ) {
         $select = array( );
-        $this->_columnHeaders = array();
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('fields', $table) ) {
                 foreach ( $table['fields'] as $fieldName => $field ) {
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
                          CRM_Utils_Array::value( $fieldName, $this->_params['fields'] ) ) {
-                        if ( $tableName == 'civicrm_email' ) {
-                            $this->_emailField = true;
-                        }
-						else if ( $tableName == 'civicrm_phone') {
-							$this->_phoneField = true;
-						}
+                        if ( in_array($fieldName, array('unsubscribe_id', 'forward_id', 'reply_id')) ) {
+                            $select[] = "IF({$field['dbAlias']} IS NULL, 'No', 'Yes') as {$tableName}_{$fieldName}";
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = 
+                                CRM_Utils_Array::value( 'type', $field );
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display'] = 
+                                CRM_Utils_Array::value( 'no_display', $field );
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = 
+                                CRM_Utils_Array::value( 'title', $field );
+                            unset($this->_columns[$tableName]['fields'][$fieldName]);
 
-                        $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display'] = CRM_Utils_Array::value( 'no_display', $field );
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value( 'title', $field );
+                        } else if ( $fieldName == 'delivered_id' ) {
+                            $select[] = "IF(mailing_event_delivered_civireport.id IS NOT NULL, 'Successful', IF(mailing_event_bounce_civireport.id IS NOT NULL, 'Bounced ', 'Unknown')) as {$tableName}_{$fieldName}";
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = 
+                                CRM_Utils_Array::value( 'type', $field );
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display'] = 
+                                CRM_Utils_Array::value( 'no_display', $field );
+                            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = 
+                                CRM_Utils_Array::value( 'title', $field );
+                            unset($this->_columns[$tableName]['fields'][$fieldName]);
+                        }
                     }
                 }
             }
         }
 
-        if ( CRM_Utils_Array::value('charts', $this->_params) ) {
-            $select[] = "COUNT(civicrm_mailing_event_trackable_url_open.id) as civicrm_mailing_click_count";
-            $this->_columnHeaders["civicrm_mailing_click_count"]['title'] = ts('Click Count'); 
+        parent::select();
+        if ( !empty($select) ) {
+            $this->_select .= ', ' . implode( ', ', $select ) . " ";
         }
-
-        $this->_select = "SELECT " . implode( ', ', $select ) . " ";
     }
 
     function from( ) {
         $this->_from = "
-        FROM civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}";
+        FROM civicrm_contact {$this->_aliases['civicrm_contact']}";
         
         $this->_from .= "
 				INNER JOIN civicrm_mailing_event_queue
 					ON civicrm_mailing_event_queue.contact_id = {$this->_aliases['civicrm_contact']}.id
 				INNER JOIN civicrm_email {$this->_aliases['civicrm_email']}
-					ON civicrm_mailing_event_queue.email_id = {$this->_aliases['civicrm_email']}.id
+					ON civicrm_mailing_event_queue.email_id = {$this->_aliases['civicrm_email']}.id";
+
+        if ( $this->_params['delivered_status_value'] == 'successful' ) {
+            $this->_from .= "
+                INNER JOIN  civicrm_mailing_event_delivered {$this->_aliases['civicrm_mailing_event_delivered']}
+                    ON  {$this->_aliases['civicrm_mailing_event_delivered']}.event_queue_id = civicrm_mailing_event_queue.id";
+            unset($this->_columns['civicrm_mailing_event_delivered']['filters']['delivered_status']);
+        } else if ( $this->_params['delivered_status_value'] == 'bounced' ) {
+            $this->_from .= "
 				INNER JOIN civicrm_mailing_event_bounce {$this->_aliases['civicrm_mailing_event_bounce']}
 					ON {$this->_aliases['civicrm_mailing_event_bounce']}.event_queue_id = civicrm_mailing_event_queue.id
 				LEFT JOIN civicrm_mailing_bounce_type {$this->_aliases['civicrm_mailing_bounce_type']}
-					ON {$this->_aliases['civicrm_mailing_event_bounce']}.bounce_type_id = {$this->_aliases['civicrm_mailing_bounce_type']}.id
-";
-
-        if ( $this->_params['is_replied_value'] == 1 ) {
+					ON {$this->_aliases['civicrm_mailing_event_bounce']}.bounce_type_id = {$this->_aliases['civicrm_mailing_bounce_type']}.id";
+            unset($this->_columns['civicrm_mailing_event_delivered']['filters']['delivered_status']);
+        } else {
             $this->_from .= "
-                INNER JOIN  civicrm_mailing_event_reply
-                    ON  civicrm_mailing_event_reply.event_queue_id = civicrm_mailing_event_queue.id";
-        } else if ( $this->_params['is_replied_value'] == 0 ) {
-            $this->_from .= "
-                LEFT JOIN  civicrm_mailing_event_reply
-                    ON  civicrm_mailing_event_reply.event_queue_id = civicrm_mailing_event_queue.id";
+                LEFT JOIN  civicrm_mailing_event_delivered {$this->_aliases['civicrm_mailing_event_delivered']}
+                    ON  {$this->_aliases['civicrm_mailing_event_delivered']}.event_queue_id = civicrm_mailing_event_queue.id
+				LEFT JOIN civicrm_mailing_event_bounce {$this->_aliases['civicrm_mailing_event_bounce']}
+					ON {$this->_aliases['civicrm_mailing_event_bounce']}.event_queue_id = civicrm_mailing_event_queue.id
+				LEFT JOIN civicrm_mailing_bounce_type {$this->_aliases['civicrm_mailing_bounce_type']}
+					ON {$this->_aliases['civicrm_mailing_event_bounce']}.bounce_type_id = {$this->_aliases['civicrm_mailing_bounce_type']}.id";
         }
 
-        if ( $this->_params['is_forwarded_value'] == 1 ) {
+        if ( array_key_exists( 'reply_id', $this->_params['fields'] ) ) {
+            if ( $this->_params['is_replied_value'] == 1 ) {
+                $joinType = 'INNER';
+                unset($this->_columns['civicrm_mailing_event_reply']['filters']['is_replied']);
+            } else {
+                $joinType = 'LEFT';
+            }
             $this->_from .= "
-                INNER JOIN  civicrm_mailing_event_forward
-                    ON  civicrm_mailing_event_forward.event_queue_id = civicrm_mailing_event_forward.id";
-        } else if ( $this->_params['is_forwarded_value'] == 0 ) {
+                {$joinType} JOIN  civicrm_mailing_event_reply {$this->_aliases['civicrm_mailing_event_reply']}
+                    ON  {$this->_aliases['civicrm_mailing_event_reply']}.event_queue_id = civicrm_mailing_event_queue.id";
+        } else {
+            unset($this->_columns['civicrm_mailing_event_reply']['filters']['is_replied']);
+        }
+
+
+        if ( array_key_exists( 'unsubscribe_id', $this->_params['fields'] ) ) {
+            if ( $this->_params['is_unsubscribed_value'] == 1 ) {
+                $joinType = 'INNER';
+                unset($this->_columns['civicrm_mailing_event_unsubscribe']['filters']['is_unsubscribed']);
+            } else {
+                $joinType = 'LEFT';
+            }
             $this->_from .= "
-                LEFT  JOIN  civicrm_mailing_event_forward
-                    ON  civicrm_mailing_event_forward.event_queue_id = civicrm_mailing_event_forward.id";
+                {$joinType} JOIN  civicrm_mailing_event_unsubscribe {$this->_aliases['civicrm_mailing_event_unsubscribe']}
+                    ON  {$this->_aliases['civicrm_mailing_event_unsubscribe']}.event_queue_id = civicrm_mailing_event_queue.id";
+        } else {
+            unset($this->_columns['civicrm_mailing_event_unsubscribe']['filters']['is_unsubscribed']);
+        }
+
+        if ( array_key_exists( 'forward_id', $this->_params['fields'] ) ) {
+            if ( $this->_params['is_forwarded_value'] == 1 ) {
+                $joinType = 'INNER';
+                unset($this->_columns['civicrm_mailing_event_forward']['filters']['is_forwarded']);
+            } else {
+                $joinType = 'LEFT';
+            }
+            $this->_from .= "
+                {$joinType} JOIN  civicrm_mailing_event_forward {$this->_aliases['civicrm_mailing_event_forward']}
+                    ON  {$this->_aliases['civicrm_mailing_event_forward']}.event_queue_id = civicrm_mailing_event_queue.id";
+        } else {
+            unset($this->_columns['civicrm_mailing_event_forward']['filters']['is_forwarded']);
         }
 
         $this->_from .= "
@@ -387,6 +436,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                       {$this->_aliases['civicrm_phone']}.is_primary = 1 ";
         }
     }
+
 	
     function postProcess( ) {
 
