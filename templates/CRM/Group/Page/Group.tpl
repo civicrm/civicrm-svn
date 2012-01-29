@@ -29,14 +29,14 @@
     <a accesskey="N" href="{crmURL p='civicrm/group/add' q='reset=1'}" id="newGroup" class="button"><span><div class="icon add-icon"></div>{ts}Add Group{/ts}</span></a><br/>
 </div>
 {/if} {* action ne add or edit *}
-{if $action ne 2 AND $action ne 8}	
-{include file="CRM/Group/Form/Search.tpl"}
-{/if}
 <div class="crm-block crm-content-block">
 {if $action eq 16}
 <div id="help">
     {ts}Use Groups to organize contacts (e.g. these contacts are part of our 'Steering Committee'). You can also create 'smart' groups based on contact characteristics (e.g. this group consists of all people in our database who live in a specific locality).{/ts} {help id="manage_groups"}
 </div>
+{/if}
+{if $action ne 2 AND $action ne 8}	
+{include file="CRM/Group/Form/Search.tpl"}
 {/if}
 
 {if $action eq 1 or $action eq 2} 
@@ -45,7 +45,7 @@
    {include file="CRM/Group/Form/Delete.tpl"}
 {/if}
 
-<div class="crm-block crm-results-block">
+<!--div class="crm-block crm-results-block">
 {if $rows}
     <div id="group">
     {if $action eq 16 or $action eq 32 or $action eq 64} {* browse *}  
@@ -112,7 +112,7 @@
                 {/if} 
     </div>
 {/if}
-</div>
+</div-->
 {if $action ne 1 and $action ne 2 and $action ne 8 and $groupPermission eq 1}
 <div class="crm-submit-buttons">
         <a accesskey="N" href="{crmURL p='civicrm/group/add' q='reset=1'}" id="newGroup" class="button"><span><div class="icon add-icon"></div>{ts}Add Group{/ts}</span></a><br/>

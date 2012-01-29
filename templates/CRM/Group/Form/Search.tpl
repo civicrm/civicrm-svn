@@ -26,38 +26,134 @@
 <div class="crm-block crm-form-block crm-search-form-block">
 
 <h3>{ts}Find Groups{/ts}</h3>
-<div class="form-item">
 <table class="form-layout">
     <tr>
-        <td>{$form.title.label}<br />
+        <td>
+            {$form.title.label}<br />
             {$form.title.html}<br />
             <span class="description font-italic">
                 {ts}Complete OR partial group name.{/ts}
             </span>
         </td>
-        <td>{$form.group_type.label}<br />
+        <td>
+            {$form.group_type.label}<br />
             {$form.group_type.html}<br />
             <span class="description font-italic">
                 {ts}Filter search by group type(s).{/ts}
             </span>
         </td>
-        <td>{$form.visibility.label}<br />
+        <td>
+            {$form.visibility.label}<br />
             {$form.visibility.html}<br />
             <span class="description font-italic">
                 {ts}Filter search by visibility.{/ts}
             </span>
         </td>
-	<td>
-            <label> Status</label><br />		
-	    {$form.active_status.html}
-	    {$form.active_status.label}&nbsp;
-	    {$form.inactive_status.html}
+	    <td>
+            <label>{ts}Status{/ts}</label><br />		
+	        {$form.active_status.html}
+	        {$form.active_status.label}&nbsp;
+	        {$form.inactive_status.html}
             {$form.inactive_status.label}		
-	 </td>
+	    </td>
     </tr>
-     <tr>
+    <tr>
         <td>{$form.buttons.html}</td><td colspan="2">
     </tr>
 </table>
 </div>
-</div>
+<br/>
+<table id="crm-group-selector">
+    <thead>
+        <tr>
+            <th class='crm-group-name'>{ts}Name{/ts}</th>
+            <th class='crm-group-group_id'>{ts}ID{/ts}</th>
+            <th class='crm-group-description'>{ts}Description{/ts}</th>
+            <th class='crm-group-group_type'>{ts}Group Type{/ts}</th>
+            <th class='crm-group-visibility'>{ts}Visibility{/ts}</th>
+            <th class='crm-group-group-links nosort'>&nbsp;</th>
+        </tr>
+    </thead>
+</table>
+
+{literal}
+<script type="text/javascript">
+cj( function() {
+    buildGroupSelector( false );
+});
+function buildGroupSelector( filterSearch ) {
+    if ( filterSearch ) {
+        crmGroupSelector.fnDestroy();
+    }
+    
+    var columns = '';
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
+
+    var ZeroRecordText = {/literal}'{ts escape="js"}No matches found{/ts}'{literal};
+    /*
+    if ( cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val( ) ) {
+      ZeroRecordText += {/literal}'{ts escape="js"} for Activity Type = "{/ts}'{literal} +  cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id :selected').text( ) + '"';
+    } else {
+      ZeroRecordText += '.';
+    }
+*/
+        crmGroupSelector = cj('#crm-group-selector').dataTable({
+        "bFilter"    : false,
+        "bAutoWidth" : false,
+        "aaSorting"  : [],
+        "aoColumns"  : [
+                        {sClass:'crm-group-name'},
+                        {sClass:'crm-group-group_id'},
+                        {sClass:'crm-group-description', bSortable:false},
+                        {sClass:'crm-group-group_type'},
+                        {sClass:'crm-group-visibility'},
+                        {sClass:'crm-group-group-links', bSortable:false},
+                       ],
+        "bProcessing": true,
+        "sPaginationType": "full_numbers",
+        "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
+        "bServerSide": true,
+        "bJQueryUI": true,
+        "sAjaxSource": sourceUrl,
+        "iDisplayLength": 25,
+        "oLanguage": { "sZeroRecords":  ZeroRecordText,                         
+                       "sProcessing":    {/literal}"{ts escape='js'}Processing...{/ts}"{literal},   
+                       "sLengthMenu":    {/literal}"{ts escape='js'}Show _MENU_ entries{/ts}"{literal},
+                       "sInfo":          {/literal}"{ts escape='js'}Showing _START_ to _END_ of _TOTAL_ entries{/ts}"{literal},
+                       "sInfoEmpty":     {/literal}"{ts escape='js'}Showing 0 to 0 of 0 entries{/ts}"{literal},
+                       "sInfoFiltered":  {/literal}"{ts escape='js'}(filtered from _MAX_ total entries){/ts}"{literal},
+                       "sSearch":        {/literal}"{ts escape='js'}Search:{/ts}"{literal},      
+                       "oPaginate": {                                           
+                            "sFirst":    {/literal}"{ts escape='js'}First{/ts}"{literal},          
+                            "sPrevious": {/literal}"{ts escape='js'}Previous{/ts}"{literal},       
+                            "sNext":     {/literal}"{ts escape='js'}Next{/ts}"{literal},           
+                            "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
+                        }                                                       
+                    },
+        "fnServerData": function ( sSource, aoData, fnCallback ) {
+            /*
+            aoData.push( {name:'contact_id', value: {/literal}{$contactId}{literal}},
+                         {name:'admin',   value: {/literal}'{$admin}'{literal}}
+            );
+            */
+
+            if ( filterSearch ) {
+                /*
+                aoData.push(	     
+                    {name:'activity_type_id', value: cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val()}
+                );
+                */
+            }	
+            cj.ajax( {
+                "dataType": 'json', 
+                "type": "POST", 
+                "url": sSource, 
+                "data": aoData, 
+                "success": fnCallback
+            } ); 
+        }
+    });
+}
+
+</script>
+{/literal}

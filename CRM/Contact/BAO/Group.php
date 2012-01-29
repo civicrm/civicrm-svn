@@ -636,6 +636,312 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         
         return array( $smartGroupId, $ssId );
     }
- }
 
 
+    /**
+     * This function is a wrapper for ajax group selector
+     *
+     * @param  array   $params associated array for params record id.
+     *
+     * @return array   $groupList associated array of group list
+     * @access public
+    */
+    public function getGroupListSelector( &$params ) {
+        // format the params
+        $params['offset']   = ( $params['page'] - 1) * $params['rp'] ;
+        $params['rowCount'] = $params['rp'];
+        $params['sort']     = CRM_Utils_Array::value( 'sortBy', $params );
+ 
+        // get groups
+        $groups = CRM_Contact_BAO_Group::getGroupList( $params );
+        
+        // add total
+        $params['total'] = CRM_Contact_BAO_Group::getGroupCount( $params );
+        
+        // format params and add links
+        $groupList = array( );
+
+        if ( !empty( $groups ) ) {
+            foreach ( $groups as $id => $value ) {
+                $groupList[$id]['group_id']           = $value['id'];
+                $groupList[$id]['group_name']         = $value['title'];
+                $groupList[$id]['group_description']  = CRM_Utils_Array::value( 'description', $value );
+                $groupList[$id]['group_type']         = CRM_Utils_Array::value( 'group_type', $value );
+                $groupList[$id]['visibility']         = $value['visibility'];
+                $groupList[$id]['links']              = $value['action'];
+            }
+            return $groupList;
+        }
+    }
+
+    /**
+     * This function to get list of groups
+     *
+     * @param  array   $params associated array for params
+     * @access public
+     */
+    static function getGroupList( &$params ) {
+
+        /*
+        $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
+                                                               'String',
+                                                               $this );
+        if ( strtolower( $this->_sortByCharacter ) == 'all' || 
+             ! empty( $_POST ) ) {
+            $this->_sortByCharacter = '';
+            $this->set( 'sortByCharacter', '' );
+        }
+        */
+
+        $config = CRM_Core_Config::singleton( );
+
+        $params = array( );
+        $whereClause = self::whereClause( $params, false );
+        
+        //$this->pagerAToZ( $whereClause, $params );
+        
+        //$params      = array( );
+        //$whereClause = $this->whereClause( $params, true );
+        //$this->pager( $whereClause, $params );
+        
+        //list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
+        
+        $offset = 0;
+        $rowCount = 25;
+
+
+        $select = $from = $where = "";
+        if ( CRM_Core_Permission::check( 'administer Multiple Organizations' ) &&
+             CRM_Core_Permission::isMultisiteEnabled( ) ) {
+            $select = ", contact.display_name as orgName, contact.id as orgID";
+            $from   = " LEFT JOIN civicrm_group_organization gOrg
+                               ON gOrg.group_id = groups.id 
+                        LEFT JOIN civicrm_contact contact
+                               ON contact.id = gOrg.organization_id ";
+
+            //get the Organization ID
+            $orgID = CRM_Utils_Request::retrieve( 'oid', 'Positive', CRM_Core_DAO::$_nullObject );
+            if ( $orgID ) { 
+                $where = " AND gOrg.organization_id = {$orgID}";
+            }
+            $this->assign( 'groupOrg',true );    
+        }
+        
+        $query = "
+        SELECT groups.* {$select}
+        FROM  civicrm_group groups 
+              {$from}
+        WHERE $whereClause {$where}
+        ORDER BY groups.title asc
+        LIMIT $offset, $rowCount";
+        
+        $object = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Contact_DAO_Group' );
+       
+        /*
+        $groupPermission =
+            CRM_Core_Permission::check( 'edit groups' ) ? CRM_Core_Permission::EDIT : CRM_Core_Permission::VIEW;
+        $this->assign( 'groupPermission', $groupPermission );
+         */
+
+        //FIXME CRM-4418, now we are handling delete separately
+        //if we introduce 'delete for group' make sure to handle here.
+        $groupPermissions = array( CRM_Core_Permission::VIEW );
+        if ( CRM_Core_Permission::check( 'edit groups' ) ) {
+            $groupPermissions[] = CRM_Core_Permission::EDIT;
+            $groupPermissions[] = CRM_Core_Permission::DELETE;
+        }
+        
+        require_once 'CRM/Core/OptionGroup.php';
+        $links =& self::links( );
+        $allTypes = CRM_Core_OptionGroup::values( 'group_type' );
+        $values   = array( );
+
+        while ( $object->fetch( ) ) {
+            //$permission = $this->checkPermission( $object->id, $object->title );
+            $permission = true;
+            if ( $permission ) {
+                $newLinks = $links;
+                $values[$object->id] = array( );
+                CRM_Core_DAO::storeValues( $object, $values[$object->id]);
+                if ( $object->saved_search_id ) {
+                    $values[$object->id]['title'] .= ' (' . ts('Smart Group') . ')';
+                    // check if custom search, if so fix view link
+                    $customSearchID = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch',
+                                                                   $object->saved_search_id,
+                                                                   'search_custom_id' );
+                    if ( $customSearchID ) {
+                        $newLinks[CRM_Core_Action::VIEW]['url'] = 'civicrm/contact/search/custom';
+                        $newLinks[CRM_Core_Action::VIEW]['qs' ] = "reset=1&force=1&ssID={$object->saved_search_id}";
+                    }
+                }
+                $action = array_sum(array_keys($newLinks));
+                if ( array_key_exists( 'is_active', $object ) ) {
+                    if ( $object->is_active ) {
+                        $action -= CRM_Core_Action::ENABLE;
+                    } else {
+                        $action -= CRM_Core_Action::VIEW;
+                        $action -= CRM_Core_Action::DISABLE;
+                    }
+                }
+                                
+                $action = $action & CRM_Core_Action::mask( $groupPermissions );
+                
+                $values[$object->id]['visibility'] = CRM_Contact_DAO_Group::tsEnum('visibility',
+                                                                                   $values[$object->id]['visibility']);
+                if ( isset( $values[$object->id]['group_type'] ) ) {
+                    $groupTypes = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                           substr( $values[$object->id]['group_type'], 1, -1 ) );
+                    $types = array( );
+                    foreach ( $groupTypes as $type ) {
+                        $types[] = CRM_Utils_Array::value( $type, $allTypes );
+                    }
+                    $values[$object->id]['group_type'] = implode( ', ', $types );
+                }
+                $values[$object->id]['action'] = CRM_Core_Action::formLink( $newLinks,
+                                                                            $action,
+                                                                            array( 'id'   => $object->id,
+                                                                                   'ssid' => $object->saved_search_id ) );
+                if ( array_key_exists( 'orgName', $object ) ) {
+                    if ( $object->orgName ) {
+                        $values[$object->id]['org_name'] = $object->orgName;
+                        $values[$object->id]['org_id']   = $object->orgID;
+                    }   
+                }
+            }
+        }
+
+        return $values;
+    }
+
+    static function getGroupCount( &$params ) {
+        $query = " SELECT COUNT(*) FROM civicrm_group";
+        return CRM_Core_DAO::singleValueQuery( $query );
+    }
+
+    function whereClause( &$params, $sortBy = true, $excludeHidden = true ) {
+        $values =  array( );
+
+        $clauses = array( );
+        //$title   = $this->get( 'title' );
+        if ( $title ) {
+            $clauses[] = "groups.title LIKE %1";
+            if ( strpos( $title, '%' ) !== false ) {
+                $params[1] = array( $title, 'String', false );
+            } else {
+                $params[1] = array( $title, 'String', true );
+            }
+        }
+
+        //$groupType = $this->get( 'group_type' );
+        
+        if ( $groupType ) {
+            $types = array_keys( $groupType );
+            if ( ! empty( $types ) ) {
+                $clauses[] = 'groups.group_type LIKE %2';
+                $typeString = 
+                    CRM_Core_DAO::VALUE_SEPARATOR . 
+                    implode( CRM_Core_DAO::VALUE_SEPARATOR, $types ) .
+                    CRM_Core_DAO::VALUE_SEPARATOR;
+                $params[2] = array( $typeString, 'String', true );
+            }
+        }
+
+        //$visibility = $this->get( 'visibility' );
+        if ( $visibility ) {
+            $clauses[] = 'groups.visibility = %3';
+            $params[3] = array( $visibility, 'String' );
+        }
+
+        //$active_status   = $this->get( 'active_status' );
+        //$inactive_status = $this->get( 'inactive_status' );
+        if ( $active_status && !$inactive_status ) {
+            $clauses[] = 'groups.is_active = 1';
+            $params[4] = array( $active_status, 'Boolean' );
+        }
+       
+      
+        if ( $inactive_status && !$active_status ) {
+            $clauses[] = 'groups.is_active = 0';
+            $params[5] = array( $inactive_status, 'Boolean' );
+        }
+        
+        if ( $inactive_status && $active_status ) {
+            $clauses[] = '(groups.is_active = 0 OR groups.is_active = 1 )';
+        }
+        /*
+        if ( $sortBy &&
+             $this->_sortByCharacter !== null ) {
+            $clauses[] = 
+                "groups.title LIKE '" . 
+                strtolower(CRM_Core_DAO::escapeWildCardString($this->_sortByCharacter)) .
+                "%'";
+        }
+
+        // dont do a the below assignement when doing a 
+        // AtoZ pager clause
+        if ( $sortBy ) {
+            if ( count( $clauses ) > 1 ) {
+                $this->assign( 'isSearch', 1 );
+            } else {
+                $this->assign( 'isSearch', 0 );
+            }
+        }
+         */
+        if ( empty( $clauses ) ) {
+             $clauses[] = 'groups.is_active = 1';
+        }
+        
+        if ( $excludeHidden ) {
+            $clauses[] = 'groups.is_hidden = 0';
+        }
+        
+        return implode( ' AND ', $clauses );
+    }
+
+    /**
+     * Function to define action links
+     *
+     * @return array self::$_links array of action links
+     * @access public
+     */
+    function &links()
+    {
+        if (!(self::$_links)) {
+            self::$_links = array(
+                                  CRM_Core_Action::VIEW => array(
+                                                                 'name'  => ts('Contacts'),
+                                                                 'url'   => 'civicrm/group/search',
+                                                                 'qs'    => 'reset=1&force=1&context=smog&gid=%%id%%',
+                                                                 'title' => ts('Group Contacts')
+                                                                 ),
+                                  CRM_Core_Action::UPDATE => array(
+                                                                   'name'  => ts('Settings'),
+                                                                   'url'   => 'civicrm/group',
+                                                                   'qs'    => 'reset=1&action=update&id=%%id%%',
+                                                                   'title' => ts('Edit Group')
+                                                                   ),
+                                  CRM_Core_Action::DISABLE => array(
+                                                                    'name'  => ts('Disable'),
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Contact_BAO_Group' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                    'ref'   => 'disable-action',
+                                                                    'title' => ts('Disable Group') 
+                                                                    ),
+                                  CRM_Core_Action::ENABLE  => array(
+                                                                    'name'  => ts('Enable'),
+                                                                    'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Contact_BAO_Group' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                    'ref'   => 'enable-action',
+                                                                    'title' => ts('Enable Group') 
+                                                                    ),
+                                  CRM_Core_Action::DELETE => array(
+                                                                   'name'  => ts('Delete'),
+                                                                   'url'   => 'civicrm/group',
+                                                                   'qs'    => 'reset=1&action=delete&id=%%id%%',
+                                                                   'title' => ts('Delete Group')
+                                                                   )
+                                  );
+        }
+        return self::$_links;
+    }
+ 
+
+}

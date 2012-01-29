@@ -231,6 +231,9 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
      */
     function browse($action = null) 
     {
+        $this->search( );
+        return;
+
         require_once 'CRM/Contact/BAO/GroupNesting.php';
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
