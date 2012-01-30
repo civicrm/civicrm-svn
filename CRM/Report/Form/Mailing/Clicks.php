@@ -61,19 +61,11 @@ class CRM_Report_Form_Mailing_Clicks extends CRM_Report_Form {
 					'title' => ts('Contact ID'),
 					'required'  => true, 
 				), 						
-				'first_name' => array(
-					'title' => ts('First Name'),
-					'required' => true,
-					'no_repeat' => true,	
-				),
-				'last_name' => array(
-					'title' => ts('Last Name'),
-					'required' => true,
-					'no_repeat' => true,	
-				),
-                'sort_name' => array( 
-					'title' => ts( 'Contact Name' )
-				),
+                'sort_name' => 
+                array( 
+                      'title' => ts( 'Contact Name' ),
+                      'required' => true,
+                       ),
 			),
 			'filters' => array( 
 				'sort_name' => array( 
@@ -89,7 +81,7 @@ class CRM_Report_Form_Mailing_Clicks extends CRM_Report_Form {
 			),
             'order_bys'  =>
             array( 'sort_name' =>
-                   array( 'title' => ts( 'Last Name, First Name'), 'default_order' => 'ASC') ),
+                   array( 'title' => ts( 'Contact Name'), 'default_order' => 'ASC') ),
 			'grouping'  => 'contact-fields',		
 		);
 		
@@ -286,45 +278,6 @@ class CRM_Report_Form_Mailing_Clicks extends CRM_Report_Form {
         require_once 'CRM/Utils/OpenFlashChart.php';
         CRM_Utils_OpenFlashChart::buildChart( $chartInfo, $this->_params['charts'] );
         $this->assign( 'chartType', $this->_params['charts'] ); 
-    }
-
-    function alterDisplay( &$rows ) {
-        // custom code to alter rows
-        $entryFound = false;
-        foreach ( $rows as $rowNum => $row ) {
-            // make count columns point to detail report
-            // convert display name to links
-            if ( array_key_exists('civicrm_contact_display_name', $row) && 
-                 array_key_exists('civicrm_contact_id', $row) ) {
-                $url = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
-                                              'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
-                                              $this->_absoluteUrl, $this->_id );
-                $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
-                $rows[$rowNum]['civicrm_contact_display_name_hover'] = ts("View Contact details for this contact.");
-                $entryFound = true;
-            }
-
-            // handle country
-            if ( array_key_exists('civicrm_address_country_id', $row) ) {
-                if ( $value = $row['civicrm_address_country_id'] ) {
-                    $rows[$rowNum]['civicrm_address_country_id'] = CRM_Core_PseudoConstant::country( $value, false );
-                }
-                $entryFound = true;
-            }
-            if ( array_key_exists('civicrm_address_state_province_id', $row) ) {
-                if ( $value = $row['civicrm_address_state_province_id'] ) {
-                    $rows[$rowNum]['civicrm_address_state_province_id'] = CRM_Core_PseudoConstant::stateProvince( $value, false );
-                }
-                $entryFound = true;
-            }
-
-
-            // skip looking further in rows, if first row itself doesn't 
-            // have the column we need
-            if ( !$entryFound ) {
-                break;
-            }
-        }
     }
 
 	function mailing_select() {

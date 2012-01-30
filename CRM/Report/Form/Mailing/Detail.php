@@ -404,29 +404,6 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         }
     }
 
-    function alterDisplay( &$rows ) {
-        // custom code to alter rows
-        $entryFound = false;
-        foreach ( $rows as $rowNum => $row ) {
-            // convert display name to links
-            if ( array_key_exists('civicrm_contact_sort_name', $row) && 
-                 array_key_exists('civicrm_contact_id', $row) ) {
-                $url = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
-                                              'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
-                                              $this->_absoluteUrl, $this->_id );
-                $rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
-                $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Contact details for this contact.");
-                $entryFound = true;
-            }
-
-            // skip looking further in rows, if first row itself doesn't 
-            // have the column we need
-            if ( !$entryFound ) {
-                break;
-            }
-        }
-    }
-
 	function mailingList() {
 		require_once('CRM/Mailing/BAO/Mailing.php');
 		
