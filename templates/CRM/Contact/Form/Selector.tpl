@@ -192,6 +192,15 @@ cj('ul#contactMenu').mouseup( function(e){
     //when right or middle button clicked fire default right click popup
    }
 });
+
+function toggleContactSelection( name, qfKey ){
+      var Url  = "{/literal}{crmURL p='civicrm/ajax/markSelection' h=0}{literal}";	
+      	  if ( cj('#' + name).is(':checked') ){
+      	   cj.post( Url, { name: name , qfKey: qfKey } );
+      } else {
+      	   cj.post( Url, { name: name , qfKey: qfKey , state: 'unchecked' } );
+      }
+}
 {/literal}
 </script>
 {include file="CRM/common/pager.tpl" location="bottom"}
