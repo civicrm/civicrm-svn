@@ -48,10 +48,11 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                   'dao' => 'CRM_Contact_DAO_Contact',
                   'fields' => 
                   array(
-                        'contact_id' => 
+                        'id' => 
                         array('name'  => 'id', 
                               'title' => ts('Contact ID'),
-                              'required'  => true, 
+                              'required'   => true,
+                              'no_display' => true,
                                ), 						
                         'sort_name' => 
                         array( 
@@ -97,7 +98,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                               'title' => ts('Mailing'),
                               'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                               'type'         => CRM_Utils_Type::T_STRING,
-                              'options'  => self::mailing_select( ),
+                              'options'  => self::mailingList( ),
                               ),					
                         ),
                   'order_bys'  =>
@@ -106,43 +107,11 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                                 'title' => ts( 'Mailing') ) ),
                   'grouping'  => 'mailing-fields',
                   );
-							  
+						
+        // adding dao just to have alias
 		$this->_columns['civicrm_mailing_event_bounce'] = 
             array(
-                  'dao'    => 'CRM_Mailing_Event_DAO_Bounce',
-                  'fields' => 
-                  array(
-                        'bounce_reason' => 
-                        array(
-                              'title' => ts('Bounce Reason'),
-                              ),
-                        ),
-                  'grouping' => 'mailing-fields' 
-                  );
-		
-		$this->_columns['civicrm_mailing_bounce_type'] = 
-            array(
-                  'dao' => 'CRM_Mailing_DAO_BounceType',
-                  'fields' => 
-                  array(
-                        'bounce_name' => 
-                        array(
-                              'name' => 'name',
-                              'title' => ts('Bounce Type'),
-                              ),
-                        ),
-                  'filters' => 
-                  array(
-                        'bounce_type_name' => 
-                        array(
-                              'name' => 'name',
-                              'title' => ts('Bounce Type'),
-                              'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                              'type'         => CRM_Utils_Type::T_STRING,
-                              'options'  => self::bounce_type(),
-                              ),
-                        ),
-                  'grouping' => 'mailing-fields' 
+                  'dao' => 'CRM_Mailing_Event_DAO_Bounce',
                   );
 
 		$this->_columns['civicrm_mailing_event_delivered'] = 
@@ -234,7 +203,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                         'forward_id' => 
                         array(
                               'name' => 'id',
-                              'title' => ts('Forward'),
+                              'title' => ts('Forwarded to Email'),
                               ),
                         ),
                   'filters' => 
@@ -265,8 +234,9 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                                ),
                         'on_hold' => 
                         array( 
-                              'title'  => ts( 'Opt-out' ),
-                              'default' => true,
+                              'title'    => ts( 'Opt-out' ),
+                              'default'  => true,
+                              'grouping' => 'mailing-fields', 
                                ),
                          ),
                   'filters' => 
@@ -345,6 +315,9 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         if ( !empty($select) ) {
             $this->_select .= ', ' . implode( ', ', $select ) . " ";
         }
+
+        // simple sort
+        ksort( $this->_columnHeaders );
     }
 
     function from( ) {
@@ -357,26 +330,21 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
 				INNER JOIN civicrm_email {$this->_aliases['civicrm_email']}
 					ON civicrm_mailing_event_queue.email_id = {$this->_aliases['civicrm_email']}.id";
 
-        if ( $this->_params['delivered_status_value'] == 'successful' ) {
-            $this->_from .= "
-                INNER JOIN  civicrm_mailing_event_delivered {$this->_aliases['civicrm_mailing_event_delivered']}
-                    ON  {$this->_aliases['civicrm_mailing_event_delivered']}.event_queue_id = civicrm_mailing_event_queue.id";
-            unset($this->_columns['civicrm_mailing_event_delivered']['filters']['delivered_status']);
-        } else if ( $this->_params['delivered_status_value'] == 'bounced' ) {
-            $this->_from .= "
-				INNER JOIN civicrm_mailing_event_bounce {$this->_aliases['civicrm_mailing_event_bounce']}
-					ON {$this->_aliases['civicrm_mailing_event_bounce']}.event_queue_id = civicrm_mailing_event_queue.id
-				LEFT JOIN civicrm_mailing_bounce_type {$this->_aliases['civicrm_mailing_bounce_type']}
-					ON {$this->_aliases['civicrm_mailing_event_bounce']}.bounce_type_id = {$this->_aliases['civicrm_mailing_bounce_type']}.id";
-            unset($this->_columns['civicrm_mailing_event_delivered']['filters']['delivered_status']);
-        } else {
+        if ( array_key_exists( 'delivered_id', $this->_params['fields'] ) ) {
             $this->_from .= "
                 LEFT JOIN  civicrm_mailing_event_delivered {$this->_aliases['civicrm_mailing_event_delivered']}
                     ON  {$this->_aliases['civicrm_mailing_event_delivered']}.event_queue_id = civicrm_mailing_event_queue.id
 				LEFT JOIN civicrm_mailing_event_bounce {$this->_aliases['civicrm_mailing_event_bounce']}
-					ON {$this->_aliases['civicrm_mailing_event_bounce']}.event_queue_id = civicrm_mailing_event_queue.id
-				LEFT JOIN civicrm_mailing_bounce_type {$this->_aliases['civicrm_mailing_bounce_type']}
-					ON {$this->_aliases['civicrm_mailing_event_bounce']}.bounce_type_id = {$this->_aliases['civicrm_mailing_bounce_type']}.id";
+					ON {$this->_aliases['civicrm_mailing_event_bounce']}.event_queue_id = civicrm_mailing_event_queue.id";
+            if ( $this->_params['delivered_status_value'] == 'bounced' ) {
+                $this->_columns['civicrm_mailing_event_delivered']['filters']['delivered_status']['clause'] = 
+                    "{$this->_aliases['civicrm_mailing_event_bounce']}.id IS NOT NULL";
+            } else if ( $this->_params['delivered_status_value'] == 'successful' ) {
+                $this->_columns['civicrm_mailing_event_delivered']['filters']['delivered_status']['clause'] = 
+                    "{$this->_aliases['civicrm_mailing_event_delivered']}.id IS NOT NULL";
+            }
+        } else {
+            unset($this->_columns['civicrm_mailing_event_delivered']['filters']['delivered_status']);
         }
 
         if ( array_key_exists( 'reply_id', $this->_params['fields'] ) ) {
@@ -392,7 +360,6 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         } else {
             unset($this->_columns['civicrm_mailing_event_reply']['filters']['is_replied']);
         }
-
 
         if ( array_key_exists( 'unsubscribe_id', $this->_params['fields'] ) ) {
             if ( $this->_params['is_unsubscribed_value'] == 1 ) {
@@ -437,29 +404,10 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         }
     }
 
-	
-    function postProcess( ) {
-
-        $this->beginPostProcess( );
-
-        // get the acl clauses built before we assemble the query
-        $this->buildACLClause( $this->_aliases['civicrm_contact'] );
-
-        $sql  = $this->buildQuery( true );
-		             
-        $rows = $graphRows = array();
-        $this->buildRows ( $sql, $rows );
-        
-        $this->formatDisplay( $rows );
-        $this->doTemplateAssignment( $rows );
-        $this->endPostProcess( $rows );	
-    }
-
     function alterDisplay( &$rows ) {
         // custom code to alter rows
         $entryFound = false;
         foreach ( $rows as $rowNum => $row ) {
-            // make count columns point to detail report
             // convert display name to links
             if ( array_key_exists('civicrm_contact_sort_name', $row) && 
                  array_key_exists('civicrm_contact_id', $row) ) {
@@ -471,20 +419,6 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
                 $entryFound = true;
             }
 
-            // handle country
-            if ( array_key_exists('civicrm_address_country_id', $row) ) {
-                if ( $value = $row['civicrm_address_country_id'] ) {
-                    $rows[$rowNum]['civicrm_address_country_id'] = CRM_Core_PseudoConstant::country( $value, false );
-                }
-                $entryFound = true;
-            }
-            if ( array_key_exists('civicrm_address_state_province_id', $row) ) {
-                if ( $value = $row['civicrm_address_state_province_id'] ) {
-                    $rows[$rowNum]['civicrm_address_state_province_id'] = CRM_Core_PseudoConstant::stateProvince( $value, false );
-                }
-                $entryFound = true;
-            }
-
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {
@@ -493,7 +427,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         }
     }
 
-	function mailing_select() {
+	function mailingList() {
 		require_once('CRM/Mailing/BAO/Mailing.php');
 		
 		$data = array( );
@@ -505,22 +439,6 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
 			$data[mysql_real_escape_string($mailing->name)] = $mailing->name;
 		}
 
-		return $data;
-	}
-
-	function bounce_type() {
-		require_once('CRM/Mailing/DAO/BounceType.php');
-		
-		$data = array();
-		
-		$bounce_type = new CRM_Mailing_DAO_BounceType();
-		$query = "SELECT name FROM civicrm_mailing_bounce_type";
-		$bounce_type->query($query);
-		
-		while($bounce_type->fetch()) {
-			$data[$bounce_type->name] = $bounce_type->name;
-		}
-		
 		return $data;
 	}
 }
