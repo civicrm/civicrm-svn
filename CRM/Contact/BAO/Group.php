@@ -902,7 +902,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
     /**
      * Function to define action links
      *
-     * @return array self::$_links array of action links
+     * @return array $links array of action links
      * @access public
      */
     function links () {
@@ -942,36 +942,17 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         return $links;
     }
 
-    /**
-     * Function to define action links for saved search
-     *
-     * @return array self::$_savedSearchLinks array of action links
-     * @access public
-     */
-    function &savedSearchLinks( )  {
-        $deleteExtra = ts('Do you really want to remove this Smart Group?');
-        $savedSearchLinks =
-            array(
-                CRM_Core_Action::VIEW   => array(
-                    'name'  => ts('Show Group Members'),
-                    'url'   => 'civicrm/contact/search/advanced',
-                    'qs'    => 'reset=1&force=1&ssID=%%ssid%%',
-                    'title' => ts('Search')
-                ),
-                CRM_Core_Action::UPDATE => array(
-                    'name'  => ts('Edit'),
-                    'url'   => 'civicrm/group',
-                    'qs'    => 'reset=1&action=update&id=%%id%%',
-                    'title' => ts('Edit Group')
-                ),
-                CRM_Core_Action::DELETE => array(
-                    'name'  => ts('Delete'),
-                    'url'   => 'civicrm/contact/search/saved',
-                    'qs'    => 'action=delete&id=%%ssid%%',
-                    'extra' => 'onclick="return confirm(\'' . $deleteExtra . '\');"',
-                ),
-            );
-        return $savedSearchLinks;
-    }
+    function pagerAtoZ( $whereClause, $whereParams ) {
+        require_once 'CRM/Utils/PagerAToZ.php';
 
+        $query = "
+        SELECT DISTINCT UPPER(LEFT(groups.title, 1)) as sort_name
+        FROM  civicrm_group groups
+        WHERE $whereClause
+        ORDER BY LEFT(groups.title, 1)
+            ";
+        $dao = CRM_Core_DAO::executeQuery( $query, $whereParams );
+
+        return CRM_Utils_PagerAToZ::getAToZBar( $dao, $this->_sortByCharacter, true );
+    }
 }

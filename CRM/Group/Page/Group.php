@@ -38,17 +38,8 @@ require_once 'CRM/Core/Page/Basic.php';
 
 class CRM_Group_Page_Group extends CRM_Core_Page_Basic 
 {
-    protected $_pager = null;
-
     protected $_sortByCharacter;
 
-    /**
-     * The action links that we need to display for saved search items
-     *
-     * @var array
-     */
-    static $_savedSearchLinks = null;
-    
     function getBAOName( ) 
     {
         return 'CRM_Contact_BAO_Group';
@@ -83,7 +74,7 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
      */
     function editName( ) 
     {
-        return 'Edit Group';
+        return ts('Edit Group');
     }
 
     /**
@@ -304,135 +295,4 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
         $form->process( );
         $form->run( );
     }
-
-    function whereClause( &$params, $sortBy = true, $excludeHidden = true ) {
-        $values =  array( );
-
-        $clauses = array( );
-        $title   = $this->get( 'title' );
-        if ( $title ) {
-            $clauses[] = "groups.title LIKE %1";
-            if ( strpos( $title, '%' ) !== false ) {
-                $params[1] = array( $title, 'String', false );
-            } else {
-                $params[1] = array( $title, 'String', true );
-            }
-        }
-
-        $groupType = $this->get( 'group_type' );
-        
-        if ( $groupType ) {
-            $types = array_keys( $groupType );
-            if ( ! empty( $types ) ) {
-                $clauses[] = 'groups.group_type LIKE %2';
-                $typeString = 
-                    CRM_Core_DAO::VALUE_SEPARATOR . 
-                    implode( CRM_Core_DAO::VALUE_SEPARATOR, $types ) .
-                    CRM_Core_DAO::VALUE_SEPARATOR;
-                $params[2] = array( $typeString, 'String', true );
-            }
-        }
-
-        $visibility = $this->get( 'visibility' );
-        if ( $visibility ) {
-            $clauses[] = 'groups.visibility = %3';
-            $params[3] = array( $visibility, 'String' );
-        }
-
-        $active_status   = $this->get( 'active_status' );
-        $inactive_status = $this->get( 'inactive_status' );
-        if ( $active_status && !$inactive_status ) {
-            $clauses[] = 'groups.is_active = 1';
-            $params[4] = array( $active_status, 'Boolean' );
-        }
-       
-      
-        if ( $inactive_status && !$active_status ) {
-            $clauses[] = 'groups.is_active = 0';
-            $params[5] = array( $inactive_status, 'Boolean' );
-        }
-        
-        if ( $inactive_status && $active_status ) {
-            $clauses[] = '(groups.is_active = 0 OR groups.is_active = 1 )';
-        }
-        
-        if ( $sortBy &&
-             $this->_sortByCharacter !== null ) {
-            $clauses[] = 
-                "groups.title LIKE '" . 
-                strtolower(CRM_Core_DAO::escapeWildCardString($this->_sortByCharacter)) .
-                "%'";
-        }
-
-        // dont do a the below assignement when doing a 
-        // AtoZ pager clause
-        if ( $sortBy ) {
-            if ( count( $clauses ) > 1 ) {
-                $this->assign( 'isSearch', 1 );
-            } else {
-                $this->assign( 'isSearch', 0 );
-            }
-        }
-
-        if ( empty( $clauses ) ) {
-             $clauses[] = 'groups.is_active = 1';
-        }
-        
-        if ( $excludeHidden ) {
-            $clauses[] = 'groups.is_hidden = 0';
-        }
-        
-        return implode( ' AND ', $clauses );
-    }
-
-    function pager( $whereClause, $whereParams ) {
-        require_once 'CRM/Utils/Pager.php';
-
-        $params['status']       = ts('Group %%StatusMessage%%');
-        $params['csvString']    = null;
-        $params['buttonTop']    = 'PagerTopButton';
-        $params['buttonBottom'] = 'PagerBottomButton';
-        $params['rowCount']     = $this->get( CRM_Utils_Pager::PAGE_ROWCOUNT );
-        if ( ! $params['rowCount'] ) {
-            $params['rowCount'] = CRM_Utils_Pager::ROWCOUNT;
-        }
-
-        $query = "
-        SELECT groups.id, groups.title
-            FROM  civicrm_group groups
-            WHERE $whereClause";
-      
-        $object = CRM_Core_DAO::executeQuery( $query, $whereParams );
-        $total  = 0;
-        while ( $object->fetch( ) ) {
-            if ( $this->checkPermission( $object->id, $object->title ) ) {
-                $total++;
-            }
-        }
-
-        $params['total'] = $total;
-        
-        $this->_pager = new CRM_Utils_Pager( $params );
-        
-        
-        $this->assign_by_ref( 'pager', $this->_pager );
-    }
-
-    function pagerAtoZ( $whereClause, $whereParams ) {
-        require_once 'CRM/Utils/PagerAToZ.php';
-
-        $query = "
-        SELECT DISTINCT UPPER(LEFT(groups.title, 1)) as sort_name
-        FROM  civicrm_group groups
-        WHERE $whereClause
-        ORDER BY LEFT(groups.title, 1)
-            ";
-        $dao = CRM_Core_DAO::executeQuery( $query, $whereParams );
-
-        $aToZBar = CRM_Utils_PagerAToZ::getAToZBar( $dao, $this->_sortByCharacter, true );
-        $this->assign( 'aToZ', $aToZBar );
-    }
-
 }
-
-
