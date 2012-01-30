@@ -38,11 +38,9 @@
  */
 class CRM_Group_Page_AJAX
 {
-    static function getGroupList( ) 
-    {
-    
-        $sortMapper  = array( 0 => 'label', 1 => 'id', 2 => '', 
-                              3 => 'group_type', 4 => 'visibility' );
+    static function getGroupList( ) {
+        $sortMapper  = array( 0 => 'groups.title', 1 => 'groups.id', 2 => '', 
+                              3 => 'groups.group_type', 4 => 'groups.visibility' );
 
         $sEcho       = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
         $offset      = isset($_REQUEST['iDisplayStart'])? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer'):0;
@@ -50,7 +48,7 @@ class CRM_Group_Page_AJAX
         $sort        = isset($_REQUEST['iSortCol_0'] )? CRM_Utils_Array::value( CRM_Utils_Type::escape($_REQUEST['iSortCol_0'],'Integer'), $sortMapper ): null;
         $sortOrder   = isset($_REQUEST['sSortDir_0'] )? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String'):'asc';
 
-        $params    = $_POST;
+        $params      = $_POST;
         if ( $sort && $sortOrder ) {
             $params['sortBy']  = $sort . ' '. $sortOrder;
         }

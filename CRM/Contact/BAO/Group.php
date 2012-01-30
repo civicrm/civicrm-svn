@@ -695,7 +695,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
 
         $config = CRM_Core_Config::singleton( );
 
-        $params = array( );
+        //$params = array( );
         $whereClause = self::whereClause( $params, false );
         
         //$this->pagerAToZ( $whereClause, $params );
@@ -708,7 +708,11 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         
         $offset = 0;
         $rowCount = 25;
-
+        
+        $orderBy = ' ORDER BY groups.title asc';
+        if ( CRM_Utils_Array::value( 'sort', $params ) ) {
+            $orderBy = ' ORDER BY ' . CRM_Utils_Array::value( 'sort', $params );  
+        }
 
         $select = $from = $where = "";
         if ( CRM_Core_Permission::check( 'administer Multiple Organizations' ) &&
@@ -732,7 +736,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         FROM  civicrm_group groups 
               {$from}
         WHERE $whereClause {$where}
-        ORDER BY groups.title asc
+        {$orderBy}
         LIMIT $offset, $rowCount";
         
         $object = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Contact_DAO_Group' );
@@ -820,9 +824,9 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
 
     function whereClause( &$params, $sortBy = true, $excludeHidden = true ) {
         $values =  array( );
-
         $clauses = array( );
-        //$title   = $this->get( 'title' );
+        
+        $title   = CRM_Utils_Array::value( 'title', $params );
         if ( $title ) {
             $clauses[] = "groups.title LIKE %1";
             if ( strpos( $title, '%' ) !== false ) {
@@ -832,11 +836,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
             }
         }
 
-        //$groupType = $this->get( 'group_type' );
-        
+        $groupType = CRM_Utils_Array::value( 'group_type', $params );
         if ( $groupType ) {
-            $types = array_keys( $groupType );
-            if ( ! empty( $types ) ) {
+            $types = explode( ',', $groupType );
+            if ( !empty( $types ) ) {
                 $clauses[] = 'groups.group_type LIKE %2';
                 $typeString = 
                     CRM_Core_DAO::VALUE_SEPARATOR . 
@@ -846,28 +849,29 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
             }
         }
 
-        //$visibility = $this->get( 'visibility' );
+        $visibility = CRM_Utils_Array::value( 'visibility', $params );
         if ( $visibility ) {
             $clauses[] = 'groups.visibility = %3';
             $params[3] = array( $visibility, 'String' );
         }
 
-        //$active_status   = $this->get( 'active_status' );
-        //$inactive_status = $this->get( 'inactive_status' );
-        if ( $active_status && !$inactive_status ) {
-            $clauses[] = 'groups.is_active = 1';
-            $params[4] = array( $active_status, 'Boolean' );
-        }
-       
-      
-        if ( $inactive_status && !$active_status ) {
-            $clauses[] = 'groups.is_active = 0';
-            $params[5] = array( $inactive_status, 'Boolean' );
+        $groupStatus = CRM_Utils_Array::value( 'status' );
+        if ( $groupStatus ) {
+            switch ( $groupStatus  ) {
+                case 1:
+                    $clauses[] = 'groups.is_active = 1';
+                    $params[4] = array( $groupStatus, 'Integer' );
+                    break;
+                case 2:
+                    $clauses[] = 'groups.is_active = 0';
+                    $params[4] = array( $groupStatus, 'Integer' );
+                    break;
+                case 3:
+                    $clauses[] = '(groups.is_active = 0 OR groups.is_active = 1 )';
+                    break;
+            }
         }
         
-        if ( $inactive_status && $active_status ) {
-            $clauses[] = '(groups.is_active = 0 OR groups.is_active = 1 )';
-        }
         /*
         if ( $sortBy &&
              $this->_sortByCharacter !== null ) {
@@ -887,6 +891,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
             }
         }
          */
+        
         if ( empty( $clauses ) ) {
              $clauses[] = 'groups.is_active = 1';
         }

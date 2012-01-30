@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-search-form-block">
+<div class="crm-block crm-form-block crm-group-search-form-block">
 
 <h3>{ts}Find Groups{/ts}</h3>
 <table class="form-layout">
@@ -50,11 +50,8 @@
             </span>
         </td>
 	    <td>
-            <label>{ts}Status{/ts}</label><br />		
-	        {$form.active_status.html}
-	        {$form.active_status.label}&nbsp;
-	        {$form.inactive_status.html}
-            {$form.inactive_status.label}		
+            {$form.group_status.label}<br />
+            {$form.group_status.html}
 	    </td>
     </tr>
     <tr>
@@ -80,6 +77,9 @@
 <script type="text/javascript">
 cj( function() {
     buildGroupSelector( false );
+    cj('#_qf_Search_refresh').click( function() {
+        buildGroupSelector( true );
+    });
 });
 function buildGroupSelector( filterSearch ) {
     if ( filterSearch ) {
@@ -110,6 +110,7 @@ function buildGroupSelector( filterSearch ) {
                         {sClass:'crm-group-group-links', bSortable:false},
                        ],
         "bProcessing": true,
+        "asStripClasses" : [ "odd-row", "even-row" ],
         "sPaginationType": "full_numbers",
         "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
         "bServerSide": true,
@@ -131,18 +132,39 @@ function buildGroupSelector( filterSearch ) {
                         }                                                       
                     },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
-            /*
-            aoData.push( {name:'contact_id', value: {/literal}{$contactId}{literal}},
-                         {name:'admin',   value: {/literal}'{$admin}'{literal}}
-            );
-            */
-
             if ( filterSearch ) {
-                /*
+                var groupTypes = '';
+                if ( cj('.crm-group-search-form-block #group_type\\[1\\]').prop('checked') ) {
+                    groupTypes = '1'; 
+                }
+                
+                if ( cj('.crm-group-search-form-block #group_type\\[2\\]').prop('checked') ) {
+                    if ( groupTypes ) {
+                        groupTypes = groupTypes + ',2';
+                    } else {
+                        groupTypes = groupTypes + '2';
+                    }
+                }
+
+                var groupStatus = '';
+                if ( cj('.crm-group-search-form-block #group_status\\[1\\]').prop('checked') ) {
+                    groupStatus = '1'; 
+                }
+                
+                if ( cj('.crm-group-search-form-block #group_status\\[2\\]').prop('checked') ) {
+                    if ( groupStatus ) {
+                        groupStatus = '3';
+                    } else {
+                        groupStatus = '2';
+                    }
+                }
+
                 aoData.push(	     
-                    {name:'activity_type_id', value: cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val()}
+                    {name:'title', value: cj('.crm-group-search-form-block #title').val()},
+                    {name:'group_type', value: groupTypes },
+                    {name:'visibility', value: cj('.crm-group-search-form-block #visibility').val()},
+                    {name:'status', value: groupStatus }
                 );
-                */
             }	
             cj.ajax( {
                 "dataType": 'json', 

@@ -66,8 +66,13 @@ class CRM_Group_Form_Search extends CRM_Core_Form {
         
         $this->add( 'select', 'visibility', ts('Visibility'        ),
                     array( '' => ts('- any visibility -' ) ) + CRM_Core_SelectValues::ufVisibility( true ) );
-        $this->addElement( 'checkbox', 'active_status' , ts( 'Enabled' ) );
-        $this->addElement( 'checkbox', 'inactive_status' , ts( 'Disabled' ) );
+
+        $groupStatuses = array( ts( 'Enabled' ) => 1 , ts( 'Disabled' ) => 2 );
+        $this->addCheckBox( 'group_status',
+                            ts( 'Status' ),
+                            $groupStatuses,
+                            null, null, null, null, '&nbsp;&nbsp;&nbsp;' );
+        
         $this->addButtons(array( 
                                 array ('type'      => 'refresh', 
                                        'name'      => ts('Search'), 
@@ -75,6 +80,7 @@ class CRM_Group_Form_Search extends CRM_Core_Form {
                                 ) ); 
 
         parent::buildQuickForm( );
+        $this->assign( 'suppressForm', true ); 
     }
 
     function postProcess( ) {
