@@ -73,6 +73,9 @@
     </thead>
 </table>
 
+{* handle enable/disable actions*}
+{include file="CRM/common/enableDisable.tpl"}
+ 
 {literal}
 <script type="text/javascript">
 cj( function() {
