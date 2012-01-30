@@ -2337,4 +2337,23 @@ AND    e.id NOT IN ( SELECT email_id FROM civicrm_mailing_recipients mr WHERE ma
         
         $dao = CRM_Core_DAO::executeQuery( $sql, $params );
     }
+
+	function getMailingsList() {
+		static $list = array( );
+
+        if ( empty($list) ) {
+            $query   = "
+SELECT civicrm_mailing.id, civicrm_mailing.name, civicrm_mailing_job.end_date 
+FROM   civicrm_mailing 
+INNER JOIN civicrm_mailing_job ON civicrm_mailing.id = civicrm_mailing_job.mailing_id
+ORDER BY civicrm_mailing.name";
+            $mailing = CRM_Core_DAO::executeQuery($query);
+            
+            while($mailing->fetch()) {
+                $list[mysql_real_escape_string($mailing->id)] = "{$mailing->name} :: {$mailing->end_date}";
+            }
+        }
+
+		return $list;
+	}
 }

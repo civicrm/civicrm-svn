@@ -1,8 +1,18 @@
 <tr>
   <td colspan="2">
-    {$form.mailing_name.label}
+    {$form.mailing_id.label}
     <br />
-    {$form.mailing_name.html}
+    {$form.mailing_id.html}
+    {literal}
+    <script type="text/javascript">
+      cj("select#mailing_id").crmasmSelect({
+        addItemTarget: 'bottom',
+        animate: false,
+        highlight: true,
+        sortable: true,
+      });
+    </script>
+    {/literal}
   </td>
 </tr>
 <tr>
@@ -35,5 +45,29 @@
     <br />
     {$form.mailing_reply_status.html}
     <span class="crm-clear-link">(<a href="javascript:unselectRadio('mailing_reply_status','{$form.formName}')">{ts}clear{/ts}</a>)</span>
+  </td>
+</tr>
+<tr>
+  <td>
+    <table>
+      <tr>
+         {$form.mailing_unsubscribe.html}&nbsp;
+         {$form.mailing_unsubscribe.label}
+      </tr>
+    </table>
+  </td>
+  <td>
+    <table>
+      <tr>
+         <td>
+            {$form.mailing_optout.html}&nbsp;
+            {$form.mailing_optout.label}
+         </td>
+         <td>
+            {$form.mailing_forward.html}&nbsp;
+            {$form.mailing_forward.label}
+         </td>
+      </tr>
+    </table>
   </td>
 </tr>
