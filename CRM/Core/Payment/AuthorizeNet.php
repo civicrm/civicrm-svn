@@ -95,8 +95,21 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         if ( ! defined( 'CURLOPT_SSLCERT' ) ) {
             return self::error( 9001, 'Authorize.Net requires curl with SSL support' );
         }
-
-        foreach ( $params as $field => $value ) {
+        
+        /*
+         * recurpayment function does not compile an array & then proces it -
+         * - the tpl does the transformation so adding call to hook here
+         * & giving it a change to act on the params array
+         */
+        $newParams = $params;
+        if ( CRM_Utils_Array::value( 'is_recur', $params ) &&
+             $params['contributionRecurID'] ) {
+             CRM_Utils_Hook::alterPaymentProcessorParams( $this,
+                                                     $params,
+                                                     $newParams );
+               
+        }       
+        foreach ( $newParams as $field => $value ) {
             $this->_setParam( $field, $value );
         }
 
@@ -246,8 +259,8 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         $exp_month = str_pad( $this->_getParam( 'month' ), 2, '0', STR_PAD_LEFT );
         $exp_year = $this->_getParam( 'year' );
         $template->assign( 'expirationDate', $exp_year . '-' . $exp_month );
-
-        $template->assign( 'description', $this->_getParam('description') );
+        // name rather than description is used in the tpl - see http://www.authorize.net/support/ARB_guide.pdf
+        $template->assign( 'name', $this->_getParam('description') );
 
         $template->assign( 'email', $this->_getParam('email') );
         $template->assign( 'contactID', $this->_getParam('contactID') );
