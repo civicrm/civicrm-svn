@@ -111,6 +111,7 @@ function buildGroupSelector( filterSearch ) {
                         {sClass:'crm-group-group_type'},
                         {sClass:'crm-group-visibility'},
                         {sClass:'crm-group-group-links', bSortable:false},
+                        {sClass:'hiddenElement', bSortable:false}
                        ],
         "bProcessing": true,
         "asStripClasses" : [ "odd-row", "even-row" ],
@@ -134,6 +135,7 @@ function buildGroupSelector( filterSearch ) {
                             "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
                         }                                                       
                     },
+        "fnDrawCallback": function() { setSelectorClass(  ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             if ( filterSearch ) {
                 var groupTypes = '';
@@ -177,6 +179,12 @@ function buildGroupSelector( filterSearch ) {
                 "success": fnCallback
             } ); 
         }
+    });
+}
+
+function setSelectorClass(  ) {
+    cj('#crm-group-selector td:last-child').each( function( ) {
+       cj(this).parent().addClass(cj(this).text() );
     });
 }
 

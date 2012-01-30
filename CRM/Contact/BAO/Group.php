@@ -669,6 +669,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                 $groupList[$id]['group_type']         = CRM_Utils_Array::value( 'group_type', $value );
                 $groupList[$id]['visibility']         = $value['visibility'];
                 $groupList[$id]['links']              = $value['action'];
+                $groupList[$id]['class']              = $value['class'];
             }
             return $groupList;
         }
@@ -774,16 +775,19 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                         $newLinks[CRM_Core_Action::VIEW]['qs' ] = "reset=1&force=1&ssID={$object->saved_search_id}";
                     }
                 }
-                $action = array_sum(array_keys($newLinks));
+
+                $values[$object->id]['class'] = '';
                 if ( array_key_exists( 'is_active', $object ) ) {
                     if ( $object->is_active ) {
                         $action -= CRM_Core_Action::ENABLE;
                     } else {
+                        $values[$object->id]['class'] = 'disabled';
                         $action -= CRM_Core_Action::VIEW;
                         $action -= CRM_Core_Action::DISABLE;
                     }
                 }
                                 
+                $action = array_sum(array_keys($newLinks));
                 $action = $action & CRM_Core_Action::mask( $groupPermissions );
                 
                 $values[$object->id]['visibility'] = CRM_Contact_DAO_Group::tsEnum('visibility',

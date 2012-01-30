@@ -44,7 +44,7 @@ class CRM_Group_Form_Search extends CRM_Core_Form {
 
    function setDefaultValues( ) {
         $defaults = array( );
-        $defaults['active_status'] = 1;
+        $defaults['group_status[1]'] = 1;
         return $defaults;
     }
 

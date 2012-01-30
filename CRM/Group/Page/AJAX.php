@@ -63,8 +63,7 @@ class CRM_Group_Page_AJAX
         require_once "CRM/Utils/JSON.php";
         $iFilteredTotal = $iTotal =  $params['total'];
         $selectorElements = array( 'group_name', 'group_id', 'group_description',
-                                   'group_type', 'visibility',
-                                   'links' );
+                                   'group_type', 'visibility', 'links', 'class' );
 
         echo CRM_Utils_JSON::encodeDataTableSelector( $groups, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
         CRM_Utils_System::civiExit( );
