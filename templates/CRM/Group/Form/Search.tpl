@@ -87,20 +87,15 @@ cj( function() {
 function buildGroupSelector( filterSearch ) {
     if ( filterSearch ) {
         crmGroupSelector.fnDestroy();
+        var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Groups found for your search criteria. Suggestions:{/ts}{literal}<div class="spacer"></div><ul><li>{/literal}{ts escape="js"}Check your spelling.{/ts}{literal}</li><li>{/literal}{ts escape="js"}Try a different spelling or use fewer letters.{/ts}{literal}</li><li>{/literal}{ts escape="js"}Make sure you have enough privileges in the access control system.{/ts}{literal}</li></ul></div>';
+    } else {
+        var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Groups have been created for this site.{/ts}</div>'{literal};
     }
     
     var columns = '';
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
 
-    var ZeroRecordText = {/literal}'{ts escape="js"}No matches found{/ts}'{literal};
-    /*
-    if ( cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val( ) ) {
-      ZeroRecordText += {/literal}'{ts escape="js"} for Activity Type = "{/ts}'{literal} +  cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id :selected').text( ) + '"';
-    } else {
-      ZeroRecordText += '.';
-    }
-*/
-        crmGroupSelector = cj('#crm-group-selector').dataTable({
+    crmGroupSelector = cj('#crm-group-selector').dataTable({
         "bFilter"    : false,
         "bAutoWidth" : false,
         "aaSorting"  : [],
