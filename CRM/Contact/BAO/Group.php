@@ -776,6 +776,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                     }
                 }
 
+                $action = array_sum(array_keys($newLinks));
+                
                 $values[$object->id]['class'] = '';
                 if ( array_key_exists( 'is_active', $object ) ) {
                     if ( $object->is_active ) {
@@ -787,7 +789,6 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                     }
                 }
                                 
-                $action = array_sum(array_keys($newLinks));
                 $action = $action & CRM_Core_Action::mask( $groupPermissions );
                 
                 $values[$object->id]['visibility'] = CRM_Contact_DAO_Group::tsEnum('visibility',

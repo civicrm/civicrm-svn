@@ -183,8 +183,11 @@ function buildGroupSelector( filterSearch ) {
 }
 
 function setSelectorClass(  ) {
-    cj('#crm-group-selector td:last-child').each( function( ) {
-       cj(this).parent().addClass(cj(this).text() );
+    cj('#crm-group-selector tr').each( function( ) {
+       var className = cj(this).find('td:last-child').text();
+       cj(this).addClass( className );
+       var rowID = cj(this).find('td:nth-child(2)').text();
+       cj(this).prop( 'id', 'row_' + rowID );
     });
 }
 
