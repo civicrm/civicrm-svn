@@ -1098,4 +1098,20 @@ LIMIT {$offset}, {$rowCount}
         echo json_encode( $elements );
         CRM_Utils_System::civiExit( );
     }
+
+    static function selectUnselectContacts( ){
+        $name = CRM_Utils_Array::value( 'name', $_POST );
+        $cacheKey = CRM_Utils_Array::value( 'qfKey', $_POST );
+        $state = CRM_Utils_Array::value( 'state', $_POST , 'checked' );
+              
+        require_once 'CRM/Core/Form.php';
+        if ( substr( $name, 0, CRM_Core_Form::CB_PREFIX_LEN ) == CRM_Core_Form::CB_PREFIX ) {
+            $cId = substr( $name, CRM_Core_Form::CB_PREFIX_LEN );
+        }
+      
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        $action = ( $state == 'checked' ) ? 'select' : 'unselect' ;
+        CRM_Core_BAO_PrevNextCache::markSelection( $cacheKey, $action, $cId );
+    }
+
 }

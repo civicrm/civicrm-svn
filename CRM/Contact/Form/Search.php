@@ -476,14 +476,19 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         /*
          * add form checkboxes for each row. This is needed out here to conform to QF protocol
          * of all elements being declared in builQuickForm
-         */
+         */ 
+        $qfKeyParam  = CRM_Utils_Array::value( 'qfKey', $this->_formValues );
+
         $rows = $this->get( 'rows' );
+        
         if ( is_array( $rows ) ) {
             $this->addElement( 'checkbox', 'toggleSelect', null, null, array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this);" ) );
             foreach ($rows as $row) {
                 $this->addElement( 'checkbox', $row['checkbox'],
-                                   null, null,
-                                   array( 'onclick' => "toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" ) );
+                                   null, null ,
+                                   array( 'onclick' => "toggleContactSelection( '".$row['checkbox']."', '".$qfKeyParam."' );
+toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" ) );
+             
             }
         }
 

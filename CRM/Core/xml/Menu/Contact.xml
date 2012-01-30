@@ -394,4 +394,9 @@
     <title>Add User</title>
     <page_callback>CRM_Contact_Page_View_Useradd</page_callback>
 </item>
+<item>
+     <path>civicrm/ajax/markSelection</path>
+     <page_callback>CRM_Contact_Page_AJAX::selectUnselectContacts</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+</item>
 </menu>

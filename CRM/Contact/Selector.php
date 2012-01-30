@@ -753,8 +753,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             }
         }
 
-        $this->fillupPrevNextCache( $sort );
-
+        $this->fillupPrevNextCache( $sort , true );
+       
         return $rows;
     }
 
@@ -827,17 +827,23 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         }
     }
 
-    function fillupPrevNextCache( $sort ) {
+    function fillupPrevNextCache( $sort, $saveSelections = false ) {
         $cacheKey = "civicrm search {$this->_key}";
+        $qfKeyUrlParam = CRM_Utils_Request::retrieve( 'qfKey', 'String',
+                                                      CRM_Core_DAO::$_nullObject );
 
         require_once 'CRM/Core/BAO/PrevNextCache.php';
+        if( $saveSelections && $qfKeyUrlParam ){
+            $selectedCidsArr = CRM_Core_BAO_PrevNextCache::markSelection( $qfKeyUrlParam );
+        }
+        
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
         CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey, 'civicrm_contact' );
-
+                
         // lets fill up the prev next cache here, so view can scroll thru
         $sql = $this->_query->searchQuery( 0, 0, $sort,
                                            false, false, 
                                            false, true, true, null );
-
         // CRM-9096
         // due to limitations in our search query writer, the above query does not work
         // in cases where the query is being sorted on a non-contact table
@@ -853,7 +859,9 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
 ";
         $replaceSQL = "SELECT contact_a.id as id";
 
+        
         $sql = str_replace( $replaceSQL, $insertSQL, $sql );
+        
 
         CRM_Core_Error::ignoreException();
         $result = CRM_Core_DAO::executeQuery( $sql );
@@ -865,7 +873,14 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
             // we print a sorry cant figure it out on view page
             return;
         }
-
+        if ( isset( $selectedCidsArr ) ) {
+            if( is_array( $selectedCidsArr ) && count( $selectedCidsArr ) == 1 ){
+              $selectedCids = array_keys($selectedCidsArr[$qfKeyUrlParam]);
+              if ( count($selectedCids) > 0 ){
+                  CRM_Core_BAO_PrevNextCache::markSelection( $qfKeyUrlParam, 'select', $selectedCids );
+              }
+            }
+        }
         // also record an entry in the cache key table, so we can delete it periodically
         require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::setItem( $cacheKey,
