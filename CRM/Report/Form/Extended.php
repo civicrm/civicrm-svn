@@ -512,7 +512,7 @@ WHERE 	line_item_civireport.id IS NOT NULL
      return CRM_Event_PseudoConstant::eventType($value);
    }
    function alterEventID( $value ) {
-     return CRM_Event_PseudoConstant::event( $value, false );
+     return is_string(CRM_Event_PseudoConstant::event( $value, false ))?CRM_Event_PseudoConstant::event( $value, false ):'';
    }
    function alterContactID( $value ) {
      return $value;
