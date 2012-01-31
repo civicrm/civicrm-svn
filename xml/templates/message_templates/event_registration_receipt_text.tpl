@@ -48,13 +48,13 @@ Here's a summary of your transaction placed on {$trxn->trxn_date|date_format:"%D
 
 {if $line_item.num_participants > 0}
   {foreach from=$line_item.participants item=participant}
-    {$participant->first_name} {$participant->last_name}
+    {$participant->display_name}
   {/foreach}
 {/if}
 {if $line_item.num_waiting_participants > 0}
   Waitlisted:
     {foreach from=$line_item.waiting_participants item=participant}
-      {$participant->first_name} {$participant->last_name}
+      {$participant->display_name}
     {/foreach}
 {/if}
 Cost: {$line_item.cost|crmMoney:$currency|string_format:"%10s"}
