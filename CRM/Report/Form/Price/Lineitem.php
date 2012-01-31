@@ -80,7 +80,7 @@ class CRM_Report_Form_Price_Lineitem extends CRM_Report_Form_Extended {
        $this->joinPriceFieldValueFromLineItem();
        $this->joinContributionFromLineItem();
        $this->joinPriceFieldFromLineItem();
-       $this->joinParticipantFromContribution();
+       $this->joinParticipantFromLineItem();
        $this->joinContactFromContribution();
        $this->joinEventFromParticipant();
 
@@ -100,7 +100,6 @@ class CRM_Report_Form_Price_Lineitem extends CRM_Report_Form_Extended {
     }
 
     function postProcess( ) {
-      
       parent::postProcess( );
     }
 
