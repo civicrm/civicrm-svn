@@ -1778,8 +1778,8 @@ AND civicrm_contact.is_opt_out =0";
                              array(
                                    'name'  => ts('Report'),
                                    'url'   => 
-                                   CRM_Report_Utils_Report::getNextUrl( 'contribute/detail', 
-                                                                        'reset=1&someFilter=1', false, true ),
+                                   CRM_Report_Utils_Report::getNextUrl( 'mailing/detail', 
+                                                                        "reset=1&mailing_id_op=in&mailing_id_value={$mailing_id}", false, true ),
                                    ),
                              CRM_Core_Action::ADVANCED => 
                              array(
