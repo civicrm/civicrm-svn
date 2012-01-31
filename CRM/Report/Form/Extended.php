@@ -146,11 +146,9 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                    array( 'dao'     => 'CRM_Price_BAO_LineItem',
                           'fields'  =>
                           array( 
-                                 'label'           => 
-                                 array( 'title' => ts( 'Line Item Label' ),
-                                        ),
                                  'qty' => 
                                  array( 'title' => ts( 'Quantity' ),
+                                        'type'  => CRM_Utils_Type::T_INT, 
                                         'statistics'   => 
                                                 array('sum' => ts( 'Total Quantity Selected' )),
                                         ), 
@@ -160,6 +158,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                                         ),
                                  'line_total'           => 
                                  array( 'title' => ts( 'Line Total' ),
+                                        'type'  => CRM_Utils_Type::T_MONEY, 
                                         'statistics'   => 
                                                 array('sum' => ts( 'Total of Line Items' )),
                                                                        ),),
@@ -191,15 +190,16 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
    function getPriceFieldValueColumns(){
      return  array( 'civicrm_price_field_value'      =>
                    array( 'dao'     => 'CRM_Price_BAO_FieldValue',
-                          'fields' => array( 'label'           => 
+                          'fields' => array( 'price_field_value_label'           => 
                                  array( 'title' => ts( 'Price Field Value Label' ),
-                                        ),
+                                        'name' => 'label'),
                                ),
                          'filters' =>             
-                          array( 'label'           => 
+                          array( 'price_field_value_label'           => 
                                  array( 'title' => ts( 'Price Fields Value Label' ),
-                                       'type'       => CRM_Utils_Type::T_STRING,
-                                       'operator'   => 'like' ), 
+                                        'type'       => CRM_Utils_Type::T_STRING,
+                                        'operator'   => 'like',
+                                        'name' => 'label' ), 
                               ),
  
  
@@ -225,6 +225,10 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
    }
    function getParticipantColumns(){
      require_once 'CRM/Event/PseudoConstant.php';
+     static $_events;
+     if ( !isset($_events['all']) ) {
+            CRM_Core_PseudoConstant::populate( $_events['all'], 'CRM_Event_DAO_Event', false, 'title', 'is_active', "is_template IS NULL OR is_template = 0", 'end_date DESC' );
+     }
      return  array('civicrm_participant' =>
                   array( 'dao'     => 'CRM_Event_DAO_Participant',
                          'fields'  =>
@@ -296,7 +300,10 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                                ),
                          'order_bys'  =>
                          array( 'event_type_id' =>
-                                array( 'title' => ts( 'Event Type'), 'default_weight' => '2', 'default_order' => 'ASC'),
+                                array( 'title' => ts( 'Event Type'), 
+                                       'default_weight' => '2', 
+                                       'default_order' => 'ASC',
+                                ),
                                 ),
                          ), );
      }
@@ -325,6 +332,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                                  'total_amount'         => array( 'title'        => ts( 'Amount' ),                                                                  
                                                                   'statistics'   => 
                                                                           array('sum' => ts( 'Total Amount' )),
+                                                                  'type'  => CRM_Utils_Type::T_MONEY ,
                                                                   ),
                                  ),
                           'filters' =>             
@@ -382,29 +390,29 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                           ),);
      }
       function joinPriceFieldValueFromLineItem(){
-        $this->_from .= " LEFT JOIN civicrm_price_field_value {$this->_aliases[civicrm_price_field_value]} 
-                          ON {$this->_aliases[civicrm_line_item]}.price_field_value_id = {$this->_aliases[civicrm_price_field_value]}.id";
+        $this->_from .= " LEFT JOIN civicrm_price_field_value {$this->_aliases['civicrm_price_field_value']} 
+                          ON {$this->_aliases['civicrm_line_item']}.price_field_value_id = {$this->_aliases['civicrm_price_field_value']}.id";
      }
       function joinPriceFieldFromLineItem(){
-        $this->_from .= " LEFT JOIN civicrm_price_field {$this->_aliases[civicrm_price_field]} 
-                          ON {$this->_aliases[civicrm_line_item]}.price_field_id = {$this->_aliases[civicrm_price_field]}.id";
+        $this->_from .= " LEFT JOIN civicrm_price_field {$this->_aliases['civicrm_price_field']} 
+                          ON {$this->_aliases['civicrm_line_item']}.price_field_id = {$this->_aliases['civicrm_price_field']}.id";
      }
       function joinParticipantFromLineItem(){
-        $this->_from .= " LEFT JOIN civicrm_participant {$this->_aliases[civicrm_participant]} 
-                          ON ({$this->_aliases[civicrm_line_item]}.line_total > 0 AND {$this->_aliases[civicrm_line_item]}.entity_id = {$this->_aliases[civicrm_participant]}.id AND {$this->_aliases[civicrm_line_item]}.entity_table = 'civicrm_participant')
+        $this->_from .= " LEFT JOIN civicrm_participant {$this->_aliases['civicrm_participant']} 
+                          ON ( {$this->_aliases['civicrm_line_item']}.entity_id = {$this->_aliases['civicrm_participant']}.id AND {$this->_aliases['civicrm_line_item']}.entity_table = 'civicrm_participant')
                           ";
      }
       function joinContributionFromParticipant(){
         $this->_from .= " LEFT JOIN civicrm_participant_payment pp 
-                          ON {$this->_aliases[civicrm_participant]}.id = pp.participant_id
-        LEFT JOIN civicrm_contribution {$this->_aliases[civicrm_contribution]} 
-                          ON pp.contribution_id = {$this->_aliases[civicrm_contribution]}.id";
+                          ON {$this->_aliases['civicrm_participant']}.id = pp.participant_id
+        LEFT JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
+                          ON pp.contribution_id = {$this->_aliases['civicrm_contribution']}.id";
      }
       function joinParticipantFromContribution(){
         $this->_from .= " LEFT JOIN civicrm_participant_payment pp 
-                          ON {$this->_aliases[civicrm_contribution]}.id = pp.contribution_id
-        LEFT JOIN civicrm_participant {$this->_aliases[civicrm_participant]} 
-                          ON pp.participant_id = {$this->_aliases[civicrm_participant]}.id";
+                          ON {$this->_aliases['civicrm_contribution']}.id = pp.contribution_id
+        LEFT JOIN civicrm_participant {$this->_aliases['civicrm_participant']} 
+                          ON pp.participant_id = {$this->_aliases['civicrm_participant']}.id";
      }
      
      function joinContributionFromLineItem(){
@@ -438,8 +446,8 @@ LEFT JOIN civicrm_membership_payment pp
                           ON membership_civireport.id = pp.membership_id
         LEFT JOIN civicrm_contribution contribution_civireport 
                           ON pp.contribution_id = contribution_civireport.id 				
-) as {$this->_aliases[civicrm_contribution]} 
-  ON {$this->_aliases[civicrm_contribution]}.lid = {$this->_aliases[civicrm_line_item]}.id
+) as {$this->_aliases['civicrm_contribution']} 
+  ON {$this->_aliases['civicrm_contribution']}.lid = {$this->_aliases['civicrm_line_item']}.id
  ";
      }
      
@@ -470,21 +478,21 @@ LEFT JOIN civicrm_membership_payment pp ON contribution_civireport_direct.id = p
 LEFT JOIN civicrm_membership p ON pp.membership_id = p.id
 LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_membership')
 WHERE 	line_item_civireport.id IS NOT NULL 
-) as {$this->_aliases[civicrm_line_item]} 
-  ON {$this->_aliases[civicrm_line_item]}.contid = {$this->_aliases[civicrm_contribution]}.id
+) as {$this->_aliases['civicrm_line_item']} 
+  ON {$this->_aliases['civicrm_line_item']}.contid = {$this->_aliases['civicrm_contribution']}.id
  
   
   ";
      }
      
       function joinContactFromParticipant(){
-        $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases[civicrm_contact]} 
-                          ON {$this->_aliases[civicrm_participant]}.contact_id = {$this->_aliases[civicrm_contact]}.id";
+        $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
+                          ON {$this->_aliases[civicrm_participant]}.contact_id = {$this->_aliases['civicrm_contact']}.id";
      }
 
       function joinContactFromContribution(){
-        $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases[civicrm_contact]} 
-                          ON {$this->_aliases[civicrm_contribution]}.contact_id = {$this->_aliases[civicrm_contact]}.id";
+        $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
+                          ON {$this->_aliases['civicrm_contribution']}.contact_id = {$this->_aliases['civicrm_contact']}.id";
      }    
       function joinEventFromParticipant(){
         $this->_from .= "  LEFT JOIN civicrm_event {$this->_aliases['civicrm_event']} 
