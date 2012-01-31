@@ -148,7 +148,6 @@ class CRM_Mailing_BAO_Query
                 $query->_tables['civicrm_mailing_event_queue'] = $query->_whereTables['civicrm_mailing_event_queue'] = 1;
                 $query->_tables['civicrm_mailing_job'] = $query->_whereTables['civicrm_mailing_job'] = 1;
                 $query->_tables['civicrm_mailing'] = $query->_whereTables['civicrm_mailing'] = 1;
-
                 return;
 
             case 'mailing_date':
@@ -192,14 +191,26 @@ class CRM_Mailing_BAO_Query
             case 'mailing_reply_status':
                 self::mailingEventQueryBuilder($query, $values,
                     'civicrm_mailing_event_reply', 'mailing_reply_status', ts('Mailing: Trackable Replies'), CRM_Mailing_PseudoConstant::yesNoOptions('reply'));
+                return;
+            case 'mailing_optout':
+                $valueTitle = array( 1 => ts('Opt-out Requests') );
+                // include opt-out events only
+                $query->_where[$grouping][] = "civicrm_mailing_event_unsubscribe.org_unsubscribe = 1";
+                self::mailingEventQueryBuilder($query, $values,
+                                               'civicrm_mailing_event_unsubscribe', 'mailing_unsubscribe', 
+                                               ts('Mailing: '), $valueTitle);
+                return;
             case 'mailing_unsubscribe':
                 $valueTitle = array( 1 => ts('Unsubscribe Requests') );
+                // exclude opt-out events
+                $query->_where[$grouping][] = "civicrm_mailing_event_unsubscribe.org_unsubscribe = 0";
                 self::mailingEventQueryBuilder($query, $values,
                                                'civicrm_mailing_event_unsubscribe', 'mailing_unsubscribe', 
                                                ts('Mailing: '), $valueTitle);
                 return;
             case 'mailing_forward':
                 $valueTitle = array( 1 => ts('Forwards') );
+                $values[2]  = 'Y'; // since its a checkbox
                 self::mailingEventQueryBuilder($query, $values,
                                                'civicrm_mailing_event_forward', 'mailing_forward', 
                                                ts('Mailing: '), $valueTitle);
@@ -302,7 +313,7 @@ class CRM_Mailing_BAO_Query
             return;
         }
 
-        if ( ( $value == 'Y' ) || ( $value == 1 ) ) {
+        if ( $value == 'Y' ) {
             $query->_where[$grouping][] = $tableName . ".id is not null ";
         } else if ($value == 'N') {
             $query->_where[$grouping][] = $tableName . ".id is null ";

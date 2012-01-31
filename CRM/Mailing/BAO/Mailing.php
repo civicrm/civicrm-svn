@@ -1583,7 +1583,7 @@ AND civicrm_contact.is_opt_out =0";
         $report['jobs'] = array();
         $report['event_totals'] = array();
         $elements = array(  'queue', 'delivered', 'url', 'forward',
-                            'reply', 'unsubscribe', 'opened', 'bounce', 'spool' );
+                            'reply', 'unsubscribe', 'optout', 'opened', 'bounce', 'spool' );
 
         // initialize various counters
         foreach ( $elements as $field ) {
@@ -1606,9 +1606,11 @@ AND civicrm_contact.is_opt_out =0";
             
             // compute unsub total separately to discount duplicates
             // CRM-1783
-            $row['unsubscribe'] = CRM_Mailing_Event_BAO_Unsubscribe::getTotalCount( $mailing_id, $mailing->id, true );
+            $row['unsubscribe'] = CRM_Mailing_Event_BAO_Unsubscribe::getTotalCount( $mailing_id, $mailing->id, true, true );
             $report['event_totals']['unsubscribe'] += $row['unsubscribe'];
 
+            $row['optout'] = CRM_Mailing_Event_BAO_Unsubscribe::getTotalCount( $mailing_id, $mailing->id, true, false );
+            $report['event_totals']['optout'] += $row['optout'];
 
             foreach ( array_keys(CRM_Mailing_BAO_Job::fields( ) ) as $field ) {
                 $row[$field] = $mailing->$field;
@@ -1621,10 +1623,13 @@ AND civicrm_contact.is_opt_out =0";
                     $mailing->queue;
                 $row['unsubscribe_rate'] = (100.0 * $row['unsubscribe'] ) /
                     $mailing->queue;
+                $row['optout_rate'] = (100.0 * $row['optout'] ) /
+                    $mailing->queue;
             } else {
                 $row['delivered_rate'] = 0;
                 $row['bounce_rate'] = 0;
                 $row['unsubscribe_rate'] = 0;
+                $row['optout_rate'] = 0;
             }
             
             $row['links'] = array(
@@ -1683,10 +1688,12 @@ AND civicrm_contact.is_opt_out =0";
             $report['event_totals']['delivered_rate'] = (100.0 * $report['event_totals']['delivered']) / $report['event_totals']['queue'];
             $report['event_totals']['bounce_rate'] = (100.0 * $report['event_totals']['bounce']) / $report['event_totals']['queue'];
             $report['event_totals']['unsubscribe_rate'] = (100.0 * $report['event_totals']['unsubscribe']) / $report['event_totals']['queue'];
+            $report['event_totals']['optout_rate'] = (100.0 * $report['event_totals']['optout']) / $report['event_totals']['queue'];
         } else {
             $report['event_totals']['delivered_rate'] = 0;
             $report['event_totals']['bounce_rate'] = 0;
             $report['event_totals']['unsubscribe_rate'] = 0;
+            $report['event_totals']['optout_rate'] = 0;
         }
 
         /* Get the click-through totals, grouped by URL */
@@ -1763,6 +1770,32 @@ AND civicrm_contact.is_opt_out =0";
                             "reset=1&event=opened&mid=$mailing_id"
             ),
         );
+
+
+        require_once 'CRM/Report/Utils/Report.php';
+        $actionLinks = array(
+                             CRM_Core_Action::VIEW     => 
+                             array(
+                                   'name'  => ts('Report'),
+                                   'url'   => 
+                                   CRM_Report_Utils_Report::getNextUrl( 'contribute/detail', 
+                                                                        'reset=1&someFilter=1', false, true ),
+                                   ),
+                             CRM_Core_Action::ADVANCED => 
+                             array(
+                                   'name'  => ts('Advanced Search'),
+                                   'url'   => 'civicrm/contact/search/advanced',
+                                   'qs'    => 'force=1&someFilter=sth',
+                                   ),
+                             );
+        $action = array_sum(array_keys($actionLinks));
+
+        $report['event_totals']['actionlinks'] = array();
+        foreach ( array('clicks', 'clicks_unique', 'queue', 'delivered', 'bounce', 'unsubscribe', 
+                        'forward', 'reply', 'opened', 'optout' ) as $key ) {
+            $report['event_totals']['actionlinks'][$key] = 
+                CRM_Core_Action::formLink($actionLinks, $action, array());
+        }
 
         return $report;
     }

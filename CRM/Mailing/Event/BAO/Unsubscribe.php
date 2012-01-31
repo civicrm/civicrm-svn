@@ -404,8 +404,8 @@ WHERE  email     = %2
      * @access public
      * @static
      */
-    public static function getTotalCount($mailing_id, $job_id = null,
-                                            $is_distinct = false) {
+    public static function getTotalCount( $mailing_id, $job_id = null,
+                                          $is_distinct = false, $org_unsubscribe = null ) {
         $dao = new CRM_Core_DAO();
         
         $unsub      = self::getTableName();
@@ -429,6 +429,11 @@ WHERE  email     = %2
         if (!empty($job_id)) {
             $query  .= " AND $job.id = " 
                     . CRM_Utils_Type::escape($job_id, 'Integer');
+        }
+
+        if ( $org_unsubscribe !== null ) {
+            $query  .= " AND $unsub.org_unsubscribe = " 
+                . ( $org_unsubscribe ? 0 : 1 );
         }
         
         if ($is_distinct) {
