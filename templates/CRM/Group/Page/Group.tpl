@@ -45,50 +45,6 @@
    {include file="CRM/Group/Form/Delete.tpl"}
 {/if}
 
-<!--div class="crm-block crm-results-block">
-{if $rows}
-    <div id="group">
-    {if $action eq 16 or $action eq 32 or $action eq 64} {* browse *}  
-    {include file="CRM/common/pager.tpl" location="top"}
-    {include file="CRM/common/pagerAToZ.tpl"}
-       {strip}
-       {* handle enable/disable actions*}
-       {include file="CRM/common/enableDisable.tpl"}
-       {include file="CRM/common/jsortable.tpl"}
-       <table id="options" class="display">
-        <thead>
-          <tr>
-          <th id="sortable">{ts}Name{/ts}</th>
-          <th>{ts}ID{/ts}</th>
-          <th id="nosort">{ts}Description{/ts}</th>
-          <th>{ts}Group Type{/ts}</th>
-          <th>{ts}Visibility{/ts}</th>
-          {if $groupOrg}
-              <th>{ts}Organizaton{/ts}</th>	
-          {/if}
-          <th></th>
-         </tr>
-        </thead>
-       {foreach from=$rows item=row}
-       <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-            <td>{$row.title}</td>	
-            <td>{$row.id}</td>
-            <td>{$row.description|mb_truncate:80:"...":true}</td>
-            <td>{$row.group_type}</td>	
-            <td>{$row.visibility}</td>
-            {if $groupOrg}
-    	    <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.org_id`"}">{$row.org_name}</a></td>
-            {/if}
-            <td>{$row.action|replace:'xx':$row.id}</td>
-         </tr>
-       {/foreach}
-       </table>
-       {/strip}
-    {include file="CRM/common/pager.tpl" location="bottom"}
-    {/if}{* browse action *}
-    </div>
-{/if}
-</div-->
 {if $action ne 1 and $action ne 2 and $action ne 8 and $groupPermission eq 1}
 <div class="crm-submit-buttons">
         <a accesskey="N" href="{crmURL p='civicrm/group/add' q='reset=1'}" id="newGroup" class="button"><span><div class="icon add-icon"></div>{ts}Add Group{/ts}</span></a><br/>

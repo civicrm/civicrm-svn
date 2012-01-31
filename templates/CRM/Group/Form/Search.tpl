@@ -68,7 +68,11 @@
             <th class='crm-group-description'>{ts}Description{/ts}</th>
             <th class='crm-group-group_type'>{ts}Group Type{/ts}</th>
             <th class='crm-group-visibility'>{ts}Visibility{/ts}</th>
-            <th class='crm-group-group-links nosort'>&nbsp;</th>
+            {if $showOrgInfo}
+            <th class='crm-group-org_info'>{ts}Organization{/ts}</th>
+            {/if}
+            <th class='crm-group-group_links nosort'>&nbsp;</th>
+            <th class='hiddenElement'>&nbsp;</th>
         </tr>
     </thead>
 </table>
@@ -105,7 +109,10 @@ function buildGroupSelector( filterSearch ) {
                         {sClass:'crm-group-description', bSortable:false},
                         {sClass:'crm-group-group_type'},
                         {sClass:'crm-group-visibility'},
-                        {sClass:'crm-group-group-links', bSortable:false},
+                        {sClass:'crm-group-group_links', bSortable:false},
+                        {/literal}{if $showOrgInfo}{literal}
+                        {sClass:'crm-group-org_info', bSortable:false},
+                        {/literal}{/if}{literal}
                         {sClass:'hiddenElement', bSortable:false}
                        ],
         "bProcessing": true,
@@ -132,6 +139,8 @@ function buildGroupSelector( filterSearch ) {
                     },
         "fnDrawCallback": function() { setSelectorClass(  ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
+            var showOrgInfo = {/literal}"{$showOrgInfo}"{literal};
+            aoData.push( {name:'showOrgInfo', value: showOrgInfo });
             if ( filterSearch ) {
                 var groupTypes = '';
                 if ( cj('.crm-group-search-form-block #group_type\\[1\\]').prop('checked') ) {

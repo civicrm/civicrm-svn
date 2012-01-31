@@ -654,7 +654,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
  
         // get groups
         $groups = CRM_Contact_BAO_Group::getGroupList( $params );
-        
+
         // add total
         $params['total'] = CRM_Contact_BAO_Group::getGroupCount( $params );
         
@@ -669,6 +669,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                 $groupList[$id]['group_type']         = CRM_Utils_Array::value( 'group_type', $value );
                 $groupList[$id]['visibility']         = $value['visibility'];
                 $groupList[$id]['links']              = $value['action'];
+                $groupList[$id]['org_info']           = $value['org_info'];
                 $groupList[$id]['class']              = $value['class'];
             }
             return $groupList;
@@ -718,9 +719,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         }
 
         $select = $from = $where = "";
+        $groupOrg = false;
         if ( CRM_Core_Permission::check( 'administer Multiple Organizations' ) &&
              CRM_Core_Permission::isMultisiteEnabled( ) ) {
-            $select = ", contact.display_name as orgName, contact.id as orgID";
+            $select = ", contact.display_name as org_name, contact.id as org_id";
             $from   = " LEFT JOIN civicrm_group_organization gOrg
                                ON gOrg.group_id = groups.id 
                         LEFT JOIN civicrm_contact contact
@@ -731,7 +733,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
             if ( $orgID ) { 
                 $where = " AND gOrg.organization_id = {$orgID}";
             }
-            $this->assign( 'groupOrg',true );    
+        
+            $groupOrg = true;
         }
         
         $query = "
@@ -806,10 +809,12 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
                                                                             $action,
                                                                             array( 'id'   => $object->id,
                                                                                    'ssid' => $object->saved_search_id ) );
-                if ( array_key_exists( 'orgName', $object ) ) {
-                    if ( $object->orgName ) {
-                        $values[$object->id]['org_name'] = $object->orgName;
-                        $values[$object->id]['org_id']   = $object->orgID;
+                if ( $groupOrg ) {
+                    if ( $object->org_id ) {
+                        $contactUrl = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$object->org_id}");
+                        $values[$object->id]['org_info'] = "<a href='{$contactUrl}'>{$object->org_name}</a>";
+                    } else {
+                        $values[$object->id]['org_info'] = '';
                     }   
                 }
             }
