@@ -1793,7 +1793,7 @@ AND civicrm_contact.is_opt_out =0";
                 $searchFilter .= "&mailing_delivery_status=Y";
                 break;
             case 'bounce':
-                $reportFilter .= "&delivery_status_value=bounced"; 
+                $url = "mailing/bounce";
                 $searchFilter .= "&mailing_delivery_status=N";
                 break;
             case 'forward':

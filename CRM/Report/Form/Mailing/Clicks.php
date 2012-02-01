@@ -280,4 +280,27 @@ class CRM_Report_Form_Mailing_Clicks extends CRM_Report_Form {
         CRM_Utils_OpenFlashChart::buildChart( $chartInfo, $this->_params['charts'] );
         $this->assign( 'chartType', $this->_params['charts'] ); 
     }
+
+    function alterDisplay( &$rows ) {
+        // custom code to alter rows
+        $entryFound = false;
+        foreach ( $rows as $rowNum => $row ) {
+            // make count columns point to detail report
+ 	 	 	// convert display name to links
+ 	 	 	if ( array_key_exists('civicrm_contact_sort_name', $row) &&
+                 array_key_exists('civicrm_contact_id', $row) ) {
+                $url = CRM_Utils_System::url( 'civicrm/contact/view',
+                                              'reset=1&cid=' . $row['civicrm_contact_id'] );
+                $rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Contact details for this contact.");
+                $entryFound = true;
+            }
+            
+            // skip looking further in rows, if first row itself doesn't
+            // have the column we need
+            if ( !$entryFound ) {
+                break;
+            }
+        }
+    }
 }

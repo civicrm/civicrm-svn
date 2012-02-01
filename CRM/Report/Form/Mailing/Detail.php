@@ -356,7 +356,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         }
 
         if ( array_key_exists( 'reply_id', $this->_params['fields'] ) ||
-            is_numeric( $this->_params['is_replied_value'] ) ) {
+             is_numeric( CRM_Utils_Array::value( 'is_replied_value', $this->_params ) ) ) {
             if ( CRM_Utils_Array::value ( 'is_replied_value', $this->_params ) == 1 ) {
                 $joinType = 'INNER';
                 $this->_columns['civicrm_mailing_event_reply']['filters']['is_replied']['clause'] = '(1)';
@@ -371,7 +371,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         }
 
         if ( array_key_exists( 'unsubscribe_id', $this->_params['fields'] ) ||
-             is_numeric( $this->_params['is_unsubscribed_value'] ) ) {
+             is_numeric( CRM_Utils_Array::value( 'is_unsubscribed_value', $this->_params ) ) ) {
             if ( CRM_Utils_Array::value ( 'is_unsubscribed_value', $this->_params ) == 1 ) {
                 $joinType = 'INNER';
                 $this->_columns['civicrm_mailing_event_unsubscribe']['filters']['is_unsubscribed']['clause'] = '(1)';
@@ -387,7 +387,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         }
 
         if ( array_key_exists( 'optout_id', $this->_params['fields'] ) ||
-             is_numeric( $this->_params['is_optout_value'] ) ) {
+             is_numeric( CRM_Utils_Array::value( 'is_optout_value', $this->_params ) ) ) {
             if ( CRM_Utils_Array::value ( 'is_optout_value', $this->_params ) == 1 ) {
                 $joinType = 'INNER';
                 $this->_columns['civicrm_mailing_event_unsubscribe']['filters']['is_optout']['clause'] = '(1)';
@@ -403,7 +403,7 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         }
 
         if ( array_key_exists( 'forward_id', $this->_params['fields'] ) ||
-             is_numeric( $this->_params['is_forwarded_value'] ) ) {
+             is_numeric( CRM_Utils_Array::value( 'is_forwarded_value', $this->_params ) ) ) {
             if ( CRM_Utils_Array::value ( 'is_forwarded_value', $this->_params ) == 1 ) {
                 $joinType = 'INNER';
                 $this->_columns['civicrm_mailing_event_forward']['filters']['is_forwarded']['clause'] = '(1)';
@@ -446,4 +446,27 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
 
 		return $data;
 	}
+
+    function alterDisplay( &$rows ) {
+        // custom code to alter rows
+        $entryFound = false;
+        foreach ( $rows as $rowNum => $row ) {
+            // make count columns point to detail report
+ 	 	 	// convert display name to links
+ 	 	 	if ( array_key_exists('civicrm_contact_sort_name', $row) &&
+                 array_key_exists('civicrm_contact_id', $row) ) {
+                $url = CRM_Utils_System::url( 'civicrm/contact/view',
+                                              'reset=1&cid=' . $row['civicrm_contact_id'] );
+                $rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Contact details for this contact.");
+                $entryFound = true;
+            }
+            
+            // skip looking further in rows, if first row itself doesn't
+            // have the column we need
+            if ( !$entryFound ) {
+                break;
+            }
+        }
+    }
 }

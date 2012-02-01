@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Report/Form.php';
+require_once 'CRM/Mailing/BAO/Mailing.php';
 
 class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
 
@@ -44,7 +45,7 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
     
     protected $_phoneField   = false;
     
-	# just a toggle we use to build the from
+	// just a toggle we use to build the from
 	protected $_mailingidField = false;
 	
     protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
@@ -84,7 +85,7 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
 			),
             'order_bys'  =>
             array( 'sort_name' =>
-                   array( 'title' => ts( 'Contact Name'), 'default_order' => 'ASC') ),
+                   array( 'title' => ts( 'Contact Name'), 'default' => true, 'default_order' => 'ASC') ),
                                      
 			'grouping'  => 'contact-fields',		
 		);
@@ -103,14 +104,14 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
                                
 			),
 			'filters' => array(
-				'mailing_name' => array(
-					'name' => 'name',
+				'mailing_id' => array(
+					'name' => 'id',
 					'title' => ts('Mailing'),
 					'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-					'type'=> CRM_Utils_Type::T_STRING,
-					'options' => self::mailing_select( ),
+					'type'=> CRM_Utils_Type::T_INT,
+					'options' => CRM_Mailing_BAO_Mailing::getMailingsList(),
 					'operator' => 'like',
-				),					
+				),                              
 			),
             'order_bys'  =>
             array( 'mailing_name' =>
@@ -172,17 +173,6 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
 
 			'grouping'  => 'contact-fields', 
 		);
-		
-		// $this->_columns['civicrm_address'] = array( 
-			// 'dao' => 'CRM_Core_DAO_Address',
-			// 'grouping'  => 'contact-fields',
-			// 'fields' => array( 
-				// 'street_address'  => array( 'default' => true ),
-				// 'city' => array( 'default' => true ),
-				// 'postal_code' => null,
-				// 'state_province_id' => array( 'title'   => ts( 'State/Province' ), ),
-			// ),
-		// );
 		
         $this->_columns['civicrm_phone'] = array( 
                                                  'dao' => 'CRM_Core_DAO_Phone',
@@ -273,13 +263,6 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
 					ON civicrm_mailing_job.mailing_id = {$this->_aliases['civicrm_mailing']}.id
 			";
 	   	
-        // if ( $this->_emailField ) {
-            // $this->_from .= "
-            // LEFT JOIN  civicrm_email {$this->_aliases['civicrm_email']} 
-                   // ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND
-                      // {$this->_aliases['civicrm_email']}.is_primary = 1) ";
-        // }
-		
         if ( $this->_phoneField ) {
             $this->_from .= "
             LEFT JOIN civicrm_phone {$this->_aliases['civicrm_phone']} 
@@ -333,22 +316,6 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
         $this->assign( 'chartType', $this->_params['charts'] ); 
     }
 
-	function mailing_select() {
-		require_once('CRM/Mailing/BAO/Mailing.php');
-		
-		$data = array( );
-		
-		$mailing = new CRM_Mailing_BAO_Mailing();
-		$query = "SELECT name FROM civicrm_mailing ";
-		$mailing->query($query);
-		
-		while($mailing->fetch()) {
-			$data[mysql_real_escape_string($mailing->name)] = $mailing->name;
-		}
-
-		return $data;
-	}
-	
 	function bounce_type() {
 		require_once('CRM/Mailing/DAO/BounceType.php');
 		
@@ -364,4 +331,27 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
 		
 		return $data;
 	}
+
+    function alterDisplay( &$rows ) {
+        // custom code to alter rows
+        $entryFound = false;
+        foreach ( $rows as $rowNum => $row ) {
+            // make count columns point to detail report
+ 	 	 	// convert display name to links
+ 	 	 	if ( array_key_exists('civicrm_contact_sort_name', $row) &&
+                 array_key_exists('civicrm_contact_id', $row) ) {
+                $url = CRM_Utils_System::url( 'civicrm/contact/view',
+                                              'reset=1&cid=' . $row['civicrm_contact_id'] );
+                $rows[$rowNum]['civicrm_contact_sort_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Contact details for this contact.");
+                $entryFound = true;
+            }
+            
+            // skip looking further in rows, if first row itself doesn't
+            // have the column we need
+            if ( !$entryFound ) {
+                break;
+            }
+        }
+    }
 }
