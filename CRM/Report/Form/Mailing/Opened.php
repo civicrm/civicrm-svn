@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Report/Form.php';
+require_once 'CRM/Mailing/BAO/Mailing.php';
 
 class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
 
@@ -81,31 +82,32 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
 			),
             'order_bys'  =>
             array( 'sort_name' =>
-                   array( 'title' => ts( 'Contact Name'), 'default_order' => 'ASC') ),
+                   array( 'title' => ts( 'Contact Name'), 'default' => true, 'default_order' => 'ASC') ),
 			'grouping'  => 'contact-fields',		
 		);
 		
 		$this->_columns['civicrm_mailing'] = array(
 			'dao' => 'CRM_Mailing_DAO_Mailing',
-			'fields' => array(
-                              'mailing_name' => array(
-                                                      'name' => 'name',           
-                                                      'title' => ts('Mailing'),
-                                                      'default' => true
-                                                      ),
-                              'mailing_name_alias' => array(
-                                                            'name' => 'name',
-                                                            'required' => true,
-                                                            'no_display' => true ),
-                              
-                              ),
+			'fields' => 
+            array(
+                  'mailing_name' => array(
+                                          'name' => 'name',           
+                                          'title' => ts('Mailing'),
+                                          'default' => true
+                                          ),
+                  'mailing_name_alias' => array(
+                                                'name' => 'name',
+                                                'required' => true,
+                                                'no_display' => true ),
+                  
+                  ),
 			'filters' => array(
-				'mailing_name' => array(
-					'name' => 'name',
+				'mailing_id' => array(
+					'name' => 'id',
 					'title' => ts('Mailing'),
 					'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-					'type'=> CRM_Utils_Type::T_STRING,
-					'options' => self::mailing_select( ),
+					'type'=> CRM_Utils_Type::T_INT,
+					'options' => CRM_Mailing_BAO_Mailing::getMailingsList(),
 					'operator' => 'like',
 				),                              
 			),
@@ -269,19 +271,4 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
         CRM_Utils_OpenFlashChart::buildChart( $chartInfo, $this->_params['charts'] );
         $this->assign( 'chartType', $this->_params['charts'] ); 
     }
-
-	function mailing_select() {
-		require_once('CRM/Mailing/BAO/Mailing.php');
-		
-		$data = array( );
-		$mailing = new CRM_Mailing_BAO_Mailing();
-		$query = "SELECT name FROM civicrm_mailing ";
-		$mailing->query($query);
-		
-		while($mailing->fetch()) {
-			$data[mysql_real_escape_string($mailing->name)] = $mailing->name;
-		}
-
-		return $data;
-	}
 }

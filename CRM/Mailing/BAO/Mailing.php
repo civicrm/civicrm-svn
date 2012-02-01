@@ -1776,10 +1776,9 @@ AND civicrm_contact.is_opt_out =0";
         $actionLinks = array(
                              CRM_Core_Action::VIEW     => 
                              array(
-                                   'name'  => ts('Report'),
-                                   'url'   => 
-                                   CRM_Report_Utils_Report::getNextUrl( 'mailing/detail', 
-                                                                        "reset=1&mailing_id_op=in&mailing_id_value={$mailing_id}", false, true ),
+                                   'name'   => ts('Report'),
+                                   'url'    => 'mailing/detail',
+                                   'filter' => "reset=1&mailing_id_value={$mailing_id}",
                                    ),
                              CRM_Core_Action::ADVANCED => 
                              array(
@@ -1793,6 +1792,38 @@ AND civicrm_contact.is_opt_out =0";
         $report['event_totals']['actionlinks'] = array();
         foreach ( array('clicks', 'clicks_unique', 'queue', 'delivered', 'bounce', 'unsubscribe', 
                         'forward', 'reply', 'opened', 'optout' ) as $key ) {
+            $url    = 'mailing/detail';
+            $filter = "reset=1&mailing_id_value={$mailing_id}";
+            switch ( $key ) {
+            case 'delivered':
+                $filter .= "&delivery_status_value=successful"; 
+                break;
+            case 'bounce':
+                $filter .= "&delivery_status_value=bounced"; 
+                break;
+            case 'forward':
+                $filter .= "&is_forwarded_value=1"; 
+                break;
+            case 'reply':
+                $filter .= "&is_replied_value=1"; 
+                break;
+            case 'unsubscribe':
+                $filter .= "&is_unsubscribed_value=1"; 
+                break;
+            case 'optout':
+                $filter .= "&is_optout_value=1"; 
+                break;
+            case 'opened':
+                $url = 'mailing/opened';
+                break;
+            case 'clicks':
+            case 'clicks_unique':
+                $url = 'mailing/clicks';
+                break;
+            }
+            $actionLinks[CRM_Core_Action::VIEW]['url'] = 
+                CRM_Report_Utils_Report::getNextUrl( $url, $filter, false, true );
+
             $report['event_totals']['actionlinks'][$key] = 
                 CRM_Core_Action::formLink($actionLinks, $action, array());
         }
