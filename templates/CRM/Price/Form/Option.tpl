@@ -43,7 +43,7 @@
 	    {/if}
 	    <tr class="crm-price-option-form-block-label">
                <td class="label">{$form.label.label}</td>
-               <td>{$form.label.html}</td>
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field_value' field='label' id=$sid}{/if}{$form.label.html}</td>
             </tr>
             <tr class="crm-price-option-form-block-amount">
                 <td class="label">{$form.amount.label}</td>
@@ -51,7 +51,7 @@
             </tr>
             <tr class="crm-price-option-form-block-description">
                 <td class="label">{$form.description.label}</td>
-                <td>{$form.description.html}</td>
+                <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field_value' field='description' id=$sid}{/if}{$form.description.html}</td>
             </tr>
             <tr class="crm-price-option-form-block-count">
                 <td class="label">{$form.count.label}</td>
