@@ -1773,11 +1773,12 @@ AND civicrm_contact.is_opt_out =0";
 
 
         require_once 'CRM/Report/Utils/Report.php';
-        $actionLinks = array( CRM_Core_Action::VIEW     => 
-                              array( 'name'   => ts('Report'), ),
-                              CRM_Core_Action::ADVANCED => 
-                              array( 'name'  => ts('Advanced Search'),
-                                     'url'   => 'civicrm/contact/search/advanced', ), );
+        $actionLinks = array( CRM_Core_Action::VIEW => array( 'name' => ts('Report'), ), );
+        if ( CRM_Core_Permission::check( 'view all contacts' ) ) {
+            $actionLinks[CRM_Core_Action::ADVANCED] = 
+                array( 'name'  => ts('Advanced Search'),
+                       'url'   => 'civicrm/contact/search/advanced', );
+        }
         $action = array_sum(array_keys($actionLinks));
 
         $report['event_totals']['actionlinks'] = array();
@@ -1823,8 +1824,9 @@ AND civicrm_contact.is_opt_out =0";
             }
             $actionLinks[CRM_Core_Action::VIEW]['url'] = 
                 CRM_Report_Utils_Report::getNextUrl( $url, $reportFilter, false, true );
-            $actionLinks[CRM_Core_Action::ADVANCED]['qs'] = $searchFilter;
-
+            if ( array_key_exists(CRM_Core_Action::ADVANCED, $actionLinks) ) {
+                $actionLinks[CRM_Core_Action::ADVANCED]['qs'] = $searchFilter;
+            }
             $report['event_totals']['actionlinks'][$key] = 
                 CRM_Core_Action::formLink($actionLinks, $action, array());
         }
