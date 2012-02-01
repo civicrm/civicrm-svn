@@ -648,6 +648,33 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 if ( isset( $this->_operator ) ) {
                     $this->_formValues['operator'] = $this->_operator;
                 }
+
+                // FIXME: we should generalise in a way that components could inject url-filters
+                // just like they build their own form elements
+                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_id', 'Positive', $this ) ) {
+                    $this->_formValues['mailing_id'] = array( $filterVal );
+                }
+                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_delivery_status', 'String', $this ) ) {
+                    $this->_formValues['mailing_delivery_status'] = $filterVal;
+                }
+                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_open_status', 'String', $this ) ) {
+                    $this->_formValues['mailing_open_status'] = $filterVal;
+                }
+                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_click_status', 'String', $this ) ) {
+                    $this->_formValues['mailing_click_status'] = $filterVal;
+                }
+                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_reply_status', 'String', $this ) ) {
+                    $this->_formValues['mailing_reply_status'] = $filterVal;
+                }
+                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_unsubscribe', 'String', $this ) ) {
+                    $this->_formValues['mailing_unsubscribe'] = $filterVal;
+                }
+                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_optout', 'String', $this ) ) {
+                    $this->_formValues['mailing_optout'] = $filterVal;
+                }
+                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_forward', 'String', $this ) ) {
+                    $this->_formValues['mailing_forward'] = $filterVal;
+                }
             }
         }
         $this->assign( 'id',

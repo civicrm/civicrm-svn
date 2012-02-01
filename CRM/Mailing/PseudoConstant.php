@@ -209,6 +209,9 @@ class CRM_Mailing_PseudoConstant extends CRM_Core_PseudoConstant
                 'bounce'  => array( 
                     'N' => ts('Successful '), 'Y' => ts('Bounced '), 
                 ),
+                'delivered' => array( 
+                    'Y' => ts('Successful '), 'N' => ts('Bounced '), 
+                ),
                 'open' => array( 
                     'Y' => ts('Opened '), 'N' => ts('Unopened/Hidden '),
                 ),
