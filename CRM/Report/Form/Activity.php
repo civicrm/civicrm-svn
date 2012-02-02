@@ -552,6 +552,14 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                 }
             }
 
+            if ( array_key_exists('civicrm_activity_activity_date_time', $row ) ) {
+                if ( CRM_Utils_Date::overdue( $rows[$rowNum]['civicrm_activity_activity_date_time'] ) && 
+                     $activityStatus[$row['civicrm_activity_status_id']] != 'Completed' ) {
+                    $rows[$rowNum]['class'] = "status-overdue";
+                    $entryFound = true;
+                }
+            }
+
             $entryFound =  $this->alterDisplayAddressFields($row,$rows,$rowNum,'activity','List all activities for this ')?true:$entryFound;
  
             if ( !$entryFound ) {

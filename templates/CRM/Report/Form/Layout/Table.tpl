@@ -95,7 +95,7 @@
 
         {foreach from=$rows item=row key=rowid}
            {eval var=$sectionHeaderTemplate}
-            <tr  class="{cycle values="odd-row,even-row"} crm-report" id="crm-report_{$rowid}">
+            <tr  class="{cycle values="odd-row,even-row"} {$row.class} crm-report" id="crm-report_{$rowid}">
                 {foreach from=$columnHeaders item=header key=field}
                     {assign var=fieldLink value=$field|cat:"_link"}
                     {assign var=fieldHover value=$field|cat:"_hover"}
