@@ -692,7 +692,7 @@ SELECT  id
       $billing_id = CRM_Core_BAO_LocationType::getBilling();
           list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $key, 2 );
                     
-                    if(empty($index) && (
+                    if(!empty($index) && (
                             !CRM_Utils_array::value($prefixName, $profileAddressFields)
                               || $index == $billing_id
                               || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id))){
