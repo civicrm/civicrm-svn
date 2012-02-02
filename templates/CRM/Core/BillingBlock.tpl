@@ -188,18 +188,32 @@ function sameAddress( setValue ) {
     cj('.billing_name_address-section input').each( function( i ){                                                                                                                                                                       
             orgID = cj(this).attr('id');
             field = orgID.split('-');                                                                                                                                                                                                     
-            fieldName = field[0].replace('billing_', '');   
-                                                                                                                                                                        
+            fieldName = field[0].replace('billing_', '');                                                                                                                                                             
             if ( field[1] ) { // ie. there is something after the '-' like billing_street_address-5   
                               // this means it is an address field                                                                                                                                                                                                         
-              if(addressFields[fieldName]){
-                fieldName = fieldName.replace('_id', '');
+              if(addressFields[fieldName]){             
                 fieldName =  fieldName + '-' + addressFields[fieldName]; 
               }                                                                                                                                                                                   
                                                                                                                                                                          
-            }                                                                                                                                                                                                                                                                                                                                                                                                                                         
+            }  
+                                                                                                                                                                                                                                                                                                                                                                                                                                             
               cj(this).val( cj('#' + fieldName ).val() );                                                                                                                                                                                                                                                                                                                                                                                                              
             });
+    cj('.billing_name_address-section select').each( function( i ){                                                                                                                                                                       
+        orgID = cj(this).attr('id');
+        field = orgID.split('-');                                                                                                                                                                                                     
+        fieldName = field[0].replace('billing_', ''); 
+        fieldNameBase = fieldName.replace('_id', '');                                                                                                                                                            
+        if ( field[1] ) { // ie. there is something after the '-' like billing_street_address-5   
+                          // this means it is an address field                                                                                                                                                                                                         
+          if(addressFields[fieldNameBase]){
+            fieldName =  fieldNameBase + '-' + addressFields[fieldNameBase]; 
+          }                                                                                                                                                                                   
+                                                                                                                                                                     
+        }  
+                                                                                                                                                                                                                                                                                                                                                                                                                                         
+          cj(this).val( cj('#' + fieldName ).val() );                                                                                                                                                                                                                                                                                                                                                                                                              
+        });
       }                                                                                                                                                                                                                           
 }                                                                                                                                                                                                                                         
 {/literal} 
