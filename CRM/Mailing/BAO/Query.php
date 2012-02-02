@@ -211,7 +211,7 @@ class CRM_Mailing_BAO_Query
                                                ts('Mailing: '), $valueTitle);
                 return;
             case 'mailing_forward':
-                $valueTitle = array( 1 => ts('Forwards') );
+                $valueTitle = array( 'Y' => ts('Forwards') );
                 $values[2]  = 'Y'; // since its a checkbox
                 self::mailingEventQueryBuilder($query, $values,
                                                'civicrm_mailing_event_forward', 'mailing_forward', 

@@ -654,26 +654,12 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_id', 'Positive', $this ) ) {
                     $this->_formValues['mailing_id'] = array( $filterVal );
                 }
-                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_delivery_status', 'String', $this ) ) {
-                    $this->_formValues['mailing_delivery_status'] = $filterVal;
-                }
-                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_open_status', 'String', $this ) ) {
-                    $this->_formValues['mailing_open_status'] = $filterVal;
-                }
-                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_click_status', 'String', $this ) ) {
-                    $this->_formValues['mailing_click_status'] = $filterVal;
-                }
-                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_reply_status', 'String', $this ) ) {
-                    $this->_formValues['mailing_reply_status'] = $filterVal;
-                }
-                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_unsubscribe', 'String', $this ) ) {
-                    $this->_formValues['mailing_unsubscribe'] = $filterVal;
-                }
-                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_optout', 'String', $this ) ) {
-                    $this->_formValues['mailing_optout'] = $filterVal;
-                }
-                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_forward', 'String', $this ) ) {
-                    $this->_formValues['mailing_forward'] = $filterVal;
+                foreach ( array('mailing_delivery_status', 'mailing_open_status', 'mailing_click_status', 
+                                'mailing_reply_status', 'mailing_optout', 'mailing_forward', 
+                                'mailing_unsubscribe', 'mailing_date_low', 'mailing_date_high') as $mailingFilter ) {
+                    if ( $filterVal = CRM_Utils_Request::retrieve( $mailingFilter, 'String', $this ) ) {
+                        $this->_formValues[$mailingFilter] = $filterVal;
+                    }
                 }
             }
         }
