@@ -703,9 +703,9 @@ SELECT  id
                               || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id)
                               || ($index = CRM_Core_BAO_LocationType::getDefault() 
                                           && $profileAddressFields[$prefixName] != $billing_id
-                                          && $profileAddressFields[$prefixName] != 'Primary'))){                        $profileAddressFields[$prefixName] = $index;
+                                          && $profileAddressFields[$prefixName] != 'Primary'))){
+                       $profileAddressFields[$prefixName] = $index;
                       }
                     
     } 
 }
-
