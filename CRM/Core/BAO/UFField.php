@@ -674,5 +674,31 @@ SELECT  id
         $query = "UPDATE civicrm_uf_field SET in_selector = 0, is_searchable = 0 WHERE  uf_group_id = {$profileID}";
         CRM_Core_DAO::executeQuery( $query );
     }
+    
+     /*
+     * Add fields to $profileAddressFields as appropriate.
+     * profileAddressFields is assigned to the template to tell it
+     * what fields are in the profile address
+     * that potentially should be copied to the Billing fields
+     * we want to give precedence to Billing & then Primary here as this will be used to
+     * transfer profile address data to billing fields
+     * http://issues.civicrm.org/jira/browse/CRM-5869
+     * 
+     * @param string $key Field key - e.g. street_address-Primary, first_name
+     * @params array $profileAddressFields array of profile fields that relate to address fields
+     */
+    static function assignAddressField($key, &$profileAddressFields){
+      require_once 'CRM/Core/BAO/LocationType.php';
+      $billing_id = CRM_Core_BAO_LocationType::getBilling();
+          list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $key, 2 );
+                    
+                    if(!empty($index) && (
+                            !empty($profileAddressFields[$prefixName])
+                              || $index == $billing_id
+                              || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id))){
+                        $profileAddressFields[$prefixName] = $index;
+                      }
+                    
+    } 
 }
 
