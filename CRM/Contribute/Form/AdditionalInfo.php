@@ -442,6 +442,7 @@ class CRM_Contribute_Form_AdditionalInfo
                 'groupName' => 'msg_tpl_workflow_contribution',
                 'valueName' => 'contribution_offline_receipt',
                 'contactId' => $params['contact_id'],
+                'contributionId' => $params['contribution_id'],
                 'from'      => $params['from_email_address'],
                 'toName'    => $contributorDisplayName,
                 'toEmail'   => $contributorEmail,
