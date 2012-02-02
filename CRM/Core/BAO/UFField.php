@@ -680,10 +680,15 @@ SELECT  id
      * profileAddressFields is assigned to the template to tell it
      * what fields are in the profile address
      * that potentially should be copied to the Billing fields
-     * we want to give precedence to Billing & then Primary here as this will be used to
+     * we want to give precedence to 
+     *   1) Billing & 
+     *   2) then Primary designated as 'Primary
+     *   3) location_type is primary
+     *   4) if none of these apply then it just uses the first one
+     *   
+     *   as this will be used to
      * transfer profile address data to billing fields
      * http://issues.civicrm.org/jira/browse/CRM-5869
-     * 
      * @param string $key Field key - e.g. street_address-Primary, first_name
      * @params array $profileAddressFields array of profile fields that relate to address fields
      */
@@ -695,8 +700,10 @@ SELECT  id
                     if(!empty($index) && (
                             !CRM_Utils_array::value($prefixName, $profileAddressFields)
                               || $index == $billing_id
-                              || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id))){
-                        $profileAddressFields[$prefixName] = $index;
+                              || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id)
+                              || ($index = CRM_Core_BAO_LocationType::getDefault() 
+                                          && $profileAddressFields[$prefixName] != $billing_id
+                                          && $profileAddressFields[$prefixName] != 'Primary'))){                        $profileAddressFields[$prefixName] = $index;
                       }
                     
     } 
