@@ -704,11 +704,14 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                         }
                         $stateCountryMap[$index][$prefixName] = $key;
                     }
-
+                    $this->assignAddressField($key, &$profileAddressFields);
                     CRM_Core_BAO_UFGroup::buildProfile( $this, $field,CRM_Profile_Form::MODE_CREATE, $contactID, true );
 
                     $this->_fields[$key] = $field;
                 }
+            }
+            if(!empty( $profileAddressFields)){                     
+              $this->assign('profileAddressFields',$profileAddressFields);
             }
             require_once 'CRM/Core/BAO/Address.php';
             CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
@@ -1283,7 +1286,27 @@ WHERE  v.option_group_id = g.id
         
         return $errors;
     }
-    
+    /*
+     * Add fields to $profileAddressFields as appropriate.
+     * profileAddressFields is assigned to the template  to tell it
+     * what fields are in the profile address
+     * that potentially should be copied to the Billing fields
+     * we want to give precedence to Billing & then Primary here as this will be used to 
+     * transfer profile address data to billing fields
+     */
+    function assignAddressField($key, &$profileAddressFields){
+      require_once 'CRM/Core/BAO/LocationType.php';
+      $billing_id = CRM_Core_BAO_LocationType::getBilling();
+          list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $key, 2 );
+                    
+                    if(!empty($index) && (
+                            !empty($profileAddressFields[$prefixName])
+                              || $index == $billing_id
+                              || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id))){
+                        $profileAddressFields[$prefixName] = $index;
+                      }
+                    
+    }
 }
 
 
