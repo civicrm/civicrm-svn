@@ -24,6 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {if $form.credit_card_number or $form.bank_account_number}
+   {if $profileAddressFields}
+   <input type="checkbox" id="billingcheckbox" value=0> {ts}Billing Address is same as above{/ts}
+   {/if}
     <div id="payment_information">
         <fieldset class="billing_mode-group {if $paymentProcessor.payment_type & 2}direct_debit_info-group{else}credit_card_info-group{/if}">
             <legend>
@@ -164,4 +167,42 @@
                 </fieldset>
             {/if}
     </div>
+     {if $profileAddressFields}
+     <script type="text/javascript">
+    {literal}                                                                                                                                                                                                                                 
+cj( function( ) {                                                                                                                                                                                                                         
+    cj('#billingcheckbox').click( function( ) {
+                                                                                                                                                                                         
+          sameAddress( this.checked ); // need to only action when check not when toggled, can't assume desired behaviour
+                                                                                                                                                                                                
+        });                                                                                                                                                                                                                               
+    });                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                         
+function sameAddress( setValue ) { 
+  {/literal} 
+    var  addressFields = {$profileAddressFields|@json_encode};
+    {literal}
+    var locationTypeInProfile = 'Primary';                                                                                                                                                                                                       
+    var orgID = field = fieldName = null;   
+    if ( setValue ) {                                                                                                                                                                                          
+    cj('.billing_name_address-section input').each( function( i ){                                                                                                                                                                       
+            orgID = cj(this).attr('id');
+            field = orgID.split('-');                                                                                                                                                                                                     
+            fieldName = field[0].replace('billing_', '');   
+                                                                                                                                                                        
+            if ( field[1] ) { // ie. there is something after the '-' like billing_street_address-5   
+                              // this means it is an address field                                                                                                                                                                                                         
+              if(addressFields[fieldName]){
+                fieldName = fieldName.replace('_id', '');
+                fieldName =  fieldName + '-' + addressFields[fieldName]; 
+              }                                                                                                                                                                                   
+                                                                                                                                                                         
+            }                                                                                                                                                                                                                                                                                                                                                                                                                                         
+              cj(this).val( cj('#' + fieldName ).val() );                                                                                                                                                                                                                                                                                                                                                                                                              
+            });
+      }                                                                                                                                                                                                                           
+}                                                                                                                                                                                                                                         
+{/literal} 
+</script>
+{/if}
 {/if}
