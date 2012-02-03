@@ -176,8 +176,11 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
                 $dao = new $d();
             }
         }
+        if (is_string($action))
+          $apiFields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => $action)+ $params);
+        else
+          $apiFields = civicrm_api($entity, 'getfields', array('version' => 3)+ $params);
 
-        $apiFields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => $action)+ $params);
         $allFields = array();
         if(is_array(CRM_Utils_Array::value('values', $apiFields))){
           $allFields = array_keys($apiFields['values']);
