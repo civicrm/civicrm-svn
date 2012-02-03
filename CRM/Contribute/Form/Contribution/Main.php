@@ -812,7 +812,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                     $priceFieldIDS[] = $priceFldVal;
                                 }
                             }
-                        } else {
+                        } else if ( ! $value['is_enter_qty'] ) {
+                            // The check for {!$value['is_enter_qty']} is done since, quantity fields allow entering 
+                            // quantity. And the quantity can't be conisdered as civicrm_price_field_value.id, CRM-9577
                             $priceFieldIDS[] = $fields['price_'.$priceId];
                         }
                         
