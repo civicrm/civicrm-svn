@@ -697,16 +697,9 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
 
         $config = CRM_Core_Config::singleton( );
 
-        //$params = array( );
         $whereClause = self::whereClause( $params, false );
         
         //$this->pagerAToZ( $whereClause, $params );
-        
-        //$params      = array( );
-        //$whereClause = $this->whereClause( $params, true );
-        //$this->pager( $whereClause, $params );
-        
-        //list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
 
         if ( !empty( $params['rowCount'] ) &&
              $params['rowCount'] > 0 ) {
@@ -824,8 +817,9 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
     }
 
     static function getGroupCount( &$params ) {
-        $query = " SELECT COUNT(*) FROM civicrm_group";
-        return CRM_Core_DAO::singleValueQuery( $query );
+        $whereClause = self::whereClause( $params, false );
+        $query = " SELECT COUNT(*) FROM civicrm_group groups WHERE {$whereClause}";
+        return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
 
     function whereClause( &$params, $sortBy = true, $excludeHidden = true ) {
