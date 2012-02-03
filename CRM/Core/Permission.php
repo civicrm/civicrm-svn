@@ -472,29 +472,40 @@ class CRM_Core_Permission {
      **/
     static function giveMeAllACLs( ) 
     {
-        $hasPermission = false;
         if ( CRM_Core_Permission::check( 'view all contacts' ) ||
              CRM_Core_Permission::check( 'edit all contacts' ) ) {
-            $hasPermission = true;
+            return true;
         }
         
-        //check for acl.
-        if ( ! $hasPermission ) { 
-            $aclPermission = self::getPermission( );
-            if ( in_array( $aclPermission, array( CRM_Core_Permission::EDIT, 
-                                                  CRM_Core_Permission::VIEW ) ) ) {
-                $hasPermission = true;
-            } else if ( self::isMultisiteEnabled( ) ) {
-                // For multisite just check if there are contacts in acl_contact_cache table for now.
-                // FixMe: so even if a user in multisite has very limited permission could still 
-                // see search / contact navigation options for example.
+        $session   = CRM_Core_Session::singleton( );
+        $contactID = $session->get( 'userID' );
 
-                require_once 'CRM/Contact/BAO/Contact/Permission.php';
-                $hasPermission = CRM_Contact_BAO_Contact_Permission::hasContactsInCache( );
-            }
+        if ( self::isMultisiteEnabled( ) ) {
+            // For multisite just check if there are contacts in acl_contact_cache table for now.
+            // FixMe: so even if a user in multisite has very limited permission could still 
+            // see search / contact navigation options for example.
+            require_once 'CRM/Contact/BAO/Contact/Permission.php';
+            return CRM_Contact_BAO_Contact_Permission::hasContactsInCache( CRM_Core_Permission::VIEW,
+                                                                           $contactID );
         }
+
+        //check for acl.
+        $aclPermission = self::getPermission( );
+        if ( in_array( $aclPermission, array( CRM_Core_Permission::EDIT, 
+                                              CRM_Core_Permission::VIEW ) ) ) {
+            return true;
+        }
+
+        // run acl where hook and see if the user is supplying an ACL clause
+        // that is not false
+        $tables = $whereTables = array( );
+        $where  = null;
         
-        return $hasPermission;
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::aclWhereClause( CRM_Core_Permission::VIEW,
+                                        $tables, $whereTables,
+                                        $contactID, $where );
+        return empty( $whereTables ) ? false : true;
     }
     
     /**

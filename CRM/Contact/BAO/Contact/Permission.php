@@ -151,17 +151,20 @@ ON DUPLICATE KEY UPDATE
     /**
      * Function to check if there are any contacts in cache table
      *
-     * @param int     $id     contact id
-     * @param string  $type   the type of operation (view|edit)
+     * @param string  $type      the type of operation (view|edit)
+     * @param int     $contactID contact id
      *
      * @return boolean
      * @access public
      * @static
      */
-    static function hasContactsInCache( $type = CRM_Core_Permission::VIEW )
+    static function hasContactsInCache( $type = CRM_Core_Permission::VIEW,
+                                        $contactID = null )
     {
-        $session   = CRM_Core_Session::singleton( );
-        $contactID = $session->get( 'userID' );
+        if ( ! $contactID ) {
+            $session   = CRM_Core_Session::singleton( );
+            $contactID = $session->get( 'userID' );
+        }
 
         if ( $type = CRM_Core_Permission::VIEW ) {
             $operationClause = " operation IN ( 'Edit', 'View' ) ";

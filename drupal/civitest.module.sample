@@ -109,8 +109,7 @@ SELECT $keys
 FROM   {$permissionTable}
 WHERE  entity_id = $contactID
 ";
-    $dao = CRM_Core_DAO::executeQuery( $sql,
-                                       CRM_Core_DAO::$_nullArray );
+    $dao = CRM_Core_DAO::executeQuery( $sql );
     if ( ! $dao->fetch( ) ) {
         return;
     }
