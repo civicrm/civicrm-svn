@@ -258,6 +258,10 @@ div#crm-container {
     font-size: .9em;
 }
 
+/*
+** Ensures max-width is reset to css default for the images in the maps
+*/
+#Map img { max-width: none; }
 
 /*
 ** CRM form layout classes (from www.realworldstyle.com)
