@@ -36,7 +36,7 @@ class JFormFieldCiviContribPages extends JFormField
 	 * @access	protected
 	 * @var		string
 	 */
-	var	$_name = 'CiviContribPages';
+	var	$type = 'CiviContribPages';
 	
     protected function getInput() {
         

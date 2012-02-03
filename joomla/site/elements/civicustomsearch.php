@@ -36,7 +36,7 @@ class JFormFieldCivicustomsearch extends JFormField {
 	 * @access	protected
 	 * @var		string
 	 */
-	var	$_name = 'Civicustomsearch';
+	var	$type = 'Civicustomsearch';
 	
     protected function getInput( ) {
         $value = $this->value;
