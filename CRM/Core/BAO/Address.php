@@ -269,16 +269,20 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
                 $state_province->name = $params['state_province'];
                 
                 // add country id if present
-                if ( isset( $params['country_id'] ) ) {
+                if ( !empty( $params['country_id'] ) ) {
                     $state_province->country_id = $params['country_id'];
                 }
                 
                 if ( ! $state_province->find(true) ) {
-                    $state_province->name = null;
+                    unset($state_province->name);
                     $state_province->abbreviation = $params['state_province'];
                     $state_province->find(true);
                 }
                 $params['state_province_id'] = $state_province->id;
+                if(empty($params['country_id'])){
+                  // set this here since we have it 
+                  $params['country_id'] = $state_province->country_id;
+                }
             } else {
                 $params['state_province_id'] = 'null';
             }
