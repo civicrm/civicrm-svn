@@ -242,10 +242,10 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                          'fields'  =>
                          array( 'participant_id'            => array( 'title' => 'Participant ID' ),
                                 'participant_record'        => array( 'name'       => 'id' ,
-                                                                      'no_display' => true,
-                                                                      'required'   => true, ),
+                                                                      'title'  => 'Participant Id'
+                                   ),
 
-                                'event_id'                  => array( 
+                                'event_id'                  => array( 'title' => ts('Event ID'),
                                                                       'type'    =>  CRM_Utils_Type::T_STRING ,
                                                                        'alter_display'  => 'alterEventID'),
                                 'status_id'                 => array( 'title'   => ts('Status'),
@@ -304,6 +304,10 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                                                 'title'        => ts( 'Event Type' ),
                                                 'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                                 'options'      => CRM_Core_OptionGroup::values('event_type'),
+                                ),
+                                'event_title' =>  array( 'name'         => 'title',
+                                                'title'        => ts( 'Event Title' ),
+                                                'operatorType' => CRM_Report_Form::OP_STRING,
                                 ), 
                                ),
                          'order_bys'  =>
