@@ -201,6 +201,14 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                                         'operator'   => 'like',
                                         'name' => 'label' ), 
                               ),
+                        'order_bys'  =>
+                         array( 'label' =>
+                                array( 'title' => ts( 'Price Field Value Label'), ),
+                                ),
+                         'group_bys' =>  
+                          array( 'label' => 
+                                 array( 'title' => ts('Price Field Value Label') ),
+                                 ),
  
  
                    ));
@@ -352,7 +360,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                                     array( 'title'        => ts( 'Contribution Status' ), 
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                         'options'      => CRM_Contribute_PseudoConstant::contributionStatus( ),
-                                        'default'      => array( 1 ),
+                                        
                                         ),
                                  'total_amount'           => 
                                     array( 'title'        => ts( 'Contribution Amount' ) ),
@@ -505,7 +513,7 @@ WHERE 	line_item_civireport.id IS NOT NULL
     * Retrieve text for contribution type from pseudoconstant
     */ 
     function alterContributionType( $value ) {
-        return CRM_Contribute_PseudoConstant::contributionType( $value, false );
+        return is_string(CRM_Contribute_PseudoConstant::contributionType( $value, false ))?CRM_Contribute_PseudoConstant::contributionType( $value, false ):'';
     } 
     /*
     * Retrieve text for contribution status from pseudoconstant
