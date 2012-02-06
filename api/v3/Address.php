@@ -100,6 +100,7 @@ function _civicrm_api3_address_create_spec(&$params){
   $params['location_type_id']['api.required'] = 1;
   $params['contact_id']['api.required'] = 1; 
   $params['is_primary']['api.default'] = 1;// TODO note this should be changes to a function call that checks if one exists
+  $params['country'] = array('title' => 'Name or 2-letter abbreviation of country. Looked up in civicrm_country table');
 }
 /**
  * Deletes an existing Address
