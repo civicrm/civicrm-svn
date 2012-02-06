@@ -1407,6 +1407,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
         
         $sent = array( );
+        $notSent = array( );
         if ( CRM_Utils_Array::value( 'send_receipt', $params ) ) {
             if ( array_key_exists( $params['from_email_address'], $this->_fromEmails['from_email_id'] ) ) {
                 $receiptFrom = $params['from_email_address'];
