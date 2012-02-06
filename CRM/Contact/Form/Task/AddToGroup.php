@@ -212,7 +212,7 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
             $groupParams['title'      ] = $params['title'];
             $groupParams['description'] = $params['description'];
             $groupParams['visibility' ] = "User and User Admin Only";
-            if ( is_array( $params['group_type'] ) ) {
+            if ( array_key_exists('group_type', $params) && is_array( $params['group_type'] ) ) {
                 $groupParams['group_type'] =
                     CRM_Core_DAO::VALUE_SEPARATOR . 
                     implode( CRM_Core_DAO::VALUE_SEPARATOR,
