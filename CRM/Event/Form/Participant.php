@@ -1372,7 +1372,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
 
         //do cleanup line  items if participant edit the Event Fee.
-        if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId ) {
+        if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId && isset($params['participantid'])  ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             CRM_Price_BAO_LineItem::deleteLineItems( $params['participant_id'], 'civicrm_participant' );
         }
