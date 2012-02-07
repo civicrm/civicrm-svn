@@ -344,7 +344,7 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
         }
     }
 
-    $acceptedSQLOperators = array('IN', ' NOT IN', '=', '<=', '>=', '>', '<', 'BETWEEN', 'LIKE');
+    $acceptedSQLOperators = array('IN', 'NOT IN', '=', '<=', '>=', '>', '<', 'BETWEEN', 'LIKE',"<>", "!=", "IS NULL", "IS NOT NULL", "NOT LIKE" );
     if (!$fields)
         return;
     foreach ($fields as $field) {
