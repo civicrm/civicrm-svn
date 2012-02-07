@@ -162,7 +162,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
      */
     public $_tag;
     public $_tagElement;
-
+    
     /**
      * form values that we will be using
      *
@@ -469,29 +469,39 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $selectedRowsRadio = $this->addElement('radio', 'radio_ts', null, '', 'ts_sel', array( 'checked' => 'checked',
                                                                           'onclick' => 'toggleTaskAction( true );') );
         $this->assign('ts_sel_id', $selectedRowsRadio->_attributes['id']);
-        
-        $allRowsRadio = $this->addElement('radio', 'radio_ts', null, '', 'ts_all', array( 'onclick' => $this->getName().".toggleSelect.checked = false; toggleCheckboxVals('mark_x_', this);toggleTaskAction( true );" ) );
+               
+        require_once "CRM/Core/BAO/PrevNextCache.php";
+                
+        if( $qfKeyParam = CRM_Utils_Array::value( 'qfKey',$this->_formValues ) ) {
+            $qfKeyParam = "civicrm search {$qfKeyParam}";
+            $selectedContactIdsArr = CRM_Core_BAO_PrevNextCache::markSelection( $qfKeyParam );
+            $selectedContactIds = array_keys( $selectedContactIdsArr[$qfKeyParam] );
+        }
+        $this->assign_by_ref( 'selectedContactIds' , $selectedContactIds );
+               
+        $allRowsRadio = $this->addElement('radio', 'radio_ts', null, '', 'ts_all', array( 'onclick' => $this->getName().".toggleSelect.checked = false; toggleCheckboxVals('mark_x_', this);toggleTaskAction( true );toggleContactSelection( 'resetSel', '{$qfKeyParam}', 'reset' );" ) );
         $this->assign('ts_all_id', $allRowsRadio->_attributes['id']);
 
         /*
          * add form checkboxes for each row. This is needed out here to conform to QF protocol
          * of all elements being declared in builQuickForm
          */ 
-        $qfKeyParam  = CRM_Utils_Array::value( 'qfKey', $this->_formValues );
-
         $rows = $this->get( 'rows' );
-        
+ 
         if ( is_array( $rows ) ) {
-            $this->addElement( 'checkbox', 'toggleSelect', null, null, array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this);" ) );
+            $this->addElement( 'checkbox', 'toggleSelect', null, null, array( 'onclick' => "toggleTaskAction( true );  toggleCheckboxVals('mark_x_',this);return toggleContactSelection( 'toggleSelect', '".$qfKeyParam."' , 'multiple' );" ) );
+            
+            $unselectedContactIds = array( );
             foreach ($rows as $row) {
                 $this->addElement( 'checkbox', $row['checkbox'],
-                                   null, null ,
-                                   array( 'onclick' => "toggleContactSelection( '".$row['checkbox']."', '".$qfKeyParam."' );
-toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" ) );
-             
+                                   null, null,
+                                   array('onclick' => "toggleContactSelection( '".$row['checkbox']."', '".$qfKeyParam."' , 'single' );toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" ) );
+                if ( !in_array($row['contact_id'],$selectedContactIds) ){
+                    $unselectedContactIds[] = $row['contact_id'];
+                }
             }
         }
-
+        $this->assign_by_ref( 'unselectedContactIds' , $unselectedContactIds );
         // add buttons
         $this->addButtons( array(
                                  array ( 'type'      => 'refresh',
@@ -551,15 +561,15 @@ toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" 
                                                                $this,
                                                                false, 1, $_REQUEST,
                                                                'AND' );
-
         /**
          * set the button names
          */
         $this->_searchButtonName = $this->getButtonName( 'refresh' );
         $this->_printButtonName  = $this->getButtonName( 'next'   , 'print' );
         $this->_actionButtonName = $this->getButtonName( 'next'   , 'action' );
-
+        
         $this->assign( 'printButtonName' , $this->_printButtonName  );
+        
         $this->assign( 'actionButtonName', $this->_actionButtonName );
         
         // reset from session, CRM-3526 
@@ -567,7 +577,7 @@ toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" 
         if ( $this->_force && $session->get( 'selectedSearchContactIds' ) ) {
             $session->resetScope( 'selectedSearchContactIds' );
         }
-        
+
         // if we dont get this from the url, use default if one exsts
         $config = CRM_Core_Config::singleton( );
         if ( $this->_ufGroupID == null &&
@@ -589,14 +599,15 @@ toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" 
         $this->assign( $this->_modeValue );
 
         $this->set( 'selectorName', $this->_selectorName );
-
+        
         // get user submitted values 
         // get it from controller only if form has been submitted, else preProcess has set this
         // $this->controller->isModal( ) returns true if page is
         // valid, i.e all the validations are true
 
         if ( ! empty( $_POST ) && !$this->controller->isModal( ) ) {
-            $this->_formValues = $this->controller->exportValues($this->_name); 
+            $this->_formValues = $this->controller->exportValues($this->_name);
+           
             $this->normalizeFormValues( );
             $this->_params = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
             $this->_returnProperties =& $this->returnProperties( );
@@ -757,11 +768,18 @@ toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" 
         if ( $this->_done ) {
             return;
         }
-        $this->_done = true;
+        $this->_done = true;        
+        
+        if ( array_key_exists( $this->_searchButtonName, $_POST ) ){
+            //reset the cache table for new search
+            require_once 'CRM/Core/BAO/PrevNextCache.php';
+            $cacheKey = "civicrm search {$this->controller->_key}";
+            CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey );
+        }
         
         //get the button name
         $buttonName = $this->controller->getButtonName( );
-
+        
         if ( isset( $this->_ufGroupID ) &&
              ! CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) ) { 
             $this->_formValues['uf_group_id'] = $this->_ufGroupID;
@@ -799,6 +817,7 @@ toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" 
             $this->controller->resetPage( $formName );
             return;
         } else {
+            
             $output = CRM_Core_Selector_Controller::SESSION;
             
             // create the selector, controller and run - store results in session
@@ -808,6 +827,7 @@ toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" 
             }
 
             $setDynamic = false;
+            
             if ( strpos( $this->_selectorName, 'CRM_Contact_Selector' ) !== false ) { 
                 eval( '$selector = new ' . $this->_selectorName . 
                       '( $this->_customSearchClass,
@@ -859,6 +879,7 @@ toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" 
             $controller->setEmbedded( true );
             $controller->setDynamicAction( $setDynamic );
             $controller->run();
+            
         }
     }
 

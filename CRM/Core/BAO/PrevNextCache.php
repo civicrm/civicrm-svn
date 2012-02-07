@@ -99,9 +99,12 @@ WHERE  cacheKey     = %3 AND
 
     function deleteItem( $id = null, $cacheKey = null, $entityTable = 'civicrm_contact' )
     {
+ 
         //clear cache
         $sql = "DELETE FROM civicrm_prevnext_cache
                            WHERE  entity_table = %1";
+        
+        
         $params = array( 1 => array( $entityTable, 'String' ) );
 
         if ( is_numeric( $id ) ) {
@@ -270,9 +273,15 @@ AND        c.created_date < date_sub( NOW( ), INTERVAL %2 day )
     * $action select   - select a particular contact
     *         unselect - unselect a particular contact
     *         get      - get contactIds of selected contacts
+    *         getall 
     */
-   static function markSelection( $cacheKey , $action = 'get', $cIds = null ){
+   static function markSelection( $cacheKey , $action = 'get', $cIds = null, $entity_table = 'civicrm_contact' ){
+        if( !$cacheKey ) {
+            return;
+        }                   
         $params = array( );
+
+        $entity_whereClause = " AND entity_table = '{$entity_table}'"; 
         if ( $cIds && $cacheKey && $action ) {
             
             if ( is_array($cIds) ){
@@ -291,40 +300,40 @@ AND (entity_id1 = %2 OR entity_id2 = %2)
             if( $action == 'select' ){
                 $whereClause .="AND is_selected = 0";
                 $sql = "
-UPDATE civicrm_prevnext_cache SET is_selected = 1 " . $whereClause;
+UPDATE civicrm_prevnext_cache SET is_selected = 1 " . $whereClause . $entity_whereClause;
                 $params[1] = array("%{$cacheKey}%", 'String');
                 
             } elseif ( $action == 'unselect' ) {
                 $whereClause .="AND is_selected = 1";
                 $sql = "
-UPDATE civicrm_prevnext_cache SET is_selected = 0 " . $whereClause;
+UPDATE civicrm_prevnext_cache SET is_selected = 0 " . $whereClause . $entity_whereClause;
                 $params[1] = array("%{$cacheKey}%", 'String');
                 
             } 
-        } elseif ( !$cIds && $cacheKey && $action == 'unselect' ){
+        } elseif ( !$cIds && $cacheKey && $action == 'unselect' ){ //default action is reseting
             $sql = "
 UPDATE civicrm_prevnext_cache SET is_selected = 0
 WHERE cacheKey LIKE %1 AND is_selected = 1
-";
+" . $entity_whereClause ;
             $params[1] = array("%{$cacheKey}%", 'String');
             
-        } elseif ( !$cIds && $cacheKey && $action == 'get' ){
+        } elseif ( !$cIds && $cacheKey && ( $action == 'get' || $action == 'getall' ) ) {
+            $actionGet = ($action == "get") ? " AND is_selected = 1 " : "";
             $sql = "
 SELECT entity_id1, entity_id2 FROM civicrm_prevnext_cache 
-WHERE cacheKey LIKE %1 AND is_selected = 1
-";
+WHERE cacheKey LIKE %1 ". $actionGet . $entity_whereClause;
             $params[1] = array("%{$cacheKey}%", 'String');
+
             $contactIds = array( $cacheKey => array( ) ); 
             $cIdDao = CRM_Core_DAO::executeQuery( $sql, $params );
             while ( $cIdDao->fetch() ) {
-
                 if( $cIdDao->entity_id1 == $cIdDao->entity_id2 ){
                   $contactIds[$cacheKey][$cIdDao->entity_id1] = 1;
-                  
+
                 }
             }
-            return $contactIds;
+         return $contactIds;
         }
-        CRM_Core_DAO::executeQuery( $sql, $params );
+       CRM_Core_DAO::executeQuery( $sql, $params );
    }
 }
