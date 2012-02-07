@@ -349,7 +349,7 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
         //array is the syntax for SQL clause
         foreach ($params[$field] as $operator => $criteria){
           if(in_array($operator,$acceptedSQLOperators)){
-            $dao->whereAdd($field . " " . $operator . " " . $criteria);
+            $dao->whereAdd(sprintf('%s %s "%s"', $field, $operator, DAO::escapeString($criteria))); 
           }
           
         } 
