@@ -100,7 +100,7 @@ class CRM_Bridge_OG_Utils {
         if ( $values['is_error'] ) {
             CRM_Core_Error::fatal( );
         }
-        return $values['contact_id'];
+        return $values['id'];
     }
 
     static function groupID( $source, $title = null, $abort = false ) {
