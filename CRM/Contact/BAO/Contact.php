@@ -1733,7 +1733,8 @@ ORDER BY civicrm_email.is_primary DESC";
                     $locTypeId = $defaultLocationId;
                 }
             }
-            if ( is_numeric($locTypeId) && !in_array( $fieldName, $multiplFields ) ) {
+            if ( is_numeric($locTypeId) && !in_array( $fieldName, $multiplFields ) 
+                                        && substr($fieldName, 0, 7) != 'custom_') {
                 $index =  $locTypeId;
                 
                 if ( is_numeric( $typeId ) ) {
