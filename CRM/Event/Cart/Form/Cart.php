@@ -147,8 +147,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
       'is_deleted' => CRM_Utils_Array::value('is_deleted', $fields, true),
     );
     $no_fields = array( );
-    require_once 'CRM/Utils/Hook.php';
-    CRM_Utils_Hook::createCartContact( $registeringContactID, $contact_params );
     $contact_id = CRM_Contact_BAO_Contact::createProfileContact( $contact_params, $no_fields, null, $add_to_groups );
     if (!$contact_id) {
       CRM_Core_Error::displaySessionError("Could not create or match a contact with that email address.  Please contact the webmaster.");
