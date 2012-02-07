@@ -1457,9 +1457,11 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             if ( $this->_isPaidEvent ) {
                 $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
                 if ( ! $this->_mode ) {
-                    $this->assign( 'paidBy',
-                                   CRM_Utils_Array::value( $params['payment_instrument_id'],
-                                                           $paymentInstrument ) );
+                    if ( isset( $params['payment_instrument_id'] ) ) {
+                        $this->assign( 'paidBy',
+                                       CRM_Utils_Array::value( $params['payment_instrument_id'],
+                                                               $paymentInstrument ) );
+                    }
                 }
 
                 $this->assign( 'totalAmount', $contributionParams['total_amount'] );
