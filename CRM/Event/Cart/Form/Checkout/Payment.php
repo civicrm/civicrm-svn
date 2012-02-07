@@ -170,7 +170,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
         if ($can_pay_later)
         {
             $this->addElement( 'checkbox', 'is_pay_later', 
-                               $pay_later_text, null, $attributes );
+                               $pay_later_text );
             $this->assign( 'pay_later_instructions', $this->pay_later_receipt );
         }
   }
