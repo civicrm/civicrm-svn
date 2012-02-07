@@ -1,8 +1,8 @@
 Dear {contact.display_name},
         This is being sent to you as a receipt of payment.
 
-	Your order number is #{$trxn->trxn_id}. Please print this confirmation for your records. Information about event registration will be sent separately to each participant.
-Here's a summary of your transaction placed on {$trxn->trxn_date|date_format:"%D %I:%M %p %Z"}:
+	Your order number is #{$transaction_id}. Please print this confirmation for your records. Information about event registration will be sent separately to each participant.
+Here's a summary of your transaction placed on {$transaction_date|date_format:"%D %I:%M %p %Z"}:
 
 {if $billing_name}
 ===========================================================
@@ -25,21 +25,21 @@ Here's a summary of your transaction placed on {$trxn->trxn_date|date_format:"%D
 
 {foreach from=$line_items item=line_item}
 {$line_item.event->title} ({$line_item.event->start_date|date_format:"%D"})
-{if $isShowLocation}
-  {if $location.address.1.name}
-    {$location.address.1.name}
+{if $line_item.event->is_show_location}
+  {if $line_item.location.address.1.name}
+    {$line_item.location.address.1.name}
   {/if}
-  {if $location.address.1.street_address}
-    {$location.address.1.street_address}
+  {if $line_item.location.address.1.street_address}
+    {$line_item.location.address.1.street_address}
   {/if}
-  {if $location.address.1.supplemental_address_1}
-    {$location.address.1.supplemental_address_1}
+  {if $line_item.location.address.1.supplemental_address_1}
+    {$line_item.location.address.1.supplemental_address_1}
   {/if}
-  {if $location.address.1.supplemental_address_2}
-    {$location.address.1.supplemental_address_2}
+  {if $line_item.location.address.1.supplemental_address_2}
+    {$line_item.location.address.1.supplemental_address_2}
   {/if}
-  {if $location.address.1.city}
-    {$location.address.1.city}, {$location.address.1.state_province} {$location.address.1.postal_code}
+  {if $line_item.location.address.1.city}
+    {$line_item.location.address.1.city}, {$line_item.location.address.1.state_province} {$line_item.location.address.1.postal_code}
   {/if}
 {/if}{*End of isShowLocation condition*}
 {$line_item.event->start_date|date_format:"%D %I:%M %p"} - {$line_item.event->end_date|date_format:"%I:%M %p"}
@@ -48,13 +48,13 @@ Here's a summary of your transaction placed on {$trxn->trxn_date|date_format:"%D
 
 {if $line_item.num_participants > 0}
   {foreach from=$line_item.participants item=participant}
-    {$participant->display_name}
+    {$participant.display_name}
   {/foreach}
 {/if}
 {if $line_item.num_waiting_participants > 0}
   Waitlisted:
     {foreach from=$line_item.waiting_participants item=participant}
-      {$participant->display_name}
+      {$participant.display_name}
     {/foreach}
 {/if}
 Cost: {$line_item.cost|crmMoney:$currency|string_format:"%10s"}

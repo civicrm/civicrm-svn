@@ -26,4 +26,4 @@
         <a href="{crmURL p='civicrm/event/cart_checkout' }" title="Check Out" class="button crm-check-out-button"><span>{ts}Check Out{/ts}</span></a>
 <br /><br />
 {/if}
-<a href="{crmURL p="civicrm/event/ical" q="reset=1&list=1&html=1"}">&laquo; Back to Event List</a>
+<a href="{crmURL p="civicrm/event/ical" q="reset=1&page=1&html=1"}">&laquo; Back to Event List</a>

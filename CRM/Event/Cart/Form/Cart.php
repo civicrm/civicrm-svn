@@ -55,7 +55,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 		$participant = CRM_Event_Cart_BAO_MerParticipant::create( array(
                       'cart_id' => $this->cart->id,
 		      'event_id' => $event_in_cart->event_id,
-		      'contact_id' => self::find_or_create_contact(),
+		      'contact_id' => self::find_or_create_contact( $this->getContactID() ),
 		) );
                 $participant->save();
 		$event_in_cart->add_participant( $participant );
@@ -121,40 +121,39 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 	return $session->get( 'userID' );
   }
 
-  static function find_or_create_contact($fields = array())
+  static function find_contact($fields)
   {
     require_once 'CRM/Dedupe/Finder.php';
     $dedupe_params = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
     $dedupe_params['check_permission'] = false;
     $ids = CRM_Dedupe_Finder::dupesByParams($dedupe_params, 'Individual');
+    if (is_array($ids))
+      return array_pop($ids);
+    else
+      return null;
+  }
 
-    if (empty($ids))
-    {
-      require_once 'CRM/Contact/BAO/Group.php';
+  static function find_or_create_contact( $registeringContactID = null, $fields = array() )
+  {
+    $contact_id = self::find_contact($fields);
 
-      //XXX
-      $params = array( 'name' => 'RegisteredByOther' );
-      $values = array( );
-      $group = CRM_Contact_BAO_Group::retrieve( $params, $values );
-      $add_to_groups = array( );
-      if ( $group != null ) {
-        $add_to_groups[] = $group->id;
-      }
-      // still add the employer id of the signed in user  //???
-      $contact_params = array(
-        'email-Primary' => CRM_Utils_Array::value('email', $fields, null),
-        'is_deleted' => CRM_Utils_Array::value('is_deleted', $fields, true),
-      );
-      $no_fields = array( );
-      $contact_id = CRM_Contact_BAO_Contact::createProfileContact( $contact_params, $no_fields, null, $add_to_groups );
-      if (!$contact_id) {
-        CRM_Core_Error::displaySessionError("Could not create or match a contact with that email address.  Please contact the webmaster.");
-      }
+    if ($contact_id) {
       return $contact_id;
     }
-    else {
-      return array_pop($ids);
+    $contact_params = array(
+      'email-Primary' => CRM_Utils_Array::value('email', $fields, null),
+      'first_name' => CRM_Utils_Array::value('first_name', $fields, null),
+      'last_name' => CRM_Utils_Array::value('last_name', $fields, null),
+      'is_deleted' => CRM_Utils_Array::value('is_deleted', $fields, true),
+    );
+    $no_fields = array( );
+    require_once 'CRM/Utils/Hook.php';
+    CRM_Utils_Hook::createCartContact( $registeringContactID, $contact_params );
+    $contact_id = CRM_Contact_BAO_Contact::createProfileContact( $contact_params, $no_fields, null, $add_to_groups );
+    if (!$contact_id) {
+      CRM_Core_Error::displaySessionError("Could not create or match a contact with that email address.  Please contact the webmaster.");
     }
+    return $contact_id;
   }
 
   function getValuesForPage( $page_name )

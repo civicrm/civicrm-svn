@@ -4,6 +4,9 @@ require_once 'CRM/Core/Page.php';
 
 class CRM_Event_Cart_Page_AddToCart extends CRM_Core_Page {
   function run( ) {
+    require_once 'CRM/Core/Transaction.php';
+    $transaction = new CRM_Core_Transaction();
+
     $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, true );
     if ( !CRM_Core_Permission::check( 'register for events' ) ) {
       CRM_Core_Error::fatal( ts( 'You do not have permission to register for this event' ) );
@@ -18,6 +21,8 @@ class CRM_Event_Cart_Page_AddToCart extends CRM_Core_Page {
     $event_in_cart = $cart->add_event($this->_id);
 
     drupal_set_message( ts("<b>%1</b> has been added to your cart. <a href='/civicrm/event/view_cart'>View your cart.</a>", array(1 => $event_in_cart->event->title) ) );
+
+    $transaction->commit();
 
     return CRM_Utils_System::redirect( $_SERVER['HTTP_REFERER'] );
   }

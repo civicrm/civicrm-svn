@@ -131,7 +131,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
           CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], $fields, $lineItem );
           //XXX total...
           if ($fields['amount'] < 0) {
-          $this->_errors['_qf_default'] = ts( "Price Levels can not be less than zero. Please select the options accordingly" );
+            $this->_errors['_qf_default'] = ts( "Price Levels can not be less than zero. Please select the options accordingly" );
           }
         }
       }
@@ -139,20 +139,23 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
       foreach ( $event_in_cart->participants as $mer_participant )
       {
           $participant_fields = $fields['event'][$event_in_cart->event_id]['participant'][$mer_participant->id];
-          $contact_id = self::find_or_create_contact($participant_fields);
+          $contact_id = self::find_contact($participant_fields);
 
-          require_once('CRM/Event/BAO/Participant.php');
-          $participant = new CRM_Event_BAO_Participant();
-          $participant->event_id = $event_in_cart->event_id;
-          $participant->contact_id = $contact_id;
-          $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
-          $participant->find();
-          while ($participant->fetch())
+          if ($contact_id)
           {
-            if (array_key_exists($participant->status_id, $statusTypes))
+            require_once('CRM/Event/BAO/Participant.php');
+            $participant = new CRM_Event_BAO_Participant();
+            $participant->event_id = $event_in_cart->event_id;
+            $participant->contact_id = $contact_id;
+            $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
+            $participant->find();
+            while ($participant->fetch())
             {
-              $form = $mer_participant->get_form();
-              $this->_errors[$form->html_field_name('email')] = ts("The participant %1 is already registered for %2 (%3).", array(1 => $participant_fields['email'], 2 => $event_in_cart->event->title, 3 => $event_in_cart->event->start_date));
+              if (array_key_exists($participant->status_id, $statusTypes))
+              {
+                $form = $mer_participant->get_form();
+                $this->_errors[$form->html_field_name('email')] = ts("The participant %1 is already registered for %2 (%3).", array(1 => $participant_fields['email'], 2 => $event_in_cart->event->title, 3 => $event_in_cart->event->start_date));
+	      }
             }
           }
       }
@@ -185,8 +188,8 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
           && $participant->contact_id == self::getContactID())
         {
           $participant->email = null;
-          $participant->contact_id = self::find_or_create_contact(array());
-        }
+          $participant->contact_id = self::find_or_create_contact( $this->getContactID() );
+    }
         $defaults += $form->setDefaultValues();
     }
     return $defaults;
@@ -198,14 +201,28 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
     foreach ( $this->_submitValues['event'] as $event_id => $participants ) {
       foreach ($participants['participant'] as $participant_id => $fields) {
 	require_once 'CRM/Contact/BAO/Contact.php';
-        $contact_id = self::find_or_create_contact($fields);
+        $contact_id = self::find_or_create_contact( $this->getContactID(), $fields );
 
         $participant = $this->cart->get_event_in_cart_by_event_id($event_id)->get_participant_by_id($participant_id);
         if ($participant->contact_id && $contact_id != $participant->contact_id)
         {
+          $defaults = array( );
+          $params = array( 'id' => $participant->contact_id);
+          $temporary_contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
+
           foreach ($this->cart->get_subparticipants($participant) as $subparticipant) {
             $subparticipant->contact_id = $contact_id;
             $subparticipant->save();
+          }
+
+          $participant->contact_id = $contact_id;
+          $participant->save();
+
+          if ($temporary_contact->is_deleted) {
+            #ARGH a permissions check prevents us from using skipUndelete,
+            #so we potentially leave records pointing to this contact for now
+            #CRM_Contact_BAO_Contact::deleteContact($temporary_contact->id);
+            $temporary_contact->delete();
           }
         }
 

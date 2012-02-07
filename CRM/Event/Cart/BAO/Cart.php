@@ -85,11 +85,21 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
 	  $cart = self::find_uncompleted_by_id( $event_cart_id );
           if ($cart && $userID)
           {
-            $cart->user_id = $userID;
-            $cart->save();
+            if (!$cart->user_id)
+            {
+              $saved_cart = self::find_uncompleted_by_user_id( $userID );
+              if ($saved_cart)
+              {
+                $cart->adopt_participants($saved_cart->id);
+                $saved_cart->delete();
+                $cart->load_associations();
+              } else {
+                $cart->user_id = $userID;
+                $cart->save();
+              }
+            }
           }
 	}
-        //TODO merge incomplete anonymous cart with stale authenticated cart
 	if ( $cart === false ) {
 	  if ( is_null( $userID ) ) {
 		$cart = self::create( array( ) );
@@ -245,6 +255,18 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
 	}
 	CRM_Core_DAO::storeValues( $cart, $values );
 	return $values;
+  }
+
+
+  public function adopt_participants($from_cart_id)
+  {
+    $params = array(
+      1 => array( $this->id, 'Integer' ),
+      2 => array( $from_cart_id, 'Integer' ),
+    );
+    $sql = "UPDATE civicrm_participant SET cart_id='%1' WHERE cart_id='%2'";
+
+    CRM_Core_DAO::executeQuery($sql, $params);
   }
 }
 

@@ -76,6 +76,7 @@ class CRM_Event_Cart_Form_Checkout_ThankYou extends CRM_Event_Cart_Form_Cart
 	$this->assign( 'transaction', $transaction );
 	$this->assign( 'payment_required', $this->get( 'payment_required' ) );
 	$this->assign( 'is_pay_later', $this->get( 'is_pay_later' ) );
+	$this->assign( 'pay_later_receipt', $this->get( 'pay_later_receipt' ) );
 	$this->assign( 'sub_total', $this->sub_total );
 	$this->assign( 'total', $this->get( 'total' ) );
 	$this->assign( 'trxn_id', $this->get( 'trxn_id' ) );

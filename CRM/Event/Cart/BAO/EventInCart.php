@@ -42,9 +42,21 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
   function delete()
   {
     $this->load_associations();
+    $contacts_to_delete = array();
     foreach ($this->participants as $participant)
     {
+        $defaults = array( );
+        $params = array( 'id' => $participant->contact_id);
+        $temporary_contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults );
+
+        if ($temporary_contact->is_deleted) {
+          $contacts_to_delete[$temporary_contact->id] = 1;
+        }
         $participant->delete();
+    }
+    foreach (array_keys($contacts_to_delete) as $contact_id)
+    {
+        CRM_Contact_BAO_Contact::deleteContact($contact_id);
     }
     parent::delete();
   }

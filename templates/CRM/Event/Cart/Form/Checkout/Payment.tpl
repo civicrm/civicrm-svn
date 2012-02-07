@@ -99,7 +99,12 @@
   </div>
   <div class="clear"></div> 
 </div>
+<div class="pay-later-instructions" style="display:none">
+  {$pay_later_instructions}
+</div>
 {include file='CRM/Core/BillingBlock.tpl'}
+{/if}
+{if $collect_billing_email == true}
 <div class="crm-section {$form.billing_contact_email.name}-section">	
   <div class="label">{$form.billing_contact_email.label}</div>
   <div class="content">{$form.billing_contact_email.html}
@@ -155,6 +160,7 @@ cj("document").ready(function() {
   function refresh() {
     var is_pay_later = cj(pay_later_sel).attr("checked");
     cj(".credit_card_info-group").toggle(!is_pay_later);
+    cj(".pay-later-instructions").toggle(is_pay_later);
     cj("div.billingNameInfo-section .description").html(is_pay_later ? "Enter the billing address at which you can be invoiced." : "Enter the name as shown on your credit or debit card, and the billing address for this card.");
   }
   cj("input#source").attr('disabled', 'disabled');

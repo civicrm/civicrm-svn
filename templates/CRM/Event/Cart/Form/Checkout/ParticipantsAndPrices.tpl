@@ -27,7 +27,7 @@
 	    {$form.$price_field_name.label}
 	  </div>
 	  <div class="content">
-	    {$form.$price_field_name.html|replace:'/label>':'/label><br>'}
+	    {$form.$price_field_name.html|replace:'/label>&nbsp;':'/label><br>'}
 	  </div>
 	{/foreach}
       </div>

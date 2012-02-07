@@ -12,8 +12,8 @@
     <p>Dear {contact.display_name},</p>
     <p>This is being sent to you as a receipt of payment.</p>
 
-    <p>Your order number is #{$trxn->trxn_id}. Please print this confirmation for your records.{if $events_in_cart} Information about event registration will be sent separately to each participant.{/if}
-      Here's a summary of your transaction placed on {$trxn->trxn_date|date_format:"%D %I:%M %p %Z"}:</p>
+    <p>Your order number is #{$transaction_id}. Please print this confirmation for your records.{if $events_in_cart} Information about event registration will be sent separately to each participant.{/if}
+      Here's a summary of your transaction placed on {$transaction_date|date_format:"%D %I:%M %p %Z"}:</p>
     
 {if $billing_name}
 	<table class="billing-info">
@@ -103,7 +103,7 @@
 	    {if $line_item.num_participants > 0}
 	    <div class="participants" style="padding-left: 10px;">
 	      {foreach from=$line_item.participants item=participant}
-	      {$participant->display_name}<br />
+	      {$participant.display_name}<br />
 	      {/foreach}
 	    </div>
 	    {/if}
@@ -111,7 +111,7 @@
 	    Waitlisted:<br/>
 	    <div class="participants" style="padding-left: 10px;">
 	      {foreach from=$line_item.waiting_participants item=participant}
-	      {$participant->display_name}<br />
+	      {$participant.display_name}<br />
 	      {/foreach}
 	    </div>
 	    {/if}
