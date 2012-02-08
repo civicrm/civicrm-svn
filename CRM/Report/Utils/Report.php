@@ -191,7 +191,8 @@ WHERE  inst.report_id = %1";
             }
         }
         // Add the headers.
-        $csv .= implode(',', $headers) . "\r\n";
+        $csv .= implode( $config->fieldSeparator,
+                         $headers) . "\r\n";
 
         $displayRows = array();
         $value       = null;
@@ -221,7 +222,8 @@ WHERE  inst.report_id = %1";
                 }  
             }
             // Add the data row.
-            $csv .= implode(',', $displayRows) . "\r\n";
+            $csv .= implode($config->fieldSeparator,
+                            $displayRows) . "\r\n";
         }
 
         return $csv;
