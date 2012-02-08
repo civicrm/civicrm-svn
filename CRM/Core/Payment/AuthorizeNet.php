@@ -247,7 +247,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         $exp_year = $this->_getParam( 'year' );
         $template->assign( 'expirationDate', $exp_year . '-' . $exp_month );
 
-        $template->assign( 'description', $this->_getParam('description') );
+        $template->assign( 'name', $this->_getParam('description') );
 
         $template->assign( 'email', $this->_getParam('email') );
         $template->assign( 'contactID', $this->_getParam('contactID') );
