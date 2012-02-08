@@ -183,6 +183,11 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     
     function browseCampaign( ) 
     {
+        // ensure valid javascript (these must have a value set)
+        $this->assign ('searchParams', json_encode(null));
+        $this->assign ('campaignTypes', json_encode(null));
+        $this->assign ('campaignStatus', json_encode(null));
+
         $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
         $campaignCount = CRM_Campaign_BAO_Campaign::getCampaignCount( );
         //don't load find interface when no campaigns in db.
@@ -252,6 +257,11 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     
     function browseSurvey( ) 
     {
+        // ensure valid javascript - this must have a value set
+        $this->assign ('searchParams', json_encode(null));
+        $this->assign ('surveyTypes', json_encode(null));
+        $this->assign ('surveyCampaigns', json_encode(null));
+
         $this->assign( 'addSurveyUrl', CRM_Utils_System::url( 'civicrm/survey/add', 'reset=1&action=add' ) );
         
         $surveyCount = CRM_Campaign_BAO_Survey::getSurveyCount( );
@@ -329,6 +339,10 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     
     function browsePetition( ) 
     {
+       // ensure valid javascript - this must have a value set
+        $this->assign ('searchParams', json_encode(null));
+        $this->assign ('petitionCampaigns', json_encode(null));
+
         $this->assign( 'addPetitionUrl', CRM_Utils_System::url( 'civicrm/petition/add', 'reset=1&action=add' ) );
         
         $petitionCount = CRM_Campaign_BAO_Petition::getPetitionCount( );
