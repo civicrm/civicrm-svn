@@ -405,6 +405,24 @@ class CRM_Utils_Array {
         return $array;
     }
     
+    /**
+     * Recursively removes duplicate values from an multi-dimensional array.
+     *
+     * @param array $array The input array possibly containing duplicate values.
+     *
+     * @return array $array The array with duplicate values removed.
+     * @static
+     */
+    static function crmArrayUnique( $array ) {
+        $result = array_map("unserialize", array_unique(array_map("serialize", $array)));
+        foreach ( $result as $key => $value ) {
+            if ( is_array( $value ) ) {
+                $result[$key] = self::crmArrayUnique($value);
+            }
+        }
+        return $result;
+    }
+
 }
 
 

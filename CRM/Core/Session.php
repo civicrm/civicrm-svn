@@ -442,7 +442,8 @@ class CRM_Core_Session {
             return;
         }
 
-        self::$_managedNames = array_unique( self::$_managedNames );
+        self::$_managedNames = CRM_Utils_Array::crmArrayUnique( self::$_managedNames );
+
         require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::storeSessionToCache( self::$_managedNames, $reset );
 
