@@ -343,8 +343,9 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
             }
         }
     }
-
-    $acceptedSQLOperators = array('IN', 'NOT IN', '=', '<=', '>=', '>', '<', 'BETWEEN', 'LIKE',"<>", "!=", "IS NULL", "IS NOT NULL", "NOT LIKE" );
+    // http://issues.civicrm.org/jira/browse/CRM-9150 - stick with 'simple' operators for now
+    // support for other syntaxes is discussed in ticket but being put off for now
+    $acceptedSQLOperators = array('=', '<=', '>=', '>', '<', 'LIKE',"<>", "!=",  "NOT LIKE" );
     if (!$fields)
         return;
     foreach ($fields as $field) {
