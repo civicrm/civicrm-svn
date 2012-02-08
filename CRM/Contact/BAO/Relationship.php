@@ -290,9 +290,15 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      *
      * @return array - array reference of all relationship types with context to current contact.
      */
-    function getContactRelationshipType( $contactId = null, $contactSuffix = null, $relationshipId = null, 
-                                         $contactType = null, $all = false, $column = 'label', 
-                                         $biDirectional = true, $contactSubType = null, $onlySubTypeRelationTypes = false )
+    static function getContactRelationshipType( $contactId = null,
+                                                $contactSuffix = null,
+                                                $relationshipId = null,
+                                                $contactType = null,
+                                                $all = false,
+                                                $column = 'label', 
+                                                $biDirectional = true,
+                                                $contactSubType = null,
+                                                $onlySubTypeRelationTypes = false )
     {
         $allRelationshipType = array( );
         $relationshipType    = array( );
