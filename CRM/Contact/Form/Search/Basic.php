@@ -74,7 +74,9 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
     function buildQuickForm( ) 
     {
         // text for sort_name or email criteria
-        $this->add('text', 'sort_name', ts('Name or Email'));
+        $config = CRM_Core_Config::singleton( );
+        $label = empty($config->includeEmailInName) ? ts('Name') : ts('Name or Email');
+        $this->add('text', 'sort_name', $label);
 
         require_once 'CRM/Core/BAO/Setting.php';
         $searchOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
@@ -89,7 +91,6 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
         }
 
         if ( CRM_Utils_Array::value( 'groups', $searchOptions ) ) {
-            $config = CRM_Core_Config::singleton( );
             if ( $config->groupTree ) {
                 $this->add('hidden', 'group', null, array('id' => 'group' ));
                 
