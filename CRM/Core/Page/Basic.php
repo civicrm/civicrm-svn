@@ -143,8 +143,15 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
      *
      * @return void
      */
-    function run( $args = null, $pageArgs = null, $sort = null )
+    function run( )
     {
+        // CRM-9034
+        // dont see args or pageArgs being used, so we should
+        // consider eliminating them in a future version
+        $n = func_num_args();
+        $args = ($n > 0) ? func_get_arg(0) : null;
+        $pageArgs = ($n > 1) ? func_get_arg(1) : null;
+        $sort = ($n > 2) ? func_get_arg(2) : null;
         // what action do we want to perform ? (store it for smarty too.. :) 
      
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String',
@@ -190,7 +197,10 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
      * @return void
      * @access public
      */
-    function browse( $action = null, $sort ) {
+    function browse( ) {
+        $n = func_num_args();
+        $action = ($n > 0) ? func_get_arg(0) : null;
+        $sort = ($n > 0) ? func_get_arg(1) : null;
         $links =& $this->links();
         if ($action == null) {
             if ( ! empty( $links ) ) {
