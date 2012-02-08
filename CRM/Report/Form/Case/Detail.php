@@ -67,7 +67,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
         }
 
         $this->caseActivityTypes = array( );
-        foreach(  CRM_Case_PseudoConstant::activityType() as $typeDetail ) {
+        foreach(  CRM_Case_PseudoConstant::caseActivityType() as $typeDetail ) {
            $this->caseActivityTypes[$typeDetail['id']] = $typeDetail['label'];
         }
         

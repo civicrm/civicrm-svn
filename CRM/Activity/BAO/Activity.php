@@ -1899,7 +1899,7 @@ AND cl.modified_id  = c.id
     static function getFileForActivityTypeId( $activityTypeId, $crmDir = 'Activity' ) 
     {
         require_once 'CRM/Case/PseudoConstant.php';
-        $activityTypes  = CRM_Case_PseudoConstant::activityType( false, true );
+        $activityTypes  = CRM_Case_PseudoConstant::caseActivityType( false, true );
         
         if ( $activityTypes[$activityTypeId]['name'] ) {
             require_once 'CRM/Utils/String.php';

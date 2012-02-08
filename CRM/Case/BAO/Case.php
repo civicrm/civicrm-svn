@@ -1112,7 +1112,7 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
         require_once "CRM/Core/PseudoConstant.php";
         require_once 'CRM/Case/PseudoConstant.php';
         
-        $activityTypes    = CRM_Case_PseudoConstant::activityType( false, true );
+        $activityTypes    = CRM_Case_PseudoConstant::caseActivityType( false, true );
         $activityStatus   = CRM_Core_PseudoConstant::activityStatus( );
         $activityPriority = CRM_Core_PseudoConstant::priority( );
         
@@ -1548,7 +1548,7 @@ AND        ca.is_deleted = 0"
                                                                                'Completed',
                                                                                'name' );
             
-                $details = CRM_Case_PseudoConstant::activityType( );
+                $details = CRM_Case_PseudoConstant::caseActivityType( );
                 $matches = array( );
                 preg_match( '/^\W+([a-zA-Z0-9_ ]+)(\W+)?\n/i',
                             $result['body'], $matches );

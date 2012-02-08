@@ -187,7 +187,7 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
         
         // get all core activities
         require_once "CRM/Case/PseudoConstant.php";
-        $coreActivityTypes  = CRM_Case_PseudoConstant::activityType( false, true );
+        $coreActivityTypes  = CRM_Case_PseudoConstant::caseActivityType( false, true );
         
         foreach ( $coreActivityTypes as $aType ) {
             $map[$aType['id']] = $aType;

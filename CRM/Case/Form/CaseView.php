@@ -350,7 +350,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
 
         // take all case activity types for search filter, CRM-7187
         $aTypesFilter    = array( );
-        $allCaseActTypes = CRM_Case_PseudoConstant::activityType( );
+        $allCaseActTypes = CRM_Case_PseudoConstant::caseActivityType( );
         foreach ( $allCaseActTypes as $typeDetails ) {
             if ( !in_array( $typeDetails['name'] , array( 'Open Case' ) ) ) {
                 $aTypesFilter[$typeDetails['id']] = CRM_Utils_Array::value( 'label', $typeDetails );

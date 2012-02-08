@@ -183,7 +183,7 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
      *
      * @return array - array reference of all activty types.
      */
-    public static function activityType( $indexName = true, $all = false )
+    public static function caseActivityType( $indexName = true, $all = false )
     {
         $cache = (int) $indexName . '_' . (int) $all;
         
@@ -208,7 +208,7 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
 
             $query .= "  ORDER BY v.weight";
             
-            $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+            $dao = CRM_Core_DAO::executeQuery( $query );
 
             $activityTypes = array();
             while( $dao->fetch() ) {
