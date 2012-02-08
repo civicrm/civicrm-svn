@@ -60,6 +60,7 @@
    {if $invoiceNumber}
    <order>  
      <invoiceNumber>{$invoiceNumber}</invoiceNumber>
+     {if $name}<description>{$name}</description>{/if}
    </order>
    {/if}  
     <customer>
