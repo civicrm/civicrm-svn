@@ -91,7 +91,7 @@ class CRM_Core_BAO_CMSUser
 
         set_time_limit(300);
 
-        if ($config->userFramework == 'Drupal') {
+        if ( $config->userSystem->is_drupal == '1' ) {
             $user            = new StdClass( );
             $uf              = $config->userFramework;
             $contactCount    = 0;
