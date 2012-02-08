@@ -37,7 +37,7 @@
 class CRM_Utils_Migrate_ExportJSON {
 
     const
-        CHUNK_SIZE = 128;
+        CHUNK_SIZE    = 128;
 
     protected $_contactIDs;
 
@@ -47,7 +47,18 @@ class CRM_Utils_Migrate_ExportJSON {
 
     protected $_discoverContacts = false;
 
-    function __construct( ) {
+    protected $_renameGroups = 1;
+
+    protected $_renameTags = 1;
+
+    protected $_sitePrefix = 'Site 1';
+
+
+    function __construct( &$params ) {
+        foreach ( $params as $name => $value ) {
+            $varName = '_' . $name;
+            $this->$varName = $value;
+        }
     }
 
 
@@ -89,13 +100,16 @@ class CRM_Utils_Migrate_ExportJSON {
         $this->address     ( $contactIDs );
         $this->phone       ( $contactIDs );
         $this->email       ( $contactIDs );
+        $this->im          ( $contactIDs );
+        $this->website     ( $contactIDs );
         $this->note        ( $contactIDs );
 
         $this->group       ( $contactIDs );
-        $this->groupcontact( $contactIDs );
+        $this->groupContact( $contactIDs );
+        $this->savedSearch ( $contactIDs );
 
         $this->tag         ( $contactIDs );
-        $this->entitytag   ( $contactIDs );
+        $this->entityTag   ( $contactIDs );
 
         $this->relationship( $contactIDs, $additionalContactIDs );
         $this->activity    ( $contactIDs, $additionalContactIDs );
@@ -221,16 +235,28 @@ SELECT *
         $this->table( $contactIDs, 'civicrm_email', $fields, 'contact_id', null );
     }
 
+    function im( &$contactIDs ) {
+        $fields =& $this->dbFields( 'CRM_Core_DAO_IM', true );
+        $this->table( $contactIDs, 'civicrm_im', $fields, 'contact_id', null );
+    }
+
+    function website( &$contactIDs ) {
+        $fields =& $this->dbFields( 'CRM_Core_DAO_Website', true );
+        $this->table( $contactIDs, 'civicrm_website', $fields, 'contact_id', null );
+    }
+
     function address( &$contactIDs ) {
         $fields =& $this->dbFields( 'CRM_Core_DAO_Email', true );
         $this->table( $contactIDs, 'civicrm_address', $fields, 'contact_id', null );
     }
 
-    function groupcontact( &$contactIDs ) {
+    function groupContact( &$contactIDs ) {
         $fields =& $this->dbFields( 'CRM_Contact_DAO_GroupContact', true );
         $this->table( $contactIDs, 'civicrm_group_contact', $fields, 'contact_id', null );
     }
 
+    // TODO - support group inheritance
+    // Parent child group ids are encoded in a text string
     function group( &$contactIDs ) {
         // handle groups only once
         static $_groupsHandled = array( );
@@ -253,9 +279,29 @@ WHERE  contact_id IN ( $ids )
 
         $fields =& $this->dbFields( 'CRM_Contact_DAO_Group', true );
         $this->table( $groupIDs, 'civicrm_group', $fields, 'id' );
+
+        $this->savedSearch( $groupIDs );
     }
 
-    function entitytag( &$contactIDs ) {
+    // TODO - support search builder and custom saved searches
+    function savedSearch( &$groupIDs ) {
+        if ( empty( $groupIDs ) ) {
+            return;
+        }
+
+        $idString = implode( ",", $groupIDs );
+        $sql = "
+SELECT     s.*
+FROM       civicrm_saved_search s
+INNER JOIN civicrm_group g on g.saved_search_id = s.id
+WHERE      g.id IN ( $idString )
+";
+
+        $fields =& $this->dbFields( 'CRM_Contact_DAO_SavedSearch', true );
+        $this->sql( $sql, 'civicrm_saved_search', $fields );
+    }
+
+    function entityTag( &$contactIDs ) {
         $fields =& $this->dbFields( 'CRM_Core_DAO_EntityTag', true );
         $this->table( $contactIDs, 'civicrm_entity_tag', $fields, 'entity_id', "entity_table = 'civicrm_contact'" );
     }
