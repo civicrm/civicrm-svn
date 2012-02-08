@@ -228,7 +228,7 @@ class CRM_Core_Action {
         foreach ( $links as $m => $link ) {
             if ( ! $mask || ( $mask & $m ) ) {
                 $extra = isset( $link['extra'] ) ?
-                    self::replace( CRM_Utils_Array::value( 'extra', $link, '' ),  $values ) :
+                    self::replace( $link['extra'],  $values ) :
                     null;
                 
                 $frontend = ( isset( $link['fe'] ) ) ? true : false;
