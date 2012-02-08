@@ -179,10 +179,11 @@ class CRM_Core_ShowHideBlocks {
      * @param string        $showLinkText  the text to be shown for the show link
      * @param string        $hideLinkText  the text to be shown for the hide link
      *
+     * @static
      * @return void
      * @access public
      */
-    function links( &$form, $prefix, $showLinkText, $hideLinkText, $assign = true ) {
+    static function links( &$form, $prefix, $showLinkText, $hideLinkText, $assign = true ) {
         $showCode = "show('id_{$prefix}'); hide('id_{$prefix}_show');";
         $hideCode = "hide('id_{$prefix}'); show('id_{$prefix}_show'); return false;";
         
