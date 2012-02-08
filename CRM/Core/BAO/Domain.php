@@ -164,7 +164,8 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
             require_once 'CRM/Utils/Mail.php';
             foreach ( $fromEmailAddress as $key => $value ) {
                 $email    = CRM_Utils_Mail::pluckEmailFromHeader( $value );
-                $fromName = CRM_Utils_Array::value( 1, explode('"', $value ) );
+                $fromArray = explode('"', $value);
+                $fromName = CRM_Utils_Array::value( 1, $fromArray );
                 break;
             }
             return array( $fromName, $email );
