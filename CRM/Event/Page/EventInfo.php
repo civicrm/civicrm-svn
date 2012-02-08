@@ -105,7 +105,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
 
             // get price set options, - CRM-5209
             if ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_event', $this->_id ) ) {
-                $setDetails     = CRM_Price_BAO_Set::getSetDetail( $priceSetId );
+                $setDetails     = CRM_Price_BAO_Set::getSetDetail( $priceSetId, true, true );
                 $priceSetFields = $setDetails[$priceSetId]['fields'];
                 if ( is_array( $priceSetFields ) ) {
                     $fieldCnt = 1;                    
