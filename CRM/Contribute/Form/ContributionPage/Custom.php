@@ -54,13 +54,10 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
         $types    = array_merge( array( 'Contact', 'Individual','Contribution','Membership'),
                                  CRM_Contact_BAO_ContactType::subTypes( 'Individual' ) );
         
-        $profiles        = CRM_Core_BAO_UFGroup::getProfiles( $types );
-        $profileId       = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'on_behalf_organization', 'id', 'name' );
-        
+        $profiles        = CRM_Core_BAO_UFGroup::getProfiles( $types );        
         $excludeTypes    = array( 'Organization', 'Household', 'Participant', 'Activity' );
         
         $excludeProfiles = CRM_Core_BAO_UFGroup::getProfiles( $excludeTypes );
-        $excludeProfiles[$profileId] = CRM_Core_BAO_UFGroup::getTitle( $profileId );
         
         foreach ( $excludeProfiles as $key => $value ) {
             if ( in_array( $value, $profiles ) ) {
