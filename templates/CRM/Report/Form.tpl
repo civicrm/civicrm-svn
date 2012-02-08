@@ -58,3 +58,8 @@
         {include file="CRM/Report/Form/ErrorMessage.tpl"}
     </div>
     {/if}
+    {if $outputMode == 'print'}
+      <script type="text/javascript">
+        window.print();
+      </script>
+    {/if}
