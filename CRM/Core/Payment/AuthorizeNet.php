@@ -115,7 +115,8 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
 
         if ( CRM_Utils_Array::value( 'is_recur', $params ) &&
              $params['contributionRecurID'] ) {
-            return $this->doRecurPayment( $params );
+             $this->doRecurPayment( );
+             return $params;
         }
 
         $postFields         = array( );
@@ -197,11 +198,9 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
     /**
      * Submit an Automated Recurring Billing subscription
      *
-     * @param  array $params assoc array of input parameters for this transaction
-     * @return array the result in a nice formatted array (or an error object)
      * @public
      */
-    function doRecurPayment( &$params ) {
+    function doRecurPayment() {
         $template = CRM_Core_Smarty::singleton( );
 
         $intervalLength = $this->_getParam('frequency_interval');
@@ -300,14 +299,13 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         }
 
         // update recur processor_id with subscriptionId
-        CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionRecur', $params['contributionRecurID'], 
+        CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionRecur',  $this->_getParam('contributionRecurID'), 
                                      'processor_id', $responseFields['subscriptionId'] );
         //only impact of assigning this here is is can be used to cancel the subscription in an automated test
         // if it isn't cancelled a duplicate transaction error occurs
         if(CRM_Utils_Array::value('subscriptionId',$responseFields)){
           $this->_setParam('subscriptionId', $responseFields['subscriptionId']);
         }
-        return $params;
     }
 
     function _getAuthorizeNetFields( ) {
