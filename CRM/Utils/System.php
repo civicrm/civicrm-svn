@@ -180,7 +180,7 @@ class CRM_Utils_System {
         return "<a href=\"$url\">$text</a>";
     }
 
-    function permissionDenied( ) {
+    static function permissionDenied( ) {
         $config   = CRM_Core_Config::singleton( );
         return $config->userSystem->permissionDenied( );
     }
