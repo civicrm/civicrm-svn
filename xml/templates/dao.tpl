@@ -215,9 +215,10 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
        * returns the names of this table
        *
        * @access public
+       * @static
        * @return string
        */
-      function getTableName( ) {ldelim}
+      static function getTableName( ) {ldelim}
         {if $table.localizable}
           return CRM_Core_DAO::getLocaleTableName( self::$_tableName );
         {else}
