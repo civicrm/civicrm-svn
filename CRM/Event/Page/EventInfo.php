@@ -130,6 +130,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                         }
                         
                         foreach ( $fieldValues['options'] as $optionId => $optionVal ) {
+                            $values['feeBlock']['isDisplayAmount'][$fieldCnt] = $priceSetFields[$fieldCnt]['is_display_amounts'];
                             $values['feeBlock']['value'][$fieldCnt] = $optionVal['amount'];
                             $values['feeBlock']['label'][$fieldCnt] = $optionVal['label'];
                             $values['feeBlock']['lClass'][$fieldCnt] = $labelClass;
