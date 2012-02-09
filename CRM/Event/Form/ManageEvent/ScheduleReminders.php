@@ -53,10 +53,12 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
      */ 
     function preProcess( )
     {
-        parent::preProcess( );   
-        if ( $this->_action & CRM_Core_Action::UPDATE &&
-             ! CRM_Utils_Array::value('new', $_GET) ) {
+        parent::preProcess( );
 
+        $newReminder = CRM_Utils_Request::retrieve( 'new', 'Boolean', $this, false, false );
+
+        if ( $this->_action & CRM_Core_Action::UPDATE &&
+             ! $newReminder ) {
             $reminderList = CRM_Core_BAO_ActionSchedule::getList( false, 
                                                                   'civicrm_event', 
                                                                   $this->_id );
@@ -80,8 +82,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                 }
                 $this->assign( 'rows', $reminderList );
             }
-            
-        }        
+        }
         
     }
     
