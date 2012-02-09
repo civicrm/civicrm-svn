@@ -64,19 +64,17 @@ class CRM_Core_BAO_CMSUser
             $mail = 'mail'; 
             $name = 'name';
 
-            if ( $config->userFramework == 'Drupal' ) { 
-                $result = db_query("SELECT uid, mail, name FROM {users} where mail != ''");
+            $result = db_query("SELECT uid, mail, name FROM {users} where mail != ''");
+
+            if ( $config->userFramework == 'Drupal' ) {
                 while ( $row = $result->fetchAssoc( ) ) {
                     $rows[] = $row;
                 }
-            } else {
-                $db_uf = self::dbHandle( $config );                
-                $result = $db_uf->query("SELECT uid, mail, name FROM {$config->userFrameworkUsersTableName} where mail != ''");
-                while ( $row = $result->fetchRow( DB_FETCHMODE_ASSOC ) ) {
+            } else if ( $config->userFramework == 'Drupal6' ) {
+                while ( $row = db_fetch_array( $result ) ) {
                     $rows[] = $row;
                 }
-            }
-
+            } 
         } else if ( $config->userFramework == 'Joomla' ) { 
             $id   = 'id'; 
             $mail = 'email'; 
