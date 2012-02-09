@@ -1883,23 +1883,33 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
   function getAndCheck($params,$id,$entity,$delete = 1, $errorText = '') {
 
       $result = civicrm_api($entity,'GetSingle', array( 'id' => $id ,
-                                   
                                                         'version'        =>$this->_apiversion));
 
       if($delete){
           civicrm_api($entity,'Delete',array( 'id' => $id ,
                                               'version'        =>$this->_apiversion));
       }
+      $dateFields = array();
+      $fields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => 'get'));
+      foreach ($fields['values'] as $field => $settings){
+        if ($settings['type'] == CRM_Utils_Type::T_DATE){
+          $dateFields[] = $field;
+        }
+      }
 
-        
       if (strtolower($entity) =='contribution'){
-          $params['receive_date'] = date('Y-m-d H:i:s' ,strtotime($params['receive_date']));
+
+          $params['receive_date'] = date('Y-m-d' ,strtotime($params['receive_date']));
           unset($params['payment_instrument_id']);//this is not returned in id format
           $params['contribution_source'] = $params['source'];
           unset($params['source']);        
       }
       foreach($params as $key => $value){
           if($key == 'version' )continue;
+          if(in_array($key, $dateFields)){
+            $value = date('Y-m-d' ,strtotime($value));
+            $result[$key] = date('Y-m-d' ,strtotime($result[$key]));
+          }
           $this->assertEquals($value, $result[$key],$key . "GetandCheck function determines that value: $value doesn't match " . print_r($result,true) . $errorText);        
           
       } 
