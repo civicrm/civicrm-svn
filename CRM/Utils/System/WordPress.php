@@ -185,7 +185,8 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
 
         if ( $config->userFrameworkFrontend ) {
             if ( get_option('permalink_structure') != '' ) { 
-                $script = get_permalink( );
+                global $post;
+                $script = get_permalink( $post->ID );
             } else {
                 $script = 'index.php';
             }
