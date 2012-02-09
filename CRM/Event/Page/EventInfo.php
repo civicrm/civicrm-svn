@@ -123,6 +123,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                             $values['feeBlock']['value'][$fieldCnt] = '';
                             $values['feeBlock']['label'][$fieldCnt] = $fieldValues['label'];
                             $values['feeBlock']['lClass'][$fieldCnt] = 'price_set_option_group-label';
+                            $values['feeBlock']['isDisplayAmount'][$fieldCnt] = CRM_Utils_Array::value('is_display_amounts', $fieldValues);
                             $fieldCnt++;
                             $labelClass = 'price_set_option-label';
                         } else {
@@ -130,7 +131,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                         }
                         
                         foreach ( $fieldValues['options'] as $optionId => $optionVal ) {
-                            $values['feeBlock']['isDisplayAmount'][$fieldCnt] = $priceSetFields[$fieldCnt]['is_display_amounts'];
+                            $values['feeBlock']['isDisplayAmount'][$fieldCnt] = CRM_Utils_Array::value('is_display_amounts', $fieldValues);
                             $values['feeBlock']['value'][$fieldCnt] = $optionVal['amount'];
                             $values['feeBlock']['label'][$fieldCnt] = $optionVal['label'];
                             $values['feeBlock']['lClass'][$fieldCnt] = $labelClass;
