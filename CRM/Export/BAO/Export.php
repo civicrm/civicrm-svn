@@ -941,7 +941,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             
             // if postalMailing option is checked, exclude contacts who are deceased, have 
             // "Do not mail" privacy setting, or have no street address
-            if ( isset( $exportParams['postal_mailing_export'] ) &&
+            if ( isset( $exportParams['postal_mailing_export']['postal_mailing_export']  ) &&
                  $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
                 self::postalMailingFormat( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
             }
