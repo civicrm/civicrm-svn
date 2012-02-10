@@ -1056,6 +1056,7 @@ WHERE civicrm_event.is_active = 1
                                                                            $isTest, 
                                                                            true,
                                                                            $participantParams );  
+                        list( $profileValues ) = $profileValues;
                         $val = array(
                                      'id'     => $gId,
                                      'values' => $profileValues,
