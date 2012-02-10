@@ -77,6 +77,11 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad( '30000' );
       $this->webtestLogin( true ); 
  
+      $this->open($this->sboxPath . 'admin/structure/block/manage/civicrm/6/configure');
+      $this->waitForElementPresent( 'edit-submit' );
+      $this->type('edit-pages','civicrm/dashboard');
+      $this->click('edit-submit');
+      $this->waitForPageToLoad('30000');
       $this->open($this->sboxPath . 'admin/structure/block');
       $this->select('edit-blocks-civicrm-6-region','value=sidebar_second');
       $this->click('edit-submit');  
