@@ -1071,7 +1071,7 @@ class CRM_Contact_BAO_Query
     {
         if ( $count ) {
             if ( isset( $this->_distinctComponentClause ) ) {
-                $select = "SELECT count( {$this->_distinctComponentClause} )";
+                $select = "SELECT count( DISTINCT {$this->_distinctComponentClause} )";
             } else {
                 $select = ( $this->_useDistinct ) ?	
                     'SELECT count(DISTINCT contact_a.id)' :
@@ -3802,7 +3802,6 @@ civicrm_relationship.start_date > {$today}
             $query = "$select $from $where $having $groupBy $order $limit";
         }
 
-        // CRM_Core_Error::debug('query', $query);
         // CRM_Core_Error::debug('query', $where);
         // CRM_Core_Error::debug('this', $this );
 
@@ -3814,6 +3813,8 @@ civicrm_relationship.start_date > {$today}
             return CRM_Core_DAO::singleValueQuery( $query );
         }
 
+        //CRM_Core_Error::debug('query', $query); exit;
+        
         $dao = CRM_Core_DAO::executeQuery( $query );
         if ( $groupContacts ) {
             $ids = array( );
