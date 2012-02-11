@@ -150,7 +150,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
 
             foreach( $params as $ids => $recur ) {
                 
-                // Cancel action only for Moneris at this time since it only changes status in DB
+                // TODO: Currently cancel action only only changes status in DB. Should invoke cancelSubscription method for given payment processor
                 $processorType = NULL;
                 if ( !empty($recur['payment_processor_id'] ) ) {
                     $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $recur['payment_processor_id'], 'live');
@@ -160,7 +160,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                 // no action allowed if it's not active
                 $params[$ids]['is_active'] = ($recur['contribution_status_id'] != 3);
 
-                if ( $processorType == 'Moneris' && $params[$ids]['is_active'] ) {
+                if ( $params[$ids]['is_active'] ) {
                     $params[$ids]['action'] = CRM_Core_Action::formLink(self::recurLinks( ), $action,
                                                                         array('cid'              => $this->_contactId,
                                                                               'id'               => $ids,

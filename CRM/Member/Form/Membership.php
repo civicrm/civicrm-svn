@@ -652,9 +652,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $recurContributionId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $this->_id,
                                                                 'contribution_recur_id' );
-            if ( $recurContributionId ) {
+            require_once 'CRM/Member/BAO/Membership.php'; 
+            if ( $recurContributionId && !CRM_Member_BAO_Membership::isSubscriptionCancelled( $this->_id ) ) {
                 $isRecur = true;
-                require_once 'CRM/Member/BAO/Membership.php'; 
                 if ( CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $this->_id ) ) {
                     $this->assign( 'cancelAutoRenew', 
                                    CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', "reset=1&mid={$this->_id}" ) );

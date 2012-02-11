@@ -202,8 +202,8 @@ class CRM_Admin_Page_AJAX
                 break;
 
             case 'CRM_Contribute_BAO_ContributionRecur':
-                $status = ts('Are you sure you want to cancel the recurring contribution?');
-                $status .= '<br /><br />' . ts('WARNING - Cancelling a recurring contribution should only be used if your gateway payment is not capable of sending this information automatically to CiviCRM.');
+                $status = ts('Are you sure you want to cancel this recurring contribution?');
+                $status .= '<br /><br /><strong>' . ts('WARNING - This action sets the CiviCRM recurring contribution status to Cancelled, but does NOT send a cancellation request to the payment processor. You will need to ensure that this recurring payment (subscription) is cancelled by the payment processor.') . '</strong>';
 
                 break;
     
