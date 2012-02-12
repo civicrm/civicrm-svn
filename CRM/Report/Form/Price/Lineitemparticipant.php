@@ -46,8 +46,10 @@ class CRM_Report_Form_Price_Lineitemparticipant extends CRM_Report_Form_Extended
     protected $_summary      = null;
 
     protected $_customGroupExtends = array( 'Participant', 'Individual' , 'Contact');
+
     protected $_baseTable = 'civicrm_line_item';
     
+   protected $_aclTable = 'civicrm_contact';
     
     function __construct($child = 0 ) {
       if(empty($child)){
