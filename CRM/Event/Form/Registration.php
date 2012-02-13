@@ -287,7 +287,10 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 $this->set( 'additionalParticipantIds', $this->_additionalParticipantIds );
             }
             
-            $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId );
+            $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId, 
+                                                               false, 
+                                                               CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] ) ); 
+
             $this->_allowWaitlist = false;
             $this->_isEventFull   = false;
             if ( $eventFull && !$this->_allowConfirmation ) {
