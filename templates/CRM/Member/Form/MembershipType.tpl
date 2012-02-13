@@ -168,8 +168,14 @@
              </tr>
              <tr class="crm-membership-type-form-block-relationship_type_id"> 	
                  <td class="label">{$form.relationship_type_id.label}</td>
-                 <td>{$form.relationship_type_id.html}<br />
-                     <span class="description">{ts}Memberships can be automatically granted to related contacts by selecting a Relationship Type.{/ts} {help id="rel-type"}</span>
+                 <td>
+                    {if !$membershipRecordsExists}
+                        {$form.relationship_type_id.html}
+                    <br />
+                    {else}
+                        {$form.relationship_type_id.html}<div class="status message">{ts}You cannot modify relationship type because there are membership records associated with this membership type.{/ts}</div>
+                    {/if}
+                    <span class="description">{ts}Memberships can be automatically granted to related contacts by selecting a Relationship Type.{/ts} {help id="rel-type"}</span>
                  </td>
              </tr>
              <tr class="crm-membership-type-form-block-visibility">
