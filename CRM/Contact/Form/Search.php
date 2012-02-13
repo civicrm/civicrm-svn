@@ -240,6 +240,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     protected $_customSearchID    = null;
     protected $_customSearchClass = null;
 
+    protected $_openedPanes = array();
+
     /**
      * define the set of valid contexts that the search form operates on
      *
@@ -651,14 +653,20 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
                 // FIXME: we should generalise in a way that components could inject url-filters
                 // just like they build their own form elements
-                if ( $filterVal = CRM_Utils_Request::retrieve( 'mailing_id', 'Positive', $this ) ) {
-                    $this->_formValues['mailing_id'] = array( $filterVal );
-                }
-                foreach ( array('mailing_delivery_status', 'mailing_open_status', 'mailing_click_status', 
-                                'mailing_reply_status', 'mailing_optout', 'mailing_forward', 
-                                'mailing_unsubscribe', 'mailing_date_low', 'mailing_date_high') as $mailingFilter ) {
-                    if ( $filterVal = CRM_Utils_Request::retrieve( $mailingFilter, 'String', $this ) ) {
+                foreach ( array('mailing_id',           'mailing_delivery_status',  'mailing_open_status', 
+                                'mailing_click_status', 'mailing_reply_status',     'mailing_optout', 
+                                'mailing_forward',      'mailing_unsubscribe',      'mailing_date_low', 
+                                'mailing_date_high') as $mailingFilter ) {
+                    $type = 'String';
+                    if ( $mailingFilter == 'mailing_id' && 
+                         $filterVal = CRM_Utils_Request::retrieve( 'mailing_id', 'Positive', $this ) ) {
+                        $this->_formValues[$mailingFilter] = array( $filterVal );
+                    } else if ( $filterVal = CRM_Utils_Request::retrieve( $mailingFilter, $type, $this ) ) {
                         $this->_formValues[$mailingFilter] = $filterVal;
+                    }
+                    if ( $filterVal ) {
+                        $this->_openedPanes['Mailings'] = 1;
+                        $this->_formValues['hidden_CiviMail'] = 1;
                     }
                 }
             }

@@ -60,8 +60,8 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
 
         parent::preProcess( );
         $openedPanes = CRM_Contact_BAO_Query::openedSearchPanes( );
+        $openedPanes = array_merge( $openedPanes, $this->_openedPanes );
         $this->assign( 'openedPanes' , $openedPanes );
-
     }
 
     /**
