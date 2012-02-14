@@ -155,7 +155,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
             
             $sortByCharacter = $form->get( 'sortByCharacter' );
             $cacheKey = ( $sortByCharacter && $sortByCharacter!='all' ) ? "{$cacheKey}_alphabet" : $cacheKey;
-            $allCids = CRM_Core_BAO_PrevNextCache::markSelection( $cacheKey , "getall" );
+            $allCids = CRM_Core_BAO_PrevNextCache::getSelection( $cacheKey , "getall" );
 
             $form->_contactIds = array( );
             if ( $useTable ) {
@@ -192,7 +192,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
             // need to perform action on only selected contacts
             $insertString = array( );
             // fetching selected contact ids of passed cache key 
-            $selectedCids = CRM_Core_BAO_PrevNextCache::markSelection( $cacheKey );
+            $selectedCids = CRM_Core_BAO_PrevNextCache::getSelection( $cacheKey );
             
             foreach ( $selectedCids[$cacheKey] as $selectedCid => $ignore ){
                 if ( $useTable ) {

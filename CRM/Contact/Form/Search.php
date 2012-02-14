@@ -462,7 +462,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             $this->add('submit', $this->_actionButtonName, ts('Go'),
                        array( 'class'   => 'form-submit',
                               'id'      => 'Go',
-                              'onclick' => "return checkPerformAction('mark_x', '".$this->getName()."', 0);" ) );
+                              'onclick' => "return checkPerformAction('mark_x', '".$this->getName()."', 0, 1);" ) );
         }
         
         // need to perform tasks on all or selected items ? using radio_ts(task selection) for it
@@ -474,11 +474,12 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 
         if( $qfKeyParam = CRM_Utils_Array::value( 'qfKey',$this->_formValues ) ) {
             $qfKeyParam = "civicrm search {$qfKeyParam}";
-            $selectedContactIdsArr = CRM_Core_BAO_PrevNextCache::markSelection( $qfKeyParam );
+            $selectedContactIdsArr = CRM_Core_BAO_PrevNextCache::getSelection( $qfKeyParam );
             $selectedContactIds = array_keys( $selectedContactIdsArr[$qfKeyParam] );
         }
+ 
         $this->assign_by_ref( 'selectedContactIds' , $selectedContactIds );
-               
+ 
         $allRowsRadio = $this->addElement('radio', 'radio_ts', null, '', 'ts_all', array( 'onclick' => $this->getName().".toggleSelect.checked = false; toggleCheckboxVals('mark_x_', this);toggleTaskAction( true );toggleContactSelection( 'resetSel', '{$qfKeyParam}', 'reset' );" ) );
         $this->assign('ts_all_id', $allRowsRadio->_attributes['id']);
 
@@ -496,12 +497,14 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 $this->addElement( 'checkbox', $row['checkbox'],
                                    null, null,
                                    array('onclick' => "toggleContactSelection( '".$row['checkbox']."', '".$qfKeyParam."' , 'single' );toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "');" ) );
-                if ( !in_array($row['contact_id'],$selectedContactIds) ){
+          
+                if ( !in_array( $row['contact_id'], $selectedContactIds ) ) {
                     $unselectedContactIds[] = $row['contact_id'];
                 }
             }
+            $this->assign_by_ref( 'unselectedContactIds' , $unselectedContactIds );
         }
-        $this->assign_by_ref( 'unselectedContactIds' , $unselectedContactIds );
+        
         // add buttons
         $this->addButtons( array(
                                  array ( 'type'      => 'refresh',
@@ -513,7 +516,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $this->add('submit', $this->_printButtonName, ts('Print'),
                    array( 'class'   => 'form-submit',
                           'id'      => 'Print',  
-                          'onclick' => "return checkPerformAction('mark_x', '".$this->getName()."', 1);" ) );
+                          'onclick' => "return checkPerformAction('mark_x', '".$this->getName()."', 1, 1);" ) );
         
         $this->setDefaultAction( 'refresh' );
 
@@ -529,11 +532,13 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         /**
          * set the varios class variables
          */
+        
         $this->_group           = CRM_Core_PseudoConstant::group( );
+
         $this->_groupIterator   = CRM_Core_PseudoConstant::groupIterator( );
         $this->_tag             =  CRM_Core_BAO_Tag::getTags( );
         $this->_done            =  false;
-
+        
         /*
          * we allow the controller to set force/reset externally, useful when we are being
          * driven by the wizard framework

@@ -184,16 +184,16 @@ cj(".selector tr").contextMenu({
             window.location = locationUrl + '&civicrmDestination=' + encodeURIComponent(destination);            
         }
    });
-   
   {/literal}
   {foreach from=$selectedContactIds item=selectedContactId}{literal}
-  	cj("#mark_x_{/literal}{$selectedContactId}{literal}").attr('checked', 'checked');
+   	cj("#mark_x_{/literal}{$selectedContactId}{literal}").attr('checked', 'checked');
   {/literal} 
   {/foreach}
-  
-   {foreach from=$unselectedContactIds item=unselectedContactId}{literal}
-    	   cj("#mark_x_{/literal}{$unselectedContactId}{literal}").removeAttr('checked');{/literal}
-   {/foreach}
+    
+  {foreach from=$unselectedContactIds item=unselectedContactId}{literal}
+        cj("#mark_x_{/literal}{$unselectedContactId}{literal}").removeAttr('checked');{/literal}
+  {/foreach}
+
   {literal}
     var formName = "{/literal}{$form.formName}{literal}";	
     on_load_init_checkboxes(formName);
@@ -206,6 +206,25 @@ cj('ul#contactMenu').mouseup( function(e){
     //when right or middle button clicked fire default right click popup
    }
 });
+
+function countSelections( ){
+  var Url =  "{/literal}{crmURL p='civicrm/ajax/markSelection' h=0}{literal}";	
+  var key =  'civicrm search {/literal}{$qfKey}{literal}';
+  var arg =  "qfKey="+key+"&action=countSelection";
+  var count = 0;
+  cj.ajax({
+      "url":   Url,
+      "type": "POST", 
+      "data":  arg,
+      "async"    : false,
+      "dataType": 'json',
+      "success": function(data){
+           count  =  data.getCount;
+      }
+    });
+
+   return count;
+}
 
 function toggleContactSelection( name, qfKey, selection ){
   var Url  = "{/literal}{crmURL p='civicrm/ajax/markSelection' h=0}{literal}";	

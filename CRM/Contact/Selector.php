@@ -753,24 +753,22 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 $rows[] = $row;
             }
         }
-
-        //patch for saving updation for current search pager
-        //navigation 
-        $sqlCount = "
-SELECT count(id) 
-FROM   civicrm_prevnext_cache
-WHERE  cacheKey LIKE %1 and entity_table = 'civicrm_contact'
-";
+        
+        $this->buildPrevNextCache( $sort );
+        
+        return $rows;
+    }
+    
+    function buildPrevNextCache( $sort ) {
         $cacheKey = CRM_Utils_Array::value('qfKey',$this->_formValues);
         //for prev/next pagination
         $crmPID = CRM_Utils_Request::retrieve( 'crmPID', 'Integer',
                                                CRM_Core_DAO::$_nullObject );
         //for alphabetic pagination selection save
         $sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter', 'String',
-                                               CRM_Core_DAO::$_nullObject );
+                                                        CRM_Core_DAO::$_nullObject );
         //for text field pagination selection save
-        $sqlParams = array( 1 => array( "%civicrm search {$cacheKey}%", 'String' ) );
-        $countRow = CRM_Core_DAO::singleValueQuery( $sqlCount, $sqlParams );
+        $countRow = CRM_Core_BAO_PrevNextCache::getCount( "%civicrm search {$cacheKey}%", null, "entity_table = 'civicrm_contact'", "LIKE" );
         
         if( !$crmPID && $countRow == 0 && !$sortByCharacter ){
             $this->fillupPrevNextCache( $sort );
@@ -780,15 +778,11 @@ WHERE  cacheKey LIKE %1 and entity_table = 'civicrm_contact'
                 //delete the alphabet key corresponding records in prevnext_cache
                 CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKeyCharacter, 'civicrm_contact' );
             } else {
-                CRM_Core_Error::debug( '$cacheKeyCharacter', $cacheKeyCharacter ); 
                 $this->fillupPrevNextCache( $sort, $cacheKeyCharacter );
-               
             }
         }
-              
-        return $rows;
     }
-
+    
     function addActions( &$rows ) {
         $config = CRM_Core_Config::singleton( );
 
