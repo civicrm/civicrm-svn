@@ -171,10 +171,6 @@ WHERE  cacheKey = %1
         CRM_Core_DAO::executeQuery( $query );
     }
     
-    /*
-     * $op     operator for cacheKey 
-     * $limit  limit clause
-     */
     function  getCount( $cacheKey, $join = null, $where = null, $op = "=" ) {
         $query = "
 SELECT COUNT(*) FROM civicrm_prevnext_cache pn 
