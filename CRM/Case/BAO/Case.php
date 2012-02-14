@@ -1392,6 +1392,7 @@ GROUP BY cc.id';
         $activityParams['medium_id']          = CRM_Core_OptionGroup::getValue( 'encounter_medium', 'email', 'name' );
         $activityParams['case_id']            = $caseId;
         $activityParams['is_auto']            = 0;
+        $activityParams['target_id']          = $clientId;
         
         $tplParams['activitySubject'] = $activitySubject;
 
@@ -2518,13 +2519,13 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
         
         if ( CRM_Utils_Array::value( 'isCaseActivity', $tplParams ) ) {
             $tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/case/activity', 
-                                                              "reset=1&cid={$activityParams['source_contact_id']}&caseid={$activityParams['case_id']}&action=update&id={$activityParams['source_record_id']}", true );
+                                                              "reset=1&cid={$activityParams['target_id']}&caseid={$activityParams['case_id']}&action=update&id={$activityParams['source_record_id']}", true );
             
             $tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/case/activity/view', 
-                                                              "reset=1&aid={$activityParams['source_record_id']}&cid={$tplParams['contact']['contact_id']}&caseID={$activityParams['case_id']}", true );
+                                                              "reset=1&aid={$activityParams['source_record_id']}&cid={$activityParams['target_id']}&caseID={$activityParams['case_id']}", true );
 
             $tplParams['manageCaseURL'] = CRM_Utils_System::url( 'civicrm/contact/view/case', 
-                                                              "reset=1&id={$activityParams['case_id']}&cid={$tplParams['contact']['contact_id']}&action=view&context=home", true );
+                                                              "reset=1&id={$activityParams['case_id']}&cid={$activityParams['target_id']}&action=view&context=home", true );
         } else {   
             $tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
                                                               "atype=$activityTypeId&action=update&reset=1&id={$activityParams['source_record_id']}&cid={$tplParams['contact']['contact_id']}&context=activity", true );
