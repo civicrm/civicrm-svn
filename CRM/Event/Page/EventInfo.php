@@ -235,8 +235,10 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         }
  
         require_once 'CRM/Event/BAO/Participant.php';
-        $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id );
         $hasWaitingList   = CRM_Utils_Array::value( 'has_waitlist', $values['event'] );
+        $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id,
+                                                                  false,
+                                                                  $hasWaitingList );
         
         $allowRegistration = false;
         if ( CRM_Utils_Array::value( 'is_online_registration', $values['event'] ) ) {
