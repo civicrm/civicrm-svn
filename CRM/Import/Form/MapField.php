@@ -809,7 +809,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                     if ( $selOne == 'url' ) {
                         $relatedContactWebsiteTypeVal = $websiteTypes[$selTwo];
                     } else {
-                        $relatedContactLocTypeVal = $locationTypes[$selTwo];
+                        $relatedContactLocTypeVal = CRM_Utils_Array::value( $selTwo, $locationTypes );
                         if ( $selThree ) {
                             if ( $selOne == 'phone' ) {
                                 $relatedContactPhoneTypeVal = $phoneTypes[$selThree];
