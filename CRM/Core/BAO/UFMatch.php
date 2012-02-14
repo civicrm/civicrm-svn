@@ -572,17 +572,20 @@ AND    domain_id    = %4
      * @access public
      * @static
      */
-    static function getNextUfIdValue( ) {
-        $query = "SELECT MAX(uf_id)+1 AS next_uf_id FROM civicrm_uf_match";
-        $dao   = CRM_Core_DAO::executeQuery( $query );
-        if ( $dao->fetch() ) {
-            $ufId = $dao->next_uf_id;
+    static function getUFId( $contactID ) { 
+        if (!isset($contactID)) { 
+            return null; 
+        } 
+        require_once 'CRM/Core/BAO/Domain.php';
+        $domain = CRM_Core_BAO_Domain::getDomain();
+        $ufmatch = new CRM_Core_DAO_UFMatch( ); 
+        
+        $ufmatch->contact_id = $contactID;
+        $ufmatch->domain_id = $domain->id;
+        if ( $ufmatch->find( true ) ) {
+            return $ufmatch->uf_id;
         }
-
-        if ( ! isset($ufId) ) {
-            $ufId = 1;
-        }
-        return $ufId;
+        return null;
     }
 
     static function isDuplicateUser( $email ) {
