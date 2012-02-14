@@ -86,7 +86,7 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
             foreach ( $fields as $field ) {
                 if ( isset( $params[$field] ) &&
                      ! CRM_Utils_System::isNull( $params[$field] ) ) { 
-                    if ( in_array( $field, array( 'mailing_from', 'mailing_to' ) ) ) { 
+                    if ( in_array( $field, array( 'mailing_from', 'mailing_to' ) ) && !$params["mailing_relative"] ) { 
                         $time = ( $field == 'mailing_to' ) ? '235959' : null;
                         $parent->set( $field, CRM_Utils_Date::processDate( $params[$field], $time ) );
                     } else {
