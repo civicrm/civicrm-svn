@@ -45,7 +45,6 @@ License: AGPL3
 // there is no session handling in WP hence we start it for CiviCRM pages
 if ( ! session_id( ) ) {
     session_start( );
-    // print_r( $_SESSION );
 }
 
 //this is require for ajax calls in civicrm
@@ -81,6 +80,13 @@ function civicrm_setup_warning( ) {
     t( 'CiviCRM is almost ready.' ). '</strong> ' .
     t( 'You must <a href="!1">configure CiviCRM</a> for it to work.', array( '!1' => $installLink) )    .
     '</p></div>';
+}
+
+function civicrm_remove_wp_magic_quotes( ) {
+    $_GET     = stripslashes_deep( $_GET     );
+    $_POST    = stripslashes_deep( $_POST    );
+    $_COOKIE  = stripslashes_deep( $_COOKIE  );
+    $_REQUEST = stripslashes_deep( $_REQUEST );
 }
 
 function civicrm_wp_initialize( ) {
@@ -201,6 +207,12 @@ function civicrm_wp_invoke( ) {
     if ( ! civicrm_wp_initialize( ) ) {
         return '';
     }
+
+    // CRM-95XX
+    // At this point we are calling a civicrm function
+    // Since WP messes up and always quotes the request, we need to reverse
+    // what it just did
+    civicrm_remove_wp_magic_quotes( );
 
     if ( isset( $_GET['q'] ) ) {
         $args = explode( '/', trim( $_GET['q'] ) );
