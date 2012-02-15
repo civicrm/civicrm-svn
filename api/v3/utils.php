@@ -345,7 +345,7 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
     }
     // http://issues.civicrm.org/jira/browse/CRM-9150 - stick with 'simple' operators for now
     // support for other syntaxes is discussed in ticket but being put off for now
-    $acceptedSQLOperators = array('=', '<=', '>=', '>', '<', 'LIKE',"<>", "!=",  "NOT LIKE" );
+    $acceptedSQLOperators = array('=', '<=', '>=', '>', '<', 'LIKE',"<>", "!=",  "NOT LIKE" , 'IN', 'NOT IN');
     if (!$fields)
         return;
     foreach ($fields as $field) {
@@ -353,8 +353,34 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
         //array is the syntax for SQL clause
         foreach ($params[$field] as $operator => $criteria){
           if(in_array($operator,$acceptedSQLOperators)){
+              switch ($operator) {
+        // unary operators
+        case 'IS NULL':
+        case 'IS NOT NULL':
+            $dao->whereAdd(sprintf('%s %s', $field, $operator));
+            break;
+            
+        // ternary operators
+        case 'BETWEEN':
+        case 'NOT BETWEEN':
+            if (empty($criteria[0]) || empty($criteria[1])) error();
+            $dao->whereAdd(sprintf('%s BETWEEN "%s" AND "%s"', $field, DAO::escapeString($criteria[0]), DAO::escapeString($criteria[1])));
+            break;
+        
+        // n-ary operators
+        case 'IN':
+        case 'NOT IN':
+            if (empty($criteria)) error();
+            $escapedCriteria = array_map(array('CRM_Core_DAO','escapeString'), $criteria);
+            $dao->whereAdd(sprintf('%s %s ("%s")', $field, $operator, implode('", "', $escapedCriteria)));
+            break;
+        
+        // binary operators
+        default:
+            
             $dao->whereAdd(sprintf('%s %s "%s"', $field, $operator, CRM_Core_DAO::escapeString($criteria))); 
-          }
+              }
+              }
           
         } 
       }else{
