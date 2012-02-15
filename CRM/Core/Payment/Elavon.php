@@ -180,7 +180,6 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
             return self::errorExit(9004, 'Could not initiate connection to payment gateway');
         }
 
-        curl_setopt ($ch, CURLOPT_GET, 1);
         curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);   // see - http://curl.haxx.se/docs/sslcerts.html
         curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);   // return the result on success, FALSE on failure
