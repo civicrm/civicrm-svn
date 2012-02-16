@@ -513,7 +513,9 @@ class CRM_Core_SelectValues
     {
         static $addr = null;
         if (! $addr ) {
-            return CRM_Utils_System::getPluginList( 'CRM/Utils/Address' );
+            return CRM_Utils_System::getPluginList( 'CRM/Utils/Address',
+                                                    '.php',
+                                                    array( 'BatchUpdate' ) );
         }
         return $addr;
     }

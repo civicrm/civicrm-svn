@@ -1288,18 +1288,22 @@ class CRM_Utils_System {
      *               contains one or more plugins
      * @param string $fext only files with this extension will be considered
      *               to be plugins
+     * @param array  $skipList list of files to skip
+     *
      * @return array List of plugins, where the plugin name is both the
      *               key and the value of each element. 
      * @access public
      */
-    static function getPluginList( $relpath, $fext = '.php' ) {
+    static function getPluginList( $relpath, $fext = '.php', $skipList = array( ) ) {
         $fext_len = strlen( $fext );
         $plugins = array( );
         $inc_files = CRM_Utils_System::listIncludeFiles( $relpath );
         foreach ( $inc_files as $inc_file ) {
             if ( substr( $inc_file, 0 - $fext_len ) == $fext ) {
                 $plugin_name = substr( $inc_file, 0, 0 - $fext_len );
-                $plugins[$plugin_name] = ts( $plugin_name );
+                if ( ! in_array( $plugin_name, $skipList ) ) {
+                    $plugins[$plugin_name] = ts( $plugin_name );
+                }
             }
         }
         return $plugins;
