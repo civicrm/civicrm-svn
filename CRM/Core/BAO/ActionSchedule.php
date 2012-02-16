@@ -754,6 +754,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                     $where[]  = "e.status_id IN ({$status})";
                 }
                 
+                $where[] = "r.is_active = 1";
                 $dateField = str_replace('event_', 'r.', $actionSchedule->start_action_date);
             }
             
@@ -801,8 +802,8 @@ INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_sche
 {$joinClause}
 LEFT JOIN {$reminderJoinClause}
 {$whereClause} AND {$startEventClause}";
+            
             CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
-
             // if repeat is turned ON:
             if ( $actionSchedule->is_repeat ) {
                 $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
