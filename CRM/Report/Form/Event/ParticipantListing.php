@@ -409,9 +409,11 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                 $participantTitle = ts('View Participant Record');
                 
                 $rows[$rowNum]['civicrm_contact_sort_name_linked' ]  = "<a title='$contactTitle' href=$url>$displayName</a>";
-                $rows[$rowNum]['civicrm_contact_sort_name_linked' ] .=
+                if ( $this->_outputMode !== 'csv' ) {
+                    $rows[$rowNum]['civicrm_contact_sort_name_linked' ] .=
                     "<span style='float: right;'><a title='$participantTitle' href=$viewUrl>" 
                     . ts('View') . "</a></span>";
+                }
                 $entryFound = true;
             }
             
