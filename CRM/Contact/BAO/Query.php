@@ -1071,7 +1071,10 @@ class CRM_Contact_BAO_Query
     {
         if ( $count ) {
             if ( isset( $this->_distinctComponentClause ) ) {
-                $select = "SELECT count( {$this->_distinctComponentClause} )";
+                // we add distinct to get the right count for components
+                // for the more complex result set, we use GROUP BY the same id
+                // CRM-9630
+                $select = "SELECT count( DISTINCT {$this->_distinctComponentClause} )";
             } else {
                 $select = ( $this->_useDistinct ) ?	
                     'SELECT count(DISTINCT contact_a.id)' :
