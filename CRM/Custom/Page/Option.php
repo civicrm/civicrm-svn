@@ -293,14 +293,11 @@ ORDER BY weight, label
                                           $this, false, 0);
 
 
-        CRM_Core_Error::debug_var( 'ACTION', $action );
-
         // what action to take ?
         if ( ( $action & 
                (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD |
                 CRM_Core_Action::VIEW | CRM_Core_Action::DELETE) ) ||
              ! empty( $_POST ) ) {
-            CRM_Core_Error::debug_var( 'ACTION EDIT', $action );
             $this->edit($action);   // no browse for edit/update/view
         } else {
             require_once 'CRM/Core/BAO/OptionValue.php';
