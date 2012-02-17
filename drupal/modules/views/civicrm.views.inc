@@ -132,6 +132,23 @@ function civicrm_views_href( $text, $path, $query ) {
 }
 
 /**
+ * Return url to CiviCRM path
+ *
+ * @param $path     string   The path being linked to, such as "civicrm/add"
+ * @param $query    string   A query string to append to the link.
+ * @param $absolute boolean  Whether to force the output to be an absolute link (beginning with http:).
+ *                           Useful for links that will be displayed outside the site, such as in an
+ *                           RSS feed.
+ *
+ * @return string            an HTML string containing a link to the given path.
+ */
+function civicrm_views_url( $path, $query, $absolute = false ) {
+    civicrm_initialize( );
+    require_once 'CRM/Utils/System.php';
+    return CRM_Utils_System::url( $path, $query, $absolute );
+}
+
+/**
  * Creates new View fields from CiviCRM fields
  *
  * @param $fields

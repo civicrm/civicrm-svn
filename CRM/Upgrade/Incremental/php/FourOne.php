@@ -147,9 +147,18 @@ WHERE  domain_id = %1
                 $values = array( );
                 foreach ( $domainColumnNames as $groupName => $settingNames ) {
                     foreach ( $settingNames as $settingName ) {
-                        $value = empty( $dao->$settingName ) ? null : serialize( $dao->$settingName );
-                        
-                        if( $value ){
+                        if ( empty( $dao->$settingName ) ) {
+                            $value = null;
+                        } else {
+                            if ( $settingName == 'mailing_backend' ) {
+                                $value = $dao->$settingName;
+                            } else {
+                                $value = serialize( $dao->$settingName );
+                            }
+
+                        }
+
+                        if ( $value ){
                             $value = addslashes($value);
                         }
                         $value =  $value ? "'{$value}'" : 'null';
@@ -176,6 +185,7 @@ WHERE  domain_id = %1
 INSERT INTO civicrm_setting( group_name, name, value, domain_id, contact_id, is_domain, created_date, created_id )
 VALUES
 ";
+
         $sql .= implode( ",\n", $values );
         CRM_Core_DAO::executeQuery( $sql );
 

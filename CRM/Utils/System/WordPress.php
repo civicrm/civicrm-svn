@@ -184,7 +184,13 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         $path = CRM_Utils_String::stripPathChars( $path );
 
         if ( $config->userFrameworkFrontend ) {
-            $script = 'index.php';
+            if ( get_option('permalink_structure') != '' ) { 
+                global $post;
+                $script = get_permalink( $post->ID );
+            } else {
+                $script = 'index.php';
+            }
+            
             // when shortcode is inlcuded in page
             if ( get_query_var('page_id') ) {
                 $pageID = "{$separator}page_id=" . get_query_var('page_id');
@@ -211,21 +217,36 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         }
         
         if ( isset( $path ) ) {
-            if ( isset( $query ) ) {
-                return $base . $script .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
+            if ( get_option('permalink_structure') != '' ) { 
+                if ( isset( $query ) ) {
+                    return $script .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
+                } else {
+                    return $script .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
+                }	 
             } else {
-                return $base . $script .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
+                if ( isset( $query ) ) {
+                    return $base . $script .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
+                } else {
+                    return $base . $script .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
+                }
             }
         } else {
-            if ( isset( $query ) ) {
-                return $base . $script .'?'. $query . $pageID . $fragment;
+            if ( get_option('permalink_structure') != '' ) { 
+                if ( isset( $query ) ) {
+                    return $script .'?'. $query . $pageID . $fragment;
+                } else {
+                    return $base . $fragment;
+                }	 
             } else {
-                return $base . $fragment;
+                if ( isset( $query ) ) {
+                    return $base . $script .'?'. $query . $pageID . $fragment;
+                } else {
+                    return $base . $fragment;
+                }
             }
         }
-        
     }
-
+    
     /**
      * Authenticate the user against the drupal db
      *

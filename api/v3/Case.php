@@ -113,7 +113,7 @@ function civicrm_api3_case_create($params) {
     // Initialize XML processor with $params
     require_once 'CRM/Case/XMLProcessor/Process.php';
     $xmlProcessor = new CRM_Case_XMLProcessor_Process ();
-    $xmlProcessorParams = array ('clientID' => $params ['contact_id'], 'creatorID' => $params ['creator_id'], 'standardTimeline' => 1, 'activityTypeName' => 'Open Case', 'caseID' => $case->id, 'subject' => $params ['subject'], 'location' => $params ['location'], 'activity_date_time' => $params ['start_date'], 'duration' => $params ['duration'], 'medium_id' => $params ['medium_id'], 'details' => $params ['details'], 'custom' => array () );
+    $xmlProcessorParams = array ('clientID' => $params ['contact_id'], 'creatorID' => $params ['creator_id'], 'standardTimeline' => 1, 'activityTypeName' => 'Open Case', 'caseID' => $case->id, 'subject' => $params ['subject'], 'location' => CRM_Utils_Array::value( 'location', $params ), 'activity_date_time' => $params ['start_date'], 'duration' => CRM_Utils_Array::value( 'duration', $params ), 'medium_id' => CRM_Utils_Array::value( 'medium_id', $params ), 'details' => CRM_Utils_Array::value( 'details', $params ), 'custom' => array () );
 
     // Do it! :-D
     $xmlProcessor->run ( $params ['case_type'], $xmlProcessorParams );
@@ -412,11 +412,11 @@ function _civicrm_api3_case_format_params(&$params, $mode) {
     switch ($mode) {
 
     case 'create' :
-        if (! $params ['start_date'])
+        if (! CRM_Utils_Array::value( 'start_date', $params ) ) {
             $params ['start_date'] = date ( 'YmdHis' );
-
+        }
         // figure out case type id, if not supplied
-        if (! $params ['case_type_id']) {
+        if (! CRM_Utils_Array::value( 'case_type_id', $params ) ) {
             $sql = "
 SELECT  ov.value
   FROM  civicrm_option_value ov
@@ -425,7 +425,7 @@ SELECT  ov.value
 
             $values = array (1 => array ($params ['case_type'], 'String' ) );
             $params ['case_type_id'] = CRM_Core_DAO::singleValueQuery ( $sql, $values );
-        } else if (! $params ['case_type']) {
+        } else if (! CRM_Utils_Array::value( 'case_type', $params ) ) {
             // figure out case type, if not supplied
             $sql = "
 SELECT  ov.name
@@ -460,11 +460,11 @@ function _civicrm_api3_case_check_params($params, $mode = NULL) {
         if (! $params ['case_type_id'] && ! $params ['case_type'])
             return civicrm_api3_create_error ( 'Missing input parameters. Must provide case_type or case_type_id.' );
 
-        $required = array ('contact_id' => 'num', 'creator_id' => 'num', 'subject' => 'str' );
+        $required = array ('contact_id' => 'num', 'subject' => 'str' );
 
-        if (! $params ['case_type'])
+        if (! CRM_Utils_Array::value( 'case_type', $params ) )
             $required ['case_type_id'] = 'num';
-        if (! $params ['case_type_id'])
+        if (! CRM_Utils_Array::value( 'case_type_id', $params ) )
             $required ['case_type'] = 'str';
         break;
 

@@ -853,18 +853,28 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.ac
                 $values[$activityID]['campaign'] = $allCampaigns[$dao->campaign_id];
             }
 
+            if ( !CRM_Utils_Array::value( 'assignee_contact_name', $values[$activityID] ) ) {
+                $values[$activityID]['assignee_contact_name'] = array( );
+            }
+           
+            if ( !CRM_Utils_Array::value( 'target_contact_name', $values[$activityID] ) ) {
+                $values[$activityID]['target_contact_name'  ] = array( );
+            }
+
             if ( !$bulkActivityTypeID || ($bulkActivityTypeID != $dao->activity_type_id) ) {
                 // build array of target / assignee names
-                $values[$activityID]['target_contact_name'][$dao->target_contact_id]     = $dao->target_contact_name;
-                $values[$activityID]['assignee_contact_name'][$dao->assignee_contact_id] = $dao->assignee_contact_name;
-                
+                if ( $dao->target_contact_id ) {
+                    $values[$activityID]['target_contact_name'][$dao->target_contact_id]     = $dao->target_contact_name;
+                }
+                if ( $dao->assignee_contact_id ) {
+                    $values[$activityID]['assignee_contact_name'][$dao->assignee_contact_id] = $dao->assignee_contact_name;
+                }
+
                 // case related fields
                 $values[$activityID]['case_id']      = $dao->case_id;
                 $values[$activityID]['case_subject'] = $dao->case_subject;
             } else {
                 $values[$activityID]['recipients'] = ts('(recipients)');
-                $values[$activityID]['target_contact_name']   = '';
-                $values[$activityID]['assignee_contact_name'] = '';
                 $values[$activityID]['mailingId']             = '';
                 if ( $accessCiviMail && in_array( $dao->source_record_id, $mailingIDs ) ) {
                     $values[$activityID]['mailingId'] = 
@@ -2291,6 +2301,11 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
                             if ( $count ) {
                                 $contactActivities[$activityId]['target_contact'] .= ";&nbsp;";
                             }
+                            
+                            if ( $count == 4 ) {
+                                $contactActivities[$activityId]['target_contact'] .= "(". ts ('more') .")";
+                                break;
+                            }
                         }
                     }
                 }
@@ -2305,6 +2320,11 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
                             $count++;
                             if ( $count ) {
                                 $contactActivities[$activityId]['assignee_contact'  ] .= ";&nbsp;";
+                            }
+
+                            if ( $count == 4 ) {
+                                $contactActivities[$activityId]['assignee_contact'] .= "(". ts ('more') .")";
+                                break;
                             }
                         }
                     }

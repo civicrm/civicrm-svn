@@ -512,10 +512,12 @@ AND    domain_id    = %4
         if (!isset($contactID)) { 
             return null; 
         } 
-        
+        require_once 'CRM/Core/BAO/Domain.php';
+        $domain = CRM_Core_BAO_Domain::getDomain();
         $ufmatch = new CRM_Core_DAO_UFMatch( ); 
         
         $ufmatch->contact_id = $contactID;
+        $ufmatch->domain_id = $domain->id;
         if ( $ufmatch->find( true ) ) {
             return $ufmatch->uf_id;
         }

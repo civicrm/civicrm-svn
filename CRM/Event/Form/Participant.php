@@ -1372,7 +1372,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
 
         //do cleanup line  items if participant edit the Event Fee.
-        if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId ) {
+        if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId && isset($params['participantid'])  ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             CRM_Price_BAO_LineItem::deleteLineItems( $params['participant_id'], 'civicrm_participant' );
         }
@@ -1407,6 +1407,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
         
         $sent = array( );
+        $notSent = array( );
         if ( CRM_Utils_Array::value( 'send_receipt', $params ) ) {
             if ( array_key_exists( $params['from_email_address'], $this->_fromEmails['from_email_id'] ) ) {
                 $receiptFrom = $params['from_email_address'];
@@ -1456,9 +1457,11 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             if ( $this->_isPaidEvent ) {
                 $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
                 if ( ! $this->_mode ) {
-                    $this->assign( 'paidBy',
-                                   CRM_Utils_Array::value( $params['payment_instrument_id'],
-                                                           $paymentInstrument ) );
+                    if ( isset( $params['payment_instrument_id'] ) ) {
+                        $this->assign( 'paidBy',
+                                       CRM_Utils_Array::value( $params['payment_instrument_id'],
+                                                               $paymentInstrument ) );
+                    }
                 }
 
                 $this->assign( 'totalAmount', $contributionParams['total_amount'] );

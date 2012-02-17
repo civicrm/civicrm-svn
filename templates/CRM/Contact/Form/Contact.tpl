@@ -90,9 +90,11 @@
    </div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
-<div id='customData'></div> 
 <script type="text/javascript">var showTab = Array( );</script> 
     {foreach from = $editOptions item = "title" key="name"}
+        {if $name eq 'CustomData' }
+            <div id='customData'></div> 
+        {/if}
         {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
 <div class="crm-submit-buttons">

@@ -13,7 +13,7 @@ class JFormFieldCiviEventsOnline extends JFormField {
 	 * @access	protected
 	 * @var		string
 	 */
-	var	$_name = 'CiviEventsOnline';
+	var	$type = 'CiviEventsOnline';
 	
     protected function getInput( )
 	{

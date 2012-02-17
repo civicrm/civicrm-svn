@@ -88,7 +88,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         //walk back and we maight set this value in this postProcess.
         //(we set when spaces < group count and want to allow become part of waiting )
 
-        $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId );
+        $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId, false, CRM_Utils_Array::value( 'has_waitlist', $this->_values['event']) );
         
         $this->_allowWaitlist = false;
         if ( $eventFull && !$this->_allowConfirmation &&

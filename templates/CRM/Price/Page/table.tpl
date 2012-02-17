@@ -51,7 +51,7 @@
 {/if}
 {if $context EQ "Contribution"}
     {if $action eq 8}
-        {ts}If you no longer want to use this price set, click the contribution page title below, and modify the Amounts or Memmbership tab configuration.{/ts}
+        {ts}If you no longer want to use this price set, click the contribution page title below, and modify the Amounts or Membership tab configuration.{/ts}
     {else}
         {ts}This price set is used by the contribution page(s) listed below. Click the contribution page title to change or remove the price set.{/ts}
     {/if}

@@ -96,7 +96,11 @@
     </tr>  
     {if $config->userSystem->is_drupal EQ '1'}
         <tr class="even">
-            <td class="tasklist"><a href="{$config->userFrameworkBaseURL}?q=admin/people/permissions&civicrmDestination=civicrm/admin/configtask">{ts}Permissions for Anonymous Users{/ts}</a></td>
+            {if $config->userFramework EQ 'Drupal'}
+                <td class="tasklist"><a href="{$config->userFrameworkBaseURL}?q=admin/people/permissions&civicrmDestination=civicrm/admin/configtask">{ts}Permissions for Anonymous Users{/ts}</a></td>
+            {else}
+                <td class="tasklist"><a href="{$config->userFrameworkBaseURL}?q=admin/user/permissions&civicrmDestination=civicrm/admin/configtask">{ts}Permissions for Anonymous Users{/ts}</a></td>
+            {/if}
             <td>{ts}You will also need to change Drupal permissions so anonymous users can make contributions, register for events and / or use profiles to enter contact information.{/ts} {docURL page="Default Permissions and Roles"}</li>
         </tr>
     {/if}

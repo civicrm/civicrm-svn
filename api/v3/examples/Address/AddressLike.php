@@ -8,7 +8,7 @@
 function address_get_example(){
 $params = array( 
   'street_address' => array( 
-      'LIKE' => ''%mb%'',
+      'LIKE' => '%mb%',
     ),
   'version' => 3,
   'sequential' => 1,
@@ -29,12 +29,12 @@ function address_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 2,
+  'id' => 9,
   'values' => array( 
       '0' => array( 
-          'id' => '2',
+          'id' => '9',
           'contact_id' => '1',
-          'location_type_id' => '6',
+          'location_type_id' => '13',
           'is_primary' => '1',
           'is_billing' => 0,
           'street_address' => 'Ambachtstraat 23',

@@ -171,9 +171,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $this->_hasLocationTypes[$name] = CRM_Utils_Array::value( 'hasLocationType', $field );
         }
 
-        // lets add group and tag to this list
+        // lets add group, tag and current_employer to this list
         $this->_selectFields['group'] = ts('Group(s)');
         $this->_selectFields['tag'  ] = ts('Tag(s)');
+        $this->_selectFields['current_employer'] = ts('Current Employer');
         
         //CRM-4363 check for in selector or searchable fields.
         $this->_hasSearchableORInSelector = CRM_Core_BAO_UFField::checkSearchableORInSelector( $this->_gid );

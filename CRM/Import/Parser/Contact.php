@@ -1899,7 +1899,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         }
         
         // to check if not update mode and unset the fields with empty value.
-        if ( !$this->_updateWithId ) { 
+        if ( !$this->_updateWithId && array_key_exists('custom', $formatted) ) { 
             foreach ( $formatted['custom'] as $customKey => $customvalue ) {
                 $emptyValue = CRM_Utils_Array::value( 'value', $customvalue[-1] );
                 if ( empty($emptyValue) ) {

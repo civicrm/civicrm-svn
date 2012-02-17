@@ -210,9 +210,16 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         $query   = new CRM_Contact_BAO_Query( $params, $returnProperties );
         $details = $query->apiQuery( $params, $returnProperties, NULL, NULL, 0, $numberofContacts );
                       
+        require_once 'CRM/Utils/Token.php';
+        $messageToken = CRM_Utils_Token::getTokens( $mailingFormat );
+
         // also get all token values
         require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::tokenValues( $details[0], $this->_contactIds );
+        CRM_Utils_Hook::tokenValues( $details[0],
+                                     $this->_contactIds,
+                                     null,
+                                     $messageToken,
+                                     'CRM_Contact_Form_Task_Label' );
 
         $tokens = array( );
         CRM_Utils_Hook::tokens( $tokens );

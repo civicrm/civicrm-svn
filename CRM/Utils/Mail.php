@@ -116,7 +116,7 @@ class CRM_Utils_Mail
         if ( strpos( $headers['From'], ',' )  !== false ) {
             $from = explode( ' <', $headers['From'] );
             $headers['From'] = self::formatRFC822Email( $from[0],
-                                                        substr( $from[1], 0, -1 ),
+                                                        substr( trim( $from[1] ) , 0, -1 ),
                                                         true );
         }
 

@@ -109,8 +109,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
             $entityValue  = CRM_Utils_Array::value('entity_value', $value );
             $entityStatus = CRM_Utils_Array::value('entity_status', $value );
             $entityRecipient = CRM_Utils_Array::value('entity_recipient', $value );
-
-            $valueLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -'));
+            $valueLabel = array('- '. strtolower( CRM_Utils_Array::value('entity_value_label', $value) ) .' -');
             $key = CRM_Utils_Array::value('id', $value);
             $entityMapping[$key] = CRM_Utils_Array::value('entity', $value);
                             
@@ -179,7 +178,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
 
         foreach ( $mapping as $value ) {
             $entityStatus = CRM_Utils_Array::value('entity_status', $value);
-            $statusLabel = ts(array('- '. strtolower( CRM_Utils_Array::value('entity_status_label', $value) ) .' -'));
+            $statusLabel = array('- '. strtolower( CRM_Utils_Array::value('entity_status_label', $value) ) .' -');
             $id =  CRM_Utils_Array::value('id', $value);
                       
             switch ($entityStatus) {
@@ -786,6 +785,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                     $where[]  = "e.status_id IN ({$status})";
                 }
                 
+                $where[] = "r.is_active = 1";
                 $dateField = str_replace('event_', 'r.', $actionSchedule->start_action_date);
             }
 
@@ -846,11 +846,11 @@ LEFT JOIN {$reminderJoinClause}
 {$whereClause} AND {$startEventClause}";
             
             CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
-
             // if repeat is turned ON:
             if ( $actionSchedule->is_repeat ) {
                 $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
                         "({$dateField}, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
+
 
                 if ( $actionSchedule->repetition_frequency_unit == 'day' ) {
                     $hrs = 24 * $actionSchedule->repetition_frequency_interval;
@@ -867,25 +867,29 @@ LEFT JOIN {$reminderJoinClause}
                 $groupByClause     = "GROUP BY reminder.contact_id, reminder.entity_id, reminder.entity_table"; 
                 $selectClause     .= ", MAX(reminder.action_date_time) as latest_log_time";
 
-                // Note this query tries to insert MAX(reminder.action_date_time) in place of is_error
-                $query = "
-INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_schedule_id, is_error)
-{$selectClause} 
+$sqlInsertValues = "{$selectClause} 
 {$fromClause} 
 {$joinClause}
 INNER JOIN {$reminderJoinClause}
 {$whereClause} AND {$repeatEventClause}
 {$groupByClause}
 {$havingClause}";
-                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
 
-                // just to clean is_error values
-                $query = "
-UPDATE civicrm_action_log 
-SET    is_error = 0 
-WHERE  action_date_time IS NULL AND action_schedule_id = %1";
-                CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
-            }
+         $valsqlInsertValues  = CRM_Core_DAO::executeQuery( $sqlInsertValues, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+
+         $arrValues = array();
+         while ($valsqlInsertValues->fetch()){
+            $arrValues[] = "( {$valsqlInsertValues->contact_id}, {$valsqlInsertValues->entity_id}, '{$valsqlInsertValues->entity_table}',{$valsqlInsertValues->action_schedule_id} )";
+         }
+
+         $valString = implode(',', $arrValues);
+
+         if( $valString ) {
+              $query = "
+              INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_schedule_id) VALUES ". $valString;
+              CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
+   }
+             }
         }
     }
 

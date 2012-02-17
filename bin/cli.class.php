@@ -91,11 +91,13 @@ class civicrm_Cli {
             $arg = $parts[0];
             $value = $parts[1];
         } else {
-            $next_arg = $this->_sanitize($args[$k + 1]);
-            // if the next argument is not another option
-            // it's the value for this argument
-            if(!preg_match('/^-/',$next_arg)) {
-                $value = $next_arg;
+            if ( isset( $args[$k + 1] ) ) {
+                $next_arg = $this->_sanitize($args[$k + 1]);
+                // if the next argument is not another option
+                // it's the value for this argument
+                if(!preg_match('/^-/',$next_arg)) {
+                    $value = $next_arg;
+                }
             }
         }
 

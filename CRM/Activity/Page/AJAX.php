@@ -135,7 +135,7 @@ class CRM_Activity_Page_AJAX
             if ( $params['mode'] == 'move' || $caseActivity->find( true ) ) {            
 	            $otherActivity->is_deleted = 1;
             } else {
-            	$otherActivity->subject = ts('(Filed on case %1) ', array( 1 => $params['caseID'] ) ) . $otherActivity->subject;
+            	$otherActivity->subject = ts('(Filed on case %1)', array( 1 => $params['caseID'] ) ) . ' ' . $otherActivity->subject;
             }
             $otherActivity->activity_date_time = $actDateTime;
             $otherActivity->save( );

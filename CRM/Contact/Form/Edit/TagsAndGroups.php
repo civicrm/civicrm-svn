@@ -153,7 +153,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
             require_once 'CRM/Core/BAO/Tag.php';
             $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
             
-            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', $form->_contactId, false, true );
+            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', $contactId, false, true );
         }
         $form->assign('tagGroup', $form->_tagGroup); 
     }

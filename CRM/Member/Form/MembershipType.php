@@ -234,6 +234,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
             }
         }
         
+        $this->assign( 'membershipRecordsExists', $membershipRecords );
+
         if  ( ($this->_action & CRM_Core_Action::UPDATE) && $reminderDay ) {
             $renewMessage     = array();
             $returnProperties = array( 'renewal_msg_id', 'renewal_reminder_day' );

@@ -355,6 +355,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
 
         $exportParams['postal_mailing_export']['temp_columns'] = array( );
         if ( $exportParams['exportOption'] == 2 && 
+             isset( $exportParams['postal_mailing_export'] ) &&
              $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
             $postalColumns = array( 'is_deceased', 'do_not_mail', 'street_address', 'supplemental_address_1' );
             foreach ( $postalColumns as $column ) {
@@ -505,9 +506,11 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
         if ( CRM_Utils_Array::value( 'tags'  , $returnProperties ) || 
              CRM_Utils_Array::value( 'groups', $returnProperties ) ||
              CRM_Utils_Array::value( 'notes' , $returnProperties ) ||
-             $query->_useGroupBy ) { 
+             // CRM-9552
+             ( $queryMode & CRM_Contact_BAO_Query::MODE_CONTACTS && $query->_useGroupBy ) ) {
             $groupBy = " GROUP BY contact_a.id";
         }
+
         if ( $queryMode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
             $groupBy = " GROUP BY civicrm_activity.id ";  
         }
@@ -568,7 +571,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
         // for CRM-3157 purposes
         require_once 'CRM/Core/I18n.php';
         $i18n = CRM_Core_I18n::singleton();
-        
+
         while ( 1 ) {
             $limitQuery = "{$queryString} LIMIT {$offset}, {$rowCount}";
             $dao = CRM_Core_DAO::executeQuery( $limitQuery );
@@ -938,7 +941,8 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             
             // if postalMailing option is checked, exclude contacts who are deceased, have 
             // "Do not mail" privacy setting, or have no street address
-            if ( $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
+            if ( isset( $exportParams['postal_mailing_export']['postal_mailing_export']  ) &&
+                 $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
                 self::postalMailingFormat( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
             }
 

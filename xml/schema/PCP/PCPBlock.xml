@@ -94,6 +94,7 @@
        <type>varchar</type>
        <length>255</length>
        <default>NULL</default>
+       <localizable>true</localizable>
        <comment>Link text for PCP.</comment>
        <add>2.2</add>
   </field> 

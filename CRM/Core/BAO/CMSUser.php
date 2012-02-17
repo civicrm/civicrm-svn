@@ -66,10 +66,15 @@ class CRM_Core_BAO_CMSUser
 
             $result = db_query("SELECT uid, mail, name FROM {users} where mail != ''");
 
-            while ( $row = $result->fetchAssoc( ) ) {
-                $rows[] = $row;
-            }
-
+            if ( $config->userFramework == 'Drupal' ) {
+                while ( $row = $result->fetchAssoc( ) ) {
+                    $rows[] = $row;
+                }
+            } else if ( $config->userFramework == 'Drupal6' ) {
+                while ( $row = db_fetch_array( $result ) ) {
+                    $rows[] = $row;
+                }
+            } 
         } else if ( $config->userFramework == 'Joomla' ) { 
             $id   = 'id'; 
             $mail = 'email'; 
@@ -84,7 +89,7 @@ class CRM_Core_BAO_CMSUser
 
         set_time_limit(300);
 
-        if ($config->userFramework == 'Drupal') {
+        if ( $config->userSystem->is_drupal == '1' ) {
             $user            = new StdClass( );
             $uf              = $config->userFramework;
             $contactCount    = 0;
@@ -254,46 +259,47 @@ class CRM_Core_BAO_CMSUser
         } else if ( $isDrupal && ! variable_get('user_register', TRUE ) ) {
             return false;
         }
-
+        
         if ( $gid ) {                                        
-                $isCMSUser = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gid, 'is_cms_user' );
+            $isCMSUser = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gid, 'is_cms_user' );
         } 
+
         // $cms is true when there is email(primary location) is set in the profile field.
         $session = CRM_Core_Session::singleton( );                         
         $userID  = $session->get( 'userID' );      
         $showUserRegistration = false;
         if ( $action ) { 
-                $showUserRegistration = true;
-        }elseif (!$action && !$userID ) { 
-                $showUserRegistration = true;
+            $showUserRegistration = true;
+        } elseif (!$action && !$userID ) { 
+            $showUserRegistration = true;
         }
 
-        if ( $isCMSUser && $emailPresent ) {                
-                if ( $showUserRegistration ) {
-                    if ( $isCMSUser != 2  ) {
-                        $extra = array(
-                                       'onclick' => "return showHideByValue('cms_create_account','','details','block','radio',false );"
-                                       );
-                        $form->addElement('checkbox', 'cms_create_account', ts('Create an account?'), null, $extra);
-                        $required = false;       
-                    }else {
-                        $form->add('hidden', 'cms_create_account', 1 );
-                        $required = true;
-                    }
+        if ( $isCMSUser && $emailPresent ) { 
+            if ( $showUserRegistration ) {
+                if ( $isCMSUser != 2  ) {
+                    $extra = array(
+                                   'onclick' => "return showHideByValue('cms_create_account','','details','block','radio',false );"
+                                   );
+                    $form->addElement('checkbox', 'cms_create_account', ts('Create an account?'), null, $extra);
+                    $required = false;       
+                }else {
+                    $form->add('hidden', 'cms_create_account', 1 );
+                    $required = true;
+                }
 
-                    $form->assign( 'isCMS', $required );       
-                    require_once 'CRM/Core/Action.php';
-                    if( ! $userID || $action & CRM_Core_Action::PREVIEW || $action & CRM_Core_Action::PROFILE ) {     
-                        $form->add('text', 'cms_name', ts('Username'), null, $required );
-                        if ( ( $isDrupal && !variable_get('user_email_verification', TRUE ) ) OR ( $isJoomla ) ) {       
-                            $form->add('password', 'cms_pass', ts('Password') );
-                            $form->add('password', 'cms_confirm_pass', ts('Confirm Password') );
-                            } 
-                        
-                        $form->addFormRule( array( 'CRM_Core_BAO_CMSUser', 'formRule' ), $form );
+                $form->assign( 'isCMS', $required );       
+                require_once 'CRM/Core/Action.php';
+                if( ! $userID || $action & CRM_Core_Action::PREVIEW || $action & CRM_Core_Action::PROFILE ) {     
+                    $form->add('text', 'cms_name', ts('Username'), null, $required );
+                    if ( ( $isDrupal && !variable_get('user_email_verification', TRUE ) ) OR ( $isJoomla ) ) {       
+                        $form->add('password', 'cms_pass', ts('Password') );
+                        $form->add('password', 'cms_confirm_pass', ts('Confirm Password') );
                     } 
-                    $showCMS = true;
+                        
+                    $form->addFormRule( array( 'CRM_Core_BAO_CMSUser', 'formRule' ), $form );
                 } 
+                $showCMS = true;
+            } 
         }
 
 
@@ -309,6 +315,7 @@ class CRM_Core_BAO_CMSUser
                 $loginUrl .= '?destination=' . urlencode( $destination );
             }
         }
+
         $form->assign( 'loginUrl', $loginUrl );
         $form->assign( 'showCMS', $showCMS ); 
     } 

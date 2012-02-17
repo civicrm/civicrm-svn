@@ -85,6 +85,11 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
      */
     protected $_componentIds;
 
+	/**
+	 * This includes the submitted values of the search form
+	 */
+	static protected $_searchFormValues;
+
     /**
      * build all the data structures needed to build the form
      *
@@ -100,22 +105,22 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
     static function preProcessCommon( &$form, $useTable = false )
     {
         $form->_contactIds   = array( );
-        $form->_contactTypes = array( );
+		$form->_contactTypes = array( );
 
         // get the submitted values of the search form
         // we'll need to get fv from either search or adv search in the future
         $fragment = 'search';
         if ( $form->_action == CRM_Core_Action::ADVANCED ) {
-            $values = $form->controller->exportValues( 'Advanced' );
+            self::$_searchFormValues = $form->controller->exportValues( 'Advanced' );
             $fragment .= '/advanced';
         } else if ( $form->_action == CRM_Core_Action::PROFILE ) {
-            $values = $form->controller->exportValues( 'Builder' );
+            self::$_searchFormValues = $form->controller->exportValues( 'Builder' );
             $fragment .= '/builder';
         } else if ( $form->_action == CRM_Core_Action::COPY ) {
-            $values = $form->controller->exportValues( 'Custom' );
+            self::$_searchFormValues = $form->controller->exportValues( 'Custom' );
             $fragment .= '/custom';
         } else {
-            $values = $form->controller->exportValues( 'Basic' );
+            self::$_searchFormValues = $form->controller->exportValues( 'Basic' );
         }
         
         //set the user context for redirection of task actions
@@ -131,7 +136,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         $session->replaceUserContext( $url );
         
         require_once 'CRM/Contact/Task.php';
-        $form->_task         = CRM_Utils_Array::value( 'task', $values ) ;
+        $form->_task         = CRM_Utils_Array::value( 'task', self::$_searchFormValues ) ;
         $crmContactTaskTasks = CRM_Contact_Task::taskTitles();
         $form->assign( 'taskName', CRM_Utils_Array::value( $form->_task, $crmContactTaskTasks ) );
        
@@ -145,7 +150,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         }            
 
         // all contacts or action = save a search
-        if ( ( CRM_Utils_Array::value('radio_ts', $values ) == 'ts_all' ) ||
+        if ( ( CRM_Utils_Array::value('radio_ts', self::$_searchFormValues ) == 'ts_all' ) ||
              ( $form->_task == CRM_Contact_Task::SAVE_SEARCH ) ) {
             // need to perform action on all contacts
             // fire the query again and get the contact id's + display name
@@ -161,7 +166,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
             $fv          = $form->get( 'formValues' );
             $customClass = $form->get( 'customSearchClass' );
             require_once 'CRM/Core/BAO/Mapping.php';
-            $returnProperties = CRM_Core_BAO_Mapping::returnProperties( $values);
+            $returnProperties = CRM_Core_BAO_Mapping::returnProperties( self::$_searchFormValues);
 
             eval( '$selector   = new ' .
                   $selectorName . 
@@ -222,11 +227,11 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
                 unset( $alreadySeen );
                 $dao->free( );
             }
-        } else if ( CRM_Utils_Array::value( 'radio_ts' , $values ) == 'ts_sel') {
+        } else if ( CRM_Utils_Array::value( 'radio_ts' , self::$_searchFormValues ) == 'ts_sel') {
             // selected contacts only
             // need to perform action on only selected contacts
             $insertString = array( );
-            foreach ( $values as $name => $value ) {
+            foreach ( self::$_searchFormValues as $name => $value ) {
                 if ( substr( $name, 0, CRM_Core_Form::CB_PREFIX_LEN ) == CRM_Core_Form::CB_PREFIX ) {
                     $contactID = substr( $name, CRM_Core_Form::CB_PREFIX_LEN );
                     if ( $useTable ) {
@@ -245,7 +250,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         
         //contact type for pick up profiles as per selected contact types with subtypes
         //CRM-5521
-        if ( $selectedTypes = CRM_Utils_Array::value( 'contact_type' , $values ) ) {
+        if ( $selectedTypes = CRM_Utils_Array::value( 'contact_type' , self::$_searchFormValues ) ) {
             if( !is_array( $selectedTypes ) ) {
                 $selectedTypes  = explode( ' ', $selectedTypes );
             }

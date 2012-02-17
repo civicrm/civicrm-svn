@@ -706,7 +706,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         }
         
         if ( $restore ) {
-            self::contactTrashRestore( $contact->id, true );
+            self::contactTrashRestore( $contact, true );
             return true;
         }
         
@@ -750,7 +750,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
             
             $contact->delete();
         } else {
-            self::contactTrashRestore( $contact->id );
+            self::contactTrashRestore( $contact );
         }
         
         //delete the contact id from recently view
@@ -920,14 +920,18 @@ WHERE id={$id}; ";
     /**
      *  Function to set is_delete true or restore deleted contact
      *  
-     *  @param int     $contactId  contact id
+     *  @param int     $contact  Contact DAO object
      *  @param boolean $restore true to set the is_delete = 1 else false to restore deleted contact,
      *                                i.e. is_delete = 0    
      *  
      *  @return void
      */
-    function contactTrashRestore( $contactId, $restore = false ) {
-        $params   = array( 1 => array( $contactId, 'Integer' ) );
+    function contactTrashRestore( $contact, $restore = false ) {
+        $op = ( $restore ? 'restore' : 'trash' );
+
+        CRM_Utils_Hook::pre( $op, $contact->contact_type, $contact->id, CRM_Core_DAO::$_nullArray );
+
+        $params   = array( 1 => array( $contact->id, 'Integer' ) );
         $isDelete = ' is_deleted = 1 ';
         if ( $restore ) {
             $isDelete = ' is_deleted = 0 ';
@@ -938,6 +942,8 @@ WHERE id={$id}; ";
         
         $query = "UPDATE civicrm_contact SET {$isDelete} WHERE id = %1";
         CRM_Core_DAO::executeQuery( $query, $params );
+
+        CRM_Utils_Hook::post( $op, $contact->contact_type, $contact->id, $contact );
     }
     
     /**
@@ -1733,7 +1739,10 @@ ORDER BY civicrm_email.is_primary DESC";
                     $locTypeId = $defaultLocationId;
                 }
             }
-            if ( is_numeric($locTypeId) && !in_array( $fieldName, $multiplFields ) ) {
+
+            if ( is_numeric($locTypeId) && 
+                 ! in_array( $fieldName, $multiplFields ) &&
+                 substr($fieldName, 0, 7) != 'custom_' ) {
                 $index =  $locTypeId;
                 
                 if ( is_numeric( $typeId ) ) {

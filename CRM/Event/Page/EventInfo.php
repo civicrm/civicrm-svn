@@ -105,7 +105,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
 
             // get price set options, - CRM-5209
             if ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_event', $this->_id ) ) {
-                $setDetails     = CRM_Price_BAO_Set::getSetDetail( $priceSetId );
+                $setDetails     = CRM_Price_BAO_Set::getSetDetail( $priceSetId, true, true );
                 $priceSetFields = $setDetails[$priceSetId]['fields'];
                 if ( is_array( $priceSetFields ) ) {
                     $fieldCnt = 1;                    
@@ -123,6 +123,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                             $values['feeBlock']['value'][$fieldCnt] = '';
                             $values['feeBlock']['label'][$fieldCnt] = $fieldValues['label'];
                             $values['feeBlock']['lClass'][$fieldCnt] = 'price_set_option_group-label';
+                            $values['feeBlock']['isDisplayAmount'][$fieldCnt] = CRM_Utils_Array::value('is_display_amounts', $fieldValues);
                             $fieldCnt++;
                             $labelClass = 'price_set_option-label';
                         } else {
@@ -130,6 +131,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                         }
                         
                         foreach ( $fieldValues['options'] as $optionId => $optionVal ) {
+                            $values['feeBlock']['isDisplayAmount'][$fieldCnt] = CRM_Utils_Array::value('is_display_amounts', $fieldValues);
                             $values['feeBlock']['value'][$fieldCnt] = $optionVal['amount'];
                             $values['feeBlock']['label'][$fieldCnt] = $optionVal['label'];
                             $values['feeBlock']['lClass'][$fieldCnt] = $labelClass;
@@ -233,8 +235,10 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         }
  
         require_once 'CRM/Event/BAO/Participant.php';
-        $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id );
         $hasWaitingList   = CRM_Utils_Array::value( 'has_waitlist', $values['event'] );
+        $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id,
+                                                                  false,
+                                                                  $hasWaitingList );
         
         $allowRegistration = false;
         if ( CRM_Utils_Array::value( 'is_online_registration', $values['event'] ) ) {

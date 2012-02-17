@@ -114,7 +114,6 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
                 
                 $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $membership[$dao->id]['membership_id'] );
                 
-                
                 $membership[$dao->id]['action'] = CRM_Core_Action::formLink( self::links( 'all', 
                                                                                           null, 
                                                                                           null, 
@@ -130,9 +129,13 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
                                                                                    'cid'=> $this->_contactId));
             }
             
-            //does membership is auto renew CRM-7137.
-            $membership[$dao->id]['auto_renew'] = CRM_Utils_Array::value( 'contribution_recur_id', 
-                                                                              $membership[$dao->id] );
+            //does membership have auto renew CRM-7137.
+            if ( CRM_Utils_Array::value( 'contribution_recur_id', $membership[$dao->id] ) &&
+                 !CRM_Member_BAO_Membership::isSubscriptionCancelled( $membership[$dao->id]['membership_id'] ) ) {
+                $membership[$dao->id]['auto_renew'] = 1;
+            } else {
+                $membership[$dao->id]['auto_renew'] = 0;
+            }
         }
         
         //Below code gives list of all Membership Types associated

@@ -160,8 +160,15 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
             // attempt to save activity targets                       
             $targetParams = array( 'activity_id'       => $activity->id,
                                    'target_contact_id' => $contact );            
-            
-            $resultTarget = CRM_Activity_BAO_ActivityTarget::create( $targetParams );           
+            // See if it already exists
+            require_once 'CRM/Activity/DAO/ActivityTarget.php';
+            $activity_target = new CRM_Activity_DAO_ActivityTarget();
+            $activity_target->activity_id = $activity->id;
+            $activity_target->target_contact_id = $contact;
+            $activity_target->find ( true );
+            if(empty($activity_target->id)) {
+              $resultTarget = CRM_Activity_BAO_ActivityTarget::create( $targetParams );           
+            }
         }
         
         $transaction->commit( );

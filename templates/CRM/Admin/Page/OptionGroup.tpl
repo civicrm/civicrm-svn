@@ -49,7 +49,7 @@
     	<tr id="row_{$row.id}"class="crm-admin-optionGroup {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-admin-optionGroup-title">{if $row.title}{$row.title}{else}( {ts}none{/ts} ){/if}</td>	
             <td class="crm-admin-optionGroup-name">{$row.name}</td>	
-            <td><a href="{crmURL p="civicrm/admin/optionValue" q="gid=`$row.id`&reset=1"}" title="{ts}view and edit options{/ts}">{ts}Options{/ts}</a></td>
+            <td><a href="{crmURL p="civicrm/admin/optionValue" q="gid=`$row.id`&reset=1"}" title="{ts}View and Edit Options{/ts}">{ts}Options{/ts}</a></td>
         </tr>
         {/foreach}
     </table>

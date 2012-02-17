@@ -251,6 +251,16 @@ class CRM_Dedupe_Merger
                 'civicrm_pledge'                  => array('contact_id'),
             );
 
+            // Add ContactReference custom fields CRM-9561
+            $sql = "
+              SELECT cg.table_name, cf.column_name
+              FROM civicrm_custom_group cg, civicrm_custom_field cf
+              WHERE cg.id = cf.custom_group_id AND cf.data_type = 'ContactReference'";
+            $dao = &CRM_Core_DAO::executeQuery($sql);
+            while ($dao->fetch()) {
+              $cidRefs[$dao->table_name][] = $dao->column_name;
+            }
+
             // Allow hook_civicrm_merge() to adjust $cidRefs
             CRM_Utils_Hook::merge( 'cidRefs', $cidRefs);
         }

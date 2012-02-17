@@ -43,7 +43,7 @@ class CRM_Core_BAO_LocationType extends CRM_Core_DAO_LocationType {
      * static holder for the default LT
      */
     static $_defaultLocationType = null;
-
+    static $_billingLocationType = null;
 
     /**
      * class constructor
@@ -109,7 +109,18 @@ class CRM_Core_BAO_LocationType extends CRM_Core_DAO_LocationType {
         }
         return self::$_defaultLocationType;
     }
-    
+    /*
+     * Get ID of billing location type
+     * @return integer
+     */
+    function getBilling(){
+         if (self::$_billingLocationType == null) {     
+            require_once 'CRM/Core/PseudoConstant.php';
+            $locationTypes = CRM_Core_PseudoConstant::locationType( );
+            self::$_billingLocationType =  array_search( 'Billing',  $locationTypes );
+         }
+         return self::$_billingLocationType;
+    }
     /**
      * Function to delete location Types 
      * 

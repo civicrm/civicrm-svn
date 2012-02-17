@@ -49,6 +49,11 @@ class CRM_Utils_Hook_Joomla extends CRM_Utils_Hook {
            JPluginHelper::importPlugin('civicrm');
            
            $app = JFactory::getApplication();
+           // for cli usage
+           if ( get_class($app) == 'JException' ) {
+               $app = JCli::getInstance( );
+           }
+
            $result = $app->triggerEvent($fnSuffix,array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5));
            if ( ! empty( $result ) ) {
                // collapse result returned from hooks

@@ -258,6 +258,10 @@ div#crm-container {
     font-size: .9em;
 }
 
+/*
+** Ensures max-width is reset to css default for the images in the maps
+*/
+#Map img { max-width: none; }
 
 /*
 ** CRM form layout classes (from www.realworldstyle.com)
@@ -2697,7 +2701,7 @@ div#crm-toolTip #hide-tooltip {
     margin-right : 45px;
 }
 
-#crm-container ul.token-input-list-facebook, ul.token-input-list-facebook li.leaf {
+#crm-container ul.token-input-list-facebook, ul.token-input-list-facebook li.leaf, #crm-container ul li {
   list-style-image:none;
 }
 

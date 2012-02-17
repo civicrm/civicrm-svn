@@ -39,7 +39,7 @@
                 <img title="Twitter Tweet Button" src="{$config->userFrameworkResourceURL}/i/tweet.png" width="55px" height="20px"  alt="Tweet Button">
             </a>
             <a href="http://www.facebook.com/plugins/like.php?href={$url}" target="_blank">
-                <img title="Facebook Like Button" src="{$config->userFrameworkResourceURL}/i/fblike.png" alt="Facbook Button" />
+                <img title="Facebook Like Button" src="{$config->userFrameworkResourceURL}/i/fblike.png" alt="Facebook Button" />
             </a>
         {else}
             {*use advanced buttons for pages*}

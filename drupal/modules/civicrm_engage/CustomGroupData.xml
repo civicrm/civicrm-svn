@@ -1376,7 +1376,7 @@ N - New</help_post>
     <OptionGroup>
         <name>civicrm_survey_default_results_set_options</name>
         <label>Survey Default Results Set Options</label>
-		<description>Default options for Results Set for Surveys</description>
+		<title>Default options for Results Set for Surveys</title>
         <is_active>1</is_active>
     </OptionGroup>  
   </OptionGroups>

@@ -367,7 +367,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $this->applyFilter('__ALL__', 'trim');
         
         $this->addDate( 'renewal_date', ts('Date Renewal Entered'), false, array( 'formatType' => 'activityDate') );    
-        if( ! $this->_mode ) {
+        if( CRM_Core_Permission::access( 'CiviContribute' ) && ! $this->_mode ) {
             $this->addElement('checkbox', 'record_contribution', ts('Record Renewal Payment?'), null, array('onclick' =>"checkPayment();"));
             require_once 'CRM/Contribute/PseudoConstant.php';
             $this->add('select', 'contribution_type_id', ts( 'Contribution Type' ), 
@@ -395,6 +395,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                         CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_Contribution', 'check_number' ) );
         } else {
             $this->add('text', 'total_amount', ts('Amount'));
+            $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
         }
         $this->addElement( 'checkbox', 'send_receipt', ts('Send Confirmation and Receipt?'), null, 
                            array( 'onclick' => "showHideByValue( 'send_receipt', '', 'notice', 'table-row', 'radio', false ); showHideByValue( 'send_receipt', '', 'fromEmail', 'table-row', 'radio',false);" ) );
@@ -442,7 +443,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
     static function formRule( $params ) 
     {
         $errors = array( );
-        
         if ( $params['membership_type_id'][0] == 0 ) {
         	$errors['membership_type_id'] = ts('Oops. It looks like you are trying to change the membership type while renewing the membership. Please click the "change membership type" link, and select a Membership Organization.');
         }
@@ -617,7 +617,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
         // chk for renewal for multiple terms CRM-8750
         $numRenewTerms = 1;
-        if ( is_numeric( $formValues['num_terms'] ) ) {
+        if ( is_numeric( CRM_Utils_Array::value('num_terms', $formValues) ) ) {
             $numRenewTerms = $formValues['num_terms'];
         }
 

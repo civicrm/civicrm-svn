@@ -1032,6 +1032,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         // processing needed, after the activity has been added/updated.
         $this->endPostProcess( $params, $activity );
 
+        // CRM-9590
+        $this->_activityId = $activity->id;
+
         // create follow up activity if needed
         $followupStatus = '';
         if ( CRM_Utils_Array::value('followup_activity_type_id', $params) ) {
@@ -1076,7 +1079,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                         array( 1 => $params['subject'],
                                                2 => $followupStatus,
                                                3 => $mailStatus ) ) );
-        
+     
         return array( 'activity' => $activity );
     }
 

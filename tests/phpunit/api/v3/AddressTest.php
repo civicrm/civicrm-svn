@@ -192,7 +192,7 @@ class api_v3_AddressTest extends CiviUnitTestCase
         civicrm_api('address','create',$this->_params);
         $subfile = "AddressLike";
         $description = "Demonstrates Use of Like";
-        $params = array( 'street_address' => array('LIKE' => "'%mb%'"),
+        $params = array( 'street_address' => array('LIKE' => '%mb%'),
                          'version' => $this->_apiversion  ,
                          'sequential' => 1,
                           );

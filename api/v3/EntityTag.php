@@ -67,7 +67,7 @@ function civicrm_api3_entity_tag_get( $params ) {
 function _civicrm_api3_entity_tag_get_spec(&$params){
   $params['entity_id']['api.required'] =1;
   $params['entity_id']['api.aliases'] = array('contact_id');
-  $params['entity_table']['api.default'] = array('civicrm_contact');  
+  $params['entity_table']['api.default'] = 'civicrm_contact';  
 }
 /**
  *

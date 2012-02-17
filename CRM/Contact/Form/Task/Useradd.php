@@ -70,7 +70,7 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form
         $contact = CRM_Contact_BAO_Contact::retrieve( $params, $defaults, $ids );    
         $this->_displayName = $contact->display_name;
         $this->_email = $contact->email;
-        CRM_Utils_System::setTitle( ts('Create User Record for') . ' ' . $this->_displayName );
+        CRM_Utils_System::setTitle( ts('Create User Record for %1', array( 1 => $this->_displayName ) ) );
     }
 
     /**

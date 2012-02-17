@@ -732,11 +732,10 @@ class CRM_GCD {
         $contact = new CRM_Contact_DAO_Contact();
         for ($id=1; $id<=$this->numHousehold; $id++) {
             $cid = $this->household[($id-1)];
-            $contact->primary_contact_id = $this->householdIndividual[$cid][0];
 
             // get the last name of the primary contact id
             $individual = new CRM_Contact_DAO_Contact();
-            $individual->id = $contact->primary_contact_id;
+            $individual->id = $this->householdIndividual[$cid][0];
             $individual->find(true);
             $firstName = $individual->first_name;
             $lastName = $individual->last_name;

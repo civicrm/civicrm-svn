@@ -109,8 +109,7 @@ SELECT $keys
 FROM   {$permissionTable}
 WHERE  entity_id = $contactID
 ";
-    $dao = CRM_Core_DAO::executeQuery( $sql,
-                                       CRM_Core_DAO::$_nullArray );
+    $dao = CRM_Core_DAO::executeQuery( $sql );
     if ( ! $dao->fetch( ) ) {
         return;
     }
@@ -1749,6 +1748,12 @@ function civitest_civicrm_aclGroup( $type, $contactID, $tableName, &$allGroups, 
  * if needed. Adds email + city to output if they exist
  */
 function civitest_civicrm_contactListQuery( &$query, $name, $context, $id ) {
+    // if other params are passed, the return without any changes
+    if ( $_GET['context'] != 'navigation' ) {
+        return;
+    }
+    
+    // we are ignoring limit currently
     //create temp table for storing result set
     $randomNum = md5( uniqid( ) );
     $quickSearchTempTable = "civicrm_temp_quick_search_{$randomNum}";

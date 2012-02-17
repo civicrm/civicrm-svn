@@ -236,11 +236,12 @@ WHERE  email     = %2
                         )");
                         
         if ($return) {
+            $returnGroups = array();
             while ($do->fetch()) {
-                $groups[$do->group_id] = array( 'title'       => $do->title,
+                $returnGroups[$do->group_id] = array( 'title'       => $do->title,
                                                 'description' => $do->description);
             }
-            return $groups;
+            return $returnGroups;
         } else {
             while ($do->fetch()) {
                 $groups[$do->group_id] = $do->title;

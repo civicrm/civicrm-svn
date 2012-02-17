@@ -287,7 +287,10 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 $this->set( 'additionalParticipantIds', $this->_additionalParticipantIds );
             }
             
-            $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId );
+            $eventFull = CRM_Event_BAO_Participant::eventFull( $this->_eventId, 
+                                                               false, 
+                                                               CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] ) ); 
+
             $this->_allowWaitlist = false;
             $this->_isEventFull   = false;
             if ( $eventFull && !$this->_allowConfirmation ) {
@@ -463,7 +466,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $this->set( 'values', $this->_values );
             $this->set( 'fields', $this->_fields );
 
-            $this->_availableRegistrations = CRM_Event_BAO_Participant::eventFull( $this->_values['event']['id'], true );
+            $this->_availableRegistrations = CRM_Event_BAO_Participant::eventFull( $this->_values['event']['id'], true, CRM_Utils_Array::value( 'has_waitlist', $this->_values['event']) );
             $this->set( 'availableRegistrations', $this->_availableRegistrations );
         }
         
@@ -747,7 +750,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                     $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId );
                     CRM_Core_OptionGroup::getAssoc( $name, $form->_values['discount'][$key], true );
                     $form->_values['discount'][$key]['name'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
-                                                                                            $optionGroupId, 'label');;
+                                                                                            $optionGroupId,
+                                                                                            'title' );
                 }
             }
         }

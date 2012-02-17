@@ -47,7 +47,7 @@
             {assign var=id value=$row.id}
             <tr id="row_{$row.id}" class="{cycle values="even-row,odd-row"}{if NOT $row.is_active} disabled{/if}">
                 <td>{$row.amount|crmMoney}</td>
-                <td>{ts}every{/ts} {$row.frequency_interval} {$row.frequency_unit} </td>
+                <td>{ts}Every{/ts} {$row.frequency_interval} {$row.frequency_unit} </td>
                 <td>{$row.start_date|crmDate}</td>
                 <td>{$row.installments}</td>
                 <td>{$row.contribution_status}</td>

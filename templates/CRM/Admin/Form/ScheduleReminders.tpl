@@ -116,7 +116,7 @@
     <tr id="recipientManual" class="crm-scheduleReminder-form-block-recipient_manual_id">
     	<td class="label">{$form.recipient_manual_id.label}</td>
         <td>{$form.recipient_manual_id.html}
-	    {edit}<span class="description">{ts}You can manually sent out the reminders to these recipients.{/ts}</span>{/edit}
+	    {edit}<span class="description">{ts}You can manually send out the reminders to these recipients.{/ts}</span>{/edit}
         </td>
     </tr>
 

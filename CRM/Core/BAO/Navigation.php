@@ -454,7 +454,7 @@ ORDER BY parent_id, weight";
         //we need to check core view/edit or supported acls.
         require_once 'CRM/Core/Permission.php';
         if ( in_array( $menuName, array( 'Search...', 'Contacts' ) ) ) {
-            if (!CRM_Core_Permission::giveMeAllACLs( ) ) {
+            if ( ! CRM_Core_Permission::giveMeAllACLs( ) ) {
                 $skipMenuItems[] = $navID;
                 return false;
             }

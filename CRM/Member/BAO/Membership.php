@@ -2137,10 +2137,10 @@ FROM   civicrm_membership_type
      */
     static function isSubscriptionCancelled ( $mid ) {
         $sql = "
-   SELECT con.contribution_status_id 
-     FROM civicrm_contribution       con
-LEFT JOIN civicrm_membership_payment cmp ON ( con.id = cmp.contribution_id )
-    WHERE cmp.membership_id = %1 LIMIT 1";
+   SELECT cr.contribution_status_id 
+     FROM civicrm_contribution_recur cr
+LEFT JOIN civicrm_membership mem ON ( cr.id = mem.contribution_recur_id )
+    WHERE mem.id = %1 LIMIT 1";
         $params = array( 1 => array( $mid, 'Integer' ) );
         $statusId = CRM_Core_DAO::singleValueQuery( $sql, $params );
         require_once 'CRM/Contribute/PseudoConstant.php';
