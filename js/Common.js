@@ -271,7 +271,7 @@ function toggleTaskAction( status ) {
  * Sample usage: onClick="javascript:checkPerformAction('chk_', myForm );"
  *
  */
-function checkPerformAction (fldPrefix, form, taskButton) {
+function checkPerformAction (fldPrefix, form, taskButton, selection) {
     var cnt;
     var gotTask = 0;
     
@@ -298,7 +298,7 @@ function checkPerformAction (fldPrefix, form, taskButton) {
             return true;
         }
 	
-        cnt = countSelectedCheckboxes(fldPrefix, document.forms[form]);
+        cnt = (selection == 1) ? countSelections() : countSelectedCheckboxes(fldPrefix, document.forms[form]);
         if (!cnt) {
             alert ("Please select one or more contacts for this action.\n\nTo use the entire set of search results, click the 'all records' radio button.");
             return false;

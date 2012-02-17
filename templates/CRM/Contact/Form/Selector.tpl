@@ -26,6 +26,7 @@
 {include file="CRM/common/pager.tpl" location="top"}
 
 {include file="CRM/common/pagerAToZ.tpl"}
+<a href="#" onclick=" return toggleContactSelection( 'resetSel', 'civicrm search {$qfKey}', 'reset' );">{ts}Reset all selections{/ts}<a>
 
 <table summary="{ts}Search results listings.{/ts}" class="selector">
   <thead class="sticky">
@@ -183,7 +184,20 @@ cj(".selector tr").contextMenu({
             window.location = locationUrl + '&civicrmDestination=' + encodeURIComponent(destination);            
         }
    });
+  {/literal}
+  {foreach from=$selectedContactIds item=selectedContactId}{literal}
+   	cj("#mark_x_{/literal}{$selectedContactId}{literal}").attr('checked', 'checked');
+  {/literal} 
+  {/foreach}
+    
+  {foreach from=$unselectedContactIds item=unselectedContactId}{literal}
+        cj("#mark_x_{/literal}{$unselectedContactId}{literal}").removeAttr('checked');{/literal}
+  {/foreach}
 
+  {literal}
+    var formName = "{/literal}{$form.formName}{literal}";	
+    on_load_init_checkboxes(formName);
+    toggleTaskAction( false );
     cj('.selector').crmrowhighlighter( );
 });
 
@@ -192,6 +206,60 @@ cj('ul#contactMenu').mouseup( function(e){
     //when right or middle button clicked fire default right click popup
    }
 });
+
+function countSelections( ){
+  var Url =  "{/literal}{crmURL p='civicrm/ajax/markSelection' h=0}{literal}";	
+  var key =  'civicrm search {/literal}{$qfKey}{literal}';
+  var arg =  "qfKey="+key+"&action=countSelection";
+  var count = 0;
+  cj.ajax({
+      "url":   Url,
+      "type": "POST", 
+      "data":  arg,
+      "async"    : false,
+      "dataType": 'json',
+      "success": function(data){
+           count  =  data.getCount;
+      }
+    });
+
+   return count;
+}
+
+function toggleContactSelection( name, qfKey, selection ){
+  var Url  = "{/literal}{crmURL p='civicrm/ajax/markSelection' h=0}{literal}";	
+      	  
+  if ( selection == 'multiple' ) {
+     var rowArr = new Array( );
+     {/literal}{foreach from=$rows item=row  key=keyVal}
+		 {literal}rowArr[{/literal}{$keyVal}{literal}] = '{/literal}{$row.checkbox}{literal}';
+     {/literal}{/foreach}{literal}
+     var elements = rowArr.join('-');      
+
+     if ( cj('#' + name).is(':checked') ){
+            cj.post( Url, { name: elements , qfKey: qfKey , variableType: 'multiple' } );
+     } else {
+    	   cj.post( Url, { name: elements , qfKey: qfKey , variableType: 'multiple' , action: 'unselect' } );
+     }
+  } else if ( selection == 'single' ) {	 
+     if ( cj('#' + name).is(':checked') ){
+     	   cj.post( Url, { name: name , qfKey: qfKey } );
+     } else {
+      	   cj.post( Url, { name: name , qfKey: qfKey , state: 'unchecked' } );
+     }
+  } else if ( name == 'resetSel' && selection == 'reset' ) {
+
+     cj.post( Url, {  qfKey: qfKey , variableType: 'multiple' , action: 'unselect' } );
+     {/literal}
+     {foreach from=$rows item=row}{literal}
+             cj("#{/literal}{$row.checkbox}{literal}").removeAttr('checked');{/literal}
+     {/foreach}
+     {literal}
+     cj("#toggleSelect").removeAttr('checked');
+     var formName = "{/literal}{$form.formName}{literal}";	
+     on_load_init_checkboxes(formName);
+  }
+}
 {/literal}
 </script>
 {include file="CRM/common/pager.tpl" location="bottom"}

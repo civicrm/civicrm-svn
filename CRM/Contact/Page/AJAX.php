@@ -1098,4 +1098,48 @@ LIMIT {$offset}, {$rowCount}
         echo json_encode( $elements );
         CRM_Utils_System::civiExit( );
     }
+
+    static function selectUnselectContacts( ){
+        $name = CRM_Utils_Array::value( 'name', $_POST );
+        $cacheKey = CRM_Utils_Array::value( 'qfKey', $_POST );
+        $state = CRM_Utils_Array::value( 'state', $_POST , 'checked' );
+        $variableType = CRM_Utils_Array::value( 'variableType', $_POST , 'single' );
+        
+        $actionToPerform = CRM_Utils_Array::value( 'action', $_POST , 'select' );
+        require_once 'CRM/Core/BAO/PrevNextCache.php';
+        if ( $actionToPerform == 'countSelection' ) {
+            $contactIds = CRM_Core_BAO_PrevNextCache::getSelection( $cacheKey );
+            $countSelectionCids = count( $contactIds[$cacheKey] );
+            
+            $arrRet = array( 'getCount' => $countSelectionCids );
+            require_once "CRM/Utils/JSON.php";
+            echo json_encode( $arrRet );
+            CRM_Utils_System::civiExit( );
+        } elseif ( $variableType == 'multiple' ) {
+            // action post value only works with multiple type variable
+            if( $name ) {        
+                //multiple names like mark_x_1-mark_x_2 where 1,2 are cids
+                $elements = explode( '-', $name ); 
+                foreach( $elements as $key => $element ){
+                    $elements[$key] = self::_convertToId( $element );
+                }
+                CRM_Core_BAO_PrevNextCache::markSelection( $cacheKey, $actionToPerform, $elements );
+            } else {
+                CRM_Core_BAO_PrevNextCache::markSelection( $cacheKey, $actionToPerform );
+            }
+        } elseif ( $variableType == 'single' ) {
+            $cId = self::_convertToId( $name );
+            $action = ( $state == 'checked' ) ? 'select' : 'unselect' ;
+            CRM_Core_BAO_PrevNextCache::markSelection( $cacheKey, $action, $cId );
+        }
+    }
+
+    protected function _convertToId( $name ){
+        require_once 'CRM/Core/Form.php';
+        if ( substr( $name, 0, CRM_Core_Form::CB_PREFIX_LEN ) == CRM_Core_Form::CB_PREFIX ) {
+            $cId = substr( $name, CRM_Core_Form::CB_PREFIX_LEN );
+        }
+        return $cId;
+    }
+
 }

@@ -104,8 +104,9 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
 
     static function preProcessCommon( &$form, $useTable = false )
     {
+        
         $form->_contactIds   = array( );
-		$form->_contactTypes = array( );
+        $form->_contactTypes = array( );
 
         // get the submitted values of the search form
         // we'll need to get fv from either search or adv search in the future
@@ -122,7 +123,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         } else {
             self::$_searchFormValues = $form->controller->exportValues( 'Basic' );
         }
-        
+ 
         //set the user context for redirection of task actions
         $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
         require_once 'CRM/Utils/Rule.php';
@@ -131,6 +132,9 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
             $urlParams .= "&qfKey=$qfKey";
         }
         
+        require_once "CRM/Core/BAO/PrevNextCache.php";
+        $cacheKey = "civicrm search {$qfKey}";
+             
         $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
         $session = CRM_Core_Session::singleton( );
         $session->replaceUserContext( $url );
@@ -148,56 +152,21 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
             $sql = "CREATE TABLE {$form->_componentTable} ( contact_id int primary key) ENGINE=MyISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci";
             CRM_Core_DAO::executeQuery( $sql );
         }            
-
+        
         // all contacts or action = save a search
         if ( ( CRM_Utils_Array::value('radio_ts', self::$_searchFormValues ) == 'ts_all' ) ||
              ( $form->_task == CRM_Contact_Task::SAVE_SEARCH ) ) {
-            // need to perform action on all contacts
-            // fire the query again and get the contact id's + display name
-            $sortID = null;
-            if ( $form->get( CRM_Utils_Sort::SORT_ID  ) ) {
-                $sortID = CRM_Utils_Sort::sortIDValue( $form->get( CRM_Utils_Sort::SORT_ID  ),
-                                                       $form->get( CRM_Utils_Sort::SORT_DIRECTION ) );
-            }
-
-            $selectorName = $form->controller->selectorName( );
-            require_once( str_replace('_', DIRECTORY_SEPARATOR, $selectorName ) . '.php' );
-
-            $fv          = $form->get( 'formValues' );
-            $customClass = $form->get( 'customSearchClass' );
-            require_once 'CRM/Core/BAO/Mapping.php';
-            $returnProperties = CRM_Core_BAO_Mapping::returnProperties( self::$_searchFormValues);
-
-            eval( '$selector   = new ' .
-                  $selectorName . 
-                  '( $customClass, $fv, null, $returnProperties ); '
-                  );
-
-            $params    =  $form->get( 'queryParams' );
-
-            // fix for CRM-5165
             $sortByCharacter = $form->get( 'sortByCharacter' );
-            if ( $sortByCharacter &&
-                 $sortByCharacter != 1 ) {
-                $params[] = array( 'sortByCharacter', '=', $sortByCharacter, 0, 0 );
-            }
-            $queryOperator = $form->get( 'queryOperator' );
-            if ( ! $queryOperator ) {
-                $queryOperator = 'AND';
-            }
-            $dao =& $selector->contactIDQuery( $params, $form->_action, $sortID,
-                                               CRM_Utils_Array::value( 'display_relationship_type',
-                                                                       $fv ),
-                                               $queryOperator );
-
+            $cacheKey = ( $sortByCharacter && $sortByCharacter!='all' ) ? "{$cacheKey}_alphabet" : $cacheKey;
+            $allCids = CRM_Core_BAO_PrevNextCache::getSelection( $cacheKey , "getall" );
 
             $form->_contactIds = array( );
             if ( $useTable ) {
                 $count = 0;
                 $insertString = array( );
-                while ( $dao->fetch( ) ) {
+                foreach ( $allCids[$cacheKey] as $cid => $ignore ) {
                     $count++;
-                    $insertString[] = " ( {$dao->contact_id} ) ";
+                    $insertString[] = " ( {$cid} ) ";
                     if ( $count % 200 == 0 ) {
                         $string = implode( ',', $insertString );
                         $sql = "REPLACE INTO {$form->_componentTable} ( contact_id ) VALUES $string";
@@ -210,35 +179,29 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
                     $sql = "REPLACE INTO {$form->_componentTable} ( contact_id ) VALUES $string";
                     CRM_Core_DAO::executeQuery( $sql );
                 }
-                $dao->free( );
             } else {
                 // filter duplicates here
                 // CRM-7058
                 // might be better to do this in the query, but that logic is a bit complex
                 // and it decides when to use distinct based on input criteria, which needs
                 // to be fixed and optimized.
-                $alreadySeen = array( );
-                while ( $dao->fetch( ) ) {
-                    if ( ! array_key_exists( $dao->contact_id, $alreadySeen ) ) {
-                        $form->_contactIds[] = $dao->contact_id;
-                        $alreadySeen[$dao->contact_id] = 1;
-                    }
+              
+                foreach ( $allCids[$cacheKey] as $cid => $ignore ) {
+                    $form->_contactIds[] = $cid; 
                 }
-                unset( $alreadySeen );
-                $dao->free( );
             }
         } else if ( CRM_Utils_Array::value( 'radio_ts' , self::$_searchFormValues ) == 'ts_sel') {
             // selected contacts only
             // need to perform action on only selected contacts
             $insertString = array( );
-            foreach ( self::$_searchFormValues as $name => $value ) {
-                if ( substr( $name, 0, CRM_Core_Form::CB_PREFIX_LEN ) == CRM_Core_Form::CB_PREFIX ) {
-                    $contactID = substr( $name, CRM_Core_Form::CB_PREFIX_LEN );
-                    if ( $useTable ) {
-                        $insertString[] = " ( {$contactID} ) ";
-                    } else {
-                        $form->_contactIds[] = substr( $name, CRM_Core_Form::CB_PREFIX_LEN );
-                    }
+            // fetching selected contact ids of passed cache key 
+            $selectedCids = CRM_Core_BAO_PrevNextCache::getSelection( $cacheKey );
+            
+            foreach ( $selectedCids[$cacheKey] as $selectedCid => $ignore ){
+                if ( $useTable ) {
+                    $insertString[] = " ( {$selectedCid} ) ";
+                } else {
+                    $form->_contactIds[] = $selectedCid;
                 }
             }
             if ( ! empty( $insertString ) ) {

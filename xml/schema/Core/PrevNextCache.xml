@@ -50,11 +50,18 @@
     <comment>cached snapshot of the serialized data</comment>
     <add>3.4</add>
   </field>
+  <field>
+    <name>is_selected</name>
+    <type>boolean</type>
+    <default>0</default>
+    <add>4.2</add>
+  </field>
   <index>
      <name>index_all</name>
      <fieldName>cacheKey</fieldName>
      <fieldName>entity_id1</fieldName>
      <fieldName>entity_id2</fieldName>
      <fieldName>entity_table</fieldName>
+     <fieldName>is_selected</fieldName>
   </index>
 </table>

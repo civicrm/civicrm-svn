@@ -43,6 +43,7 @@ require_once 'CRM/Utils/Sort.php';
 
 require_once 'CRM/Contact/BAO/Contact.php';
 require_once 'CRM/Contact/BAO/Query.php';
+require_once 'CRM/Core/BAO/PrevNextCache.php';
 
 /**
  * This class is used to retrieve and display a range of
@@ -752,12 +753,36 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 $rows[] = $row;
             }
         }
-
-        $this->fillupPrevNextCache( $sort );
-
+        
+        $this->buildPrevNextCache( $sort );
+        
         return $rows;
     }
-
+    
+    function buildPrevNextCache( $sort ) {
+        $cacheKey = CRM_Utils_Array::value('qfKey',$this->_formValues);
+        //for prev/next pagination
+        $crmPID = CRM_Utils_Request::retrieve( 'crmPID', 'Integer',
+                                               CRM_Core_DAO::$_nullObject );
+        //for alphabetic pagination selection save
+        $sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter', 'String',
+                                                        CRM_Core_DAO::$_nullObject );
+        //for text field pagination selection save
+        $countRow = CRM_Core_BAO_PrevNextCache::getCount( "%civicrm search {$cacheKey}%", null, "entity_table = 'civicrm_contact'", "LIKE" );
+        
+        if( !$crmPID && $countRow == 0 && !$sortByCharacter ){
+            $this->fillupPrevNextCache( $sort );
+        } elseif ( $sortByCharacter ) {
+            $cacheKeyCharacter = "civicrm search {$cacheKey}_alphabet";
+            if( $sortByCharacter == 'all' ){
+                //delete the alphabet key corresponding records in prevnext_cache
+                CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKeyCharacter, 'civicrm_contact' );
+            } else {
+                $this->fillupPrevNextCache( $sort, $cacheKeyCharacter );
+            }
+        }
+    }
+    
     function addActions( &$rows ) {
         $config = CRM_Core_Config::singleton( );
 
@@ -826,18 +851,19 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             unset( $rValue['action'] );
         }
     }
-
-    function fillupPrevNextCache( $sort ) {
-        $cacheKey = "civicrm search {$this->_key}";
-
-        require_once 'CRM/Core/BAO/PrevNextCache.php';
+    
+    
+    function fillupPrevNextCache( $sort, $cacheKey = null ) {
+        if( !$cacheKey ){
+            $cacheKey = "civicrm search {$this->_key}"; 
+        }
+        
         CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey, 'civicrm_contact' );
-
+                
         // lets fill up the prev next cache here, so view can scroll thru
         $sql = $this->_query->searchQuery( 0, 0, $sort,
                                            false, false, 
                                            false, true, true, null );
-
         // CRM-9096
         // due to limitations in our search query writer, the above query does not work
         // in cases where the query is being sorted on a non-contact table
@@ -853,7 +879,9 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
 ";
         $replaceSQL = "SELECT contact_a.id as id";
 
+        
         $sql = str_replace( $replaceSQL, $insertSQL, $sql );
+        
 
         CRM_Core_Error::ignoreException();
         $result = CRM_Core_DAO::executeQuery( $sql );
@@ -865,9 +893,9 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
             // we print a sorry cant figure it out on view page
             return;
         }
-
+        
         // also record an entry in the cache key table, so we can delete it periodically
-        require_once 'CRM/Core/BAO/Cache.php';
+    require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::setItem( $cacheKey,
                                      'CiviCRM Search PrevNextCache',
                                      $cacheKey );
