@@ -92,7 +92,10 @@ class CRM_Utils_Geocode_Google {
                 $stateProvince = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_StateProvince', $values['state_province_id'] );
             } else {
                 if ( ! $stateName ) {
-                    $stateProvince = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_StateProvince', $values['state_province'], 'name', 'abbreviation' );
+                    $stateProvince = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_StateProvince',
+                                                                  $values['state_province'],
+                                                                  'name',
+                                                                  'abbreviation' );
                 } else {
                     $stateProvince = $values['state_province'];
                 }
