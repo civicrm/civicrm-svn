@@ -95,7 +95,14 @@ class CRM_Utils_PDF_Utils {
     </div>
   </body>
 </html>";
+        if ($config->wkhtmltopdfPath) {
+            return self::_html2pdf_wkhtmltopdf( $paper_size, $orientation, $html, $output, $filename );
+        } else { 
+            return self::_html2pdf_dompdf( $paper_size, $orientation, $html, $output, $filename );
+        }
+    }
 
+    static function _html2pdf_dompdf( $paper_size, $orientation, $html, $output , $filename ) {
         require_once 'packages/dompdf/dompdf_config.inc.php';
         spl_autoload_register('DOMPDF_autoload');
         $dompdf = new DOMPDF( );
@@ -110,6 +117,23 @@ class CRM_Utils_PDF_Utils {
         }
     }
     
+    static function _html2pdf_wkhtmltopdf( $paper_size, $orientation, $html, $output , $filename ) {
+        require_once 'packages/snappy/src/autoload.php';
+        $config = CRM_Core_Config::singleton(); 
+        $snappy = new Knp\Snappy\Pdf($config->wkhtmltopdfPath);
+        $snappy->setOption( "page-width", $paper_size[2]."pt" );
+        $snappy->setOption( "page-height", $paper_size[3]."pt" );
+        $snappy->setOption( "orientation", $orientation );
+        $pdf = $snappy->getOutputFromHtml(utf8_decode($html));
+        if ( $output ) {
+            return $pdf;
+        } else {
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="'.$filename.'"');
+            echo $pdf;
+        }
+    }
+
     /*
      * function to convert value from one metric to another
      */

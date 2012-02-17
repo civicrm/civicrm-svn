@@ -448,6 +448,11 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $doNotAttachPDFReceipt = false;
 
     /**
+     * Path to wkhtmltopdf if available
+     */
+    public $wkhtmltopdfPath = false;
+
+    /**
      * Provide addressSequence
      *
      * @param

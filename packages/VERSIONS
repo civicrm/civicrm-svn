@@ -93,8 +93,7 @@ eZ Components  2009.1.2   BSD 3-cl.   http://ezcomponents.org/                  
 html2text      1.0.0      GPL 2+      http://chuggnutt.com/html2text.php                            local changes
 reCAPTCHA      1.10       X11         http://recaptcha.net/
 OpenFlashChart 2.0        LGPL        http://teethgrinder.co.uk/open-flash-chart-2/ 
-
-
+Snappy         ??         X11         https://github.com/knplabs/snappy
 
 payment processors for CiviCRM
 ==============================
