@@ -18,12 +18,6 @@
      <weight>450</weight>
   </item>
   <item>
-     <path>civicrm/contribute/pcp</path>
-     <page_callback>CRM_PCP_Form_PCP</page_callback>
-     <access_callback>1</access_callback>
-     <is_public>true</is_public>
-  </item>
-  <item>
      <path>civicrm/contribute/campaign</path>
      <title>Setup a Personal Campaign Page - Account Information</title>
      <page_callback>CRM_PCP_Controller_PCP</page_callback>
