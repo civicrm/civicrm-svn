@@ -117,6 +117,8 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
      * @return {$table.name}
      */
     function __construct( ) {ldelim}
+        $this->__table = '{$table.name}';
+
         parent::__construct( );
     {rdelim}
 

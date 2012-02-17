@@ -82,13 +82,12 @@ class CRM_Core_DAO extends DB_DataObject
     function __construct() 
     {
         $this->initialize( );
-        $this->__table = $this->getTableName();
     }
 
     /**
      * empty definition for virtual function
      */
-	function getTableName( ) 
+	static function getTableName( ) 
     {
         return null;
     }
