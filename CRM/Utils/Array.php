@@ -423,6 +423,28 @@ class CRM_Utils_Array {
         return $result;
     }
 
+    /**
+     *  Sort an array and maintain index association, use Collate from the
+     *  PECL "intl" package, if available, for UTF-8 sorting (ex: list of countries).
+     *  On Debian/Ubuntu: apt-get install php5-intl
+     *
+     *  @param array $array array of values
+     *
+     *  @return  array  Sorted array
+     *  @static
+     */
+    static function asort( $array = array( ) ) {
+        $lcMessages = CRM_Utils_System::getUFLocale();
+
+        if ($lcMessages && $lcMessages != 'en_US' && class_exists('Collator')) {
+            $collator = new Collator($lcMessages . '.utf8');
+            $collator->asort($array);
+        } else {
+            asort($array);
+        }
+
+        return $array;
+    }
+ }
+
 }
-
-

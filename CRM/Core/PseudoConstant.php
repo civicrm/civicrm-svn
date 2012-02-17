@@ -782,7 +782,7 @@ class CRM_Core_PseudoConstant
             if ($tsLocale != '' and $tsLocale != 'en_US') {
                 $i18n = CRM_Core_I18n::singleton();
                 $i18n->localizeArray(self::$stateProvince, array('context' => 'province'));
-                asort(self::$stateProvince);
+                CRM_Utils_Array::asort(self::$stateProvince);
             }
         }
         if ( $id ) {
@@ -913,7 +913,7 @@ WHERE  id = %1";
             if ($tsLocale != '' and $tsLocale != 'en_US') {
                 $i18n = CRM_Core_I18n::singleton();
                 $i18n->localizeArray(self::$country, array('context' => 'country'));
-                asort(self::$country);
+                CRM_Utils_Array::asort(self::$country);
             }
         }
         if ($id) {
@@ -1540,7 +1540,7 @@ ORDER BY name";
         if ( $tsLocale != '' and $tsLocale != 'en_US' ) {
             $i18n = CRM_Core_I18n::singleton();
             $i18n->localizeArray( $result );
-            asort( $result );
+            CRM_Utils_Array::asort( $result );
         }
 
         $_cache[$cacheKey] = $result;
