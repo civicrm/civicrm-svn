@@ -746,7 +746,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                     $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId );
                     CRM_Core_OptionGroup::getAssoc( $name, $form->_values['discount'][$key], true );
                     $form->_values['discount'][$key]['name'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
-                                                                                            $optionGroupId, 'title');;
+                                                                                            $optionGroupId,
+                                                                                            'title' );
                 }
             }
         }
