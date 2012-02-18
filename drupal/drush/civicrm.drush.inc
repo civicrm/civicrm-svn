@@ -421,6 +421,8 @@ function civicrm_upgrade_db() {
     if ( !defined('CIVICRM_UPGRADE_ACTIVE') ) { 
         define('CIVICRM_UPGRADE_ACTIVE', 1); 
     }
+    $_GET['q'] = 'civicrm/upgrade';
+
     _civicrm_init();
 
     $_POST['upgrade'] = 1;
