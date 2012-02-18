@@ -686,6 +686,7 @@ OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
         if ( $path && $path == 'civicrm/upgrade' ) {
             return true;
         }
+
         $config = self::singleton( );
         if ( CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET ) == 'civicrm/upgrade' ) {
             return true;
