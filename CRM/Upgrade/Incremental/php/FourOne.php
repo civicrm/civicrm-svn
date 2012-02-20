@@ -383,12 +383,6 @@ AND    v.is_active = 1
         $upgrade->processSQL( $rev );
     }
 
-    function upgrade_4_1_1( $rev ) {
-        $upgrade = new CRM_Upgrade_Form( );
-        $upgrade->assign( 'addDedupeEmail', !(CRM_Core_DAO::checkFieldExists('civicrm_mailing', 'dedupe_email') ) );
-        $upgrade->processSQL( $rev );
-    }
-
     function getTemplateMessage( ) {
         return "Blah";
     }
