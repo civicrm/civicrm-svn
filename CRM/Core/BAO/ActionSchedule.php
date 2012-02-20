@@ -779,9 +779,15 @@ reminder.action_schedule_id = %1";
             $where[] = "c.is_deleted = 0";
 
             if ( $actionSchedule->start_action_date ) {
-                $startEvent = ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
+                $operator =  ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) ;
+                
+                $startEvent = $operator .
                     "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
-                $startEvent = "'{$now}' >= {$startEvent}";
+                $startEventClause[] = "'{$now}' >= {$startEvent}";
+
+                $startEventClause[] = $operator. "({$now}, INTERVAL 1 DAY ) <= r.start_date";
+
+                $startEvent= implode( ' AND ', $startEventClause );
             } else if ( $actionSchedule->absolute_date ) {
                 $startEvent = "DATEDIFF(DATE('{$now}'),'{$actionSchedule->absolute_date}') = 0";
             }
@@ -802,7 +808,7 @@ INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_sche
 {$joinClause}
 LEFT JOIN {$reminderJoinClause}
 {$whereClause} AND {$startEventClause}";
-            
+
             CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
             // if repeat is turned ON:
             if ( $actionSchedule->is_repeat ) {
