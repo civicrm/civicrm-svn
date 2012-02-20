@@ -1,6 +1,8 @@
 -- CRM-9699
 
-ALTER TABLE `civicrm_mailing` ADD `dedupe_email` TINYINT( 4 ) NULL DEFAULT '0' COMMENT 'Remove duplicate emails?';
+{if $addDedupeEmail}
+    ALTER TABLE `civicrm_mailing` ADD `dedupe_email` TINYINT( 4 ) NULL DEFAULT '0' COMMENT 'Remove duplicate emails?';
+{/if}
 
 SELECT @region_id   := max(id) from civicrm_worldregion where name = "Africa West, East, Central and Southern";
 
