@@ -386,6 +386,10 @@ AND    v.is_active = 1
     function upgrade_4_1_1( $rev ) {
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->assign( 'addDedupeEmail', !(CRM_Core_DAO::checkFieldExists('civicrm_mailing', 'dedupe_email') ) );
+        
+        $sql = "SELECT id FROM civicrm_worldregion LIMIT 1";
+        $upgrade->assign( 'worldRegionEmpty', !CRM_Core_DAO::singleValueQuery( $sql ) );
+
         $upgrade->processSQL( $rev );
     }
 
