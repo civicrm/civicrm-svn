@@ -77,7 +77,7 @@
 					{else}
                                             {if $element.field_data_type == 'Money'}
                                                 {if $element.field_type == 'Text'}
-                                                    <td class="html-adjust">{$element.field_value|crmNumberFormat}</td>
+                                                    <td class="html-adjust">{$element.field_value|crmMoney}</td>
                                                 {else}
                                                     <td class="html-adjust">{$element.field_value}</td>
                                                 {/if}
