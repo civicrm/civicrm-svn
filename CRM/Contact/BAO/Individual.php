@@ -200,7 +200,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             CRM_Utils_Hook::tokens( $tokens );
             $tokenFields = array( );
             foreach ( $tokens as $category => $catTokens ) {
-                foreach ( $catTokens as $token ) {
+                foreach ( $catTokens as $token => $label ) {
                     $tokenFields[] = $token;
                 }
             }
