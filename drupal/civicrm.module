@@ -539,7 +539,7 @@ function civicrm_register_data($edit, &$user, $category, $reset, $doNotProcess =
     civicrm_key_disable( );
 
     $ctype = civicrm_get_ctype( 'Individual' );
-    if ( $user->uid ) {
+    if ( is_object($user) && $user->uid ) {
         // Happens on $type == 'insert'
         // $reset == false always
         // $doNotProcess == false always
@@ -552,7 +552,7 @@ function civicrm_register_data($edit, &$user, $category, $reset, $doNotProcess =
                                                    $doNotProcess, $ctype );
     } else {
         // Happens on $type == 'register'
-        $html = CRM_Core_BAO_UFGroup::getEditHTML( $userID, '',
+        $html = CRM_Core_BAO_UFGroup::getEditHTML( null, '',
                                                    1,
                                                    true,
                                                    $reset, null,
