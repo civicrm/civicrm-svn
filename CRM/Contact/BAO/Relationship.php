@@ -305,6 +305,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             if ($relationship->find(true)) {
                 $contact = new CRM_Contact_DAO_Contact( );
                 $contact->id = ( $relationship->contact_id_a === $contactId ) ? $relationship->contact_id_b : $relationship->contact_id_a;
+
                 if ($contact->find(true)) {
                     $otherContactType = $contact->contact_type;
                     //CRM-5125 for contact subtype specific relationshiptypes
@@ -328,10 +329,9 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             if ( ( ( ! $value['contact_type_a'] ) || $value['contact_type_a'] == $contactType ) &&
                  // the other contact type is required or present or matches
                  ( ( ! $value['contact_type_b'] ) || ( ! $otherContactType ) || $value['contact_type_b'] == $otherContactType ) &&
-                 ( in_array( $value['contact_sub_type_a'], $contactSubType ) || 
-                   ( (!$value['contact_sub_type_b'] && !$value['contact_sub_type_a']) && !$onlySubTypeRelationTypes) ) ) {
+                 ( ! $contactSubType || ( in_array( $value['contact_sub_type_a'], $contactSubType ) || 
+                 ( ( !$value['contact_sub_type_b'] && !$value['contact_sub_type_a']) && !$onlySubTypeRelationTypes) ) ) ) {
                 $relationshipType[ $key . '_a_b' ] =  $value[ "{$column}_a_b" ];
-                     
             } 
             
             if ( ( ( ! $value['contact_type_b'] ) || $value['contact_type_b'] == $contactType ) &&
@@ -340,11 +340,12 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
                    || in_array( $value['contact_sub_type_b'], $contactSubType ) ) ) {
                 $relationshipType[ $key . '_b_a' ] = $value[ "{$column}_b_a" ];
             }
-            
+
             if ( $all ) {
                 $relationshipType[ $key . '_a_b' ] = $value[ "{$column}_a_b" ];
                 $relationshipType[ $key . '_b_a' ] = $value[ "{$column}_b_a" ];
             }
+
         }
         
         if ( $biDirectional ) {
@@ -352,10 +353,9 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             // (i.e. the relationship is bi-directional)
             $relationshipType = array_unique( $relationshipType );
         }
-        
+
         // sort the relationshipType in ascending order CRM-7736
         asort( $relationshipType ); 
-
         return $relationshipType;
     }
 
