@@ -28,5 +28,4 @@ UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @
 ALTER TABLE `civicrm_custom_group` CHANGE `extends_entity_column_value` `extends_entity_column_value` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'linking custom group for dynamic object.';
 
 -- CRM-9534
--- Add column 'is_selected' for 'civicrm_prevnext_cache'
-ALTER TABLE `civicrm_prevnext_cache` ADD tinyint(4) DEFAULT 0;
+ALTER TABLE `civicrm_prevnext_cache` ADD COLUMN is_selected tinyint(4) DEFAULT '0';
