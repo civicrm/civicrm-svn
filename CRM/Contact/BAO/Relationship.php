@@ -653,8 +653,12 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      */
     static function setIsActive( $id, $is_active ) 
     {
-         // set the userContext stack
-        return CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_Relationship', $id, 'is_active', $is_active );
+        CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_Relationship', $id, 'is_active', $is_active );
+        
+        // call hook
+        CRM_Utils_Hook::enableDisable( 'CRM_Contact_BAO_Relationship', $id, $is_active );
+        
+        return true;
     }
 
     /**
