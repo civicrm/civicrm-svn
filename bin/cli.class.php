@@ -28,6 +28,7 @@
 class civicrm_Cli {
     // required values that must be passed
     // via the command line
+    var $_required_arguments = array('action','entity');
     var $_entity = null;
     var $_action = null;
     var $_output = false;
@@ -169,7 +170,7 @@ class civicrm_Cli {
     }
 
     private function _validateOptions( ) {
-        $required = array('action','entity');
+        $required = $this->_required_arguments;
         while(list(,$var) = each($required)) {
           $index = '_' . $var;
           if(empty($this->$index)) {
