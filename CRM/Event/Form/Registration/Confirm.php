@@ -535,9 +535,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     //get the participant statuses.
                     $waitingStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'" );
                     if ( $this->_allowWaitlist ) {
-                        $value['participant_status_id'] = array_search( 'On waitlist', $waitingStatuses );
+                        $value['participant_status_id'] = $value['participant_status'] = array_search( 'On waitlist', $waitingStatuses );
                     } else {
-                        $value['participant_status_id'] = array_search( 'Awaiting approval', $waitingStatuses );  
+                        $value['participant_status_id'] = $value['participant_status'] = array_search( 'Awaiting approval', $waitingStatuses );  
                     }
                     
                     //there might be case user seleted pay later and
@@ -552,7 +552,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                         //get the participant statuses.
                         $pendingStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Pending'" );
                         $status = CRM_Utils_Array::value('is_pay_later', $value) ? 'Pending from pay later' : 'Pending from incomplete transaction';
-                        $value['participant_status_id'] = array_search($status, $pendingStatuses);
+                        $value['participant_status_id'] = $value['participant_status'] = array_search($status, $pendingStatuses);
                     }
                 } else if ( $this->_contributeMode == 'express' && CRM_Utils_Array::value( 'is_primary', $value ) ) {
                     $result =& $payment->doExpressCheckout( $value );
