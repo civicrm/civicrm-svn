@@ -781,19 +781,18 @@ reminder.action_schedule_id = %1";
             if ( $actionSchedule->start_action_date ) {
                 $operator =  ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) ;
                 
-                $startEvent = $operator .
+                $startDate = $operator .
                     "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
-                $startEventClause[] = "'{$now}' >= {$startEvent}";
+                $startDateClause[] = "'{$now}' >= {$startDate}";
 
-                $startEventClause[] = $operator. "({$now}, INTERVAL 1 DAY ) <= r.start_date";
-
-                $startEvent= implode( ' AND ', $startEventClause );
+                $startDateClause[] = $operator. "({$now}, INTERVAL 1 DAY ) <= r.start_date";
+                $startDate= implode( ' AND ', $startDateClause );
             } else if ( $actionSchedule->absolute_date ) {
-                $startEvent = "DATEDIFF(DATE('{$now}'),'{$actionSchedule->absolute_date}') = 0";
+                $startDate = "DATEDIFF(DATE('{$now}'),'{$actionSchedule->absolute_date}') = 0";
             }
 
             // ( now >= date_built_from_start_time ) OR ( now = absolute_date )
-            $startEventClause = "reminder.id IS NULL AND {$startEvent}";
+            $startDateClause = "reminder.id IS NULL AND {$startDate}";
 
             // start composing query
             $selectClause = "SELECT " . implode( ', ', $select );
@@ -807,15 +806,14 @@ INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_sche
 {$fromClause} 
 {$joinClause}
 LEFT JOIN {$reminderJoinClause}
-{$whereClause} AND {$startEventClause}";
+{$whereClause} AND {$startDateClause}";
 
             CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
             // if repeat is turned ON:
             if ( $actionSchedule->is_repeat ) {
                 $repeatEvent = ( $actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD" ) . 
                         "({$dateField}, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
-
-
+                
                 if ( $actionSchedule->repetition_frequency_unit == 'day' ) {
                     $hrs = 24 * $actionSchedule->repetition_frequency_interval;
                 } else if ( $actionSchedule->repetition_frequency_unit == 'week' ) {
