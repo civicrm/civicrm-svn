@@ -360,8 +360,8 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
           $data[$currentgroup['table_name']]['table']['join']['users'] = 
             array(
                   'left_table' => $jointable,
-		  'left_field' => 'id',
-  		  'field' => 'entity_id',
+                  'left_field' => 'id',
+                  'field' => 'entity_id',
                   );
         }
         $currentgroupfields = $currentgroup['fields'];
@@ -370,7 +370,7 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
                                   'Multi-Select State/Province', 'Autocomplete-Select' );
         $customMultiValueHTMLTypes = array( 'Multi-Select', 'AdvMulti-Select', 'CheckBox', 'Multi-Select Country',
                                             'Multi-Select State/Province');
-
+        
         foreach ($currentgroupfields as $key => $currentfield) {
             if (empty($currentfield['help_post'])) { 
                 $currentfield['help_post'] = t('Custom Data Field');
@@ -384,33 +384,40 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
             } else if ( $currentfield['html_type'] == 'File' ) {
                 $handler = array('civicrm_handler_field_custom_file',
                                  'click sortable' => TRUE,);
-             }else {
+             } else {
                 $handler = civicrm_get_field_handler( $currentfield['data_type'] );
             }
             
-            if ( !empty($currentfield['option_group_id']) && in_array($currentfield['html_type'], $customMultiValueHTMLTypes) ){
+
+            if ( $currentfield['html_type'] == 'Multi-Select Country' ) {
+                $filter_handler = array( 'handler' => 'civicrm_handler_filter_country_multi' );
+            } elseif ( ! empty($currentfield['option_group_id']) && 
+                       in_array($currentfield['html_type'], $customMultiValueHTMLTypes) ) {
                 $filter_handler = array('handler' => 'civicrm_handler_filter_custom_option');
-            } elseif ( !empty($currentfield['option_group_id']) ){
+            } elseif ( ! empty($currentfield['option_group_id']) ){
                 $filter_handler = array('handler' => 'civicrm_handler_filter_custom_single_option');  
             } else {
                 $filter_handler = civicrm_get_filter_handler( $currentfield['data_type'] );
             }
+            
             //Create the Views Field
-            $data[$currentgroup['table_name']][$currentfield['column_name']] = array(
-                                                                                     'title' => $currentfield['label'],
-                                                                                     'help' => $currentfield['help_post'],
-                                                                                     'field' => $handler,
-
-                                                                                     'argument' => array(
-                                                                                                         'handler' => civicrm_get_argument_handler($currentfield['data_type']),
+            $data[$currentgroup['table_name']][$currentfield['column_name']] = 
+                array(
+                      'title' => $currentfield['label'],
+                      'help' => $currentfield['help_post'],
+                      'field' => $handler,
+                      
+                      'argument' => array(
+                                          'handler' => civicrm_get_argument_handler($currentfield['data_type']),
                                                                                                          ),
+                      
+                      'filter' => $filter_handler,
+                      
+                      'sort' => array(
+                                      'handler' => civicrm_get_sort_handler($currentfield['data_type']),
+                                      ),
+                      );
 
-                                                                                     'filter' => $filter_handler,
-
-                                                                                     'sort' => array(
-                                                                                                     'handler' => civicrm_get_sort_handler($currentfield['data_type']),
-                                                                                                     ),
-                                                                                     );
             //For date fields add in 6 arguments
             if ( $currentfield['data_type'] == 'Date' ){
                 //@TODO  Still need to get the field under it's respecitve group, I may e able to set the civicrm_views_add_date_arguments() function with a group variable and default it to null
