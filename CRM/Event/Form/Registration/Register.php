@@ -1142,9 +1142,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
                 $waitingStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'" );
                 if ( $this->_allowWaitlist && !$this->_allowConfirmation ) {
-                    $value['participant_status_id'] = array_search( 'On waitlist', $waitingStatuses );
+                    $value['participant_status'] = array_search( 'On waitlist', $waitingStatuses );
                 } else if ( $this->_requireApproval && !$this->_allowConfirmation ) {
-                    $value['participant_status_id'] = array_search( 'Awaiting approval', $waitingStatuses );
+                    $value['participant_status'] = array_search( 'Awaiting approval', $waitingStatuses );
                 }
                 
                 $this->set( 'value', $value );
