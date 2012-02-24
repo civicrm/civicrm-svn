@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
-class civicrm_Cli {
+class civicrm_cli {
     // required values that must be passed
     // via the command line
     var $_required_arguments = array('action','entity');
