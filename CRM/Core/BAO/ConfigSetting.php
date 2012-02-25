@@ -621,7 +621,8 @@ WHERE  id = %1
 
     static function skipVars( ) {
         return array( 'dsn', 'templateCompileDir',
-                      'userFrameworkDSN', 
+                      'userFrameworkDSN',
+                      'userFramework', 
                       'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                       'userPermissionClass', 'userFrameworkURLVar', 'userFrameworkVersion',
                       'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
