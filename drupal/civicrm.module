@@ -713,19 +713,24 @@ function civicrm_translated_menu_link_alter(&$item) {
     }
 }
 
-function civicrm_admin_menu( ) {
+/**
+ * Implements hook_admin_menu_output_alter().
+ */
+function civicrm_admin_menu_output_alter(&$content) {
     if ( ! civicrm_initialize( ) ) {
         return;
     }
 
     $weight  = 10;
-    $links   = array();
-    $links[] = array(
-                     'title' => 'CiviCRM',
-                     'path' => 'civicrm',
-                     'weight' => $weight,
-                     'options' => array( 'query' => 'reset=1' ) );
-    return $links;
+    $content['menu']['civicrm'] = array(
+                                        '#title' => t('CiviCRM'),
+                                        '#attributes' => array('class' => array('civicrm')),
+                                        '#href' => 'civicrm',
+                                        '#options' => array(
+                                                            'query' => array('reset' => 1),
+                                                            ),
+                                        // #weight controls the order of links in the resulting item list.
+                                        '#weight' => $weight );
 
 }
 
