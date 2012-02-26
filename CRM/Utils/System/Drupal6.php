@@ -517,13 +517,16 @@ SELECT name, mail
      * @param $name string  optional username for login
      * @param $pass string  optional password for login
      */
-    function loadBootStrap($name = null, $pass = null, $uid = null )
+    function loadBootStrap($params = array( ), $loadUser = true, $throwError = true, $realPath = null  )
     {
+       $uid = CRM_Utils_Array::value( 'uid', $params );
+       $name = CRM_Utils_Array::value( 'name', $params, false ) ? $params['name'] : trim(CRM_Utils_Array::value('name', $_REQUEST));
+       $pass = CRM_Utils_Array::value( 'pass', $params, false ) ? $params['pass'] : trim(CRM_Utils_Array::value('pass', $_REQUEST));
+      
         //take the cms root path.
-        $cmsPath = $this->cmsRootPath( );
-        
+        $cmsPath = $this->cmsRootPath($realPath );
         if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
-            echo '<br />Sorry, could not able to locate bootstrap.inc.';
+            echo '<br />Sorry, unable to locate bootstrap.inc.';
             exit( );
         }
         
@@ -567,11 +570,15 @@ SELECT name, mail
         CRM_Utils_Hook::config( $config );
     }
     
-    function cmsRootPath( ) 
+    function cmsRootPath($scriptFilename ) 
     {
         $cmsRoot = $valid = null;
-        
-        $path = $_SERVER['SCRIPT_FILENAME'];
+
+        if( !is_null( $scriptFilename ) ) {
+            $path = $scriptFilename;
+        } else {
+            $path = $_SERVER['SCRIPT_FILENAME'];
+        }
         if ( function_exists( 'drush_get_context' ) ) {
             // drush anyway takes care of multisite install etc
             return drush_get_context('DRUSH_DRUPAL_ROOT');
