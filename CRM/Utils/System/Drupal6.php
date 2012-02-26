@@ -554,8 +554,6 @@ SELECT name, mail
             return true;
         }
         //load user, we need to check drupal permissions.
-        $name = $name ? $name : trim(CRM_Utils_Array::value('name', $_REQUEST));
-        $pass = $pass ? $pass : trim(CRM_Utils_Array::value('pass', $_REQUEST));
         if ( $name ) {
             $user = user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
             if ( empty( $user->uid ) ) {
