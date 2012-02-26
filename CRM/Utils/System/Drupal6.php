@@ -539,7 +539,20 @@ SELECT name, mail
             echo '<br />Sorry, could not able to load drupal bootstrap.';
             exit( );
         }
-        
+            // lets also fix the clean url setting
+        // CRM-6948
+        $config->cleanURL = (int) variable_get('clean_url', '0');
+
+        // we need to call the config hook again, since we now know
+        // all the modules that are listening on it, does not apply
+        // to J! and WP as yet
+        // CRM-8655
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::config( $config );
+
+        if ( ! $loadUser ) {
+            return true;
+        }
         //load user, we need to check drupal permissions.
         $name = $name ? $name : trim(CRM_Utils_Array::value('name', $_REQUEST));
         $pass = $pass ? $pass : trim(CRM_Utils_Array::value('pass', $_REQUEST));
@@ -560,14 +573,6 @@ SELECT name, mail
             }
         }
         
-        // CRM-6948: When using loadBootStrap, it's implicit that CiviCRM has already loaded its settings, which means that define(CIVICRM_CLEANURL) was correctly set.
-        // So we correct it
-        $config = CRM_Core_Config::singleton();
-        $config->cleanURL = (int)variable_get('clean_url', '0'); 
-        
-        // CRM-8655: Drupal wasn't available during bootstrap, so hook_civicrm_config never executes
-        require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::config( $config );
     }
     
     function cmsRootPath($scriptFilename ) 
