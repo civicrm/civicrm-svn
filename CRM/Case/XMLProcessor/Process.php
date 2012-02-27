@@ -180,6 +180,8 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
         $relationshipTypeID = array_search( $relationshipTypeName,
                                             $relationshipTypes );
         if ( $relationshipTypeID === false ) {
+            require_once 'CRM/Utils/System.php';
+            $docLink = CRM_Utils_System::docURL2( "CiviCase Configuration" );
             CRM_Core_Error::fatal(ts('Relationship type %1, found in case configuration file, is not present in the database %2',
                                   array(1 => $relationshipTypeName, 2 => $docLink)));
             return false;

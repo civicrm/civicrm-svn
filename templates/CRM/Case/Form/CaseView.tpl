@@ -401,7 +401,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 			} else {
 			   html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' );">&nbsp;&nbsp;';
 			   var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-			   var errorMsg = '{/literal}{ts 1="' + relTypeName + '" 2="' + relTypeAdminLink + '" }The relationship type definition for the %1 case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
+			   var errorMsg = '{/literal}{ts 1="' + relTypeName + '" 2="' + relTypeAdminLink + '" }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
 
 			   //display error message.
 			   var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="ui-icon ui-icon-close" style="float:left"></div>' + '</a>';
@@ -643,7 +643,7 @@ function addRole() {
 							} else {
 							     var relTypeName = cj("#role_type :selected").text();  
 							     var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-			  				     var errorMsg = '{/literal}{ts 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"  }The relationship type definition for the %1 case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
+			  				     var errorMsg = '{/literal}{ts 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"  }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
 
 			   				     //display error message.
 			   				     var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="ui-icon ui-icon-close" style="float:left"></div>' + '</a>';
