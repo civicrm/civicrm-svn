@@ -122,7 +122,6 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      * @static
      */
     function addHTMLHead( $head ) {
-        //drupal_set_html_head( $head );
     }
 
     /** 
@@ -248,7 +247,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
     
     /**
-     * Authenticate the user against the drupal db
+     * Authenticate the user against the wordpress db
      *
      * @param string $name     the user name
      * @param string $password the password for the above user name
@@ -258,36 +257,27 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
      * @access public
      * @static
      */
-    function authenticate( $name, $password ) {
-        // FIX ME: need to check on this
-        require_once 'DB.php';
-
+    function authenticate( $name, $password, $loadCMSBootstrap = false, $realPath = null ) {
         $config = CRM_Core_Config::singleton( );
-        
-        $dbDrupal = DB::connect( $config->userFrameworkDSN );
-        if ( DB::isError( $dbDrupal ) ) {
-            CRM_Core_Error::fatal( "Cannot connect to drupal db via $config->userFrameworkDSN, " . $dbDrupal->getMessage( ) ); 
-        }                                                      
 
-        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-        $password  = md5( $password );
-        $name      = $dbDrupal->escapeSimple( $strtolower( $name ) );
-        $sql = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName .
-            " u WHERE LOWER(u.name) = '$name' AND u.pass = '$password' AND u.status = 1";
-        $query = $dbDrupal->query( $sql );
+        if ( $loadCMSBootstrap ) {
+            self::loadBootstrap( $name, $password );
+        }
 
-        $user = null;
+        $user = wp_authenticate( $name, $password );
+        if ( is_a( $user, 'WP_Error' ) ) {
+            return false;
+        }
+
         // need to change this to make sure we matched only one row
         require_once 'CRM/Core/BAO/UFMatch.php';
-        while ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) { 
-            CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row['uid'], $row['mail'], 'Drupal' );
-            $contactID = CRM_Core_BAO_UFMatch::getContactId( $row['uid'] );
-            if ( ! $contactID ) {
-                return false;
-            }
-            return array( $contactID, $row['uid'], mt_rand() );
+
+        CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user->data, $user->data->ID, $user->data->user_email, 'WordPress' );
+        $contactID = CRM_Core_BAO_UFMatch::getContactId( $user->data->ID );
+        if ( ! $contactID ) {
+            return false;
         }
-        return false;
+        return array( $contactID, $user->data->ID, mt_rand() );
     }
 
     /**   
@@ -327,13 +317,22 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
 
     /**
-     * load drupal bootstrap
+     * load wordpress bootstrap
      *
      * @param $name string  optional username for login
      * @param $pass string  optional password for login
      */
     function loadBootStrap($name = null, $pass = null)
     {
+        global $wp, $wp_rewrite, $wp_the_query, $wp_query, $wpdb;
+
+        $cmsRootPath = self::cmsRootPath( );
+        if ( ! $cmsRootPath ) {
+            CRM_Core_Error::fatal( "Could not find the install directory for WordPress" );
+        }
+
+        require_once( $cmsRootPath . DIRECTORY_SEPARATOR . 'wp-load.php' );
+
     }
     
     function cmsRootPath( ) 
