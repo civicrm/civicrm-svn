@@ -473,15 +473,14 @@ AND    u.status = 1
         }
         return false;
     }
-
-    static function loadUser( $username ) {
+    /*
+    * Load user into session
+    */
+    function loadUser( $username ) {
         global $user;
-        // fixme: this should be broken out into the appropriate d6, d7 framework
-        if(function_exists('user_load_by_name')) {
-            // >= d7 approach
-            $user = user_load_by_name($username);
-        } 
-        
+
+        $user = user_load_by_name($username);
+
         if(empty($user->uid)) return false;
 
         require_once('CRM/Core/BAO/UFMatch.php');

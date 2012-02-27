@@ -460,7 +460,23 @@ SELECT name, mail
         }
         return false;
     }
+    /*
+    * Load user into session
+    */
+    function loadUser( $username ) {
+        global $user;
+        $user = user_load(array('name' => $username));
+        if(empty($user->uid)) return false;
 
+        require_once('CRM/Core/BAO/UFMatch.php');
+        $contact_id = CRM_Core_BAO_UFMatch::getContactId( $uid );
+
+        // lets store contact id and user id in session
+        $session = CRM_Core_Session::singleton( );
+        $session->set( 'ufID'  , $uid );
+        $session->set( 'userID', $contact_id );
+        return true;
+    }
     /**   
      * Set a message in the UF to display to a user 
      *   
