@@ -739,7 +739,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             
         $config = CRM_Core_Config::singleton( );
         
-        require_once 'CRM/Core/PseudoConstant.php'; 
+        require_once 'CRM/Core/PseudoConstant.php';
+        require_once 'CRM/Contact/BAO/Contact.php';
         $locationTypes = $imProviders = array( );
         $locationTypes = CRM_Core_PseudoConstant::locationType( );
         $imProviders   = CRM_Core_PseudoConstant::IMProvider( );
@@ -768,16 +769,13 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             } 
             $params[$index] = $values[$index] = '';
             $customFieldName = null;
-            $elements = array( 'email_greeting_custom'  => 'email_greeting', 
-                               'postal_greeting_custom' => 'postal_greeting', 
-                               'addressee_custom'       => 'addressee' );
             if ( isset($details->$name) || $name == 'group' || $name == 'tag') {//hack for CRM-665
                 // to handle gender / suffix / prefix
                 if ( in_array( $name, array( 'gender', 'individual_prefix', 'individual_suffix' ) ) ) {
                     $values[$index] = $details->$name;
                     $name = $name . '_id';
                     $params[$index] = $details->$name;
-                } else if ( in_array( $name, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
+                } else if ( in_array( $name, CRM_Contact_BAO_Contact::$_greetingTypes ) ) {
                     $dname = $name . '_display';
                     $values[$index] = $details->$dname;
                     $name = $name . '_id';
@@ -928,7 +926,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                             } else if ( $name == 'image_URL' ) {
                                 list( $width, $height  ) = getimagesize( $details->$name );
                                 list( $thumbWidth, $thumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $width, $height );
- 	 		                    
+
                                 $image_URL = '<img src="'.$details->$name . '" height= '.$thumbHeight. ' width= '.$thumbWidth.'  />';
                                 $values[$index] = "<a href='#' onclick='contactImagePopUp(\"{$details->$name}\", {$width}, {$height});'>{$image_URL}</a>";
                             } else if ( in_array( $name, array('birth_date', 'deceased_date','membership_start_date','membership_end_date','join_date') ) ) {
@@ -1489,6 +1487,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         require_once 'CRM/Core/OptionGroup.php';
         require_once 'CRM/Core/BAO/UFField.php';
         require_once 'CRM/Contact/BAO/ContactType.php';
+        require_once 'CRM/Contact/BAO/Contact.php';
 
         $defaultValues = array( );
         $fieldName  = $field['name'];
@@ -1625,7 +1624,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             
             $sel = $form->add('select', $name, $title, $subtypeList, $required);
             $sel->setMultiple(true);
-        } else if (in_array($fieldName, array('email_greeting', 'postal_greeting', 'addressee' ) ) ) {
+        } else if (in_array($fieldName, CRM_Contact_BAO_Contact::$_greetingTypes ) ) {
             //add email greeting, postal greeting, addressee, CRM-4575
             $gId = $form->get('gid') ? $form->get('gid') : CRM_Utils_Array::value('group_id', $field);
             $profileType = CRM_Core_BAO_UFField::getProfileType( $gId, true, false, true );
@@ -1636,28 +1635,13 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                 $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
             }
-            if ( $fieldName == 'email_greeting') {
-                $emailGreeting = array( 'contact_type'  => $profileType, 
-                                        'greeting_type' => 'email_greeting');
-                $form->add('select', $name, $title, 
-                           array('' => ts('- select -')) + CRM_Core_PseudoConstant::greeting($emailGreeting), $required );
-                // adding custom email greeting element alongwith email greeting        
-                $form->add('text', 'email_greeting_custom', ts('Custom Email Greeting'), null, false);   
-            } else if ( $fieldName === 'postal_greeting' ) { 
-                $postalGreeting = array( 'contact_type'  => $profileType, 
-                                         'greeting_type' => 'postal_greeting');
-                $form->add('select', $name, $title, 
-                           array('' => ts('- select -')) + CRM_Core_PseudoConstant::greeting($postalGreeting), $required );
-                // adding custom postal greeting element alongwith postal greeting         
-                $form->add('text', 'postal_greeting_custom', ts('Custom Postal Greeting'), null, false);   
-            } else if ( $fieldName === 'addressee' ) { 
-                 $addressee = array( 'contact_type'  => $profileType, 
-                                     'greeting_type' => 'addressee');
-                $form->add('select', $name, $title, 
-                           array('' => ts('- select -')) + CRM_Core_PseudoConstant::greeting($addressee), $required );
-                // adding custom addressee  element alongwith addressee type         
-                $form->add('text', 'addressee_custom', ts('Custom Addressee'), null, false);   
-            }
+            $greeting = array( 'contact_type'  => $profileType, 
+                               'greeting_type' => $fieldName );
+            $form->add('select', $name, $title, 
+                       array('' => ts('- select -')) + CRM_Core_PseudoConstant::greeting($greeting), $required );
+            // add custom greeting element       
+            $form->add('text', $fieldName.'_custom', ts('Custom '.ucwords(str_replace('_', ' ', $fieldName))),
+                       null, false); 
         } else if ($fieldName === 'preferred_communication_method') {
             $communicationFields = CRM_Core_PseudoConstant::pcm();
             foreach ( $communicationFields as $key => $var ) {
@@ -1886,15 +1870,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         $defaults[$fldName] = $details['individual_suffix_id'];
                     } else if ( ( $name == 'birth_date' ) || ( $name == 'deceased_date' ) ) {
                         list( $defaults[$fldName] ) = CRM_Utils_Date::setDateDefaults( $details[$name], 'birth' );
-                    } else if ($name == 'email_greeting') {
-                        $defaults[$fldName] = $details['email_greeting_id'];
-                        $defaults['email_greeting_custom'] = $details['email_greeting_custom'];
-                    } else if ($name == 'postal_greeting') {
-                        $defaults[$fldName] = $details['postal_greeting_id'];
-                        $defaults['postal_greeting_custom'] = $details['postal_greeting_custom'];
-                    } else if ($name == 'addressee') {
-                        $defaults[$fldName] = $details['addressee_id'];
-                        $defaults['addressee_custom'] = $details['addressee_custom'];
+                    } else if ( in_array($name, CRM_Contact_BAO_Contact::$_greetingTypes) ) {
+                        $defaults[$fldName] = $details[$name.'_id'];
+                        $defaults[$name.'_custom'] = $details[$name.'_custom'];
                     } else if ($name == 'preferred_communication_method') {
                         $v = explode( CRM_Core_DAO::VALUE_SEPARATOR, $details[$name] );
                         foreach ( $v as $item ) {

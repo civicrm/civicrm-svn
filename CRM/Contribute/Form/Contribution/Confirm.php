@@ -629,26 +629,17 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             // if we find more than one contact, use the first one
             $contact_id  = CRM_Utils_Array::value( 0, $ids );
             
-            // CRM-8940 Do not reset greeting id's if we already have a contact
-            if ( ! $contact_id ) {
-                $greetingTypes = array( 'addressee'       => 'addressee_id', 
-                                        'email_greeting'  => 'email_greeting_id', 
-                                        'postal_greeting' => 'postal_greeting_id'
-                                        );
-            
-                foreach( $greetingTypes  as $key => $value ) {
-                    if( !array_key_exists( $key, $params ) ) {
-                        $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, null, null, 
-                                                                               'AND is_default =1
-                                                                                AND (filter = 1 OR filter = 0 )',
-                                                                               'value' 
-                                                                               );
-                    
-                        $params[$key] = key( $defaultGreetingTypeId );
+            // Fetch default greeting id's if creating a contact
+            if ( !$contact_id ) {
+                require_once 'CRM/Contact/BAO/Contact.php';
+                require_once 'CRM/Contact/BAO/Contact/Utils.php';
+                foreach( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
+                    if( !isset($params[$greeting]) ) {
+                        $params[$greeting] = CRM_Contact_BAO_Contact_Utils::defaultGreeting('Individual', $greeting);
                     }
                 }
             }
-            
+
             $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
                                                                          $fields,
                                                                          $contact_id,

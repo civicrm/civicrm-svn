@@ -122,6 +122,7 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
             }
         }
         $fields['state_province'] = $fields['country'] = $fields['email'] = 1;
+        require_once 'CRM/Contact/BAO/Contact.php';
         foreach ($fields as $name => $dontCare ) {
             if ( isset($this->_params[0][$name]) ) {
                 $defaults[$name] = $this->_params[0][$name];
@@ -130,8 +131,8 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
                     if ( isset( $this->_params[0][ $timeField ] ) ) {
                         $defaults[ $timeField ] = $this->_params[0][ $timeField ];
                     }
-                } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
-                            && CRM_Utils_Array::value($name.'_custom', $this->_params[0]) ) { 
+                } else if ( in_array($name, CRM_Contact_BAO_Contact::$_greetingTypes)
+                            && !empty($this->_params[0][$name.'_custom']) ) { 
                     $defaults[$name.'_custom'] = $this->_params[0][$name.'_custom'];
                 }
             }

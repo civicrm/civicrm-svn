@@ -906,13 +906,7 @@ Group By  componentId";
         
         // if valueID is not passed use default value 
         if ( !$valueID ) {
-            require_once 'CRM/Core/OptionGroup.php';
-            $contactTypeFilters = array( 1 => 'Individual', 2 => 'Household', 3 => 'Organization' );
-            $filter = CRM_Utils_Array::key( $contactType, $contactTypeFilters );
-            $defaulValueID = CRM_Core_OptionGroup::values( $greeting, null, null, null, 
-                                                           " AND is_default = 1 AND ( filter = {$filter} OR filter = 0 )",
-                                                           "value");
-            $valueID = $id = array_pop( $defaulValueID );
+            $valueID = $id = self::defaultGreeting( $contactType, $greeting );
         }
         
         $filter =  array( 'contact_type'  => $contactType, 
@@ -943,9 +937,9 @@ Group By  componentId";
         
         //FIXME : apiQuery should handle these clause.
         $filterContactFldIds = $filterIds = array( );
-        
+        require_once 'CRM/Contact/BAO/Contact.php';
         $idFldName = $displayFldName = null;
-        if ( $greeting == 'email_greeting' || $greeting == 'postal_greeting' ||  $greeting == 'addressee' ) {
+        if ( in_array($greeting, CRM_Contact_BAO_Contact::$_greetingTypes) ) {
             $idFldName = $greeting . '_id';
             $displayFldName = $greeting . '_display';
         }
@@ -1032,5 +1026,29 @@ WHERE id IN (" . implode( ',', $contactIds ) . ")";
             // now update cache field
             CRM_Core_DAO::executeQuery( $cacheFieldQuery );
         }
-    }    
+    }
+    
+    /**
+     * Fetch the default greeting for a given contact type
+     * 
+     * @param string $contactType contact type
+     * @param string $greetingType greeting type
+     * 
+     * @return int or null
+     */
+    static function defaultGreeting ( $contactType, $greetingType ) {
+        require_once 'CRM/Core/OptionGroup.php';
+        $contactTypeFilters = array( 'Individual' => 1, 'Household' => 2, 'Organization' => 3 );
+        if (!isset($contactTypeFilters[$contactType])) {
+            return;
+        }
+        $filter = $contactTypeFilters[$contactType];
+
+        $id = CRM_Core_OptionGroup::values( $greetingType, null, null, null, 
+                                            " AND is_default = 1 AND (filter = {$filter} OR filter = 0)",
+                                            'value');
+        if ( !empty($id) ) {
+            return current($id);
+        }
+    }
 }

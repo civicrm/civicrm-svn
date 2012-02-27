@@ -530,15 +530,11 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 return false;
             }
         }
-        
-        $elements = array( 'email_greeting'  => 'email_greeting_custom', 
-                           'postal_greeting' => 'postal_greeting_custom',
-                           'addressee'       => 'addressee_custom' ); 
-        foreach ( $elements as $greeting => $customizedGreeting ) {
+        require_once 'CRM/Contact/BAO/Contact.php';
+        foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
             if( $greetingType = CRM_Utils_Array::value($greeting, $self->_params[0]) ) {
                 $customizedValue = CRM_Core_OptionGroup::getValue( $greeting, 'Customized', 'name' ); 
-                if( $customizedValue  == $greetingType && 
-                    ! CRM_Utils_Array::value( $customizedGreeting, $self->_params[0] ) ) {
+                if( $customizedValue == $greetingType && empty($self->_params[0][$greeting.'_custom']) ) {
                     return false;
                 }
             }

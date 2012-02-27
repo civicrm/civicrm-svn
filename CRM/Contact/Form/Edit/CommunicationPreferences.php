@@ -165,34 +165,27 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
         }                                                        
 
         // CRM-7119: set preferred_language to default if unset
-        if (!isset($defaults['preferred_language']) or empty($defaults['preferred_language'])) {
+        if ( empty($defaults['preferred_language']) ) {
             $config = CRM_Core_Config::singleton();
             $defaults['preferred_language'] = $config->lcMessages;
         }
 
-        //set default from greeting types CRM-4575.
-        $greetingTypes = array('addressee'       => 'addressee_id', 
-                               'email_greeting'  => 'email_greeting_id', 
-                               'postal_greeting' => 'postal_greeting_id'
-                               );
-
+        //set default from greeting types CRM-4575, CRM-9739
+        require_once 'CRM/Contact/BAO/Contact.php';
         if ( $form->_action & CRM_Core_Action::ADD ) {
-            $contactTypeFilters = array( 1 => 'Individual', 2 => 'Household', 3 => 'Organization' );
-            $filter = CRM_Utils_Array::key( $form->_contactType, $contactTypeFilters);
-            require_once 'CRM/Core/OptionGroup.php';
-            foreach ( $greetingTypes as $greetingType => $greeting ) {
-                if ( !CRM_Utils_Array::value($greeting, $defaults) ) {
-                    //get the default from email address.
-                    $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $greetingType, null, null, 
-                                                                           null, " AND is_default = 1 AND ( filter = {$filter} OR filter = 0 )", 'value');
-                    if ( !empty($defaultGreetingTypeId) ) {
-                        $defaults[$greeting] = key($defaultGreetingTypeId);
+            foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
+                if ( empty($defaults[$greeting . '_id']) ) {
+                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
+                    if ( $defaultGreetingTypeId =
+                         CRM_Contact_BAO_Contact_Utils::defaultGreeting($form->_contactType, $greeting)
+                    ) {
+                        $defaults[$greeting . '_id'] = $defaultGreetingTypeId;
                     }
                 }
             }
         } else {
-            foreach ( $greetingTypes as $greetingType => $greeting ) {
-                $name = "{$greetingType}_display";
+            foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
+                $name = "{$greeting}_display";
                 $form->assign( $name, CRM_Utils_Array::value( $name, $defaults ) );
             }
         }
@@ -239,6 +232,3 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
     }
 
 }
-
-
-
