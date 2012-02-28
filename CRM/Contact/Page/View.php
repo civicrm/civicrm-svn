@@ -242,7 +242,8 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         require_once 'CRM/Core/BAO/UFMatch.php';
 
         $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ); 
-        if ( $uid && ( $session->get( 'userID' ) == $this->_contactId ) ) {
+        if ( $uid && ( ( $session->get( 'userID' ) == $this->_contactId ) ||
+            CRM_Core_Permission::check( 'administer CiviCRM' ) ) ) {
             if ( $config->userSystem->is_drupal == '1' ) {
                 $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
             } else if ( $config->userFramework == 'Joomla' ) {
