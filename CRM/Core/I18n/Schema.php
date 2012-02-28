@@ -174,10 +174,6 @@ class CRM_Core_I18n_Schema
             }
         }
 
-        // drop triggers
-        $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_insert";
-        $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_update";
-
         // deal with columns
         foreach ($columns[$table] as $column => $type) {
             $queries[] = "ALTER TABLE {$table} ADD {$column} {$type}";
@@ -200,6 +196,9 @@ class CRM_Core_I18n_Schema
         foreach ($queries as $query) {
             $dao->query($query, false);
         }
+
+        // invoke the meta trigger creation call
+        CRM_Core_DAO::triggerRebuild( $table );
     }
 
     /**
@@ -400,80 +399,6 @@ class CRM_Core_I18n_Schema
             // CRM-7854: skip existing indices
             if (CRM_Core_DAO::checkConstraintExists($table, $name)) continue;
             $queries[$index['name']] = "CREATE {$unique} INDEX {$name} ON {$table} ({$cols})";
-        }
-        return $queries;
-    }
-
-    /**
-     * CREATE TRIGGER queries for a given set of locales
-     *
-     * @param $locales array  array of current database locales
-     * @param $locale string  new locale to add
-     * @param $class string   schema structure class to use
-     * @return array          array of CREATE TRIGGER queries
-     */
-    private static function createTriggerQueries($locales, $locale, $class = 'CRM_Core_I18n_SchemaStructure')
-    {
-        eval("\$columns =& $class::columns();");
-        $queries = array();
-        
-        // CRM-7786: there are cases where the INSERT happens early, so UPDATEs need to cater for NULL *_xx_YY fields
-        // FIXME: merge this and the below foreach loops
-        foreach ($columns as $table => $hash) {
-            $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_update";
-
-            $trigger = array();
-            $trigger[] = "CREATE TRIGGER {$table}_before_update BEFORE UPDATE ON {$table} FOR EACH ROW BEGIN";
-
-            if ($locales) {
-                foreach ($hash as $column => $_) {
-                    $trigger[] = "IF NEW.{$column}_{$locale} IS NOT NULL THEN";
-                    foreach ($locales as $old) {
-                        $trigger[] = "IF NEW.{$column}_{$old} IS NULL THEN SET NEW.{$column}_{$old} = NEW.{$column}_{$locale}; END IF;";
-                    }
-                    foreach ($locales as $old) {
-                        $trigger[] = "ELSEIF NEW.{$column}_{$old} IS NOT NULL THEN";
-                        foreach (array_merge($locales, array($locale)) as $loc) {
-                            if ($loc == $old) continue;
-                            $trigger[] = "IF NEW.{$column}_{$loc} IS NULL THEN SET NEW.{$column}_{$loc} = NEW.{$column}_{$old}; END IF;";
-                        }
-                    }
-                    $trigger[] = 'END IF;';
-                }
-            }
-
-            $trigger[] = 'END';
-
-            $queries[] = implode(' ', $trigger);
-        }
-        
-        // take care of the ON INSERT triggers
-        foreach ($columns as $table => $hash) {
-            $queries[] = "DROP TRIGGER IF EXISTS {$table}_before_insert";
-
-            $trigger = array();
-            $trigger[] = "CREATE TRIGGER {$table}_before_insert BEFORE INSERT ON {$table} FOR EACH ROW BEGIN";
-
-            if ($locales) {
-                foreach ($hash as $column => $_) {
-                    $trigger[] = "IF NEW.{$column}_{$locale} IS NOT NULL THEN";
-                    foreach ($locales as $old) {
-                        $trigger[] = "SET NEW.{$column}_{$old} = NEW.{$column}_{$locale};";
-                    }
-                    foreach ($locales as $old) {
-                        $trigger[] = "ELSEIF NEW.{$column}_{$old} IS NOT NULL THEN";
-                        foreach (array_merge($locales, array($locale)) as $loc) {
-                            if ($loc == $old) continue;
-                            $trigger[] = "SET NEW.{$column}_{$loc} = NEW.{$column}_{$old};";
-                        }
-                    }
-                    $trigger[] = 'END IF;';
-                }
-            }
-
-            $trigger[] = 'END';
-
-            $queries[] = implode(' ', $trigger);
         }
         return $queries;
     }

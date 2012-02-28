@@ -108,7 +108,9 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
     {
         if (!$this->isEnabled()) return;
 
-        $this->dropTriggers();
+        // invoke the meta trigger creation call
+        CRM_Core_DAO::triggerRebuild( );
+
         $this->deleteReports();
     }
 
@@ -272,37 +274,6 @@ COLS;
         $this->logs[$table] = "log_$table";
     }
 
-    /**
-     * Create triggers populating the relevant log table every time the given table changes.
-     */
-    function createTriggersFor($table)
-    {
-        if ($table != 'civicrm_contact' and !$this->isEnabled()) return;
-
-        $columns = $this->columnsOf($table);
-
-        $queries = array();
-        foreach (array('Insert', 'Update', 'Delete') as $action) {
-            $trigger = "{$table}_after_" . strtolower($action);
-            $queries[] = "DROP TRIGGER IF EXISTS $trigger";
-            $query = "CREATE TRIGGER $trigger AFTER $action ON $table FOR EACH ROW INSERT INTO `{$this->db}`.log_$table (";
-            foreach ($columns as $column) {
-                $query .= "$column, ";
-            }
-            $query .= "log_conn_id, log_user_id, log_action) VALUES (";
-            foreach ($columns as $column) {
-                $query .= $action == 'Delete' ? "OLD.$column, " : "NEW.$column, ";
-            }
-            $query .= "CONNECTION_ID(), @civicrm_user_id, '$action')";
-            $queries[] = $query;
-        }
-
-        $dao = new CRM_Core_DAO;
-        foreach ($queries as $query) {
-            $dao->executeQuery($query);
-        }
-    }
-
     private function deleteReports()
     {
         // disable logging templates
@@ -320,19 +291,6 @@ COLS;
             $dao->domain_id = $domain_id;
             $dao->report_id = $report;
             $dao->delete();
-        }
-    }
-
-    /**
-     * Drop triggers for all logged tables.
-     */
-    private function dropTriggers()
-    {
-        $dao = new CRM_Core_DAO;
-        foreach ($this->tables as $table) {
-            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_insert");
-            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_update");
-            $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_delete");
         }
     }
 
