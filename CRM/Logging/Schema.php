@@ -122,7 +122,10 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
         foreach ($this->tables as $table) {
             $this->createLogTableFor($table);
         }
-        $this->createTriggers();
+
+        // invoke the meta trigger creation call
+        CRM_Core_DAO::triggerRebuild( );
+
         $this->addReports();
     }
 
@@ -166,8 +169,8 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
             CRM_Core_DAO::executeQuery("ALTER TABLE `{$this->db}`.log_$table ADD $line");
         }
 
-        // recreate triggers to cater for the new columns
-        $this->createTriggersFor($table);
+        // invoke the meta trigger creation call
+        CRM_Core_DAO::triggerRebuild( $table );
     }
 
     /**
@@ -300,16 +303,6 @@ COLS;
         }
     }
 
-    /**
-     * Create triggers for all logged tables.
-     */
-    private function createTriggers()
-    {
-        foreach ($this->tables as $table) {
-            $this->createTriggersFor($table);
-        }
-    }
-
     private function deleteReports()
     {
         // disable logging templates
@@ -367,4 +360,52 @@ COLS;
         // FIXME: probably should be a bit more thorough…
         return (bool) CRM_Core_DAO::singleValueQuery("SHOW TRIGGERS LIKE 'civicrm_contact'");
     }
+
+    function triggerInfo( &$info, $tableName = null ) {
+        // check if we have logging enabled
+        $config =& CRM_Core_Config::singleton( );
+        if ( ! $config->logging ) {
+            return;
+        }
+
+        $upsert = array( 'INSERT', 'UPDATE' );
+        $delete = array( 'DELETE' );
+
+        if ( $tableName ) {
+            $tableNames = array( $tableName );
+        } else {
+            $tableNames = $this->tables;
+        }
+
+        // logging is enabled, so now lets create the trigger info tables
+        foreach ( $tableNames as $table ) {
+            $columns = $this->columnsOf($table);
+
+            $upsertSQL = $deleteSQL = "INSERT INTO `{$this->db}`.log_{tableName} (";
+            foreach ( $columns as $column ) {
+                $upsertSQL .= "$column, ";
+                $deleteSQL .= "$column, ";
+            }
+            $upsertSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
+            $deleteSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
+            
+            foreach ( $columns as $column ) {
+                $upsertSQL .= "NEW.$column, ";
+                $deleteSQL .= "OLD.$column, ";
+            }
+            $upsertSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
+            $deleteSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
+
+            $info[] = array( 'table' => array( $table ),
+                             'when'  => 'AFTER',
+                             'event' => $upsert,
+                             'sql'   => $upsertSQL );
+
+            $info[] = array( 'table' => array( $table ),
+                             'when'  => 'AFTER',
+                             'event' => $delete,
+                             'sql'   => $deleteSQL );
+        }
+    }
+
 }

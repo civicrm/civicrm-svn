@@ -845,4 +845,25 @@ abstract class CRM_Utils_Hook {
                                            'civicrm_alterContent' );
     }
 
+    /**
+     * This hook collects the trigger definition from all components
+     *
+     * @param $triggerInfo reference to an array of trigger information
+     *   each element has 4 fields:
+     *     table - array of tableName
+     *     when  - BEFORE or AFTER
+     *     event - array of eventName - INSERT OR UPDATE OR DELETE
+     *     sql   - array of statements optionally terminated with a ;
+     *             a statement can use the tokes {tableName} and {eventName}
+     *             to do token replacement with the table / event. This allows
+     *             templatizing logging and other hooks
+     * @param string $tableName (optional) the name of the table that we are interested in only
+     */
+    static function triggerInfo( &$info, $tableName = null ) {
+        return self::singleton( )->invoke( 2, $info, $tableName,
+                                           self::$_nullObject, self::$_nullObject,
+                                           self::$_nullObject,
+                                           'civicrm_triggerInfo' );
+    }
+
 }
