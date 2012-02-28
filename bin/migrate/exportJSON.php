@@ -43,9 +43,10 @@ function run( ) {
 
     // this does not return on failure
     // CRM_Utils_System::authenticateScript( true );
+    $params = array( );
 
     require_once 'CRM/Utils/Migrate/ExportJSON.php';
-    $export = new CRM_Utils_Migrate_ExportJSON( );
+    $export = new CRM_Utils_Migrate_ExportJSON( $params );
 
     $export->run( '/tmp/export.json' );
 }
