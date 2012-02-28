@@ -578,16 +578,11 @@ class CRM_Utils_Token
         } else if ( $token == 'checksum' ) {
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $hash = CRM_Utils_Array::value( 'hash', $contact );
-            if ( $hash ) {
-                $cs = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contact['contact_id'],
-                                                                       null,
-                                                                       null,
-                                                                       $hash );
-                $value = "cs={$cs}";
-            } else if ( $contact['contact_id'] ) {
-                $cs = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contact['contact_id'] );
-                $value = "cs={$cs}";
-            }
+            $cs   = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contact['contact_id'],
+                                                                     null,
+                                                                     null,
+                                                                     $hash );
+            $value = "cs={$cs}";
         } else {
             $value = CRM_Utils_Array::retrieveValueRecursive($contact, $token);
         }
