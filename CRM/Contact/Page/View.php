@@ -240,7 +240,9 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                 
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/BAO/UFMatch.php';
-        if ( $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ) ) {
+
+        $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ); 
+        if ( $uid && ( $session->get( 'userID' ) == $this->_contactId ) ) {
             if ( $config->userSystem->is_drupal == '1' ) {
                 $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
             } else if ( $config->userFramework == 'Joomla' ) {
