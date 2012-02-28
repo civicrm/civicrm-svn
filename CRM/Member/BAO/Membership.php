@@ -116,7 +116,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                                'status_id'     => $membership->status_id,
                                'start_date'    => $logStartDate,
                                'end_date'      => CRM_Utils_Date::isoToMysql( $membership->end_date ),
-                               'renewal_reminder_date' => $membership->reminder_date, 
+                               'renewal_reminder_date' => CRM_Utils_Date::isoToMysql( $membership->reminder_date ), 
                                'modified_date' => date('Ymd'),
         					   'membership_type_id' => $values[$membership->id]['membership_type_id']
                                );
