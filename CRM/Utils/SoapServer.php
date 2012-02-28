@@ -140,6 +140,7 @@ class CRM_Utils_SoapServer
     public function mailer_event_bounce($key, $job, $queue, $hash, $body) {
         $this->verify($key);
         $params = array( 'job_id'         => $job,
+                         'time_stamp' => date('YmdHis'),
                          'event_queue_id' => $queue,
                          'hash'           => $hash,
                          'body'           => $body,
@@ -151,6 +152,8 @@ class CRM_Utils_SoapServer
     public function mailer_event_unsubscribe($key, $job, $queue, $hash) {
         $this->verify($key);
         $params = array( 'job_id'         => $job,
+                         'time_stamp' => date('YmdHis'),
+                         'org_unsubscribe' => 0,
                          'event_queue_id' => $queue,
                          'hash'           => $hash,
                          'version'        => 3
@@ -161,6 +164,8 @@ class CRM_Utils_SoapServer
     public function mailer_event_domain_unsubscribe($key, $job, $queue, $hash) {
         $this->verify($key);
         $params = array( 'job_id'         => $job,
+                         'time_stamp' => date('YmdHis'),
+                         'org_unsubscribe' => 1,
                          'event_queue_id' => $queue,
                          'hash'           => $hash,
                          'version'        => 3
@@ -171,6 +176,8 @@ class CRM_Utils_SoapServer
     public function mailer_event_resubscribe($key, $job, $queue, $hash) {
         $this->verify($key);
         $params = array( 'job_id'         => $job,
+                         'time_stamp' => date('YmdHis'),
+                         'org_unsubscribe' => 0,
                          'event_queue_id' => $queue,
                          'hash'           => $hash,
                          'version'        => 3
@@ -191,6 +198,8 @@ class CRM_Utils_SoapServer
         $this->verify($key);
         $params = array( 'contact_id'   => $contact,
                          'subscribe_id' => $subscribe,
+                         'time_stamp' => date('YmdHis'),
+                         'event_subscribe_id' => $subscribe,
                          'hash'         => $hash,
                          'version'      => 3
                          );
@@ -206,6 +215,7 @@ class CRM_Utils_SoapServer
                          'replyTo'        => $rt,
                          'bodyHTML'       => $bodyHTML,
                          'fullEmail'      => $fullEmail,
+                         'time_stamp' => date('YmdHis'),
                          'version'        => 3
                          );
         return civicrm_api('Mailing', 'event_reply', $params);
