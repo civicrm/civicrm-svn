@@ -377,7 +377,25 @@ OR       group_name = %2 )
 
         $dirParams = array( );
         $urlParams = array( );
-        $dao    = CRM_Core_DAO::executeQuery( $sql, $sqlParams );
+
+        $dao    = CRM_Core_DAO::executeQuery( $sql,
+                                              $sqlParams,
+                                              true,
+                                              null,
+                                              false,
+                                              true,
+                                              true ); // trap exceptions as error
+
+        if ( is_a( $dao, 'DB_Error' ) ) {
+            if ( CRM_Core_Config::isUpgradeMode( ) ) {
+                // seems like this is a 4.0 -> 4.1 upgrade, so we suppress this error and continue
+                return;
+            } else {
+                echo "Fatal DB error, exiting, seems like your schema does not have civicrm_setting table\n";
+                exit( );
+            }
+        }
+
         while ( $dao->fetch( ) ) {
             if ( ! isset( $params[$dao->name] ) ) {
                 continue;
@@ -430,7 +448,24 @@ OR       group_name = %2 )
         $sqlParams = array( 1 => array( self::DIRECTORY_PREFERENCES_NAME, 'String' ),
                             2 => array( self::URL_PREFERENCES_NAME      , 'String' ) );
 
-        $dao    = CRM_Core_DAO::executeQuery( $sql, $sqlParams );
+        $dao    = CRM_Core_DAO::executeQuery( $sql,
+                                              $sqlParams,
+                                              true,
+                                              null,
+                                              false,
+                                              true,
+                                              true ); // trap exceptions as error
+
+        if ( is_a( $dao, 'DB_Error' ) ) {
+            if ( CRM_Core_Config::isUpgradeMode( ) ) {
+                // seems like this is a 4.0 -> 4.1 upgrade, so we suppress this error and continue
+                return;
+            } else {
+                echo "Fatal DB error, exiting, seems like your schema does not have civicrm_setting table\n";
+                exit( );
+            }
+        }
+
 
         require_once 'CRM/Utils/File.php';
         while ( $dao->fetch( ) ) {

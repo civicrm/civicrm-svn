@@ -174,7 +174,9 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
         require_once 'CRM/Core/BAO/Setting.php';
         $mailingBackend = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                          'mailing_backend' );
+        
         if ( ! empty( $mailingBackend ) ) {
+            require_once 'CRM/Core/BAO/ConfigSetting.php';
             CRM_Core_BAO_ConfigSetting::formatParams( $formValues, $mailingBackend );
         }
         

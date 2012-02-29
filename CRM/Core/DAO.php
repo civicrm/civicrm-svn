@@ -882,7 +882,8 @@ FROM   civicrm_domain
                                    $abort = true,
                                    $daoName = null,
                                    $freeDAO = false,
-                                   $i18nRewrite = true )
+                                   $i18nRewrite = true,
+                                   $trapException = false )
     {
         $queryStr = self::composeQuery( $query, $params, $abort );
         //CRM_Core_Error::debug( 'q', $queryStr );
@@ -893,7 +894,17 @@ FROM   civicrm_domain
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
             eval( '$dao   = new ' . $daoName . '( );' );
         }
+
+        if ( $trapException ) {
+            CRM_Core_Error::ignoreException();
+        }
+
         $result = $dao->query( $queryStr, $i18nRewrite );
+
+        if ( $trapException ) {
+            CRM_Core_Error::setCallback();
+        }
+
         if ( is_a( $result, 'DB_Error' ) ) {
             return $result;
         }

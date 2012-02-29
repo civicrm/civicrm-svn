@@ -1063,16 +1063,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $errors['cvv2'] =  ts( 'Please enter a valid Credit Card Verification Number' );
             }
         }
-
-        $elements = array( 'email_greeting'  => 'email_greeting_custom', 
-                           'postal_greeting' => 'postal_greeting_custom',
-                           'addressee'       => 'addressee_custom' ); 
-        foreach ( $elements as $greeting => $customizedGreeting ) {
+        require_once 'CRM/Contact/BAO/Contact.php';
+        foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
             if( $greetingType = CRM_Utils_Array::value($greeting, $fields) ) {
                 $customizedValue = CRM_Core_OptionGroup::getValue( $greeting, 'Customized', 'name' ); 
-                if( $customizedValue  == $greetingType && 
-                    ! CRM_Utils_Array::value( $customizedGreeting, $fields ) ) {
-                    $errors[$customizedGreeting] = ts( 'Custom %1 is a required field if %1 is of type Customized.', 
+                if( $customizedValue == $greetingType && empty($fielse[$greeting.'_custom']) ) {
+                    $errors[$greeting.'_custom'] = ts( 'Custom %1 is a required field if %1 is of type Customized.', 
                                                        array( 1 => ucwords(str_replace('_'," ", $greeting) ) ) );
                 }
             }

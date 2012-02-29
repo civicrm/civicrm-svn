@@ -365,7 +365,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
         $fields["billing_state_province-{$this->_bltID}"] =
             $fields["billing_country-{$this->_bltID}"] = $fields["email-{$this->_bltID}"] = 1;
-      
+        require_once 'CRM/Contact/BAO/Contact.php';
         foreach ($fields as $name => $dontCare ) {
             if ( isset($this->_params[0][$name]) ) {
                 $defaults[$name] = $this->_params[0][$name];
@@ -377,8 +377,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     if ( isset( $this->_params[0]["{$name}_id"] ) ) {
                         $defaults["{$name}_id"] = $this->_params[0]["{$name}_id"];
                     }
-                } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
-                            && CRM_Utils_Array::value($name.'_custom', $this->_params[0]) ) { 
+                } else if ( in_array($name, CRM_Contact_BAO_Contact::$_greetingTypes)
+                            && !empty($this->_params[0][$name.'_custom']) ) { 
                     $defaults[$name.'_custom'] = $this->_params[0][$name.'_custom'];
                 }
             }
@@ -535,9 +535,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     //get the participant statuses.
                     $waitingStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'" );
                     if ( $this->_allowWaitlist ) {
-                        $value['participant_status_id'] = array_search( 'On waitlist', $waitingStatuses );
+                        $value['participant_status_id'] = $value['participant_status'] = array_search( 'On waitlist', $waitingStatuses );
                     } else {
-                        $value['participant_status_id'] = array_search( 'Awaiting approval', $waitingStatuses );  
+                        $value['participant_status_id'] = $value['participant_status'] = array_search( 'Awaiting approval', $waitingStatuses );  
                     }
                     
                     //there might be case user seleted pay later and
@@ -552,7 +552,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                         //get the participant statuses.
                         $pendingStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Pending'" );
                         $status = CRM_Utils_Array::value('is_pay_later', $value) ? 'Pending from pay later' : 'Pending from incomplete transaction';
-                        $value['participant_status_id'] = array_search($status, $pendingStatuses);
+                        $value['participant_status_id'] = $value['participant_status'] = array_search($status, $pendingStatuses);
                     }
                 } else if ( $this->_contributeMode == 'express' && CRM_Utils_Array::value( 'is_primary', $value ) ) {
                     $result =& $payment->doExpressCheckout( $value );
@@ -1042,23 +1042,14 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                                                                          $ctype,
                                                                          true );
         } else {
-            $greetingTypes = array( 'addressee'       => 'addressee_id', 
-                                    'email_greeting'  => 'email_greeting_id', 
-                                    'postal_greeting' => 'postal_greeting_id'
-                                    );
-            
-            foreach( $greetingTypes  as $key => $value ) {
-                if( !array_key_exists( $key, $params ) ) {
-                    $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, null, null, 
-                                                                           'AND is_default = 1
-                                                                            AND (filter = 1 OR filter = 0 )',
-                                                                           'value' 
-                                                                           );
-                    
-                        $params[$key] = key( $defaultGreetingTypeId );
+
+            foreach( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
+                if ( !isset($params[$greeting.'_id']) ) {
+                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
+                    $params[$greeting.'_id'] = CRM_Contact_BAO_Contact_Utils::defaultGreeting('Individual', $greeting);
                 }
             }
-           
+
             $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params,
                                                                         $fields,
                                                                         null,

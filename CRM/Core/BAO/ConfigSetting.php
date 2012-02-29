@@ -191,7 +191,7 @@ class CRM_Core_BAO_ConfigSetting
             $urlVar = 'task';
         }
 
-        if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'civicrm/upgrade' || defined('CIVICRM_UPGRADE_ACTIVE') ) {
+        if ( CRM_Core_Config::isUpgradeMode() ) {
             $domain->selectAdd( 'config_backend' );
         } else if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'admin/modules/list/confirm' ) {
             $domain->selectAdd( 'config_backend', 'locales' );
@@ -217,7 +217,7 @@ class CRM_Core_BAO_ConfigSetting
             }
 
             // since language field won't be present before upgrade.
-            if ( CRM_Utils_Array::value( $urlVar, $_GET ) == 'civicrm/upgrade' ) {
+            if ( CRM_Core_Config::isUpgradeMode() ) {
                 return;
             }
 
@@ -621,7 +621,8 @@ WHERE  id = %1
 
     static function skipVars( ) {
         return array( 'dsn', 'templateCompileDir',
-                      'userFrameworkDSN', 
+                      'userFrameworkDSN',
+                      'userFramework', 
                       'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                       'userPermissionClass', 'userFrameworkURLVar', 'userFrameworkVersion',
                       'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',

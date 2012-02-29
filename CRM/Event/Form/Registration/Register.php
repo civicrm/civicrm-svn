@@ -844,17 +844,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $errors['cvv2'] =  ts( 'Please enter a valid Credit Card Verification Number' );
             }
         }
-        
-        $elements = array( 'email_greeting'  => 'email_greeting_custom', 
-                           'postal_greeting' => 'postal_greeting_custom',
-                           'addressee'       => 'addressee_custom' ); 
-        foreach ( $elements as $greeting => $customizedGreeting ) {
+        require_once 'CRM/Contact/BAO/Contact.php';
+        foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
             if( $greetingType = CRM_Utils_Array::value($greeting, $fields) ) {
                 $customizedValue = CRM_Core_OptionGroup::getValue( $greeting, 'Customized', 'name' ); 
-                if( $customizedValue  == $greetingType && 
-                    ! CRM_Utils_Array::value( $customizedGreeting, $fields ) ) {
+                if( $customizedValue == $greetingType && empty($fields[$greeting.'_custom']) ) {
                     $errors[$customizedGreeting] = ts( 'Custom %1 is a required field if %1 is of type Customized.', 
-                                                       array( 1 => ucwords(str_replace('_'," ", $greeting) ) ) );
+                                                       array( 1 => ucwords(str_replace('_', ' ', $greeting) ) ) );
                 }
             }
         }
@@ -1142,9 +1138,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
                 $waitingStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'" );
                 if ( $this->_allowWaitlist && !$this->_allowConfirmation ) {
-                    $value['participant_status_id'] = array_search( 'On waitlist', $waitingStatuses );
+                    $value['participant_status_id'] = $value['participant_status'] = array_search( 'On waitlist', $waitingStatuses );
                 } else if ( $this->_requireApproval && !$this->_allowConfirmation ) {
-                    $value['participant_status_id'] = array_search( 'Awaiting approval', $waitingStatuses );
+                    $value['participant_status_id'] = $value['participant_status'] = array_search( 'Awaiting approval', $waitingStatuses );
                 }
                 
                 $this->set( 'value', $value );

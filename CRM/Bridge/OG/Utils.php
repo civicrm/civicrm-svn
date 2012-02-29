@@ -87,20 +87,16 @@ class CRM_Bridge_OG_Utils {
         if ( $contactID ) {
             return $contactID;
         }
+        // else synchronize contact for this user
 
-        // else create a contact for this user
-        $user = user_load( $ufID );
-        $params = array(
-            'contact_type' => 'Individual',
-            'email'        => $user->mail,
-            'version'      => 3,
-        );
+        $account = user_load( $ufID );
 
-        $values = civicrm_api('contact', 'create', $params );
-        if ( $values['is_error'] ) {
+        CRM_Core_BAO_UFMatch::synchronizeUFMatch( $account, $ufID, $account->mail, 'Drupal' );
+        $contactID = CRM_Core_BAO_UFMatch::getContactId( $ufID );
+        if ( ! $contactID ) {
             CRM_Core_Error::fatal( );
         }
-        return $values['id'];
+        return $contactID;
     }
 
     static function groupID( $source, $title = null, $abort = false ) {

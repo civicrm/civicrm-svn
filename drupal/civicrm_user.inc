@@ -213,6 +213,7 @@ function civicrm_user_view( $user, $view_mode ){
             $pageContent = $page->run( );
 
             // CRM-3537: profile edit link
+            $editURL = '';
             if ( user_edit_access($user) ) {
                 $editURL = '&raquo; ' . l( ts("Edit %1", array('%1' => $title['title'])),
                                            "user/{$user->uid}/edit/{$title['title']}");
@@ -227,7 +228,7 @@ function civicrm_user_view( $user, $view_mode ){
                     array(  '#type'   => 'user_profile_item',
                             '#title'  => null,
                             '#value'  => $pageContent . $editURL,
-			    '#markup' => $pageContent . $editURL );
+			                '#markup' => $pageContent . $editURL );
 
                 $weight += 10;
             }

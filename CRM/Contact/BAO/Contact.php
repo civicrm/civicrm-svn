@@ -68,6 +68,13 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
     static $_commPrefs = array( 'do_not_phone', 'do_not_email', 'do_not_mail', 'do_not_sms', 'do_not_trade' );
 
     /**
+     * types of greetings
+     *
+     * @var array
+     */
+    static $_greetingTypes = array( 'addressee', 'email_greeting', 'postal_greeting' );
+
+    /**
      * static field for all the contact information that we can potentially import
      *
      * @var array
@@ -262,7 +269,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         $isEdit = true;
         if ( $invokeHooks ) {
             require_once 'CRM/Utils/Hook.php';
-            if ( CRM_Utils_Array::value( 'contact_id', $params ) ) {
+            if ( !empty($params['contact_id']) ) {
                 CRM_Utils_Hook::pre( 'edit', $params['contact_type'], $params['contact_id'], $params );
             } else {
                 CRM_Utils_Hook::pre( 'create', $params['contact_type'], null, $params ); 
@@ -273,9 +280,22 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         $config = CRM_Core_Config::singleton();
 
         // CRM-6942: set preferred language to the current language if it’s unset (and we’re creating a contact)
-        if ( ( ! isset($params['id']) || ! $params['id']) &&
-             ( ! isset($params['preferred_language']) ||  ! $params['preferred_language'])) {
+        if ( empty($params['id']) && empty($params['preferred_language']) ) {
             $params['preferred_language'] = $config->lcMessages;
+        }
+
+        // CRM-9739: set greeting & addressee if unset and we’re creating a contact
+        if ( empty($params['id']) ) {
+            foreach ( self::$_greetingTypes as $greeting ) {
+                if ( empty($params[$greeting . '_id']) ) {
+                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
+                    if ( $defaultGreetingTypeId =
+                        CRM_Contact_BAO_Contact_Utils::defaultGreeting($params['contact_type'], $greeting)
+                    ) {
+                        $params[$greeting . '_id'] = $defaultGreetingTypeId;
+                    }
+                }
+            }
         }
 
         require_once 'CRM/Core/Transaction.php';
@@ -493,19 +513,13 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         CRM_Utils_Array::lookupValue( $defaults, 'gender', CRM_Core_PseudoConstant::gender(), $reverse );
         
         //lookup value of email/postal greeting, addressee, CRM-4575
-        $filterCondition = array( 'contact_type'  => CRM_Utils_Array::value( 'contact_type', $defaults ),
-                                  'greeting_type' => 'email_greeting' ); 
-        CRM_Utils_Array::lookupValue( $defaults, 'email_greeting', 
-                                      CRM_Core_PseudoConstant::greeting($filterCondition), $reverse );
-        $filterCondition = array( 'contact_type'  => CRM_Utils_Array::value( 'contact_type', $defaults ),
-                                  'greeting_type' => 'postal_greeting' ); 
-        CRM_Utils_Array::lookupValue( $defaults, 'postal_greeting', 
-                                      CRM_Core_PseudoConstant::greeting($filterCondition), $reverse );
-        $filterCondition = array( 'contact_type'  => CRM_Utils_Array::value( 'contact_type', $defaults ),
-                                  'greeting_type' => 'addressee' ); 
-        CRM_Utils_Array::lookupValue( $defaults, 'addressee', 
-                                      CRM_Core_PseudoConstant::greeting($filterCondition), $reverse );
-        
+        foreach ( self::$_greetingTypes as $greeting ) {
+            $filterCondition = array( 'contact_type'  => CRM_Utils_Array::value( 'contact_type', $defaults ),
+                                      'greeting_type' => $greeting ); 
+            CRM_Utils_Array::lookupValue( $defaults, $greeting, 
+                                          CRM_Core_PseudoConstant::greeting($filterCondition), $reverse );
+        }
+
         $blocks = array( 'address', 'im', 'phone' );
         foreach ( $blocks as $name ) {
             if ( !array_key_exists($name, $defaults) || !is_array($defaults[$name]) ) continue;
@@ -1105,16 +1119,15 @@ WHERE id={$id}; ";
                                                                                   false ) );
                     //unset the fields, which are not related to their
                     //contact type.
-                    $commonValues = array ( 'Individual'   => array( 'household_name','legal_name','sic_code','organization_name' ),
-                                            'Household'    => array( 'first_name','middle_name','last_name','job_title',
-                                                                     'gender_id','birth_date','organization_name','legal_name',
-                                                                     'legal_identifier','sic_code','home_URL','is_deceased',
-                                                                     'deceased_date' ),
-                                            'Organization' => array( 'first_name','middle_name','last_name','job_title',
-                                                                     'gender_id','birth_date','household_name','email_greeting',
-                                                                     'email_greeting_custom','postal_greeting',
-                                                                     'postal_greeting_custom','is_deceased','deceased_date' ) 
-                                            );
+                    $commonValues = array ( 
+                        'Individual'   => array( 'household_name','legal_name','sic_code','organization_name' ),
+                        'Household'    => array( 'first_name','middle_name','last_name','job_title',
+                                                 'gender_id','birth_date','organization_name','legal_name',
+                                                 'legal_identifier','sic_code','home_URL','is_deceased',
+                                                 'deceased_date' ),
+                        'Organization' => array( 'first_name','middle_name','last_name','job_title',
+                                                 'gender_id','birth_date','household_name','is_deceased','deceased_date' ) 
+                    );
                     foreach ( $commonValues[$contactType] as $value ) {
                         unset( $fields[$value] );
                     }
@@ -1849,12 +1862,9 @@ ORDER BY civicrm_email.is_primary DESC";
                     $data['prefix_id'] = $value;
                 } else if ($key === 'gender') { 
                     $data['gender_id'] = $value;
-                } else if ($key === 'email_greeting') {  //save email/postal greeting and addressee values if any, CRM-4575 
-                    $data['email_greeting_id'] = $value;  
-                } else if ($key === 'postal_greeting') { 
-                    $data['postal_greeting_id'] = $value;
-                } else if ($key === 'addressee') { 
-                    $data['addressee_id'] = $value;  
+                } //save email/postal greeting and addressee values if any, CRM-4575 
+                  else if ( in_array($key, self::$_greetingTypes, true) ) {
+                    $data[$key .'_id'] = $value;  
                 } else if ( !$skipCustom && ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($key)) ) {
                     // for autocomplete transfer hidden value instead of label
                     if ( $params[$key] && isset ( $params[$key. '_id'] ) ) {

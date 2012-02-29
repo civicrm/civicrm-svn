@@ -207,6 +207,10 @@ tr.light .form-item, tr.dark .form-item {
 #crm-container div.description, #crm-container span.description, #crm-container dd.description {
   font-size: 1em;
 }
+#crm-container div.description, #crm-container span.description {
+   margin: 2px 0 15px 0;
+   display: block;
+}
 .form-item label {
   font-weight: bold;
 }

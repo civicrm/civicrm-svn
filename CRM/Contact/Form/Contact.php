@@ -1171,8 +1171,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         require_once 'CRM/Core/BAO/Address.php';
         
-        $buildStreetAddress = false;
         foreach ( $params['address'] as $instance => &$address ) {
+            $buildStreetAddress = false;
             $parseFieldName = 'street_address';
             foreach ( array( 'street_number', 'street_name', 'street_unit' ) as $fld ) {
                 if ( CRM_Utils_Array::value( $fld, $address )  ) {

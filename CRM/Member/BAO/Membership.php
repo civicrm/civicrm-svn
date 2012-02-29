@@ -116,7 +116,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                                'status_id'     => $membership->status_id,
                                'start_date'    => $logStartDate,
                                'end_date'      => CRM_Utils_Date::isoToMysql( $membership->end_date ),
-                               'renewal_reminder_date' => $membership->reminder_date, 
+                               'renewal_reminder_date' => CRM_Utils_Date::isoToMysql( $membership->reminder_date ), 
                                'modified_date' => date('Ymd'),
         					   'membership_type_id' => $values[$membership->id]['membership_type_id']
                                );
@@ -2468,12 +2468,12 @@ WHERE      civicrm_membership.is_test = 0";
                     $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
                                         
                     if ( $toEmail ) {
-                        $result = CRM_Core_BAO_MessageTemplates::sendReminder( $dao->contact_id,
+                        $sendResult = CRM_Core_BAO_MessageTemplates::sendReminder( $dao->contact_id,
                                                                                $toEmail,
                                                                                $renewalMsgId,
                                                                                $fromEmailAddress );
-                        if ( ! $result ||
-                             is_a( $result, 'PEAR_Error' ) ) {
+                        if ( ! $sendResult ||
+                             is_a( $sendResult, 'PEAR_Error' ) ) {
                             // we could not send an email, for now we ignore
                             // CRM-3406
                             // at some point we might decide to do something
@@ -2485,6 +2485,7 @@ WHERE      civicrm_membership.is_test = 0";
                         CRM_Core_DAO::setFieldValue( 'CRM_Member_DAO_Membership', $dao->membership_id, 'reminder_date', 'null');
                         
                         // insert the activity log record.
+                        $config = CRM_Core_Config::singleton();
                         $activityParams = array( );
                         $activityParams['subject']            = $allTypes[$dao->membership_type_id] . 
                             ": Status - " . $statusLabels[$newStatus['id']] . 

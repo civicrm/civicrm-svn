@@ -84,6 +84,14 @@ class CRM_Core_Smarty extends Smarty {
         }
         $this->compile_dir  = $config->templateCompileDir;
         
+        // check and ensure it is writable
+        // else we sometime suppress errors quietly and this results
+        // in blank emails etc
+        if ( ! is_writable( $this->compile_dir ) ) {
+            echo "CiviCRM doeso not have permission to write temp files in {$smarty->compile_dir}, Exiting";
+            exit( );
+        }
+        
         //Check for safe mode CRM-2207
         if ( ini_get('safe_mode') ) {
             $this->use_sub_dirs = false;

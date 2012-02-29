@@ -313,8 +313,8 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $greeting = array( );
-	
-	/** 
+  
+    /** 
      * Default Greetings
      * @var array
      * @static
@@ -1612,9 +1612,9 @@ ORDER BY name";
      * @return array - array reference of all greetings.
      *
      */
-	public static function greeting( $filter, $columnName = 'label' )
+    public static function greeting( $filter, $columnName = 'label' )
     { 
-		$index = $filter['greeting_type']  . '_' . $columnName;
+        $index = $filter['greeting_type']  . '_' . $columnName;
 
         // also add contactType to the array
         $contactType = CRM_Utils_Array::value( 'contact_type', $filter );
@@ -1622,28 +1622,28 @@ ORDER BY name";
             $index .= '_' . $contactType;
         }
 
-	    if ( ! CRM_Utils_Array::value( $index, self::$greeting ) ) {
+        if ( ! CRM_Utils_Array::value( $index, self::$greeting ) ) {
             $filterCondition = null;
-			if ( $contactType ) {
-				$filterVal = 'v.filter =';
-				switch( $contactType ) {
-				case 'Individual': 
-					$filterVal .= "1";
-					break;
-				case 'Household':
-					$filterVal .= "2";
-					break;
-				case 'Organization':
-					$filterVal .= "3";
-					break;
-				}			
-				$filterCondition .= "AND (v.filter = 0 OR {$filterVal}) "; 
-			} 
+            if ( $contactType ) {
+                $filterVal = 'v.filter =';
+                switch( $contactType ) {
+                case 'Individual': 
+                    $filterVal .= "1";
+                    break;
+                case 'Household':
+                    $filterVal .= "2";
+                    break;
+                case 'Organization':
+                    $filterVal .= "3";
+                    break;
+                }     
+                $filterCondition .= "AND (v.filter = 0 OR {$filterVal}) "; 
+            } 
             
             require_once 'CRM/Core/OptionGroup.php';
             self::$greeting[$index] = CRM_Core_OptionGroup::values( $filter['greeting_type'], 
                                                                     null, null, null, 
-																	$filterCondition, $columnName );
+                                                                    $filterCondition, $columnName );
         }
 
         return self::$greeting[$index];
@@ -1660,42 +1660,27 @@ ORDER BY name";
      */
     public static function &greetingDefaults( )
     {
-	    if ( ! self::$greetingDefaults ) {
-			$defaultGreetings = array();
-			$contactTypes     = array( 'Individual', 'Organization', 'Household' );
-			$greetingTypes    = array( 'addressee', 'email_greeting', 'postal_greeting' );
-            
-			require_once 'CRM/Core/OptionGroup.php';
-            
-			foreach ( $contactTypes as $contactType ) {
-				$filterCondition = '';
-				$filterVal       = 'v.filter =';
-                
-				switch( $contactType ) {
-				case 'Individual': 
-					$filterVal .= "1";
-					break;
-				case 'Household':
-					$filterVal .= "2";
-					break;
-				case 'Organization':
-					$filterVal .= "3";
-					break;
-				}			
-				$filterCondition .= " AND (v.filter = 0 OR {$filterVal}) AND v.is_default = 1 ";	
-                
-				foreach ( $greetingTypes as $greetingType ) {
-					$tokenVal = CRM_Core_OptionGroup::values( $greetingType, null, null, null, 
+        if ( ! self::$greetingDefaults ) {
+            $defaultGreetings = array();
+            $contactTypes = array( 'Individual' => 1, 'Household' => 2, 'Organization' => 3 );
+
+            require_once 'CRM/Core/OptionGroup.php';
+            require_once 'CRM/Contact/BAO/Contact.php';
+            foreach ( $contactTypes as $contactType => $filter ) {
+                $filterCondition = " AND (v.filter = 0 OR v.filter = $filter) AND v.is_default = 1 ";  
+
+                foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
+                    $tokenVal = CRM_Core_OptionGroup::values( $greeting, null, null, null, 
                                                               $filterCondition, 'label' );
-					$defaultGreetings[$contactType][$greetingType] = $tokenVal;
-				}
-			}
-            
-			self::$greetingDefaults = $defaultGreetings;
+                    $defaultGreetings[$contactType][$greeting] = $tokenVal;
+                }
+            }
+
+            self::$greetingDefaults = $defaultGreetings;
         }
-        
+
         return self::$greetingDefaults;
-	}
+    }
 
     /**
      * Get all the Languages from database.

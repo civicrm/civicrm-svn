@@ -261,7 +261,7 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
         $statusMsg = ts("Your updates have been saved.");
 
         if ( $inValidSubtypeCnt ) {
-          $statusMsg .= ' ' .  ts('Contact SubType field of %1 nunber of contact(s) has not been updated.', array(1 => $inValidSubtypeCnt));  
+          $statusMsg .= ' ' .  ts('Contact SubType field of %1 number of contact(s) has not been updated.', array(1 => $inValidSubtypeCnt));  
         }
         CRM_Core_Session::setStatus("{$statusMsg}");
     }//end of function

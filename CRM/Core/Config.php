@@ -403,7 +403,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         // retrieve serialised settings
         require_once "CRM/Core/BAO/ConfigSetting.php";
         $variables = array();
-        CRM_Core_BAO_ConfigSetting::retrieve($variables);  
+        CRM_Core_BAO_ConfigSetting::retrieve($variables);
 
         // if settings are not available, go down the full path
         if ( empty( $variables ) ) {
@@ -686,10 +686,17 @@ OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
         if ( $path && $path == 'civicrm/upgrade' ) {
             return true;
         }
-        $config = self::singleton( );
-        if ( CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET ) == 'civicrm/upgrade' ) {
-            return true;
+
+        // note: do not re-initialize config here, since this function is part of 
+        // config initialization itself
+        $urlVar = 'q';
+        if ( defined( 'CIVICRM_UF' ) && CIVICRM_UF == 'Joomla' ) {
+            $urlVar = 'task';
         }
+
+        if ( ( 'civicrm/upgrade' == CRM_Utils_Array::value( $urlVar, $_GET ) ) || defined('CIVICRM_UPGRADE_ACTIVE') ) {
+            return true;
+        } 
         return false;
     }
     

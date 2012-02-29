@@ -47,14 +47,6 @@ function CheckAuthentication() {
        require_once 'CRM/Core/Config.php';
 
        $config = CRM_Core_Config::singleton();
-
-       require_once 'CRM/Utils/System.php';
-       CRM_Utils_System::loadBootStrap(array(), false, false);
-
-       if ($config->userFramework == 'Drupal' &&
-           !user_access('access CiviCRM') ) {
-           //return;
-       }
        
        if ( !isset($_SESSION['KCFINDER'] ) ) {
            $_SESSION['KCFINDER'] = array();

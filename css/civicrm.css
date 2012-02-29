@@ -768,7 +768,8 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 }
 
 #crm-container .form-layout-compressed td.description {
-    padding: 0px 0px 5px 20px;
+    padding: 20px 5px 0 5px;
+    font-size: 1em;
 }
 
 /* Page and form-level 'help' */

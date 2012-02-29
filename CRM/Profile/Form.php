@@ -809,17 +809,13 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
             
         }
-
-        $elements = array( 'email_greeting'  => 'email_greeting_custom', 
-                           'postal_greeting' => 'postal_greeting_custom',
-                           'addressee'       => 'addressee_custom' ); 
-        foreach ( $elements as $greeting => $customizedGreeting ) {
+        require_once 'CRM/Contact/BAO/Contact.php';
+        foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
             if( $greetingType = CRM_Utils_Array::value($greeting, $fields) ) {
                 $customizedValue = CRM_Core_OptionGroup::getValue( $greeting, 'Customized', 'name' ); 
-                if( $customizedValue  == $greetingType && 
-                    ! CRM_Utils_Array::value( $customizedGreeting, $fields ) ) {
-                    $errors[$customizedGreeting] = ts( 'Custom  %1 is a required field if %1 is of type Customized.', 
-                                                       array( 1 => ucwords(str_replace('_'," ", $greeting) ) ) );
+                if( $customizedValue == $greetingType && empty($fields[$greeting.'_custom']) ) {
+                    $errors[$greeting.'_custom'] = ts( 'Custom  %1 is a required field if %1 is of type Customized.', 
+                                                       array( 1 => ucwords(str_replace('_', ' ', $greeting) ) ) );
                 }
             }
         }
@@ -867,29 +863,12 @@ class CRM_Profile_Form extends CRM_Core_Form
             if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                 $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
             }
-            
-            $contactTypeFilters = array( 1 => 'Individual', 2 => 'Household', 
-                                         3 => 'Organization' );
-            $filter = CRM_Utils_Array::key( $profileType, $contactTypeFilters );
-            if( $filter ) {
-                foreach( $greetingTypes  as $key => $value ) {
-                    if( !array_key_exists( $key, $params ) ) {
-                        $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, 
-                                                                               null, null, 
-                                                                               "AND is_default =1
-                                                                               AND (filter = 
-                                                                               {$filter} OR 
-                                                                               filter = 0 )",
-                                                                               'value' 
-                                                                               );
-                        
-                        $params[$key] = key( $defaultGreetingTypeId );
-                    }
+
+            foreach( $greetingTypes as $key => $value ) {
+                if( !array_key_exists( $key, $params ) ) {
+                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
+                    $params[$key] = CRM_Contact_BAO_Contact_Utils::defaultGreeting( $profileType, $key );
                 }
-            }
-            if ( $profileType == 'Organization' ) {
-                unset( $params['email_greeting'], $params['postal_greeting'] );
-                
             }
         }  
         if ( $this->_mode == self::MODE_REGISTER ) {

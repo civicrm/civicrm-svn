@@ -631,7 +631,7 @@ OR       ( start_date >= $now )
                     </div>
                     <div style="padding:15px 15px 0 15px;">
                         <select id="add_civicomponent_id">
-                            <option value="">  <?php _e("Select a frontend elment."); ?>  </option>
+                            <option value="">  <?php _e("Select a frontend element."); ?>  </option>
                             <option value="contribution">Contribution Page</option>
                             <option value="event">Event Page</option>
                         </select>

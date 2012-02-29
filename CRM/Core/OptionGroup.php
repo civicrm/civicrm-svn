@@ -189,7 +189,7 @@ WHERE  v.option_group_id = g.id
                 $postValues = array( );
                 // params[$postName] may be a Ctrl+A separated value list
                 if ( is_string ( $postalName ) && 
-                     strpos( $postalName, CRM_Core_DAO::VALUE_SEPARATOR ) ) {
+                     strpos( $postalName, CRM_Core_DAO::VALUE_SEPARATOR ) == false ) {
                     // eliminate the ^A frm the beginning and end if present
                     if ( substr( $postalName, 0, 1 ) == CRM_Core_DAO::VALUE_SEPARATOR ) {
                         $params[$postName] = substr( $params[$postName], 1, -1 );

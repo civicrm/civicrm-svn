@@ -348,6 +348,10 @@ class CRM_Utils_String {
      * @static
      */
     static function strtobool($str) {
+        if ( ! is_scalar( $str ) ) {
+            return false;
+        }
+
         if ( preg_match('/^(y(es)?|t(rue)?|1)$/i', $str) ) {
             return true;
         }
@@ -363,11 +367,15 @@ class CRM_Utils_String {
      * @static
      */
     static function strtoboolstr($str) {
+        if ( ! is_scalar( $str ) ) {
+            return false;
+        }
+
         if ( preg_match('/^(y(es)?|t(rue)?|1)$/i', $str) ) {
             return '1';
         } else if ( preg_match('/^(n(o)?|f(alse)?|0)$/i', $str) ) {
             return '0';
-        }else {            
+        } else {            
             return false;
         }
     }

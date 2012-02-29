@@ -35,7 +35,7 @@
     	      	   	<ul>
                             <li><a class="crm-contribpage-contribution" href="{crmURL p='civicrm/contribute/add' q="reset=1&action=add&context=standalone"}">{ts}New Contribution{/ts}</a></li>
                             <li><a class="crm-contribution-test" href="{crmURL p='civicrm/contribute/transact' q="reset=1&action=preview&id=`$contributionPageID`"}">{ts}Online Contribution (Test-drive){/ts}</a></li>
-                            <li><a class="crm-contribution-live" href="{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$contributionPageID`"}" target="_blank">{ts}Online Contribution (Live){/ts}</a></li>
+                            <li><a class="crm-contribution-live" href="{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$contributionPageID`" fe='true'}" target="_blank">{ts}Online Contribution (Live){/ts}</a></li>
     		        </ul>
     	           </div>
     	      </div>

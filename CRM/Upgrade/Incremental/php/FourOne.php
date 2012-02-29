@@ -374,7 +374,7 @@ AND    v.is_active = 1
         $name = implode( "','", $arrNames );
         
         $sql = "
-        Update civicrm_setting set is_domain = 1 where is_domain = 0 and group_name in ( '{$groupNames}' ) and name in ('{$name}')";
+        update civicrm_setting set is_domain = 1 where is_domain = 0 and group_name in ( '{$groupNames}' ) and name in ('{$name}')";
         
         CRM_Core_DAO::executeQuery( $sql );
         
@@ -382,7 +382,17 @@ AND    v.is_active = 1
         $upgrade->assign( 'addWightForActivity', !(CRM_Core_DAO::checkFieldExists('civicrm_activity', 'weight')) );
         $upgrade->processSQL( $rev );
     }
-    
+
+    function upgrade_4_1_1( $rev ) {
+        $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->assign( 'addDedupeEmail', !(CRM_Core_DAO::checkFieldExists('civicrm_mailing', 'dedupe_email') ) );
+        
+        $sql = "SELECT id FROM civicrm_worldregion LIMIT 1";
+        $upgrade->assign( 'worldRegionEmpty', !CRM_Core_DAO::singleValueQuery( $sql ) );
+
+        $upgrade->processSQL( $rev );
+    }
+
     function getTemplateMessage( ) {
         return "Blah";
     }

@@ -282,24 +282,16 @@ class CRM_Core_Block {
             break;    
 
         case self::ADD:
-            require_once "CRM/Core/BAO/LocationType.php";
+            require_once 'CRM/Core/BAO/LocationType.php';
+            require_once 'CRM/Contact/BAO/Contact.php';
+            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $defaultLocation = CRM_Core_BAO_LocationType::getDefault();
             $defaultPrimaryLocationId = $defaultLocation->id;
             $values = array( 'postURL' => CRM_Utils_System::url( 'civicrm/contact/add', 'reset=1&ct=Individual' ), 
                              'primaryLocationType' => $defaultPrimaryLocationId );
 
-            $greetingTypes = array( 'addressee'       => 'addressee_id', 
-                                    'email_greeting'  => 'email_greeting_id', 
-                                    'postal_greeting' => 'postal_greeting_id'
-                                    );
-            
-            foreach( $greetingTypes  as $key => $value ) {
-                $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, null, null, 
-                                                                       'AND is_default =1
-                                                                        AND (filter = 1 OR filter = 0 )',
-                                                                       'value' 
-                                                                       );                    
-                $values[$value] = key( $defaultGreetingTypeId );
+            foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
+                $values[$greeting.'_id'] = CRM_Contact_BAO_Contact_Utils::defaultGreeting('Individual', $greeting);
             }
             
             self::setProperty( self::ADD,

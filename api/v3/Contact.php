@@ -722,7 +722,7 @@ function civicrm_api3_contact_quicksearch( $params )
 
     //CRM-5954
     $query = "
-        SELECT DISTINCT(id), data, {$selectAliases}
+        SELECT DISTINCT(id), data, sort_name, {$selectAliases}
         FROM   (
             ( SELECT 0 as exactFirst, cc.id as id, {$select},CONCAT_WS( ' :: ', {$actualSelectElements} ) as data
             FROM   civicrm_contact cc {$from}
