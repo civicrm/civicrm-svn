@@ -240,11 +240,12 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                 
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/BAO/UFMatch.php';
-
         $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ); 
         if ( $uid && ( ( $session->get( 'userID' ) == $this->_contactId ) ||
             CRM_Core_Permission::check( 'administer CiviCRM' ) ) ) {
-            if ( $config->userSystem->is_drupal == '1' ) {
+            // To do: we should also allow users with CRM_Core_Permission::check( 'view user profiles' ) true to access $userRecordUrl
+            // but this is currently returning false regardless of permission set for the role. dgg
+            if ( $config->userSystem->is_drupal == '1' && CRM_Core_Permission::check( 'administer users' ) ) {
                 $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
             } else if ( $config->userFramework == 'Joomla' ) {
                 $userRecordUrl = $config->userFrameworkVersion > 1.5 ? 
