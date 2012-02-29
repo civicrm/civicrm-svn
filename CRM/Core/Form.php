@@ -813,6 +813,16 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
 
         $this->addElement( $editor, $name, $label, $attributes );
         $this->assign('editor', $editor);
+
+        // include wysiwyg editor js files
+        $includeWysiwygEditor = false;
+        $includeWysiwygEditor = $this->get('includeWysiwygEditor');
+        if ( !$includeWysiwygEditor ) {
+            $includeWysiwygEditor = true;
+            $this->set('includeWysiwygEditor', $includeWysiwygEditor );
+        }
+
+        $this->assign( 'includeWysiwygEditor', $includeWysiwygEditor );
     }    
 
     function addCountry( $id, $title ,$required = null, $extra = null ) {
@@ -821,7 +831,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         if( $required ) {
             $this->addRule($id, ts('Please select %1', array(1 => $title)), 'required');
         }
-
     }
 
     function addSelectOther( $name, $label, $options, $attributes ,$required = null, $javascriptMethod = null) {

@@ -27,19 +27,14 @@
 {include file="CRM/common/debug.tpl"}
 {/if}
 
+{* include wysiwyg related files*}
+{include file="CRM/common/wysiwyg.tpl"}
+
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 
 {include file="CRM/common/action.tpl"}
 {if $buildNavigation }
-    {include file="CRM/common/Navigation.tpl" }
-{/if}
-
-{* temporary hack to fix wysiysg editor failure if js compression is on *}
-{if $defaultWysiwygEditor eq 1}
-    <script type="text/javascript" src="{$config->resourceBase}packages/tinymce/jscripts/tiny_mce/jquery.tinymce.js"></script>
-    <script type="text/javascript" src="{$config->resourceBase}packages/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
-{elseif $defaultWysiwygEditor eq 2}
-    <script type="text/javascript" src="{$config->resourceBase}packages/ckeditor/ckeditor.js"></script>
+    {include file="CRM/common/Navigation.tpl"}
 {/if}
 
 {if isset($browserPrint) and $browserPrint}
