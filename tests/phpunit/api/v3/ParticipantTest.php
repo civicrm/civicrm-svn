@@ -456,7 +456,19 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
             $this->assertDBState( 'CRM_Event_DAO_Participant', $participant['id'], $params );
         }
     }
-
+    /*
+     * Test to check if receive date is being changed per CRM-9763
+     */
+        function testCreateUpdateReceiveDate(){
+           $participant =  civicrm_api('participant','create',$this->_params);
+           $update = array(
+             'version' => 3, 
+             'id' => $participant['id'],
+             'status_id' => 2,);
+           civicrm_api('participant','create',$update);
+           $this->getAndCheck(array_merge($this->_params,$update) , $participant['id'], 'participant');
+        }
+    
 
     
     ///////////////// civicrm_participant_update methods
