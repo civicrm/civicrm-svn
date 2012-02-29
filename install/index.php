@@ -52,6 +52,14 @@ if ( !in_array($installType, array('drupal', 'wordpress')) ) {
     errorDisplayPage( $errorTitle, $errorMsg );
 }
 
+// There are compatibility problems with XCache at the moment
+$xcacheInstalled = function_exists( 'xcache_isset');
+if ( $xcacheInstalled ) {
+    $errorTitle = "Oops! XCache has been installed";
+    $errorMsg = "There is currently a compatibility problem with XCache. Please use a different php caching mechanism or disable php caching altogether and then reload this page. This is a known issue and is being investigated.";
+    errorDisplayPage( $errorTitle, $errorMsg );
+}
+
 global $crmPath;
 global $installDirPath;
 global $installURLPath;
