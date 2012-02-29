@@ -1848,10 +1848,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             $tablesToTruncate[] = 'civicrm_custom_field';
         }
 
+        CRM_Core_DAO::executeQuery( "SET FOREIGN_KEY_CHECKS = 0;" );
         foreach ( $tablesToTruncate as $table ) {
             $sql = "TRUNCATE TABLE $table";
             CRM_Core_DAO::executeQuery( $sql );
         }
+        CRM_Core_DAO::executeQuery( "SET FOREIGN_KEY_CHECKS = 1;" );
 
         if ( $dropCustomValueTables ) {
             $dbName = self::getDBName();
