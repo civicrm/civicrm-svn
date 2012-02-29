@@ -631,10 +631,16 @@ function civicrm_api3_contact_quicksearch( $params )
     $config = CRM_Core_Config::singleton( );
     $as = $select;
     $select = implode( ', ', $select );
+    if ( ! empty( $select ) ) {
+        $select = ", $select";
+    }
     $actualSelectElements = implode( ', ', $actualSelectElements );
     $selectAliases = $from;
     unset( $selectAliases['address'] );
     $selectAliases = implode( ', ', array_keys( $selectAliases ) );
+    if ( ! empty( $selectAliases ) ) {
+        $selectAliases = ", $selectAliases";
+    }
     $from   = implode( ' ' , $from   );
     $limit = CRM_Utils_Array::value( 'limit', $params, 10);
 
@@ -722,16 +728,16 @@ function civicrm_api3_contact_quicksearch( $params )
 
     //CRM-5954
     $query = "
-        SELECT DISTINCT(id), data, sort_name, {$selectAliases}
+        SELECT DISTINCT(id), data, sort_name {$selectAliases}
         FROM   (
-            ( SELECT 0 as exactFirst, cc.id as id, {$select},CONCAT_WS( ' :: ', {$actualSelectElements} ) as data
+            ( SELECT 0 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$actualSelectElements} ) as data {$select}
             FROM   civicrm_contact cc {$from}
     {$aclFrom}
     {$additionalFrom} {$includeEmailFrom}
     {$exactWhereClause}
     LIMIT 0, {$limit} )
     UNION
-    ( SELECT 1 as exactFirst, cc.id as id, {$select}, CONCAT_WS( ' :: ', {$actualSelectElements} ) as data
+    ( SELECT 1 as exactFirst, cc.id as id, CONCAT_WS( ' :: ', {$actualSelectElements} ) as data {$select}
     FROM   civicrm_contact cc {$from}
     {$aclFrom}
     {$additionalFrom} {$includeEmailFrom}
@@ -751,6 +757,7 @@ LIMIT    0, {$limit}
                                     );
 
     $dao = CRM_Core_DAO::executeQuery( $query );
+
     $contactList = array();
     $listCurrentEmployer = true;
     while ( $dao->fetch( ) ) {
