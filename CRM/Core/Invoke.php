@@ -78,6 +78,11 @@ class CRM_Core_Invoke
                 // also cleanup all caches
                 $config->cleanupCaches( );
 
+                // also rebuild triggers if set
+                if ( CRM_Utils_Request::retrieve( 'triggerRebuild', 'Boolean', CRM_Core_DAO::$_nullObject, false, 0, 'GET' ) ) {
+                    CRM_Core_DAO::triggerRebuild( );
+                }
+
                 return CRM_Utils_System::redirect( );
             } else {
                 CRM_Core_Error::fatal( 'You do not have permission to execute this url' );
