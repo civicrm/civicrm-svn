@@ -79,9 +79,6 @@ function civicrm_api3_custom_field_create( $params )
             }
         }
         
-        if (is_a($error, 'CRM_Core_Error')) {
-            return civicrm_api3_create_error( $error->_errors[0]['message'] );
-        }
         
         // Array created for passing options in params
         if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
