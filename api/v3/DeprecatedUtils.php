@@ -132,9 +132,16 @@ function _civicrm_api3_deprecated_participant_formatted_param( $params, &$values
             }
             break;
         case 'participant_status_id':
-            $id = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
-            $values[$key] = $id;
+            if (!CRM_Utils_Rule::integer($value)) {
+                return civicrm_api3_create_error("Event Status ID is not valid: $value");
+            }
             break;
+            
+        case 'participant_status':
+            $status = CRM_Event_PseudoConstant::participantStatus();
+            $values['participant_status_id'] = CRM_Utils_Array::key( $value, $status );;
+            break;
+
         case 'participant_role_id':
         case 'participant_role':
             $role = CRM_Event_PseudoConstant::participantRole();
