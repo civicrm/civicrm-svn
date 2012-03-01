@@ -205,6 +205,80 @@ abstract class CRM_Core_Payment {
     {
         return method_exists( CRM_Utils_System::getClassName( $paymentObject ), 'cancelSubscription' );
     }
+    
+    /**
+     * Page callback for civicrm/payment/ipn
+     * Load requested payment processor and call that processor's handlePaymentNotification method
+     *
+     * @public
+     */
+    static function handleIPN() {
+        
+        if ( !isset( $_GET['processor_name'] ) ) {
+            CRM_Core_Error::fatal( "Missing 'processor_name' param for IPN callback" );
+            return;
+        }
+        
+        // Query db for processor ..
+        require_once "CRM/Core/DAO.php";
+        $mode = @$_GET['mode'];
+        
+        $dao = CRM_Core_DAO::executeQuery( "
+             SELECT ppt.class_name, ppt.name as processor_name, pp.id AS processor_id
+               FROM civicrm_payment_processor_type ppt
+          LEFT JOIN civicrm_payment_processor pp
+                 ON pp.name = ppt.name
+                AND pp.is_active
+                AND pp.is_test = %1
+              WHERE ppt.name = %2 
+        ",
+            array(
+                1 => array( $mode == 'test' ? 1 : 0, 'Integer' ),
+                2 => array( $_GET['processor_name'], 'String' )
+            )
+        );
+        
+        if ( $dao->fetch() ) {
+            
+            // Handle extensions and traditional payment modules
+            require_once 'CRM/Core/Extensions.php';
+            $ext = new CRM_Core_Extensions( );
+            if ( $ext->isExtensionKey( $dao->class_name ) ) {
+                $paymentClass = $ext->keyToClass( $dao->class_name, 'payment' );
+                require_once $ext->classToPath( $paymentClass );
+            } else {                
+                CRM_Core_Error::fatal( "handlePaymentNotification method not supported under legacy payment processors" );
+            }
+            
+            require_once "CRM/Core/BAO/PaymentProcessor.php";
+            $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $dao->processor_id, $mode );
+   
+            if ( empty( $paymentProcessor ) ) {
+                CRM_Core_Error::fatal( "No enabled instances of this payment processor were found." );
+            }
+            
+            // Instantiate PP
+            eval( '$processorInstance = ' . $paymentClass . '::singleton( $mode, $paymentProcessor );' );
+            
+            // Does PP implement a handleIPN method, and can we call it?
+            if ( ! method_exists( $processorInstance, 'handlePaymentNotification' ) || 
+                 ! is_callable( array( $processorInstance, 'handlePaymentNotification' ) ) ) {
+                // No? Sorry then ..
+                CRM_Core_Error::fatal( "Payment processor does not implement a handlePaymentNotification method" );
+            }
+            
+            // Everything, it seems, is ok - execute pp callback handler
+            $processorInstance->handlePaymentNotification();
+            
+        } else {
+            CRM_Core_Error::fatal( "Payment processor '{$_GET['processor_name']}' was not found." );
+        }
+        
+        require_once "CRM/Utils/System.php";
+        CRM_Utils_System::civiExit();
+              
+    }
+    
 }
 
 
