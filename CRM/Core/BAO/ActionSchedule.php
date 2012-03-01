@@ -421,26 +421,6 @@ WHERE   cas.entity_value = $id AND
                 $$elem = $smarty->fetch("string:{$$elem}");
             }
             
-            $message = new Mail_mime("\n");
-            
-            /* Do contact-specific token replacement in text mode, and add to the
-             * message if necessary */
-            if ( !$html || $contact['preferred_mail_format'] == 'Text' ||
-                 $contact['preferred_mail_format'] == 'Both') {
-                // render the &amp; entities in text mode, so that the links work
-                $text = str_replace('&amp;', '&', $text);
-                $message->setTxtBody($text);
-                
-                unset( $text );
-            }
-            
-            if ($html && ( $contact['preferred_mail_format'] == 'HTML' ||
-                           $contact['preferred_mail_format'] == 'Both')) {
-                $message->setHTMLBody($html);
-                unset( $html );
-            }
-            $recipient = "\"{$contact['display_name']}\" <$email>";
-            
             $matches = array();
             preg_match_all( '/(?<!\{|\\\\)\{(\w+\.\w+)\}(?!\})/',
                             $body_subject,
@@ -467,31 +447,27 @@ WHERE   cas.entity_value = $id AND
           
             $messageSubject = $smarty->fetch("string:{$messageSubject}");
 
-            $headers = array(
-                             'From'      => $from,
-                             'Subject'   => $messageSubject,
-                             );
-            $headers['To'] = $recipient;
+            // set up the parameters for CRM_Utils_Mail::send
+            require_once 'CRM/Utils/Mail.php';
+            $mailParams = array(
+                                'groupName' => 'Scheduled Reminder Sender',
+                                'from'      => $from,
+                                'toName'    => $contact['display_name'],
+                                'toEmail'   => $email,
+                                'subject'   => $messageSubject,
+            );
             
-            $mailMimeParams = array(
-                                    'text_encoding' => '8bit',
-                                    'html_encoding' => '8bit',
-                                    'head_charset'  => 'utf-8',
-                                    'text_charset'  => 'utf-8',
-                                    'html_charset'  => 'utf-8',
-                                    );
-            $message->get($mailMimeParams);
-            $message->headers($headers);
-
-            $config = CRM_Core_Config::singleton();
-            $mailer =& $config->getMailer();
+            if ( !$html || $contact['preferred_mail_format'] == 'Text' ||
+                 $contact['preferred_mail_format'] == 'Both') {
+            	// render the &amp; entities in text mode, so that the links work
+            	$mailParams['text'] = str_replace('&amp;', '&', $text);
+            }
+            if ($html && ( $contact['preferred_mail_format'] == 'HTML' ||
+                $contact['preferred_mail_format'] == 'Both')) {
+            	$mailParams['html'] = $html;
+            }
             
-            $body = $message->get();
-            $headers = $message->headers();
-            
-            CRM_Core_Error::ignoreException( );
-            $result = $mailer->send($recipient, $headers, $body);
-            CRM_Core_Error::setCallback();
+            $result = CRM_Utils_Mail::send( $mailParams );
         }
         $schedule->free( );
         

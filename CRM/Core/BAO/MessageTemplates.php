@@ -206,6 +206,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 $tokens = $dummy_mail->getTokens();
                 
                 if ( $$bodyType ) {
+                    CRM_Utils_Token::replaceGreetingTokens( $$bodyType, null, $contact['contact_id'] );
                     $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, true, $tokens[$value], true );
                     $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, false, $tokens[$value], false, true );
                     $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value], true );
@@ -221,29 +222,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             foreach( array( 'text', 'html') as $elem) {
                 $$elem = $smarty->fetch("string:{$$elem}");
             }
-            
-            $message = new Mail_mime("\n");
-            
-            /* Do contact-specific token replacement in text mode, and add to the
-             * message if necessary */
-            if ( !$html || $contact['preferred_mail_format'] == 'Text' ||
-                 $contact['preferred_mail_format'] == 'Both') 
-                {
-                    // render the &amp; entities in text mode, so that the links work
-                    $text = str_replace('&amp;', '&', $text);
-                    $message->setTxtBody($text);
-                    
-                    unset( $text );
-                }
-            
-            if ($html && ( $contact['preferred_mail_format'] == 'HTML' ||
-                           $contact['preferred_mail_format'] == 'Both'))
-                {
-                    $message->setHTMLBody($html);
-                    
-                    unset( $html );
-                }
-            $recipient = "\"{$contact['display_name']}\" <$email>";
             
             $matches = array();
             preg_match_all( '/(?<!\{|\\\\)\{(\w+\.\w+)\}(?!\})/',
@@ -270,32 +248,27 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $messageSubject = CRM_Utils_Token::replaceHookTokens ( $messageSubject, $contact, $categories, true );
           
             $messageSubject = $smarty->fetch("string:{$messageSubject}");
-
-            $headers = array(
-                             'From'      => $from,
-                             'Subject'   => $messageSubject,
-                             );
-            $headers['To'] = $recipient;
             
-            $mailMimeParams = array(
-                                    'text_encoding' => '8bit',
-                                    'html_encoding' => '8bit',
-                                    'head_charset'  => 'utf-8',
-                                    'text_charset'  => 'utf-8',
-                                    'html_charset'  => 'utf-8',
-                                    );
-            $message->get($mailMimeParams);
-            $message->headers($headers);
-
-            $config = CRM_Core_Config::singleton();
-            $mailer =& $config->getMailer();
+            // set up the parameters for CRM_Utils_Mail::send
+            require_once 'CRM/Utils/Mail.php';
+            $mailParams = array(
+                                'groupName' => 'Scheduled Reminder Sender',
+                                'from'      => $from,
+                                'toName'    => $contact['display_name'],
+                                'toEmail'   => $email,
+                                'subject'   => $messageSubject,
+            );
+            if ( !$html || $contact['preferred_mail_format'] == 'Text' ||
+                 $contact['preferred_mail_format'] == 'Both') {
+            	// render the &amp; entities in text mode, so that the links work
+            	$mailParams['text'] = str_replace('&amp;', '&', $text);
+            }
+            if ($html && ( $contact['preferred_mail_format'] == 'HTML' ||
+                $contact['preferred_mail_format'] == 'Both')) {
+            	$mailParams['html'] = $html;
+            }
             
-            $body = $message->get();
-            $headers = $message->headers();
-            
-            CRM_Core_Error::ignoreException( );
-            $result = $mailer->send($recipient, $headers, $body);
-            CRM_Core_Error::setCallback();
+            $result = CRM_Utils_Mail::send( $mailParams );
         }
 
         $messageTemplates->free( );

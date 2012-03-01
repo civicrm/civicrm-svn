@@ -114,7 +114,24 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
      */
     public static function send($queue_id, &$mailing, &$bodyTxt, $replyto, &$bodyHTML = null, &$fullEmail = null)
     {
-        if ($fullEmail) {
+        $domain = CRM_Core_BAO_Domain::getDomain( );
+        $emails = CRM_Core_BAO_Email::getTableName();
+        $queue = CRM_Mailing_Event_BAO_Queue::getTableName();
+        $contacts = CRM_Contact_BAO_Contact::getTableName();
+            
+        $eq = new CRM_Core_DAO();
+        $eq->query("SELECT     $contacts.display_name as display_name,
+                               $emails.email as email
+                   FROM        $queue
+                   INNER JOIN  $contacts
+                           ON  $queue.contact_id = $contacts.id
+                   INNER JOIN  $emails
+                           ON  $queue.email_id = $emails.id
+                   WHERE       $queue.id = " 
+                               . CRM_Utils_Type::escape($queue_id, 'Integer'));
+        $eq->fetch();
+            
+    	if ($fullEmail) {
             // parse the email and set a new destination
             $parser = new ezcMailParser;
             $set = new ezcMailVariableSet($fullEmail);
@@ -145,32 +162,14 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
                 $ct = "{$parts[0]} boundary=\"$boundary\"";
             }
         } else {
-            $domain = CRM_Core_BAO_Domain::getDomain( );
-            
-            $emails = CRM_Core_BAO_Email::getTableName();
-            $eq = CRM_Mailing_Event_BAO_Queue::getTableName();
-            $contacts = CRM_Contact_BAO_Contact::getTableName();
-            
-            $dao = new CRM_Core_DAO();
-            $dao->query("SELECT     $contacts.display_name as display_name,
-                                    $emails.email as email
-                        FROM        $eq
-                        INNER JOIN  $contacts
-                                ON  $eq.contact_id = $contacts.id
-                        INNER JOIN  $emails
-                                ON  $eq.email_id = $emails.id
-                        WHERE       $eq.id = " 
-                                    . CRM_Utils_Type::escape($queue_id, 'Integer'));
-            $dao->fetch();
-            
-            if (empty($dao->display_name)) {
-                $from = $dao->email;
-            } else {
-                $from = "\"{$dao->display_name}\" <{$dao->email}>";
-            }
-
             require_once 'CRM/Core/BAO/MailSettings.php';
             $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+
+            if (empty($eq->display_name)) {
+                $from = $eq->email;
+            } else {
+                $from = "\"{$eq->display_name}\" <{$eq->email}>";
+            }
             
             $message = new Mail_mime("\n");
 
@@ -188,6 +187,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $h =& $message->headers($headers);
         }
 
+        CRM_Mailing_BAO_Mailing::addMessageIdHeader( $h, 'r', $eq->job_id, $queue_id, $eq->hash );
         $config = CRM_Core_Config::singleton();
         $mailer =& $config->getMailer();
 
@@ -220,6 +220,8 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         $eq->query(
         "SELECT     $contacts.preferred_mail_format as format,
                     $email.email as email
+                    $queue.job_id as job_id
+                    $queue.hash as hash
         FROM        $contacts
         INNER JOIN  $queue ON $queue.contact_id = $contacts.id
         INNER JOIN  $email ON $queue.email_id = $email.id
@@ -279,6 +281,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         
         $b = CRM_Utils_Mail::setMimeParams( $message );
         $h =& $message->headers($headers);
+        CRM_Mailing_BAO_Mailing::addMessageIdHeader ( $h, 'a', $eq->job_id, queue_id, $eq->hash );
         
         $mailer =& $config->getMailer();
         PEAR::setErrorHandling( PEAR_ERROR_CALLBACK,

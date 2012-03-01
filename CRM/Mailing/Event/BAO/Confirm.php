@@ -107,14 +107,6 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
 
         require_once 'CRM/Core/BAO/MailSettings.php';
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-
-        $headers = array(
-                         'Subject'     => $component->subject,
-                         'From'        => "\"$domainEmailName\" <do-not-reply@$emailDomain>",
-                         'To'          => $email,
-                         'Reply-To'    => "do-not-reply@$emailDomain",
-                         'Return-Path' => "do-not-reply@$emailDomain",
-                         );
         
         $html = $component->body_html;
         
@@ -137,21 +129,20 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
         $text = CRM_Utils_Token::replaceDomainTokens($text, $domain, false, $tokens['text'] );
         $text = CRM_Utils_Token::replaceWelcomeTokens($text, $group->title, false);
         
-        $message = new Mail_mime("\n");
-
-        $message->setHTMLBody($html);
-        $message->setTxtBody($text);
-        $b = CRM_Utils_Mail::setMimeParams( $message );
-        $h =& $message->headers($headers);
-        $mailer =& $config->getMailer();
+        $mailParams = array(
+                         'groupName'  => 'Mailing Event ' . $component->component_type;
+                         'subject'    => $component->subject,
+                         'from'       => "\"$domainEmailName\" <do-not-reply@$emailDomain>",
+                         'toEmail'    => $email,
+                         'toName'     => $display_name,
+                         'replyTo'    => "do-not-reply@$emailDomain",
+                         'returnPath' => "do-not-reply@$emailDomain",
+                         'html'       => $html,
+                         'text'       => $text,
+        );
+        // send - ignore errors because the desired status change has already been successful
+        $unused_result = CRM_Utils_Mail::send( $mailParams );
         
-        require_once 'CRM/Mailing/BAO/Mailing.php';
-        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK,
-                               array('CRM_Core_Error', 'nullHandler' ) );
-        if ( is_object( $mailer ) ) {
-            $mailer->send($email, $h, $b);
-            CRM_Core_Error::setCallback();
-        }
         return $group->title;
     }
 }

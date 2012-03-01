@@ -62,8 +62,10 @@ class CRM_Utils_Mail
      */
     static function send( &$params ) {
         require_once 'CRM/Core/BAO/MailSettings.php';
-        $returnPath = CRM_Core_BAO_MailSettings::defaultReturnPath();
-        $from       = CRM_Utils_Array::value( 'from', $params );
+        $returnPath       = CRM_Core_BAO_MailSettings::defaultReturnPath();
+        $includeMessageId = CRM_Core_BAO_MailSettings::includeMessageId();
+        $emailDomain      = CRM_Core_BAO_MailSettings::defaultDomain();
+        $from             = CRM_Utils_Array::value( 'from', $params );
         if ( ! $returnPath ) {
             $returnPath = self::pluckEmailFromHeader($from);
         }
@@ -103,6 +105,9 @@ class CRM_Utils_Mail
         $headers['Return-Path']               = CRM_Utils_Array::value( 'returnPath', $params );
         $headers['Reply-To']                  = CRM_Utils_Array::value( 'replyTo', $params, $from );
         $headers['Date']                      = date('r');
+        if ( $includeMessageId ) {
+          $headers['Message-ID']              = '<' . uniqid( 'civicrm_', true ) . "@$emailDomain>";
+        }  
         if (CRM_Utils_Array::value( 'autoSubmitted', $params )) {
           $headers['Auto-Submitted']          = "Auto-Generated";
         }
@@ -161,7 +166,9 @@ class CRM_Utils_Mail
             CRM_Core_Error::setCallback();
             if ( is_a( $result, 'PEAR_Error' ) ) {
                 $message = self::errorMessage ($mailer, $result );
-                CRM_Core_Session::setStatus( $message, false );
+                // append error message in case multiple calls are being made to
+                // this method in the course of sending a batch of messages. 
+                CRM_Core_Session::setStatus( $message, true );
                 return false;
             }
             return true;
@@ -196,7 +203,7 @@ class CRM_Utils_Mail
         
         return $message;
     }
-    
+
     function logger( &$to, &$headers, &$message ) {
         if ( is_array( $to ) ) {
             $toString = implode( ', ', $to ); 

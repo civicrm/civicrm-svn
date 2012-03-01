@@ -101,11 +101,11 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
         $defaults = array( );
 
         foreach ( $this->_varNames as $groupName => $settings ) {
-            foreach ( $settings as $settingName => $dontcare ) {
+            foreach ( $settings as $settingName => $settingDetails ) {
                 $defaults[$settingName] = 
                     isset( $this->_config->$settingName ) ?
                     $this->_config->$settingName :
-                    null;
+                    CRM_Utils_Array::value ( 'default', $settingDetails, null );
             }
         }
 

@@ -835,8 +835,45 @@ AND civicrm_contact.is_opt_out =0";
         }
     }
 
-
-
+    /**
+     * Given and array of headers and a prefix, job ID, event queue ID, and hash,
+     * add a Message-ID header if needed.
+     * 
+     * i.e. if the global includeMessageId is set and there isn't already a 
+     * Message-ID in the array.
+     * The message ID is structured the same way as a verp. However no interpretation
+     * is placed on the values received, so they do not need to follow the verp
+     * convention. 
+     * 
+     * @param array  $headers         Array of message headers to update, in-out
+     * @param string $prefix          Prefix for the message ID, use same prefixes as verp
+     *                                wherever possible
+     * @param string $job_id          Job ID component of the generated message ID
+     * @param string $event_queue_id  Event Queue ID component of the generated message ID
+     * @param string $hash            Hash component of the generated message ID.                     
+     * @return void
+     */
+    static function addMessageIdHeader ( &$headers, $prefix, $job_id, $event_queue_id, $hash ) 
+    {	
+    	$config = CRM_Core_Config::singleton( );    	 
+    	require_once 'CRM/Core/BAO/MailSettings.php';
+    	$localpart        = CRM_Core_BAO_MailSettings::defaultLocalpart();
+    	$emailDomain      = CRM_Core_BAO_MailSettings::defaultDomain();
+    	$includeMessageId = CRM_Core_BAO_MailSettings::includeMessageId();
+    	
+        if ( $includeMessageId && ( ! array_key_exists ( 'Message-ID', $headers ) ) ) {
+           $headers['Message-ID'] = '<' . 
+                                    implode($config->verpSeparator,
+    		                                array(
+    		                                      $localpart . $prefix,
+    		                                      $job_id,
+    		                                      $event_queue_id,
+    		                                      $hash
+    		                                     )
+    		                               ) . "@{$emailDomain}>";
+    	}
+    }
+    
     /**
      * static wrapper for getting verp and urls
      *
@@ -846,7 +883,8 @@ AND civicrm_contact.is_opt_out =0";
      * @param string $email         Destination address
      * @return (reference) array    array ref that hold array refs to the verp info and urls
      */
-    static function getVerpAndUrls($job_id, $event_queue_id, $hash, $email){
+    static function getVerpAndUrls($job_id, $event_queue_id, $hash, $email)
+    {
         // create a skeleton object and set its properties that are required by getVerpAndUrlsAndHeaders()
         require_once 'CRM/Core/BAO/Domain.php';
         $config = CRM_Core_Config::singleton();
@@ -885,12 +923,12 @@ AND civicrm_contact.is_opt_out =0";
                              'bounce'      => 'b' ,
                              'unsubscribe' => 'u' ,
                              'resubscribe' => 'e',
-                             'optOut'      => 'o'  );
+                             'optOut'      => 'o');
         
         require_once 'CRM/Core/BAO/MailSettings.php';
-        $localpart   = CRM_Core_BAO_MailSettings::defaultLocalpart();
-        $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
-
+        $localpart        = CRM_Core_BAO_MailSettings::defaultLocalpart();
+        $emailDomain      = CRM_Core_BAO_MailSettings::defaultDomain();
+        
         foreach ($verpTokens as $key => $value ) {
             $verp[$key] = implode($config->verpSeparator,
                                   array(
@@ -935,7 +973,7 @@ AND civicrm_contact.is_opt_out =0";
             'Subject'          => $this->subject,
             'List-Unsubscribe' => "<mailto:{$verp['unsubscribe']}>",
         );
-
+        self::addMessageIdHeader( $headers, 'm', $job_id, $event_queue_id, $hash );
         if( $isForward ) {
             $headers['Subject'] = "[Fwd:{$this->subject}]";
         } 

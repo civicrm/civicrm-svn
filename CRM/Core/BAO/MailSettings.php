@@ -94,6 +94,16 @@ class CRM_Core_BAO_MailSettings extends CRM_Core_DAO_MailSettings
     {
         return self::defaultDAO()->return_path;
     }
+    
+    /**
+     * Return the "include message ID" flag from the default set of settings. 
+     *
+     * @return boolean  default include message ID
+     */
+    static function includeMessageId()
+    {
+        return self::defaultDAO()->include_message_id;
+    }
     /**
      * Takes a bunch of params that are needed to match certain criteria and
      * retrieves the relevant objects. Typically the valid params are only

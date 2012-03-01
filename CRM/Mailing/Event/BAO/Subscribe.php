@@ -37,7 +37,6 @@
 
 require_once 'Mail/mime.php';
 require_once 'CRM/Utils/Mail.php';
-require_once 'CRM/Utils/Verp.php';
 
 require_once 'CRM/Mailing/Event/DAO/Subscribe.php';
 
@@ -211,7 +210,6 @@ SELECT     civicrm_email.id as email_id
         $localpart   = CRM_Core_BAO_MailSettings::defaultLocalpart();
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
 
-        require_once 'CRM/Utils/Verp.php';
         $confirm = implode($config->verpSeparator,
                            array($localpart . 'c',
                                  $this->contact_id,
@@ -277,6 +275,10 @@ SELECT     civicrm_email.id as email_id
         $message->setTxtBody($text);
         $b = CRM_Utils_Mail::setMimeParams( $message );
         $h =& $message->headers($headers);
+        CRM_Mailing_BAO_Mailing::addMessageIdHeader( $h, 's',
+                                                     $this->contact_id,
+                                                     $this->id,
+                                                     $this->hash );
         $mailer =& $config->getMailer();
 
         require_once 'CRM/Mailing/BAO/Mailing.php';

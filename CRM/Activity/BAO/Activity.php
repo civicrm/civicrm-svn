@@ -1431,20 +1431,20 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         }
         
         // create the params array
-        $params                = array( );
-
-        $params['groupName'  ] = 'Activity Email Sender';
-        $params['from'       ] = $from;
-        $params['toName'     ] = $toDisplayName;
-        $params['toEmail'    ] = $toEmail;
-        $params['subject'    ] = $subject;
-        $params['cc'         ] = $cc;
-        $params['bcc'        ] = $bcc;
-        $params['text'       ] = $text_message;
-        $params['html'       ] = $html_message;
-        $params['attachments'] = $attachments;
-
-        if ( ! CRM_Utils_Mail::send( $params ) ) {
+        $mailParams = array (
+                             'groupName'   => 'Activity Email Sender',
+                             'from'        => $from,
+                             'toName'      => $toDisplayName,
+                             'toEmail'     => $toEmail,
+                             'subject'     => $subject,
+                             'cc'          => $cc,
+                             'bcc'         => $bcc,
+                             'text'        => $text_message,
+                             'html'        => $html_message,
+                             'attachments' => $attachments,
+        );
+        
+        if ( ! CRM_Utils_Mail::send( $mailParams ) ) {
             return false;
         }
 
