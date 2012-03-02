@@ -75,12 +75,16 @@ function buildForm (entity, action) {
 }
 
 function generateQuery () {
-    var version = $('#version').val();
+    var version = 3;
+    
     var entity = $('#entity').val();
     var action = $('#action').val();
     var debug = "";
     if ($('#debug').attr('checked'))
       debug= "debug=1&";
+    var sequential = "";
+    if ($('#sequential').attr('checked'))
+      sequential= "sequential=1&";
     var json = "";
     if ($('#json').attr('checked'))
       json= "json=1&";
@@ -98,7 +102,7 @@ function generateQuery () {
         extra = extra + "&" +this.id +"="+val;
       }
     });
-    query = restURL+json+debug+'version='+version+'&entity='+entity+'&action='+action+extra;
+    query = restURL+json+sequential+debug+'&entity='+entity+'&action='+action+extra;
     $('#query').val (query);
     if (action == 'delete' && $('#selector a').length == 0) {
       buildForm (entity, action); 
@@ -112,7 +116,7 @@ function generateQuery () {
 }
 
 function runQuery(query) {
-    var vars = [], hash,smarty = '',php = " array (",json = "{", link ="";
+    var vars = [], hash,smarty = '',php = " array (version=3\',",json = "{  ", link ="";
     window.location.hash = query;
     $('#result').html('<i>Loading...</i>');
     $.get(query,function(data) {
@@ -126,7 +130,9 @@ function runQuery(query) {
     for(var i = 0; i < hashes.length; i++) {
        
         hash = hashes[i].split('=');
+
         switch (hash[0]) {
+           case 'version':
            case 'debug':
            case 'json':
              break;
@@ -137,6 +143,8 @@ function runQuery(query) {
              var entity= hash[1];
              break;
            default:
+             if (typeof hash[1] == 'undefined')
+               break;
              smarty = smarty+ hash[0] + '="'+hash[1]+ '" ';
              php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
              json = json+"'"+ hash[0] +"' :'"+hash[1]+ "', ";
@@ -166,8 +174,8 @@ cj(function ($) {
   }
   $('#entity').change (function() { $("#selector").empty();generateQuery();  });
   $('#action').change (function() { $("#selector").empty();generateQuery();  });
-  $('#version').change (function() { generateQuery();  });
   $('#debug').change (function() { generateQuery();  });
+  $('#sequential').change (function() { generateQuery();  });
   $('#json').change (function() { generateQuery();  });
   $('#explorer').submit(function() {runQuery($('#query').val()); return false; });
 
@@ -179,11 +187,6 @@ cj(function ($) {
 </script>
 <body>
 <form id="explorer">
-<label>version</label>
-<select id="version">
-  <option value="3" selected="selected">3</option>
-  <option value="2">2</option>
-</select>
 <label>entity</label>
 <select id="entity">
   <option value="" selected="selected">Choose...</option>
@@ -207,6 +210,9 @@ cj(function ($) {
 </select>
 <label>debug</label>
 <input type="checkbox" id="debug" checked="checked">
+<input type="hidden" id="version" name="version" value="3" title="sequential is a more compact format, that is nicer and general and easier to use for json and smarty.">
+<label>sequential</label>
+<input type="checkbox" id="sequential" checked="checked">
 <label>json</label>
 <input type="checkbox" id="json" checked="checked">
 <br>
