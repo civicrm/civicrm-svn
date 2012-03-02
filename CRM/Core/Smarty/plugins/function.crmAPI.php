@@ -37,20 +37,17 @@
 /**
  */
 function smarty_function_crmAPI( $params, &$smarty ) {
-    require_once 'CRM/Utils/REST.php';
     if ( array_key_exists('action',$params) && !array_key_exists('action',$params) ) 
        $params['action'] = $params['method'];
-    if (empty($params['var'])) {
-        $smarty->trigger_error("assign: missing 'var' parameter");
-        return;
-    }
     if (empty($params['action'])) {
-        $smarty->trigger_error("assign: missing 'action' parameter");
-        return;
+        $params['action'] = "get";        
+    }
+    if (empty($params['sequential'])) {
+        $params['sequential'] = 1;        
     }
     if (empty($params['entity'])) {
         $smarty->trigger_error("assign: missing 'entity' parameter");
-        return;
+        return "crmAPI: missing 'entity' parameter";
     }
     CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
     $action = $params ['action'];
@@ -67,6 +64,9 @@ function smarty_function_crmAPI( $params, &$smarty ) {
         return;
     }
 
+    if (empty($params['var'])) {
+        return json_encode($result);
+    }
     if (!empty($params['json'])) {
       $smarty->assign($params["var"],json_encode($result));
     } else {
