@@ -377,16 +377,20 @@ class CRM_Utils_REST
     }
 
     if (!array_key_exists ('version',$params)) {  
-      $params ['version'] = (array_key_exists ('entity',$params )) ? 3 : 2; 
+      $params ['version'] = 3;
     } 
+
+    if ( $params['version'] == 2) { 
+      $result['is_error']=1; 
+      $result['error_message'] = "FATAL: API v2 not accessible from ajax/REST"; 
+      $result['deprecated'] = "Please upgrade to API v3"; 
+      return $result; 
+    }
 
     // trap all fatal errors
     CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
     $result = civicrm_api ($args[1], $args[2],$params);
     CRM_Core_Error::setCallback( );
-    if ( $params['version'] == 2) {
-      $result['deprecated'] = "Please upgrade to API v3";
-    }
 
     if ( $result === false ) {
       return self::error( 'Unknown error.' );
