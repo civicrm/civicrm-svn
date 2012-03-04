@@ -133,6 +133,7 @@ class CRM_Admin_Page_PaymentProcessor extends CRM_Core_Page_Basic
         $paymentProcessor = array();
         $dao = new CRM_Core_DAO_PaymentProcessor();
         $dao->is_test   = 0;
+        $dao->domain_id = CRM_Core_Config::domainID( );
         $dao->orderBy('name');
         $dao->find();
 
