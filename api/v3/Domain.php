@@ -53,7 +53,7 @@ function civicrm_api3_domain_get($params ) {
 
         require_once 'CRM/Core/BAO/Domain.php';
         $bao = new CRM_Core_BAO_Domain( );
-        if ($params['current_domain']){
+        if (CRM_Utils_Array::value('current_domain',$params)){
             $bao = CRM_Core_BAO_Domain::getDomain();
         }else{
             _civicrm_api3_dao_set_filter ( $bao, $params );
