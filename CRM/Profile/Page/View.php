@@ -175,9 +175,9 @@ class CRM_Profile_Page_View extends CRM_Core_Page
         return parent::run();
     }
 
-    function getTemplateFileName() {
+    function checkTemplateFileExists( $suffix = '' ) {
         if ( $this->_gid ) {
-            $templateFile = "CRM/Profile/Page/{$this->_gid}/View.tpl";
+            $templateFile = "CRM/Profile/Page/{$this->_gid}/View.{$suffix}tpl";
             $template     = CRM_Core_Page::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
@@ -186,13 +186,23 @@ class CRM_Profile_Page_View extends CRM_Core_Page
             // lets see if we have customized by name
             $ufGroupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
             if ( $ufGroupName ) {
-                $templateFile = "CRM/Profile/Page/{$ufGroupName}/View.tpl";
+                $templateFile = "CRM/Profile/Page/{$ufGroupName}/View.{$suffix}tpl";
                 if ( $template->template_exists( $templateFile ) ) {
                     return $templateFile;
                 }
             }
         }
-        return parent::getTemplateFileName( );
+        return null;
+    }
+
+    function getTemplateFileName() {
+        $fileName = $this->checkTemplateFileExists( );
+        return $fileName ? $fileName : parent::getTemplateFileName( );
+    }
+
+    function overrideExtraTemplateFileName() {
+        $fileName = $this->checkTemplateFileExists( 'extra.' );
+        return $fileName ? $fileName : parent::overrideExtraTemplateFileName( );
     }
 
 }

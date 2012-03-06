@@ -1150,24 +1150,35 @@ WHERE  v.option_group_id = g.id
         
         return $optionsCount;
     }
-    
-    function getTemplateFileName() 
-    {
+
+    function checkTemplateFileExists( $suffix = '' ) {
         if ( $this->_eventId ) {
             $templateName = $this->_name;
             if ( substr( $templateName, 0, 12 ) == 'Participant_' ) {
                 $templateName = 'AdditionalParticipant';
             }
-                
-            $templateFile = "CRM/Event/Form/Registration/{$this->_eventId}/{$templateName}.tpl";
+            
+            $templateFile = "CRM/Event/Form/Registration/{$this->_eventId}/{$templateName}.{$suffix}tpl";
             $template = CRM_Core_Form::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }
         }
-        return parent::getTemplateFileName( );
+        return null;
+    }
+
+    function getTemplateFileName() 
+    {
+        $fileName = $this->checkTemplateFileExists( );
+        return $fileName ? $fileName : parent::getTemplateFileName( );
     }
     
+    function overrideExtraTemplateFileName() 
+    {
+        $fileName = $this->checkTemplateFileExists( 'extra.' );
+        return $fileName ? $fileName : parent::overrideExtraTemplateFileName( );
+    }
+
     function getContactID( ) 
     {
         $tempID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );

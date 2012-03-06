@@ -572,6 +572,17 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     }
 
     /**
+     * Default extra tpl file basically just replaces .tpl with .extra.tpl
+     * i.e. we dont override
+     *
+     * @return string
+     * @access public
+     */
+    function overrideExtraTemplateFileName() {
+        return null;
+    }
+
+    /**
      * Error reporting mechanism
      *
      * @param string  $message Error Message

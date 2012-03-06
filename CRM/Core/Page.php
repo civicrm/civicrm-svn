@@ -176,7 +176,9 @@ class CRM_Core_Page {
             } else {
                 $content = self::$_template->fetch( 'CRM/common/print.tpl' );
             }
-            CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
+            CRM_Utils_System::appendTPLFile( $pageTemplateFile,
+                                             $content,
+                                             $this->overrideExtraTemplateFileName( ) );
 
             //its time to call the hook.
             require_once 'CRM/Utils/Hook.php';
@@ -281,6 +283,17 @@ class CRM_Core_Page {
         return str_replace( '_',
                             DIRECTORY_SEPARATOR,
                             CRM_Utils_System::getClassName( $this ) ) .'.tpl';
+    }
+
+    /**
+     * Default extra tpl file basically just replaces .tpl with .extra.tpl
+     * i.e. we dont override
+     *
+     * @return string
+     * @access public
+     */
+    function overrideExtraTemplateFileName() {
+        return null;
     }
 
     /**

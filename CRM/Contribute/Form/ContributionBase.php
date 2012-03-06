@@ -738,17 +738,28 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             }
         }
     }
-    
-    function getTemplateFileName() 
-    {
+
+    function checkTemplateFileExists( $suffix ) {
         if ( $this->_id ) {
-            $templateFile = "CRM/Contribute/Form/Contribution/{$this->_id}/{$this->_name}.tpl";
+            $templateFile = "CRM/Contribute/Form/Contribution/{$this->_id}/{$this->_name}.{$suffix}tpl";
             $template = CRM_Core_Form::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }
         }
-        return parent::getTemplateFileName( );
+        return null;
+    }
+
+    function getTemplateFileName() 
+    {
+        $fileName = $this->checkTemplateFileExists( );
+        return $fileName ? $fileName : parent::getTemplateFileName( );
+    }
+
+    function overrideExtraTemplateFileName() 
+    {
+        $fileName = $this->checkTemplateFileExists( 'extra.' );
+        return $fileName ? $fileName : parent::overrideExtraTemplateFileName( );
     }
 
     /**

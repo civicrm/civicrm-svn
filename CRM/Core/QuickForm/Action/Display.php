@@ -134,7 +134,9 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
 
         $content = $template->fetch( $controller->getTemplateFile( ) );
 
-        CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
+        CRM_Utils_System::appendTPLFile( $pageTemplateFile,
+                                         $content,
+                                         $page->overrideExtraTemplateFileName( ) );
 
         //its time to call the hook.
         require_once 'CRM/Utils/Hook.php';
