@@ -181,33 +181,33 @@ function civicrm_config( &$config ) {
                     'crmRoot' => $crmPath,
                     'templateCompileDir' => $compileDir,
                     'frontEnd' => 0,
-                    'dbUser' => $config['mysql']['username'],
-                    'dbPass' => $config['mysql']['password'],
+                    'dbUser' => addslashes( $config['mysql']['username'] ),
+                    'dbPass' => addslashes( $config['mysql']['password'] ),
                     'dbHost' => $config['mysql']['server'],
-                    'dbName' => $config['mysql']['database'],
+                    'dbName' => addslashes( $config['mysql']['database'] ),
                     );
 
     $params['baseURL']    = isset($config['base_url']) ? $config['base_url'] : civicrm_cms_base( );
     if ( $installType == 'drupal' && 
          version_compare(VERSION, '7.0-rc1') >= 0 ) {
         $params['cms']        = 'Drupal';
-        $params['CMSdbUser']  = $config['drupal']['username'];
-        $params['CMSdbPass']  = $config['drupal']['password'];
+        $params['CMSdbUser']  = addslashes( $config['drupal']['username'] );
+        $params['CMSdbPass']  = addslashes( $config['drupal']['password'] );
         $params['CMSdbHost']  = $config['drupal']['server'];
-        $params['CMSdbName']  = $config['drupal']['database'];
+        $params['CMSdbName']  = addslashes( $config['drupal']['database'] );
     } elseif ( $installType == 'drupal' && 
                version_compare(VERSION, '6.0') >= 0 ) {
         $params['cms']        = 'Drupal6';
-        $params['CMSdbUser']  = $config['drupal']['username'];
-        $params['CMSdbPass']  = $config['drupal']['password'];
+        $params['CMSdbUser']  = addslashes( $config['drupal']['username'] );
+        $params['CMSdbPass']  = addslashes( $config['drupal']['password'] );
         $params['CMSdbHost']  = $config['drupal']['server'];
-        $params['CMSdbName']  = $config['drupal']['database'];
+        $params['CMSdbName']  = addslashes( $config['drupal']['database'] );
     } else {
         $params['cms']        = 'WordPress';
-        $params['CMSdbUser']  = DB_USER;
-        $params['CMSdbPass']  = DB_PASSWORD;
+        $params['CMSdbUser']  = addslashes( DB_USER );
+        $params['CMSdbPass']  = addslashes( DB_PASSWORD );
         $params['CMSdbHost']  = DB_HOST;
-        $params['CMSdbName']  = DB_NAME;
+        $params['CMSdbName']  = addslashes( DB_NAME );
     }
 
     $params['siteKey']    = md5(uniqid( '', true ) . $params['baseURL']);
