@@ -1235,13 +1235,22 @@ class CRM_Utils_System {
      *
      * @param string $fileName - the name of the tpl file that we are processing
      * @param string $content (by reference) - the current content string
+     * @param string $overideFileName - an optional parameter which is sent by contribution/event reg/profile pages
+     *               which uses a id specific extra file name if present
      *
      * @return void - the content string is modified if needed
      * @static
      */
-    static function appendTPLFile( $fileName, &$content ) {
+    static function appendTPLFile( $fileName,
+                                   &$content,
+                                   $overideFileName = null) {
         $template = CRM_Core_Smarty::singleton( );
-        $additionalTPLFile = str_replace( '.tpl', '.extra.tpl', $fileName );
+        if ( $overideFileName ) {
+            $additionalTPLFile = $overideFileName;
+        } else {
+            $additionalTPLFile = str_replace( '.tpl', '.extra.tpl', $fileName );
+        }
+
         if ( $template->template_exists( $additionalTPLFile ) ) {
             $content .= $template->fetch( $additionalTPLFile );
         }
