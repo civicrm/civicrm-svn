@@ -39,13 +39,6 @@ require_once 'CRM/Core/Config.php';
 
 class CRM_Core_Extensions_Module
 {
-
-
-    /**
-     * 
-     */
-    const CUSTOM_SEARCH_GROUP_NAME = 'custom_search';
-
     public function __construct( $ext ) {
         $this->ext = $ext;
 
@@ -54,37 +47,60 @@ class CRM_Core_Extensions_Module
 
     
     public function install( ) {
-        if ( array_key_exists( $this->ext->key, $this->config->civiModules ) ) {
-            CRM_Core_Error::fatal( 'This civiModule is already registered.' );
+        if ( array_key_exists( $this->ext->file, $this->config->civiModules ) ) {
+            // CRM_Core_Error::fatal( 'This civiModule is already registered.' );
         }
 
-        $config = CRM_Core_Config::singleton( );
-        $params['civiModules'] = $config->civiModules;
+        self::commonInstall( 'install' );
+    }
+
+    private function callHook( $moduleName, $modulePath, $hookName ) {
+        include_once( $modulePath . DIRECTORY_SEPARATOR . $moduleName . '.php' );
+        $fnName = "{$moduleName}_civicrm_{$hookName}";
+        if ( function_exists( $fnName ) ) {
+            $fnName( );
+        }
+    }
+
+    private function commonInstall( $type = 'install' ) {
+        $params = array( );
+        $params['civiModules'] = $this->config->civiModules;
         $params['civiModules'][$this->ext->file] = $this->ext->key . DIRECTORY_SEPARATOR . $this->ext->file . ".php";
 
         require_once 'CRM/Admin/Form/Setting.php';
         CRM_Admin_Form_Setting::commonProcess( $params );
+
+        $this->callHook( $this->ext->file,
+                         $this->ext->path,
+                         $type );
     }
 
     public function uninstall( ) {
-        if( !array_key_exists( $this->ext->key, $this->customSearches ) ) {
+        if( !array_key_exists( $this->ext->file, $this->config->civiModules ) ) {
             CRM_Core_Error::fatal( 'This civiModule is not registered.' );
         }
-        
-        $params['civiModules'] = $config->civiModules;
-        $params['civiModules'] = array_diff( $config->civiModules,
-                                             array( $this->ext->key ) );
 
+        $this->commonUNInstall( 'uninstall' );
+    }
+
+    private function commonUNInstall( $type = 'uninstall' ) {
+        $params = array( );
+        $params['civiModules'] = array_diff( $this->config->civiModules,
+                                             array( $this->ext->key ) );
         require_once 'CRM/Admin/Form/Setting.php';
         CRM_Admin_Form_Setting::commonProcess( $params );
+
+        $this->callHook( $this->ext->file,
+                         $this->ext->path,
+                         $type );
     }
     
     public function disable() {
-        $this->uninstall( );
+        $this->commonUNInstall( 'disable' );
     }
     
     public function enable() {
-        $this->install( );
+        $this->commonInstall( 'enable' );
     }
     
 }

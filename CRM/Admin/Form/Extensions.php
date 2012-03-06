@@ -91,35 +91,44 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
      */
     public function buildQuickForm( ) 
     {
-        if ($this->_action & CRM_Core_Action::DELETE) {
-            $this->addButtons(array(
-                                    array ('type'      => 'next',
-                                           'name'      => ts('Uninstall'),
-                                           'isDefault' => true),
-                                    array ('type'      => 'cancel',
-                                           'name'      => ts('Cancel')),
-                                    )
-                              );
-        } elseif ($this->_action & CRM_Core_Action::UPDATE) {
-            $this->addButtons(array(
-                                    array ('type'      => 'next',
-                                           'name'      => ts('Upgrade'),
-                                           'isDefault' => true),
-                                    array ('type'      => 'cancel',
-                                           'name'      => ts('Cancel')),
-                                    )
-                              );                              
-        } else {
-            $this->addButtons( array(
-                                     array ( 'type'      => 'next',
-                                             'name'      => ts('Install'),
-                                             'isDefault' => true   ),
-                                     array ( 'type'      => 'cancel',
-                                             'name'      => ts('Cancel') ),
-                                     )
-                               );
-            
+
+        switch ( $this->_action ) {
+        case 1:
+            $buttonName = ts( 'Install' );
+            $title  = ts( 'Install Extension' );
+            break;
+
+        case 2:
+            $buttonName = ts( 'Upgrade' );
+            $title  = ts( 'Upgrade Extension' );
+            break;
+
+        case 8:
+            $buttonName = ts( 'Uninstall' );
+            $title  = ts( 'Uninstall Extension' );
+            break;
+
+        case 32:
+            $buttonName = ts( 'Enable' );
+            $title  = ts( 'Enable Extension' );
+            break;
+
+        case 64:
+            $buttonName = 'Disable';
+            $title  = ts( 'Disable Extension' );
+            break;
+
         }
+
+        $this->assign( 'title', $title );
+        $this->addButtons(array(
+                                array ('type'      => 'next',
+                                       'name'      => $buttonName,
+                                       'isDefault' => true),
+                                array ('type'      => 'cancel',
+                                       'name'      => ts('Cancel')),
+                                )
+                          );
     }
     
     /**  
@@ -162,6 +171,20 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
             $ext = new CRM_Core_Extensions();
             $ext->install($this->_id, $this->_key);
             CRM_Core_Session::setStatus( ts('Extension has been installed.') );
+        }
+        
+        if ( $this->_action & CRM_Core_Action::ENABLE ) {
+            require_once('CRM/Core/Extensions.php');
+            $ext = new CRM_Core_Extensions();
+            $ext->enable($this->_id, $this->_key);
+            CRM_Core_Session::setStatus( ts('Extension has been enabled.') );
+        }
+        
+        if ( $this->_action & CRM_Core_Action::DISABLE ) {
+            require_once('CRM/Core/Extensions.php');
+            $ext = new CRM_Core_Extensions();
+            $ext->disable($this->_id, $this->_key);
+            CRM_Core_Session::setStatus( ts('Extension has been disabled.') );
         }
         
         if ( $this->_action & CRM_Core_Action::UPDATE ) {

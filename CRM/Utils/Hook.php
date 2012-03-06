@@ -109,22 +109,40 @@ abstract class CRM_Utils_Hook {
         foreach ( $civiModules as $module) { 
             $fnName = "{$module}_{$fnSuffix}";
             if ( function_exists( $fnName ) ) {
-                if ( $numParams == 1 ) {
+                switch ( $numParams ) {
+                case 0:
+                    $fResult = $fnName( );
+                    break;
+
+                case 1:
                     $fResult = $fnName( $arg1 );
-                } else if ( $numParams == 2 ) {
+                    break;
+
+                case 2:
                     $fResult = $fnName( $arg1, $arg2 );
-                } else if ( $numParams == 3 ) {
+                    break;
+
+                case 3:
                     $fResult = $fnName( $arg1, $arg2, $arg3 );
-                } else if ( $numParams == 4 ) {
+                    break;
+
+                case 4:
                     $fResult = $fnName( $arg1, $arg2, $arg3, $arg4 );
-                } else if ( $numParams == 5 ) {
+                    break;
+
+                case 5:
                     $fResult = $fnName( $arg1, $arg2, $arg3, $arg4, $arg5 );
-                }
+                    break;
 
-                if ( !empty( $fResult ) ) {
-                    $result = array_merge( $result, $fResult );
+                default:
+                    CRM_Core_Error::fatal( ts( 'Invalid hook invocation' ) );
+                    break;
                 }
+                
+            }
 
+            if ( !empty( $fResult ) ) {
+                $result = array_merge( $result, $fResult );
             }
         }
 
@@ -864,6 +882,34 @@ abstract class CRM_Utils_Hook {
                                            self::$_nullObject, self::$_nullObject,
                                            self::$_nullObject,
                                            'civicrm_triggerInfo' );
+    }
+
+    static function install( ) {
+        return self::singleton( )->invoke( 0, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_install' );
+    }
+
+    static function uninstall( ) {
+        return self::singleton( )->invoke( 0, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_uninstall' );
+    }
+
+    static function enable( ) {
+        return self::singleton( )->invoke( 0, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_enable' );
+    }
+
+    static function disable( ) {
+        return self::singleton( )->invoke( 0, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           self::$_nullObject, self::$_nullObject,
+                                           'civicrm_disable' );
     }
 
 }

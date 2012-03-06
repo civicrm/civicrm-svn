@@ -252,7 +252,7 @@ class CRM_Core_Extensions
                 $exts[$e->key] = $e;
             }
         }
-        
+
         // get installed extensions at the end, they overwrite everything
         $installed = $this->_discoverInstalled( TRUE );
         foreach( $installed as $dc => $e ) {
@@ -551,6 +551,18 @@ class CRM_Core_Extensions
         $e = $this->getExtensions();
         $ext = $e[$key];
         $ext->install();
+    }
+
+    public function enable( $id, $key ) {
+        $e = $this->getExtensions();
+        $ext = $e[$key];
+        $ext->enable();
+    }
+
+    public function disable( $id, $key ) {
+        $e = $this->getExtensions();
+        $ext = $e[$key];
+        $ext->disable();
     }
 
     /**

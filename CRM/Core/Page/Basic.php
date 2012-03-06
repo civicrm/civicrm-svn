@@ -171,12 +171,15 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
         }
 
         if ( $this->_action &
-             ( CRM_Core_Action::VIEW   | 
-               CRM_Core_Action::ADD    |
-               CRM_Core_Action::UPDATE |
-               CRM_Core_Action::COPY   |
-               CRM_Core_Action::DELETE ) ) {
-            $this->edit($this->_action, $id);                               // use edit form for view, add or update or delete
+             ( CRM_Core_Action::VIEW    | 
+               CRM_Core_Action::ADD     |
+               CRM_Core_Action::UPDATE  |
+               CRM_Core_Action::COPY    |
+               CRM_Core_Action::ENABLE  |
+               CRM_Core_Action::DISABLE |
+               CRM_Core_Action::DELETE  ) ) {
+            // use edit form for view, add or update or delete
+            $this->edit($this->_action, $id);
         } else {
             // if no action or browse 
             $this->browse(null, $sort);
@@ -346,7 +349,10 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
      */
     function edit( $mode, $id = null , $imageUpload = false , $pushUserContext = true) 
     {
-        $controller = new CRM_Core_Controller_Simple( $this->editForm( ), $this->editName( ), $mode , $imageUpload );
+        $controller = new CRM_Core_Controller_Simple( $this->editForm( ), 
+                                                      $this->editName( ), 
+                                                      $mode , 
+                                                      $imageUpload );
 
        // set the userContext stack
         if( $pushUserContext ) {

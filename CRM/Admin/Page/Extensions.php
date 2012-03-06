@@ -97,13 +97,15 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
                                                                     ),
                                   CRM_Core_Action::ENABLE  => array(
                                                                     'name'  => ts('Enable'),
-                                                                    'extra' => 'onclick = "enableDisable( \'%%id%%\',\''. 'CRM_Core_Extensions' . '\',\'' . 'disable-enable' . '\',\'' . 'true' . '\' );"',
+                                                                    'url'   => 'civicrm/admin/extensions',
+                                                                    'qs'    => 'action=enable&id=%%id%%&key=%%key%%',
                                                                     'ref'   => 'enable-action',
                                                                     'title' => ts('Enable')
                                                                     ),
                                   CRM_Core_Action::DISABLE => array(
                                                                     'name'  => ts('Disable'),
-                                                                    'extra' => 'onclick = "enableDisable( \'%%id%%\',\''. 'CRM_Core_Extensions' . '\',\'' . 'enable-disable' . '\',\'' . 'true' . '\' );"',
+                                                                    'url'   => 'civicrm/admin/extensions',
+                                                                    'qs'    => 'action=disable&id=%%id%%&key=%%key%%',
                                                                     'ref'   => 'disable-action',
                                                                     'title' => ts('Disable')
                                                                     ),
@@ -178,14 +180,19 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
             if( $obj->status == CRM_Core_Extensions_Extension::STATUS_INSTALLED ) {
                 if( $obj->is_active ) {
                     $action = CRM_Core_Action::DISABLE;
-                    if( $obj->upgradable ) { $action += CRM_Core_Action::UPDATE; }
+                    if( $obj->upgradable ) {
+                        $action += CRM_Core_Action::UPDATE;
+                    }
                 } else {
                     $action = array_sum(array_keys($this->links()));
                     $action -= CRM_Core_Action::DISABLE;
                     $action -= CRM_Core_Action::ADD;
-                    if( ! $obj->upgradable ) { $action -= CRM_Core_Action::UPDATE; }
+                    if( ! $obj->upgradable ) {
+                        $action -= CRM_Core_Action::UPDATE;
+                    }
                 }
-                $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(), $action,
+                $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
+                                                                          $action,
                                                                           array('id' => $id, 
                                                                                 'key' => $obj->key ));                
             } else {
@@ -194,7 +201,8 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
                 $action -= CRM_Core_Action::ENABLE;
                 $action -= CRM_Core_Action::DELETE;
                 $action -= CRM_Core_Action::UPDATE;
-                $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(), $action,
+                $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
+                                                                          $action,
                                                                           array('id' => $id, 
                                                                                 'key' => $obj->key ));            
             } 

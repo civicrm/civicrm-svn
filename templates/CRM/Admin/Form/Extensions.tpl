@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for install /uninstall extensions  *}
-<h3>{if $action eq 1}{ts}Install Extension{/ts}{elseif $action eq 2}{ts}Upgrade Extension{/ts}{else}{ts}Uninstall Extension{/ts}{/if}</h3>
+<h3>{$title}</h3>
 <div class="crm-block crm-form-block crm-admin-optionvalue-form-block">
    {if $action eq 8}
       <div class="messages status">

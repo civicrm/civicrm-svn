@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 
-{if $action eq 1 or $action eq 2 or $action eq 8}
+{if $action eq 1 or $action eq 2 or $action eq 8 or $action eq 32 or $action eq 64}
    {include file="CRM/Admin/Form/Extensions.tpl"}
 {else}
     {capture assign='adminURL'}{crmURL p='civicrm/admin/setting/path' q="reset=1&civicrmDestination=/civicrm/admin/extensions?reset=1"}{/capture}
