@@ -181,9 +181,13 @@ class CRM_Core_Extensions_Extension
         }
         $this->_registerExtensionByType();
         $this->_createExtensionEntry();
+        if ( $this->type == 'payment' )
+            $this->_runPaymentHook( 'install' );
     }
     
     public function uninstall( ) {
+        if ( $this->type == 'payment' )
+            $this->_runPaymentHook( 'uninstall' );
         $this->removeFiles();    
         $this->_removeExtensionByType();
         $this->_removeExtensionEntry();
@@ -245,9 +249,13 @@ class CRM_Core_Extensions_Extension
     public function enable( ) {
         $this->_setActiveByType( 1 );
         CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $this->id, 'is_active', 1 );
+        if ( $this->type == 'payment' )
+            $this->_runPaymentHook( 'enable' );
     }
     
     public function disable( ) {
+        if ( $this->type == 'payment' )
+            $this->_runPaymentHook( 'disable' );
         $this->_setActiveByType( 0 );
         CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $this->id, 'is_active', 0 );
     }
@@ -277,6 +285,114 @@ class CRM_Core_Extensions_Extension
     private function _removeExtensionEntry() {
         CRM_Core_BAO_OptionValue::del($this->id);
         CRM_Core_Session::setStatus( ts('Selected option value has been deleted.') );
+    }
+    
+    /**
+     * Function to run hooks in the payment processor class
+     * Load requested payment processor and call the method specified.
+     *
+     * @param string $method - the method to call in the payment processor class 
+     * @private
+     */
+    private function _runPaymentHook( $method ) {
+        
+        // Not concerned about performance at this stage, as these are seldomly performed tasks
+        // (payment processor enable/disable/install/uninstall). May wish to implement some
+        // kind of registry/caching system if more hooks are added.
+        
+        require_once 'CRM/Core/Extensions.php';
+        require_once 'CRM/Core/DAO.php';
+        
+        if ( ! isset( $this->id ) || empty( $this->id ) )
+            return;
+        
+        $ext = new CRM_Core_Extensions( );
+        
+        $paymentClass = $ext->keyToClass( $this->key, 'payment' );
+        require_once $ext->classToPath( $paymentClass );
+        
+        // See if we have any instances of this PP defined ..
+        if ( $processor_id = CRM_Core_DAO::singleValueQuery("
+                SELECT pp.id
+                  FROM civicrm_option_group og
+            INNER JOIN civicrm_option_value ov
+                    ON ov.option_group_id = og.id
+            INNER JOIN civicrm_payment_processor pp 
+                    ON pp.payment_processor_type = ov.name
+                 WHERE og.name = 'system_extensions'
+                   AND ov.grouping = 'payment'
+                   AND ov.id = %1
+              
+        ",
+            array(
+                1 => array( $this->id, 'Integer' )  
+            )
+        )) {
+            // If so, load params in the usual way ..
+            require_once "CRM/Core/BAO/PaymentProcessor.php";
+            $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $processor_id, null );
+        
+        } else {
+            // Otherwise, do the best we can to construct some ..
+            $dao = CRM_Core_DAO::executeQuery("
+                    SELECT ppt.* FROM civicrm_option_value ov
+                INNER JOIN civicrm_payment_processor_type ppt
+                        ON ppt.name = ov.name
+                     WHERE ov.id = %1
+                       AND ov.grouping = 'payment'
+            ",
+                array(
+                    1 => array( $this->id, 'Integer' )
+                )
+            );
+            if ( $dao->fetch( ) ) 
+                $paymentProcessor = array(
+                    'id'                     => -1,
+                    'name'                   => $dao->title,
+                    'payment_processor_type' => $dao->name,
+                    'user_name'              => 'nothing',
+                    'password'               => 'nothing', 
+                    'signature'              => '',           
+                    'url_site'               => $dao->url_site_default,
+                    'url_api'                => $dao->url_api_default, 
+                    'url_recur'              => $dao->url_recur_default, 
+                    'url_button'             => $dao->url_button_default, 
+                    'subject'                => '', 
+                    'class_name'             => $dao->class_name,
+                    'is_recur'               => $dao->is_recur,
+                    'billing_mode'           => $dao->billing_mode,
+                    'payment_type'           => $dao->payment_type
+                );
+            else
+                CRM_Core_Error::fatal( "Unable to find payment processor in " . __CLASS__ . '::' . __METHOD__ );
+            
+        }
+        
+        // In the case of uninstall, check for instances of PP first.
+        // Don't run hook if any are found.
+        if ( $method == 'uninstall' && $paymentProcessor['id'] > 0 )
+            return;
+            
+        switch ($method) {
+            
+            case 'install':
+            case 'uninstall':
+            case 'enable':
+            case 'disable':
+                
+                // Instantiate PP
+                eval( '$processorInstance = ' . $paymentClass . '::singleton( null, $paymentProcessor );' );
+                
+                // Does PP implement this method, and can we call it?
+                if ( method_exists( $processorInstance, $method ) && is_callable( array( $processorInstance, $method ) ) ) {
+                   // If so, call it ...
+                   $processorInstance->$method( );
+                }
+                break;
+            default:
+                CRM_Core_Session::setStatus( "Unrecognized payment hook ($method) in " . __CLASS__ . '::' . __METHOD__ );
+        }
+    
     }
     
     private function _createExtensionEntry() {
