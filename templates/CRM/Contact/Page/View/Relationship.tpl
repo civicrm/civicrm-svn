@@ -102,9 +102,11 @@
         {/strip}
         </div>
 
-        <div id="permission-legend" class="crm-content-block">
-	     <span class="crm-marker">* </span>{ts}Indicates a permissioned relationship. This contact can be viewed and updated by the other.{/ts}
-        </div>
+        {if $relationshipTabContext}
+            <div id="permission-legend" class="crm-content-block">
+                 <span class="crm-marker">* </span>{ts}Indicates a permissioned relationship. This contact can be viewed and updated by the other.{/ts}
+            </div>
+        {/if}
 {/if}
 {* end of code to show current relationships *}
 
