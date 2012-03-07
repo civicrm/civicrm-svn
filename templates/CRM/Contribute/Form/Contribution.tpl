@@ -292,6 +292,9 @@ function loadPanes( id ) {
         {if $contributionMode}
             url = url + "&mode={$contributionMode}";
         {/if}
+	{if $qfKey}
+            url = url + "&qfKey={$qfKey}";
+        {/if}
     {literal}
    if ( ! cj('div.'+id).html() ) {
 	    var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts}loading{/ts}{literal}" />&nbsp;{/literal}{ts}Loading{/ts}{literal}...';

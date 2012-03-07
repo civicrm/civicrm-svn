@@ -787,6 +787,8 @@ WHERE  contribution_id = {$this->_id}
         }
         $this->assign( 'buildRecurBlock', $buildRecurBlock );
         
+        $qfKey = $this->controller->_key;
+        $this->assign( 'qfKey', $qfKey );
         $this->assign( 'allPanes', $allPanes );
         $this->assign( 'showAdditionalInfo', $showAdditionalInfo );
         
