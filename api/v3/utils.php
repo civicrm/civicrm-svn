@@ -76,12 +76,13 @@ function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoption
  * @param array $daoName string DAO to check for required fields (create functions only)
  * @param array $keys list of required fields. A value can be an array denoting that either this or that is required.
  * @param bool $verifyDAO
+ *
  * @return null or throws error if there the required fields not present
  */
 
 function civicrm_api3_verify_mandatory($params, $daoName = null, $keys = array(), $verifyDAO = TRUE) {
-  // moving this to civicrm_api - remove the check for array pending testing
-   if ( ! is_array( $params ) ) {
+    // moving this to civicrm_api - remove the check for array pending testing
+    if ( ! is_array( $params ) ) {
         throw new Exception ('Input variable `params` is not an array');
     }
 
@@ -97,9 +98,9 @@ function civicrm_api3_verify_mandatory($params, $daoName = null, $keys = array()
     if (CRM_Utils_Array::value('id',$params)){
         $keys = array('version');
     } else {
-      if (! in_array('version', $keys)) {
-          $keys[] = 'version';    //required from v3 onwards
-      }
+        if (! in_array('version', $keys)) {
+            $keys[] = 'version';    //required from v3 onwards
+        }
     }
     foreach ($keys as $key) {
         if (is_array($key)) {
