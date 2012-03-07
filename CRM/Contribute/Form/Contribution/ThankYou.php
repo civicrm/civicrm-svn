@@ -168,6 +168,9 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
             $profileId       = $OnBehalfProfile[0];
 
             $fieldTypes = array( 'Contact', 'Organization' );
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $contactSubType = CRM_Contact_BAO_ContactType::subTypes( 'Organization' );
+            $fieldTypes = array_merge( $fieldTypes, $contactSubType );
             if ( is_array( $this->_membershipBlock ) && !empty( $this->_membershipBlock ) ) {
                 $fieldTypes = array_merge( $fieldTypes, array( 'Membership' ) );
             } else {

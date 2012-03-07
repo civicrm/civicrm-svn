@@ -1798,7 +1798,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 // lets always add the hidden
                 //subtype value if there is any, and we won't have to
                 // compute it while processing.
-                $form->addElement( 'hidden', 'contact_sub_type_hidden', $field['field_type'] );
+                if( $onBehalf ){
+                    $form->addElement( 'hidden', 'onbehalf[contact_sub_type]', $field['field_type'] );
+                } else {
+                    $form->addElement( 'hidden', 'contact_sub_type_hidden', $field['field_type'] );
+                }
                 $hiddenSubtype = true;
             }
         

@@ -116,7 +116,19 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         $required = array( 'Contact', 'Organization' );
         $optional = array( 'Contribution', 'Membership' );
         require_once "CRM/Core/BAO/UFGroup.php";
+
         $profiles              = CRM_Core_BAO_UFGroup::getValidProfiles( $required, $optional );
+        //Check profiles for Organization subtypes
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $contactSubType = CRM_Contact_BAO_ContactType::subTypes( 'Organization' );
+        foreach( $contactSubType as $type ){
+            $required        = array( 'Contact', $type );
+            $subTypeProfiles = CRM_Core_BAO_UFGroup::getValidProfiles( $required, $optional );
+            foreach( $subTypeProfiles as $profileId => $profileName ){
+                $profiles[ $profileId ] = $profileName;
+            }
+        }
+
         $requiredProfileFields = array( 'organization_name', 'email' );
                    
         if ( !empty( $profiles ) ) {

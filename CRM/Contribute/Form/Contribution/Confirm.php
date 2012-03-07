@@ -214,7 +214,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     }
                     $this->_params['onbehalf_location']["{$loc}"] = $value;
                 } else {
-                    $this->_params['onbehalf_location'][$field]   = $value;
+                    if( $loc == 'contact_sub_type' ){
+                        $this->_params['onbehalf_location'][$loc]   = $value;                        
+                    } else {
+                        $this->_params['onbehalf_location'][$field]   = $value;
+                    }
                 }
             }
         } else if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
@@ -332,6 +336,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $profileId       = $OnBehalfProfile[0];
 
             $fieldTypes = array( 'Contact', 'Organization' );
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $contactSubType = CRM_Contact_BAO_ContactType::subTypes( 'Organization' );
+            $fieldTypes = array_merge( $fieldTypes, $contactSubType );
             if ( is_array( $this->_membershipBlock ) && !empty( $this->_membershipBlock ) ) {
                 $fieldTypes = array_merge( $fieldTypes, array( 'Membership' ) );
             } else {
@@ -587,7 +594,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     }
                 }
             }
-            
+
             if ( array_key_exists( 'onbehalf_location', $params ) && is_array( $params['onbehalf_location'] ) ) {
                 foreach ( $params['onbehalf_location'] as $block => $vals ) {
                     $behalfOrganization[$block] = $vals;
@@ -595,7 +602,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 unset( $params['onbehalf_location'] );
             }
         }
-        
+
         // check for profile double opt-in and get groups to be subscribed
         require_once 'CRM/Core/BAO/UFGroup.php';
         $subscribeGroupIds = CRM_Core_BAO_UFGroup::getDoubleOptInGroupIds( $params, $contactID );
@@ -673,7 +680,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
             CRM_Mailing_Event_BAO_Subscribe::commonSubscribe( $subscribeGroupIds, $subscribtionEmail, $contactID );
         }
-        
+
         // If onbehalf-of-organization contribution / signup, add organization
         // and it's location.
         if ( isset( $params['hidden_onbehalf_profile'] ) && isset( $behalfOrganization['organization_name'] ) ) {

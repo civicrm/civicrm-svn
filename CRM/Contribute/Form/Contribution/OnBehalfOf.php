@@ -133,6 +133,10 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
                                                           null, false, null, false, null, 
                                                           CRM_Core_Permission::CREATE, null );
         $fieldTypes = array( 'Contact', 'Organization' );
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $contactSubType = CRM_Contact_BAO_ContactType::subTypes( 'Organization' );
+        $fieldTypes = array_merge( $fieldTypes, $contactSubType );
+        
         if ( is_array( $form->_membershipBlock ) && !empty( $form->_membershipBlock ) ) {
             $fieldTypes = array_merge( $fieldTypes, array( 'Membership' ) );
         } else {
