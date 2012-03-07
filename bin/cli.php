@@ -146,7 +146,6 @@ class civicrm_Cli {
 
         require_once ('CRM/Core/Config.php');
         $this->_config = CRM_Core_Config::singleton( );
-        echo "{$this->_config->mailerJobsMax}, {$this->_config->mailerJobSize}, {$this->_config->mailerBatchLimit}\n";
 
         require_once ('CRM/Utils/System.php' );
         $class = 'CRM_Utils_System_' . $this->_config->userFramework;

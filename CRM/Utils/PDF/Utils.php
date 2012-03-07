@@ -98,7 +98,6 @@ class CRM_Utils_PDF_Utils {
 
         require_once 'packages/dompdf/dompdf_config.inc.php';
         spl_autoload_register('DOMPDF_autoload');
-
         $dompdf = new DOMPDF( );
         $dompdf->set_paper ($paper_size, $orientation);
         $dompdf->load_html(utf8_decode($html));

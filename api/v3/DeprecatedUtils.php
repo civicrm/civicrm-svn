@@ -25,8 +25,6 @@
   +--------------------------------------------------------------------+
 */
 
-require_once 'api/v3/utils.php';
-
 /*
  * These functions have been deprecated out of API v3 Utils folder as they are not part of the
  * API. Calling API functions directly is not supported & these functions are not called by any
