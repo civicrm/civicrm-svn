@@ -219,7 +219,13 @@ class CRM_Logging_Differ
         $cgDao->fetch();
 
         $params[3] = array($cgDao->id, 'Integer');
-        $sql = "SELECT column_name, data_type, label, name, option_group_id FROM `{$this->db}`.log_civicrm_custom_field WHERE log_date <= %2 AND custom_group_id = %3 ORDER BY log_date";
+        $sql = "
+SELECT column_name, data_type, label, name, option_group_id 
+FROM   `{$this->db}`.log_civicrm_custom_field 
+WHERE  log_date <= %2
+AND    custom_group_id = %3 
+ORDER BY log_date
+";
         $cfDao = CRM_Core_DAO::executeQuery($sql, $params);
 
         while ($cfDao->fetch()) {
@@ -229,6 +235,7 @@ class CRM_Logging_Differ
             case 'Boolean':
                 $values[$cfDao->column_name] = array('0' => ts('false'), '1' => ts('true'));
                 break;
+
             case 'String':
                 $values[$cfDao->column_name] = array();
                 if ( !empty( $cfDao->option_group_id ) ) {
