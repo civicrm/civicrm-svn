@@ -649,11 +649,23 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                                      'participant_fee_level'  => 1
                                    );
             if ( $contactID ) {
-                if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
-                    $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD,
-                                                               null , null, false, null,
-                                                               false, null, CRM_Core_Permission::CREATE,
-                                                               'field_name', true ); 
+                //FIX CRM-9653
+                if ( is_array( $id ) ) {
+                    $fields = array();
+                    foreach ( $id as $profileID ) {
+                        $field = CRM_Core_BAO_UFGroup::getFields( $profileID, false, CRM_Core_Action::ADD,
+                                                                   null , null, false, null,
+                                                                   false, null, CRM_Core_Permission::CREATE,
+                                                                   'field_name', true );
+                        $fields = array_merge( $fields, $field );
+                    }
+                } else {
+                    if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
+                        $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD,
+                                                                   null , null, false, null,
+                                                                   false, null, CRM_Core_Permission::CREATE,
+                                                                   'field_name', true ); 
+                    }
                 }
             } else {
                 $fields = CRM_Core_BAO_UFGroup::getFields( $id, false, CRM_Core_Action::ADD,
@@ -871,7 +883,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         
         $transaction = new CRM_Core_Transaction( );
         
-        $groupName = "participant_role";
+        $groupName = 'participant_role';
         $query = "
 SELECT  v.label as label ,v.value as value
 FROM   civicrm_option_value v, 
