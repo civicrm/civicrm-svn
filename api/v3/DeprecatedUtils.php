@@ -31,6 +31,8 @@
  * part of the API so are not really part of the api
  * 
  */
+
+require_once 'api/v3/utils.php';
   
 /**
  * take the input parameter list as specified in the data model and
