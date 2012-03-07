@@ -37,5 +37,17 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     
     function verifyPreDBstate ( &$errors ) {
         return true;
-    }   
+    }
+    
+    function upgrade_4_2_alpha1( $rev ) {
+    	$config = CRM_Core_Config::singleton( );
+
+        $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+
+        // now rebuild all the triggers
+        // CRM-9716
+        CRM_Core_DAO::triggerRebuild( );
+    }
+
   }
