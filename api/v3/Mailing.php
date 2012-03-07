@@ -121,15 +121,15 @@ function civicrm_api3_mailing_event_reply($params)
 {
     civicrm_api3_verify_mandatory ($params,
                                    'CRM_Mailing_Event_DAO_Reply',
-                                   array('job_id', 'event_queue_id', 'hash', 'bodyTxt', 'replyTo'),
+                                   array( 'job_id', 'event_queue_id', 'hash', 'replyTo' ),
                                    false );
 
     $job       = $params['job_id']; 
     $queue     = $params['event_queue_id']; 
     $hash      = $params['hash']; 
-    $bodyTxt   = $params['bodyTxt']; 
     $replyto   = $params['replyTo']; 
-    $bodyHTML  = CRM_Utils_Array::value('bodyHTML', $params);
+    $bodyTxt   = CRM_Utils_Array::value('bodyTxt'  , $params);
+    $bodyHTML  = CRM_Utils_Array::value('bodyHTML' , $params);
     $fullEmail = CRM_Utils_Array::value('fullEmail', $params);
 
     $mailing = CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
