@@ -94,7 +94,7 @@ class CRM_Contact_Page_AJAX
                          'rel'         => $rel,
                          'context'     => $context,
                          'version'     => 3
-                       );
+                         );
         
         $result = civicrm_api( 'Contact', 'quicksearch', $params );
         if ( $result['is_error'] ==0 && is_array( $result['values'] ) ) {
@@ -707,12 +707,12 @@ LIMIT {$offset}, {$rowCount}
 ";
 
              // send query to hook to be modified if needed
-             require_once 'CRM/Utils/Hook.php';
-             CRM_Utils_Hook::contactListQuery( $query,
-                                              $name,
-                                              CRM_Utils_Array::value( 'context', $_GET ),
-                                              CRM_Utils_Array::value( 'cid', $_GET ) );
-            
+                    require_once 'CRM/Utils/Hook.php';
+                    CRM_Utils_Hook::contactListQuery( $query,
+                                                      $name,
+                                                      CRM_Utils_Array::value( 'context', $_GET ),
+                                                      CRM_Utils_Array::value( 'cid', $_GET ) );
+                    
                     $dao = CRM_Core_DAO::executeQuery( $query );
                     while( $dao->fetch( ) ) {
                         $result[]= array( 'name' => $dao->name,
@@ -727,23 +727,23 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
        {$aclWhere}
 LIMIT {$offset}, {$rowCount}
 ";
-
-              // send query to hook to be modified if needed
-              require_once 'CRM/Utils/Hook.php';
-              CRM_Utils_Hook::contactListQuery( $query,
-                                               $name,
-                                               CRM_Utils_Array::value( 'context', $_GET ),
-                                               CRM_Utils_Array::value( 'cid', $_GET ) );
-
-            
+                    
+                    // send query to hook to be modified if needed
+                    require_once 'CRM/Utils/Hook.php';
+                    CRM_Utils_Hook::contactListQuery( $query,
+                                                      $name,
+                                                      CRM_Utils_Array::value( 'context', $_GET ),
+                                                      CRM_Utils_Array::value( 'cid', $_GET ) );
+                    
+                    
                     $dao = CRM_Core_DAO::executeQuery( $query );
-            
+                    
                     while( $dao->fetch( ) ) {
                         $result[]= array( 'name' => '"'.$dao->name.'" &lt;'.$dao->email.'&gt;',
                                           'id'   => (CRM_Utils_Array::value( 'id', $_GET ) ) ? "{$dao->id}::{$dao->email}" :'"'.$dao->name.'" <'.$dao->email.'>');
                     }
                 }
-
+                
                 if ( $result ) {
                     echo json_encode( $result );
                 }
