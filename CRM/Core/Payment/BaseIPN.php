@@ -715,7 +715,7 @@ LIMIT 1;";
         $template = CRM_Core_Smarty::singleton( );
         $template->assign('first_name', $contact->first_name);
         $template->assign('last_name', $contact->last_name);
-        $template->assign('display_name', $contact->display_name);
+        $template->assign('displayName', $contact->display_name);
         // CRM_Core_Error::debug('tpl',$template);
         //assign honor infomation to receiptmessage
         if ( $honarID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
