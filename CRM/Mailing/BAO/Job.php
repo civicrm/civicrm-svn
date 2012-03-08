@@ -556,7 +556,13 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                                            $field['contact_id'], $field['email'],
                                            $recipient, false, $details[0][$contactID], $attachments, 
                                            false, null, $replyToEmail );
-            
+            if ( empty( $message ) ) {
+                // lets keep the message in the queue
+                // most likely a permissions related issue with smarty templates
+                // or a bad contact id? CRM-9833
+                continue;
+            }
+
             /* Send the mailing */
             $body    =& $message->get();
             $headers =& $message->headers();

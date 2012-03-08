@@ -1040,7 +1040,9 @@ AND civicrm_contact.is_opt_out =0";
             //CRM-4524
             $contact = reset( $contact );
             
-            if ( !$contact || is_a( $contact, 'CRM_Core_Error' ) ) {
+            if ( ! $contact || is_a( $contact, 'CRM_Core_Error' ) ) {
+                CRM_Core_Error::debug_log_message( ts( 'CiviMail will not send email to a non-existent contact: %1',
+                                                       array( 1 => $contactId ) ) );
                 return null;
             }
             
@@ -1123,6 +1125,15 @@ AND civicrm_contact.is_opt_out =0";
                 $smarty->security = false;
             }
             $mailParams['html'] = $htmlBody;
+        }
+
+        if ( empty( $mailParams['text'] ) &&
+             empty( $mailParams['html'] ) ) {
+            // CRM-9833
+            // something went wrong, lets log it and return null
+            CRM_Core_Error::debug_log_message( ts( 'CiviMail will not send an empty mail body, Skipping: %1',
+                                                   array( 1 => $email ) ) );
+            return null;
         }
 
         $mailParams['attachments'] = $attachments;
