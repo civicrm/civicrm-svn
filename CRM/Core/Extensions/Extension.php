@@ -217,6 +217,10 @@ class CRM_Core_Extensions_Extension
 
         $filename = $path . DIRECTORY_SEPARATOR . $this->key . DIRECTORY_SEPARATOR . 'info.xml';
         $newxml = file_get_contents( $filename );
+        
+        if (empty($newxml))
+            CRM_Core_Error::fatal( ts( 'Failed reading data from %1 during installation', array( 1 => $filename ) ) );
+            
         require_once 'CRM/Core/Extensions/Extension.php';
         $check = new CRM_Core_Extensions_Extension( $this->key . ".newversion" );
         $check->readXMLInfo( $newxml );
@@ -231,6 +235,7 @@ class CRM_Core_Extensions_Extension
     }
     
     public function download( ) {
+    
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
         
@@ -241,7 +246,45 @@ class CRM_Core_Extensions_Extension
             CRM_Core_Error::fatal( 'Cannot install this extension - downloadUrl is not set!' );
         }
         
-        file_put_contents( $filename, file_get_contents( $this->downloadUrl ) );
+        // Download extension zip file ...
+        
+        @ini_set( 'allow_url_fopen', 1 );
+        @ini_set( 'user_agent', 'CiviCRM v' . CRM_Utils_System::version( ) );
+        
+        // Check response code on downloadUrl
+        $headers       = get_headers( $this->downloadUrl );
+        $response_code = substr( $headers[0], 9, 3 );
+     
+        if ( $response_code == 200 ) {
+        
+            $context = stream_context_create(array(
+                'http' => array(
+                    'timeout' => 20      // Timeout if no reply after 20 seconds
+                )
+            ));
+            
+            // Attempt to download file
+            if ( !$zipfile = file_get_contents( $this->downloadUrl, false, $context ) ) 
+                CRM_Core_Error::fatal( ts( 'Unable to download extension from %1', array(1 => $this->downloadUrl) ) );
+            
+            // Attempt to save file
+            if ( @file_put_contents( $filename, $zipfile ) === false )
+                CRM_Core_Error::fatal( ts ( 'Unable to write to %1.<br />Is the location writable?', array(1 => $filename) ) );
+            
+        } else {
+            // Response code != 200?
+            // Bail and inform user ...
+            $error = 'Unable to download extension from %1.';
+            if ( $response_code >= 100 && $response_code < 300 )
+                CRM_Core_Error::fatal( ts ( "$error<br />Server returned an HTTP %2 response code.", array(1 => $this->downloadUrl, 2 => $response_code) ) );
+            elseif ( $response_code >= 300 && $response_code < 400 )
+                CRM_Core_Error::fatal( ts ( "$error<br />URL is redirecting.", array(1 => $this->downloadUrl) ) );
+            else
+                CRM_Core_Error::fatal( ts( "$error<br />Server returned an HTTP %2 error.", array(1 => $this->downloadUrl, 2 => $response_code) ) );
+        }
+        
+        @ini_restore( 'user_agent' );
+        @ini_restore( 'allow_url_fopen' );
         
         $this->tmpFile = $filename;
     }    
@@ -304,7 +347,7 @@ class CRM_Core_Extensions_Extension
         require_once 'CRM/Core/DAO.php';
         
         if ( ! isset( $this->id ) || empty( $this->id ) )
-            return;
+            $this->id = 0;
         
         $ext = new CRM_Core_Extensions( );
         
@@ -312,7 +355,7 @@ class CRM_Core_Extensions_Extension
         require_once $ext->classToPath( $paymentClass );
         
         // See if we have any instances of this PP defined ..
-        if ( $processor_id = CRM_Core_DAO::singleValueQuery("
+        if ($this->id && $processor_id = CRM_Core_DAO::singleValueQuery("
                 SELECT pp.id
                   FROM civicrm_option_group og
             INNER JOIN civicrm_option_value ov
@@ -338,11 +381,11 @@ class CRM_Core_Extensions_Extension
                     SELECT ppt.* FROM civicrm_option_value ov
                 INNER JOIN civicrm_payment_processor_type ppt
                         ON ppt.name = ov.name
-                     WHERE ov.id = %1
+                     WHERE ov.name = %1
                        AND ov.grouping = 'payment'
             ",
                 array(
-                    1 => array( $this->id, 'Integer' )
+                    1 => array( $this->name, 'String' )
                 )
             );
             if ( $dao->fetch( ) ) 
