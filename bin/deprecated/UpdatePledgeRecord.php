@@ -136,15 +136,15 @@ SELECT  pledge.contact_id              as contact_id,
             }
         }
         
-        require_once 'CRM/Pledge/BAO/Payment.php';
+        require_once 'CRM/Pledge/BAO/PledgePayment.php';
         // process the updating script...
     
         foreach ( $pledgePayments as $pledgeId => $paymentIds ) {
             // 1. update the pledge /pledge payment status. returns new status when an update happens
             echo "<br />Checking if status update is needed for Pledge Id: {$pledgeId} (current status is {$allStatus[$pledgeStatus[$pledgeId]]})";
 
-            $newStatus = CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeId, $paymentIds,
-                                                                            array_search( 'Overdue', $allStatus ), null, 0, false, true );
+            $newStatus = CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId, $paymentIds,
+                                                                                  array_search( 'Overdue', $allStatus ), null, 0, false, true );
             if ( $newStatus != $pledgeStatus[$pledgeId] ) {
                 echo "<br />- status updated to: {$allStatus[$newStatus]}";
                 $updateCnt += 1;
@@ -248,7 +248,7 @@ SELECT  pledge.contact_id              as contact_id,
 
                         // 3. update pledge payment details                                                                     
                         if ( $mailSent ) {
-                            CRM_Pledge_BAO_Payment::updateReminderDetails( $paymentId );
+                            CRM_Pledge_BAO_PledgePayment::updateReminderDetails( $paymentId );
                             $activityType = 'Pledge Reminder';
                             $activityParams = array( 'subject'            => $subject,
                                                      'source_contact_id'  => $contactId,

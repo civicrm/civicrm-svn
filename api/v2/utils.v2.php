@@ -1084,8 +1084,8 @@ function _civicrm_contribute_formatted_param( &$params, &$values, $create=false 
             }
             
             //we need to check if oldest payment amount equal to contribution amount
-            require_once 'CRM/Pledge/BAO/Payment.php';
-            $pledgePaymentDetails = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $values['pledge_id'] );
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
+            $pledgePaymentDetails = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $values['pledge_id'] );
             
             if ( $pledgePaymentDetails['amount'] == $totalAmount ) {
                 $values['pledge_payment_id'] = $pledgePaymentDetails['id'];
