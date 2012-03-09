@@ -148,6 +148,12 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
      * participant mode
      */
     public  $_mode = null;
+    
+     /**
+     * event ID preselect
+     */
+    public  $_eID = null;
+    
     /*
      *Line Item for Price Set
      */
@@ -202,6 +208,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
 
         $this->_contactId 	   = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_mode           = CRM_Utils_Request::retrieve( 'mode', 'String', $this );
+        $this->_eID            = CRM_Utils_Request::retrieve( 'eid', 'Positive', $this );
         $this->_context        = CRM_Utils_Request::retrieve('context', 'String', $this );
         $this->assign('context', $this->_context );
         
@@ -760,9 +767,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         // but we do the same for the onChange element and this form is complex
         // and i did not want to break it late in the 3.2 cycle
         $preloadJSSnippet = null;
-        if ( CRM_Utils_Array::value( 'reset', $_GET ) ) {
-            $this->_eID = CRM_Utils_Request::retrieve( 'eid', 'Positive', $this );
-            if ( $this->_eID ) {
+        if ( CRM_Utils_Array::value( 'reset', $_GET ) && $this->_eID ) {
                 $preloadJSSnippet = "
 cj(function() {
 cj('#event_id').val( '{$this->_eID}' );
@@ -772,7 +777,6 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
 loadCampaign( {$this->_eID}, {$eventCampaigns} );
 });
 ";
-            }
         }
 
         $this->assign( 'preloadJSSnippet', $preloadJSSnippet );
@@ -1632,8 +1636,14 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $buttonName = $this->controller->getButtonName( );
         if ( $this->_context == 'standalone' ) {
             if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
-                $session->replaceUserContext(CRM_Utils_System::url('civicrm/participant/add', 
-                                                                   'reset=1&action=add&context=standalone') );
+            	$urlParams = 'reset=1&action=add&context=standalone';
+            	if ( $this->_mode ) {
+            		$urlParams .= '&mode=' . $this->_mode;
+            	}
+            	if ( $this->_eID ) {
+            		$urlParams .= '&eid=' . $this->_eID;
+            	}
+                $session->replaceUserContext(CRM_Utils_System::url('civicrm/participant/add', $urlParams) );
             } else {
                 $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/contact/view',
                                                                     "reset=1&cid={$this->_contactId}&selectedChild=participant" ) );
