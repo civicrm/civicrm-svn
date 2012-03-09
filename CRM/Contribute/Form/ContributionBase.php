@@ -291,9 +291,10 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $isMonetary = CRM_Utils_Array::value( 'is_monetary', $this->_values );
             $isPayLater = CRM_Utils_Array::value( 'is_pay_later', $this->_values );
 
+            //FIXME: to support multiple payment processors
             if ( $isMonetary && 
-                 ( ! $isPayLater || CRM_Utils_Array::value( 'payment_processor_id', $this->_values ) ) ) {
-                $ppID = CRM_Utils_Array::value( 'payment_processor_id', $this->_values );
+                 ( ! $isPayLater || CRM_Utils_Array::value( 'payment_processor', $this->_values ) ) ) {
+                $ppID = CRM_Utils_Array::value( 'payment_processor', $this->_values );
                 if ( ! $ppID ) {
                     CRM_Core_Error::fatal( ts( 'A payment processor must be selected for this contribution page (contact the site administrator for assistance).' ) );
                 }
@@ -739,7 +740,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         }
     }
 
-    function checkTemplateFileExists( $suffix ) {
+    function checkTemplateFileExists( $suffix = null ) {
         if ( $this->_id ) {
             $templateFile = "CRM/Contribute/Form/Contribution/{$this->_id}/{$this->_name}.{$suffix}tpl";
             $template = CRM_Core_Form::getTemplate( );
