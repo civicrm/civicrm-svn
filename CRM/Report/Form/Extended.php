@@ -436,7 +436,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
        $this->_from .= "  LEFT JOIN (SELECT line_item_civireport.id as lid, contribution_civireport_direct.* 
 FROM civicrm_line_item line_item_civireport
 LEFT JOIN civicrm_contribution contribution_civireport_direct 
-                       ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
+                       ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
 
 			
 WHERE 	contribution_civireport_direct.id IS NOT NULL
@@ -444,7 +444,7 @@ WHERE 	contribution_civireport_direct.id IS NOT NULL
 UNION SELECT line_item_civireport.id as lid, contribution_civireport.*
 			FROM civicrm_line_item line_item_civireport
 			LEFT JOIN civicrm_participant participant_civireport 
-                          ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = participant_civireport.id AND line_item_civireport.entity_table = 'civicrm_participant')
+                          ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = participant_civireport.id AND line_item_civireport.entity_table = 'civicrm_participant')
 
 LEFT JOIN civicrm_participant_payment pp 
                           ON participant_civireport.id = pp.participant_id
@@ -454,7 +454,7 @@ LEFT JOIN civicrm_participant_payment pp
 UNION SELECT line_item_civireport.id as lid,contribution_civireport.*
 			FROM civicrm_line_item line_item_civireport
 			LEFT JOIN civicrm_membership membership_civireport 
-                          ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id =membership_civireport.id AND line_item_civireport.entity_table = 'civicrm_membership')
+                          ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id =membership_civireport.id AND line_item_civireport.entity_table = 'civicrm_membership')
 
 LEFT JOIN civicrm_membership_payment pp 
                           ON membership_civireport.id = pp.membership_id
@@ -473,7 +473,7 @@ LEFT JOIN civicrm_membership_payment pp
        LEFT JOIN (
 SELECT contribution_civireport_direct.id AS contid, line_item_civireport.*
 FROM civicrm_contribution contribution_civireport_direct  
-LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
+LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
 WHERE 	line_item_civireport.id IS NOT NULL 
 
 UNION 
@@ -481,7 +481,7 @@ SELECT contribution_civireport_direct.id AS contid, line_item_civireport.*
 FROM civicrm_contribution contribution_civireport_direct  
 LEFT JOIN civicrm_participant_payment pp ON contribution_civireport_direct.id = pp.contribution_id
 LEFT JOIN civicrm_participant p ON pp.participant_id = p.id
-LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_participant')
+LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_participant')
 WHERE 	line_item_civireport.id IS NOT NULL 
 
 UNION
@@ -490,7 +490,7 @@ SELECT contribution_civireport_direct.id AS contid, line_item_civireport.*
 FROM civicrm_contribution contribution_civireport_direct  
 LEFT JOIN civicrm_membership_payment pp ON contribution_civireport_direct.id = pp.contribution_id
 LEFT JOIN civicrm_membership p ON pp.membership_id = p.id
-LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_membership')
+LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_membership')
 WHERE 	line_item_civireport.id IS NOT NULL 
 ) as {$this->_aliases['civicrm_line_item']} 
   ON {$this->_aliases['civicrm_line_item']}.contid = {$this->_aliases['civicrm_contribution']}.id
