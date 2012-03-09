@@ -110,9 +110,15 @@ SELECT id
         if ( count($paymentProcessor) ) {
             $this->assign('paymentProcessor',$paymentProcessor);
         }
-        $this->add( 'select', 'payment_processor_id', ts( 'Payment Processor' ),
+
+        $this->addCheckBox( 'payment_processor', ts('Payment Processor'),
+                            array_flip($paymentProcessor),
+                            null, null, null, null,
+                            array( '&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>' ) );
+
+        /*        $this->add( 'select', 'payment_processor_id', ts( 'Payment Processor' ),
                     array(''=>ts( '- select -' )) + $paymentProcessor, null, array( 'onchange' => "showRecurring( this.value );" ) );
-        
+        */
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
         
         //check if selected payment processor supports recurring payment
@@ -344,7 +350,7 @@ SELECT id
 
         if ( CRM_Utils_Array::value( 'is_recur_interval', $fields ) ) {
             $paymentProcessorType = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessor', 
-                                                                 $fields['payment_processor_id'], 
+                                                                 $fields['payment_processor'], 
                                                                  'payment_processor_type' );
             if ( $paymentProcessorType == 'Google_Checkout' ) {
                 $errors['is_recur_interval'] = ts( 'Google Checkout does not support recurring intervals' );
@@ -364,10 +370,9 @@ SELECT id
     {
         // get the submitted form values.
         $params = $this->controller->exportValues( $this->_name );
-       
-        if ( CRM_Utils_Array::value( 'payment_processor_id', $params) == 
-             CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessor', 'AuthNet', 
-                                          'id', 'payment_processor_type') ) {
+        if ( array_key_exists( CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessor', 'AuthNet',
+                                                            'id', 'payment_processor_type'), 
+                               CRM_Utils_Array::value( 'payment_processor', $params ) ) ) {
             CRM_Core_Session::setStatus( ts( ' Please note that the Authorize.net payment processor only allows recurring contributions and auto-renew memberships with payment intervals from 7-365 days or 1-12 months (i.e. not greater than 1 year).' ) );
         }
         // check for price set.
@@ -413,7 +418,11 @@ SELECT id
                          array_keys( $params['recur_frequency_unit'] ) );
             $params['is_recur_interval'] = CRM_Utils_Array::value( 'is_recur_interval', $params ,false );
         }
-        
+
+        if ( !CRM_Utils_System::isNull( $params['payment_processor'] ) ) {
+            $params['payment_processor'] = implode(',', array_keys($params['payment_processor']));
+        }
+
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
         $contributionPage   = CRM_Contribute_BAO_ContributionPage::create( $params );
         $contributionPageID = $contributionPage->id;
