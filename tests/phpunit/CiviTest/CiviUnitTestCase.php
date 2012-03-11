@@ -1913,7 +1913,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
             $value = date('Y-m-d' ,strtotime($value));
             $result[$key] = date('Y-m-d' ,strtotime($result[$key]));
           }
-          $this->assertEquals($value, $result[$keys[$key]],$key . "GetandCheck function determines that value: $value doesn't match " . print_r($result,true) . $errorText);        
+          $this->assertEquals($value, $result[$keys[$key]],$key . "EGetandCheck function determines that value: $value doesn't match " . print_r($result,true) . $errorText);        
           
       } 
   }
