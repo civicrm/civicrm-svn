@@ -140,12 +140,13 @@ class api_v3_DomainTest extends CiviUnitTestCase
                  'version' => 3,
                  'current_domain' => 1,
                  'return' => 'name'));
-     $this->assertAPISuccess($domain);
+     $this->assertEquals('Default Domain Name', $domain,print_r($domain,true) .'in line ' . __LINE__);
      $domain = civicrm_api('domain', 'getvalue', array(
                  'version' => 3,
                  'current_domain' => 1,
                  'return' => 'name'));
-    $this->assertAPISuccess($domain);
+     $this->assertEquals('Default Domain Name', $domain,print_r($domain,true). 'in line ' . __LINE__);
+     
     }
     
     /**

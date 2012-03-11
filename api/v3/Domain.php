@@ -39,7 +39,7 @@
 /**
  * Include utility functions
  */
-require_once 'api/v3/utils.php';
+require_once 'CRM/Core/BAO/Domain.php';
 
 /**
  * Get CiviCRM domain details
@@ -51,13 +51,12 @@ function civicrm_api3_domain_get($params ) {
         $params['version'] = CRM_Utils_array::value('domain_version',$params);
         unset($params['version']);
 
-        require_once 'CRM/Core/BAO/Domain.php';
         $bao = new CRM_Core_BAO_Domain( );
         if (CRM_Utils_Array::value('current_domain',$params)){
-            $bao = CRM_Core_BAO_Domain::getDomain();
-        }else{
-            _civicrm_api3_dao_set_filter ( $bao, $params );
+            $domainBAO = CRM_Core_Config::domainID( );
+            $params['id'] = $domainBAO->id;
         }
+        _civicrm_api3_dao_set_filter ( $bao, $params );
         $domains = _civicrm_api3_dao_to_array ($bao,$params);
 
         foreach ($domains as $domain) {
