@@ -463,6 +463,15 @@ class api_v3_EventTest extends CiviUnitTestCase
       $result = civicrm_api('event', 'getfields',$params);
       $this->assertEquals(1, $result['values']['title']['api.required'], 'in line ' . __LINE__);
     }
+    /* 
+     * test api_action param also works
+     */
+    function testgetfieldsRest(){
+      $description = "demonstrate use of getfields to interogate api";
+      $params = array('version' => 3, 'api_action' => 'create');
+      $result = civicrm_api('event', 'getfields',$params);
+      $this->assertEquals(1, $result['values']['title']['api.required'], 'in line ' . __LINE__);
+    }
     function testgetfieldsDelete(){
       $description = "demonstrate use of getfields to interogate api";
       $params = array('version' => 3, 'action' => 'delete');

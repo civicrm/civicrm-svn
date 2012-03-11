@@ -1063,11 +1063,17 @@ function _civicrm_api3_getrequired($apiRequest) {
  * If multiple aliases the last takes precedence
  */
 function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
+    if(strtolower($apiRequest['action'] =='getfields')){
+      if (!CRM_Utils_Array::value('action',$apiRequest['params'] ) && CRM_Utils_Array::value('api_action',$apiRequest['params'] )){
+        $apiRequest['params']['action'] = $apiRequest['params']['api_action'];
+      }
+      return;
+    }
     $result = civicrm_api($apiRequest['entity'],
                           'getfields',
                           array('version' => 3,
                                 'action' => $apiRequest['action']));
-
+   
     foreach ($result['values'] as $field => $values) {
         if (CRM_Utils_Array::value('api.aliases',$values)){
             if (!CRM_Utils_Array::value($field,$apiRequest['params'])){ // aliased field is empty so we try to use field alias
