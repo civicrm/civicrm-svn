@@ -177,6 +177,38 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
         }
     }
 
+    
+    static function getPayments( $paymentProcessorIDs, $mode )
+    {
+        if ( ! $paymentProcessorIDs ) {
+            CRM_Core_Error::fatal( ts( 'Invalid value passed to getPayment function' ) );
+        }
+        foreach ( $paymentProcessorIDs as $paymentProcessorID ) {
+            $dao            = new CRM_Core_DAO_PaymentProcessor( );
+            $dao->id        =  $paymentProcessorID;
+            $dao->is_active =  1;
+            if ( ! $dao->find( true ) ) {
+                return null;
+            }
+            
+            if ( $mode == 'test' ) {
+                $testDAO = new CRM_Core_DAO_PaymentProcessor( );
+                $testDAO->name      = $dao->name;
+                $testDAO->is_active = 1;
+                $testDAO->is_test   = 1;
+                if ( ! $testDAO->find( true ) ) {
+                    CRM_Core_Error::fatal( ts( 'Could not retrieve payment processor details' ) );
+                }
+                $paymentDAO[$dao->id] = self::buildPayment( $testDAO );
+            } else {
+                $paymentDAO[$dao->id] = self::buildPayment( $dao );
+            }
+        }
+        return $paymentDAO;
+    }
+
+
+
     /**
      * Function to build payment processor details
      *
