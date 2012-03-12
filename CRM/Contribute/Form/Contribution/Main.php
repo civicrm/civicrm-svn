@@ -339,6 +339,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         }
         
+        if ( !empty( $this->_paymentProcessors ) ) {
+            foreach ( $this->_paymentProcessors as $pid => $value ) {
+                if ( CRM_Utils_Array::value( 'is_default', $value ) ) {
+                    $this->_defaults['payment_processor'] = $pid;
+                }
+            }
+        }
+
         return $this->_defaults;
     }
     
