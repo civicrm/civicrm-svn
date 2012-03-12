@@ -241,16 +241,16 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/BAO/UFMatch.php';
         $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ); 
-        if ( $uid && ( ( $session->get( 'userID' ) == $this->_contactId ) ||
-            CRM_Core_Permission::check( 'administer CiviCRM' ) ) ) {
-            // To do: we should also allow users with CRM_Core_Permission::check( 'view user profiles' ) true to access $userRecordUrl
+        if ( $uid ) {
+            // To do: we should also allow drupal users with CRM_Core_Permission::check( 'view user profiles' ) true to access $userRecordUrl
             // but this is currently returning false regardless of permission set for the role. dgg
-            if ( $config->userSystem->is_drupal == '1' && CRM_Core_Permission::check( 'administer users' ) ) {
-                $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
-            } else if ( $config->userFramework == 'Joomla' ) {
-                $userRecordUrl = $config->userFrameworkVersion > 1.5 ? 
-                    $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". $uid : 
-                    $config->userFrameworkBaseURL ."index2.php?option=com_users&view=user&task=edit&id[]=". $uid;
+            if ( $config->userSystem->is_drupal == '1' &&
+                 ( $session->get( 'userID' ) == $this->_contactId || CRM_Core_Permission::check( 'administer users' ) ) ) {
+                     $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
+            // To do: replace 'administer CiviCRM' with check for Joomla permission required to view other users profiles. dgg
+            } else if ( $config->userFramework == 'Joomla' &&
+                        ( $session->get( 'userID' ) == $this->_contactId ||  CRM_Core_Permission::check( 'administer CiviCRM' ) ) ) {
+                $userRecordUrl = $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". $uid;
             } else {
                 $userRecordUrl = null;
             }
