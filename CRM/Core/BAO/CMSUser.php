@@ -213,9 +213,9 @@ class CRM_Core_BAO_CMSUser
     static function create( &$params, $mail ) 
     {
         $config  = CRM_Core_Config::singleton( );
-        
+             
         $ufID = $config->userSystem->createUser( $params, $mail );
-
+      
         //if contact doesn't already exist create UF Match
         if ( $ufID !== false &&
              isset( $params['contactID'] ) ) {
@@ -225,8 +225,10 @@ class CRM_Core_BAO_CMSUser
             $ufmatch->uf_id          =  $ufID;
             $ufmatch->contact_id     =  $params['contactID'];
             $ufmatch->uf_name        =  $params[$mail];
-            $ufmatch->save( );
             
+            if ( !$ufmatch->find(true) ) {
+                $ufmatch->save( );
+            }
         }
         
         return $ufID;

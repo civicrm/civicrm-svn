@@ -381,6 +381,13 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         }
         
         $uid = wp_insert_user( $user_data );
+        
+        $creds = array( );
+        $creds['user_login'] = $params['cms_name'];
+        $creds['user_password'] = $params['cms_pass'];
+        $creds['remember'] = true;
+        $user = wp_signon( $creds, false );
+                    
         wp_new_user_notification( $uid, $user_data['user_pass'] );
         return $uid;
     }
