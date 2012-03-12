@@ -299,9 +299,12 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                     CRM_Core_Error::fatal( ts( 'A payment processor must be selected for this contribution page (contact the site administrator for assistance).' ) );
                 }
                 
+                $ppIds = explode( CRM_Core_DAO::VALUE_SEPARATOR, $ppID );
                 require_once 'CRM/Core/BAO/PaymentProcessor.php';
-                $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID,
-                                                                                      $this->_mode );
+                $this->_paymentProcessors = CRM_Core_BAO_PaymentProcessor::getPayments( $ppIds,
+                                                                                       $this->_mode );
+                
+                $this->_paymentProcessor = $this->_paymentProcessors[1]; 
                 // check selected payment processor is active
                 if ( empty( $this->_paymentProcessor ) ) {
                     CRM_Core_Error::fatal( ts( 'A payment processor configured for this page might be disabled (contact the site administrator for assistance).' ) );

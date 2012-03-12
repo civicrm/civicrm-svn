@@ -365,6 +365,15 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
         $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
                 
+        if ( count ( $this->_paymentProcessors > 1 ) ) {
+            $pps = $this->_paymentProcessors;
+            foreach ( $pps as $key => &$name ){
+                $pps[$key] = $name['name']; 
+            }
+            
+            $this->addRadio( 'payment_processor', ts('Payment Processor'), $pps );
+        }
+        
         //build pledge block.
         $this->_useForMember = 0;
         //don't build membership block when pledge_id is passed
