@@ -247,11 +247,15 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             if ( $config->userSystem->is_drupal == '1' &&
                  ( $session->get( 'userID' ) == $this->_contactId || CRM_Core_Permission::check( 'administer users' ) ) ) {
                      $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
-            // To do: replace 'administer CiviCRM' with check for Joomla permission required to view other users profiles. dgg
-            } else if ( $config->userFramework == 'Joomla' &&
-                        ( $session->get( 'userID' ) == $this->_contactId ||  CRM_Core_Permission::check( 'administer CiviCRM' ) ) ) {
-                $userRecordUrl = $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". $uid;
-            } else {
+            } else if ( $config->userFramework == 'Joomla' ) {
+                $userRecordUrl = null;
+                // if logged in user is super user, then he can view other users joomla profile    
+                if ( JFactory::getUser()->authorise('core.admin') ) {
+                    $userRecordUrl = $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". $uid;
+                } else if ( $session->get( 'userID' ) == $this->_contactId ) {
+                    $userRecordUrl = $config->userFrameworkBaseURL ."index.php?option=com_admin&view=profile&layout=edit&id=". $uid;
+                } 
+           } else {
                 $userRecordUrl = null;
             }
             $this->assign( 'userRecordUrl', $userRecordUrl );
