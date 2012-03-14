@@ -348,7 +348,21 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $autoRenew;
-    
+
+    /**
+     * batch type options
+     * @var array
+     * @static
+     */
+    private static $batchTypes;
+
+    /**
+     * batch status options
+     * @var array
+     * @static
+     */
+    private static $batchStatues;
+
     /**
      * populate the object from the database. generic populate
      * method
@@ -1758,6 +1772,44 @@ ORDER BY name";
         return self::$eventContacts;
     }
 
-}
+    /**
+     * Get all batch types 
+     *
+     * The static array batchTypes
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all batch types
+     */
+    public static function &getBatchTypes( )
+    {
+        if ( !self::$batchTypes ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$batchTypes = CRM_Core_OptionGroup::values( 'batch_type' );
+        }
 
+        return self::$batchTypes;
+    }
+
+    /**
+     * Get all batch statuses 
+     *
+     * The static array batchStatues
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all batch statuses
+     */
+    public static function &getBatchStatues( )
+    {
+        if ( !self::$batchStatues ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$batchStatues = CRM_Core_OptionGroup::values( 'batch_status' );
+        }
+
+        return self::$batchStatues;
+    }
+
+
+}
 

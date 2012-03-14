@@ -29,3 +29,7 @@ ALTER TABLE `civicrm_custom_group` CHANGE `extends_entity_column_value` `extends
 
 -- CRM-9534
 ALTER TABLE `civicrm_prevnext_cache` ADD COLUMN is_selected tinyint(4) DEFAULT '0';
+
+-- CRM-9834
+-- add civicrm_batch table changes
+-- add batch type and batch status option groups

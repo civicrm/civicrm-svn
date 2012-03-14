@@ -31,6 +31,15 @@
      <localizable>true</localizable>
      <comment>Friendly Name.</comment>
      <add>3.3</add>
+     <drop>4.2</drop>
+  </field>
+  <field>
+     <name>title</name>
+     <type>varchar</type>
+     <length>64</length>
+     <localizable>true</localizable>
+     <comment>Friendly Name.</comment>
+     <add>4.2</add>
   </field>
   <field>
      <name>description</name>
@@ -80,4 +89,51 @@
        <add>3.3</add>
        <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field>
+      <name>saved_search_id</name>
+      <type>int unsigned</type>
+      <comment>FK to Saved Search ID</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey>
+      <name>saved_search_id</name>
+      <table>civicrm_saved_search</table>
+      <key>id</key>
+      <add>4.2</add>
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
+  <field>
+      <name>batch_status_id</name>
+      <type>int unsigned</type> 
+      <required>true</required>  
+      <comment>fk to Batch Status options in civicrm_option_values</comment>
+      <add>4.2</add>
+  </field>  
+  <field>
+      <name>batch_type_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>fk to Batch Type options in civicrm_option_values</comment>
+      <add>4.2</add>
+  </field>
+  <index>
+      <name>UI_name</name>
+      <fieldName>name</fieldName>
+      <unique>true</unique>
+      <add>4.2</add>
+  </index>
+  <field>     
+      <name>total</name>  
+      <type>decimal</type>  
+      <comment>Total amount for this batch.</comment>  
+      <add>4.2</add>  
+  </field>
+  <field>
+       <name>item_count</name>
+       <type>int unsigned</type>
+       <required>true</required>
+       <comment>Number of items in a batch.</comment>
+       <add>4.2</add>
+  </field>
+ 
 </table>

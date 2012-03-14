@@ -116,4 +116,15 @@
      <access_callback>1</access_callback>
      <is_public>true</is_public>
   </item>
+  <item>
+      <path>civicrm/batch</path>
+     <title>Batch</title>
+     <page_callback>CRM_Batch_Page_Batch</page_callback>
+     <access_arguments>access CiviContribute</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/batch/add</path>
+     <page_callback>CRM_Batch_Form_Batch</page_callback>
+     <access_arguments>access CiviContribute</access_arguments>
+  </item>
 </menu>

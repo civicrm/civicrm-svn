@@ -34,35 +34,81 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Batch.php';
+require_once 'CRM/Core/Page/Basic.php';
 
 /**
- *
+ * Page for displaying list of current batches 
  */
-class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
+class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic 
+{
     /**
-     * Cache for the current batch object
-     */
-    static $_batch = null;
-
-
-    /**
-     * Create a new batch
+     * The action links that we need to display for the browse screen
      *
-     * @return batch array
-     * @access public
+     * @var array
+     * @static
      */
-    static function create( $params ) {
-        if ( ! CRM_Utils_Array::value( 'id', $params ) ) { 
-            require_once 'CRM/Utils/String.php';
-            $params['name'] = CRM_Utils_String::titleToVar( $params['title'] );
-        }
+    static $_links = null;
 
-        $batch = new CRM_Core_DAO_Batch( );
-        $batch->copyValues( $params );
-        $batch->save( );
-        return $batch;
+    /**
+     * Get BAO Name
+     *
+     * @return string Classname of BAO.
+     */
+    function getBAOName() 
+    {
+        return 'CRM_Core_BAO_Batch';
+    }
+
+    /**
+     * Get action Links
+     *
+     * @return array (reference) of action links
+     */
+    function &links()
+    {            
+        if ( !( self::$_links ) ) {
+            self::$_links = array(
+                CRM_Core_Action::UPDATE  => array(
+                    'name'  => ts('Batch Entry'),
+                    'url'   => 'civicrm/batch/entry',
+                    'qs'    => 'id=%%id%%&reset=1',
+                    'title' => ts('Batch Entry') 
+                )
+            );
+        }
+        return self::$_links;
+    }
+
+    /**
+     * Get name of edit form
+     *
+     * @return string Classname of edit form.
+     */
+    function editForm() 
+    {
+        return 'CRM_Contribute_Form_Batch';
+    }
+    
+    /**
+     * Get edit form name
+     *
+     * @return string name of this page.
+     */
+    function editName() 
+    {
+        return 'Batch Processing';
+    }
+    
+    /**
+     * Get user context.
+     *
+     * @return string user context.
+     */
+    function userContext($mode = null) 
+    {
+        return  CRM_Utils_System::currentPath( );
     }
 
 }
+
 

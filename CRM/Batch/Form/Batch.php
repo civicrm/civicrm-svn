@@ -34,35 +34,54 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Batch.php';
+require_once 'CRM/Admin/Form.php';
 
 /**
- *
+ * This class generates form components for batch entry
+ * 
  */
-class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
+class CRM_Batch_Form_Batch extends CRM_Admin_Form
+{
     /**
-     * Cache for the current batch object
-     */
-    static $_batch = null;
-
-
-    /**
-     * Create a new batch
+     * Function to build the form
      *
-     * @return batch array
+     * @return None
      * @access public
      */
-    static function create( $params ) {
-        if ( ! CRM_Utils_Array::value( 'id', $params ) ) { 
-            require_once 'CRM/Utils/String.php';
-            $params['name'] = CRM_Utils_String::titleToVar( $params['title'] );
+    public function buildQuickForm( ) 
+    {
+        parent::buildQuickForm( );
+       
+        if ( $this->_action & CRM_Core_Action::DELETE ) { 
+            return;
         }
-
-        $batch = new CRM_Core_DAO_Batch( );
-        $batch->copyValues( $params );
-        $batch->save( );
-        return $batch;
+        
+        $this->applyFilter('__ALL__', 'trim');
+        $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch');
+        $this->add('text', 'title', ts('Title'), $attributes['name'], true );
+        $this->add('select', 'batch_type_id', ts('Type'), CRM_Core_Pseudoconstant::getBatchTypes() ); 
+        $this->add('text', 'description', ts('Description'), $attributes['description'] );
+        $this->add('text', 'item_count', ts('Number of items'), $attributes['item_count'] );
+        $this->add('text', 'total', ts('Total Amount'), $attributes['total'] );
+        $this->add('select', 'batch_status_id', ts('Status'), CRM_Core_Pseudoconstant::getBatchStatues() ); 
     }
+       
+    /**
+     * Function to process the form
+     *
+     * @access public
+     * @return None
+     */
+    public function postProcess() {
+        $params = $this->controller->exportValues( $this->_name );
+
+        require_once 'CRM/Core/BAO/Batch.php';
+        $batch = CRM_Core_BAO_Batch::create( $params ); 
+        
+        // redirect to batch entry page.
+
+    } //end of function
 
 }
+
 

@@ -1,6 +1,4 @@
-<?php
-
-/*
+{*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
  +--------------------------------------------------------------------+
@@ -24,45 +22,43 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+*}
 
-/**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
- * $Id$
- *
- */
+<div id="help">
+    {ts}Current batches{/ts}
+</div>
 
-require_once 'CRM/Core/DAO/Batch.php';
+{if $rows}
+<div id="crm-batch">
+  <table id="options" class="display">
+    <thead>
+        <tr>
+            <th>{ts}Title{/ts}</th>
+            <th>{ts}Type{/ts}</th>
+            <th>{ts}Item Count{/ts}</th>
+            <th>{ts}Total Amount{/ts}</th>
+            <th></th>
+        </tr>
+    </thead>
+    {foreach from=$rows item=row}
+        <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"}">
+            <td class="crm-batch-name">{$row.title}</td>	
+            <td class="crm-batch-type">{$row.batch_type_id}</td>	
+            <td class="crm-batch-total">{$row.item_count}</td>	
+            <td class="crm-batch-total">{$row.total|crmMoney}</td>	
+            <td>{$row.action|replace:'xx':$row.id}</td>
+        </tr>
+    {/foreach}
+  </table>
 
-/**
- *
- */
-class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
-    /**
-     * Cache for the current batch object
-     */
-    static $_batch = null;
-
-
-    /**
-     * Create a new batch
-     *
-     * @return batch array
-     * @access public
-     */
-    static function create( $params ) {
-        if ( ! CRM_Utils_Array::value( 'id', $params ) ) { 
-            require_once 'CRM/Utils/String.php';
-            $params['name'] = CRM_Utils_String::titleToVar( $params['title'] );
-        }
-
-        $batch = new CRM_Core_DAO_Batch( );
-        $batch->copyValues( $params );
-        $batch->save( );
-        return $batch;
-    }
-
-}
-
+  <div class="action-link">
+    <a href="{crmURL p='civicrm/batch/add' q='action=add&reset=1'}" id="newBatch" class="button"><span>&raquo; {ts}New Batch{/ts}</span></a>
+  </div>
+</div>
+{else}
+    <div class="messages status">
+        <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+        {capture assign=crmURL}{crmURL p="civicrm/batch/add" q="action=add&reset=1"}{/capture}
+        {ts 1=$crmURL}There are no batches. You can <a href='%1'>add one</a>.{/ts}
+    </div>    
+{/if}

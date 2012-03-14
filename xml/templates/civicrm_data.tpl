@@ -204,7 +204,9 @@ VALUES
    ('label_format'                  , '{ts escape="sql"}Mailing Label Format{/ts}'               , 1, 1),
    ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 1, 1),
    ('event_contacts'                , '{ts escape="sql"}Event Recipients{/ts}'                   , 1, 1),
-   ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 1, 1);
+   ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 1, 1),
+   ('batch_type'                    , '{ts escape="sql"}Batch Type{/ts}'                         , 1, 1),
+   ('batch_status'                  , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1);
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -268,6 +270,8 @@ SELECT @option_group_id_label          := max(id) from civicrm_option_group wher
 SELECT @option_group_id_aco            := max(id) from civicrm_option_group where name = 'activity_contacts';
 SELECT @option_group_id_ere            := max(id) from civicrm_option_group where name = 'event_contacts';
 SELECT @option_group_id_conference_slot := max(id) from civicrm_option_group where name = 'conference_slot';
+SELECT @option_group_id_batch_type     := max(id) from civicrm_option_group where name = 'batch_type';
+SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -782,6 +786,14 @@ VALUES
 -- default conference slots
    (@option_group_id_conference_slot, '{ts escape="sql"}Morning Sessions{/ts}', 1, '{ts escape="sql"}Morning Sessions{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_conference_slot, '{ts escape="sql"}Evening Sessions{/ts}', 2, '{ts escape="sql"}Evening Sessions{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+
+-- default batch type
+   (@option_group_id_batch_type, '{ts escape="sql"}Contribution{/ts}', 1, '{ts escape="sql"}Contribution{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_batch_type, '{ts escape="sql"}Membership{/ts}', 2, '{ts escape="sql"}Membership{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+
+-- default batch statues
+   (@option_group_id_batch_status, '{ts escape="sql"}Open{/ts}', 1, '{ts escape="sql"}Open{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_batch_status, '{ts escape="sql"}Closed{/ts}', 2, '{ts escape="sql"}Closed{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
 
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL), 
