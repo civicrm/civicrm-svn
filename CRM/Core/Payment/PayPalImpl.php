@@ -301,7 +301,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $args['cvv2']           = $params['cvv2'];
         $args['firstName']      = $params['first_name'];
         $args['lastName']       = $params['last_name'];
-        $args['email']          = $params['email'];
+        $args['email']          = CRM_Utils_Array::value( 'email', $params );
         $args['street']         = $params['street_address'];
         $args['city']           = $params['city'];
         $args['state']          = $params['state_province'];
