@@ -403,6 +403,21 @@ function enableHonorType( ) {
     }
 }
 
+function showPaymentBlock( id ) {
+ console.log(id);
+
+      var ppID = id;
+      var action = "{/literal}{$action}{literal}";
+      //      console.log(mode);
+      var postUrl = "{/literal}{crmURL p='civicrm/ajax/getpp' h=0}{literal}";
+
+      cj.post( postUrl, {ppID: ppID, action: action}, function( data ) {
+
+
+
+      }, 'json');
+}
+
 function pcpAnonymous( ) {
     // clear nickname field if anonymous is true
     if ( document.getElementsByName("pcp_is_anonymous")[1].checked ) { 

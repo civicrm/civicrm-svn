@@ -379,7 +379,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $pps[$key] = $name['name']; 
             }
             
-            $this->addRadio( 'payment_processor', ts('Payment Processor'), $pps );
+            $this->addRadio( 'payment_processor', ts('Payment Processor'), $pps, array('onclick' =>"return showPaymentBlock(this.value);") );
         }
         
         //build pledge block.

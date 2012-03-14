@@ -278,7 +278,24 @@ abstract class CRM_Core_Payment {
         CRM_Utils_System::civiExit();
               
     }
-    
+
+    /**                                                                                                                                                                                                         * Function to get Payment Processor Info
+     * 
+     */
+    static function getPaymentProcessorInfo( )
+    {
+        $ppID = CRM_Utils_Type::escape( $_POST['ppID'], 'Positive' );
+        $action = CRM_Utils_Type::escape( $_POST['action'], 'String' );
+        
+        $mode = ( $action == 1024 ) ? 'test' : 'live';
+        
+        require_once 'CRM/Core/BAO/PaymentProcessor.php';
+        $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );        
+        
+        require_once 'CRM/Utils/System.php';
+        CRM_Utils_System::civiExit();
+
+    }
 }
 
 
