@@ -123,6 +123,13 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form
             $errors['api_action'] = ts( 'Given API command is not defined.' );
         }
 
+        // CRM-9868- don't allow Enabled (is_active) for jobs that should never be run automatically via execute action or runjobs url 
+        if( ( $fields['api_action'] == 'process_membership_reminder_date' || $fields['api_action'] == 'update_greeting' ) &&
+              CRM_Utils_Array::value( 'is_active', $fields ) == 1 ) {
+            $docLink = CRM_Utils_System::docURL2( "Managing Scheduled Jobs");
+            $errors['is_active'] = ts( 'You can not save this Scheduled Job as Active with the specified api action (%2). That action should not be run regularly - it should only be run manually for special conditions. %1', array( 1 => $docLink, 2 => $fields['api_action'] ) );
+        }
+
         if ( ! empty( $errors ) ) {
             return $errors;
         }
