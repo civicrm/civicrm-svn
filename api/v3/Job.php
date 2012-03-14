@@ -57,10 +57,9 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_job_execute( $params )
 {
-
     require_once 'CRM/Core/JobManager.php';
     $facility = new CRM_Core_JobManager();
-    $facility->execute();
+    $facility->execute( CRM_Utils_Array::value( 'auth', $params, true ) );
                         
     // always creates success - results are handled elsewhere
     return civicrm_api3_create_success( );
