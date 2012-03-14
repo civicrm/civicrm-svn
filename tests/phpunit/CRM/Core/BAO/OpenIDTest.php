@@ -86,7 +86,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase
                                 'Database check for created OpenID.' );
         
         $allowedToLogin = CRM_Core_BAO_OpenID::isAllowedToLogin( $openIdURL );
-        $this->assertEquals( $allowedToLogin, false, 'Verify allowed_to_login value is 0.');
+        $this->assertEquals( $allowedToLogin, true, 'Verify allowed_to_login value is 0.');
         
         
         // Now call add() to modify an existing open-id record
@@ -145,7 +145,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase
         $openIds = CRM_Core_BAO_OpenID::allOpenIDs( $contactId );
         
         // check number of openids for the contact
-        $this->assertEquals( count( $openIds ), 2, 'Checking number of returned open-ids.' );
+        $this->assertEquals( count( $openIds ), 3, 'Checking number of returned open-ids.' );
         
         // check first openid values
         $this->assertEquals( $openIdURLOne,  $openIds[$openIdOne]['openid'], 

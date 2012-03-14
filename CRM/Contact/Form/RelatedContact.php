@@ -179,7 +179,7 @@ class CRM_Contact_Form_RelatedContact extends CRM_Core_Form
         $params['contact_id']   = $this->_contactId;
 
         require_once 'CRM/Contact/BAO/Contact.php';
-        $contact = CRM_Contact_BAO_Contact::create($params, true, false );
+        $contact = CRM_Contact_BAO_Contact::create($params, true);
         
         // set status message.
         CRM_Core_Session::setStatus(ts('Your %1 contact record has been saved.', 

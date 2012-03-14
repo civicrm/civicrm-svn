@@ -76,12 +76,13 @@ function civicrm_api3_verify_one_mandatory ($params, $daoName = null, $keyoption
  * @param array $daoName string DAO to check for required fields (create functions only)
  * @param array $keys list of required fields. A value can be an array denoting that either this or that is required.
  * @param bool $verifyDAO
+ *
  * @return null or throws error if there the required fields not present
  */
 
 function civicrm_api3_verify_mandatory($params, $daoName = null, $keys = array(), $verifyDAO = TRUE) {
-  // moving this to civicrm_api - remove the check for array pending testing
-   if ( ! is_array( $params ) ) {
+    // moving this to civicrm_api - remove the check for array pending testing
+    if ( ! is_array( $params ) ) {
         throw new Exception ('Input variable `params` is not an array');
     }
 
@@ -97,9 +98,9 @@ function civicrm_api3_verify_mandatory($params, $daoName = null, $keys = array()
     if (CRM_Utils_Array::value('id',$params)){
         $keys = array('version');
     } else {
-      if (! in_array('version', $keys)) {
-          $keys[] = 'version';    //required from v3 onwards
-      }
+        if (! in_array('version', $keys)) {
+            $keys[] = 'version';    //required from v3 onwards
+        }
     }
     foreach ($keys as $key) {
         if (is_array($key)) {
@@ -1062,11 +1063,17 @@ function _civicrm_api3_getrequired($apiRequest) {
  * If multiple aliases the last takes precedence
  */
 function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
+    if(strtolower($apiRequest['action'] =='getfields')){
+      if (!CRM_Utils_Array::value('action',$apiRequest['params'] ) && CRM_Utils_Array::value('api_action',$apiRequest['params'] )){
+        $apiRequest['params']['action'] = $apiRequest['params']['api_action'];
+      }
+      return;
+    }
     $result = civicrm_api($apiRequest['entity'],
                           'getfields',
                           array('version' => 3,
                                 'action' => $apiRequest['action']));
-
+   
     foreach ($result['values'] as $field => $values) {
         if (CRM_Utils_Array::value('api.aliases',$values)){
             if (!CRM_Utils_Array::value($field,$apiRequest['params'])){ // aliased field is empty so we try to use field alias

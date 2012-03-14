@@ -339,11 +339,11 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
                  ( ( !$value['contact_sub_type_b'] && !$value['contact_sub_type_a']) && !$onlySubTypeRelationTypes) ) ) ) {
                 $relationshipType[ $key . '_a_b' ] =  $value[ "{$column}_a_b" ];
             } 
-            
+
             if ( ( ( ! $value['contact_type_b'] ) || $value['contact_type_b'] == $contactType ) &&
                  ( ( ! $value['contact_type_a'] ) || ( ! $otherContactType ) || $value['contact_type_a'] == $otherContactType ) &&
-                 ( ( (!$value['contact_sub_type_a'] && !$value['contact_sub_type_b']) && !$onlySubTypeRelationTypes) 
-                   || in_array( $value['contact_sub_type_b'], $contactSubType ) ) ) {
+                 ( ! $contactSubType || ( in_array( $value['contact_sub_type_b'], $contactSubType ) ||
+                 ( ( !$value['contact_sub_type_a'] && !$value['contact_sub_type_b']) && !$onlySubTypeRelationTypes) ) ) ) {
                 $relationshipType[ $key . '_b_a' ] = $value[ "{$column}_b_a" ];
             }
 

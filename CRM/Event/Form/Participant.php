@@ -979,7 +979,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             if ( !empty( $participantLinks ) ) {
                 $status = ts( 'The following participants no longer have an event fee recorded. You can edit their registration and record a replacement contribution by clicking the links below:' ) . '<br>' .$participantLinks ;         
             } else {
-                $status = ts( 'Selected Participants was deleted sucessfully.' );
+                $status = ts( 'Selected participant was deleted successfully.' );
             }
             CRM_Core_Session::setStatus( $status );
             return;

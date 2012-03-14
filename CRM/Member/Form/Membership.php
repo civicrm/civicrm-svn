@@ -1460,7 +1460,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $this->assign( 'module', 'Membership' );
             $this->assign( 'contactID', $this->_contactID );
             $this->assign( 'membershipID', CRM_Utils_Array::value('membership_id', $params,CRM_Utils_Array::value('membership_id',$this->_defaultValues)));
-            $this->assign( 'contributionID', isset($contribution)? $contribution->id : null );
+            $this->assign( 'contributionID', isset($contribution)? $contribution->id :  $this->_onlinePendingContributionId);
+            if(CRM_Utils_Array::value('contribution_status_id', $params)){
+              $this->assign( 'contributionStatusID',$params['contribution_status_id']);
+              $this->assign( 'contributionStatus',CRM_Contribute_PseudoConstant::contributionStatus($params['contribution_status_id'], 'name'));
+            }
             $this->assign('receiptType', 'membership signup');
             $this->assign( 'receive_date', CRM_Utils_Array::value('receive_date', $params) );            
             $this->assign( 'formValues', $formValues );

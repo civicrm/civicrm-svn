@@ -81,14 +81,14 @@ function &civicrm_pledge_payment_create( &$params ) {
 
     $values  = array( );
  
-    require_once 'CRM/Pledge/BAO/Payment.php';    
+    require_once 'CRM/Pledge/BAO/PledgePayment.php';    
     $error = _civicrm_pledgepayment_format_params( $params, $values );
   
       if ( civicrm_error( $error ) ) {
         return $error;
       }
 
-    $pledge = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $params['pledge_id']);
+    $pledge = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $params['pledge_id']);
     $params['id'] = $pledge['id'];
     
     //params ID needs to be pledge payment ID
@@ -109,10 +109,10 @@ LIMIT 0, 1
            $params['id'] =  $payment->id;
         }
 }
-        CRM_Pledge_BAO_Payment::add( $params );
+        CRM_Pledge_BAO_PledgePayment::add( $params );
 
         //update pledge status
-        CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $params['pledge_id']);      
+        CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $params['pledge_id']);      
         return $errors;
        
 }
@@ -340,7 +340,7 @@ function _civicrm_pledgepayment_check_params( &$params ) {
  */
 function _civicrm_pledgepayment_format_params( &$params, &$values, $create=false ) {
     // copy all the pledge fields as is
-   require_once 'CRM/Pledge/BAO/Payment.php';
+   require_once 'CRM/Pledge/BAO/PledgePayment.php';
    require_once 'CRM/Pledge/DAO/Pledge.php';
     $fields = CRM_Pledge_DAO_Pledge::fields( );
 

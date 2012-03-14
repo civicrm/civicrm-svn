@@ -253,10 +253,10 @@ class InstallRequirements {
      * Just check that the database configuration is okay
      */
     function checkdatabase($databaseConfig, $dbName) {
-        if($this->requireFunction('mysql_connect',
-                                  array("PHP Configuration", 
-                                        "MySQL support",
-                                        "MySQL support not included in PHP."))) {
+        if ($this->requireFunction('mysql_connect', 
+                                   array("PHP Configuration", 
+                                         "MySQL support",
+                                         "MySQL support not included in PHP."))) {
             $this->requireMySQLServer($databaseConfig['server'],
                                       array("MySQL $dbName Configuration",
                                             "Does the server exist",
@@ -395,99 +395,114 @@ class InstallRequirements {
         $this->requireServerVariables(array('SCRIPT_NAME','HTTP_HOST','SCRIPT_FILENAME'), array("Webserver config", "Recognised webserver", "You seem to be using an unsupported webserver.  The server variables SCRIPT_NAME, HTTP_HOST, SCRIPT_FILENAME need to be set."));
 
         // Check for MySQL support
-        $this->requireFunction('mysql_connect', array("PHP Configuration", "MySQL support", "MySQL support not included in PHP."));
+        $this->requireFunction('mysql_connect',
+                               array("PHP Configuration", "MySQL support", "MySQL support not included in PHP."));
 
         // Check for JSON support
-        $this->requireFunction('json_encode', array("PHP Configuration", "JSON support", "JSON support not included in PHP."));
+        $this->requireFunction('json_encode',
+                               array("PHP Configuration", "JSON support", "JSON support not included in PHP."));
+
+        // Check for xcache_isset and emit warning if exists
+        $this->checkXCache(array("PHP Configuration", 
+                                 "XCache compatibility",
+                                 "XCache is installed and there are known compatibility issues between XCache and CiviCRM. Consider using an alternative PHP caching mechanism or disable PHP caching altogether.") );
         
-        // Check memory allocation
-        $this->requireMemory(32*1024*1024, 64*1024*1024, array("PHP Configuration", "Memory allocated (PHP config option 'memory_limit')", "CiviCRM needs a minimum of 32M allocated to PHP, but recommends 64M.", ini_get("memory_limit")));
+         // Check memory allocation
+         $this->requireMemory(32*1024*1024, 
+                              64*1024*1024, 
+                              array("PHP Configuration", 
+                                    "Memory allocated (PHP config option 'memory_limit')", 
+                                    "CiviCRM needs a minimum of 32M allocated to PHP, but recommends 64M.",
+                                    ini_get("memory_limit")));
 
-        return $this->errors;
-    }
+         return $this->errors;
+     }
 
-    function suggestPHPSetting($settingName, $settingValues, $testDetails) {
+     function requireMemory($min, $recommended, $testDetails) {
+         $this->testing($testDetails);
+         $mem = $this->getPHPMemory();
+
+         if($mem < $min && $mem > 0) {
+             $testDetails[2] .= " You only have " . ini_get("memory_limit") . " allocated";
+             $this->error($testDetails);
+         } else if($mem < $recommended && $mem > 0) {
+             $testDetails[2] .= " You only have " . ini_get("memory_limit") . " allocated";
+             $this->warning($testDetails);
+         } elseif($mem == 0) {
+             $testDetails[2] .= " We can't determine how much memory you have allocated. Install only if you're sure you've allocated at least 20 MB.";
+             $this->warning($testDetails);
+         }
+     }
+
+     function getPHPMemory() {
+         $memString = ini_get("memory_limit");
+
+         switch(strtolower(substr($memString,-1))) {
+             case "k":
+             return round(substr($memString,0,-1)*1024);
+
+             case "m":
+             return round(substr($memString,0,-1)*1024*1024);
+
+             case "g":
+             return round(substr($memString,0,-1)*1024*1024*1024);
+
+             default:
+             return round($memString);
+         }
+     }
+
+     function listErrors() {
+         if($this->errors) {
+             echo "<p>The following problems are preventing me from installing CiviCRM:</p>";
+             foreach($this->errors as $error) {
+                 echo "<li>" . htmlentities($error) . "</li>";
+             }
+         }
+     }
+
+     function showTable($section = null) {
+         if($section) {
+             $tests = $this->tests[$section];
+             echo "<table class=\"testResults\" width=\"100%\">";
+             foreach($tests as $test => $result) {
+                 echo "<tr class=\"$result[0]\"><td>$test</td><td>" . nl2br(htmlentities($result[1])) . "</td></tr>";
+             }
+             echo "</table>";
+
+         } else {
+             foreach($this->tests as $section => $tests) {
+                 echo "<h3>$section</h3>";
+                 echo "<table class=\"testResults\" width=\"100%\">";
+
+                 foreach($tests as $test => $result) {
+                     echo "<tr class=\"$result[0]\"><td>$test</td><td>" . nl2br(htmlentities($result[1])) . "</td></tr>";
+                 }
+                 echo "</table>";
+             }
+         }
+     }
+
+     function requireFunction($funcName, $testDetails) {
         $this->testing($testDetails);
 
-        $val = ini_get($settingName);
-        if(!in_array($val, $settingValues) && $val != $settingValues) {
-            $testDetails[2] = "$settingName is set to '$val' in php.ini.  $testDetails[2]";
-            $this->warning($testDetails);
-        }
-    }
-
-    function requireMemory($min, $recommended, $testDetails) {
-        $this->testing($testDetails);
-        $mem = $this->getPHPMemory();
-
-        if($mem < $min && $mem > 0) {
-            $testDetails[2] .= " You only have " . ini_get("memory_limit") . " allocated";
+        if (! function_exists( $funcName ) ) {
             $this->error($testDetails);
-        } else if($mem < $recommended && $mem > 0) {
-            $testDetails[2] .= " You only have " . ini_get("memory_limit") . " allocated";
-            $this->warning($testDetails);
-        } elseif($mem == 0) {
-            $testDetails[2] .= " We can't determine how much memory you have allocated. Install only if you're sure you've allocated at least 20 MB.";
-            $this->warning($testDetails);
-        }
-    }
-
-    function getPHPMemory() {
-        $memString = ini_get("memory_limit");
-
-        switch(strtolower(substr($memString,-1))) {
-            case "k":
-            return round(substr($memString,0,-1)*1024);
-
-            case "m":
-            return round(substr($memString,0,-1)*1024*1024);
-
-            case "g":
-            return round(substr($memString,0,-1)*1024*1024*1024);
-
-            default:
-            return round($memString);
-        }
-    }
-
-    function listErrors() {
-        if($this->errors) {
-            echo "<p>The following problems are preventing me from installing CiviCRM:</p>";
-            foreach($this->errors as $error) {
-                echo "<li>" . htmlentities($error) . "</li>";
-            }
-        }
-    }
-
-    function showTable($section = null) {
-        if($section) {
-            $tests = $this->tests[$section];
-            echo "<table class=\"testResults\" width=\"100%\">";
-            foreach($tests as $test => $result) {
-                echo "<tr class=\"$result[0]\"><td>$test</td><td>" . nl2br(htmlentities($result[1])) . "</td></tr>";
-            }
-            echo "</table>";
-
+            return false;
         } else {
-            foreach($this->tests as $section => $tests) {
-                echo "<h3>$section</h3>";
-                echo "<table class=\"testResults\" width=\"100%\">";
-
-                foreach($tests as $test => $result) {
-                    echo "<tr class=\"$result[0]\"><td>$test</td><td>" . nl2br(htmlentities($result[1])) . "</td></tr>";
-                }
-                echo "</table>";
-            }
+            return true;
         }
-    }
+     }
 
-    function requireFunction($funcName, $testDetails) {
-        $this->testing($testDetails);
-        if(!function_exists($funcName)) $this->error($testDetails);
-        else return true;
-    }
+     function checkXCache( $testDetails ) {
+         if ( function_exists( 'xcache_isset' ) &&
+              ini_get( 'xcache.size' ) > 0 ) {
+             $this->testing( $testDetails );
+             $this->warning( $testDetails );
+         }
+     }
 
-    function requirePHPVersion($minVersion, $testDetails, $maxVersion = null) {
+     function requirePHPVersion($minVersion, $testDetails, $maxVersion = null) {
 
         $this->testing($testDetails);
 
@@ -783,6 +798,7 @@ class InstallRequirements {
         $this->errors[] = $testDetails;
 
     }
+
     function warning($testDetails) {
         $section = $testDetails[0];
         $test = $testDetails[1];
@@ -795,6 +811,7 @@ class InstallRequirements {
     function hasErrors() {
         return sizeof($this->errors);
     }
+
     function hasWarnings() {
         return sizeof($this->warnings);
     }

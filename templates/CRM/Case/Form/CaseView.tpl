@@ -742,7 +742,7 @@ function addTags() {
                 var caseID      = {/literal}{$caseID}{literal};	
 
                 cj("#manageTags #tags option").each( function() {
-                    if ( cj(this).attr('selected') == true) {
+                    if ( cj(this).prop('selected') ) {
                         if ( !tagsChecked ) {
                             tagsChecked = cj(this).val() + '';
                         } else {

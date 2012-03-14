@@ -23,7 +23,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
     function tearDown( ) 
     {
         // truncate a few tables
-        $tablesToTruncate = array( 'civicrm_contact', 'civicrm_activity' );
+        $tablesToTruncate = array( 'civicrm_contact', 'civicrm_activity', 'civicrm_activity_target', 'civicrm_activity_assignment' );
         $this->quickCleanup( $tablesToTruncate );
     }
     

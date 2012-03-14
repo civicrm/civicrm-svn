@@ -69,10 +69,13 @@ class CRM_Report_Page_InstanceList extends CRM_Core_Page
                  ON v.component_id = comp.id
             
          WHERE v.is_active = 1 {$report}
+                AND inst.domain_id = %1
+          ORDER BY  v.weight";
 
-         ORDER BY v.weight
-        ";
-        $dao  = CRM_Core_DAO::executeQuery( $sql );
+        $dao  = CRM_Core_DAO::executeQuery( $sql, array(
+                         1 => array( CRM_Core_Config::domainID( ), 'Integer' ) ) );
+        
+
         $config = CRM_Core_Config::singleton( );
         $rows = array();
         $url  = 'civicrm/report/instance';

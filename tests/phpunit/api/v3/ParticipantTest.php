@@ -456,9 +456,54 @@ class api_v3_ParticipantTest extends CiviUnitTestCase
             $this->assertDBState( 'CRM_Event_DAO_Participant', $participant['id'], $params );
         }
     }
-
-
-    
+    /*
+     * Test to check if receive date is being changed per CRM-9763
+     */
+        function testCreateUpdateReceiveDate(){
+           $participant =  civicrm_api('participant','create',$this->_params);
+           $update = array(
+             'version' => 3, 
+             'id' => $participant['id'],
+             'status_id' => 2,);
+           civicrm_api('participant','create',$update);
+           $this->getAndCheck(array_merge($this->_params,$update) , $participant['id'], 'participant');
+        }
+    /*
+     * Test to check if participant fee level is being changed per CRM-9781
+     */
+        function testCreateUpdateParticipantFeeLevel(){
+          $myParams = $this->_params + array('participant_fee_level' => CRM_Core_DAO::VALUE_SEPARATOR . "fee". CRM_Core_DAO::VALUE_SEPARATOR);
+          $participant =  civicrm_api('participant','create',$myParams);
+          $this->assertAPISuccess($participant);
+          $update = array(
+             'version' => 3, 
+             'id' => $participant['id'],
+             'status_id' => 2,);
+           civicrm_api('participant','create',$update);
+           $this->assertEquals($participant['values'][$participant['id']]['participant_fee_level'],
+                               $update['values'][$participant['id']]['participant_fee_level']);
+           
+           civicrm_api('participant', 'delete', array('version' => 3, 'id' => $participant['id']));
+        }
+    /*
+     * Test to check if participant fee level is being changed per CRM-9781
+     * Try again  without a custom separater to check that one isn't added
+     * (get & check won't accept an array)
+     */
+    function testUpdateCreateParticipantFeeLevelNoSeparator(){
+          
+          $myParams = $this->_params + array('participant_fee_level' => "fee");
+          $participant =  civicrm_api('participant','create',$myParams);
+          $this->assertAPISuccess($participant);
+          $update = array(
+             'version' => 3, 
+             'id' => $participant['id'],
+             'status_id' => 2,);
+           civicrm_api('participant','create',$update);
+           $this->assertEquals($participant['values'][$participant['id']]['participant_fee_level'],
+                               $update['values'][$participant['id']]['participant_fee_level']);
+           $this->getAndCheck($update, $participant['id'], 'participant');
+}
     ///////////////// civicrm_participant_update methods
 
     /**

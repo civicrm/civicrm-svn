@@ -55,12 +55,15 @@ class civicrm_cli {
     public function callApi( ) {
         require_once 'api/api.php';
 
-        if( $this->_joblog ) {
+        //  CRM-9822 -'execute' action always goes thru Job api and always writes to log
+        if( $this->_action != 'execute' && $this->_joblog ) {
             require_once 'CRM/Core/JobManager.php';
             $facility = new CRM_Core_JobManager();
             $facility->setSingleRunParams( $this->_entity, $this->_action, $this->_params, 'From Cli.php' );
             $facility->executeJobByAction( $this->_entity, $this->_action );
         } else {
+            // CRM-9822 cli.php calls don't require site-key, so bypass site-key authentication
+            $this->_params['auth'] = false;
             $result = civicrm_api($this->_entity, $this->_action, $this->_params);
         }
 

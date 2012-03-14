@@ -203,7 +203,7 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
     //field has been renamed - don't lose it! Note that this must be called
     // installment amount not pledge_installment_amount, pledge_original_installment_amount
     // or original_installment_amount to avoid error
-    // Division by zero in CRM\Pledge\BAO\Payment.php:162
+    // Division by zero in CRM\Pledge\BAO\PledgePayment.php:162
     // but we should accept the variant because they are all 'logical assumptions' based on the
     // 'standards'
     $values['installment_amount'] = CRM_Utils_Array::value('installment_amount',$params);
@@ -229,12 +229,12 @@ function _civicrm_api3_pledge_format_params( $params, &$values, $create=false ) 
   }
   if ( array_key_exists( 'id', $params )  ){
     //retrieve the id key dropped from params. Note we can't use pledge_id because it
-    //causes an error in CRM_Pledge_BAO_Payment - approx line 302
+    //causes an error in CRM_Pledge_BAO_PledgePayment - approx line 302
     $values['id'] = $params['id'];
   }
   if ( array_key_exists( 'pledge_id', $params )  ){
     //retrieve the id key dropped from params. Note we can't use pledge_id because it
-    //causes an error in CRM_Pledge_BAO_Payment - approx line 302
+    //causes an error in CRM_Pledge_BAO_PledgePayment - approx line 302
     $values['id'] = $params['pledge_id'];
     unset($values['pledge_id']);
   }

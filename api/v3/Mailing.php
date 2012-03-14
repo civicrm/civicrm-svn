@@ -65,7 +65,10 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
 function civicrm_api3_mailing_event_bounce($params)
 {   
 
-        civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Bounce',array ( 'job_id', 'event_queue_id', 'hash', 'body' ) );
+        civicrm_api3_verify_mandatory ($params,
+                                       'CRM_Mailing_Event_DAO_Bounce',
+                                       array ( 'job_id', 'event_queue_id', 'hash', 'body' ),
+                                       false );
            
         $body = $params['body']; 
         unset ( $params['body'] );
@@ -90,7 +93,10 @@ function civicrm_api3_mailing_event_bounce($params)
 function civicrm_api3_mailing_event_confirm( $params ) 
 {
 
-        civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Confirm',array ( 'contact_id', 'subscribe_id', 'hash' ) );
+        civicrm_api3_verify_mandatory ($params,
+                                       'CRM_Mailing_Event_DAO_Confirm',
+                                       array ( 'contact_id', 'subscribe_id', 'hash' ),
+                                       false );
           
         $contact_id   = $params['contact_id']; 
         $subscribe_id = $params['subscribe_id']; 
@@ -115,14 +121,15 @@ function civicrm_api3_mailing_event_reply($params)
 {
     civicrm_api3_verify_mandatory ($params,
                                    'CRM_Mailing_Event_DAO_Reply',
-                                   array('job_id', 'event_queue_id', 'hash', 'bodyTxt', 'replyTo') );            
-          
+                                   array( 'job_id', 'event_queue_id', 'hash', 'replyTo' ),
+                                   false );
+
     $job       = $params['job_id']; 
     $queue     = $params['event_queue_id']; 
     $hash      = $params['hash']; 
-    $bodyTxt   = $params['bodyTxt']; 
     $replyto   = $params['replyTo']; 
-    $bodyHTML  = CRM_Utils_Array::value('bodyHTML', $params);
+    $bodyTxt   = CRM_Utils_Array::value('bodyTxt'  , $params);
+    $bodyHTML  = CRM_Utils_Array::value('bodyHTML' , $params);
     $fullEmail = CRM_Utils_Array::value('fullEmail', $params);
 
     $mailing = CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
@@ -146,7 +153,10 @@ function civicrm_api3_mailing_event_reply($params)
 function civicrm_api3_mailing_event_forward($params) 
 {
 
-    civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Forward', array('job_id', 'event_queue_id', 'hash', 'email') );
+    civicrm_api3_verify_mandatory ($params,
+                                   'CRM_Mailing_Event_DAO_Forward',
+                                   array('job_id', 'event_queue_id', 'hash', 'email'),
+                                   false );
                    
     $job       = $params['job_id']; 
     $queue     = $params['event_queue_id']; 
@@ -174,7 +184,10 @@ function civicrm_api3_mailing_event_forward($params)
 function civicrm_api3_mailing_event_click($params) 
 {
 
-    civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_TrackableURLOpen', array('event_queue_id', 'url_id') );
+    civicrm_api3_verify_mandatory ($params,
+                                   'CRM_Mailing_Event_DAO_TrackableURLOpen',
+                                   array('event_queue_id', 'url_id'),
+                                   false );
           
     $url_id = $params['url_id']; 
     $queue  = $params['event_queue_id']; 
@@ -198,7 +211,11 @@ function civicrm_api3_mailing_event_click($params)
 function civicrm_api3_mailing_event_open($params) 
 {
 
-    civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Opened', array('event_queue_id') );    
+    civicrm_api3_verify_mandatory ($params,
+                                   'CRM_Mailing_Event_DAO_Opened',
+                                   array('event_queue_id'),
+                                   false );
+
     $queue   = $params['event_queue_id']; 
     $success = CRM_Mailing_Event_BAO_Opened::open( $queue );
 

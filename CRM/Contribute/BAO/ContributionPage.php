@@ -245,6 +245,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 'email'               => $email,
                 'receiptFromEmail'    => CRM_Utils_Array::value( 'receipt_from_email', $values ),
                 'contactID'           => $contactID,
+                'displayName'         => $displayName,
                 'contributionID'      => $values['contribution_id'],
                 'contributionOtherID' => CRM_Utils_Array::value('contribution_other_id', $values),
                 'membershipID'        => CRM_Utils_Array::value('membership_id', $values),

@@ -810,7 +810,7 @@ reminder.action_schedule_id = %1";
             }
 
             // ( now >= date_built_from_start_time ) OR ( now = absolute_date )
-            $startDateClause = "reminder.id IS NULL AND {$startDate}";
+            $dateClause = "reminder.id IS NULL AND {$startDate}";
 
             // start composing query
             $selectClause = "SELECT " . implode( ', ', $select );
@@ -824,7 +824,7 @@ INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_sche
 {$fromClause} 
 {$joinClause}
 LEFT JOIN {$reminderJoinClause}
-{$whereClause} AND {$startDateClause}";
+{$whereClause} AND {$dateClause}";
 
             CRM_Core_DAO::executeQuery( $query, array( 1 => array( $actionSchedule->id, 'Integer' ) ) );
             // if repeat is turned ON:

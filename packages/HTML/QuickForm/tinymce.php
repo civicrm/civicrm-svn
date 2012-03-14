@@ -153,7 +153,7 @@ class HTML_QuickForm_TinyMCE extends HTML_QuickForm_textarea
         theme_advanced_buttons1    : "separator,bold,italic,underline,|,fontselect,fontsizeselect",
         theme_advanced_buttons1_add: "separator,forecolor,backcolor,separator,link,unlink,separator,image,hr,emotions",
         theme_advanced_buttons2    : "separator,numlist,bullist,|,outdent,indent,cite,separator,justifyleft,justifycenter,justifyright",
-        theme_advanced_buttons2_add: "justifyfull,separator,pastetext,pasteword,|,spellchecker,separator,removeformat,separator,code,|,fullscreen,help",
+        theme_advanced_buttons2_add: "justifyfull,separator,pastetext,pasteword,|,spellchecker,separator,removeformat,separator,|,undo,redo,|,code,|,fullscreen,help",
         theme_advanced_buttons3    : "",
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",

@@ -135,16 +135,17 @@ class CRM_Contact_Task
                                   22    => array( 'title'  => ts('Unhold Emails'),
                                                   'class'  => 'CRM_Contact_Form_Task_Unhold' ),
                                   self::RESTORE => array(
-                                      'title'  => ts('Restore Contacts'),
-                                      'class'  => 'CRM_Contact_Form_Task_Delete',
-                                      'result' => false,
-                                  ),
+                                                         'title'  => ts('Restore Contacts'),
+                                                         'class'  => 'CRM_Contact_Form_Task_Delete',
+                                                         'result' => false,
+                                                         ),
                                   self::DELETE_PERMANENTLY => array(
-                                      'title'  => ts('Delete Permanently'),
-                                      'class'  => 'CRM_Contact_Form_Task_Delete',
-                                      'result' => false,
-                                  ),
+                                                                    'title'  => ts('Delete Permanently'),
+                                                                    'class'  => 'CRM_Contact_Form_Task_Delete',
+                                                                    'result' => false,
+                                                                    ),
                                   );
+
             if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
                 $label = CRM_Contact_BAO_ContactType::getLabel( 'Household' );
                 self::$_tasks[9] = array( 'title'  => ts( 'Add Contacts to %1',
@@ -152,6 +153,7 @@ class CRM_Contact_Task
                                           'class'  => 'CRM_Contact_Form_Task_AddToHousehold'
                                           );
             }
+
             if( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
                 $label = CRM_Contact_BAO_ContactType::getLabel( 'Organization' );
                 self::$_tasks[10] = array( 'title'  => ts( 'Add Contacts to %1',
@@ -159,12 +161,14 @@ class CRM_Contact_Task
                                            'class'  => 'CRM_Contact_Form_Task_AddToOrganization'
                                            );
             }
+
             if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) ) {
                 self::$_tasks[21] = array( 'title'  => ts( 'Merge Contacts' ),
                                            'class'  => 'CRM_Contact_Form_Task_Merge',
                                            'result' => true 
                                            );
             }
+
             //CRM-4418, check for delete 
             if ( !CRM_Core_Permission::check( 'delete contacts' ) ) {
                 unset( self::$_tasks[8] );
@@ -174,7 +178,10 @@ class CRM_Contact_Task
             // should fix this to be more flexible as providers are added ??
             $config = CRM_Core_Config::singleton( );
 
-            if ( $config->mapProvider && ($config->mapProvider == 'Google' || (  $config->mapProvider == 'OpenStreetMaps' || $config->geoProvider == 'Google') ) ) {
+            if ( $config->mapProvider && 
+                 ( $config->mapProvider == 'Google' || 
+                   (  $config->mapProvider == 'OpenStreetMaps' || 
+                      $config->geoProvider == 'Google') ) ) {
                 self::$_tasks[12] = array( 'title'  => ts( 'Map Contacts'),
                                            'class'  => 'CRM_Contact_Form_Task_Map',
                                            'result' => false );
@@ -270,10 +277,12 @@ class CRM_Contact_Task
      */
     static function &permissionedTaskTitles($permission, $deletedContacts = false)
     {
+        self::initTasks( );
+
         $tasks = array( );
         if ($deletedContacts) {
             if ( CRM_Core_Permission::check( 'access deleted contacts' ) ) {
-                $tasks = array( self::RESTORE => self::$_tasks[self::RESTORE]['title'] );
+                $tasks[self::RESTORE] = self::$_tasks[self::RESTORE]['title'];
                 if ( CRM_Core_Permission::check( 'delete contacts' ) ) {
                     $tasks[self::DELETE_PERMANENTLY] = self::$_tasks[self::DELETE_PERMANENTLY]['title'];
                 } 
@@ -284,23 +293,18 @@ class CRM_Contact_Task
             $tasks = array( 
                            5  => self::$_tasks[ 5]['title'],
                            6  => self::$_tasks[ 6]['title'],
-                           12 => self::$_tasks[12]['title'],
                            16 => self::$_tasks[16]['title'],
-                           20 => self::$_tasks[20]['title'],
                            );
-            if ( ! self::$_tasks[20]['title'] ) {
-                unset( $tasks[20] );
+
+            if ( isset( self::$_tasks[12] ) &&
+                 ! empty( self::$_tasks[12]['title'] ) ) {
+                $tasks[12] = self::$_tasks[12]['title'];
             }
-            if ( ! self::$_tasks[12]['title'] ) {
-                //usset it, No edit permission and Map provider info
-                //absent, drop down shows blank space
-                unset( $tasks[12] );
+            
+            if ( isset( self::$_tasks[20] ) &&
+                 ! empty( self::$_tasks[20]['title'] ) ) {
+                $tasks[20] = self::$_tasks[20]['title'];
             }
-            //user has to have edit permission to delete contact.
-            //CRM-4418, lets keep delete for View and Edit so user can tweak ACL
-//             if ( CRM_Core_Permission::check( 'delete contacts' ) ) {
-//                 $tasks[8] = self::$_tasks[8]['title']; 
-//             }
         }
 
         return $tasks;

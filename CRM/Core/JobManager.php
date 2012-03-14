@@ -74,7 +74,8 @@ class CRM_Core_JobManager
     
         $this->logEntry( 'Starting scheduled jobs execution' );
         require_once 'CRM/Utils/System.php';
-        if( $auth && !CRM_Utils_System::authenticateKey( false ) ) {
+
+        if( $auth && !CRM_Utils_System::authenticateKey( true ) ) {
             $this->logEntry( 'Could not authenticate the site key.' );
         }
         require_once 'api/api.php';

@@ -194,7 +194,8 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
 
         require_once 'CRM/Utils/Rule.php';
         if ( ! CRM_Utils_Rule::email( $uniqId ) ) {
-            return $status ? null : false;
+            $retVal = $status ? null : false;
+            return $retVal;
         }
         
         $newContact   = false;

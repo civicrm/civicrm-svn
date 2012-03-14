@@ -683,7 +683,8 @@ case_relation_type.id = case_relationship.relationship_type_id )";
         $form->assign( 'accessAllCases', $accessAllCases );
         
         require_once 'CRM/Core/BAO/Tag.php';
-        $caseTags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case') );
+        $caseTags = CRM_Core_BAO_Tag::getTags( 'civicrm_case' );
+        
         if( $caseTags ) {
             foreach ($caseTags as $tagID => $tagName) {
                 $form->_tagElement =& $form->addElement('checkbox', "case_tags[$tagID]", null, $tagName);         

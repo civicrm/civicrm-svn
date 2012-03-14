@@ -31,6 +31,8 @@
  * part of the API so are not really part of the api
  * 
  */
+
+require_once 'api/v3/utils.php';
   
 /**
  * take the input parameter list as specified in the data model and
@@ -132,9 +134,16 @@ function _civicrm_api3_deprecated_participant_formatted_param( $params, &$values
             }
             break;
         case 'participant_status_id':
-            $id = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantStatusType', $value, 'id', 'label');
-            $values[$key] = $id;
+            if (!CRM_Utils_Rule::integer($value)) {
+                return civicrm_api3_create_error("Event Status ID is not valid: $value");
+            }
             break;
+            
+        case 'participant_status':
+            $status = CRM_Event_PseudoConstant::participantStatus();
+            $values['participant_status_id'] = CRM_Utils_Array::key( $value, $status );;
+            break;
+
         case 'participant_role_id':
         case 'participant_role':
             $role = CRM_Event_PseudoConstant::participantRole();
@@ -499,8 +508,8 @@ function _civicrm_api3_deprecated_formatted_param( $params, &$values, $create=fa
             }
 
             //we need to check if oldest payment amount equal to contribution amount
-            require_once 'CRM/Pledge/BAO/Payment.php';
-            $pledgePaymentDetails = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $values['pledge_id'] );
+            require_once 'CRM/Pledge/BAO/PledgePayment.php';
+            $pledgePaymentDetails = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $values['pledge_id'] );
 
             if ( $pledgePaymentDetails['amount'] == $totalAmount ) {
                 $values['pledge_payment_id'] = $pledgePaymentDetails['id'];

@@ -118,7 +118,7 @@ class CRM_Admin_Page_JobLog extends CRM_Core_Page_Basic
         
         require_once 'CRM/Core/DAO/JobLog.php';
         $dao = new CRM_Core_DAO_JobLog();
-        $dao->orderBy('run_time desc');
+        $dao->orderBy('id desc');
         if( $jobName ) $dao->job_id = $jid;
         $dao->find();
         $rows = array();

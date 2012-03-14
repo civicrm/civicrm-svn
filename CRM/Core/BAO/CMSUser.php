@@ -213,9 +213,9 @@ class CRM_Core_BAO_CMSUser
     static function create( &$params, $mail ) 
     {
         $config  = CRM_Core_Config::singleton( );
-        
+             
         $ufID = $config->userSystem->createUser( $params, $mail );
-
+      
         //if contact doesn't already exist create UF Match
         if ( $ufID !== false &&
              isset( $params['contactID'] ) ) {
@@ -225,8 +225,10 @@ class CRM_Core_BAO_CMSUser
             $ufmatch->uf_id          =  $ufID;
             $ufmatch->contact_id     =  $params['contactID'];
             $ufmatch->uf_name        =  $params[$mail];
-            $ufmatch->save( );
             
+            if ( !$ufmatch->find(true) ) {
+                $ufmatch->save( );
+            }
         }
         
         return $ufID;
@@ -249,6 +251,8 @@ class CRM_Core_BAO_CMSUser
         
         $isDrupal = $config->userSystem->is_drupal ;
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? TRUE : FALSE;
+        $isWordPress = $config->userFramework == 'WordPress' ? TRUE : FALSE;
+        
         //if CMS is configured for not to allow creating new CMS user,
         //don't build the form,Fixed for CRM-4036
         if ( $isJoomla ) {
@@ -258,11 +262,13 @@ class CRM_Core_BAO_CMSUser
             }
         } else if ( $isDrupal && ! variable_get('user_register', TRUE ) ) {
             return false;
+        } else if ( $isWordPress && ! get_option( 'users_can_register' ) ) {
+            return false;
         }
         
         if ( $gid ) {                                        
             $isCMSUser = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gid, 'is_cms_user' );
-        } 
+        }
 
         // $cms is true when there is email(primary location) is set in the profile field.
         $session = CRM_Core_Session::singleton( );                         
@@ -291,10 +297,10 @@ class CRM_Core_BAO_CMSUser
                 require_once 'CRM/Core/Action.php';
                 if( ! $userID || $action & CRM_Core_Action::PREVIEW || $action & CRM_Core_Action::PROFILE ) {     
                     $form->add('text', 'cms_name', ts('Username'), null, $required );
-                    if ( ( $isDrupal && !variable_get('user_email_verification', TRUE ) ) OR ( $isJoomla ) ) {       
+                    if ( ( $isDrupal && !variable_get('user_email_verification', TRUE ) ) OR ( $isJoomla ) OR ( $isWordPress ) ) {       
                         $form->add('password', 'cms_pass', ts('Password') );
                         $form->add('password', 'cms_confirm_pass', ts('Confirm Password') );
-                    } 
+                    }
                         
                     $form->addFormRule( array( 'CRM_Core_BAO_CMSUser', 'formRule' ), $form );
                 } 
@@ -335,12 +341,13 @@ class CRM_Core_BAO_CMSUser
         }
 
         $config  = CRM_Core_Config::singleton( );
-            
+        
         $isDrupal = $config->userSystem->is_drupal ;
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? TRUE : FALSE;
-
+        $isWordPress = $config->userFramework == 'WordPress' ? TRUE : FALSE;
+        
         $errors = array( );
-        if ( $isDrupal || $isJoomla ) {
+        if ( $isDrupal || $isJoomla || $isWordPress ) {
             $emailName = null;
             if ( ! empty( $self->_bltID ) ) {
                 // this is a transaction related page
@@ -368,7 +375,7 @@ class CRM_Core_BAO_CMSUser
                 $errors[$emailName] = ts( 'Please specify a valid email address.' );
             }
                 
-            if ( ( $isDrupal && ! variable_get('user_email_verification', TRUE ) ) OR ( $isJoomla ) ) {
+            if ( ( $isDrupal && ! variable_get('user_email_verification', TRUE ) ) OR ( $isJoomla ) OR ( $isWordPress ) ) {
                 if ( empty( $fields['cms_pass'] ) ||
                      empty( $fields['cms_confirm_pass'] ) ) {
                     $errors['cms_pass'] = ts( 'Please enter a password.' );
@@ -383,7 +390,7 @@ class CRM_Core_BAO_CMSUser
             }
                 
             // now check that the cms db does not have the user name and/or email
-            if ( $isDrupal OR $isJoomla ) {
+            if ( $isDrupal OR $isJoomla OR $isWordPress ) {
                 $params = array( 'name' => $fields['cms_name'],
                                  'mail' => $fields[$emailName] );
             }
@@ -409,11 +416,12 @@ class CRM_Core_BAO_CMSUser
     static function userExists( &$contact ) 
     {        
         $config = CRM_Core_Config::singleton( );
-
+        
         $isDrupal = $config->userSystem->is_drupal ;
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? true : false;
+        $isWordPress = $config->userFramework == 'WordPress' ? true : false;
         
-        if ( !$isDrupal && !$isJoomla ) { 
+        if ( !$isDrupal && !$isJoomla && !$isWordPress ) { 
             die( 'Unknown user framework' ); 
         }
         
@@ -451,8 +459,14 @@ class CRM_Core_BAO_CMSUser
                 $contact['user_exists'] = true;
                 $result = $uid;
             }
+        } elseif ( $isWordPress ) {
+            if ( email_exists( $params['mail'] ) ) {
+                $contact['user_exists'] = true;
+                $userObj = get_user_by( 'email', $params['mail'] );
+                return $userObj->ID;
+            }
         }
-
+        
         return $result;
     }
 

@@ -1848,10 +1848,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             $tablesToTruncate[] = 'civicrm_custom_field';
         }
 
+        CRM_Core_DAO::executeQuery( "SET FOREIGN_KEY_CHECKS = 0;" );
         foreach ( $tablesToTruncate as $table ) {
             $sql = "TRUNCATE TABLE $table";
             CRM_Core_DAO::executeQuery( $sql );
         }
+        CRM_Core_DAO::executeQuery( "SET FOREIGN_KEY_CHECKS = 1;" );
 
         if ( $dropCustomValueTables ) {
             $dbName = self::getDBName();
@@ -1889,14 +1891,15 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
           civicrm_api($entity,'Delete',array( 'id' => $id ,
                                               'version'        =>$this->_apiversion));
       }
-      $dateFields = array();
+      $dateFields = $keys = array();
       $fields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => 'get'));
       foreach ($fields['values'] as $field => $settings){
+        $keys[CRM_Utils_Array::Value('name', $settings,$field)] = array_key_exists($field, $result)?$field: CRM_Utils_Array::Value('name', $settings,$field);
         if ($settings['type'] == CRM_Utils_Type::T_DATE){
           $dateFields[] = $field;
+          
         }
       }
-
       if (strtolower($entity) =='contribution'){
 
           $params['receive_date'] = date('Y-m-d' ,strtotime($params['receive_date']));
@@ -1910,7 +1913,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
             $value = date('Y-m-d' ,strtotime($value));
             $result[$key] = date('Y-m-d' ,strtotime($result[$key]));
           }
-          $this->assertEquals($value, $result[$key],$key . "GetandCheck function determines that value: $value doesn't match " . print_r($result,true) . $errorText);        
+          $this->assertEquals($value, $result[$keys[$key]],$key . "EGetandCheck function determines that value: $value doesn't match " . print_r($result,true) . $errorText);        
           
       } 
   }

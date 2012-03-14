@@ -181,7 +181,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         require_once 'CRM/Import/Parser/Contact.php';
         if (!(($index < 0) || ($this->_participantStatusIndex < 0) )) {
             $errorRequired = ! CRM_Utils_Array::value($this->_participantStatusIndex, $values); 
-            if ((!$params['event_id'] && !$params['event_title'])) {
+            if ( !CRM_Utils_Array::value( 'event_id', $params ) && !CRM_Utils_Array::value( 'event_title', $params ) ) {
                 CRM_Import_Parser_Contact::addToErrorMsg('Event', $missingField);
             } 
             if ( !CRM_Utils_Array::value( 'participant_status_id', $params ) ) {
@@ -417,6 +417,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                 require_once 'CRM/Dedupe/BAO/Rule.php';
                 $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
                 
+                $disp = '';
                 foreach ( $fieldsArray as $value ) {
                     if(array_key_exists(trim($value),$params)) {
                         $paramValue = $params[trim($value)];

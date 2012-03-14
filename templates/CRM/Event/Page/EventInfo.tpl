@@ -175,7 +175,6 @@
 	    </div>
 	{/if}
 
-    
 	{if $event.is_monetary eq 1 && $feeBlock.value}
 	    <div class="crm-section event_fees-section">
 	        <div class="label"><label>{$event.fee_label}</label></div>
@@ -190,8 +189,8 @@
 	                    {/if}
 	                    <tr>
 	                        <td class="{$lClass} crm-event-label">{$feeBlock.label.$idx}</td>
-                          {if $feeBlock.isDisplayAmount.$idx}
-	                          <td class="fee_amount-value right">{$feeBlock.value.$idx|crmMoney}</td>
+                          {if !$isPriceSet || ($isPriceSet & $feeBlock.isDisplayAmount.$idx)}
+	                        <td class="fee_amount-value right">{$feeBlock.value.$idx|crmMoney}</td>
                           {/if}
 	                    </tr>
 	                {/foreach}

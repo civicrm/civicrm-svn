@@ -1125,6 +1125,7 @@ WHERE civicrm_event.is_active = 1
                         'email'              => $email,
                         'confirm_email_text' => CRM_Utils_Array::value('confirm_email_text', $values['event']),
                         'isShowLocation'     => CRM_Utils_Array::value('is_show_location',   $values['event']),
+                        'participantID'      => $participantId,
                     ),
                     'PDFFilename' => 'eventReceipt.pdf',
                 );

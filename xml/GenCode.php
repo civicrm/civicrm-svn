@@ -353,7 +353,7 @@ function resolveForeignKey( &$tables, &$classNames, $name ) {
     foreach ( array_keys( $tables[$name]['foreignKey'] ) as $fkey ) {
         $ftable = $tables[$name]['foreignKey'][$fkey]['table'];
         if ( ! array_key_exists( $ftable, $classNames ) ) {
-            echo "$ftable is not a valid foreign key table in $name";
+            echo "$ftable is not a valid foreign key table in $name\n";
             continue;
         }
         $tables[$name]['foreignKey'][$fkey]['className'] = $classNames[$ftable];

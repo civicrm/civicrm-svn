@@ -216,8 +216,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 // we retrieve the object from memcache, so we now initialize the objects
                 self::$_singleton->_initialize( $loadFromDB );
                 
-                // add component specific settings
-                self::$_singleton->componentRegistry->addConfig( self::$_singleton );
+                // CRM-9803, NYSS-4822
+                // this causes various settings to be reset and hence we should
+                // only use the config object that we retrived from memcache
             }
             
             self::$_singleton->initialized = 1;

@@ -615,7 +615,7 @@ LIMIT 1;";
         $participant  =& $objects['participant'] ;
         $event        =& $objects['event']       ;
         $memberships  =& $objects['membership']  ;
-
+        $contact      =& $objects['contact']  ;
         if ( empty( $values ) ) {
             $values = array( );
             $contribID = $ids['contribution'];
@@ -713,6 +713,9 @@ LIMIT 1;";
         }
 
         $template = CRM_Core_Smarty::singleton( );
+        $template->assign('first_name', $contact->first_name);
+        $template->assign('last_name', $contact->last_name);
+        $template->assign('displayName', $contact->display_name);
         // CRM_Core_Error::debug('tpl',$template);
         //assign honor infomation to receiptmessage
         if ( $honarID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
@@ -930,8 +933,14 @@ LIMIT 1;";
                         $template->assign( 'membership_name',
                                            CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id ) );
                         $template->assign( 'mem_start_date', $membership->start_date );
+                        $template->assign( 'mem_join_date', $membership->join_date );
                         $template->assign( 'mem_end_date'  , $membership->end_date );
-                        
+                        $membership_status = CRM_Member_PseudoConstant::membershipStatus( $membership->status_id, null, 'label' );
+                        $template->assign( 'mem_status', $membership_status);
+                        if($membership_status == 'Pending' && $membership->is_pay_later ==1){
+                          $template->assign( 'is_pay_later' ,1);
+                        }
+                                                
                         // if separate payment there are two contributions recorded and the 
                         // admin will need to send a receipt for each of them separately.
                         // we dont link the two in the db (but can potentially infer it if needed)

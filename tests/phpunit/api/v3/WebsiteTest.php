@@ -7,6 +7,7 @@ class api_v3_WebsiteTest extends CiviUnitTestCase
     protected $_apiversion;
     protected $params;
     protected $id;
+    protected $_entity;
     public $DBResetRequired = false;  
     function setUp() 
     {
@@ -44,8 +45,7 @@ class api_v3_WebsiteTest extends CiviUnitTestCase
         $this->assertAPISuccess($result, 'In line ' . __LINE__ );
         $this->assertEquals( 1, $result['count'], 'In line ' . __LINE__ );
         $this->assertNotNull( $result['values'][$result['id']]['id'], 'In line ' . __LINE__ );           
-
-        $this->id = $result['id']; 
+        civicrm_api('website','delete',array('version' =>3,'id' => $result['id']));
     }
 
    public function testDeleteWebsite () {

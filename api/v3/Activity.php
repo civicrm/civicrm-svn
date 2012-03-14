@@ -82,7 +82,6 @@ function civicrm_api3_activity_create( $params ) {
         civicrm_api3_verify_mandatory($params,
                                       null,
                                       array('source_contact_id',
-                                            array('subject','activity_subject'),
                                             array('activity_name','activity_type_id', 'activity_label')));
     }
 
@@ -192,8 +191,7 @@ function civicrm_api3_activity_create( $params ) {
  * and is used for pre-filling defaults and ensuring mandatory requirements are met.
  */
 function _civicrm_api3_activity_create_spec(&$params){
-    $params['id'] = CRM_Utils_Array::value( 'activity_id', $params );
-    unset ($params['activity_id']);
+    $params['subject']['api.required'] =1;
     $params['assignee_contact_id'] = array('name' => 'assignee_id',
                                            'title' => 'assigned to',
                                            'type' => 1,

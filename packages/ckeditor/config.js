@@ -23,6 +23,7 @@ CKEDITOR.editorConfig = function( config )
         ['NumberedList','BulletedList','Outdent','Indent','Blockquote'],     
         ['PasteText','PasteFromWord','SpellChecker'],
         ['RemoveFormat'],
+        ['Undo','Redo'],
         ['Source','-','Preview','-','About'],
     ];
 };
