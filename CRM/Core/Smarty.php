@@ -131,7 +131,10 @@ class CRM_Core_Smarty extends Smarty {
             require_once 'CRM/Core/BAO/Setting.php';
             $editorID = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                    'editor_id' );
-            $session->set( 'defaultWysiwygEditor', $editorID );
+            if ( ! $session->isEmpty( ) ) {
+                $session->set( 'defaultWysiwygEditor', $editorID );
+            }
+            $defaultWysiwygEditor = $editorID;
         }
         
         $this->assign( 'defaultWysiwygEditor', $defaultWysiwygEditor );

@@ -449,4 +449,10 @@ class CRM_Core_Session {
         self::$_managedNames = null;
     }
 
+    function isEmpty( ) {
+        // check if session is empty, if so we dont cache
+        // stuff that we can get away with
+        // helps proxies like varnish
+        return empty( $_SESSION ) ? true : false;
+    }
 }
