@@ -332,18 +332,36 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
 
         foreach ($allRelationshipType as $key => $value) {
             // the contact type is required or matches
-            if ( ( ( ! $value['contact_type_a'] ) || $value['contact_type_a'] == $contactType ) &&
+            if ( ( ( ! $value['contact_type_a'] ) || 
+                   $value['contact_type_a'] == $contactType ) &&
                  // the other contact type is required or present or matches
-                 ( ( ! $value['contact_type_b'] ) || ( ! $otherContactType ) || $value['contact_type_b'] == $otherContactType ) &&
-                 ( ! $contactSubType || ( in_array( $value['contact_sub_type_a'], $contactSubType ) || 
-                 ( ( !$value['contact_sub_type_b'] && !$value['contact_sub_type_a']) && !$onlySubTypeRelationTypes) ) ) ) {
+                 ( ( ! $value['contact_type_b'] ) || 
+                   ( ! $otherContactType ) || 
+                   $value['contact_type_b'] == $otherContactType ) &&
+                 ( ! $contactSubType ||
+                   ( in_array( $value['contact_sub_type_a'], $contactSubType ) || 
+                     ( ( !$value['contact_sub_type_b'] &&
+                         !$value['contact_sub_type_a']) && 
+                       !$onlySubTypeRelationTypes) ) ) ) {
                 $relationshipType[ $key . '_a_b' ] =  $value[ "{$column}_a_b" ];
-            } 
+            } else if ( empty( $value['contact_type_b'] ) ) {
+                // case contact_type_b is "all contacts", CRM-9877
+                $relationshipType[ $key . '_a_b' ] =  $value[ "{$column}_a_b" ];
+            }
 
-            if ( ( ( ! $value['contact_type_b'] ) || $value['contact_type_b'] == $contactType ) &&
-                 ( ( ! $value['contact_type_a'] ) || ( ! $otherContactType ) || $value['contact_type_a'] == $otherContactType ) &&
-                 ( ! $contactSubType || ( in_array( $value['contact_sub_type_b'], $contactSubType ) ||
-                 ( ( !$value['contact_sub_type_a'] && !$value['contact_sub_type_b']) && !$onlySubTypeRelationTypes) ) ) ) {
+            if ( ( ( ! $value['contact_type_b'] ) || 
+                   $value['contact_type_b'] == $contactType ) &&
+                 ( ( ! $value['contact_type_a'] ) ||
+                   ( ! $otherContactType ) || 
+                   $value['contact_type_a'] == $otherContactType ) &&
+                 ( ! $contactSubType || 
+                   ( in_array( $value['contact_sub_type_b'], $contactSubType ) ||
+                 ( ( !$value['contact_sub_type_a'] && 
+                     !$value['contact_sub_type_b']) && 
+                   !$onlySubTypeRelationTypes) ) ) ) {
+                $relationshipType[ $key . '_b_a' ] = $value[ "{$column}_b_a" ];
+            } else if ( empty( $value['contact_type_a'] ) ) {
+                // case contact_type_a is "all contacts", CRM-9877
                 $relationshipType[ $key . '_b_a' ] = $value[ "{$column}_b_a" ];
             }
 
