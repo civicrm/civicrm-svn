@@ -64,5 +64,39 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         return $batch;
     }
 
+   /**
+    * Retrieve the information about the batch
+    *
+    * @param array $params   (reference ) an assoc array of name/value pairs
+    * @param array $defaults (reference ) an assoc array to hold the flattened values
+    *
+    * @return array CRM_Core_BAO_Batch object on success, null otherwise
+    * @access public
+    * @static
+    */
+    static function retrieve( &$params, &$defaults ) {
+        $batch = new CRM_Core_DAO_Batch( );
+        $batch->copyValues( $params );
+        if ( $batch->find( true ) ) {
+            CRM_Core_DAO::storeValues( $batch, $defaults );
+            return $batch;
+        }
+        return null;
+    }
+
+    /**
+     * Get profile id associated with the batch type
+     *
+     * @param int   $batchTypeId batch type id
+     * @return int  $profileId   profile id
+     * @static
+     */
+    static function getProfileId( $batchTypeId  ) {
+        //retrieve the profile specific to batch type
+        //FIX ME
+        $profileId = 10;
+
+        return $profileId;
+    }
 }
 
