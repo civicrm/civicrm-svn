@@ -149,6 +149,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         require_once "CRM/Core/BAO/CustomField.php";
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Contribution' );
         for ( $rowNumber = 1; $rowNumber<= $this->_batchInfo['item_count']; $rowNumber++  ) {
+            require_once 'CRM/Contact/Form/NewContact.php';
+            CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber );
+ 
             foreach ( $this->_fields as $name => $field ) {
                 CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $rowNumber );
             }

@@ -41,12 +41,16 @@
     {assign var='rowNumber' value=$smarty.section.i.index} 
     <tr class="{cycle values="odd-row,even-row"}" entity_id="{$rowNumber}">
         {* contact select/create option*}
-        <td class="compressed"></td>
+        <td class="compressed">
+            <table>
+            {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber}
+            </table>
+        </td>
 
         {foreach from=$fields item=field key=fieldName}
         {assign var=n value=$field.name}
         {if ( $fields.$n.data_type eq 'Date') or ( $n eq 'thankyou_date' ) or ( $n eq 'cancel_date' ) or ( $n eq 'receipt_date' ) or ( $n eq 'receive_date' )}
-            <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$cid batchUpdate=1}</td>
+            <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$rowNumber batchUpdate=1}</td>
         {else}
             <td class="compressed">{$form.field.$rowNumber.$n.html}</td> 
         {/if}
