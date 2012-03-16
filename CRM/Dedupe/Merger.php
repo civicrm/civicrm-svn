@@ -636,7 +636,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 // add additional details that we might need to resolve conflicts
                 $migrationInfo['main_details']  =& $rowsElementsAndInfo['main_details'];
                 $migrationInfo['other_details'] =& $rowsElementsAndInfo['other_details'];
-                $migrationInfo['main_loc_address'] =& $rowsElementsAndInfo['main_loc_address'];
+                $migrationInfo['main_loc_block'] =& $rowsElementsAndInfo['main_loc_block'];
                 $migrationInfo['rows']             =& $rowsElementsAndInfo['rows'];
                 
                 // go ahead with merge if there is no conflict
@@ -919,7 +919,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         $allLocationTypes = CRM_Core_PseudoConstant::locationType( );
         
-        $mainLocAddress = $locBlockIds = array();
+        $mainLocBlock = $locBlockIds = array();
         $locBlockIds['main'] = $locBlockIds['other'] = array();
         foreach ( array( 'Email', 'Phone', 'IM', 'OpenID', 'Address' ) as $block ) {
             $name = strtolower( $block );
@@ -939,11 +939,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                         $locLabel[$moniker][$name][$count] = CRM_Utils_Array::value($fldName, 
                                                                                     $blkValues);
                         $locTypes[$moniker][$name][$count] = $locTypeId;
-                        if ( $moniker == 'main' && $name == 'address' ) {
-                            $mainLocAddress["main_$locTypeId"] = CRM_Utils_Array::value($fldName, 
+                        if ( $moniker == 'main' && in_array($name,$locationBlocks) ) {
+                            $mainLocBlock["main_$name$locTypeId"] = CRM_Utils_Array::value($fldName, 
                                                                                         $blkValues);
-                            $locBlockIds['main']['address'][$locTypeId] = $blkValues['id'];
-                        } else {
+                            $locBlockIds['main'][$name][$locTypeId] = $blkValues['id'];
+                        }
+                        else {
                             $locBlockIds[$moniker][$name][$count] = $blkValues['id'];
                         }
                     }
@@ -972,15 +973,20 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     
                     // keep 1-1 mapping for address - location type.
                     $js = null;
-                    if ( $name == 'address' && !empty( $mainLocAddress ) ) {
-                        $js = array( 'onChange' => "mergeAddress( this, $count );" );
+                    if ( in_array($name,$locationBlocks) && !empty( $mainLocBlock ) ) {
+                        $js = array( 'onChange' => "mergeBlock('$name', this, $count );" );
                     }
                     $elements[] = array( 'select', "location[{$name}][$count][locTypeId]", null, 
                                          $defaultLocType + $locTypeValues, $js );
                     // keep location-type-id same as that of other-contact
                     $migrationInfo['location'][$name][$count]['locTypeId'] = $locTypeId;
 
-                    if ( $name != 'address' ) {
+                    if ( $name != 'address'  && $name != 'email' && $name != 'phone' ) {
+                        $elements[] = array( 'advcheckbox', "location[{$name}][$count][operation]", null, ts('add new') );
+                        // always use add operation
+                        $migrationInfo['location'][$name][$count]['operation'] = 1;
+                    }
+                    if ( ( $name == 'email' || $name == 'phone' ) && $mainLocTypeId == $locTypeId && $rows["move_location_{$name}_$count"]['main'] != null ){
                         $elements[] = array( 'advcheckbox', "location[{$name}][$count][operation]", null, ts('add new') );
                         // always use add operation
                         $migrationInfo['location'][$name][$count]['operation'] = 1;
@@ -1092,7 +1098,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $result = array( 'rows'               => $rows,
                          'elements'           => $elements,
                          'rel_table_elements' => $relTableElements,
-                         'main_loc_address'   => $mainLocAddress,
+                         'main_loc_block'     => $mainLocBlock,
                          'rel_tables'         => $relTables,
                          'main_details'       => $main,
                          'other_details'      => $other,
@@ -1103,7 +1109,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         // unset all vars to avoid any possible leaks
         unset( $diffs, $contact, $mainTree, $otherTree, $rows, 
-               $elements, $relTableElements, $mainLocAddress, $relTables, $main, $other, $migrationInfo );
+               $elements, $relTableElements, $mainLocBlock, $relTables, $main, $other, $migrationInfo );
 
         return $result;
     }
@@ -1184,7 +1190,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     
                     // keep 1-1 mapping for address - loc type.
                     $idKey = $blkCount;
-                    if ( $name == 'address' ) $idKey = $locTypeId;  
+                    if ( array_key_exists($name,$locComponent) ) $idKey = $locTypeId;  
 
                     $mainBlockId = CRM_Utils_Array::value( $idKey, $migrationInfo['main_details']['loc_block_ids'][$name] );
                     
