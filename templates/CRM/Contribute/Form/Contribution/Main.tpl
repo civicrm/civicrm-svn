@@ -250,6 +250,8 @@ function clearAmountOther() {
     {/if} 
 
     {if $is_monetary} 
+    	{*include payment block js file*}
+    	{include file="CRM/common/paymentBlock.tpl"}
         {include file='CRM/Core/BillingBlock.tpl'} 
     {/if} 
 
