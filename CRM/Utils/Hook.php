@@ -121,7 +121,8 @@ abstract class CRM_Utils_Hook {
                     $fResult = $fnName( $arg1, $arg2, $arg3, $arg4, $arg5 );
                 }
 
-                if ( !empty( $fResult ) ) {
+                if ( ! empty( $fResult ) &&
+                     is_array( $fResult ) ) {
                     $result = array_merge( $result, $fResult );
                 }
 
