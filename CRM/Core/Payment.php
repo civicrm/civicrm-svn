@@ -292,6 +292,8 @@ abstract class CRM_Core_Payment {
         require_once 'CRM/Core/BAO/PaymentProcessor.php';
         $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );        
         
+        echo json_encode( $paymentProcessor );
+
         require_once 'CRM/Utils/System.php';
         CRM_Utils_System::civiExit();
 

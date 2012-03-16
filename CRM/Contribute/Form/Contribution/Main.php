@@ -60,7 +60,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     public $_membershipTypeValues;
     
     public $_useForMember;
-        
+
+    protected $_ppType;
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -69,8 +70,16 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      */ 
     public function preProcess()  
     {
+        $this->_ppType = CRM_Utils_Array::value( 'type', $_GET );
+        require_once 'CRM/Core/Payment/ProcessorForm.php';
+        $this->assign('ppType', false);
+        if ( $this->_ppType ) {
+            $this->assign('ppType', true);
+            return CRM_Core_Payment_ProcessorForm::preProcess( $this );
+        }
+
         parent::preProcess( );
-        
+
         // Make the contributionPageID avilable to the template
         $this->assign( 'contributionPageID', $this->_id );
         $this->assign( 'isShare', $this->_values['is_share'] );
@@ -149,6 +158,15 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     }
                 }
             }
+        }
+        ///for post        
+        $payment_processor = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage',  $this->_id, 'payment_processor' );
+        if (!is_numeric( $payment_processor )) {
+            $this->set('type',  CRM_Utils_Array::value( 'payment_processor_id', $_POST ) );
+            $this->set('mode',  $this->_mode );
+
+            CRM_Core_Payment_ProcessorForm::preProcess( $this );
+            CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
         }
     }
 
@@ -358,6 +376,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      */
     public function buildQuickForm( ) 
     {  
+        if ( $this->_ppType ) {
+            return CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
+        }
+        
         $config = CRM_Core_Config::singleton( );
         if ( $this->_values['is_for_organization'] == 2 ) {
             $this->assign( 'onBehalfRequired', true );
