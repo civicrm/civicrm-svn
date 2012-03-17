@@ -23,36 +23,33 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-
 {literal}
 <script type="text/javascript">
 
-function buildPaymentBlock( type )
-{
+function buildPaymentBlock( type ) {
 	var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type; 
-
-	console.log(type);
 	
 	{/literal}
 		{if $urlPathVar}
 			dataUrl = dataUrl + '&' + '{$urlPathVar}'
 		{/if}
+		
+		{if $contributionPageID}
+            dataUrl = dataUrl + '&id=' + '{$contributionPageID}'
+        {/if}
 	
 		{if $qfKey}
 			dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'
 		{/if}
-	
 	{literal}
 
-	console.log(dataUrl);
-	var fname = '#payment_information';	
+	var fname = '#billing-payment-block';	
 	var response = cj.ajax({	
-                                                url: dataUrl,
-                                                async: false
-                                        }).responseText;
+                        url: dataUrl,
+                        async: false
+                        }).responseText;
 
-        cj( fname ).html( response );	
-
+    cj( fname ).html( response );	
 }
 
 </script>

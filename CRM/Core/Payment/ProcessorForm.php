@@ -42,8 +42,7 @@
 class CRM_Core_Payment_ProcessorForm 
 {
     static function preProcess( &$form, 
-                                $type = null, $mode = null )
-    {
+                                $type = null, $mode = null ) {
         if ( $type ) {
             $form->_type = $type;
         } else {
@@ -54,20 +53,11 @@ class CRM_Core_Payment_ProcessorForm
         if ($form->_type) {
             $form->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($form->_type, $form->_mode);
         }
-
     }
     
-    static function buildQuickform( &$form )
-    {
-        self::buildPaymentForm( $form, $form->_paymentprocessor );
-    }
-
-    static function buildPaymentForm( &$form,
-                                      &$paymentProcessor
-                                    )
-    {
+    static function buildQuickform( &$form ) {
         require_once 'CRM/Core/Payment/Form.php';  
-        if (  $paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) {
+        if ( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) {
             CRM_Core_Payment_Form::buildDirectDebit( $form );
         } else {
             CRM_Core_Payment_Form::buildCreditCard( $form );

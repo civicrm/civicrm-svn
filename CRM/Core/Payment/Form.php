@@ -43,7 +43,7 @@ class CRM_Core_Payment_Form {
      */ 
     protected function _setPaymentFields( &$form) {
         $bltID = $form->_bltID;
-
+        
         $form->_fields['billing_first_name'] = 
             array( 'htmlType'   => 'text', 
                    'name'       => 'billing_first_name', 
@@ -223,6 +223,8 @@ class CRM_Core_Payment_Form {
      * @access public 
      */
     function buildCreditCard( &$form, $useRequired = false ) {
+        self::setCreditCardFields($form);
+        
         require_once 'CRM/Core/Payment.php';
         if ( $form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM) {
             foreach ( $form->_fields as $name => $field ) {

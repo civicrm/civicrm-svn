@@ -23,7 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $onbehalf} 
+{if $ppType}
+  {include file="CRM/Core/BillingBlock.tpl"}
+{elseif $onbehalf} 
    {include file=CRM/Contribute/Form/Contribution/OnBehalfOf.tpl} 
 {else}
 {literal}
@@ -248,13 +250,8 @@ function clearAmountOther() {
     	</div>
     </fieldset>
     {/if} 
-
-    {if $is_monetary} 
-    	{*include payment block js file*}
-    	{include file="CRM/common/paymentBlock.tpl"}
-        {include file='CRM/Core/BillingBlock.tpl'} 
-    {/if} 
-
+    <div id="billing-payment-block"></div>
+    {include file="CRM/common/paymentBlock.tpl'}
     <div class="crm-group custom_post_profile-group">
     	{include file="CRM/UF/Form/Block.tpl" fields=$customPost}
 	</div>
