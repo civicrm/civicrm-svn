@@ -45,7 +45,13 @@ function buildPaymentBlock( type )
 	{literal}
 
 	console.log(dataUrl);
-	
+	var fname = '#payment_information';	
+	var response = cj.ajax({	
+                                                url: dataUrl,
+                                                async: false
+                                        }).responseText;
+
+        cj( fname ).html( response );	
 
 }
 
