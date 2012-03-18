@@ -91,11 +91,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
         $register = $model->register($values);
 
-        if ( $register !== false ) {
-            $user = JFactory::getUser($values['username']);
-            $ufID = $user->id;
-        }
-
+        $ufID     = JUserHelper::getUserId($values['username']);
         return $ufID;
     }
     
