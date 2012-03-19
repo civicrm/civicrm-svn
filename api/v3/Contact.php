@@ -183,15 +183,18 @@ function civicrm_api3_contact_get( $params )
             unset($params['contact_is_deleted']);
         }
     }
+    // CRM-9890 get options from params should be the function that does all this sorting.
+    // we don't need to redefine these into variables below - can just use them in the array
+    // but it's going to make it easier to copy into the other functions so leave for now 
+    //& tidy up in a later re-factor
+    $options = _civicrm_api3_get_options_from_params($params, true);
+    $sort            = CRM_Utils_Array::value('sort',$options,NULL);
+    $offset          = CRM_Utils_Array::value('offset',$options);
+    $rowCount        = CRM_Utils_Array::value('limit',$options);
+    $smartGroupCache = CRM_Utils_Array::value('smartGroupCache',$params);
+    $inputParams      = CRM_Utils_Array::value('input_params',$options,array( ));
+    $returnProperties =  CRM_Utils_Array::value('return',$options,null);
 
-    $inputParams      = array( );
-    $returnProperties = array( );
-    $otherVars = array( 'sort', 'offset', 'rowCount', 'smartGroupCache' );
-
-    $sort            = null;
-    $offset          = 0;
-    $rowCount        = 25;
-    $smartGroupCache = false;
 
     if (array_key_exists ('filter_group_id',$params)) {
       $params['filter.group_id'] = $params['filter_group_id'];
@@ -205,27 +208,7 @@ function civicrm_api3_contact_get( $params )
       unset ($params['filter.group_id']);
       $groups = array_flip ($groups);
       $groups[key($groups)] = 1;
-      $params['group']=$groups;
-    }
-
-
-    if ( array_key_exists ('return',$params)) {// handle the format return =sort_name,display_name...
-      $returnProperties = explode (',',$params['return']);
-      $returnProperties = array_flip ($returnProperties); 
-      $returnProperties[key($returnProperties)] = 1; 
-    }
-    foreach ( $params as $n => $v ) {
-        if ( substr( $n, 0, 6 ) == 'return' ) { // handle the format return.sort_name=1,return.display_name=1
-            $returnProperties[ substr( $n, 7 ) ] = $v;
-        } elseif ( in_array( $n, $otherVars ) ) {
-            $$n = $v;
-        } else {
-            $inputParams[$n] = $v;
-        }
-    }
-
-    if ( empty( $returnProperties ) ) {
-        $returnProperties = null;
+      $inputParams['group']=$groups;
     }
 
     require_once 'CRM/Contact/BAO/Query.php';

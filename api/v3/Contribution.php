@@ -149,23 +149,13 @@ function civicrm_api3_contribution_get($params) {
 		  $params['contribution_id'] = CRM_Utils_Array::value('contribution_id', $params,$params['id']);
 		  unset ($params['id']);
 		}
-
-		$inputParams = array ();
-		$returnProperties = array ();
-		$otherVars = array ('sort', 'offset', 'rowCount' );
-		
-		$sort = null;
-		$offset = 0;
-		$rowCount = 25;
-		foreach ( $params as $n => $v ) {
-			if (substr ( $n, 0, 7 ) == 'return.') {
-				$returnProperties [substr ( $n, 7 )] = $v;
-			} elseif (in_array ( $n, $otherVars )) {
-				$$n = $v;
-			} else {
-				$inputParams [$n] = $v;
-			}
-		}
+    $options = _civicrm_api3_get_options_from_params($params, true);
+    $sort            = CRM_Utils_Array::value('sort',$options,NULL);
+    $offset          = CRM_Utils_Array::value('offset',$options);
+    $rowCount        = CRM_Utils_Array::value('limit',$options);
+    $smartGroupCache = CRM_Utils_Array::value('smartGroupCache',$params);
+    $inputParams      = CRM_Utils_Array::value('input_params',$options,array( ));
+    $returnProperties =  CRM_Utils_Array::value('return',$options,null);
 		
 		require_once 'CRM/Contribute/BAO/Query.php';
 		require_once 'CRM/Contact/BAO/Query.php';

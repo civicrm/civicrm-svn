@@ -352,7 +352,55 @@ class api_v3_ContactTest extends CiviUnitTestCase
         $this->customGroupDelete($ids['custom_group_id']);      
 
     }
-        /**
+    /*
+     * Test that sort works - old syntax
+     */
+    function testGetSort(){
+        $c1 = civicrm_api($this->_entity,'create', $this->_params);
+        $this->assertAPISuccess($c1, 'in line ' . __LINE__);
+        $c2 = civicrm_api($this->_entity,'create', array('version' => 3, 'first_name' => 'bb', 'last_name' => 'ccc', 'contact_type' => 'Individual'));
+        $result = civicrm_api($this->_entity,'get', array('version' => 3, 
+                                                'sort' => 'first_name ASC',
+                                                'return.first_name' => 1,
+                                                'sequential' => 1,
+                                                'rowCount' => 1));
+        $this->assertAPISuccess($result, 'in line ' . __LINE__);
+        
+        $this->assertEquals('abc1',$result['values'][0]['first_name']);
+        $result = civicrm_api($this->_entity,'get', array('version' => 3, 
+                                                'sort' => 'first_name DESC',
+                                                'return.first_name' => 1,
+                                                'sequential' => 1,
+                                                'rowCount' => 1));
+        $this->assertEquals('bb',$result['values'][0]['first_name']);
+        
+        civicrm_api($this->_entity,'delete', array('version' => 3,'id' => $c1['id']));
+        civicrm_api($this->_entity,'delete', array('version' => 3,'id' => $c2['id']));
+    }
+    
+    /*
+     * Test that sort works - new syntax
+     */
+    function testGetSortNewSYntax(){
+        $c1 = civicrm_api($this->_entity,'create', $this->_params);
+        $c2 = civicrm_api($this->_entity,'create', array('version' => 3, 'first_name' => 'bb', 'last_name' => 'ccc', 'contact_type' => 'Individual'));
+        $result = civicrm_api($this->_entity,'getvalue', array('version' => 3, 
+                                                'return' => 'first_name',
+                                                'options' => array('limit' => 1,
+                                                                   'sort' => 'first_name')));
+        $this->assertEquals('abc1',$result, 'in line' . __LINE__);
+        
+        $result = civicrm_api($this->_entity,'getvalue', array('version' => 3, 
+                                                'return' => 'first_name',
+                                                'options' => array('limit' => 1,
+                                                                   'sort' => 'first_name DESC')));
+        $this->assertEquals('bb',$result);
+        
+        civicrm_api($this->_entity,'delete', array('version' => 3,'id' => $c1['id']));
+        civicrm_api($this->_entity,'delete', array('version' => 3,'id' => $c2['id']));
+    }
+    
+     /**
      * check with complete array + custom field 
      * Note that the test is written on purpose without any
      * variables specific to participant so it can be replicated into other entities

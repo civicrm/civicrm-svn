@@ -108,22 +108,14 @@ function civicrm_api3_participant_get( $params ) {
             unset( $params['id'] );
         }
 
-            $inputParams      = array( );
-    $returnProperties = array( );
-    $otherVars = array( 'sort', 'offset', 'rowCount' );
 
-    $sort     = null;
-    $offset   = 0;
-    $rowCount = 25;
-    foreach ( $params as $n => $v ) {
-        if ( substr( $n, 0, 7 ) == 'return.' ) {
-            $returnProperties[ substr( $n, 7 ) ] = $v;
-        } elseif ( in_array ( $n, $otherVars ) ) {
-            $$n = $v;
-        } else {
-            $inputParams[$n] = $v;
-        }
-    }
+    $options = _civicrm_api3_get_options_from_params($params, true);
+    $sort            = CRM_Utils_Array::value('sort',$options,NULL);
+    $offset          = CRM_Utils_Array::value('offset',$options);
+    $rowCount        = CRM_Utils_Array::value('limit',$options);
+    $smartGroupCache = CRM_Utils_Array::value('smartGroupCache',$params);
+    $inputParams      = CRM_Utils_Array::value('input_params',$options,array( ));
+    $returnProperties =  CRM_Utils_Array::value('return',$options,null);
 
     // add is_test to the clause if not present
     if ( ! array_key_exists( 'participant_test', $inputParams ) ) {
@@ -158,6 +150,7 @@ function civicrm_api3_participant_get( $params ) {
         return civicrm_api3_create_success($participant,$params, 'participant','get',$dao);
 
 }
+
 
 
 /**

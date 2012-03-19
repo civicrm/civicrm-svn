@@ -415,33 +415,60 @@ function   _civicrm_api3_apply_filters_to_dao($filterField,$filterValue, &$dao )
     }
 }
 /*
+ * 
+ * Get sort, limit etc options from the params - supporting old & new formats.
+ * get returnproperties for legacy
  * @param array $params params array as passed into civicrm_api
  * @return array $options options extracted from params
  */
 
-function _civicrm_api3_get_options_from_params(&$params){
+function _civicrm_api3_get_options_from_params(&$params, $legacy = 0){
+    $sort = CRM_Utils_Array::value('sort', $params, 0);
+    $sort = CRM_Utils_Array::value('option.sort', $params, $sort);
+    $sort = CRM_Utils_Array::value('option_sort', $params, $sort);
+    
+    $offset = CRM_Utils_Array::value('offset', $params, 0);
+    $offset = CRM_Utils_Array::value('option.offset', $params, $offset);
+    $offset = CRM_Utils_Array::value('option_offset', $params,$offset ); // dear PHP thought it would be a good idea to transform a.b into a_b in the get/post
 
-  $options = array();
+    $limit = CRM_Utils_Array::value('rowCount', $params,25);
+    $limit = CRM_Utils_Array::value('option.limit', $params,$limit);
+    $limit = CRM_Utils_Array::value('option_limit', $params,$limit);
+
+    if( is_array( CRM_Utils_Array::value( 'options', $params ) ) ){
+      $offset = CRM_Utils_Array::value('offset', $params['options'],$offset );
+      $limit = CRM_Utils_Array::value('limit', $params['options'],$limit );
+      $sort = CRM_Utils_Array::value('sort', $params['options'],$sort );
+    }
+    
+    $returnProperties = array();
+    if ( array_key_exists ('return',$params)) {// handle the format return =sort_name,display_name...
+      $returnProperties = explode (',',$params['return']);
+      $returnProperties = array_flip ($returnProperties); 
+      $returnProperties[key($returnProperties)] = 1; 
+    }
+    
+    
+    $options = array('offset' => $offset,
+                     'sort' => $sort,
+                     'limit' => $limit,
+                     'return' => !empty($returnProperties)?$returnProperties:null);
+  if(!legacy){
+    return $options;
+  }
+  //here comes the legacy support for $returnProperties, $inputParams e.g for contat_get
   $inputParams      = array( );
-  $returnProperties = array( );
-  $otherVars = array( 'sort', 'offset', 'rowCount' );
-
-  $sort     = null;
-  $offset   = 0;
-  $rowCount = 25;
+  $legacyreturnProperties = array( );
+  $otherVars = array( 'sort', 'offset', 'rowCount', 'options',  );
   foreach ( $params as $n => $v ) {
       if ( substr( $n, 0, 7 ) == 'return.' ) {
-        $returnProperties[ substr( $n, 7 ) ] = $v;
+        $legacyreturnProperties[ substr( $n, 7 ) ] = $v;
       } elseif ( in_array( $n, $otherVars ) ) {
-        $$n = $v;
       } else {
         $inputParams[$n] = $v;
       }
     }
-  $options['sort'] = $sort;
-  $options['limit'] = $rowCount;
-  $options['offset'] = $offset;
-  $options['return'] = $returnProperties;
+  $options['return'] = array_merge($returnProperties, $legacyreturnProperties);
   $options['input_params'] = $inputParams;
   return $options;
 
@@ -452,31 +479,15 @@ function _civicrm_api3_get_options_from_params(&$params){
  * @param object $dao DAO object
  */
 function   _civicrm_api3_apply_options_to_dao(&$params, &$dao, $defaults = array() ) {
-    $sort = CRM_Utils_Array::value('option.sort', $params, 0);
-    $sort = CRM_Utils_Array::value('option_sort', $params, $sort);
 
-    $offset = CRM_Utils_Array::value('option.offset', $params, 0);
-    $offset = CRM_Utils_Array::value('option_offset', $params,$offset ); // dear PHP thought it would be a good idea to transform a.b into a_b in the get/post
-
-    //XAV->eileen do you want it?     $offset = CRM_Utils_Array::value('offset', $params,  $offset);
-    $limit = CRM_Utils_Array::value('option.limit', $params,25);
-    $limit = CRM_Utils_Array::value('option_limit', $params,$limit);
-
-
-    if( is_array( CRM_Utils_Array::value( 'options', $params ) ) ){
-      $offset = CRM_Utils_Array::value('offset', $params['options'],$offset );
-      $limit = CRM_Utils_Array::value('limit', $params['options'],$limit );
-      $sort = CRM_Utils_Array::value('sort', $params['options'],$sort );
-    }
-
-    $dao->limit( (int)$offset, (int)$limit);
-
-
-    if(!empty($sort)){
-        $dao->orderBy( $sort);
+    $options = _civicrm_api3_get_options_from_params($params);
+    $dao->limit( (int)$options['offset'], (int)$options['limit']);
+    if(!empty($options['sort'])){
+        $dao->orderBy($options['sort']);
     }
 
 }
+
 
 /*
  * build fields array. This is the array of fields as it relates to the given DAO
