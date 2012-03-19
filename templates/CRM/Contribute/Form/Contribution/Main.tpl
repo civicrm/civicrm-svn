@@ -313,7 +313,7 @@ function clearAmountOther() {
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="is_pay_later"
     trigger_value       =""
-    target_element_id   ="payment_information" 
+    target_element_id   ="billing-payment-block" 
     target_element_type ="table-row"
     field_type          ="radio"
     invert              = 1

@@ -710,7 +710,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                    
         if ( !in_array( $this->_paymentProcessor['billing_mode'], array( 2, 4 ) ) && 
              $this->_values['is_monetary'] && is_array( $this->_paymentProcessor ) ) {
-            $attributes = array('onclick' => "return showHideByValue('is_pay_later','','payment_information',
+            $attributes = array('onclick' => "return showHideByValue('is_pay_later','','billing-payment-block',
                                                      'block','radio',true);");
             
             $this->assign( 'hidePaymentInformation', true );
