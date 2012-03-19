@@ -304,7 +304,8 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 $this->_paymentProcessors = CRM_Core_BAO_PaymentProcessor::getPayments( $ppIds,
                                                                                        $this->_mode );
                 
-                $this->_paymentProcessor = $this->_paymentProcessors[1]; 
+                $key = key ( $this->_paymentProcessors );
+                $this->_paymentProcessor = $this->_paymentProcessors[$key]; 
                 // check selected payment processor is active
                 if ( empty( $this->_paymentProcessor ) ) {
                     CRM_Core_Error::fatal( ts( 'A payment processor configured for this page might be disabled (contact the site administrator for assistance).' ) );
