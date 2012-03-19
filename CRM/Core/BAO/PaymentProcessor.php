@@ -199,11 +199,12 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
                 if ( ! $testDAO->find( true ) ) {
                     CRM_Core_Error::fatal( ts( 'Could not retrieve payment processor details' ) );
                 }
-                $paymentDAO[$dao->id] = self::buildPayment( $testDAO );
+                $paymentDAO[$testDAO->id] = self::buildPayment( $testDAO );
             } else {
                 $paymentDAO[$dao->id] = self::buildPayment( $dao );
             }
         }
+        asort($paymentDAO );
         return $paymentDAO;
     }
 
