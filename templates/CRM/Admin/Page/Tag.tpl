@@ -135,8 +135,7 @@ function mergeTag( fromId ) {
 			cj("#tag_name").val( "" );
 			cj("#tag_name_id").val( null );
 
-			var tagUrl = {/literal}"{crmURL p='civicrm/ajax/mergeTagList' h=0}"{literal};
-                        tagUrl = tagUrl + "&fromId=" + fromId;
+			var tagUrl = {/literal}"{crmURL p='civicrm/ajax/mergeTagList' h=0 q='fromId='}"{literal} + fromId;
 
 			cj("#tag_name").autocomplete( tagUrl, {
 				width: 260,
