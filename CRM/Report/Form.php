@@ -539,16 +539,19 @@ class CRM_Report_Form extends CRM_Core_Form {
             if ( array_key_exists( 'order_bys', $table ) && 
                  is_array( $table['order_bys'] ) ) {
 
-                 if (!array_key_exists('order_bys', $this->_defaults) )
-			 $this->_defaults['order_bys'] = array();
+                if (!array_key_exists('order_bys', $this->_defaults) )
+                    $this->_defaults['order_bys'] = array();
                 foreach ( $table['order_bys'] as $fieldName => $field ) {
-                    if ( CRM_Utils_Array::value( 'default', $field ) ) {
+                    if ( CRM_Utils_Array::value( 'default', $field ) || 
+                         CRM_Utils_Array::value( 'default_order', $field ) ||
+                         CRM_Utils_Array::value( 'default_is_section', $field ) || 
+                         CRM_Utils_Array::value( 'default_weight', $field ) ) {
                         $order_by = array(
                                           'column'  => $fieldName,
                                           'order'   => CRM_Utils_Array::value( 'default_order', $field, 'ASC' ),
                                           'section' => CRM_Utils_Array::value( 'default_is_section', $field, 0 ),
                                           );
-
+                        
                         if ( CRM_Utils_Array::value( 'default_weight', $field ) ) {
                             $this->_defaults['order_bys'][ (int) $field['default_weight']] = $order_by;
                         } else {
