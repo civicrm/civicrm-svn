@@ -57,9 +57,8 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
      */
     function createUser( &$params, $mail ) 
     {
-
-        require_once 'components/com_users/models/registration.php';
-
+        require_once JPATH_SITE . '/components/com_users/models/registration.php';
+        
         $userParams = JComponentHelper::getParams('com_users');
         $model      = new UsersModelRegistration();
         $ufID       = null;
