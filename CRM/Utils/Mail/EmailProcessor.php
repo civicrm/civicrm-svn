@@ -264,6 +264,22 @@ class CRM_Utils_Mail_EmailProcessor {
                                 }
                             }
                         }
+
+                        if ( $text == null && 
+                             $mail->subject == "Delivery Status Notification (Failure)" ) {
+                            // Exchange error - CRM-9361
+                            foreach ( $mail->body->getParts() as $part ) {
+                                if ( $part instanceof ezcMailDeliveryStatus ) {
+                                    foreach( $part->recipients as $rec ) {
+                                        if ( $rec["Status"] == "5.1.1" ) {
+                                            $text = "Delivery to the following recipients failed";
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         $params = array( 'job_id'         => $job,
                                          'event_queue_id' => $queue,
                                          'hash'           => $hash,
