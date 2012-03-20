@@ -530,9 +530,10 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $otherEvs = CRM_Core_BAO_CustomValueTable::getEntityValues($otherId);
         $keys = array_unique(array_merge(array_keys($mainEvs), array_keys($otherEvs)));
         foreach ($keys as $key) {
-            if ($mainEvs[$key] != $otherEvs[$key]) $diffs['custom'][] = $key;
+          $key1 = CRM_Utils_Array::value($key, $mainEvs);
+          $key2 = CRM_Utils_Array::value($key, $otherEvs);
+          if ($key1 != $key2) $diffs['custom'][] = $key;
         }
-
         return $diffs;
     }
 }
