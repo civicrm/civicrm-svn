@@ -181,7 +181,12 @@ function civicrm_user_view( $user, $view_mode ){
         if ( CRM_Core_Permission::check( 'access CiviCRM' ) &&
              CRM_Contact_BAO_Contact_Permission::allow( $userID ) ) {
             $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid=$userID" );
-            $contactURL = '<a href="' .$url. '">&raquo; ' .ts("View Contact Record") . '</a>';
+            $contactURL = 
+                '<span class="user-page-link" id="user-page-contact" ><a href="' .
+                $url . 
+                '"><span class="user-page-bullet">&raquo;</span> ' .
+                ts("View Contact Record") .
+                '</a></span>';
         }
 
         if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
@@ -189,7 +194,12 @@ function civicrm_user_view( $user, $view_mode ){
             if ( ! empty( $contactURL ) ) {
                 $contactURL .= '<br/>';
             }
-            $contactURL .= '<a href="' .$url. '">&raquo; ' .ts("View Contact Dashboard") . '</a>';
+            $contactURL .= 
+                '<span class="user-page-link" id="user-page-dashboard" ><a href="' .
+                $url .
+                '"><span class="user-page-bullet">&raquo;</span> ' .
+                ts("View Contact Dashboard") .
+                '</a></span>';
         }
 
         require_once 'CRM/Profile/Page/Dynamic.php';
@@ -215,8 +225,13 @@ function civicrm_user_view( $user, $view_mode ){
             // CRM-3537: profile edit link
             $editURL = '';
             if ( user_edit_access($user) ) {
-                $editURL = '&raquo; ' . l( ts("Edit %1", array('%1' => $title['title'])),
-                                           "user/{$user->uid}/edit/{$title['title']}");
+                $editURL = 
+                    '<span class="user-page-link" id="user-page-profile-' .
+                    substr($title['title'],0,3) .
+                    '" ><span class="user-page-bullet">&raquo;</span> ' .
+                    l( ts("Edit %1", array('%1' => $title['title'] ) ),
+                       "user/{$user->uid}/edit/{$title['title']}" ) .
+                    '</span>';
             }
 
             if ( $pageContent ) {
