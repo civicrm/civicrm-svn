@@ -453,7 +453,7 @@ function _civicrm_api3_get_options_from_params(&$params, $legacy = 0){
                      'sort' => $sort,
                      'limit' => $limit,
                      'return' => !empty($returnProperties)?$returnProperties:null);
-  if(!legacy){
+  if(!$legacy){
     return $options;
   }
   //here comes the legacy support for $returnProperties, $inputParams e.g for contat_get
