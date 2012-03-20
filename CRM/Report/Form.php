@@ -537,10 +537,10 @@ class CRM_Report_Form extends CRM_Core_Form {
             }
 
             if ( array_key_exists( 'order_bys', $table ) && 
-                 is_array( $table['order_bys'] ) &&
-                 !array_key_exists('order_bys', $this->_defaults) ) {
+                 is_array( $table['order_bys'] ) ) {
 
-                $this->_defaults['order_bys'] = array();
+                 if (!array_key_exists('order_bys', $this->_defaults) )
+			 $this->_defaults['order_bys'] = array();
                 foreach ( $table['order_bys'] as $fieldName => $field ) {
                     if ( CRM_Utils_Array::value( 'default', $field ) ) {
                         $order_by = array(
