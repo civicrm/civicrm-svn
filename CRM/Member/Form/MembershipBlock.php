@@ -122,7 +122,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $paymentProcessor = CRM_Core_PseudoConstant::paymentProcessor( false, false, 'is_recur = 1' );
             
             $paymentProcessorId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', 
-                                                               $this->_id, 'payment_processor_id' );
+                                                               $this->_id, 'payment_processor' );
             $isRecur = false;
             $membership        = array();
             $membershipDefault = array();
