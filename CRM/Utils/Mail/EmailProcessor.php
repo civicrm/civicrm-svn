@@ -281,7 +281,7 @@ class CRM_Utils_Mail_EmailProcessor {
                                          'hash'           => $hash,
                                          'version'        => 3 
                                          );
-                        civicrm_api('Mailing', 'event_confirm', $params);
+                        $result = civicrm_api('Mailing', 'event_confirm', $params);
                         break;
 
                     case 'o':
@@ -340,8 +340,11 @@ class CRM_Utils_Mail_EmailProcessor {
                         break;
                     }
 
-                    CRM_Utils_Hook::emailProcessor( 'mailing', $params, $mail, $result, $action );
-                    
+                    if ( $result['is_error'] ) {
+                        echo "Failed Processing: {$mail->subject}, Action: $action, Job ID: $job, Queue ID: $queue, Hash: $hash. Reason: {$result['error_message']}\n";
+                    } else {
+                        CRM_Utils_Hook::emailProcessor( 'mailing', $params, $mail, $result, $action );
+                    }
                 }
                             
                 $store->markProcessed($key);
