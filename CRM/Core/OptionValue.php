@@ -310,7 +310,27 @@ class CRM_Core_OptionValue
                                                                   'title'=> 'Honor Type Label',
                                                                   'headerPattern' => '/^honor_type_label$/i',
                                                                   'where' => 'honor_type.label'
+                                                                   ),
+                                   'soft_credit_name'    => array('name' => 'soft_credit_name',
+                                                                  'title'=> 'Soft Credit Name',
+                                                                  'headerPattern' => '/^soft_credit_name$/i',
+                                                                  'where' => 'civicrm_contact_d.display_name'
                                                                   ),
+                                   'soft_credit_email'    => array('name' => 'soft_credit_email',
+                                                                   'title'=> 'Soft Credit Email',
+                                                                   'headerPattern' => '/^soft_credit_email$/i',
+                                                                   'where' => 'soft_email.email'
+                                                                   ),
+                                   'soft_credit_phone'    => array('name' => 'soft_credit_phone',
+                                                                   'title'=> 'Soft Credit Phone',
+                                                                   'headerPattern' => '/^soft_credit_phone$/i',
+                                                                   'where' => 'soft_phone.phone'
+                                                                   ),
+                                   'soft_credit_contact_id'    => array('name' => 'soft_credit_contact_id',
+                                                                        'title'=> 'Soft Credit Contact ID',
+                                                                        'headerPattern' => '/^soft_credit_contact_id$/i',
+                                                                        'where' => 'civicrm_contribution_soft.contact_id'
+                                                                        ),
                                    );
             } else if ( $mode == '' ) {  
                 //the fields email greeting and postal greeting are meant only for Individual and Household

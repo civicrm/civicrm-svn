@@ -162,6 +162,34 @@ class CRM_Contribute_BAO_Query
             $query->_element['contribution_campaign_id'] = 1;
             $query->_tables['civicrm_contribution'] = 1;
         }
+        
+         // LCD 716
+        if ( CRM_Utils_Array::value( 'soft_credit_name', $query->_returnProperties ) ) {
+            $query->_select['contribution_soft_credit_name']  = "civicrm_contact_d.display_name as contribution_soft_credit_name";
+            $query->_element['contribution_soft_credit_name'] = 1;
+            $query->_tables['civicrm_contribution'] = 1;
+            $query->_tables['civicrm_contribution_soft'] = 1;
+            $query->_tables['civicrm_contribution_soft_contact'] = 1;
+        }
+        
+        if ( CRM_Utils_Array::value( 'soft_credit_email', $query->_returnProperties ) ) {
+            $query->_select['contribution_soft_credit_email']  = "soft_email.email as contribution_soft_credit_email";
+            $query->_element['contribution_soft_credit_email'] = 1;
+            $query->_tables['civicrm_contribution'] = 1;
+            $query->_tables['civicrm_contribution_soft'] = 1;
+            $query->_tables['civicrm_contribution_soft_contact'] = 1;
+            $query->_tables['civicrm_contribution_soft_email'] = 1;
+        }
+        
+        if ( CRM_Utils_Array::value( 'soft_credit_phone', $query->_returnProperties ) ) {
+            $query->_select['contribution_soft_credit_email']  = "soft_phone.phone as contribution_soft_credit_phone";
+            $query->_element['contribution_soft_credit_phone'] = 1;
+            $query->_tables['civicrm_contribution'] = 1;
+            $query->_tables['civicrm_contribution_soft'] = 1;
+            $query->_tables['civicrm_contribution_soft_contact'] = 1;
+            $query->_tables['civicrm_contribution_soft_phone'] = 1;
+        }
+        // LCD 716 END
     }
 
     static function where( &$query ) 
@@ -579,9 +607,23 @@ class CRM_Contribute_BAO_Query
             $from .= " $side  JOIN civicrm_participant ON civicrm_participant_payment.participant_id = civicrm_participant.id ";
             break;
 
+        // LCD 716    
         case 'civicrm_contribution_soft':
             $from = " $side JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id = civicrm_contribution.id";
             break;
+            
+        case 'civicrm_contribution_soft_contact':
+            $from .= " $side JOIN civicrm_contact civicrm_contact_d ON (civicrm_contribution_soft.contact_id = civicrm_contact_d.id )";
+            break;
+        
+        case 'civicrm_contribution_soft_email':
+            $from .= " $side JOIN civicrm_email as soft_email ON (civicrm_contact_d.id = soft_email.contact_id )";
+            break;
+            
+        case 'civicrm_contribution_soft_phone':
+            $from .= " $side JOIN civicrm_phone as soft_phone ON (civicrm_contact_d.id = soft_phone.contact_id )";
+            break;
+        // LCD 716 END
         }
         return $from;
     }
