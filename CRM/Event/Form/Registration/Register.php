@@ -73,6 +73,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
      */
     public $_skipDupeRegistrationCheck = false;
     
+    protected $_ppType;
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -82,6 +83,14 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     function preProcess( ) 
     {
         parent::preProcess( );
+        
+        $this->_ppType = CRM_Utils_Array::value( 'type', $_GET );
+        $this->assign( 'ppType', false );
+        if ( $this->_ppType ) {
+            $this->assign( 'ppType', true );
+            require_once 'CRM/Core/Payment/ProcessorForm.php';
+            return CRM_Core_Payment_ProcessorForm::preProcess( $this );
+        }
         
         //CRM-4320.
         //here we can't use parent $this->_allowWaitlist as user might
@@ -116,6 +125,18 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         
         // Assign pageTitle
     	$this->assign( 'pageTitle', ts( 'Event Registration' ) );
+  
+        if ( !empty($_POST) ) {
+            $payment_processor = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event',  $this->_eventId, 'payment_processor' );
+            if (!is_numeric( $payment_processor )) {
+                $this->set('type',  CRM_Utils_Array::value( 'payment_processor', $_POST ) );
+                $this->set('mode',  $this->_mode );
+
+                require_once 'CRM/Core/Payment/ProcessorForm.php';
+                CRM_Core_Payment_ProcessorForm::preProcess( $this );
+                CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
+            }
+        }
     }
     
     /**
@@ -294,6 +315,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
     public function buildQuickForm( ) 
     {  
+        if ( $this->_ppType ) {
+            return CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
+        }
+
         $contactID = parent::getContactID( );
         $this->assign( 'contact_id', $contactID );
         $display_name = '';
@@ -311,6 +336,16 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     ts( 'Email Address' ),
                     array( 'size' => 30, 'maxlength' => 60 ), true );
         $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
+        
+        if ( count ( $this->_paymentProcessors ) > 1 ) {
+            $pps = $this->_paymentProcessors;
+            foreach ( $pps as $key => &$name ){
+                $pps[$key] = $name['name'];
+            }
+            
+            $this->addRadio( 'payment_processor', ts('Payment Processor'), $pps,
+                             array('onChange' => "buildPaymentBlock( this.value );"));
+        }
         
         $bypassPayment = $allowGroupOnWaitlist = $isAdditionalParticipants = false;
         if ( $this->_values['event']['is_multiple_registrations'] ) {
@@ -375,7 +410,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             if ( is_array( $this->_paymentProcessor ) ) {
                 $freezePayLater = false;
                 if ( !in_array( $this->_paymentProcessor['billing_mode'], array( 2, 4 ) ) ) { 
-                    $showHidePayfieldName = 'payment_information';
+                    $showHidePayfieldName = 'billing-payment-block';
                     $attributes = array('onclick' => "showHidePaymentInfo( );" );
                 }
                 
@@ -400,7 +435,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 
                 require_once 'CRM/Core/Payment/Form.php';
                 CRM_Core_Payment_Form::buildCreditCard( $this );
-                if ( $showHidePayfieldName == 'payment_information' ) {
+                if ( $showHidePayfieldName == 'billing-payment-block' ) {
                     $showHidePaymentInformation = true;
                 }
                 if ( $showHidePayfieldName == 'PayPalExpress' ) {
@@ -412,7 +447,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         //lets add some qf element to bypass payment validations, CRM-4320
         if ( $bypassPayment ) {
             $attributes = null;
-            if ( $showHidePayfieldName == 'payment_information' && $showHidePaymentInformation ) {
+            if ( $showHidePayfieldName == 'billing-payment-block' && $showHidePaymentInformation ) {
                 $attributes = array('onclick' => "showHidePaymentInfo();" );
             }
             if ( $showHidePayfieldName ==  'PayPalExpress' ) {
@@ -480,11 +515,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                             $this );
 
         // add pcp fields
-        if ($this->_pcpId){
-          require_once "CRM/PCP/BAO/PCP.php";
-          CRM_PCP_BAO_PCP::buildPcp($this->_pcpId, $this);
+        if ( $this->_pcpId ) {
+            require_once 'CRM/PCP/BAO/PCP.php';
+            CRM_PCP_BAO_PCP::buildPcp( $this->_pcpId, $this );
         }
-        
     }
     
     /**

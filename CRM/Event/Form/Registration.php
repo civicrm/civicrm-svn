@@ -368,20 +368,25 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             //check for variour combination for paylater, payment
             //process with paid event.
             if ( $isMonetary && 
-                 ( ! $isPayLater || CRM_Utils_Array::value( 'payment_processor_id', $this->_values['event'] ) ) ) {
-                $ppID = CRM_Utils_Array::value( 'payment_processor_id',
+                 ( ! $isPayLater || CRM_Utils_Array::value( 'payment_processor', $this->_values['event'] ) ) ) {
+                $ppID = CRM_Utils_Array::value( 'payment_processor',
                                                 $this->_values['event'] );
                 if ( ! $ppID ) {
                     CRM_Core_Error::statusBounce( ts( 'A payment processor must be selected for this event registration page, or the event must be configured to give users the option to pay later (contact the site administrator for assistance).' ), $infoUrl );
                 }
                 
+                $ppIds = explode( CRM_Core_DAO::VALUE_SEPARATOR, $ppID );
                 require_once 'CRM/Core/BAO/PaymentProcessor.php';
-                $this->_paymentProcessor =
-                    CRM_Core_BAO_PaymentProcessor::getPayment( $ppID,
-                                                               $this->_mode );
+                $this->_paymentProcessors =
+                    CRM_Core_BAO_PaymentProcessor::getPayments( $ppIds,
+                                                                $this->_mode );
                 
+
                 // make sure we have a valid payment class, else abort
                 if ( $this->_values['event']['is_monetary'] ) {
+                    $key = key ( $this->_paymentProcessors );
+                    $this->_paymentProcessor = $this->_paymentProcessors[$key];
+                    // check selected payment processor is active                                                                                                                                               
                     if ( ! $this->_paymentProcessor ) {
                         CRM_Core_Error::fatal( ts( 'The site administrator must set a Payment Processor for this event in order to use online registration.' ) );
                     }

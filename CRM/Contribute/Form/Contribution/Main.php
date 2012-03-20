@@ -164,7 +164,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( !empty($_POST) ) {
             $payment_processor = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage',  $this->_id, 'payment_processor' );
             if (!is_numeric( $payment_processor )) {
-                $this->set('type',  CRM_Utils_Array::value( 'payment_processor_id', $_POST ) );
+                $this->set('type',  CRM_Utils_Array::value( 'payment_processor', $_POST ) );
                 $this->set('mode',  $this->_mode );
 
                 require_once 'CRM/Core/Payment/ProcessorForm.php';
