@@ -43,16 +43,6 @@ function civicrm_conf_init() {
     }
 
     /**
-     * Quick test to see if the config file is in the standalone directory
-     */
-    $standalonedir = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'standalone';
-    if ( file_exists( $standalonedir . DIRECTORY_SEPARATOR . 'civicrm.settings.php' ) ) {
-      	return $standalonedir;
-    } elseif ( file_exists( $standalonedir . DIRECTORY_SEPARATOR . 'sites' . DIRECTORY_SEPARATOR .  'default'  . DIRECTORY_SEPARATOR . 'civicrm.settings.php' ) ) {
-        $confdir = $standalonedir;
-    }
-
-    /**
      * We are within the civicrm module, the drupal root is 2 links
      * above us, so use that
      */
@@ -66,11 +56,15 @@ function civicrm_conf_init() {
     } else {
         // make it relative to civicrm.config.php, else php makes it relative
         // to the script that invokes it
-        // simple check to see if this is under sites/all or just modules
-        if ( strpos( $currentDir, 'sites' . DIRECTORY_SEPARATOR . 'all' . DIRECTORY_SEPARATOR . 'modules' ) !== false ) {
-            // seems like this is in drupal5 dir location
+        $moduleDir  = 'sites' . DIRECTORY_SEPARATOR . 'all' . DIRECTORY_SEPARATOR . 'modules';
+        $contribDir = $moduleDir . DIRECTORY_SEPARATOR . 'contrib';
+        // check to see if this is under sites/all/modules/contrib
+        if ( strpos( $currentDir, $contribDir ) !== false ) {
+            $confdir = $currentDir . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..';
+        // check to see if this is under sites/all/modules
+        } else if ( strpos( $currentDir, $moduleDir ) !== false ) {
             $confdir = $currentDir . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..';
-        } else if ( strpos( $currentDir, 'plugins' . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'civicrm' ) !==false ){
+        } else if ( strpos( $currentDir, 'plugins' . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'civicrm' ) !== false ) {
              //if its wordpress 
             $confdir = $currentDir . DIRECTORY_SEPARATOR . '..';
         } else {
