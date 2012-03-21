@@ -198,10 +198,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
      * @access public
      * @return None
      */
-    public function postProcess() 
-    {
-        /*
-        $params     = $this->exportValues( );
+    public function postProcess() {
+        $params = $this->controller->exportValues( $this->_name );
+        crm_core_error::debug( 'p', $params );
         $dates = array( 'receive_date',
                         'receipt_date',
                         'thankyou_date',
@@ -209,13 +208,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                         );
         if ( isset( $params['field'] ) ) {
             foreach ( $params['field'] as $key => $value ) {
-                                
+                // if contact is not selected we should skip the row
+                if ( !CRM_Utils_Array::value( $key, $params['contact_select_id'] ) ) {
+                    continue;
+                }
+
+                $value['contact_id'] = CRM_Utils_Array::value( $key, $params['contact_select_id'] );                          
                 $value['custom'] = CRM_Core_BAO_CustomField::postProcess( $value,
                                                                           CRM_Core_DAO::$_nullObject,
                                                                           $key,
                                                                           'Contribution' );
                                 
-                $ids['contribution'] = $key;
                 foreach ( $dates as $val ) {
                     if ( isset( $value[$val] ) ) {
                         $value[$val] = CRM_Utils_Date::processDate( $value[$val] );
@@ -235,7 +238,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                 
                 unset($value['contribution_type']);
                 unset($value['contribution_source']);
-                $contribution = CRM_Contribute_BAO_Contribution::add( $value ,$ids ); 
+                
+                $contribution = CRM_Contribute_BAO_Contribution::add( $value ); 
                 
                 // add custom field values           
                 if ( CRM_Utils_Array::value( 'custom', $value ) &&
@@ -244,12 +248,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                     CRM_Core_BAO_CustomValueTable::store( $value['custom'], 'civicrm_contribution', $contribution->id );
                 }            
             }
-            CRM_Core_Session::setStatus("Your updates have been saved."); 
-        } else {
-            CRM_Core_Session::setStatus("No updates have been saved.");
+            CRM_Core_Session::setStatus("Your batch is processed."); 
         }
 
-         */
+        // redirect to batch entry page.
+        $session = CRM_Core_Session::singleton( );
+        $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch', "reset=1" ));
     }//end of function
 } 
-

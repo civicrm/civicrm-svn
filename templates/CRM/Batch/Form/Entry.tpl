@@ -31,7 +31,7 @@
 <table>
     <thead>
         <tr class="columnheader">
-            <td>Contact</td>
+            <td>{ts}Contact{/ts}</td>
         {foreach from=$fields item=field key=fieldName}
             <td>{$field.title}</td>
         {/foreach}
@@ -39,7 +39,7 @@
     </thead>
     {section name='i' start=1 loop=$rowCount} 
     {assign var='rowNumber' value=$smarty.section.i.index} 
-    <tr class="{cycle values="odd-row,even-row"}" entity_id="{$rowNumber}">
+    <tr class="{cycle values="odd-row,even-row"} selector-rows" entity_id="{$rowNumber}">
         {* contact select/create option*}
         <td class="compressed">
             <table>
@@ -60,4 +60,19 @@
 </table>
 <div class="crm-submit-buttons">{if $fields}{$form._qf_Batch_refresh.html}{/if} &nbsp; {$form.buttons.html}</div>
 </div>
+{literal}
+<script type="text/javascript">
+    cj(function(){
+        cj('.selector-rows').click(function(){
+            cj(this).addClass('processed');
+            //cj("#Entry").submit();
+        });
 
+        var options = {
+             'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}       
+        };
+
+        //cj("#Entry").ajaxForm(options);
+    });
+</script>
+{/literal}
