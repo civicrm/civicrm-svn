@@ -283,6 +283,11 @@ class CRM_Utils_Mail_Incoming {
     }
 
     function parseAddress( &$address, &$params, &$subParam, &$mail ) {
+        // CRM-9484
+        if ( empty( $address->email ) ) {
+            return;
+        }
+
         $subParam['email'] = $address->email;
         $subParam['name' ] = $address->name ;
 
