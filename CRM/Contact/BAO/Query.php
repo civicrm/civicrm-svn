@@ -1076,9 +1076,7 @@ class CRM_Contact_BAO_Query
                 // CRM-9630
                 $select = "SELECT count( DISTINCT {$this->_distinctComponentClause} )";
             } else {
-                $select = ( $this->_useDistinct ) ?	
-                    'SELECT count(DISTINCT contact_a.id)' :
-                    'SELECT count(*)';
+                $select = 'SELECT count(DISTINCT contact_a.id)';
             }
             $from = $this->_simpleFromClause;
             if ( $this->_useDistinct ) {
