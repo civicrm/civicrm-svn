@@ -223,10 +223,9 @@ class CRM_Core_Payment_Form {
      * @access public 
      */
     function buildCreditCard( &$form, $useRequired = false ) {
-        self::setCreditCardFields($form);
-        
         require_once 'CRM/Core/Payment.php';
-        if ( $form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM) {
+        if ( $form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
+            self::setCreditCardFields( $form );
             foreach ( $form->_fields as $name => $field ) {
                 if ( isset( $field['cc_field'] ) &&
                      $field['cc_field'] ) {
@@ -272,7 +271,8 @@ class CRM_Core_Payment_Form {
     function buildDirectDebit( &$form, $useRequired = false ) {
         require_once 'CRM/Core/Payment.php';
 
-        if ( $form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM) {
+        if ( $form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
+            self::setDirectDebitFields( $form );
             foreach ( $form->_fields as $name => $field ) {
                 if ( isset( $field['cc_field'] ) &&
                      $field['cc_field'] ) {
