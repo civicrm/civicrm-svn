@@ -99,7 +99,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         require_once "CRM/Core/BAO/UFGroup.php";
         require_once "CRM/Core/BAO/CustomGroup.php";
         CRM_Utils_System::setTitle( ts('Batch entry for Contributions') );
-        
+
+        $this->addElement('hidden', 'batch_id', $this->_batchId );
+
         $this->_fields  = array( );
         $this->_fields  = CRM_Core_BAO_UFGroup::getFields( $this->_profileId, false, CRM_Core_Action::VIEW );
 
@@ -117,6 +119,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             if ( is_array( $field['attributes'] ) && $this->_fields[$name]['attributes']['size'] > 19 ) {
                 //shrink class to "form-text-medium"
                 $this->_fields[$name]['attributes']['size'] = 19;
+            }
+            
+            if ( $this->_fields[$name]['is_required'] ) {
+                $this->_fields[$name]['attributes']['validate'] = 'required';
             }
         }
 
@@ -181,13 +187,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             return;
         }
         
-        $defaults = array( );
-        /*
-        foreach ($this->_contributionIds as $contributionId) {
-            $details[$contributionId] = array( );
-            CRM_Core_BAO_UFGroup::setProfileDefaults( null, $this->_fields, $defaults, false, $contributionId, 'Contribute' );
-        }
-         */
+        // get the existing batch values from cache table
+        require_once 'CRM/Core/BAO/Cache.php'; 
+        $cacheKeyString = "batchEntry {$this->_batchId}";
+        $defaults = CRM_Core_BAO_Cache::getItem( 'batch entry', $cacheKeyString );
+ 
         return $defaults;
     }
 
