@@ -253,6 +253,15 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                     CRM_Core_BAO_CustomValueTable::store( $value['custom'], 'civicrm_contribution', $contribution->id );
                 }            
             }
+
+            // update batch to close status
+
+
+            // delete from cache table
+            require_once 'CRM/Core/BAO/Cache.php'; 
+            $cacheKeyString = "batchEntry {$this->_batchId}";
+            CRM_Core_BAO_Cache::deleteGroup( 'batch entry', $cacheKeyString );
+ 
             CRM_Core_Session::setStatus("Your batch is processed."); 
         }
 

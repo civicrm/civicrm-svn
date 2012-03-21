@@ -111,17 +111,23 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
      * delete the entire cache if group is not specified
      *
      * @param string $group The group name of the entries to be deleted
-     * 
+     * @param string $path  path of the item that needs to be deleted
+     *
      * @return void
      * @static
      * @access public
      */
-    static function deleteGroup( $group = null ) {
+    static function deleteGroup( $group = null, $path = null ) {
         $dao = new CRM_Core_DAO_Cache( );
         
         if ( ! empty( $group ) ) {
             $dao->group_name = $group;
         }
+
+        if ( ! empty( $path ) ) {
+            $dao->path = $path;
+        }
+ 
         $dao->delete( );
 
         // also reset ACL Cache
