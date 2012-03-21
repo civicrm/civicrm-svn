@@ -37,6 +37,7 @@
             <th>{ts}Type{/ts}</th>
             <th>{ts}Item Count{/ts}</th>
             <th>{ts}Total Amount{/ts}</th>
+            <th>{ts}Status{/ts}</th>
             <th></th>
         </tr>
     </thead>
@@ -46,7 +47,8 @@
             <td class="crm-batch-type">{$row.batch_type_id}</td>	
             <td class="crm-batch-total">{$row.item_count}</td>	
             <td class="crm-batch-total">{$row.total|crmMoney}</td>	
-            <td>{$row.action|replace:'xx':$row.id}</td>
+            <td class="crm-batch-total">{$row.batch_status_id}</td>	
+            <td>{if $row.batch_status_id eq 1}{$row.action|replace:'xx':$row.id}{/if}</td>
         </tr>
     {/foreach}
   </table>

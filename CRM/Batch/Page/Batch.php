@@ -69,7 +69,7 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
         if ( !( self::$_links ) ) {
             self::$_links = array(
                 CRM_Core_Action::UPDATE  => array(
-                    'name'  => ts('Batch Entry'),
+                    'name'  => ts('Enter Records'),
                     'url'   => 'civicrm/batch/entry',
                     'qs'    => 'id=%%id%%&reset=1',
                     'title' => ts('Batch Entry') 

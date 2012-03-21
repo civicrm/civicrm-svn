@@ -136,7 +136,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                                          'name'      => ts('Validate & Process the Batch'),
                                          'isDefault' => true   ),
                                  array ( 'type'      => 'cancel',
-                                         'name'      => ts('Continue Later') ),
+                                         'name'      => ts('Save & Continue Later') ),
                                  )
                            );
         
@@ -255,7 +255,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             }
 
             // update batch to close status
+            require_once 'CRM/Core/BAO/Batch.php';
+            $paramValues = array( 'id'              => $this->_batchId,
+                                  'batch_status_id' => 2 );
 
+            CRM_Core_BAO_Batch::create( $paramValues ); 
 
             // delete from cache table
             require_once 'CRM/Core/BAO/Cache.php'; 
