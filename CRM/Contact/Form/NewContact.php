@@ -51,12 +51,12 @@ class CRM_Contact_Form_NewContact
      * @access public
      * @return void
      */
-    function buildQuickForm( &$form, $blockNo = 1, $extraProfiles = null ) {
+    function buildQuickForm( &$form, $blockNo = 1, $extraProfiles = null, $required = false ) {
         // call to build contact autocomplete
         $attributes = array( 'width' => '200px' );    
-        $form->add('text', "contact[{$blockNo}]", ts('Select Contact'), $attributes );
+        $form->add('text', "contact[{$blockNo}]", ts('Select Contact'), $attributes, $required );
         $form->addElement('hidden', "contact_select_id[{$blockNo}]" );
-        
+
         if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
              CRM_Core_Permission::check( 'add contacts' ) ) {            
             // build select for new contact
