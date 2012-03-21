@@ -79,6 +79,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             // get the profile id associted with this batch type
             $this->_profileId = CRM_Core_BAO_Batch::getProfileId( $this->_batchInfo['batch_type_id'] );
         }
+
+        // redirect to batch entry page.
+        $session = CRM_Core_Session::singleton( );
+        $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch', "reset=1" ));
     }
     
     /**
@@ -93,8 +97,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             CRM_Core_Error::fatal( 'Profile that is used for batch entry is missing.' );
         }
 
-        $this->addDefaultButtons( ts('Save') );
-        
         // get the profile information
         require_once "CRM/Core/BAO/UFGroup.php";
         require_once "CRM/Core/BAO/CustomGroup.php";
@@ -131,10 +133,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         
         $this->addButtons( array(
                                  array ( 'type'      => 'submit',
-                                         'name'      => ts('Process Batch'),
+                                         'name'      => ts('Validate & Process the Batch'),
                                          'isDefault' => true   ),
                                  array ( 'type'      => 'cancel',
-                                         'name'      => ts('Cancel') ),
+                                         'name'      => ts('Continue Later') ),
                                  )
                            );
         
@@ -168,11 +170,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         // don't set the status message when form is submitted.
         $buttonName = $this->controller->getButtonName('submit');
 
-        if ( $suppressFields && $buttonName != '_qf_Batch_next' ) {
+        if ( $suppressFields && $buttonName != '_qf_Entry_next' ) {
             CRM_Core_Session::setStatus( "FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update and have been excluded." );
         }
 
-        $this->addDefaultButtons( ts( 'Process Batch' ) );
     }
 
     /**
@@ -255,8 +256,5 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             CRM_Core_Session::setStatus("Your batch is processed."); 
         }
 
-        // redirect to batch entry page.
-        $session = CRM_Core_Session::singleton( );
-        $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch', "reset=1" ));
-    }//end of function
+   }//end of function
 } 
