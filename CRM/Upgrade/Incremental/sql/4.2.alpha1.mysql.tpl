@@ -6,9 +6,6 @@ INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
   (@option_group_id_report, {localize}'Mail Detail Report'{/localize}, 'mailing/detail', 'CRM_Report_Form_Mailing_Detail', @weight := @weight + 1, {localize}'Provides reporting on Intended and Successful Deliveries, Unsubscribes and Opt-outs, Replies and Forwards.'{/localize}, 0, @mailCompId);
 
-
-INSERT INTO `civicrm_report_instance` (`id`, `domain_id`, `title`, `report_id`, `description`, `permission`, `grouprole`, `form_values`, `is_active`, `email_subject`, `email_to`, `email_cc`, `header`, `footer`, `navigation_id`) VALUES
-
 INSERT INTO `civicrm_report_instance`
     ( `domain_id`, `title`, `report_id`, `description`, `permission`, `form_values`)
 VALUES 
