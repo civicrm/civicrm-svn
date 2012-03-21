@@ -161,16 +161,16 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         }
         
-        if ( !empty($_POST) ) {
-            $payment_processor = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage',  $this->_id, 'payment_processor' );
-            if (!is_numeric( $payment_processor )) {
-                $this->set('type',  CRM_Utils_Array::value( 'payment_processor', $_POST ) );
-                $this->set('mode',  $this->_mode );
-
-                require_once 'CRM/Core/Payment/ProcessorForm.php';
-                CRM_Core_Payment_ProcessorForm::preProcess( $this );
-                CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
-            }
+        if ( CRM_Utils_Array::value( 'hidden_processor', $_POST ) ) {
+            //if ( !empty($_POST) ) {
+            //crm_Core_error::debug('p', $_POST);
+            
+            $this->set('type',  CRM_Utils_Array::value( 'payment_processor', $_POST ) );
+            $this->set('mode',  $this->_mode );
+            
+            require_once 'CRM/Core/Payment/ProcessorForm.php';
+            CRM_Core_Payment_ProcessorForm::preProcess( $this );
+            CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
         }
     }
 
@@ -399,7 +399,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
         $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
 
-        if ( count ( $this->_paymentProcessors ) > 1 ) {
+        //if ( count ( $this->_paymentProcessors ) > 1 ) {
             $pps = $this->_paymentProcessors;
             foreach ( $pps as $key => &$name ){
                 $pps[$key] = $name['name']; 
@@ -407,7 +407,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             
             $this->addRadio( 'payment_processor', ts('Payment Processor'), $pps, 
                              array('onChange' => "buildPaymentBlock( this.value );"));
-        }
+            // }
         
         //build pledge block.
         $this->_useForMember = 0;
@@ -490,14 +490,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost' );
 
         // doing this later since the express button type depends if there is an upload or not
-        if ( $this->_values['is_monetary'] ) {
+        /*if ( $this->_values['is_monetary'] ) {
             require_once 'CRM/Core/Payment/Form.php';
             if (  $this->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) {
                 CRM_Core_Payment_Form::buildDirectDebit( $this );
             } else {
                 CRM_Core_Payment_Form::buildCreditCard( $this );
             }
-        }
+            }*/
 
         //to create an cms user 
         if ( ! $this->_userID ) {
