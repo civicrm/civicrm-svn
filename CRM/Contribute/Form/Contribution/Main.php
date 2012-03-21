@@ -724,7 +724,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                       $this->_values['pay_later_text'], null, $attributes );
         //if payment processor is not available then freeze
         //the paylater checkbox with default checked.
-        if ( empty ( $this->_paymentProcessor ) ) {
+        if ( empty ( $this->_values['payment_processor'] ) ) {
             $element->freeze();
         }
     }
