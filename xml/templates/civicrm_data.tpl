@@ -1208,7 +1208,8 @@ INSERT INTO civicrm_uf_group
     (7,  'summary_overlay',    'Contact',   		  '{ts escape="sql"}Summary Overlay{/ts}'   , 0,           1,           NULL),
     (8,  'shared_address',     'Contact',   		  '{ts escape="sql"}Shared Address{/ts}'    , 0,           1,           NULL),
     (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership', 
-    '{ts escape="sql"}On Behalf Of Organization{/ts}'    , 0,           1,           NULL);
+    '{ts escape="sql"}On Behalf Of Organization{/ts}'    , 0,           1,           NULL),
+    (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Batch Entry{/ts}' , 0,      1,           NULL);
 
 INSERT INTO civicrm_uf_join
    (is_active,module,entity_table,entity_id,weight,uf_group_id)
@@ -1222,7 +1223,8 @@ VALUES
    (1, 'Profile', NULL, NULL, 5, 6),
    (1, 'Profile', NULL, NULL, 6, 7),
    (1, 'Profile', NULL, NULL, 7, 8),
-   (1, 'Profile', NULL, NULL, 8, 9);
+   (1, 'Profile', NULL, NULL, 8, 9),
+   (1, 'Profile', NULL, NULL, 9, 10);
    
 INSERT INTO civicrm_uf_field
        (id, uf_group_id, field_name,              is_required, is_reserved, weight, visibility,                  in_selector, is_searchable, location_type_id, label,                                         		field_type,    help_post, phone_type_id ) VALUES
@@ -1267,7 +1269,18 @@ INSERT INTO civicrm_uf_field
        (39,  9,           'city',                  1,           0,           5,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}City{/ts}',                           'Contact',    NULL,   NULL),
        (40,  9,           'postal_code',           1,           0,           6,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Postal Code{/ts}',                    'Contact',    NULL,   NULL),
        (41,  9,           'country',               1,           0,           7,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Country{/ts}',                        'Contact',    NULL,   NULL),
-       (42,  9,           'state_province',        1,           0,           8,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}State / Province{/ts}',               'Contact',    NULL,   NULL);
+       (42,  9,           'state_province',        1,           0,           8,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}State / Province{/ts}',               'Contact',    NULL,   NULL),
+       (43, 10,     'contribution_type',           1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Contribution Type{/ts}', 'Contribution', NULL, NULL ),
+       (44, 10,     'total_amount',                1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Total Amount{/ts}', 'Contribution', NULL, NULL ),
+       (45, 10,     'currency',                    1, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Currency{/ts}', 'Contribution', NULL, NULL ),
+       (46, 10,     'contribution_status_id',      1, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Contribution Status{/ts}', 'Contribution', NULL, NULL ),
+       (47, 10,     'contribution_source',         0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Contribution Source{/ts}', 'Contribution', NULL, NULL ),
+       (48, 10,     'receive_date',                0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receive Date{/ts}', 'Contribution', NULL, NULL ),
+       (49, 10,     'payment_instrument',          0, 0, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Instrument{/ts}', 'Contribution', NULL, NULL ),
+       (50, 10,     'check_number',                0, 0, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Check Number{/ts}', 'Contribution', NULL, NULL ),
+       (51, 10,     'invoice_id',                  0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Invoice ID{/ts}', 'Contribution', NULL, NULL ),
+       (52, 10,     'receipt_date',                0, 0, 10, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receipt Date{/ts}', 'Contribution', NULL, NULL );
+
 
 INSERT INTO civicrm_participant_status_type
   (id, name,                                  label,                                                       class,      is_reserved, is_active, is_counted, weight, visibility_id) VALUES

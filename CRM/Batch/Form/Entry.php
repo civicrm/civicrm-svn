@@ -220,7 +220,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                         $value[$val] = CRM_Utils_Date::processDate( $value[$val] );
                     }
                 }
-                if ($value['contribution_type']) {
+                if ( $value['contribution_type'] ) {
                     $value['contribution_type_id'] = $value['contribution_type'];
                 }
 
