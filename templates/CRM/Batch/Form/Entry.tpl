@@ -66,13 +66,13 @@
         cj('.selector-rows').click(function(){
             cj(this).addClass('processed');
             //cj("#Entry").submit();
+            var options = {
+            'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}       
+            };
+
+            cj("#Entry").ajaxSubmit(options);
         });
 
-        var options = {
-             'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}       
-        };
-
-        //cj("#Entry").ajaxForm(options);
     });
 </script>
 {/literal}

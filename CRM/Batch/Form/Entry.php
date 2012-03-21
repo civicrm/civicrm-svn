@@ -200,7 +200,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
      */
     public function postProcess() {
         $params = $this->controller->exportValues( $this->_name );
-        crm_core_error::debug( 'p', $params );
+        
         $dates = array( 'receive_date',
                         'receipt_date',
                         'thankyou_date',
@@ -239,7 +239,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                 unset($value['contribution_type']);
                 unset($value['contribution_source']);
                 
-                $contribution = CRM_Contribute_BAO_Contribution::add( $value ); 
+                $contribution = CRM_Contribute_BAO_Contribution::add( $value, CRM_Core_DAO::$_nullArray ); 
                 
                 // add custom field values           
                 if ( CRM_Utils_Array::value( 'custom', $value ) &&
