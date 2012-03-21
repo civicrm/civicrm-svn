@@ -94,10 +94,9 @@ ents, or the option to "Execute real-time monetary transactions" is disabled. Pl
     static function buildQuickform( &$form ) {
         require_once 'CRM/Core/Payment/Form.php';
         $form->addElement( 'hidden', 'hidden_processor', 1 );
-        //crm_Core_Error::DEbug($form->_paymentProcessor);
         if (( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT )) {
             CRM_Core_Payment_Form::buildDirectDebit( $form );
-        } else {
+        } elseif (( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_CREDIT_CARD ))  {
             CRM_Core_Payment_Form::buildCreditCard( $form );
         }
     }
