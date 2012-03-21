@@ -384,22 +384,31 @@ class CRM_Report_Form extends CRM_Core_Form {
             foreach ( $fieldGroups as $fieldGrp ) {
                 if ( CRM_Utils_Array::value( $fieldGrp, $table ) && is_array( $table[$fieldGrp] ) ) {
                     foreach ( $table[$fieldGrp] as $fieldName => $field ) {
-                        if ( array_key_exists($fieldName, $expFields) ) {
+                        // $name is the field name used to reference the BAO/DAO export fields array
+                        $name = isset($field['name']) ? $field['name'] : $fieldName;
+
+                        // Sometimes the field name key in the BAO/DAO export fields array is
+                        // different from the actual database field name.
+                        // Unset $field['name'] so that actual database field name can be obtained
+                        // from the BAO/DAO export fields array.
+                        unset($field['name']);
+                        
+                        if ( array_key_exists($name, $expFields) ) {
                             foreach ( $doNotCopy as $dnc ) {
                                 // unset the values we don't want to be copied.
-                                unset($expFields[$fieldName][$dnc]);
+                                unset($expFields[$name][$dnc]);
                             }
                             if ( empty($field) ) {
-                                $this->_columns[$tableName][$fieldGrp][$fieldName] = $expFields[$fieldName];
+                                $this->_columns[$tableName][$fieldGrp][$fieldName] = $expFields[$name];
                             } else {
-                                foreach ( $expFields[$fieldName] as $property => $val ) {
+                                foreach ( $expFields[$name] as $property => $val ) {
                                     if ( ! array_key_exists($property, $field) ) {
                                         $this->_columns[$tableName][$fieldGrp][$fieldName][$property] = $val;
                                     }
                                 }
                             }
                         }
-
+                        
                         // fill other vars
                         if ( CRM_Utils_Array::value( 'no_repeat', $field ) ) {
                             $this->_noRepeats[] = "{$tableName}_{$fieldName}";
@@ -416,7 +425,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
                         // set name = fieldName, unless already set
                         if ( !isset($this->_columns[$tableName][$fieldGrp][$fieldName]['name']) ) {
-                            $this->_columns[$tableName][$fieldGrp][$fieldName]['name'] = $fieldName;
+                            $this->_columns[$tableName][$fieldGrp][$fieldName]['name'] = $name;
                         }
 
                         // set dbAlias = alias.name, unless already set
