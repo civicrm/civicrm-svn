@@ -492,6 +492,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         $this->assign( 'billingName', $name );
         $this->set( 'name', $name );
 
+        $this->assign( 'paymentProcessor', $this->_paymentProcessor );
         $vars = array( 'amount', 'currencyID',
                        'credit_card_type', 'trxn_id', 'amount_level' );
  

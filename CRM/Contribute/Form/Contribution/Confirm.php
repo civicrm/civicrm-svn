@@ -62,7 +62,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         parent::preProcess( );
         // lineItem isn't set until Register postProcess
         $this->_lineItem = $this->get( 'lineItem' );
-        
+        $this->_paymentProcessor = $this->get( 'paymentProcessor' );
+
         if ( $this->_contributeMode == 'express' ) {
             // rfp == redirect from paypal
             $rfp = CRM_Utils_Request::retrieve( 'rfp', 'Boolean',

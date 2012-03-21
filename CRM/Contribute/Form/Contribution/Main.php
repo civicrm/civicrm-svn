@@ -160,14 +160,13 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 }
             }
         }
-        
+
         if ( CRM_Utils_Array::value( 'hidden_processor', $_POST ) ) {
-            //if ( !empty($_POST) ) {
-            //crm_Core_error::debug('p', $_POST);
-            
+
             $this->set('type',  CRM_Utils_Array::value( 'payment_processor', $_POST ) );
             $this->set('mode',  $this->_mode );
-            
+            $this->set('paymentProcessor',  $this->_paymentProcessor );
+
             require_once 'CRM/Core/Payment/ProcessorForm.php';
             CRM_Core_Payment_ProcessorForm::preProcess( $this );
             CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
