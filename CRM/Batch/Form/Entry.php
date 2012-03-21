@@ -145,15 +145,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         
         $fileFieldExists = false;
  
-        //load all campaigns.
-        if ( array_key_exists( 'contribution_campaign_id', $this->_fields ) ) {
-            $this->_componentCampaigns = array( );
-            CRM_Core_PseudoConstant::populate( $this->_componentCampaigns,
-                                               'CRM_Contribute_DAO_Contribution',
-                                               true, 'campaign_id', 'id', 
-                                               ' id IN ('. implode(' , ',array_values( $this->_contributionIds ) ) .' ) ');
-        }
-        
         require_once "CRM/Core/BAO/CustomField.php";
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Contribution' );
         for ( $rowNumber = 1; $rowNumber<= $this->_batchInfo['item_count']; $rowNumber++  ) {

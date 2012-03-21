@@ -43,12 +43,12 @@
     </thead>
     {foreach from=$rows item=row}
         <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"}">
-            <td class="crm-batch-name">{$row.title}</td>	
-            <td class="crm-batch-type">{$row.batch_type_id}</td>	
-            <td class="crm-batch-total">{$row.item_count}</td>	
-            <td class="crm-batch-total">{$row.total|crmMoney}</td>	
-            <td class="crm-batch-total">{$row.batch_status_id}</td>	
-            <td>{if $row.batch_status_id eq 1}{$row.action|replace:'xx':$row.id}{/if}</td>
+            <td class="crm-batch-title">{$row.title}</td>	
+            <td class="crm-batch-type">{$row.type_id}</td>	
+            <td class="crm-item_count">{$row.item_count}</td>	
+            <td class="crm-total">{$row.total|crmMoney}</td>	
+            <td class="crm-status_id">{$row.batch_status_id}</td>	
+            <td>{if $row.status_id eq 1}{$row.action|replace:'xx':$row.id}{/if}</td>
         </tr>
     {/foreach}
   </table>

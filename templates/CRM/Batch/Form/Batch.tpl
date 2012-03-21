@@ -38,17 +38,17 @@
           <td class="label">{$form.title.label}</td>
           <td>{$form.title.html}</td>
       </tr>
-      <tr class="crm-batch-form-block-batch_type_id">
-          <td class="label">{$form.batch_type_id.label}</td>
-          <td>{$form.batch_type_id.html}</td>
+      <tr class="crm-batch-form-block-type_id">
+          <td class="label">{$form.type_id.label}</td>
+          <td>{$form.type_id.html}</td>
       </tr>
       <tr class="crm-batch-form-block-description">
           <td class="label">{$form.description.label}</td>
           <td>{$form.description.html}</td>
       </tr>
-      <tr class="crm-batch-form-block-batch_status_id">
-          <td class="label">{$form.batch_status_id.label}</td>
-          <td>{$form.batch_status_id.html}</td>
+      <tr class="crm-batch-form-block-status_id">
+          <td class="label">{$form.status_id.label}</td>
+          <td>{$form.status_id.html}</td>
       </tr>
       <tr class="crm-batch-form-block-item_count">
           <td class="label">{$form.item_count.label}</td>

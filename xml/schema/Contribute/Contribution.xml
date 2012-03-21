@@ -301,7 +301,7 @@
       <type>int unsigned</type>
       <default>1</default>
       <import>true</import>
-      <export>false</export>
+      <export>true</export>
       <headerPattern>/status/i</headerPattern>
       <add>1.6</add>
   </field>

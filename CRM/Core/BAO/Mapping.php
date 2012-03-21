@@ -394,6 +394,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
                 require_once 'CRM/Contribute/BAO/Contribution.php';
                 $fields['Contribution'] = CRM_Contribute_BAO_Contribution::exportableFields();
                 unset($fields['Contribution']['contribution_contact_id']);
+                unset($fields['Contribution']['contribution_status_id']);
                 $compArray['Contribution'] = ts('Contribution');
             }
         }
