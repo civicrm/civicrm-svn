@@ -47,7 +47,7 @@
         {* contact select/create option*}
         <td class="compressed">
             <table>
-            {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber}
+            {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true}
             </table>
         </td>
 

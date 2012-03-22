@@ -25,6 +25,18 @@
 *}
 {* template for adding form elements for selecting existing or creating new contact*}
 {if $context ne 'search'}
+    {if $noLabel}
+     	<div>
+            <div id="contact-success-{$blockNo}" class="hiddenElement">
+                <span class="success-status">{ts}New contact has been created.{/ts}</span>
+            </div>
+            {$form.contact.$blockNo.html} <br/>
+    	    {if $form.profiles}
+    		{ts}OR{/ts}<br/>{$form.profiles.$blockNo.html}<div id="contact-dialog-{$blockNo}" class="hiddenElement"></div>
+    	    {/if}
+    	</div>
+       
+    {else}
     <tr id="contact-success-{$blockNo}" class="hiddenElement">
     <td></td>
     <td><span class="success-status">{ts}New contact has been created.{/ts}</span></td>
@@ -37,6 +49,7 @@
     	    {/if}
     	</td>
     </tr>
+    {/if}
 {/if}
 
 {literal}
