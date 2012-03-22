@@ -408,7 +408,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $pps[0] = $this->_values['pay_later_text'];
             }
             $this->addRadio( 'payment_processor', ts('Payment Processor'), $pps, 
-                             array('onChange' => "buildPaymentBlock( this.value );"));
+                             array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
         
         }
         
@@ -551,9 +551,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->add( 'text', 'pcp_roll_nickname', ts('Name'), array( 'maxlength' => 30 ) );
             $this->add( 'textarea', 'pcp_personal_note', ts( 'Personal Note' ), array( 'style' => 'height: 3em; width: 40em;' ) );
         }
-        
-        if ( !( $this->_paymentProcessor['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON &&
-                !$this->_values['is_pay_later'] ) ) {
+
+        if ( !( $this->_paymentProcessor['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON
+                && !$this->_values['is_pay_later'] ) )
+            {
             $this->addButtons(array( 
                                     array ( 'type'      => 'upload',
                                             'name'      => ts('Confirm Contribution'), 
@@ -1171,6 +1172,22 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         // get the submitted form values. 
         $params = $this->controller->exportValues( $this->_name );
+        if ( $this->_values['is_pay_later'] && 
+             empty( $this->_paymentProcessor ) && 
+             ! array_key_exists( 'hidden_processor', $params ) ) {
+            $params['is_pay_later'] = 1;
+        } else {
+            $params['is_pay_later'] = 0;
+        }
+
+        $this->set( 'is_pay_later', $params['is_pay_later'] );
+        // assign pay later stuff                                                                                                                                                                                  
+        $this->_params['is_pay_later'] = CRM_Utils_Array::value( 'is_pay_later', $params, false );
+        $this->assign( 'is_pay_later', $params['is_pay_later'] );
+        if ( $params['is_pay_later'] ) {
+            $this->assign( 'pay_later_text'   , $this->_values['pay_later_text']    );
+            $this->assign( 'pay_later_receipt', $this->_values['pay_later_receipt'] );
+        }
 
         //carry campaign from profile.
         if ( array_key_exists( 'contribution_campaign_id', $params ) ) {

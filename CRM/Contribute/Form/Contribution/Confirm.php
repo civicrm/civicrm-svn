@@ -60,10 +60,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     {
         $config = CRM_Core_Config::singleton( );
         parent::preProcess( );
+        
         // lineItem isn't set until Register postProcess
         $this->_lineItem = $this->get( 'lineItem' );
         $this->_paymentProcessor = $this->get( 'paymentProcessor' );
-
+        
         if ( $this->_contributeMode == 'express' ) {
             // rfp == redirect from paypal
             $rfp = CRM_Utils_Request::retrieve( 'rfp', 'Boolean',
@@ -151,6 +152,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $this->_params['currencyID'    ] = $config->defaultCurrency;
             $this->_params['payment_action'] = 'Sale';
         }
+
+        $this->_params['is_pay_later'] = $this->get( 'is_pay_later' );
 
         // if onbehalf-of-organization
         if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $this->_params ) ) {
@@ -354,7 +357,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->assign( 'is_separate_payment', $this->_separateMembershipPayment );
         $this->assign( 'lineItem', $this->_lineItem );
         $this->assign( 'priceSetID', $this->_priceSetId );
-        
 
         if ( $this->_paymentProcessor['payment_processor_type'] == 'Google_Checkout' 
              && !$this->_params['is_pay_later'] && ! ( $this->_amount == 0 ) ) {
@@ -487,9 +489,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     {
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Contact/BAO/Contact.php';
-
         $contactID = $this->_userID;
-
+        
         // add a description field at the very beginning
         $this->_params['description'] = ts( 'Online Contribution' ) . ': ' . 
             ( ( $this->_pcpInfo['title'] ) ? $this->_pcpInfo['title'] : $this->_values['title'] );
