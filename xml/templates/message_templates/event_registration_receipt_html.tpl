@@ -10,10 +10,23 @@
     {capture assign=valueStyle }style="padding: 4px; border-bottom: 1px solid #999;"{/capture}
 
     <p>Dear {contact.display_name},</p>
-    <p>This is being sent to you as a receipt of payment.</p>
+    {if $is_pay_later}
+      <p>
+        This is being sent to you as an acknowledgement that you have registered one or more members for the following workshop, event or purchase. Please note, however, that the status of your payment is pending, and the registration for this event will not be completed until your payment is received.
+      </p>
+    {else}
+      <p>
+        This is being sent to you as a {if $is_refund}confirmation of refund{else}receipt of payment made{/if} for the following workshop, event registration or purchase made at CompassPoint Nonprofit Services.
+      </p>
+    {/if}
 
-    <p>Your order number is #{$transaction_id}. Please print this confirmation for your records.{if $events_in_cart} Information about event registration will be sent separately to each participant.{/if}
-      Here's a summary of your transaction placed on {$transaction_date|date_format:"%D %I:%M %p %Z"}:</p>
+    {if $is_pay_later}
+      <p>{$pay_later_receipt}</p>
+    {/if}
+
+    <p>Your order number is #{$transaction_id}. Please print this confirmation for your records.{if $line_items && !$is_refund} Information about the workshops will be sent separately to each participant.{/if}
+  Here's a summary of your transaction placed on {$transaction_date|date_format:"%D %I:%M %p %Z"}:</p>
+
     
 {if $billing_name}
 	<table class="billing-info">
@@ -93,7 +106,7 @@
 		{$line_item.location.address.1.supplemental_address_2}<br />
 	      {/if}
 	      {if $line_item.location.address.1.city}
-		{$line_item.location.address.1.city}, {$location.address.1.state_province} {$location.address.1.postal_code}
+		{$line_item.location.address.1.city}, {$line_item.location.address.1.state_province} {$location.address.1.postal_code}
 	      {/if}
 	    {/if}{*End of isShowLocation condition*}<br /><br />
 	    {$line_item.event->start_date|date_format:"%D %I:%M %p"} - {$line_item.event->end_date|date_format:"%I:%M %p"}

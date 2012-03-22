@@ -817,11 +817,7 @@ WHERE civicrm_event.is_active = 1
 
         require_once 'CRM/Utils/String.php';
 
-        // check if we're in shopping cart mode for events
-        require_once 'CRM/Core/BAO/Setting.php';
-        $enable_cart = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME,
-                                                   'enable_cart' );
-        if ($enable_cart) {
+        if ($config->enable_cart) {
             require_once 'CRM/Event/Cart/BAO/EventInCart.php';
         }
         while ( $dao->fetch( ) ) {
@@ -864,7 +860,7 @@ WHERE civicrm_event.is_active = 1
                 $info['location'     ] = $address;
                 $info['url'          ] = CRM_Utils_System::url( 'civicrm/event/info', 'reset=1&id=' . $dao->event_id, true, null, false );
 
-                if ($enable_cart) {
+                if ($config->enable_cart) {
                     $reg = CRM_Event_Cart_BAO_EventInCart::get_registration_link($dao->event_id);
                     $info['registration_link'] = CRM_Utils_System::url($reg['path'], $reg['query'], true);
                     $info['registration_link_text'] = $reg['label'];
@@ -1115,6 +1111,17 @@ WHERE civicrm_event.is_active = 1
                                           $isTest, 
                                           null, 
                                           $participantParams );
+
+                require_once 'CRM/Event/Cart/BAO/Conference.php';
+                $sessions = CRM_Event_Cart_BAO_Conference::get_participant_sessions($participantId);
+                
+                $tplParams = array_merge( $values, $participantParams, array(
+                  'email' => $email,
+                  'confirm_email_text' => CRM_Utils_Array::value('confirm_email_text', $values['event']),
+                  'isShowLocation' => CRM_Utils_Array::value('is_show_location',   $values['event']),
+                  'contributeMode' => null,
+                  'conference_sessions' => $sessions,
+                ) );
                 
                 $sendTemplateParams = array(
                     'groupName' => 'msg_tpl_workflow_event',

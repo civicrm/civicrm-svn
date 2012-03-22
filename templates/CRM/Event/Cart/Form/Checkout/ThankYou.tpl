@@ -5,7 +5,7 @@
     {ts 1=$site_name}This is your receipt of payment made for the following event registration made at %1.{/ts}
   </p>
   <p>
-    {ts 1=$transaction->trxn_id 2=$transaction->trxn_date|date_format:"%D %I:%M %p %Z"}Your order number is <strong>#%1</strong>. Please print this confirmation for your records. You will receieve a confirmation email with the information below.  Information about the workshops will be sent separately to each participant. Here's a summary of your transaction placed on %2:{/ts}
+    {ts 1=$transaction_id 2=$transaction_date|date_format:"%D %I:%M %p %Z"}Your order number is <strong>#%1</strong>. Please print this confirmation for your records. You will receieve a confirmation email with the information below.  Information about the workshops will be sent separately to each participant. Here's a summary of your transaction placed on %2:{/ts}
   </p>
   {if $pay_later_receipt && $is_pay_later}
   <p>
@@ -29,7 +29,7 @@
 		<div class="clear"></div>
       </div>
     </div>
-    {if !$is_pay_later}
+    {if $credit_card_type}
       <div class="crm-group credit_card-group">
         <div class="header-dark">
                   {ts}Credit Card Information{/ts}
@@ -81,7 +81,7 @@
 			  {$line_item.location.address.1.supplemental_address_2}
 			{/if}
 			{if $line_item.location.address.1.city}
-			  {$line_item.location.address.1.city} {$line_item.location.address.1.postal_code}
+			  {$line_item.location.address.1.city}, {$line_item.location.address.1.state_province} {$line_item.location.address.1.postal_code}
 			{/if}
 		    </div>
 		  {/if}{*End of isShowLocation condition*}

@@ -31,23 +31,25 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	  'register_date' => $registerDate,
 	  'source'        => CRM_Utils_Array::value('participant_source', $params, $this->description),
 	  //'fee_level'     => $participant->fee_level,
-	  'is_pay_later'  => CRM_Utils_Array::value( 'is_pay_later', $params, 0 ),
+          'is_pay_later'  => $this->is_pay_later,
 	  'fee_amount'    => CRM_Utils_Array::value('amount', $params, 0),
           //XXX why is this a ref to participant and not contact?:
 	  //'registered_by_id' => $this->payer_contact_id,
 	  'fee_currency'     => CRM_Utils_Array::value( 'currencyID', $params )
 	);
 
-	$participant_statuses = CRM_Event_PseudoConstant::participantStatus();
-	if ( $participant->must_wait ) {
-	  $participantParams['status_id'] = array_search( 'On waitlist', $participant_statuses );
+        if ( $participant->must_wait ) {
+          $participant_status = 'On waitlist';
           //XXX magic:
           $this->assign('isOnWaitlist', true);
-	} else if ( CRM_Utils_Array::value('is_pay_later', $params)) {
-	  $participantParams['status_id'] = array_search( 'Pending from pay later', $participant_statuses );
+	} else if ( CRM_Utils_Array::value('is_pay_later', $params, false) ) {
+          $participant_status = 'Pending from pay later';
 	} else {
-          $participantParams['status_id'] = array_search( 'Registered', $participant_statuses );
+          $participant_status = 'Registered';
         }
+        $participantParams['participant_status'] = $participant_status;
+        $participant_statuses = CRM_Event_PseudoConstant::participantStatus();
+        $participantParams['status_id'] = array_search( $participant_status, $participant_statuses );
 
 	if ( $this->_action & CRM_Core_Action::PREVIEW || CRM_Utils_Array::value( 'mode', $params ) == 'test' ) {
 	  $participantParams['is_test'] = 1;
@@ -81,12 +83,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	  $paymentParticpant = CRM_Event_BAO_ParticipantPayment::create( $payment_params, $ids );
 	}
 
-        $defaults = array();
-        $ids = array( 'contact_id' => $participant->contact_id );
-        $contact = CRM_Contact_BAO_Contact::retrieve( $ids, $defaults );
-        $contact->is_deleted = 0;
-        $contact->save();
-
 	$transaction->commit( );
 
         $event_values = array();
@@ -119,7 +115,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
             );
         }
         $values = array(
-          'params' => $participantParams,
+          'params' => array($participant->id => $participantParams),
           'event' => $event_values,
           'location' => $location,
           'custom_pre_id' => $pre_id,
@@ -167,10 +163,12 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	CRM_Core_Payment_Form::setCreditCardFields( $this );
 	CRM_Core_Payment_Form::buildCreditCard( $this );
 
-        if ($can_pay_later)
+        if ($can_pay_later || self::is_administrator())
         {
             $this->addElement( 'checkbox', 'is_pay_later', 
                                $pay_later_text );
+            $this->addElement( 'checkbox', 'payment_completed', 
+                               ts('Payment Completed') );
             $this->assign( 'pay_later_instructions', $this->pay_later_receipt );
         }
   }
@@ -334,6 +332,8 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	foreach ( $this->line_items as &$line_item ) {
 	  $location_params = array( 'entity_id' => $line_item['event']->id, 'entity_table' => 'civicrm_event' );
 	  $line_item['location'] = CRM_Core_BAO_Location::getValues( $location_params, true );
+          CRM_Core_BAO_Address::fixAddress($line_item['location']['address'][1]);
+
 	}
 	$send_template_params = array
 	(
@@ -366,6 +366,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
                 'pay_later_receipt' => $this->pay_later_receipt,
 	  ),
 	  'valueName' => 'event_registration_receipt',
+          'PDFFilename' => 'eventReceipt.pdf',
 	);
 	$template_params_to_copy = array
 	(
@@ -391,8 +392,8 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
   {
 	$errors = array( );
 
-	if ($self->payment_required)
-	{	  
+        if ($self->payment_required && !CRM_Utils_Array::value('is_pay_later', $self->_submitValues))
+	{
 	  require_once 'CRM/Core/BAO/PaymentProcessor.php';
 	  require_once 'CRM/Core/Payment/Form.php';
 	  require_once 'CRM/Core/Payment.php';
@@ -440,7 +441,8 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
   function preProcess()
   {
     $params = $this->_submitValues;
-    $this->is_pay_later = CRM_Utils_Array::value('is_pay_later', $params, false);
+    $this->is_pay_later = CRM_Utils_Array::value('is_pay_later', $params, false)
+        && !CRM_Utils_Array::value('payment_completed', $params);
 
     parent::preProcess();
   }
@@ -460,6 +462,17 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	$trxn = null;
 	$params = $this->_submitValues;
 
+        $main_participants = $this->cart->get_main_event_participants();
+        foreach ($main_participants as $participant)
+        {
+          $defaults = array();
+          $ids = array( 'contact_id' => $participant->contact_id );
+          $contact = CRM_Contact_BAO_Contact::retrieve( $ids, $defaults );
+          $contact->is_deleted = 0;
+          $contact->save();
+        }
+
+        $trxn_prefix = 'VR';
         if (array_key_exists('billing_contact_email', $params))
         {
           $this->payer_contact_id = self::find_or_create_contact( $this->getContactID(), array(
@@ -507,34 +520,43 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	$params['invoiceID'] = md5(uniqid(rand(), true));
         $params['amount'] = $this->total;
         $params['contribution_type_id'] = $this->contribution_type_id;
-	if ($this->payment_required && !$this->is_pay_later)
-	{
+	if ($this->payment_required && !CRM_Utils_Array::value('is_pay_later', $params))
+          {
           $trxn = $this->make_payment($params);
           $params['trxn_id'] = $trxn->trxn_id;
           $params['trxn_date'] = $trxn->trxn_date;
           $params['currencyID'] = $trxn->currency;
           $params['financial_trxn_id'] = $trxn->id;
         }
-	if ($trxn == null) {
-	  $params['trxn_id'] = strftime("VR%Y%m%d%H%M%S");
-          $params['trxn_date'] = $params['now'];
-	}
 	$this->cart->completed = true;
 	$this->cart->save( );
 	$this->set( 'last_event_cart_id', $this->cart->id );
+
+	$contribution_statuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+        $params['payment_instrument_id'] = null;
+        if (CRM_Utils_Array::value('is_pay_later', $params)) {
+            $params['payment_instrument_id'] = CRM_Core_OptionGroup::getValue( 'payment_instrument', 'Check', 'name' );
+            $trxn_prefix = 'CK';
+        } else {
+            $params['payment_instrument_id'] = CRM_Core_OptionGroup::getValue( 'payment_instrument', 'Credit Card', 'name' );
+        }
+        if ($this->is_pay_later && !CRM_Utils_Array::value('payment_completed', $params)) {
+            $params['contribution_status_id'] = array_search('Pending', $contribution_statuses);
+        } else {
+            $params['contribution_status_id'] = array_search('Completed', $contribution_statuses);
+            $params['participant_status'] = 'Registered';
+            $params['is_pay_later'] = 0;
+        }
+	if ($trxn == null) {
+	  $params['trxn_id'] = $trxn_prefix . strftime("%Y%m%d%H%M%S");
+          $params['trxn_date'] = $params['now'];
+	}
 
         if ($this->payment_required)
         {
           $this->emailReceipt( $this->cart->events_in_carts, $params );
         }
-	$contribution_statuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
-        if ($this->is_pay_later) {
-            $params['contribution_status_id'] = array_search('Pending', $contribution_statuses);
-            $params['payment_instrument_id'] = null;
-        } else {
-            $params['contribution_status_id'] = array_search('Completed', $contribution_statuses);
-            $params['payment_instrument_id'] = CRM_Core_OptionGroup::getValue( 'payment_instrument', 'Credit Card', 'name' );
-        }
+
         // n.b. we need to process the subparticipants before main event
         // participants so that session attendance can be included in the email
         $main_participants = $this->cart->get_main_event_participants();
@@ -564,7 +586,9 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
             $this->registerParticipant( $params, $mer_participant, $event_in_cart->event );
           }
         }
-	$this->saveDataToSession( $params['trxn_id'] );
+        $this->trxn_id = $params['trxn_id'];
+        $this->trxn_date = $params['trxn_date'];
+	$this->saveDataToSession( );
 	$transaction->commit();
   }
 
@@ -594,14 +618,17 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 		CRM_Core_Error::displaySessionError( $result );
 		CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/cart_checkout', "_qf_Payment_display=1&qfKey={$this->controller->_key}", true, null, false ) );
 		return;
+          } elseif (!$result['trxn_id']) {
+                CRM_Core_Error::fatal( ts("Financial institution didn't return a transaction id.") );
 	  }
+
 	  $trxnParams = array
 	  (
             'trxn_date'         => $params['now'],
-            'trxn_type'         => 'Debit',
-            'total_amount'      => $params['amount'],
-            'fee_amount'        => CRM_Utils_Array::value( 'fee_amount', $result ),
-            'net_amount'        => CRM_Utils_Array::value( 'net_amount', $result, $params['amount'] ), 
+		'trxn_type'         => 'Debit',
+		'total_amount'      => $params['amount'],
+		'fee_amount'        => CRM_Utils_Array::value( 'fee_amount', $result ),
+		'net_amount'        => CRM_Utils_Array::value( 'net_amount', $result, $params['amount'] ), 
             'currency'          => CRM_Utils_Array::value( 'currencyID', $params ),
             'payment_processor' => $this->_paymentProcessor['payment_processor_type'],
             'trxn_id'           => $result['trxn_id'],
@@ -672,7 +699,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
       }
   }
 
-  function saveDataToSession( $trxn_id )
+  function saveDataToSession()
   {
 	$session_line_items = array( );
 	foreach ( $this->line_items as $line_item ) {
@@ -686,7 +713,8 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	$this->set( 'payment_required', $this->payment_required );
 	$this->set( 'is_pay_later', $this->is_pay_later );
 	$this->set( 'pay_later_receipt', $this->pay_later_receipt );
-	$this->set( 'trxn_id', $trxn_id );
+	$this->set( 'trxn_id', $this->trxn_id );
+	$this->set( 'trxn_date', $this->trxn_date );
 	$this->set( 'total', $this->total );
   }
 

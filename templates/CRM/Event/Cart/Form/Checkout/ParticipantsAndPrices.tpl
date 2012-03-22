@@ -38,10 +38,6 @@
  {/if}
 {/foreach}
 
-<!--<div id="discount-entry" class="discount-entry">
-  <p>{$form.discountcode.label}: {$form.discountcode.html}</p>
-</div>-->
-
 <div id="crm-submit-buttons" class="crm-submit-buttons">
   {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>

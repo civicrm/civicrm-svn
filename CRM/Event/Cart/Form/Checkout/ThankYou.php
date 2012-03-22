@@ -52,9 +52,6 @@ class CRM_Event_Cart_Form_Checkout_ThankYou extends CRM_Event_Cart_Form_Cart
   {
     $defaults = array( );
     $ids = array( );
-	$transaction = new CRM_Core_DAO_FinancialTrxn( );
-	$transaction->trxn_id = $this->get( 'trxn_id' );
-	$transaction->find( true );
 	$template_params_to_copy = array
 	(
 	  'billing_name',
@@ -73,13 +70,13 @@ class CRM_Event_Cart_Form_Checkout_ThankYou extends CRM_Event_Cart_Form_Cart
 	$this->buildLineItems( );
 	$this->assign( 'discounts', $this->get( 'discounts' ) );
 	$this->assign( 'events_in_carts', $this->cart->events_in_carts );
-	$this->assign( 'transaction', $transaction );
+	$this->assign( 'transaction_id', $this->get('trxn_id') );
+	$this->assign( 'transaction_date', $this->get('trxn_date') );
 	$this->assign( 'payment_required', $this->get( 'payment_required' ) );
 	$this->assign( 'is_pay_later', $this->get( 'is_pay_later' ) );
 	$this->assign( 'pay_later_receipt', $this->get( 'pay_later_receipt' ) );
 	$this->assign( 'sub_total', $this->sub_total );
 	$this->assign( 'total', $this->get( 'total' ) );
-	$this->assign( 'trxn_id', $this->get( 'trxn_id' ) );
         // XXX Configure yourself
 	//$this->assign( 'site_name', "" );
 	//$this->assign( 'site_contact', "" );

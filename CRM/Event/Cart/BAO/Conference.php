@@ -2,6 +2,7 @@
 
 class CRM_Event_Cart_BAO_Conference
 {
+//XXX assumes we don't allow a contact to register for the same conference more than once
 //XXX flattens the object tree for convenient templating
     static function get_participant_sessions($main_event_participant_id)
     {
