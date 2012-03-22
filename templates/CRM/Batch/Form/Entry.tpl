@@ -67,11 +67,9 @@
 {literal}
 <script type="text/javascript">
     cj(function(){
-        cj('.selector-rows').click(function(){
-            cj(this).addClass('processed');
-            //cj("#Entry").submit();
+        cj('.selector-rows').change(function(){
             var options = {
-            'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}       
+                'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}       
             };
 
             cj("#Entry").ajaxSubmit(options);
