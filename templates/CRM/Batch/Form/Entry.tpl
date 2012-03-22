@@ -35,6 +35,7 @@
 <table>
     <thead>
         <tr class="columnheader">
+            <td>&nbsp;</td>
             <td>{ts}Contact{/ts}</td>
         {foreach from=$fields item=field key=fieldName}
             <td>{$field.title}</td>
@@ -44,11 +45,10 @@
     {section name='i' start=1 loop=$rowCount} 
     {assign var='rowNumber' value=$smarty.section.i.index} 
     <tr class="{cycle values="odd-row,even-row"} selector-rows" entity_id="{$rowNumber}">
+        <td class="compressed">[]</td>
         {* contact select/create option*}
         <td class="compressed">
-            <table>
             {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true}
-            </table>
         </td>
 
         {foreach from=$fields item=field key=fieldName}
@@ -73,15 +73,37 @@
             };
 
             cj("#Entry").ajaxSubmit(options);
+            
+            // validate rows
+            checkColumns( cj(this) );
         });
         
+        // validate rows
+        validateRow( );
+
         //calculate the actual total for the batch
         calculateActualTotal();
         cj('input[id*="_total_amount"]').change(function(){
             calculateActualTotal();    
         });
-    });
+   });
 
+   function validateRow( ) {
+      cj('.selector-rows').each(function(){
+           checkColumns( cj(this) );
+      });
+   }
+    
+   function checkColumns( parentRow ) {
+       // show valid row icon if all required data is field
+       parentRow.find("td:first").html('[X]');
+       parentRow.find('td .required').each(function(){
+         if ( !cj(this).val( ) ) {
+            parentRow.find("td:first").html('[]');
+         }
+       });
+   }
+    
    function calculateActualTotal() {
        var total = 0;
        cj('input[id*="_total_amount"]').each(function(){

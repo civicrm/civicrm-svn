@@ -123,10 +123,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                 //shrink class to "form-text-medium"
                 $this->_fields[$name]['attributes']['size'] = 19;
             }
-            
-            if ( $this->_fields[$name]['is_required'] ) {
-                $this->_fields[$name]['attributes']['validate'] = 'required';
-            }
         }
 
         //should we restrict number of fields for batch entry
