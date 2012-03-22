@@ -115,7 +115,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
             );
         }
         $values = array(
-          'params' => array($participant->id => $participantParams),
+          'params' => $participantParams,
           'event' => $event_values,
           'location' => $location,
           'custom_pre_id' => $pre_id,
