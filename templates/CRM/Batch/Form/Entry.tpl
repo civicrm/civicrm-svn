@@ -45,7 +45,7 @@
     {section name='i' start=1 loop=$rowCount} 
     {assign var='rowNumber' value=$smarty.section.i.index} 
     <tr class="{cycle values="odd-row,even-row"} selector-rows" entity_id="{$rowNumber}">
-        <td class="compressed">[]</td>
+        <td class="compressed"><span class="batch-edit">&nbsp;&nbsp;&nbsp;</span></td>
         {* contact select/create option*}
         <td class="compressed">
             {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true}
@@ -96,12 +96,24 @@
     
    function checkColumns( parentRow ) {
        // show valid row icon if all required data is field
-       parentRow.find("td:first").html('[X]');
+       var validRow   = 0;
+       var inValidRow = 0;
        parentRow.find('td .required').each(function(){
          if ( !cj(this).val( ) ) {
-            parentRow.find("td:first").html('[]');
+            inValidRow++;
+         } else {
+            validRow++;
          }
        });
+
+       // this means use has entered some data
+       if ( inValidRow > 0 && validRow > 0 ) {
+            parentRow.find("td:first span").prop('class', 'batch-invalid');
+       } else if ( inValidRow == 0 && validRow > 0 ) {
+            parentRow.find("td:first span").prop('class', 'batch-valid');
+       } else {
+            parentRow.find("td:first span").prop('class', 'batch-edit');
+       }
    }
     
    function calculateActualTotal() {

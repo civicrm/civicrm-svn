@@ -3202,3 +3202,19 @@ div#crm-toolTip
   color:white;
 }
 
+/* classes related to batch entry operation */
+#crm-container span.batch-edit {
+    background-position: -66px -114px;
+    background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
+}
+
+#crm-container span.batch-valid {
+    background-position: -322px -143px;
+    background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
+}
+
+#crm-container span.batch-invalid {
+    background-position: -258px -143px;
+    background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
+}
+
