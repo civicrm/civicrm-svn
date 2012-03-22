@@ -148,7 +148,19 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
 
         // Add soft_contribution details as part of fix for CRM-8908
         $contribution->soft_credit_to  = CRM_Utils_Array::value('soft_credit_to',  $params );
-        
+
+        // make entry in batch entity batch table
+        if ( CRM_Utils_Array::value( 'batch_id', $params ) ) {
+            $entityParams = array( 
+                'batch_id'     =>  $params['batch_id'],
+                'entity_table' =>  'civicrm_contribution',
+                'entity_id'    =>  $contribution->id
+            );
+
+            require_once 'CRM/Core/BAO/Batch.php';
+            CRM_Core_BAO_Batch::addBatchEntity( $entityParams );
+        }
+
         // reset the group contact cache for this group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );

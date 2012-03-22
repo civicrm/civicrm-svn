@@ -140,8 +140,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                                  )
                            );
         
-        
-        $this->assign( 'rowCount', $this->_batchInfo['item_count'] );
+        $this->assign( 'rowCount', $this->_batchInfo['item_count'] + 1 );
         
         $fileFieldExists = false;
  
@@ -235,6 +234,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                 unset($value['contribution_type']);
                 unset($value['contribution_source']);
                 
+                $value['batch_id'] = $this->_batchId;
                 $contribution = CRM_Contribute_BAO_Contribution::add( $value, CRM_Core_DAO::$_nullArray ); 
                 
                 // add custom field values           

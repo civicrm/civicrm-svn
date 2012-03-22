@@ -45,14 +45,13 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
      */
     static $_batch = null;
 
-
     /**
      * Create a new batch
      *
      * @return batch array
      * @access public
      */
-    static function create( $params ) {
+    static function create( &$params ) {
         if ( ! CRM_Utils_Array::value( 'id', $params ) ) { 
             require_once 'CRM/Utils/String.php';
             $params['name'] = CRM_Utils_String::titleToVar( $params['title'] );
@@ -121,5 +120,18 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         $batchName = "Batch {$batchNo} - ". date('Y-m-d');
         return $batchName;
     }
-}
 
+    /**
+     * create entity batch entry
+     *
+     * @return batch array
+     * @access public
+     */
+    static function addBatchEntity( &$params ) {
+        require_once 'CRM/Core/DAO/EntityBatch.php';
+        $entityBatch = new CRM_Core_DAO_EntityBatch( );
+        $entityBatch->copyValues( $params );
+        $entityBatch->save( );
+        return $entityBatch;
+    }
+}
