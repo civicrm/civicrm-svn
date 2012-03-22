@@ -39,8 +39,8 @@ require_once 'CRM/Utils/Hook.php';
 class CRM_Utils_Hook_Joomla extends CRM_Utils_Hook {
 
     function invoke( $numParams,
-                           &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-                           $fnSuffix ) {
+                     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+                     $fnSuffix ) {
        // ensure that we are running in a joomla context
        // we've not yet figured out how to bootstrap joomla, so we should
        // not execute hooks if joomla is not loaded
