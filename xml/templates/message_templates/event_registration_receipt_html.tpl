@@ -16,7 +16,7 @@
       </p>
     {else}
       <p>
-        This is being sent to you as a {if $is_refund}confirmation of refund{else}receipt of payment made{/if} for the following workshop, event registration or purchase made at CompassPoint Nonprofit Services.
+        This is being sent to you as a {if $is_refund}confirmation of refund{else}receipt of payment made{/if} for the following workshop, event registration or purchase.
       </p>
     {/if}
 
@@ -183,5 +183,7 @@
 	</tr>
       </tfoot>
     </table>
+
+    If you have questions about the status of your registration or purchase please feel free to contact us.
   </body>
 </html>

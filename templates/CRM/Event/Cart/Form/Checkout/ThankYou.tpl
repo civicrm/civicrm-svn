@@ -2,7 +2,7 @@
 
 <div class="crm-block crm-event-thankyou-form-block">
   <p>
-    {ts 1=$site_name}This is your receipt of payment made for the following event registration made at %1.{/ts}
+    {ts}This is your receipt of payment made for the following event registration.{/ts}
   </p>
   <p>
     {ts 1=$transaction_id 2=$transaction_date|date_format:"%D %I:%M %p %Z"}Your order number is <strong>#%1</strong>. Please print this confirmation for your records. You will receieve a confirmation email with the information below.  Information about the workshops will be sent separately to each participant. Here's a summary of your transaction placed on %2:{/ts}
@@ -160,5 +160,5 @@
       </tr>
     </tfoot>
   </table>
-  <p>{ts 1=$site_contact}If you have questions about the status of your registration or purchase please contact us at %1.{/ts}</p>
+  <p>{ts}If you have questions about the status of your registration or purchase please contact us.{/ts}</p>
 </div>

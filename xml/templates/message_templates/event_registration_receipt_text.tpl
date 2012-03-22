@@ -90,3 +90,5 @@ Total: {$total|crmMoney:$currency|string_format:"%10s"}
 {$credit_card_number}
 {ts}Expires{/ts}: {$credit_card_exp_date.M}/{$credit_card_exp_date.Y}
 {/if}
+
+  If you have questions about the status of your registration or purchase please feel free to contact us.
