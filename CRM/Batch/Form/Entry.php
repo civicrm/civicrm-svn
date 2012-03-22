@@ -77,7 +77,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             CRM_Core_BAO_Batch::retrieve( $params, $this->_batchInfo );
 
             // get the profile id associted with this batch type
-            $this->_profileId = CRM_Core_BAO_Batch::getProfileId( $this->_batchInfo['batch_type_id'] );
+            $this->_profileId = CRM_Core_BAO_Batch::getProfileId( $this->_batchInfo['type_id'] );
         }
 
         // redirect to batch entry page.

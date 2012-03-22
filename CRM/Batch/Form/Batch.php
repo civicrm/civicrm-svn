@@ -60,7 +60,7 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form
         $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch');
         $this->add('text', 'title', ts('Title'), $attributes['name'], true );
         $this->add('select', 'type_id', ts('Type'), CRM_Core_Pseudoconstant::getBatchTypes() ); 
-        $this->add('text', 'description', ts('Description'), $attributes['description'] );
+        $this->add('textarea', 'description', ts('Description'), $attributes['description'] );
         $this->add('text', 'item_count', ts('Number of items'), $attributes['item_count'] );
         $this->add('text', 'total', ts('Total Amount'), $attributes['total'] );
         $this->add('select', 'status_id', ts('Status'), CRM_Core_Pseudoconstant::getBatchStatues() ); 

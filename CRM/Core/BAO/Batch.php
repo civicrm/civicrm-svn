@@ -93,10 +93,19 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
      */
     static function getProfileId( $batchTypeId  ) {
         //retrieve the profile specific to batch type
-        //FIX ME
-        $profileId = 10;
+        
+        switch ( $batchTypeId ) {
+        case 1:
+            //batch profile used for contribution
+            $profileName = "contribution_batch_entry";
+            break;
+        case 2:
+            //batch profile used for memberships 
+            $profileName = "membership_batch_entry";
+        }
 
-        return $profileId;
+        // get and return the profile id
+        return CRM_Core_DAO::getFieldValue('CRM_Core_BAO_UFGroup', $profileName, 'id', 'name');
     }
 }
 
