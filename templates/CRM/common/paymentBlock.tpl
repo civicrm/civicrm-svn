@@ -27,6 +27,10 @@
 <script type="text/javascript">
 
 function buildPaymentBlock( type ) {
+	if ( type == 0 ) { 
+           return;
+    	} 
+	 
 	var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type; 
 	
 	{/literal}
