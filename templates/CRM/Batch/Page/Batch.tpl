@@ -47,7 +47,7 @@
             <td class="crm-batch-type">{$row.type_id}</td>	
             <td class="crm-item_count">{$row.item_count}</td>	
             <td class="crm-total">{$row.total|crmMoney}</td>	
-            <td class="crm-status_id">{$row.batch_status_id}</td>	
+            <td class="crm-status_id">{$row.status_id}</td>	
             <td>{if $row.status_id eq 1}{$row.action|replace:'xx':$row.id}{/if}</td>
         </tr>
     {/foreach}

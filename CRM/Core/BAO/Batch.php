@@ -107,5 +107,19 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         // get and return the profile id
         return CRM_Core_DAO::getFieldValue('CRM_Core_BAO_UFGroup', $profileName, 'id', 'name');
     }
+
+    /**
+     * generate batch name
+     *
+     * @return batch name
+     * @static
+     */
+    static function generateBatchName( ) {
+        $sql = "SELECT max(id) FROM civicrm_batch";
+        $batchNo = CRM_Core_DAO::singleValueQuery( $sql );
+        $batchNo++;
+        $batchName = "Batch {$batchNo} - ". date('Y-m-d');
+        return $batchName;
+    }
 }
 
