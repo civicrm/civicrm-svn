@@ -248,8 +248,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
             // update batch to close status
             require_once 'CRM/Core/BAO/Batch.php';
-            $paramValues = array( 'id'              => $this->_batchId,
-                                  'batch_status_id' => 2 );
+            $paramValues = array( 'id'        => $this->_batchId,
+                                  'status_id' => 2 );
 
             CRM_Core_BAO_Batch::create( $paramValues ); 
 
@@ -258,7 +258,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             $cacheKeyString = "batchEntry {$this->_batchId}";
             CRM_Core_BAO_Cache::deleteGroup( 'batch entry', $cacheKeyString );
  
-            CRM_Core_Session::setStatus("Your batch is processed."); 
+            CRM_Core_Session::setStatus("Your batch is processed.");
+            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/batch', "reset=1" ) );
         }
 
    }//end of function

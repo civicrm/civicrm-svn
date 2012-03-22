@@ -125,7 +125,6 @@
   <field>
       <name>mode_id</name>
       <type>int unsigned</type>
-      <required>true</required>
       <comment>fk to Batch mode options in civicrm_option_values</comment>
       <add>4.2</add>
   </field>
