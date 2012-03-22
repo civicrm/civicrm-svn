@@ -154,7 +154,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
 
         $this->_params['is_pay_later'] = $this->get( 'is_pay_later' );
-
+        $this->assign( 'is_pay_later', $this->_params['is_pay_later'] );
         // if onbehalf-of-organization
         if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $this->_params ) ) {
             if ( CRM_Utils_Array::value( 'org_option', $this->_params ) && 
