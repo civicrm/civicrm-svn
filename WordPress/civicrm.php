@@ -100,17 +100,6 @@ function civicrm_wp_initialize( ) {
 
     if ( ! $initialized ) {
 
-        // autoload
-        if (FALSE) {
-            // TODO:
-            //   Use Joomla native or contrib autoloading, if there is any.
-        }
-        else {
-            require_once dirname(__FILE__) . '/../CRM/Core/ClassLoader.php';
-            $classLoader = new CRM_Core_ClassLoader();
-            $classLoader->register();
-        }
-
         // Check for php version and ensure its greater than 5.
         // do a fatal exit if
         if ( (int ) substr( PHP_VERSION, 0, 1 ) < 5 ) {
@@ -128,6 +117,11 @@ function civicrm_wp_initialize( ) {
             $error = include_once( $settingsFile );
         }
         
+        // autoload
+        require_once 'CRM/Core/ClassLoader.php';
+        $classLoader = new CRM_Core_ClassLoader();
+        $classLoader->register();
+
         // get ready for problems
         $installLink    = admin_url() . "options-general.php?page=civicrm-settings";
         $docLinkInstall = "http://wiki.civicrm.org/confluence/display/CRMDOC/WordPress+Installation+Guide";
