@@ -69,6 +69,13 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         // Make the contributionPageID avilable to the template
         $this->assign( 'contributionPageID', $this->_id );
         $this->assign( 'isShare', $this->_values['is_share'] );
+        
+        $this->_params['is_pay_later'] = $this->get( 'is_pay_later' );
+        $this->assign( 'is_pay_later', $this->_params['is_pay_later'] );
+        if ( $this->_params['is_pay_later'] ) {
+            $this->assign( 'pay_later_receipt', $this->_values['pay_later_receipt'] );
+        }
+
     }
     
     /**
