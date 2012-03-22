@@ -76,6 +76,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             require_once 'CRM/Core/BAO/Batch.php';
             CRM_Core_BAO_Batch::retrieve( $params, $this->_batchInfo );
 
+            $this->assign( 'batchTotal', $this->_batchInfo['total'] );
             // get the profile id associted with this batch type
             $this->_profileId = CRM_Core_BAO_Batch::getProfileId( $this->_batchInfo['type_id'] );
         }

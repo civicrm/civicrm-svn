@@ -27,7 +27,11 @@
 <div id="help">
     {ts}Batch entry form{/ts}
 </div>
-    
+<div class="form-item batch-totals">
+    <div class="label">{ts}Expected total amount{/ts}: <span class="batch-expected-total">{$batchTotal}</span></div>
+    <div class="label">{ts}Actual total amount{/ts}: <span class="batch-actual-total">0</span></div>
+</div>
+<br/>
 <table>
     <thead>
         <tr class="columnheader">
@@ -72,7 +76,22 @@
 
             cj("#Entry").ajaxSubmit(options);
         });
-
+        
+        //calculate the actual total for the batch
+        calculateActualTotal();
+        cj('input[id*="_total_amount"]').change(function(){
+            calculateActualTotal();    
+        });
     });
+
+   function calculateActualTotal() {
+       var total = 0;
+       cj('input[id*="_total_amount"]').each(function(){
+          if ( cj(this).val() ) {
+            total += parseInt(cj(this).val());
+          }
+       });
+       cj('.batch-actual-total').html(total); 
+   }
 </script>
 {/literal}

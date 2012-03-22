@@ -1722,6 +1722,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             require_once 'CRM/Contribute/PseudoConstant.php';
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionStatus( ), $required);
+        } else if ($fieldName == 'currency' ) {
+            $form->addCurrency( $name, $title, $required );
         } else if ($fieldName == 'contribution_page_id' ) {
            require_once 'CRM/Contribute/PseudoConstant.php';
            $form->add('select', $name, $title,
