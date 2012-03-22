@@ -71,7 +71,6 @@ class CRM_ACL_API {
             $contactID = 0; // anonymous user
         }
 
-        require_once 'CRM/ACL/BAO/ACL.php';
         return CRM_ACL_BAO_ACL::check( $str, $contactID );
     }
 
@@ -122,7 +121,6 @@ class CRM_ACL_API {
             $contactID = 0; // anonymous user
         }
 
-        require_once 'CRM/ACL/BAO/ACL.php';
         return implode( ' AND ',
                         array( CRM_ACL_BAO_ACL::whereClause( $type,
                                                              $tables,
@@ -153,7 +151,6 @@ class CRM_ACL_API {
             $contactID = 0; // anonymous user
         }
 
-        require_once 'CRM/ACL/BAO/ACL.php';
         return CRM_ACL_BAO_ACL::group( $type, $contactID, $tableName, $allGroups, $includedGroups );
     }
 

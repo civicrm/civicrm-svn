@@ -34,12 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/BAO/CustomField.php';
-require_once 'CRM/Campaign/BAO/Campaign.php';
-require_once 'CRM/Custom/Form/CustomData.php';
-require_once 'CRM/Campaign/PseudoConstant.php';
-require_once 'CRM/Campaign/DAO/CampaignGroup.php';
 
 /**
  * This class generates form components for processing a campaign 
@@ -79,7 +73,6 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
     
     public function preProcess()
     {
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         if ( !CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             CRM_Utils_System::permissionDenied( );
         }
@@ -250,7 +243,6 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
                    CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Campaign', 'external_identifier'), false);
         
         // add Campaign Parent Id
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( 'parent_id', $this->_values ), 
                                                               $this->_campaignId );
         if ( !empty( $campaigns ) ) {
@@ -273,7 +265,6 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         $this->addWysiwyg( 'goal_general', ts( 'Campaign Goals' ), array( 'rows' => 2, 'cols' => 40 ) );
         $this->add('text', 'goal_revenue', ts('Revenue Goal'), array( 'size' => 8, 'maxlength' => 12 ) ); 
-        require_once 'CRM/Utils/Money.php';
         $this->addRule('goal_revenue', ts('Please enter a valid money value (e.g. %1).', 
                                           array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
         
@@ -369,7 +360,6 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
                                                                    $this->_campaignId,
                                                                    'Campaign' );
         
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $result = CRM_Campaign_BAO_Campaign::create( $params );
         
         if ( $result ) {

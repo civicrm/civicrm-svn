@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Controller.php';
 
 class CRM_Import_Controller extends CRM_Core_Controller {
 
@@ -49,7 +48,6 @@ class CRM_Import_Controller extends CRM_Core_Controller {
             set_time_limit( 0 );
         }
         
-        require_once 'CRM/Import/StateMachine.php';
         $this->_stateMachine = new CRM_Import_StateMachine( $this, $action );
 
         // create and instantiate the pages

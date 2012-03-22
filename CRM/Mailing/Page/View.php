@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 /**
  * a page for mailing preview
  */
@@ -58,7 +57,6 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
 
         // check for visibility, if visibility is Public Pages and they have the permission
         // return true
-		require_once 'CRM/Core/Permission.php';
         if ( $this->_mailing->visibility == 'Public Pages' &&
              CRM_Core_Permission::check( 'view public CiviMail content' )) {
             return true;
@@ -97,14 +95,11 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
 			$this->_contactID = $session->get( 'userID' );
         }
 
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         $this->_mailing     = new CRM_Mailing_BAO_Mailing();
         $this->_mailing->id = $this->_mailingID;
 
-        require_once 'CRM/Core/Error.php';
         if ( ! $this->_mailing->find( true ) ||
              ! $this->checkPermission( ) ) {
-            require_once 'CRM/Utils/System.php';
             CRM_Utils_System::permissionDenied( );
             return;
         }
@@ -113,12 +108,10 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
         
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
         }
 
         // get and format attachments
-        require_once 'CRM/Core/BAO/File.php';
         $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
                                                           $this->_mailing->id );
 		
@@ -127,7 +120,6 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
 			//get details of contact with token value including Custom Field Token Values.CRM-3734
 			$returnProperties = $this->_mailing->getReturnProperties( );
 			$params  = array( 'contact_id' => $this->_contactID );
-            require_once 'CRM/Utils/Token.php';
             $details = CRM_Utils_Token::getTokenDetails( $params,
                                                          $returnProperties,
                                                          true, true, null,

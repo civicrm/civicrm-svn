@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
     protected $_addressField = false;
@@ -438,7 +436,6 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             if ( CRM_Utils_Array::value( 'receive_date', $this->_params['group_bys'] ) ) {
                 
                 // build the chart.
-                require_once 'CRM/Utils/OpenFlashChart.php';
                 $config  = CRM_Core_Config::Singleton();
                 $graphRows['xname'] = $this->_interval;
                 $graphRows['yname'] = "Amount ({$config->defaultCurrency})";

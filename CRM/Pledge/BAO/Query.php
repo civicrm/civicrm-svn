@@ -38,7 +38,6 @@ class CRM_Pledge_BAO_Query
 {
     static function &getFields( ) 
     {
-        require_once 'CRM/Pledge/BAO/Pledge.php';
         $fields = CRM_Pledge_BAO_Pledge::exportableFields( );
         return $fields;
     }
@@ -290,7 +289,6 @@ class CRM_Pledge_BAO_Query
                 $status = $value;
             }
 
-            require_once 'CRM/Core/OptionGroup.php';
             $statusValues = CRM_Core_OptionGroup::values('contribution_status');
          
             $names = array( );
@@ -329,7 +327,6 @@ class CRM_Pledge_BAO_Query
                 $status = $value;
             }
 
-            require_once 'CRM/Core/OptionGroup.php';
             $statusValues = CRM_Core_OptionGroup::values('contribution_status');
          
             $names = array( );
@@ -361,7 +358,6 @@ class CRM_Pledge_BAO_Query
             return;
         
         case 'pledge_contribution_type_id':
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $type = CRM_Contribute_PseudoConstant::contributionType( $value );
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_pledge.contribution_type_id', 
                                                                               $op,
@@ -372,7 +368,6 @@ class CRM_Pledge_BAO_Query
             return;
             
         case 'pledge_contribution_page_id':
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $page = CRM_Contribute_PseudoConstant::contributionPage( $value );
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_pledge.contribution_page_id', 
                                                                               $op,
@@ -415,7 +410,6 @@ class CRM_Pledge_BAO_Query
             return;
 
         case 'pledge_campaign_id':
-            require_once 'CRM/Campaign/BAO/Query.php';
             $campParams = array( 'op'          => $op,
                                  'campaign'    => $value,
                                  'grouping'    => $grouping,
@@ -531,7 +525,6 @@ class CRM_Pledge_BAO_Query
                                  );
             
             // also get all the custom pledge properties
-            require_once 'CRM/Core/BAO/CustomField.php';
             $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Pledge');
             if ( ! empty( $fields ) ) {
                 foreach ( $fields as $name => $dontCare ) {
@@ -544,7 +537,6 @@ class CRM_Pledge_BAO_Query
 
     static function buildSearchForm( &$form ) 
     { 
-        require_once 'CRM/Core/Form/Date.php';
         // pledge related dates
         CRM_Core_Form_Date::buildDateRange( $form, 'pledge_start_date', 1, '_low', '_high', ts('From'),  false, false );
         CRM_Core_Form_Date::buildDateRange( $form, 'pledge_end_date', 1, '_low', '_high', ts('From'),  false, false );
@@ -555,14 +547,12 @@ class CRM_Pledge_BAO_Query
                 
         $form->addElement( 'checkbox', 'pledge_test' , ts( 'Find Test Pledges?' ) );
 
-        require_once 'CRM/Utils/Money.php';
         $form->add('text', 'pledge_amount_low', ts('From'), array( 'size' => 8, 'maxlength' => 8 ) ); 
         $form->addRule('pledge_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
         
         $form->add('text', 'pledge_amount_high', ts('To'), array( 'size' => 8, 'maxlength' => 8 ) ); 
         $form->addRule('pledge_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
 
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $statusValues = CRM_Contribute_PseudoConstant::contributionStatus( );
  
         // Remove status values that are only used for recurring contributions for now (Failed and In Progress).
@@ -583,7 +573,6 @@ class CRM_Pledge_BAO_Query
 
         $form->addGroup( $paymentStatus, 'pledge_payment_status_id', ts( 'Pledge Payment Status' ) );
 
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $form->add('select', 'pledge_contribution_type_id', 
                    ts( 'Contribution Type' ),
                    array( '' => ts( '- select -' ) ) +
@@ -610,11 +599,9 @@ class CRM_Pledge_BAO_Query
                     array( '' => ts( '- select -' ) ) + $freqUnitsDisplay );
 
         // add all the custom  searchable fields
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         $pledge = array( 'Pledge' );
         $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $pledge );
         if ( $groupDetails ) {
-            require_once 'CRM/Core/BAO/CustomField.php';
             $form->assign('pledgeGroupTree', $groupDetails);
             foreach ($groupDetails as $group) {
                 foreach ($group['fields'] as $field) {
@@ -628,7 +615,6 @@ class CRM_Pledge_BAO_Query
             }
         }
         
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'pledge_campaign_id' );        
 
         $form->assign( 'validCiviPledge', true );

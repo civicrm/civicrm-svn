@@ -60,7 +60,6 @@ class CRM_Contact_BAO_Contact_Utils
             
             $typeInfo = array( );
             $params = array( 'name' => $contactType );
-            require_once 'CRM/Contact/BAO/ContactType.php';
             CRM_Contact_BAO_ContactType::retrieve( $params, $typeInfo );
 
             if (  CRM_Utils_Array::value( 'image_URL', $typeInfo ) ) {
@@ -173,7 +172,6 @@ WHERE  id IN ( $idString )
         }
 
         if ( ! $live ) {
-            require_once 'CRM/Core/BAO/Setting.php';
             $days = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                    'checksum_timeout',
                                                    null,
@@ -200,7 +198,6 @@ WHERE  id IN ( $idString )
      */
     static function validChecksum( $contactID, $inputCheck ) 
     {
-        require_once 'CRM/Utils/System.php';
 
         $input =  CRM_Utils_System::explode( '_', $inputCheck, 3 );
         
@@ -263,7 +260,6 @@ UNION
      */
     static function createCurrentEmployerRelationship( $contactID, $organization ) 
     {
-        require_once 'CRM/Contact/BAO/Relationship.php';
         $organizationId = null;
         
         // if organization id is passed.
@@ -276,7 +272,6 @@ UNION
             $organizationParams = array();
             $organizationParams['organization_name'] = $orgName[0];
             
-            require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
 
             $dedupeParams['check_permission'] = false;            
@@ -348,7 +343,6 @@ UNION
         
         //we do not know that triggered relationship record is active.
         if ( $duplicate ) {
-            require_once 'CRM/Contact/DAO/Relationship.php';
             $relationship = new CRM_Contact_DAO_Relationship( );
             $relationship->contact_id_a = $contactID;
             $relationship->contact_id_b = $employerID;
@@ -431,7 +425,6 @@ WHERE id={$contactId}; ";
             
             //get relationship id.
             if ( CRM_Contact_BAO_Relationship::checkDuplicateRelationship( $relMembershipParams, $contactId, $employerId ) ) {
-                require_once 'CRM/Contact/DAO/Relationship.php';
                 $relationship = new CRM_Contact_DAO_Relationship( );
                 $relationship->contact_id_a = $contactId;
                 $relationship->contact_id_b = $employerId;
@@ -470,7 +463,6 @@ WHERE id={$contactId}; ";
             $title = ts('Contact Information');
         }
 
-        require_once 'CRM/Contact/Form/Location.php';
         $config = CRM_Core_Config::singleton( );
 
         $form->assign( 'contact_type' , $contactType );
@@ -488,7 +480,6 @@ WHERE id={$contactId}; ";
             $contactID = $session->get( 'userID' );
 
             if ( $contactID ) {
-                require_once 'CRM/Contact/BAO/Relationship.php';
                 $employers = CRM_Contact_BAO_Relationship::getPermissionedEmployer( $contactID );
             }
 
@@ -552,7 +543,6 @@ WHERE id={$contactId}; ";
                           CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email',
                                                      'email'));
         //build the address block
-        require_once 'CRM/Contact/Form/Edit/Address.php';
         CRM_Contact_Form_Edit_Address::buildQuickForm( $form );
         
         // also fix the state country selector
@@ -601,8 +591,6 @@ UPDATE civicrm_contact
         }
         
         // does contact has sufficient permissions.
-        require_once 'CRM/Core/Permission.php';
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
         $permissions = array( 'view'  => 'view all contacts',
                               'edit'  => 'edit all contacts',
                               'merge' => 'administer CiviCRM' );
@@ -707,7 +695,6 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
         }
         
         if ( empty( $returnProperties ) ) {
-            require_once 'CRM/Core/BAO/Setting.php';
             $autocompleteContactSearch = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                              'contact_autocomplete_options' );
             $returnProperties = array_fill_keys( array_merge( array( 'sort_name'), 
@@ -885,15 +872,12 @@ Group By  componentId";
 
     static function clearContactCaches( ) {
         // clear acl cache if any.
-        require_once 'CRM/ACL/BAO/Cache.php';
         CRM_ACL_BAO_Cache::resetCache( );
 
         // also clear prev/next dedupe cache
-        require_once 'CRM/Core/BAO/PrevNextCache.php';
         CRM_Core_BAO_PrevNextCache::deleteItem( );
         
         // reset the group contact cache for this group
-        require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
     }
 
@@ -919,7 +903,6 @@ Group By  componentId";
         }
         
         // build return properties based on tokens
-        require_once 'CRM/Utils/Token.php';
         $greetingTokens = CRM_Utils_Token::getTokens( $greetingString );
         $tokens = CRM_Utils_Array::value( 'contact', $greetingTokens );
         $greetingsReturnProperties = array( );
@@ -937,7 +920,6 @@ Group By  componentId";
         
         //FIXME : apiQuery should handle these clause.
         $filterContactFldIds = $filterIds = array( );
-        require_once 'CRM/Contact/BAO/Contact.php';
         $idFldName = $displayFldName = null;
         if ( in_array($greeting, CRM_Contact_BAO_Contact::$_greetingTypes) ) {
             $idFldName = $greeting . '_id';
@@ -969,7 +951,6 @@ Group By  componentId";
         }
         
         // retrieve only required contact information
-        require_once 'CRM/Utils/Token.php';
         $extraParams[] = array( 'contact_type', '=', $contactType, 0, 0 );
         // we do token replacement in the replaceGreetingTokens hook
         list($greetingDetails) = CRM_Utils_Token::getTokenDetails( array_keys( $filterContactFldIds ),
@@ -1037,7 +1018,6 @@ WHERE id IN (" . implode( ',', $contactIds ) . ")";
      * @return int or null
      */
     static function defaultGreeting ( $contactType, $greetingType ) {
-        require_once 'CRM/Core/OptionGroup.php';
         $contactTypeFilters = array( 'Individual' => 1, 'Household' => 2, 'Organization' => 3 );
         if (!isset($contactTypeFilters[$contactType])) {
             return;

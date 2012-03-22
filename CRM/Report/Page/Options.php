@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  * Page for displaying list of Gender
@@ -172,7 +171,6 @@ class CRM_Report_Page_Options extends CRM_Core_Page_Basic
      */
     function browse()
     {
-        require_once 'CRM/Core/OptionValue.php';			
         $groupParams = array( 'name' => self::$_gName );
         $optionValue = CRM_Core_OptionValue::getRows($groupParams, $this->links(), 'weight');
         $gName		 = self::$_gName;
@@ -182,7 +180,6 @@ class CRM_Report_Page_Options extends CRM_Core_Page_Basic
         
         $session = new CRM_Core_Session();
         $session->replaceUserContext($returnURL);
-        require_once 'CRM/Utils/Weight.php';
         CRM_Utils_Weight::addOrder( $optionValue, 'CRM_Core_DAO_OptionValue',
                                     'id', $returnURL, $filter );
         $this->assign('rows', $optionValue);

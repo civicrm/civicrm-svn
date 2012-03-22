@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Member/PseudoConstant.php';
 
 class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
 
@@ -303,7 +301,6 @@ LEFT  JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
                 $row[$key] = $dao->$key;
             }
 
-            require_once 'CRM/Utils/OpenFlashChart.php';
             if ( CRM_Utils_Array::value('charts', $this->_params ) && 
                  $row['civicrm_contribution_receive_date_subtotal'] ) {
                 $graphRows['receive_date'][]   = $row['civicrm_contribution_receive_date_start'];
@@ -320,14 +317,12 @@ LEFT  JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
         $this->assign_by_ref( 'rows', $rows );
         $this->assign( 'statistics', $this->statistics( $rows ) );
         
-        require_once 'CRM/Utils/OpenFlashChart.php';
         if ( CRM_Utils_Array::value('charts', $this->_params ) ) {
             foreach ( array ( 'receive_date', $this->_interval, 'value' ) as $ignore ) {
                 unset( $graphRows[$ignore][$count-1] );
             }
             
             // build chart.
-            require_once 'CRM/Utils/OpenFlashChart.php';
             CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
         }
         parent::endPostProcess( );

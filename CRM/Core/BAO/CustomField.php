@@ -33,12 +33,6 @@
  * $Id$
  *
  */
-require_once 'CRM/Core/OptionGroup.php';
-require_once 'CRM/Core/SelectValues.php';
-require_once 'CRM/Core/DAO/CustomField.php';
-require_once 'CRM/Core/DAO/CustomGroup.php';
-require_once 'CRM/Core/BAO/CustomOption.php';
-require_once 'CRM/Contact/BAO/ContactType.php';
 
 /**
  * Business objects for managing custom data fields.
@@ -140,7 +134,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
     {
         if ( !isset($params['id']) && !isset($params['column_name']) ) {
             // if add mode & column_name not present, calculate it.
-            require_once 'CRM/Utils/String.php';
             $params['column_name'] = 
                 strtolower( CRM_Utils_String::munge( $params['label'], '_', 32 ) );
             
@@ -182,7 +175,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 $params['default_value'] = $params['option_value'][$params['default_option']];
             }
         }
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         // create any option group & values if required
         if ( $params['html_type'] != 'Text' &&
@@ -196,7 +188,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                                                         
             if ( $params['option_type'] == 1 ) {
                 // first create an option group for this custom group
-                require_once 'CRM/Core/BAO/OptionGroup.php';
                 $optionGroup            = new CRM_Core_DAO_OptionGroup( );
                 $optionGroup->name      =  "{$params['column_name']}_". date( 'YmdHis' );
                 $optionGroup->title     =  $params['label'];
@@ -204,10 +195,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 $optionGroup->save( );
                 $params['option_group_id'] = $optionGroup->id;
                 
-                require_once 'CRM/Core/BAO/OptionValue.php';
                 
                 
-                require_once 'CRM/Utils/String.php';
                 foreach ($params['option_value'] as $k => $v) {
                     if (strlen(trim($v))) {
                         $optionValue                  =  new CRM_Core_DAO_OptionValue( );
@@ -216,7 +205,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                         $optionValue->name            =  CRM_Utils_String::titleToVar( $params['option_label'][$k] );
                         switch ( $params['data_type'] ) {
                         case 'Money':
-                            require_once 'CRM/Utils/Rule.php';
                             $optionValue->value = CRM_Utils_Rule::cleanMoney( $v );
                             break;
                         case 'Int':
@@ -299,11 +287,9 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      */
     static function resetCache( ) {
         // reset the cache
-        require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
     
         // reset various static arrays used here
-        require_once 'CRM/Contact/BAO/Contact.php';
         CRM_Contact_BAO_Contact::$_importableFields = CRM_Contact_BAO_Contact::$_exportableFields = self::$_importFields = null;
     }
 
@@ -339,7 +325,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
      */
     static function setIsActive( $id, $is_active )
     {
-        require_once 'CRM/Core/BAO/UFField.php';
 
         self::resetCache( );
 
@@ -432,7 +417,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
 
         // also get the permission stuff here
         if ($checkPermission) {
-            require_once 'CRM/Core/Permission.php';
             $permissionClause = CRM_Core_Permission::customGroupClause( CRM_Core_Permission::VIEW,
                                                                         "{$cgTable}." );
         } else {
@@ -453,7 +437,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             }
 
             // check if we can retrieve from database cache
-            require_once 'CRM/Core/BAO/Cache.php'; 
             $fields = CRM_Core_BAO_Cache::getItem( 'contact fields', "custom importableFields $cacheKey" );
 
             if ( $fields === null ) {
@@ -527,7 +510,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
 
                 // also get the permission stuff here
                 if ($checkPermission) {
-                    require_once 'CRM/Core/Permission.php';
                     $permissionClause = CRM_Core_Permission::customGroupClause( CRM_Core_Permission::VIEW,
                                                                                 "{$cgTable}.", true );
                 } else {
@@ -1043,7 +1025,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                $html_type == 'CheckBox' ||
                $html_type == 'AdvMulti-Select' ||
                $html_type == 'Multi-Select' ) ) {
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::customFieldOptions( $fieldID, $option );
         }
 
@@ -1227,7 +1208,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
         $customField->id = $customFieldId;
         $customField->find(true);
         
-        require_once 'CRM/Profile/Form.php';
         $value = null;
         if ( ! $contactId ) {
             if ($mode == CRM_Profile_Form::MODE_CREATE ) {
@@ -1293,7 +1273,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             
         case 'Autocomplete-Select':
             if ($customField->data_type == 'ContactReference') {
-                require_once 'CRM/Contact/BAO/Contact.php';
                 if ( is_numeric( $value ) ) {
                     $defaults[$elementName.'_id'] = $value; 
                     $defaults[$elementName] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'sort_name' );
@@ -1346,7 +1325,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                                              $fileID,
                                                              'entity_id',
                                                              'id' );
-                    require_once 'CRM/Core/BAO/File.php';
                     list( $path ) = CRM_Core_BAO_File::path( $fileID, $entityId, null, null);
                     list( $imageWidth, $imageHeight ) = getimagesize( $path );
                     list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
@@ -1429,7 +1407,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
              ! $customFields[$customFieldId]['is_multiple'] && // we always create new entites for is_multiple unless specified
              $entityId ) {
             //get the entity table for the custom field
-            require_once 'CRM/Core/BAO/CustomQuery.php';
             $entityTable = CRM_Core_BAO_CustomQuery::$extendsMap[$customFieldExtend];
 
             $query = "
@@ -1501,7 +1478,6 @@ SELECT id
 
                 // set the custom field meta data to have a length larger than value
                 // alter the custom value table column to match this length
-                require_once 'CRM/Core/BAO/SchemaHandler.php';
                 CRM_Core_BAO_SchemaHandler::alterFieldLength( $customFieldId, $tableName, $columnName, $newLength );
             }
         }
@@ -1522,7 +1498,6 @@ SELECT id
             }
 
             if ( $customFields[$customFieldId]['data_type'] == 'Money' ) {
-                require_once 'CRM/Utils/Rule.php';
                 $value = CRM_Utils_Rule::cleanMoney( $value );
             }
         }
@@ -1541,7 +1516,6 @@ SELECT id
                 return;
             }
 
-            require_once 'CRM/Core/DAO/File.php';
             $config = CRM_Core_Config::singleton();
 
             $fName    = $value['name']; 
@@ -1645,7 +1619,6 @@ SELECT $columnName
 
     static function createField( $field, $operation, $indexExist = false ) 
     {
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                   $field->custom_group_id,
                                                   'table_name' );
@@ -1691,7 +1664,6 @@ SELECT $columnName
             $params['default'] = "'{$field->default_value}'";
         }
         
-        require_once 'CRM/Core/BAO/SchemaHandler.php';
         CRM_Core_BAO_SchemaHandler::alterFieldSQL( $params, $indexExist );
     }
     
@@ -1712,7 +1684,6 @@ SELECT $columnName
             return $errors;
         }
         
-        require_once 'CRM/Core/DAO/CustomGroup.php';
         $oldGroup = new CRM_Core_DAO_CustomGroup();
         $oldGroup->id = $field->custom_group_id;
         if (!$oldGroup->find(TRUE)) {
@@ -1788,17 +1759,14 @@ WHERE  id IN ( %1, %2 )
         if (TRUE !== $validation) {
             CRM_Core_Error::fatal(implode(' ', $validation));
         }
-        require_once 'CRM/Core/DAO/CustomField.php';
         $field = new CRM_Core_DAO_CustomField();
         $field->id = $fieldID;
         $field->find(TRUE);
 
-        require_once 'CRM/Core/DAO/CustomGroup.php';
         $newGroup = new CRM_Core_DAO_CustomGroup();
         $newGroup->id = $newGroupID;
         $newGroup->find(TRUE);
         
-        require_once 'CRM/Core/DAO/CustomGroup.php';
         $oldGroup = new CRM_Core_DAO_CustomGroup();
         $oldGroup->id = $field->custom_group_id;
         $oldGroup->find(TRUE);
@@ -1949,7 +1917,6 @@ WHERE  option_group_id = {$optionGroupId}";
 
         if ( $count < 2 ) {
             //delete the option group
-            require_once 'CRM/Core/BAO/OptionGroup.php';
             CRM_Core_BAO_OptionGroup::del( $optionGroupId );
         }
     }
@@ -2066,7 +2033,6 @@ SELECT label, value
                 }
             }
 
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::customFieldOptions( $field['id'], $options );
         }
     }
@@ -2144,14 +2110,11 @@ WHERE      f.id IN ($ids)";
             return $errors;
         }
         
-        require_once 'CRM/Utils/Rule.php';
-        require_once 'CRM/Core/DAO/CustomField.php';
         
         //pick up profile fields.
         $profileFields = array( );
         $ufGroupId = CRM_Utils_Array::value( 'ufGroupId', $params );
         if ( $ufGroupId ) {
-            require_once 'CRM/Core/BAO/UFGroup.php';
             $profileFields = CRM_Core_BAO_UFGroup::getFields( $ufGroupId, 
                                                               false, 
                                                               CRM_Core_Action::VIEW );

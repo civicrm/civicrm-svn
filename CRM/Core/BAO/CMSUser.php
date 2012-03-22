@@ -294,7 +294,6 @@ class CRM_Core_BAO_CMSUser
                 }
 
                 $form->assign( 'isCMS', $required );       
-                require_once 'CRM/Core/Action.php';
                 if( ! $userID || $action & CRM_Core_Action::PREVIEW || $action & CRM_Core_Action::PROFILE ) {     
                     $form->add('text', 'cms_name', ts('Username'), null, $required );
                     if ( ( $isDrupal && !variable_get('user_email_verification', TRUE ) ) OR ( $isJoomla ) OR ( $isWordPress ) ) {       

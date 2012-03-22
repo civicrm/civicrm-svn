@@ -34,14 +34,8 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/Selector/Base.php';
-require_once 'CRM/Core/Selector/API.php';
 
-require_once 'CRM/Utils/Pager.php';
-require_once 'CRM/Utils/Sort.php';
 
-require_once 'CRM/Contact/BAO/Contact.php';
 
 
 /**
@@ -305,7 +299,6 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                                                  )
                                            );
 
-            require_once 'CRM/Core/PseudoConstant.php';
             $locationTypes = CRM_Core_PseudoConstant::locationType( );
 
             foreach ( $this->_fields as $name => $field ) { 
@@ -448,7 +441,6 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         }
         $links = self::links( $this->_map, $this->_editLink, $this->_linkToUF, $this->_profileIds );
         
-        require_once 'CRM/Core/PseudoConstant.php';
         $locationTypes = CRM_Core_PseudoConstant::locationType( );
 
         $names = array( );
@@ -497,22 +489,18 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
             }
         }
         
-        require_once "CRM/Core/OptionGroup.php";
 
         $multipleSelectFields = array( 'preferred_communication_method' => 1 );
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
-            require_once 'CRM/Quest/BAO/Student.php';
             $multipleSelectFields = CRM_Quest_BAO_Student::$multipleSelectFields;
         }
 
         // we need to determine of overlay profile should be shown
-        require_once 'CRM/Core/BAO/UFGroup.php';
         $showProfileOverlay = CRM_Core_BAO_UFGroup::showOverlayProfile( );
 
         $imProviders  = CRM_Core_PseudoConstant::IMProvider( );
         $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
         $languages    = CRM_Core_PseudoConstant::languages( );
-        require_once 'CRM/Contact/BAO/Contact/Utils.php';
         while ($result->fetch()) {
             if (isset($result->country)) {
                 // the query returns the untranslated country name
@@ -595,7 +583,6 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                                'gid' => implode( ',', $this->_profileIds ) );
 
             if ( $this->_linkToUF ) {
-                require_once 'CRM/Core/BAO/UFMatch.php';
                 $ufID = CRM_Core_BAO_UFMatch::getUFId( $result->contact_id );
                 if ( ! $ufID ) {
                     unset( $newLinks[CRM_Core_Action::PROFILE] );

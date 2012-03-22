@@ -44,7 +44,6 @@ class CRM_Pledge_Page_AJAX
      */    
     function pledgeName( &$config ) 
     {
-        require_once 'CRM/Utils/Type.php';
         
         $getRecords = false;
         if ( isset( $_GET['name'] ) && $_GET['name'] ) {
@@ -83,7 +82,6 @@ WHERE {$whereClause}
                                  'value'=> trim( $name, '*') );
         }
         
-        require_once "CRM/Utils/JSON.php";
         echo CRM_Utils_JSON::encode( $elements, 'value');
         CRM_Utils_System::civiExit( );
     } 

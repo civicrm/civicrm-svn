@@ -33,7 +33,6 @@
  *
  */
 
-require_once 'CRM/Utils/Type.php';
 
 /**
  * This class contains all campaign related functions that are called using AJAX (jQuery)
@@ -84,13 +83,11 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        require_once "CRM/Utils/JSON.php";
         $result = array( 'status'       => 'fail',
                          'voter_id'     => $voterId,
                          'activity_id'  => $params['interviewer_id'] );
         
         //time to validate custom data.
-        require_once 'CRM/Core/BAO/CustomField.php';
         $errors = CRM_Core_BAO_CustomField::validateCustomData( $params );
         if ( is_array( $errors ) && !empty( $errors )  ) {
             $result['errors'] = $errors;
@@ -99,11 +96,9 @@ class CRM_Campaign_Page_AJAX
         }
         
         //process the response/interview data.
-        require_once 'CRM/Campaign/Form/Task/Interview.php';
         $activityId = CRM_Campaign_Form_Task_Interview::registerInterview( $params );
         if ( $activityId ) $result['status'] = 'success'; 
         
-        require_once "CRM/Utils/JSON.php";
         echo json_encode( $result );
         
         CRM_Utils_System::civiExit( );
@@ -116,14 +111,12 @@ class CRM_Campaign_Page_AJAX
         $opValues = array( );
         
         if ( $id ) {
-            require_once 'CRM/Core/OptionValue.php';
             $groupParams['id'] = $id;
             CRM_Core_OptionValue::getValues( $groupParams, $opValues );
         }
 
         $surveyId = CRM_Utils_Array::value( 'survey_id', $_POST );
         if ( $surveyId ) {
-            require_once 'CRM/Campaign/DAO/Survey.php';
             $survey = new CRM_Campaign_DAO_Survey( );
             $survey->id        = $surveyId;
             $survey->result_id = $id;
@@ -183,7 +176,6 @@ class CRM_Campaign_Page_AJAX
         $searchVoterFor = $params['campaign_search_voter_for']; 
         if ( $searchVoterFor == 'reserve' ) {
             if ( CRM_Utils_Array::value( 'campaign_survey_id', $params ) ) {
-                require_once 'CRM/Campaign/DAO/Survey.php';
                 $survey = new CRM_Campaign_DAO_Survey( );
                 $survey->id = $surveyId = $params['campaign_survey_id'];
                 $survey->selectAdd( 'campaign_id, activity_type_id' );
@@ -196,13 +188,11 @@ class CRM_Campaign_Page_AJAX
                 //get all associated campaign groups in where filter, CRM-7406
                 $groups = CRM_Utils_Array::value( 'group', $params );
                 if ( $campaignId && CRM_Utils_System::isNull( $groups ) ) {
-                    require_once 'CRM/Campaign/BAO/Campaign.php';
                     $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
                     foreach( $campaignGroups as $id => $group ) $params['group'][$id] = 1;
                 }
                 
                 //apply filter of survey contact type for search.
-                require_once 'CRM/Campaign/BAO/Survey.php';
                 $contactType = CRM_Campaign_BAO_Survey::getSurveyContactType( $surveyId );
                 if ( $contactType ) {
                     $params['contact_type'][$contactType] = 1 ;
@@ -213,7 +203,6 @@ class CRM_Campaign_Page_AJAX
             unset( $params['survey_interviewer_id'] );
         } else {
             //get the survey status in where clause.
-            require_once 'CRM/Core/PseudoConstant.php';
             $scheduledStatusId = array_search( 'Scheduled', CRM_Core_PseudoConstant::activityStatus( 'name' ) );
             if ( $scheduledStatusId ) $params['survey_status_id'] = $scheduledStatusId;
             //BAO/Query knows reserve/release/interview processes.
@@ -252,7 +241,6 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        require_once 'CRM/Contact/BAO/Query.php';
         $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params );
         $query       = new CRM_Contact_BAO_Query( $queryParams,
                                                   null, null, false, false, 
@@ -260,7 +248,6 @@ class CRM_Campaign_Page_AJAX
                                                   true );
         
         //get the voter clause to restrict and validate search.
-        require_once 'CRM/Campaign/BAO/Query.php';
         $voterClause = CRM_Campaign_BAO_Query::voterClause( $voterClauseParams );
         
         $searchCount = $query->searchQuery( 0, 0, null,
@@ -284,7 +271,6 @@ class CRM_Campaign_Page_AJAX
         if ( $searchCount > 0 ) {
             if ( $searchCount < $offset ) $offset = 0;
             
-            require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
             $config = CRM_Core_Config::singleton( );
             
             // get the result of the search
@@ -327,7 +313,6 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        require_once "CRM/Utils/JSON.php";
         $selectorElements = array_merge( $selectorCols, array( $extraVoterColName ) );
         
         $iFilteredTotal = $iTotal;
@@ -341,7 +326,6 @@ class CRM_Campaign_Page_AJAX
         $status    = null; 
         $operation = CRM_Utils_Type::escape( $_POST['operation'], 'String' );
         if ( $operation == 'release' ) {
-            require_once 'CRM/Utils/String.php';
             $activityId = CRM_Utils_Type::escape($_POST['activity_id'],  'Integer' );
             $isDelete   = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['isDelete'], 'String' ) );
             if ( $activityId &&
@@ -382,7 +366,6 @@ class CRM_Campaign_Page_AJAX
             }
             if ( $createActivity  ) {
                 $isReserved = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['isReserved'], 'String' ) );
-                require_once 'CRM/Core/PseudoConstant.php';
                 $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
                 $scheduledStatusId = array_search( 'Scheduled', $activityStatus ); 
                 if ( $isReserved ) {
@@ -406,12 +389,10 @@ class CRM_Campaign_Page_AJAX
                     $activityParams['activity_type_id']   = $activityTypeId;
                     $activityParams['campaign_id']        = $surveyValues['campaign_id'];
                     
-                    require_once 'CRM/Activity/BAO/Activity.php';
                     $activity = CRM_Activity_BAO_Activity::create( $activityParams );
                     if ( $activity->id ) $status = 'success';
                 } else {
                     //delete reserved activity for given voter.
-                    require_once 'CRM/Campaign/BAO/Survey.php';
                     $voterIds   = array( $activityParams['target_contact_id'] ); 
                     $activities = CRM_Campaign_BAO_Survey::voterActivityDetails( $activityParams['source_record_id'], 
                                                                                  $voterIds,
@@ -431,7 +412,6 @@ class CRM_Campaign_Page_AJAX
                 }
             }
         } else if ( $operation == 'gotv' ) {
-            require_once 'CRM/Utils/String.php';
             $activityId = CRM_Utils_Type::escape($_POST['activity_id'],  'Integer' );
             $hasVoted    = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['hasVoted'], 'String' ) );
             if ( $activityId ) {
@@ -454,8 +434,6 @@ class CRM_Campaign_Page_AJAX
     
     function allActiveCampaigns( ) 
     {
-        require_once 'CRM/Utils/JSON.php';
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $currentCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( );
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, true, false, true );
         $options   = array( array( 'value' => '',
@@ -482,15 +460,12 @@ class CRM_Campaign_Page_AJAX
 
     function campaignGroups( ) 
     {
-        require_once 'CRM/Utils/JSON.php';
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $surveyId = CRM_Utils_Request::retrieve( 'survey_id', 'Positive', 
                                                  CRM_Core_DAO::$_nullObject, false, null, 'POST' );
         $campGroups = array( );
         if ( $surveyId ) {
             $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'campaign_id' );
             if ( $campaignId ) {
-                require_once 'CRM/Campaign/BAO/Campaign.php';
                 $campGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
             }
         }
@@ -498,7 +473,6 @@ class CRM_Campaign_Page_AJAX
         //CRM-7406 --If there is no campaign or no group associated with
         //campaign of given survey, lets allow to search across all groups.
         if ( empty( $campGroups ) ) {
-            require_once 'CRM/Core/PseudoConstant.php';
             $campGroups = CRM_Core_PseudoConstant::group( ); 
         }
         $groups = array( array( 'value' => '',
@@ -575,8 +549,6 @@ class CRM_Campaign_Page_AJAX
             $params[$sortParam] = $$sortParam;
         }
         
-        require_once 'CRM/Campaign/BAO/Campaign.php';
-        require_once 'CRM/Campaign/Page/DashBoard.php';
         $searchCount = CRM_Campaign_BAO_Campaign::getCampaignSummary( $params, true );
         $campaigns   = CRM_Campaign_Page_DashBoard::getCampaignSummary( $params );
         $iTotal      = $searchCount;
@@ -590,7 +562,6 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        require_once "CRM/Utils/JSON.php";
         $selectorElements = $selectorCols;
         
         $iFilteredTotal = $iTotal;
@@ -661,8 +632,6 @@ class CRM_Campaign_Page_AJAX
             $params[$sortParam] = $$sortParam;
         }
         
-        require_once 'CRM/Campaign/BAO/Survey.php';
-        require_once 'CRM/Campaign/Page/DashBoard.php';
         $surveys     = CRM_Campaign_Page_DashBoard::getSurveySummary( $params );
         $searchCount = CRM_Campaign_BAO_Survey::getSurveySummary( $params, true );
         $iTotal      = $searchCount;
@@ -676,7 +645,6 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        require_once "CRM/Utils/JSON.php";
         $selectorElements = $selectorCols;
         
         $iFilteredTotal = $iTotal;
@@ -742,8 +710,6 @@ class CRM_Campaign_Page_AJAX
             $params[$sortParam] = $$sortParam;
         }
         
-        require_once 'CRM/Campaign/BAO/Petition.php';
-        require_once 'CRM/Campaign/Page/DashBoard.php';
         $petitions   = CRM_Campaign_Page_DashBoard::getPetitionSummary( $params );
         $searchCount = CRM_Campaign_BAO_Petition::getPetitionSummary( $params, true );
         $iTotal      = $searchCount;
@@ -757,7 +723,6 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
-        require_once "CRM/Utils/JSON.php";
         $selectorElements = $selectorCols;
         
         $iFilteredTotal = $iTotal;

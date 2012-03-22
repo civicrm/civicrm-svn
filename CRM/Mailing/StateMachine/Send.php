@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/StateMachine.php';
 
 /**
  * State machine for managing different states of the Import process.
@@ -60,7 +59,6 @@ class CRM_Mailing_StateMachine_Send extends CRM_Core_StateMachine {
                               'CRM_Mailing_Form_Test'    => null,
                               );
 
-        require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
             if ( CRM_Core_Permission::check( 'schedule mailings' ) ) {
                 $this->_pages['CRM_Mailing_Form_Schedule'] = null;

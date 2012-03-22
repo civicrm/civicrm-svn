@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  * Page for displaying list of message templates
@@ -179,7 +178,6 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
 
             $this->_revertedId = $id;
 
-            require_once 'CRM/Core/BAO/MessageTemplates.php';
             CRM_Core_BAO_MessageTemplates::revert($id);
         }
 

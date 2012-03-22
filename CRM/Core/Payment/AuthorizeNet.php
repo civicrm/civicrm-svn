@@ -20,7 +20,6 @@
  * begin at one, so always delete one from the "Position in Response"
  */
 
-require_once 'CRM/Core/Payment.php';
 
 class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
     const
@@ -355,7 +354,6 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
      * @return bool                 True if ID exists, else false
      */
     function _checkDupe( $invoiceId ) {
-        require_once 'CRM/Contribute/DAO/Contribution.php';
         $contribution = new CRM_Contribute_DAO_Contribution( );
         $contribution->invoice_id = $invoiceId;
         return $contribution->find( );
@@ -568,7 +566,6 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
 
     function cancelSubscriptionURL( $entityID = null, $entity = null ) {
         if ( $entityID && $entity == 'membership' ) {
-            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $contactID = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $entityID, "contact_id" );
             $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
 

@@ -91,7 +91,6 @@
 **/
 
 
-require_once 'CRM/Core/Payment.php';
 
 class CRM_Core_Payment_eWAY extends CRM_Core_Payment 
 { 
@@ -402,7 +401,6 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
     */
    function _checkDupe( $invoiceId ) 
    {
-       require_once 'CRM/Contribute/DAO/Contribution.php';
        $contribution = new CRM_Contribute_DAO_Contribution( );
        $contribution->invoice_id = $invoiceId;
        return $contribution->find( );
@@ -485,8 +483,6 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
        // Initialization call is required to use CiviCRM APIs.
        civicrm_initialize( true );
       
-       require_once 'CRM/Utils/Mail.php';
-       require_once 'CRM/Core/BAO/Domain.php';
 
        list( $fromName, $fromEmail ) = CRM_Core_BAO_Domain::getNameAndEmail( );
        $from      = "$fromName <$fromEmail>";

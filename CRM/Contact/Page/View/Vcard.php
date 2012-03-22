@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
 require_once 'Contact/Vcard/Build.php';
 
 /**
@@ -99,7 +98,6 @@ class CRM_Contact_Page_View_Vcard extends CRM_Contact_Page_View {
 
         // TODO: $vcard->setGeo($lat, $lon);
         if ( CRM_Utils_Array::value( 'address', $defaults ) ) {
-            require_once 'CRM/Core/PseudoConstant.php';
             $stateProvices = CRM_Core_PseudoConstant::stateProvince( );
             $countries     = CRM_Core_PseudoConstant::country( );
             foreach ( $defaults['address'] as $location ) {                    

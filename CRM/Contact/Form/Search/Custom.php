@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Search.php';
 
 class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
 
@@ -44,7 +43,6 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
         $this->set( 'searchFormName', 'Custom' );
 
         $this->set('context', 'custom' );
-        require_once 'CRM/Contact/BAO/SearchCustom.php';
 
         $csID = CRM_Utils_Request::retrieve( 'csid', 'Integer', $this );
         $ssID = CRM_Utils_Request::retrieve( 'ssID', 'Integer', $this );
@@ -69,7 +67,6 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
         CRM_Utils_System::appendBreadCrumb( $breadCrumb );
 
         // use the custom selector
-        require_once 'CRM/Contact/Selector/Custom.php';
         $this->_selectorName = 'CRM_Contact_Selector_Custom';
 
         $this->set( 'customSearchID'   , $this->_customSearchID    );
@@ -99,7 +96,6 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
 
     function getTemplateFileName( ) {
 
-        require_once( 'CRM/Core/Extensions.php' );
         $ext = new CRM_Core_Extensions();
         
         if( $ext->isExtensionClass( CRM_Utils_System::getClassName( $this->_customClass ) ) ) {

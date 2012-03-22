@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form.php';
 
 /**
  * This class generates form components for Premiums
@@ -62,7 +61,6 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form
      * @return None
      */
     function setDefaultValues( ) {
-        require_once 'CRM/Utils/Rule.php';
         $defaults = parent::setDefaultValues( );
         if ( $this->_id ) {
             $params = array( 'id' => $this->_id );
@@ -102,7 +100,6 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form
         //parent::buildQuickForm( );
         
         if ( $this->_action & CRM_Core_Action::PREVIEW ) {
-            require_once 'CRM/Contribute/BAO/Premium.php';
             CRM_Contribute_BAO_Premium::buildPremiumPreviewBlock( $this, $this->_id);
             
             $this->addButtons(array(
@@ -261,7 +258,6 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form
      */
     public function postProcess() 
     {
-        require_once 'CRM/Contribute/BAO/ManagePremiums.php';
         
         if ( $this->_action & CRM_Core_Action::PREVIEW ) {
             return;
@@ -290,7 +286,6 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form
                         $params['image'] = $config->imageUploadURL . $fileName;
 
                         // to check wether GD is installed or not
-                        require_once 'CRM/Utils/System.php';
                         $gdSupport  = CRM_Utils_System::getModuleSetting( 'gd', 'GD Support');
                         $error      = false; 
 

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/DAO/Instance.php';
 
 class CRM_Report_BAO_Instance extends CRM_Report_DAO_Instance
 {

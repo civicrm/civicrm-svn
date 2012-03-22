@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
-require_once 'CRM/Contact/BAO/Contact.php';
 
 /**
  * Main page for viewing contact.
@@ -194,7 +192,6 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
             CRM_Contact_BAO_ContactType::contactTypePairs( true, $contactType, ', ' );
 
         // get contact tags
-        require_once 'CRM/Core/BAO/EntityTag.php';
         $contactTags = CRM_Core_BAO_EntityTag::getContactTags($this->_contactId);       
         
         if ( !empty( $contactTags ) ) {
@@ -204,7 +201,6 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $defaults['privacy_values'] = CRM_Core_SelectValues::privacy();
         
         //Show blocks only if they are visible in edit form
-        require_once 'CRM/Core/BAO/Setting.php';
         $this->_editOptions  = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                    'contact_edit_options' );
         $configItems = array( 'CommBlock'     => 'Communication Preferences',
@@ -220,7 +216,6 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
 
         // get contact name of shared contact names
         $sharedAddresses = array( );
-        require_once 'CRM/Contact/BAO/Contact/Utils.php';
         $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames( $defaults['address'] );
         foreach ( $defaults['address'] as $key => $addressValue ) {
             if ( CRM_Utils_Array::value( 'master_id', $addressValue ) && 
@@ -246,7 +241,6 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $this->assign( $defaults );
         
         // also assign the last modifed details
-        require_once 'CRM/Core/BAO/Log.php';
         $lastModified = CRM_Core_BAO_Log::lastModified( $this->_contactId, 'civicrm_contact' );
         $this->assign_by_ref( 'lastModified', $lastModified );
         
@@ -257,7 +251,6 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                                                                   'contact_view_options', true );
         $changeLog = $this->_viewOptions['log'];
         $this->assign_by_ref( 'changeLog' , $changeLog );
-        require_once 'CRM/Core/Component.php';
         $components = CRM_Core_Component::getEnabledComponents();
 
         foreach ( $components as $name => $component ) {
@@ -339,11 +332,9 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         }
 
         // see if any other modules want to add any tabs
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::tabs( $allTabs, $this->_contactId );
 
         // now sort the tabs based on weight
-        require_once 'CRM/Utils/Sort.php';
         usort( $allTabs, array( 'CRM_Utils_Sort', 'cmpFunc' ) );
 
         $this->assign( 'allTabs'     , $allTabs     );
@@ -352,7 +343,6 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         $this->assign( 'selectedChild', $selectedChild );
         
         // hook for contact summary
-        require_once 'CRM/Utils/Hook.php';
         $contentPlacement = CRM_Utils_Hook::SUMMARY_BELOW;  // ignored but needed to prevent warnings
         CRM_Utils_Hook::summary( $this->_contactId, $content, $contentPlacement );
         if ( $content ) {

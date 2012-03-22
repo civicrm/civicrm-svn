@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Friend/BAO/Friend.php';
-require_once 'CRM/Contribute/Form/ContributionPage.php';
 
 /**
  * This class generates form components for Tell A Friend

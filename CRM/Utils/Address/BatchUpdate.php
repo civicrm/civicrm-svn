@@ -26,7 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CRM/Core/ScheduledJob.php';
 
 /**
  * A PHP cron script to format all the addresses in the database. Currently
@@ -60,7 +59,6 @@ class CRM_Utils_Address_BatchUpdate
 
     public function run( ) {
 
-        require_once 'CRM/Core/Config.php';
         $config =& CRM_Core_Config::singleton();
     
         // do check for geocoding.
@@ -80,7 +78,6 @@ class CRM_Utils_Address_BatchUpdate
         }
 
         // do check for parse street address.
-        require_once 'CRM/Core/BAO/Setting.php';
         $parseAddress = false;
         $parseAddress = CRM_Utils_Array::value( 'street_address_parsing',
                                                 CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
@@ -151,15 +148,12 @@ class CRM_Utils_Address_BatchUpdate
    
         $totalGeocoded = $totalAddresses = $totalAddressParsed = 0;
 
-        require_once 'CRM/Core/DAO.php';
         $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
     
         if ( $processGeocode ) {
             require_once( str_replace('_', DIRECTORY_SEPARATOR, $config->geocodeMethod ) . '.php' );
         }
     
-        require_once 'CRM/Core/DAO/Address.php';
-        require_once 'CRM/Core/BAO/Address.php';
     
         $unparseableContactAddress = array( );
         while ( $dao->fetch( ) ) {

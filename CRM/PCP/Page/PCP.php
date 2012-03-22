@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/PCP/BAO/PCP.php';
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  * Page for displaying list of contribution types
@@ -177,9 +175,6 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
             $this->_sortByCharacter = '';
         }
 
-        require_once 'CRM/PCP/PseudoConstant.php';
-        require_once 'CRM/Contribute/PseudoConstant.php';
-        require_once 'CRM/Event/PseudoConstant.php';
         
         $status  = CRM_PCP_PseudoConstant::pcpstatus( );
         $cpages  = CRM_Contribute_PseudoConstant::contributionPage( );
@@ -224,7 +219,6 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         $approvedId = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );
 
         //check for delete CRM-4418
-        require_once 'CRM/Core/Permission.php'; 
         $allowToDelete = CRM_Core_Permission::check( 'delete in CiviContribute' );
 
         // get all contribution pages
@@ -269,7 +263,6 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
         $pcp = CRM_Core_DAO::executeQuery($query, $params);
         while ( $pcp->fetch( ) ) {
             $action = array_sum(array_keys($this->links()));
-            require_once 'CRM/Contact/BAO/Contact.php';
             $contact = CRM_Contact_BAO_Contact::getDisplayAndImage( $pcp->contact_id);
             
             $class = '';
@@ -392,7 +385,6 @@ class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic
 
     //@TODO this function changed, debug this at runtime
     function pagerAtoZ( $whereClause, $whereParams ) {
-        require_once 'CRM/Utils/PagerAToZ.php';
         $where = '';    
         if ($whereClause){
             if (strpos($whereClause, ' AND') == 0){

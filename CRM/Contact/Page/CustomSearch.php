@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Main page for viewing all Saved searches.

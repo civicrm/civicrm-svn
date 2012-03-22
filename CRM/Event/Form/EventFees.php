@@ -58,7 +58,6 @@ class CRM_Event_Form_EventFees
         $form->_pId        = CRM_Utils_Request::retrieve( 'participantId', 'Positive', $form );
         $form->_discountId = CRM_Utils_Request::retrieve( 'discountId', 'Positive', $form );
 
-        require_once 'CRM/Event/BAO/Event.php';
         $form->_fromEmails = CRM_Event_BAO_Event::getFromEmailIds( $form->_eventId );
         
         //CRM-6907 set event specific currency.
@@ -94,7 +93,6 @@ class CRM_Event_Form_EventFees
             $ids    = array( );
             $params = array( 'id' => $form->_pId );
             
-            require_once 'CRM/Event/BAO/Participant.php';
             CRM_Event_BAO_Participant::getValues( $params, $defaults, $ids );
             if ( $form->_action == CRM_Core_Action::UPDATE ) {
                 $discounts = array( );
@@ -142,7 +140,6 @@ class CRM_Event_Form_EventFees
             $fields["email-{$form->_bltID}"         ] = 1;
             $fields['email-Primary'                 ] = 1;
             
-            require_once 'CRM/Core/BAO/UFGroup.php';
             if ( $form->_contactId ) {
                 CRM_Core_BAO_UFGroup::setProfileDefaults( $form->_contactId, $fields, $form->_defaults );
             }
@@ -159,7 +156,6 @@ class CRM_Event_Form_EventFees
                 }
             }
             
-            require_once 'CRM/Core/Config.php';
             $config = CRM_Core_Config::singleton( );
             // set default country from config if no country set
             if ( !CRM_Utils_Array::value("billing_country_id-{$form->_bltID}", $defaults[$form->_pId] ) ) { 
@@ -173,7 +169,6 @@ class CRM_Event_Form_EventFees
 //             $defaults[$form->_pId]['credit_card_exp_date'] = array( 'Y' => '2012', 'M' => '05' );
         }
 
-        require_once 'CRM/Price/BAO/Set.php';
         if ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_event', $form->_eventId ) ) {
             // get price set default values, CRM-4090
             if ( in_array( get_class( $form ), 
@@ -234,7 +229,6 @@ class CRM_Event_Form_EventFees
             if ( ( $form->_action == CRM_Core_Action::ADD ) ) {
                 // this case is for add mode, where we show discount automatically
                 if ( !isset( $form->_discountId ) ) {
-                    require_once 'CRM/Core/BAO/Discount.php';
                     $discountId = CRM_Core_BAO_Discount::findSet( $form->_eventId, 'civicrm_event' );
                 } else {
                     $discountId = $form->_discountId;
@@ -325,7 +319,6 @@ class CRM_Event_Form_EventFees
         
         // CRM-4395 
         if ( $contriId = $form->get( 'onlinePendingContributionId' ) ) {
-            require_once 'CRM/Contribute/DAO/Contribution.php';
             $contribution = new CRM_Contribute_DAO_Contribution( );
             $contribution->id = $contriId;
             $contribution->find( true );
@@ -358,14 +351,12 @@ class CRM_Event_Form_EventFees
         }
         
         // get price set ID.
-        require_once 'CRM/Price/BAO/Set.php';
         $priceSetID = CRM_Price_BAO_Set::getFor( 'civicrm_event', $eventID );
         if ( !$priceSetID ) {
             return $defaults;  
         }
         
         // use line items for setdefault price set fields, CRM-4090
-        require_once 'CRM/Price/BAO/LineItem.php';
         $lineItems[$participantID] = CRM_Price_BAO_LineItem::getLineItems( $participantID );
         
         if ( is_array( $lineItems[$participantID] ) && 
@@ -437,7 +428,6 @@ SELECT  id, html_type
             
             // make sure this is for backoffice registration.
             if ( $form->getName( ) == 'Participant' ) {
-                require_once 'CRM/Event/BAO/Participant.php';
                 $eventfullMsg = CRM_Event_BAO_Participant::eventFullMessage( $form->_eventId, $form->_pId );
                 $form->addElement( 'hidden', 'hidden_eventFullMsg', $eventfullMsg, array( 'id' => 'hidden_eventFullMsg' ) );
             }
@@ -451,13 +441,11 @@ SELECT  id, html_type
         }
         
         if ( $form->_isPaidEvent ) {
-            require_once 'CRM/Event/BAO/Event.php';
             $params = array( 'id' => $form->_eventId );
             CRM_Event_BAO_Event::retrieve( $params, $event );
 
             //retrieve custom information
             $form->_values = array( );
-            require_once 'CRM/Event/Form/Registration/Register.php';
             CRM_Event_Form_Registration::initEventFee( $form, $event['id'] );
             CRM_Event_Form_Registration_Register::buildAmount( $form, true, $form->_discountId );
             $lineItem = array();
@@ -482,13 +470,11 @@ SELECT  id, html_type
                 }
             }
             if ( $form->_mode ) {
-                require_once 'CRM/Core/Payment/Form.php';
                 CRM_Core_Payment_Form::buildCreditCard( $form, true );
             } else if ( !$form->_mode ) {
                 $form->addElement('checkbox', 'record_contribution', ts('Record Payment?'), null, 
                                   array('onclick' =>"return showHideByValue('record_contribution','','payment_information','table-row','radio',false);"));
                 
-                require_once 'CRM/Contribute/PseudoConstant.php';
                 $form->add('select', 'contribution_type_id', 
                            ts( 'Contribution Type' ), 
                            array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ) );
@@ -557,7 +543,6 @@ SELECT  id, html_type
             }
         }
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                       'mailing_backend' );
         $form->assign( 'outBound_option', $mailingInfo['outBound_option'] );

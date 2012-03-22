@@ -54,8 +54,6 @@ class CRM_Upgrade_Incremental_php_ThreeThree {
         $colQuery = 'ALTER TABLE `civicrm_custom_field` ADD `name` VARCHAR( 64 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `custom_group_id` ';
         CRM_Core_DAO::executeQuery( $colQuery, CRM_Core_DAO::$_nullArray, true, null, false, false );
         
-        require_once 'CRM/Utils/String.php';
-        require_once 'CRM/Core/DAO/CustomField.php';
         $customFldCntQuery = 'select count(*) from civicrm_custom_field where name like %1 and id != %2';
         $customField = new CRM_Core_DAO_CustomField( );
         $customField->selectAdd( );
@@ -78,7 +76,6 @@ WHERE id = %2
         }
         $customField->free( );
         
-        require_once 'CRM/Core/DAO/CustomGroup.php';
         $customGrpCntQuery = 'select count(*) from civicrm_custom_group where name like %1 and id != %2';
         $customGroup = new CRM_Core_DAO_CustomGroup( );
         $customGroup->selectAdd( );
@@ -94,7 +91,6 @@ WHERE id = %2
         }
         $customGroup->free( );
         
-        require_once 'CRM/Core/DAO/UFGroup.php';
         $ufGrpCntQuery = 'select count(*) from civicrm_uf_group where name like %1 and id != %2';
         $ufGroup = new CRM_Core_DAO_UFGroup( );
         $ufGroup->selectAdd( );
@@ -132,11 +128,6 @@ WHERE id = %2
         $updateLineItem1 = "ALTER TABLE civicrm_line_item ADD COLUMN price_field_value_id int(10) unsigned default NULL;";
         CRM_Core_DAO::executeQuery( $updateLineItem1 );
 
-        require_once 'CRM/Price/BAO/FieldValue.php';
-        require_once 'CRM/Price/DAO/LineItem.php';
-        require_once 'CRM/Price/DAO/Field.php';
-        require_once 'CRM/Core/DAO/OptionGroup.php';
-        require_once 'CRM/Core/DAO/OptionValue.php';
         
         $priceFieldDAO = new CRM_Price_DAO_Field();
         $priceFieldDAO->find( );
@@ -234,7 +225,6 @@ WHERE id = %2
         // as the table 'civicrm_price_field' is localised and column 'count' is dropped 
         // after the views are rebuild, we need to rebuild views to avoid invalid refrence of table.
         if ( $upgrade->multilingual ) {
-            require_once 'CRM/Core/I18n/Schema.php';
             CRM_Core_I18n_Schema::rebuildMultilingualSchema( $upgrade->locales, $rev );
         } 
     }
@@ -245,7 +235,6 @@ WHERE id = %2
         // get the duplicate Ids of line item entries
         $dupeLineItemIds = array( );
         $fields = array( 'entity_table', 'entity_id', 'price_field_id', 'price_field_value_id' );
-        require_once 'CRM/Price/BAO/LineItem.php';
         $mainLineItem = new CRM_Price_BAO_LineItem( );
         $mainLineItem->find( true );
         while ( $mainLineItem->fetch( ) ) {
@@ -318,7 +307,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
             }
         }
         //CRM-7137
-        require_once 'CRM/Member/DAO/MembershipBlock.php';
         // get membership type for each membership block.
         $sql = "SELECT id, membership_types FROM civicrm_membership_block ";
         $dao = CRM_Core_DAO::executeQuery( $sql );
@@ -338,7 +326,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
         }
                 
         //CRM-7172
-        require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
 
             // CRM-7896
@@ -358,7 +345,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
     
     function upgrade_3_3_7( $rev ) 
     {        
-        require_once 'CRM/Contact/DAO/Contact.php';
         $dao = new CRM_Contact_DAO_Contact( );
         $dbName = $dao->_database;
 
@@ -375,7 +361,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
 
         // handle db changes done for CRM-8218
         $alterContactDashboard = false;
-        require_once 'CRM/Contact/DAO/DashboardContact.php';
         $dao = new CRM_Contact_DAO_DashboardContact( );
         $dbName = $dao->_database;
 

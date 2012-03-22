@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Page for displaying Parent Information Section tabs
@@ -116,7 +115,6 @@ class CRM_Admin_Page_Persistent extends CRM_Core_Page
             $permission = true;
         }
         
-        require_once "CRM/Core/DAO/Persistent.php"; 
         $daoResult = new CRM_Core_DAO_Persistent();
         $daoResult->find();
         $schoolValues = array();

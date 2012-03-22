@@ -39,7 +39,6 @@ class CRM_Member_BAO_Query
     
     static function &getFields( ) 
     {
-        require_once 'CRM/Member/BAO/Membership.php';
         $fields = CRM_Member_BAO_Membership::exportableFields( );
         return $fields;
     }
@@ -201,7 +200,6 @@ class CRM_Member_BAO_Query
             return;
 
         case 'member_status_id':
-            require_once 'CRM/Member/PseudoConstant.php';
             $status = implode (',' ,array_keys($value));
             
             if (count($value) > 1) {
@@ -257,7 +255,6 @@ class CRM_Member_BAO_Query
             return;
             
         case 'member_membership_type_id':
-            require_once 'CRM/Member/PseudoConstant.php';
             $mType = implode (',' , array_keys($value));
             if (count($value) > 1) {
                 $op = 'IN';
@@ -303,7 +300,6 @@ class CRM_Member_BAO_Query
             return;
             
         case 'member_campaign_id':
-            require_once 'CRM/Campaign/BAO/Query.php';
             $campParams = array( 'op'          => $op,
                                  'campaign'    => $value,
                                  'grouping'    => $grouping,
@@ -372,7 +368,6 @@ class CRM_Member_BAO_Query
 
             if ( $includeCustomFields ) {
                 // also get all the custom membership properties
-                require_once "CRM/Core/BAO/CustomField.php";
                 $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Membership');
                 if ( ! empty( $fields ) ) {
                     foreach ( $fields as $name => $dontCare ) {
@@ -387,7 +382,6 @@ class CRM_Member_BAO_Query
 
     static function buildSearchForm( &$form ) 
     {
-        require_once 'CRM/Member/PseudoConstant.php';
         foreach (CRM_Member_PseudoConstant::membershipType( ) as $id => $Name) {
             $form->_membershipType =& $form->addElement('checkbox', "member_membership_type_id[$id]", null,$Name);
         }
@@ -403,7 +397,6 @@ class CRM_Member_BAO_Query
 
         $form->addElement( 'text', 'member_source', ts( 'Source' ) );
  
-        require_once 'CRM/Core/Form/Date.php';
         CRM_Core_Form_Date::buildDateRange( $form, 'member_join_date', 1, '_low', '_high', ts('From'),  false, false );
                 
         CRM_Core_Form_Date::buildDateRange( $form, 'member_start_date', 1, '_low', '_high', ts('From'),  false, false );
@@ -415,11 +408,9 @@ class CRM_Member_BAO_Query
         $form->addElement( 'checkbox', 'member_auto_renew', ts( 'Find Auto-renew Memberships?' ) );
 
         // add all the custom  searchable fields
-        require_once 'CRM/Custom/Form/CustomData.php';
         $extends      = array( 'Membership' );
         $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $extends );
         if ( $groupDetails ) {
-            require_once 'CRM/Core/BAO/CustomField.php';
             $form->assign('membershipGroupTree', $groupDetails);
             foreach ($groupDetails as $group) {
                 foreach ($group['fields'] as $field) {
@@ -433,7 +424,6 @@ class CRM_Member_BAO_Query
             }
         }
         
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'member_campaign_id' );
         
         $form->assign( 'validCiviMember', true );

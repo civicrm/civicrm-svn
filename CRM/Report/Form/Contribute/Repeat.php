@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
 
@@ -391,7 +389,6 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
     }
 
     function formRule ( $fields, $files, $self ) {
-        require_once 'CRM/Utils/Date.php';
 
         $errors = $checkDate = $errorCount = array( );
 

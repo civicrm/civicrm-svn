@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Event/Import/Parser.php';
 require_once 'api/v3/DeprecatedUtils.php';
 /**
  * class to parse membership csv files
@@ -76,10 +75,8 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
      */
     function init( )
     {
-        require_once 'CRM/Event/BAO/Participant.php';
         $fields = CRM_Event_BAO_Participant::importableFields( $this->_contactType, false );
         $fields['event_id']['title'] = "Event ID";
-        require_once 'CRM/Event/BAO/Event.php';
         $eventfields =& CRM_Event_BAO_Event::fields() ;
         $fields['event_title'] = $eventfields['event_title'];
         
@@ -178,7 +175,6 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         }
         $params =& $this->getActiveFieldParams( );
 
-        require_once 'CRM/Import/Parser/Contact.php';
         if (!(($index < 0) || ($this->_participantStatusIndex < 0) )) {
             $errorRequired = ! CRM_Utils_Array::value($this->_participantStatusIndex, $values); 
             if ( !CRM_Utils_Array::value( 'event_id', $params ) && !CRM_Utils_Array::value( 'event_title', $params ) ) {
@@ -329,7 +325,6 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         //date-Format part ends
         static $indieFields = null;
         if ($indieFields == null) {
-            require_once('CRM/Event/BAO/Participant.php');
             $indieFields = CRM_Event_BAO_Participant::import();
         }
         
@@ -414,7 +409,6 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
                                     'contact_type' => $this->_contactType,
                                     'level' => 'Strict'
                                     );
-                require_once 'CRM/Dedupe/BAO/Rule.php';
                 $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
                 
                 $disp = '';

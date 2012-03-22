@@ -37,7 +37,6 @@
 /**
  * Class contains Contact dashboard related functions
  */
-require_once 'CRM/Core/DAO/Dashboard.php';
 
 class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
 {
@@ -95,7 +94,6 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         
         // get contact dashboard dashlets
         $hasDashlets = false;
-        require_once 'CRM/Contact/DAO/DashboardContact.php';
         $dao = new CRM_Contact_DAO_DashboardContact( );
         $dao->contact_id = $contactID;
         $dao->orderBy( 'column_no asc, weight asc' );
@@ -224,7 +222,6 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         $dashboadDAO->fetch( );
 
         // build the content
-        require_once 'CRM/Contact/DAO/DashboardContact.php';
         $dao = new CRM_Contact_DAO_DashboardContact( );
 
         $session = CRM_Core_Session::singleton( ); 
@@ -357,7 +354,6 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             $dashboardID = CRM_Core_DAO::singleValueQuery( $query );  
         }
         
-        require_once "CRM/Core/DAO/Dashboard.php";
         $dashlet  = new CRM_Core_DAO_Dashboard( );
         
         if ( !$dashboardID ) {
@@ -443,7 +439,6 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
      * @static
      */
     static function deleteDashlet( $dashletID ) {
-        require_once "CRM/Core/DAO/Dashboard.php";
         $dashlet     = new CRM_Core_DAO_Dashboard( );
         $dashlet->id = $dashletID;
         $dashlet->delete( );

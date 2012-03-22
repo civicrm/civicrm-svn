@@ -255,7 +255,6 @@ class CRM_Utils_Token
                 return $addressCache[$cache_key];
             }
             
-            require_once 'CRM/Utils/Address.php';
             $value = null;
             /* Construct the address token */
             if ( CRM_Utils_Array::value( $token, $loc ) ) {
@@ -329,7 +328,6 @@ class CRM_Utils_Token
                     }
                 }
             } else if ( $token == 'checksum' ) {
-                require_once 'CRM/Contact/BAO/Contact/Utils.php';
                 $cs = CRM_Contact_BAO_Contact_Utils::generateChecksum( $org['contact_id'] );
                 $value = "cs={$cs}";
             } else if ( $token == 'address' ) {
@@ -419,13 +417,11 @@ class CRM_Utils_Token
             break;
             
         case 'html':
-            require_once 'CRM/Mailing/Page/View.php';
             $page = new CRM_Mailing_Page_View( );
             $value = $page->run( $mailing->id, null, false );
             break;
             
         case 'approvalStatus':
-            require_once 'CRM/Mailing/PseudoConstant.php';
             $mailApprovalStatus = CRM_Mailing_PseudoConstant::approvalStatus( );
             $value = $mailApprovalStatus[$mailing->approval_status_id];
             break;
@@ -576,7 +572,6 @@ class CRM_Utils_Token
         if (!in_array($token,self::$_tokens['contact'])) {
             $value = "{contact.$token}";
         } else if ( $token == 'checksum' ) {
-            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $hash = CRM_Utils_Array::value( 'hash', $contact );
             $cs   = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contact['contact_id'],
                                                                      null,
@@ -678,7 +673,6 @@ class CRM_Utils_Token
                 $base = CRM_Utils_System::baseURL();
 
                 // FIXME: an ugly hack for CRM-2035, to be dropped once CRM-1799 is implemented
-                require_once 'CRM/Contact/DAO/Group.php';
                 $dao = new CRM_Contact_DAO_Group();
                 $dao->find();
                 while ($dao->fetch()) {
@@ -771,7 +765,6 @@ class CRM_Utils_Token
             foreach ( $matches as $key => $value ) {
                 $gid = substr($value, 18, -1);
                 $config = CRM_Core_Config::singleton();
-                require_once 'CRM/Core/BAO/MailSettings.php';
                 $domain    = CRM_Core_BAO_MailSettings::defaultDomain();
                 $localpart = CRM_Core_BAO_MailSettings::defaultLocalpart();
                 // we add the 0.0000000000000000 part to make this match the other email patterns (with action, two ids and a hash)
@@ -908,7 +901,6 @@ class CRM_Utils_Token
         }
 
         $params = array( );
-        require_once 'CRM/Core/Form.php';
         foreach ( $contactIDs  as $key => $contactID ) {
             $params[] = array( CRM_Core_Form::CB_PREFIX . $contactID,
                                '=', 1, 0, 0);
@@ -930,7 +922,6 @@ class CRM_Utils_Token
             
         // if return properties are not passed then get all return properties
         if ( empty( $returnProperties ) ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
             $fields = array_merge( array_keys(CRM_Contact_BAO_Contact::exportableFields( ) ),
                                    array( 'display_name', 'checksum', 'contact_id'));
             foreach( $fields as $key => $val) {
@@ -939,7 +930,6 @@ class CRM_Utils_Token
         }
 
         $custom = array( );
-        require_once 'CRM/Core/BAO/CustomField.php'; 
         foreach ( $returnProperties as $name => $dontCare ) {
             $cfID = CRM_Core_BAO_CustomField::getKeyID( $name );
             if ( $cfID ) {
@@ -951,7 +941,6 @@ class CRM_Utils_Token
         $numberofContacts = count( $contactIDs );
 
 
-        require_once 'CRM/Contact/BAO/Query.php';
         $query   = new CRM_Contact_BAO_Query( $params, $returnProperties );
 
         $details = $query->apiQuery( $params, $returnProperties, NULL, NULL, 0, $numberofContacts );
@@ -962,11 +951,9 @@ class CRM_Utils_Token
             if ( array_key_exists( $contactID, $contactDetails ) ) {
                 if ( CRM_Utils_Array::value( 'preferred_communication_method', $returnProperties ) == 1 
                      && array_key_exists( 'preferred_communication_method', $contactDetails[$contactID] ) ) {
-                    require_once 'CRM/Core/PseudoConstant.php';
                     $pcm = CRM_Core_PseudoConstant::pcm();
                     
                     // communication Prefferance
-                    require_once 'CRM/Core/BAO/CustomOption.php';
                     $contactPcm = explode(CRM_Core_DAO::VALUE_SEPARATOR,
                                           $contactDetails[$contactID]['preferred_communication_method']);
                     $result = array( );
@@ -996,7 +983,6 @@ class CRM_Utils_Token
         }
 
         // also call a hook and get token details
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::tokenValues( $details[0],
                                      $contactIDs,
                                      null,
@@ -1012,7 +998,6 @@ class CRM_Utils_Token
      */
     function replaceGreetingTokens( &$tokenString, $contactDetails = null, $contactId = null, $className = null ) 
     {
-        require_once 'CRM/Utils/Token.php';
 
         if ( !$contactDetails && !$contactId ) {
             return;    
@@ -1103,12 +1088,10 @@ class CRM_Utils_Token
         switch ( $objectName ) {
 
         case 'permission':
-            require_once 'CRM/Core/Permission.php';
             $value = CRM_Core_Permission::permissionEmails( $objectValue );
             break;
 
         case 'role':
-            require_once 'CRM/Core/Permission.php';
             $value = CRM_Core_Permission::roleEmails( $objectValue );
             break;
 

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'CRM/Core/DAO/Factory.php';
 
 class CRM_Contact_DAO_Factory {
 

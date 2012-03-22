@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Event/Form/Registration.php';
 
 /**
  * This class generates form components for processing Event  
@@ -122,7 +121,6 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
             }
         }
         $fields['state_province'] = $fields['country'] = $fields['email'] = 1;
-        require_once 'CRM/Contact/BAO/Contact.php';
         foreach ($fields as $name => $dontCare ) {
             if ( isset($this->_params[0][$name]) ) {
                 $defaults[$name] = $this->_params[0][$name];
@@ -142,7 +140,6 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
               
         $this->setDefaults( $defaults );
 
-        require_once 'CRM/Friend/BAO/Friend.php';
         
         $params['entity_id']    = $this->_eventId;
         $params['entity_table'] = 'civicrm_event';
@@ -175,7 +172,6 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         $this->assign( 'isRequireApproval', $isRequireApproval );
 
         // find pcp info
-        require_once "CRM/PCP/DAO/PCPBlock.php";
         $eventId = $this->_eventId;
         $dao = new CRM_PCP_DAO_PCPBlock();
         $dao->entity_table = 'civicrm_event';
@@ -189,7 +185,6 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
         }
         
         // Assign Participant Count to Lineitem Table
-        require_once 'CRM/Price/BAO/Set.php';
         $this->assign( 'pricesetFieldsCount', CRM_Price_BAO_Set::getPricesetCount( $this->_priceSetId ) );    
         
         // can we blow away the session now to prevent hackery

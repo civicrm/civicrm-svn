@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/BAO/CustomGroup.php';
 
 /**
  * this class builds custom data

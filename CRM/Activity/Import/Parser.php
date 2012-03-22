@@ -34,10 +34,7 @@
  *
  */
 
-require_once 'CRM/Utils/String.php';
-require_once 'CRM/Utils/Type.php';
 
-require_once 'CRM/Activity/Import/Field.php';
 
 abstract class CRM_Activity_Import_Parser 
 {
@@ -548,7 +545,6 @@ abstract class CRM_Activity_Import_Parser
             if (! array_key_exists ($name,$tempField) ) {
                 $this->_fields[$name] = new CRM_Activity_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
             } else {
-                require_once 'CRM/Import/Field.php';
                 $this->_fields[$name] = new CRM_Import_Field( $name, $title, $type, $headerPattern, $dataPattern, CRM_Utils_Array::value( 'hasLocationType', $tempField[$name] ) );
             }
                 
@@ -663,14 +659,12 @@ abstract class CRM_Activity_Import_Parser
 
     function errorFileName( $type ) 
     {
-        require_once 'CRM/Import/Parser.php';
         $fileName = CRM_Import_Parser::errorFileName( $type );
         return $fileName;
     }
     
     function saveFileName( $type ) 
     {
-        require_once 'CRM/Import/Parser.php';
         $fileName = CRM_Import_Parser::saveFileName( $type );
         return $fileName;
     }

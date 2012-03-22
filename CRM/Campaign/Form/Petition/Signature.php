@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Campaign/BAO/Petition.php';
-require_once 'CRM/Core/PseudoConstant.php';
        
 /**
  * This class generates form components for processing a petition signature 
@@ -171,7 +168,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         $userChecksum = CRM_Utils_Request::retrieve( 'cs', 'String', $this );
         if ( $userChecksum ) {
             //check for anonymous user.
-            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $validUser = CRM_Contact_BAO_Contact_Utils::validChecksum( $tempID, $userChecksum );
             if ( $validUser ) return  $tempID;
         }
@@ -195,7 +191,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         return; 
       }
 			//check petition is valid and active
-			require_once 'CRM/Campaign/BAO/Survey.php';
 			$params['id'] = $this->_surveyId;
 			$this->petition = array();
 			CRM_Campaign_BAO_Survey::retrieve($params,$this->petition);
@@ -216,8 +211,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     	}
       
         // add the custom contact and activity profile fields to the signature form
-        require_once 'CRM/Core/BAO/UFJoin.php';         
-	      require_once 'CRM/Core/BAO/UFGroup.php';
 
         $ufJoinParams = array( 'entity_id'    => $this->_surveyId,
                                'entity_table' => 'civicrm_survey',   
@@ -252,7 +245,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      */
     function setDefaultValues( ) 
     {
-        require_once 'CRM/Core/BAO/UFGroup.php';         
         $this->_defaults = array( );   
         if ( $this->_contactId ) {
             CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactId, $this->_contactProfileFields, $this->_defaults, true );        
@@ -262,7 +254,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         }
         
         //set custom field defaults
-        require_once "CRM/Core/BAO/CustomField.php";
     
 		foreach ( $this->_contactProfileFields as $name => $field ) {
             if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
@@ -349,7 +340,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      */
     public function postProcess() 
     {		
-        require_once 'CRM/Core/BAO/Setting.php';
         $tag_name = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::CAMPAIGN_PREFERENCES_NAME,
                                                    'tag_unconfirmed' );
 
@@ -400,7 +390,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 		} else {
 			// dupeCheck - check if contact record already exists
 			// code modified from api/v2/Contact.php-function civicrm_contact_check_params()
-			require_once 'CRM/Dedupe/Finder.php';
 			$params['contact_type'] = $this->_ctype;    
 			//TODO - current dedupe finds soft deleted contacts - adding param is_deleted not working
 			//$params['is_deleted'] = 0;  // ignore soft deleted contacts
@@ -414,7 +403,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 		switch (count($ids)) {
 			case 0:
 				//no matching contacts - create a new contact				
-				require_once 'CRM/Campaign/BAO/Survey.php';
 				$petition_params['id'] = $this->_surveyId;
 				$petition = array();
 				CRM_Campaign_BAO_Survey::retrieve($petition_params,$petition);
@@ -434,7 +422,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				
 				// dedupe matched single contact, check for 'unconfirmed' tag				
 				if ( $tag_name ) {
-					require_once 'CRM/Core/DAO/EntityTag.php';
 					$tag = new CRM_Core_DAO_EntityTag( );
 					$tag->entity_id  = $this->_contactId;
 					$tag->tag_id     = $this->_tagId;
@@ -460,7 +447,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				// check if user has already signed this petition - redirects to Thank You if true
 				$this->redirectIfSigned($params);
 				if ( $tag_name ) {
-					require_once 'CRM/Core/DAO/EntityTag.php';
 					$tag = new CRM_Core_DAO_EntityTag( );
 					$tag->entity_id  = $this->_contactId;
 					$tag->tag_id     = $this->_tagId;
@@ -482,7 +468,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 
 
 
-			require_once 'CRM/Core/Transaction.php';
 			$transaction = new CRM_Core_Transaction( );
 			
             $addToGroupID = isset($this->_addToGroupID) ? $this->_addToGroupID : null;
@@ -560,8 +545,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     {
 
         if ( $id ) {
-            require_once 'CRM/Core/BAO/UFGroup.php';
-            require_once 'CRM/Profile/Form.php';
             $session = CRM_Core_Session::singleton( );
             $this->assign( "petition" , $this->petition );
             $contactID = null; //$contactID = $this->_contactId;	   
@@ -569,7 +552,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 
             $fields = null;
             if ( $contactID ) { //TODO: contactID is never set (commented above)
-                require_once "CRM/Core/BAO/UFGroup.php";
                 if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
                     $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD );
                 }
@@ -608,7 +590,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 
                 if ( $addCaptcha &&
                      ! $viewOnly ) {
-                    require_once 'CRM/Utils/ReCAPTCHA.php';
                     $captcha = CRM_Utils_ReCAPTCHA::singleton( );
                     $captcha->add( $this );
                     $this->assign( "isCaptcha" , true );

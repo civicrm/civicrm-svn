@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/ShowHideBlocks.php';
-require_once 'CRM/Custom/Form/CustomData.php';
 
 /**
  * This class generates form components for custom data
@@ -143,10 +140,8 @@ class CRM_Case_Form_CustomData extends CRM_Core_Form
         $params = $this->controller->exportValues( $this->_name );
         $fields = array();
         
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::postProcess( $params,
                                                     $fields,
                                                     'civicrm_case',
@@ -169,12 +164,10 @@ class CRM_Case_Form_CustomData extends CRM_Core_Form
                                  'details'             => json_encode( $this->_defaults ),
                                  'activity_date_time'  => date('YmdHis'),
                                  );
-        require_once 'CRM/Activity/BAO/Activity.php';
         $activity   = CRM_Activity_BAO_Activity::create( $activityParams );
 
         $caseParams = array( 'activity_id' => $activity->id,
                              'case_id'     => $this->_entityID );
-        require_once 'CRM/Case/BAO/Case.php';
         CRM_Case_BAO_Case::processCaseActivity( $caseParams );
 
         $transaction->commit( );

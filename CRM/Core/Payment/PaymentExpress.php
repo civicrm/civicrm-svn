@@ -32,7 +32,6 @@
  * in creating this payment processor module
  */
  
-require_once 'CRM/Core/Payment.php';
 
 
 class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
@@ -189,7 +188,6 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
              *
              * This contains the XML/Curl functions we'll need to generate the XML request
              */
-            require_once 'CRM/Core/Payment/PaymentExpressUtils.php';
             $dpsParams['PxPayUserId']       = $this->_paymentProcessor['user_name'];
             $dpsParams['PxPayKey']          = $this->_paymentProcessor['password'];
             // Build a valid XML string to pass to DPS

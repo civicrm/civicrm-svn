@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/ContributionPage.php';
 
 /**
  * form to configure thank-you messages and receipting features for an online contribution page
@@ -134,7 +133,6 @@ class CRM_Contribute_Form_ContributionPage_ThankYou extends CRM_Contribute_Form_
             $params['bcc_receipt'] = null;
         }
 
-        require_once 'CRM/Contribute/BAO/ContributionPage.php'; 
         $dao = CRM_Contribute_BAO_ContributionPage::create( $params ); 
         parent::endPostProcess( );
     }

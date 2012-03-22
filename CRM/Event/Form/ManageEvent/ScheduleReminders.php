@@ -35,8 +35,6 @@
  *
  */
 
-require_once 'CRM/Event/Form/ManageEvent.php';
-require_once 'CRM/Core/BAO/ActionSchedule.php';
 
 /**
  * This class generates form components for scheduling reminders for Event  
@@ -71,7 +69,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                     } else {
                         $action += CRM_Core_Action::ENABLE;
                     }
-                    require_once 'CRM/Admin/Page/ScheduleReminders.php';
                     $links = CRM_Admin_Page_ScheduleReminders::links();
                     $links[CRM_Core_Action::DELETE]['qs'] .= "&context=event&eventId={$this->_id}";
                     $links[CRM_Core_Action::UPDATE]['qs'] .= "&context=event&eventId={$this->_id}";
@@ -121,7 +118,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $entity->setMultiple( true ); 
 
         //get the frequency units.
-        require_once 'CRM/Core/OptionGroup.php';
         $this->_freqUnits = array( 'hour' => 'hour' ) + 
             CRM_Core_OptionGroup::values('recur_frequency_units');
         
@@ -147,7 +143,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
                 
         $this->add( 'select', 'start_action_date', ts( 'Date Field' ), $sel4, true );
 
-        require_once 'CRM/Core/OptionGroup.php';
         $this->addElement( 'checkbox', 'is_repeat', ts('Repeat') , 
                            null, array('onclick' => "return showHideByValue('is_repeat',true,'repeatFields','table-row','radio',false);") );
 
@@ -182,7 +177,6 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
         $this->addElement( 'select', 'group_id', ts( 'Group' ), 
                            CRM_Core_PseudoConstant::staticGroup( ) );
 
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::commonCompose( $this );
 
         $this->add('text', 'subject', ts('Subject'), 

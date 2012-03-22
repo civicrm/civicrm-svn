@@ -32,11 +32,6 @@
  *
  */
 
-require_once 'CRM/Core/Selector/Base.php';
-require_once 'CRM/Core/Selector/API.php';
-require_once 'CRM/Utils/Pager.php';
-require_once 'CRM/Utils/Sort.php';
-require_once 'CRM/Contact/BAO/Query.php';
 
 /**
  * This class is used to retrieve and display a range of
@@ -184,7 +179,6 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
         
         // type of selector
         $this->_action = $action;
-        require_once 'CRM/Activity/BAO/Query.php';
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, 
                                                    CRM_Activity_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_ACTIVITY,
                                                                                                     false ),
@@ -245,16 +239,12 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                                false, 
                                                $this->_activityClause );
          $rows = array( );
-         require_once 'CRM/Mailing/BAO/Mailing.php';
-         require_once 'CRM/Mailing/Info.php';
          $mailingIDs = CRM_Mailing_BAO_Mailing::mailingACLIDs( );
          $accessCiviMail = CRM_Core_Permission::check( 'access CiviMail' );
          
          //get all campaigns.
-         require_once 'CRM/Campaign/BAO/Campaign.php';
          $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
          
-         require_once 'CRM/Campaign/PseudoConstant.php';
          $engagementLevels = CRM_Campaign_PseudoConstant::engagementLevel();
          
          while ( $result->fetch( ) ) {
@@ -286,7 +276,6 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             if ( $this->_context == 'search' ) {
                 $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->activity_id;
             }
-            require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
             $row['contact_type'] =
                 CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ?
                                                          $result->contact_sub_type : $result->contact_type ,false,$result->contact_id);
@@ -307,7 +296,6 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                 $row['assignee_contact_name'] = '';
                 $accessMailingReport = true;
             }
-            require_once 'CRM/Activity/Selector/Activity.php';
             $activityActions = new CRM_Activity_Selector_Activity( $result->contact_id, null );
             $actionLinks = $activityActions->actionLinks( $activityTypeId,
                                                           CRM_Utils_Array::value( 'source_record_id', $row ),

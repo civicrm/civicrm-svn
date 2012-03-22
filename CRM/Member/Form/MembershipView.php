@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * This class generates form components for Payment-Instrument
@@ -49,9 +48,6 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form
      * @access public  
      */
     public function preProcess( ) {
-        require_once 'CRM/Member/BAO/Membership.php';
-        require_once 'CRM/Member/BAO/MembershipType.php';
-        require_once 'CRM/Core/BAO/CustomGroup.php';
 
         $values = array( ); 
         $id = CRM_Utils_Request::retrieve('id', 'Positive', $this );
@@ -66,7 +62,6 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form
             CRM_Member_BAO_Membership::retrieve( $params, $values );
 
             // build associated contributions
-            require_once 'CRM/Member/Page/Tab.php';
             CRM_Member_Page_Tab::associatedContribution( $values['contact_id'], $id );
 
 
@@ -121,13 +116,11 @@ END AS 'relType'
             $this->assign( 'displayName', $displayName );        
 
             // add viewed membership to recent items list
-            require_once 'CRM/Utils/Recent.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/membership', 
                                           "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
             
             $title = $displayName . ' - ' . ts('Membership Type:') . ' ' . $values['membership_type'];
             
-            require_once 'CRM/Core/Permission.php';
             $recentOther = array( );
             if ( CRM_Core_Permission::checkActionPermission( 'CiviMember', CRM_Core_Action::UPDATE ) ) {
                 $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/membership', 
@@ -167,7 +160,6 @@ END AS 'relType'
 
         //do check for campaigns
         if ( $campaignId = CRM_Utils_Array::value( 'campaign_id', $values ) ) {
-            require_once 'CRM/Campaign/BAO/Campaign.php';
             $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
             $values['campaign'] = $campaigns[$campaignId];
         }

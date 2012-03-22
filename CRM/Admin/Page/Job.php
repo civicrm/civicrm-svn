@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-require_once 'CRM/Core/DAO/Job.php';
 
 /**
  * Page for displaying list of jobs
@@ -157,14 +155,12 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
 
         // using Export action for Execute. Doh.
         if ( $this->_action & CRM_Core_Action::EXPORT ) { 
-            require_once 'CRM/Core/JobManager.php';
             $jm = new CRM_Core_JobManager();
             $jm->executeJobById( $this->_id );
 
             CRM_Core_Session::setStatus( ts('Selected Scheduled Job has been executed. See the log for details.') );
         }
 
-        require_once 'CRM/Core/JobManager.php';
         $sj = new CRM_Core_JobManager();
         $rows = $temp = array();
         foreach( $sj->jobs as $job ) {

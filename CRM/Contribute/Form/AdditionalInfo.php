@@ -46,7 +46,6 @@ class CRM_Contribute_Form_AdditionalInfo
     { 
         //premium section
         $form->add( 'hidden', 'hidden_Premium', 1 );
-        require_once 'CRM/Contribute/DAO/Product.php';
         $sel1 = $sel2 = array();
         
         $dao = new CRM_Contribute_DAO_Product();
@@ -192,7 +191,6 @@ class CRM_Contribute_Form_AdditionalInfo
      */ 
     function processPremium( &$params, $contributionID, $premiumID = null, &$options = null )
     {
-        require_once 'CRM/Contribute/DAO/ContributionProduct.php';
         $dao = new CRM_Contribute_DAO_ContributionProduct();
         $dao->contribution_id = $contributionID;
         $dao->product_id      = $params['product_name'][0];
@@ -225,7 +223,6 @@ class CRM_Contribute_Form_AdditionalInfo
     function processNote( &$params, $contactID, $contributionID, $contributionNoteID = null )
     {
         //process note
-        require_once 'CRM/Core/BAO/Note.php';
         $noteParams = array('entity_table' => 'civicrm_contribution', 
                             'note'         => $params['note'], 
                             'entity_id'    => $contributionID,
@@ -272,7 +269,6 @@ class CRM_Contribute_Form_AdditionalInfo
         }
 
         if ( CRM_Utils_Array::value( 'honor_type_id', $params ) ) {
-            require_once 'CRM/Contribute/BAO/Contribution.php';
             if ( $this->_honorID ) {
                 $honorId = CRM_Contribute_BAO_Contribution::createHonorContact( $params , $this->_honorID );
             } else {
@@ -311,7 +307,6 @@ class CRM_Contribute_Form_AdditionalInfo
         $params['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
                                                                         $params['contribution_type_id'] );
         if ( CRM_Utils_Array::value( 'payment_instrument_id', $params ) ) {
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument( );
             $params['paidBy']  = $paymentInstrument[$params['payment_instrument_id']];
         }
@@ -334,7 +329,6 @@ class CRM_Contribute_Form_AdditionalInfo
             if ( isset( $params['product_name'] ) && 
                  is_array( $params['product_name'] ) &&
                  ! empty( $params['product_name'] ) ) {
-                require_once 'CRM/Contribute/DAO/Product.php';
                 $productDAO = new CRM_Contribute_DAO_Product();
                 $productDAO->id = $params['product_name'][0];
                 $productDAO->find(true);
@@ -375,7 +369,6 @@ class CRM_Contribute_Form_AdditionalInfo
             foreach ( $addressParts as $name => $field ) {
                 $addressFields[$name] = CRM_Utils_Array::value( $field, $params );
             }
-            require_once 'CRM/Utils/Address.php';
             $this->assign('address', CRM_Utils_Address::format( $addressFields ) );
             
             $date = CRM_Utils_Date::format( $params['credit_card_exp_date'] );  
@@ -405,7 +398,6 @@ class CRM_Contribute_Form_AdditionalInfo
             }
             
             //retrieve custom data
-            require_once "CRM/Core/BAO/UFGroup.php";
             $customGroup = array( ); 
             
             foreach ( $form->_groupTree as $groupID => $group ) {
@@ -427,8 +419,6 @@ class CRM_Contribute_Form_AdditionalInfo
         }
         
         $form->assign_by_ref( 'formValues', $params );
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
-        require_once 'CRM/Utils/Mail.php';
         list( $contributorDisplayName, 
               $contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $params['contact_id'] );
         $this->assign( 'contactID', $params['contact_id'] );
@@ -436,7 +426,6 @@ class CRM_Contribute_Form_AdditionalInfo
         $this->assign( 'currency', $params['currency']);
         $this->assign( 'receive_date',  CRM_Utils_Date::processDate( $params['receive_date'] ) );
 
-        require_once 'CRM/Core/BAO/MessageTemplates.php';
         list ($sendReceipt, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
             array(
                 'groupName' => 'msg_tpl_workflow_contribution',
@@ -466,8 +455,6 @@ class CRM_Contribute_Form_AdditionalInfo
             return;
         }
         
-        require_once 'CRM/Price/BAO/Set.php';
-        require_once 'CRM/Price/BAO/LineItem.php';
         foreach ( $lineItem as $priceSetId => $values ) {
             if ( !$priceSetId ) continue;
             foreach( $values as $line ) {

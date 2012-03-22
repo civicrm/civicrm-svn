@@ -33,11 +33,6 @@
  *
  */
 
-require_once 'CRM/Core/Selector/Base.php';
-require_once 'CRM/Core/Selector/API.php';
-require_once 'CRM/Utils/Pager.php';
-require_once 'CRM/Utils/Sort.php';
-require_once 'CRM/Contact/BAO/Query.php';
 
 /**
  * This class is used to retrieve and display a range of
@@ -169,7 +164,6 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
         // type of selector
         $this->_action = $action;
 
-        require_once 'CRM/Case/BAO/Query.php';
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams,
                                                    CRM_Case_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_CASE,
                                                                                                 false ),
@@ -315,10 +309,8 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
          }
          $mask = CRM_Core_Action::mask( $permissions );
          
-         require_once 'CRM/Core/OptionGroup.php';
          $caseStatus = CRM_Core_OptionGroup::values( 'case_status', false, false, false, " AND v.name = 'Urgent' " );
          
-         require_once 'CRM/Case/BAO/Case.php';
          $scheduledInfo = array();
          
          while ( $result->fetch( ) ) {
@@ -355,7 +347,6 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                                               true 
                                                               );
 
-             require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
              $row['contact_type'] = 
                  CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                           $result->contact_sub_type : $result->contact_type );

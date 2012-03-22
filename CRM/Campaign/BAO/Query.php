@@ -167,7 +167,6 @@ class CRM_Campaign_BAO_Query
             return;
 
         case 'survey_status_id' :
-            require_once 'CRM/Core/PseudoConstant.php';
             $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
             
             $query->_qill[$grouping ][] = ts( 'Survey Status - %1', array( 1 => $activityStatus[$value] ) );
@@ -211,7 +210,6 @@ class CRM_Campaign_BAO_Query
             break;
             
         case self::civicrm_activity :
-            require_once 'CRM/Campaign/PseudoConstant.php';
             $surveyActivityTypes = CRM_Campaign_PseudoConstant::activityType( );
             $surveyKeys = "(". implode( ',', array_keys( $surveyActivityTypes ) ) .")"; 
             $from = " INNER JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
@@ -300,9 +298,6 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
      */ 
     static function buildSearchForm( &$form ) 
     {
-        require_once 'CRM/Core/PseudoConstant.php';
-        require_once 'CRM/Campaign/BAO/Survey.php';
-        require_once 'CRM/Contact/BAO/ContactType.php';
         
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Address' );
         $className = CRM_Utils_System::getClassName( $form );
@@ -367,7 +362,6 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
      WHERE  grp.name = %1';        
         $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( 'Voter_Info', 'String' ) ) );
         $customSearchFields = array( );
-        require_once 'CRM/Core/BAO/CustomField.php';
         while ( $dao->fetch( ) ) {
             foreach ( array( 'ward', 'precinct' ) as $name ) {
                 if ( stripos( $name, $dao->label ) !== false  ) {
@@ -423,7 +417,6 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $searchVoterFor = CRM_Utils_Array::value( 'campaign_search_voter_for', $params );
         
         //get the survey activities.
-        require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $status = array( 'Scheduled' );
         if ( $searchVoterFor == 'reserve' ) $status[] = 'Completed';
@@ -436,7 +429,6 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             }
         }
         
-        require_once 'CRM/Campaign/BAO/Survey.php';
         $voterActValues = CRM_Campaign_BAO_Survey::getSurveyVoterInfo( $surveyId, null, $statusIds );
         
         if ( !empty( $voterActValues ) ) {
@@ -537,8 +529,6 @@ PRIMARY KEY ( id ),
           }
         }
         
-        require_once 'CRM/Contact/BAO/Query.php';
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         
         $campaignIds = $campaignTitles = array( );

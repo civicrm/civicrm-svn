@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Navigation.php';
 
 class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation 
 {
@@ -72,7 +71,6 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
     {
         $menus = array( );
 
-        require_once "CRM/Core/DAO/Menu.php";
         $menu  = new CRM_Core_DAO_Menu( );
         $menu->domain_id = CRM_Core_Config::domainID( );
         $menu->find();
@@ -95,7 +93,6 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
      */
     static function add( &$params ) 
     {
-        require_once "CRM/Core/DAO/Navigation.php";
         $navigation  = new CRM_Core_DAO_Navigation( );
         
         $params['is_active'    ] = CRM_Utils_Array::value( 'is_active', $params, false );
@@ -195,7 +192,6 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
         $config = CRM_Core_Config::singleton( );
 
         // check if we can retrieve from database cache
-        require_once 'CRM/Core/BAO/Cache.php'; 
         $navigations = CRM_Core_BAO_Cache::getItem( 'navigation', $cacheKeyString );
 
         if ( ! $navigations ) {
@@ -318,7 +314,6 @@ ORDER BY parent_id, weight";
         $navigationString = null;
 
         // run the Navigation  through a hook so users can modify it
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::navigationMenu( $navigations );
 
         $i18n = CRM_Core_I18n::singleton();
@@ -452,7 +447,6 @@ ORDER BY parent_id, weight";
         }
         
         //we need to check core view/edit or supported acls.
-        require_once 'CRM/Core/Permission.php';
         if ( in_array( $menuName, array( 'Search...', 'Contacts' ) ) ) {
             if ( ! CRM_Core_Permission::giveMeAllACLs( ) ) {
                 $skipMenuItems[] = $navID;
@@ -551,7 +545,6 @@ ORDER BY parent_id, weight";
 
         $navParams = array( 'contact_id' => $contactID );
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $navigation = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::NAVIGATION_NAME,
                                                      'navigation',
                                                      null,
@@ -598,7 +591,6 @@ ORDER BY parent_id, weight";
             
             // before inserting check if contact id exists in db
             // this is to handle wierd case when contact id is in session but not in db
-            require_once 'CRM/Contact/DAO/Contact.php';
             $contact = new CRM_Contact_DAO_Contact( );
             $contact->id = $contactID;
             if ( $contact->find(true ) ) {
@@ -629,7 +621,6 @@ ORDER BY parent_id, weight";
         }
         
         CRM_Core_DAO::executeQuery( $query, $params );
-        require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
     }          
     
@@ -720,7 +711,6 @@ ORDER BY parent_id, weight";
         $sql[] = "UPDATE civicrm_navigation SET weight = {$newWeight}, parent_id = {$newParentID} WHERE id = {$nodeID}";
           
         // now execute all the sql's
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
           
         foreach ( $sql as $query ) {

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Tag.php';
 
 class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag
 {
@@ -266,7 +265,6 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag
     static function del ( $id )
     {
         // delete all crm_entity_tag records with the selected tag id
-        require_once 'CRM/Core/DAO/EntityTag.php';
         $entityTag = new CRM_Core_DAO_EntityTag( );
         $entityTag->tag_id = $id;
         if ( $entityTag->find( ) ) {
@@ -279,7 +277,6 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag
         $tag = new CRM_Core_DAO_Tag( );
         $tag->id = $id;
 
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::pre( 'delete', 'Tag', $id, $tag );
 
         if ( $tag->delete( ) ) {
@@ -321,7 +318,6 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag
         $tag->copyValues( $params );
         $tag->id = CRM_Utils_Array::value( 'tag', $ids );
 
-        require_once 'CRM/Utils/Hook.php';
         $edit = ($tag->id) ? true : false;
         if ($edit) {
             CRM_Utils_Hook::pre( 'edit', 'Tag', $tag->id, $tag );

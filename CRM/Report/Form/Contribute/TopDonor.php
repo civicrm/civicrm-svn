@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
 
     protected $_summary = null;
@@ -294,7 +292,6 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
     
     function add2group( $groupID ) {
         if ( is_numeric( $groupID ) ) {
-            require_once 'CRM/Contact/BAO/GroupContact.php';
 
             $sql = " 
 {$this->_select} {$this->_from}  {$this->_where} {$this->_groupBy} 
@@ -314,7 +311,6 @@ ORDER BY civicrm_contribution_total_amount_sum DESC
     }
 
     function limit( $rowCount = CRM_Report_Form::ROW_COUNT_LIMIT ) {
-        require_once 'CRM/Utils/Pager.php';
         // lets do the pager if in html mode
         $this->_limit = null;
         if ( $this->_outputMode == 'html' || $this->_outputMode == 'group' ) {

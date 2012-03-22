@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Profile/Form.php';
 
 /**
  * This class provides the functionality for batch profile update
@@ -100,7 +99,6 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
         if ( ! $ufGroupId ) {
             CRM_Core_Error::fatal( 'ufGroupId is missing' );
         }
-        require_once "CRM/Core/BAO/UFGroup.php";
         $this->_title = ts('Batch Update') . ' - ' . CRM_Core_BAO_UFGroup::getTitle ( $ufGroupId );
         CRM_Utils_System::setTitle( $this->_title );
         
@@ -140,7 +138,6 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
                                         'organization_name',
                                         'household_name');
 
-        require_once 'CRM/Core/BAO/Address.php';
         foreach ( $this->_contactIds as $contactId ) {
             $profileFields = $this->_fields;
             CRM_Core_BAO_Address::checkContactSharedAddressFields( $profileFields, $contactId );
@@ -277,7 +274,6 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
         $addressFldKey = 'street_address';
         if ( !isset( $parseAddress ) ) {
             $parseAddress = false;
-            require_once 'CRM/Core/BAO/Setting.php';
             foreach ( $this->_fields as $key => $fld ) {
                 if ( strpos( $key, $addressFldKey ) !== false ) {
                     $parseAddress = CRM_Utils_Array::value('street_address_parsing', 
@@ -294,7 +290,6 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
         }
         
         $allParseValues = array( );
-        require_once 'CRM/Core/BAO/Address.php';
         foreach ( $contactValues as $key => $value ) {
             if ( strpos( $key, $addressFldKey ) !== false ) {
                 $locTypeId = substr( $key, strlen( $addressFldKey ) + 1 );

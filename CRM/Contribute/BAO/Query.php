@@ -56,7 +56,6 @@ class CRM_Contribute_BAO_Query
         if ( ! self::$_contributionFields ) {
             self::$_contributionFields = array( );
             
-            require_once 'CRM/Contribute/BAO/Contribution.php';
             $fields = CRM_Contribute_BAO_Contribution::exportableFields( );
             
             unset( $fields['contribution_contact_id'] );
@@ -277,7 +276,6 @@ class CRM_Contribute_BAO_Query
 
         case 'contribution_type_id':
         case 'contribution_type':
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $cType = $value;
             $types = CRM_Contribute_PseudoConstant::contributionType( );
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.contribution_type_id", 
@@ -287,7 +285,6 @@ class CRM_Contribute_BAO_Query
             return;
             
         case 'contribution_page_id':
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $cPage = $value;
             $pages = CRM_Contribute_PseudoConstant::contributionPage( );
             $query->_where[$grouping][] = "civicrm_contribution.contribution_page_id = $cPage";
@@ -296,7 +293,6 @@ class CRM_Contribute_BAO_Query
             return;
 
         case 'contribution_pcp_made_through_id':
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $pcPage = $value;
             $pcpages = CRM_Contribute_PseudoConstant::pcPage( );
             $query->_where[$grouping][] = "civicrm_contribution_soft.pcp_id = $pcPage";
@@ -306,7 +302,6 @@ class CRM_Contribute_BAO_Query
             
         case 'contribution_payment_instrument_id':
         case 'contribution_payment_instrument':
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $pi  = $value;
             $pis = CRM_Contribute_PseudoConstant::paymentInstrument( );
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.payment_instrument_id", 
@@ -352,7 +347,6 @@ class CRM_Contribute_BAO_Query
                 $status = $value;
             }
 
-            require_once "CRM/Core/OptionGroup.php";
             $statusValues = CRM_Core_OptionGroup::values("contribution_status");
             
             $names = array( );
@@ -486,7 +480,6 @@ class CRM_Contribute_BAO_Query
             return;
             
         case 'contribution_campaign_id':
-            require_once 'CRM/Campaign/BAO/Query.php';
             $campParams = array( 'op'          => $op,
                                  'campaign'    => $value,
                                  'grouping'    => $grouping,
@@ -675,7 +668,6 @@ class CRM_Contribute_BAO_Query
 
             if ( $includeCustomFields ) {
                 // also get all the custom contribution properties
-                require_once "CRM/Core/BAO/CustomField.php";
                 $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Contribution');
                 if ( ! empty( $fields ) ) {
                     foreach ( $fields as $name => $dontCare ) {
@@ -697,12 +689,10 @@ class CRM_Contribute_BAO_Query
      */ 
     static function buildSearchForm( &$form ) 
     {
-        require_once 'CRM/Utils/Money.php';
 
         //added contribution source
         $form->addElement('text', 'contribution_source', ts('Contribution Source'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Contribution', 'source') );
         
-        require_once 'CRM/Core/Form/Date.php';
         CRM_Core_Form_Date::buildDateRange( $form, 'contribution_date', 1, '_low', '_high', ts('From'),  false, false );
         
         $form->add('text', 'contribution_amount_low', ts('From'), array( 'size' => 8, 'maxlength' => 8 ) ); 
@@ -712,13 +702,11 @@ class CRM_Contribute_BAO_Query
         $form->addRule('contribution_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
 
         //adding select option for curreny type -- CRM-4711
-        require_once 'CRM/Core/PseudoConstant.php';
         $form->add('select', 'contribution_currency_type',
                    ts( 'Currency Type' ),
                    array( '' => ts( '- select -' ) ) +
                    CRM_Core_PseudoConstant::currencySymbols( 'name' ) );
 
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $form->add('select', 'contribution_type_id', 
                    ts( 'Contribution Type' ),
                    array( '' => ts( '- select -' ) ) +
@@ -742,7 +730,6 @@ class CRM_Contribute_BAO_Query
         
         $status = array( );
         
-        require_once "CRM/Core/OptionGroup.php";
         $statusValues = CRM_Core_OptionGroup::values("contribution_status");
         // Remove status values that are only used for recurring contributions or pledges (In Progress, Overdue).
         unset( $statusValues['5']);
@@ -775,11 +762,9 @@ class CRM_Contribute_BAO_Query
         $form->addYesNo( 'contribution_pcp_display_in_roll', ts('Personal Campaign Page Honor Roll?') );
         
         // add all the custom  searchable fields
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         $contribution = array( 'Contribution' );
         $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $contribution );
         if ( $groupDetails ) {
-            require_once 'CRM/Core/BAO/CustomField.php';
             $form->assign('contributeGroupTree', $groupDetails);
             foreach ($groupDetails as $group) {
                 foreach ($group['fields'] as $field) {
@@ -793,7 +778,6 @@ class CRM_Contribute_BAO_Query
             }
         }
 
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'contribution_campaign_id' );
         
         $form->assign( 'validCiviContribute', true );

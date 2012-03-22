@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/System/Drupal.php';
 
 /**
  * Helper authentication class for unit tests
@@ -123,7 +122,6 @@ class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
 
     function getUserID( $user ) {
         //FIXME: look here a bit closer when testing UFMatch
-        require_once 'CRM/Core/BAO/UFMatch.php';
       
         // this puts the appropriate values in the session, so
         // no need to return anything

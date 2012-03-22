@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Mailing/BAO/Mailing.php';
 
 class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
 
@@ -433,7 +431,6 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
     }
 
 	function mailingList() {
-		require_once('CRM/Mailing/BAO/Mailing.php');
 		
 		$data = array( );
 		$mailing = new CRM_Mailing_BAO_Mailing();

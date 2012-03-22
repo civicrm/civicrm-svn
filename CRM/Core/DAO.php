@@ -38,9 +38,7 @@
 require_once 'PEAR.php';
 require_once 'DB/DataObject.php';
 
-require_once 'CRM/Utils/Date.php';
 require_once 'CRM/Core/I18n.php';
-require_once 'CRM/Core/PseudoConstant.php';
 
 class CRM_Core_DAO extends DB_DataObject 
 {
@@ -137,7 +135,6 @@ class CRM_Core_DAO extends DB_DataObject
     static function getLocaleTableName( $tableName ) {
         global $dbLocale;
         if ( $dbLocale ) {
-            require_once 'CRM/Core/I18n/Schema.php';
             $tables = CRM_Core_I18n_Schema::schemaStructureTables();
             if ( in_array($tableName, $tables) ) {
                 return $tableName . $dbLocale;
@@ -158,7 +155,6 @@ class CRM_Core_DAO extends DB_DataObject
         // rewrite queries that should use $dbLocale-based views for multi-language installs
         global $dbLocale;
         if ($i18nRewrite and $dbLocale) {
-            require_once 'CRM/Core/I18n/Schema.php';
             $query = CRM_Core_I18n_Schema::rewriteQuery($query);
         }
 
@@ -302,7 +298,6 @@ class CRM_Core_DAO extends DB_DataObject
         }
         $this->free( );
 
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::postSave( $this );
 
         return $this;
@@ -326,7 +321,6 @@ class CRM_Core_DAO extends DB_DataObject
             return;
         }
 
-        require_once 'CRM/Core/DAO/Log.php';
         $dao = new CRM_Core_DAO_Log( );
         $dao->entity_table  = $this->getTableName( );
         $dao->entity_id     = $this->id;
@@ -956,7 +950,6 @@ FROM   civicrm_domain
 
     static function composeQuery( $query, &$params, $abort ) 
     {
-        require_once 'CRM/Utils/Type.php';
 
         $tr = array( );
         foreach ( $params as $key => $item ) {
@@ -1182,14 +1175,11 @@ SELECT contact_id
     static function dropAllTables( ) {
 
         // first drop all the custom tables we've created
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         CRM_Core_BAO_CustomGroup::dropAllTables( );
 
         // drop all multilingual views
-        require_once 'CRM/Core/I18n/Schema.php';
         CRM_Core_I18n_Schema::dropAllViews();
         
-        require_once 'CRM/Utils/File.php';
         CRM_Utils_File::sourceSQLFile( CIVICRM_DSN,
                                        dirname( __FILE__ ) . DIRECTORY_SEPARATOR .
                                        '..'                . DIRECTORY_SEPARATOR .
@@ -1228,7 +1218,6 @@ SELECT contact_id
 
 	static $counter=0;
 
-        require_once("CRM/Utils/Type.php");
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
 
         for ($i=0;$i<$numObjects;++$i) {
@@ -1335,7 +1324,6 @@ SELECT contact_id
 
     static function deleteTestObjects($daoName, $params=array()) {
 
-        require_once "CRM/Utils/Type.php";
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
         eval( '$object   = new ' . $daoName . '( );' );
         $object->id = CRM_Utils_Array::value( 'id', $params );
@@ -1437,14 +1425,11 @@ SELECT contact_id
 	static function triggerRebuild( $tableName = null ) {
         $info = array( );
 
-        require_once 'CRM/Logging/Schema.php';
         $logging = new CRM_Logging_Schema;
         $logging->triggerInfo( $info, $tableName );
 
-        require_once 'CRM/Core/I18n/Schema.php';
         CRM_Core_I18n_Schema::triggerInfo( $info, $tableName );
 
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::triggerInfo( $info, $tableName );
 
         self::createTriggers( $info );

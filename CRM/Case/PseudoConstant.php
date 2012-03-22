@@ -94,7 +94,6 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
     {
         $cacheKey = "{$column}_".(int)$onlyActive;
         if ( !isset( self::$caseStatus[$cacheKey] ) ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$caseStatus[$cacheKey] = CRM_Core_OptionGroup::values( 'case_status', 
                                                                          false, false, false, null, 
                                                                          $column, $onlyActive );
@@ -125,7 +124,6 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
                 $condition = null;
             } 
             
-            require_once 'CRM/Core/OptionGroup.php';
             self::$redactionRule = CRM_Core_OptionGroup::values('redaction_rule', true, false, false, $condition);
             // }
         return self::$redactionRule;
@@ -142,7 +140,6 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
     {
         $cacheKey = "{$column}_".(int)$onlyActive;
         if ( !isset( self::$caseType[$cacheKey] ) ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$caseType[$cacheKey] =  CRM_Core_OptionGroup::values( 'case_type', 
                                                                         false, false, false, null, 
                                                                         $column, $onlyActive );
@@ -162,7 +159,6 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
     {
         $cacheKey = "{$column}_".(int)$onlyActive;
         if ( !isset( self::$encounterMedium[$cacheKey] ) ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$encounterMedium[$cacheKey] =  CRM_Core_OptionGroup::values( 'encounter_medium', 
                                                                                false, false, false, null, 
                                                                                $column, $onlyActive );
@@ -241,7 +237,6 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
             return false;
         }
 
-        require_once('CRM/Case/BAO/Case.php');
         if ( ! array_key_exists($caseId, self::$caseTypePair) || empty(self::$caseTypePair[$caseId][$column]) ) {
             $caseTypes   = self::caseType( $column );
             $caseTypeIds = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',

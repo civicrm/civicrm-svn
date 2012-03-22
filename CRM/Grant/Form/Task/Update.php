@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Grant/Form/Task.php';
 
 /**
  * This class provides the functionality to update a group of
@@ -67,7 +66,6 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task
      */
     function buildQuickForm( ) 
     {
-        require_once 'CRM/Grant/PseudoConstant.php';
         $grantStatus = CRM_Grant_PseudoConstant::grantStatus();
         $this->addElement('select', 'status_id', ts('Grant Status'), array( '' => '' ) + $grantStatus);
 
@@ -102,7 +100,6 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task
         }
 
         if ( ! empty( $params ) ) {
-            require_once 'CRM/Grant/BAO/Grant.php';
             foreach ( $params as $key => $value ) {
                 $values[$key] = $value;
             }

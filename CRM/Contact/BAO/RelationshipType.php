@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/DAO/RelationshipType.php';
 
 class CRM_Contact_BAO_RelationshipType extends CRM_Contact_DAO_RelationshipType {
 
@@ -149,7 +148,6 @@ class CRM_Contact_BAO_RelationshipType extends CRM_Contact_DAO_RelationshipType 
             CRM_Core_Error::fatal( ts( 'Invalid relationship type' ) );
         }
 
-        require_once 'CRM/Contact/DAO/Relationship.php';
 
         //check dependencies
 
@@ -168,7 +166,6 @@ UPDATE civicrm_membership_type
         CRM_Core_DAO::executeQuery( $query, $params );
 
         //fixed for CRM-3323
-        require_once 'CRM/Core/DAO/MappingField.php';
         $mappingField = new CRM_Core_DAO_MappingField( );            
         $mappingField->relationship_type_id = $relationshipTypeId;
         $mappingField->find();

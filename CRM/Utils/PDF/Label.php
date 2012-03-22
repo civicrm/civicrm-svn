@@ -78,7 +78,6 @@ class CRM_Utils_PDF_Label extends TCPDF {
            $tFormat = $format;
        } else {
            // Saved format
-           require_once "CRM/Core/BAO/LabelFormat.php";
            $tFormat = CRM_Core_BAO_LabelFormat::getByName( $format );
        }
        
@@ -107,7 +106,6 @@ class CRM_Utils_PDF_Label extends TCPDF {
             $metric = $this->defaults['metric'];
         }
         if ($convert) {
-            require_once "CRM/Utils/PDF/Utils.php";
             $value = CRM_Utils_PDF_Utils::convertMetric($value, $metric, $this->metricDoc);
         }
         return $value;
@@ -117,7 +115,6 @@ class CRM_Utils_PDF_Label extends TCPDF {
      * Function to initialize label format settings
      */ 
     function LabelSetFormat(&$format, $unit) {
-        require_once "CRM/Core/BAO/LabelFormat.php";
         $this->defaults    = CRM_Core_BAO_LabelFormat::getDefaultValues();
         $this->format      =& $format;
         $this->formatName  = $this->getFormatValue('name');
@@ -137,7 +134,6 @@ class CRM_Utils_PDF_Label extends TCPDF {
         $this->height      = $this->getFormatValue('height', true);
         $this->paddingLeft = $this->getFormatValue('lPadding',true);
         $this->paddingTop  = $this->getFormatValue('tPadding',true);
-        require_once "CRM/Core/BAO/PaperSize.php";
         $paperSize = CRM_Core_BAO_PaperSize::getByName( $this->paperSize );
         $w = CRM_Utils_PDF_Utils::convertMetric( $paperSize['width'],  $paperSize['metric'], $this->metricDoc );
         $h = CRM_Utils_PDF_Utils::convertMetric( $paperSize['height'], $paperSize['metric'], $this->metricDoc );
@@ -163,7 +159,6 @@ class CRM_Utils_PDF_Label extends TCPDF {
                        'autopadding' => false, 
                        'maxh' => $this->height );
         
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::alterMailingLabelParams( $args ); 
         
         if ( $args['ishtml'] == true ) {

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/OptionGroup.php';
 
 /**
  * This class holds all the Pseudo constants that are specific to Grant. This avoids

@@ -33,9 +33,6 @@
  * $Id$
  *
  */
-require_once 'CRM/Contact/BAO/Relationship.php';
-require_once 'CRM/Core/BAO/UFGroup.php';
-require_once 'CRM/Member/BAO/Membership.php';
 
 class CRM_Contribute_Form_Contribution_OnBehalfOf
 {
@@ -50,7 +47,6 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
                         
-        require_once 'CRM/Core/BAO/UFJoin.php'; 
         $ufJoinParams     = array( 'module'       => 'onBehalf',
                                    'entity_table' => 'civicrm_contribution_page',   
                                    'entity_id'    => $form->_id );   
@@ -133,7 +129,6 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
                                                           null, false, null, false, null, 
                                                           CRM_Core_Permission::CREATE, null );
         $fieldTypes = array( 'Contact', 'Organization' );
-        require_once 'CRM/Contact/BAO/ContactType.php';
         $contactSubType = CRM_Contact_BAO_ContactType::subTypes( 'Organization' );
         $fieldTypes = array_merge( $fieldTypes, $contactSubType );
         
@@ -162,7 +157,6 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
         }
         
         if ( !empty($stateCountryMap) ) {
-            require_once 'CRM/Core/BAO/Address.php';
             CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
         }
 

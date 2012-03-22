@@ -20,7 +20,6 @@
  * begin at one, so always delete one from the "Position in Response"
  */
 
-require_once 'CRM/Core/Payment.php';
 
 class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
     const

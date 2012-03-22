@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 class CRM_Upgrade_Form extends CRM_Core_Form {
 
@@ -87,7 +86,6 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
         // this->latestVersion is legacy code, only used for 2.0 -> 2.1 upgrade
         $this->latestVersion = '2.1.6'; // latest ver in 2.1 series               
 
-        require_once "CRM/Core/DAO/Domain.php";                        
         $domain = new CRM_Core_DAO_Domain();
         $domain->find(true);
         
@@ -116,7 +114,6 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
         $versionName  = self::$_numberMap[$versionParts[0]].self::$_numberMap[$versionParts[1]];
 
         if ( !array_key_exists( $versionName, $incrementalPhpObject ) ) {
-            require_once "CRM/Upgrade/Incremental/php/{$versionName}.php";
             eval( "\$incrementalPhpObject['$versionName'] = new CRM_Upgrade_Incremental_php_{$versionName};" );
         }
         return $incrementalPhpObject[$versionName];
@@ -148,7 +145,6 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
     }
     
     function source( $fileName, $isQueryString = false ) {
-        require_once 'CRM/Utils/File.php';
 
         CRM_Utils_File::sourceSQLFile( $this->_config->dsn,
                                        $fileName, null, $isQueryString );
@@ -222,7 +218,6 @@ SET    version = '$version'
         if ( $newVersion ) {
             $oldVersion = CRM_Core_BAO_Domain::version();
 
-            require_once 'CRM/Core/BAO/Log.php';
             $session   = CRM_Core_Session::singleton();
             $logParams = array(
                                'entity_table'  => 'civicrm_domain',
@@ -286,7 +281,6 @@ SET    version = '$version'
         $this->source( $smarty->fetch($tplFile), true );
 
         if ( $this->multilingual ) {
-            require_once 'CRM/Core/I18n/Schema.php';
             CRM_Core_I18n_Schema::rebuildMultilingualSchema($this->locales, $rev);
         }        
         return $this->multilingual;
@@ -294,7 +288,6 @@ SET    version = '$version'
 
     function setSchemaStructureTables( $rev ) {
       if ( $this->multilingual ) {
-        require_once 'CRM/Core/I18n/Schema.php';
         CRM_Core_I18n_Schema::schemaStructureTables($rev, true);
       }  
     }

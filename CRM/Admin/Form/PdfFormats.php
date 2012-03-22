@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
 
 /**
  * This class generates form components for PDF Page Format Settings
@@ -69,7 +68,6 @@ class CRM_Admin_Form_PdfFormats extends CRM_Admin_Form
         $this->add( 'text', 'description', ts( 'Description' ), array( 'size' => CRM_Utils_Type::HUGE ) );
         $this->add( 'checkbox', 'is_default', ts( 'Is this PDF Page Format the default?' ) );
 
-        require_once 'CRM/Core/BAO/PaperSize.php';
         $this->add( 'select', 'paper_size', ts( 'Paper Size' ), 
                      array( 0 => ts( '- default -' ) ) + CRM_Core_BAO_PaperSize::getList( true ), false,
                      array('onChange' => "selectPaper( this.value );") );

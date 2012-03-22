@@ -33,7 +33,6 @@
  *
  */
 
-require_once 'CRM/Pledge/Form/Task.php';
 
 /**
  * This class provides the functionality to save a search

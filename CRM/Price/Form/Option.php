@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * form to process actions on the field aspect of Custom
@@ -88,19 +87,15 @@ class CRM_Price_Form_Option extends CRM_Core_Form
     {
         $defaults = array();
         
-        require_once 'CRM/Price/BAO/FieldValue.php';
         if (isset($this->_oid)) {
             $params = array('id' =>  $this->_oid );
             
             CRM_Price_BAO_FieldValue::retrieve( $params, $defaults );
 
             // fix the display of the monetary value, CRM-4038
-            require_once 'CRM/Utils/Money.php';
             $defaults['value'] = CRM_Utils_Money::format( CRM_Utils_Array::value( 'value', $defaults ), null, '%a');
         }
         
-        require_once 'CRM/Core/DAO.php';
-        require_once 'CRM/Utils/Weight.php';
        
         if (! isset($defaults['weight']) || ! $defaults['weight']) {
             $fieldValues = array( 'price_field_id' => $this->_fid );
@@ -154,7 +149,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form
             $this->assign( 'showMember', false );
             if ( $memberComponentId == $extendComponentId ) {
                 $this->assign( 'showMember', true );
-                require_once 'CRM/Member/PseudoConstant.php';
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $this->add( 'select', 'membership_type_id', ts('Membership Type'), array('' => ' ') + $membershipTypes, false,
                             array( 'onClick' => "calculateRowValues( );")   );
@@ -264,7 +258,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form
      */
     public function postProcess()
     {
-        require_once 'CRM/Price/BAO/FieldValue.php';
         if ( $this->_action == CRM_Core_Action::DELETE ) {
             $fieldValues = array( 'price_field_id' => $this->_fid );
             $wt    = CRM_Utils_Weight::delWeight( 'CRM_Price_DAO_FieldValue', $this->_oid, $fieldValues );

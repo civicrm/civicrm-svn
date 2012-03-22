@@ -33,7 +33,6 @@
  * $Id$
  *
  */
-require_once 'CRM/Core/Form.php';
 class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
 {
     /**
@@ -117,7 +116,6 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
         }
         
         //take contribution information monthly
-        require_once 'CRM/Contribute/BAO/Contribution/Utils.php';
         $chartInfoMonthly = CRM_Contribute_BAO_Contribution_Utils::contributionChartMonthly( $selectedYear );
         
         $chartData = $abbrMonthNames = array( );
@@ -160,7 +158,6 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
         $this->assign( 'hasContributions', $hasContributions );
         
         // process the data.
-        require_once 'CRM/Utils/OpenFlashChart.php';
         $chartCnt     = 1;
 
         $monthlyChart = $yearlyChart = false;

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  * Page for displaying list of categories
@@ -164,7 +163,6 @@ WHERE t2.id IS NULL {$reservedClause}";
            $mergeableTags[$tag->id] = 1;
        }
 
-       require_once 'CRM/Core/OptionGroup.php';
        $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
        
        $query = "SELECT t1.name, t1.id, t2.name as parent, t1.description, t1.used_for, t1.is_tagset,

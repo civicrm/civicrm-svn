@@ -26,8 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CRM/Core/Config.php';
-require_once 'CRM/Core/Extensions/ExtensionType.php';
 
 /**
  * This class stores logic for managing CiviCRM extensions.
@@ -117,7 +115,6 @@ class CRM_Core_Extensions
             $this->enabled = TRUE;
             $tmp = $this->_extDir . DIRECTORY_SEPARATOR . 'tmp';
             $cache = $this->_extDir . DIRECTORY_SEPARATOR . 'cache';
-            require_once 'CRM/Utils/File.php';
             if( is_writable( $this->_extDir ) ) {
                 if ( !file_exists( $tmp ) ) { 
                     CRM_Utils_File::createDir( $tmp ,false);
@@ -301,8 +298,6 @@ class CRM_Core_Extensions
      * @return array list of extensions
      */
     private function _discoverInstalled( $fullInfo = FALSE ) {
-        require_once 'CRM/Core/OptionValue.php';
-        require_once 'CRM/Core/Extensions/Extension.php';
         $result = array();        
         $groupParams = array( 'name' => self::OPTION_GROUP_NAME );
         $links = array();
@@ -331,7 +326,6 @@ class CRM_Core_Extensions
 
     public function _discoverRemote( ) {
 
-        require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
         $tsPath = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'timestamp.txt';
         $timestamp = false;
@@ -351,7 +345,6 @@ class CRM_Core_Extensions
             $cached = true;
         }
 
-        require_once 'CRM/Core/Extensions/Extension.php';
         foreach( $remotes as $id => $rext ) {
             $ext = new CRM_Core_Extensions_Extension( $rext['key'] );
             $ext->setRemote();
@@ -379,7 +372,6 @@ class CRM_Core_Extensions
      * @return array list of extensions
      */
     private function _discoverAvailable() {
-        require_once 'CRM/Core/Extensions/Extension.php';
         $result = array();
         if ( $this->_extDir ) {
             $e = scandir( $this->_extDir );
@@ -507,7 +499,6 @@ class CRM_Core_Extensions
     public function isExtensionClass( $clazz ) {
         
         if ( substr( $clazz, 0, 4 ) != 'CRM_' ) {
-            require_once 'CRM/Core/PseudoConstant.php';
             $extensions = CRM_Core_PseudoConstant::getExtensions( $clazz );
             if ( array_key_exists( $this->classToKey($clazz), $extensions ) ) {
                 return TRUE;
@@ -610,7 +601,6 @@ class CRM_Core_Extensions
 
 
     public function grabCachedKeyList( ) {
-        require_once 'CRM/Core/Config.php';
         $result = array();
         $config = CRM_Core_Config::singleton( );
         $cachedPath = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
@@ -632,7 +622,6 @@ class CRM_Core_Extensions
      */
     public function grabRemoteKeyList( ) {
 
-        require_once 'CRM/Utils/VersionCheck.php';
         ini_set('default_socket_timeout', CRM_Utils_VersionCheck::CHECK_TIMEOUT);
         set_error_handler(array('CRM_Utils_VersionCheck', 'downloadError'));
         
@@ -683,7 +672,6 @@ class CRM_Core_Extensions
      * @return contents of info.xml, or null if info.xml cannot be retrieved or parsed
      */
     public function grabRemoteInfoFile( $key, $cached = false ) {
-        require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
         
         $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache';

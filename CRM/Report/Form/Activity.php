@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
 
 class CRM_Report_Form_Activity extends CRM_Report_Form {
   
@@ -44,8 +43,6 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         $config = CRM_Core_Config::singleton( );
         $campaignEnabled = in_array( "CiviCampaign", $config->enableComponents );
         if ( $campaignEnabled ){
-            require_once 'CRM/Campaign/BAO/Campaign.php';
-            require_once 'CRM/Campaign/PseudoConstant.php';
             $getCampaigns = CRM_Campaign_BAO_Campaign::getPermissionedCampaigns( null, null, true, false, true );
             $this->activeCampaigns = $getCampaigns['campaigns'];
             asort( $this->activeCampaigns );
@@ -404,8 +401,6 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         //override for ACL( Since Cotact may be source
         //contact/assignee or target also it may be null )
         
-        require_once 'CRM/Core/Permission.php';
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
         if ( CRM_Core_Permission::check( 'view all contacts' ) ) {
             $this->_aclFrom = $this->_aclWhere = null;
             return;
@@ -442,9 +437,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         $viewLinks      = false;
         $seperator      = CRM_CORE_DAO::VALUE_SEPARATOR;
         $context        = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'report' ); 
-        require_once 'CRM/Activity/Selector/Activity.php';
         
-        require_once 'CRM/Core/Permission.php';
         if ( CRM_Core_Permission::check( 'access CiviCRM' ) ) {
             $viewLinks  = true;
             $onHover    = ts('View Contact Summary for this Contact');

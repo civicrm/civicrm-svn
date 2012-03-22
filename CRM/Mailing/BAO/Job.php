@@ -35,10 +35,6 @@
  */
 
 require_once 'Mail.php';
-require_once 'CRM/Mailing/DAO/Job.php';
-require_once 'CRM/Mailing/DAO/Mailing.php';
-require_once 'CRM/Mailing/BAO/Job.php';
-require_once 'CRM/Mailing/BAO/Mailing.php';
 
 class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
@@ -98,7 +94,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             $job->query($query);
         }
 
-        require_once 'CRM/Core/Lock.php';
 
         while ($job->fetch()) {
             // still use job level lock for each child job
@@ -128,7 +123,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
             /* Queue up recipients for the child job being launched */
             if ($job->status != 'Running') {
-                require_once 'CRM/Core/Transaction.php';
                 $transaction = new CRM_Core_Transaction( );
 
                 // have to queue it up based on the offset and limits
@@ -152,13 +146,11 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             // Compose and deliver each child job 
             $isComplete = $job->deliver($mailer, $testParams);
                         
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::post( 'create', 'CRM_Mailing_DAO_Spool', $job->id, $isComplete);
 
             // Mark the child complete
             if ( $isComplete ) {
                 /* Finish the job */
-                require_once 'CRM/Core/Transaction.php';
                 $transaction = new CRM_Core_Transaction( );
 
                 $saveJob = new CRM_Mailing_DAO_Job( );
@@ -232,7 +224,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             // the parent job as well as the mailing status
             if( ! $anyChildLeft ) {
 
-                require_once 'CRM/Core/Transaction.php';
                 $transaction = new CRM_Core_Transaction( );
 
                 $saveJob = new CRM_Mailing_DAO_Job( );
@@ -288,7 +279,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
        $job->query($query);
 
-       require_once 'CRM/Core/Lock.php';
 
        // For each of the "Parent Jobs" we find, we split them into 
        // X Number of child jobs
@@ -315,7 +305,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
            $job->split_job($offset);
                         
            // update the status of the parent job
-           require_once 'CRM/Core/Transaction.php';
            $transaction = new CRM_Core_Transaction( );
 
            $saveJob = new CRM_Mailing_DAO_Job( );
@@ -334,12 +323,10 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
    // Split the parent job into n number of child job based on an offset
    // If null or 0 , we create only one child job
    public function split_job($offset = 200) {
-       require_once 'CRM/Mailing/BAO/Recipients.php';
        $recipient_count = CRM_Mailing_BAO_Recipients::mailingSize( $this->mailing_id );
 
        $jobTable = CRM_Mailing_DAO_Job::getTableName();
                 
-       require_once('CRM/Core/DAO.php');
                 
        $dao = new CRM_Core_DAO();
 
@@ -372,7 +359,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
    }
 
     public function queue($testParams = null) {
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
         if (!empty($testParams)) {
@@ -380,7 +366,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         } else {
             // We are still getting all the recipients from the parent job 
             // so we don't mess with the include/exclude logic.
-            require_once 'CRM/Mailing/BAO/Recipients.php';
             $recipients = CRM_Mailing_BAO_Recipients::mailingQuery($this->mailing_id, $this->job_offset, $this->job_limit);
 
             // FIXME: this is not very smart, we should move this to one DB call
@@ -415,7 +400,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
      * @access public
      */
     public function deliver(&$mailer, $testParams =null) {
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
         $mailing->find(true);
@@ -467,14 +451,12 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         CRM_Mailing_BAO_Mailing::tokenReplace($mailing);
 
         // get and format attachments
-        require_once 'CRM/Core/BAO/File.php';
         $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
                                                           $mailing->id );
 
 
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
         }
         
@@ -535,7 +517,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             $params[] = $field['contact_id'];
         }
 
-        require_once 'CRM/Utils/Token.php';
         $details = CRM_Utils_Token::getTokenDetails( $params,
                                                      $returnProperties,
                                                      true, true, null,
@@ -610,8 +591,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                 }
 
                 /* Register the bounce event */
-                require_once 'CRM/Mailing/BAO/BouncePattern.php';
-                require_once 'CRM/Mailing/Event/BAO/Bounce.php';
                 $params = array( 'event_queue_id' => $field['id'],
                                  'job_id'         => $this->id,
                                  'hash'           => $field['hash'] );
@@ -740,9 +719,7 @@ AND    status IN ( 'Scheduled', 'Running', 'Paused' )
     public static function workflowClause() {
       // add an additional check and only process
       // jobs that are approved
-      require_once 'CRM/Mailing/Info.php';
       if ( CRM_Mailing_Info::workflowEnabled( ) ) {
-          require_once 'CRM/Core/OptionGroup.php';
           $approveOptionID = CRM_Core_OptionGroup::getValue( 'mail_approval_status',
                                                              'Approved',
                                                              'name' );
@@ -805,7 +782,6 @@ AND    civicrm_activity.source_record_id = %2";
             if ( $activityID ) {
                 $activity['id'] = $activityID;  
 
-                require_once 'CRM/Core/BAO/Email.php';
                 // CRM-9519
                 if ( CRM_Core_BAO_Email::isMultipleBulkMail( ) ) {
                     // make sure we don't attempt to duplicate the target activity
@@ -818,7 +794,6 @@ AND    civicrm_activity.source_record_id = %2";
                 }
             }
 
-            require_once 'CRM/Activity/BAO/Activity.php';
             if (is_a(CRM_Activity_BAO_Activity::create($activity),
                      'CRM_Core_Error')) {
                 $result = false;

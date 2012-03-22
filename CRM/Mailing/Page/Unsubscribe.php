@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Mailing/Page/Common.php';
 
 class CRM_Mailing_Page_Unsubscribe extends CRM_Mailing_Page_Common
 {

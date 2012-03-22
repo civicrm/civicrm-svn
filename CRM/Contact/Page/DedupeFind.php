@@ -34,12 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-require_once 'CRM/Dedupe/Finder.php';
-require_once 'CRM/Dedupe/DAO/Rule.php';
-require_once 'CRM/Dedupe/DAO/RuleGroup.php';
-require_once 'CRM/Contact/BAO/Contact/Permission.php';
-require_once 'CRM/Core/BAO/PrevNextCache.php';
 
 class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
 {
@@ -104,7 +98,6 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
         } else if ( $action & CRM_Core_Action::MAP ) {
             // do a batch merge if requested 
             $rgid = CRM_Utils_Request::retrieve( 'rgid', 'Positive', $this, false, 0 );
-            require_once 'CRM/Dedupe/Merger.php';
             $result  = CRM_Dedupe_Merger::batchMerge( $rgid, $gid, 'safe', true, true );
 
             $skippedCount = CRM_Utils_Request::retrieve( 'skipped', 'Positive', $this, false, 0 );

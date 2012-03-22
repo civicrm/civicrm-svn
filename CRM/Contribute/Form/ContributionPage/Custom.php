@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/ContributionPage.php';
 
 /**
  * form to process actions on the group aspect of Custom Data
@@ -49,8 +48,6 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
      */
     public function buildQuickForm()
     {
-        require_once 'CRM/Core/BAO/UFGroup.php';
-        require_once 'CRM/Contact/BAO/ContactType.php';
         $types    = array_merge( array( 'Contact', 'Individual','Contribution','Membership'),
                                  CRM_Contact_BAO_ContactType::subTypes( 'Individual' ) );
         
@@ -93,7 +90,6 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
              CRM_Utils_System::setTitle(ts('Include Profiles (%1)', array(1 => $title)));
          }
             
-        require_once 'CRM/Core/BAO/UFJoin.php';
 
         $ufJoinParams = array( 'module'       => 'CiviContribute',
                                'entity_table' => 'civicrm_contribution_page',  
@@ -120,7 +116,6 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
             $params['id'] = $this->_id;
         }
 
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
          
         // also update uf join table
@@ -129,7 +124,6 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
                                'entity_table' => 'civicrm_contribution_page', 
                                'entity_id'    => $this->_id );
 
-        require_once 'CRM/Core/BAO/UFJoin.php';
         // first delete all past entries
         CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );
 
@@ -177,7 +171,6 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
         $preProfileType = $postProfileType = null;
         // for membership profile make sure Membership section is enabled
         // get membership section for this contribution page
-        require_once 'CRM/Member/DAO/MembershipBlock.php';
         $dao = new CRM_Member_DAO_MembershipBlock();
         $dao->entity_table = 'civicrm_contribution_page';
         $dao->entity_id    = $contributionPageId; 
@@ -188,7 +181,6 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
             $membershipEnable = true;
         }
         
-        require_once 'CRM/Core/BAO/UFField.php';
         if ( $fields['custom_pre_id'] ) {
             $preProfileType  = CRM_Core_BAO_UFField::getProfileType( $fields['custom_pre_id'] );
         }

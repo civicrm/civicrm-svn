@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Friend/DAO/Friend.php';
 
 /**
  * This class contains the funtions for Friend
@@ -62,7 +61,6 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
      */
     static function add( &$params ) 
     {
-        require_once 'CRM/Contact/BAO/Contact.php';        
         $friend = CRM_Contact_BAO_Contact::createProfileContact( $params, CRM_Core_DAO::$_nullArray );
         return $friend;
     }
@@ -102,7 +100,6 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
      */
     static function create( &$params ) 
     {
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
         $mailParams = array( );
@@ -124,7 +121,6 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
         $frndParams['entity_table'] = $params['entity_table'];  
         self::getValues($frndParams);  
         
-        require_once 'CRM/Activity/BAO/Activity.php';
 
         $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', 'Tell a Friend', 'value', 'name' );
 
@@ -144,8 +140,6 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
         $activity = CRM_Activity_BAO_Activity::create( $activityParams );
 
         //friend contacts creation
-        require_once 'CRM/Activity/BAO/ActivityTarget.php';
-        require_once 'CRM/Core/BAO/UFGroup.php';
         foreach ( $contactParams as $key => $value ) {
             
             //create contact only if it does not exits in db
@@ -161,7 +155,6 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
             $targetParams = array( 'activity_id'       => $activity->id,
                                    'target_contact_id' => $contact );            
             // See if it already exists
-            require_once 'CRM/Activity/DAO/ActivityTarget.php';
             $activity_target = new CRM_Activity_DAO_ActivityTarget();
             $activity_target->activity_id = $activity->id;
             $activity_target->target_contact_id = $contact;
@@ -179,7 +172,6 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
         $mailParams['message']      = CRM_Utils_Array::value( 'suggested_message', $params );
 
         // get domain
-        require_once 'CRM/Core/BAO/Domain.php';
         $domainDetails = CRM_Core_BAO_Domain::getNameAndEmail( );
         list( $username, $mailParams['domain'] ) = explode( '@', $domainDetails[1] );
         
@@ -289,7 +281,6 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
      */
     static function sendMail( $contactID, &$values )
     {   
-        require_once 'CRM/Contact/BAO/Contact.php';
         list( $fromName, $email ) = CRM_Contact_BAO_Contact::getContactDetails( $contactID );
         // if no $fromName (only email collected from originating contact) - list returns single space
         if ( trim($fromName) == '') {
@@ -301,7 +292,6 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
             $values['email_from'] = $email;
         }
 
-        require_once 'CRM/Core/BAO/MessageTemplates.php';
         foreach ($values['email'] as $displayName => $emailTo) {
             if ($emailTo) {
                 // FIXME: factor the below out of the foreach loop

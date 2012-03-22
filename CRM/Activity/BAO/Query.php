@@ -232,7 +232,6 @@ class CRM_Activity_BAO_Query
             break;
 
         case 'activity_engagement_level':
-            require_once 'CRM/Core/OptionGroup.php';
             if ( ! $value ) {
                 break;
             }
@@ -357,7 +356,6 @@ class CRM_Activity_BAO_Query
             } 
             
         case 'activity_tags':
-            require_once'CRM/Core/BAO/Tag.php';
             $value = array_keys( $value );
             $activityTags = CRM_Core_PseudoConstant::tag( ); 
             
@@ -374,7 +372,6 @@ class CRM_Activity_BAO_Query
             
             break;
         case 'activity_campaign_id':
-            require_once 'CRM/Campaign/BAO/Query.php';
             $campParams = array( 'op'          => $op,
                                  'campaign'    => $value,
                                  'grouping'    => $grouping,
@@ -497,7 +494,6 @@ class CRM_Activity_BAO_Query
             $form->_activityElement =& $form->addElement( 'checkbox', "activity_type_id[$activityID]", null, $activity,array('onClick' => 'showCustomData( this.id );'));
         }
              
-        require_once 'CRM/Core/Form/Date.php';
         CRM_Core_Form_Date::buildDateRange( $form, 'activity_date', 1, '_low', '_high', ts('From'),  false, false );
         
         $activityRoles  = array( 1 => ts( 'Created by' ), 2 => ts( 'Assigned to' ) );
@@ -513,7 +509,6 @@ class CRM_Activity_BAO_Query
         $form->setDefaults( array( 'activity_status[1]' => 1, 'activity_status[2]' => 1 ) );
         $form->addElement( 'text', 'activity_subject', ts( 'Subject' ), CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_Contact', 'sort_name') );
         $form->addElement( 'checkbox', 'activity_test', ts( 'Find Test Activities?' ) );
-        require_once 'CRM/Core/BAO/Tag.php';
         $activity_tags = CRM_Core_BAO_Tag::getTags( 'civicrm_activity' );
         if ( $activity_tags ) {
             foreach ($activity_tags as $tagID => $tagName) {
@@ -522,21 +517,16 @@ class CRM_Activity_BAO_Query
             }
         }
 
-        require_once 'CRM/Core/Form/Tag.php';
-        require_once 'CRM/Core/BAO/Tag.php';
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
         CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_activity', null, true, false, true );
 
-        require_once ('CRM/Campaign/BAO/Survey.php');
         $surveys = CRM_Campaign_BAO_Survey::getSurveys( );
         if( $surveys ) $form->add( 'select', 'activity_survey_id', ts('Survey'), 
                                    array('' => ts('- none -')) + $surveys, false );
         
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         $extends = array( 'Activity' );
         $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $extends );
         if ( $groupDetails ) {
-            require_once 'CRM/Core/BAO/CustomField.php';
             $form->assign( 'activityGroupTree', $groupDetails );
             foreach ( $groupDetails as $group ) {
                 foreach ( $group['fields'] as $field ) {
@@ -547,7 +537,6 @@ class CRM_Activity_BAO_Query
             }
         }
         
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $form, 'activity_campaign_id' );
         
         //add engagement level CRM-7775
@@ -555,7 +544,6 @@ class CRM_Activity_BAO_Query
         if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) &&
              CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             $buildEngagementLevel = true;
-            require_once 'CRM/Campaign/PseudoConstant.php';
             $form->add( 'select', 'activity_engagement_level', 
                         ts( 'Engagement Index' ), 
                         array( '' => ts( '- select -' ) ) + CRM_Campaign_PseudoConstant::engagementLevel( ) );
@@ -598,7 +586,6 @@ class CRM_Activity_BAO_Query
             
             if ( $includeCustomFields ) {
                 // also get all the custom activity properties
-                require_once "CRM/Core/BAO/CustomField.php";
                 $fields = CRM_Core_BAO_CustomField::getFieldsForImport('Activity');
                 if ( ! empty( $fields ) ) {
                     foreach ( $fields as $name => $dontCare ) {

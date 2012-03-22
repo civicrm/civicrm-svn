@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * This class generates form components for Location Type
@@ -87,7 +86,6 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
             $this->_config->contact_id = $this->_contactID;
         }
 
-        require_once 'CRM/Core/BAO/Setting.php';
         foreach ( $this->_varNames as $groupName => $settingNames ) {
             $values = CRM_Core_BAO_Setting::getItem( $groupName );
             foreach ( $values as $name => $value ) {
@@ -113,7 +111,6 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
     }
 
     function cbsDefaultValues( &$defaults ) {
-        require_once 'CRM/Core/BAO/CustomOption.php';
 
         foreach ( $this->_varNames as $groupName => $groupValues ) {
             foreach ( $groupValues as $settingName => $fieldValue ) {
@@ -144,9 +141,6 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
     {
         parent::buildQuickForm( );
 
-        require_once 'CRM/Core/OptionGroup.php';
-        require_once 'CRM/Utils/String.php';
-        require_once 'CRM/Utils/Array.php';
         
         if ( ! empty( $this->_varNames ) ) {
             foreach ( $this->_varNames as $groupName => $groupValues ) {

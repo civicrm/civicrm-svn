@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Grant/PseudoConstant.php';
 class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
     
     protected $_addressField = false;

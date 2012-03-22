@@ -35,7 +35,6 @@
  */
 
 require_once 'Mail/mime.php';
-require_once 'CRM/Core/DAO/MessageTemplates.php';
 
 
 class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates 
@@ -156,9 +155,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
     }
 
     static function sendReminder( $contactId, $email, $messageTemplateID ,$from) {
-        require_once "CRM/Core/BAO/Domain.php";
-        require_once "CRM/Utils/String.php";
-        require_once "CRM/Utils/Token.php";
 
         $messageTemplates = new CRM_Core_DAO_MessageTemplates( );
         $messageTemplates->id = $messageTemplateID;
@@ -186,7 +182,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             }
 
             //CRM-5734
-            require_once 'CRM/Utils/Hook.php';
             
             $contactArray = array( $contactId => $contact );
             CRM_Utils_Hook::tokenValues( $contactArray,
@@ -199,7 +194,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $type = array('html', 'text');
             
             foreach( $type as $key => $value ) {
-                require_once 'CRM/Mailing/BAO/Mailing.php';
                 $dummy_mail = new CRM_Mailing_BAO_Mailing();
                 $bodyType = "body_{$value}";
                 $dummy_mail->$bodyType = $$bodyType;
@@ -216,7 +210,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $html = $body_html;
             $text = $body_text;
             
-            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
             $smarty = CRM_Core_Smarty::singleton( );
             foreach( array( 'text', 'html') as $elem) {
@@ -250,7 +243,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $messageSubject = $smarty->fetch("string:{$messageSubject}");
             
             // set up the parameters for CRM_Utils_Mail::send
-            require_once 'CRM/Utils/Mail.php';
             $mailParams = array(
                                 'groupName' => 'Scheduled Reminder Sender',
                                 'from'      => $from,
@@ -391,9 +383,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         }
 
         // replace tokens in the three elements (in subject as if it was the text body)
-        require_once 'CRM/Utils/Token.php';
-        require_once 'CRM/Core/BAO/Domain.php';
-        require_once 'CRM/Mailing/BAO/Mailing.php';
 
         $domain = CRM_Core_BAO_Domain::getDomain();
         $hookTokens = array();
@@ -421,7 +410,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                     $returnProperties[$name] = 1;
                 }
             }
-            require_once 'CRM/Utils/Token.php';
             list( $contact ) = CRM_Utils_Token::getTokenDetails($contactParams,
                                                                 $returnProperties,
                                                                 false, false, null,
@@ -460,7 +448,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         $subject = "{strip}$subject{/strip}";
 
         // parse the three elements with Smarty
-        require_once 'CRM/Core/Smarty/resources/String.php';
         civicrm_smarty_register_string_resource();
         $smarty = CRM_Core_Smarty::singleton();
         foreach ($params['tplParams'] as $name => $value) {
@@ -497,8 +484,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             if ( $config->doNotAttachPDFReceipt && 
                  $params['PDFFilename'] && 
                  $params['html'] ) {
-                require_once 'CRM/Utils/PDF/Utils.php';
-                require_once 'CRM/Utils/File.php';
                 $pdf_filename = $config->templateCompileDir . CRM_Utils_File::makeFileName( $params['PDFFilename'] );
                 
                 //FIXME : CRM-7894
@@ -524,7 +509,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
 			    );
             }
             
-            require_once 'CRM/Utils/Mail.php';
             $sent = CRM_Utils_Mail::send( $params );
 
             if ( $pdf_filename ) {

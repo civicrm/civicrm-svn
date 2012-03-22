@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/PseudoConstant.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 /**
  * form to process actions on the group aspect of Custom Data
@@ -113,7 +110,6 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         }
 
         // set up tabs
-        require_once 'CRM/Contribute/Form/ContributionPage/TabHeader.php';
         CRM_Contribute_Form_ContributionPage_TabHeader::build( $this );
          
         if ($this->_action == CRM_Core_Action::UPDATE) {
@@ -226,7 +222,6 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         if (isset($this->_id)) {
             
             //set defaults for pledgeBlock values.
-            require_once 'CRM/Pledge/BAO/PledgeBlock.php';
             $pledgeBlockParams = array( 'entity_id'    => $this->_id,
                                         'entity_table' => ts('civicrm_contribution_page') );
             $pledgeBlockDefaults = array( );
@@ -239,7 +234,6 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             foreach ( $pledgeBlock  as $key ) {
                 $defaults[$key] = CRM_Utils_Array::value( $key, $pledgeBlockDefaults ); 
             }
-            require_once 'CRM/Core/BAO/CustomOption.php';
             if ( CRM_Utils_Array::value( 'pledge_frequency_unit', $pledgeBlockDefaults ) ) {
                 $defaults['pledge_frequency_unit'] = 
                     array_fill_keys( explode( CRM_Core_DAO::VALUE_SEPARATOR,
@@ -247,13 +241,11 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             }
 
             // fix the display of the monetary value, CRM-4038
-            require_once 'CRM/Utils/Money.php';
             if (isset($defaults['goal_amount'])) {
                 $defaults['goal_amount'] = CRM_Utils_Money::format($defaults['goal_amount'], null, '%a');
             }
             
             // get price set of type contributions
-            require_once 'CRM/Price/BAO/Set.php';
             //this is the value for stored in db if price set extends contribution
             $usedFor = 2;
             $this->_priceSetID = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id, $usedFor );
@@ -277,12 +269,10 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         }
 
         if ( CRM_Utils_Array::value( 'recur_frequency_unit',$defaults ) ) {
-            require_once 'CRM/Core/BAO/CustomOption.php';
             $defaults['recur_frequency_unit'] = 
                 array_fill_keys( explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                           $defaults['recur_frequency_unit'] ), '1' );
         } else {
-            require_once 'CRM/Core/OptionGroup.php';
             $defaults['recur_frequency_unit'] = 
                 array_fill_keys( CRM_Core_OptionGroup::values( 'recur_frequency_units' ), '1' );
         }
@@ -322,7 +312,6 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             //retrieve list of pages from StateMachine and find next page
             //this is quite painful because StateMachine is full of protected variables
             //so we have to retrieve all pages, find current page, and then retrieve next
-            require_once 'CRM/Contribute/StateMachine/ContributionPage.php';
             $stateMachine = new CRM_Contribute_StateMachine_ContributionPage( $this );
             $states       = $stateMachine->getStates();
             $statesList   = array_keys($states);

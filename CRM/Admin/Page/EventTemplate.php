@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-require_once 'CRM/Event/BAO/Event.php';
 
 /**
  * Page for displaying list of event templates.
@@ -100,10 +98,8 @@ class CRM_Admin_Page_EventTemplate extends CRM_Core_Page_Basic
         //get all event templates.
         $allEventTemplates = array( );
         
-        require_once 'CRM/Event/DAO/Event.php';
         $eventTemplate = new CRM_Event_DAO_Event( );
         
-        require_once 'CRM/Event/PseudoConstant.php';
         $eventTypes          = CRM_Event_PseudoConstant::eventType( );
         $participantRoles    = CRM_Event_PseudoConstant::participantRole( );
         $participantListings = CRM_Event_PseudoConstant::participantListing( );

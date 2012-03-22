@@ -153,7 +153,6 @@ class CRM_Core_BAO_CustomValueTable
                         }
 
                         // need to add/update civicrm_entity_file
-                        require_once 'CRM/Core/DAO/EntityFile.php';
                         $entityFileDAO = new CRM_Core_DAO_EntityFile();
                         $entityFileDAO->file_id = $field['file_id'];
                         $entityFileDAO->find( true );
@@ -232,7 +231,6 @@ class CRM_Core_BAO_CustomValueTable
                     }
                     $dao = CRM_Core_DAO::executeQuery( $query, $params );
 
-                    require_once 'CRM/Utils/Hook.php';
                     CRM_Utils_Hook::custom( $hookOP,
                                             $hookID,
                                             $entityID,
@@ -332,7 +330,6 @@ class CRM_Core_BAO_CustomValueTable
 
     function postProcess( &$params, &$customFields, $entityTable, $entityID, $customFieldExtends )
     {
-        require_once "CRM/Core/BAO/CustomField.php";
         $customData = CRM_Core_BAO_CustomField::postProcess( $params,
                                                              $customFields,
                                                              $entityID,
@@ -441,7 +438,6 @@ AND    $cond
      * @static
      */
     static function setValues( &$params ) {
-        require_once 'CRM/Utils/Type.php';
 
         if ( ! isset( $params['entityID'] ) ||
              CRM_Utils_Type::escape( $params['entityID'],
@@ -453,7 +449,6 @@ AND    $cond
         // custom_X => value or custom_X_VALUEID => value (for multiple values), VALUEID == -1, -2 etc for new insertions
         $values = array( );
         $fieldValues = array( );
-        require_once 'CRM/Core/BAO/CustomField.php';
         foreach ( $params as $n => $v ) {
             if ( $customFieldInfo = CRM_Core_BAO_CustomField::getKeyID( $n, true ) ) {
                 $fieldID = (int ) $customFieldInfo[0];
@@ -605,7 +600,6 @@ AND    cf.id IN ( $fieldIDList )
               in_array( $params['entityType'], $default ) ) {
             $type = NULL;
         } else {
-            require_once 'CRM/Core/SelectValues.php';
             $entities = CRM_Core_SelectValues::customGroupExtends( );
             if (!array_key_exists($type, $entities)) {
                 if (in_array($type, $entities)) {

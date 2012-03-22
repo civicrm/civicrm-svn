@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
-require_once 'CRM/Contact/DAO/SavedSearch.php';
 
 /**
  * Main page for viewing all Saved searches.

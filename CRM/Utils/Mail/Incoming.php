@@ -226,7 +226,6 @@ class CRM_Utils_Mail_Incoming {
     } 
 
     function parseMailingObject( &$mail ) {
-        require_once 'CRM/Core/Config.php';
         
         $config = CRM_Core_Config::singleton();
 
@@ -258,7 +257,6 @@ class CRM_Utils_Mail_Incoming {
 
         // format and move attachments to the civicrm area
         if ( ! empty( $attachments ) ) {
-            require_once 'CRM/Utils/File.php';
             $date   =  date( 'Ymdhis' );
             $config = CRM_Core_Config::singleton( );
             for ( $i = 0; $i < count( $attachments ); $i++ ) {
@@ -314,7 +312,6 @@ class CRM_Utils_Mail_Incoming {
      * create one with this email
      */
     function getContactID( $email, $name = null, $create = true, &$mail ) {
-        require_once 'CRM/Contact/BAO/Contact.php';
         $dao = CRM_Contact_BAO_Contact::matchContactOnEmail( $email, 'Individual' );
 
         $contactID = null;
@@ -323,7 +320,6 @@ class CRM_Utils_Mail_Incoming {
         }
 
         $result = null;
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::emailProcessorContact( $email, $contactID, $result );
 
         if ( ! empty( $result ) ) {
@@ -350,7 +346,6 @@ class CRM_Utils_Mail_Incoming {
         $params = array( 'contact_type'   => 'Individual',
                          'email-Primary'  => $email );
 
-        require_once 'CRM/Utils/String.php';
         CRM_Utils_String::extractName( $name, $params );
 
         return CRM_Contact_BAO_Contact::createProfileContact( $params,

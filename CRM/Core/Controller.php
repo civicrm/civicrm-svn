@@ -47,7 +47,6 @@
 require_once 'HTML/QuickForm/Controller.php';
 require_once 'HTML/QuickForm/Action/Direct.php';
 
-require_once 'CRM/Core/StateMachine.php';
 
 class CRM_Core_Controller extends HTML_QuickForm_Controller {
 
@@ -170,7 +169,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         // only use the civicrm cache if we have a valid key
         // else we clash with other users CRM-7059
         if ( ! empty( $this->_key ) ) {
-            require_once 'CRM/Core/BAO/Cache.php';
             CRM_Core_Session::registerAndRetrieveSessionObjects( array( "_{$name}_container",
                                                                         array( 'CiviCRM', $this->_scope ) ) );
         }
@@ -208,7 +206,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         // and created the scope etc
         $this->set( 'qfKey', $this->_key );
 
-        require_once 'CRM/Utils/Request.php';
 
         // also retrieve and store destination in session
         $this->_destination = CRM_Utils_Request::retrieve( 'civicrmDestination', 'String', $this,
@@ -216,7 +213,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     }
 
     function fini( ) {
-        require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::storeSessionToCache( array( "_{$this->_name}_container",
                                                         array( 'CiviCRM', $this->_scope ) ),
                                                  true );
@@ -230,7 +226,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             return null;
         }
 
-        require_once 'CRM/Core/Key.php';
 
         $key = CRM_Utils_Array::value( 'qfKey', $_REQUEST, null );
         if ( ! $key ) {
@@ -384,7 +379,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
                 $formName = CRM_Utils_String::getClassName( $name );
             }
             
-            require_once 'CRM/Core/Extensions.php';
             $ext = new CRM_Core_Extensions( );
             if ( $ext->isExtensionClass( $className) ) {
                 require_once( $ext->classToPath( $className ) );
@@ -656,7 +650,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             $uploadDir = $config->uploadDir;
         }
 
-        require_once 'CRM/Core/BAO/File.php';
         if ( empty( $uploadNames ) ) {
             $uploadNames = $this->get( 'uploadNames' );
             if ( ! empty( $uploadNames ) ) {
@@ -667,7 +660,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             }
         }
 
-        require_once 'CRM/Core/QuickForm/Action/Upload.php';
         $action = new CRM_Core_QuickForm_Action_Upload ( $this->_stateMachine,
                                                           $uploadDir,
                                                           $uploadNames );

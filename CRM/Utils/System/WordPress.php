@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/System/Base.php';
 
 /**
  * WordPress specific stuff goes here
@@ -179,7 +178,6 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         $separator = $htmlize ? '&amp;' : '&';
  		$pageID    = '';
 
-        require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
 
         if ( $config->userFrameworkFrontend ) {
@@ -270,7 +268,6 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         }
 
         // need to change this to make sure we matched only one row
-        require_once 'CRM/Core/BAO/UFMatch.php';
 
         CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user->data, $user->data->ID, $user->data->user_email, 'WordPress' );
         $contactID = CRM_Core_BAO_UFMatch::getContactId( $user->data->ID );
@@ -370,7 +367,6 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
                            'role' => get_option('default_role')
                            );
         if ( isset($params['contactID']) ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
             $contactType = CRM_Contact_BAO_Contact::getContactType( $params['contactID'] );
             if ( $contactType == 'Individual' ) {
                 $user_data['first_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',

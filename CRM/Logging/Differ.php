@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/PseudoConstant.php';
-require_once 'CRM/Core/PseudoConstant.php';
 
 class CRM_Logging_Differ
 {

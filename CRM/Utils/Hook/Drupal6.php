@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/Hook.php';
 
 class CRM_Utils_Hook_Drupal6 extends CRM_Utils_Hook {
 

@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/OptionGroup.php';
-require_once 'CRM/Core/PseudoConstant.php';
 
 /**
  * This class holds all the Pseudo constants that are specific to Event. This avoids

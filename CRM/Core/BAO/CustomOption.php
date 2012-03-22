@@ -57,7 +57,6 @@ class CRM_Core_BAO_CustomOption {
      */
     static function retrieve( &$params, &$defaults )
     {
-        require_once 'CRM/Core/DAO/OptionValue.php';
         $customOption = new CRM_Core_DAO_OptionValue( );
         $customOption->copyValues( $params );
         if ( $customOption->find( true ) ) {
@@ -92,7 +91,6 @@ class CRM_Core_BAO_CustomOption {
             return $options;
         }
 
-        require_once 'CRM/Core/DAO/OptionValue.php';
         $dao = new CRM_Core_DAO_OptionValue();
         $dao->option_group_id = $optionGroupID;
         if ( ! $inactiveNeeded ) {
@@ -108,7 +106,6 @@ class CRM_Core_BAO_CustomOption {
             $options[$dao->id]['value'] = $dao->value;
         }
 
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::customFieldOptions( $fieldID, $options, true );
         
         return $options;
@@ -162,7 +159,6 @@ WHERE  id = %1
             }
         }
 
-        require_once 'CRM/Core/BAO/CustomField.php';
         return CRM_Core_BAO_CustomField::getDisplayValueCommon( $value,
                                                                 $options,
                                                                 $htmlType,
@@ -234,7 +230,6 @@ WHERE  f.custom_group_id = g.id
         $dao = CRM_Core_DAO::executeQuery( $query, $queryParams );
         if ( $dao->fetch( ) ) {
             if ( $dao->dataType == 'Money' ) { 
-                require_once 'CRM/Utils/Rule.php';
                 $params['value'] = CRM_Utils_Rule::cleanMoney( $params['value'] );
             }
             CRM_Core_Error::debug( $params );
@@ -285,10 +280,8 @@ SET    {$dao->columnName} = REPLACE( {$dao->columnName}, %1, %2 )";
                                                           'option_group_id' );
         }
         
-        require_once 'CRM/Core/OptionGroup.php';
         $options = CRM_Core_OptionGroup::valuesByID( $optionGroupID );
 
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::customFieldOptions( $customFieldID, $options, false );
 
         return $options;

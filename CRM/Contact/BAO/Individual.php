@@ -37,7 +37,6 @@
 /**
  * Class contains functions for individual contact type
  */
-require_once 'CRM/Contact/DAO/Contact.php';
 
 class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
 {
@@ -204,8 +203,6 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                     $tokenFields[] = $token;
                 }
             }
-            require_once 'CRM/Utils/Address.php';
-            require_once 'CRM/Core/BAO/Setting.php';
             
             //build the sort name.
             $format = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
@@ -332,7 +329,6 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         $contact->find();
 
         // iterate through the affected individuals and rebuild their display_names
-        require_once 'CRM/Contact/BAO/Contact.php';
         while ($contact->fetch()) {
             $contact = new CRM_Contact_BAO_Contact();
             $contact->id = $contact->contact_id;

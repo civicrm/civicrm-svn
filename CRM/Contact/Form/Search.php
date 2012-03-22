@@ -38,17 +38,8 @@
  * Files required
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/Session.php';
-require_once 'CRM/Core/PseudoConstant.php';
-require_once 'CRM/Core/BAO/Tag.php'; 
 
-require_once 'CRM/Utils/PagerAToZ.php';
 
-require_once 'CRM/Contact/Selector/Controller.php';
-require_once 'CRM/Contact/Selector.php';
-require_once 'CRM/Contact/Task.php';
-require_once 'CRM/Contact/BAO/SavedSearch.php';
 
 /**
  * Base Search / View form for *all* listing of multiple 
@@ -436,7 +427,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 CRM_Utils_System::setTitle( ts( 'Contacts in Group: %1', array( 1 => $this->_group[$this->_groupID] ) ) );
 
                 // check if user has permission to edit members of this group
-                require_once 'CRM/Contact/BAO/Group.php';
                 $permission = CRM_Contact_BAO_Group::checkPermission( $this->_groupID, $this->_group[$this->_groupID] );
                 if ( $permission && in_array(CRM_Core_Permission::EDIT, $permission) ) {
                     $this->assign( 'permissionedForGroup', true );
@@ -472,7 +462,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                                           'onclick' => 'toggleTaskAction( true );') );
         $this->assign('ts_sel_id', $selectedRowsRadio->_attributes['id']);
                
-        require_once "CRM/Core/BAO/PrevNextCache.php";
                 
         if( $qfKeyParam = CRM_Utils_Array::value( 'qfKey',$this->_formValues ) ) {
             $qfKeyParam = "civicrm search {$qfKeyParam}";
@@ -704,7 +693,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                        
         // show the context menu only when we’re not searching for deleted contacts; CRM-5673
         if ( !CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
             $menuItems = CRM_Contact_BAO_Contact::contextMenu( );
             $primaryActions     = CRM_Utils_Array::value( 'primaryActions', $menuItems, array( ) ); 
             $this->_contextMenu = CRM_Utils_Array::value( 'moreActions',    $menuItems, array( ) );
@@ -798,7 +786,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         
         if ( array_key_exists( $this->_searchButtonName, $_POST ) ){
             //reset the cache table for new search
-            require_once 'CRM/Core/BAO/PrevNextCache.php';
             $cacheKey = "civicrm search {$this->controller->_key}";
             CRM_Core_BAO_PrevNextCache::deleteItem( null, $cacheKey );
         }

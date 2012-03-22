@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Profile/Form.php';
 
 /**
  * This class provides the functionality for batch entry for contributions/memeberships
@@ -73,7 +72,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         
         if ( empty( $this->_batchInfo ) ) {
             $params = array( 'id' => $this->_batchId );
-            require_once 'CRM/Core/BAO/Batch.php';
             CRM_Core_BAO_Batch::retrieve( $params, $this->_batchInfo );
 
             // get the profile id associted with this batch type
@@ -98,8 +96,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         }
 
         // get the profile information
-        require_once "CRM/Core/BAO/UFGroup.php";
-        require_once "CRM/Core/BAO/CustomGroup.php";
         CRM_Utils_System::setTitle( ts('Batch entry for Contributions') );
 
         $this->addElement('hidden', 'batch_id', $this->_batchId );
@@ -145,10 +141,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         
         $fileFieldExists = false;
  
-        require_once "CRM/Core/BAO/CustomField.php";
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Contribution' );
         for ( $rowNumber = 1; $rowNumber<= $this->_batchInfo['item_count']; $rowNumber++  ) {
-            require_once 'CRM/Contact/Form/NewContact.php';
             CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber, null, true );
  
             foreach ( $this->_fields as $name => $field ) {
@@ -180,7 +174,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         }
         
         // get the existing batch values from cache table
-        require_once 'CRM/Core/BAO/Cache.php'; 
         $cacheKeyString = "batchEntry {$this->_batchId}";
         $defaults = CRM_Core_BAO_Cache::getItem( 'batch entry', $cacheKeyString );
  
@@ -240,20 +233,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
                 // add custom field values           
                 if ( CRM_Utils_Array::value( 'custom', $value ) &&
                      is_array( $value['custom'] ) ) {
-                    require_once 'CRM/Core/BAO/CustomValueTable.php';
                     CRM_Core_BAO_CustomValueTable::store( $value['custom'], 'civicrm_contribution', $contribution->id );
                 }            
             }
 
             // update batch to close status
-            require_once 'CRM/Core/BAO/Batch.php';
             $paramValues = array( 'id'              => $this->_batchId,
                                   'batch_status_id' => 2 );
 
             CRM_Core_BAO_Batch::create( $paramValues ); 
 
             // delete from cache table
-            require_once 'CRM/Core/BAO/Cache.php'; 
             $cacheKeyString = "batchEntry {$this->_batchId}";
             CRM_Core_BAO_Cache::deleteGroup( 'batch entry', $cacheKeyString );
  

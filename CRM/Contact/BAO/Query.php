@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Address.php'; 
-require_once 'CRM/Core/DAO/Phone.php'; 
-require_once 'CRM/Core/DAO/Email.php';
 
 /**
  * This class is a heart of search query building mechanism.
@@ -389,7 +386,6 @@ class CRM_Contact_BAO_Query
                           $smartGroupCache = true, $displayRelationshipType = null,
                           $operator = 'AND' ) 
     {
-        require_once 'CRM/Contact/BAO/Contact.php';
 
         // CRM_Core_Error::backtrace( );
         // CRM_Core_Error::debug( 'params', $params );
@@ -420,16 +416,13 @@ class CRM_Contact_BAO_Query
             $this->_search = false;
             $this->_skipPermission = true;
         } else {
-            require_once 'CRM/Contact/BAO/Contact.php';
             $this->_fields = CRM_Contact_BAO_Contact::exportableFields( 'All', false, true, true );
          
-            require_once 'CRM/Core/Component.php';
             $fields = CRM_Core_Component::getQueryFields( );
             unset( $fields['note'] );
             $this->_fields = array_merge( $this->_fields, $fields );
             
             // add activity fields
-            require_once 'CRM/Activity/BAO/Activity.php';
             $fields = CRM_Activity_BAO_Activity::exportableFields( );
             $this->_fields = array_merge( $this->_fields, $fields );
         }
@@ -556,7 +549,6 @@ class CRM_Contact_BAO_Query
 
             // redirect to activity select clause
             if ( substr( $name, 0, 9  ) == 'activity_' ) {
-                require_once 'CRM/Activity/BAO/Query.php';
                 CRM_Activity_BAO_Query::select( $this );
                 continue;
             }
@@ -598,7 +590,6 @@ class CRM_Contact_BAO_Query
                              || $tableName == 'individual_suffix' || $tableName == 'im_provider' 
                              || $tableName == 'email_greeting' || $tableName == 'postal_greeting' 
                              || $tableName == 'addressee' ) {
-                            require_once 'CRM/Core/OptionValue.php';
                             CRM_Core_OptionValue::select($this);
                             if ( in_array( $tableName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
                                 //get display
@@ -724,11 +715,9 @@ class CRM_Contact_BAO_Query
         $this->addMultipleElements( );
 
         //fix for CRM-951
-        require_once 'CRM/Core/Component.php';
         CRM_Core_Component::alterQuery( $this, 'select' );
 
         if ( ! empty( $this->_cfIDs ) ) {
-            require_once 'CRM/Core/BAO/CustomQuery.php';
             $this->_customQuery = new CRM_Core_BAO_CustomQuery( $this->_cfIDs, true );
             $this->_customQuery->query( );
             $this->_select       = array_merge( $this->_select , $this->_customQuery->_select );
@@ -898,7 +887,6 @@ class CRM_Contact_BAO_Query
                         $this->_element["{$tName}_id"]                  = 1;
                         if ( substr( $tName, -15 ) == '-state_province' ) {
                             // FIXME: hack to fix CRM-1900
-                            require_once 'CRM/Core/BAO/Setting.php';
                             $a = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                 'address_format' );
 
@@ -1004,7 +992,6 @@ class CRM_Contact_BAO_Query
         }
 
         if ( ! empty( $addressCustomFieldIds ) ) {
-            require_once 'CRM/Core/BAO/CustomQuery.php';
             $cfIDs = $addressCustomFieldIds;
             $customQuery = new CRM_Core_BAO_CustomQuery( $cfIDs );
             foreach ( $addressCustomFieldIds as $cfID => $locTypeName ) {
@@ -1174,7 +1161,6 @@ class CRM_Contact_BAO_Query
     static function fixDateValues( $relative, &$from, &$to )
     { 
         if ( $relative ){ 
-            require_once 'CRM/Utils/Date.php';
             list($from, $to) = CRM_Utils_Date::getFromTo( $relative, $from, $to );
         }
     }
@@ -1408,7 +1394,6 @@ class CRM_Contact_BAO_Query
         case 'activity_campaign_id':
         case 'activity_engagement_level':
         case 'activity_id':    
-            require_once 'CRM/Activity/BAO/Query.php';
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 
@@ -1471,7 +1456,6 @@ class CRM_Contact_BAO_Query
             return;
 
         case 'prox_distance':
-            require_once 'CRM/Contact/BAO/ProximityQuery.php';
             CRM_Contact_BAO_ProximityQuery::process( $this, $values );
             return;
 
@@ -1530,7 +1514,6 @@ class CRM_Contact_BAO_Query
                 }
             }
 
-            require_once 'CRM/Core/Component.php';
             CRM_Core_Component::alterQuery( $this, 'where' );
         }
         
@@ -2048,11 +2031,9 @@ class CRM_Contact_BAO_Query
         }
        
         // to handle table dependencies of components
-        require_once 'CRM/Core/Component.php';
         CRM_Core_Component::tableNames( $tables );
         
         //format the table list according to the weight
-        require_once 'CRM/Core/TableHierarchy.php';
         $info = CRM_Core_TableHierarchy::info( );
 
         foreach ($tables as $key => $value) {
@@ -2167,7 +2148,6 @@ class CRM_Contact_BAO_Query
             case 'activity_type':
             case 'activity_status':
             case 'civicrm_activity_contact':
-                require_once 'CRM/Activity/BAO/Query.php';
                 $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
                 continue; 
 
@@ -2486,7 +2466,6 @@ WHERE  id IN ( $groupIDs )
             $this->_useDistinct = true;
             
             if ( ! $this->_smartGroupCache || $group->cache_date == null ) {
-                require_once 'CRM/Contact/BAO/GroupContactCache.php';
                 CRM_Contact_BAO_GroupContactCache::load( $group );
             }
             
@@ -3288,7 +3267,6 @@ WHERE  id IN ( $groupIDs )
         $taskSelect =  CRM_Core_PseudoConstant::tasks( );
         $this->_qill[$grouping][] = ts('Task') . ": $taskSelect[$taskID]";
         if ( $statusID ) {
-            require_once 'CRM/Core/OptionGroup.php';
             $statusSelect = CRM_Core_OptionGroup::values( 'task_status' );
             $this->_qill[$grouping][] = ts('Task Status') . ": $statusSelect[$statusID]";
         }
@@ -3328,7 +3306,6 @@ WHERE  id IN ( $groupIDs )
 
         self::$_relType = $rel[1];
         if ( $nameClause ) { 
-            require_once 'CRM/Contact/BAO/RelationshipType.php';
 
             $params = array( 'id' => $rel[0] );
             $rTypeValues = array( );
@@ -3344,7 +3321,6 @@ WHERE  id IN ( $groupIDs )
            $this->_where[$grouping][] = "( contact_b.sort_name $nameClause AND contact_b.id != contact_a.id )";
         }
 
-        require_once 'CRM/Contact/BAO/Relationship.php';
         $relTypeInd =  CRM_Contact_BAO_Relationship::getContactRelationshipType(null,'null',null,'Individual');
         $relTypeOrg =  CRM_Contact_BAO_Relationship::getContactRelationshipType(null,'null',null,'Organization');
         $relTypeHou =  CRM_Contact_BAO_Relationship::getContactRelationshipType(null,'null',null,'Household');
@@ -3423,10 +3399,8 @@ civicrm_relationship.start_date > {$today}
         if ( ! isset( self::$_defaultReturnProperties[$mode] ) ) {
         	// add activity return properties
         	if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
-        		require_once 'CRM/Activity/BAO/Query.php';
         		self::$_defaultReturnProperties[$mode] = CRM_Activity_BAO_Query::defaultReturnProperties( $mode, false );
         	} else {
-            	require_once 'CRM/Core/Component.php';
             	self::$_defaultReturnProperties[$mode] = CRM_Core_Component::defaultReturnProperties( $mode, false );
             }
 
@@ -3593,7 +3567,6 @@ civicrm_relationship.start_date > {$today}
                           $additionalWhereClause = null, $sortOrder = null,
                           $additionalFromClause = null, $skipOrderAndLimit = false ) 
     {
-        require_once 'CRM/Core/Permission.php';
 
         if ( $includeContactIds ) {
             $this->_includeContactIds = true;
@@ -3619,7 +3592,6 @@ civicrm_relationship.start_date > {$today}
         }
 
         if ( ! $this->_skipPermission ) {
-            require_once 'CRM/ACL/API.php';
             $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW,
                                                     $this->_tables,
                                                     $this->_whereTables,
@@ -3877,7 +3849,6 @@ SELECT COUNT( civicrm_contribution.total_amount ) as total_count,
 
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
 
-        require_once 'CRM/Utils/Money.php';
         $summary['total']['count'] = 0;
         $summary['total']['amount'] = $summary['total']['avg'] = array( );
         while ( $dao->fetch( ) ) {
@@ -3914,7 +3885,6 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                 $summary['cancel']['avg']    = $dao->cancel_avg;
             }
         } else {
-            require_once 'CRM/Utils/Money.php';
             $summary['cancel']['count']  = 0;
             $summary['cancel']['amount'] = $summary['cancel']['avg'] = array( );
             while ( $dao->fetch( ) ) {

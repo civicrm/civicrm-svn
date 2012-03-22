@@ -94,7 +94,6 @@ WHERE  id = $id
         }
 
         // this tree stuff is quite useful, so lets store it in the cache
-        require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::setItem( $tree, 'contact groups', 'nestable tree hierarchy' );
     }
 
@@ -130,7 +129,6 @@ WHERE  id = $id
     }
 
     static function getPotentialCandidates( $id, &$groups ) {
-        require_once 'CRM/Core/BAO/Cache.php';
         $tree = CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
 
         if ( $tree === null ) {
@@ -180,7 +178,6 @@ WHERE  id = $id
     }
 
     static function json( ) {
-        require_once 'CRM/Core/BAO/Cache.php';
         $tree = CRM_Core_BAO_Cache::getItem( 'contact groups', 'nestable tree hierarchy' );
 
         if ( $tree === null ) {

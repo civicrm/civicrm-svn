@@ -33,7 +33,6 @@
  *
  */
 
-require_once 'CRM/Utils/Hook.php';
 
 class CRM_Utils_Hook_WordPress extends CRM_Utils_Hook {
 

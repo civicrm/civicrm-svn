@@ -476,7 +476,6 @@ AND    entity_table = 'civicrm_contact'
             include_once( $daoFile );
         
             $daoFields =& $daoName::fields( );
-            require_once 'CRM/Utils/Array.php';
 
             foreach ( $daoFields as $key =>& $value ) {
                 $_fieldsRetrieved[$daoName][$value['name']] = array( 'uniqueName' => $key,

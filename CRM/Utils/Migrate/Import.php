@@ -40,9 +40,6 @@ class CRM_Utils_Migrate_Import {
     }
 
     function run( $file ) {
-        require_once 'CRM/Core/DAO/CustomGroup.php';
-        require_once 'CRM/Core/DAO/CustomField.php';
-        require_once 'CRM/Core/DAO/OptionValue.php';
 
         // read xml file
         $dom = DomDocument::load( $file );
@@ -106,7 +103,6 @@ class CRM_Utils_Migrate_Import {
     }
 
     function optionGroups( &$xml, &$idMap ) {
-        require_once 'CRM/Core/DAO/OptionGroup.php';
         foreach ( $xml->OptionGroups as $optionGroupsXML ) {
             foreach ( $optionGroupsXML->OptionGroup as $optionGroupXML ) {
                 $optionGroup = new CRM_Core_DAO_OptionGroup( );
@@ -117,7 +113,6 @@ class CRM_Utils_Migrate_Import {
     }
 
     function optionValues( &$xml, &$idMap ) {
-        require_once 'CRM/Core/DAO/OptionValue.php';
         foreach ( $xml->OptionValues as $optionValuesXML ) {
             foreach ( $optionValuesXML->OptionValue as $optionValueXML ) {
                 $optionValue = new CRM_Core_DAO_OptionValue( );
@@ -139,7 +134,6 @@ WHERE      v.option_group_id = %1
     }
 
     function relationshipTypes( &$xml ) {
-        require_once 'CRM/Contact/BAO/RelationshipType.php';
         
         foreach ( $xml->RelationshipTypes as $relationshipTypesXML ) {
             foreach ( $relationshipTypesXML->RelationshipType as $relationshipTypeXML ) {
@@ -150,7 +144,6 @@ WHERE      v.option_group_id = %1
     }
 
     function contributionTypes( &$xml ) {
-        require_once 'CRM/Contribute/BAO/ContributionType.php';
         
         foreach ( $xml->ContributionTypes as $contributionTypesXML ) {
             foreach ( $contributionTypesXML->ContributionType as $contributionTypeXML ) {
@@ -161,8 +154,6 @@ WHERE      v.option_group_id = %1
     }
 
     function customGroups( &$xml, &$idMap ) {
-        require_once 'CRM/Core/BAO/CustomGroup.php';
-        require_once 'CRM/Utils/String.php';
         foreach ( $xml->CustomGroups as $customGroupsXML ) {
             foreach ( $customGroupsXML->CustomGroup as $customGroupXML ) {
                 $customGroup = new CRM_Core_DAO_CustomGroup( );
@@ -234,17 +225,14 @@ AND        v.name = %1
                         $optionIDs = array( );
                         switch ( $valueID ) {
                         case 1: // ParticipantRole
-                            require_once 'CRM/Core/OptionGroup.php';
                             $condition = "AND v.name IN ( '{$optValues}' )";
                             $optionIDs = CRM_Core_OptionGroup::values( 'participant_role', false, false, false, $condition, 'name' );
                             break;
                         case 2: // ParticipantEventName
-                            require_once 'CRM/Event/PseudoConstant.php';
                             $condition = "( is_template IS NULL OR is_template != 1 ) AND title IN( '{$optValues}' )";
                             $optionIDs = CRM_Event_PseudoConstant::event( null, false, $condition );
                             break;
                         case 3: // ParticipantEventType
-                            require_once 'CRM/Core/OptionGroup.php';
                             $condition = "AND v.name IN ( '{$optValues}' )";
                             $optionIDs = CRM_Core_OptionGroup::values( 'event_type', false, false, false, $condition, 'name' ); 
                             break;
@@ -272,7 +260,6 @@ AND        v.name = %1
     }
 
     function customFields( &$xml, &$idMap ) {
-        require_once 'CRM/Core/BAO/CustomField.php';
         foreach ( $xml->CustomFields as $customFieldsXML ) {
             foreach ( $customFieldsXML->CustomField as $customFieldXML ) {
                 $customField = new CRM_Core_DAO_CustomField( );
@@ -299,7 +286,6 @@ AND        v.name = %1
     }
 
     function dbTemplateString( &$xml, &$idMap ){
-        require_once 'CRM/Core/DAO/Persistent.php';
         foreach( $xml->Persistent as $persistentXML ){ 
             foreach( $persistentXML->Persistent as $persistent ){
                 $persistentObj = new CRM_Core_DAO_Persistent();
@@ -313,7 +299,6 @@ AND        v.name = %1
     }
 
     function profileGroups( &$xml, &$idMap ) {
-        require_once 'CRM/Core/DAO/UFGroup.php';
         foreach ( $xml->ProfileGroups as $profileGroupsXML ) {
             foreach ( $profileGroupsXML->ProfileGroup as $profileGroupXML ) {
                 $profileGroup = new CRM_Core_DAO_UFGroup( );
@@ -325,7 +310,6 @@ AND        v.name = %1
     }
 
     function profileFields( &$xml, &$idMap ) {
-        require_once 'CRM/Core/DAO/UFField.php';
         foreach ( $xml->ProfileFields as $profileFieldsXML ) {
             foreach ( $profileFieldsXML->ProfileField as $profileFieldXML ) {
                 $profileField = new CRM_Core_DAO_UFField( );
@@ -359,7 +343,6 @@ AND        f.column_name = %2
     }
 
     function profileJoins( &$xml, &$idMap ) {
-        require_once 'CRM/Core/DAO/UFJoin.php';
         foreach ( $xml->ProfileJoins as $profileJoinsXML ) {
             foreach ( $profileJoinsXML->ProfileJoin as $profileJoinXML ) {
                 $profileJoin = new CRM_Core_DAO_UFJoin( );

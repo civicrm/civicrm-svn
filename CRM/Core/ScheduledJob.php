@@ -84,7 +84,6 @@ class CRM_Core_ScheduledJob
     }                                                          
 
     public function saveLastRun( $date = null ) {
-        require_once 'CRM/Core/DAO/Job.php';
         $dao = new CRM_Core_DAO_Job();
         $dao->id = $this->id;
         $dao->last_run = ( $date == null ) ? CRM_Utils_Date::currentDBDate( ) : CRM_Utils_Date::currentDBDate( $date );

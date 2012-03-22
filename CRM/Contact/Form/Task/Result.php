@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Task.php';
 
 /**
  * Used for displaying results
@@ -86,7 +85,6 @@ class CRM_Contact_Form_Task_Result extends CRM_Contact_Form_Task {
         
         //set the user context for redirection of task actions
         $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-        require_once 'CRM/Utils/Rule.php';
         if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $path .= "&qfKey=$qfKey";
         
         $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $path );

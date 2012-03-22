@@ -69,7 +69,6 @@ class CRM_Contact_Form_Edit_Email
             //Block type
             $form->addElement('select', "email[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
 
-            require_once 'CRM/Core/BAO/Email.php';
             $multipleBulk = CRM_Core_BAO_Email::isMultipleBulkMail( );
 
             //On-hold select

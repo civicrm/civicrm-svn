@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Campaign/BAO/Survey.php';
 
 class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     
@@ -54,7 +52,6 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         //filter options for survey activity status.
         $responseStatus = array( );
         self::$_surveyRespondentStatus = array( );
-        require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         if ( $statusId = array_search( 'Scheduled', $activityStatus ) ) {
             $responseStatus[$statusId] = ts( 'Reserved' );
@@ -452,7 +449,6 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             if ( $this->_outputMode == 'print' ) {
                 echo $outPut;
             } else {
-                require_once 'CRM/Utils/PDF/Utils.php';                     
                 CRM_Utils_PDF_Utils::html2pdf( $outPut, "CiviReport.pdf" );
             }
             
@@ -763,8 +759,6 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
             return;
         }
         
-        require_once 'CRM/Campaign/BAO/Survey.php';
-        require_once 'CRM/Core/BAO/CustomField.php';
         $responseFields = array( );
         foreach ( $surveyIds as $surveyId ) {
             $responseFields += CRM_Campaign_BAO_survey::getSurveyResponseFields( $surveyId );

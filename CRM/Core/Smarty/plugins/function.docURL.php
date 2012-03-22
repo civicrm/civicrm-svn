@@ -48,7 +48,6 @@ function smarty_function_docURL( $params, &$smarty ) {
     if ( ! isset( $smarty ) ) {
         return;
     } else {
-        require_once 'CRM/Utils/System.php';
         return CRM_Utils_System::docURL( $params );
     }
     

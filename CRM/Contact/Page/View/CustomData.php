@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Page for displaying custom data
@@ -73,7 +72,6 @@ class CRM_Contact_Page_View_CustomData extends CRM_Core_Page {
         $this->assign( 'contactId', $this->_contactId );
 
         // check logged in url permission
-        require_once 'CRM/Contact/Page/View.php';
         CRM_Contact_Page_View::checkUserPermission( $this );
         
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');

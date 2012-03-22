@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Cache.php';
 
 /**
  * BAO object for civicrm_cache table. This is a database cache and is persisted across sessions. Typically we use
@@ -131,7 +130,6 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         $dao->delete( );
 
         // also reset ACL Cache
-        require_once 'CRM/ACL/BAO/Cache.php';
         CRM_ACL_BAO_Cache::resetCache( );
 
         // also reset memory cache if any
@@ -235,7 +233,6 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         if ( mt_rand( 1, 100000 ) % $cacheCleanUpNumber == 0 ) {
 
             // delete all PrevNext caches
-            require_once 'CRM/Core/BAO/PrevNextCache.php';
             CRM_Core_BAO_PrevNextCache::cleanupCache( );
 
             $sql = "

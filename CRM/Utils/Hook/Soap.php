@@ -34,7 +34,6 @@
  *
  */
  
-require_once 'CRM/Utils/Hook.php';
 
 class CRM_Utils_Hook_Soap extends CRM_Utils_Hook {
    function invoke( $numParams,

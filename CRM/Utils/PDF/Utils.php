@@ -44,7 +44,6 @@ class CRM_Utils_PDF_Utils {
             $pages =  array( $text );
         }
         // Get PDF Page Format
-        require_once "CRM/Core/BAO/PdfFormat.php";
         $format = CRM_Core_BAO_PdfFormat::getDefaultValues();
         if ( is_array( $pdfFormat ) ) {
             // PDF Page Format parameters passed in
@@ -53,7 +52,6 @@ class CRM_Utils_PDF_Utils {
             // PDF Page Format ID passed in
             $format = CRM_Core_BAO_PdfFormat::getById( $pdfFormat );
         }
-        require_once 'CRM/Core/BAO/PaperSize.php';
         $paperSize = CRM_Core_BAO_PaperSize::getByName( $format['paper_size'] );
         $paper_width = self::convertMetric( $paperSize['width'], $paperSize['metric'], 'pt' );
         $paper_height = self::convertMetric( $paperSize['height'], $paperSize['metric'], 'pt' );

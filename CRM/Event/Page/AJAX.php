@@ -44,7 +44,6 @@ class CRM_Event_Page_AJAX
      */
     function event( )
     {
-        require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
         if ( ! $name ){
             $name = '%';
@@ -72,7 +71,6 @@ ORDER BY title
      */
     function eventType( )
     {
-        require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
         if( !$name ) {
             $name = '%';
@@ -101,7 +99,6 @@ ORDER by v.weight";
      */
     function eventFee( )
     {
-        require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
         if( !$name ) {
             $name = '%';
@@ -124,7 +121,6 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
     }
     
     function eventList(  ) {
-        require_once "CRM/Event/BAO/Event.php";
         $events = CRM_Event_BAO_Event::getEvents( true );
 
         $elements = array( array( 'name'  => ts('- select -'),
@@ -134,7 +130,6 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
                                  'value' => $id );
         }
 
-        require_once "CRM/Utils/JSON.php";
         echo json_encode( $elements );
         CRM_Utils_System::civiExit( );
     } 
@@ -144,7 +139,6 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
      */
     function participantRole( ) {
         
-        require_once 'CRM/Utils/Type.php';
         
         $eventID = $_GET['eventId'] ;
        
@@ -153,7 +147,6 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
                                                       'default_role_id',
                                                       'id'
                                                       );
-        require_once "CRM/Utils/JSON.php";
         $participantRole = array( 'role' => $defaultRoleId );
         echo json_encode( $participantRole );
         CRM_Utils_System::civiExit( );

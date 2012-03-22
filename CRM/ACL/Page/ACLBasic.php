@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  *
@@ -137,7 +136,6 @@ class CRM_ACL_Page_ACLBasic extends CRM_Core_Page_Basic
      */
     function browse()
     {
-        require_once 'CRM/ACL/DAO/ACL.php';
 
         // get all acl's sorted by weight
         $acl =  array( );
@@ -150,10 +148,8 @@ ORDER BY entity_id
         $dao    = CRM_Core_DAO::executeQuery( $query,
                                               CRM_Core_DAO::$_nullArray );
 
-        require_once 'CRM/Core/OptionGroup.php';
         $roles  = CRM_Core_OptionGroup::values( 'acl_role' );
 
-        require_once 'CRM/Core/Permission.php';
         $permissions  = CRM_Core_Permission::basicPermissions( );
         while ( $dao->fetch( ) ) {
             if ( ! array_key_exists( $dao->entity_id, $acl ) ) {

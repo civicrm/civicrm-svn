@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
 
 /**
  * This class generates form components for Extensions
@@ -54,7 +53,6 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
     {
         parent::preProcess( );
 
-        require_once 'CRM/Utils/Request.php';
         $this->_key = CRM_Utils_Request::retrieve('key', 'String',
                                                   $this, false, 0);
 
@@ -64,7 +62,6 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
         $this->assign('id', $this->_id);
         $this->assign('key', $this->_key);
         
-        require_once "CRM/Core/Extensions.php";
         $ext = new CRM_Core_Extensions( );
             $extension = $ext->getExtensions( );
 
@@ -160,35 +157,30 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
         CRM_Utils_System::flushCache( );
 
         if ( $this->_action & CRM_Core_Action::DELETE ) {
-            require_once('CRM/Core/Extensions.php');
             $ext = new CRM_Core_Extensions();
             $ext->uninstall($this->_id, $this->_key);
             CRM_Core_Session::setStatus( ts('Extension has been uninstalled.') );
         }
         
         if ( $this->_action & CRM_Core_Action::ADD ) {
-            require_once('CRM/Core/Extensions.php');
             $ext = new CRM_Core_Extensions();
             $ext->install($this->_id, $this->_key);
             CRM_Core_Session::setStatus( ts('Extension has been installed.') );
         }
         
         if ( $this->_action & CRM_Core_Action::ENABLE ) {
-            require_once('CRM/Core/Extensions.php');
             $ext = new CRM_Core_Extensions();
             $ext->enable($this->_id, $this->_key);
             CRM_Core_Session::setStatus( ts('Extension has been enabled.') );
         }
         
         if ( $this->_action & CRM_Core_Action::DISABLE ) {
-            require_once('CRM/Core/Extensions.php');
             $ext = new CRM_Core_Extensions();
             $ext->disable($this->_id, $this->_key);
             CRM_Core_Session::setStatus( ts('Extension has been disabled.') );
         }
         
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            require_once('CRM/Core/Extensions.php');
             $ext = new CRM_Core_Extensions();
             $ext->upgrade($this->_id, $this->_key);
             CRM_Core_Session::setStatus( ts('Extension has been upgraded.') );

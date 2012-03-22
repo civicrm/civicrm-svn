@@ -48,7 +48,6 @@ class CRM_Utils_Mail_EmailProcessor {
      *                 fix this to return true on success / false on failure etc
      */
     static function processBounces() {
-        require_once 'CRM/Core/DAO/MailSettings.php';
         $dao = new CRM_Core_DAO_MailSettings;
         $dao->domain_id = CRM_Core_Config::domainID( );
         $dao->is_default = true;
@@ -91,7 +90,6 @@ class CRM_Utils_Mail_EmailProcessor {
      * @return void
      */
      static function processActivities() {
-         require_once 'CRM/Core/DAO/MailSettings.php';
          $dao = new CRM_Core_DAO_MailSettings;
          $dao->domain_id = CRM_Core_Config::domainID( );
          $dao->is_default = false;
@@ -114,7 +112,6 @@ class CRM_Utils_Mail_EmailProcessor {
      * @return void
      */
     static function process( $civiMail = true ) {
-        require_once 'CRM/Core/DAO/MailSettings.php';
         $dao = new CRM_Core_DAO_MailSettings;
         $dao->domain_id = CRM_Core_Config::domainID( );
         $dao->find( );
@@ -129,7 +126,6 @@ class CRM_Utils_Mail_EmailProcessor {
         // 0 = activities; 1 = bounce;
         $usedfor = $dao->is_default;
         
-        require_once 'CRM/Core/OptionGroup.php';
         $emailActivityTypeId = 
             ( defined('EMAIL_ACTIVITY_TYPE_ID') && EMAIL_ACTIVITY_TYPE_ID )  ? 
             EMAIL_ACTIVITY_TYPE_ID : CRM_Core_OptionGroup::getValue( 'activity_type', 
@@ -156,7 +152,6 @@ class CRM_Utils_Mail_EmailProcessor {
         $rpRegex = '/Return-Path: ' . preg_quote($dao->localpart) . '(b)' . $twoDigitString . '([0-9a-f]{16})@' . preg_quote($dao->domain) . '/';
 
         // retrieve the emails
-        require_once 'CRM/Mailing/MailStore.php';
         try {
             $store = CRM_Mailing_MailStore::getStore($dao->name);
         } catch ( Exception $e ) {
@@ -166,7 +161,6 @@ class CRM_Utils_Mail_EmailProcessor {
             CRM_Core_Error::fatal( $message );
         }
 
-        require_once 'CRM/Utils/Hook.php';
 
         // process fifty at a time, CRM-4002
         while ($mails = $store->fetchNext(MAIL_BATCH_SIZE)) {
@@ -207,7 +201,6 @@ class CRM_Utils_Mail_EmailProcessor {
                 // preseve backward compatibility
                 if ( $usedfor == 0 || ! $civiMail ) {
                     // if its the activities that needs to be processed ..
-                    require_once 'CRM/Utils/Mail/Incoming.php';
                     $mailParams = CRM_Utils_Mail_Incoming::parseMailingObject( $mail );
                     
                     civicrm_api_include('activity', false, 2);

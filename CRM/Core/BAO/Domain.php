@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Domain.php';
 
 /**
  *
@@ -158,10 +157,8 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
 
     static function getNameAndEmail( $skipFatal = false ) 
     {
-        require_once 'CRM/Core/OptionGroup.php';
         $fromEmailAddress = CRM_Core_OptionGroup::values( 'from_email_address', null, null, null, ' AND is_default = 1' );
         if ( !empty( $fromEmailAddress ) ) {
-            require_once 'CRM/Utils/Mail.php';
             foreach ( $fromEmailAddress as $key => $value ) {
                 $email    = CRM_Utils_Mail::pluckEmailFromHeader( $value );
                 $fromArray = explode('"', $value);
@@ -185,7 +182,6 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
 
         if ( $groupID ) {
             $contactIDs = array( $contactID );
-            require_once 'CRM/Contact/DAO/GroupContact.php';
             CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIDs, $groupID );
 
             return $groupID;
@@ -200,7 +196,6 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
             return $groupID;
         }
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $domainGroupID = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
                                                         'domain_group_id' );
         $multisite     = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
@@ -218,7 +213,6 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
                 $groupParams = array( 'title'            => $title,
                                       'is_active'        => 1,
                                       'no_parent'        => 1 );
-                require_once 'CRM/Contact/BAO/Group.php';
                 $group   = CRM_Contact_BAO_Group::create( $groupParams );
                 $groupID = $group->id;
             }
@@ -236,7 +230,6 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
         $childGrps     = array();
 
         if ( $domainGroupID ) {
-            require_once 'CRM/Contact/BAO/GroupNesting.php';
             $childGrps = CRM_Contact_BAO_GroupNesting::getChildGroupIds( $domainGroupID );
             $childGrps[] = $domainGroupID;
         }

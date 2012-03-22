@@ -87,7 +87,6 @@ AND    v.option_group_id = g.id
 AND    v.name = %3
 ";
 
-        require_once 'CRM/Utils/File.php';
         foreach ( $params as $name => $value ) {
             // always try to store relative directory or url from CMS root
             if ( $type == 'directory' ) {
@@ -117,7 +116,6 @@ AND    v.option_group_id = g.id
 AND    v.is_active = 1
 ";
 
-        require_once 'CRM/Utils/File.php';
 
         $dao    = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch( ) ) {

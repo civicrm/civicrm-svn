@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/Task.php';
 
 /**
  * Used for displaying results

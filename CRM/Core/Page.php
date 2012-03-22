@@ -34,11 +34,7 @@
  *
  */
 
-require_once 'CRM/Core/SelectValues.php';
-require_once 'CRM/Core/Action.php';
-require_once 'CRM/Core/Permission.php';
 
-require_once 'CRM/Utils/Request.php'; 
 
 /**
  * A Page is basically data in a nice pretty format.
@@ -166,7 +162,6 @@ class CRM_Core_Page {
         self::$_template->assign( 'tplFile', $pageTemplateFile );
 
         // invoke the pagRun hook, CRM-3906
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::pageRun( $this );
 
         if ( $this->_print ) {
@@ -181,11 +176,9 @@ class CRM_Core_Page {
                                              $this->overrideExtraTemplateFileName( ) );
 
             //its time to call the hook.
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::alterContent( $content, 'page', $pageTemplateFile, $this );
 
             if ( $this->_print == CRM_Core_Smarty::PRINT_PDF ) {
-                require_once 'CRM/Utils/PDF/Utils.php';
                 CRM_Utils_PDF_Utils::html2pdf( $content, "{$this->_name}.pdf", false,
                                                array( 'paper_size' => 'a3', 'orientation' => 'landscape' ) );
             } else {
@@ -200,7 +193,6 @@ class CRM_Core_Page {
         CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
 
         //its time to call the hook.
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::alterContent( $content, 'page', $pageTemplateFile, $this );
 
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print );

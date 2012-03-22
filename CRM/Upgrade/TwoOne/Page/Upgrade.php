@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
-require_once 'CRM/Upgrade/Form.php';
 class CRM_Upgrade_TwoOne_Page_Upgrade extends CRM_Core_Page {
 
     function run( ) {
@@ -85,7 +83,6 @@ class CRM_Upgrade_TwoOne_Page_Upgrade extends CRM_Core_Page {
     }
 
     function runForm( $stepID ) {
-        require_once "CRM/Upgrade/TwoOne/Form/Step{$stepID}.php";
         $formName = "CRM_Upgrade_TwoOne_Form_Step{$stepID}";
         eval( "\$form = new $formName( );" );
         
@@ -112,7 +109,6 @@ class CRM_Upgrade_TwoOne_Page_Upgrade extends CRM_Core_Page {
     }
 
     function runTwoOneTwo( ) {
-        require_once "CRM/Upgrade/TwoOne/Form/TwoOneTwo.php";
         $formName = "CRM_Upgrade_TwoOne_Form_TwoOneTwo";
         eval( "\$form = new $formName( '2.1.4' );" );
         

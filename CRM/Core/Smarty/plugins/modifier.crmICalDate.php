@@ -43,7 +43,6 @@
  * @access public
  */
 
-require_once 'CRM/Utils/ICalendar.php';
 
 function smarty_modifier_crmICalDate( $str, $gdata = false )
 {

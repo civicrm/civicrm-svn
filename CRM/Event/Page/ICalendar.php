@@ -34,7 +34,6 @@
  *
  */
  
-require_once 'CRM/Core/Page.php';
 
 /**
  * ICalendar class
@@ -53,7 +52,6 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
      */
     function run( )
     { 
-        require_once 'CRM/Utils/Request.php';
         $id       = CRM_Utils_Request::retrieve('id'   , 'Positive', $this, false, null, 'GET' );
         $type     = CRM_Utils_Request::retrieve('type' , 'Positive', $this, false, 0);
         $start    = CRM_Utils_Request::retrieve('start', 'Positive', $this, false, 0);
@@ -63,7 +61,6 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
         $html     = CRM_Utils_Request::retrieve('html' , 'Positive', $this, false, 0);
         $rss      = CRM_Utils_Request::retrieve('rss'  , 'Positive', $this, false, 0);
        
-        require_once 'CRM/Event/BAO/Event.php';
         $info = CRM_Event_BAO_Event::getCompleteInfo( $start, $type, $id, $end );
         $this->assign( 'events', $info );
 		$this->assign( 'timezone', @date_default_timezone_get() );
@@ -79,7 +76,6 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
             $calendar = $template->fetch( 'CRM/Core/Calendar/GData.tpl' );
         } else if ( $html ) {
             // check if we're in shopping cart mode for events
-            require_once 'CRM/Core/BAO/Setting.php';
             $enable_cart = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME,
                                                        'enable_cart' );
             if ($enable_cart) {
@@ -92,7 +88,6 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
         }
 
         // Push output for feed or download
-        require_once 'CRM/Utils/ICalendar.php';
         if( $iCalPage == 1) {
             if ( $gData || $rss ) {
                 CRM_Utils_ICalendar::send( $calendar, 'text/xml', 'utf-8' );

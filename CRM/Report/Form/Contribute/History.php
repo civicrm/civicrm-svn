@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
     // Primary Contacts count limit
@@ -647,7 +645,6 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
             return;
         }
         
-        require_once 'CRM/Utils/Money.php';
 
         $last_primary = null;
         foreach ( $rows as $rowNum => $row ) {

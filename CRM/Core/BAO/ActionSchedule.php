@@ -35,8 +35,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/ActionSchedule.php';
-require_once 'CRM/Core/DAO/ActionMapping.php';
 
 /**
  * This class contains functions for managing Scheduled Reminders
@@ -81,16 +79,13 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
     {
         $mapping  = self::getMapping( $id );
 
-        require_once 'CRM/Core/PseudoConstant.php';
 	$activityStatus = CRM_Core_PseudoConstant::activityStatus(); 
         $activityType = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
 
-	require_once 'CRM/Event/PseudoConstant.php';
 	$participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
 	$event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
 	$eventType = CRM_Event_PseudoConstant::eventType();
 		
-	require_once 'CRM/Member/PseudoConstant.php';
 	$membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
 	$membershipType = CRM_Member_PseudoConstant::membershipType();
 
@@ -221,7 +216,6 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         
         $recipientMapping = array_combine(array_keys($options), array_keys($options));
 
-	require_once 'CRM/Core/PseudoConstant.php';        
         foreach ( $mapping as $value ) {
             $entityRecipient = CRM_Utils_Array::value( 'entity_recipient', $value );
             $key = CRM_Utils_Array::value( 'id', $value );
@@ -269,16 +263,13 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
      */
     static function &getList( $namesOnly = false, $entityValue = null, $id = null ) 
     {
-        require_once 'CRM/Core/PseudoConstant.php';
         $activity_type = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
         $activity_status = CRM_Core_PseudoConstant::activityStatus();
 
-        require_once 'CRM/Event/PseudoConstant.php';
         $event_type = CRM_Event_PseudoConstant::eventType();
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
         $civicrm_participant_status_type = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
 
-	require_once 'CRM/Member/PseudoConstant.php';
 	$civicrm_membership_status = CRM_Member_PseudoConstant::membershipStatus();
 	$civicrm_membership_type = CRM_Member_PseudoConstant::membershipType();
 
@@ -355,9 +346,6 @@ WHERE   cas.entity_value = $id AND
     }
 
     static function sendReminder( $contactId, $email, $scheduleID, $from, $tokenParams ) {
-        require_once 'CRM/Core/BAO/Domain.php';
-        require_once 'CRM/Utils/String.php';
-        require_once 'CRM/Utils/Token.php';
 
         $schedule = new CRM_Core_DAO_ActionSchedule( );
         $schedule->id = $scheduleID;
@@ -388,7 +376,6 @@ WHERE   cas.entity_value = $id AND
             $contact = array_merge( $contact, $tokenParams );
 
             //CRM-5734
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::tokenValues( $contact, $contactId );
 
             CRM_Utils_Hook::tokens( $hookTokens );
@@ -397,7 +384,6 @@ WHERE   cas.entity_value = $id AND
             $type = array('html', 'text');
             
             foreach( $type as $key => $value ) {
-                require_once 'CRM/Mailing/BAO/Mailing.php';
                 $dummy_mail = new CRM_Mailing_BAO_Mailing();
                 $bodyType = "body_{$value}";
                 $dummy_mail->$bodyType = $$bodyType;
@@ -414,7 +400,6 @@ WHERE   cas.entity_value = $id AND
             $html = $body_html;
             $text = $body_text;
             
-            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
             $smarty = CRM_Core_Smarty::singleton( );
             foreach( array( 'text', 'html') as $elem) {
@@ -448,7 +433,6 @@ WHERE   cas.entity_value = $id AND
             $messageSubject = $smarty->fetch("string:{$messageSubject}");
 
             // set up the parameters for CRM_Utils_Mail::send
-            require_once 'CRM/Utils/Mail.php';
             $mailParams = array(
                                 'groupName' => 'Scheduled Reminder Sender',
                                 'from'      => $from,
@@ -562,10 +546,6 @@ WHERE   cas.entity_value = $id AND
     }
 
     static function sendMailings( $mappingID, $now ) {
-        require_once 'CRM/Activity/BAO/Activity.php';
-        require_once 'CRM/Contact/BAO/Contact.php';
-        require_once 'CRM/Core/BAO/ActionLog.php';
-        require_once 'CRM/Core/BAO/Domain.php';
         $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
         $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
         
@@ -700,7 +680,6 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                                trim($actionSchedule->entity_status, CRM_Core_DAO::VALUE_SEPARATOR) );
             $status = implode( ',', $status );
         
-            require_once 'CRM/Core/OptionGroup.php';
             if (!CRM_Utils_System::isNull($mapping->entity_recipient)) {
                 $recipientOptions = CRM_Core_OptionGroup::values( $mapping->entity_recipient );
             }
@@ -874,7 +853,6 @@ INNER JOIN {$reminderJoinClause}
     }
 
     static function processQueue( $now = null ) {
-        require_once 'CRM/Utils/Time.php';
         $now = $now ? CRM_Utils_Time::setTime( $now ) : CRM_Utils_Time::getTime( );
 
         $mappings = self::getMapping( );

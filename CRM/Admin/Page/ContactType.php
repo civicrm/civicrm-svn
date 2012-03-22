@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-require_once 'CRM/Contact/BAO/ContactType.php';
 
 /**
  * Page for displaying list of contact Subtypes

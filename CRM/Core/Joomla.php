@@ -54,7 +54,6 @@ class CRM_Core_Joomla {
             return;
         }
 
-        require_once 'CRM/Core/Block.php';
         $blockIds = array( 
             CRM_Core_Block::CREATE_NEW,
             CRM_Core_Block::RECENTLY_VIEWED,
@@ -70,7 +69,6 @@ class CRM_Core_Joomla {
             $blocks[] = CRM_Core_Block::getContent( $id );
         }
 
-        require_once 'CRM/Core/Smarty.php';
         $template = CRM_Core_Smarty::singleton( );
         $template->assign_by_ref( 'blocks', $blocks );
         $sidebarLeft = $template->fetch( 'CRM/Block/blocks.tpl' );

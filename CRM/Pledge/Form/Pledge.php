@@ -34,11 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
-require_once 'CRM/Custom/Form/CustomData.php';
-require_once 'CRM/Contribute/Form/AdditionalInfo.php';
-require_once 'CRM/Pledge/BAO/Pledge.php';
 
 /**
  * This class generates form components for processing a pledge 
@@ -115,7 +110,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             return;
         }
 
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
         $this->userDisplayName = $this->userEmail = null;
         if ( $this->_contactID ) {
             list( $this->userDisplayName, 
@@ -173,10 +167,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
         
         //get the pledge frequency units.
-        require_once 'CRM/Core/OptionGroup.php';
         $this->_freqUnits = CRM_Core_OptionGroup::values('recur_frequency_units');
 
-        require_once 'CRM/Core/BAO/Email.php';
         $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail( );
     }
     
@@ -212,7 +204,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             
             //check is this pledge pending 
             // fix the display of the monetary value, CRM-4038
-            require_once 'CRM/Utils/Money.php';
             if ( $this->_isPending ) {
                 $defaults['eachPaymentAmount'] = $this->_values['amount'] / $this->_values['installments'];
                 $defaults['eachPaymentAmount'] = CRM_Utils_Money::format($defaults['eachPaymentAmount'], null, '%a');
@@ -255,7 +246,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         
         //honoree contact.
         if ( $this->_honorID ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
             $honorDefault = array();
             $idParams = array( 'contact_id' => $this->_honorID );
             CRM_Contact_BAO_Contact::retrieve( $idParams, $honorDefault );
@@ -299,7 +289,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
         
         if ( $this->_context == 'standalone' ) {
-            require_once 'CRM/Contact/Form/NewContact.php';
             CRM_Contact_Form_NewContact::buildQuickForm( $this );
         }
         
@@ -434,7 +423,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
                    true );
 
         //CRM-7362 --add campaigns.
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         CRM_Campaign_BAO_Campaign::addCampaign( $this, CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         
         $pageIds = array( );
@@ -448,7 +436,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         $ele = $this->add('select', 'contribution_page_id', ts( 'Self-service Payments Page' ), 
                           array( '' => ts( '- select -' ) ) + $pledgePages );
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                       'mailing_backend' );
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
@@ -616,7 +603,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         
         //handle Honoree contact.
         if ( CRM_Utils_Array::value( 'honor_type_id', $params ) ) {
-            require_once 'CRM/Contribute/BAO/Contribution.php';
             if ( $this->_honorID ) {
                 $honorID = CRM_Contribute_BAO_Contribution::createHonorContact( $params , $this->_honorID );
             } else {

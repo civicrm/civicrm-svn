@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form/Preferences.php';
 
 /**
  * This class generates form components for Address Section  
@@ -45,7 +44,6 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 
         CRM_Utils_System::setTitle(ts('Settings - Addresses'));
 
-        require_once 'CRM/Core/BAO/Setting.php';
 
         $this->_varNames =
             array( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME => 
@@ -200,7 +198,6 @@ FROM   civicrm_county
                             'sql'         . DIRECTORY_SEPARATOR .
                             'counties.US.sql.gz';
                         
-                        require_once 'CRM/Core/Session.php';
                         CRM_Core_Session::setStatus( ts( 'You have enabled the County option. Please ensure you populate the county table in your CiviCRM Database. You can find a list of US counties (in gzip format) in your distribution at: <em>%1</em>',
                                                          array( 1 => $sqlFilePath ) ) );
                     }

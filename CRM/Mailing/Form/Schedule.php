@@ -34,8 +34,6 @@
   *
   */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Mailing/BAO/Mailing.php';
 
  /**
   *
@@ -50,7 +48,6 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
       */ 
      public function preProcess()  
      {
-         require_once 'CRM/Mailing/Info.php';
          if ( CRM_Mailing_Info::workflowEnabled( ) &&
               ! CRM_Core_Permission::check('schedule mailings' ) ) {
              $url = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'reset=1&scheduled=false' );
@@ -58,7 +55,6 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
          }
 
          //when user come from search context.
-         require_once 'CRM/Contact/Form/Search.php';
          $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
 
          $this->_mailingID = $this->get( 'mailing_id' );
@@ -79,7 +75,6 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
      {
          $defaults = array( );
          if ( $this->_scheduleFormOnly ) {
-             require_once 'CRM/Mailing/BAO/Recipients.php';
              $count = CRM_Mailing_BAO_Recipients::mailingSize( $this->_mailingID );
          } else {
              $count = $this->get( 'count' );
@@ -153,7 +148,6 @@ require_once 'CRM/Mailing/BAO/Mailing.php';
                                                                 'subject' );
              $preview['viewURL'] = CRM_Utils_System::url( 'civicrm/mailing/view', "reset=1&id={$this->_mailingID}" );
 
-             require_once 'CRM/Core/BAO/File.php';
              $preview['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_mailing',
                                                                          $this->_mailingID );
              

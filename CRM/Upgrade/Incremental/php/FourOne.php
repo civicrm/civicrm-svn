@@ -62,7 +62,6 @@ class CRM_Upgrade_Incremental_php_FourOne {
     function upgrade_4_1_alpha1( $rev ) {
     	$config = CRM_Core_Config::singleton( );
         if ( in_array( 'CiviCase', $config->enableComponents ) ) {
-            require_once 'CRM/Case/BAO/Case.php';
         	if ( ! CRM_Case_BAO_Case::createCaseViews( ) ) {
                 $template = CRM_Core_Smarty::singleton( );
                 $afterUpgradeMessage = '';
@@ -81,19 +80,16 @@ class CRM_Upgrade_Incremental_php_FourOne {
         $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
 
-        require_once 'CRM/Core/BAO/Setting.php';
 
         $this->transferPreferencesToSettings( );
         $this->createNewSettings( );
 
         // now modify the config so that the directories are now stored in the settings table
         // CRM-8780
-        require_once 'CRM/Core/BAO/ConfigSetting.php';
         $params = array( );
         CRM_Core_BAO_ConfigSetting::add( $params );
         
          // also reset navigation
-        require_once 'CRM/Core/BAO/Navigation.php';
         CRM_Core_BAO_Navigation::resetNavigation( );
         
     }
@@ -296,7 +292,6 @@ AND    v.is_active = 1
     }
 
     function upgrade_4_1_alpha2( $rev ) {
-        require_once 'CRM/Core/BAO/Setting.php';
         $dao = new CRM_Core_DAO_Setting();
         $dao->group_name = 'Directory Preferences';
         $dao->name = 'customTemplateDir';
@@ -315,8 +310,6 @@ AND    v.is_active = 1
 
     function upgrade_4_1_beta1( $rev ) {
         //CRM-9311
-        require_once 'CRM/Core/BAO/Setting.php';
-        require_once 'CRM/Core/OptionGroup.php';
         $groupNames = array( 'directory_preferences', 'url_preferences' );
         foreach($groupNames as $groupName){
             CRM_Core_OptionGroup::deleteAssoc( $groupName ); 

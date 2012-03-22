@@ -26,7 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CRM/Core/Component/Info.php';
 
 /**
  * This class introduces component to the system and provides all the 
@@ -105,7 +104,6 @@ class CRM_Campaign_Info extends CRM_Core_Component_Info
 
     // add shortcut to Create New
     public function creatNewShortcut( &$shortCuts ) {
-        require_once 'CRM/Core/Permission.php';
         if ( CRM_Core_Permission::check('manage campaign') ||
              CRM_Core_Permission::check('administer CiviCampaign') ) {
             $shortCuts = 

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/UFJoin.php';
 
 /**
  *

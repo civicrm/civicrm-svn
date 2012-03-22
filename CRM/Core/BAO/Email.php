@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Email.php';
 
 /**
  * This class contains functions for email handling
@@ -234,7 +233,6 @@ ORDER BY e.is_primary DESC, email_id ASC ";
         $fromEmailValues = array( ); 
         
         // add the domain email id
-        require_once 'CRM/Core/BAO/Domain.php';
         $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail( );
         $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
         $fromEmailValues[$domainEmail] = htmlspecialchars( $domainEmail );
@@ -262,7 +260,6 @@ ORDER BY e.is_primary DESC, email_id ASC ";
     }
 
     static function isMultipleBulkMail( ) {
-        require_once 'CRM/Core/BAO/Setting.php';
         return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                               'civimail_multiple_bulk_emails',
                                               null,

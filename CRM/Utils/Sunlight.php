@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Error.php';
 
 class CRM_Utils_Sunlight {
     static $_apiURL = 'http://api.sunlightlabs.com/';

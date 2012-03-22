@@ -44,6 +44,5 @@
  */
 function smarty_modifier_crmStripAlternatives($full)
 {
-    require_once 'CRM/Utils/String.php';
     return CRM_Utils_String::stripAlternatives($full);
 }

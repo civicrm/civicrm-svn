@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * This is a dummy class that does nothing at the moment.

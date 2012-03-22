@@ -36,7 +36,6 @@
 
 require_once 'PHPgettext/streams.php';
 require_once 'PHPgettext/gettext.php';
-require_once 'CRM/Core/Config.php';
 
 class CRM_Core_I18n
 {
@@ -72,7 +71,6 @@ class CRM_Core_I18n
         static $enabled = null;
 
         if (!$all) {
-            require_once 'CRM/Core/I18n/PseudoConstant.php';
             $all = CRM_Core_I18n_PseudoConstant::languages();
 
             // check which ones are available; add them to $all if not there already
@@ -185,7 +183,6 @@ class CRM_Core_I18n
         }
 
         // do all wildcard translations first
-        require_once 'CRM/Utils/Array.php';
         $config = CRM_Core_Config::singleton( );
         $stringTable = CRM_Utils_Array::value( $config->lcMessages,
                                                $config->localeCustomStrings );

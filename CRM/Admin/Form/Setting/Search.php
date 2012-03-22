@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form/Setting.php';
 
 /**
  * This class generates form components for Search Parameters
@@ -61,7 +60,6 @@ class CRM_Admin_Form_Setting_Search extends  CRM_Admin_Form_Setting
         $this->addElement('text', 'smartGroupCacheTimeout', ts('Smart group cache timeout'),
                           array( 'size' => 3, 'maxlength' => 5 ) );
        
-        require_once "CRM/Core/BAO/UFGroup.php";
         $types    = array( 'Contact', 'Individual', 'Organization', 'Household' );
         $profiles = CRM_Core_BAO_UFGroup::getProfiles( $types ); 
 
@@ -69,7 +67,6 @@ class CRM_Admin_Form_Setting_Search extends  CRM_Admin_Form_Setting
                     array('' => ts('- select -')) + $profiles );
 
         // Autocomplete for Contact Search (quick search etc.)
-        require_once 'CRM/Core/OptionGroup.php';
         $options = array( ts('Contact Name') => 1 ) + array_flip( CRM_Core_OptionGroup::values( 'contact_autocomplete_options', 
                                                                                                 false, false, true ) );
         $this->addCheckBox( 'autocompleteContactSearch', ts('Autocomplete Contact Search'), $options, 
@@ -78,7 +75,6 @@ class CRM_Admin_Form_Setting_Search extends  CRM_Admin_Form_Setting
         $element->_elements[0]->_flagFrozen = true;
 
         // Autocomplete for Contact Reference (custom fields)
-        require_once 'CRM/Core/OptionGroup.php';
         $optionsCR = array( ts('Contact Name') => 1 ) + array_flip( CRM_Core_OptionGroup::values( 'contact_reference_options', 
                                                                                                 false, false, true ) );
         $this->addCheckBox( 'autocompleteContactReference', ts('Contact Reference Options'), $optionsCR, 

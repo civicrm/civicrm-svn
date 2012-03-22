@@ -34,7 +34,6 @@
  *
  */
  
-require_once 'CRM/Case/XMLProcessor.php';
 
 class CRM_Case_XMLProcessor_Settings extends CRM_Case_XMLProcessor {
 

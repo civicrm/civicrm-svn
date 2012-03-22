@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * form to process actions on the set aspect of Custom Data
@@ -84,7 +83,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
      */
     public function preProcess()
     {
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         // current set id
         $this->_id = $this->get('id');
 
@@ -210,13 +208,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $this->add('text', 'title', ts('Set Name'), $attributes['title'], true);
         
         //Fix for code alignment, CRM-3058
-        require_once "CRM/Contribute/PseudoConstant.php";
-        require_once "CRM/Member/BAO/MembershipType.php";
-        require_once 'CRM/Event/PseudoConstant.php';
-        require_once "CRM/Contact/BAO/Relationship.php";
-        require_once 'CRM/Core/OptionGroup.php';
-        require_once 'CRM/Contact/BAO/ContactType.php';
-        require_once 'CRM/Campaign/PseudoConstant.php';
         $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization' );
         $this->assign( 'contactTypes', json_encode($contactTypes) );
               
@@ -278,7 +269,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             }
         }
         
-        require_once "CRM/Core/Component.php";
         $cSubTypes = CRM_Core_Component::contactSubTypes();
        
         if ( !empty( $cSubTypes ) ) {
@@ -488,7 +478,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $group = CRM_Core_BAO_CustomGroup::create( $params );
 
         // reset the cache
-        require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
       
         if ($this->_action & CRM_Core_Action::UPDATE) {

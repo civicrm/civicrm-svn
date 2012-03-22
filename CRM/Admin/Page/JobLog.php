@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-require_once 'CRM/Core/DAO/Job.php';
 
 /**
  * Page for displaying list of jobs
@@ -104,7 +102,6 @@ class CRM_Admin_Page_JobLog extends CRM_Core_Page_Basic
 
         $jid = CRM_Utils_Request::retrieve('jid', 'Positive', $this);
         
-        require_once 'CRM/Core/JobManager.php';
         $sj = new CRM_Core_JobManager();
 
         $jobName = null;
@@ -116,7 +113,6 @@ class CRM_Admin_Page_JobLog extends CRM_Core_Page_Basic
 
         $this->assign('jobName', $jobName );
         
-        require_once 'CRM/Core/DAO/JobLog.php';
         $dao = new CRM_Core_DAO_JobLog();
         $dao->orderBy('id desc');
         if( $jobName ) $dao->job_id = $jid;

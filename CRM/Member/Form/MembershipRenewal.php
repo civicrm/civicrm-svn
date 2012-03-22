@@ -34,11 +34,6 @@
  *
  */
 
-require_once 'CRM/Member/Form.php';
-require_once 'CRM/Member/PseudoConstant.php';
-require_once 'CRM/Custom/Form/CustomData.php';
-require_once 'CRM/Core/BAO/CustomGroup.php';
-require_once 'CRM/Utils/Date.php';
 
 /**
  * This class generates form components for Membership Renewal
@@ -103,8 +98,6 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false, 'billing_mode IN ( 1, 3 )' );
             
             foreach ( $processors as $ppID => $label ) {
-                require_once 'CRM/Core/BAO/PaymentProcessor.php';
-                require_once 'CRM/Core/Payment.php';
                 $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
                 if ( $paymentProcessor['payment_processor_type'] == 'PayPal' && !$paymentProcessor['user_name'] ) {
                     continue;
@@ -138,7 +131,6 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             
             $this->_fields = array( );
             
-            require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::setCreditCardFields( $this );
             
             // this required to show billing block    
@@ -155,7 +147,6 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
              CRM_Custom_Form_Customdata::setDefaultValues( $this );
         }
                  
-        require_once 'CRM/Core/BAO/Email.php';
         $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail( );
         parent::preProcess( );
     }
@@ -203,7 +194,6 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
                                                                          $this->_memType, 
                                                                          'contribution_type_id' );
         
-        require_once 'CRM/Utils/Money.php';
         $defaults['total_amount'] = CRM_Utils_Money::format( CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                                                                  $this->_memType, 
                                                                  'minimum_fee' ), null, '%a');
@@ -238,7 +228,6 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             $fields["email-{$this->_bltID}"         ] = 1;
             $fields['email-Primary'                 ] = 1;
             
-            require_once 'CRM/Core/BAO/UFGroup.php';
             CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactID, $fields, $this->_defaults );
 
             // use primary email address if billing email address is empty
@@ -369,7 +358,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $this->addDate( 'renewal_date', ts('Date Renewal Entered'), false, array( 'formatType' => 'activityDate') );    
         if( CRM_Core_Permission::access( 'CiviContribute' ) && ! $this->_mode ) {
             $this->addElement('checkbox', 'record_contribution', ts('Record Renewal Payment?'), null, array('onclick' =>"checkPayment();"));
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $this->add('select', 'contribution_type_id', ts( 'Contribution Type' ), 
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( )
                        );
@@ -406,23 +394,19 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
         if ( $this->_mode ) {
             $this->add( 'select', 'payment_processor_id', ts( 'Payment Processor' ),$this->_processors, true );
-            require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::buildCreditCard( $this, true );
         }
         
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
         // Retrieve the name and email of the contact - this will be the TO for receipt email
         list( $this->_contributorDisplayName, 
               $this->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
         $this->assign( 'email', $this->_contributorEmail );
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                       'mailing_backend' );
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
 
         if ( CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $this->_id, 'contribution_recur_id' ) ) {
-            require_once 'CRM/Member/BAO/Membership.php'; 
             if ( CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $this->_id ) ) {
                 $this->assign( 'cancelAutoRenew', 
                                CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', "reset=1&mid={$this->_id}" ) );
@@ -471,9 +455,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
      */
     public function postProcess() 
     {
-        require_once 'CRM/Member/BAO/Membership.php';
-        require_once 'CRM/Member/BAO/MembershipType.php';
-        require_once 'CRM/Member/BAO/MembershipStatus.php'; 
 
         $ids    = array( );
         $config = CRM_Core_Config::singleton();
@@ -495,10 +476,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $formValues['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
                 $this->_memType,'contribution_type_id' );
 
-            require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $formValues['payment_processor_id'],
                                                                                   $this->_mode );
-            require_once 'CRM/Contact/BAO/Contact.php';
             $now = CRM_Utils_Date::getToday( $now, 'YmdHis' );
             $fields = array( );
             
@@ -560,7 +539,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $paymentParams['email'] = $this->_contributorEmail;
             }
             
-            require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
             $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
@@ -628,7 +606,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         
         $endDate = CRM_Utils_Date::processDate( $renewMembership->end_date );
         
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email
         $session = CRM_Core_Session::singleton( );
         $userID  = $session->get( 'userID' );
@@ -654,11 +631,8 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $contributionParams[$f] = CRM_Utils_Array::value( $f, $formValues );
             }   
 
-            require_once 'CRM/Contribute/BAO/Contribution.php';
             $contribution = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
            
-            require_once 'CRM/Member/DAO/MembershipPayment.php';
-            require_once 'CRM/Utils/Hook.php';
             $mpDAO = new CRM_Member_DAO_MembershipPayment();    
             $mpDAO->membership_id   = $renewMembership->id;
             $mpDAO->contribution_id = $contribution->id;
@@ -680,13 +654,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                     'trxn_id'           => $result['trxn_id'],
                                     );
             
-                require_once 'CRM/Core/BAO/FinancialTrxn.php';
                 $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
             }
         }
 
         if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
-            require_once 'CRM/Core/DAO.php';
             CRM_Core_DAO::setFieldValue( 'CRM_Member_DAO_MembershipType', 
                                          $formValues['membership_type_id'][1],
                                          'receipt_text_renewal',
@@ -709,7 +681,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $this->_groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Membership', $this, $this->_id, false,$this->_memType);
             
             // retrieve custom data
-            require_once 'CRM/Core/BAO/UFGroup.php';
             $customFields = $customValues = $fo = array( );
             foreach ( $this->_groupTree as $groupID => $group ) {
                 if ( $groupID == 'info' ) {
@@ -769,7 +740,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                         $addressFields[$n] = $this->_params['billing_' . $part];
                     }
                 }
-                require_once 'CRM/Utils/Address.php';
                 $this->assign('address', CRM_Utils_Address::format( $addressFields ) );
                 $date = CRM_Utils_Date::format( $this->_params['credit_card_exp_date'] );
                 $date = CRM_Utils_Date::mysqlToIso( $date );
@@ -786,7 +756,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 }
             }
 
-            require_once 'CRM/Core/BAO/MessageTemplates.php';
             list ($mailSend, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
                 array(
                     'groupName' => 'msg_tpl_workflow_membership',

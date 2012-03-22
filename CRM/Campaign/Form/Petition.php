@@ -33,9 +33,6 @@
  * $Id$
  *
  */
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Campaign/BAO/Survey.php';
-require_once 'CRM/Campaign/Form/Survey.php';
 
 /**
  * This class generates form components for adding a petition 
@@ -78,7 +75,6 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
     {
     	$defaults = parent::setDefaultValues();
     	
-        require_once 'CRM/Core/BAO/UFJoin.php';
 		$ufJoinParams = array( 'entity_table' => 'civicrm_survey',
 					   'entity_id'    => $this->_surveyId,
 					   'weight'       => 2);
@@ -108,9 +104,6 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
             return;
         }
 
-        require_once 'CRM/Event/PseudoConstant.php';
-        require_once 'CRM/Core/BAO/UFGroup.php';
-        require_once 'CRM/Core/OptionGroup.php';
        
         $this->add('text', 'title', ts('Petition Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
 
@@ -123,7 +116,6 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
         $this->addWysiwyg('instructions',ts('Introduction'), $attributes['instructions']);
         
         // Campaign id
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
 
@@ -193,7 +185,6 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey
 
         $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
 
-        require_once 'CRM/Core/BAO/UFJoin.php';
         
         // also update the ProfileModule tables 
         $ufJoinParams = array( 'is_active'    => 1, 

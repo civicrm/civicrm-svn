@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Event Info Page - Summmary about the event
@@ -58,7 +57,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         //get the event id.
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, true );
         $config    = CRM_Core_Config::singleton( );
-        require_once 'CRM/Event/BAO/Event.php';
         // ensure that the user has permission to see this page
         if ( ! CRM_Core_Permission::event( CRM_Core_Permission::VIEW,
                                            $this->_id ) ) {
@@ -95,7 +93,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         $this->assign( 'isShowLocation', CRM_Utils_Array::value( 'is_show_location', $values['event'] ) );
         
         // show event fees.
-        require_once 'CRM/Price/BAO/Set.php';
         if ( $this->_id && CRM_Utils_Array::value( 'is_monetary', $values['event'] ) ) {
             //CRM-6907
             $config = CRM_Core_Config::singleton( );
@@ -109,7 +106,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                 $priceSetFields = $setDetails[$priceSetId]['fields'];
                 if ( is_array( $priceSetFields ) ) {
                     $fieldCnt = 1;                    
-                    require_once 'CRM/Core/PseudoConstant.php';
                     $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
                     
                     foreach ( $priceSetFields as $fid => $fieldValues ) {
@@ -143,8 +139,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                 $this->assign( 'isPriceSet', 1); 
             } else {
                 //retrieve event fee block.
-                require_once 'CRM/Core/OptionGroup.php';
-                require_once 'CRM/Core/BAO/Discount.php';
                 $discountId = CRM_Core_BAO_Discount::findSet( $this->_id, 'civicrm_event' );
                 if ( $discountId ) {
                     CRM_Core_OptionGroup::getAssoc( CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount', 
@@ -158,11 +152,9 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         }
 
         $params = array( 'entity_id' => $this->_id ,'entity_table' => 'civicrm_event');
-        require_once 'CRM/Core/BAO/Location.php';
         $values['location'] = CRM_Core_BAO_Location::getValues( $params, true );
         
         //retrieve custom field information
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         $groupTree = CRM_Core_BAO_CustomGroup::getTree('Event', $this, $this->_id, 0, $values['event']['event_type_id'] );
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
         $this->assign( 'action', CRM_Core_Action::VIEW);
@@ -218,7 +210,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         
         if ( CRM_Core_Permission::check( 'view event participants' ) &&
              CRM_Core_Permission::check( 'view all contacts' ) ) {  
-            require_once 'CRM/Event/PseudoConstant.php';
             $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
             $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0');
             $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
@@ -234,7 +225,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
             $this->assign( 'participantListingURL', $participantListingURL );
         }
  
-        require_once 'CRM/Event/BAO/Participant.php';
         $hasWaitingList   = CRM_Utils_Array::value( 'has_waitlist', $values['event'] );
         $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id,
                                                                   false,
@@ -256,12 +246,10 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                     }
                     
                     // check if we're in shopping cart mode for events
-                    require_once 'CRM/Core/BAO/Setting.php';
                     $enable_cart = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME,
                                                                'enable_cart' );
                     
                     if ( $enable_cart ) {
-                        require_once('CRM/Event/Cart/BAO/EventInCart.php');
                         $link = CRM_Event_Cart_BAO_EventInCart::get_registration_link($this->_id);
                         $registerText = $link['label'];
 

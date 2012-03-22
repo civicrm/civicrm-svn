@@ -35,7 +35,6 @@
  */
 
 
-require_once 'CRM/Event/DAO/ParticipantStatusType.php';
 
 class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatusType
 {
@@ -49,7 +48,6 @@ class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatu
 
     static function &create(&$params)
     {
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction;
         $statusType = self::add($params);
         if (is_a($statusType, 'CRM_Core_Error')) {
@@ -63,12 +61,10 @@ class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatu
     static function deleteParticipantStatusType($id)
     {
         // return early if there are participants with this status
-        require_once 'CRM/Event/DAO/Participant.php';
         $participant = new CRM_Event_DAO_Participant;
         $participant->status_id = $id;
         if ($participant->find()) return false;
 
-        require_once 'CRM/Utils/Weight.php';
         CRM_Utils_Weight::delWeight('CRM_Event_DAO_ParticipantStatusType', $id);
 
         $dao = new CRM_Event_DAO_ParticipantStatusType;
@@ -102,7 +98,6 @@ class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatu
 
         $returnMessages = array();
 
-        require_once 'CRM/Event/PseudoConstant.php';
         $participantRole = CRM_Event_PseudoConstant::participantRole( );
         $pendingStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Pending'"  );
         $expiredStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Negative'" );
@@ -174,10 +169,8 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                     if ( ( $expirationSeconds + $registrationPendingSeconds ) < time( ) ) {
                         
                         //lets get the transaction mechanism.
-                        require_once 'CRM/Core/Transaction.php';
                         $transaction = new CRM_Core_Transaction( );
                         
-                        require_once 'CRM/Event/BAO/Participant.php';
                         $ids = array( $participantId );
                         $expiredId = array_search( 'Expired', $expiredStatuses );
                         $results = CRM_Event_BAO_Participant::transitionParticipants( $ids, $expiredId, $values['status_id'], true, true );
@@ -217,7 +210,6 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                          CRM_Event_BAO_Event::validRegistrationDate( $values ) ) {
                         
                         //check the target event having space.
-                        require_once 'CRM/Event/BAO/Participant.php';
                         $eventOpenSpaces = CRM_Event_BAO_Participant::eventFull( $values['event_id'], true, false );
                         
                         if ( $eventOpenSpaces && is_numeric( $eventOpenSpaces ) ||  ( $eventOpenSpaces === null ) ) {
@@ -232,10 +224,8 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                                                         
                             //need to check as to see if event has enough speces
                             if ( ( $requiredSpaces <= $eventOpenSpaces ) || ( $eventOpenSpaces === null ) ) {
-                                require_once 'CRM/Core/Transaction.php';
                                 $transaction = new CRM_Core_Transaction( );
                                 
-                                require_once 'CRM/Event/BAO/Participant.php';
                                 $ids = array( $participantId );
                                 $updateStatusId = array_search( 'Pending from waitlist', $pendingStatuses );
                                 

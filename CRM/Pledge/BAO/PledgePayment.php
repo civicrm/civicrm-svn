@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Pledge/DAO/PledgePayment.php';
 
 class CRM_Pledge_BAO_PledgePayment extends CRM_Pledge_DAO_PledgePayment
 {
@@ -101,8 +100,6 @@ WHERE     pledge_id = %1
 
     static function create( $params )
     {
-        require_once 'CRM/Contribute/PseudoConstant.php';
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
      
        
@@ -174,14 +171,12 @@ WHERE     pledge_id = %1
      */
     static function add( $params )
     {
-        require_once 'CRM/Utils/Hook.php';
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             CRM_Utils_Hook::pre( 'edit',  'PledgePayment', $params['id'], $params );
         } else {
             CRM_Utils_Hook::pre( 'create',  'PledgePayment', null, $params ); 
         }
         
-        require_once 'CRM/Pledge/DAO/PledgePayment.php';
         $payment = new CRM_Pledge_DAO_PledgePayment( );
         $payment->copyValues( $params );
         
@@ -238,13 +233,11 @@ WHERE     pledge_id = %1
      */
     static function del( $id )
     {
-        require_once 'CRM/Pledge/DAO/PledgePayment.php';
         $payment = new CRM_Pledge_DAO_PledgePayment( );
         $payment->id = $id;
         if ( $payment->find( ) ) {
             $payment->fetch( );
             
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::pre( 'delete',  'PledgePayment', $id, $payment );
             
             $result = $payment->delete( );
@@ -268,12 +261,10 @@ WHERE     pledge_id = %1
      */
     static function deletePayments( $id )
     { 
-        require_once 'CRM/Utils/Rule.php';
         if ( ! CRM_Utils_Rule::positiveInteger( $id ) ) {
             return false;
         }
         
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         $payment = new CRM_Pledge_DAO_PledgePayment( );
@@ -283,7 +274,6 @@ WHERE     pledge_id = %1
             while ( $payment->fetch( ) ) {
                 //also delete associated contribution.
                 if ( $payment->contribution_id ) {
-                    require_once 'CRM/Contribute/BAO/Contribution.php';
                     CRM_Contribute_BAO_Contribution::deleteContribution( $payment->contribution_id );
                 }
                 $payment->delete( );
@@ -306,10 +296,8 @@ WHERE     pledge_id = %1
     static function resetPledgePayment( $contributionID )
     { 
         //get all status
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         $payment = new CRM_Pledge_DAO_PledgePayment( );
@@ -359,7 +347,6 @@ WHERE     pledge_id = %1
         $editScheduled = false;        
         
         //get all statuses
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
         // if we get do not get contribution id means we are editing the scheduled payment.
@@ -582,7 +569,6 @@ WHERE  civicrm_pledge.id = %2
      */
      static function calculatePledgeStatus( $pledgeId )
      {
-         require_once 'CRM/Contribute/PseudoConstant.php';
          $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
          
          //retrieve all pledge payments for this particular pledge
@@ -650,7 +636,6 @@ WHERE  civicrm_pledge_payment.pledge_id = %1
 ";
         
         //get all status
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $params = array( 1 => array( $pledgeId, 'Integer' ) );
 
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
@@ -684,7 +669,6 @@ WHERE  civicrm_pledge_payment.id = {$paymentId}
     static function getOldestPledgePayment( $pledgeID, $limit = 1 )
     {
         //get pending / overdue statuses
-        require_once('CRM/Contribute/PseudoConstant.php');
         $pledgeStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
         //get pending and overdue payments

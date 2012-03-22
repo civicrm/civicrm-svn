@@ -37,10 +37,6 @@
 /**
  * Files required
  */
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Campaign/BAO/Survey.php';
-require_once 'CRM/Campaign/BAO/Campaign.php';
-require_once 'CRM/Campaign/PseudoConstant.php';
 
 class CRM_Campaign_Form_Search_Survey extends CRM_Core_Form 
 {
@@ -98,7 +94,6 @@ class CRM_Campaign_Form_Search_Survey extends CRM_Core_Form
         $this->assign( 'surveyTypes', json_encode( $surveyTypes ) );
         
         //campaigns
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         $this->add('select', 'survey_campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
         $this->set( 'surveyCampaigns', $campaigns );

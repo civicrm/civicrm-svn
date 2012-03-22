@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Profile/Selector/Listings.php';
-require_once 'CRM/Core/Selector/Controller.php';
-require_once 'CRM/Core/Page.php';
 
 /**
  * This implements the profile page for all contacts. It uses a selector
@@ -127,7 +124,6 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             }
             
             // check if we are rendering mixed profiles
-            require_once 'CRM/Core/BAO/UFGroup.php';
             if ( CRM_Core_BAO_UFGroup::checkForMixProfiles( $this->_profileIds ) ) {
                 CRM_Core_Error::fatal( ts( 'You cannot combine profiles of multiple types.' ) );
             } 
@@ -141,7 +137,6 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
            $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
         } 
         
-        require_once 'CRM/Core/BAO/UFGroup.php';
         if ( empty( $this->_profileIds ) ) {
             $gids = $this->_gid;
         } else {
@@ -385,7 +380,6 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
         
         $details = array( );
         $ufGroupParam   = array('id' => $gid );
-        require_once "CRM/Core/BAO/UFGroup.php";
         CRM_Core_BAO_UFGroup::retrieve($ufGroupParam, $details);
 
         // make sure this group can be mapped

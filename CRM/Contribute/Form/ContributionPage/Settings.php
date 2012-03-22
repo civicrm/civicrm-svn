@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/ContributionPage.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_ContributionPage 
 {
@@ -68,7 +66,6 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
                                                   'title' );
             CRM_Utils_System::setTitle( ts( 'Title and Settings (%1)',
                                             array( 1 => $title ) ) );
-            require_once 'CRM/Core/BAO/UFJoin.php';
 
             $ufJoinParams = array( 'module'       => 'OnBehalf',
                                    'entity_table' => 'civicrm_contribution_page',  
@@ -89,7 +86,6 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
      */
     public function buildQuickForm()
     {
-        require_once 'CRM/Utils/Money.php';
 
         $this->_first = true;
         $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage');
@@ -103,7 +99,6 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
                    true );
         
         //CRM-7362 --add campaigns.
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         CRM_Campaign_BAO_Campaign::addCampaign( $this, CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         
         $this->addWysiwyg( 'intro_text', ts('Introductory Message'), $attributes['intro_text'] );
@@ -115,11 +110,9 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
 
         $required = array( 'Contact', 'Organization' );
         $optional = array( 'Contribution', 'Membership' );
-        require_once "CRM/Core/BAO/UFGroup.php";
 
         $profiles              = CRM_Core_BAO_UFGroup::getValidProfiles( $required, $optional );
         //Check profiles for Organization subtypes
-        require_once 'CRM/Contact/BAO/ContactType.php';
         $contactSubType = CRM_Contact_BAO_ContactType::subTypes( 'Organization' );
         foreach( $contactSubType as $type ){
             $required        = array( 'Contact', $type );
@@ -246,7 +239,6 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
             $params['honor_block_text'] = null;
         }
 
-        require_once 'CRM/Contribute/BAO/ContributionPage.php';
         $dao = CRM_Contribute_BAO_ContributionPage::create( $params );
         
         // make entry in UF join table for onbehalf of org profile
@@ -255,7 +247,6 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
                                'entity_table' => 'civicrm_contribution_page', 
                                'entity_id'    => $dao->id );
 
-        require_once 'CRM/Core/BAO/UFJoin.php';
         // first delete all past entries
         CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );
 

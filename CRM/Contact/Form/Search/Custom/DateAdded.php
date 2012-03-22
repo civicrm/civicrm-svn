@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Search/Custom/Base.php';
 
 class CRM_Contact_Form_Search_Custom_DateAdded
    extends    CRM_Contact_Form_Search_Custom_Base
@@ -179,7 +178,6 @@ class CRM_Contact_Form_Search_Custom_DateAdded
         if ( $this->_groups ){
             //block for Group search
             $smartGroup = array( );
-            require_once 'CRM/Contact/DAO/Group.php';
             $group = new CRM_Contact_DAO_Group( );
             $group->is_active = 1;
             $group->find();

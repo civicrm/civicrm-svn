@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Core/QuickForm/Action.php';
 
 class CRM_Core_QuickForm_Action_Process extends CRM_Core_QuickForm_Action {
 

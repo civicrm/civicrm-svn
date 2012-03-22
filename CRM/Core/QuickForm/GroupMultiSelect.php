@@ -35,7 +35,6 @@
  *
  */
  
-require_once 'CRM/Core/QuickForm/NestedAdvMultiSelect.php';
  
 class CRM_Core_QuickForm_GroupMultiSelect extends CRM_Core_QuickForm_NestedAdvMultiSelect {
     

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form/Preferences.php';
 
 /**
  * This class generates form components for the display preferences
@@ -146,7 +145,6 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         if ($drupal_wysiwyg) {
           $this->addElement( 'select', 'wysiwyg_input_format', ts('Input Format'), $format_options, null);
         }
-        require_once 'CRM/Core/OptionGroup.php';
         $editOptions = CRM_Core_OptionGroup::values( 'contact_edit_options', false, false, false, 'AND v.filter = 0' );
         $this->assign( 'editOptions', $editOptions );
         
@@ -180,7 +178,6 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
                     unset($preferenceWeights[$key]);
                 }
             }
-            require_once 'CRM/Core/BAO/OptionValue.php';
             $opGroupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup' , 'contact_edit_options', 'id', 'name' );
             CRM_Core_BAO_OptionValue::updateOptionWeights( $opGroupId, array_flip($preferenceWeights) );
         }

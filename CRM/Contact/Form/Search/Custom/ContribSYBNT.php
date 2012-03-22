@@ -34,7 +34,6 @@
  *
  */
     
-require_once 'CRM/Contact/Form/Search/Interface.php';
     
 class CRM_Contact_Form_Search_Custom_ContribSYBNT
 implements CRM_Contact_Form_Search_Interface {

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/ACL/DAO/EntityRole.php';
 
 /**
  *  Access Control EntityRole

@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Campaign/Form/Task.php';
-require_once 'CRM/Campaign/Selector/Search.php';
-require_once 'CRM/Core/Selector/Controller.php';
 
 /**
  * This class provides the functionality to print voter records

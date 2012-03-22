@@ -35,9 +35,7 @@
  */
 
 require_once 'Mail/mime.php';
-require_once 'CRM/Utils/Mail.php';
 
-require_once 'CRM/Mailing/Event/DAO/Confirm.php';
 
 class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
 
@@ -60,7 +58,6 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
      */
     public static function confirm($contact_id, $subscribe_id, $hash) 
     {
-        require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
         $se =& CRM_Mailing_Event_BAO_Subscribe::verify($contact_id,
                                                        $subscribe_id, $hash);
         
@@ -68,7 +65,6 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
             return false;
         }
         
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         $ce = new CRM_Mailing_Event_BAO_Confirm();
@@ -76,7 +72,6 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
         $ce->time_stamp = date('YmdHis');
         $ce->save();
         
-        require_once 'CRM/Contact/BAO/GroupContact.php';
         CRM_Contact_BAO_GroupContact::updateGroupMembershipStatus( $contact_id, $se->group_id,
                                                                    'Email',$ce->id);
         
@@ -84,20 +79,16 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
         
         $config = CRM_Core_Config::singleton();
         
-        require_once 'CRM/Core/BAO/Domain.php';
         $domain = CRM_Core_BAO_Domain::getDomain( );
         list($domainEmailName, $_) = CRM_Core_BAO_Domain::getNameAndEmail();
         
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
         list($display_name, $email) =
             CRM_Contact_BAO_Contact_Location::getEmailDetails($se->contact_id);
         
-        require_once 'CRM/Contact/DAO/Group.php';
         $group = new CRM_Contact_DAO_Group();
         $group->id = $se->group_id;
         $group->find(true);
         
-        require_once 'CRM/Mailing/BAO/Component.php';
         $component = new CRM_Mailing_BAO_Component();
         $component->is_default = 1;
         $component->is_active = 1;
@@ -105,7 +96,6 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
         
         $component->find(true);
 
-        require_once 'CRM/Core/BAO/MailSettings.php';
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
         
         $html = $component->body_html;
@@ -116,13 +106,11 @@ class CRM_Mailing_Event_BAO_Confirm extends CRM_Mailing_Event_DAO_Confirm {
             $text = CRM_Utils_String::htmlToText($component->body_html);
         }
         
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         $bao = new CRM_Mailing_BAO_Mailing();
         $bao->body_text = $text;
         $bao->body_html = $html;
         $tokens = $bao->getTokens();
         
-        require_once 'CRM/Utils/Token.php';
         $html = CRM_Utils_Token::replaceDomainTokens($html, $domain, true, $tokens['html'] );
         $html = CRM_Utils_Token::replaceWelcomeTokens($html, $group->title, true);
         

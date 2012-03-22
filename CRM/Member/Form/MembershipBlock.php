@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/ContributionPage.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
-require_once 'CRM/Member/BAO/Membership.php';
 
 /**
  * form to process actions on Membership
@@ -82,7 +79,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         } else {
             $this->assign('membershipBlockId', $defaults['id']);
         }
-        require_once 'CRM/Price/BAO/Set.php';
         if ( $this->_id &&
            ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id, 3 )) ) {
            $defaults['member_price_set_id'] = $priceSetId;
@@ -101,7 +97,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
      */
     public function buildQuickForm()
     {
-        require_once 'CRM/Member/BAO/MembershipType.php';
         $membershipTypes = CRM_Member_BAO_MembershipType::getMembershipTypes();
         
         if (! empty( $membershipTypes ) ) {
@@ -153,7 +148,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             
             $this->addFormRule(array('CRM_Member_Form_MembershipBlock', 'formRule') , $this->_id);
         }
-        require_once 'CRM/Price/BAO/Set.php';
         $price = CRM_Price_BAO_Set::getAssoc( false, 'CiviMember');
         if ( CRM_Utils_System::isNull( $price ) ) {
             $this->assign('price', false );
@@ -194,7 +188,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         if ( CRM_Utils_Array::value( 'member_is_active', $params ) ) {
             
             // don't allow price set w/ membership signup, CRM-5095 
-            require_once 'CRM/Price/BAO/Set.php';
             if ( $contributionPageId && ( $setID = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $contributionPageId ) ) ) {
 
                 $extends = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $setID, 'extends' );
@@ -224,7 +217,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
 
             //for CRM-1302
             //if Membership status is not present, then display an error message
-            require_once 'CRM/Member/BAO/MembershipStatus.php';
             $dao = new CRM_Member_BAO_MembershipStatus();
             if ( ! $dao->find( ) ) {
                 $errors['_qf_default'] = ts( 'Add status rules, before configuring membership' );
@@ -236,7 +228,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             }
 
             if ( $contributionPageId ) {
-                require_once 'CRM/Contribute/DAO/ContributionPage.php';
                 $amountBlock = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $contributionPageId, 'amount_block_is_active' );
                 
                 if ( !$amountBlock &&  CRM_Utils_Array::value( 'is_separate_payment', $params ) ) {
@@ -260,7 +251,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         $params = $this->controller->exportValues( $this->_name );
         if ( $params['membership_type'] ) {
             // we do this in case the user has hit the forward/back button
-            require_once 'CRM/Member/DAO/MembershipBlock.php';
             $dao = new CRM_Member_DAO_MembershipBlock();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $this->_id; 

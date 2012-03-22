@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/ActionLog.php';
 
 /**
  * This class contains functions for managing Action Logs
@@ -56,7 +55,6 @@ class CRM_Core_BAO_ActionLog extends CRM_Core_DAO_ActionLog
 
         $actionLog->copyValues( $params );
 
-        require_once 'CRM/Utils/Hook.php';
         $edit = ($actionLog->id) ? true : false;
         if ($edit) {
             CRM_Utils_Hook::pre( 'edit', 'ActionLog', $actionLog->id, $actionLog );

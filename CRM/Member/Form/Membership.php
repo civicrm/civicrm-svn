@@ -34,10 +34,6 @@
  *
  */
 
-require_once 'CRM/Member/Form.php';
-require_once 'CRM/Member/PseudoConstant.php';
-require_once "CRM/Custom/Form/CustomData.php";
-require_once "CRM/Core/BAO/CustomGroup.php";
 
 /**
  * This class generates form components for Membership Type
@@ -101,8 +97,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false, "billing_mode IN ( 1, 3 )" );
             
             foreach ( $processors as $ppID => $label ) {
-                require_once 'CRM/Core/BAO/PaymentProcessor.php';
-                require_once 'CRM/Core/Payment.php';
                 $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
                 if ( $paymentProcessor['payment_processor_type'] == 'PayPal' && !$paymentProcessor['user_name'] ) {
                     continue;
@@ -136,7 +130,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                        
             $this->_fields = array( );
             
-            require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::setCreditCardFields( $this );
             
             // this required to show billing block    
@@ -145,7 +138,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         }
         
         if ( $this->_action & CRM_Core_Action::ADD ) {
-            require_once 'CRM/Member/BAO/Membership.php';
             //check whether any active membership statuses are available - redirects back to contact summary if not
             CRM_Member_BAO_Membership::statusAvilability($this->_contactID);
 
@@ -187,13 +179,11 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         // CRM-4395, get the online pending contribution id.
         $this->_onlinePendingContributionId = null;
         if ( !$this->_mode && $this->_id && ($this->_action & CRM_Core_Action::UPDATE) ) {
-            require_once 'CRM/Contribute/BAO/Contribution.php';
             $this->_onlinePendingContributionId = CRM_Contribute_BAO_Contribution::checkOnlinePendingContribution( $this->_id, 
                                                                                                                    'Membership' );
         }
         $this->assign( 'onlinePendingContributionId', $this->_onlinePendingContributionId );
 
-        require_once "CRM/Core/BAO/Email.php";
         $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail( );
         
         parent::preProcess( );
@@ -260,7 +250,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             //keep main object campaign in hand.
             $memberCampaignId = CRM_Utils_Array::value( 'campaign_id', $defaults );
             
-            require_once "CRM/Contribute/BAO/Contribution.php";
             CRM_Contribute_BAO_Contribution::getValues( $contributionParams, $defaults, $contributionIds );
             
             //get back original object campaign id.
@@ -321,7 +310,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             $fields["email-Primary"                 ] = 1;
 
             if ( $this->_contactID ) {
-                require_once "CRM/Core/BAO/UFGroup.php";
                 CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactID, $fields, $this->_defaults );
             }
 
@@ -390,7 +378,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             }
             
             $this->set( 'priceSetId', $this->_priceSetId );
-            require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::buildPriceSet( $this );
 
             $optionsMembershipTypes = array( );
@@ -417,7 +404,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
 
         if ( $this->_action & CRM_Core_Action::ADD ) {
             $buildPriceSet = false;
-            require_once 'CRM/Price/BAO/Set.php';
             $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'CiviMember' );
             if ( !empty( $priceSets ) ) {
                 $buildPriceSet = true;
@@ -450,7 +436,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         }
         
         if ( $this->_context == 'standalone' ) {
-            require_once 'CRM/Contact/Form/NewContact.php';
             CRM_Contact_Form_NewContact::buildQuickForm( $this );
         }        
         
@@ -563,7 +548,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                    CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_Membership', 'source' ) );
         
         //CRM-7362 --add campaigns.
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaignId = null;
         if ( $this->_id ) {
             $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $this->_id, 'campaign_id' ); 
@@ -582,7 +566,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                         
             $this->addElement('checkbox', 'record_contribution', ts('Record Membership Payment?') );
             
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $this->add('select', 'contribution_type_id', 
                        ts( 'Contribution Type' ), 
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ) );
@@ -633,13 +616,11 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                         ts( 'Payment Processor' ),
                         $this->_processors, true, 
                         array( 'onChange' => "buildAutoRenew( null, this.value );") );
-            require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::buildCreditCard( $this, true );
         }
         
         // Retrieve the name and email of the contact - this will be the TO for receipt email
         if ( $this->_contactID ) {
-            require_once 'CRM/Contact/BAO/Contact/Location.php';
             list( $this->_memberDisplayName, 
                   $this->_memberEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
         
@@ -652,7 +633,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $recurContributionId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $this->_id,
                                                                 'contribution_recur_id' );
-            require_once 'CRM/Member/BAO/Membership.php'; 
             if ( $recurContributionId && !CRM_Member_BAO_Membership::isSubscriptionCancelled( $this->_id ) ) {
                 $isRecur = true;
                 if ( CRM_Member_BAO_Membership::isCancelSubscriptionSupported( $this->_id ) ) {
@@ -668,7 +648,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         
         $this->addFormRule(array('CRM_Member_Form_Membership', 'formRule'), $this );
         
-        require_once 'CRM/Core/BAO/Setting.php';
         $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                       'mailing_backend' );
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
@@ -692,7 +671,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $priceSetId = CRM_Utils_Array::value( 'price_set_id', $params );
         
         if ( $priceSetId ) {
-            require_once 'CRM/Price/BAO/Field.php';
             CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $params, $errors );
             
             $priceFieldIDS = array();
@@ -739,7 +717,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         }
 
         if ( !empty($errors) && (count($self->_memTypeSelected) > 1) ) {
-            require_once 'CRM/Member/BAO/MembershipType.php';
             $memberOfContacts = CRM_Member_BAO_MembershipType::getMemberOfContactByMemTypes( $self->_memTypeSelected );
             $duplicateMemberOfContacts = array_count_values($memberOfContacts);
             foreach( $duplicateMemberOfContacts as $countDuplicate ) {
@@ -764,7 +741,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         
         if ( CRM_Utils_Array::value( 'payment_processor_id', $params ) ) {
             // make sure that credit card number and cvv are valid
-            require_once 'CRM/Utils/Rule.php';
             if ( CRM_Utils_Array::value( 'credit_card_type', $params ) ) {
                 if ( CRM_Utils_Array::value( 'credit_card_number', $params ) &&
                      ! CRM_Utils_Rule::creditCardNumber( $params['credit_card_number'], $params['credit_card_type'] ) ) {
@@ -780,7 +756,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         
         $joinDate = null;
         if ( CRM_Utils_Array::value( 'join_date', $params ) ) {
-            require_once 'CRM/Member/BAO/MembershipType.php';
             
             $joinDate = CRM_Utils_Date::processDate( $params['join_date'] );
                         
@@ -839,7 +814,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
                 //CRM-3724, check for availability of valid membership status.
                 if ( !CRM_Utils_Array::value( 'is_override',  $params ) && !isset($errors['_qf_default']) ) {
-                    require_once 'CRM/Member/BAO/MembershipStatus.php';
                     $calcStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( $startDate, 
                                                                                               $endDate, 
                                                                                               $joinDate, 
@@ -896,9 +870,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
      */
     public function postProcess() 
     {
-        require_once 'CRM/Member/BAO/Membership.php';
-        require_once 'CRM/Member/BAO/MembershipType.php';
-        require_once 'CRM/Member/BAO/MembershipStatus.php';
 
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             CRM_Member_BAO_Membership::deleteRelatedMemberships( $this->_id );
@@ -948,14 +919,12 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         $lineItem = array( );
         $priceSetId = null;
         if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $this->_params ) ) {
-            require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::processAmount( $this->_priceSet['fields'], 
                                               $this->_params, $lineItem[$priceSetId] );
             $params['total_amount'] = CRM_Utils_Array::value( 'amount', $this->_params );
         }
         
         // set the contact, when contact is selected
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
         if ( CRM_Utils_Array::value('contact_select_id', $formValues ) ) {
             $this->_contactID = $formValues['contact_select_id'][1];
             list( $this->_memberDisplayName, 
@@ -1111,7 +1080,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                                                                'contribution_type_id' );
             }
 
-            require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $formValues['payment_processor_id'],
                                                                                   $this->_mode );
             
@@ -1119,7 +1087,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $params['payment_processor_id'] = $this->_params['payment_processor_id'] = 
                 $formValues['payment_processor_id'] = $this->_paymentProcessor['id'];
             
-            require_once "CRM/Contact/BAO/Contact.php";
             
             $now = date( 'YmdHis' );
             $fields = array( );
@@ -1185,7 +1152,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                 $paymentParams['email'] = $this->_memberEmail;
             }
             
-            require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
             // CRM-7137 -for recurring membership, 
@@ -1194,7 +1160,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             if ( CRM_Utils_Array::value( 'is_recur', $paymentParams ) ) {
                 $allStatus = CRM_Member_PseudoConstant::membershipStatus( );
 
-                require_once 'CRM/Contribute/Form/Contribution/Confirm.php';
                 $contribution 
                     = CRM_Contribute_Form_Contribution_Confirm::processContribution( $this, 
                                                                                      $this->_params, 
@@ -1235,11 +1200,9 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             if ( is_a( $result, 'CRM_Core_Error' ) ) {
                 //make sure to cleanup db for recurring case.
                 if ( CRM_Utils_Array::value( 'contributionID', $paymentParams ) ) {
-                    require_once 'CRM/Contribute/BAO/Contribution.php';
                     CRM_Contribute_BAO_Contribution::deleteContribution( $paymentParams['contributionID'] );
                 }
                 if ( CRM_Utils_Array::value( 'contributionRecurID', $paymentParams ) ) {
-                    require_once 'CRM/Contribute/BAO/ContributionRecur.php';
                     CRM_Contribute_BAO_ContributionRecur::deleteRecurContribution( $paymentParams['contributionRecurID'] );
                 }
                 
@@ -1310,7 +1273,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                                         'trxn_id'           => CRM_Utils_Array::value( 'trxn_id', $result ) 
                                         );
                     
-                    require_once 'CRM/Core/BAO/FinancialTrxn.php';
                     $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
                 }
             }
@@ -1320,7 +1282,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                  CRM_Utils_Array::value( 'record_contribution', $formValues ) ) {
                 
                 // update membership as well as contribution object, CRM-4395
-                require_once 'CRM/Contribute/Form/Contribution.php';
                 $params['contribution_id'] = $this->_onlinePendingContributionId;
                 $params['componentId']     = $params['id'];
                 $params['componentName']   = 'contribute';
@@ -1336,7 +1297,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                     //display end date w/ status message.
                     $endDate = $membership->end_date;
                     
-                    require_once 'CRM/Member/PseudoConstant.php';
                     $membershipStatues = CRM_Member_PseudoConstant::membershipStatus( );
                     if ( !in_array( $membership->status_id, array( array_search('Cancelled',$membershipStatues),
                                                                    array_search('Expired',$membershipStatues) ) ) ) {   
@@ -1399,7 +1359,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             }
 
             // retrieve custom data
-            require_once "CRM/Core/BAO/UFGroup.php";
             $customFields = $customValues = array( );
             foreach ( $this->_groupTree as $groupID => $group ) {
                 if ( $groupID == 'info' ) {
@@ -1443,7 +1402,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
                         $addressFields[$n] = $this->_params['billing_'.$part];
                     }
                 }
-                require_once 'CRM/Utils/Address.php';
                 $this->assign('address', CRM_Utils_Address::format( $addressFields ) );
 
                 $date = CRM_Utils_Date::format( $this->_params['credit_card_exp_date'] );
@@ -1477,7 +1435,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
 
             $this->assign( 'customValues', $customValues );
 
-            require_once 'CRM/Core/BAO/MessageTemplates.php';
             list ($mailSend, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
                 array(
                     'groupName' => 'msg_tpl_workflow_membership',

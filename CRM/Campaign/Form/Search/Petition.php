@@ -37,10 +37,6 @@
 /**
  * Files required
  */
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Campaign/BAO/Survey.php';
-require_once 'CRM/Campaign/BAO/Petition.php';
-require_once 'CRM/Campaign/BAO/Campaign.php';
 
 class CRM_Campaign_Form_Search_Petition extends CRM_Core_Form 
 {
@@ -90,7 +86,6 @@ class CRM_Campaign_Form_Search_Petition extends CRM_Core_Form
         $this->add( 'text', 'petition_title', ts( 'Title' ), $attributes['title'] );
         
         //campaigns
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         $this->add('select', 'petition_campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
         $this->set( 'petitionCampaigns', $campaigns );

@@ -169,7 +169,6 @@ class CRM_Core_Permission {
             $defaultGroups = array_keys( $customGroups );
         }
 
-        require_once 'CRM/ACL/API.php';
         return CRM_ACL_API::group( $type, null, 'civicrm_custom_group', $customGroups, $defaultGroups );
     }
 
@@ -233,7 +232,6 @@ class CRM_Core_Permission {
 
         }
 
-        require_once 'CRM/ACL/API.php';
         return CRM_ACL_API::group( $type, null, 'civicrm_uf_group', $ufGroups );
     }
 
@@ -249,7 +247,6 @@ class CRM_Core_Permission {
     }
 
     public static function event( $type = CRM_Core_Permission::VIEW, $eventID = null ) {
-        require_once 'CRM/Event/PseudoConstant.php';
         $events = CRM_Event_PseudoConstant::event( null, true );
         $includeEvents = array( );
 
@@ -263,7 +260,6 @@ class CRM_Core_Permission {
             $includeEvents = array_keys( $events );
         }
 
-        require_once 'CRM/ACL/API.php';
         $permissionedEvents = CRM_ACL_API::group( $type, null, 'civicrm_event', $events, $includeEvents );
         if ( ! $eventID ) {
             return $permissionedEvents;
@@ -289,7 +285,6 @@ class CRM_Core_Permission {
         
         if ( $checkPermission ) {
             if ( $module == 'CiviCase' ) {
-                require_once 'CRM/Case/BAO/Case.php';
                 return CRM_Case_BAO_Case::accessCiviCase( );
             } else {
                 return CRM_Core_Permission::check( "access $module" );
@@ -323,7 +318,6 @@ class CRM_Core_Permission {
         }
         
         if ( $module == 'CiviCase' && !$permissionName ) {
-            require_once 'CRM/Case/BAO/Case.php';
             return CRM_Case_BAO_Case::accessCiviCase( );
         } else {
             //check for permission.
@@ -374,7 +368,6 @@ class CRM_Core_Permission {
         // check whether the following Ajax requests submitted the right key
         // FIXME: this should be integrated into ACLs proper
         if ( CRM_Utils_Array::value( 'page_type', $item ) == 3 ) {
-            require_once 'CRM/Core/Key.php';
             if (!CRM_Core_Key::validate($_REQUEST['key'], $item['path'])) {
                 return false;
             }
@@ -406,7 +399,6 @@ class CRM_Core_Permission {
             }
 
             $config = CRM_Core_Config::singleton( );
-            require_once 'CRM/Core/Component.php';
             
             if ( !$all ) {
                 $components = CRM_Core_Component::getEnabledComponents( );
@@ -484,7 +476,6 @@ class CRM_Core_Permission {
             // For multisite just check if there are contacts in acl_contact_cache table for now.
             // FixMe: so even if a user in multisite has very limited permission could still 
             // see search / contact navigation options for example.
-            require_once 'CRM/Contact/BAO/Contact/Permission.php';
             return CRM_Contact_BAO_Contact_Permission::hasContactsInCache( CRM_Core_Permission::VIEW,
                                                                            $contactID );
         }
@@ -501,7 +492,6 @@ class CRM_Core_Permission {
         $tables = $whereTables = array( );
         $where  = null;
         
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::aclWhereClause( CRM_Core_Permission::VIEW,
                                         $tables, $whereTables,
                                         $contactID, $where );
@@ -524,7 +514,6 @@ class CRM_Core_Permission {
         
         static $allCompPermissions;
         if ( !is_array( $allCompPermissions ) ) {
-            require_once 'CRM/Core/Component.php';
             $components = CRM_Core_Component::getComponents( );
             foreach ( $components as $name => $comp ) {
                 $allCompPermissions[$name] = $comp->getPermissions( );
@@ -570,7 +559,6 @@ class CRM_Core_Permission {
     }
 
     static function isMultisiteEnabled( ) {
-        require_once 'CRM/Core/BAO/Setting.php';
         return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
                                               'is_enabled' ) ? true : false;
     }

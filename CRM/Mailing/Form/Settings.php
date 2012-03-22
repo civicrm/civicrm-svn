@@ -48,7 +48,6 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
     public function preProcess()  
     {
         //when user come from search context. 
-        require_once 'CRM/Contact/Form/Search.php';
         $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
     }
     
@@ -78,7 +77,6 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
         }
 
         if ( $mailingID ) {
-            require_once 'CRM/Mailing/DAO/Mailing.php';
             $dao = new  CRM_Mailing_DAO_Mailing();
             $dao->id = $mailingID; 
             $dao->find(true);
@@ -101,11 +99,9 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
      */
     public function buildQuickForm( ) 
     {
-        require_once 'CRM/Mailing/PseudoConstant.php';
 
         $this->addElement('checkbox', 'override_verp', ts('Track Replies?'));
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $defaults['override_verp'] = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                                     'track_civimail_replies', null, false );
         
@@ -200,7 +196,6 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
         $ids['mailing_id']    = $this->get('mailing_id');
         
         // update mailing
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::create($params, $ids);
 
         if ( $qf_Settings_submit ) {

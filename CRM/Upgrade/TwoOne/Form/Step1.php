@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Upgrade/Form.php';
 
 class CRM_Upgrade_TwoOne_Form_Step1 extends CRM_Upgrade_Form {
 
@@ -42,7 +41,6 @@ class CRM_Upgrade_TwoOne_Form_Step1 extends CRM_Upgrade_Form {
         $config = CRM_Core_Config::singleton( );
 
         // Let's first update the config defaults
-        require_once "CRM/Core/DAO/Domain.php";
         $domain = new CRM_Core_DAO_Domain();
         $domain->selectAdd( );
         $domain->selectAdd( 'config_backend' );
@@ -71,7 +69,6 @@ class CRM_Upgrade_TwoOne_Form_Step1 extends CRM_Upgrade_Form {
                 }
             }
             // serialise settings 
-            require_once "CRM/Core/BAO/ConfigSetting.php";
             CRM_Core_BAO_ConfigSetting::add($defaults);            
             
             $config = CRM_Core_Config::singleton( );

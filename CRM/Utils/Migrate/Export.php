@@ -338,7 +338,6 @@ AND    entity_id    IS NULL
                     $value = $object->$name;
                     if ( substr( $value, 0, 7 ) == 'custom_' ) { // hack for profile field_name
                         $cfID = substr( $value, 7 );
-                        require_once 'CRM/Core/BAO/CustomField.php';
                         list( $tableName, $columnName, $groupID ) = CRM_Core_BAO_CustomField::getTableColumnGroup( $cfID );
                         $value = "custom.{$tableName}.{$columnName}";
                     }

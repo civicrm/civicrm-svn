@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Price/BAO/Set.php';
 
 /**
  * form to process actions on Price Sets
@@ -140,8 +138,6 @@ class CRM_Price_Form_Set extends CRM_Core_Form
             $priceSetUsedTables = CRM_Price_BAO_Set::getUsedBy( $this->_sid, true );
         }
         
-        require_once 'CRM/Core/Config.php';
-        require_once 'CRM/Core/Component.php';
         $config = CRM_Core_Config::singleton( );
         $showContribution = false;
         $components = array( 'CiviEvent'      => array( 'title'  => ts( 'Event' ),  
@@ -188,7 +184,6 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         $this->addGroup( $extends, 'extends', ts('Used For'), '&nbsp;', true );
 
         $this->addRule( 'extends', ts('%1 is a required field.', array(1 => ts('Used For'))), 'required' );
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $this->add( 'select', 'contribution_type_id', 
                     ts( 'Contribution Type (Membership Fees)' ), 
                     array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ) );

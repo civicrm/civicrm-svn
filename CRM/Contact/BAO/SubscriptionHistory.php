@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/DAO/SubscriptionHistory.php';
 
 /**
  * BAO object for crm_email table

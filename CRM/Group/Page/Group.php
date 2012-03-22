@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 class CRM_Group_Page_Group extends CRM_Core_Page_Basic 
 {

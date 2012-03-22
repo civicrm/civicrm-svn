@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/Task.php';
-require_once 'CRM/Contribute/Selector/Search.php';
-require_once 'CRM/Core/Selector/Controller.php';
 
 /**
  * This class provides the functionality to print contribution records

@@ -34,10 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/ShowHideBlocks.php';
-require_once 'CRM/Campaign/BAO/Survey.php';
-require_once 'CRM/Custom/Form/CustomData.php';
 
 /**
  * This class generates form components for processing a survey 
@@ -87,7 +83,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     
     public function preProcess()
     {
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         if ( !CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             CRM_Utils_System::permissionDenied( );
         }
@@ -162,11 +157,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $defaults = $this->_values;
 
         if ( $this->_surveyId ) {
-            require_once 'CRM/Core/BAO/UFJoin.php';
 
             if ( CRM_Utils_Array::value('result_id', $defaults) &&
                  CRM_Utils_Array::value('recontact_interval', $defaults) ) {
-                require_once 'CRM/Core/OptionValue.php';
                 
                 $resultId          = $defaults['result_id'];
                 $recontactInterval = unserialize($defaults['recontact_interval']);
@@ -228,9 +221,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             return CRM_Custom_Form_CustomData::buildQuickForm( $this );
         }
 
-        require_once 'CRM/Event/PseudoConstant.php';
-        require_once 'CRM/Core/BAO/UFGroup.php';
-        require_once 'CRM/Core/BAO/CustomField.php';
        
         $this->add('text', 'title', ts('Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
         
@@ -239,7 +229,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->add('select', 'activity_type_id', ts('Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
         // Campaign id
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
         
@@ -493,8 +482,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $params['last_modified_id'] = $session->get( 'userID' );
         $params['last_modified_date'] = date('YmdHis');
         
-        require_once 'CRM/Core/BAO/OptionValue.php';
-        require_once 'CRM/Core/BAO/OptionGroup.php';
         
         $updateResultSet = false;
         $resultSetOptGrpId = null;
@@ -587,7 +574,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             }
         }
         
-        require_once 'CRM/Core/BAO/UFJoin.php';
         
         // also update the ProfileModule tables 
         $ufJoinParams = array( 'is_active'    => 1, 

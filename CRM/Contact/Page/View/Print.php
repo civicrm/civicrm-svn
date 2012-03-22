@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View/Summary.php';
 
 /**
  * Main page for viewing contact.

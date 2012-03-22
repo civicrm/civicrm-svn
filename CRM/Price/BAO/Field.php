@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Price/DAO/Field.php';
 
 /**
  * Business objects for managing price fields.
@@ -86,8 +85,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
      */
     static function create( &$params, $ids )
     {
-        require_once 'CRM/Core/Transaction.php';
-        require_once 'CRM/Price/BAO/FieldValue.php';
 
         $transaction = new CRM_Core_Transaction( );
         
@@ -99,12 +96,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
         }
         
         $options  = $optionsIds = array( );
-        require_once 'CRM/Price/Form/Field.php';
         $maxIndex = CRM_Price_Form_Field::NUM_OPTION;
         
         if ( $priceField->html_type == 'Text' ) {
             $maxIndex = 1;
-            require_once 'CRM/Price/BAO/FieldValue.php';
             
             $fieldValue = new CRM_Price_DAO_FieldValue( );
             $fieldValue->price_field_id = $priceField->id;
@@ -227,7 +222,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                                                 $fieldOptions = null,
                                                 $feezeOptions = array( ) ) 
     {
-        require_once 'CRM/Utils/Money.php';
         $field = new CRM_Price_DAO_Field();
         $field->id = $fieldId;
         if (! $field->find(true)) {
@@ -401,7 +395,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
         
         if ( $reset || empty( $options[$fieldId] ) ) {
             $values = array( );
-            require_once 'CRM/Price/BAO/FieldValue.php';
             CRM_Price_BAO_FieldValue::getValues( $fieldId, $values, 'weight', ! $inactiveNeeded );
             $options[$fieldId] = $values;
         }
@@ -453,13 +446,11 @@ WHERE
         
         if ( $field->find( true ) ) {
             // delete the options for this field
-            require_once 'CRM/Price/BAO/FieldValue.php';
             CRM_Price_BAO_FieldValue::deleteValues( $id );
             
             // reorder the weight before delete
             $fieldValues  = array( 'price_set_id' => $field->price_set_id );
             
-            require_once 'CRM/Utils/Weight.php';
             CRM_Utils_Weight::delWeight( 'CRM_Price_DAO_Field', $field->id, $fieldValues );
             
             // now delete the field 
@@ -526,7 +517,6 @@ WHERE  id IN (" .implode( ',', array_keys( $priceFields ) ).')';
             
             $selectedAmounts = array( );
             
-            require_once 'CRM/Price/BAO/FieldValue.php';
             foreach ( $htmlTypes as $fieldId => $type ) {
                 $options = array( );
                 CRM_Price_BAO_FieldValue::getValues( $fieldId, $options );  

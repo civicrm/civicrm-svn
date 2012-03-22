@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Activity/Import/Parser.php';
 
 /**
  * This class summarizes the import results

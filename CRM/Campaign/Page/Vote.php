@@ -32,8 +32,6 @@
    *
    */
 
-require_once 'CRM/Core/Page.php';
-require_once 'CRM/Core/Permission.php';
 
 /**
  * Page for voting tab interface.

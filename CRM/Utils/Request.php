@@ -34,7 +34,6 @@
  */
 
 
-require_once 'CRM/Core/Action.php';
 
 /**
  * class for managing a http request
@@ -95,7 +94,6 @@ class CRM_Utils_Request {
             break;
         }
 
-        require_once 'CRM/Utils/Type.php';
         if ( isset( $value ) &&
              ( CRM_Utils_Type::validate( $value, $type, $abort, $name ) === null ) ) {
             $value = null;

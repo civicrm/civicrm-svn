@@ -32,7 +32,6 @@
    * in creating this payment processor module
    */
 
-require_once 'CRM/Core/Payment/BaseIPN.php';
 
 class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 
@@ -156,7 +155,6 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
             return;
         }
 
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         // fix for CRM-2842
@@ -201,7 +199,6 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 */ 
 	static function getContext( $privateData, $orderNo)	
 	{
-        require_once 'CRM/Contribute/DAO/Contribution.php';
 
         $component = null;
         $isTest = null;
@@ -252,7 +249,6 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 
             // we are in event mode
             // make sure event exists and is valid
-            require_once 'CRM/Event/DAO/Event.php';
             $event = new CRM_Event_DAO_Event( );
             $event->id = $eventID;
             if ( ! $event->find( true ) ) {
@@ -295,7 +291,6 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
         }
 
 		if ($dps_method == "pxpay"){	
-            require_once 'CRM/Core/Payment/PaymentExpressUtils.php';
 			$processResponse = _valueXml(array(
                                                'PxPayUserId' => $dps_user,
                                                'PxPayKey' => $dps_key,
@@ -385,7 +380,6 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
         $mode   = $mode ? 'test' : 'live';
 
 
-        require_once 'CRM/Core/BAO/PaymentProcessor.php';
         $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $paymentProcessorID,
                                                                        $mode );
         

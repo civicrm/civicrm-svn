@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Event/DAO/ParticipantPayment.php';
 
 class CRM_Event_BAO_ParticipantPayment extends CRM_Event_DAO_ParticipantPayment
 {
@@ -65,7 +64,6 @@ class CRM_Event_BAO_ParticipantPayment extends CRM_Event_DAO_ParticipantPayment
      */ 
     static function deleteParticipantPayment( $params ) 
     {
-        require_once 'CRM/Event/DAO/ParticipantPayment.php';
         $participantPayment = new CRM_Event_DAO_ParticipantPayment( );
 
         $valid = false;
@@ -81,7 +79,6 @@ class CRM_Event_BAO_ParticipantPayment extends CRM_Event_DAO_ParticipantPayment
         }
 
         if ( $participantPayment->find( true ) ) {
-            require_once 'CRM/Contribute/BAO/Contribution.php';
             CRM_Contribute_BAO_Contribution::deleteContribution( $participantPayment->contribution_id );
             $participantPayment->delete( ); 
             return $participantPayment;

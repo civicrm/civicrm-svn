@@ -35,7 +35,6 @@
  *
  */
  
-require_once 'CRM/Contact/DAO/GroupNesting.php';
 
 class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implements Iterator {
     
@@ -170,7 +169,6 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
     }
     
     function _getNextParentlessGroup( &$group = null ) {
-        require_once 'CRM/Contact/BAO/Group.php';
         $lastParentlessGroup = $this->_lastParentlessGroup;
         $nextGroup = new CRM_Contact_BAO_Group( );
         $nextGroup->order_by = 'title ' . self::$_sortOrder;
@@ -194,7 +192,6 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
         $children = self::getChildGroupIds( $parentGroup->id );
         if ( count( $children ) > 0 ) {
             // we have child groups, so get the first one based on _sortOrder
-            require_once 'CRM/Contact/BAO/Group.php';
             $childGroup = new CRM_Contact_BAO_Group( );
             $cgQuery = "SELECT * FROM civicrm_group WHERE id IN (" .
                 implode( ',', $children ) . ") ORDER BY title " .
@@ -554,7 +551,6 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
     static function getAncestorGroups( $groupIds, $includeSelf = true ) {
         $groupIds = self::getAncestorGroupIds( $groupIds, $includeSelf );
         $params['id'] = $groupIds;
-        require_once 'CRM/Contact/BAO/Group.php';
         return CRM_Contact_BAO_Group::getGroups( $params );
     }
     
@@ -654,7 +650,6 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
     static function getDescendentGroups( $groupIds, $includeSelf = true ) {
         $groupIds = self::getDescendentGroupIds( $groupIds, $includeSelf );
         $params['id'] = $groupIds;
-        require_once 'CRM/Contact/BAO/Group.php';
         return CRM_Contact_BAO_Group::getGroups( $params );
     }
     
@@ -669,7 +664,6 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
      */
 
     static function getPotentialChildGroupIds( $groupId ) {
-        require_once 'CRM/Contact/BAO/Group.php';
         $groups = CRM_Contact_BAO_Group::getGroups( );
         $potentialChildGroupIds = array( );
         foreach ( $groups as $group ) {

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
 
 class CRM_Logging_ReportSummary extends CRM_Report_Form
 {

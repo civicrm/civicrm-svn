@@ -34,12 +34,6 @@
  *
  */
 
-require_once "CRM/Core/Form.php";
-require_once "CRM/Core/BAO/CustomGroup.php";
-require_once 'CRM/Core/BAO/File.php';
-require_once "CRM/Contact/Form/Task.php";
-require_once "CRM/Activity/BAO/Activity.php";
-require_once "CRM/Custom/Form/CustomData.php";
 
 /**
  * This class generates form components for Activity
@@ -230,14 +224,12 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $this->assign( 'contactId', $this->_currentlyViewedContactId );
         
         if ( $this->_currentlyViewedContactId ) {
-            require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::setTitle( $this->_currentlyViewedContactId );
         }
 
         //give the context.
         if ( !isset($this->_context) ) {
             $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
-            require_once 'CRM/Contact/Form/Search.php';
             if ( CRM_Contact_Form_Search::isSearchContext( $this->_context ) ) {
                 $this->_context = 'search';
             } else if ( !in_array( $this->_context, array( 'dashlet', 'dashletFullscreen' ) ) 
@@ -272,7 +264,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $this->assign( 'atype', $this->_activityTypeId );
         
         //check for required permissions, CRM-6264 
-        require_once 'CRM/Case/BAO/Case.php';
         if ( $this->_activityId &&
              in_array( $this->_action, array( CRM_Core_Action::UPDATE, CRM_Core_Action::VIEW ) ) && 
              !CRM_Activity_BAO_Activity::checkPermission( $this->_activityId, $this->_action ) ) {
@@ -291,7 +282,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         //Assigning Activity type name
         if ( $this->_activityTypeId ) {
-            require_once 'CRM/Core/OptionGroup.php';
             $activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 'AND v.value = '.$this->_activityTypeId , 'name' );
             if ( $activityTName[$this->_activityTypeId] ) {
                 $this->_activityTypeName = $activityTName[$this->_activityTypeId];
@@ -356,7 +346,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         if ( $this->_activityTypeId ) {
             //set activity type name and description to template
-            require_once 'CRM/Core/BAO/OptionValue.php';
             list( $this->_activityTypeName, $activityTypeDescription ) = 
                 CRM_Core_BAO_OptionValue::getActivityTypeDetails( $this->_activityTypeId );
             $this->assign( 'activityTypeName',        $this->_activityTypeName );
@@ -368,7 +357,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
         
         //validate the qfKey
-        require_once 'CRM/Utils/Rule.php';
         if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
         
         if ( $this->_context == 'fulltext' ) {
@@ -431,7 +419,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
              $this->_activityTypeFile = 
              CRM_Activity_BAO_Activity::getFileForActivityTypeId($this->_activityTypeId, $this->_crmDir) ) {
             
-            require_once "CRM/{$this->_crmDir}/Form/Activity/{$this->_activityTypeFile}.php";
             $this->assign( 'activityTypeFile', $this->_activityTypeFile );
             $this->assign( 'crmDir', $this->_crmDir );
         }
@@ -529,7 +516,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             }
 
             // set default tags if exists
-            require_once 'CRM/Core/BAO/EntityTag.php';
             $defaults['tag'] = CRM_Core_BAO_EntityTag::getTag( $this->_activityId, 'civicrm_activity' );
           
         } else {
@@ -563,7 +549,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                  $this->_activityTypeFile . '::setDefaultValues($this);');
         }
         if ( ! CRM_Utils_Array::value( 'priority_id', $defaults ) ) {
-            require_once 'CRM/Core/PseudoConstant.php';
             $priority = CRM_Core_PseudoConstant::priority( );
             $defaults['priority_id'] = array_search( 'Normal', $priority );
         }
@@ -611,7 +596,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         if ( ! $this->_single && !empty($this->_contactIds) ) {
             $withArray          = array();
-            require_once 'CRM/Contact/BAO/Contact.php';
             foreach ( $this->_contactIds as $contactId ) {
                 $withDisplayName = self::_getDisplayNameById($contactId);
                 $withArray[] = "\"$withDisplayName\" ";
@@ -624,7 +608,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
 
         //build other activity links
-        require_once 'CRM/Activity/Form/ActivityLinks.php';
         CRM_Activity_Form_ActivityLinks::buildQuickForm( );
 
         //enable form element (ActivityLinks sets this true)
@@ -660,7 +643,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         
         //CRM-7362 --add campaigns.
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         CRM_Campaign_BAO_Campaign::addCampaign( $this, CRM_Utils_Array::value( 'campaign_id', $this->_values ) );
         
         //add engagement level CRM-7775
@@ -668,7 +650,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) &&
              CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             $buildEngagementLevel = true;
-            require_once 'CRM/Campaign/PseudoConstant.php';
             $this->add( 'select', 'engagement_level', 
                         ts( 'Engagement Index' ), 
                         array( '' => ts( '- select -' ) ) + CRM_Campaign_PseudoConstant::engagementLevel( ) );
@@ -684,7 +665,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         if ( $this->_activityId && CRM_Campaign_BAO_Campaign::isCampaignEnable( ) &&
              CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
 
-            require_once 'CRM/Campaign/BAO/Survey.php';
             $this->_isSurveyActivity = CRM_Campaign_BAO_Survey::isSurveyActivity( $this->_activityId );
             if ( $this->_isSurveyActivity ) {
                 $surveyId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', 
@@ -760,7 +740,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $this->assign( 'target_contact_value', $defaultTargetContactName );
         }
         
-        require_once 'CRM/Core/BAO/Tag.php';
         $tags = CRM_Core_BAO_Tag::getTags( 'civicrm_activity' );
         
         if ( !empty($tags) ) { 
@@ -773,7 +752,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         if ( !in_array( $this->_activityTypeName, $specialActivities ) ) {
             // build tag widget
-            require_once 'CRM/Core/Form/Tag.php';
             $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
             CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, false, true );
         }
@@ -785,7 +763,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             }
 			$buttons = array( );
             // do check for permissions 
-            require_once 'CRM/Case/BAO/Case.php';
             if ( CRM_Case_BAO_Case::checkPermission( $this->_activityId, 'File On Case', $this->_activityTypeId ) ) {
                 $buttons[] = array ( 'type'      => 'cancel',
                                      'name'      => ts('File on case'),
@@ -857,7 +834,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         //FIX me temp. comment
         // make sure if associated contacts exist
-        require_once 'CRM/Contact/BAO/Contact.php';
 
         if ( $fields['source_contact_id'] && ! is_numeric($fields['source_contact_qid'])) {
             $errors['source_contact_id'] = ts('Source Contact non-existent!');
@@ -915,12 +891,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
     {
         if ( $this->_action & CRM_Core_Action::DELETE ) { 
             $deleteParams = array( 'id' => $this->_activityId );
-            require_once 'CRM/Case/BAO/Case.php';
             $moveToTrash = CRM_Case_BAO_Case::isCaseActivity( $this->_activityId );
             CRM_Activity_BAO_Activity::deleteActivity( $deleteParams, $moveToTrash);
 
             // delete tags for the entity
-            require_once 'CRM/Core/BAO/EntityTag.php';
             $tagParams = array( 'entity_table' => 'civicrm_activity',
                                 'entity_id'    => $this->_activityId );
             CRM_Core_BAO_EntityTag::del( $tagParams );
@@ -1019,12 +993,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         
         //save static tags
-        require_once 'CRM/Core/BAO/EntityTag.php';
         CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
  
         //save free tags
         if ( isset( $params['activity_taglist'] ) && !empty( $params['activity_taglist'] ) ) {
-            require_once 'CRM/Core/Form/Tag.php';
             CRM_Core_Form_Tag::postProcess( $params['activity_taglist'], $activity->id, 'civicrm_activity', $this );
         }
         
@@ -1044,7 +1016,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         // send copy to assignee contacts.CRM-4509
         $mailStatus = '';
-        require_once 'CRM/Core/BAO/Setting.php';
 
         if ( ! CRM_Utils_Array::crmIsEmptyArray($params['assignee_contact_id']) &&
              CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
@@ -1063,7 +1034,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 //include attachments while sendig a copy of activity.
                 $attachments = CRM_Core_BAO_File::getEntityFile( 'civicrm_activity', $activity->id );
 
-                require_once "CRM/Case/BAO/Case.php";
                 // CRM-8400 add param with _currentlyViewedContactId for URL link in mail
                 $result = CRM_Case_BAO_Case::sendActivityCopy( null, $activity->id, $mailToContacts, $attachments, null );
                 $mailStatus .= ts("A copy of the activity has also been sent to assignee contacts(s)."); 

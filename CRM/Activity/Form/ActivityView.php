@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once "CRM/Activity/BAO/Activity.php";
-require_once 'CRM/Campaign/BAO/Campaign.php';
 
 /**
  * This class handle activity view mode
@@ -76,7 +73,6 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form
         CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
 
         //set activity type name and description to template
-        require_once 'CRM/Core/BAO/OptionValue.php';
         list( $activityTypeName, $activityTypeDescription ) = CRM_Core_BAO_OptionValue::getActivityTypeDetails( $defaults['activity_type_id'] );
         
         $this->assign( 'activityTypeName', $activityTypeName );
@@ -84,7 +80,6 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form
         
         if (  CRM_Utils_Array::value('mailingId', $defaults) ) {
             $this->_mailing_id = CRM_Utils_Array::value( 'source_record_id', $defaults );
-            require_once 'CRM/Mailing/BAO/Mailing.php';
             $mailingReport = CRM_Mailing_BAO_Mailing::report( $this->_mailing_id, true );
             CRM_Mailing_BAO_Mailing::getMailingContent( $mailingReport, $this ); 
             $this->assign( 'mailingReport', $mailingReport );
@@ -98,17 +93,14 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form
         
         //get the campaign
         if ( $campaignId = CRM_Utils_Array::value( 'campaign_id', $defaults ) ) {
-            require_once 'CRM/Campaign/BAO/Campaign.php';
             $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
             $values['campaign'] = $campaigns[$campaignId];
         }
         if ( $engagementLevel = CRM_Utils_Array::value( 'engagement_level', $defaults ) ) {
-            require_once 'CRM/Campaign/PseudoConstant.php';
             $engagementLevels = CRM_Campaign_PseudoConstant::engagementLevel();
             $values['engagement_level'] = CRM_Utils_Array::value( $engagementLevel, $engagementLevels, $engagementLevel );
         }
         
-        require_once 'CRM/Core/BAO/File.php';
         $values['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_activity',
                                                                    $activityId );
         $this->assign( 'values', $values ); 

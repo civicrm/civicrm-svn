@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/StateMachine.php';
 
 /**
  * State machine for managing different states of the Import process.

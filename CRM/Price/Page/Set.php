@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Create a page for displaying Price Sets.
@@ -144,7 +143,6 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
                                            $this, false, 0);
         
         if ( $sid ) {
-            require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::checkPermission( $sid );
         }
         // what action to take ?
@@ -157,8 +155,6 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
             CRM_Core_Session::setStatus(ts('A copy of the price set has been created') );
             $this->copy( );
         } else {
-            require_once 'CRM/Price/BAO/Set.php';
-            require_once 'CRM/Price/BAO/Field.php';
 
             // if action is delete do the needful.
             if ($action & (CRM_Core_Action::DELETE)) {
@@ -260,12 +256,10 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
     {
         // get all price sets
         $priceSet = array();
-        require_once 'CRM/Core/Component.php';
         $comps = array( 'CiviEvent'      => ts( 'Event' ),
                         'CiviContribute' => ts( 'Contribution' ),
                         'CiviMember'     => ts( 'Membership' ) );
         
-        require_once 'CRM/Price/BAO/Set.php';
         $dao = new CRM_Price_DAO_Set();
         if ( CRM_Price_BAO_Set::eventPriceSetDomainID( ) ) {
             $dao->domain_id = CRM_Core_Config::domainID( );
@@ -310,7 +304,6 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
         $id = CRM_Utils_Request::retrieve('sid', 'Positive',
                                            $this, true, 0, 'GET');
 
-        require_once 'CRM/Price/BAO/Set.php';
         CRM_Price_BAO_Set::copy( $id );
 
         CRM_Utils_System::redirect( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1' ) );

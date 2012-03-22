@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Profile/Form.php';
-require_once 'CRM/Activity/Form/Task.php';
 
 /**
  * This class provides the functionality for batch profile update for Activity
@@ -100,7 +98,6 @@ class CRM_Activity_Form_Task_PickProfile extends CRM_Activity_Form_Task {
      */
     function buildQuickForm( ) 
     {
-        require_once "CRM/Core/BAO/UFGroup.php";
         $types = array( 'Activity' );
         $profiles = CRM_Core_BAO_UFGroup::getProfiles( $types, true );
         

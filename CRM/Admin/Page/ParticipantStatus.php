@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-require_once 'CRM/Event/DAO/ParticipantStatusType.php';
 
 class CRM_Admin_Page_ParticipantStatus extends CRM_Core_Page_Basic
 {

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Member/DAO/MembershipStatus.php';
 
 class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus 
 {
@@ -196,7 +195,6 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus
         }
 
         //delete from membership Type table
-        require_once 'CRM/Member/DAO/MembershipStatus.php';
         $membershipStatus = new CRM_Member_DAO_MembershipStatus( );
         $membershipStatus->id = $membershipStatusId;
         $membershipStatus->delete();
@@ -339,7 +337,6 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus
     function getMembershipStatusCurrent() 
     {
         $statusIds  = array();
-        require_once 'CRM/Member/DAO/MembershipStatus.php';
         $membershipStatus = new CRM_Member_DAO_MembershipStatus( );
         $membershipStatus->is_current_member = 1;
         $membershipStatus->find();
