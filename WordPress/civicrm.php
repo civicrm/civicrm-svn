@@ -99,6 +99,18 @@ function civicrm_wp_initialize( ) {
     }
 
     if ( ! $initialized ) {
+
+        // autoload
+        if (FALSE) {
+            // TODO:
+            //   Use Joomla native or contrib autoloading, if there is any.
+        }
+        else {
+            require_once dirname(__FILE__) . '/../CRM/Core/ClassLoader.php';
+            $classLoader = new CRM_Core_ClassLoader();
+            $classLoader->register();
+        }
+
         // Check for php version and ensure its greater than 5.
         // do a fatal exit if
         if ( (int ) substr( PHP_VERSION, 0, 1 ) < 5 ) {
