@@ -101,12 +101,12 @@ class CRM_Core_Component
         return $_cache;
     }
 
-    public function &getEnabledComponents( $force = false )
+    static public function &getEnabledComponents( $force = false )
     {
         return self::_info( $force );
     }
 
-    public function &getNames( $translated = false )
+    public static function &getNames( $translated = false )
     {
         $allComponents = self::getComponents();
         

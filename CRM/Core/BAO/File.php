@@ -165,7 +165,8 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         
     }
 
-    public function delete($fileID , $entityID, $fieldID ) {
+    public function delete($useWhere = false) {
+        list( $fileID , $entityID, $fieldID ) = func_get_args();
         // get the table and column name
         require_once 'CRM/Core/BAO/CustomField.php';
         list( $tableName, $columnName, $groupID ) = CRM_Core_BAO_CustomField::getTableColumnGroup( $fieldID );

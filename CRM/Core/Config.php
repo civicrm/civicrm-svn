@@ -183,8 +183,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     {
         if ( self::$_singleton === null || $force ) {
             // goto a simple error handler
-            PEAR::setErrorHandling( PEAR_ERROR_CALLBACK,
-                                    array( 'CRM_Core_Error', 'simpleHandler' ) );
+            $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
+            $GLOBALS['_PEAR_default_error_options'] = array( 'CRM_Core_Error', 'simpleHandler' );
             
             // lets ensure we set E_DEPRECATED to minimize errors
             // CRM-6327
@@ -683,7 +683,7 @@ OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
     /**
      * function to check if running in upgrade mode
      */
-    function isUpgradeMode( $path = null ) {
+    static function isUpgradeMode( $path = null ) {
         if ( $path && $path == 'civicrm/upgrade' ) {
             return true;
         }

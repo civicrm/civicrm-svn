@@ -97,7 +97,7 @@ WHERE  cacheKey     = %3 AND
         return $pos;
     }
 
-    function deleteItem( $id = null, $cacheKey = null, $entityTable = 'civicrm_contact' )
+    static function deleteItem( $id = null, $cacheKey = null, $entityTable = 'civicrm_contact' )
     {
  
         //clear cache

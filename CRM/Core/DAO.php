@@ -99,8 +99,9 @@ class CRM_Core_DAO extends DB_DataObject
      *
      * @return void
      * @access private
+     * @static
      */
-    function init( $dsn )
+    static function init( $dsn )
     {
         $options =& PEAR::getStaticProperty('DB_DataObject', 'options');
         $options['database'] = $dsn;
@@ -172,8 +173,9 @@ class CRM_Core_DAO extends DB_DataObject
      *
      * @return void
      * @access public
+     * @static
      */
-    function setFactory(&$factory) 
+    static function setFactory(&$factory) 
     {
         self::$_factory =& $factory;
     }
@@ -383,8 +385,9 @@ class CRM_Core_DAO extends DB_DataObject
      *
      * @return void
      * @access public
+     * @static
      */
-    function storeValues( &$object, &$values ) 
+    static function storeValues( &$object, &$values ) 
     {
         $fields =& $object->fields( );
         foreach ( $fields as $name => $value ) {
@@ -458,10 +461,11 @@ class CRM_Core_DAO extends DB_DataObject
      * @access public
      * @static
      */
-    function getAttribute( $class, $fieldName = null) 
+    static function getAttribute( $class, $fieldName = null) 
     {
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php');
-        eval('$fields =& ' . $class . '::fields( );');
+        eval('$object = new ' . $class . '( );');
+        $fields =& $object->fields( );
         if ( $fieldName != null ) {
             $field = CRM_Utils_Array::value( $fieldName, $fields );
             return self::makeAttribute( $field );

@@ -115,8 +115,9 @@ class CRM_Core_Config_Defaults
      *                           mode (eg: Global setting >> Components)    
      *
      * @access public
+     * @static
      */
-    public function setValues(&$defaults, $formMode = false) 
+    public static function setValues(&$defaults, $formMode = false) 
     {
         $config = CRM_Core_Config::singleton( );
 

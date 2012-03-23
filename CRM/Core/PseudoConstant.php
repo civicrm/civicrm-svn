@@ -509,15 +509,17 @@ class CRM_Core_PseudoConstant
      * @access public
      * @static
      *
-     * @return array - array reference of all activty types.
+     * @return array - array reference of all activity types.
      */
-    public static function &activityType( $all = true, 
-                                          $includeCaseActivities = false, 
-                                          $reset = false,
-                                          $returnColumn = 'label',
-                                          $includeCampaignActivities = false,
-                                          $onlyComponentActivities = false )
+    public static function &activityType( )
     {
+        $args = func_get_args();
+        $all = CRM_Utils_Array::value(0, $args, true);
+        $includeCaseActivities = CRM_Utils_Array::value(1, $args, false);
+        $reset = CRM_Utils_Array::value(2, $args, false);
+        $returnColumn = CRM_Utils_Array::value(3, $args, 'label');
+        $includeCampaignActivities = CRM_Utils_Array::value(4, $args, false);
+        $onlyComponentActivities = CRM_Utils_Array::value(5, $args, false);
         $index = (int) $all . '_' . $returnColumn . '_' . (int) $includeCaseActivities;
         $index .= '_' . (int)$includeCampaignActivities;
         $index .= '_' . (int)$onlyComponentActivities;

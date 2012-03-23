@@ -366,7 +366,7 @@ ORDER BY parent_id, weight";
     /**
      * Recursively check child menus
      */
-    function recurseNavigation(&$value, &$navigationString, $json, $skipMenuItems ) 
+    static function recurseNavigation(&$value, &$navigationString, $json, $skipMenuItems ) 
     {
         if ( $json ) {
             if ( !empty( $value['child'] ) ) {
@@ -431,7 +431,7 @@ ORDER BY parent_id, weight";
     /**
      *  Get Menu name
      */
-    function getMenuName( &$value, &$skipMenuItems ) {
+    static function getMenuName( &$value, &$skipMenuItems ) {
         // we need to localise the menu labels (CRM-5456) and don’t
         // want to use ts() as it would throw the ts-extractor off
         $i18n = CRM_Core_I18n::singleton();

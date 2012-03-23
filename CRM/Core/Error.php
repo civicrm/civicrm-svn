@@ -88,12 +88,12 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     public static $modeException = null;
     
     /**
-     * singleton function used to manage this object. This function is not
-     * explicity declared static to be compatible with PEAR_ErrorStack
+     * singleton function used to manage this object.
      *  
      * @return object
+     * @static
      */
-    function &singleton()
+    static function &singleton( $package = null, $msgCallback = false, $contextCallback = false, $throwPEAR_Error = false, $stackClass = 'PEAR_ErrorStack')
     {
         if (self::$_singleton === null ) {
             self::$_singleton = new CRM_Core_Error('CiviCRM');
@@ -218,7 +218,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     // this function is used to trap and print errors
     // during system initialization time. Hence the error
     // message is quite ugly
-    public function simpleHandler( $pearError ) {
+    public static function simpleHandler( $pearError ) {
 
         // create the error array
         $error = array();
@@ -517,7 +517,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
     /* used for the API, rise the exception instead of catching/fatal it */
     public static function setRaiseException( ) {
-        PEAR::setErrorHandling( PEAR_ERROR_CALLBACK,  array( 'CRM_Core_Error', 'exceptionHandler' ) );
+        $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
+        $GLOBALS['_PEAR_default_error_options'] = array( 'CRM_Core_Error', 'exceptionHandler' );
     }
 
     public static function ignoreException( $callback = null ) {
@@ -525,8 +526,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
             $callback = array( 'CRM_Core_Error', 'nullHandler' );
         }
 
-        PEAR::setErrorHandling( PEAR_ERROR_CALLBACK,
-                                $callback );
+        $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
+        $GLOBALS['_PEAR_default_error_options'] = $callback;
     }
     
     public static function exceptionHandler ($pearError) {
@@ -559,8 +560,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         if ( ! $callback ) {
             $callback = array( 'CRM_Core_Error', 'handle' );
         }
-        PEAR::setErrorHandling( PEAR_ERROR_CALLBACK, 
-                                $callback );
+        $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
+        $GLOBALS['_PEAR_default_error_options'] = $callback;
     }
 
     public static function &createAPIError( $msg, $data = null ) {
@@ -616,6 +617,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     }
 }
 
-PEAR_ErrorStack::singleton('CRM', false, null, 'CRM_Core_Error');
+$e = new PEAR_ErrorStack('CRM');
+$e->singleton('CRM', false, null, 'CRM_Core_Error');
 
 
