@@ -41,7 +41,7 @@ require_once 'CRM/Campaign/BAO/Survey.php';
  *
  * @param array $params  Associative array of property
  *                       name/value pairs to insert in new 'survey'
- *
+ * @example SurveyCreate.php Std Create example
  * @return array api result array
  * {@getfields survey_create}
  * @access public
