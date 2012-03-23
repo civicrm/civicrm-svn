@@ -1032,7 +1032,7 @@ class CRM_Utils_Token
             
             // $greetingTokens not empty, means there are few tokens which are not evaluated, like custom data etc
             // so retrieve it from database 
-            if ( !empty( $greetingTokens ) ) {
+            if ( !empty( $greetingTokens ) && array_key_exists ( 'contact', $greetingTokens ) ) {
                 $greetingsReturnProperties = array_flip( CRM_Utils_Array::value( 'contact', $greetingTokens ) );        
                 $greetingsReturnProperties = array_fill_keys( array_keys( $greetingsReturnProperties ), 1 );
                 $contactParams             = array( 'contact_id' => $contactId );

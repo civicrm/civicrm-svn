@@ -342,7 +342,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                 foreach ( $optionGroupIds as $id ) {
                     $discountSuffix = '.discount.'. CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup',
                                                                                  $id,
-                                                                                 'label' );
+                                                                                 'title' );
                     CRM_Core_BAO_OptionGroup::copyValue('event', 
                                                         $params['template_id'], 
                                                         $event->id , 

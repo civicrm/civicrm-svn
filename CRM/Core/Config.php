@@ -291,7 +291,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             $this->userFrameworkUsersTableName = $dbprefix . 'users';
         } elseif ( $userFramework == 'WordPress' ) {
             global $wpdb;
-            $this->userFrameworkUsersTableName = $wpdb->prefix . 'users'; 
+            $dbprefix = $wpdb ? $wpdb->prefix : '';
+            $this->userFrameworkUsersTableName = $dbprefix . 'users';
         }
 
     }

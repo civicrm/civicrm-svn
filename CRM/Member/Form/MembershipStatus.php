@@ -128,6 +128,7 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form
             if ($this->_action & CRM_Core_Action::UPDATE ) {
                 $ids['membershipStatus'] = $this->_id;
             }
+            $oldWeight = null;
             if ($this->_id) {
                 $oldWeight = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipStatus', $this->_id, 'weight', 'id' );
             }

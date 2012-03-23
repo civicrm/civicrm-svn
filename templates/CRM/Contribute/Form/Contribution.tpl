@@ -228,7 +228,7 @@
         	    {/if}
             </td>
         </tr>
-        {* Credit contribution to PCP. *}
+        {if $siteHasPCPs}{* Credit contribution to PCP. *}
         <tr id="pcpID" class="crm-contribution-form-block-pcp_made_through_id">
             <td class="label">{$form.pcp_made_through.label}</td>
             <td>
@@ -256,6 +256,7 @@
             	</div>
             </td>
         </tr>
+        {/if}
       </table>
 
     <div id="customData" class="crm-contribution-form-block-customData"></div>

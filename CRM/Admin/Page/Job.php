@@ -152,7 +152,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
      * @access public
      * @static
      */
-    function browse($action=null)
+    function browse( $action=null )
     {
 
         // using Export action for Execute. Doh.
@@ -171,7 +171,11 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic
             $action = array_sum(array_keys($this->links()));
 
             // update enable/disable links.
-            if ($job->is_active) {
+            // CRM-9868- remove enable action for jobs that should never be run automatically via execute action or runjobs url 
+            if ( $job->api_action == 'process_membership_reminder_date' || $job->api_action == 'update_greeting' ) {
+                $action -= CRM_Core_Action::ENABLE;
+                $action -= CRM_Core_Action::DISABLE;
+            } else if ( $job->is_active ) {
                 $action -= CRM_Core_Action::ENABLE;
             } else {
                 $action -= CRM_Core_Action::DISABLE;

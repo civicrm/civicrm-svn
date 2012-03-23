@@ -57,18 +57,18 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
      */
     function createUser( &$params, $mail ) 
     {
+        require_once JPATH_SITE . '/components/com_users/models/registration.php';
+        
         $userParams = JComponentHelper::getParams('com_users');
+        $model      = new UsersModelRegistration();
+        $ufID       = null;
 
         // get the default usertype
         $userType = $userParams->get('new_usertype');
         if ( ! $userType ) {
-            $userType = 'Registered';
+            $userType = 2;
         }
 
-        $acl = JFactory::getACL();
-
-        
-        
         if ( isset($params['name']) ) {
             $fullname = trim( $params['name'] );
         } elseif ( isset($params['contactID']) ) {
@@ -77,41 +77,21 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
         } else {
             $fullname = trim( $params['cms_name'] );
         }
-        
-        // Prepare the values for a new Joomla! user.
-        $values                 = array();
-        $values['name']         = $fullname;
-        $values['username']     = trim($params['cms_name']);
-        $values['password1']     = $params['cms_pass'];
-        $values['email1']        = trim($params[$mail]);
-        
-        $useractivation = $userParams->get( 'useractivation' );
-        if ( $useractivation == 1 ) { 
-            jimport('joomla.user.helper');
-            // block the User
-            $values['block'] = 1; 
-            $values['activation'] =JUtility::getHash( JUserHelper::genRandomPassword() ); 
-        } else { 
-            // don't block the user
-            $values['block'] = 0; 
-        }
 
-        // Get an empty JUser instance.
-        $user = JUser::getInstance( 0 );
-        $user->bind( $values );
+        // Prepare the values for a new Joomla user.
+        $values              = array();
+        $values['name']      = $fullname;
+        $values['username']  = trim($params['cms_name']);
+        $values['password1'] = $values['password2'] = $params['cms_pass'];
+        $values['email1']    = $values['email2']    = trim($params[$mail]);
 
-        // Store the Joomla! user.
-        if ( ! $user->save( ) ) {
-            // Error can be accessed via $user->getError();
-            return false;
-        }
-        //since civicrm don't have own tokens to use in user
-        //activation email. we have to use com_user tokens, CRM-5809
         $lang = JFactory::getLanguage();
-        $lang->load( 'com_user' );
-        require_once 'components/com_user/controller.php';
-        UserController::_sendMail( $user, $user->password2 );
-        return $user->get('id');
+        $lang->load( 'com_users' );
+
+        $register = $model->register($values);
+
+        $ufID     = JUserHelper::getUserId($values['username']);
+        return $ufID;
     }
     
     /*
@@ -165,7 +145,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
         $query->select( 'username, email' );
         $query->from($JUserTable->getTableName());
         $query->where('(LOWER(username) = LOWER(\''.$name.'\')) OR (LOWER(email) = LOWER(\''.$email.'\'))');
-        $db->setQuery($query, 0, $limit);
+        $db->setQuery($query, 0, 10);
         $users = $db->loadAssocList();
         
         $row = array();;

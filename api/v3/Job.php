@@ -175,16 +175,12 @@ function civicrm_api3_job_update_greeting( $params )
     require_once 'CRM/Contact/BAO/Contact/Utils.php';
 
     civicrm_api3_verify_mandatory($params,null,array('ct', 'gt'));
-
-    // FIXME: verify_type along the lines of: $id = CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
- 
-    // FIXME: verify_type along the lines of: $contactType = CRM_Utils_Request::retrieve( 'ct', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+    // fixme - use the wrapper & getfields to do this checking - advertise as an enum
     if ( ! in_array( $params['ct'],
                      array( 'Individual', 'Household', 'Organization' ) ) ) {
         return civicrm_api3_create_error( ts('Invalid contact type (ct) parameter value') );
     }
     
-    // FIXME: verify_type along the lines of: $greeting = CRM_Utils_Request::retrieve( 'gt', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
     if ( ! in_array( $params['gt'],
                      array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
         return civicrm_api3_create_error( ts('Invalid greeting type (gt) parameter value') );

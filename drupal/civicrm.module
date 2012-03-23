@@ -325,8 +325,9 @@ function civicrm_initialize( )
             drupal_add_html_head($header);
         }
         require_once 'CRM/Core/BAO/Preferences.php';
-        //fixme - after 3.4 is discontinued remove 3.4 support
-        //As this file may be shared between 3.4 & 4.1 releases use the BAO_Preferences::value legacy function if it exists
+
+        // fixme - after 3.4 is discontinued remove 3.4 support
+        // As this file may be shared between 3.4 & 4.1 releases use the BAO_Preferences::value legacy function if it exists
         // in future only CRM_Core_BAO_Setting::getItem will be required
         $args = explode( '/', $_GET['q'] );
         if (( ! isset( $args[1] ) OR $args[1] != 'upgrade') &&	

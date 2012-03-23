@@ -176,7 +176,7 @@ class CRM_Contact_BAO_SavedSearch extends CRM_Contact_DAO_SavedSearch
             require_once 'CRM/Contact/BAO/SearchCustom.php';
             return CRM_Contact_BAO_SearchCustom::contactIDSQL( null, $id );
         } else {
-            $tables = $whereTables = array( $contact => 1 );
+            $tables = $whereTables = array( 'civicrm_contact' => 1 );
             $where  = CRM_Contact_BAO_SavedSearch::whereClause( $id, $tables, $whereTables );
             if ( ! $where ) {
                 $where = '( 1 )' ;

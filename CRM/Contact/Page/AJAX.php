@@ -606,10 +606,9 @@ WHERE sort_name LIKE '%$name%'";
             $recordBAO = CRM_Utils_String::munge( $recordBAO );
             $recordClass = explode( '_', $recordBAO );
             
-            // make sure recordClass is in the CRM namespace and
-            // at least 3 levels deep
-            if ( $recordClass[0] == 'CRM' &&
-                 count( $recordClass ) >= 3 ) {
+            // make sure recordClass is namespaced (we cant check CRM since extensions can also use this)
+            // but it should be at least 3 levels deep
+            if ( count( $recordClass ) >= 3 ) {
                 require_once(str_replace('_', DIRECTORY_SEPARATOR, $recordBAO) . ".php");
                 $method  = 'setIsActive'; 
 

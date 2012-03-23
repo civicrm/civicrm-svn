@@ -59,7 +59,10 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
 function civicrm_api3_mailing_group_event_unsubscribe($params) 
 {
 
-        civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Unsubscribe', array('job_id', 'event_queue_id', 'hash') );    
+        civicrm_api3_verify_mandatory ($params,
+                                       'CRM_Mailing_Event_DAO_Unsubscribe',
+                                       array('job_id', 'event_queue_id', 'hash'),
+                                       false );    
           
         $job   = $params['job_id']; 
         $queue = $params['event_queue_id']; 
@@ -85,7 +88,10 @@ function civicrm_api3_mailing_group_event_unsubscribe($params)
 function civicrm_api3_mailing_group_event_domain_unsubscribe($params) 
 {
 
-        civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Unsubscribe', array('job_id', 'event_queue_id', 'hash') );
+        civicrm_api3_verify_mandatory ($params,
+                                       'CRM_Mailing_Event_DAO_Unsubscribe',
+                                       array('job_id', 'event_queue_id', 'hash'),
+                                       false );
           
         $job   = $params['job_id']; 
         $queue = $params['event_queue_id']; 
@@ -111,7 +117,10 @@ function civicrm_api3_mailing_group_event_domain_unsubscribe($params)
 function civicrm_api3_mailing_group_event_resubscribe($params) 
 {
 
-        civicrm_api3_verify_mandatory ($params,'CRM_Mailing_Event_DAO_Unsubscribe', array('job_id', 'event_queue_id', 'hash') );
+        civicrm_api3_verify_mandatory ($params,
+                                       'CRM_Mailing_Event_DAO_Unsubscribe',
+                                       array('job_id', 'event_queue_id', 'hash'),
+                                       false );
  
         $job   = $params['job_id']; 
         $queue = $params['event_queue_id']; 
@@ -136,7 +145,10 @@ function civicrm_api3_mailing_group_event_resubscribe($params)
 function civicrm_api3_mailing_group_event_subscribe($params) 
 {
 
-        civicrm_api3_verify_mandatory ( $params, 'CRM_Mailing_Event_DAO_Subscribe', array( 'email', 'group_id' ), false );
+        civicrm_api3_verify_mandatory ( $params, 
+                                        'CRM_Mailing_Event_DAO_Subscribe',
+                                        array( 'email', 'group_id' ),
+                                        false );
           
         $email      = $params['email']; 
         $group_id   = $params['group_id']; 

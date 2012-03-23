@@ -540,7 +540,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             $key2 = CRM_Utils_Array::value($key, $otherEvs);
             if ($key1 != $key2) $diffs['custom'][] = $key;
         }
-
         unset($main, $other, $mainEvs, $otherEvs);
         return $diffs;
     }

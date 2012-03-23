@@ -282,13 +282,14 @@ AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
                 WHERE
                 a.source_contact_id = civicrm_contact.id AND
                 a.activity_type_id = civicrm_survey.activity_type_id AND
-                civicrm_survey.id =  $surveyId AND
-                a.source_record_id =  $surveyId  ";
-        if ($status_id)
-            $sql .= " AND status_id = ". (int) $status_id;
+                civicrm_survey.id =  %1 AND
+                a.source_record_id =  %1  ";
+
+        $params = array( 1 => array( $surveyId, 'Integer' ) );
         $sql .= " GROUP BY civicrm_address.country_id";
         $fields = array ('total','country_id','country_iso','country');
-        $dao = CRM_Core_DAO::executeQuery( $sql );
+
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         while ( $dao->fetch() ) {
             $row = array();
             foreach ($fields as $field) {
@@ -366,7 +367,7 @@ AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
      * @param int $id
      * @static
      */
-    static function getPetitionSignature( $surveyId, $status_id=null ) {
+    static function getPetitionSignature( $surveyId, $status_id = null ) {
 
         $surveyId = (int)$surveyId;// sql injection protection
         $signature = array( );
@@ -390,14 +391,25 @@ AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
             WHERE
             a.source_contact_id = civicrm_contact.id AND
             a.activity_type_id = civicrm_survey.activity_type_id AND
-            civicrm_survey.id =  $surveyId AND
-            a.source_record_id =  $surveyId  ";
-        if ($status_id)
-            $sql .= " AND status_id = ". (int) $status_id;
-        $fields = array ('id','survey_id','contact_id','activity_date_time','activity_type_id','status_id','first_name','last_name', 'sort_name','gender_id','country_id','state_province_id','country_iso','country');
+            civicrm_survey.id =  %1 AND
+            a.source_record_id =  %1 ";
+
+        $params = array( 1 => array( $surveyId, 'Integer' ) );
+
+        if ($status_id) {
+            $sql .= " AND status_id = %2";
+            $params[2] = array( $status_id, 'Integer' );
+        }
         $sql .= " ORDER BY  a.activity_date_time";
 
-        $dao = CRM_Core_DAO::executeQuery( $sql );
+        $fields = array ('id','survey_id','contact_id',
+                         'activity_date_time','activity_type_id',
+                         'status_id','first_name','last_name',
+                         'sort_name','gender_id','country_id',
+                         'state_province_id','country_iso','country');
+
+
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         while ( $dao->fetch() ) {
             $row = array();
             foreach ($fields as $field) {
@@ -449,16 +461,21 @@ AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
             a.source_contact_id AS source_contact_id,
             a.activity_date_time AS activity_date_time,
             a.activity_type_id AS activity_type_id,
-            a.status_id AS status_id," .
-            "'" . $surveyInfo['title'] . "'" ." AS survey_title
+            a.status_id AS status_id,
+            %1 AS survey_title,
             FROM   civicrm_activity a
-            WHERE  a.source_record_id = " . $surveyId . "
-            AND a.activity_type_id = " . $surveyInfo['activity_type_id'] . "
-            AND a.source_contact_id = " . $contactId;
+            WHERE  a.source_record_id = %2
+            AND a.activity_type_id = %3
+            AND a.source_contact_id = %4
+";
+        $params = array( 1 => array( $surveyInfo['title']           , 'String'  ),
+                         2 => array( $surveyId                      , 'Integer' ),
+                         3 => array( $surveyInfo['activity_type_id'], 'Integer' ),
+                         4 => array( $contactId                     , 'Integer' ) );
+
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
 
         require_once 'CRM/Contact/BAO/Contact.php';
-
-        $dao = CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
             $signature[$dao->id]['id'] = $dao->id;
             $signature[$dao->id]['source_record_id'] = $dao->source_record_id;

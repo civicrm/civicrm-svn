@@ -40,7 +40,7 @@
  * Settings for Drupal 6.x:
  *      define( 'CIVICRM_UF'        , 'Drupal6' );
  *
- * Settings for Joomla 1.6.x:
+ * Settings for Joomla 1.7.x - 2.5.x:
  *      define( 'CIVICRM_UF'        , 'Joomla' );
  *
  * Settings for WordPress 3.3.x:
@@ -119,6 +119,14 @@ define('CIVICRM_LOGGING_DSN', CIVICRM_DSN);
  *
  * the CIVICRM_TEMPLATE_COMPILEDIR would be:
  *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/joomla/media/civicrm/templates_c/' );
+ *
+ * EXAMPLE - WordPress Installations:
+ * If the path to the WordPress home directory is /var/www/htdocs/wordpress
+ * the $civicrm_root setting would be:
+ *      $civicrm_root = '/var/www/htdocs/wordpress/wp-content/plugins/civicrm/civicrm/';
+ *
+ * the CIVICRM_TEMPLATE_COMPILEDIR would be:
+ *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/wordpress/wp-content/plugins/files/civicrm/templates_c/' );
  *
  */
 

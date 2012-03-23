@@ -37,16 +37,12 @@ require_once 'CRM/Campaign/BAO/Survey.php';
 
 
 /**
- * create/update survey
+ * Create or update a survey
  *
- * This API is used to create new survey or update any of the existing
- * In case of updating existing survey, id of that particular survey must
- * be in $params array. 
- *
- * @param array $params  (referance) Associative array of property
+ * @param array $params  Associative array of property
  *                       name/value pairs to insert in new 'survey'
- *
- * @return array   survey array
+ * @example SurveyCreate.php Std Create example
+ * @return array api result array
  * {@getfields survey_create}
  * @access public
  */

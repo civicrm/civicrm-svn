@@ -362,6 +362,11 @@ function civicrm_check_permission( $args ) {
         return false;
     }
 
+    $config = CRM_Core_Config::singleton( );
+    
+    // set frontend true 
+    $config->userFrameworkFrontend = true;
+
     require_once 'CRM/Utils/Array.php';
     // all profile and file urls, as well as user dashboard and tell-a-friend are valid
     $arg1 = CRM_Utils_Array::value( 1, $args );
@@ -370,11 +375,6 @@ function civicrm_check_permission( $args ) {
         return true;
     }
     
-    $config = CRM_Core_Config::singleton( );
-    
-    // set frontend true 
-    $config->userFrameworkFrontend = true;
-
     $arg2 = CRM_Utils_Array::value( 2, $args );
     $arg3 = CRM_Utils_Array::value( 3, $args );
 
@@ -518,7 +518,7 @@ function civicrm_add_form_button( $context ) {
 }
 
 function civicrm_add_form_button_html( ) {
-    $title = _e( "Please choose a Contribution or Event Page", "CiviCRM" );
+    $title = _e( "Please select a CiviCRM front-end page type.", "CiviCRM" );
 
     $now = date( "Ymdhis" );
 
@@ -569,6 +569,8 @@ OR       ( start_date >= $now )
                 }
 
                 var action;
+                var mode;
+                var pid;
                 var component = jQuery("#add_civicomponent_id").val( );
                 switch ( component ) {
                     case 'contribution':
@@ -580,11 +582,17 @@ OR       ( start_date >= $now )
                         var action = jQuery("input[name='event_action']:checked").val( );
                         var mode   = jQuery("input[name='component_mode']:checked").val( );
                         break;
+                    case 'user-dashboard':
+                        break;
                 }
                 
                 // [ civicrm component=contribution/event/profile id=N mode=test/live action=info/register/create/search/edit/view ] 
-                var shortcode = '[civicrm component="' + component + '" id="' + pid + '"';
+                var shortcode = '[civicrm component="' + component + '"';
                 
+                if ( pid ) {
+                    shortcode = shortcode + ' id="'+ pid +'"';
+                }
+
                 if ( mode ) {
                     shortcode = shortcode + ' mode="'+ mode +'"';
                 }
@@ -613,6 +621,12 @@ OR       ( start_date >= $now )
                             jQuery('#component-section').show();
                             jQuery('#action-section-event').show();
                             break;
+                        case 'user-dashboard':
+                            jQuery('#contribution-section').hide();
+                            jQuery('#event-section').hide();
+                            jQuery('#component-section').hide();
+                            jQuery('#action-section-event').hide();
+                            break;
                     }
                 });
             });
@@ -634,6 +648,7 @@ OR       ( start_date >= $now )
                             <option value="">  <?php _e("Select a frontend element."); ?>  </option>
                             <option value="contribution">Contribution Page</option>
                             <option value="event">Event Page</option>
+                            <option value="user-dashboard">User Dashboard</option>
                         </select>
 
                          <span id="contribution-section" style="display:none;">
@@ -725,6 +740,11 @@ function civicrm_shortcode_handler( $atts ) {
         }
         break;
 
+    case 'user-dashboard':
+        $args['q'] = 'civicrm/user';
+        unset($args['id']);
+        break;
+        
     default:
         echo 'Do not know how to handle this shortcode<p>';
         return;

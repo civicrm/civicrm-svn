@@ -135,8 +135,7 @@ function mergeTag( fromId ) {
 			cj("#tag_name").val( "" );
 			cj("#tag_name_id").val( null );
 
-			var tagUrl = {/literal}"{crmURL p='civicrm/ajax/mergeTagList' h=0}"{literal};
-                        tagUrl = tagUrl + "&fromId=" + fromId;
+			var tagUrl = {/literal}"{crmURL p='civicrm/ajax/mergeTagList' h=0 q='fromId='}"{literal} + fromId;
 
 			cj("#tag_name").autocomplete( tagUrl, {
 				width: 260,
@@ -169,7 +168,7 @@ function mergeTag( fromId ) {
 				
                 /* send synchronous request so that disabling any actions for slow servers*/
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/mergeTags' h=0 }"{literal}; 
-				var data    = 'fromId='+ fromId + '&toId='+ toId + "&key={/literal}{crmKey name='civicrm/ajax/mergeTags'}{literal}";
+				var data    = '{fromId:'+ fromId + ',toId:'+ toId + ",key:{/literal}{crmKey name='civicrm/ajax/mergeTags'}{literal}}";
                 cj.ajax({ type     : "POST", 
 					  url      : postUrl, 
 					  data     : data, 

@@ -189,6 +189,7 @@ function civicrm_api3_activity_create( $params ) {
 /*
  * Specify Meta data for create. Note that this data is retrievable via the getfields function 
  * and is used for pre-filling defaults and ensuring mandatory requirements are met.
+ * @param array $params (reference) array of parameters determined by getfields
  */
 function _civicrm_api3_activity_create_spec(&$params){
     $params['subject']['api.required'] =1;

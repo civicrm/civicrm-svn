@@ -81,7 +81,7 @@ class civicrm_handler_field_link_pcp extends views_handler_field {
           // why bother displaying PCP pages if the user can't follow through with a donation?
           if ( user_access('make online contributions') ) {
             return civicrm_views_url(
-              'civicrm/contribute/pcp/info',
+              'civicrm/pcp/info',
               "reset=1&id={$values->id}",
               TRUE // results in an absolute URL
             );
