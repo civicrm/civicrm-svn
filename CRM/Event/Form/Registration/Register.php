@@ -201,10 +201,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         //if event is monetary and pay later is enabled and payment
         //processor is not available then freeze the pay later checkbox with
         //default check
-        /*        if ( CRM_Utils_Array::value( 'is_pay_later' , $this->_values['event'] ) &&
+        if ( CRM_Utils_Array::value( 'is_pay_later' , $this->_values['event'] ) &&
              ! is_array( $this->_paymentProcessor ) ) {
             $this->_defaults['is_pay_later'] = 1;
-            }*/
+        }
 
         //set custom field defaults
         if ( ! empty( $this->_fields ) ) {
@@ -850,13 +850,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                  ( !$self->_allowConfirmation && ( $self->_requireApproval || $self->_allowWaitlist ) ) ) {
                 return empty( $errors ) ? true : $errors;
             }
-            
+            /*
             foreach ( $self->_fields as $name => $fld ) {
                 if ( $fld['is_required'] &&
                      CRM_Utils_System::isNull( CRM_Utils_Array::value( $name, $fields ) ) ) {
                     $errors[$name] = ts( '%1 is a required field.', array( 1 => $fld['title'] ) );
                 }
-            }
+                }*/
         }
         
         // make sure that credit card number and cvv are valid
@@ -901,12 +901,22 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         $params ['is_primary'] = 1;   
 
         if ( $this->_values['event']['is_pay_later'] &&
-             empty( $this->_paymentProcessor ) &&
+             //empty( $this->_paymentProcessor ) &&
              ! array_key_exists( 'hidden_processor', $params ) ) {
             $params['is_pay_later'] = 1;
         } else {
             $params['is_pay_later'] = 0;
         }        
+
+        $this->set( 'is_pay_later', $params['is_pay_later'] );
+
+        // assign pay later stuff                                                                                                                                                                    
+        $this->_params['is_pay_later'] = CRM_Utils_Array::value( 'is_pay_later', $params, false );
+        $this->assign( 'is_pay_later', $params['is_pay_later'] );
+        if ( $params['is_pay_later'] ) {
+            $this->assign( 'pay_later_text'   , $this->_values['event']['pay_later_text']    );
+            $this->assign( 'pay_later_receipt', $this->_values['event']['pay_later_receipt'] );
+        }
         if ( !$this->_allowConfirmation ) {
             // check if the participant is already registered
             if (! $this->_skipDupeRegistrationCheck) {
