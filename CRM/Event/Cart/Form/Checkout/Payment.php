@@ -97,6 +97,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
             $location = CRM_Core_BAO_Location::getValues( $locationParams, true );
             require_once 'CRM/Core/BAO/Address.php';
             CRM_Core_BAO_Address::fixAddress( $location['address'][1] );
+            $event_values['location'] = $location;
         }
 
         require_once 'CRM/Event/Cart/Form/MerParticipant.php';
@@ -117,7 +118,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
         $values = array(
           'params' => $participantParams,
           'event' => $event_values,
-          'location' => $location,
           'custom_pre_id' => $pre_id,
           'custom_post_id' => $post_id,
           'payer' => $payer_values,

@@ -51,6 +51,26 @@
        {$event.event_start_date|crmDate}{if $event.event_end_date}-{if $event.event_end_date|date_format:"%Y%m%d" == $event.event_start_date|date_format:"%Y%m%d"}{$event.event_end_date|crmDate:0:1}{else}{$event.event_end_date|crmDate}{/if}{/if}
       </td>
      </tr>
+     {if $conference_sessions}
+      <tr>
+       <td colspan="2" {$labelStyle}>
+	{ts}Your schedule:{/ts}
+       </td>
+      </tr>
+      <tr>
+       <td colspan="2" {$valueStyle}>
+	{assign var='group_by_day' value='NA'}
+	{foreach from=$conference_sessions item=session}
+	 {if $session.start_date|date_format:"%Y/%m/%d" != $group_by_day|date_format:"%Y/%m/%d"}
+	  {assign var='group_by_day' value=$session.start_date}
+          <em>{$group_by_day|date_format:"%m/%d/%Y"}</em><br />
+	 {/if}
+	 {$session.start_date|crmDate:0:1}{if $session.end_date}-{$session.end_date|crmDate:0:1}{/if} {$session.title}<br />
+	 {if $session.location}&nbsp;&nbsp;&nbsp;&nbsp;{$session.location}<br />{/if}
+	{/foreach}
+       </td>
+      </tr>
+     {/if}
      <tr>
       <td {$labelStyle}>
        {ts}Participant Role{/ts}:

@@ -1124,6 +1124,7 @@ WHERE civicrm_event.is_active = 1
                   'confirm_email_text' => CRM_Utils_Array::value('confirm_email_text', $values['event']),
                   'isShowLocation' => CRM_Utils_Array::value('is_show_location',   $values['event']),
                   'contributeMode' => null,
+                  'participantID'      => $participantId,
                   'conference_sessions' => $sessions,
                 ) );
                 
@@ -1132,12 +1133,7 @@ WHERE civicrm_event.is_active = 1
                     'valueName' => 'event_online_receipt',
                     'contactId' => $contactID,
                     'isTest'    => $isTest,
-                    'tplParams' => array(
-                        'email'              => $email,
-                        'confirm_email_text' => CRM_Utils_Array::value('confirm_email_text', $values['event']),
-                        'isShowLocation'     => CRM_Utils_Array::value('is_show_location',   $values['event']),
-                        'participantID'      => $participantId,
-                    ),
+                    'tplParams' => $tplParams,
                     'PDFFilename' => 'eventReceipt.pdf',
                 );
 
