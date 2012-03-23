@@ -366,8 +366,9 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         *     
         * @return array array of exportable Fields
         * @access public
+        * @static
         */
-    function &exportableFields( ) 
+    static function &exportableFields( ) 
     {
         if ( ! self::$_exportableFields ) {
             if ( ! self::$_exportableFields ) {

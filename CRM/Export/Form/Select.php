@@ -216,34 +216,34 @@ FROM   {$this->_componentTable}
     {
         //export option
         $exportOptions = $mergeOptions = $postalMailing = array();        
-        $exportOptions[] = HTML_QuickForm::createElement('radio',
+        $exportOptions[] = $this->createElement('radio',
                                                          null, null,
                                                          ts('Export PRIMARY fields'),
                                                          self::EXPORT_ALL,
                                                          array( 'onClick' => 'showMappingOption( );' ));
-        $exportOptions[] = HTML_QuickForm::createElement('radio',
+        $exportOptions[] = $this->createElement('radio',
                                                          null, null,
                                                          ts('Select fields for export'),
                                                          self::EXPORT_SELECTED,
                                                          array( 'onClick' => 'showMappingOption( );' ));
 
-        $mergeOptions[] = HTML_QuickForm::createElement( 'radio', 
+        $mergeOptions[] = $this->createElement( 'radio',
                                                          null, null,
                                                          ts('Do not merge'),
                                                          self::EXPORT_MERGE_DO_NOT_MERGE,
                                                          array( 'onclick' => 'showGreetingOptions( );' ) );
-        $mergeOptions[] = HTML_QuickForm::createElement( 'radio', 
+        $mergeOptions[] = $this->createElement( 'radio',
                                                          null, null,
                                                          ts('Merge All Contacts with the Same Address'),
                                                          self::EXPORT_MERGE_SAME_ADDRESS,
                                                          array( 'onclick' => 'showGreetingOptions( );' ) );
-        $mergeOptions[] = HTML_QuickForm::createElement( 'radio', 
+        $mergeOptions[] = $this->createElement( 'radio',
                                                          null, null,
                                                          ts('Merge Household Members into their Households'),
                                                          self::EXPORT_MERGE_HOUSEHOLD,
                                                          array( 'onclick' => 'showGreetingOptions( );' ) );
 
-        $postalMailing[]  = HTML_QuickForm::createElement( 'advcheckbox',
+        $postalMailing[]  = $this->createElement( 'advcheckbox',
                                                            'postal_mailing_export', 
                                                            null, 
                                                            null);

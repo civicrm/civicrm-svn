@@ -813,7 +813,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $roleids = CRM_Event_PseudoConstant::participantRole( );
         
         foreach ( $roleids as $rolekey => $rolevalue ) {  
-            $roleTypes[] = HTML_QuickForm::createElement( 'checkbox', $rolekey, null, $rolevalue, 
+            $roleTypes[] = $this->createElement( 'checkbox', $rolekey, null, $rolevalue,
                                                           array( 'onclick' => "showCustomData( 'Participant', {$rolekey}, {$this->_roleCustomDataTypeID} );") );
         }
     

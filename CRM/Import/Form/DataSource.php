@@ -138,13 +138,13 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
             
         // duplicate handling options
         $duplicateOptions = array();        
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
             null, null, ts('Skip'), CRM_Import_Parser::DUPLICATE_SKIP);
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
             null, null, ts('Update'), CRM_Import_Parser::DUPLICATE_UPDATE);
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
             null, null, ts('Fill'), CRM_Import_Parser::DUPLICATE_FILL);
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
             null, null, ts('No Duplicate Checking'), CRM_Import_Parser::DUPLICATE_NOCHECK);
 
         $this->addGroup($duplicateOptions, 'onDuplicate', 
@@ -165,15 +165,15 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         require_once 'CRM/Contact/BAO/ContactType.php';
         $contactOptions = array();
         if ( CRM_Contact_BAO_ContactType::isActive( 'Individual' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Individual'), CRM_Import_Parser::CONTACT_INDIVIDUAL, $js);        
         }
         if ( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Household'), CRM_Import_Parser::CONTACT_HOUSEHOLD, $js);
         }
         if ( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Organization'), CRM_Import_Parser::CONTACT_ORGANIZATION, $js);
         } 
 
@@ -241,7 +241,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
                 preg_match('/^(.+)\.php$/',$dataSourceFile,$matches)) {
                 $dataSourceClass = "CRM_Import_DataSource_" . $matches[1];
                 require_once $dataSourceDir . DIRECTORY_SEPARATOR . $dataSourceFile;
-                eval("\$info = $dataSourceClass::getInfo();");
+                eval("\$object = new $dataSourceClass(); \$info = \$object->getInfo();");
                 $dataSources[$dataSourceClass] = $info['title'];
             }
         }

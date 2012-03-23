@@ -140,11 +140,16 @@ WHERE  email     = %2
         $transaction = new CRM_Core_Transaction( );
 
         $do = new CRM_Core_DAO();
-        $mg         = CRM_Mailing_DAO_Group::getTableName();
-        $job        = CRM_Mailing_BAO_Job::getTableName();
-        $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
-        $group      = CRM_Contact_BAO_Group::getTableName();
-        $gc         = CRM_Contact_BAO_GroupContact::getTableName();
+        $mgObject = new CRM_Mailing_DAO_Group();
+        $mg         = $mgObject->getTableName();
+        $jobObject = new CRM_Mailing_BAO_Job();
+        $job        = $jobObject->getTableName();
+        $mailingObject = new CRM_Mailing_BAO_Mailing();
+        $mailing    = $mailingObject->getTableName();
+        $groupObject = new CRM_Contact_BAO_Group();
+        $group      = $groupObject->getTableName();
+        $gcObject = new CRM_Contact_BAO_GroupContact();
+        $gc         = $gcObject->getTableName();
         
         //We Need the mailing Id for the hook...
         $do->query("SELECT $job.mailing_id as mailing_id 
@@ -289,11 +294,16 @@ WHERE  email     = %2
         $config = CRM_Core_Config::singleton();
         $domain = CRM_Core_BAO_Domain::getDomain( );
         
-        $jobTable = CRM_Mailing_BAO_Job::getTableName();
-        $mailingTable = CRM_Mailing_DAO_Mailing::getTableName();
-        $contacts = CRM_Contact_DAO_Contact::getTableName();
-        $email = CRM_Core_DAO_Email::getTableName();
-        $queue = CRM_Mailing_Event_BAO_Queue::getTableName();
+        $jobObject = new CRM_Mailing_BAO_Job();
+        $jobTable = $jobObject->getTableName();
+        $mailingObject = new CRM_Mailing_DAO_Mailing();
+        $mailingTable = $mailingObject->getTableName();
+        $contactsObject = new CRM_Contact_DAO_Contact();
+        $contacts = $contactsObject->getTableName();
+        $emailObject = new CRM_Core_DAO_Email();
+        $email = $emailObject->getTableName();
+        $queueObject = new CRM_Mailing_Event_BAO_Queue();
+        $queue = $queueObject->getTableName();
         
         //get the default domain email address.
         list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
@@ -410,10 +420,13 @@ WHERE  email     = %2
                                           $is_distinct = false, $org_unsubscribe = null ) {
         $dao = new CRM_Core_DAO();
         
-        $unsub      = self::getTableName();
-        $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
-        $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
-        $job        = CRM_Mailing_BAO_Job::getTableName();
+        $unsub      = self::$_tableName;
+        $queueObject = new CRM_Mailing_Event_BAO_Queue();
+        $queue      = $queueObject->getTableName();
+        $mailingObject = new CRM_Mailing_BAO_Mailing();
+        $mailing    = $mailingObject->getTableName();
+        $jobObject = new CRM_Mailing_BAO_Job();
+        $job        = $jobObject->getTableName();
 
         $query = "
             SELECT      COUNT($unsub.id) as unsubs
@@ -471,12 +484,17 @@ WHERE  email     = %2
         
         $dao = new CRM_Core_Dao();
         
-        $unsub      = self::getTableName();
-        $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
-        $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
-        $job        = CRM_Mailing_BAO_Job::getTableName();
-        $contact    = CRM_Contact_BAO_Contact::getTableName();
-        $email      = CRM_Core_BAO_Email::getTableName();
+        $unsub      = self::$_tableName;
+        $queueObject = new CRM_Mailing_Event_BAO_Queue();
+        $queue      = $queueObject->getTableName();
+        $mailingObject = new CRM_Mailing_BAO_Mailing();
+        $mailing    = $mailingObject->getTableName();
+        $jobObject = new CRM_Mailing_BAO_Job();
+        $job        = $jobObject->getTableName();
+        $contactObject = new CRM_Contact_BAO_Contact();
+        $contact    = $contactObject->getTableName();
+        $emailObject = new CRM_Core_BAO_Email();
+        $email      = $emailObject->getTableName();
 
         $query =    "
             SELECT      $contact.display_name as display_name,
