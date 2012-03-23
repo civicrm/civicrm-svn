@@ -60,8 +60,11 @@ function civicrm_requirements($phase) {
     if ( empty($settings) && 
          $phase == 'install' ) {
         $problems[] = array(
-                            'title' => t('CiviCRM settings does not extist'),
-                            'description' => t('CiviCRM settings file does not extist. It should be created by CiviCRM <a href="!link">install</a>', array('!link' => substr(dirname(dirname(__FILE__)), strlen(getcwd())).'/install/index.php')),
+                            'title' => t('CiviCRM settings does not exist'),
+                            'description' => 
+                            t('CiviCRM settings file does not exist. It should be created by CiviCRM <a href="!link">install</a>', 
+                              array('!link' => substr(dirname(dirname(__FILE__)), 
+                                                      strlen(getcwd())) . '/install/index.php')),
                             'severity' => REQUIREMENT_ERROR,
                             );
     }

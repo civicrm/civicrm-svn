@@ -136,7 +136,8 @@ global $cmsPath;
 if ( $installType == 'drupal' ) {
     //CRM-6840 -don't force to install in sites/all/modules/ 
     require_once "$crmPath/CRM/Utils/System/Drupal.php";
-    $cmsPath = CRM_Utils_System_Drupal::cmsRootPath( );
+    $object = new CRM_Utils_System_Drupal();
+    $cmsPath = $object->cmsRootPath( );
 
     $siteDir = getSiteDir( $cmsPath, $_SERVER['SCRIPT_FILENAME'] );
     $alreadyInstalled = file_exists( $cmsPath  . CIVICRM_DIRECTORY_SEPARATOR .
@@ -836,6 +837,18 @@ class Installer extends InstallRequirements {
     }
 
     function install($config) {
+        global $installDirPath;
+        echo '<link rel="stylesheet" type="text/css" href="template.css" />';
+        echo '<div style="padding: 1em;"><h1>Installing CiviCRM...</h1>
+              <p>I am now running through the installation steps (this should take a few minutes)<p/>
+              <p>If you receive a fatal error, refresh this page to continue the installation</p>';
+
+        flush();
+
+        // Load the sapphire runtime
+        echo '<br/>Building database schema and setup files...</div>';
+        flush();
+
         // create database if does not exists
         $this->createDatabaseIfNotExists( $config['mysql']['server'],
             $config['mysql']['username'],

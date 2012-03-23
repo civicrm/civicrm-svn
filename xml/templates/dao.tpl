@@ -243,8 +243,9 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
        *
        * @access public
        * return array
+       * @static
        */
-       function &import( $prefix = false ) {ldelim}
+       static function &import( $prefix = false ) {ldelim}
             if ( ! ( self::$_import ) ) {ldelim}
                self::$_import = array ( );
                $fields = self::fields( );
@@ -274,8 +275,9 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
        *
        * @access public
        * return array
+       * @static
        */
-       function &export( $prefix = false ) {ldelim}
+       static function &export( $prefix = false ) {ldelim}
             if ( ! ( self::$_export ) ) {ldelim}
                self::$_export = array ( );
                $fields = self::fields( );
