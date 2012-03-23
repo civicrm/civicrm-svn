@@ -339,7 +339,7 @@ class CRM_Utils_REST
     return self::process( $args );
   }
 
-  function process( &$args, $restInterface = true ) {
+  static function process( &$args, $restInterface = true ) {
     $params =& self::buildParamList( );
     
     $params['check_permissions'] = true;
@@ -398,7 +398,7 @@ class CRM_Utils_REST
     return $result;
   }
 
-  function &buildParamList( ) {
+  static function &buildParamList( ) {
     $params = array( );
 
     $skipVars = array( 'q'   => 1,

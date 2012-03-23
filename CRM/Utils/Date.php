@@ -728,8 +728,9 @@ class CRM_Utils_Date
      *
      * @return int array $results contains years or months
      * @access public
+     * @static
      */
-    public function calculateAge($birthDate) 
+    static public function calculateAge($birthDate) 
     {     
         $results = array( );
         $formatedBirthDate  = CRM_Utils_Date::customFormat($birthDate,'%Y-%m-%d'); 
@@ -840,7 +841,7 @@ class CRM_Utils_Date
      * @param $format given format ( eg 'M Y', 'Y M' ) 
      * return array of qfMapping and date parts for date format.
      */
-    function checkBirthDateFormat( $format = null )
+    static function &checkBirthDateFormat( $format = null )
     {
         $birthDateFormat = null;
         if ( !$format ) {

@@ -79,8 +79,9 @@ class CRM_Utils_Type
      * @return $string     String datatype respective to integer datatype
      *
      * @access public
+     * @static
      */
-    function typeToString( $type ) 
+    static function typeToString( $type ) 
     {
         switch ( $type ) {
         case     1: $string = 'Int'      ; break;

@@ -127,8 +127,8 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $membership        = array();
             $membershipDefault = array();
             foreach ( $membershipTypes as $k => $v ) {
-                $membership[]      = HTML_QuickForm::createElement('advcheckbox', $k , null, $v );
-                $membershipDefault[] = HTML_QuickForm::createElement('radio',null ,null,null, $k );
+                $membership[]      = $this->createElement('advcheckbox', $k , null, $v );
+                $membershipDefault[] = $this->createElement('radio',null ,null,null, $k );
                 if ( is_array( $paymentProcessor ) && 
                      CRM_Utils_Array::value( $paymentProcessorId, $paymentProcessor ) ) {
                     $isRecur = true;

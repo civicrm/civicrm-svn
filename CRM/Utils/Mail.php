@@ -237,8 +237,9 @@ class CRM_Utils_Mail
      *
      * @param  string $header  the full name + email address string
      * @return string          the plucked email address
+     * @static
      */
-    function pluckEmailFromHeader($header) {
+    static function pluckEmailFromHeader($header) {
         preg_match('/<([^<]*)>$/', $header, $matches);
         
         if ( isset($matches[1]) ) {

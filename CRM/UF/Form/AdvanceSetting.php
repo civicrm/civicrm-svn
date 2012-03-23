@@ -53,9 +53,9 @@ class CRM_UF_Form_AdvanceSetting extends CRM_UF_Form_Group {
         
         // should we allow updates on a exisitng contact
         $options = array(); 
-        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Issue warning and do not save'), 0 );
-        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Update the matching contact'), 1 );
-        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Allow duplicate contact to be created'), 2 );
+        $options[] = $form->createElement('radio', null, null, ts('Issue warning and do not save'), 0 );
+        $options[] = $form->createElement('radio', null, null, ts('Update the matching contact'), 1 );
+        $options[] = $form->createElement('radio', null, null, ts('Allow duplicate contact to be created'), 2 );
         
         $this->addGroup($options, 'is_update_dupe', ts('What to do upon duplicate match'));
         // we do not have any url checks to allow relative urls
@@ -90,17 +90,17 @@ class CRM_UF_Form_AdvanceSetting extends CRM_UF_Form_Group {
         }
 
         $options = array(); 
-        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('No account create option'), 0 );
-        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Give option, but not required'), 1 );
-        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Account creation required'), 2 );
+        $options[] = $form->createElement('radio', null, null, ts('No account create option'), 0 );
+        $options[] = $form->createElement('radio', null, null, ts('Give option, but not required'), 1 );
+        $options[] = $form->createElement('radio', null, null, ts('Account creation required'), 2 );
         
         $this->addGroup($options, 'is_cms_user', ts('%1 user account registration option?', array( 1=>$config->userFramework )));
 
         // options for including Proximity Search in the profile search form
         $proxOptions = array(); 
-        $proxOptions[] = HTML_QuickForm::createElement('radio', null, null, ts('None'), 0 );
-        $proxOptions[] = HTML_QuickForm::createElement('radio', null, null, ts('Optional'), 1 );
-        $proxOptions[] = HTML_QuickForm::createElement('radio', null, null, ts('Required'), 2 );
+        $proxOptions[] = $form->createElement('radio', null, null, ts('None'), 0 );
+        $proxOptions[] = $form->createElement('radio', null, null, ts('Optional'), 1 );
+        $proxOptions[] = $form->createElement('radio', null, null, ts('Required'), 2 );
         
         $this->addGroup($proxOptions, 'is_proximity_search', ts('Proximity search'));
     }

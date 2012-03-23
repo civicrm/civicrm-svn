@@ -83,9 +83,9 @@ class CRM_Member_Import_Form_UploadFile extends CRM_Core_Form
         $this->addElement( 'checkbox', 'skipColumnHeader', ts('First row contains column headers') );
 
         $duplicateOptions = array(); 
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
                                                             null, null, ts('Insert new Membership'), CRM_Member_Import_Parser::DUPLICATE_SKIP);
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
                                                             null, null, ts('Update existing Membership'), CRM_Member_Import_Parser::DUPLICATE_UPDATE);
         
         $this->addGroup($duplicateOptions, 'onDuplicate', 
@@ -111,15 +111,15 @@ class CRM_Member_Import_Form_UploadFile extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/ContactType.php';
         $contactOptions = array();        
         if ( CRM_Contact_BAO_ContactType::isActive( 'Individual' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Individual'), CRM_Member_Import_Parser::CONTACT_INDIVIDUAL);
         }
         if ( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Household'), CRM_Member_Import_Parser::CONTACT_HOUSEHOLD);
         }
         if ( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Organization'), CRM_Member_Import_Parser::CONTACT_ORGANIZATION);
         }
 

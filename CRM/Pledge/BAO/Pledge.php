@@ -707,8 +707,9 @@ GROUP BY  cp.currency
      *
      * @return array array of exportable Fields
      * @access public
+     * @static
      */
-    function &exportableFields( ) 
+    static function &exportableFields( ) 
     {
         if ( ! self::$_exportableFields ) {
             if ( ! self::$_exportableFields ) {

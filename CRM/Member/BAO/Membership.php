@@ -935,8 +935,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
      *
      * @return array array of importable Fields
      * @access public
+     * @static
      */
-    function &importableFields( $contactType = 'Individual', $status = true ) 
+    static function &importableFields( $contactType = 'Individual', $status = true ) 
     {
         if ( ! self::$_importableFields ) {
             if ( ! self::$_importableFields ) {
@@ -994,8 +995,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
      * function to get all exportable fields
      *
      * @retun array return array of all exportable fields
+     * @static
      */
-    function &exportableFields( ) 
+    static function &exportableFields( ) 
     { 
         $expFieldMembership = CRM_Member_DAO_Membership::export( );
         //campaign fields.

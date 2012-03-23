@@ -143,8 +143,14 @@ class CRM_Utils_System {
      * 
      * @return void           prints content on stdout
      * @access public
+     * @static
      */
-    function theme( $type, &$content, $args = null, $print = false, $ret = false, $maintenance = false ) {
+    static function theme( $type, 
+                           &$content, 
+                           $args = null, 
+                           $print = false, 
+                           $ret = false, 
+                           $maintenance = false ) {
         $config =& CRM_Core_Config::singleton( );
         return $config->userSystem->theme($type, $content, $args, $print, $ret, $maintenance);
     }
@@ -161,10 +167,14 @@ class CRM_Utils_System {
      *
      * @return string            an HTML string containing a link to the given path.
      * @access public
-     *
+     * @static
      */
-    function url($path = null, $query = null, $absolute = false,
-                 $fragment = null, $htmlize = true, $frontend = false ) {
+    static function url($path = null, 
+                        $query = null, 
+                        $absolute = false,
+                        $fragment = null, 
+                        $htmlize = true, 
+                        $frontend = false ) {
         // we have a valid query and it has not yet been transformed
         if ( $htmlize && ! empty( $query ) && strpos( $query, '&amp;' ) === false ) {
             $query = htmlentities( $query );
@@ -216,8 +226,9 @@ class CRM_Utils_System {
      * 
      * @return string url
      * @access public
+     * @static
      */
-    function crmURL( $params ) {
+    static function crmURL( $params ) {
         $p = CRM_Utils_Array::value( 'p', $params );
         if ( ! isset( $p ) ) {
             $p = self::currentPath( );
@@ -239,8 +250,9 @@ class CRM_Utils_System {
      *
      * @return void
      * @access public
+     * @static
      */
-    function setTitle( $title, $pageTitle = null ) {
+    static function setTitle( $title, $pageTitle = null ) {
         $config   = CRM_Core_Config::singleton( );
         return $config->userSystem->setTitle( $title, $pageTitle );
     }

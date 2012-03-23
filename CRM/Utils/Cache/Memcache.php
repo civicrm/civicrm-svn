@@ -111,7 +111,7 @@ class CRM_Utils_Cache_Memcache {
     }
 
     function &get( $key ) {
-        $result =& $this->_cache->get( $this->_prefix . $key );
+        $result = $this->_cache->get( $this->_prefix . $key );
         return $result;
     }
 

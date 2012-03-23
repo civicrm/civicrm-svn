@@ -107,7 +107,7 @@ class CRM_Utils_File {
      * @access public
      * @static
      */
-    function createDir( $path, $abort = true ) {
+    static function createDir( $path, $abort = true ) {
         if ( is_dir( $path ) || empty( $path ) ) {
             return;
         }
@@ -137,7 +137,7 @@ class CRM_Utils_File {
      * @access public 
      * @static 
      */ 
-    public function cleanDir( $target, $rmdir = true ) {
+    public static function cleanDir( $target, $rmdir = true ) {
         static $exceptions = array( '.', '..' );
 
         if ( $sourcedir = @opendir( $target ) ) {

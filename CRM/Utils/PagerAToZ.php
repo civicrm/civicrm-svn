@@ -88,7 +88,7 @@ class CRM_Utils_PagerAToZ
         if ( $isDAO ) {
             $result = $query;
         } else {
-            $result =& $query->alphabetQuery( );
+            $result = $query->alphabetQuery( );
         }
         if ( ! $result ) {
             return null;
@@ -111,7 +111,7 @@ class CRM_Utils_PagerAToZ
      * @access private
      * @static
      */
-    function createLinks ( &$query, $sortByCharacter, $isDAO ) 
+    static function createLinks ( &$query, $sortByCharacter, $isDAO ) 
     {
         $AToZBar          = self::getStaticCharacters();
         $dynamicAlphabets = self::getDynamicCharacters( $query, $isDAO );

@@ -561,7 +561,7 @@ AND    u.status = 1
     function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true, $realPath = null )
     {
         //take the cms root path.
-        $cmsPath = $this->cmsRootPath( $realPath );
+        $cmsPath = self::cmsRootPath( $realPath );
 
         if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
             if ( $throwError ) {
@@ -652,7 +652,7 @@ AND    u.status = 1
         return false;
     }
     
-    function cmsRootPath( $scriptFilename = null ) 
+    static function cmsRootPath( $scriptFilename = null )
     {
 
         $cmsRoot = $valid = null;

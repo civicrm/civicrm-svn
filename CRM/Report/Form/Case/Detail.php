@@ -246,7 +246,7 @@ class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
 
     function caseDetailSpecialColumnsAdd( ) {
         $elements = array( );
-        $elements[] =& HTML_QuickForm::createElement( 'select', 'case_activity_all_dates' , null,
+        $elements[] =& $this->createElement( 'select', 'case_activity_all_dates' , null,
                                                       array('' => ts('-- select --')) +  $this->caseActivityTypes );
         $this->addGroup($elements, 'case_detail_extra');
         

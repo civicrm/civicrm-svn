@@ -160,7 +160,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         foreach ( $components as $compName => $compValues ) {
             // take only enabled components.
             if ( !in_array( $compName, $config->enableComponents ) ) continue;
-            $option = HTML_QuickForm::createElement( 'checkbox', $compValues['extend'], null, $compValues['title'] );
+            $option = $this->createElement( 'checkbox', $compValues['extend'], null, $compValues['title'] );
             
             //if price set is used than freeze it.
             if ( !empty( $priceSetUsedTables ) ) {
