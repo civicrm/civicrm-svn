@@ -282,7 +282,10 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
             $ids['onbehalf_dupe_alert'] = self::retrieve( 'onBehalfDupeAlert'  , 'Integer', 'GET', false );
         }
 
-        if ( ! $this->validateData( $input, $ids, $objects ) ) {
+        $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessorType',
+                                                           'PayPal_Standard', 'id', 'name' );
+        
+        if ( ! $this->validateData( $input, $ids, $objects, true, $paymentProcessorID ) ) {
             return false;
         }
 

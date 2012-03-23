@@ -128,7 +128,10 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
         }
         $ids['contributionRecur'] = $ids['contributionPage'] = null;
 
-        if ( ! $this->validateData( $input, $ids, $objects ) ) {
+        $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessorType',
+                                                           'PayPal_Express', 'id', 'name' );
+        
+        if ( ! $this->validateData( $input, $ids, $objects, true, $paymentProcessorID ) ) {
             return false;
         }
 
