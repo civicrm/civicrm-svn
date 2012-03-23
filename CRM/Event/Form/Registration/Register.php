@@ -336,17 +336,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     ts( 'Email Address' ),
                     array( 'size' => 30, 'maxlength' => 60 ), true );
         $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
-        
-        if ( count ( $this->_paymentProcessors ) > 1 ) {
-            $pps = $this->_paymentProcessors;
-            foreach ( $pps as $key => &$name ){
-                $pps[$key] = $name['name'];
-            }
-            
-            $this->addRadio( 'payment_processor', ts('Payment Processor'), $pps,
-                             array('onChange' => "buildPaymentBlock( this.value );"));
-        }
-        
+
         $bypassPayment = $allowGroupOnWaitlist = $isAdditionalParticipants = false;
         if ( $this->_values['event']['is_multiple_registrations'] ) {
             // don't allow to add additional during confirmation if not preregistered.
@@ -419,20 +409,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     $attributes = array('onclick' => "showHidePayPalExpressOption();" );
                 }
             }
-            
+
             //lets build only when there is no waiting and no required approval.
             if ( $this->_allowConfirmation || ( !$this->_requireApproval && !$this->_allowWaitlist ) ) {
-                if ( $this->_values['event']['is_pay_later'] ) {
-                    $element = $this->addElement( 'checkbox', 'is_pay_later', 
-                                                  $this->_values['event']['pay_later_text'], null, $attributes );
-                    
-                    //if payment processor is not available then freeze
-                    //the paylater checkbox with default checked.
-                    if ( $freezePayLater ) {
-                        $element->freeze( );
-                    }
-                }
-                
+
                 require_once 'CRM/Core/Payment/Form.php';
                 CRM_Core_Payment_Form::buildCreditCard( $this );
                 if ( $showHidePayfieldName == 'billing-payment-block' ) {
@@ -443,7 +423,21 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 }
             }
         }
+
+        if ( !empty ( $this->_paymentProcessors ) && count ( $this->_paymentProcessors ) > 1 ) {
+            $pps = $this->_paymentProcessors;
+            foreach ( $pps as $key => &$name ){
+                $pps[$key] = $name['name'];
+            }
+        }
         
+        if ( CRM_Utils_Array::value( 'is_pay_later', $this->_values['event'] ) &&
+             ( $this->_allowConfirmation || ( !$this->_requireApproval && !$this->_allowWaitlist ) ) ) {
+            $pps[0] = $this->_values['event']['pay_later_text'];
+        }
+        $this->addRadio( 'payment_processor', ts('Payment Method'), $pps,
+                         array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
+
         //lets add some qf element to bypass payment validations, CRM-4320
         if ( $bypassPayment ) {
             $attributes = null;
@@ -460,7 +454,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         $this->assign( 'showHidePaymentInformation', $showHidePaymentInformation );
         
         $userID = parent::getContactID( );
-       
+
         if ( ! $userID ) {
             $createCMSUser = false;
 
