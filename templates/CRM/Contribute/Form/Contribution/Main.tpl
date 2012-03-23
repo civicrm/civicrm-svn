@@ -145,11 +145,6 @@ function clearAmountOther() {
 	    	<div class="clear"></div> 
 	    </div>
 
-	    <div class="crm-section payment_processor-section">
-                <div class="label">{$form.payment_processor.label}</div>
-                <div class="content">{$form.payment_processor.html}</div>
-                <div class="clear"></div>
-            </div>	
 	{if $form.is_for_organization}
 		<div class="crm-section {$form.is_for_organization.name}-section">
 	    	<div class="content">
@@ -250,6 +245,12 @@ function clearAmountOther() {
     	</div>
     </fieldset>
     {/if} 
+
+    <div class="crm-section payment_processor-section">
+    	 <div class="label">{$form.payment_processor.label}</div>
+         <div class="content">{$form.payment_processor.html}</div>
+         <div class="clear"></div>
+    </div>
     <div id="billing-payment-block"></div>
     {include file="CRM/common/paymentBlock.tpl'}
     <div class="crm-group custom_post_profile-group">

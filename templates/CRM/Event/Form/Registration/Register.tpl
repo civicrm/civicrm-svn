@@ -146,16 +146,15 @@
         <div class="clear"></div>
     </div>
 
-    <div class="crm-section payment_processor-section">
-         <div class="label">{$form.payment_processor.label}</div>
-         <div class="content">{$form.payment_processor.html}</div>
-         <div class="clear"></div>
-    </div>
-
 {* User account registration option. Displays if enabled for one of the profiles on this page. *}
 {include file="CRM/common/CMSUser.tpl"}
 
 {include file="CRM/UF/Form/Block.tpl" fields=$customPre} 
+ <div class="crm-section payment_processor-section">
+      <div class="label">{$form.payment_processor.label}</div>
+      <div class="content">{$form.payment_processor.html}</div>
+      <div class="clear"></div>
+ </div>
 
  <div id="billing-payment-block"></div>
  {include file="CRM/common/paymentBlock.tpl'}
