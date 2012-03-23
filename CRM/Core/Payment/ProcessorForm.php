@@ -57,12 +57,11 @@ class CRM_Core_Payment_ProcessorForm
         //$form->_paymentProcessor['processorName'] = $form->_paymentObject->_processorName;                                                                                                
         $form->set( 'paymentProcessor', $form->_paymentProcessor );     
 
-        /*
         // also set cancel subscription url                                                                                                                                                             
         if ( CRM_Utils_Array::value( 'is_recur', $form->_paymentProcessor ) &&                                                                                                                          
              CRM_Utils_Array::value( 'is_recur', $form->_values ) ) {                                                                                                                                   
             $form->_values['cancelSubscriptionUrl'] = $form->_paymentObject->cancelSubscriptionURL( );                                                                                                  
-            } */     
+        }  
         
         //checks after setting $form->_paymentProcessor
         // we do this outside of the above conditional to avoid                                                                                                                                                    // saving the country/state list in the session (which could be huge)                                                                                                                               
@@ -94,9 +93,9 @@ ents, or the option to "Execute real-time monetary transactions" is disabled. Pl
     static function buildQuickform( &$form ) {
         require_once 'CRM/Core/Payment/Form.php';
         $form->addElement( 'hidden', 'hidden_processor', 1 );
-        if (( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT )) {
+        if ( ( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) ) {
             CRM_Core_Payment_Form::buildDirectDebit( $form );
-        } elseif (( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_CREDIT_CARD ))  {
+        } elseif ( ( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_CREDIT_CARD ) )  {
             CRM_Core_Payment_Form::buildCreditCard( $form );
         }
     }
