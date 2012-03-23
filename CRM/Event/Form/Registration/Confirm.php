@@ -73,9 +73,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         $this->_lineItem = $this->get( 'lineItem' );
         $this->_params = $this->get( 'params' );
 
-        $this->_params['is_pay_later'] = $yash = $this->get( 'is_pay_later' );
-        $this->assign( 'is_pay_later', $this->_params['is_pay_later'] );
-        if ( $this->_params['is_pay_later'] ) {
+        $this->_params[0]['is_pay_later'] = $this->get( 'is_pay_later' );
+        $this->assign( 'is_pay_later', $this->_params[0]['is_pay_later'] );
+        if ( $this->_params[0]['is_pay_later'] ) {
             $this->assign( 'pay_later_receipt', $this->_values['event']['pay_later_receipt'] );
         }
 
