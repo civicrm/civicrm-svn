@@ -126,17 +126,17 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         // Assign pageTitle
     	$this->assign( 'pageTitle', ts( 'Event Registration' ) );
   
-        if ( !empty($_POST) ) {
-            $payment_processor = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event',  $this->_eventId, 'payment_processor' );
-            if (!is_numeric( $payment_processor )) {
-                $this->set('type',  CRM_Utils_Array::value( 'payment_processor', $_POST ) );
-                $this->set('mode',  $this->_mode );
+        if ( CRM_Utils_Array::value( 'hidden_processor', $_POST ) ) {
 
-                require_once 'CRM/Core/Payment/ProcessorForm.php';
-                CRM_Core_Payment_ProcessorForm::preProcess( $this );
-                CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
-            }
+            $this->set('type',  CRM_Utils_Array::value( 'payment_processor', $_POST ) );
+            $this->set('mode',  $this->_mode );
+            $this->set('paymentProcessor',  $this->_paymentProcessor );
+
+            require_once 'CRM/Core/Payment/ProcessorForm.php';
+            CRM_Core_Payment_ProcessorForm::preProcess( $this );
+            CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
         }
+
     }
     
     /**
@@ -201,10 +201,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         //if event is monetary and pay later is enabled and payment
         //processor is not available then freeze the pay later checkbox with
         //default check
-        if ( CRM_Utils_Array::value( 'is_pay_later' , $this->_values['event'] ) &&
+        /*        if ( CRM_Utils_Array::value( 'is_pay_later' , $this->_values['event'] ) &&
              ! is_array( $this->_paymentProcessor ) ) {
             $this->_defaults['is_pay_later'] = 1;
-        }
+            }*/
 
         //set custom field defaults
         if ( ! empty( $this->_fields ) ) {
@@ -900,6 +900,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         //set as Primary participant
         $params ['is_primary'] = 1;   
 
+        if ( $this->_values['event']['is_pay_later'] &&
+             empty( $this->_paymentProcessor ) &&
+             ! array_key_exists( 'hidden_processor', $params ) ) {
+            $params['is_pay_later'] = 1;
+        } else {
+            $params['is_pay_later'] = 0;
+        }        
         if ( !$this->_allowConfirmation ) {
             // check if the participant is already registered
             if (! $this->_skipDupeRegistrationCheck) {
