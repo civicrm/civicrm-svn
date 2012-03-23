@@ -149,8 +149,8 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
                     array( '' => ts('- select -') ) + $profiles );
 
         $options = array(); 
-        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Optional'), 1 );
-        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Required'), 2 );
+        $options[] = $this->createElement('radio', null, null, ts('Optional'), 1 );
+        $options[] = $this->createElement('radio', null, null, ts('Required'), 2 );
         $this->addGroup($options, 'is_for_organization', ts('') ); 
         $this->add('textarea', 'for_organization', ts('On behalf of Label'), $attributes['for_organization'] );
 

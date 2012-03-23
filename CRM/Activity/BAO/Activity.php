@@ -920,8 +920,9 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.ac
      * component related activities w/ core activity retrieve process. 
      *
      * return an array of component id and name.
+     * @static
      **/
-    function activityComponents( ) 
+    static function activityComponents( ) 
     {
         require_once 'CRM/Core/Permission.php';
         $components = array( );
@@ -1468,8 +1469,9 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
      * 
      * @return array    array of importable Fields
      * @access public
+     * @static
      */
-    function &importableFields( $status = false ) 
+    static function &importableFields( $status = false ) 
     {
         if ( ! self::$_importableFields ) {
             if ( ! self::$_importableFields ) {
@@ -1957,8 +1959,9 @@ AND cl.modified_id  = c.id
      *   
      * @return array array of exportable Fields
      * @access public
+     * @static
      */
-    function &exportableFields( $name = 'Activity' ) 
+    static function &exportableFields( $name = 'Activity' ) 
     {
         require_once ('CRM/Core/BAO/CustomField.php');
         if ( ! isset( self::$_exportableFields[$name] ) ) {

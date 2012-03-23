@@ -507,7 +507,7 @@ class CRM_Activity_BAO_Query
         
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         foreach ( $activityStatus as $activityStatusID => $activityStatusName ) {
-            $activity_status[] = HTML_QuickForm::createElement( 'checkbox', $activityStatusID, null, $activityStatusName );
+            $activity_status[] = $form->createElement( 'checkbox', $activityStatusID, null, $activityStatusName );
         }
         $form->addGroup( $activity_status, 'activity_status', ts( 'Activity Status' ) );
         $form->setDefaults( array( 'activity_status[1]' => 1, 'activity_status[2]' => 1 ) );

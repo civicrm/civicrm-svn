@@ -76,7 +76,8 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String',
                                                       $this, false, 'view' );
         //location blocks.
-        CRM_Contact_Form_Location::preProcess( $this );
+        $location = new CRM_Contact_Form_Location( );
+        $location->preProcess( $this );
     }
     
     /*
@@ -108,7 +109,8 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
             foreach ( $optionValues as $Id => $value ) {
                 if ( $value['is_default'] && $value['is_active'] ) {
                     $this->_fromEmailId        = $Id;
-                    $domainDefaults['email_name']    = CRM_Utils_Array::value( 1, explode('"', $value['label'] ) );
+                    $list = explode( '"', $value['label'] );
+                    $domainDefaults['email_name']    = CRM_Utils_Array::value( 1, $list );
                     $domainDefaults['email_address'] = CRM_Utils_Mail::pluckEmailFromHeader( $value['label'] );
                     break;
                 }

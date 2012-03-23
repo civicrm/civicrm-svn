@@ -1626,8 +1626,9 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
      *     
      * @return array array of exportable Fields
      * @access public
+     * @static
      */
-    function &exportableFields( ) 
+    static function &exportableFields( ) 
     {
         if ( ! self::$_exportableFields ) {
             if ( ! self::$_exportableFields ) {

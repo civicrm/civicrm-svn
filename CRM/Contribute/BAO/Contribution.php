@@ -453,8 +453,9 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
      *
      * @return array array of importable Fields
      * @access public
+     * @static
      */
-    function &importableFields( $contacType = 'Individual', $status = true ) 
+    static function &importableFields( $contacType = 'Individual', $status = true ) 
     {
         if ( ! self::$_importableFields ) {
             if ( ! self::$_importableFields ) {
@@ -521,7 +522,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         return self::$_importableFields;
     }
 
-    function &exportableFields( ) 
+    static function &exportableFields( ) 
     {
         if ( ! self::$_exportableFields ) {
             if ( ! self::$_exportableFields ) {
@@ -1721,7 +1722,7 @@ WHERE     c.id = $contributionId";
         return $componentDetails;
     }
     
-    function contributionCount( $contactId, $includeSoftCredit = true, $includeHonoree = true ) 
+    static function contributionCount( $contactId, $includeSoftCredit = true, $includeHonoree = true ) 
     {
         if ( !$contactId ) return 0;
         

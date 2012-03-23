@@ -156,7 +156,7 @@ class CRM_Contribute_Form_AdditionalInfo
         $honor = CRM_Core_PseudoConstant::honor( );
         $extraOption = array('onclick' =>"return enableHonorType();");
         foreach ( $honor as $key => $var) {
-            $honorTypes[$key] = HTML_QuickForm::createElement('radio', null, null, $var, $key, $extraOption);
+            $honorTypes[$key] = $form->createElement('radio', null, null, $var, $key, $extraOption);
         }
         $form->addGroup($honorTypes, 'honor_type_id', null);
         $form->add('select','honor_prefix_id',ts('Prefix') ,array('' => ts('- prefix -')) + CRM_Core_PseudoConstant::individualPrefix());

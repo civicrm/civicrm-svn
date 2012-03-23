@@ -137,7 +137,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
             $tag = CRM_Core_BAO_Tag::getTags( );
             
             foreach ($tag as $id => $name) {
-                $elements[] = HTML_QuickForm::createElement('checkbox', $id, null, $name);
+                $elements[] = $form->createElement('checkbox', $id, null, $name);
             }
             if ( ! empty( $elements ) ) { 
                 $form->addGroup( $elements, $fName, $tagName, '<br />' );

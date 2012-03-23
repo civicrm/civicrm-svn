@@ -619,7 +619,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $honorOptions = array( );
         $honor = CRM_Core_PseudoConstant::honor( ); 
         foreach ($honor as $key => $var) {
-            $honorTypes[$key] = HTML_QuickForm::createElement('radio', null, null, $var, $key, $extraOption );
+            $honorTypes[$key] = $this->createElement('radio', null, null, $var, $key, $extraOption );
         }
         $this->addGroup($honorTypes, 'honor_type_id', null);
         

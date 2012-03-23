@@ -85,9 +85,9 @@ class CRM_Contribute_Import_Form_UploadFile extends CRM_Core_Form
 
         $duplicateOptions = array();
 
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
                                                             null, null, ts('Insert new contributions'), CRM_Contribute_Import_Parser::DUPLICATE_SKIP);
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
                                                             null, null, ts('Update existing contributions'), CRM_Contribute_Import_Parser::DUPLICATE_UPDATE);
         $this->addGroup($duplicateOptions, 'onDuplicate', 
                         ts('Import mode'));
@@ -114,15 +114,15 @@ class CRM_Contribute_Import_Form_UploadFile extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/ContactType.php';
         $contactOptions = array();        
         if ( CRM_Contact_BAO_ContactType::isActive( 'Individual' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Individual'), CRM_Contribute_Import_Parser::CONTACT_INDIVIDUAL);
         }
         if ( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Household'), CRM_Contribute_Import_Parser::CONTACT_HOUSEHOLD);
         }
         if ( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
-            $contactOptions[] = HTML_QuickForm::createElement('radio',
+            $contactOptions[] = $this->createElement('radio',
                 null, null, ts('Organization'), CRM_Contribute_Import_Parser::CONTACT_ORGANIZATION);
         }
 

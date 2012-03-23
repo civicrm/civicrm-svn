@@ -1050,8 +1050,9 @@ WHERE id={$id}; ";
      *
      * @return array array of importable Fields
      * @access public
+     * @static
      */
-    function &importableFields( $contactType = 'Individual',
+    static function &importableFields( $contactType = 'Individual',
                                 $status = false,
                                 $showAll = false, 
                                 $isProfile = false,
@@ -1193,8 +1194,9 @@ WHERE id={$id}; ";
      *
      * @return array array of exportable Fields
      * @access public
+     * @static
      */
-    function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false ) 
+    static function &exportableFields( $contactType = 'Individual', $status = false, $export = false, $search = false ) 
     {
         if ( empty( $contactType ) ) {
             $contactType = 'All';
@@ -2406,7 +2408,8 @@ AND       civicrm_openid.is_primary = 1";
              
              // build the condition.
              if ( is_array( $criteria ) ) {
-                 eval( '$fields = CRM_Core_DAO_' . $block . '::fields( );' ); 
+                 eval( '$object = new CRM_Core_DAO_' . $block . '( );' ); 
+                 $fields = $object->fields();
                  $conditions = array( );
                  foreach( $criteria as $field => $value ) {
                      if ( array_key_exists( $field, $fields ) ) {

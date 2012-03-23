@@ -83,11 +83,11 @@ class CRM_Activity_Import_Form_UploadFile extends CRM_Core_Form
         $this->addElement( 'checkbox', 'skipColumnHeader', ts('First row contains column headers') );
 
         $duplicateOptions = array();        
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
             null, null, ts('Skip'), CRM_Activity_Import_Parser::DUPLICATE_SKIP);
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
             null, null, ts('Update'), CRM_Activity_Import_Parser::DUPLICATE_UPDATE);
-        $duplicateOptions[] = HTML_QuickForm::createElement('radio',
+        $duplicateOptions[] = $this->createElement('radio',
             null, null, ts('Fill'), CRM_Activity_Import_Parser::DUPLICATE_FILL);
         
         $this->addGroup($duplicateOptions, 'onDuplicate', 

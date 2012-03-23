@@ -207,10 +207,10 @@ class CRM_Contact_Form_Search_Criteria {
         
         $commPreff = array();
         foreach ( $comm as $k => $v ) {
-            $commPreff[] = HTML_QuickForm::createElement('advcheckbox', $k , null, $v );
+            $commPreff[] = $form->createElement('advcheckbox', $k , null, $v );
         }
         
-        $onHold[] = HTML_QuickForm::createElement('advcheckbox', 'on_hold' , null, ts('') ); 
+        $onHold[] = $form->createElement('advcheckbox', 'on_hold' , null, ts('') );
         $form->addGroup($onHold, 'email_on_hold', ts('Email On Hold'));
 
         $form->addGroup($commPreff, 'preferred_communication_method', ts('Preferred Communication Method'));
@@ -336,7 +336,7 @@ class CRM_Contact_Form_Search_Criteria {
         $location_type = array();
         $locationType = CRM_Core_PseudoConstant::locationType( );
         foreach ($locationType as $locationTypeID => $locationTypeName) {
-            $location_type[] = HTML_QuickForm::createElement('checkbox', $locationTypeID, null, $locationTypeName);
+            $location_type[] = $form->createElement('checkbox', $locationTypeID, null, $locationTypeName);
         }
         $form->addGroup($location_type, 'location_type', ts('Location Types'), '&nbsp;');
 
@@ -439,7 +439,7 @@ class CRM_Contact_Form_Search_Criteria {
         $genderOptions = array( );
         $gender =CRM_Core_PseudoConstant::gender();
         foreach ($gender as $key => $var) {
-            $genderOptions[$key] = HTML_QuickForm::createElement('radio', null,
+            $genderOptions[$key] = $form->createElement('radio', null,
                                                                  ts('Gender'), $var, $key,
                                                                  array( 'id' => "civicrm_gender_{$var}_{$key}" ) );
         }
@@ -453,8 +453,8 @@ class CRM_Contact_Form_Search_Criteria {
 		
 		// radio button for is_deceased
         $deceasedOptions = array( );
-        $deceasedOptions[1] = HTML_QuickForm::createElement('radio', null, ts('Deceased'), 'Yes', 1);
-		$deceasedOptions[0] = HTML_QuickForm::createElement('radio', null, ts('Deceased'), 'No', 0);
+        $deceasedOptions[1] = $form->createElement('radio', null, ts('Deceased'), 'Yes', 1);
+		$deceasedOptions[0] = $form->createElement('radio', null, ts('Deceased'), 'No', 0);
         $form->addGroup( $deceasedOptions, 'is_deceased', ts('Deceased'));
     }
     
