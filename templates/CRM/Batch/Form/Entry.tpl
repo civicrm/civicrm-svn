@@ -28,8 +28,8 @@
     {ts}Batch entry form{/ts}
 </div>
 <div class="form-item batch-totals">
-    <div class="label">{ts}Expected total amount{/ts}: <span class="batch-expected-total">{$batchTotal}</span></div>
-    <div class="label">{ts}Actual total amount{/ts}: <span class="batch-actual-total">0</span></div>
+    <div class="label">{ts}Expected total amount{/ts}: <span class="batch-expected-total">{$batchTotal|crmMoney}</span></div>
+    <div class="label">{ts}Actual total amount{/ts}: {$config->defaultCurrencySymbol} <span class="batch-actual-total"></span></div>
 </div>
 <br/>
 <table>
@@ -98,17 +98,20 @@
        // show valid row icon if all required data is field
        var validRow   = 0;
        var inValidRow = 0;
+       var errorExists = false;
        parentRow.find('td .required').each(function(){
          if ( !cj(this).val( ) ) {
             inValidRow++;
+         } else if ( cj(this).hasClass('error') && !cj(this).hasClass('valid') ) {
+            errorExists = true;
          } else {
             validRow++;
          }
        });
 
        // this means use has entered some data
-       if ( inValidRow > 0 && validRow > 0 ) {
-            parentRow.find("td:first span").prop('class', 'batch-invalid');
+       if ( errorExists ) {
+           parentRow.find("td:first span").prop('class', 'batch-invalid');
        } else if ( inValidRow == 0 && validRow > 0 ) {
             parentRow.find("td:first span").prop('class', 'batch-valid');
        } else {
@@ -123,7 +126,25 @@
             total += parseInt(cj(this).val());
           }
        });
-       cj('.batch-actual-total').html(total); 
+       
+       cj('.batch-actual-total').html(formatMoney(total)); 
    }
+
+//money formatting/localization
+function formatMoney ( amount ) {
+var c = 2;
+var t = '{/literal}{$config->monetaryThousandSeparator}{literal}';
+var d = '{/literal}{$config->monetaryDecimalPoint}{literal}';
+
+var n = amount, 
+    c = isNaN(c = Math.abs(c)) ? 2 : c, 
+    d = d == undefined ? "," : d, 
+    t = t == undefined ? "." : t, s = n < 0 ? "-" : "", 
+    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+    j = (j = i.length) > 3 ? j % 3 : 0;
+	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+}
+
+
 </script>
 {/literal}
