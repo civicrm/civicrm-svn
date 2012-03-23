@@ -381,25 +381,30 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                     CRM_Core_BAO_PaymentProcessor::getPayments( $ppIds,
                                                                 $this->_mode );
                 
-
+                
                 // make sure we have a valid payment class, else abort
                 if ( $this->_values['event']['is_monetary'] ) {
-                    $key = key ( $this->_paymentProcessors );
-                    $this->_paymentProcessor = $this->_paymentProcessors[$key];
-                    // check selected payment processor is active                                                                                                                                               
-                    if ( ! $this->_paymentProcessor ) {
-                        CRM_Core_Error::fatal( ts( 'The site administrator must set a Payment Processor for this event in order to use online registration.' ) );
-                    }
                     
-                    // ensure that processor has a valid config
-                    $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
-                    $error = $payment->checkConfig( );
-                    if ( ! empty( $error ) ) {
-                        CRM_Core_Error::fatal( $error );
+                    if ( !CRM_Utils_System::isNull( $this->_paymentProcessors ) ) {
+                        foreach( $this->_paymentProcessors as $eachPaymentProcessor ) {
+                            
+                            // check selected payment processor is active                                                                                                                   
+                            if ( ! $eachPaymentProcessor ) {
+                                CRM_Core_Error::fatal( ts( 'The site administrator must set a Payment Processor for this event in order to use online registration.' ) );
+                            }
+                            
+                            // ensure that processor has a valid config
+                            $payment = CRM_Core_Payment::singleton( $this->_mode, $eachPaymentProcessor, $this );
+                            $error = $payment->checkConfig( );
+                            if ( ! empty( $error ) ) {
+                                CRM_Core_Error::fatal( $error );
+                            }
+                        }
+                        
                     }
                 }
-                $this->_paymentProcessor['processorName'] = $payment->_processorName;
-                $this->set( 'paymentProcessor', $this->_paymentProcessor );
+                //$this->_paymentProcessor['processorName'] = $payment->_processorName;
+                //$this->set( 'paymentProcessor', $this->_paymentProcessor );
             }
             
             //init event fee.
