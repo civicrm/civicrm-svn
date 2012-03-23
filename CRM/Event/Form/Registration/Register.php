@@ -411,7 +411,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             }
 
             //lets build only when there is no waiting and no required approval.
-            if ( $this->_allowConfirmation || ( !$this->_requireApproval && !$this->_allowWaitlist ) ) {
+            /*if ( $this->_allowConfirmation || ( !$this->_requireApproval && !$this->_allowWaitlist ) ) {
 
                 require_once 'CRM/Core/Payment/Form.php';
                 CRM_Core_Payment_Form::buildCreditCard( $this );
@@ -421,7 +421,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 if ( $showHidePayfieldName == 'PayPalExpress' ) {
                     $buildExpressPayBlock = true; 
                 }
-            }
+            }*/
         }
 
         if ( !empty ( $this->_paymentProcessors ) && count ( $this->_paymentProcessors ) > 1 ) {
@@ -850,13 +850,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                  ( !$self->_allowConfirmation && ( $self->_requireApproval || $self->_allowWaitlist ) ) ) {
                 return empty( $errors ) ? true : $errors;
             }
-            /*
+
             foreach ( $self->_fields as $name => $fld ) {
                 if ( $fld['is_required'] &&
                      CRM_Utils_System::isNull( CRM_Utils_Array::value( $name, $fields ) ) ) {
                     $errors[$name] = ts( '%1 is a required field.', array( 1 => $fld['title'] ) );
                 }
-                }*/
+            }
         }
         
         // make sure that credit card number and cvv are valid
