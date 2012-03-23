@@ -407,7 +407,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( CRM_Utils_Array::value( 'is_pay_later', $this->_values ) ) {
             $pps[0] = $this->_values['pay_later_text'];
         }
-        $this->addRadio( 'payment_processor', ts('Payment Processor'), $pps, 
+        $this->addRadio( 'payment_processor', ts('Payment Method'), $pps, 
                          array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
         
         //build pledge block.
