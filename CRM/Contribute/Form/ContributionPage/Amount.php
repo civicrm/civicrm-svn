@@ -116,9 +116,6 @@ SELECT id
                             null, null, null, null,
                             array( '&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>' ) );
 
-        /*        $this->add( 'select', 'payment_processor_id', ts( 'Payment Processor' ),
-                    array(''=>ts( '- select -' )) + $paymentProcessor, null, array( 'onchange' => "showRecurring( this.value );" ) );
-        */
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
         
         //check if selected payment processor supports recurring payment
@@ -374,11 +371,14 @@ SELECT id
     {
         // get the submitted form values.
         $params = $this->controller->exportValues( $this->_name );
-        if ( array_key_exists( CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessor', 'AuthNet',
-                                                            'id', 'payment_processor_type'), 
-                               CRM_Utils_Array::value( 'payment_processor', $params ) ) ) {
-            CRM_Core_Session::setStatus( ts( ' Please note that the Authorize.net payment processor only allows recurring contributions and auto-renew memberships with payment intervals from 7-365 days or 1-12 months (i.e. not greater than 1 year).' ) );
+        if ( array_key_exists( 'payment_processor', $params ) ) {
+            if ( array_key_exists( CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessor', 'AuthNet',
+                                                                'id', 'payment_processor_type'), 
+                                   CRM_Utils_Array::value( 'payment_processor', $params ) ) ) {
+                CRM_Core_Session::setStatus( ts( ' Please note that the Authorize.net payment processor only allows recurring contributions and auto-renew memberships with payment intervals from 7-365 days or 1-12 months (i.e. not greater than 1 year).' ) );
+            }
         }
+
         // check for price set.
         $priceSetID = CRM_Utils_Array::value( 'price_set_id', $params );
         
@@ -423,8 +423,11 @@ SELECT id
             $params['is_recur_interval'] = CRM_Utils_Array::value( 'is_recur_interval', $params ,false );
         }
 
-        if ( !CRM_Utils_System::isNull( $params['payment_processor'] ) ) {
-            $params['payment_processor'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys( $params['payment_processor'] ) );
+        if ( array_key_exists( 'payment_processor', $params ) &&
+             ! CRM_Utils_System::isNull( $params['payment_processor'] ) ) {
+                $params['payment_processor'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys( $params['payment_processor'] ) );
+        } else {
+            $params['payment_processor'] = 'null';
         }
 
         require_once 'CRM/Contribute/BAO/ContributionPage.php';

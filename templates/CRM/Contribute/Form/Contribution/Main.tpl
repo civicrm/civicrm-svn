@@ -23,7 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $onbehalf} 
+{if $ppType}
+  {include file="CRM/Core/BillingBlock.tpl"}
+{elseif $onbehalf} 
    {include file=CRM/Contribute/Form/Contribution/OnBehalfOf.tpl} 
 {else}
 {literal}
@@ -143,11 +145,6 @@ function clearAmountOther() {
 	    	<div class="clear"></div> 
 	    </div>
 
-	    <div class="crm-section payment_processor-section">
-                <div class="label">{$form.payment_processor.label}</div>
-                <div class="content">{$form.payment_processor.html}</div>
-                <div class="clear"></div>
-            </div>	
 	{if $form.is_for_organization}
 		<div class="crm-section {$form.is_for_organization.name}-section">
 	    	<div class="content">
@@ -249,10 +246,13 @@ function clearAmountOther() {
     </fieldset>
     {/if} 
 
-    {if $is_monetary} 
-        {include file='CRM/Core/BillingBlock.tpl'} 
-    {/if} 
-
+    <div class="crm-section payment_processor-section">
+    	 <div class="label">{$form.payment_processor.label}</div>
+         <div class="content">{$form.payment_processor.html}</div>
+         <div class="clear"></div>
+    </div>
+    <div id="billing-payment-block"></div>
+    {include file="CRM/common/paymentBlock.tpl'}
     <div class="crm-group custom_post_profile-group">
     	{include file="CRM/UF/Form/Block.tpl" fields=$customPost}
 	</div>
@@ -314,7 +314,7 @@ function clearAmountOther() {
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="is_pay_later"
     trigger_value       =""
-    target_element_id   ="payment_information" 
+    target_element_id   ="billing-payment-block" 
     target_element_type ="table-row"
     field_type          ="radio"
     invert              = 1

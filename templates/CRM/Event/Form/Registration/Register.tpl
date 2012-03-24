@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{if $ppType}
+  {include file="CRM/Core/BillingBlock.tpl"}
+{else}
 {if $action & 1024}
     {include file="CRM/Event/Form/Registration/PreviewHeader.tpl"}
 {/if}
@@ -143,15 +146,19 @@
         <div class="clear"></div>
     </div>
 
-
 {* User account registration option. Displays if enabled for one of the profiles on this page. *}
 {include file="CRM/common/CMSUser.tpl"}
 
 {include file="CRM/UF/Form/Block.tpl" fields=$customPre} 
+ <div class="crm-section payment_processor-section">
+      <div class="label">{$form.payment_processor.label}</div>
+      <div class="content">{$form.payment_processor.html}</div>
+      <div class="clear"></div>
+ </div>
 
-{if $paidEvent}   
-    {include file='CRM/Core/BillingBlock.tpl'} 
-{/if}        
+ <div id="billing-payment-block"></div>
+ {include file="CRM/common/paymentBlock.tpl'}
+
 
 {include file="CRM/UF/Form/Block.tpl" fields=$customPost}   
 
@@ -181,7 +188,7 @@
     </div>
 {/if}
 </div>
-
+{/if}
 {literal} 
 <script type="text/javascript">
     {/literal}{if $pcp && $is_honor_roll }pcpAnonymous();{/if}{literal}
@@ -226,9 +233,9 @@
 
 	if ( ( cj("#bypass_payment").val( ) == 1 ) ||
 	     ( payLater && document.getElementsByName('is_pay_later')[0].checked ) ) {
-	     hide( 'payment_information' );		
+	     hide( 'billing-payment-block' );		
 	} else {
-             show( 'payment_information' );
+             show( 'billing-payment-block' );
 	}
     }
     

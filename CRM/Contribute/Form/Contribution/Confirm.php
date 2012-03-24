@@ -60,8 +60,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     {
         $config = CRM_Core_Config::singleton( );
         parent::preProcess( );
+        
         // lineItem isn't set until Register postProcess
         $this->_lineItem = $this->get( 'lineItem' );
+        $this->_paymentProcessor = $this->get( 'paymentProcessor' );
         
         if ( $this->_contributeMode == 'express' ) {
             // rfp == redirect from paypal
@@ -130,10 +132,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
             
             if ( isset( $this->_params['credit_card_exp_date'] ) ) {
-                $this->_params['year'   ]        = CRM_Core_Payment_Form::getCreditCardExpirationYear( $this->_params );
-                $this->_params['month'  ]        = CRM_Core_Payment_Form::getCreditCardExpirationMonth( $this->_params );
+                require_once 'CRM/Core/Payment/Form.php';
+                $this->_params['year'   ] = CRM_Core_Payment_Form::getCreditCardExpirationYear( $this->_params );
+                $this->_params['month'  ] = CRM_Core_Payment_Form::getCreditCardExpirationMonth( $this->_params );
             }
-            $this->_params['ip_address']     = $_SERVER['REMOTE_ADDR']; 
+            $this->_params['ip_address']  = $_SERVER['REMOTE_ADDR']; 
             // hack for safari
             if ( $this->_params['ip_address'] == '::1' ) {
                 $this->_params['ip_address'] = '127.0.0.1';
@@ -150,6 +153,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $this->_params['payment_action'] = 'Sale';
         }
 
+        $this->_params['is_pay_later'] = $this->get( 'is_pay_later' );
+        $this->assign( 'is_pay_later', $this->_params['is_pay_later'] );
+        if ( $this->_params['is_pay_later'] ) {
+            $this->assign( 'pay_later_receipt', $this->_values['pay_later_receipt'] );
+        }
         // if onbehalf-of-organization
         if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $this->_params ) ) {
             if ( CRM_Utils_Array::value( 'org_option', $this->_params ) && 
@@ -352,7 +360,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->assign( 'is_separate_payment', $this->_separateMembershipPayment );
         $this->assign( 'lineItem', $this->_lineItem );
         $this->assign( 'priceSetID', $this->_priceSetId );
-        
 
         if ( $this->_paymentProcessor['payment_processor_type'] == 'Google_Checkout' 
              && !$this->_params['is_pay_later'] && ! ( $this->_amount == 0 ) ) {
@@ -485,9 +492,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     {
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Contact/BAO/Contact.php';
-
         $contactID = $this->_userID;
-
+        
         // add a description field at the very beginning
         $this->_params['description'] = ts( 'Online Contribution' ) . ': ' . 
             ( ( $this->_pcpInfo['title'] ) ? $this->_pcpInfo['title'] : $this->_values['title'] );

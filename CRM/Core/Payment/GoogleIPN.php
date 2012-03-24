@@ -119,7 +119,10 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             $ids['contributionRecur']   = self::retrieve( 'contributionRecurID', 'Integer', $privateData, false );
         }
 
-        if ( ! $this->validateData( $input, $ids, $objects ) ) {
+        $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessorType',
+                                                           'Google_Checkout', 'id', 'name' );
+
+        if ( ! $this->validateData( $input, $ids, $objects, true, $paymentProcessorID ) ) {
             return false;
         }
 
@@ -281,8 +284,11 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                 }
             }
         }
-
-        $this->loadObjects( $input, $ids, $objects, true );
+        
+        $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessorType',
+                                                           'Google_Checkout', 'id', 'name' );
+        
+        $this->loadObjects( $input, $ids, $objects, true, $paymentProcessorID );
 
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
@@ -429,7 +435,10 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
             }
         }
 
-        $this->loadObjects( $input, $ids, $objects, false );
+        $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessorType',
+                                                           'Google_Checkout', 'id', 'name' );
+        
+        $this->loadObjects( $input, $ids, $objects, false, $paymentProcessorID );
 
         if ( !$ids['paymentProcessor'] ) {
             CRM_Core_Error::debug_log_message( "Payment processor could not be retrieved." );

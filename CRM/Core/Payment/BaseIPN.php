@@ -42,7 +42,7 @@ class CRM_Core_Payment_BaseIPN {
         self::$_now = date( 'YmdHis' );
     }
 
-    function validateData( &$input, &$ids, &$objects, $required = true ) {
+    function validateData( &$input, &$ids, &$objects, $required = true , $paymentProcessorID = null ) {
 
         // make sure contact exists and is valid
         require_once 'CRM/Contact/DAO/Contact.php';
@@ -67,7 +67,7 @@ class CRM_Core_Payment_BaseIPN {
 
         $objects['contact']          =& $contact;
         $objects['contribution']     =& $contribution;
-        if ( ! $this->loadObjects( $input, $ids, $objects, $required ) ) {
+        if ( ! $this->loadObjects( $input, $ids, $objects, $required, $paymentProcessorID ) ) {
             return false;
         }
         
@@ -96,7 +96,7 @@ class CRM_Core_Payment_BaseIPN {
         return true;
     }
 
-    function loadObjects( &$input, &$ids, &$objects, $required ) {
+    function loadObjects( &$input, &$ids, &$objects, $required, $paymentProcessorID ) {
         $contribution =& $objects['contribution'];
      
         $objects['membership']        = null;
@@ -117,7 +117,7 @@ class CRM_Core_Payment_BaseIPN {
         $objects['contributionType'] = $contributionType;
         
         
-        $paymentProcessorID = null;
+        //$paymentProcessorID = null;
         if ( $input['component'] == 'contribute' ) {
             
             // retrieve the other optional objects first so
@@ -200,7 +200,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                     // get the payment processor id from contribution page
                     $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
                                                                        $contribution->contribution_page_id,
-                                                                       'payment_processor_id' );
+                                                                       'payment_processor' );
+                    
                 }
                 
                 //fail to load payment processor id.
@@ -547,7 +548,7 @@ LIMIT 1;";
                 $paymentProcessor = $objects['paymentProcessor']->payment_processor_type;    
             }
         }
-        
+
         if ( $contribution->trxn_id ) {
             
             $trxnParams = array(

@@ -105,7 +105,7 @@ abstract class CRM_Core_Payment {
                 $paymentClass = $ext->keyToClass( $paymentProcessor['class_name'], 'payment' );
                 require_once( $ext->classToPath( $paymentClass ) );
             } else {                
-                $paymentClass = "CRM_Core_" . $paymentProcessor['class_name'];
+                $paymentClass = 'CRM_Core_' . $paymentProcessor['class_name'];
                 require_once( str_replace( '_', DIRECTORY_SEPARATOR , $paymentClass ) . '.php' );
             }
             
@@ -220,7 +220,7 @@ abstract class CRM_Core_Payment {
         }
         
         // Query db for processor ..
-        require_once "CRM/Core/DAO.php";
+        require_once 'CRM/Core/DAO.php';
         $mode = @$_GET['mode'];
         
         $dao = CRM_Core_DAO::executeQuery( "
@@ -250,7 +250,7 @@ abstract class CRM_Core_Payment {
                 CRM_Core_Error::fatal( "handlePaymentNotification method not supported under legacy payment processors" );
             }
             
-            require_once "CRM/Core/BAO/PaymentProcessor.php";
+            require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $dao->processor_id, $mode );
    
             if ( empty( $paymentProcessor ) ) {
@@ -274,11 +274,11 @@ abstract class CRM_Core_Payment {
             CRM_Core_Error::fatal( "Payment processor '{$_GET['processor_name']}' was not found." );
         }
         
-        require_once "CRM/Utils/System.php";
+        require_once 'CRM/Utils/System.php';
         CRM_Utils_System::civiExit();
               
     }
-    
+
 }
 
 
