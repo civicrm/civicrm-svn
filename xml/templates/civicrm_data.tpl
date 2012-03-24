@@ -1271,15 +1271,14 @@ INSERT INTO civicrm_uf_field
        (41,  9,           'country',               1,           0,           7,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Country{/ts}',                        'Contact',    NULL,   NULL),
        (42,  9,           'state_province',        1,           0,           8,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}State / Province{/ts}',               'Contact',    NULL,   NULL),
        (43, 10,     'contribution_type',           1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Contribution', NULL, NULL ),
-       (44, 10,     'currency',                    1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Currency{/ts}', 'Contribution', NULL, NULL ),
-       (45, 10,     'total_amount',                1, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Total Amount{/ts}', 'Contribution', NULL, NULL ),
-       (46, 10,     'contribution_status_id',      1, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Contribution', NULL, NULL ),
-       (47, 10,     'contribution_source',         0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Contribution', NULL, NULL ),
-       (48, 10,     'receive_date',                0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receive Date{/ts}', 'Contribution', NULL, NULL ),
-       (49, 10,     'payment_instrument',          0, 0, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Instrument{/ts}', 'Contribution', NULL, NULL ),
-       (50, 10,     'check_number',                0, 0, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Check Number{/ts}', 'Contribution', NULL, NULL ),
-       (51, 10,     'invoice_id',                  0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Invoice ID{/ts}', 'Contribution', NULL, NULL ),
-       (52, 10,     'receipt_date',                0, 0, 10, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receipt Date{/ts}', 'Contribution', NULL, NULL );
+       (44, 10,     'total_amount',                1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Total Amount{/ts}', 'Contribution', NULL, NULL ),
+       (45, 10,     'contribution_status_id',      1, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Contribution', NULL, NULL ),
+       (46, 10,     'contribution_source',         0, 0, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Contribution', NULL, NULL ),
+       (47, 10,     'receive_date',                0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receive Date{/ts}', 'Contribution', NULL, NULL ),
+       (48, 10,     'payment_instrument',          0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Instrument{/ts}', 'Contribution', NULL, NULL ),
+       (49, 10,     'check_number',                0, 0, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Check Number{/ts}', 'Contribution', NULL, NULL ),
+       (50, 10,     'invoice_id',                  0, 0, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Invoice ID{/ts}', 'Contribution', NULL, NULL ),
+       (51, 10,     'receipt_date',                0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receipt Date{/ts}', 'Contribution', NULL, NULL );
 
 
 INSERT INTO civicrm_participant_status_type
