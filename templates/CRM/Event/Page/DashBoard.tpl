@@ -106,7 +106,7 @@
               <div class="crm-configure-actions">
 		 <span id="{$id}" class="btn-slide">{ts}Configure{/ts}
         	    	<ul class="panel" id="panel_info_{$id}">
-        		    <li><a title="Info and Settings" class="action-item-wrap" href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$id`"}">{ts}Info and Settings{/ts}</a></li>
+        		    <li><a title="Info and Settings" class="action-item-wrap" href="{crmURL p='civicrm/event/manage/settings' q="reset=1&action=update&id=`$id`"}">{ts}Info and Settings{/ts}</a></li>
         		    <li><a title="Location" class="action-item-wrap {if NOT $values.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$id`"}">{ts}Location{/ts}</a></li>
         		    <li><a title="Fees" class="action-item {if NOT $values.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$id`"}">{ts}Fees{/ts}</a></li>
         		    <li><a title="Online Registration" class="action-item-wrap {if NOT $values.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$id`"}">{ts}Online Registration{/ts}</a></li>
