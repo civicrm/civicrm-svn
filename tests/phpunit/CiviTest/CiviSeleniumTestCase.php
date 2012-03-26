@@ -63,8 +63,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         require_once 'CiviSeleniumSettings.php';
         $this->settings = new CiviSeleniumSettings();
 
+        // autoload
+        require_once 'CRM/Core/ClassLoader.php';
+        $classLoader = new CRM_Core_ClassLoader();
+        $classLoader->register();
+
         // also initialize a connection to the db 
-        require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
     }
 
