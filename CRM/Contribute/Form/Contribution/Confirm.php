@@ -129,7 +129,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
             
             if ( isset( $this->_params['credit_card_exp_date'] ) ) {
-                require_once 'CRM/Core/Payment/Form.php';
                 $this->_params['year'   ] = CRM_Core_Payment_Form::getCreditCardExpirationYear( $this->_params );
                 $this->_params['month'  ] = CRM_Core_Payment_Form::getCreditCardExpirationMonth( $this->_params );
             }

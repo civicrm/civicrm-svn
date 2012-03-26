@@ -148,7 +148,6 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
                 'entity_id'    =>  $contribution->id
             );
 
-            require_once 'CRM/Core/BAO/Batch.php';
             CRM_Core_BAO_Batch::addBatchEntity( $entityParams );
         }
 

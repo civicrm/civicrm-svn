@@ -49,7 +49,6 @@ class CRM_Core_Payment_ProcessorForm
             $form->_type = CRM_Utils_Request::retrieve( 'type', 'String', $form );
         }
 
-        require_once 'CRM/Core/BAO/PaymentProcessor.php';
         if ($form->_type) {
             $form->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($form->_type, $form->_mode);
         }
@@ -91,7 +90,6 @@ ents, or the option to "Execute real-time monetary transactions" is disabled. Pl
     }
     
     static function buildQuickform( &$form ) {
-        require_once 'CRM/Core/Payment/Form.php';
         $form->addElement( 'hidden', 'hidden_processor', 1 );
         if ( ( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) ) {
             CRM_Core_Payment_Form::buildDirectDebit( $form );

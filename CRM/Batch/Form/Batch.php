@@ -75,7 +75,6 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form
         $defaults = array();
 
         // set batch name default
-        require_once 'CRM/Core/BAO/Batch.php';
         $defaults['title'] = CRM_Core_BAO_Batch::generateBatchName();
  
         return $defaults;

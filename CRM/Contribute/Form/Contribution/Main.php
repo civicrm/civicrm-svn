@@ -73,7 +73,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->assign('ppType', false);
         if ( $this->_ppType ) {
             $this->assign('ppType', true);
-            require_once 'CRM/Core/Payment/ProcessorForm.php';
             return CRM_Core_Payment_ProcessorForm::preProcess( $this );
         }
 
@@ -160,7 +159,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->set('mode',  $this->_mode );
             $this->set('paymentProcessor',  $this->_paymentProcessor );
 
-            require_once 'CRM/Core/Payment/ProcessorForm.php';
             CRM_Core_Payment_ProcessorForm::preProcess( $this );
             CRM_Core_Payment_ProcessorForm::buildQuickForm( $this );
         }

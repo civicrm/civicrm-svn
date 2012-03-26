@@ -126,7 +126,6 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
      * @access public
      */
     static function addBatchEntity( &$params ) {
-        require_once 'CRM/Core/DAO/EntityBatch.php';
         $entityBatch = new CRM_Core_DAO_EntityBatch( );
         $entityBatch->copyValues( $params );
         $entityBatch->save( );

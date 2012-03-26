@@ -798,7 +798,6 @@ WHERE civicrm_event.is_active = 1
 
 
         // check if we're in shopping cart mode for events
-        require_once 'CRM/Core/BAO/Setting.php';
         $enable_cart = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME,
                                                    'enable_cart' );
         if ($enable_cart) {
