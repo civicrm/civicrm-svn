@@ -406,7 +406,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
 
         $this->_paymentProcessors = $this->get( 'paymentProcessors' );
-        if ( !empty ( $this->_paymentProcessors ) && count ( $this->_paymentProcessors ) > 1 ) {
+        if ( !empty ( $this->_paymentProcessors ) ) {
             $pps = $this->_paymentProcessors;
             foreach ( $pps as $key => &$name ){
                 $pps[$key] = $name['name'];
@@ -417,8 +417,11 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
              ( $this->_allowConfirmation || ( !$this->_requireApproval && !$this->_allowWaitlist ) ) ) {
             $pps[0] = $this->_values['event']['pay_later_text'];
         }
-        $this->addRadio( 'payment_processor', ts('Payment Method'), $pps,
-                         array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
+
+        if ( count ( $pps ) > 1 ) {
+            $this->addRadio( 'payment_processor', ts('Payment Method'), $pps,
+                             array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
+        }
 
         //lets add some qf element to bypass payment validations, CRM-4320
         if ( $bypassPayment ) {

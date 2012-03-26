@@ -76,7 +76,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             return CRM_Core_Payment_ProcessorForm::preProcess( $this );
         }
 
-
         // Make the contributionPageID avilable to the template
         $this->assign( 'contributionPageID', $this->_id );
         $this->assign( 'isShare', $this->_values['is_share'] );
@@ -382,7 +381,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
 
         $this->_paymentProcessors = $this->get( 'paymentProcessors' );
-        if ( !empty ( $this->_paymentProcessors ) && count ( $this->_paymentProcessors ) > 1 ) {
+        if ( !empty ( $this->_paymentProcessors ) ) {
             $pps = $this->_paymentProcessors;
             foreach ( $pps as $key => &$name ){
                 $pps[$key] = $name['name']; 
@@ -391,9 +390,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( CRM_Utils_Array::value( 'is_pay_later', $this->_values ) ) {
             $pps[0] = $this->_values['pay_later_text'];
         }
-        $this->addRadio( 'payment_processor', ts('Payment Method'), $pps, 
-                         array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
-        
+
+        if ( count ( $pps ) > 1 ) {
+            $this->addRadio( 'payment_processor', ts('Payment Method'), $pps, 
+                             array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
+        }
+
         //build pledge block.
         $this->_useForMember = 0;
         //don't build membership block when pledge_id is passed
