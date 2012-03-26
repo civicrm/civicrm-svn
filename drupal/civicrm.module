@@ -393,6 +393,18 @@ function civicrm_get_ctype( $default = null )
  */
 function civicrm_invoke( )
 {
+    // check if this is a redirect and maybe a user login?
+    // this changed between D6 and D7, seems hackish but not sure
+    // what we can / should do
+    // CRM-9853
+    if ( isset( $_POST['form_build_id'] ) &&
+         isset( $_POST['form_id'] ) && 
+         ( $_POST['form_id'] == 'user_login_block' || $_POST['form_id'] == 'user_login' ) &&
+         isset( $_GET['destination'] ) ) {
+        // process the user login form and let it do the redirect?
+        return drupal_get_form('user_login');
+    }
+
     // make sure the system is initialized
     if ( ! civicrm_initialize( ) ) {
         return drupal_not_found( );
@@ -401,7 +413,7 @@ function civicrm_invoke( )
     civicrm_cache_disable( );
 
     require_once 'CRM/Core/Error.php';
-    
+
     $args = explode( '/', $_GET['q'] );
 
     // synchronize the drupal uid with the contacts db
