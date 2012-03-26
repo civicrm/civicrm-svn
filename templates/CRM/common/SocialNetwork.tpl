@@ -35,17 +35,17 @@
     <div class="crm-fb-tweet-buttons">
         {if $emailMode eq true}
             {*use images for email*}
-            <a href="http://twitter.com/share?url={$url}&amp;text={$title}" id="crm_tweet">
+            <a href="//twitter.com/share?url={$url}&amp;text={$title}" id="crm_tweet">
                 <img title="Twitter Tweet Button" src="{$config->userFrameworkResourceURL}/i/tweet.png" width="55px" height="20px"  alt="Tweet Button">
             </a>
-            <a href="http://www.facebook.com/plugins/like.php?href={$url}" target="_blank">
+            <a href="//www.facebook.com/plugins/like.php?href={$url}" target="_blank">
                 <img title="Facebook Like Button" src="{$config->userFrameworkResourceURL}/i/fblike.png" alt="Facebook Button" />
             </a>
         {else}
             {*use advanced buttons for pages*}
             <div class="label">
                 <iframe allowtransparency="true" frameborder="0" scrolling="no"
-                src="http://platform.twitter.com/widgets/tweet_button.html?text={$title}&amp;url={$url}" 
+                src="//platform.twitter.com/widgets/tweet_button.html?text={$title}&amp;url={$url}" 
                 style="width:100px; height:20px;">
                 </iframe>
             </div>
@@ -53,7 +53,7 @@
                 <g:plusone href={$url}></g:plusone>
             </div>
             <div class="label">
-                <iframe src="http://www.facebook.com/plugins/like.php?app_id=240719639306341&amp;href={$url}&amp;send=false&amp;layout=standard&amp;show_faces=false&amp;action=like&amp;colorscheme=light" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:30px;" allowTransparency="true"> 
+                <iframe src="//www.facebook.com/plugins/like.php?app_id=240719639306341&amp;href={$url}&amp;send=false&amp;layout=standard&amp;show_faces=false&amp;action=like&amp;colorscheme=light" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:30px;" allowTransparency="true"> 
                 </iframe>
             </div>
         {/if}
