@@ -571,10 +571,14 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
             $this->set( 'discountSection', 2 );
             return;
         }
-        
-        if ( !CRM_Utils_System::isNull( $params['payment_processor'] ) ) {
+     
+        if ( array_key_exists( 'payment_processor', $params ) &&
+             !CRM_Utils_System::isNull( $params['payment_processor'] ) ) {
             $params['payment_processor'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, array_keys( $params['payment_processor'] ) );
+        } else {
+            $params['payment_processor'] = 'null';
         }
+        
         $params['is_pay_later'] = CRM_Utils_Array::value( 'is_pay_later', $params, 0 );
         
         if ( $this->_id ) {
