@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
-require_once 'CRM/Core/BAO/MailSettings.php';
 
 /**
  * This class handles mail account settings.
@@ -73,7 +71,6 @@ class CRM_Admin_Form_MailSettings extends CRM_Admin_Form
         $this->add('text', 'return_path', ts('Return-Path'), $attributes['return_path'] );
         $this->addRule( 'return_path', ts('Return-Path must use a valid email address format.'), 'email' );
         
-        require_once 'CRM/Core/PseudoConstant.php';
         $this->add( 'select', 'protocol', 
                     ts( 'Protocol' ),
                     array('' => ts('- select -')) + CRM_Core_PseudoConstant::mailProtocol(),

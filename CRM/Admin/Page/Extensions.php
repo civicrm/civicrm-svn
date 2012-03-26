@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  * This page displays the list of extensions registered in the system.
@@ -62,7 +61,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     function preProcess( )
     {
-        require_once 'CRM/Core/Extensions.php';
         $ext = new CRM_Core_Extensions();
         if( $ext->enabled === TRUE ) {
             self::$_extensions = $ext->getExtensions( );
@@ -161,7 +159,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
         $em  = self::$_extensions;
 
         $fid = 1;
-        require_once 'CRM/Core/Extensions/Extension.php';
         foreach( $em as $key => $obj ) {
 
             // rewrite ids to be numeric, but keep those which are 

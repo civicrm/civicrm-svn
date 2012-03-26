@@ -97,7 +97,6 @@ class CRM_Activity_Task
                                               'result' => false ),
                                   );
 
-            require_once 'CRM/Core/Config.php';
             $config = CRM_Core_Config::singleton( );
             if (  in_array( 'CiviCase', $config->enableComponents ) ) {
                 self::$_tasks[6] = array( 'title'  => ts( 'File on Case' ),
@@ -110,7 +109,6 @@ class CRM_Activity_Task
                 unset( self::$_tasks[1] );
             }
         }
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::searchTasks( 'activity', self::$_tasks );
         asort( self::$_tasks );
         return self::$_tasks;

@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Event/Form/ManageEvent.php';
-require_once 'CRM/Event/BAO/Event.php';
-require_once 'CRM/Core/OptionGroup.php';
 
 /**
  * This class generates form components for Conference Slots
@@ -91,7 +88,6 @@ class CRM_Event_Form_ManageEvent_Conference extends CRM_Event_Form_ManageEvent
      */
     public function buildQuickForm( ) 
     {
-        require_once 'CRM/Core/OptionGroup.php';
         $slots = CRM_Core_OptionGroup::values('conference_slot');
 
         $this->add('select',
@@ -116,7 +112,6 @@ class CRM_Event_Form_ManageEvent_Conference extends CRM_Event_Form_ManageEvent
             $params['parent_event_id'] = ''; # believe me...
         }
         //update events table
-        require_once 'CRM/Event/BAO/Event.php';
         $params['id'] = $this->_id;
         CRM_Event_BAO_Event::add( $params );
 

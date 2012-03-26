@@ -37,7 +37,6 @@
  *
  */
 
-require_once 'CRM/Utils/Array.php';
 
 class CRM_Core_Action {
 
@@ -218,7 +217,6 @@ class CRM_Core_Action {
 
 
         if($op && $objectName && $objectId) {
-          require_once 'CRM/Utils/Hook.php';
           CRM_Utils_Hook::links($op, $objectName, $objectId, $links, $mask );
         }
         
@@ -278,7 +276,6 @@ class CRM_Core_Action {
             }
         }
         
-        require_once 'CRM/Utils/String.php';
         
         $result = '';
         $mainLinks  = $url;

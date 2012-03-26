@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Core/QuickForm/Action.php';
 
 class CRM_Core_QuickForm_Action_Upload extends CRM_Core_QuickForm_Action {
 
@@ -93,7 +92,6 @@ class CRM_Core_QuickForm_Action_Upload extends CRM_Core_QuickForm_Action {
                 // rename the uploaded file with a unique number at the end
                 $value = $element->getValue();
 
-                require_once 'CRM/Utils/File.php';
                 $newName = CRM_Utils_File::makeFileName( $value['name'] );
                 $status = $element->moveUploadedFile( $this->_uploadDir, $newName );
                 if ( ! $status ) {

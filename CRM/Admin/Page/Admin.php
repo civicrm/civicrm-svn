@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Page for displaying Administer CiviCRM Control Panel
@@ -51,7 +50,6 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
         if ( rand( 1, 10 ) == 3 &&
              CRM_Core_DAO::isDBMyISAM( 150 ) ) {
             $errorMessage = 'Your database is configured to use the MyISAM database engine. CiviCRM  requires InnoDB. You will need to convert any MyISAM tables in your database to InnoDB. Using MyISAM tables will result in data integrity issues.';
-            require_once 'CRM/Core/Session.php';
             CRM_Core_Session::setStatus( $errorMessage );
         }
 
@@ -95,10 +93,8 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
             $groups['CiviCampaign'] = ts( 'CiviCampaign' );
         }
 
-        require_once 'CRM/Core/Menu.php';
         $values = CRM_Core_Menu::getAdminLinks( );
         
-        require_once 'CRM/Core/ShowHideBlocks.php';
         $this->_showHide = new CRM_Core_ShowHideBlocks( );
         foreach ( $groups as $group => $title) {
             $this->_showHide->addShow( "id_{$group}_show" );
@@ -109,7 +105,6 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
             $adminPanel[$group]['hide' ] = $v['hide'];
             $adminPanel[$group]['title'] = $title;
         }
-        require_once 'CRM/Utils/VersionCheck.php';
         $versionCheck = CRM_Utils_VersionCheck::singleton();
         $this->assign('newVersion',   $versionCheck->newerVersion());
         $this->assign('localVersion', $versionCheck->localVersion);

@@ -1,6 +1,5 @@
 <?php
 
-require_once 'CRM/Event/Cart/DAO/EventInCart.php';
 
 class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart implements
   ArrayAccess
@@ -23,7 +22,6 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
 
   public static function create( $params )
   {
-	require_once 'CRM/Core/Transaction.php';
 	$transaction = new CRM_Core_Transaction( );
 	$event_in_cart = new CRM_Event_Cart_BAO_EventInCart( );
 	$event_in_cart->copyValues( $params );
@@ -124,7 +122,6 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
 	  return;
 	}
 	$this->assocations_loaded = true;
-	require_once 'CRM/Event/BAO/Event.php';
 	$params = array( 'id' => $this->event_id );
 	$defaults = array( );
 	$this->event = CRM_Event_BAO_Event::retrieve( $params, $defaults );
@@ -136,7 +133,6 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
 	  $this->event_cart = CRM_Event_Cart_BAO_Cart::find_by_id( $this->event_cart_id);
 	}
 
-	require_once 'CRM/Event/Cart/BAO/MerParticipant.php';
 	$participants = CRM_Event_Cart_BAO_MerParticipant::find_all_by_event_and_cart_id($this->event_id, $this->event_cart->id);
 	foreach ($participants as $participant) {
 	    $participant->load_associations( );
@@ -206,7 +202,6 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
 
   static function get_registration_link($event_id)
   {
-      require_once 'CRM/Event/Cart/BAO/Cart.php';
       $cart = CRM_Event_Cart_BAO_Cart::find_or_create_for_current_session( );
       $cart->load_associations( );
       $event_in_cart = $cart->get_event_in_cart_by_event_id( $event_id );

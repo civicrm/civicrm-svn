@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Activity/Import/Parser/Activity.php';
 
 /**
  * This class previews the uploaded file and returns summary

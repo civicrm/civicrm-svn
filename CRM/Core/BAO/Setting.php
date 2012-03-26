@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Setting.php';
 
 /**
  * BAO object for civicrm_setting table. This table is used to store civicrm settings that are not used
@@ -90,7 +89,6 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
         if ( $load &&
              ! isset( self::$_cache[$cacheKey] ) ) {
             // check in civi cache if present (typically memcache)
-            require_once 'CRM/Utils/Cache.php';
             $globalCache = CRM_Utils_Cache::singleton( );
             $result = $globalCache->get( $cacheKey );
             if ( $result ) {
@@ -113,7 +111,6 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
 
         self::$_cache[$cacheKey] = $values; 
 
-        require_once 'CRM/Utils/Cache.php';
         $globalCache = CRM_Utils_Cache::singleton( );
         $result = $globalCache->set( $cacheKey, $values );
 
@@ -288,7 +285,6 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
                                   $condition = null ) {
         $optionValue = self::getItem( $group, $name );
 
-        require_once 'CRM/Core/OptionGroup.php';
         $groupValues = CRM_Core_OptionGroup::values( $name, false, false, $localize, $condition, $returnField );
 
         //enabled name => label require for new contact edit form, CRM-4605
@@ -309,7 +305,6 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
         }
         
         if ( $optionValue && !empty( $groupValues ) ) {
-            require_once 'CRM/Core/BAO/CustomOption.php';
             $dbValues = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                  substr( $optionValue, 1, -1 ) ); 
             
@@ -337,7 +332,6 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
         if ( empty( $value ) ) {
             $optionValue = null;
         } else if ( is_array( $value ) ) {
-            require_once 'CRM/Core/OptionGroup.php';
             $groupValues = CRM_Core_OptionGroup::values( $name, false, false, false, null, $keyField );
             
             $cbValues = array( );
@@ -420,7 +414,6 @@ OR       group_name = %2 )
     }
 
     static function storeDirectoryOrURLPreferences( &$params, $group ) {
-        require_once 'CRM/Utils/File.php';
         foreach ( $params as $name => $value ) {
             // always try to store relative directory or url from CMS root
             $value = 
@@ -467,7 +460,6 @@ OR       group_name = %2 )
         }
 
 
-        require_once 'CRM/Utils/File.php';
         while ( $dao->fetch( ) ) {
             $value = null;
             // overwrite value from settings file

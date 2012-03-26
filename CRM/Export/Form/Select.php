@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/BAO/Contact.php';
 
 /**
  * This class gets the name of the file to upload
@@ -86,7 +85,6 @@ class CRM_Export_Form_Select extends CRM_Core_Form
          //special case for custom search, directly give option to download csv file
         $customSearchID = $this->get( 'customSearchID' );
         if ( $customSearchID ) {
-            require_once 'CRM/Export/BAO/Export.php';
             CRM_Export_BAO_Export::exportCustom( $this->get( 'customSearchClass' ),
                                                  $this->get( 'formValues' ),
                                                  $this->get( CRM_Utils_Sort::SORT_ORDER ) );
@@ -113,7 +111,6 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             
             if ( in_array( $componentName[1], $components ) ) {
                 eval( '$this->_exportMode = self::' . strtoupper( $componentName[1] ) . '_EXPORT;');
-                require_once "CRM/{$componentName[1]}/Form/Task.php";
                 eval('CRM_' . $componentName[1] . '_Form_Task::preProcessCommon( $this, true );');
                 $values = $this->controller->exportValues( 'Search' ); 
             } else {
@@ -138,21 +135,18 @@ class CRM_Export_Form_Select extends CRM_Core_Form
         $componentMode = $this->get( 'component_mode' );
         switch ( $componentMode ) {
         case 2:
-            require_once 'CRM/Contribute/Form/Task.php';
             CRM_Contribute_Form_Task::preProcessCommon( $this, true );
             $this->_exportMode = self::CONTRIBUTE_EXPORT;
             $componentName = array( '', 'Contribute' );
             break;
 
         case 3:
-            require_once 'CRM/Event/Form/Task.php';
             CRM_Event_Form_Task::preProcessCommon( $this, true );
             $this->_exportMode = self::EVENT_EXPORT;
             $componentName = array( '', 'Event' );
             break;
 
         case 4:
-            require_once 'CRM/Activity/Form/Task.php';
             CRM_Activity_Form_Task::preProcessCommon( $this, true );
             $this->_exportMode = self::ACTIVITY_EXPORT;
             $componentName = array( '', 'Activity' );
@@ -160,13 +154,11 @@ class CRM_Export_Form_Select extends CRM_Core_Form
 
         }
 
-        require_once 'CRM/Contact/Task.php';
         $this->_task = $values['task']; 
         if ( $this->_exportMode == self::CONTACT_EXPORT ) {
             $contactTasks = CRM_Contact_Task::taskTitles(); 
             $taskName = $contactTasks[$this->_task]; 
             $component = false;
-            require_once 'CRM/Contact/Form/Task.php';
             CRM_Contact_Form_Task::preProcessCommon( $this, true );
         } else {
             $this->assign( 'taskName', "Export $componentName[1]" ); 
@@ -364,7 +356,6 @@ FROM   {$this->_componentTable}
         
 
         if ( $exportOption == self::EXPORT_ALL ) {
-            require_once 'CRM/Export/BAO/Export.php';
             CRM_Export_BAO_Export::exportComponents( $this->_selectAll,
                                                      $this->_componentIds,
                                                      $this->get( 'queryParams' ),
@@ -435,7 +426,6 @@ FROM   {$this->_componentTable}
             break;
         }
         
-        require_once 'CRM/Core/BAO/Mapping.php';
         $mappingTypeId = CRM_Core_OptionGroup::getValue( 'mapping_type', $exportType, 'name' );
         $this->set( 'mappingTypeId', $mappingTypeId );
 

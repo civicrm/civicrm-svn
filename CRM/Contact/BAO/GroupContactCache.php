@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/DAO/GroupContactCache.php';
 
 class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCache {
 
@@ -103,7 +102,6 @@ AND     ( g.cache_date IS NULL OR
             $groupID = array( $groupID );
         }
 
-        require_once 'CRM/Contact/BAO/Query.php';
         $returnProperties = array('contact_id');
         foreach ($groupID as $gid) {
             $params = array(array('group', 'IN', array($gid => 1), 0, 0));
@@ -250,13 +248,11 @@ WHERE  id = %1
         $idName      = 'id';
         $customClass = null;
         if ( $savedSearchID ) {
-            require_once 'CRM/Contact/BAO/SavedSearch.php';
             $ssParams   = CRM_Contact_BAO_SavedSearch::getSearchParams($savedSearchID);
 
             // rectify params to what proximity search expects if there is a value for prox_distance
             // CRM-7021
             if ( !empty( $ssParams ) ) { 
-                require_once 'CRM/Contact/BAO/ProximityQuery.php';
                 CRM_Contact_BAO_ProximityQuery::fixInputParams( $ssParams );
             }
 
@@ -265,14 +261,12 @@ WHERE  id = %1
             if (CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch',
                                              $savedSearchID,
                                              'mapping_id' ) ) {
-                require_once "CRM/Core/BAO/Mapping.php";
                 $fv = CRM_Contact_BAO_SavedSearch::getFormValues($savedSearchID);
                 $returnProperties = CRM_Core_BAO_Mapping::returnProperties( $fv );
             }
 
             if ( isset( $ssParams['customSearchID'] ) ) {
                 // if custom search
-                require_once 'CRM/Contact/BAO/SearchCustom.php';
                 
                 // we split it up and store custom class
                 // so temp tables are not destroyed if they are used
@@ -284,7 +278,6 @@ WHERE  id = %1
             } else {
                 $formValues = CRM_Contact_BAO_SavedSearch::getFormValues( $savedSearchID );
 
-                require_once 'CRM/Contact/BAO/Query.php';
 
                 $query = new CRM_Contact_BAO_Query($ssParams, $returnProperties, null,
                                                     false, false, 1,
@@ -348,7 +341,6 @@ AND  civicrm_group_contact.group_id = $groupID ";
                 $removed_contacts[] = $dao->contact_id;
             }
 
-            require_once 'CRM/Contact/BAO/Group.php';
             $childrenIDs = explode( ',', $group->children );
             foreach ( $childrenIDs as $childID ) {
                 $contactIDs = CRM_Contact_BAO_Group::getMember( $childID, false );

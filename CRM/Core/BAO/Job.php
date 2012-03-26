@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Job.php';
 
 /**
  * This class contains scheduled jobs related functions.

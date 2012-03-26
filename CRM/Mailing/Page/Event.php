@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Mailing/Selector/Browse.php';
-require_once 'CRM/Core/Selector/Controller.php';
-require_once 'CRM/Core/Page.php';
 
 /**
  * This implements the profile page for all contacts. It uses a selector
@@ -59,7 +56,6 @@ class CRM_Mailing_Page_Event extends CRM_Core_Page {
      * @return void 
      */ 
     function run( ) {
-        require_once 'CRM/Mailing/Selector/Event.php';
         $selector =&
             new CRM_Mailing_Selector_Event( 
                       CRM_Utils_Request::retrieve('event', 'String',

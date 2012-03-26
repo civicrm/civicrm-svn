@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Search/Custom/Base.php';
-require_once 'CRM/Contact/BAO/SavedSearch.php';
 
 class CRM_Contact_Form_Search_Custom_Group
    extends    CRM_Contact_Form_Search_Custom_Base
@@ -216,7 +214,6 @@ class CRM_Contact_Form_Search_Custom_Group
         $iGroups = $xGroups = null;
         $smartGroup = array( );
         if ( $this->_groups || $this->_allSearch ) { 
-            require_once 'CRM/Contact/DAO/Group.php';
             $group = new CRM_Contact_DAO_Group( );
             $group->is_active = 1;
             $group->find();
@@ -356,7 +353,6 @@ class CRM_Contact_Form_Search_Custom_Group
         //block for Tags search
         if ( $this->_tags || $this->_allSearch ) {
             //find all tags 
-            require_once 'CRM/Core/DAO/Tag.php';
             $tag = new CRM_Core_DAO_Tag( );
             $tag->is_active = 1;
             $tag->find();

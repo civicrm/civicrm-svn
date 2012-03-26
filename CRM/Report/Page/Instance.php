@@ -34,10 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
-require_once 'CRM/Report/Utils/Report.php';
-require_once 'CRM/Report/BAO/Instance.php';
-require_once 'CRM/Utils/Wrapper.php';
 
 /**
  * Page for invoking report instances
@@ -71,14 +67,12 @@ class CRM_Report_Page_Instance extends CRM_Core_Page
           
             //delete navigation if exists
             if ( $navId ) {
-                require_once 'CRM/Core/BAO/Navigation.php';
                 CRM_Core_BAO_Navigation::processDelete( $navId ); 
                 CRM_Core_BAO_Navigation::resetNavigation( );
             }
             
             CRM_Core_Session::setStatus( ts( 'Selected Instance has been deleted.' ) );
         } else {
-            require_once 'CRM/Core/OptionGroup.php';
             $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', "{$optionVal}", 'value' );
             if ( empty( $templateInfo ) ) {
                 CRM_Core_Session::setStatus( ts( 'Could not find template for the instance.' ) );
@@ -91,7 +85,6 @@ class CRM_Report_Page_Instance extends CRM_Core_Page
             $reportClass = null;
 
             if( $extKey !== FALSE ) {
-                require_once( 'CRM/Core/Extensions.php' );
                 $ext = new CRM_Core_Extensions();
                 $reportClass = $ext->keyToClass( $templateInfo['name'], 'report' );
                 $templateInfo['name'] = $reportClass;

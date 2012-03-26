@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Search/Custom/Base.php';
 
 class CRM_Contact_Form_Search_Custom_RandomSegment
    extends    CRM_Contact_Form_Search_Custom_Base
@@ -133,7 +132,6 @@ class CRM_Contact_Form_Search_Custom_RandomSegment
 
         //block for Group search
         $smartGroup = array( );
-        require_once 'CRM/Contact/DAO/Group.php';
         $group = new CRM_Contact_DAO_Group( );
         $group->is_active = 1;
         $group->find();

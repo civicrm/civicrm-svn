@@ -61,7 +61,6 @@ class CRM_Utils_Mail
      * @return boolean true if a mail was sent, else false
      */
     static function send( &$params ) {
-        require_once 'CRM/Core/BAO/MailSettings.php';
         $returnPath       = CRM_Core_BAO_MailSettings::defaultReturnPath();
         $includeMessageId = CRM_Core_BAO_MailSettings::includeMessageId();
         $emailDomain      = CRM_Core_BAO_MailSettings::defaultDomain();
@@ -72,7 +71,6 @@ class CRM_Utils_Mail
         $params['returnPath'] = $returnPath;
 
         // first call the mail alter hook
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::alterMailParams( $params );
 
         // check if any module has aborted mail sending
@@ -86,7 +84,6 @@ class CRM_Utils_Mail
         $attachments = CRM_Utils_Array::value( 'attachments', $params );
 
         // CRM-6224
-        require_once 'CRM/Utils/String.php';
         if (trim(CRM_Utils_String::htmlToText($htmlMessage)) == '') {
             $htmlMessage = false;
         }
@@ -255,7 +252,6 @@ class CRM_Utils_Mail
      * @static
      */
     static function validOutBoundMail() {
-        require_once 'CRM/Core/BAO/Setting.php';
         $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                       'mailing_backend' );
         if ( $mailingInfo['outBound_option'] == 3 ) {

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Create a page for displaying UF Groups.
@@ -160,11 +159,9 @@ class CRM_UF_Page_Group extends CRM_Core_Page
         } else {
             // if action is enable or disable do the needful.
             if ($action & CRM_Core_Action::ENABLE) {
-                require_once "CRM/Core/BAO/UFGroup.php";
                 CRM_Core_BAO_UFGroup::setIsActive($id, 1);
 
                 // update cms integration with registration / my account
-                require_once 'CRM/Utils/System.php';
                 CRM_Utils_System::updateCategories( );
             } else if ( $action & CRM_Core_Action::PROFILE ) { 
                 $this->profile( );
@@ -192,7 +189,6 @@ class CRM_UF_Page_Group extends CRM_Core_Page
         $gid = CRM_Utils_Request::retrieve('gid', 'Positive',
                                            $this, true, 0, 'GET');
         
-        require_once 'CRM/Core/BAO/UFGroup.php';
         CRM_Core_BAO_UFGroup::copy( $gid ); 
         CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/uf/group', 'reset=1' ) );
     }
@@ -289,13 +285,11 @@ class CRM_UF_Page_Group extends CRM_Core_Page
     { 
         $ufGroup     = array( );
         $allUFGroups = array( );
-        require_once 'CRM/Core/BAO/UFGroup.php';
         $allUFGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup( );
         if (empty($allUFGroups)) {
             return;
         }
 
-        require_once 'CRM/Utils/Hook.php';
         $ufGroups = CRM_Core_PseudoConstant::ufGroup( );
         CRM_Utils_Hook::aclGroup( CRM_Core_Permission::ADMIN, null, 'civicrm_uf_group', $ufGroups, $allUFGroups );
 
@@ -420,37 +414,31 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                 $typeName   = null;
                 switch($valueParts[0]) {
                 case 'ContributionType':
-                    require_once 'CRM/Contribute/PseudoConstant.php';
                     $typeName = 'Contribution';
                     $valueLabels = CRM_Contribute_PseudoConstant::contributionType( );
                     break;
 
                 case 'ParticipantRole':
-                    require_once 'CRM/Event/PseudoConstant.php';
                     $typeName = 'Participant';
                     $valueLabels = CRM_Event_PseudoConstant::participantRole( );
                     break;
                     
                 case 'ParticipantEventName':
-                    require_once 'CRM/Event/PseudoConstant.php';
                     $typeName = 'Participant';
                     $valueLabels = CRM_Event_PseudoConstant::event( );
                     break;
 
                 case 'ParticipantEventType': 
-                    require_once 'CRM/Event/PseudoConstant.php';
                     $typeName = 'Participant';
                     $valueLabels = CRM_Event_PseudoConstant::eventType( );
                     break;
 
                 case 'MembershipType':
-                    require_once 'CRM/Member/PseudoConstant.php';
                     $typeName = 'Membership';
                     $valueLabels = CRM_Member_PseudoConstant::membershipType( );
                     break;
 
                 case 'ActivityType':
-                    require_once 'CRM/Core/PseudoConstant.php';
                     $typeName = 'Activity';
                     $valueLabels = CRM_Core_PseudoConstant::ActivityType(true, true, false, 'label', true);
                     break;

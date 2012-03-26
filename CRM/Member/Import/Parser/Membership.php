@@ -35,7 +35,6 @@
  */
 
 
-require_once 'CRM/Member/Import/Parser.php';
 require_once 'api/api.php';
 
 /**
@@ -75,7 +74,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
      */
     function init( ) 
     {
-        require_once 'CRM/Member/BAO/Membership.php';
         $fields = CRM_Member_BAO_Membership::importableFields( $this->_contactType, false );
 
         foreach ($fields as $name => $field) {
@@ -166,7 +164,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
         
         $params =& $this->getActiveFieldParams( );
        
-        require_once 'CRM/Import/Parser/Contact.php';
         $errorMessage = null;
 
         
@@ -343,7 +340,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
         
         static $indieFields = null;
         if ($indieFields == null) {
-            require_once('CRM/Member/DAO/Membership.php');
             $tempIndieFields = CRM_Member_DAO_Membership::import();
             $indieFields = $tempIndieFields;
         }
@@ -380,7 +376,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             }
             
             if ( $formatValues['membership_id'] ) {
-                require_once 'CRM/Member/BAO/Membership.php';
                 $dao =  new CRM_Member_BAO_Membership();
                 $dao->id = $formatValues['membership_id'];
                 $dates = array('join_date','start_date','end_date');
@@ -436,9 +431,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                     $formatted['contact_id'] = $cid;
                     
                     //fix for CRM-1924
-                    require_once 'CRM/Member/BAO/MembershipStatus.php';
-                    require_once 'CRM/Member/BAO/MembershipType.php';
-                    require_once 'CRM/Member/PseudoConstant.php';
                     $calcDates = CRM_Member_BAO_MembershipType::getDatesForMembershipType( $formatted['membership_type_id'], 
                                                                                            $joinDate, 
                                                                                            $startDate, 
@@ -487,7 +479,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                                     'contact_type' => $this->_contactType,
                                     'level' => 'Strict'
                                     );
-                require_once 'CRM/Dedupe/BAO/Rule.php';
                 $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
                 
                 foreach ( $fieldsArray as $value ) {
@@ -525,7 +516,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             }
             
             //to calculate dates
-            require_once 'CRM/Member/BAO/MembershipType.php';
             $calcDates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($formatted['membership_type_id'], 
                                                                                   $joinDate,
                                                                                   $startDate,
@@ -539,7 +529,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
             if ( !CRM_Utils_Array::value('is_override', $formatted ) ) {
                 $formatted['exclude_is_admin'] = $excludeIsAdmin = true;
             }
-            require_once 'CRM/Member/BAO/MembershipStatus.php';
             $calcStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( $startDate,
                                                                                       $endDate,
                                                                                       $joinDate,

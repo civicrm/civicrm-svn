@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Core/Config.php';
 
 class CRM_Core_Extensions_Module
 {
@@ -67,7 +66,6 @@ class CRM_Core_Extensions_Module
         $params['civiModules'] = $this->config->civiModules;
         $params['civiModules'][$this->ext->file] = $this->ext->key . DIRECTORY_SEPARATOR . $this->ext->file . ".php";
 
-        require_once 'CRM/Admin/Form/Setting.php';
         CRM_Admin_Form_Setting::commonProcess( $params );
 
         $this->callHook( $this->ext->file,
@@ -87,7 +85,6 @@ class CRM_Core_Extensions_Module
         $params = array( );
         $params['civiModules'] = array_diff( $this->config->civiModules,
                                              array( $this->ext->key ) );
-        require_once 'CRM/Admin/Form/Setting.php';
         CRM_Admin_Form_Setting::commonProcess( $params );
 
         $this->callHook( $this->ext->file,

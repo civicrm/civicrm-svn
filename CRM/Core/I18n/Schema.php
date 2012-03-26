@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO.php';
-require_once 'CRM/Core/DAO/Domain.php';
-require_once 'CRM/Core/I18n/SchemaStructure.php';
 
 class CRM_Core_I18n_Schema
 {
@@ -267,10 +264,8 @@ class CRM_Core_I18n_Schema
         if ($version) {
             $latest =  self::getLatestSchema( $version );
             $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
-            require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
         } else {
             $class = 'CRM_Core_I18n_SchemaStructure';
-            require_once 'CRM/Core/I18n/SchemaStructure.php';
         }
         eval("\$indices =& $class::indices();");
         eval("\$tables  =& $class::tables();");
@@ -343,7 +338,6 @@ class CRM_Core_I18n_Schema
             if ($version) {
                 $latest =  self::getLatestSchema( $version );
                 $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
-                require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
                 eval("\$tables  =& $class::tables();");
             } else {
                 $tables = CRM_Core_I18n_SchemaStructure::tables();

@@ -34,11 +34,7 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Task.php';
 
-require_once 'CRM/Core/Menu.php';
-require_once 'CRM/Core/BAO/CustomGroup.php';
-require_once 'CRM/Contact/BAO/Contact.php';
 
 /**
  * This class provides the functionality to sms a group of
@@ -158,7 +154,6 @@ class CRM_SMS_Form_Task_SMS extends CRM_Contact_Form_Task {
         }
         $message = $this->controller->exportValue( 'SMS', 'message' );
 
-        require_once 'CRM/SMS/BAO/History.php';
         list( $total, $sent, $notSent ) = CRM_SMS_BAO_History::send( $this->_contactIds, $message, $smsNumber );
 
         $status = array(

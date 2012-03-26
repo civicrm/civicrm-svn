@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Import/ImportJob.php';
 
 /**
  * This class mainly exists to allow imports to be triggered synchronously (i.e.

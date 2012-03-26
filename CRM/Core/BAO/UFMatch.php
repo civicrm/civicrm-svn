@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Session.php';
-require_once 'CRM/Core/DAO/UFMatch.php';
 
 /**
  * The basic class that interfaces with the external user framework
@@ -92,7 +90,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
         }
 
         //check do we have logged in user.
-        require_once 'CRM/Utils/System.php';
         $isUserLoggedIn = CRM_Utils_System::isUserLoggedIn( );
         
         // reset the session if we are a different user
@@ -145,7 +142,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
         
         // add current contact to recently viewed
         if ( $ufmatch->contact_id ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
             list( $displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl ) = 
                 CRM_Contact_BAO_Contact::getDisplayAndImage( $ufmatch->contact_id, true, true );
              
@@ -192,7 +188,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
     {
         $config = CRM_Core_Config::singleton( );
 
-        require_once 'CRM/Utils/Rule.php';
         if ( ! CRM_Utils_Rule::email( $uniqId ) ) {
             $retVal = $status ? null : false;
             return $retVal;
@@ -200,7 +195,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
         
         $newContact   = false;
 
-        require_once 'CRM/Core/DAO.php';
 
         // make sure that a contact id exists for this user id
         $ufmatch = new CRM_Core_DAO_UFMatch( );
@@ -208,7 +202,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
         $ufmatch->uf_id = $userKey;
 
         if ( ! $ufmatch->find( true ) ) {
-            require_once 'CRM/Core/Transaction.php';
             $transaction = new CRM_Core_Transaction( );
 
             $dao = null;
@@ -217,17 +210,14 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
                 $params = $_POST;
                 $params['email'] = $uniqId;
 
-                require_once 'CRM/Dedupe/Finder.php';
                 $dedupeParams = CRM_Dedupe_Finder::formatParams ( $params      , 'Individual' );
                 $dedupeParams['check_permission'] = false;
                 $ids          = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual' );
                 
-                require_once 'CRM/Core/BAO/Setting.php';
                 if ( ! empty( $ids ) && 
                      CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
                                                     'uniq_email_per_site' ) ) {
                     // restrict dupeIds to ones that belong to current domain/site.
-                    require_once 'CRM/Core/BAO/Domain.php';
                     $siteContacts = CRM_Core_BAO_Domain::getContactList();
                     foreach ( $ids as $index => $dupeId ) {
                         if ( ! in_array( $dupeId, $siteContacts ) ) {
@@ -241,7 +231,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
                     $dao->contact_id = $ids[0];
                 }
             } else {
-                require_once 'CRM/Contact/BAO/Contact.php';
                 $dao = CRM_Contact_BAO_Contact::matchContactOnEmail( $uniqId, $ctype );
             }
 
@@ -294,7 +283,6 @@ WHERE  contact_id = %1
                 // for joomla
                 if ( $uf == 'Joomla' &&
                      $user->name ) {
-                    require_once 'CRM/Utils/String.php';
                     CRM_Utils_String::extractName( $user->name, $params );
                 }
 
@@ -429,7 +417,6 @@ AND    domain_id    = %4
             //check if the primary email for the contact exists 
             //$contactDetails[1] - email 
             //$contactDetails[3] - email id
-            require_once 'CRM/Contact/BAO/Contact/Location.php';
             $contactDetails = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactId );
             
             if ( trim($contactDetails[1]) ) {
@@ -443,7 +430,6 @@ AND    domain_id    = %4
                 $dao = CRM_Core_DAO::executeQuery( $query, $p );
             } else {
                 //else insert a new email record
-                require_once 'CRM/Core/DAO/Email.php';
                 $email = new CRM_Core_DAO_Email();
                 $email->contact_id  = $contactId;
                 $email->is_primary  = 1;
@@ -452,7 +438,6 @@ AND    domain_id    = %4
                 $emailID = $email->id;
             }
 
-            require_once 'CRM/Core/BAO/Log.php';
             CRM_Core_BAO_Log::register( $contactId,
                                         'civicrm_email',
                                         $emailID  );
@@ -513,7 +498,6 @@ AND    domain_id    = %4
         if (!isset($contactID)) { 
             return null; 
         } 
-        require_once 'CRM/Core/BAO/Domain.php';
         $domain = CRM_Core_BAO_Domain::getDomain();
         $ufmatch = new CRM_Core_DAO_UFMatch( ); 
         
@@ -613,7 +597,6 @@ AND    domain_id    = %4
     static function getUFValues( $ufID = null ) {
         if ( !$ufID ) {
             //get logged in user uf id.
-            require_once 'CRM/Utils/System.php';
             $ufID = CRM_Utils_System::getLoggedInUfID( );
         }
         if ( !$ufID ) return array( );

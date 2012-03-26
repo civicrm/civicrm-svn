@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Search/Interface.php';
 
 class CRM_Contact_Form_Search_Custom_ActivitySearch
 implements CRM_Contact_Form_Search_Interface {
@@ -69,7 +68,6 @@ implements CRM_Contact_Form_Search_Interface {
                                                        'name' );
 	
         //Add custom fields to columns array for inclusion in export
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Activity', $form, null,
                                                          null, '', null );
         
@@ -184,7 +182,6 @@ implements CRM_Contact_Form_Search_Interface {
         }
 	
         // add custom group fields to SELECT and FROM clause
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Activity', $form, null, null, '', null );
 	
         foreach ($groupTree as $key) {

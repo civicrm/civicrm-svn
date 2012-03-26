@@ -40,11 +40,6 @@
 require_once 'Log.php';
 require_once 'Mail.php';
 
-require_once 'CRM/Core/DAO.php';
-require_once 'CRM/Utils/System.php';
-require_once 'CRM/Utils/File.php';
-require_once 'CRM/Core/Session.php';
-require_once 'CRM/Core/Config/Variables.php';
 require_once 'api/api.php';
 
 class CRM_Core_Config extends CRM_Core_Config_Variables
@@ -193,7 +188,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             }
 
             // first, attempt to get configuration object from cache
-            require_once 'CRM/Utils/Cache.php';
             $cache = CRM_Utils_Cache::singleton( );
             self::$_singleton = $cache->get( 'CRM_Core_Config' );
 
@@ -235,7 +229,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
 
             // call the hook so other modules can add to the config
             // again doing this at the very very end
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::config( self::$_singleton );
 
             // make sure session is always initialised            
@@ -358,7 +351,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         // initialize component registry early to avoid "race" 
         // between CRM_Core_Config and CRM_Core_Component (they
         // are co-dependant)
-        require_once 'CRM/Core/Component.php';
         $this->componentRegistry = new CRM_Core_Component();
     }
 
@@ -403,7 +395,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     private function _initVariables() 
     {
         // retrieve serialised settings
-        require_once "CRM/Core/BAO/ConfigSetting.php";
         $variables = array();
         CRM_Core_BAO_ConfigSetting::retrieve($variables);
 
@@ -414,11 +405,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             
             // Step 2. get default values (with settings file overrides if
             // available - handled in CRM_Core_Config_Defaults)
-            require_once 'CRM/Core/Config/Defaults.php';
             CRM_Core_Config_Defaults::setValues( $variables );
 
             // retrieve directory and url preferences also
-            require_once 'CRM/Core/BAO/Setting.php';
             CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences( $defaults );
 
             // add component specific settings
@@ -499,12 +488,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     static function &getMailer( $persist = false ) 
     {
         if ( ! isset( self::$_mail ) ) {
-            require_once "CRM/Core/BAO/Setting.php";
             $mailingInfo = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                           'mailing_backend' );
             if ( defined( 'CIVICRM_MAILER_SPOOL' ) &&
                  CIVICRM_MAILER_SPOOL ) {
-                require_once 'CRM/Mailing/BAO/Spool.php';
                 self::$_mail = new CRM_Mailing_BAO_Spool();
             } elseif ($mailingInfo['outBound_option'] == 0 ) {
                 if ( $mailingInfo['smtpServer'] == '' ||
@@ -516,7 +503,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 $params['port'] = $mailingInfo['smtpPort'] ? $mailingInfo['smtpPort'] : 25;
                 
                 if ($mailingInfo['smtpAuth']) {
-                    require_once 'CRM/Utils/Crypt.php';
                     $params['username'] = $mailingInfo['smtpUsername'];
                     $params['password'] = CRM_Utils_Crypt::decrypt( $mailingInfo['smtpPassword'] );
                     $params['auth']     = true;

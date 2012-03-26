@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/OptionValue.php';
 
 class CRM_Core_I18n_PseudoConstant
 {

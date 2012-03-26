@@ -39,14 +39,6 @@
 
 require_once 'HTML/QuickForm/Page.php';
 
-require_once 'CRM/Utils/Rule.php';
-require_once 'CRM/Utils/Request.php';
-require_once 'CRM/Utils/Weight.php';
-require_once 'CRM/Core/Permission.php';
-require_once 'CRM/Core/Smarty.php';
-require_once 'CRM/Core/Form/Renderer.php';
-require_once 'CRM/Core/SelectValues.php';
-require_once 'CRM/Utils/String.php';
 
 class CRM_Core_Form extends HTML_QuickForm_Page {
 
@@ -307,7 +299,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     function validate( ) {
         $error = parent::validate( );
 
-        require_once 'CRM/Utils/Hook.php';
         $hookErrors = CRM_Utils_Hook::validate( get_class( $this ),
                                                 $this->_submitValues, $this->_submitFiles, $this );
         if ( $hookErrors !== true && is_array($hookErrors) && !empty($hookErrors) ) {
@@ -336,7 +327,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $this->assign( 'qfKey', $this->controller->_key );
         }
 
-        require_once 'CRM/Utils/Hook.php';
         
         $this->buildQuickForm();
 
@@ -558,7 +548,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
      * @access public
      */
     function getTemplateFileName() {
-        require_once( 'CRM/Core/Extensions.php' );
         $ext = new CRM_Core_Extensions();
         if( $ext->isExtensionClass( CRM_Utils_System::getClassName( $this ) ) ) {
             $filename = $ext->getTemplateName( CRM_Utils_System::getClassName( $this ) );
@@ -780,7 +769,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     }
     
     function addSelect( $name, $label, $prefix = null, $required = null, $extra = null, $select = '- select -' ) {
-        require_once "CRM/Core/OptionGroup.php";
         if ($prefix) {
             $this->addElement('select', $name . '_id' . $prefix , $label,
                               array('' => $select ) + CRM_Core_OptionGroup::values($name), $extra );
@@ -788,7 +776,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                 $this->addRule($name . '_id' . $prefix, ts('Please select %1', array(1 => $label)), 'required');
             }
         } else {
-            require_once 'CRM/Core/OptionGroup.php';
             $this->addElement('select', $name. '_id' , $label,
                               array('' => $select ) + CRM_Core_OptionGroup::values($name), $extra );
             if ( $required) {
@@ -803,7 +790,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     {
         // 1. Get configuration option for editor (tinymce, ckeditor, pure textarea)
         // 2. Based on the option, initialise proper editor
-        require_once 'CRM/Core/BAO/Setting.php';
         $editorID = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                    'editor_id' );
         $editor = strtolower( CRM_Utils_Array::value( $editorID,
@@ -1124,7 +1110,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                           $required = true,
                           $defaultCurrency = null,
 			  $freezeCurrency = false ) {
-        require_once 'CRM/Core/OptionGroup.php';
         $currencies = CRM_Core_OptionGroup::values( 'currencies_enabled' );
         if ( !$required ) $currencies = array( ''=> ts( '- select -' ) ) + $currencies;
         $ele = $this->add( 'select', $name, $label, $currencies, $required );

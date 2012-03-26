@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Payment/BaseIPN.php';
-require_once 'CRM/Core/Payment.php';
 
 class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
 
@@ -45,7 +43,6 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
 
     function main( $component = 'contribute' )
     {
-        require_once 'CRM/Utils/Request.php';
         
         //we only get invoice num as a key player from payment gateway response.
         //for ARB we get x_subscription_id and x_subscription_paynum
@@ -104,10 +101,8 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             return false;
         }
 
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
         $now = date( 'YmdHis' );

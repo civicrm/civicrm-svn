@@ -39,10 +39,6 @@
  * 
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/Payment.php';
-require_once 'CRM/Member/PseudoConstant.php';
-require_once 'CRM/Core/BAO/PaymentProcessor.php';
 
 class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
 {
@@ -66,7 +62,6 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
     {
         $mid = CRM_Utils_Request::retrieve( 'mid', 'Integer', $this, true );
         if ( !CRM_Core_Permission::check( 'edit memberships' ) ) {
-            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $userChecksum = CRM_Utils_Request::retrieve( 'cs', 'String', $this, false );
             $contactID    = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $mid, "contact_id" );
             if ( !  CRM_Contact_BAO_Contact_Utils::validChecksum( $contactID, $userChecksum ) ) {
@@ -105,7 +100,6 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
             $membershipTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $mid, 'membership_type_id' );
             $this->assign( 'membershipType', CRM_Utils_Array::value( $membershipTypeId, $membershipTypes ) );
 
-            require_once 'CRM/Member/BAO/Membership.php';
             if ( CRM_Member_BAO_Membership::isSubscriptionCancelled( $mid ) ) {
                 CRM_Core_Error::fatal( ts( 'The auto renew membership looks to have been cancelled already.' ) );
             }
@@ -128,7 +122,6 @@ INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
             }
 
             if ( $contributionId ) {
-                require_once 'CRM/Contribute/BAO/Contribution.php';
                 $contribution = new CRM_Contribute_DAO_Contribution();
                 $contribution->id = $contributionId;
                 $contribution->find(true);
@@ -180,7 +173,6 @@ INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
             CRM_Core_Error::displaySessionError( $cancelSubscription );
         } else if ( $cancelSubscription ) {
             $status = ts( 'The auto-renewal option for your membership has been successfully cancelled. Your membership has not been cancelled. However you will need to arrange payment for renewal when your membership expires.' );
-            require_once 'CRM/Contribute/BAO/ContributionRecur.php';
             $cancelled = CRM_Contribute_BAO_ContributionRecur::cancelRecurContribution( $this->_contributionRecurId, 
                                                                                         $this->_objects );
         } else {
@@ -192,7 +184,6 @@ INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
             if ( $session->get( 'userID' ) ) {
                 CRM_Core_Session::setStatus( $status );
             } else {
-                require_once 'CRM/Utils/System.php';
                 CRM_Utils_System::setUFMessage( $message );
             }
         }

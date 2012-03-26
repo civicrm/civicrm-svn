@@ -118,7 +118,6 @@ WHERE  v.option_group_id = g.id
         $var = self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
 
         // call option value hook
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::optionValues( $var, $name );
 
         $_cache[$cacheKey] = $var;
@@ -182,7 +181,6 @@ WHERE  v.option_group_id = g.id
      */
     static function lookupValues( &$params, &$names, $flip = false ) 
     {
-        require_once 'CRM/Core/BAO/CustomOption.php';
         foreach ($names as $postName => $value) {
             // See if $params field is in $names array (i.e. is a value that we need to lookup)
             if ( $postalName = CRM_Utils_Array::value( $postName, $params )  ) {
@@ -318,7 +316,6 @@ WHERE  v.option_group_id = g.id
     {
         self::deleteAssoc( $groupName );
         if ( ! empty( $values ) ) {
-            require_once 'CRM/Core/DAO/OptionGroup.php';
             $group = new CRM_Core_DAO_OptionGroup( );
             $group->name        = $groupName;
             $group->title       = empty( $groupTitle ) ? $groupName : $groupTitle;
@@ -326,7 +323,6 @@ WHERE  v.option_group_id = g.id
             $group->is_active   = 1;
             $group->save( );
             
-            require_once 'CRM/Core/DAO/OptionValue.php';
             foreach ( $values as $v ) {
                 $value = new CRM_Core_DAO_OptionValue( );
                 $value->option_group_id = $group->id;

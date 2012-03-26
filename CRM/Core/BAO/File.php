@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/File.php';
 
 /**
  * BAO object for crm_log table
@@ -46,7 +45,6 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
                    $entityID,
                    $entityTable = null,
                    $quest = false  ) {
-        require_once 'CRM/Core/DAO/EntityFile.php'; 
         
         $entityFileDAO = new CRM_Core_DAO_EntityFile();
         if ($entityTable) {
@@ -56,7 +54,6 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         $entityFileDAO->file_id      = $fileID;
         
         if ( $entityFileDAO->find( true ) ) {
-            require_once 'CRM/Core/DAO/File.php'; 
             $fileDAO = new CRM_Core_DAO_File( );
             $fileDAO->id = $fileID;
             if ( $fileDAO->find( true ) ) {
@@ -98,7 +95,6 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
                                     $uploadName = 'uploadFile',
                                     $mimeType    ) {
 
-        require_once 'CRM/Core/DAO/File.php';
         $config = CRM_Core_Config::singleton();
         
         $path = explode( '/', $data );
@@ -111,7 +107,6 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
             $directoryName = $config->customFileUploadDir;
         }
 
-        require_once "CRM/Utils/File.php";
         CRM_Utils_File::createDir( $directoryName );
 
         if ( ! rename( $data, $directoryName . DIRECTORY_SEPARATOR . $filename ) ) {
@@ -133,7 +128,6 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
             CRM_Core_Error::fatal( );
         }
         
-        require_once "CRM/Core/DAO/File.php";
         $fileDAO = new CRM_Core_DAO_File();
         if ( isset( $dao->cfID ) &&
              $dao->cfID ) {
@@ -152,7 +146,6 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         $fileDAO->save();
     
         // need to add/update civicrm_entity_file
-        require_once "CRM/Core/DAO/EntityFile.php";
         $entityFileDAO = new CRM_Core_DAO_EntityFile();
         if ( isset( $dao->cefID ) &&
              $dao->cefID ) {
@@ -168,10 +161,8 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
     public function delete($useWhere = false) {
         list( $fileID , $entityID, $fieldID ) = func_get_args();
         // get the table and column name
-        require_once 'CRM/Core/BAO/CustomField.php';
         list( $tableName, $columnName, $groupID ) = CRM_Core_BAO_CustomField::getTableColumnGroup( $fieldID );
 
-        require_once "CRM/Core/DAO/EntityFile.php";
         $entityFileDAO = new CRM_Core_DAO_EntityFile();
         $entityFileDAO->file_id      = $fileID;
         $entityFileDAO->entity_id    = $entityID;
@@ -183,7 +174,6 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
             CRM_Core_Error::fatal( );
         }
 
-        require_once "CRM/Core/DAO/File.php";
         $fileDAO = new CRM_Core_DAO_File();
         $fileDAO->id = $fileID;
         if ( $fileDAO->find(true) ) {
@@ -248,7 +238,6 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
      * combination
      */
     public function &getEntityFile( $entityTable, $entityID ) {
-        require_once 'CRM/Utils/File.php';
         $config = CRM_Core_Config::singleton( );
 
         list( $sql, $params ) = self::sql( $entityTable, $entityID, null );
@@ -413,7 +402,6 @@ AND       CEF.entity_id    = %2";
      * table and id.
      */
     static function copyEntityFile( $oldEntityTable, $oldEntityId, $newEntityTable, $newEntityId ) {
-        require_once "CRM/Core/DAO/EntityFile.php";
         $oldEntityFile = new CRM_Core_DAO_EntityFile();
         $oldEntityFile->entity_id    = $oldEntityId;
         $oldEntityFile->entity_table = $oldEntityTable;

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Task.php';
 
 /**
  * This class provides the functionality to support Proximity Searches
@@ -109,7 +108,6 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
         // prox_distance_unit
 
         // state country js, CRM-5233
-        require_once 'CRM/Core/BAO/Address.php';
         $stateCountryMap   = array( );
         $stateCountryMap[] = array( 'state_province' => 'prox_state_province_id',
                                     'country'        => 'prox_country_id' );
@@ -155,7 +153,6 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
      */
     function &setDefaultValues( $form ) {
         $defaults = array();
-        require_once 'CRM/Core/Config.php';
     	$config = CRM_Core_Config::singleton( );
     	$countryDefault = $config->defaultContactCountry;
     	

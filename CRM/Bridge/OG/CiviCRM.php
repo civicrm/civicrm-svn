@@ -45,7 +45,6 @@ class CRM_Bridge_OG_CiviCRM {
     }
 
     static function groupAdd( $groupID, $group ) {
-        require_once 'CRM/Bridge/OG/Utils.php';
         $ogID = CRM_Bridge_OG_Utils::ogID( $groupID, false );
         
         $node = new StdClass( );
@@ -75,7 +74,6 @@ class CRM_Bridge_OG_CiviCRM {
     }
 
     static function groupDelete( $groupID, $group ) {
-        require_once 'CRM/Bridge/OG/Utils.php';
         $ogID = CRM_Bridge_OG_Utils::ogID( $groupID, false );
         if ( ! $ogID ) {
             return;
@@ -85,13 +83,11 @@ class CRM_Bridge_OG_CiviCRM {
     }
 
     static function groupContact( $groupID, $contactIDs, $op ) {
-        require_once 'CRM/Bridge/OG/Utils.php';
         $ogID = CRM_Bridge_OG_Utils::ogID( $groupID, false );
         if ( ! $ogID ) {
             return;
         }
 
-        require_once 'CRM/Core/BAO/UFMatch.php';
         foreach ( $contactIDs as $contactID ) {
             $drupalID = CRM_Core_BAO_UFMatch::getUFId( $contactID );
             if ( $drupalID ) {                

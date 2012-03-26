@@ -50,7 +50,6 @@ class CRM_Utils_Address_USPS {
         }
         
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $userID = CRM_Core_BAO_Setting::getItem(  CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME,
                                                   'address_standardization_userid' );
         $url    = CRM_Core_BAO_Setting::getItem(  CRM_Core_BAO_Setting::ADDRESS_STANDARDIZATION_PREFERENCES_NAME,

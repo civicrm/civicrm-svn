@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Case/BAO/Case.php';
-require_once 'CRM/Case/PseudoConstant.php';
 
 class CRM_Report_Form_Case_Detail extends CRM_Report_Form {
     

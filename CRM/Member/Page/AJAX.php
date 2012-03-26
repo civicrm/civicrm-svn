@@ -44,7 +44,6 @@ class CRM_Member_Page_AJAX
      */
     function getMemberTypeDefaults( $config ) 
     {
-        require_once 'CRM/Utils/Type.php';
         if (!$_POST['mtype']) {
             $details['name'] = '';
             $details['auto_renew'] = '';
@@ -70,7 +69,6 @@ WHERE   id = %1";
         }
 
         // fix the display of the monetary value, CRM-4038
-        require_once 'CRM/Utils/Money.php';
         $details['total_amount'] = CRM_Utils_Money::format( $details['total_amount'], null, '%a' );
                 
         $options = array( ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required ') );

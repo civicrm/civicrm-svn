@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/ShowHideBlocks.php';
-require_once 'CRM/Core/PseudoConstant.php';
 
 /**
  * Auxilary class to provide support to the Contact Form class. Does this by implementing
@@ -93,7 +91,6 @@ class CRM_Contact_Form_Edit_Individual {
         $form->addElement('hidden', 'current_employer_id', '', array( 'id' => 'current_employer_id') );
         $form->addElement('text', 'contact_source', ts('Source'));
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $checkSimilar = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                        'contact_ajax_check_similar',
                                                        null,

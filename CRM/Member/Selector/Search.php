@@ -34,13 +34,8 @@
  *
  */
 
-require_once 'CRM/Core/Selector/Base.php';
-require_once 'CRM/Core/Selector/API.php';
 
-require_once 'CRM/Utils/Pager.php';
-require_once 'CRM/Utils/Sort.php';
 
-require_once 'CRM/Contact/BAO/Query.php';
 
 /**
  * This class is used to retrieve and display a range of
@@ -173,7 +168,6 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
         // type of selector
         $this->_action = $action;
         
-        require_once 'CRM/Member/BAO/Query.php';
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, 
                                                    CRM_Member_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_MEMBER,
                                                                                                   false ),
@@ -319,7 +313,6 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
      function &getRows($action, $offset, $rowCount, $sort, $output = null) 
      {
          // check if we can process credit card registration
-         require_once 'CRM/Core/PseudoConstant.php';
          $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false,
                                                                  "billing_mode IN ( 1, 3 )" );
          if ( count( $processors ) > 0 ) {
@@ -336,7 +329,6 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
          }
          
          //get all campaigns.
-         require_once 'CRM/Campaign/BAO/Campaign.php';
          $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         
          $result = $this->_query->searchQuery( $offset, $rowCount, $sort,
@@ -407,7 +399,6 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
              if ( isset( $result->membership_recur_id ) && $result->membership_recur_id ) $autoRenew =  true;
              $row['auto_renew'] = $autoRenew;
              
-             require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
              $row['contact_type' ] = 
                  CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                           $result->contact_sub_type : $result->contact_type ,false,$result->contact_id);

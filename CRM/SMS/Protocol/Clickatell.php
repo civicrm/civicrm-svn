@@ -33,7 +33,6 @@ require_once 'PEAR.php';
  * @package	SMS
  */
 
-require_once 'CRM/SMS/Protocol.php';
 
 class CRM_SMS_Protocol_Clickatell extends CRM_SMS_Protocol {
 

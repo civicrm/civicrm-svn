@@ -26,8 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/BAO/CMSUser.php';
 
 /**
  * This class generates form components generic to useradd

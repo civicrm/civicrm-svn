@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
 
 /**
  * 

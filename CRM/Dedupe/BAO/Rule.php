@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Dedupe/DAO/Rule.php';
 
 /**
  * The CiviCRM duplicate discovery engine is based on an
@@ -183,7 +182,6 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
      */
     function dedupeRuleFields( $params)
     {
-        require_once 'CRM/Dedupe/BAO/RuleGroup.php';
         $rgBao = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->level = $params['level'];
         $rgBao->contact_type = $params['contact_type'];
@@ -203,7 +201,6 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
     function validateContacts( $cid, $oid )
     {
         if ( !$cid || !$oid ) return; 
-        require_once 'CRM/Dedupe/DAO/Exception.php';
         $exception = new CRM_Dedupe_DAO_Exception( );
         $exception->contact_id1 = $cid;
         $exception->contact_id2 = $oid;

@@ -33,8 +33,6 @@
  *
  */
 
-require_once 'CRM/Mailing/BAO/Mailing.php';
-require_once 'CRM/Mailing/PseudoConstant.php';
 
 class CRM_Mailing_BAO_Query
 {
@@ -161,7 +159,6 @@ class CRM_Mailing_BAO_Query
                 return;
 
             case 'mailing_delivery_status':
-                require_once('CRM/Mailing/PseudoConstant.php');
                 $options = CRM_Mailing_PseudoConstant::yesNoOptions('delivered');
 
                 list( $name, $op, $value, $grouping, $wildcard ) = $values;
@@ -237,11 +234,9 @@ class CRM_Mailing_BAO_Query
                         array( 'id' => 'mailing_id',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
         }
 
-        require_once 'CRM/Core/Form/Date.php';
         CRM_Core_Form_Date::buildDateRange( $form, 'mailing_date', 1, '_low', '_high', ts('From'),  false, false );
                 
         // event filters
-        require_once('CRM/Mailing/PseudoConstant.php');
         $form->addRadio( 'mailing_delivery_status', ts('Delivery Status'), CRM_Mailing_PseudoConstant::yesNoOptions('delivered'));
         $form->addRadio( 'mailing_open_status', ts('Trackable Opens'), CRM_Mailing_PseudoConstant::yesNoOptions('open'));
         $form->addRadio( 'mailing_click_status', ts('Trackable URLs'), CRM_Mailing_PseudoConstant::yesNoOptions('click'));

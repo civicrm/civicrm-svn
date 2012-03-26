@@ -140,7 +140,6 @@ EOS;
 	  CRM_Core_DAO::storeValues( $this->main_participant, $values );
 	  $values['id'] = null;
 	  $values['event_id'] = $event_in_cart->event_id;
-	  require_once 'CRM/Event/Cart/BAO/MerParticipant.php';
 	  $participant = CRM_Event_Cart_BAO_MerParticipant::create( $values );
           $participant->save();
           $event_in_cart->add_participant( $participant );

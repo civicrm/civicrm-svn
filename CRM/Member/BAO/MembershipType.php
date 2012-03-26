@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Member/DAO/MembershipType.php';
 
 class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType 
 {
@@ -176,7 +175,6 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
         }
         
         //delete from membership Type table
-        require_once 'CRM/Member/DAO/MembershipType.php';
         $membershipType = new CRM_Member_DAO_MembershipType( );
         $membershipType->id = $membershipTypeId;
         
@@ -236,7 +234,6 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      */
     static function getMembershipTypes( $public = true )
     {
-        require_once 'CRM/Member/DAO/Membership.php';
         $membershipTypes = array();
         $membershipType = new CRM_Member_DAO_MembershipType( );
         $membershipType->is_active = 1;
@@ -260,7 +257,6 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      */
     function getMembershipTypeDetails( $membershipTypeId ) 
     {
-        require_once 'CRM/Member/DAO/Membership.php';
         $membershipTypeDetails = array();
         
         $membershipType = new CRM_Member_DAO_MembershipType( );
@@ -475,8 +471,6 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      */
     function getRenewalDatesForMembershipType( $membershipId, $changeToday = null, $membershipTypeID = null, $numRenewTerms = 1 ) 
     {
-        require_once 'CRM/Member/BAO/Membership.php';
-        require_once 'CRM/Member/BAO/MembershipStatus.php';
         $params = array('id' => $membershipId);
         $membershipDetails = CRM_Member_BAO_Membership::getValues( $params, $values );
         $statusID          = $membershipDetails[$membershipId]->status_id;
@@ -623,7 +617,6 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
     static function getMembershipTypeOrganization( $membershipTypeId = null ) {
         $allmembershipTypes = array( );
         
-        require_once 'CRM/Member/DAO/MembershipType.php';
         $membershipType = new CRM_Member_DAO_MembershipType( );
         
         if ( isset($membershipTypeId) ) {

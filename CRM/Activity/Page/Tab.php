@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Main page for viewing activities
@@ -74,7 +73,6 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
         $activityTypeId = CRM_Utils_Request::retrieve('atype', 'Positive', $this );
 
         // Email and Create Letter activities use a different form class
-        require_once 'CRM/Core/OptionGroup.php';
         $emailTypeValue = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                           'Email',
                                                           'name' );
@@ -134,7 +132,6 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
         $this->assign( 'contactID', $this->_contactId );
 
         // check logged in url permission
-        require_once 'CRM/Contact/Page/View.php';
         CRM_Contact_Page_View::checkUserPermission( $this );
         
         // set page title
@@ -178,7 +175,6 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
         //do check for view/edit operation.
         if ( $this->_id &&
              in_array( $action, array( CRM_Core_Action::UPDATE, CRM_Core_Action::VIEW ) ) ) {
-            require_once 'CRM/Activity/BAO/Activity.php';
             if ( !CRM_Activity_BAO_Activity::checkPermission( $this->_id, $action ) ) {
                 CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
             }
@@ -199,7 +195,6 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
             $activityTypeId = CRM_Utils_Request::retrieve('atype', 'Positive', $this );
             
             // Email and Create Letter activities use a different form class
-            require_once 'CRM/Core/OptionGroup.php';
             $emailTypeValue = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                               'Email',
                                                               'name' );

@@ -33,8 +33,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Campaign/DAO/Campaign.php';
 
 Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
 {
@@ -78,9 +76,7 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         $campaign->save();
        
         /* Create the campaign group record */
-        require_once 'CRM/Contact/BAO/Group.php';
         $groupTableName   = CRM_Contact_BAO_Group::getTableName( );
-        require_once 'CRM/Campaign/DAO/CampaignGroup.php';
        
         if( CRM_Utils_Array::value( 'include', $params['groups'] ) && is_array( $params['groups']['include'] ) ) {                    
              foreach( $params['groups']['include'] as $entityId ) {
@@ -97,7 +93,6 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         //store custom data
         if ( CRM_Utils_Array::value( 'custom', $params ) &&
              is_array( $params['custom'] ) ) {
-            require_once 'CRM/Core/BAO/CustomValueTable.php';
             CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_campaign', $campaign->id );
         }
         

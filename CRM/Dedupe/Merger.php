@@ -33,11 +33,6 @@
  *
  */
 
-require_once 'CRM/Contact/BAO/GroupContact.php';
-require_once 'CRM/Core/BAO/CustomGroup.php';
-require_once 'CRM/Core/BAO/UFMatch.php';
-require_once 'CRM/Case/BAO/Case.php';
-require_once 'CRM/Contact/BAO/Contact.php';
 
 class CRM_Dedupe_Merger
 {
@@ -492,7 +487,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         CRM_Utils_Hook::merge( 'sqls', $sqls, $mainId, $otherId, $tables);
         
         // call the SQL queries in one transaction
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         foreach ($sqls as $sql) {
             CRM_Core_DAO::executeQuery( $sql,
@@ -531,7 +525,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             }
         }
 
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         $mainEvs  = CRM_Core_BAO_CustomValueTable::getEntityValues($mainId);
         $otherEvs = CRM_Core_BAO_CustomValueTable::getEntityValues($otherId);
         $keys = array_unique(array_merge(array_keys($mainEvs), array_keys($otherEvs)));
@@ -572,7 +565,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $limit = $redirectForPerformance ? 75 : 1;
         $where = "de.id IS NULL LIMIT {$limit}";
 
-        require_once 'CRM/Core/BAO/PrevNextCache.php';
         $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
         if ( empty($dupePairs) && !$redirectForPerformance ) {
             // If we haven't found any dupes, probably cache is empty. 
@@ -806,7 +798,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         }
 
         static $fields = array();
-        require_once 'CRM/Contact/DAO/Contact.php';
         if ( empty($fields) ) {
             $fields = CRM_Contact_DAO_Contact::fields();
             CRM_Core_DAO::freeResult( );
@@ -877,7 +868,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         // handle location blocks.
         $locationBlocks = array( 'email', 'phone', 'address' );
-        require_once 'CRM/Utils/Address.php';
         
         foreach ( $locationBlocks as $block ) {
             foreach ( array( 'main', 'other' ) as $locBlocks ) {
@@ -1196,7 +1186,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     if ( !$otherBlockId ) continue;
                     
                     // for the block which belongs to other-contact, link the contact to main-contact
-                    require_once "CRM/Core/DAO/{$daoName}.php";
                     eval("\$otherBlockDAO = new CRM_Core_DAO_$daoName();");
                     $otherBlockDAO->id = $otherBlockId;
                     $otherBlockDAO->contact_id = $mainId;
@@ -1288,7 +1277,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 case 'Multi-Select State/Province':
                     // Merge values from both contacts for multivalue fields, CRM-4385
                     // get the existing custom values from db.
-                    require_once 'CRM/Core/BAO/CustomValueTable.php';
                     $customParams = array( 'entityID' => $mainId, $key => true );
                     $customfieldValues = CRM_Core_BAO_CustomValueTable::getValues( $customParams );
                     if ( CRM_Utils_array::value( $key, $customfieldValues ) ) {
@@ -1344,11 +1332,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         // FIXME: move this someplace else (one of the BAOs) after discussing
         // where to, and whether CRM_Core_BAO_File::delete() shouldn't actually,
         // like, delete a file...
-        require_once 'CRM/Core/BAO/File.php';
-        require_once 'CRM/Core/DAO/CustomField.php';
-        require_once 'CRM/Core/DAO/CustomGroup.php';
-        require_once 'CRM/Core/DAO/EntityFile.php';
-        require_once 'CRM/Core/Config.php';
 
         if ( !isset( $customFiles ) ) {
             $customFiles = array();
@@ -1389,7 +1372,6 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         // special case to set values for view only, CRM-5362
         if ( !empty( $viewOnlyCustomFields ) ) {
-            require_once 'CRM/Core/BAO/CustomValueTable.php';
             $viewOnlyCustomFields['entityID'] = $mainId;
             CRM_Core_BAO_CustomValueTable::setValues( $viewOnlyCustomFields );
         }

@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Dedupe/Merger.php';
-require_once 'CRM/Contact/BAO/Contact.php';
 require_once 'api/api.php';
 
 class CRM_Contact_Form_Merge extends CRM_Core_Form
@@ -61,9 +58,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
     function preProcess()
     {
-        require_once 'CRM/Core/BAO/CustomGroup.php';
-        require_once 'CRM/Core/OptionGroup.php';
-        require_once 'CRM/Core/OptionValue.php';
         if ( ! CRM_Core_Permission::check( 'merge duplicate contacts' ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have access to this page' ) );
         }
@@ -77,13 +71,11 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $this->_gid  = $gid  = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, false );
         $this->_mergeId      = CRM_Utils_Request::retrieve( 'mergeId', 'Positive', $this, false );
 
-        require_once 'CRM/Dedupe/BAO/Rule.php';
         if ( ! CRM_Dedupe_BAO_Rule::validateContacts( $cid, $oid ) ) {
             CRM_Core_Error::statusBounce( ts( 'The selected pair of contacts are marked as non duplicates. If these records should be merged, you can remove this exception on the <a href=\'%1\'>Dedupe Exceptions</a> page.', array( 1 => CRM_Utils_System::url('civicrm/dedupe/exception', 'reset=1') ) ) );
         }
 
         //load cache mechanism 
-        require_once 'CRM/Core/BAO/PrevNextCache.php';
         $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $cid, 'contact_type' );
         $cacheKey  = "merge $contactType";
         $cacheKey .= $rgid ? "_{$rgid}" : '_0';
@@ -96,7 +88,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $pos = CRM_Core_BAO_PrevNextCache::getPositions( $cacheKey, $cid, $oid, $this->_mergeId, $join, $where, $flip  );
  
         // Block access if user does not have EDIT permissions for both contacts.
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
         if ( ! ( CRM_Contact_BAO_Contact_Permission::allow( $cid, CRM_Core_Permission::EDIT ) && 
                  CRM_Contact_BAO_Contact_Permission::allow( $oid, CRM_Core_Permission::EDIT ) ) ) {
             CRM_Utils_System::permissionDenied( );
@@ -106,7 +97,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $config = CRM_Core_Config::singleton( );
         $config->doNotResetCache = 1;
 
-        require_once 'CRM/Core/Permission.php';
         $viewUser = CRM_Core_Permission::check( 'access user profiles' );
         $mainUfId = CRM_Core_BAO_UFMatch::getUFId( $cid );
         $mainUser = null;
@@ -197,7 +187,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'The other contact record does not exist' ) );
         }
 
-        require_once 'CRM/Contact/BAO/ContactType.php';
         $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( null, true, '' );
 
         $this->assign('contact_type', $main['contact_type']);

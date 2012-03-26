@@ -69,7 +69,6 @@ class CRM_Utils_Cache {
         if (self::$_singleton === null ) {
             if ( defined( 'CIVICRM_USE_MEMCACHE' ) &&
                  CIVICRM_USE_MEMCACHE ) {
-                require_once 'CRM/Utils/Cache/Memcache.php';
                 $settings = self::getCacheSettings( );
                 self::$_singleton = new CRM_Utils_Cache_Memcache( $settings['host'],
                                                                   $settings['port'],
@@ -77,7 +76,6 @@ class CRM_Utils_Cache {
                                                                   $settings['prefix'] );
             } else if ( defined( 'CIVICRM_USE_ARRAYCACHE' ) && 
                         CIVICRM_USE_ARRAYCACHE ) {
-                require_once 'CRM/Utils/Cache/ArrayCache.php';
                 self::$_singleton = new CRM_Utils_Cache_ArrayCache();
             } else {
                 self::$_singleton = new CRM_Utils_Cache( );

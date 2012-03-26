@@ -15,7 +15,6 @@
  * 
  */
 
-require_once 'CRM/Core/Payment.php';
 
 class CRM_Core_Payment_PayJunction extends CRM_Core_Payment 
 { 

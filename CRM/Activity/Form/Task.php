@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * Class for activity task actions 
@@ -130,7 +129,6 @@ class CRM_Activity_Form_Task extends CRM_Core_Form
 
         //set the context for redirection for any task actions
         $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
-        require_once 'CRM/Utils/Rule.php';
         $urlParams = 'force=1';
         if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
         

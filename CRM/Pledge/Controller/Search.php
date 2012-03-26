@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Controller.php';
-require_once 'CRM/Core/Session.php';
 
 /**
  * This class is used by the Search functionality.
@@ -55,7 +53,6 @@ class CRM_Pledge_Controller_Search extends CRM_Core_Controller
      */
     function __construct( $title = null, $action = CRM_Core_Action::NONE, $modal = true )
     {
-        require_once 'CRM/Pledge/StateMachine/Search.php';
         
         parent::__construct( $title, $modal );
         

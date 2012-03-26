@@ -1,7 +1,5 @@
 <?php
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Event/Cart/BAO/Cart.php';
 
 class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 {
@@ -20,7 +18,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 
   function registerParticipant( $params, &$participant, $event ) 
   {
-	require_once 'CRM/Core/Transaction.php';
 	$transaction = new CRM_Core_Transaction( );
 
 	// handle register date CRM-4320
@@ -74,7 +71,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
         $participant->save();
 
 	if (CRM_Utils_Array::value('contributionID', $params)) {
-	  require_once 'CRM/Event/BAO/ParticipantPayment.php';
 	  $payment_params = array(
 		'participant_id' => $participant->id,
 		'contribution_id' => $params['contributionID'],
@@ -93,14 +89,11 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
         {
             $locationParams = array( 'entity_id'    => $participant->event_id,
                                      'entity_table' => 'civicrm_event');
-            require_once 'CRM/Core/BAO/Location.php';
             $location = CRM_Core_BAO_Location::getValues( $locationParams, true );
-            require_once 'CRM/Core/BAO/Address.php';
             CRM_Core_BAO_Address::fixAddress( $location['address'][1] );
             $event_values['location'] = $location;
         }
 
-        require_once 'CRM/Event/Cart/Form/MerParticipant.php';
         list ($pre_id, $post_id) = CRM_Event_Cart_Form_MerParticipant::get_profile_groups($participant->event_id);
         $payer_values = array
         (
@@ -155,11 +148,9 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	  CRM_Core_Error::statusBounce( ts( 'A payment processor must be selected for this event registration page, or the event must be configured to give users the option to pay later (contact the site administrator for assistance).' ) );
 	}
 
-	require_once 'CRM/Core/BAO/PaymentProcessor.php';
 	$this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $payment_processor_id, $this->_mode );
 	$this->assign( 'paymentProcessor', $this->_paymentProcessor );
 
-	require_once 'CRM/Core/Payment/Form.php';
 	CRM_Core_Payment_Form::setCreditCardFields( $this );
 	CRM_Core_Payment_Form::buildCreditCard( $this );
 
@@ -176,7 +167,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 
   function buildQuickForm( )
   {
-	require_once 'CRM/Core/BAO/CustomValueTable.php';
 
 	$this->line_items = array();
 	$this->sub_total = 0;
@@ -312,14 +302,12 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 
   function getDefaultFrom( )
   {
-	require_once 'CRM/Core/OptionGroup.php';
 	$values = CRM_Core_OptionGroup::values('from_email_address');
 	return $values[1];
   }
 
   function emailReceipt( $events_in_cart, $params )
   {
-	require_once 'CRM/Contact/BAO/Contact.php';
 	$contact_details = CRM_Contact_BAO_Contact::getContactDetails( $this->payer_contact_id );
 	$state_province = new CRM_Core_DAO_StateProvince();
 	$state_province->id = $params["billing_state_province_id-{$this->_bltID}"];
@@ -384,7 +372,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 	  $this->set( $template_param_to_copy, $send_template_params['tplParams'][$template_param_to_copy]);
 	}
 
-        require_once 'CRM/Core/BAO/MessageTemplates.php';
         CRM_Core_BAO_MessageTemplates::sendTemplate( $send_template_params );
   }
 
@@ -394,9 +381,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 
         if ($self->payment_required && !CRM_Utils_Array::value('is_pay_later', $self->_submitValues))
 	{
-	  require_once 'CRM/Core/BAO/PaymentProcessor.php';
-	  require_once 'CRM/Core/Payment/Form.php';
-	  require_once 'CRM/Core/Payment.php';
 	  $payment =& CRM_Core_Payment::singleton( $self->_mode, $self->_paymentProcessor, $this );
 	  $error = $payment->checkConfig( $self->_mode );
 	  if ( $error ) {
@@ -409,7 +393,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 		}
 	  }
 
-	  require_once 'CRM/Utils/Rule.php';
 
 	  if ( CRM_Utils_Array::value( 'credit_card_type', $fields ) ) {
 		if ( CRM_Utils_Array::value( 'credit_card_number', $fields ) &&
@@ -448,15 +431,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
   }
 
   function postProcess( ) {
-	require_once 'CRM/Contact/BAO/Contact.php';
-	require_once 'CRM/Contribute/BAO/Contribution.php';
-	require_once 'CRM/Contribute/PseudoConstant.php';
-	require_once 'CRM/Core/BAO/CustomValueTable.php';
-	require_once 'CRM/Core/Config.php';
-	require_once 'CRM/Core/Transaction.php';
-	require_once 'CRM/Core/BAO/FinancialTrxn.php';
-	require_once 'CRM/Event/PseudoConstant.php';
-	require_once 'CRM/Utils/Rule.php';
 
 	$transaction = new CRM_Core_Transaction( );
 	$trxn = null;
@@ -720,9 +694,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 
   function setDefaultValues()
   {
-	require_once 'CRM/Core/Config.php';
-	require_once 'CRM/Contact/BAO/Contact.php';
-	require_once 'CRM/Event/Cart/BAO/MerParticipant.php';
 
 	$defaults = parent::setDefaultValues();
 

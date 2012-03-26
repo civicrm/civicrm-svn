@@ -26,7 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CRM/Core/Component/Info.php';
 
 /**
  * This class introduces component to the system and provides all the 
@@ -70,7 +69,6 @@ class CRM_Mailing_Info extends CRM_Core_Component_Info
             return false;
         }
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $enableWorkflow = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
                                                          'civimail_workflow',
                                                          null,

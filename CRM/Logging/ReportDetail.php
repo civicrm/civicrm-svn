@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Logging/Differ.php';
-require_once 'CRM/Logging/Schema.php';
-require_once 'CRM/Report/Form.php';
 
 class CRM_Logging_ReportDetail extends CRM_Report_Form
 {
@@ -66,7 +63,6 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form
         parent::__construct();
 
         if (CRM_Utils_Request::retrieve('revert', 'Boolean', CRM_Core_DAO::$_nullObject)) {
-            require_once 'CRM/Logging/Reverter.php';
             $reverter = new CRM_Logging_Reverter($this->log_conn_id, $this->log_date);
             $reverter->revert($this->tables);
             CRM_Core_Session::setStatus(ts('The changes have been reverted.'));

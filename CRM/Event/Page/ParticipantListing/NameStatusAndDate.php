@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 class CRM_Event_Page_ParticipantListing_NameStatusAndDate extends CRM_Core_Page {
 
@@ -99,7 +98,6 @@ LIMIT    $offset, $rowCount";
 
         $rows = array( );
         $object = CRM_Core_DAO::executeQuery( $query, $params );
-        require_once 'CRM/Event/PseudoConstant.php';
         $statusLookup = CRM_Event_PseudoConstant::participantStatus( );
         while ( $object->fetch( ) ) {
             $row = array( 'id'            => $object->contact_id,
@@ -117,7 +115,6 @@ LIMIT    $offset, $rowCount";
     }
 
     function pager( $fromClause, $whereClause, $whereParams ) {
-        require_once 'CRM/Utils/Pager.php';
 
         $params = array( );
 
@@ -142,7 +139,6 @@ SELECT count( civicrm_contact.id )
 
     function orderBy( ) {
         static $headers = null;
-        require_once 'CRM/Utils/Sort.php';
         if ( ! $headers ) {
             $headers = array( );
             $headers[1] = array( 'name'      => ts( 'Name' ),

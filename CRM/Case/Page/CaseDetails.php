@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 class CRM_Case_Page_CaseDetails extends CRM_Core_Page
 {
@@ -59,10 +58,8 @@ class CRM_Case_Page_CaseDetails extends CRM_Core_Page
 
         $caseId = CRM_Utils_Request::retrieve( 'caseId', 'Positive', $this );
        
-        require_once 'CRM/Case/Page/Tab.php';
         CRM_Case_Page_Tab::setContext( );
             
-        require_once 'CRM/Case/BAO/Case.php';
         $params = array( 'date_range' => 0 );
         
         $caseDetails = array( );

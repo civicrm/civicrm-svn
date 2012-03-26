@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 class CRM_Pledge_Page_Payment extends CRM_Core_Page
 {
@@ -54,18 +53,15 @@ class CRM_Pledge_Page_Payment extends CRM_Core_Page
         
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
 
-        require_once 'CRM/Pledge/Page/Tab.php';
         CRM_Pledge_Page_Tab::setContext( );
 
         if ( $this->_action & CRM_Core_Action::UPDATE ) { 
             $this->edit( ); 
             // set page title
-            require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::setTitle( $this->_contactId );
         } else {
             $pledgeId = CRM_Utils_Request::retrieve( 'pledgeId', 'Positive', $this );
             
-            require_once 'CRM/Pledge/BAO/PledgePayment.php';
             $paymentDetails = CRM_Pledge_BAO_PledgePayment::getPledgePayments( $pledgeId );
             
             $this->assign( 'rows'     , $paymentDetails );

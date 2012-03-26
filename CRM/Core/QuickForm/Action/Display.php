@@ -35,9 +35,7 @@
  *
  */
 
-require_once 'CRM/Core/QuickForm/Action.php';
 
-require_once 'CRM/Core/Config.php';
 
 class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
 
@@ -139,7 +137,6 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
                                          $page->overrideExtraTemplateFileName( ) );
 
         //its time to call the hook.
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::alterContent( $content, 'form', $pageTemplateFile, $page );
 
         $print = $controller->getPrint( );
@@ -155,7 +152,6 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
 
         if ( $print ) {
             if ( $print == CRM_Core_Smarty::PRINT_PDF ) {
-                require_once 'CRM/Utils/PDF/Utils.php';
                 CRM_Utils_PDF_Utils::html2pdf( $content, "{$page->_name}.pdf", false,
                                                array( 'paper_size' => 'a3', 'orientation' => 'landscape' ) );
             } else {

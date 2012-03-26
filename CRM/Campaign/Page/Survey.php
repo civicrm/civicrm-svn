@@ -33,8 +33,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
-require_once 'CRM/Campaign/BAO/Survey.php';
 
 /**
  * Page for displaying Surveys
@@ -83,12 +81,10 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
     }
 
     function browse( ) {
-        require_once 'CRM/Core/Permission.php';
 
         $surveys = CRM_Campaign_BAO_Survey::getSurveySummary( );
         
         if ( !empty($surveys) ) {
-            require_once 'CRM/Campaign/BAO/Campaign.php';
 
             $surveyType = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
             $campaigns  = CRM_Campaign_BAO_Campaign::getAllCampaign( );

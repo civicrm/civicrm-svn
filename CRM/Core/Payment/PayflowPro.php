@@ -9,7 +9,6 @@
    | Written & Contributed by Eileen McNaughton - 2009                          |
    +---------------------------------------------------------------------------+
   */
-require_once 'CRM/Core/Payment.php';
 
 class CRM_Core_Payment_PayflowPro extends CRM_Core_Payment {
     
@@ -361,7 +360,6 @@ class CRM_Core_Payment_PayflowPro extends CRM_Core_Payment {
     function _checkDupe( $invoiceId )
     {
         //copied from Eway but not working and not really sure it should!
-        require_once 'CRM/Contribute/DAO/Contribution.php';
         $contribution = new CRM_Contribute_DAO_Contribution( );
         $contribution->invoice_id = $invoiceId;
         return $contribution->find( );

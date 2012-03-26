@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Upgrade/Form.php';
 
 class CRM_Upgrade_TwoOne_Form_Step3 extends CRM_Upgrade_Form {
 

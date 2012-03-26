@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/MailSettings.php';
 
 class CRM_Core_BAO_MailSettings extends CRM_Core_DAO_MailSettings
 {
@@ -175,7 +174,6 @@ class CRM_Core_BAO_MailSettings extends CRM_Core_DAO_MailSettings
      */
     static function &create( &$params ) 
     {  
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         $mailSettings = self::add( $params );
@@ -201,7 +199,6 @@ class CRM_Core_BAO_MailSettings extends CRM_Core_DAO_MailSettings
     static function deleteMailSettings( $id )
     { 
         $results = null;
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         $mailSettings = new CRM_Core_DAO_MailSettings( );

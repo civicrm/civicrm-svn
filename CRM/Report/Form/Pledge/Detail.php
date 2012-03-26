@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
 
 class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
 
@@ -441,7 +440,6 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
             //handle status id
             if ( array_key_exists( 'civicrm_pledge_status_id', $row ) ) {
                 if ( $value = $row['civicrm_pledge_status_id'] ) {
-                    require_once 'CRM/Contribute/PseudoConstant.php'; 
                     $rows[$rowNum]['civicrm_pledge_status_id'] = 
                        CRM_Contribute_PseudoConstant::contributionStatus($value);
                 }

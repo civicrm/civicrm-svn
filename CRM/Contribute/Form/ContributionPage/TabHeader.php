@@ -150,7 +150,6 @@ class CRM_Contribute_Form_ContributionPage_TabHeader
                 $tabs[$key]['active'] = $tabs[$key]['valid'] = true;
             }
             //get all section info.
-            require_once 'CRM/Contribute/BAO/ContributionPage.php';
             $contriPageInfo = CRM_Contribute_BAO_ContributionPage::getSectionInfo( array( $contribPageId ) );
             
             foreach ( $contriPageInfo[$contribPageId] as $section => $info ) {

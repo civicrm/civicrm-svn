@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 class CRM_Event_Page_ParticipantListing extends CRM_Core_Page {
 
@@ -71,7 +70,6 @@ class CRM_Event_Page_ParticipantListing extends CRM_Core_Page {
         $this->preProcess( );
 
         // get the class name from the participantListingID
-        require_once 'CRM/Core/OptionGroup.php';
         $className = CRM_Core_OptionGroup::getValue( 'participant_listing',
                                                      $this->_participantListingID,
                                                      'value',

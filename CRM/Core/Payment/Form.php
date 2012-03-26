@@ -156,7 +156,6 @@ class CRM_Core_Payment_Form {
                    'is_required'=> true 
                    );
 
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $creditCardType = 
             array( '' => ts('- select -')) + CRM_Contribute_PseudoConstant::creditCard( );
         $form->_fields['credit_card_type'] = 
@@ -223,7 +222,6 @@ class CRM_Core_Payment_Form {
      * @access public 
      */
     function buildCreditCard( &$form, $useRequired = false ) {
-        require_once 'CRM/Core/Payment.php';
         if ( $form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
             self::setCreditCardFields( $form );
             foreach ( $form->_fields as $name => $field ) {
@@ -246,7 +244,6 @@ class CRM_Core_Payment_Form {
                             'currentDate', true );
 
             // also take care of state country widget
-            require_once 'CRM/Core/BAO/Address.php';
             $stateCountryMap = array( 1 => array( 'country'        => "billing_country_id-{$form->_bltID}"       ,
                                                   'state_province' => "billing_state_province_id-{$form->_bltID}" ) );
             CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
@@ -269,7 +266,6 @@ class CRM_Core_Payment_Form {
      * @access public 
      */
     function buildDirectDebit( &$form, $useRequired = false ) {
-        require_once 'CRM/Core/Payment.php';
 
         if ( $form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
             self::setDirectDebitFields( $form );
@@ -373,7 +369,6 @@ class CRM_Core_Payment_Form {
     {     
         // If selected country has possible values for state/province mark the
         // state/province field as required.
-        require_once 'CRM/Core/DAO/StateProvince.php';
         $config = CRM_Core_Config::singleton( );
         $stateProvince = new CRM_Core_DAO_StateProvince( );
         $stateProvince->country_id = CRM_Utils_Array::value( "billing_country_id-{$form->_bltID}", $form->_submitValues );
@@ -381,7 +376,6 @@ class CRM_Core_Payment_Form {
         if ( $stateProvince->count( ) > 0 ) {
             // check that the state/province data is not excluded by a
             // limitation in the localisation settings.
-            require_once 'CRM/Core/PseudoConstant.php';
             $countryIsoCodes = CRM_Core_PseudoConstant::countryIsoCode( );
             $limitCodes      = $config->provinceLimit( );
             $limitIds        = array( );

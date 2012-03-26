@@ -62,10 +62,8 @@ class CRM_Contribute_BAO_Contribution_Utils
                                     $component = 'contribution', 
                                     $fieldTypes = null )
     { 
-        require_once 'CRM/Core/Payment/Form.php';
         CRM_Core_Payment_Form::mapParams( $form->_bltID, $form->_params, $paymentParams, true );
         
-        require_once 'CRM/Contribute/DAO/ContributionType.php';
         $contributionType = new CRM_Contribute_DAO_ContributionType( );
         if ( isset( $paymentParams['contribution_type'] ) ) {
             $contributionType->id = $paymentParams['contribution_type'];
@@ -91,7 +89,6 @@ class CRM_Contribute_BAO_Contribution_Utils
         
         
         if ( $form->_values['is_monetary'] && $form->_amount > 0.0 && is_array( $form->_paymentProcessor ) ) {
-            require_once 'CRM/Core/Payment.php';
             $payment = CRM_Core_Payment::singleton( $form->_mode, $form->_paymentProcessor, $form );
         }
         
@@ -153,7 +150,6 @@ class CRM_Contribute_BAO_Contribution_Utils
                             $form->_values['priceSetID'] = $form->_priceSetId;
                         }
                         
-                        require_once 'CRM/Contribute/BAO/ContributionPage.php';
                         $form->_values['contribution_id'] = $contribution->id;
                         $form->_values['contribution_page_id'] = $contribution->contribution_page_id;
 
@@ -279,7 +275,6 @@ class CRM_Contribute_BAO_Contribution_Utils
         }
         
         // finally send an email receipt
-        require_once 'CRM/Contribute/BAO/ContributionPage.php';
         $form->_values['contribution_id'] = $contribution->id;
         CRM_Contribute_BAO_ContributionPage::sendMail( $contactID, $form->_values, $contribution->is_test,
                                                        false, $fieldTypes );
@@ -371,7 +366,6 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
 
         if ( CRM_Utils_Array::value( 'cms_create_account', $params ) ) {
             $params['contactID'] = $contactID;
-            require_once 'CRM/Core/BAO/CMSUser.php';
             if ( ! CRM_Core_BAO_CMSUser::create( $params, $mail ) ) {
                 CRM_Core_Error::statusBounce( ts('Your profile is not saved and Account is not created.') );
             }
@@ -400,7 +394,6 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
         
         if ( isset( $transaction['trxn_id'] ) ) {
             // set error message if transaction has already been processed.
-            require_once 'CRM/Contribute/DAO/Contribution.php';
             $contribution = new CRM_Contribute_DAO_Contribution();
             $contribution->trxn_id = $transaction['trxn_id'];
             if ( $contribution->find(true) ) {
@@ -412,7 +405,6 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
         }
 
         if ( ! isset( $transaction['contribution_type_id'] ) ) {
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $contributionTypes = array_keys( CRM_Contribute_PseudoConstant::contributionType( ) );
             $transaction['contribution_type_id'] = $contributionTypes[0];
         }
@@ -624,7 +616,6 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
         }
 
         // add contact using dedupe rule
-        require_once 'CRM/Dedupe/Finder.php';
         $dedupeParams = CRM_Dedupe_Finder::formatParams ($params      , 'Individual');
         $dedupeParams['check_permission'] = false;
         $dupeIds      = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
@@ -632,7 +623,6 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
         if ( CRM_Utils_Array::value( 0, $dupeIds ) ) {
             $params['contact_id'] = $dupeIds[0];
         }
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         if ( ! $contact->id ) {
             return false;
@@ -661,7 +651,6 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
         // if this is a recurring contribution then process it first
         if ( $params['trxn_type'] == 'subscrpayment' ) {
             // see if a recurring record already exists
-            require_once 'CRM/Contribute/BAO/ContributionRecur.php';
             $recurring = new CRM_Contribute_BAO_ContributionRecur;
             $recurring->processor_id = $params['processor_id'];
             if ( ! $recurring->find( true ) ) {
@@ -687,7 +676,6 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
             }
         }
 
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contribution =& CRM_Contribute_BAO_Contribution::create( $params,
                                                                   CRM_Core_DAO::$_nullArray );
         if ( ! $contribution->id ) {

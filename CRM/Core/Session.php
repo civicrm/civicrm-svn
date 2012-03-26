@@ -28,7 +28,6 @@
 
 require_once "PEAR.php"; 
 
-require_once "CRM/Core/Error.php";
 
 class CRM_Core_Session {
 
@@ -253,7 +252,6 @@ class CRM_Core_Session {
         if ( empty( $prefix ) ) {
             $values =& $this->_session[$this->_key];
         } else {
-            require_once 'CRM/Core/BAO/Cache.php';
             $values = CRM_Core_BAO_Cache::getItem( 'CiviCRM Session', "CiviCRM_{$prefix}" );
         }
         
@@ -433,7 +431,6 @@ class CRM_Core_Session {
             self::$_managedNames = array_merge( self::$_managedNames, $names );
         }
 
-        require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::restoreSessionFromCache( $names );
     }
 
@@ -444,7 +441,6 @@ class CRM_Core_Session {
 
         self::$_managedNames = CRM_Utils_Array::crmArrayUnique( self::$_managedNames );
 
-        require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::storeSessionToCache( self::$_managedNames, $reset );
 
         self::$_managedNames = null;

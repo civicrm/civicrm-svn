@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/SMS/Protocol.php';
 
 /**
  * BAO object for crm_email_history table
@@ -72,7 +71,6 @@ class CRM_SMS_BAO_History extends CRM_SMS_DAO_History {
         $history->save( );
 
         $sent = $notSent = 0;
-        require_once 'CRM/SMS/Protocol.php';
         foreach ( $contactIds as $contactId ) {
             if ( self::sendMessage( $fromSMSNumber, $contactId, $message, $smsNumber, $history->id ) ) {
                 $sent++;

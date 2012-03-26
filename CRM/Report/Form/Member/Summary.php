@@ -34,11 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Member/PseudoConstant.php';
-require_once "CRM/Member/BAO/MembershipType.php";
-require_once "CRM/Member/BAO/Membership.php";
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
     
@@ -454,7 +449,6 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
             }
             
             // build chart.
-            require_once 'CRM/Utils/OpenFlashChart.php';
             if ( $isMembershipType ) { 
                 $graphRows['value'] = $display;
                 $chartInfo          = array( 'legend' => 'Membership Summary',

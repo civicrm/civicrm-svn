@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Profile/Form.php';
 /**
  * This class generates form components for custom data
  * 
@@ -90,10 +89,8 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
             $userID = $session->get( 'userID' );
             $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, $userID );
             
-            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             if ( $id != $userID ) {
                 // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
-                require_once 'CRM/Contact/BAO/Contact/Permission.php';
                 $config = CRM_Core_Config::singleton( );
                 if ( $config->userFrameworkFrontend ) {
                     CRM_Contact_BAO_Contact_Permission::validateOnlyChecksum( $id, $this );
@@ -136,8 +133,6 @@ SELECT module
     public function buildQuickForm()
     {
         // add the hidden field to redirect the postProcess from
-        require_once 'CRM/UF/Form/Group.php';
-        require_once 'CRM/Core/DAO/UFGroup.php';
         $ufGroup = new CRM_Core_DAO_UFGroup( );
         
         $ufGroup->id = $this->_gid;
@@ -284,12 +279,10 @@ SELECT module
             $contact = civicrm_api( 'contact', 'get', $contactParams );
             $contact = reset( $contact['values'] );
             
-            require_once 'CRM/Mailing/BAO/Mailing.php';
             $dummyMail = new CRM_Mailing_BAO_Mailing(); 
             $dummyMail->body_text = $this->_postURL;
             $tokens = $dummyMail->getTokens();
             
-            require_once 'CRM/Utils/Token.php';
             $url = CRM_Utils_Token::replaceContactTokens($this->_postURL, $contact, false, CRM_Utils_Array::value('text', $tokens));
         }
 
@@ -319,7 +312,6 @@ SELECT module
                 $message .= '<p>';
             }
             
-            require_once 'CRM/Utils/System.php';
             CRM_Utils_System::setUFMessage( $message );
             
             $message = urlencode( $message );

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/ContributionPage.php';
 
 /**
  * form to process actions on the group aspect of Custom Data
@@ -62,7 +61,6 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
      */
     public function buildQuickForm()
     {
-        require_once 'CRM/Utils/Money.php';
 
         // do u want to allow a free form text field for amount 
         $this->addElement('checkbox', 'is_allow_other_amount', ts('Allow other amounts' ), null, array( 'onclick' => "minMax(this);showHideAmountBlock( this, 'is_allow_other_amount' );" ) );  
@@ -116,13 +114,11 @@ SELECT id
                             null, null, null, null,
                             array( '&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>' ) );
 
-        require_once 'CRM/Contribute/BAO/ContributionPage.php';
         
         //check if selected payment processor supports recurring payment
         if ( !empty( $recurringPaymentProcessor ) ) {
             $this->addElement( 'checkbox', 'is_recur', ts('Recurring contributions'), null, 
                                array('onclick' => "showHideByValue('is_recur',true,'recurFields','table-row','radio',false); showRecurInterval( );") );
-            require_once 'CRM/Core/OptionGroup.php';
             $this->addCheckBox( 'recur_frequency_unit', ts('Supported recurring units'), 
                                 CRM_Core_OptionGroup::values( 'recur_frequency_units', false, false, false, null, 'name' ),
                                 null, null, null, null,
@@ -140,7 +136,6 @@ SELECT id
                           CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'pay_later_receipt' ),
                           false );
         // add price set fields
-        require_once 'CRM/Price/BAO/Set.php';
         $price = CRM_Price_BAO_Set::getAssoc( false, 'CiviContribute');
         if (CRM_Utils_System::isNull($price)) {
             $this->assign('price', false );
@@ -155,7 +150,6 @@ SELECT id
         $config = CRM_Core_Config::singleton( );
         if ( in_array('CiviPledge', $config->enableComponents) ) {
             $this->assign('civiPledge', true );
-            require_once 'CRM/Core/OptionGroup.php';
             $this->addElement( 'checkbox', 'is_pledge_active', ts('Pledges') , 
                                null, array('onclick' => "showHideAmountBlock( this, 'is_pledge_active' ); return showHideByValue('is_pledge_active',true,'pledgeFields','table-row','radio',false);") );
             $this->addCheckBox( 'pledge_frequency_unit', ts( 'Supported pledge frequencies' ), 
@@ -199,7 +193,6 @@ SELECT id
             $this->assign( 'priceSetID', $this->_priceSetID );
             if ( $this->_priceSetID ) return $defaults;
             
-            require_once 'CRM/Core/OptionGroup.php'; 
             CRM_Core_OptionGroup::getAssoc( "civicrm_contribution_page.amount.{$this->_id}", $this->_amountBlock );
             $hasAmountBlock = false;
             if ( !empty( $this->_amountBlock ) ) {
@@ -227,7 +220,6 @@ SELECT id
         }
         
         // fix the display of the monetary value, CRM-4038 
-        require_once 'CRM/Utils/Money.php';
         if (isset($defaults['min_amount'])) {
             $defaults['min_amount'] = CRM_Utils_Money::format($defaults['min_amount'], null, '%a');
         }
@@ -264,7 +256,6 @@ SELECT id
         //if so disable first separate membership payment option  
         //then disable contribution amount section. CRM-3801,
         
-        require_once 'CRM/Member/DAO/MembershipBlock.php';
         $membershipBlock = new CRM_Member_DAO_MembershipBlock( );
         $membershipBlock->entity_table = 'civicrm_contribution_page';
         $membershipBlock->entity_id = $self->_id;
@@ -416,7 +407,6 @@ SELECT id
         }
         
         if ( $params['is_recur'] ) {
-            require_once 'CRM/Core/BAO/CustomOption.php';
             $params['recur_frequency_unit'] = 
                 implode( CRM_Core_DAO::VALUE_SEPARATOR,
                          array_keys( $params['recur_frequency_unit'] ) );
@@ -430,7 +420,6 @@ SELECT id
             $params['payment_processor'] = 'null';
         }
 
-        require_once 'CRM/Contribute/BAO/ContributionPage.php';
         $contributionPage   = CRM_Contribute_BAO_ContributionPage::create( $params );
         $contributionPageID = $contributionPage->id;
         
@@ -441,9 +430,6 @@ SELECT id
         if ( !empty( $this->_amountBlock ) ) $deleteAmountBlk = true;
         
         if ( $contributionPageID ) {
-            require_once 'CRM/Price/BAO/Set.php';
-            require_once 'CRM/Core/OptionGroup.php';
-            require_once 'CRM/Pledge/BAO/PledgeBlock.php';
             
             if ( CRM_Utils_Array::value('amount_block_is_active', $params ) ) {
                 // handle price set.
@@ -495,7 +481,6 @@ SELECT id
                         $pledgeBlockParams['is_pledge_interval'] = CRM_Utils_Array::value( 'is_pledge_interval', 
                                                                                            $params, false );
                         // create pledge block.
-                        require_once 'CRM/Pledge/BAO/PledgeBlock.php';
                         CRM_Pledge_BAO_PledgeBlock::create( $pledgeBlockParams );
                     }
                 }

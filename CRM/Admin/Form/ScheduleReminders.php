@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
 
 /**
  * This class generates form components for Scheduling Reminders
@@ -61,7 +60,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         parent::buildQuickForm( );
         $this->_mappingID = $mappingID = null;
 
-        require_once 'CRM/Core/BAO/ActionSchedule.php';
         if ( $this->_action & (CRM_Core_Action::DELETE ) ) { 
             $reminderName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_ActionSchedule', 
                                                          $this->_id, 'title' );
@@ -117,7 +115,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         }
 
         //get the frequency units.
-        require_once 'CRM/Core/OptionGroup.php';
         $this->_freqUnits = array( 'hour' => 'hour' ) + CRM_Core_OptionGroup::values('recur_frequency_units');
         
         //pass the mapping ID in UPDATE mode
@@ -144,7 +141,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
                 
         $this->add( 'select', 'start_action_date', ts( 'Date Field' ), $sel4, true );
 
-        require_once 'CRM/Core/OptionGroup.php';
         $this->addElement( 'checkbox', 'is_repeat', ts('Repeat') , 
                            null, array('onclick' => "return showHideByValue('is_repeat',true,'repeatFields','table-row','radio',false);") );
 
@@ -193,7 +189,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form
         $this->addElement( 'select', 'group_id', ts( 'Group' ), 
                            CRM_Core_PseudoConstant::staticGroup( ) );
 
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::commonCompose( $this );
 
         $this->add('text', 'subject', ts('Subject'), 

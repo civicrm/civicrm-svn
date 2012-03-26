@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Logging/ReportDetail.php';
 
 class CRM_Report_Form_Contribute_LoggingDetail extends CRM_Logging_ReportDetail
 {
@@ -55,7 +54,6 @@ class CRM_Report_Form_Contribute_LoggingDetail extends CRM_Logging_ReportDetail
         parent::buildQuickForm();
 
         // link back to summary report
-        require_once 'CRM/Report/Utils/Report.php';
         $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contribute/summary', 'reset=1', false, true));
     }
 

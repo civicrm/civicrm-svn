@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Event/Page/ParticipantListing/Simple.php';
 
 class CRM_Event_Page_ParticipantListing_NameAndEmail extends CRM_Event_Page_ParticipantListing_Simple {
 

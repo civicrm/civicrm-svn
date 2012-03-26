@@ -35,15 +35,7 @@
  */
 
 require_once 'Mail/mime.php';
-require_once 'CRM/Utils/Mail.php';
 
-require_once 'CRM/Mailing/Event/DAO/Unsubscribe.php';
-require_once 'CRM/Mailing/BAO/Job.php'; 
-require_once 'CRM/Mailing/BAO/Mailing.php';
-require_once 'CRM/Mailing/DAO/Group.php';
-require_once 'CRM/Contact/BAO/Group.php';
-require_once 'CRM/Contact/BAO/GroupContact.php';
-require_once 'CRM/Core/BAO/Domain.php';
 
 class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscribe {
 
@@ -69,9 +61,7 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
         if (! $q) {
             return false;
         }
-        require_once 'CRM/Core/BAO/Email.php';
 
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
         $now = date('YmdHis');
@@ -136,7 +126,6 @@ WHERE  email     = %2
         }
         
         $contact_id = $q->contact_id;
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
         $do = new CRM_Core_DAO();
@@ -213,7 +202,6 @@ WHERE  email     = %2
         }
 
         //Pass the groups to be unsubscribed from through a hook.
-        require_once 'CRM/Utils/Hook.php';
         $group_ids = array_keys($groups);
         $base_group_ids = array_keys($base_groups);
         CRM_Utils_Hook::unsubscribeGroups('unsubscribe', $mailing_id, $contact_id, $group_ids, $base_group_ids);
@@ -359,7 +347,6 @@ WHERE  email     = %2
         $bao->body_text = $text;
         $bao->body_html = $html;
         $tokens = $bao->getTokens();
-        require_once 'CRM/Utils/Token.php';
         if ($eq->format == 'HTML' || $eq->format == 'Both') {
             $html = 
                 CRM_Utils_Token::replaceDomainTokens($html, $domain, true, $tokens['html']);
@@ -379,7 +366,6 @@ WHERE  email     = %2
             $message->setTxtBody($text);
         }
 
-        require_once 'CRM/Core/BAO/MailSettings.php';
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
 
         $headers = array(

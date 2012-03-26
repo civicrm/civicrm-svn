@@ -82,7 +82,6 @@ class CRM_Bridge_OG_Utils {
     }
 
     static function contactID( $ufID ) {
-        require_once 'CRM/Core/BAO/UFMatch.php';
         $contactID = CRM_Core_BAO_UFMatch::getContactId( $ufID );
         if ( $contactID ) {
             return $contactID;

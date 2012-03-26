@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View/UserDashBoard.php';
 
 /**
  * This class is for building membership block on user dashboard
@@ -50,7 +49,6 @@ class CRM_Member_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBoard
     function listMemberships( ) 
     {
         $membership = array( );
-        require_once "CRM/Member/BAO/Membership.php";
         $dao = new CRM_Member_DAO_Membership( );
         $dao->contact_id = $this->_contactId;
         $dao->is_test    = 0;
@@ -72,7 +70,6 @@ class CRM_Member_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBoard
             $membership[$dao->id]['renewPageId'] = CRM_Member_BAO_Membership::getContributionPageId( $dao->id );
             if ( !$membership[$dao->id]['renewPageId'] ) {
                 // Membership payment was not done via online contribution page or free membership. Check for default membership renewal page from CiviMember Settings
-                require_once 'CRM/Core/BAO/Setting.php';
                 $defaultRenewPageId = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MEMBER_PREFERENCES_NAME,
                                                            'default_renewal_contribution_page' );
                 if ( $defaultRenewPageId ) {

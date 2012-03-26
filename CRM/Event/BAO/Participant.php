@@ -36,8 +36,6 @@
  *
  */
 
-require_once 'CRM/Event/PseudoConstant.php';
-require_once 'CRM/Event/DAO/Participant.php';
 
 class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
 {
@@ -93,7 +91,6 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
      */
     static function &add(&$params)
     {
-        require_once 'CRM/Utils/Hook.php';
         
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             CRM_Utils_Hook::pre( 'edit', 'Participant', $params['id'], $params );
@@ -126,7 +123,6 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         //CRM-6910
         //1. If currency present, it should be valid one.
         //2. We should have currency when amount is not null.
-        require_once 'CRM/Utils/Rule.php';
         $currency = $participantBAO->fee_currency;
         if ( $currency ||
              !CRM_Utils_System::isNull( $participantBAO->fee_amount ) ) {
@@ -142,7 +138,6 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         $session = CRM_Core_Session::singleton();
         
         // reset the group contact cache for this group
-        require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
         
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
@@ -197,9 +192,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
 
     static function &create(&$params) 
     { 
-        require_once 'CRM/Utils/Date.php';
 
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         $status      = null;
         
@@ -216,7 +209,6 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         
         if ( ( ! CRM_Utils_Array::value( 'id', $params ) ) ||
              ( $params['status_id'] != $status ) ) {
-            require_once 'CRM/Activity/BAO/Activity.php';
             CRM_Activity_BAO_Activity::addActivity( $participant );
         }
         
@@ -235,12 +227,10 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         // add custom field values       
         if ( CRM_Utils_Array::value( 'custom', $params ) &&
              is_array( $params['custom'] ) ) {
-            require_once 'CRM/Core/BAO/CustomValueTable.php';
             CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_participant', $participant->id );
         }
         
         //process note, CRM-7634
-        require_once 'CRM/Core/BAO/Note.php';
         $noteId = null;
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             $note = CRM_Core_BAO_Note::getNote( $params['id'], 'civicrm_participant' );
@@ -273,7 +263,6 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         }
         
         // Log the information on successful add/edit of Participant data.
-        require_once 'CRM/Core/BAO/Log.php';
         $logParams = array(
                            'entity_table'  => 'civicrm_participant',
                            'entity_id'     => $participant->id,
@@ -290,9 +279,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
 
         // do not add to recent items for import, CRM-4399
         if ( !CRM_Utils_Array::value( 'skipRecentView', $params ) ) {
-            require_once 'CRM/Utils/Recent.php';
 
-            require_once 'CRM/Contact/BAO/Contact.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
                                           "action=view&reset=1&id={$participant->id}&cid={$participant->contact_id}&context=home" );
             
@@ -366,7 +353,6 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         // It might be case there are some empty spaces and still event
         // is full, as waitlist might represent group require spaces > empty.
         
-        require_once 'CRM/Event/BAO/Event.php';
         $participantRoles   = CRM_Event_PseudoConstant::participantRole(   null, 'filter = 1' ); 
         $countedStatuses    = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
         $waitingStatuses    = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Waiting'" );
@@ -621,7 +607,6 @@ GROUP BY  participant.event_id
                 $fields = array( );
             }
             
-            require_once 'CRM/Core/DAO/Note.php';
             $tmpFields         = CRM_Event_DAO_Participant::import( );
             
             $note              = array( 'participant_note'   => array( 'title'         => 'Participant Note',
@@ -641,7 +626,6 @@ GROUP BY  participant.event_id
                                                                        'data_type'     => CRM_Utils_Type::T_STRING ) );
             $tmpConatctField = array( );
             if ( !$onlyParticipant ) {
-                require_once 'CRM/Contact/BAO/Contact.php';
                 $contactFields = CRM_Contact_BAO_Contact::importableFields( $contactType, null );
 
                 // Using new Dedupe rule.
@@ -649,7 +633,6 @@ GROUP BY  participant.event_id
                                     'contact_type' => $contactType,
                                     'level' => 'Strict'
                                     );
-                require_once 'CRM/Dedupe/BAO/Rule.php';
                 $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
                 
                 if( is_array($fieldsArray) ) {
@@ -708,7 +691,6 @@ GROUP BY  participant.event_id
             
             $fields = array( );
             
-            require_once 'CRM/Core/DAO/Note.php';
             $participantFields = CRM_Event_DAO_Participant::export( );
             $noteField         = array( 'participant_note' => array( 'title' => 'Participant Note',
                                                                      'name'  => 'participant_note'));
@@ -724,7 +706,6 @@ GROUP BY  participant.event_id
                 $participantFields['participant_campaign'] = array( 'title' => ts( 'Campaign Title' ) );
             }
             
-            require_once 'CRM/Core/DAO/Discount.php';
             $discountFields  = CRM_Core_DAO_Discount::export( );
 
             $fields = array_merge( $participantFields, $participantStatus, $participantRole, $noteField, $discountFields );
@@ -825,14 +806,11 @@ WHERE  civicrm_participant.id = {$participantId}
      */ 
     static function deleteParticipant( $id ) 
     {
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::pre( 'delete', 'Participant', $id, CRM_Core_DAO::$_nullArray );
 
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
         //delete activity record
-        require_once 'CRM/Activity/BAO/Activity.php';
         $params = array( 'source_record_id' => $id,
                          'activity_type_id' => 5 );// activity type id for event registration
 
@@ -841,19 +819,16 @@ WHERE  civicrm_participant.id = {$participantId}
         // delete the participant payment record
         // we need to do this since the cascaded constraints
         // dont work with join tables
-        require_once 'CRM/Event/BAO/ParticipantPayment.php';
         $p = array( 'participant_id' => $id );
         CRM_Event_BAO_ParticipantPayment::deleteParticipantPayment( $p );
         
         // cleanup line items.
-        require_once 'CRM/Price/BAO/LineItem.php';
         $participantsId = array();
         $participantsId =  self::getAdditionalParticipantIds($id);
         $participantsId[] = $id;
         CRM_Price_BAO_LineItem::deleteLineItems( $participantsId , 'civicrm_participant' );
         
         //delete note when participant deleted.
-        require_once 'CRM/Core/BAO/Note.php';
         $note = CRM_Core_BAO_Note::getNote( $id, 'civicrm_participant' );
         $noteId = key( $note );
         if ( $noteId ) {
@@ -869,7 +844,6 @@ WHERE  civicrm_participant.id = {$participantId}
         CRM_Utils_Hook::post( 'delete', 'Participant', $participant->id, $participant );
 
         // delete the recently created Participant
-        require_once 'CRM/Utils/Recent.php';
         $participantRecent = array(
                                    'id'   => $id,
                                    'type' => 'Participant'
@@ -938,7 +912,6 @@ WHERE  civicrm_participant.id = {$participantId}
      */
     static function fixEventLevel( &$eventLevel )
     {
-        require_once 'CRM/Core/BAO/CustomOption.php';
         if ( ( substr( $eventLevel, 0, 1) == CRM_Core_DAO::VALUE_SEPARATOR ) &&
              ( substr( $eventLevel, -1, 1) == CRM_Core_DAO::VALUE_SEPARATOR ) ) {
             $eventLevel = implode( ', ', explode( CRM_Core_DAO::VALUE_SEPARATOR, 
@@ -1071,9 +1044,6 @@ INNER JOIN civicrm_price_field_value value ON ( value.id = lineItem.price_field_
         $additionalParticipantIDs = array();
         $additionalParticipantIDs = self::getAdditionalParticipantIds( $primaryParticipantID );
         if ( !empty ( $additionalParticipantIDs ) ) {
-            require_once 'CRM/Core/DAO.php';
-            require_once 'CRM/Contact/BAO/Contact.php';
-            require_once 'CRM/Utils/System.php';
             foreach ( $additionalParticipantIDs as $additionalParticipantID ) {
                 $additionalContactID = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', 
                                                                     $additionalParticipantID,
@@ -1238,13 +1208,10 @@ UPDATE  civicrm_participant
         //get the domain values.
         if ( empty( $domainValues ) ) { 
             // making all tokens available to templates.
-            require_once 'CRM/Core/BAO/Domain.php';
-            require_once 'CRM/Core/SelectValues.php';
             $domain = CRM_Core_BAO_Domain::getDomain( );
             $tokens = array ( 'domain'  => array( 'name', 'phone', 'address', 'email'),
                               'contact' => CRM_Core_SelectValues::contactTokens( ));
             
-            require_once 'CRM/Utils/Token.php';
             foreach( $tokens['domain'] as $token ){ 
                 $domainValues[$token] = CRM_Utils_Token::getDomainTokenReplacement( $token, $domain );
             }
@@ -1266,7 +1233,6 @@ UPDATE  civicrm_participant
         if ( !empty( $eventIds ) ) {
             foreach ( $eventIds as $eventId ) {
                 //retrieve event information
-                require_once 'CRM/Event/BAO/Event.php';
                 $eventParams = array( 'id' => $eventId );
                 CRM_Event_BAO_Event::retrieve( $eventParams, $eventDetails[$eventId] );
                 
@@ -1276,7 +1242,6 @@ UPDATE  civicrm_participant
                 
                 //get the location info
                 $locParams = array( 'entity_id' => $eventId ,'entity_table' => 'civicrm_event');
-                require_once 'CRM/Core/BAO/Location.php';
                 $eventDetails[$eventId]['location'] = CRM_Core_BAO_Location::getValues( $locParams, true );
             }
         }
@@ -1421,8 +1386,6 @@ UPDATE  civicrm_participant
             //calculate the checksum value.
             $checksumValue = null;
             if ( $mailType == 'Confirm' && !$participantValues['registered_by_id'] ) {
-                require_once 'CRM/Utils/Date.php';
-                require_once 'CRM/Contact/BAO/Contact/Utils.php';
                 $checksumLife = 'inf';
                 if ( $endDate = CRM_Utils_Array::value( 'end_date',  $eventDetails )  ) {
                     $checksumLife = (CRM_Utils_Date::unixTime( $endDate )-time())/(60*60);
@@ -1437,7 +1400,6 @@ UPDATE  civicrm_participant
                 $receiptFrom = $eventDetails['confirm_from_name'] . ' <' . $eventDetails['confirm_from_email'] . '>';
             }
 
-            require_once 'CRM/Core/BAO/MessageTemplates.php';
             list ($mailSent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
                 array(
                     'groupName' => 'msg_tpl_workflow_event',
@@ -1479,7 +1441,6 @@ UPDATE  civicrm_participant
                                          'status_id'          => 2
                                          );
                 
-                require_once 'CRM/Activity/BAO/Activity.php';
                 if (is_a(CRM_Activity_BAO_Activity::create($activityParams), 'CRM_Core_Error')) {
                     CRM_Core_Error::fatal('Failed creating Activity for expiration mail');
                 }

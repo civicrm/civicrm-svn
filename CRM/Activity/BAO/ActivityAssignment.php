@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Activity/DAO/ActivityAssignment.php';
 
 /**
  * This class is for activity assignment functions
@@ -63,7 +62,6 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
      */
     public function create( &$params ) 
     {
-        require_once 'CRM/Activity/BAO/ActivityAssignment.php';
         $assignment = new CRM_Activity_BAO_ActivityAssignment();
 
         $assignment->copyValues( $params );
@@ -84,7 +82,6 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
     static function retrieveAssigneeIdsByActivityId( $activity_id ) 
     {
         $assigneeArray = array();
-        require_once 'CRM/Utils/Rule.php';
         if ( ! CRM_Utils_Rule::positiveInteger( $activity_id ) ) {
             return $assigneeArray;
         }

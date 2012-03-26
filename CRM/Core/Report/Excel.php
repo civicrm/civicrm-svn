@@ -27,7 +27,6 @@
 */
 
 
-require_once 'CRM/Utils/String.php';
 
 class CRM_Core_Report_Excel {
     /**
@@ -158,7 +157,6 @@ class CRM_Core_Report_Excel {
 
     function writeHTMLFile ( $fileName, &$header, &$rows, $titleHeader = null, $outputHeader = true ) {
         if ( $outputHeader ) {
-            require_once 'CRM/Utils/System.php';
             CRM_Utils_System::download( CRM_Utils_String::munge( $fileName ),
                                         'application/vnd.ms-excel',
                                         CRM_Core_DAO::$_nullObject,
@@ -187,7 +185,6 @@ class CRM_Core_Report_Excel {
 
     function writeCSVFile( $fileName, &$header, &$rows, $titleHeader = null, $outputHeader = true ) {
         if ( $outputHeader ) {
-            require_once 'CRM/Utils/System.php';
             CRM_Utils_System::download( CRM_Utils_String::munge( $fileName ),
                                         'text/x-csv',
                                         CRM_Core_DAO::$_nullObject,

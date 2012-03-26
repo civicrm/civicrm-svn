@@ -34,7 +34,6 @@
  * 
  */ 
 
-require_once 'CRM/Core/Payment.php';
 require_once 'Google/library/googlecart.php';
 require_once 'Google/library/googleitem.php';
 require_once 'Google/library/googlesubscription.php';
@@ -400,7 +399,6 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
     function cancelSubscriptionURL( $entityID = null, $entity = null ) 
     {
         if ( $entityID && $entity == 'membership' ) {
-            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $contactID = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $entityID, "contact_id" );
             $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
 

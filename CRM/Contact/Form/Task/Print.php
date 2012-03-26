@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Task.php';
 
 /**
  * This class provides the functionality to save a search
@@ -66,7 +65,6 @@ class CRM_Contact_Form_Task_Print extends CRM_Contact_Form_Task {
         // create the selector, controller and run - store results in session
         $fv               = $this->get( 'formValues' );
              
-        require_once 'CRM/Contact/BAO/Query.php';
         $params = CRM_Contact_BAO_Query::convertFormValues( $rowElements );
       
         $returnProperties = $this->get( 'returnProperties' );

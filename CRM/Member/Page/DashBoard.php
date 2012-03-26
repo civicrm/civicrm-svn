@@ -34,9 +34,7 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
-require_once 'CRM/Member/Page/DashBoard.php';
 
 /**
  * Page for displaying list of Payment-Instrument
@@ -53,8 +51,6 @@ class CRM_Member_Page_DashBoard extends CRM_Core_Page
      */ 
     function preProcess( ) 
     {
-        require_once "CRM/Member/BAO/MembershipType.php";
-        require_once "CRM/Member/BAO/Membership.php";
         CRM_Utils_System::setTitle( ts('CiviMember') );
         $membershipSummary = array();
         $preMonth = CRM_Utils_Date::customFormat(date( "Y-m-d", mktime(0, 0, 0, date("m")-1,01,date("Y"))) , '%Y%m%d');
@@ -175,7 +171,6 @@ class CRM_Member_Page_DashBoard extends CRM_Core_Page
         }
 		
         //CRM_Core_Error::debug($membershipSummary); //LCD debug
-        require_once "CRM/Member/BAO/MembershipStatus.php";
         $status = CRM_Member_BAO_MembershipStatus::getMembershipStatusCurrent();
         $status = implode(',' , $status );
         

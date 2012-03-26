@@ -57,10 +57,8 @@ class CRM_Group_Page_AJAX
         $params['rp']   = $rowCount;
 
         // get group list 
-        require_once 'CRM/Contact/BAO/Group.php';
         $groups = CRM_Contact_BAO_Group::getGroupListSelector( $params );
 
-        require_once "CRM/Utils/JSON.php";
         $iFilteredTotal = $iTotal =  $params['total'];
         $selectorElements = array( 'group_name', 'group_id', 'group_description',
                                    'group_type', 'visibility', 'org_info', 'links', 'class' );

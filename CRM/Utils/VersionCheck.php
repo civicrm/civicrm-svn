@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Config.php';
 
 class CRM_Utils_VersionCheck
 {
@@ -143,7 +142,6 @@ class CRM_Utils_VersionCheck
                 }
 
                 // get active payment processor types
-                require_once 'CRM/Core/DAO/PaymentProcessor.php';
                 $dao = new CRM_Core_DAO_PaymentProcessor;
                 $dao->is_active = 1;
                 $dao->find();
@@ -168,7 +166,6 @@ class CRM_Utils_VersionCheck
 
                 $fp = @fopen($cachefile, 'w');
                 if ( ! $fp ) {
-                    require_once 'CRM/Core/Session.php';
                     $message = ts( 'Do not have permission to write to file: %1',
                                    array( 1 => $cachefile ) );
                     CRM_Core_Session::setStatus( $message );

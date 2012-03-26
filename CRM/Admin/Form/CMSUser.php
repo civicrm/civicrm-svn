@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * This class generates form components for Synchronizing CMS Users
@@ -71,7 +70,6 @@ class CRM_Admin_Form_CMSUser extends CRM_Core_Form
      */
     public function postProcess() 
     {
-        require_once 'CRM/Core/BAO/CMSUser.php';
         CRM_Core_BAO_CMSUser::synchronize();
     }
 }

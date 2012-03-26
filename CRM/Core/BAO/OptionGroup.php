@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/OptionGroup.php';
 
 class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup 
 {
@@ -127,7 +126,6 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup
     static function del($optionGroupId) 
     {
         // need to delete all option value field before deleting group 
-        require_once 'CRM/Core/DAO/OptionValue.php';
         $optionValue = new CRM_Core_DAO_OptionValue( );
         $optionValue->option_group_id = $optionGroupId;
         $optionValue->delete();

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Search/Custom/Base.php';
 
 class CRM_Contact_Form_Search_Custom_Basic
   extends    CRM_Contact_Form_Search_Custom_Base
@@ -60,7 +59,6 @@ class CRM_Contact_Form_Search_Custom_Basic
         $returnProperties = array( );
         $returnProperties['contact_sub_type'] = 1;
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                               'address_options', true, null, true );
 

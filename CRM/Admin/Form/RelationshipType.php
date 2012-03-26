@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
 
 /**
  * This class generates form components for Relationship Type
@@ -74,7 +73,6 @@ class CRM_Admin_Form_RelationshipType extends CRM_Admin_Form
                    CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_RelationshipType', 'description' ) );
         
 
-        require_once 'CRM/Contact/BAO/ContactType.php';
 
         $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( );
         

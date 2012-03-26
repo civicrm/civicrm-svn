@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/PrevNextCache.php';
 
 /**
  * BAO object for civicrm_prevnext_cache table
@@ -205,7 +204,6 @@ WHERE cacheKey ". $op ." %1
 
         // 2. FILL cache
         $foundDupes = array( );
-        require_once 'CRM/Dedupe/Finder.php';
         if ( $rgid && $gid ) {
             $foundDupes = CRM_Dedupe_Finder::dupesInGroup( $rgid, $gid );
         } else if ( $rgid ) {

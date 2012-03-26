@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO.php';
 
 class CRM_Logging_Schema
 {
@@ -55,7 +54,6 @@ class CRM_Logging_Schema
      */
     function __construct()
     {
-        require_once 'CRM/Contact/DAO/Contact.php';
         $dao = new CRM_Contact_DAO_Contact( );
         $civiDBName = $dao->_database;
 
@@ -204,7 +202,6 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
         ");
 
         // add report instances
-        require_once 'CRM/Report/DAO/Instance.php';
         $domain_id = CRM_Core_Config::domainID();
         foreach ($this->reports as $report) {
             $dao = new CRM_Report_DAO_Instance;
@@ -284,7 +281,6 @@ COLS;
         ");
 
         // delete report instances
-        require_once 'CRM/Report/DAO/Instance.php';
         $domain_id = CRM_Core_Config::domainID();
         foreach($this->reports as $report) {
             $dao = new CRM_Report_DAO_Instance;

@@ -117,7 +117,6 @@ class CRM_Utils_Type
      */
     public static function escape($data, $type, $abort = true) 
     {
-        require_once 'CRM/Utils/Rule.php';
         switch($type) {
         case 'Integer':
         case 'Int':
@@ -209,7 +208,6 @@ class CRM_Utils_Type
      */
     public static function validate($data, $type, $abort = true, $name = 'One of parameters ') 
     {
-        require_once 'CRM/Utils/Rule.php';
         switch($type) {
         case 'Integer':
         case 'Int':

@@ -26,7 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CRM/Core/Component/Info.php';
 
 /**
  * This class introduces component to the system and provides all the 

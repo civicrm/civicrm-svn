@@ -35,7 +35,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  * Page for displaying list of Reminders 
@@ -138,7 +137,6 @@ class CRM_Admin_Page_ScheduleReminders extends CRM_Core_Page_Basic
      */
     function browse($action=null)
     {
-        require_once 'CRM/Core/BAO/ActionSchedule.php';
         // Get list of configured reminders
         $reminderList = CRM_Core_BAO_ActionSchedule::getList();
 

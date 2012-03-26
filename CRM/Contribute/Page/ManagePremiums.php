@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  * Page for displaying list of Premiums
@@ -151,7 +150,6 @@ class CRM_Contribute_Page_ManagePremiums extends CRM_Core_Page_Basic
     {
         // get all custom groups sorted by weight
         $premiums = array();
-        require_once 'CRM/Contribute/DAO/Product.php';
         $dao = new CRM_Contribute_DAO_Product();
         $dao->orderBy('name');
         $dao->find();

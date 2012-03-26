@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form.php';
 
 /**
  * This class generates form components for Contribution Type
@@ -81,7 +80,6 @@ class CRM_Contribute_Form_ContributionType extends CRM_Contribute_Form
      */
     public function postProcess() 
     {
-        require_once 'CRM/Contribute/BAO/ContributionType.php';
         if($this->_action & CRM_Core_Action::DELETE) {
             CRM_Contribute_BAO_ContributionType::del($this->_id);
             CRM_Core_Session::setStatus( ts('Selected contribution type has been deleted.') );

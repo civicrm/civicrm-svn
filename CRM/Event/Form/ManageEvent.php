@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * This class generates form components for processing Event  
@@ -109,11 +108,9 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             $this->_single = true;
             
             $params = array( 'id' => $this->_id );
-            require_once 'CRM/Event/BAO/Event.php';
             CRM_Event_BAO_Event::retrieve( $params, $eventInfo );
 
             // its an update mode, do a permission check
-            require_once 'CRM/Event/BAO/Event.php';
             if ( ! CRM_Event_BAO_Event::checkPermission( $this->_id, CRM_Core_Permission::EDIT ) ) {
                 CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
             }
@@ -163,7 +160,6 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
 
         if ( CRM_Core_Permission::check( 'view event participants' ) &&
              CRM_Core_Permission::check( 'view all contacts' ) ) {  
-            require_once 'CRM/Event/PseudoConstant.php';
             $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1', 'label' );
             $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0', 'label' );
             $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
@@ -174,7 +170,6 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         $this->_templateId = (int) CRM_Utils_Request::retrieve('template_id', 'Integer', $this);
 
         // also set up tabs
-        require_once 'CRM/Event/Form/ManageEvent/TabHeader.php';
         CRM_Event_Form_ManageEvent_TabHeader::build( $this );
 
         // Set Done button URL and breadcrumb. Templates go back to Manage Templates, 
@@ -210,11 +205,9 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         $defaults = array( );
         if ( isset( $this->_id ) ) {
             $params = array( 'id' => $this->_id );
-            require_once 'CRM/Event/BAO/Event.php';
             CRM_Event_BAO_Event::retrieve($params, $defaults);
         } elseif ($this->_templateId) {
             $params = array('id' => $this->_templateId);
-            require_once 'CRM/Event/BAO/Event.php';
             CRM_Event_BAO_Event::retrieve($params, $defaults);
             $defaults['is_template'] = $this->_isTemplate;
             $defaults['template_id'] = $defaults['id'];

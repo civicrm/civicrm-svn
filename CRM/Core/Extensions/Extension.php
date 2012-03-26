@@ -35,8 +35,6 @@
  *
  */
 
-require_once 'CRM/Core/Config.php';
-require_once 'CRM/Core/Extensions.php';
 
 class CRM_Core_Extensions_Extension
 {
@@ -194,15 +192,11 @@ class CRM_Core_Extensions_Extension
     }
 
     public function removeFiles() {
-        require_once 'CRM/Utils/File.php';
-        require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
         CRM_Utils_File::cleanDir( $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key, true );
     }
     
     public function installFiles() {
-        require_once 'CRM/Utils/File.php';
-        require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
 
         $zip = new ZipArchive;
@@ -221,7 +215,6 @@ class CRM_Core_Extensions_Extension
         if (empty($newxml))
             CRM_Core_Error::fatal( ts( 'Failed reading data from %1 during installation', array( 1 => $filename ) ) );
             
-        require_once 'CRM/Core/Extensions/Extension.php';
         $check = new CRM_Core_Extensions_Extension( $this->key . ".newversion" );
         $check->readXMLInfo( $newxml );
         if( $check->version != $this->version ) {
@@ -236,7 +229,6 @@ class CRM_Core_Extensions_Extension
     
     public function download( ) {
     
-        require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
         
         $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
@@ -343,8 +335,6 @@ class CRM_Core_Extensions_Extension
         // (payment processor enable/disable/install/uninstall). May wish to implement some
         // kind of registry/caching system if more hooks are added.
         
-        require_once 'CRM/Core/Extensions.php';
-        require_once 'CRM/Core/DAO.php';
         
         if ( ! isset( $this->id ) || empty( $this->id ) )
             $this->id = 0;
@@ -372,7 +362,6 @@ class CRM_Core_Extensions_Extension
             )
         )) {
             // If so, load params in the usual way ..
-            require_once "CRM/Core/BAO/PaymentProcessor.php";
             $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $processor_id, null );
         
         } else {

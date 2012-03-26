@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Campaign/Form/Task.php';
-require_once 'CRM/Campaign/BAO/Survey.php';
 
 /**
  * This class provides the functionality to add contacts for
@@ -98,7 +96,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         CRM_Campaign_BAO_Survey::retrieve( $params, $this->_surveyDetails );
         
         //get the survey activities.
-        require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $statusIds = array( );
         foreach ( array( 'Scheduled' ) as $name ) {
@@ -119,7 +116,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         $this->assign( 'surveyTitle', $this->_surveyDetails['title'] );
         
         //append breadcrumb to survey dashboard.
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         if ( CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
             CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
@@ -230,13 +226,11 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     public function postProcess( ) 
     {        
         //add reservation.
-        require_once 'CRM/Core/PseudoConstant.php';
         $countVoters    = 0;
         $maxVoters      = CRM_Utils_Array::value('max_number_of_contacts', $this->_surveyDetails);
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $statusHeld     = array_search( 'Scheduled', $activityStatus );
         
-        require_once 'CRM/Activity/BAO/Activity.php';
         $reservedVoterIds = array( );
         foreach ( $this->_contactIds as $cid ) {
             $subject =  ts( '%1', array( 1 =>  $this->_surveyDetails['title'] ) ). ' - ' . ts( 'Respondent Reservation' );
@@ -310,15 +304,12 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             $grpParams = array( 'title'         => $newGroupName,
                                 'description'   => $newGroupDesc,
                                 'is_active'     => true  );
-            require_once 'CRM/Contact/BAO/Group.php';
             $group = CRM_Contact_BAO_Group::create( $grpParams );
             $groups[] = $newGroupId = $group->id;
         }
         
         //add the respondents to groups.
         if ( is_array( $groups ) ) {
-            require_once 'CRM/Core/PseudoConstant.php';
-            require_once 'CRM/Contact/BAO/GroupContact.php';
             $existingGroups = CRM_Core_PseudoConstant::group( );
             foreach ( $groups as $groupId ) {
                 $addCount = CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId );

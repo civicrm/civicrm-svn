@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Profile/Form.php';
-require_once 'CRM/Event/Form/Task.php';
 
 /**
  * This class provides the functionality for batch profile update for events
@@ -81,14 +79,12 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
         parent::preProcess( );
         
         //get the contact read only fields to display.
-        require_once 'CRM/Core/BAO/Setting.php';
         $readOnlyFields = array_merge( array( 'sort_name' => ts( 'Name' ) ),
                                        CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                            'contact_autocomplete_options',
                                                                            true, null, false, 'name', true ) );
         //get the read only field data.
         $returnProperties  = array_fill_keys( array_keys( $readOnlyFields ), 1 );
-        require_once 'CRM/Contact/BAO/Contact/Utils.php';
         $contactDetails = CRM_Contact_BAO_Contact_Utils::contactDetails( $this->_participantIds, 
                                                                          'CiviEvent', $returnProperties );
         $this->assign( 'contactDetails', $contactDetails );
@@ -109,7 +105,6 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
             CRM_Core_Error::fatal( 'ufGroupId is missing' );
         }
 
-        require_once "CRM/Core/BAO/UFGroup.php";
         $this->_title = ts('Batch Update for Events') . ' - ' . CRM_Core_BAO_UFGroup::getTitle ( $ufGroupId );
         CRM_Utils_System::setTitle( $this->_title );
         $this->addDefaultButtons( ts('Save') );
@@ -159,7 +154,6 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
         }
         
         //fix for CRM-2752
-        require_once "CRM/Core/BAO/CustomField.php";
         // get the option value for custom data type 	
 		$this->_roleCustomDataTypeID      = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantRole', 'name' );
 		$this->_eventNameCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventName', 'name' );
@@ -231,7 +225,6 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
         foreach ($this->_participantIds as $participantId) {
             $details[$participantId] = array( );
             
-            require_once 'CRM/Event/BAO/Participant.php';
             $details[$participantId] = CRM_Event_BAO_Participant::participantDetails( $participantId );
             CRM_Core_BAO_UFGroup::setProfileDefaults( null, $this->_fields, $defaults, false, $participantId, 'Event');
 
@@ -331,7 +324,6 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
             return;
         }
         
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contributionId = CRM_Contribute_BAO_Contribution::checkOnlinePendingContribution( $participantId, 
                                                                                            'Event' );
         if ( !$contributionId ) {
@@ -342,8 +334,6 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
         //1. participant - positive => contribution - completed.
         //2. participant - negative => contribution - cancelled.
         
-        require_once 'CRM/Event/PseudoConstant.php';
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $positiveStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Positive'" );
         $negativeStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Negative'" );
         $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
@@ -366,7 +356,6 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
                          'contribution_status_id' => $contributionStatusId );
         
         //change related contribution status.
-        require_once 'CRM/Core/Payment/BaseIPN.php';
         $updatedStatusId = CRM_Core_Payment_BaseIPN::updateContributionStatus( $params ); 
         
         return $updatedStatusId;

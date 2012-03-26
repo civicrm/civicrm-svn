@@ -1,7 +1,5 @@
 <?php
 
-require_once 'CRM/Core/Error.php';
-require_once 'CRM/Utils/Array.php';
 
 class CRM_Core_DAO_Factory {
 

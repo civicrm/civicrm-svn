@@ -1,7 +1,5 @@
 <?php
 
-require_once 'CRM/Event/Cart/DAO/Cart.php';
-require_once 'CRM/Event/Cart/BAO/EventInCart.php';
 
 class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
 {
@@ -44,7 +42,6 @@ class CRM_Event_Cart_BAO_Cart extends CRM_Event_Cart_DAO_Cart
 
   public static function create( $params )
   {
-	require_once 'CRM/Core/Transaction.php';
 	$transaction = new CRM_Core_Transaction( );
 
 	$cart = self::add( $params );

@@ -61,7 +61,6 @@ class CRM_Report_Utils_Report {
         $optionVal = self::getValueFromUrl( $instanceID );
 
         if ( $optionVal ) {
-            require_once 'CRM/Core/OptionGroup.php';
             $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', "{$optionVal}", 'value' );
             return array( $templateInfo['id'], $optionVal );
         }
@@ -133,7 +132,6 @@ WHERE  inst.report_id = %1";
             return false;
         }
 
-        require_once 'CRM/Core/BAO/Domain.php';
         list( $domainEmailName, 
               $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
 
@@ -157,7 +155,6 @@ WHERE  inst.report_id = %1";
         $params['text'       ] = '';
         $params['html'       ] = $fileContent;
 
-        require_once "CRM/Utils/Mail.php";
         return CRM_Utils_Mail::send( $params );
     }
 
@@ -177,7 +174,6 @@ WHERE  inst.report_id = %1";
      * - make CSV file content and return as string.
      */
     static function makeCsv( &$form, &$rows ) {
-        require_once 'CRM/Utils/Money.php';
         $config    = CRM_Core_Config::singleton( );
         $csv       = '';
           
@@ -234,7 +230,6 @@ WHERE  inst.report_id = %1";
         $config    = CRM_Core_Config::singleton( );
         $arg       = explode( '/', $_GET[$config->userFrameworkURLVar] );
         
-        require_once 'CRM/Utils/Rule.php';
         if ( $arg[1] == 'report' &&
              CRM_Utils_Array::value( 2, $arg ) == 'instance' ) {
             if ( CRM_Utils_Rule::positiveInteger( $arg[3] ) ) {
@@ -307,8 +302,6 @@ WHERE  inst.report_id = %1";
     }
 
     static function processReport( $params ) {
-        require_once 'CRM/Report/Page/Instance.php';
-        require_once 'CRM/Utils/Wrapper.php';
 
         $instanceId = CRM_Utils_Array::value( 'instanceId', $params );
 
@@ -322,7 +315,6 @@ WHERE  inst.report_id = %1";
         $optionVal = self::getValueFromUrl( $instanceId );
         $messages  = array( "Report Mail Triggered..." );
         
-        require_once 'CRM/Core/OptionGroup.php';
         $templateInfo = CRM_Core_OptionGroup::getRowValues( 'report_template', $optionVal, 'value' );
         $obj = new CRM_Report_Page_Instance();
         $is_error = 0;

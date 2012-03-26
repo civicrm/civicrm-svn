@@ -34,10 +34,7 @@
  *
  */
 
-require_once 'CRM/Utils/String.php';
-require_once 'CRM/Utils/Type.php';
 
-require_once 'CRM/Import/Field.php';
 
 abstract class CRM_Import_Parser {
 

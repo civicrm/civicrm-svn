@@ -34,7 +34,6 @@
  *
  */
 
-require_once "CRM/Core/Form.php";
 
 /**
  * This class generates form components for OpenCase Activity
@@ -61,12 +60,10 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
     {
         $defaults = array(); 
         
-        require_once 'CRM/Core/OptionGroup.php';
         $openCaseActivityType = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                'Open Case',
                                                                'name' );  
         $openCaseParams = array( 'activity_type_id' => $openCaseActivityType );
-        require_once 'CRM/Case/BAO/Case.php';
         $openCaseInfo = CRM_Case_BAO_Case::getCaseActivityDates( $form->_caseId, $openCaseParams, true );
         if ( empty($openCaseInfo) ) {
         	list( $defaults['start_date'], $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults();
@@ -188,7 +185,6 @@ WHERE civicrm_case.id=  %1";
         // Multiple steps since revisioned
         if ( $form->openCaseActivityId ) {
         	
-        	require_once 'CRM/Activity/BAO/Activity.php';
         	$abao = new CRM_Activity_BAO_Activity( );
         	$oldParams = array( 'id' => $form->openCaseActivityId );
         	$oldActivityDefaults = array();
@@ -204,7 +200,6 @@ WHERE civicrm_case.id=  %1";
             $oldParams = array( 'id' => $form->openCaseActivityId,
                                 'is_current_revision' => 0,
                               );                              
-            require_once 'CRM/Activity/DAO/Activity.php';
             $oldActivity = new CRM_Activity_DAO_Activity();
             $oldActivity->copyValues( $oldParams );
             $oldActivity->save( ); 
@@ -229,7 +224,6 @@ WHERE civicrm_case.id=  %1";
                                              'case_id'     => $form->_caseId,
                                            );
                 
-                require_once "CRM/Case/BAO/Case.php";
                 CRM_Case_BAO_Case::processCaseActivity( $caseActivityParams );
 
                 $caseActivityParams = array( 'activityID' => $form->openCaseActivityId,

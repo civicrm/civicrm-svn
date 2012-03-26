@@ -39,8 +39,6 @@
  * used by the search forms
  *
  */
-require_once 'CRM/Contact/BAO/ContactType.php';
-require_once 'CRM/Mailing/Info.php';
  
 class CRM_Contact_Task
 {
@@ -216,7 +214,6 @@ class CRM_Contact_Task
             
             self::$_tasks += CRM_Core_Component::taskList( );
 
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::searchTasks( 'contact', self::$_tasks );
 
             asort(self::$_tasks);
@@ -246,7 +243,6 @@ class CRM_Contact_Task
 
         $config = CRM_Core_Config::singleton( );
 
-        require_once 'CRM/Utils/Mail.php';
         if ( !CRM_Utils_Mail::validOutBoundMail() ) { 
             unset( $titles[6 ] );
             unset( $titles[20] );

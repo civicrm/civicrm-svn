@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/BAO/CustomField.php';
 
 /**
  * This class is to build the form for deleting a field
@@ -113,7 +111,6 @@ class CRM_Custom_Form_DeleteField extends CRM_Core_Form {
         CRM_Core_BAO_CustomField::deleteField( $field );
 
         // also delete any profiles associted with this custom field
-        require_once "CRM/Core/BAO/UFField.php";
         CRM_Core_BAO_UFField::delUFField($this->_id);
         CRM_Core_Session::setStatus( ts('The custom field \'%1\' has been deleted.', array(1 => $field->label)) );        
 

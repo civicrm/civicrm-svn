@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/Type.php';
-require_once 'CRM/Member/PseudoConstant.php';
 
 class CRM_Member_Import_Field {
   

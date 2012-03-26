@@ -40,8 +40,6 @@
 require_once 'PEAR/ErrorStack.php';
 require_once 'PEAR/Exception.php';
 
-require_once 'CRM/Core/Config.php';
-require_once 'CRM/Core/Smarty.php';
 
 require_once 'Log.php';
 
@@ -467,7 +465,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         $backTrace = debug_backtrace( );
         
         $msgs = array( );
-        require_once 'CRM/Utils/Array.php';
         foreach ( $backTrace as $trace ) {
             $msgs[] = implode( ', ',
                                array( CRM_Utils_Array::value('file'    , $trace ),
@@ -605,7 +602,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     protected static function abend( $code ) {
         // do a hard rollback of any pending transactions
         // if we've come here, its because of some unexpected PEAR errors
-        require_once 'CRM/Core/Transaction.php';
         CRM_Core_Transaction::forceRollbackIfEnabled( );
         CRM_Utils_System::civiExit( $code );
     }

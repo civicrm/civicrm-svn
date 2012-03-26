@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Task.php';
 
 /**
  * This class provides the functionality to add contact(s) to Household
@@ -262,7 +261,6 @@ class CRM_Contact_Form_Task_AddToHousehold extends CRM_Contact_Form_Task {
 
                 $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
 
-                require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
                 $searchRows[$contactID]['type'] = 
                     CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                              $result->contact_sub_type : $result->contact_type );

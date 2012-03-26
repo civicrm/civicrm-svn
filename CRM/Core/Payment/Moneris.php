@@ -35,7 +35,6 @@
  * 
  */ 
 
-require_once 'CRM/Core/Payment.php';
 
 class CRM_Core_Payment_Moneris extends CRM_Core_Payment { 
     const

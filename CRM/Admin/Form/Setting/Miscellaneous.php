@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form/Setting.php';
 
 /**
  * This class generates form components for Miscellaneous
@@ -57,7 +56,6 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         $validTriggerPermission = CRM_Core_DAO::checkTriggerViewPermission( false );
 
         // FIXME: for now, disable logging for multilingual sites OR if triggers are not permittted
-        require_once 'CRM/Core/DAO/Domain.php';
         $domain = new CRM_Core_DAO_Domain;
         $domain->find(true);
         $attribs = $domain->locales || ! $validTriggerPermission ? array('disabled' => 'disabled') : null;
@@ -99,7 +97,6 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
     {
         parent::setDefaultValues();
 
-        require_once 'CRM/Core/BAO/Setting.php';
         $this->_defaults['checksumTimeout'] = 
             CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'checksum_timeout',
@@ -114,7 +111,6 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
 
         // handle logging
         // FIXME: do it only if the setting changed
-        require_once 'CRM/Logging/Schema.php';
         $values = $this->exportValues();
         $logging = new CRM_Logging_Schema;
         $values['logging'] ? $logging->enableLogging() : $logging->disableLogging();

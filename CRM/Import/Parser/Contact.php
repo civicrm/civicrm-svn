@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Import/Parser.php';
 //@todo calling api functions directly is not supported
 require_once 'api/v3/utils.php';
 require_once 'api/v3/Contact.php';
@@ -136,8 +135,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      */
     function init( ) 
     {
-        require_once 'CRM/Contact/BAO/Contact.php';
-        require_once 'CRM/Core/BAO/Address.php';
         $contactFields = CRM_Contact_BAO_Contact::importableFields( $this->_contactType );
         // exclude the address options disabled in the Address Settings
         $fields        = CRM_Core_BAO_Address::validateAddressOptions( $contactFields );
@@ -248,7 +245,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             $this->_updateWithId = true;
         }
         
-        require_once 'CRM/Core/BAO/Setting.php';
         $this->_parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', 
                                                              CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                                                  'address_options' ), 
@@ -462,7 +458,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         static $contactFields = null;
         if ( $contactFields == null) {
-            require_once "CRM/Contact/DAO/Contact.php";
             $contactFields = CRM_Contact_DAO_Contact::import( );
         }              
         
@@ -471,7 +466,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
              ( CRM_Utils_Array::value('id', $params ) ||
                in_array( $onDuplicate, array( CRM_Import_Parser::DUPLICATE_SKIP, CRM_Import_Parser::DUPLICATE_NOCHECK ) ) ) ) {
             
-            require_once "CRM/Contact/BAO/Contact.php";
             if ( $internalCid = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                              $params['external_identifier'],
                                                              'id',
@@ -711,7 +705,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         if ( $contactID ) {
             // call import hook
-            require_once 'CRM/Utils/Hook.php';
             $currentImportID  = end($values);
         
             $hookParams = array( 'contactID'       => $contactID, 
@@ -928,7 +921,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             
                             //handle current employer, CRM-3532
                             if ( $valid ) {
-                                require_once 'CRM/Core/PseudoConstant.php';
                                 $allRelationships   = CRM_Core_PseudoConstant::relationshipType( 'name' );
                                 $relationshipTypeId = str_replace( array('_a_b', '_b_a'), array('', ''),  $key );
                                 $relationshipType   = str_replace( $relationshipTypeId . '_', '', $key );
@@ -942,7 +934,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                 }
                                 if ( $orgId && $individualId ) {
                                     $currentEmpParams[$individualId] = $orgId;
-                                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
                                     CRM_Contact_BAO_Contact_Utils::setCurrentEmployer( $currentEmpParams ); 
                                 }
                             }
@@ -1236,7 +1227,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 if ( !empty($relation) ) {
                     list($id, $first, $second) = CRM_Utils_System::explode('_', $relation, 3);
                     $direction = "contact_sub_type_$second";
-                    require_once 'CRM/Contact/BAO/RelationshipType.php';
                     $relationshipType = new CRM_Contact_BAO_RelationshipType( ); 
                     $relationshipType->id = $id;
                     if ( $relationshipType->find( true ) ) {
@@ -1295,7 +1285,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      */
     function isErrorInCoreData($params, &$errorMessage) 
     {
-        require_once 'CRM/Core/OptionGroup.php';
         foreach ($params as $key => $value) {
             if ( $value ) {
                 $session = CRM_Core_Session::singleton();
@@ -1675,7 +1664,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             $modeFill     = true;
         }
         
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         $groupTree = CRM_Core_BAO_CustomGroup::getTree($params['contact_type'],CRM_Core_DAO::$_nullObject,
                                                        $cid,0,null);
         CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $defaults, false, false );
@@ -1910,7 +1898,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         // parse street address, CRM-5450
         if ( $this->_parseStreetAddress ) {
-            require_once 'CRM/Core/BAO/Address.php';
             if ( array_key_exists( 'address', $formatted ) && is_array( $formatted['address'] ) ) { 
                 foreach ( $formatted['address'] as $instance => &$address ) {
                     $streetAddress = CRM_Utils_Array::value( 'street_address', $address );

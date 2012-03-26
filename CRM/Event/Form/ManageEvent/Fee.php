@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Event/Form/ManageEvent.php';
-require_once 'CRM/Event/BAO/Event.php';
-require_once 'CRM/Core/OptionGroup.php';
 
 /**
  * This class generates form components for Event Fees
@@ -96,19 +93,16 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         CRM_Event_BAO_Event::retrieve( $params, $defaults );
                
         if ( isset( $eventId ) ) {
-            require_once 'CRM/Price/BAO/Set.php';
             $price_set_id = CRM_Price_BAO_Set::getFor( 'civicrm_event', $eventId );
 
             if ( $price_set_id ) {
                 $defaults['price_set_id'] = $price_set_id;
             } else {
-                require_once 'CRM/Core/OptionGroup.php'; 
                 CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventId}", $defaults );
             }
         }
 
         //check if discounted
-        require_once 'CRM/Core/BAO/Discount.php';
         $discountedEvent = CRM_Core_BAO_Discount::getOptionGroup($this->_id, "civicrm_event");
 
         if ( !empty( $discountedEvent ) ) { 
@@ -220,7 +214,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
             $defaults['pay_later_text'] = ts( 'I will send payment by check' );
         }
 
-        require_once 'CRM/Core/ShowHideBlocks.php';
         $this->_showHide = new CRM_Core_ShowHideBlocks( );
         if ( !$defaults['is_monetary'] ) {
             $this->_showHide->addHide( 'event-fees' );
@@ -248,7 +241,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
      */
     public function buildQuickForm( ) 
     {
-        require_once 'CRM/Utils/Money.php';
 
         $this->addYesNo( 'is_monetary',
                          ts('Paid Event'),
@@ -259,7 +251,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         //add currency element.
         $this->addCurrency( 'currency', ts( 'Currency' ), false );
         
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $paymentProcessor = CRM_Core_PseudoConstant::paymentProcessor( );
 
         $this->assign('paymentProcessor',$paymentProcessor);
@@ -283,7 +274,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
 
         $this->add('text','fee_label',ts('Fee Label'));
 
-        require_once 'CRM/Price/BAO/Set.php';
         $price = CRM_Price_BAO_Set::getAssoc( false, 'CiviEvent');
         if ( CRM_Utils_System::isNull( $price ) ) {
             $this->assign('price', false );
@@ -315,7 +305,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         
         $this->assign('discountSection', $discountSection);
         
-        require_once 'CRM/Core/ShowHideBlocks.php';
         // form fields of Discount sets
         $defaultOption = array();
         $_showHide = new CRM_Core_ShowHideBlocks('','');
@@ -534,7 +523,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
 
     public function buildAmountLabel()
     {
-        require_once 'CRM/Utils/Money.php';
 
         $default = array( );
         for ( $i = 1; $i <= self::NUM_OPTION; $i++ ) {
@@ -582,12 +570,10 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         $params['is_pay_later'] = CRM_Utils_Array::value( 'is_pay_later', $params, 0 );
         
         if ( $this->_id ) {
-            require_once 'CRM/Price/BAO/Set.php';
             
             // delete all the prior label values or discounts in the custom options table
             // and delete a price set if one exists
             if ( ! CRM_Price_BAO_Set::removeFrom( 'civicrm_event', $this->_id ) ) {
-                require_once 'CRM/Core/OptionGroup.php';
                 CRM_Core_OptionGroup::deleteAssoc( "civicrm_event.amount.{$this->_id}" );
                 CRM_Core_OptionGroup::deleteAssoc ("civicrm_event.amount.{$this->_id}.discount.%", "LIKE");
             }
@@ -657,7 +643,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                                                         'start_date'      => CRM_Utils_Date::processDate( $params["discount_start_date"][$j]),
                                                         'end_date'        => CRM_Utils_Date::processDate( $params["discount_end_date"][$j])
                                                         );                                
-                                require_once 'CRM/Core/BAO/Discount.php';
                                 CRM_Core_BAO_Discount::add($discountParams);
                             }
                             
@@ -671,7 +656,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         }
         
         //update events table
-        require_once 'CRM/Event/BAO/Event.php';
         $params['id'] = $this->_id;
         CRM_Event_BAO_Event::add( $params );
 

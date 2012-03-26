@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Task.php';
 
 /**
  * This class provides the functionality to save a search
@@ -100,11 +99,9 @@ class CRM_Contact_Form_Task_SaveSearch extends CRM_Contact_Form_Task {
         $this->addElement('textarea', 'description', ts('Description'),
                           CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Group', 'description'));
 
-        require_once 'CRM/Core/OptionGroup.php';
         $groupTypes = CRM_Core_OptionGroup::values( 'group_type', true );
         unset( $groupTypes['Access Control'] );
         if ( ! CRM_Core_Permission::access( 'CiviMail' ) ) {
-            require_once 'CRM/Mailing/Info.php';
             $isWorkFlowEnabled = CRM_Mailing_Info::workflowEnabled( );
             if ( $isWorkFlowEnabled && 
                  !CRM_Core_Permission::check( 'create mailings' ) &&
@@ -157,7 +154,6 @@ class CRM_Contact_Form_Task_SaveSearch extends CRM_Contact_Form_Task {
         $mappingId = null;
         if ( $isAdvanced == '2' && $isSearchBuilder == '1' ) {
             //save the mapping for search builder
-            require_once "CRM/Core/BAO/Mapping.php";
 
             if ( !$this->_id ) {
                 //save record in mapping table
@@ -167,7 +163,6 @@ class CRM_Contact_Form_Task_SaveSearch extends CRM_Contact_Form_Task {
                 $mappingId = $mapping->id;                 
             } else {
                 //get the mapping id from saved search
-                require_once "CRM/Contact/BAO/SavedSearch.php";
                 
                 $savedSearch     = new CRM_Contact_BAO_SavedSearch();
                 $savedSearch->id = $this->_id;
@@ -211,7 +206,6 @@ class CRM_Contact_Form_Task_SaveSearch extends CRM_Contact_Form_Task {
             $params['id'] = CRM_Contact_BAO_SavedSearch::getName( $this->_id, 'id' );
         }
 
-        require_once 'CRM/Contact/BAO/Group.php';
         $group = CRM_Contact_BAO_Group::create( $params );
 
         // CRM-9464

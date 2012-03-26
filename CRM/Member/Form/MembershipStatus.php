@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Member/Form.php';
 
 /**
  * This class generates form components for Membership Type
@@ -115,7 +114,6 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form
      */
     public function postProcess() 
     {
-        require_once 'CRM/Member/BAO/MembershipStatus.php';
         if($this->_action & CRM_Core_Action::DELETE) {
             $wt = CRM_Utils_Weight::delWeight('CRM_Member_DAO_MembershipStatus', $this->_id);
             CRM_Member_BAO_MembershipStatus::del($this->_id);

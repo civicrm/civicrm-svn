@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Mailing/BAO/Mailing.php';
 
 class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
 
@@ -311,13 +309,11 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
         }
         
         // build the chart.
-        require_once 'CRM/Utils/OpenFlashChart.php';
         CRM_Utils_OpenFlashChart::buildChart( $chartInfo, $this->_params['charts'] );
         $this->assign( 'chartType', $this->_params['charts'] ); 
     }
 
 	function bounce_type() {
-		require_once('CRM/Mailing/DAO/BounceType.php');
 		
 		$data = array('' => '--Please Select--');
 		

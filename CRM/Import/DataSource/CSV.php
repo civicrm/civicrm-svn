@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Import/DataSource.php';
 
 class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
 {
@@ -82,7 +81,6 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
         $this->set('originalColHeader', CRM_Utils_Array::value( 'original_col_header', $result ) );
         
         $table = $result['import_table_name'];
-        require_once 'CRM/Import/ImportJob.php';
         $importJob = new CRM_Import_ImportJob($table);
         $this->set('importTableName', $importJob->getTableName());
     }

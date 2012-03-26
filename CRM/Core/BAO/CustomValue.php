@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO.php';
 
 /**
  * Business objects for managing custom data values.
@@ -55,7 +54,6 @@ class CRM_Core_BAO_CustomValue extends CRM_Core_DAO
      */
     public static function typecheck($type, $value) 
     {
-        require_once 'CRM/Utils/Rule.php';
         switch($type) {
         case 'Memo':
             return true;
@@ -207,7 +205,6 @@ class CRM_Core_BAO_CustomValue extends CRM_Core_DAO
          $sql = "DELETE FROM {$tableName} WHERE id = {$customValueID}";
          CRM_Core_DAO::executeQuery( $sql );
 
-         require_once 'CRM/Utils/Hook.php';
          CRM_Utils_Hook::custom( 'delete',
                                  $customGroupID,
                                  null,

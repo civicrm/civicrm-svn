@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/System/Base.php';
 
 /**
  * Drupal specific stuff goes here
@@ -188,7 +187,6 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
      *
      */
     function getLoginDestination( &$form ) {
-        require_once 'CRM/Utils/System.php';
         $args = null;
 
         $id = $form->get( 'id' );
@@ -343,7 +341,6 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
         $config = CRM_Core_Config::singleton( );
         $script =  'index.php';
 
-        require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
 
         if (isset($fragment)) {
@@ -413,7 +410,6 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
         }                                                      
 
         $account = $userUid = $userMail = null;
-        require_once 'CRM/Core/BAO/UFMatch.php';
 
 
         
@@ -483,7 +479,6 @@ AND    u.status = 1
 
         if(empty($user->uid)) return false;
 
-        require_once('CRM/Core/BAO/UFMatch.php');
         $contact_id = CRM_Core_BAO_UFMatch::getContactId( $uid );
 
         // lets store contact id and user id in session
@@ -542,7 +537,6 @@ AND    u.status = 1
         case $language->language == 'zh-hant':             return 'zh_TW';
         case preg_match('/^.._..$/', $language->language): return $language->language;
         default:
-            require_once 'CRM/Core/I18n/PseudoConstant.php';
             return CRM_Core_I18n_PseudoConstant::longForShort(substr($language->language, 0, 2));
         }
     }
@@ -601,7 +595,6 @@ AND    u.status = 1
         // all the modules that are listening on it, does not apply
         // to J! and WP as yet
         // CRM-8655
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::config( $config );
 
         if ( ! $loadUser ) {
@@ -646,7 +639,6 @@ AND    u.status = 1
         $config->cleanURL = (int)variable_get('clean_url', '0'); 
         
         // CRM-8655: Drupal wasn't available during bootstrap, so hook_civicrm_config never executes
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::config( $config );
 
         return false;

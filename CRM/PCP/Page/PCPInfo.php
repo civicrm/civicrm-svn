@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
-require_once 'CRM/PCP/BAO/PCP.php';
 
 /**
  * PCP Info Page - Summary about the PCP
@@ -83,8 +81,6 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
         CRM_Utils_System::setTitle($pcpInfo['title']);
         $this->assign('pcp', $pcpInfo );
 
-        require_once 'CRM/PCP/PseudoConstant.php';
-        require_once 'CRM/Core/OptionGroup.php';
         $pcpStatus  = CRM_PCP_PseudoConstant::pcpStatus( );
         $approvedId = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );        
         
@@ -148,14 +144,12 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
 
         if ( $pcpBlock->entity_table == 'civicrm_event' ) {
             $page_class = 'CRM_Event_DAO_Event';
-            require_once "CRM/Event/PseudoConstant.php";
             $this->assign( 'pageName', CRM_Event_PseudoConstant::event( $pcpInfo['page_id'] ) );
             CRM_Core_DAO::commonRetrieveAll( $page_class, 'id',
                                              $pcpInfo['page_id'], $default, array( 'start_date', 'end_date', 'registration_start_date', 'registration_end_date' ) );
 
         } else if ($pcpBlock->entity_table == 'civicrm_contribution_page'){
             $page_class = 'CRM_Contribute_DAO_ContributionPage';
-            require_once "CRM/Contribute/PseudoConstant.php";
             $this->assign( 'pageName', CRM_Contribute_PseudoConstant::contributionPage( $pcpInfo['page_id'], true ) );
             CRM_Core_DAO::commonRetrieveAll( $page_class, 'id',
                                              $pcpInfo['page_id'], $default, array( 'start_date', 'end_date' ) );
@@ -168,7 +162,6 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
             
             $this->assign('owner', $owner );
             
-            require_once 'CRM/PCP/BAO/PCP.php';
             $link  = CRM_PCP_BAO_PCP::pcpLinks( );
 
             $hints = array(
@@ -319,7 +312,6 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page
             $permission = true;
         }
         if ( $single && $permission ) {
-            require_once 'CRM/Core/Controller/Simple.php';
             $controller = new CRM_Core_Controller_Simple( $form, $subForm, $action); 
             $controller->set('id', $this->_id);
             $controller->set('single', true );

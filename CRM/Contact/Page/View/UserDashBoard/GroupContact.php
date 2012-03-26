@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View/UserDashBoard.php';
 
 class CRM_Contact_Page_View_UserDashBoard_GroupContact extends CRM_Contact_Page_View_UserDashBoard
 {
@@ -95,7 +94,6 @@ class CRM_Contact_Page_View_UserDashBoard_GroupContact extends CRM_Contact_Page_
             $status         = CRM_Utils_Request::retrieve( 'st', 'String',
                                                            CRM_Core_DAO::$_nullObject, true );
             if ( is_numeric($groupContactId) && $status ) {
-                require_once 'CRM/Contact/Page/View/GroupContact.php';
                 CRM_Contact_Page_View_GroupContact::del( $groupContactId, $status, $this->_contactId);
             }
 

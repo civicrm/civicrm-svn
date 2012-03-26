@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
 
 /**
  *
@@ -90,7 +89,6 @@ SELECT object_table
             return;
         }
 
-        require_once 'CRM/Core/Permission.php';
         $permissions  = array_flip( CRM_Core_Permission::basicPermissions( ) );
         $this->addCheckBox( 'object_table',
                             ts('ACL Type'),
@@ -98,7 +96,6 @@ SELECT object_table
                             null, null, true, null,
                             array( '</td><td>', '</td></tr><tr><td>' ) );
         
-        require_once 'CRM/Core/OptionGroup.php';
 
         $label = ts( 'Role' );
         $role = array( '-1' => ts('- select role -'),
@@ -132,10 +129,8 @@ SELECT object_table
      */
     public function postProcess() 
     {
-        require_once 'CRM/ACL/BAO/Cache.php';
         CRM_ACL_BAO_Cache::resetCache( );
 
-        require_once 'CRM/ACL/BAO/ACL.php';
         $params = $this->controller->exportValues( $this->_name );
         if ( $this->_id ||
              $this->_id === '0' ) {

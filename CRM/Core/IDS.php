@@ -129,14 +129,12 @@ class CRM_Core_IDS {
     exceptions[]        = page_text
 ";
             if ( file_put_contents( $configFile, $contents ) === false ) {
-                require_once 'CRM/Core/Error.php';
                 CRM_Core_Error::movedSiteError( $configFile );
             }
 
 
             // also create the .htaccess file so we prevent the reading of the log and ini files
             // via a browser, CRM-3875
-            require_once 'CRM/Utils/File.php';
             CRM_Utils_File::restrictAccess($config->configAndLogDir);
         }
 

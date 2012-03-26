@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/PCP/DAO/PCP.php';
-require_once 'CRM/PCP/DAO/PCPBlock.php';
-require_once 'CRM/Contribute/DAO/Contribution.php';
 
 class CRM_PCP_BAO_PCP extends CRM_PCP_DAO_PCP
 {
@@ -67,13 +64,11 @@ class CRM_PCP_BAO_PCP extends CRM_PCP_DAO_PCP
     {
         if ( $pcpBlock ) {
             // action is taken depending upon the mode
-            require_once 'CRM/PCP/DAO/PCPBlock.php';
             $dao = new CRM_PCP_DAO_PCPBlock( );
             $dao->copyValues( $params );
             $dao->save( );
             return $dao;
         } else {
-            require_once 'CRM/PCP/DAO/PCP.php';
             $dao              = new CRM_PCP_DAO_PCP( );
             $dao->copyValues( $params );
 
@@ -265,7 +260,6 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
                   AND is_test = 0";
         $dao   = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         $honor = array();
-        require_once 'CRM/Utils/Money.php';
         while( $dao->fetch() ) {
             $honor[$dao->id]['nickname']     = ucwords($dao->pcp_roll_nickname);
             $honor[$dao->id]['total_amount'] = CRM_Utils_Money::format( $dao->total_amount, $dao->currency );
@@ -342,10 +336,8 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
      */
     function delete ( $id ) 
     {
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::pre( 'delete', 'Campaign', $id, CRM_Core_DAO::$_nullArray );
         
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         // delete from pcp table
@@ -455,12 +447,10 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
           return false;
         }
 
-        require_once 'CRM/Core/OptionGroup.php';
         $approvedId    = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );
 
         $prms =  array( 'entity_id' => $entity['id'],
                         'entity_table' => $entity_table );
-        require_once 'CRM/PCP/PseudoConstant.php';
         $pcpStatus = CRM_PCP_PseudoConstant::pcpStatus( );
         CRM_Core_DAO::commonRetrieve( 'CRM_PCP_DAO_PCPBlock',
                                       $prms,
@@ -545,7 +535,6 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
 
         CRM_Core_DAO::setFieldValue( 'CRM_PCP_DAO_PCP', $id, 'status_id', $is_active );
 
-        require_once 'CRM/PCP/PseudoConstant.php';
         $pcpTitle  = CRM_Core_DAO::getFieldValue( 'CRM_PCP_DAO_PCP', $id, 'title' );
         $pcpStatus = CRM_PCP_PseudoConstant::pcpStatus( );
         $pcpStatus = $pcpStatus[$is_active]; 
@@ -575,7 +564,6 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
      *
      */
     static function sendStatusUpdate( $pcpId, $newStatus, $isInitial = false, $component = 'contribute' ) {
-        require_once 'CRM/PCP/PseudoConstant.php';
         $pcpStatus = CRM_PCP_PseudoConstant::pcpStatus( );
         $config = CRM_Core_Config::singleton( );
 
@@ -583,9 +571,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
             return false;
         }
 
-        require_once 'CRM/Utils/Mail.php';
         require_once 'Mail/mime.php';
-        require_once 'CRM/Contact/BAO/Contact/Location.php';        
 
         //set loginUrl
         $loginUrl = $config->userFrameworkBaseURL;
@@ -610,11 +596,9 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
         );
 
         //get the default domain email address.
-        require_once 'CRM/Core/BAO/Domain.php';
         list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
         
         if ( !$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG') {
-            require_once 'CRM/Utils/System.php';
             $fixUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
             CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in <a href="%1">Administer CiviCRM &raquo; Configure &raquo; Domain Information</a>. The email address used may need to be a valid mail account with your email service provider.', array( 1 => $fixUrl ) ) );
         }
@@ -657,7 +641,6 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
 
         $tplName = $isInitial ? 'pcp_supporter_notify' : 'pcp_status_change';
 
-        require_once 'CRM/Core/BAO/MessageTemplates.php';
         list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
             array(
                 'groupName' => 'msg_tpl_workflow_contribution',

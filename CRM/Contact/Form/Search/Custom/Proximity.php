@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Search/Custom/Base.php';
 
 class CRM_Contact_Form_Search_Custom_Proximity
    extends    CRM_Contact_Form_Search_Custom_Base
@@ -63,7 +62,6 @@ class CRM_Contact_Form_Search_Custom_Proximity
             }
             
             // use the address to get the latitude and longitude
-            require_once 'CRM/Utils/Geocode/Google.php';
             CRM_Utils_Geocode_Google::format( $this->_formValues );
 
             if ( ! is_numeric( CRM_Utils_Array::value('geo_code_1', $this->_formValues) ) ||
@@ -142,7 +140,6 @@ class CRM_Contact_Form_Search_Custom_Proximity
 
         
         // state country js, CRM-5233
-        require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap ); 
         CRM_Core_BAO_Address::fixAllStateSelects( $form, $defaults );
         
@@ -213,7 +210,6 @@ LEFT JOIN civicrm_group_contact cgc ON ( cgc.contact_id = contact_a.id AND cgc.s
         $params = array( );
         $clause = array( );
 
-        require_once 'CRM/Contact/BAO/ProximityQuery.php';
         $where = CRM_Contact_BAO_ProximityQuery::where( $this->_latitude,
                                                         $this->_longitude,
                                                         $this->_distance,

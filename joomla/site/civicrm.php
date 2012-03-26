@@ -14,16 +14,16 @@ if ( (int ) substr( PHP_VERSION, 0, 1 ) < 5 ) {
 
 include_once 'civicrm.settings.php';
 
-require_once 'PEAR.php';
-
-require_once 'CRM/Core/Config.php';
-require_once 'CRM/Core/DAO.php';
-require_once 'CRM/Core/Error.php';
-require_once 'CRM/Core/Invoke.php';
-
 civicrm_invoke( );
 
 function civicrm_init( ) {
+
+    require_once 'CRM/Core/ClassLoader.php';
+    $classLoader = new CRM_Core_ClassLoader();
+    $classLoader->register();
+
+    require_once 'PEAR.php';
+
     $config = CRM_Core_Config::singleton();
 
     // this is the front end, so let others know

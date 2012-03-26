@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * This class generates form components generic to CiviCRM settings
@@ -62,20 +61,16 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
                 $formMode = true;
             }
             
-            require_once "CRM/Core/BAO/ConfigSetting.php";
             CRM_Core_BAO_ConfigSetting::retrieve($this->_defaults);
 
-            require_once "CRM/Core/Config/Defaults.php";
             CRM_Core_Config_Defaults::setValues($this->_defaults, $formMode); 
 
-            require_once "CRM/Core/OptionGroup.php";
             $list = array_flip( CRM_Core_OptionGroup::values( 'contact_autocomplete_options', 
                                                               false, false, true, null, 'name' ) );
 
             $cRlist = array_flip( CRM_Core_OptionGroup::values( 'contact_reference_options', 
                                                                 false, false, true, null, 'name' ) );
 
-            require_once "CRM/Core/BAO/Setting.php";
             $listEnabled = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                'contact_autocomplete_options' );
             $cRlistEnabled = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
@@ -144,7 +139,6 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
                          array_keys( $params['autocompleteContactSearch'] ) ) .
                 CRM_Core_DAO::VALUE_SEPARATOR;
 
-            require_once 'CRM/Core/BAO/Setting.php';
             CRM_Core_BAO_Setting::setItem( $value,
                                            CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'contact_autocomplete_options' );
@@ -160,7 +154,6 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
                          array_keys( $params['autocompleteContactReference'] ) ) .
                 CRM_Core_DAO::VALUE_SEPARATOR;
 
-            require_once 'CRM/Core/BAO/Setting.php';
             CRM_Core_BAO_Setting::setItem( $value,
                                            CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'contact_reference_options' );
@@ -170,7 +163,6 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
 
         // save checksum timeout
         if ( CRM_Utils_Array::value( 'checksumTimeout', $params ) ) {
-            require_once 'CRM/Core/BAO/Setting.php';
             CRM_Core_BAO_Setting::setItem( $params['checksumTimeout'],
                                            CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'checksum_timeout' );
@@ -190,7 +182,6 @@ AND    time_format <> ''
             unset( $params['timeInputFormat'] );
         }
         
-        require_once "CRM/Core/BAO/ConfigSetting.php";
         CRM_Core_BAO_ConfigSetting::add($params);
 
         // also delete the CRM_Core_Config key from the database
@@ -205,7 +196,6 @@ AND    time_format <> ''
         $config = CRM_Core_Config::singleton(true, true);
 
         // rebuild menu items
-        require_once 'CRM/Core/Menu.php';
         CRM_Core_Menu::store( );
 
         // also delete the IDS file so we can write a new correct one on next load

@@ -34,10 +34,7 @@
  *
  */
 
-require_once 'CRM/Utils/String.php';
-require_once 'CRM/Utils/Type.php';
 
-require_once 'CRM/Contribute/Import/Field.php';
 
 abstract class CRM_Contribute_Import_Parser 
 {
@@ -560,7 +557,6 @@ abstract class CRM_Contribute_Import_Parser
      */
     function setActiveFields( $fieldKeys ) {
         $this->_activeFieldCount = count( $fieldKeys );
-        require_once 'CRM/Contribute/Import/Field.php';
         foreach ( $fieldKeys as $key ) {
             if ( empty( $this->_fields[$key] ) ) {
                 $this->_activeFields[] = new CRM_Contribute_Import_Field( '', ts( '- do not import -' ) );
@@ -671,7 +667,6 @@ abstract class CRM_Contribute_Import_Parser
             if (! array_key_exists ($name,$tempField) ) {
                 $this->_fields[$name] = new CRM_Contribute_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
             } else {
-                require_once 'CRM/Import/Field.php';
                 $this->_fields[$name] = new CRM_Import_Field( $name, $title, $type, $headerPattern, $dataPattern,
                                                                CRM_Utils_Array::value( 'hasLocationType', $tempField[$name] ) );
             }
@@ -826,7 +821,6 @@ abstract class CRM_Contribute_Import_Parser
         case CRM_Contribute_Import_Parser::CONFLICT:
         case CRM_Contribute_Import_Parser::DUPLICATE:
             //here constants get collides.
-            require_once 'CRM/Import/Parser.php';
             if ( $type == CRM_Contribute_Import_Parser::ERROR ) {
                 $type = CRM_Import_Parser::ERROR;
             } else if ( $type == CRM_Contribute_Import_Parser::NO_MATCH ) {
@@ -862,7 +856,6 @@ abstract class CRM_Contribute_Import_Parser
         case CRM_Contribute_Import_Parser::CONFLICT:
         case CRM_Contribute_Import_Parser::DUPLICATE:
             //here constants get collides.
-            require_once 'CRM/Import/Parser.php';
             if ( $type == CRM_Contribute_Import_Parser::ERROR ) {
                 $type = CRM_Import_Parser::ERROR;
             } else if ( $type == CRM_Contribute_Import_Parser::NO_MATCH ) {

@@ -1040,7 +1040,6 @@ class CRM_Utils_System {
 
     static function isDBVersionValid( &$errorMessage ) 
     {
-        require_once 'CRM/Core/BAO/Domain.php';
         $dbVersion = CRM_Core_BAO_Domain::version( );
 
         if ( ! $dbVersion ) {
@@ -1080,7 +1079,6 @@ class CRM_Utils_System {
 
     static function civiExit( $status = 0 ) {
         // move things to CiviCRM cache as needed
-        require_once 'CRM/Core/Session.php';
         CRM_Core_Session::storeSessionObjects( );
         
         exit( $status );
@@ -1092,7 +1090,6 @@ class CRM_Utils_System {
     static function flushCache( $daoName = null ) {
         // flush out all cache entries so we can reload new data
         // a bit aggressive, but livable for now
-        require_once 'CRM/Utils/Cache.php';
         $cache = CRM_Utils_Cache::singleton( );
         $cache->flush( );
     }
@@ -1339,7 +1336,6 @@ class CRM_Utils_System {
      * @static
      */
     static function executeScheduledJobs( ) {
-        require_once 'CRM/Core/JobManager.php';
         $facility = new CRM_Core_JobManager();
         $facility->execute( false );
 

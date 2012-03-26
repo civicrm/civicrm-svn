@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Logging/Differ.php';
 
 class CRM_Logging_Reverter
 {
@@ -165,7 +164,6 @@ class CRM_Logging_Reverter
             $cid = CRM_Core_DAO::singleValueQuery($query, $params);
             if (!$cid) return;
 
-            require_once 'CRM/Contact/DAO/Contact.php';
             $dao = new CRM_Contact_DAO_Contact;
             $dao->id = $cid;
             if ($dao->find(true)) {

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
 
 /**
  * This class generates form components for Option Value
@@ -61,21 +60,18 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form
     public function preProcess( ) 
     {
         parent::preProcess( );
-        require_once 'CRM/Utils/Request.php';
         $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive',
                                                   $this, false, 0);
         //get optionGroup name in case of email/postal greeting or addressee, CRM-4575
         if( !empty( $this->_gid ) ) {
             $this->_gName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $this->_gid, 'name');
         }
-        require_once 'CRM/Core/Session.php';
         $session = CRM_Core_Session::singleton();
         $url = CRM_Utils_System::url('civicrm/admin/optionValue', 'reset=1&action=browse&gid='.$this->_gid); 
         $session->replaceUserContext( $url );
 
         $this->assign('id', $this->_id);
 
-        require_once 'CRM/Core/OptionGroup.php';
         if ( $this->_id && in_array( $this->_gName, CRM_Core_OptionGroup::$_domainIDGroups ) ) {
             $domainID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $this->_id, 'domain_id', 'id' ) ;
             if( CRM_Core_Config::domainID( ) != $domainID ) {
@@ -205,7 +201,6 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form
         
         //don't allow duplicate value within group.
         $optionValues = array( );
-        require_once 'CRM/Core/OptionValue.php';
         CRM_Core_OptionValue::getValues( array( 'id' => $self->_gid ), $optionValues );
         foreach ( $optionValues as $values ) {
             if ( $values['id'] != $self->_id ) {
@@ -230,7 +225,6 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form
         CRM_Utils_System::flushCache( );
 
         $params = $this->exportValues();
-        require_once 'CRM/Core/BAO/OptionValue.php';
         if($this->_action & CRM_Core_Action::DELETE) {
             CRM_Core_BAO_OptionValue::del($this->_id);
             CRM_Core_Session::setStatus( ts('Selected option value has been deleted.') );

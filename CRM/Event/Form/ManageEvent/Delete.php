@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Event/Form/ManageEvent.php';
 
 /**
  * This class is to build the form for Deleting Group
@@ -65,7 +64,6 @@ class CRM_Event_Form_ManageEvent_Delete extends CRM_Event_Form_ManageEvent
             $this->_title = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $this->_id, 'title');
         }
 
-        require_once 'CRM/Event/BAO/Event.php';
         if ( ! CRM_Event_BAO_Event::checkPermission( $this->_id, CRM_Core_Permission::DELETE ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
         } 
@@ -101,7 +99,6 @@ class CRM_Event_Form_ManageEvent_Delete extends CRM_Event_Form_ManageEvent
      */
     public function postProcess( )
     {
-        require_once 'CRM/Event/DAO/Participant.php';
         $participant = new CRM_Event_DAO_Participant( );
         $participant->event_id = $this->_id;
         

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form/Setting.php';
 
 /**
  * This class generates form components for Error Handling and Debugging
@@ -55,7 +54,6 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
     public function buildQuickForm( ) {
         CRM_Utils_System::setTitle(ts('Settings - Cleanup Caches and Update Paths'));
 
-        require_once 'CRM/Core/BAO/ConfigSetting.php';
         list( $this->_oldBaseURL,
               $this->_oldBaseDir,
               $this->_oldSiteName ) = CRM_Core_BAO_ConfigSetting::getConfigSettings( );
@@ -103,7 +101,6 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 
     function postProcess( ) {
         if ( CRM_Utils_Array::value( '_qf_UpdateConfigBackend_next_cleanup', $_POST ) ) {
-            require_once 'CRM/Core/Config.php';
             
             $config = CRM_Core_Config::singleton( );
             

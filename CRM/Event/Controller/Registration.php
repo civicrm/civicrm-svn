@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Controller.php';
 
 class CRM_Event_Controller_Registration extends CRM_Core_Controller {
 
@@ -44,7 +43,6 @@ class CRM_Event_Controller_Registration extends CRM_Core_Controller {
     function __construct( $title = null, $action = CRM_Core_Action::NONE, $modal = true ) {
         parent::__construct( $title, $modal );
 
-        require_once 'CRM/Event/StateMachine/Registration.php';
         $this->_stateMachine = new CRM_Event_StateMachine_Registration( $this, $action );
 
         // create and instantiate the pages

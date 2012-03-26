@@ -1,6 +1,5 @@
 <?php
 
-require_once('CRM/Core/Form.php');
 class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 {
   public $cart;
@@ -46,8 +45,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 
   function stub_out_and_inherit( )
   {
-	require_once 'CRM/Event/Cart/BAO/MerParticipant.php';
-	require_once 'CRM/Core/Transaction.php';
 	$transaction = new CRM_Core_Transaction( );
 
 	foreach ( $this->cart->get_main_events_in_carts( ) as $event_in_cart ) {
@@ -67,7 +64,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 
   function checkWaitingList( )
   {
-	require_once 'CRM/Event/BAO/Participant.php';
 	foreach ( $this->cart->events_in_carts as $event_in_cart )
 	{
 	  $empty_seats = $this->checkEventCapacity( $event_in_cart->event_id );
@@ -85,7 +81,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 
   function checkEventCapacity( $event_id )
   {
-	require_once 'CRM/Event/BAO/Participant.php';
 	$empty_seats = CRM_Event_BAO_Participant::eventFull( $event_id, true );
 	if (is_numeric($empty_seats)) {
 	    return $empty_seats;
@@ -111,7 +106,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 	$userChecksum = CRM_Utils_Request::retrieve( 'cs', 'String', $this );
 	if ( $userChecksum ) {
 	  //check for anonymous user.
-	  require_once 'CRM/Contact/BAO/Contact/Utils.php';
 	  $validUser = CRM_Contact_BAO_Contact_Utils::validChecksum( $tempID, $userChecksum );
 	  if ( $validUser ) return  $tempID;
 	}
@@ -123,7 +117,6 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 
   static function find_contact($fields)
   {
-    require_once 'CRM/Dedupe/Finder.php';
     $dedupe_params = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
     $dedupe_params['check_permission'] = false;
     $ids = CRM_Dedupe_Finder::dupesByParams($dedupe_params, 'Individual');

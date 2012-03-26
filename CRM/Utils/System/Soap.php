@@ -34,7 +34,6 @@
  *
  */
  
-require_once 'CRM/Utils/System/Base.php';
 
 /**
  * Soap specific stuff goes here

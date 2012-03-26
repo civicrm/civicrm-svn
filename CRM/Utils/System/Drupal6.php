@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/System/Base.php';
 
 /**
  * Drupal specific stuff goes here
@@ -222,7 +221,6 @@ SELECT name, mail
      *
      */
     function getLoginDestination( &$form ) {
-        require_once 'CRM/Utils/System.php';
         $args = null;
 
         $id = $form->get( 'id' );
@@ -374,7 +372,6 @@ SELECT name, mail
         $config = CRM_Core_Config::singleton( );
         $script =  'index.php';
 
-        require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
 
         if (isset($fragment)) {
@@ -449,7 +446,6 @@ SELECT name, mail
 
         $user = null;
         // need to change this to make sure we matched only one row
-        require_once 'CRM/Core/BAO/UFMatch.php';
         while ( $row = $query->fetchRow( DB_FETCHMODE_ASSOC ) ) { 
             CRM_Core_BAO_UFMatch::synchronizeUFMatch( $user, $row['uid'], $row['mail'], 'Drupal' );
             $contactID = CRM_Core_BAO_UFMatch::getContactId( $row['uid'] );
@@ -468,7 +464,6 @@ SELECT name, mail
         $user = user_load(array('name' => $username));
         if(empty($user->uid)) return false;
 
-        require_once('CRM/Core/BAO/UFMatch.php');
         $contact_id = CRM_Core_BAO_UFMatch::getContactId( $uid );
 
         // lets store contact id and user id in session
@@ -518,7 +513,6 @@ SELECT name, mail
         case $language->language == 'zh-hant':             return 'zh_TW';
         case preg_match('/^.._..$/', $language->language): return $language->language;
         default:
-            require_once 'CRM/Core/I18n/PseudoConstant.php';
             return CRM_Core_I18n_PseudoConstant::longForShort(substr($language->language, 0, 2));
         }
     }
@@ -563,7 +557,6 @@ SELECT name, mail
         // all the modules that are listening on it, does not apply
         // to J! and WP as yet
         // CRM-8655
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::config( $config );
 
         if ( ! $loadUser ) {

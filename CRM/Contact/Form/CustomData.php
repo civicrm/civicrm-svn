@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/ShowHideBlocks.php';
-require_once 'CRM/Custom/Form/CustomData.php';
 
 /**
  * This class generates form components for custom data
@@ -131,7 +128,6 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
 		$this->_groupID = CRM_Utils_Request::retrieve( 'groupID', 'Positive', $this, true );
 		$this->_tableID  = CRM_Utils_Request::retrieve( 'tableId', 'Positive', $this, true );
 
-		require_once 'CRM/Contact/BAO/Contact.php';
 		$this->_contactType = CRM_Contact_BAO_Contact::getContactType($this->_tableID);
 		$this->_contactSubType = CRM_Contact_BAO_Contact::getContactSubType($this->_tableID, ',');
 		$this->assign( 'contact_type', $this->_contactType);
@@ -221,7 +217,6 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
     {
         // Get the form values and groupTree
         $params = $this->controller->exportValues( $this->_name );
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::postProcess( $params,
                                                     $this->_groupTree[$this->_groupID]['fields'],
                                                     'civicrm_contact',
@@ -229,7 +224,6 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
                                                     $this->_entityType );
 
         // reset the group contact cache for this group
-        require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
     }
 }

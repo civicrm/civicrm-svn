@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Create a page for displaying Custom Sets.
@@ -150,8 +149,6 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         } else if ($action & CRM_Core_Action::PREVIEW) {
             $this->preview($id) ;
         } else {
-            require_once 'CRM/Core/BAO/CustomGroup.php';
-            require_once 'CRM/Core/BAO/UFField.php';
             // finally browse the custom groups
             $this->browse();
         }
@@ -244,11 +241,6 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         
         //fix for Displaying subTypes  
         $subTypes= array();
-        require_once "CRM/Contribute/PseudoConstant.php";
-        require_once "CRM/Member/BAO/MembershipType.php";
-		require_once "CRM/Event/PseudoConstant.php";
-        require_once 'CRM/Contact/BAO/ContactType.php';
-        require_once 'CRM/Campaign/PseudoConstant.php';
         
         $subTypes['Activity']     = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
         $subTypes['Contribution'] = CRM_Contribute_PseudoConstant::contributionType( );
@@ -263,7 +255,6 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         $subTypes['Household' ]           = CRM_Contact_BAO_ContactType::subTypePairs( 'Household', false, null );
         $subTypes['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization', false, null );
                
-        require_once "CRM/Contact/BAO/Relationship.php";
         
         $relTypeInd =  CRM_Contact_BAO_Relationship::getContactRelationshipType(null,'null',null,'Individual');
         $relTypeOrg =  CRM_Contact_BAO_Relationship::getContactRelationshipType(null,'null',null,'Organization');
@@ -283,7 +274,6 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         
         $subTypes['Relationship'] = $allRelationshipType;
         
-        require_once "CRM/Core/Component.php";
         $cSubTypes = CRM_Core_Component::contactSubTypes();
         $contactSubTypes = array();
         foreach ($cSubTypes as $key => $value ) {
@@ -343,7 +333,6 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         }
 
         $returnURL = CRM_Utils_System::url( 'civicrm/admin/custom/group', "reset=1&action=browse" );
-        require_once 'CRM/Utils/Weight.php';
         CRM_Utils_Weight::addOrder( $customGroup, 'CRM_Core_DAO_CustomGroup',
                                     'id', $returnURL );
         

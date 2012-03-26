@@ -37,7 +37,6 @@
  *
  */
 
-require_once 'CRM/Core/Config.php';
 
 class CRM_SMS_Config {
 

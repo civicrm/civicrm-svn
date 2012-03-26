@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Contribute/Import/Parser/Contribution.php';
 
 /**
  * This class gets the name of the file to upload
@@ -93,8 +91,6 @@ class CRM_Contribute_Import_Form_UploadFile extends CRM_Core_Form
                         ts('Import mode'));
 
         //get the saved mapping details 
-        require_once "CRM/Core/BAO/Mapping.php";
-        require_once "CRM/Core/OptionGroup.php";
         $mappingArray = CRM_Core_BAO_Mapping::getMappings( CRM_Core_OptionGroup::getValue( 'mapping_type',
                                                                                            'Import Contribution',
                                                                                            'name' ) );
@@ -111,7 +107,6 @@ class CRM_Contribute_Import_Form_UploadFile extends CRM_Core_Form
                         CRM_Contribute_Import_Parser::DUPLICATE_SKIP));
 
         //contact types option
-        require_once 'CRM/Contact/BAO/ContactType.php';
         $contactOptions = array();        
         if ( CRM_Contact_BAO_ContactType::isActive( 'Individual' ) ) {
             $contactOptions[] = $this->createElement('radio',
@@ -133,7 +128,6 @@ class CRM_Contribute_Import_Form_UploadFile extends CRM_Core_Form
                                  CRM_Contribute_Import_Parser::CONTACT_INDIVIDUAL));
 
         //build date formats
-        require_once 'CRM/Core/Form/Date.php';
         CRM_Core_Form_Date::buildAllowedDateFormats( $this );
 
         $this->addButtons( array(

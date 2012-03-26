@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Log.php';
 
 /**
  * BAO object for crm_log table
@@ -46,7 +45,6 @@ class CRM_Core_BAO_Log extends CRM_Core_DAO_Log
 
     static function &lastModified( $id, $table = 'civicrm_contact' )
     {
-        require_once 'CRM/Core/DAO/Log.php';
         
         $log = new CRM_Core_DAO_Log( );
         
@@ -74,7 +72,6 @@ class CRM_Core_BAO_Log extends CRM_Core_DAO_Log
      */
     static function add( &$params)
     {
-        require_once 'CRM/Core/DAO/Log.php';
         
         $log = new CRM_Core_DAO_Log( );
         $log->copyValues($params);
@@ -165,11 +162,9 @@ UPDATE civicrm_log
              return false;
          }
 
-         require_once 'CRM/Logging/Schema.php';
          $loggingSchema = new CRM_Logging_Schema( );
          
          if ( $loggingSchema->isEnabled() ) {
-             require_once 'CRM/Report/BAO/Instance.php';
              $params   = array( 'report_id' => 'logging/contact/summary' );
              $instance = array( );
              CRM_Report_BAO_Instance::retrieve($params, $instance);

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/Recent.php';
 
 /**
  * Fix for bug CRM-392. Not sure if this is the best fix or it will impact
@@ -128,7 +127,6 @@ class CRM_Core_Smarty extends Smarty {
         $defaultWysiwygEditor = $session->get( 'defaultWysiwygEditor');
         if ( ! $defaultWysiwygEditor && 
              ! CRM_Core_Config::isUpgradeMode( ) ) {
-            require_once 'CRM/Core/BAO/Setting.php';
             $editorID = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                    'editor_id' );
             if ( ! $session->isEmpty( ) ) {
@@ -153,14 +151,12 @@ class CRM_Core_Smarty extends Smarty {
         }
         
         //check if logged in user has access CiviCRM permission and build menu
-        require_once 'CRM/Core/Permission.php';
         $buildNavigation = CRM_Core_Permission::check( 'access CiviCRM' );
         $this->assign('buildNavigation', $buildNavigation );
         
 
         if ( ! CRM_Core_Config::isUpgradeMode() && 
              $buildNavigation ) {
-            require_once 'CRM/Core/BAO/Navigation.php';
             $contactID = $session->get('userID');
             if ( $contactID ) {
                 $navigation = CRM_Core_BAO_Navigation::createNavigation( $contactID );
@@ -196,7 +192,6 @@ class CRM_Core_Smarty extends Smarty {
      */
     function fetch($resource_name, $cache_id = null, $compile_id = null, $display = false)
     {
-        require_once 'CRM/Core/Menu.php';
         return parent::fetch( $resource_name, $cache_id, $compile_id, $display );
     }
 

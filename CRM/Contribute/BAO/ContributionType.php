@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/DAO/ContributionType.php';
 
 class CRM_Contribute_BAO_ContributionType extends CRM_Contribute_DAO_ContributionType 
 {
@@ -160,7 +159,6 @@ class CRM_Contribute_BAO_ContributionType extends CRM_Contribute_DAO_Contributio
         }
         
         //delete from contribution Type table
-        require_once 'CRM/Contribute/DAO/Contribution.php';
         $contributionType = new CRM_Contribute_DAO_ContributionType( );
         $contributionType->id = $contributionTypeId;
         $contributionType->delete();

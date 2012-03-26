@@ -34,15 +34,12 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 class CRM_Core_Page_File extends CRM_Core_Page 
 {
 
     function run( ) 
     {
-        require_once 'CRM/Utils/Request.php';
-        require_once 'CRM/Core/DAO.php';
 
         $eid         = CRM_Utils_Request::retrieve( 'eid'   , 'Positive', $this, true );
         $fid         = CRM_Utils_Request::retrieve( 'fid'   , 'Positive', $this, false );
@@ -50,7 +47,6 @@ class CRM_Core_Page_File extends CRM_Core_Page
         $quest       = CRM_Utils_Request::retrieve( 'quest' , 'String',   $this );
         $action      = CRM_Utils_Request::retrieve( 'action', 'String',   $this );
 
-        require_once 'CRM/Core/BAO/File.php';
         list( $path, $mimeType ) = CRM_Core_BAO_File::path( $id, $eid, null, $quest);
         if ( ! $path ) {
             CRM_Core_Error::statusBounce( 'Could not retrieve the file' );
@@ -74,7 +70,6 @@ class CRM_Core_Page_File extends CRM_Core_Page
                 return $wrapper->run( 'CRM_Custom_Form_DeleteFile', ts('Domain Information Page'), null);
             }
         } else {
-            require_once 'CRM/Utils/File.php';
             CRM_Utils_System::download( CRM_Utils_File::cleanFileName ( basename( $path ) ),
                                         $mimeType,
                                         $buffer );

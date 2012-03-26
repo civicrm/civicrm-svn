@@ -37,8 +37,6 @@
  *
  */
 
-require_once 'CRM/Event/BAO/Event.php';
-require_once 'CRM/Utils/PDF/Label.php';
 
 /**
  * This class print the name badges for the participants
@@ -84,7 +82,6 @@ class CRM_Event_Badge {
     }
     
    protected function retrieveEvent($eventID) {
-       require_once 'CRM/Event/BAO/Event.php';
        $bao = new CRM_Event_BAO_Event ();
        if ($bao->get('id',$eventID)) {
           return $bao;
@@ -102,7 +99,6 @@ class CRM_Event_Badge {
       $img = get_class($this).".".$this->imgExtension ;
     }
 
-    require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton( );
     $imgFile = $config->customTemplateDir."/$path/$eventID/$img"; 
     if (file_exists($imgFile)) return $imgFile;
@@ -159,7 +155,6 @@ class CRM_Event_Badge {
       */
     function createLabels( &$participants )
     {
-        require_once 'CRM/Utils/String.php';
         
         $this->pdf = new CRM_Utils_PDF_Label( $this->format, 'mm' );
         $this->pdfExtraFormat();

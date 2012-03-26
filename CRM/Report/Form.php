@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 class CRM_Report_Form extends CRM_Core_Form {
 
@@ -469,7 +468,6 @@ class CRM_Report_Form extends CRM_Core_Form {
             $this->setDefaultValues( false );
         }
 
-        require_once 'CRM/Report/Utils/Get.php';
         CRM_Report_Utils_Get::processFilter( $this->_filters,
                                              $this->_defaults );
         CRM_Report_Utils_Get::processGroupBy( $groupBys,
@@ -598,7 +596,6 @@ class CRM_Report_Form extends CRM_Core_Form {
             $this->_defaults = array_merge( $this->_defaults, $this->_instanceValues );
         }
 
-        require_once 'CRM/Report/Form/Instance.php';
         CRM_Report_Form_Instance::setDefaultValues( $this, $this->_defaults );
         
         return $this->_defaults;
@@ -644,8 +641,6 @@ class CRM_Report_Form extends CRM_Core_Form {
     }
 
     function addFilters( ) {
-        require_once 'CRM/Utils/Date.php';
-        require_once 'CRM/Core/Form/Date.php';
         $options = $filters = array();
         $count = 1;
         foreach ( $this->_filters as $table => $attributes ) {
@@ -796,7 +791,6 @@ class CRM_Report_Form extends CRM_Core_Form {
     }
 
     function buildInstanceAndButtons( ) {
-        require_once 'CRM/Report/Form/Instance.php';
         CRM_Report_Form_Instance::buildForm( $this );
         
         $label = $this->_id ? ts( 'Update Report' ) : ts( 'Create Report' );
@@ -939,7 +933,6 @@ class CRM_Report_Form extends CRM_Core_Form {
     }
 
     function buildTagFilter( ) {
-        require_once 'CRM/Core/BAO/Tag.php';
         $contactTags = CRM_Core_BAO_Tag::getTags( );
         if ( !empty($contactTags) ) {
             $this->_columns['civicrm_tag'] = 
@@ -1198,7 +1191,6 @@ class CRM_Report_Form extends CRM_Core_Form {
         if( empty($totime) ){
             $totime = '235959';
         }
-        require_once 'CRM/Utils/Date.php';
         //FIX ME not working for relative 
         if ( $relative ) {
             list( $term, $unit ) = explode( '.', $relative );
@@ -1223,7 +1215,6 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
         
         $customFieldIds  = array( );
-        require_once 'CRM/Core/BAO/CustomField.php';
         foreach( $this->_params['fields'] as $fieldAlias => $value ) {
             if ( $fieldId = CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
                 $customFieldIds[$fieldAlias] = $fieldId;
@@ -1309,7 +1300,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             }   
         case 'Money':
             if ( $htmlType == 'Text') {
-                require_once 'CRM/Utils/Money.php';
                 $retValue = CRM_Utils_Money::format($value, null, '%a');
                 break;
             }
@@ -1398,7 +1388,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
     }
 
     function fixSubTotalDisplay( &$row, $fields, $subtotal = true ) {
-        require_once 'CRM/Utils/Money.php';
         foreach ( $row as $colName => $colVal ) {
             if ( in_array($colName, $fields) ) {
                 $row[$colName] = $row[$colName];
@@ -1444,7 +1433,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
 
         // allow building charts if any
         if ( ! empty($this->_params['charts']) && !empty($rows) ) {
-            require_once 'CRM/Utils/OpenFlashChart.php';
             $this->buildChart( $rows );
             $this->assign( 'chartEnabled', true );
             $this->_chartId = "{$this->_params['charts']}_" . ($this->_id ? $this->_id : substr(get_class($this), 16)) . '_' . session_id( );
@@ -1735,7 +1723,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
 
         // Get today's date to include in printed reports
         if ( $printOnly ) {
-            require_once 'CRM/Utils/Date.php';
             $reportDate = CRM_Utils_Date::customFormat( date('Y-m-d H:i') );
             $this->assign( 'reportDate', $reportDate );
         }
@@ -2115,8 +2102,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                 $this->_formValues['report_footer'] ;
 
             if ( $this->_sendmail ) {
-                require_once 'CRM/Report/Utils/Report.php';
-                require_once 'CRM/Utils/File.php';
                 $config = CRM_Core_Config::singleton();
                 $attachments = array();
 
@@ -2137,7 +2122,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                 }
                 if ( $this->_outputMode == 'pdf' ) {
                     // generate PDF content
-                    require_once 'CRM/Utils/PDF/Utils.php';          
                     $pdfFullFilename = $config->templateCompileDir . CRM_Utils_File::makeFileName( 'CiviReport.pdf' );
                     file_put_contents( $pdfFullFilename, 
                                        CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf", 
@@ -2185,7 +2169,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                     //delete the object
                     imagedestroy($chart);
                 }
-                require_once 'CRM/Utils/PDF/Utils.php';                     
                 CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf", false, array('orientation' => 'landscape') );
             }
             CRM_Utils_System::civiExit( );
@@ -2195,11 +2178,9 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             $group = $this->_params['groups'];
             $this->add2group( $group );
         } else if ( $this->_instanceButtonName == $this->controller->getButtonName( ) ) {
-            require_once 'CRM/Report/Form/Instance.php';
             CRM_Report_Form_Instance::postProcess( $this );
         } else if ( $this->_createNewButtonName == $this->controller->getButtonName( ) ) {
             $this->_createNew = true;
-            require_once 'CRM/Report/Form/Instance.php';
             CRM_Report_Form_Instance::postProcess( $this );
         }
     }
@@ -2226,7 +2207,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
     }
 
     function limit( $rowCount = self::ROW_COUNT_LIMIT ) {
-        require_once 'CRM/Utils/Pager.php';
         // lets do the pager if in html mode
         $this->_limit = null;
         if ( $this->_outputMode == 'html' || $this->_outputMode == 'group'  ) {
@@ -2253,7 +2233,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
 
     function setPager( $rowCount = self::ROW_COUNT_LIMIT ) {
         if ( $this->_limit && ($this->_limit != '') ) {
-            require_once 'CRM/Utils/Pager.php';
             $sql    = "SELECT FOUND_ROWS();";
             $this->_rowsFound = CRM_Core_DAO::singleValueQuery( $sql );
             $params = array( 'total'        => $this->_rowsFound,
@@ -2271,8 +2250,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
     function whereGroupClause($field, $value, $op) {
          
         $smartGroupQuery = ""; 
-        require_once 'CRM/Contact/DAO/Group.php';
-        require_once 'CRM/Contact/BAO/SavedSearch.php';
         
         $group = new CRM_Contact_DAO_Group( );
         $group->is_active = 1;
@@ -2284,7 +2261,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
              }
         }
         
-        require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::check( $smartGroups );
 
         $smartGroupQuery = '';
@@ -2327,7 +2303,6 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
     }
 
     function buildACLClause( $tableAlias = 'contact_a' ) {
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
         list( $this->_aclFrom, $this->_aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( $tableAlias );
     }
 
@@ -2495,7 +2470,6 @@ ORDER BY cg.weight, cf.weight";
         if ( empty($this->_customGroupExtends) ) {
             return;
         }
-        require_once 'CRM/Core/BAO/CustomQuery.php';
         $mapper = CRM_Core_BAO_CustomQuery::$extendsMap;
 
         foreach( $this->_columns as $table => $prop ) {
@@ -2513,7 +2487,6 @@ LEFT JOIN $table {$this->_aliases[$table]} ON {$this->_aliases[$table]}.entity_i
                 if ( array_key_exists( 'fields', $prop ) ) { 
                     foreach ( $prop['fields'] as $fieldName => $field ) { 
                         if ( CRM_Utils_Array::value( 'dataType', $field ) == 'ContactReference' ) {
-                            require_once 'CRM/Core/BAO/CustomField.php';
                             $columnName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField', CRM_Core_BAO_CustomField::getKeyID($fieldName) , 'column_name' );
                             $this->_from .= "
 LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_aliases[$table]}.{$columnName} ";
@@ -2528,7 +2501,6 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
         if( empty($prop) ) {
             return false;
         }
-        require_once 'CRM/Core/BAO/CustomField.php';
         
         if ( !empty( $this->_params['fields'] ) ) {
             foreach( array_keys($prop['fields']) as $fieldAlias ) {
@@ -2589,7 +2561,6 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
      */
     function preProcessOrderBy( &$formValues ) {
         // Object to show/hide form elements
-        require_once('CRM/Core/ShowHideBlocks.php');
         $_showHide =& new CRM_Core_ShowHideBlocks( '', '' );
         
         $_showHide->addShow( 'optionField_1' );
@@ -2884,7 +2855,6 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
     
     function add2group( $groupID ) {
         if ( is_numeric( $groupID ) && isset( $this->_aliases['civicrm_contact'] ) ) {
-            require_once 'CRM/Contact/BAO/GroupContact.php';
             $select = "SELECT DISTINCT {$this->_aliases['civicrm_contact']}.id AS addtogroup_contact_id, ";
             $select = str_ireplace( 'SELECT SQL_CALC_FOUND_ROWS ', $select, $this->_select );
 

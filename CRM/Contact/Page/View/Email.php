@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
-require_once 'CRM/Contact/BAO/Contact.php';
 /**
  * Dummy page for details of Email
  *
@@ -104,7 +102,6 @@ class CRM_Contact_Page_View_Email extends CRM_Core_Page
             list( $displayName, $contactImage ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $dao->contact_id );
             
             CRM_Utils_System::setTitle( $contactImage . ' ' . $displayName );
-            require_once 'CRM/Core/Menu.php';
             // also add the cid params to the Menu array
             CRM_Core_Menu::addParam( 'cid',  $cid);
           

@@ -76,7 +76,6 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
         $form->addGroup($privacy, 'privacy', ts('Privacy'), '&nbsp;');
         
         // preferred communication method 
-        require_once 'CRM/Core/PseudoConstant.php';
         $comm = CRM_Core_PseudoConstant::pcm();
         foreach ( $comm as $value => $title ) {
             $commPreff[] = $form->createElement('advcheckbox', $value, null, $title );
@@ -135,7 +134,6 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
     static function formRule( $fields, $files, $self ) 
     {
         //CRM-4575
-        require_once 'CRM/Core/OptionGroup.php';
        
         $greetings = self::getGreetingFields( $self->_contactType );
         foreach ( $greetings as $greeting => $details ) { 
@@ -171,11 +169,9 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
         }
 
         //set default from greeting types CRM-4575, CRM-9739
-        require_once 'CRM/Contact/BAO/Contact.php';
         if ( $form->_action & CRM_Core_Action::ADD ) {
             foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
                 if ( empty($defaults[$greeting . '_id']) ) {
-                    require_once 'CRM/Contact/BAO/Contact/Utils.php';
                     if ( $defaultGreetingTypeId =
                          CRM_Contact_BAO_Contact_Utils::defaultGreeting($form->_contactType, $greeting)
                     ) {

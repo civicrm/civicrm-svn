@@ -34,12 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/Selector/Base.php';
-require_once 'CRM/Core/Selector/API.php';
-require_once 'CRM/Utils/Pager.php';
-require_once 'CRM/Utils/Sort.php';
-require_once 'CRM/Activity/BAO/Activity.php';
 
 /**
  * This class is used to retrieve and display activities for a contact
@@ -93,7 +87,6 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
         $this->_activityTypeIDs = $activityTypeIDs;
 
         // get all enabled view componentc (check if case is enabled)
-        require_once 'CRM/Core/BAO/Setting.php';
         $this->_viewOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                   'contact_view_options', true, null, true );
     }
@@ -230,7 +223,6 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                                                       'title'    => ts('Update Activity') ) );
         }
         
-        require_once 'CRM/Case/BAO/Case.php';
         if ( $activityTypeName && 
              CRM_Case_BAO_Case::checkPermission( $activityId, 'File On Case', $activityTypeId ) ) {
             $actionLinks += array ( CRM_Core_Action::ADD => array( 'name'     => ts('File On Case'),
@@ -322,7 +314,6 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      * @access public
      */
     function getTotalCount($action, $case = null ) { 
-        require_once 'CRM/Activity/BAO/Activity.php';
         $params = array(
                         'contact_id'       => $this->_contactId,
                         'admin'            => $this->_admin,
@@ -369,7 +360,6 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
 
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         
-        require_once 'CRM/Campaign/PseudoConstant.php';
         $engagementLevels = CRM_Campaign_PseudoConstant::engagementLevel();
         
         //CRM-4418

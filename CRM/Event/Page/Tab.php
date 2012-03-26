@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 class CRM_Event_Page_Tab extends CRM_Core_Page 
 {
@@ -61,7 +60,6 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
         $controller->run( );
         
         if ( $this->_contactId ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
             $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
             $this->assign( 'displayName', $displayName );
         }
@@ -130,7 +128,6 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             $this->assign( 'contactId', $this->_contactId );
 
             // check logged in url permission
-            require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
             
             // set page title
@@ -196,7 +193,6 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
         $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
 
         //validate the qfKey
-        require_once 'CRM/Utils/Rule.php';
         if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) {
             $qfKey = null;
         }

@@ -103,7 +103,6 @@ class CRM_Utils_OpenFlashChart
         }
         
         // get the currency.
-        require_once 'CRM/Utils/Money.php';
         $config   = CRM_Core_Config::singleton();
         $symbol   = $config->defaultCurrencySymbol;
                         
@@ -188,7 +187,6 @@ class CRM_Utils_OpenFlashChart
         $graphTitle = CRM_Utils_Array::value( 'legend', $params ) ? $params['legend'] : ts( 'Pie Chart' );
         
         //get the currency.
-        require_once 'CRM/Utils/Money.php';
         $config   = CRM_Core_Config::singleton();
         $symbol   = $config->defaultCurrencySymbol;
         
@@ -265,7 +263,6 @@ class CRM_Utils_OpenFlashChart
         if ( empty($xReferences) ) return $chart; 
         
         // get the currency.
-        require_once 'CRM/Utils/Money.php';
         $config   = CRM_Core_Config::singleton();
         $symbol   = $config->defaultCurrencySymbol;
                         
@@ -458,7 +455,6 @@ class CRM_Utils_OpenFlashChart
     function buildChart( &$params, $chart ) {
         $openFlashChart = array( );
         if ( $chart && is_array( $params ) && !empty( $params ) ) {
-            require_once 'CRM/Utils/OpenFlashChart.php';
             // build the chart objects.
             eval( "\$chartObj = CRM_Utils_OpenFlashChart::" . $chart .'( $params );' );    
             

@@ -38,10 +38,6 @@
  * Files required
  */
 
-require_once 'CRM/Campaign/BAO/Survey.php';
-require_once 'CRM/Campaign/BAO/Campaign.php';
-require_once 'CRM/Campaign/Selector/Search.php';
-require_once 'CRM/Core/Selector/Controller.php';
 
 class CRM_Campaign_Form_Search extends CRM_Core_Form 
 {
@@ -204,7 +200,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         //get the voter clause.
         $voterClause = $this->voterClause( );
         
-        require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
         $selector = new CRM_Campaign_Selector_Search( $this->_queryParams,
@@ -233,7 +228,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $controller->moveFromSessionToTemplate(); 
         
         //append breadcrumb to survey dashboard.
-        require_once 'CRM/Campaign/BAO/Campaign.php';
         if ( CRM_Campaign_BAO_Campaign::accessCampaign( ) ) {
             $url = CRM_Utils_System::url( 'civicrm/campaign', 'reset=1&subPage=survey' );
             CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Survey(s)'), 'url' => $url ) ) );
@@ -263,7 +257,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     function buildQuickForm( ) 
     {
         //build the search form.
-        require_once 'CRM/Campaign/BAO/Query.php';
         CRM_Campaign_BAO_Query::buildSearchForm( $this );
         
         /* 
@@ -285,9 +278,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             
             $total = $cancel = 0;
             
-            require_once "CRM/Core/Permission.php";
             $permission = CRM_Core_Permission::getPermission( );
-            require_once 'CRM/Campaign/Task.php';
             $allTasks = CRM_Campaign_Task::permissionedTaskTitles( $permission );
             
             //hack to serve right page to state machine.
@@ -299,7 +290,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $taskValue = array( $currentTaskValue => $allTasks[$currentTaskValue] );
             if ( $this->_operation == 'interview' && 
                  CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
-                require_once 'CRM/Core/PseudoConstant.php';
                 $activityTypes = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
                 
                 $surveyTypeId  = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
@@ -368,7 +358,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         //format params as per task.
         $this->formatParams( );
         
-        require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
         $this->set( 'formValues' , $this->_formValues  );
@@ -529,7 +518,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             CRM_Utils_System::permissionDenied( );
             CRM_Utils_System::civiExit( );
         }
-        require_once 'CRM/Contact/BAO/Contact.php';
         $this->_formValues['survey_interviewer_id']   = $cid;
         $this->_formValues['survey_interviewer_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                                                      $cid,
@@ -542,7 +530,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     
     function voterClause( ) 
     {
-        require_once 'CRM/Campaign/BAO/Query.php';
         $params = array( 'campaign_search_voter_for' => $this->_operation );
         
         $clauseFields = array( 'surveyId'      => 'campaign_survey_id', 

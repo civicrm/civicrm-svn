@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Logging/ReportDetail.php';
 
 class CRM_Report_Form_Contact_LoggingDetail extends CRM_Logging_ReportDetail
 {
@@ -66,7 +65,6 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Logging_ReportDetail
             $this->assign('revertURL', self::$_template->get_template_vars('revertURL') . "&cid={$this->cid}");
         } else {
             // link back to summary report
-            require_once 'CRM/Report/Utils/Report.php';
             $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
         }
     }

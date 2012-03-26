@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Contact/BAO/Relationship.php';
-require_once 'CRM/Contact/BAO/ContactType.php';
 
 class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
     

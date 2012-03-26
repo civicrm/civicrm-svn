@@ -1,13 +1,10 @@
 <?php
 
-require_once 'CRM/Dedupe/BAO/QueryBuilder.php';
 
 // TODO: How to handle NULL values/records?
 class CRM_Dedupe_BAO_QueryBuilder_IndividualFuzzy extends CRM_Dedupe_BAO_QueryBuilder {
 
     static function record($rg) {
-        require_once 'CRM/Core/DAO.php';
-        require_once 'CRM/Utils/Array.php';
 
         $civicrm_contact = CRM_Utils_Array::value('civicrm_contact', $rg->params, array());
         $civicrm_email = CRM_Utils_Array::value('civicrm_email', $rg->params, array());

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/System/Base.php';
 
 /**
  * Joomla specific stuff goes here
@@ -72,7 +71,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
         if ( isset($params['name']) ) {
             $fullname = trim( $params['name'] );
         } elseif ( isset($params['contactID']) ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
             $fullname = trim( CRM_Contact_BAO_Contact::displayName($params['contactID']) );
         } else {
             $fullname = trim( $params['cms_name'] );
@@ -251,7 +249,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
         }
 
         if ( $includeAll ) {
-            require_once 'CRM/Core/Config.php';
             $config = CRM_Core_Config::singleton();
 
             $document->addStyleSheet( "{$config->resourceBase}css/deprecate.css" );
@@ -308,7 +305,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
  		$separator = $htmlize ? '&amp;' : '&';
  		$Itemid    = '';
         $script    = '';
-        require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
 
         if ( $config->userFrameworkFrontend ) {
@@ -435,7 +431,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
         }
 
         $user = null;
-        require_once 'CRM/Core/BAO/UFMatch.php';
         if ( !empty( $row ) ) {
             $dbPassword  = CRM_Utils_Array::value( 'password', $row );
             $dbId  = CRM_Utils_Array::value( 'id', $row );

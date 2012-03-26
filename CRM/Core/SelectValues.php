@@ -104,7 +104,6 @@ class CRM_Core_SelectValues
     {
         static $contactType = null;
         if (!$contactType) {
-            require_once 'CRM/Contact/BAO/ContactType.php';
             $contactType = array( '' => ts('- any contact type -') );
             $contactType = $contactType + CRM_Contact_BAO_ContactType::basicTypePairs( );
         }
@@ -370,7 +369,6 @@ class CRM_Core_SelectValues
             $date['format'] = $format;
         } else {
             if ( $type ) {
-                require_once 'CRM/Core/DAO/PreferencesDate.php';
                 $dao = new CRM_Core_DAO_PreferencesDate( );
                 $dao->name = $type;
                 if ( ! $dao->find( true ) ) {
@@ -640,8 +638,6 @@ class CRM_Core_SelectValues
     {
         static $tokens = null;
         if ( ! $tokens ) {
-            require_once 'CRM/Contact/BAO/Contact.php';
-            require_once 'CRM/Core/BAO/CustomField.php';
             $additionalFields =  array( 'checksum'     => array( 'title' => ts('Checksum') ),
                                         'contact_id'   => array( 'title' => ts('Internal Contact ID') ) );
             $exportFields = array_merge( CRM_Contact_BAO_Contact::exportableFields( ), $additionalFields );
@@ -671,7 +667,6 @@ class CRM_Core_SelectValues
             }
 
             // might as well get all the hook tokens to
-            require_once 'CRM/Utils/Hook.php';
             $hookTokens = array( );
             CRM_Utils_Hook::tokens( $hookTokens );
             foreach ( $hookTokens as $category => $tokenValues ) {

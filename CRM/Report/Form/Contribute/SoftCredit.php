@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
 
@@ -377,7 +375,6 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         $this->buildACLClause( array( 'constituentname' ,'contact_civireport' ) );
         $sql = $this->buildQuery( );
         
-        require_once 'CRM/Utils/OpenFlashChart.php';
         $dao   = CRM_Core_DAO::executeQuery( $sql );
         $rows  = $graphRows = array();
         $count = 0;

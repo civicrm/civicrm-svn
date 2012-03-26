@@ -34,16 +34,8 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/Selector/Base.php';
-require_once 'CRM/Core/Selector/API.php';
 
-require_once 'CRM/Utils/Pager.php';
-require_once 'CRM/Utils/Sort.php';
 
-require_once 'CRM/Contact/BAO/Contact.php';
-require_once 'CRM/Contact/BAO/Query.php';
-require_once 'CRM/Core/BAO/PrevNextCache.php';
 
 /**
  * This class is used to retrieve and display a range of
@@ -183,7 +175,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         $this->_ufGroupID = CRM_Utils_Array::value( 'uf_group_id', $this->_formValues );
 
         if ( $this->_ufGroupID ) {
-            require_once 'CRM/Core/BAO/UFGroup.php';
             $this->_fields = CRM_Core_BAO_UFGroup::getListingFields( CRM_Core_Action::VIEW,
                                                                      CRM_Core_BAO_UFGroup::PUBLIC_VISIBILITY |
                                                                      CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
@@ -206,7 +197,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         // rectify params to what proximity search expects if there is a value for prox_distance
         // CRM-7021
         if ( !empty( $this->_params ) ) { 
-            require_once 'CRM/Contact/BAO/ProximityQuery.php';
             CRM_Contact_BAO_ProximityQuery::fixInputParams( $this->_params );
         }
 
@@ -318,7 +308,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
 
     function &getColHeads($action = null, $output = null) {
-        require_once 'CRM/Contact/BAO/Group.php';
       
         $colHeads = self::_getColumnHeaders();
        
@@ -373,7 +362,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                                                      )
                                                );
 
-                require_once 'CRM/Core/PseudoConstant.php';
                 $locationTypes = CRM_Core_PseudoConstant::locationType( );
 
                 foreach ( $this->_fields as $name => $field ) { 
@@ -516,7 +504,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         }
 
         if ( $this->_ufGroupID ) {
-            require_once 'CRM/Core/PseudoConstant.php';
             $locationTypes = CRM_Core_PseudoConstant::locationType( );
 
             $names = array( );
@@ -563,18 +550,15 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         //hack for student data (checkboxs)
         $multipleSelectFields = array( 'preferred_communication_method' => 1 );
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
-            require_once 'CRM/Quest/BAO/Student.php';
             $multipleSelectFields = CRM_Quest_BAO_Student::$multipleSelectFields;
         }
         
-        require_once 'CRM/Core/OptionGroup.php';
         $links = self::links( $this->_context, $this->_contextMenu, $this->_key );
         
         //check explicitly added contact to a Smart Group.
         $groupID   = CRM_Utils_Array::key( '1', $this->_formValues['group'] );  
 
         // for CRM-3157 purposes
-        require_once 'CRM/Core/PseudoConstant.php';
         if ( in_array('country',        $names ) ) {
             $countries = CRM_Core_PseudoConstant::country();
         }
@@ -731,7 +715,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 // allow components to add more actions
                 CRM_Core_Component::searchAction( $row, $result->contact_id );
 
-                require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
                 $row['contact_type' ] = 
                     CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                              $result->contact_sub_type : $result->contact_type,
@@ -797,7 +780,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
         $links = self::links( $this->_context, $this->_contextMenu, $this->_key );
 
-        require_once 'CRM/Contact/BAO/Contact/Utils.php';
 
         foreach ( $rows as $id => &$row ) {
             if ( CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) 
@@ -895,7 +877,6 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
         }
         
         // also record an entry in the cache key table, so we can delete it periodically
-    require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::setItem( $cacheKey,
                                      'CiviCRM Search PrevNextCache',
                                      $cacheKey );
@@ -939,7 +920,6 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
     {
         if ( ! isset( self::$_columnHeaders ) )
         { 
-            require_once 'CRM/Core/BAO/Setting.php';
             $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                   'address_options', true, null, true );
             
@@ -1000,7 +980,6 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
         // rectify params to what proximity search expects if there is a value for prox_distance
         // CRM-7021 CRM-7905
         if ( !empty( $params ) ) { 
-            require_once 'CRM/Contact/BAO/ProximityQuery.php';
             CRM_Contact_BAO_ProximityQuery::fixInputParams( $params );
         }
 

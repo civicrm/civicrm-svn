@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form.php';
 
 /**
  * This class generates form components for batch entry
@@ -91,7 +90,6 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form
     public function postProcess() {
         $params = $this->controller->exportValues( $this->_name );
 
-        require_once 'CRM/Core/BAO/Batch.php';
         $batch = CRM_Core_BAO_Batch::create( $params ); 
         
         // redirect to batch entry page.

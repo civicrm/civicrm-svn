@@ -525,7 +525,6 @@ class CRM_Core_PseudoConstant
         $index .= '_' . (int)$onlyComponentActivities;
         
         if ( ! array_key_exists( $index, self::$activityType ) || $reset ) {
-            require_once 'CRM/Core/OptionGroup.php';
             $condition = null;
             if ( !$all ) {
                 $condition    = 'AND filter = 0';
@@ -536,7 +535,6 @@ class CRM_Core_PseudoConstant
             }
             
             $componentIds = array( );
-            require_once 'CRM/Core/Component.php';
             $compInfo     = CRM_Core_Component::getEnabledComponents( );
             
             // build filter for listing activity types only if their 
@@ -586,7 +584,6 @@ class CRM_Core_PseudoConstant
     public static function &individualPrefix( )
     {
         if ( ! self::$individualPrefix ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$individualPrefix = CRM_Core_OptionGroup::values('individual_prefix');
         }
         return self::$individualPrefix;
@@ -608,7 +605,6 @@ class CRM_Core_PseudoConstant
     public static function &phoneType( )
     {
         if ( ! self::$phoneType ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$phoneType = CRM_Core_OptionGroup::values('phone_type');
         }
         return self::$phoneType;
@@ -630,7 +626,6 @@ class CRM_Core_PseudoConstant
     public static function &individualSuffix( )
     {
         if ( ! self::$individualSuffix ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$individualSuffix = CRM_Core_OptionGroup::values('individual_suffix');
         }
         return self::$individualSuffix;
@@ -652,7 +647,6 @@ class CRM_Core_PseudoConstant
     public static function &gender( )
     {
         if ( ! self::$gender ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$gender = CRM_Core_OptionGroup::values('gender');
         }
         return self::$gender;
@@ -677,7 +671,6 @@ class CRM_Core_PseudoConstant
     public static function &IMProvider( ) 
     {
         if ( ! self::$imProvider ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$imProvider = CRM_Core_OptionGroup::values('instant_messenger_service');
         }        
         return self::$imProvider;
@@ -702,7 +695,6 @@ class CRM_Core_PseudoConstant
     public static function &websiteType( ) 
     {
         if ( ! self::$websiteType ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$websiteType = CRM_Core_OptionGroup::values('website_type');
         }        
         return self::$websiteType;
@@ -725,7 +717,6 @@ class CRM_Core_PseudoConstant
     public static function &fromEmailAddress( ) 
     {
         if ( ! self::$fromEmailAddress ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$fromEmailAddress = CRM_Core_OptionGroup::values('from_email_address');
         }        
         return self::$fromEmailAddress;
@@ -748,7 +739,6 @@ class CRM_Core_PseudoConstant
     public static function &mailProtocol( ) 
     {
         if ( ! self::$mailProtocol ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$mailProtocol = CRM_Core_OptionGroup::values('mail_protocol');
         }        
         return self::$mailProtocol;
@@ -1016,7 +1006,6 @@ WHERE  id = %1";
     */
     public static function &allGroup( $groupType = null, $excludeHidden = true )
     {
-        require_once 'CRM/Contact/BAO/Group.php';
         $condition = CRM_Contact_BAO_Group::groupTypeCondition( $groupType, $excludeHidden );
 
         if (!self::$group) {
@@ -1054,7 +1043,6 @@ WHERE  id = %1";
              When used as an object, GroupNesting implements Iterator
              and iterates nested groups in a logical manner for us
             */
-            require_once 'CRM/Contact/BAO/GroupNesting.php';
             self::$groupIterator = new CRM_Contact_BAO_GroupNesting( $styledLabels );
         }
         return self::$groupIterator;
@@ -1080,7 +1068,6 @@ WHERE  id = %1";
      */
     public static function group( $groupType = null, $excludeHidden = true )
     {
-        require_once 'CRM/Core/Permission.php';
         return CRM_Core_Permission::group( $groupType, $excludeHidden );
     }
 
@@ -1110,7 +1097,6 @@ WHERE  id = %1";
             }
 
             if ( $groupType ) {
-                require_once 'CRM/Contact/BAO/Group.php';
                 $condition .= ' AND ' . CRM_Contact_BAO_Group::groupTypeCondition( $groupType );
             }
 
@@ -1195,7 +1181,6 @@ WHERE  id = %1";
             $column_a_b = "{$valueColumnName}_a_b";
             $column_b_a = "{$valueColumnName}_b_a";
             
-            require_once 'CRM/Contact/DAO/RelationshipType.php';
             $relationshipTypeDAO = new CRM_Contact_DAO_RelationshipType();
             $relationshipTypeDAO->selectAdd();
             $relationshipTypeDAO->selectAdd("id, {$column_a_b}, {$column_b_a}, contact_type_a, contact_type_b, contact_sub_type_a, contact_sub_type_b");
@@ -1316,7 +1301,6 @@ WHERE  id = %1";
     public static function &pcm( ) 
     {
         if ( ! self::$pcm ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$pcm = CRM_Core_OptionGroup::values('preferred_communication_method');
         }        
         return self::$pcm;
@@ -1347,7 +1331,6 @@ WHERE  id = %1";
 
         // CRM-7178. Make sure we only include payment processors valid in ths
         // domain
-        require_once 'CRM/Core/Config.php';
         $condition .= 
             " AND domain_id = " . CRM_Core_Config::domainID( );
 
@@ -1423,7 +1406,6 @@ WHERE  id = %1";
     public static function &honor( )
     {
         if ( ! self::$honorType ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$honorType = CRM_Core_OptionGroup::values('honor_type');
         }
         return self::$honorType;
@@ -1443,7 +1425,6 @@ WHERE  id = %1";
         if ( ! array_key_exists($column, self::$activityStatus) ) {
             self::$activityStatus[$column] = array( );
 
-            require_once 'CRM/Core/OptionGroup.php';
             self::$activityStatus[$column] = CRM_Core_OptionGroup::values('activity_status', false, 
                                                                           false, false, null, $column);
         }
@@ -1463,7 +1444,6 @@ WHERE  id = %1";
     public static function &priority(  )
     {
         if ( ! self::$priority ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$priority = CRM_Core_OptionGroup::values('priority');
         }
         
@@ -1482,7 +1462,6 @@ WHERE  id = %1";
     public static function &wysiwygEditor( )
     {
         if ( ! self::$wysiwygEditor ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$wysiwygEditor = CRM_Core_OptionGroup::values('wysiwyg_editor');
         }
         return self::$wysiwygEditor;
@@ -1502,7 +1481,6 @@ WHERE  id = %1";
     public static function &visibility( $column = 'label' )
     {
         if ( ! self::$visibility ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$visibility = CRM_Core_OptionGroup::values( 'visibility',false,false, false, null, $column );
         }
         return self::$visibility;
@@ -1518,7 +1496,6 @@ WHERE  id = %1";
     public static function &mappingTypes( )
     {
         if ( ! self::$mappingType ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$mappingType = CRM_Core_OptionGroup::values('mapping_type');
         }
         return self::$mappingType;
@@ -1561,7 +1538,6 @@ ORDER BY name";
 
         $_cache[$cacheKey] = $result;
 
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::buildStateProvinceForCountry( $countryID, $result );
 
         return $result;
@@ -1656,7 +1632,6 @@ ORDER BY name";
                 $filterCondition .= "AND (v.filter = 0 OR {$filterVal}) "; 
             } 
             
-            require_once 'CRM/Core/OptionGroup.php';
             self::$greeting[$index] = CRM_Core_OptionGroup::values( $filter['greeting_type'], 
                                                                     null, null, null, 
                                                                     $filterCondition, $columnName );
@@ -1680,8 +1655,6 @@ ORDER BY name";
             $defaultGreetings = array();
             $contactTypes = array( 'Individual' => 1, 'Household' => 2, 'Organization' => 3 );
 
-            require_once 'CRM/Core/OptionGroup.php';
-            require_once 'CRM/Contact/BAO/Contact.php';
             foreach ( $contactTypes as $contactType => $filter ) {
                 $filterCondition = " AND (v.filter = 0 OR v.filter = $filter) AND v.is_default = 1 ";  
 
@@ -1709,7 +1682,6 @@ ORDER BY name";
      */
     public static function &languages( ) 
     {
-        require_once 'CRM/Core/I18n/PseudoConstant.php';
         return CRM_Core_I18n_PseudoConstant::languages();
     }
     
@@ -1725,7 +1697,6 @@ ORDER BY name";
     public static function &getExtensions( )
     {
         if ( !self::$extensions ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$extensions = CRM_Core_OptionGroup::values( 'system_extensions' );
         }
 
@@ -1747,7 +1718,6 @@ ORDER BY name";
     public static function &activityContacts( $column = 'label' )
     {
         if ( ! self::$activityContacts ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$activityContacts = CRM_Core_OptionGroup::values('activity_contacts', false, false, false, null, $column);
         }
         return self::$activityContacts;
@@ -1768,7 +1738,6 @@ ORDER BY name";
     public static function &eventContacts( $column = 'label' )
     {
         if ( ! self::$eventContacts ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$eventContacts = CRM_Core_OptionGroup::values('event_contacts', false, false, false, null, $column);
         }
         return self::$eventContacts;
@@ -1786,7 +1755,6 @@ ORDER BY name";
     public static function &getBatchTypes( )
     {
         if ( !self::$batchTypes ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$batchTypes = CRM_Core_OptionGroup::values( 'batch_type' );
         }
 
@@ -1805,7 +1773,6 @@ ORDER BY name";
     public static function &getBatchStatues( )
     {
         if ( !self::$batchStatues ) {
-            require_once 'CRM/Core/OptionGroup.php';
             self::$batchStatues = CRM_Core_OptionGroup::values( 'batch_status' );
         }
 

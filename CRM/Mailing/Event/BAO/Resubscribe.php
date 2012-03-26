@@ -35,7 +35,6 @@
  */
 
 require_once 'Mail/mime.php';
-require_once 'CRM/Utils/Mail.php';
 
 class CRM_Mailing_Event_BAO_Resubscribe {
 
@@ -67,7 +66,6 @@ class CRM_Mailing_Event_BAO_Resubscribe {
         
         $contact_id = $q->contact_id;
         
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         $do = new CRM_Core_DAO();
@@ -132,7 +130,6 @@ class CRM_Mailing_Event_BAO_Resubscribe {
             }
         }
 
-        require_once 'CRM/Utils/Hook.php';
         $group_ids = array_keys($groups);
         $base_groups = null;
         CRM_Utils_Hook::unsubscribeGroups('resubscribe', $mailing_id, $contact_id, $group_ids, $base_groups);
@@ -249,7 +246,6 @@ class CRM_Mailing_Event_BAO_Resubscribe {
         $bao->body_text = $text;
         $bao->body_html = $html;
         $tokens = $bao->getTokens();
-        require_once 'CRM/Utils/Token.php';
         if ($eq->format == 'HTML' || $eq->format == 'Both') {
             $html = 
                 CRM_Utils_Token::replaceDomainTokens($html, $domain, true, $tokens['html']);
@@ -269,7 +265,6 @@ class CRM_Mailing_Event_BAO_Resubscribe {
             $message->setTxtBody($text);
         }
 
-        require_once 'CRM/Core/BAO/MailSettings.php';
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
 
         $headers = array(

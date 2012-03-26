@@ -133,7 +133,6 @@ class CRM_Contact_Form_Edit_TagsandGroups
             }
             $form->_tagGroup[$fName] = 1;
             $elements = array( );
-            require_once 'CRM/Core/BAO/Tag.php';            
             $tag = CRM_Core_BAO_Tag::getTags( );
             
             foreach ($tag as $id => $name) {
@@ -149,8 +148,6 @@ class CRM_Contact_Form_Edit_TagsandGroups
             }
             
             // build tag widget
-            require_once 'CRM/Core/Form/Tag.php';
-            require_once 'CRM/Core/BAO/Tag.php';
             $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
             
             CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', $contactId, false, true );
@@ -179,7 +176,6 @@ class CRM_Contact_Form_Edit_TagsandGroups
                 $fName = $fieldName; 
             }
 
-            require_once 'CRM/Contact/BAO/GroupContact.php';
             $contactGroup = CRM_Contact_BAO_GroupContact::getContactGroup( $id, 'Added', null, false, true );  
             if ( $contactGroup ) {  
                 foreach ( $contactGroup as $group ) {  
@@ -194,7 +190,6 @@ class CRM_Contact_Form_Edit_TagsandGroups
                 $fName = $fieldName; 
             }
             
-            require_once 'CRM/Core/BAO/EntityTag.php';
             $contactTag = CRM_Core_BAO_EntityTag::getTag($id);  
             if ( $contactTag ) {  
                 foreach ( $contactTag as $tag ) {  

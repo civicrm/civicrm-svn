@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Payment/BaseIPN.php';
 
 class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
 
@@ -94,7 +93,6 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         }
         $sendNotification          = false;
         $subscriptionPaymentStatus = null;
-        require_once 'CRM/Core/Payment.php';
         //set transaction type
         $txnType = $_POST['txn_type'];
         switch ( $txnType ) {
@@ -221,7 +219,6 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
             $contribution->total_amount = $input['amount'];
         }
 
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
         // fix for CRM-2842
@@ -259,7 +256,6 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         // CRM_Core_Error::debug_var( 'GET' , $_GET , true, true );
         // CRM_Core_Error::debug_var( 'POST', $_POST, true, true );
 
-        require_once 'CRM/Utils/Request.php';
         
         $objects = $ids = $input = array( );
         $input['component'] = $component;

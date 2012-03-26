@@ -37,9 +37,6 @@
 /**
  * Files required
  */
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Campaign/BAO/Campaign.php';
-require_once 'CRM/Campaign/PseudoConstant.php';
 
 class CRM_Campaign_Form_Search_Campaign extends CRM_Core_Form 
 {

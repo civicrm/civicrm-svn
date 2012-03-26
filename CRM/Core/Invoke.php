@@ -55,12 +55,6 @@ class CRM_Core_Invoke
         }
 
         require_once 'CRM/Core/I18n.php';
-        require_once 'CRM/Utils/Wrapper.php';
-        require_once 'CRM/Core/Action.php';
-        require_once 'CRM/Utils/Request.php';
-        require_once 'CRM/Core/Menu.php';
-        require_once 'CRM/Core/Component.php';
-        require_once 'CRM/Core/Permission.php';
 
         $config = CRM_Core_Config::singleton( );
 
@@ -72,7 +66,6 @@ class CRM_Core_Invoke
                 CRM_Core_Session::setStatus( ts( 'Menu has been rebuilt' ) );
 
                 // also reset navigation
-                require_once 'CRM/Core/BAO/Navigation.php';
                 CRM_Core_BAO_Navigation::resetNavigation( );
 
                 // also cleanup all caches
@@ -91,7 +84,6 @@ class CRM_Core_Invoke
 
         // first fire up IDS and check for bad stuff
         if ($config->useIDS) {
-            require_once 'CRM/Core/IDS.php';
             $ids = new CRM_Core_IDS( );
             $ids->check( $args );
         }
@@ -100,10 +92,8 @@ class CRM_Core_Invoke
         $i18n   = CRM_Core_I18n::singleton( );
 
         if ( $config->userFramework == 'Standalone' ) {
-            require_once 'CRM/Core/Session.php';
             $session = CRM_Core_Session::singleton( ); 
             if ( $session->get('new_install') !== true ) {
-                require_once 'CRM/Core/Standalone.php';
                 CRM_Core_Standalone::sidebarLeft( );
             } else if ( $args[1] == 'standalone' && $args[2] == 'register' ) {
                 CRM_Core_Menu::store( );
@@ -124,7 +114,6 @@ class CRM_Core_Invoke
         if ( $config->userFramework == 'Joomla' && $item ) {
             $config->userFrameworkURLVar = 'task';
 
-            require_once 'CRM/Core/Joomla.php';
             // joomla 1.5RC1 seems to push this in the POST variable, which messes
             // QF and checkboxes
             unset( $_POST['option'] );
@@ -254,7 +243,6 @@ class CRM_Core_Invoke
         CRM_Utils_System::setUserContext( array( 'civicrm/contact/search/basic', 'civicrm/contact/view' ) );
         $wrapper = new CRM_Utils_Wrapper( );
         
-        require_once 'CRM/Core/Component.php';
         $properties = CRM_Core_Component::contactSubTypeProperties( $contact_sub_type, 'Edit' );
         if( $properties ) {
             $wrapper->run( $properties['class'], ts('New %1', array(1 => $contact_sub_type)), $action, true );
@@ -361,7 +349,6 @@ class CRM_Core_Invoke
             } 
         } 
 
-        require_once 'CRM/Profile/Page/Listings.php';
         $page = new CRM_Profile_Page_Listings( );
         return $page->run( );
     }

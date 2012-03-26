@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/BAO/UFGroup.php';
-require_once 'CRM/Profile/Form.php';
 
 /**
  * This class generates form components for processing a ontribution 
@@ -216,14 +213,12 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         if ( $this->_userID ) {
             $this->_mid = CRM_Utils_Request::retrieve( 'mid', 'Positive', $this );
             if ( $this->_mid ) {
-                require_once 'CRM/Member/DAO/Membership.php';
                 $membership = new CRM_Member_DAO_Membership( );
                 $membership->id = $this->_mid;
                 
                 if ( $membership->find(true) ) {
                     $this->_defaultMemTypeId = $membership->membership_type_id;
                     if ( $membership->contact_id != $this->_userID ) {
-                        require_once 'CRM/Contact/BAO/Relationship.php';
                         $employers = 
                             CRM_Contact_BAO_Relationship::getPermissionedEmployer( $this->_userID );
                         if ( array_key_exists($membership->contact_id, $employers) ) {
@@ -267,7 +262,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $this->_values = array( );
             $this->_fields = array( );
 
-            require_once 'CRM/Contribute/BAO/ContributionPage.php';
             CRM_Contribute_BAO_ContributionPage::setValues( $this->_id, $this->_values );
 
             // check if form is active
@@ -300,7 +294,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 }
                 
                 $ppIds = explode( CRM_Core_DAO::VALUE_SEPARATOR, $ppID );
-                require_once 'CRM/Core/BAO/PaymentProcessor.php';
                 $this->_paymentProcessors = CRM_Core_BAO_PaymentProcessor::getPayments( $ppIds,
                                                                                         $this->_mode );
                 if ( !CRM_Utils_System::isNull( $this->_paymentProcessors ) ) {
@@ -324,7 +317,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
 
             // get price info
             // CRM-5095
-            require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::initSet( $this, $this->_id, 'civicrm_contribution_page' );
             
             // this avoids getting E_NOTICE errors in php
@@ -340,11 +332,9 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             
             //check if Membership Block is enabled, if Membership Fields are included in profile
             //get membership section for this contribution page
-            require_once 'CRM/Member/BAO/Membership.php';
             $this->_membershipBlock = CRM_Member_BAO_Membership::getMembershipBlock( $this->_id );
             $this->set( 'membershipBlock', $this->_membershipBlock );
             
-            require_once 'CRM/Core/BAO/UFField.php';
             if ( $this->_values['custom_pre_id'] ) {
                 $preProfileType  = CRM_Core_BAO_UFField::getProfileType( $this->_values['custom_pre_id'] );
             }
@@ -359,7 +349,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 CRM_Core_Error::fatal( ts('This page includes a Profile with Membership fields - but the Membership Block is NOT enabled. Please notify the site administrator.') );
             }
             
-            require_once 'CRM/Pledge/BAO/PledgeBlock.php';
             $pledgeBlock = CRM_Pledge_BAO_PledgeBlock::getPledgeBlock( $this->_id );
 
             if ( $pledgeBlock ) {
@@ -386,7 +375,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $this->set( 'fields', $this->_fields );
         }
         
-        require_once 'CRM/PCP/BAO/PCP.php';
         // Handle PCP
         $pcpId = CRM_Utils_Request::retrieve( 'pcpId', 'Positive', $this );
         if ( $pcpId ) {
@@ -411,7 +399,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         }
         
         // check if one of the (amount , membership)  bloks is active or not
-        require_once 'CRM/Member/BAO/Membership.php';
         $this->_membershipBlock = $this->get( 'membershipBlock' );
 
         if ( ! $this->_values['amount_block_is_active'] &&
@@ -543,7 +530,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $addressFields[$n] = CRM_Utils_Array::value( 'billing_' . $part, $this->_params );
         }
 
-        require_once 'CRM/Utils/Address.php';
         $this->assign('address', CRM_Utils_Address::format($addressFields));
         
         if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $this->_params ) ) {
@@ -650,7 +636,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 
                 $fields = array_diff_assoc( $fields, $this->_fields );
                                 
-                require_once 'CRM/Core/BAO/Address.php';
                 CRM_Core_BAO_Address::checkContactSharedAddressFields( $fields, $contactID );
                 $addCaptcha = false;
                 foreach($fields as $key => $field) {
@@ -688,12 +673,10 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 
                 $this->assign( $name, $fields );
 
-                require_once 'CRM/Core/BAO/Address.php';
                 CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
 
                 if ( $addCaptcha &&
                      ! $viewOnly ) {
-                    require_once 'CRM/Utils/ReCAPTCHA.php';
                     $captcha = CRM_Utils_ReCAPTCHA::singleton( );
                     $captcha->add( $this );
                     $this->assign( 'isCaptcha', true );
@@ -744,7 +727,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         CRM_Core_DAO::commonRetrieve('CRM_Pledge_DAO_Pledge', $pledgeParams, $pledgeValues, $returnProperties );
         
         //get all status
-        require_once 'CRM/Contribute/PseudoConstant.php';
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $validStatus = array( array_search( 'Pending', $allStatus ), 
                               array_search( 'In Progress', $allStatus ),
@@ -757,7 +739,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $validUser = true;
         } else if ( $userChecksum && $pledgeValues['contact_id'] ) {
             //check for anonymous user.
-            require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $validUser = CRM_Contact_BAO_Contact_Utils::validChecksum( $pledgeValues['contact_id'], $userChecksum );
 
             //make sure cid is same as pledge contact id
@@ -790,12 +771,10 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $recurId  = CRM_Utils_Request::retrieve( 'recurId', 'Positive', CRM_Core_DAO::$_nullObject );
             //clean db for recurring contribution.
             if ( $isRecur && $recurId ) {
-                require_once 'CRM/Contribute/BAO/ContributionRecur.php';
                 CRM_Contribute_BAO_ContributionRecur::deleteRecurContribution( $recurId );
             }
             $contribId = CRM_Utils_Request::retrieve( 'contribId', 'Positive', CRM_Core_DAO::$_nullObject );
             if ( $contribId ) {
-                require_once 'CRM/Contribute/BAO/Contribution.php';
                 CRM_Contribute_BAO_Contribution::deleteContribution( $contribId );
             }
         }

@@ -34,10 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
-require_once 'CRM/Upgrade/Form.php';
-require_once 'CRM/Core/BAO/Domain.php';
-require_once 'CRM/Utils/System.php';
 
 class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     function preProcess( ) {
@@ -114,7 +110,6 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
             if ( $latestVer == '3.2.alpha1' ) {
                 $postUpgradeMessage .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
             } else if ( $latestVer == '3.2.beta3' && ( version_compare($currentVer, '3.1.alpha1') >= 0 ) ) {
-                require_once 'CRM/Contact/BAO/ContactType.php';
                 $subTypes = CRM_Contact_BAO_ContactType::subTypes( );
                                 
                 if ( is_array( $subTypes ) && !empty( $subTypes ) ) {
@@ -290,7 +285,6 @@ SELECT  count( id ) as statusCount
 
     function upgrade_2_2_alpha1( $rev ) {
         for ( $stepID = 1; $stepID <= 4; $stepID++ ) {
-            require_once "CRM/Upgrade/TwoTwo/Form/Step{$stepID}.php";
             $formName = "CRM_Upgrade_TwoTwo_Form_Step{$stepID}";
             eval( "\$form = new $formName( );" );
             
@@ -329,7 +323,6 @@ SELECT  count( id ) as statusCount
     }
 
     function upgrade_2_1_2( $rev ) {
-        require_once "CRM/Upgrade/TwoOne/Form/TwoOneTwo.php";
         $formName = "CRM_Upgrade_TwoOne_Form_TwoOneTwo";
         eval( "\$form = new $formName( '$rev' );" );
         
@@ -399,7 +392,6 @@ SELECT  count( id ) as statusCount
     
     function upgrade_3_0_alpha1( $rev ) {
 
-        require_once 'CRM/Upgrade/ThreeZero/ThreeZero.php';
         $threeZero = new CRM_Upgrade_ThreeZero_ThreeZero( );
         
         $error = null;
@@ -415,7 +407,6 @@ SELECT  count( id ) as statusCount
 
     function upgrade_3_1_alpha1( $rev ) {
 
-        require_once 'CRM/Upgrade/ThreeOne/ThreeOne.php';
         $threeOne = new CRM_Upgrade_ThreeOne_ThreeOne( );
         
         $error = null;
@@ -437,7 +428,6 @@ SELECT  count( id ) as statusCount
         CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray );
 
         // make report component enabled by default
-        require_once "CRM/Core/DAO/Domain.php";
         $domain = new CRM_Core_DAO_Domain();
         $domain->selectAdd( );
         $domain->selectAdd( 'config_backend' );
@@ -452,7 +442,6 @@ SELECT  count( id ) as statusCount
                     $defaults['enableComponents'][]   = 'CiviReport';
                     $defaults['enableComponentIDs'][] = $compId;
 
-                    require_once "CRM/Core/BAO/ConfigSetting.php";
                     CRM_Core_BAO_ConfigSetting::add($defaults);            
                 }
             }
@@ -462,7 +451,6 @@ SELECT  count( id ) as statusCount
     function upgrade_3_0_2( $rev ) {
         
         $template = CRM_Core_Smarty::singleton( );
-        require_once 'CRM/Core/OptionGroup.php';
         //check whether upgraded from 2.1.x or 2.2.x 
         $inboundEmailID = CRM_Core_OptionGroup::getValue('activity_type', 'Inbound Email', 'name' );
        
@@ -523,7 +511,6 @@ SELECT  count( id ) as statusCount
 
     function upgrade_3_1_3 ( $rev ) 
     {     
-        require_once 'CRM/Upgrade/ThreeOne/ThreeOne.php';
         $threeOne = new CRM_Upgrade_ThreeOne_ThreeOne( );
         $threeOne->upgrade_3_1_3( );
         
@@ -533,7 +520,6 @@ SELECT  count( id ) as statusCount
 
     function upgrade_3_1_4 ( $rev ) 
     {     
-        require_once 'CRM/Upgrade/ThreeOne/ThreeOne.php';
         $threeOne = new CRM_Upgrade_ThreeOne_ThreeOne( );
         $threeOne->upgrade_3_1_4( );
         

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
 
 /**
  * This class generates form components for Activity Links
@@ -55,9 +54,7 @@ class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form
         $letterTypeId = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                         'Print PDF Letter',
                                                         'name' );
-        require_once 'CRM/Utils/Mail.php';
         if ( CRM_Utils_Mail::validOutBoundMail() && $contactId ) { 
-            require_once 'CRM/Contact/BAO/Contact.php';
             list( $name, $email, $doNotEmail, $onHold, $isDeseased ) = CRM_Contact_BAO_Contact::getContactDetails( $contactId );
             if ( !$doNotEmail && $email && !$isDeseased ) {
                 $activityTypes = array( $emailTypeId => ts('Send an Email') );

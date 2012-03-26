@@ -118,7 +118,6 @@ class CRM_Utils_File {
                 $docLink = CRM_Utils_System::docURL2( 'Moving an Existing Installation to a New Server or Location', false, 'Moving an Existing Installation to a New Server or Location' );
                 echo "Error: Could not create directory: $path.<p>If you have moved an existing CiviCRM installation from one location or server to another there are several steps you will need to follow. They are detailed on this CiviCRM wiki page - {$docLink}. A fix for the specific problem that caused this error message to be displayed is to set the value of the config_backend column in the civicrm_domain table to NULL. However we strongly recommend that you review and follow all the steps in that document.</p>";
 
-                require_once 'CRM/Utils/System.php';
                 CRM_Utils_System::civiExit( );
             } else {
                 return false;
@@ -186,7 +185,6 @@ class CRM_Utils_File {
      * @access public
      */
     static function toUtf8( $name ) {
-        require_once 'CRM/Core/Config.php';
         static $config         = null;
         static $legacyEncoding = null;
         if ($config == null) {
@@ -272,15 +270,12 @@ class CRM_Utils_File {
     static function isExtensionSafe( $ext ) {
         static $extensions = null;
         if ( ! $extensions ) {
-            require_once 'CRM/Core/OptionGroup.php';
             $extensions = CRM_Core_OptionGroup::values( 'safe_file_extension', true );
             
             //make extensions to lowercase
             $extensions = array_change_key_case( $extensions, CASE_LOWER );
             // allow html/htm extension ONLY if the user is admin 
             // and/or has access CiviMail
-            require_once 'CRM/Mailing/Info.php';
-            require_once 'CRM/Core/Permission.php';
             if ( ! ( CRM_Core_Permission::check( 'access CiviMail' ) ||
                      CRM_Core_Permission::check( 'administer CiviCRM' ) ||
                      ( CRM_Mailing_Info::workflowEnabled( ) && 
@@ -368,7 +363,6 @@ class CRM_Utils_File {
 HTACCESS;
             $file = $dir . '.htaccess';
             if (file_put_contents($file, $htaccess) === false) {
-                require_once 'CRM/Core/Error.php';
                 CRM_Core_Error::movedSiteError($file);
             }
         }

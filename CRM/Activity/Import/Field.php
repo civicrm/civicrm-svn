@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Utils/Type.php';
 
 
 class CRM_Activity_Import_Field 

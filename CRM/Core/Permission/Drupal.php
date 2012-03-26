@@ -100,7 +100,6 @@ class CRM_Core_Permission_Drupal {
                 self::$_viewPermissionedGroups[$groupKey] = $groups;
             }
 
-            require_once 'CRM/ACL/API.php';
 
             $ids = CRM_ACL_API::group( CRM_Core_Permission::VIEW, null, 'civicrm_saved_search', $groups );
             foreach ( array_values( $ids ) as $id ) {
@@ -158,7 +157,6 @@ class CRM_Core_Permission_Drupal {
                     $group     = new CRM_Contact_DAO_Group( );
                     $group->id = $id;
                     if ( $group->find( true ) && $group->saved_search_id ) {
-                        require_once 'CRM/Contact/BAO/SavedSearch.php';
                         $clause    = CRM_Contact_BAO_SavedSearch::whereClause( $group->saved_search_id,
                                                                                $tables,
                                                                                $whereTables );
@@ -190,7 +188,6 @@ class CRM_Core_Permission_Drupal {
                     $group     = new CRM_Contact_DAO_Group( );
                     $group->id = $id;
                     if ( $group->find( true ) && $group->saved_search_id ) {
-                        require_once 'CRM/Contact/BAO/SavedSearch.php';
                         $clause    = CRM_Contact_BAO_SavedSearch::whereClause( $group->saved_search_id,
                                                                                $tables,
                                                                                $whereTables );
@@ -260,7 +257,6 @@ class CRM_Core_Permission_Drupal {
             $session = CRM_Core_Session::singleton( );
             $isAdmin = $session->get( 'ufID' ) == 1 ? true : false;
         }
-        require_once 'CRM/ACL/API.php';
         return ( $isAdmin) ? true : CRM_ACL_API::check( $str, $contactID );
         */
     }

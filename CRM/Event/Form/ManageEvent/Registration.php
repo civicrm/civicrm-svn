@@ -35,10 +35,6 @@
  *
  */
 
-require_once 'CRM/Event/Form/ManageEvent.php';
-require_once 'CRM/Event/BAO/Event.php';
-require_once 'CRM/Core/BAO/UFGroup.php';
-require_once 'CRM/Contact/BAO/ContactType.php';
 
 /**
  * This class generates form components for processing Event  
@@ -116,7 +112,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             $params = array( 'id' => $eventId );
             CRM_Event_BAO_Event::retrieve( $params, $defaults );
             
-            require_once 'CRM/Core/BAO/UFJoin.php';
             $ufJoinParams = array( 'entity_table' => 'civicrm_event',
                                    'module'       => 'CiviEvent',
                                    'entity_id'    => $eventId );
@@ -201,7 +196,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
      */
     function setShowHide( &$defaults) 
     {
-        require_once 'CRM/Core/ShowHideBlocks.php';
         $this->_showHide = new CRM_Core_ShowHideBlocks( array('registration' => 1 ),
                                                          '') ;
         if ( empty($defaults)) {
@@ -281,7 +275,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                           null,
                           array('onclick' => "return showHideByValue('is_multiple_registrations', '', 'additional_profile_pre|additional_profile_post', 'table-row', 'radio', false);"));
 
-        require_once 'CRM/Dedupe/BAO/Rule.php';
         $params           = array( 'level'        => 'Fuzzy',
                                    'contact_type' => 'Individual' );
         $dedupeRuleFields = CRM_Dedupe_BAO_Rule::dedupeRuleFields( $params );
@@ -296,7 +289,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                            array( 'onclick' => "return showRuleFields( " . json_encode( $ruleFields ) ." );" ) );
         $this->assign( 'ruleFields', json_encode( $ruleFields ) );
 
-        require_once 'CRM/Event/PseudoConstant.php';
         $participantStatuses = CRM_Event_PseudoConstant::participantStatus();
         if (in_array('Awaiting approval', $participantStatuses) and in_array('Pending from approval', $participantStatuses) and in_array('Rejected', $participantStatuses)) {
             $this->addElement('checkbox',
@@ -593,7 +585,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                                                                               true );
         }
         
-        require_once 'CRM/Event/BAO/Event.php';
         CRM_Event_BAO_Event::add( $params );
         
         // also update the ProfileModule tables 
@@ -602,7 +593,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                                'entity_table' => 'civicrm_event', 
                                'entity_id'    => $this->_id );
         
-        require_once 'CRM/Core/BAO/UFJoin.php';
 
         // first delete all past entries
         CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );

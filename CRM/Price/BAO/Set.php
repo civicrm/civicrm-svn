@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Price/DAO/Set.php';
-require_once 'CRM/Price/BAO/Field.php';
 
 /**
  * Business object for managing price sets
@@ -219,7 +217,6 @@ WHERE     ct.id = cp.contribution_type_id AND
         // remove from all inactive forms
         $usedBy = self::getUsedBy( $id );
         if ( isset( $usedBy['civicrm_event'] ) ) {
-            require_once 'CRM/Event/DAO/Event.php';
             foreach ( $usedBy['civicrm_event'] as $eventId => $unused ) {
                 $eventDAO = new CRM_Event_DAO_Event( );
                 $eventDAO->id = $eventId;
@@ -262,7 +259,6 @@ WHERE     ct.id = cp.contribution_type_id AND
         }
         unset( $dao );
         
-        require_once 'CRM/Price/DAO/SetEntity.php';
         $dao = new CRM_Price_DAO_SetEntity( );
         // find if this already exists
         $dao->entity_id    = $entityId;
@@ -282,7 +278,6 @@ WHERE     ct.id = cp.contribution_type_id AND
      */
     public static function removeFrom( $entityTable, $entityId ) 
     {
-        require_once 'CRM/Price/DAO/SetEntity.php';
         $dao = new CRM_Price_DAO_SetEntity( );
         $dao->entity_table = $entityTable;
         $dao->entity_id    = $entityId;
@@ -335,9 +330,7 @@ WHERE     ct.id = cp.contribution_type_id AND
     {
         $fid = null;
         
-        require_once 'CRM/Utils/Array.php';
         if ( $oid = CRM_Utils_Array::value( 'oid', $params ) ) {
-            require_once 'CRM/Price/DAO/FieldValue.php';
             $fieldValue     = new CRM_Price_DAO_FieldValue( );
             $fieldValue->id = $oid;
             if ( $fieldValue->find( true ) ) {
@@ -517,7 +510,6 @@ WHERE  id = %1";
                 }
                 
                 if ( $entityId && $entity ) {
-                    require_once 'CRM/Price/BAO/LineItem.php';
                     $form->_values['line_items'] = 
                         CRM_Price_BAO_LineItem::getLineItems( $entityId, $entity );
                 }
@@ -581,7 +573,6 @@ WHERE  id = %1";
         $totalPrice = 0;
         $radioLevel = $checkboxLevel = $selectLevel = $textLevel = array( );
 
-        require_once 'CRM/Price/BAO/LineItem.php';
         foreach ( $fields as $id => $field ) {
             if ( !CRM_Utils_Array::value( "price_{$id}", $params ) || 
                  ( empty( $params["price_{$id}"] ) && $params["price_{$id}"] == null ) ) {
@@ -673,7 +664,6 @@ WHERE  id = %1";
             $displayParticipantCount = ' Participant Count -'.$totalParticipant;
         }
         
-        require_once 'CRM/Core/BAO/CustomOption.php';
         $params['amount_level'] =
             CRM_Core_DAO::VALUE_SEPARATOR .
             implode( CRM_Core_DAO::VALUE_SEPARATOR, $amount_level ) . $displayParticipantCount .
@@ -703,7 +693,6 @@ WHERE  id = %1";
         $priceSet = self::getSetDetail( $priceSetId, true, $validFieldsOnly );
         $form->_priceSet = CRM_Utils_Array::value( $priceSetId, $priceSet );
         $form->assign( 'priceSet',  $form->_priceSet );
-        require_once 'CRM/Core/PseudoConstant.php';
         
         $component = 'contribution';
         if ( $className == 'CRM_Member_Form_Membership') {
@@ -720,7 +709,6 @@ WHERE  id = %1";
         }
        
         // call the hook.
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::buildAmount( $component, $form, $feeBlock );
         
         foreach ( $feeBlock as $field ) {
@@ -757,7 +745,6 @@ WHERE  id = %1";
         }
         static $_contact_memberships = array();
         $checklifetime = false;
-        require_once 'CRM/Member/BAO/Membership.php';
         foreach( $options as $key => $value ) {
             if ( CRM_Utils_Array::value( 'membership_type_id', $value ) ) {
                 if ( !isset($_contact_memberships[$userid][$value['membership_type_id']]) ) {
@@ -865,7 +852,6 @@ WHERE  id = %1";
         }
         $copy->save( );
         
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::copy( 'Set', $copy );
         return $copy;
     }
@@ -1008,7 +994,6 @@ GROUP BY     mt.member_of_contact_id";
     }   
 
     static function eventPriceSetDomainID( ) {
-        require_once 'CRM/Core/BAO/Setting.php';
         return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
                                               'event_price_set_domain_id',
                                               null, false );

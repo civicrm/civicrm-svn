@@ -35,7 +35,6 @@
  */
 
 require_once 'api/api.php';
-require_once 'CRM/Utils/Token.php';
 
 /**
  * This class contains the funtions for Component export
@@ -123,7 +122,6 @@ class CRM_Export_BAO_Export
             $queryMode = CRM_Contact_BAO_Query::MODE_ACTIVITY;
             break;
         }
-        require_once 'CRM/Core/BAO/CustomField.php';
         if ( $fields ) {
             //construct return properties 
             $locationTypes = CRM_Core_PseudoConstant::locationType();
@@ -272,13 +270,11 @@ class CRM_Export_BAO_Export
                 $paymentTableId = 'membership_id';
                 break;
             case CRM_Contact_BAO_Query::MODE_PLEDGE :
-                require_once 'CRM/Pledge/BAO/Query.php';
                 $extraReturnProperties = CRM_Pledge_BAO_Query::extraReturnProperties( $queryMode );
                 $paymentFields  = true;
                 $paymentTableId = 'pledge_payment_id';
                 break;
             case CRM_Contact_BAO_Query::MODE_CASE :
-                require_once 'CRM/Case/BAO/Query.php';
                 $extraReturnProperties = CRM_Case_BAO_Query::extraReturnProperties( $queryMode );
                 break;
             }
@@ -524,11 +520,9 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
         }
 
         //hack for student data
-        require_once 'CRM/Core/OptionGroup.php';
         $multipleSelectFields = array( 'preferred_communication_method' => 1 );
         
         if ( CRM_Core_Permission::access( 'Quest' ) ) { 
-            require_once 'CRM/Quest/BAO/Student.php';
             $studentFields = array( );
             $studentFields = CRM_Quest_BAO_Student::$multipleSelectFields;
             $multipleSelectFields = array_merge( $multipleSelectFields, $studentFields );
@@ -547,7 +541,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                                      );
             
             // get payment related in for event and members
-            require_once 'CRM/Contribute/BAO/Contribution.php';
             $paymentDetails = CRM_Contribute_BAO_Contribution::getContributionDetails( $exportMode, $ids );
             if( !empty( $paymentDetails ) ) $addPaymentHeader = true;
             $nullContributionDetails = array_fill_keys(array_keys($paymentHeaders), null);    
@@ -555,7 +548,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
 
         //get all campaigns.
         if ( $exportCampaign ) {
-            require_once 'CRM/Campaign/BAO/Campaign.php';
             $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
         }
         
@@ -697,7 +689,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
                         } else if ( $field == 'provider_id' || $field == 'im_provider' ) {
                             $fieldValue = CRM_Utils_Array::value( $fieldValue, $imProviders );  
                         } else if ( $field == 'participant_role_id' ) {
-                            require_once 'CRM/Event/PseudoConstant.php';
                             $participantRoles = CRM_Event_PseudoConstant::participantRole( ) ;
                             $sep = CRM_Core_DAO::VALUE_SEPARATOR;
                             $viewRoles = array();
@@ -947,7 +938,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             }
 
             // call export hook
-            require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
             
             // now write the CSV file
@@ -1042,7 +1032,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
     
     function exportCustom( $customSearchClass, $formValues, $order ) 
     {
-        require_once "CRM/Core/Extensions.php";
         $ext = new CRM_Core_Extensions();
         if( ! $ext->isExtensionClass( $customSearchClass ) ) {
             require_once( str_replace( '_', DIRECTORY_SEPARATOR, $customSearchClass ) . '.php' );
@@ -1081,7 +1070,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             $rows[] = $row;
         }
 
-        require_once 'CRM/Core/Report/Excel.php';
         CRM_Core_Report_Excel::writeCSVFile( self::getExportFileName( ), $header, $rows );
         CRM_Utils_System::civiExit( );
     }
@@ -1406,7 +1394,6 @@ WHERE  id IN ( $deleteIDString )
     static function _buildMasterCopyArray( $sql, $exportParams, $sharedAddress = false ) {
         static $contactGreetingTokens = array();
         
-        require_once 'CRM/Core/OptionGroup.php';
         $addresseeOptions = CRM_Core_OptionGroup::values('addressee');
         $postalOptions    = CRM_Core_OptionGroup::values('postal_greeting');
         
@@ -1587,7 +1574,6 @@ GROUP BY civicrm_primary_id ";
 SELECT *
 FROM   $exportTempTable
 ";
-        require_once 'CRM/Core/Report/Excel.php';
         while ( 1 ) {
             $limitQuery = $query . "
 LIMIT $offset, $limit
@@ -1656,7 +1642,6 @@ LIMIT $offset, $limit
 
             // check for supplemental_address_1
             if ( array_key_exists('supplemental_address_1', $sqlColumns) ) {
-                require_once 'CRM/Core/BAO/Setting.php';
                 $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                                       'address_options', true, null, true );
                 if ( CRM_Utils_Array::value( 'supplemental_address_1', $addressOptions ) ) {

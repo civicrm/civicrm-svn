@@ -34,7 +34,6 @@
  *	
  */
 
-require_once 'CRM/Utils/Request.php';
 
 
 class CRM_Utils_REST
@@ -88,8 +87,6 @@ class CRM_Utils_REST
    * @static
    */
   public function authenticate($name, $pass) {
-    require_once 'CRM/Utils/System.php';
-    require_once 'CRM/Core/DAO.php';
 
     $result =& CRM_Utils_System::authenticate($name, $pass);
 
@@ -252,7 +249,6 @@ class CRM_Utils_REST
   }
 
   function handle( ) {
-	require_once 'CRM/Utils/Request.php';
     // Get the function name being called from the q parameter in the query string
     $q = CRM_Utils_array::value( 'q', $_REQUEST );
     // or for the rest interface, from fnName
@@ -298,7 +294,6 @@ class CRM_Utils_REST
       if (empty($key))
         return self::error( "FATAL: mandatory param 'key' missing. More info at: " . $docLink );
     }
-    require_once 'CRM/Utils/Request.php';
 
 
     // At this point we know we are not calling either login or ping (neither of which 
@@ -323,7 +318,6 @@ class CRM_Utils_REST
     // an ajax interface), we need to check to see if they are carring a valid user's 
     // secret key.
     if ( !$valid_user ) {
-      require_once 'CRM/Core/DAO.php';
       $api_key = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
       if (!$api_key) {
         return ("FATAL:mandatory param 'api_key' (user key) missing");
@@ -344,7 +338,6 @@ class CRM_Utils_REST
     
     $params['check_permissions'] = true;
     $fnName = $apiFile = null;
-    require_once 'CRM/Utils/String.php';
     // clean up all function / class names. they should be alphanumeric and _ only
     for ( $i = 1 ; $i <= 3; $i++ ) {
       if ( ! empty( $args[$i] ) ) {
@@ -483,7 +476,6 @@ class CRM_Utils_REST
     // this is driven by the menu system, so we can use permissioning to
     // restrict calls to this etc
     // the request has to be sent by an ajax call. First line of protection against csrf
-    require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton( );
     if ( false &&
          ! $config->debug && 
@@ -547,7 +539,6 @@ class CRM_Utils_REST
       return;
     }
 
-    require_once 'CRM/Core/DAO.php';
     if ( $args[1] == 'login' ) {
       CRM_Utils_System::loadBootStrap( CRM_Core_DAO::$_nullArray, true, false );
       return;
@@ -562,13 +553,11 @@ class CRM_Utils_REST
       }
 
     if ( !$uid ) {
-      require_once 'CRM/Utils/Request.php';
 
       $store      = null;
       $api_key    = CRM_::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
       $contact_id = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
       if ( $contact_id ) {
-        require_once 'CRM/Core/BAO/UFMatch.php';
         $uid = CRM_Core_BAO_UFMatch::getUFId( $contact_id );
       }
     }

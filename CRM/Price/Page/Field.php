@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Create a page for displaying Price Fields.
@@ -124,7 +123,6 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
      */
     function browse()
     {
-        require_once 'CRM/Price/BAO/Field.php';
         $priceField = array();
         $priceFieldBAO = new CRM_Price_BAO_Field();
         
@@ -142,7 +140,6 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
                 $optionValues = array( );
                 $params       = array( 'price_field_id' => $priceFieldBAO->id );
                 
-                require_once 'CRM/Price/BAO/FieldValue.php';
                 CRM_Price_BAO_FieldValue::retrieve($params , $optionValues );
 
                 $priceField[$priceFieldBAO->id]['price'] = CRM_Utils_Array::value( 'amount', $optionValues );
@@ -165,7 +162,6 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
             }
 
             // need to translate html types from the db
-            require_once 'CRM/Price/BAO/Field.php';
             $htmlTypes = CRM_Price_BAO_Field::htmlTypes( );
             $priceField[$priceFieldBAO->id]['html_type'] = $htmlTypes[$priceField[$priceFieldBAO->id]['html_type']];
             $priceField[$priceFieldBAO->id]['order']     = $priceField[$priceFieldBAO->id]['weight'];
@@ -176,7 +172,6 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
 
         $returnURL = CRM_Utils_System::url( 'civicrm/admin/price/field', "reset=1&action=browse&sid={$this->_sid}" );
         $filter    = "price_set_id = {$this->_sid}";
-        require_once 'CRM/Utils/Weight.php';
         CRM_Utils_Weight::addOrder( $priceField, 'CRM_Price_DAO_Field',
                                     'id', $returnURL, $filter );
         $this->assign('priceField', $priceField);
@@ -221,7 +216,6 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
      */
     function run( )
     {
-        require_once 'CRM/Price/BAO/Set.php';
         
         // get the group id
         $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive',
@@ -260,7 +254,6 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
             }
             else {
                 // add breadcrumb
-                require_once 'CRM/Price/BAO/Field.php';
                 $url = CRM_Utils_System::url( 'civicrm/admin/price/field', 'reset=1' );
                 CRM_Utils_System::appendBreadCrumb( ts('Price'),
                                                     $url );
@@ -284,7 +277,6 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
         } else if ($action & CRM_Core_Action::PREVIEW) {
             $this->preview($fid) ;
         } else {
-            require_once 'CRM/Price/BAO/Field.php';
             $this->browse();
         }
 

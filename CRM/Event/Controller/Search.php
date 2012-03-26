@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Controller.php';
-require_once 'CRM/Core/Session.php';
 
 /**
  * This class is used by the Search functionality.
@@ -55,7 +53,6 @@ class CRM_Event_Controller_Search extends CRM_Core_Controller
      */
     function __construct( $title = null, $action = CRM_Core_Action::NONE, $modal = true )
     {
-        require_once 'CRM/Event/StateMachine/Search.php';
         
         parent::__construct( $title, $modal );
         
@@ -64,7 +61,6 @@ class CRM_Event_Controller_Search extends CRM_Core_Controller
         // create and instantiate the pages
         $this->addPages( $this->_stateMachine, $action );
         
-        require_once 'CRM/Core/BAO/File.php';
 
         $session = CRM_Core_Session::singleton( );
         $uploadNames = $session->get( 'uploadNames' );

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/IM.php';
 
 /**
  * This class contain function for IM handling

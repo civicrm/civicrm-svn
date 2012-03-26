@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contact/Form/Search/Custom/Base.php';
 
 class CRM_Contact_Form_Search_Custom_MultipleValues
    extends    CRM_Contact_Form_Search_Custom_Base
@@ -47,7 +46,6 @@ class CRM_Contact_Form_Search_Custom_MultipleValues
     function __construct( &$formValues ) {
         parent::__construct( $formValues );
 
-        require_once 'CRM/Core/BAO/CustomGroup.php';
         $this->_groupTree = CRM_Core_BAO_CustomGroup::getTree( "'Contact', 'Individual', 'Organization', 'Household'",
                                                                CRM_Core_DAO::$_nullObject,
                                                                null, -1 );

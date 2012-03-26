@@ -35,15 +35,11 @@
  */
 
 require_once 'Mail/mime.php';
-require_once 'CRM/Utils/Mail.php';
 
 require_once 'ezc/Base/src/ezc_bootstrap.php';
 require_once 'ezc/autoload/mail_autoload.php';
 
-require_once 'CRM/Mailing/Event/DAO/Reply.php';
 
-require_once 'CRM/Mailing/BAO/Job.php'; 
-require_once 'CRM/Mailing/BAO/Mailing.php';
 
 class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
 
@@ -162,7 +158,6 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
                 $ct = "{$parts[0]} boundary=\"$boundary\"";
             }
         } else {
-            require_once 'CRM/Core/BAO/MailSettings.php';
             $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
 
             if (empty($eq->display_name)) {
@@ -237,11 +232,9 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
 
         $message = new Mail_Mime("\n");
 
-        require_once 'CRM/Core/BAO/Domain.php';        
         $domain = CRM_Core_BAO_Domain::getDomain( );
         list ($domainEmailName, $_) = CRM_Core_BAO_Domain::getNameAndEmail();
 
-        require_once 'CRM/Core/BAO/MailSettings.php';
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
 
         $headers = array(
@@ -260,20 +253,17 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $text = CRM_Utils_String::htmlToText($component->body_html);
         }
         
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         $bao = new CRM_Mailing_BAO_Mailing();
         $bao->body_text = $text;
         $bao->body_html = $html;
         $tokens = $bao->getTokens();
 
         if ($eq->format == 'HTML' ||  $eq->format == 'Both') {
-            require_once 'CRM/Utils/Token.php';
             $html = CRM_Utils_Token::replaceDomainTokens($html, $domain, true, $tokens['html'] );
             $html = CRM_Utils_Token::replaceMailingTokens($html, $mailing, null, $tokens['html']);
             $message->setHTMLBody($html);
         }
         if (!$html || $eq->format == 'Text' ||  $eq->format == 'Both') {
-            require_once 'CRM/Utils/Token.php';
             $text = CRM_Utils_Token::replaceDomainTokens($text, $domain, false, $tokens['text'] );
             $text = CRM_Utils_Token::replaceMailingTokens($text, $mailing, null, $tokens['text']);
             $message->setTxtBody($text);

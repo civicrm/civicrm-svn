@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Mailing/Selector/Browse.php';
-require_once 'CRM/Core/Selector/Controller.php';
-require_once 'CRM/Core/Page.php';
 
 /**
  * This implements the profile page for all contacts. It uses a selector
@@ -97,14 +94,12 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
         $this->_mailingId = CRM_Utils_Request::retrieve( 'mid', 'Positive', $this );
 
         // check that the user has permission to access mailing id
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::checkPermission( $this->_mailingId );
 
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this );
         $this->assign( 'action', $this->_action );
 
         $showLinks = true;
-        require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
             if ( CRM_Core_Permission::check( 'create mailings' ) ) {
                 $archiveLinks = true;
@@ -132,7 +127,6 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
     {
         $this->preProcess();
         if ( isset( $_GET['runJobs'] ) || CRM_Utils_Array::value( '2', $newArgs ) == 'queue' ) {
-            require_once 'CRM/Mailing/BAO/Job.php';
             $config = CRM_Core_Config::singleton();
 
 
@@ -177,7 +171,6 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
         
         if ( $this->_action & CRM_Core_Action::DISABLE ) {                 
             if ( CRM_Utils_Request::retrieve( 'confirmed', 'Boolean', $this ) ) {
-                require_once 'CRM/Mailing/BAO/Job.php';
                 CRM_Mailing_BAO_Job::cancel( $this->_mailingId );
                 CRM_Utils_System::redirect( $context );
             } else {
@@ -195,7 +188,6 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
                     CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
                 }
                 
-                require_once 'CRM/Mailing/BAO/Mailing.php';
                 CRM_Mailing_BAO_Mailing::del( $this->_mailingId );
                 CRM_Utils_System::redirect( $context );
             } else {

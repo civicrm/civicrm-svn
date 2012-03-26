@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Report/Form.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Report_Form_Extended extends CRM_Report_Form {
     protected $_addressField = false;
@@ -234,7 +232,6 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
                    ));
    }
    function getParticipantColumns(){
-     require_once 'CRM/Event/PseudoConstant.php';
      static $_events;
      if ( !isset($_events['all']) ) {
             CRM_Core_PseudoConstant::populate( $_events['all'], 'CRM_Event_DAO_Event', false, 'title', 'is_active', "is_template IS NULL OR is_template = 0", 'end_date DESC' );

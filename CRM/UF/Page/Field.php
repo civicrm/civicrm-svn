@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page.php';
 
 /**
  * Create a page for displaying CiviCRM Profile Fields.
@@ -124,14 +123,12 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         $ufFieldBAO->orderBy( 'weight', 'field_name' );
         $ufFieldBAO->find();
         
-        require_once 'CRM/Core/BAO/UFGroup.php';
         $otherModules =  CRM_Core_BAO_UFGroup::getUFJoinRecord( $this->_gid );
         $this->assign( 'otherModules', $otherModules ); 
         
         $isGroupReserved = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'is_reserved' );
         $this->assign( 'isGroupReserved', $isGroupReserved );
         
-        require_once "CRM/Core/BAO/UFField.php";
         $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
         if ( $profileType == 'Contribution' || $profileType == 'Membership' || $profileType == 'Activity' || $profileType == 'Participant' ) {
             $this->assign( 'skipCreate', true );
@@ -140,13 +137,10 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         $locationType = array( );
         $locationType = CRM_Core_PseudoConstant::locationType();
         
-        require_once 'CRM/Contact/BAO/Contact.php';
         $fields = CRM_Contact_BAO_Contact::exportableFields( 'All', false, true );
-        require_once "CRM/Contribute/BAO/Contribution.php";
         $fields = array_merge( CRM_Contribute_BAO_Contribution::getContributionFields(), $fields );
         
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
-            require_once 'CRM/Quest/BAO/Student.php';
             $fields = array_merge( CRM_Quest_BAO_Student::exportableFields(), $fields );
         }
 
@@ -189,7 +183,6 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         $returnURL = CRM_Utils_System::url( 'civicrm/admin/uf/group/field',
                                             "reset=1&action=browse&gid={$this->_gid}" );
         $filter    = "uf_group_id = {$this->_gid}";
-        require_once 'CRM/Utils/Weight.php';
         CRM_Utils_Weight::addOrder( $ufField, 'CRM_Core_DAO_UFField',
                                     'id', $returnURL, $filter );
         
@@ -244,7 +237,6 @@ class CRM_UF_Page_Field extends CRM_Core_Page
                                                    $this, false, 0 );
 
         if ( $this->_gid ) {
-            require_once 'CRM/Core/BAO/UFGroup.php';
             $groupTitle = CRM_Core_BAO_UFGroup::getTitle( $this->_gid );
             $this->assign( 'gid', $this->_gid );
             $this->assign( 'groupTitle', $groupTitle );
@@ -267,7 +259,6 @@ class CRM_UF_Page_Field extends CRM_Core_Page
         } else if ( $action & CRM_Core_Action::PREVIEW ) {
             $this->preview( $id, $this->_gid );
         } else {
-            require_once 'CRM/Core/BAO/UFField.php';
             $this->browse( );
         }
 

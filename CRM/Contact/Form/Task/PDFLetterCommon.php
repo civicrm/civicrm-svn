@@ -48,7 +48,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
      */
     static function preProcess( &$form ) 
     {
-        require_once 'CRM/Core/BAO/MessageTemplates.php';
         $messageText    = array( );
         $messageSubject = array( );
         $dao = new CRM_Core_BAO_MessageTemplates( );
@@ -69,7 +68,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
     {
         $form->_contactIds = array( $cid );
         // put contact display name in title for single contact mode
-        require_once 'CRM/Contact/Page/View.php';
         CRM_Contact_Page_View::setTitle( $cid );
     }
 
@@ -82,12 +80,10 @@ class CRM_Contact_Form_Task_PDFLetterCommon
      */
     static function buildQuickForm( &$form )
     {
-        require_once 'CRM/Core/BAO/PdfFormat.php';
         $form->add( 'static', 'pdf_format_header', NULL, ts('Page Format') );
         $form->add( 'select', 'format_id', ts( 'Select Format' ),
                      array( 0 => ts( '- default -' ) ) + CRM_Core_BAO_PdfFormat::getList( true ), false,
                      array('onChange' => "selectFormat( this.value, false );") );
-        require_once 'CRM/Core/BAO/PaperSize.php';
         $form->add( 'select', 'paper_size', ts( 'Paper Size' ), 
                      array( 0 => ts( '- default -' ) ) + CRM_Core_BAO_PaperSize::getList( true ), false,
                      array('onChange' => "selectPaper( this.value ); showUpdateFormatChkBox();") );
@@ -111,7 +107,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         $form->assign('useSelectedPageFormat', ts('Should the new template always use the selected Page Format?') );
         $form->assign('totalSelectedContacts',count($form->_contactIds));
 
-        require_once "CRM/Mailing/BAO/Mailing.php";
         CRM_Mailing_BAO_Mailing::commonLetterCompose( $form );
 
         if ( $form->_single ){
@@ -148,7 +143,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
      * Set default values
      */
     static function setDefaultValues( ) {
-        require_once 'CRM/Core/BAO/PdfFormat.php';
         $defaultFormat = CRM_Core_BAO_PdfFormat::getDefaultValues();
         $defaultFormat['format_id'] = $defaultFormat['id'];
         return $defaultFormat;
@@ -192,7 +186,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         $formValues = $form->controller->exportValues( $form->getName( ) );
 
         // process message template
-        require_once 'CRM/Core/BAO/MessageTemplates.php';
         if ( CRM_Utils_Array::value( 'saveTemplate', $formValues ) || CRM_Utils_Array::value( 'updateTemplate', $formValues ) ) {
             $messageTemplate = array( 'msg_text'    => NULL,
                                       'msg_html'    => $formValues['html_message'],
@@ -223,13 +216,11 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         }
         if ( CRM_Utils_Array::value( 'update_format', $formValues ) ) {
-            require_once 'CRM/Core/BAO/PdfFormat.php';
             $bao = new CRM_Core_BAO_PdfFormat();
             $bao->savePdfFormat( $formValues, $formValues['format_id'] );
         }
 
         $html = array();
-        require_once 'CRM/Utils/Token.php';
 
         $tokens = array( );
         CRM_Utils_Hook::tokens( $tokens );
@@ -241,7 +232,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         //from particular letter line, CRM-6798 
         self::formatMessage( $html_message );
 
-        require_once 'CRM/Utils/Token.php';
 		$messageToken = CRM_Utils_Token::getTokens( $html_message );  
 
 		$returnProperties = array();
@@ -254,14 +244,12 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
         }
 
         $skipOnHold   = isset( $form->skipOnHold ) ? $form->skipOnHold : false;
         $skipDeceased = isset( $form->skipDeceased ) ? $form->skipDeceased : true;
 
-        require_once 'CRM/Utils/Token.php';
         foreach ($form->_contactIds as $item => $contactId) {
             $params  = array( 'contact_id'  => $contactId );
             
@@ -291,7 +279,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             $html[] = $tokenHtml;
         }
         
-        require_once 'CRM/Activity/BAO/Activity.php';
         
         $session = CRM_Core_Session::singleton( );
         $userID = $session->get( 'userID' );         
@@ -325,7 +312,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         }
         
         
-        require_once 'CRM/Utils/PDF/Utils.php';
         CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", false, $formValues );
 
         $form->postProcessHook( );

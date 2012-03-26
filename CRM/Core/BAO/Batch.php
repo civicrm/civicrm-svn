@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO/Batch.php';
 
 /**
  *
@@ -53,7 +52,6 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
      */
     static function create( &$params ) {
         if ( ! CRM_Utils_Array::value( 'id', $params ) ) { 
-            require_once 'CRM/Utils/String.php';
             $params['name'] = CRM_Utils_String::titleToVar( $params['title'] );
         }
 

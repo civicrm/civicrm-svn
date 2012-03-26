@@ -200,7 +200,6 @@ fclose($fh);
         $template->assign_by_ref( 'activities', $activities );
        
         if ( $printReport ) {
-            require_once 'CRM/Utils/Date.php';
             $reportDate = CRM_Utils_Date::customFormat( date('Y-m-d H:i') );
             $template->assign( 'reportDate', $reportDate );
             $contents = $template->fetch( 'CRM/Case/Audit/Report.tpl' );

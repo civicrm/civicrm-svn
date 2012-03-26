@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Upgrade/Form.php';
 
 class CRM_Upgrade_TwoTwo_Form_Step3 extends CRM_Upgrade_Form {
     
@@ -138,7 +137,6 @@ SELECT id
         
         if ( $fmaGroupId ) {
             //get domain from email address and name as default value.
-            require_once 'CRM/Core/BAO/Domain.php';
             $domain = CRM_Core_BAO_Domain::getDomain( );
             $domain->selectAdd( );
             $domain->selectAdd( 'email_name', 'email_address' );
@@ -152,7 +150,6 @@ SELECT id
             
             //get the existing from email address.
             
-            require_once 'CRM/Core/OptionValue.php';
             $optionValues = array( );
             $grpParams['name'] = 'from_email_address';
             CRM_Core_OptionValue::getValues( $grpParams, $optionValues );          
@@ -204,7 +201,6 @@ UPDATE  civicrm_option_value
                         
                         //name is unique so drop name value record.
                         //since we transfer this name to found label record.
-                        require_once 'CRM/Core/BAO/OptionValue.php';
                         CRM_Core_BAO_OptionValue::del( $nameValues['id'] );
                     }
                 }
@@ -212,7 +208,6 @@ UPDATE  civicrm_option_value
                 if ( !empty( $updateValues ) ) {
                     $insertEmailAddress = false;
                     //update label/name found record w/ manupulated values.
-                    require_once 'CRM/Core/DAO/OptionValue.php';
                     $updateValues['is_active'] = $updateValues['is_default'] = 1;
                     $optionValue = new CRM_Core_DAO_OptionValue( );
                     $optionValue->copyValues( $updateValues );
@@ -269,8 +264,6 @@ ALTER TABLE `civicrm_domain`
      */
     function mailerPreferences( )
     {
-        require_once "CRM/Core/DAO/Domain.php"; 
-        require_once 'CRM/Core/BAO/Preferences.php';
         
         $mailerValues = array( );
         $mailerFields = array( 'outBound_option', 'smtpServer', 'smtpPort', 'smtpAuth', 

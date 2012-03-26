@@ -33,8 +33,6 @@
  * $Id$
  *
  */
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/PCP/BAO/PCP.php';
 /**
  * This class generates form components for processing a pcp page creati 
  * 
@@ -71,7 +69,6 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
 
     function setDefaultValues( ) 
     {
-        require_once 'CRM/PCP/DAO/PCP.php';
         $dafaults = array( );
         $dao = new CRM_PCP_DAO_PCP( );
         
@@ -82,7 +79,6 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
             }
             // fix the display of the monetary value, CRM-4038
             if (isset($defaults['goal_amount'])) {
-                require_once 'CRM/Utils/Money.php';
                 $defaults['goal_amount'] = CRM_Utils_Money::format($defaults['goal_amount'], null, '%a');
             }
         }
@@ -130,7 +126,6 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
         $attrib = Array ('rows' => 8, 'cols' => 60 );
         $this->addWysiwyg( 'page_text', ts('Your Message'), $attrib ); 
         $maxAttachments = 1; 
-        require_once 'CRM/Core/BAO/File.php';
         CRM_Core_BAO_File::buildAttachment( $this, 'civicrm_pcp', $this->_pageId, $maxAttachments );
         
         $this->addElement( 'checkbox', 'is_thermometer', ts('Progress Bar') );
@@ -227,7 +222,6 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
         
         $params['id'] = $this->_pageId;
 
-        require_once 'CRM/PCP/BAO/PCP.php';
         $pcp = CRM_PCP_BAO_PCP::add( $params, false );
 
 
@@ -254,7 +248,6 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
             } else {
                 $this->assign ( 'mode', 'Add');
             }
-            require_once 'CRM/Core/OptionGroup.php';
             $pcpStatus = CRM_Core_OptionGroup::getLabel( 'pcp_status', $statusId );
             $this->assign( 'pcpStatus', $pcpStatus );
             
@@ -293,11 +286,9 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
             $this->assign( 'managePCPUrl', $managePCPUrl );
             
             //get the default domain email address.
-            require_once 'CRM/Core/BAO/Domain.php';
             list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
             
             if ( !$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG') {
-                require_once 'CRM/Utils/System.php';
                 $fixUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
                 CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in <a href="%1">Administer CiviCRM &raquo; Configure &raquo; Domain Information</a>. The email address used may need to be a valid mail account with your email service provider.', array( 1 => $fixUrl ) ) );
             }
@@ -311,7 +302,6 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
             unset( $emailArray[0] );
             $cc = implode(',', $emailArray );
 
-            require_once 'CRM/Core/BAO/MessageTemplates.php';
             list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
                 array(
                     'groupName' => 'msg_tpl_workflow_contribution',

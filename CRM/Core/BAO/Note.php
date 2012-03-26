@@ -34,7 +34,6 @@
    *
    */
 
-require_once 'CRM/Core/DAO/Note.php';
 
 /**
  * BAO object for crm_note table
@@ -171,17 +170,14 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
         $note->save( );
         
         if ( $note->entity_table == 'civicrm_contact' ) {
-            require_once 'CRM/Core/BAO/Log.php';
             CRM_Core_BAO_Log::register( $note->entity_id,
                                         'civicrm_note',
                                         $note->id );
-            require_once 'CRM/Contact/BAO/Contact.php';
             $displayName = CRM_Contact_BAO_Contact::displayName( $note->entity_id );
             
             $noteActions = false;
             $session     = CRM_Core_Session::singleton( );
             if ( $session->get( 'userID' ) ) {
-                require_once 'CRM/Contact/BAO/Contact/Permission.php';
                 if ( $session->get( 'userID' ) == $note->entity_id ) {
                     $noteActions = true;
                 } else if ( CRM_Contact_BAO_Contact_Permission::allow( $note->entity_id, CRM_Core_Permission::EDIT ) ) {
@@ -200,7 +196,6 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
             }
             
             // add the recently created Note
-            require_once 'CRM/Utils/Recent.php';
             CRM_Utils_Recent::add( $displayName . ' - ' . $note->subject,
                                    CRM_Utils_System::url( 'civicrm/contact/view/note', 
                                                           "reset=1&action=view&cid={$note->entity_id}&id={$note->id}&context=home" ),
@@ -317,7 +312,6 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
         }
         
         // delete the recently created Note
-        require_once 'CRM/Utils/Recent.php';
         foreach ( $recent as $recentId ) {
             $noteRecent = array(
                                 'id'   => $recentId,
@@ -468,8 +462,6 @@ ORDER BY  modified_date desc";
                 CRM_Core_DAO::storeValues( $note, $tree[$note->id] );
                 
                 // get name of user that created this note
-                require_once 'CRM/Contact/DAO/Contact.php';
-                require_once 'CRM/Core/Smarty/plugins/modifier.mb_truncate.php';
                 $contact =  new CRM_Contact_DAO_Contact( );
                 $createdById = $note->contact_id;
                 $contact->id = $createdById;

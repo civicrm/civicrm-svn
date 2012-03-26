@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/ShowHideBlocks.php';
 
 /**
  * form to process actions on the field aspect of Price
@@ -89,7 +87,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
      */
     public function preProcess()
     {
-        require_once 'CRM/Price/BAO/Field.php';
         
         $this->_sid = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this, false, null, 'REQUEST' );
         $this->_fid = CRM_Utils_Request::retrieve( 'fid' , 'Positive', $this, false, null, 'REQUEST' );
@@ -130,11 +127,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form
             if ( $defaults['html_type'] == 'Text' ) {
                 $valueParams = array( 'price_field_id' => $this->_fid );
                 
-                require_once 'CRM/Price/BAO/FieldValue.php';
                 CRM_Price_BAO_FieldValue::retrieve( $valueParams, $defaults );
                 
                 // fix the display of the monetary value, CRM-4038
-                require_once 'CRM/Utils/Money.php';
                 $defaults['price'] = CRM_Utils_Money::format( $defaults['amount'], null, '%a' );
             }
 
@@ -156,7 +151,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         }
 
         if ( $this->_action & CRM_Core_Action::ADD ) {
-            require_once 'CRM/Utils/Weight.php';
             $fieldValues = array( 'price_set_id' => $this->_sid );
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight( 'CRM_Price_DAO_Field', $fieldValues );
             $defaults['options_per_line'] = 1;
@@ -190,11 +184,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         // html_type
         $javascript = 'onchange="option_html_type(this.form)";';
 
-        require_once 'CRM/Price/BAO/Field.php';
         $htmlTypes = CRM_Price_BAO_Field::htmlTypes( );
         
         // Text box for Participant Count for a field
-        require_once 'CRM/Core/Component.php';
 
         $eventComponentId = CRM_Core_Component::getComponentID( 'CiviEvent' );
         $memberComponentId = CRM_Core_Component::getComponentID( 'CiviMember' );
@@ -265,7 +257,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 // description 
                 //$this->add('textArea', 'option_description['.$i.']', ts('Description'), array('rows' => 1, 'cols' => 40 ));
             } else if ( in_array( $memberComponentId, $this->_extendComponentId ) ) {
-                require_once 'CRM/Member/PseudoConstant.php';
                 $membershipTypes = CRM_Member_PseudoConstant::membershipType();
                 $js =  array( 'onchange'  => "calculateRowValues( $i );");
                 
@@ -334,7 +325,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                                 )
                           );
         // is public?
-        require_once 'CRM/Core/PseudoConstant.php';
         $this->add( 'select', 'visibility_id', ts('Visibility'), CRM_Core_PseudoConstant::visibility( ) );
 
         // add a form rule to check default value
@@ -482,7 +472,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
                 }
                 
                 if( !empty( $memTypesIDS ) ){
-                    require_once 'CRM/Member/BAO/MembershipType.php';
                     $foundDuplicate = false;
                     $orgIds = array();
                     foreach( $memTypesIDS as $key => $val ) { 
@@ -563,7 +552,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         // need the FKEY - price set id
         $params['price_set_id'] = $this->_sid;
         
-        require_once 'CRM/Utils/Weight.php';
         if ($this->_action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
             $fieldValues = array( 'price_set_id' => $this->_sid );
             $oldWeight   = null;

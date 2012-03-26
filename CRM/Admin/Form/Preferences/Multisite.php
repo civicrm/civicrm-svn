@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Admin/Form/Preferences.php';
 
 /**
  * This class generates form components for multi site preferences
@@ -43,7 +42,6 @@ require_once 'CRM/Admin/Form/Preferences.php';
 class CRM_Admin_Form_Preferences_Multisite extends CRM_Admin_Form_Preferences
 {
     function preProcess( ) {
-        require_once 'CRM/Utils/System.php';
         $msDoc = CRM_Utils_System::docURL2( 'Multi Site Installation' );
         CRM_Utils_System::setTitle(ts('Multi Site Settings'));
         $this->_varNames = 

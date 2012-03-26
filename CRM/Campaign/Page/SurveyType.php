@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
 
 /**
  * Page for displaying list of Gender
@@ -166,7 +165,6 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
      */
     function browse()
     {
-        require_once 'CRM/Core/OptionValue.php';
 
         $campaingCompId = CRM_Core_Component::getComponentID('CiviCampaign');
         $groupParams    = array( 'name' => $this->_gName );
@@ -181,7 +179,6 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
         $returnURL = CRM_Utils_System::url( "civicrm/admin/campaign/surveyType",
                                             "reset=1" );
         $filter    = "option_group_id = " . $this->_gid;
-        require_once 'CRM/Utils/Weight.php';
         CRM_Utils_Weight::addOrder( $optionValues, 'CRM_Core_DAO_OptionValue',
                                     'id', $returnURL, $filter );
         $this->assign('rows', $optionValues);

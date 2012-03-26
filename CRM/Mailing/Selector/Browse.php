@@ -34,12 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/Selector/Base.php';
-require_once 'CRM/Core/Selector/API.php';
-require_once 'CRM/Utils/Pager.php';
-require_once 'CRM/Utils/Sort.php';
-require_once 'CRM/Contact/BAO/Contact.php';
 
 /**
  * This class is used to browse past mailings.
@@ -116,8 +110,6 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
      */
     function &getColumnHeaders( $action = null, $output = null ) 
     {
-        require_once 'CRM/Mailing/BAO/Mailing.php';
-        require_once 'CRM/Mailing/BAO/Job.php';
         $mailing = CRM_Mailing_BAO_Mailing::getTableName();
         $job = CRM_Mailing_BAO_Job::getTableName();
         if ( ! isset( self::$_columnHeaders ) ) {
@@ -177,7 +169,6 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
                                                 )
                                           );
             
-            require_once 'CRM/Campaign/BAO/Campaign.php';
             if ( CRM_Campaign_BAO_Campaign::isCampaignEnable( ) ) {
                 self::$_columnHeaders[] = array( 'name' => ts('Campaign'),
                                                  'sort' => 'campaign_id',
@@ -200,8 +191,6 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
      */
     function getTotalCount( $action )
     {
-        require_once 'CRM/Mailing/BAO/Job.php';
-        require_once 'CRM/Mailing/BAO/Mailing.php';
         $job        = CRM_Mailing_BAO_Job::getTableName( );
         $mailing    = CRM_Mailing_BAO_Mailing::getTableName( );
         $mailingACL = CRM_Mailing_BAO_Mailing::mailingACL( );
@@ -291,7 +280,6 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
 
         $allAccess = true;
         $workFlow = $showApprovalLinks = $showScheduleLinks = $showCreateLinks = false;
-        require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
             $allAccess = false;
             $workFlow  = true;
@@ -329,7 +317,6 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         $searchMailings = $mailing->searchMailingIDs( );
         
         //check for delete CRM-4418
-        require_once 'CRM/Core/Permission.php'; 
         $allowToDelete = CRM_Core_Permission::check( 'delete in CiviMail' );
         
         if ( $output != CRM_Core_Selector_Controller::EXPORT ) {
@@ -454,7 +441,6 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
             }
         }
 
-        require_once 'CRM/Utils/Date.php';
 
         $from = $this->_parent->get( 'mailing_from' );
         if ( ! CRM_Utils_System::isNull( $from ) ) {
@@ -548,7 +534,6 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
 
     function pagerAtoZ( )
     {
-        require_once 'CRM/Utils/PagerAToZ.php';
         
         $params      = array( );
         $whereClause = $this->whereClause( $params, false );

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/DAO/ContributionPage.php';
 
 /**
  * This class contains Contribution Page related functions.
@@ -79,13 +78,11 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         CRM_Core_DAO::commonRetrieve( 'CRM_Contribute_DAO_ContributionPage', $params, $values );
 
         // get the amounts and the label
-        require_once 'CRM/Core/OptionGroup.php';  
         $values['amount'] = array( );
         CRM_Core_OptionGroup::getAssoc( "civicrm_contribution_page.amount.{$id}", 
                                         $values['amount'], true );
 
         // get the profile ids
-        require_once 'CRM/Core/BAO/UFJoin.php'; 
         $ufJoinParams = array( 'module'       => 'CiviContribute',
                                'entity_table' => 'civicrm_contribution_page',   
                                'entity_id'    => $id );   
@@ -120,7 +117,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
      */
     static function sendMail( $contactID, &$values, $isTest = false, $returnMessageText = false, $fieldTypes = null ) 
     {
-        require_once 'CRM/Core/BAO/UFField.php';
         $gIds = $params = array( );
         $email = null;
         if ( isset( $values['custom_pre_id'] ) ) {
@@ -163,7 +159,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         }
         if ( ! $returnMessageText && !empty( $gIds ) ) {
             //send notification email if field values are set (CRM-1941)
-            require_once 'CRM/Core/BAO/UFGroup.php';
             foreach ( $gIds as $key => $gId ) {
                 if ( $gId ) {
                     $email = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gId, 'notify' );
@@ -187,12 +182,10 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             } else {
                 // presence of related contact implies onbehalf of org case, 
                 // where location type is set to default. 
-                require_once 'CRM/Core/BAO/LocationType.php';
                 $locType = CRM_Core_BAO_LocationType::getDefault();
                 $billingLocationTypeId = $locType->id;
             }
 
-            require_once 'CRM/Contact/BAO/Contact/Location.php';
             if ( !array_key_exists('related_contact', $values) ) {
                 list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID, false, $billingLocationTypeId );
             }
@@ -202,7 +195,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             }
             
             if ( empty( $displayName ) ) {
-                require_once 'CRM/Contact/BAO/Contact.php';
                 $displayName = CRM_Contact_BAO_Contact::displayName( $contactID );
             }
             
@@ -213,7 +205,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             //If profile GROUP contain the Individual type then consider the
             //profile is of Individual ( including the custom data of membership/contribution )
             //IF Individual type not present in profile then it is consider as Organization data.
-            require_once 'CRM/Core/BAO/UFGroup.php';
             $userID = $contactID;
             if ( $preID = CRM_Utils_Array::value( 'custom_pre_id', $values ) ) {
                 if ( CRM_Utils_Array::value( 'related_contact', $values ) ) {
@@ -237,7 +228,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 self::buildCustomDisplay( $postID, 'customPost', $userID, $template, $params['custom_post_id'] );
             }
 
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $title = isset($values['title']) ? $values['title'] : CRM_Contribute_PseudoConstant::contributionPage($values['contribution_page_id']);
 
             // set email in the template here
@@ -291,7 +281,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 $tplParams['onBehalfName']  = $displayName;
                 $tplParams['onBehalfEmail'] = $email;
 
-                require_once 'CRM/Core/BAO/UFJoin.php'; 
                 $ufJoinParams    = array( 'module'       => 'onBehalf',
                                           'entity_table' => 'civicrm_contribution_page',   
                                           'entity_id'    => $values['id'] );   
@@ -312,7 +301,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             	'PDFFilename' => 'receipt.pdf',
             );
 
-            require_once 'CRM/Core/BAO/MessageTemplates.php';
 
             if ( $returnMessageText ) {
                 list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
@@ -382,14 +370,12 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 $receiptFromName  = $value[$pageID]['receipt_from_name'];
                 $receiptFromEmail = $value[$pageID]['receipt_from_email']; 
             } else {
-                require_once 'CRM/Core/BAO/Domain.php';
                 $domainValues = CRM_Core_BAO_Domain::getNameAndEmail( );
                 $receiptFrom      = "$domainValues[0] <$domainValues[1]>";
                 $receiptFromName  = $domainValues[0];
                 $receiptFromEmail = $domainValues[1];
             }
             
-            require_once 'CRM/Contact/BAO/Contact/Location.php';
             list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID, false );
             $templatesParams = array( 'groupName' => 'msg_tpl_workflow_contribution',
                                       'valueName' => 'contribution_recurring_notify',
@@ -410,7 +396,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                                       'toEmail' => $email,
                                       );
             
-            require_once 'CRM/Core/BAO/MessageTemplates.php';
             list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate( $templatesParams );
             
             if ($sent) {
@@ -437,7 +422,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
     function buildCustomDisplay( $gid, $name, $cid, &$template, &$params, $fieldTypes = null ) 
     {
         if ( $gid ) {
-            require_once 'CRM/Core/BAO/UFGroup.php';
             if ( CRM_Core_BAO_UFGroup::filterUFGroups($gid, $cid) ){
                 $values = array( );
                 $groupTitle = null;
@@ -511,7 +495,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         
         
         //copy option group and values 
-        require_once 'CRM/Core/BAO/OptionGroup.php';
         $copy->default_amount_id = CRM_Core_BAO_OptionGroup::copyValue('contribution', 
                                                                        $id, 
                                                                        $copy->id, 
@@ -549,7 +532,6 @@ WHERE entity_table = 'civicrm_contribution_page'
         
         $copy->save( );
         
-        require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::copy( 'ContributionPage', $copy );
 
         return $copy;

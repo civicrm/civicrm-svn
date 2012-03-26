@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/DAO.php';
 
 /**
  * This class acts like a psuedo-BAO for transient import job tables
@@ -242,7 +241,6 @@ class CRM_Import_ImportJob {
             }
         }
         
-        require_once 'CRM/Import/Parser/Contact.php';
         $this->_parser = new CRM_Import_Parser_Contact( 
             $this->_mapperKeys, 
             $this->_mapperLocTypes,
@@ -356,7 +354,6 @@ class CRM_Import_ImportJob {
                                'is_selectable' => true,
                                'used_for'      => 'civicrm_contact' 
                                );
-            require_once 'CRM/Core/BAO/Tag.php';
             $id = array();
             $addedTag = CRM_Core_BAO_Tag::add($tagParams,$id);
             $this->_tag[$addedTag->id] = 1;
@@ -365,7 +362,6 @@ class CRM_Import_ImportJob {
 
         if ( is_array($this->_tag) ) {
             $tagAdditions = array();
-            require_once "CRM/Core/BAO/EntityTag.php";
             foreach ($this->_tag as $tagId =>$val) {
                 $addTagCount = CRM_Core_BAO_EntityTag::addEntitiesToTag( $contactIds, $tagId );
                 $totalTagCount = $addTagCount[1];

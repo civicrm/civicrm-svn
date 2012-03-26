@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Core/BAO/CustomGroup.php';
 /**
  * This class is to build the form for Deleting Group
  */
@@ -136,7 +134,6 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
     }
 
     static function formRule( $fields, $files, $self) {
-        require_once 'CRM/Core/BAO/CustomField.php';
         $self->_dstGID = $fields['dst_group_id'];
         $tmp = CRM_Core_BAO_CustomField::_moveFieldValidate( $self->_srcFID, $self->_dstGID );
         $errors = array();
@@ -151,7 +148,6 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
      * @access public
      */
     public function postProcess( ) {
-        require_once 'CRM/Core/BAO/CustomField.php';
         CRM_Core_BAO_CustomField::moveField( $this->_srcFID, $this->_dstGID );
         
         $dstGroup  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',

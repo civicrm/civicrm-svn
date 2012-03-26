@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/ContributionBase.php';
 
 /**
  * form for thank-you / success page - 3rd step of online contribution process
@@ -108,7 +107,6 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         $this->assign('receiptFromEmail', CRM_Utils_Array::value( 'receipt_from_email', $this->_values ) );
         
         if ( $productID ) {
-            require_once 'CRM/Contribute/BAO/Premium.php';  
             CRM_Contribute_BAO_Premium::buildPremiumBlock( $this , $this->_id ,false ,$productID, $option);
         }
         
@@ -125,7 +123,6 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
             $this->assign( 'honor_block_is_active', $honor_block_is_active );
             $this->assign( 'honor_block_title', CRM_Utils_Array::value( 'honor_block_title', $this->_values ) );
           
-            require_once "CRM/Core/PseudoConstant.php";
             $prefix = CRM_Core_PseudoConstant::individualPrefix();
             $honor  = CRM_Core_PseudoConstant::honor( );             
             $this->assign( 'honor_type',       $honor[$params["honor_type_id"]] );
@@ -167,7 +164,6 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         $this->buildCustom( $this->_values['custom_pre_id'] , 'customPre' , true );
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost', true );
         if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $params ) ) {
-            require_once 'CRM/Core/BAO/UFJoin.php'; 
             $ufJoinParams    = array( 'module'       => 'onBehalf',
                                       'entity_table' => 'civicrm_contribution_page',   
                                       'entity_id'    => $this->_id );   
@@ -175,7 +171,6 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
             $profileId       = $OnBehalfProfile[0];
 
             $fieldTypes = array( 'Contact', 'Organization' );
-            require_once 'CRM/Contact/BAO/ContactType.php';
             $contactSubType = CRM_Contact_BAO_ContactType::subTypes( 'Organization' );
             $fieldTypes = array_merge( $fieldTypes, $contactSubType );
             if ( is_array( $this->_membershipBlock ) && !empty( $this->_membershipBlock ) ) {
@@ -196,7 +191,6 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         $defaults = array();
         $options = array( );
         $fields = array( );
-        require_once "CRM/Core/BAO/CustomGroup.php";
         $removeCustomFieldTypes = array ('Contribution');
         foreach ( $this->_fields as $name => $dontCare ) {
             if ( $name == 'onbehalf' ) {
@@ -231,7 +225,6 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
 
         $this->_submitValues = array_merge( $this->_submitValues, $defaults );
         $this->setDefaults( $defaults );
-        require_once 'CRM/Friend/BAO/Friend.php';
         $values['entity_id'] = $this->_id;
         $values['entity_table'] = 'civicrm_contribution_page';
         

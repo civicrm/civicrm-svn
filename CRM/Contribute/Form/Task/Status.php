@@ -33,8 +33,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form/Task.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 
 /**
  * This class provides the functionality to email a group of
@@ -220,10 +218,8 @@ AND    co.id IN ( $contribIDs )";
         $params = $this->controller->exportValues( $this->_name );
         $statusID = CRM_Utils_Array::value( 'contribution_status_id', $params );
 
-        require_once 'CRM/Core/Payment/BaseIPN.php';
         $baseIPN = new CRM_Core_Payment_BaseIPN( );
 
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
         // get the missing pieces for each contribution
