@@ -400,6 +400,7 @@ WHERE   cas.entity_value = $id AND
             $html = $body_html;
             $text = $body_text;
             
+            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
             $smarty = CRM_Core_Smarty::singleton( );
             foreach( array( 'text', 'html') as $elem) {
