@@ -40,9 +40,10 @@ if ( !in_array($cms, array('drupal', 'joomla')) ) {
 require_once 'Smarty/Smarty.class.php';
 require_once 'PHP/Beautifier.php';
 
-require_once 'CRM/Core/Config.php';
-require_once 'CRM/Core/I18n.php';
-require_once 'CRM/Utils/Tree.php';
+// autoload
+require_once 'CRM/Core/ClassLoader.php';
+$classLoader = new CRM_Core_ClassLoader();
+$classLoader->register();
 
 function createDir( $dir, $perm = 0755 ) {
     if ( ! is_dir( $dir ) ) {
