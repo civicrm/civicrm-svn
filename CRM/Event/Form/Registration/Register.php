@@ -405,6 +405,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             }*/
         }
 
+        $this->_paymentProcessors = $this->get( 'paymentProcessors' );
         if ( !empty ( $this->_paymentProcessors ) && count ( $this->_paymentProcessors ) > 1 ) {
             $pps = $this->_paymentProcessors;
             foreach ( $pps as $key => &$name ){

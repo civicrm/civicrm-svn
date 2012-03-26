@@ -373,7 +373,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                     CRM_Core_BAO_PaymentProcessor::getPayments( $ppIds,
                                                                 $this->_mode );
                 
-                
+                $this->set( 'paymentProcessors', $this->_paymentProcessors );
+
                 // make sure we have a valid payment class, else abort
                 if ( $this->_values['event']['is_monetary'] ) {
                     

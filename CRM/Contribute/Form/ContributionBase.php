@@ -296,6 +296,9 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 $ppIds = explode( CRM_Core_DAO::VALUE_SEPARATOR, $ppID );
                 $this->_paymentProcessors = CRM_Core_BAO_PaymentProcessor::getPayments( $ppIds,
                                                                                         $this->_mode );
+
+                $this->set( 'paymentProcessors', $this->_paymentProcessors );
+
                 if ( !CRM_Utils_System::isNull( $this->_paymentProcessors ) ) {
                     foreach( $this->_paymentProcessors as $eachPaymentProcessor ) {
                         // check selected payment processor is active

@@ -381,6 +381,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
         $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
 
+        $this->_paymentProcessors = $this->get( 'paymentProcessors' );
         if ( !empty ( $this->_paymentProcessors ) && count ( $this->_paymentProcessors ) > 1 ) {
             $pps = $this->_paymentProcessors;
             foreach ( $pps as $key => &$name ){
