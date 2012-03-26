@@ -143,7 +143,7 @@ class civicrm_Cli {
         // CRM-8917 - check if script name starts with /, if not - prepend it.
         if (ord($_SERVER['SCRIPT_NAME']) != 47) $_SERVER['SCRIPT_NAME'] = '/'. $_SERVER['SCRIPT_NAME']; 
 
-        $civicrm_root = dirname(__DIR__);
+        $civicrm_root = dirname( dirname( __FILE__ ) );
         chdir( $civicrm_root );
         require_once('civicrm.config.php');
 
