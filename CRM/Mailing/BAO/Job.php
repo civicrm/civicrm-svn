@@ -503,6 +503,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
+            require_once 'CRM/Core/Smarty/resources/String.php';      
             civicrm_smarty_register_string_resource( );
         }
         
