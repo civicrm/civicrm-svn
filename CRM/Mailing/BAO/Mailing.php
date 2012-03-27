@@ -98,7 +98,7 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
         parent::__construct( );
     }
 
-    function &getRecipientsCount($job_id, $mailing_id = null) 
+    function &getRecipientsCount($job_id, $mailing_id = null, $mode = null) 
     {
         // need this for backward compatibility, so we can get count for old mailings
         // please do not use this function if possible
@@ -111,7 +111,8 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
     function &getRecipients($job_id, $mailing_id = null,
                             $offset = NULL, $limit = NULL,
                             $storeRecipients = false,
-                            $dedupeEmail = false) 
+                            $dedupeEmail = false,
+                            $mode = null) 
     {
         $mailingGroup = new CRM_Mailing_DAO_Group();
         
@@ -123,6 +124,9 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
         $eb         = CRM_Mailing_Event_DAO_Bounce::getTableName();
         
         $email      = CRM_Core_DAO_Email::getTableName();
+        if ( $mode == 'sms' ) {
+            $phone  = CRM_Core_DAO_Phone::getTableName();
+        }
         $contact    = CRM_Contact_DAO_Contact::getTableName();
 
         $group      = CRM_Contact_DAO_Group::getTableName();
@@ -207,10 +211,15 @@ WHERE  c.group_id = {$groupDAO->id}
             $mailingGroup->query($smartGroupExclude);
         }
 
+        $tempColumn = 'email_id';
+        if ( $mode == 'sms' ) {
+            $tempColumn = 'phone_id';
+        }
+
         /* Get all the group contacts we want to include */
         $mailingGroup->query(
             "CREATE TEMPORARY TABLE I_$job_id 
-            (email_id int, contact_id int primary key)
+            ($tempColumn int, contact_id int primary key)
             ENGINE=HEAP"
         );
         
@@ -244,11 +253,41 @@ WHERE  c.group_id = {$groupDAO->id}
                         AND             $mg.mailing_id = {$mailing_id}
                         AND             X_$job_id.contact_id IS null
                     ORDER BY $email.is_bulkmail";
+
+        if ( $mode == 'sms' ) {
+            $phoneTypes = CRM_Core_PseudoConstant::phoneType();
+            $phoneTypes = array_flip($phoneTypes);
+            $query = "REPLACE INTO       I_$job_id (phone_id, contact_id)
+
+                    SELECT DISTINCT     $phone.id as phone_id,
+                                        $contact.id as contact_id
+                    FROM                $phone
+                    INNER JOIN          $contact
+                            ON          $phone.contact_id = $contact.id
+                    INNER JOIN          $g2contact
+                            ON          $contact.id = $g2contact.contact_id
+                    INNER JOIN          $mg
+                            ON          $g2contact.group_id = $mg.entity_id
+                                AND     $mg.entity_table = '$group'
+                    LEFT JOIN           X_$job_id
+                            ON          $contact.id = X_$job_id.contact_id
+                    WHERE           
+                                       ($mg.group_type = 'Include')
+                        AND             $mg.search_id IS NULL
+                        AND             $g2contact.status = 'Added'
+                        AND             $contact.do_not_sms = 0
+                        AND             $contact.is_opt_out = 0
+                        AND             $contact.is_deceased = 0
+                        AND             $phone.phone_type_id = {$phoneTypes['Mobile']}
+                        AND             $phone.phone IS NOT NULL
+                        AND             $phone.phone != ''
+                        AND             $mg.mailing_id = {$mailing_id}
+                        AND             X_$job_id.contact_id IS null";
+        }
         $mailingGroup->query($query);
 
         /* Query prior mailings */
-        $mailingGroup->query(
-                    "REPLACE INTO       I_$job_id (email_id, contact_id)
+        $query =    "REPLACE INTO       I_$job_id (email_id, contact_id)
                     SELECT DISTINCT     $email.id as email_id,
                                         $contact.id as contact_id
                     FROM                $email
@@ -271,8 +310,34 @@ WHERE  c.group_id = {$groupDAO->id}
                         AND             $email.on_hold = 0
                         AND             $mg.mailing_id = {$mailing_id}
                         AND             X_$job_id.contact_id IS null
-                    ORDER BY $email.is_bulkmail");
+                    ORDER BY $email.is_bulkmail";
 
+        if ( $mode == 'sms' ) {
+            $query = 
+                    "REPLACE INTO       I_$job_id (phone_id, contact_id)
+                    SELECT DISTINCT     $phone.id as phone_id,
+                                        $contact.id as contact_id
+                    FROM                $phone
+                    INNER JOIN          $contact
+                            ON          $phone.contact_id = $contact.id
+                    INNER JOIN          $eq
+                            ON          $eq.contact_id = $contact.id
+                    INNER JOIN          $job
+                            ON          $eq.job_id = $job.id
+                    INNER JOIN          $mg
+                            ON          $job.mailing_id = $mg.entity_id AND $mg.entity_table = '$mailing'
+                    LEFT JOIN           X_$job_id
+                            ON          $contact.id = X_$job_id.contact_id
+                    WHERE
+                                       ($mg.group_type = 'Include')
+                        AND             $contact.do_not_sms = 0
+                        AND             $contact.is_opt_out = 0
+                        AND             $contact.is_deceased = 0
+                        AND             $phone.phone_type_id = {$phoneTypes['Mobile']}
+                        AND             $mg.mailing_id = {$mailing_id}
+                        AND             X_$job_id.contact_id IS null";
+        }
+        $mailingGroup->query( $query );
         
         $sql = "
 SELECT     $group.id, $group.cache_date, $group.saved_search_id, $group.children
@@ -309,6 +374,21 @@ WHERE      gc.group_id = {$groupDAO->id}
   AND      X_$job_id.contact_id IS null
 ORDER BY   e.is_bulkmail
 ";
+            if ( $mode == 'sms' ) {
+                $smartGroupInclude = "
+INSERT IGNORE INTO I_$job_id (phone_id, contact_id) 
+SELECT     p.id as phone_id, c.id as contact_id
+FROM       civicrm_contact c
+INNER JOIN civicrm_phone e                ON p.contact_id         = c.id
+INNER JOIN civicrm_group_contact_cache gc ON gc.contact_id        = c.id
+LEFT  JOIN X_$job_id                      ON X_$job_id.contact_id = c.id
+WHERE      gc.group_id = {$groupDAO->id}
+  AND      c.do_not_sms = 0
+  AND      c.is_opt_out = 0
+  AND      c.is_deceased = 0
+  AND      p.phone_type_id = {$phoneTypes['Mobile']}
+  AND      X_$job_id.contact_id IS null";
+            }
             $mailingGroup->query($smartGroupInclude);
         }
 
@@ -326,7 +406,7 @@ AND    $mg.mailing_id = {$mailing_id}
             $customSQL = CRM_Contact_BAO_SearchCustom::civiMailSQL( $dao->search_id,
                                                                     $dao->search_args,
                                                                     $dao->entity_id );
-            $query =    "REPLACE INTO       I_$job_id (email_id, contact_id)
+            $query =    "REPLACE INTO       I_$job_id ({$tempColumn}, contact_id)
                          $customSQL";
             $mailingGroup->query($query);
         }
@@ -356,6 +436,32 @@ AND    $mg.mailing_id = {$mailing_id}
                         AND             $mg.mailing_id = {$mailing_id}
                         AND             X_$job_id.contact_id IS null
                     ORDER BY $email.is_bulkmail";
+        if ( $mode == "sms" ) {
+            $query =    
+                    "REPLACE INTO       I_$job_id (phone_id, contact_id)
+                    SELECT DISTINCT     $phone.id as phone_id,
+                                        $contact.id as contact_id
+                    FROM                $phone
+                    INNER JOIN          $contact
+                            ON          $phone.contact_id = $contact.id
+                    INNER JOIN          $g2contact
+                            ON          $contact.id = $g2contact.contact_id
+                    INNER JOIN          $mg
+                            ON          $g2contact.group_id = $mg.entity_id
+                    LEFT JOIN           X_$job_id
+                            ON          $contact.id = X_$job_id.contact_id
+                    WHERE           
+                                        $mg.entity_table = '$group'
+                        AND             $mg.group_type = 'Include'
+                        AND             $g2contact.status = 'Added'
+                        AND             $contact.do_not_sms = 0
+                        AND             $contact.is_opt_out = 0
+                        AND             $contact.is_deceased = 0
+                        AND             $phone.phone_type_id = {$phoneTypes['Mobile']}
+                        AND             $mg.mailing_id = {$mailing_id}
+                        AND             X_$job_id.contact_id IS null";
+
+        }
         $mailingGroup->query($query);
                     
         $results = array();
@@ -368,7 +474,7 @@ AND    $mg.mailing_id = {$mailing_id}
         if ( $limit && $offset !== null) {
             $limitString = "LIMIT $offset, $limit";
         }
-
+        
         if ( $storeRecipients &&
              $mailing_id ) {
             $sql = "
@@ -387,16 +493,17 @@ WHERE  mailing_id = %1
             }
       
             $sql = "
-INSERT INTO civicrm_mailing_recipients ( mailing_id, contact_id, email_id )
-SELECT %1, i.contact_id, i.email_id
+INSERT INTO civicrm_mailing_recipients ( mailing_id, contact_id, {$tempColumn} )
+SELECT %1, i.contact_id, i.{$tempColumn}
 FROM       civicrm_contact contact_a
 INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
            $groupJoin
            {$aclFrom}
            {$aclWhere}
            $groupBy
-ORDER BY   i.contact_id, i.email_id
+ORDER BY   i.contact_id, i.{$tempColumn}
 ";
+            
             CRM_Core_DAO::executeQuery( $sql, $params );
 
             // if we need to add all emails marked bulk, do it as a post filter
@@ -1000,7 +1107,6 @@ AND civicrm_contact.is_opt_out =0";
         
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            require_once 'CRM/Core/Smarty/resources/String.php';     
             civicrm_smarty_register_string_resource( );
         }
         
@@ -1416,7 +1522,7 @@ AND civicrm_contact.is_opt_out =0";
      * @access public
      * @static
      */
-    public static function &report( $id, $skipDetails = false ) {
+    public static function &report( $id, $skipDetails = false, $isSMS = false ) {
         $mailing_id = CRM_Utils_Type::escape($id, 'Integer');
         
         $mailing = new CRM_Mailing_BAO_Mailing();
@@ -1443,16 +1549,21 @@ AND civicrm_contact.is_opt_out =0";
         
         
         $report = array();
-                
+        $additionalWhereClause = " AND ";
+        if( !$isSMS ) {
+            $additionalWhereClause .= " {$t['mailing']}.sms_provider_id IS NULL ";
+        } else {
+            $additionalWhereClause .= " {$t['mailing']}.sms_provider_id IS NOT NULL ";
+        }
+        
         /* Get the mailing info */
         $mailing->query("
             SELECT          {$t['mailing']}.*
             FROM            {$t['mailing']}
-            WHERE           {$t['mailing']}.id = $mailing_id");
-            
+            WHERE           {$t['mailing']}.id = $mailing_id {$additionalWhereClause}");
+       
         $mailing->fetch();
         
-
         $report['mailing'] = array();
         foreach (array_keys(self::fields()) as $field) {
             $report['mailing'][$field] = $mailing->$field;
@@ -1950,7 +2061,8 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                         $mailing.scheduled_id as scheduled_id,
                         $mailing.is_archived as archived,
                         $mailing.created_date as created_date,
-                        campaign_id
+                        campaign_id,
+                        $mailing.sms_provider_id as sms_provider_id
             FROM        $mailing
             LEFT JOIN   $job ON ( $job.mailing_id = $mailing.id AND $job.is_test = 0 AND $job.parent_id IS NULL )
             LEFT JOIN   civicrm_contact createdContact ON ( civicrm_mailing.created_id = createdContact.id )
@@ -1994,6 +2106,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                             'approval_status_id' => $dao->approval_status_id,
                             'campaign_id'   => $dao->campaign_id,
                             'campaign'      => empty($dao->campaign_id) ? NULL : $allCampaigns[$dao->campaign_id],
+                            'sms_provider_id' => $dao->sms_provider_id
                             );
         }
         return $rows;
@@ -2165,11 +2278,14 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                     ts('Plain-text format'),
                     array('cols' => '80', 'rows' => '8',
                           'onkeyup' => "return verify(this)"));
-        $form->addWysiwyg( 'html_message',
-                           ts('HTML format'),
-                           array('cols' => '80', 'rows' => '8',
-                                 'onkeyup' =>"return verify(this)" ) );
- 
+        
+        if ( $className != 'CRM_SMS_Form_Upload' && $className != 'CRM_Contact_Form_Task_SMS' &&
+             $className != 'CRM_Contact_Form_Task_SMS' ) {
+            $form->addWysiwyg( 'html_message',
+                               ts('HTML format'),
+                               array('cols' => '80', 'rows' => '8',
+                                     'onkeyup' =>"return verify(this)" ) );
+        }   
     }
 
     /**
@@ -2263,25 +2379,27 @@ SELECT  $mailing.id as mailing_id
      * @return $report array content/component.
      * @access public
      */
-    public function getMailingContent( &$report, &$form ) 
+    public function getMailingContent( &$report, &$form, $isSMS = false ) 
     {
         $htmlHeader = $textHeader = null;
         $htmlFooter = $textFooter = null;
 
-        if ($report['mailing']['header_id']) { 
-            $header = new CRM_Mailing_BAO_Component();
-            $header->id = $report['mailing']['header_id'];
-            $header->find(true);
-            $htmlHeader = $header->body_html;
-            $textHeader = $header->body_text;
-        }
-        
-        if ($report['mailing']['footer_id']) { 
-            $footer = new CRM_Mailing_BAO_Component();
-            $footer->id = $report['mailing']['footer_id'];
-            $footer->find(true);
-            $htmlFooter = $footer->body_html;
-            $textFooter = $footer->body_text;
+        if( !$isSMS ) {
+            if ($report['mailing']['header_id']) { 
+                $header = new CRM_Mailing_BAO_Component();
+                $header->id = $report['mailing']['header_id'];
+                $header->find(true);
+                $htmlHeader = $header->body_html;
+                $textHeader = $header->body_text;
+            }
+            
+            if ($report['mailing']['footer_id']) { 
+                $footer = new CRM_Mailing_BAO_Component();
+                $footer->id = $report['mailing']['footer_id'];
+                $footer->find(true);
+                $htmlFooter = $footer->body_html;
+                $textFooter = $footer->body_text;
+            }
         }
         
         $text = CRM_Utils_Request::retrieve( 'text', 'Boolean', $form );
@@ -2290,26 +2408,32 @@ SELECT  $mailing.id as mailing_id
             CRM_Utils_System::civiExit( );
         }
         
-        $html = CRM_Utils_Request::retrieve( 'html', 'Boolean', $form );
-        if ( $html ) {
-            echo $htmlHeader . $report['mailing']['body_html'] . $htmlFooter;
-            CRM_Utils_System::civiExit( );
+        if( !$isSMS ) {
+            $html = CRM_Utils_Request::retrieve( 'html', 'Boolean', $form );
+            if ( $html ) {
+                echo $htmlHeader . $report['mailing']['body_html'] . $htmlFooter;
+                CRM_Utils_System::civiExit( );
+            }
         }
-        
+
         if ( ! empty( $report['mailing']['body_text'] ) ) {
             $url   = CRM_Utils_System::url( 'civicrm/mailing/report', 'reset=1&text=1&mid=' . $form->_mailing_id );
             $popup =  "javascript:popUp(\"$url\");";
             $form->assign( 'textViewURL' , $popup  );
         }
         
-        if ( ! empty( $report['mailing']['body_html'] ) ) {
-            $url   = CRM_Utils_System::url( 'civicrm/mailing/report', 'reset=1&html=1&mid=' . $form->_mailing_id );
-            $popup =  "javascript:popUp(\"$url\");";
-            $form->assign( 'htmlViewURL' , $popup  );
+        if( !$isSMS ) {
+            if ( ! empty( $report['mailing']['body_html'] ) ) {
+                $url   = CRM_Utils_System::url( 'civicrm/mailing/report', 'reset=1&html=1&mid=' . $form->_mailing_id );
+                $popup =  "javascript:popUp(\"$url\");";
+                $form->assign( 'htmlViewURL' , $popup  );
+            }
         }
         
-        $report['mailing']['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_mailing',
-                                                                              $form->_mailing_id );
+        if ( !$isSMS ) {
+            $report['mailing']['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_mailing',
+                                                                                  $form->_mailing_id );
+        }
         return $report;
     }
 
@@ -2329,12 +2453,12 @@ WHERE  civicrm_mailing_job.id = %1
         return $_cache[$jobID];
     }
 
-    static function processQueue( ) 
+    static function processQueue( $mode = null ) 
     {
         $config =& CRM_Core_Config::singleton();
         CRM_Core_Error::debug_log_message( "Beginning processQueue run: {$config->mailerJobsMax}, {$config->mailerJobSize}" );
 
-        if (CRM_Core_BAO_MailSettings::defaultDomain() == "FIXME.ORG") {
+        if ( $mode == null && CRM_Core_BAO_MailSettings::defaultDomain() == "FIXME.ORG") {
           CRM_Core_Error::fatal( ts( 'The <a href="%1">default mailbox</a> has not been configured. You will find <a href="%2">more info in the online user and administrator guide</a>', array( 1 => CRM_Utils_System::url('civicrm/admin/mailSettings', 'reset=1'), 2=> "http://book.civicrm.org/user/basic-setup/email-system-configuration")));
         }
 
@@ -2369,9 +2493,9 @@ WHERE  civicrm_mailing_job.id = %1
         // load bootstrap to call hooks
 
         // Split up the parent jobs into multiple child jobs
-        CRM_Mailing_BAO_Job::runJobs_pre($config->mailerJobSize);
-        CRM_Mailing_BAO_Job::runJobs();
-        CRM_Mailing_BAO_Job::runJobs_post();
+        CRM_Mailing_BAO_Job::runJobs_pre($config->mailerJobSize, $mode);
+        CRM_Mailing_BAO_Job::runJobs(null, $mode);
+        CRM_Mailing_BAO_Job::runJobs_post($mode);
 
         // lets release the global cron lock if we do have one
         if ( $gotCronLock ) {
@@ -2398,14 +2522,20 @@ AND    e.id NOT IN ( SELECT email_id FROM civicrm_mailing_recipients mr WHERE ma
         $dao = CRM_Core_DAO::executeQuery( $sql, $params );
     }
 
-	function getMailingsList() {
+	function getMailingsList( $isSMS = false ) {
 		static $list = array( );
-
+        $where = " WHERE ";
+        if( !$isSMS ) {
+            $where .= " civicrm_mailing.sms_provider_id IS NULL ";
+        } else {
+            $where .= " civicrm_mailing.sms_provider_id IS NOT NULL ";
+        }
+        
         if ( empty($list) ) {
             $query   = "
 SELECT civicrm_mailing.id, civicrm_mailing.name, civicrm_mailing_job.end_date 
 FROM   civicrm_mailing 
-INNER JOIN civicrm_mailing_job ON civicrm_mailing.id = civicrm_mailing_job.mailing_id
+INNER JOIN civicrm_mailing_job ON civicrm_mailing.id = civicrm_mailing_job.mailing_id {$where}
 ORDER BY civicrm_mailing.name";
             $mailing = CRM_Core_DAO::executeQuery($query);
             

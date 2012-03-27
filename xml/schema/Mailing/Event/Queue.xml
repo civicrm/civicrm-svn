@@ -29,7 +29,7 @@
     <field>
         <name>email_id</name>
         <type>int unsigned</type>
-        <required>true</required>
+	<default>NULL</default>
         <comment>FK to Email</comment>
     </field>
     <foreignKey>
@@ -57,4 +57,16 @@
         <required>true</required>
         <comment>Security hash</comment>
     </field>
+    <field>
+        <name>phone_id</name>
+        <type>int unsigned</type>
+	<default>NULL</default>
+        <comment>FK to Phone</comment>
+    </field>
+    <foreignKey>
+        <name>phone_id</name>
+        <table>civicrm_phone</table>
+        <key>id</key>
+        <onDelete>CASCADE</onDelete>
+    </foreignKey>
 </table>

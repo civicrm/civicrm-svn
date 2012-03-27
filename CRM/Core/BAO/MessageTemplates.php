@@ -210,7 +210,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $html = $body_html;
             $text = $body_text;
             
-            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
             $smarty = CRM_Core_Smarty::singleton( );
             foreach( array( 'text', 'html') as $elem) {
@@ -449,7 +448,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         $subject = "{strip}$subject{/strip}";
 
         // parse the three elements with Smarty
-        require_once 'CRM/Core/Smarty/resources/String.php';
         civicrm_smarty_register_string_resource();
 
         $smarty = CRM_Core_Smarty::singleton();

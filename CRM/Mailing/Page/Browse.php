@@ -80,6 +80,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
      */
     public $_scheduled;
 
+    public $_sms;
     /**
      * Heart of the viewing process. The runner gets all the meta data for
      * the contact and calls the appropriate type of page to view.
@@ -92,7 +93,8 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
     {
         $this->_unscheduled = $this->_archived = $archiveLinks = false;
         $this->_mailingId = CRM_Utils_Request::retrieve( 'mid', 'Positive', $this );
-
+        $this->_sms = CRM_Utils_Request::retrieve( 'sms', 'Positive', $this );
+        
         // check that the user has permission to access mailing id
         CRM_Mailing_BAO_Mailing::checkPermission( $this->_mailingId );
 
@@ -126,6 +128,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
     function run( $newArgs )
     {
         $this->preProcess();
+        
         if ( isset( $_GET['runJobs'] ) || CRM_Utils_Array::value( '2', $newArgs ) == 'queue' ) {
             $config = CRM_Core_Config::singleton();
 
@@ -165,7 +168,11 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
         if ( $this->_createdId ) {
             $this->set( 'createdId', $this->_createdId );
         }
-       
+        
+        if ( $this->_sms ) {
+            $this->set( 'sms', $this->_sms );
+        }
+
         $session = CRM_Core_Session::singleton();
         $context = $session->readUserContext( );
         
@@ -223,11 +230,13 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
                                                        $this, 
                                                        CRM_Core_Selector_Controller::TEMPLATE );
         
+        
         $controller->setEmbedded( true );
         $controller->run( );
         
         //hack to display results as per search
         $rows = $controller->getRows( $controller );
+        
         $this->assign( 'rows', $rows );
         
         $urlParams = 'reset=1';
@@ -236,17 +245,36 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
             $urlString .= '/unscheduled';
             $urlParams .= '&scheduled=false';
             $this->assign( 'unscheduled', true );
-            CRM_Utils_System::setTitle( ts( 'Draft and Unscheduled Mailings' ) );
+            
+            if( $this->get( 'sms' ) ) {
+                CRM_Utils_System::setTitle( ts( 'Draft and Unscheduled Mass SMS' ) );
+            } else {
+                CRM_Utils_System::setTitle( ts( 'Draft and Unscheduled Mailings' ) );
+            }
         } else if ( CRM_Utils_Array::value( 3,  $newArgs ) == 'archived' ) {
             $urlString .= '/archived';
             $this->assign( 'archived', true );
-            CRM_Utils_System::setTitle( ts( 'Archived Mailings' ) );
+            
+            if( $this->get( 'sms' ) ) {
+                CRM_Utils_System::setTitle( ts( 'Archived Mass SMS' ) );
+            } else {
+                CRM_Utils_System::setTitle( ts( 'Archived Mailings' ) );
+            }
         } else if ( CRM_Utils_Array::value( 3,  $newArgs)  == 'scheduled' ) {
             $urlString .= '/scheduled';
             $urlParams .= '&scheduled=true';
-            CRM_Utils_System::setTitle( ts( 'Scheduled and Sent Mailings' ) );
+           
+            if( $this->get( 'sms' ) ) {
+                CRM_Utils_System::setTitle( ts( 'Scheduled and Sent Mass SMS' ) );
+            } else {
+                CRM_Utils_System::setTitle( ts( 'Scheduled and Sent Mailings' ) );
+            }
         } else {
-            CRM_Utils_System::setTitle( ts( 'Find Mailings' ) );
+            if( $this->get( 'sms' ) ) {
+                CRM_Utils_System::setTitle( ts( 'Find Mass SMS' ) );
+            } else {
+                CRM_Utils_System::setTitle( ts( 'Find Mailings' ) );
+            }
         }
         
         $crmRowCount = CRM_Utils_Request::retrieve( 'crmRowCount', 'Integer', CRM_Core_DAO::$_nullObject );
@@ -293,7 +321,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
     function whereClause( &$params, $sortBy = true )
     {
         $values =  array( );
-
+       
         $clauses = array( );
         $title   = $this->get( 'mailing_name' );
         //echo " name=$title  ";

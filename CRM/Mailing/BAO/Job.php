@@ -54,7 +54,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
      * @access public
      * @static
      */
-    public static function runJobs($testParams = null) {
+    public static function runJobs($testParams = null, $mode = null) {
         $job = new CRM_Mailing_BAO_Job();
         
         $config = CRM_Core_Config::singleton();
@@ -72,6 +72,11 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             $mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
             $domainID    = CRM_Core_Config::domainID( );
 
+            $modeClause = 'AND m.sms_provider_id IS NULL';
+            if ( $mode == 'sms' ) {
+                $modeClause = 'AND m.sms_provider_id IS NOT NULL';
+            }
+
 			// Select the first child job that is scheduled
 			// CRM-6835
             $query = "
@@ -79,6 +84,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			  FROM   $jobTable     j,
 					 $mailingTable m
 			 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
+                     {$modeClause}
 			   AND   j.is_test = 0
 			   AND   ( ( j.start_date IS null
 			   AND       j.scheduled_date <= $currentTime
@@ -141,7 +147,11 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
             // Get the mailer
             // make it a persistent connection, CRM-9349
-            $mailer = $config->getMailer( true );
+            if ( $mode === null ) {
+                $mailer = $config->getMailer( true );
+            } else if ( $mode == 'sms' ) {
+                $mailer = CRM_SMS_Provider::singleton( array('mailing_id' => $job->mailing_id) );
+            }
 
             // Compose and deliver each child job 
             $isComplete = $job->deliver($mailer, $testParams);
@@ -175,7 +185,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
     // post process to determine if the parent job
     // as well as the mailing is complete after the run
-    public static function runJobs_post() { 
+    public static function runJobs_post($mode = null) { 
         
         $job = new CRM_Mailing_BAO_Job();
         
@@ -243,8 +253,8 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
     }
         
         
-   // before we run jobs, we need to split the jobs
-   public static function runJobs_pre($offset = 200) {
+    // before we run jobs, we need to split the jobs
+    public static function runJobs_pre($offset = 200, $mode = null) {
        $job = new CRM_Mailing_BAO_Job();
         
        $config = CRM_Core_Config::singleton();
@@ -259,14 +269,20 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
        $domainID = CRM_Core_Config::domainID( );
 
+       $modeClause = 'AND m.sms_provider_id IS NULL';
+       if ( $mode == 'sms' ) {
+           $modeClause = 'AND m.sms_provider_id IS NOT NULL';
+       }
+
        // Select all the mailing jobs that are created from 
        // when the mailing is submitted or scheduled.
        $query = "
 		SELECT   j.*
 		  FROM   $jobTable     j,
 				 $mailingTable m
-		 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
+		 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID} 
                  $workflowClause
+                 $modeClause
 		   AND   j.is_test = 0
 		   AND   ( ( j.start_date IS null
 		   AND       j.scheduled_date <= $currentTime
@@ -375,9 +391,16 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             $params = array( );
             $count  = 0;
             while ($recipients->fetch()) {
+                if ( $recipients->phone_id ) {
+                    $recipients->email_id = "null";
+                } else {
+                    $recipients->phone_id = "null";
+                }
+                
                 $params[] = array( $this->id,
                                    $recipients->email_id,
-                                   $recipients->contact_id );
+                                   $recipients->contact_id,
+                                   $recipients->phone_id  );
                 $count++;
                 if ( $count % CRM_Core_DAO::BULK_MAIL_INSERT_COUNT == 0 ) {
                     CRM_Mailing_Event_BAO_Queue::bulkCreate( $params, $now );
@@ -408,6 +431,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         $eq = new CRM_Mailing_Event_BAO_Queue();
         $eqTable        = CRM_Mailing_Event_BAO_Queue::getTableName();
         $emailTable     = CRM_Core_BAO_Email::getTableName();
+        $phoneTable     = CRM_Core_DAO_Phone::getTableName();
         $contactTable   = CRM_Contact_BAO_Contact::getTableName();
         $edTable        = CRM_Mailing_Event_BAO_Delivered::getTableName();
         $ebTable        = CRM_Mailing_Event_BAO_Bounce::getTableName();
@@ -415,7 +439,8 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
         $query = "  SELECT      $eqTable.id,
                                 $emailTable.email as email,
                                 $eqTable.contact_id,
-                                $eqTable.hash
+                                $eqTable.hash,
+                                NULL as phone
                     FROM        $eqTable
                     INNER JOIN  $emailTable
                             ON  $eqTable.email_id = $emailTable.id
@@ -429,7 +454,28 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                         AND     $edTable.id IS null
                         AND     $ebTable.id IS null
                         AND		$contactTable.is_opt_out = 0";
-                    
+
+        if ( $mailing->sms_provider_id ) {
+            $query = "  
+                    SELECT      $eqTable.id,
+                                $phoneTable.phone as phone,
+                                $eqTable.contact_id,
+                                $eqTable.hash,
+                                NULL as email
+                    FROM        $eqTable
+                    INNER JOIN  $phoneTable
+                            ON  $eqTable.phone_id = $phoneTable.id
+                    INNER JOIN  $contactTable
+                            ON  $contactTable.id = $phoneTable.contact_id
+                    LEFT JOIN   $edTable
+                            ON  $eqTable.id = $edTable.event_queue_id
+                    LEFT JOIN   $ebTable
+                            ON  $eqTable.id = $ebTable.event_queue_id
+                    WHERE       $eqTable.job_id = " . $this->id . "
+                        AND     $edTable.id IS null
+                        AND     $ebTable.id IS null
+                        AND		$contactTable.is_opt_out = 0";
+        }
         $eq->query($query);
 
         static $config = null;
@@ -457,7 +503,6 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
 
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            require_once 'CRM/Core/Smarty/resources/String.php';      
             civicrm_smarty_register_string_resource( );
         }
         
@@ -482,7 +527,8 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             $fields[] = array( 'id'         => $eq->id,
                                'hash'       => $eq->hash,
                                'contact_id' => $eq->contact_id,
-                               'email'      => $eq->email );
+                               'email'      => $eq->email,
+                               'phone'      => $eq->phone );
             if ( count( $fields ) == self::MAX_CONTACTS_TO_PROCESS ) {
                 $isDelivered = $this->deliverGroup( $fields, $mailing, $mailer, $job_date, $attachments );
                 if ( ! $isDelivered ) {
@@ -548,6 +594,13 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
             /* Send the mailing */
             $body    =& $message->get();
             $headers =& $message->headers();
+
+            if ( $mailing->sms_provider_id ) {
+                $provider = CRM_SMS_Provider::singleton( array('mailing_id' => $mailing->id) );
+                $body     = $provider->getMessage( $message, $field['contact_id'], $details[0][$contactID] );
+                $headers  = $provider->getRecipientDetails( $field, $details[0][$contactID] );
+            }
+
             // make $recipient actually be the *encoded* header, so as not to baffle Mail_RFC822, CRM-5743
             $recipient = $headers['To'];
             $result = null;
@@ -750,11 +803,18 @@ AND    status IN ( 'Scheduled', 'Running', 'Paused' )
                 $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                   'Bulk Email',
                                                                   'name' );
+                if ( $mailing->sms_provider_id ) {
+                    $mailing->subject = $mailing->name;
+                    $activityTypeID   = CRM_Core_OptionGroup::getValue( 'activity_type',
+                                                                        'Bulk SMS',
+                                                                        'name' );
+                }
                 if ( ! $activityTypeID ) {
                     CRM_Core_Error::fatal( );
                 }
             }
         
+
             $activity = array('source_contact_id'    => $mailing->scheduled_id,
                               'target_contact_id'    => array_unique( $targetParams ), // CRM-9519
                               'target_contact_id'    => $targetParams,

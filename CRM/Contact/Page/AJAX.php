@@ -321,6 +321,7 @@ class CRM_Contact_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
     
+
     
     /**
      * Function to fetch the custom field help 
@@ -735,7 +736,66 @@ LIMIT {$offset}, {$rowCount}
         }
         CRM_Utils_System::civiExit( );
     } 
-   
+
+    static function getContactPhone( ) {
+            
+            $queryString = null;
+            //check for mobile type
+            $phoneTypes = CRM_Core_PseudoConstant::phoneType( );
+            $mobileType = CRM_Utils_Array::key('Mobile', $phoneTypes);
+
+            if ( $name = CRM_Utils_Array::value( 'name', $_GET ) ) {
+                $name  = CRM_Utils_Type::escape(  $name, 'String' );
+                $queryString = " ( cc.sort_name LIKE '%$name%' OR cp.phone LIKE '%$name%' ) ";
+            } elseif ( $cid = CRM_Utils_Array::value( 'cid', $_GET ) ) {
+                //check cid for interger
+                $contIDS = explode( ',', $cid );
+                foreach ( $contIDS as $contID ) {
+                    CRM_Utils_Type::escape( $contID, 'Integer' );
+                }
+                $queryString = " cc.id IN ( $cid )";
+			}
+
+            if ( $queryString ) {
+                $offset   = CRM_Utils_Array::value( 'offset',   $_GET, 0 );
+                $rowCount = CRM_Utils_Array::value( 'rowcount', $_GET, 20 );
+
+                // add acl clause here
+                list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( 'cc' );
+                if ( $aclWhere ) {
+                    $aclWhere = " AND $aclWhere";
+                }
+                       
+                $query="
+SELECT sort_name name, cp.phone, cc.id
+FROM   civicrm_phone cp INNER JOIN civicrm_contact cc ON cc.id = cp.contact_id 
+       {$aclFrom}
+WHERE  cc.is_deceased = 0 AND cc.do_not_sms = 0 AND cp.phone_type_id = {$mobileType} AND {$queryString}
+       {$aclWhere}
+LIMIT {$offset}, {$rowCount}
+";
+
+                // send query to hook to be modified if needed
+                CRM_Utils_Hook::contactListQuery( $query,
+                                                  $name,
+                                                  CRM_Utils_Array::value( 'context', $_GET ),
+                                                  CRM_Utils_Array::value( 'cid', $_GET ) );
+                                      
+                $dao = CRM_Core_DAO::executeQuery( $query );
+                    
+                while( $dao->fetch( ) ) {
+                     $result[]= array( 'name' => '"'.$dao->name.'" &lt;'.$dao->phone.'&gt;',
+                                       'id'   => (CRM_Utils_Array::value( 'id', $_GET ) ) ? "{$dao->id}::{$dao->phone}" :'"'.$dao->name.'" <'.$dao->phone.'>');
+                }
+             }
+              
+             if ( $result ) {
+                    echo json_encode( $result );
+             }
+        CRM_Utils_System::civiExit( );
+    } 
+
+
     static function buildSubTypes( ) 
     {
        $parent = CRM_Utils_Array::value( 'parentId', $_POST );

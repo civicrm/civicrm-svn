@@ -248,9 +248,9 @@ class CRM_Contact_Task
             unset( $titles[20] );
         }
         
-        if ( ! in_array( 'CiviSMS', $config->enableComponents ) ) {
-            unset( $titles[7] );
-        }
+        // if ( ! in_array( 'CiviSMS', $config->enableComponents ) ) {
+        //     unset( $titles[7] );
+        // }
 
         // CRM-6806
         if ( !CRM_Core_Permission::check( 'access deleted contacts' ) || 

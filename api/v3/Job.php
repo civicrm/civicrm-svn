@@ -236,6 +236,23 @@ function civicrm_api3_job_process_mailing( $params )
 
 }
 
+/**
+ * Process sms queue 
+ *
+ * @param array $params
+ * @return array
+ */
+function civicrm_api3_job_process_sms( $params ) 
+{
+    require_once 'CRM/Mailing/BAO/Mailing.php';
+    if ( ! CRM_Mailing_BAO_Mailing::processQueue( 'sms' ) ) { 
+        return civicrm_api3_create_error( "Process Queue failed");
+    } else {
+        $values = array( );
+        return civicrm_api3_create_success($values, $params,'mailing','process');
+    }
+}
+
 function civicrm_api3_job_fetch_bounces( $params ) 
 {
     require_once 'CRM/Utils/Mail/EmailProcessor.php';

@@ -206,8 +206,10 @@ VALUES
    ('event_contacts'                , '{ts escape="sql"}Event Recipients{/ts}'                   , 1, 1),
    ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 1, 1),
    ('batch_type'                    , '{ts escape="sql"}Batch Type{/ts}'                         , 1, 1),
-   ('batch_status'                  , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1);
-   
+   ('batch_status'                  , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1),
+   ('sms_api_type'                  , '{ts escape="sql"}Api Type{/ts}'                           , 1, 1),
+   ('sms_provider_name'             , '{ts escape="sql"}Sms Provider Internal Name{/ts}'         , 1, 1);
+
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
 SELECT @option_group_id_gender         := max(id) from civicrm_option_group where name = 'gender';
@@ -272,6 +274,8 @@ SELECT @option_group_id_ere            := max(id) from civicrm_option_group wher
 SELECT @option_group_id_conference_slot := max(id) from civicrm_option_group where name = 'conference_slot';
 SELECT @option_group_id_batch_type     := max(id) from civicrm_option_group where name = 'batch_type';
 SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';
+SELECT @option_group_id_sms_api_type   := max(id) from civicrm_option_group where name = 'sms_api_type';
+SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -328,6 +332,7 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}',                          30, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}',                           31, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Petition{/ts}',                           32, 'Petition', NULL,0, 0, 31, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}BULK SMS{/ts}',                           34, 'BULK SMS',         NULL, 1, NULL, 34, '{ts escape="sql"}BULK SMS{/ts}',                                                    0, 1, 1, NULL, NULL),
 
 -- Activity Types for CiviCampaign CiviCase
    (@option_group_id_act, '{ts escape="sql"}Change Custom Data{/ts}',                 33, 'Change Custom Data', NULL,0, 0, 33, '', 0, 1, 1, @caseCompId, NULL),
@@ -794,6 +799,14 @@ VALUES
 -- default batch statues
    (@option_group_id_batch_status, '{ts escape="sql"}Open{/ts}', 1, '{ts escape="sql"}Open{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_batch_status, '{ts escape="sql"}Closed{/ts}', 2, '{ts escape="sql"}Closed{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+
+-- sms_api_type
+   (@option_group_id_sms_api_type, 'http', 1, 'http', NULL, NULL, 0, 1, NULL, 0, 1, 1, NULL, NULL),
+   (@option_group_id_sms_api_type, 'xml',  2, 'xml',  NULL, NULL, 0, 2, NULL, 0, 1, 1, NULL, NULL),
+   (@option_group_id_sms_api_type, 'smtp', 3, 'smtp', NULL, NULL, 0, 3, NULL, 0, 1, 1, NULL, NULL),
+
+-- sms provider name
+   (@option_group_id_sms_provider_name, 'Clickatell', 'Clickatell', 'Clickatell', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL), 

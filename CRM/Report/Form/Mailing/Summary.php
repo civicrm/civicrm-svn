@@ -75,9 +75,9 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 					//'operator' => 'like',
 					'default' => 1,
 				),
-                
+
                 'mailing_name' => array(
-					'name' => 'name',
+                                        'name' => 'name',
 					'title' => ts('Mailing'),
 					'operatorType' => CRM_Report_Form::OP_MULTISELECT,
 					'type'=> CRM_Utils_Type::T_STRING,
@@ -232,7 +232,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 		$data = array( );
 		
 		$mailing = new CRM_Mailing_BAO_Mailing();
-		$query = "SELECT name FROM civicrm_mailing ";
+		$query = "SELECT name FROM civicrm_mailing WHERE sms_provider_id IS NULL";
 		$mailing->query($query);
 		
 		while($mailing->fetch()) {
@@ -326,6 +326,9 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 	
     function where( ) {
         $clauses = array( );
+        //to avoid the sms listings
+        $clauses[] = "{$this->_aliases['civicrm_mailing']}.sms_provider_id IS NULL";
+        
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('filters', $table) ) {
                 foreach ( $table['filters'] as $fieldName => $field ) {
@@ -338,6 +341,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
                         $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                     } else {
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
+
                         if ( $op ) {
                             if( $fieldName == 'relationship_type_id' ) {
                                 $clause =  "{$this->_aliases['civicrm_relationship']}.relationship_type_id=".$this->relationshipId;
@@ -386,7 +390,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
         $this->buildACLClause( CRM_Utils_Array::value( 'civicrm_contact', $this->_aliases ) );
 
         $sql  = $this->buildQuery( true );
-		
+        
 		// print_r($sql);
              
         $rows = $graphRows = array();

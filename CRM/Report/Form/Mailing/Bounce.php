@@ -268,7 +268,13 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
                       {$this->_aliases['civicrm_phone']}.is_primary = 1 ";
         }
     }
-
+    
+    function where( ) {
+        $clauses = array( );
+        //to avoid the sms listings
+        $this->_where = "WHERE {$this->_aliases['civicrm_mailing']}.sms_provider_id IS NULL";
+    }
+    
     function groupBy( ) {
         if ( CRM_Utils_Array::value('charts', $this->_params) ) {
             $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_mailing']}.id";

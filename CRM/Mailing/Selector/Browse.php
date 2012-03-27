@@ -304,8 +304,9 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         $mailing = new CRM_Mailing_BAO_Mailing();
         
         $params = array( );
-        $whereClause = ' AND ' . $this->whereClause( $params );
 
+        $whereClause = ' AND ' . $this->whereClause( $params );
+        
         if ( empty( $params ) ) {
             $this->_parent->assign( 'isSearch', 0 );
         } else {
@@ -336,7 +337,11 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
 
             foreach ( $rows as $key => $row ) {
                 $actionMask = null;
-                if ( !( $row['status'] == 'Not scheduled' ) ) {
+                if($row['sms_provider_id']) {
+                    $actionLinks[CRM_Core_Action::PREVIEW]['url'] = 'civicrm/sms/send';
+                }
+                                
+                if ( !( $row['status'] == 'Not scheduled' ) && !$row['sms_provider_id'] ) {
                     if ( $allAccess || $showCreateLinks ) {
                         $actionMask = CRM_Core_Action::VIEW;
                     }
@@ -403,6 +408,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
                 }
                 unset( $rows[$key]['scheduled_iso'] );
             }
+            
         }
 
         // also initialize the AtoZ pager
@@ -430,6 +436,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
     function whereClause( &$params, $sortBy = true )
     {
         $values = $clauses = array( );
+       
         $title  = $this->_parent->get( 'mailing_name' );
 
         if ( $title ) {
@@ -472,6 +479,12 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         if ( $this->_parent->get( 'archived' ) ) {
             // CRM-6446: archived view should also show cancelled mailings
             $clauses[] = "(civicrm_mailing.is_archived = 1 OR civicrm_mailing_job.status = 'Canceled')";
+        }
+        
+        if ( $this->_parent->get( 'sms' ) ) {
+            $clauses[] = "(civicrm_mailing.sms_provider_id IS NOT NULL)";
+        } else {
+            $clauses[] = "(civicrm_mailing.sms_provider_id IS NULL)";
         }
         
         // CRM-4290, do not show archived or unscheduled mails 
@@ -528,7 +541,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         if ( empty( $clauses ) ) {
             return 1;
         }
-
+ 
         return implode( ' AND ', $clauses );
     }
 

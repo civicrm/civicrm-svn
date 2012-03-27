@@ -61,7 +61,7 @@ WHERE  mailing_id = %1
         }
         
         $sql = "
-SELECT contact_id, email_id
+SELECT contact_id, email_id, phone_id
 FROM   civicrm_mailing_recipients
 WHERE  mailing_id = %1
        $limitString

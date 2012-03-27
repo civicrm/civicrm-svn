@@ -37,3 +37,86 @@ INSERT INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUE
 
 -- CRM-9905
 ALTER TABLE civicrm_contribution_page CHANGE COLUMN is_email_receipt is_email_receipt TINYINT(4) DEFAULT 0;
+
+-- CRM-9783
+CREATE TABLE `civicrm_sms_provider` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'SMS Provider ID',
+  `name` varchar(64) unsigned DEFAULT NULL COMMENT 'Provider internal name points to option_value of option_group sms_provider_name',
+  `title` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Provider name visible to user',
+  `username` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `api_type` int(10) unsigned NOT NULL COMMENT 'points to value in civicrm_option_value for group sms_api_type',
+  `api_url` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `api_params` text COLLATE utf8_unicode_ci COMMENT 'the api params in xml, http or smtp format',
+  `is_default` tinyint(4) DEFAULT '0',
+  `is_active` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;
+
+ALTER TABLE `civicrm_mailing` ADD `sms_provider_id` int(10) unsigned NULL COMMENT 'FK to civicrm_sms_provider id ';
+ALTER TABLE `civicrm_mailing` ADD CONSTRAINT `FK_civicrm_mailing_sms_provider_id` FOREIGN KEY (`sms_provider_id`) REFERENCES `civicrm_sms_provider` (`id`) ON DELETE SET NULL;
+
+INSERT INTO 
+   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`) 
+VALUES 
+   ('sms_provider_name', '{ts escape="sql"}Sms provider Internal Name{/ts}' , 1, 1);
+SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
+    
+INSERT INTO civicrm_option_value
+     (option_group_id, {localize field='label'}label{/localize}, value, name, weight, filter, is_default, component_id)
+VALUES
+     (@option_group_id_sms_provider_name, 'Clickatell', 'Clickatell', 'Clickatell', 1, 0, NULL, NULL);
+
+INSERT INTO 
+   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`) 
+VALUES 
+    ( 'sms_api_type',  '{ts escape="sql"}Api Type{/ts}' , 1, 1 );
+SELECT @option_group_id_sms_api_type := max(id) from civicrm_option_group where name = 'sms_api_type';
+    
+INSERT INTO civicrm_option_value
+     (option_group_id, {localize field='label'}label{/localize}, value, name, weight, filter, is_default, is_reserved, component_id)
+VALUES
+     (@option_group_id_sms_api_type, 'http',  1, 'http',  1, NULL, 0, 1, NULL),
+     (@option_group_id_sms_api_type, 'xml',   2, 'xml',   2, NULL, 0, 1, NULL),
+     (@option_group_id_sms_api_type, 'smtp',  3, 'smtp',  3, NULL, 0, 1, NULL);
+
+-- CRM-9784
+
+SELECT @adminSystemSettingsID := MAX(id) FROM civicrm_navigation where name = 'System Settings';
+
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES
+    ( @domainID, 'civicrm/admin/sms/provider?reset=1', '{ts escape="sql" skip="true"}Configure SMS Providers{/ts}', 'Configure SMS Providers', 'administer CiviCRM', '', @adminSystemSettingsID, '1', NULL, 16 );
+
+-- CRM-9799
+
+SELECT @mailingsID := MAX(id) FROM civicrm_navigation where name = 'Mailings';
+
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES    
+    ( @domainID, 'civicrm/sms/send?reset=1', '{ts escape="sql" skip="true"}New SMS{/ts}', 'New SMS', 'administer CiviCRM', NULL, @mailingsID, '1', 1, 8 );
+
+SELECT @fromEmailAddressesID := MAX(id) FROM civicrm_navigation where name = 'From Email Addresses';
+
+UPDATE civicrm_navigation SET has_separator = 1 WHERE parent_id = @mailingsID AND name = 'From Email Addresses';
+
+SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'activity_type';
+
+INSERT INTO 
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+VALUES
+   (@option_group_id_act, '{ts escape="sql"}BULK SMS{/ts}', 34, 'BULK SMS', NULL, 1, NULL, 34, '{ts escape="sql"}BULK SMS{/ts}', 0, 1, 1, NULL, NULL);
+
+ALTER TABLE `civicrm_mailing_recipients` ADD `phone_id` int(10) unsigned DEFAULT NULL;
+
+ALTER TABLE `civicrm_mailing_recipients` ADD CONSTRAINT `FK_civicrm_mailing_recipients_phone_id` FOREIGN KEY (`phone_id`) REFERENCES `civicrm_phone` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `civicrm_mailing_event_queue` ADD `phone_id` int(10) unsigned DEFAULT NULL;
+
+ALTER TABLE `civicrm_mailing_event_queue` ADD CONSTRAINT `FK_civicrm_mailing_event_queue_phone_id` FOREIGN KEY (`phone_id`) REFERENCES `civicrm_phone` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `civicrm_mailing_event_queue` CHANGE `email_id` `email_id` int(10) unsigned DEFAULT NULL;
+ALTER TABLE `civicrm_mailing_recipients` CHANGE `email_id` `email_id` int(10) unsigned DEFAULT NULL;
+

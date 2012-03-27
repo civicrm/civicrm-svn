@@ -1289,7 +1289,6 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
              CIVICRM_MAIL_SMARTY ) {
             $smarty = CRM_Core_Smarty::singleton( );
             
-            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
 
             $escapeSmarty = true;
@@ -1334,7 +1333,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                 $tokenText    = $smarty->fetch( "string:$tokenText" );
                 $tokenHtml    = $smarty->fetch( "string:$tokenHtml" );
             }
-            
+           
             $sent = false;
             if ( self::sendMessage( $from,
                                     $userID,
@@ -1352,6 +1351,167 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         }
         
         return array( $sent, $activity->id );
+    }
+    
+    static function sendSMS( &$contactDetails,
+                             &$activityParams,
+                             &$smsParams = array(),
+                             &$contactIds,
+                             $userID = null ) 
+    {        
+        if ( $userID == null ) {
+            $session = CRM_Core_Session::singleton( );
+            $userID  =  $session->get( 'userID' );
+        }
+
+        $text =& $activityParams['text_message'];
+        $html =& $activityParams['html_message'];
+       
+        // CRM-4575
+        // token replacement of addressee/email/postal greetings
+        // get the tokens added in subject and message
+        $messageToken = CRM_Utils_Token::getTokens( $text );  
+        $messageToken = array_merge( $messageToken,
+                                     CRM_Utils_Token::getTokens( $html) );
+        
+        //create the meta level record first ( sms activity )
+        $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
+                                                          'SMS',
+                                                          'name' );
+
+        // CRM-6265: save both text and HTML parts in details (if present)
+        if ($html and $text) {
+            $details = "-ALTERNATIVE ITEM 0-\n$html\n-ALTERNATIVE ITEM 1-\n$text\n-ALTERNATIVE END-\n";
+        } else {
+            $details = $html ? $html : $text;
+
+        }
+        
+        $activitySubject = $activityParams['activity_subject'];
+        $activityParams = array('source_contact_id'    => $userID,
+                                'activity_type_id'     => $activityTypeID,
+                                'activity_date_time'   => date('YmdHis'),
+                                'subject'              => $activitySubject,
+                                'details'              => $details,
+                                // FIXME: check for name Completed and get ID from that lookup
+                                'status_id'            => 2
+                                );
+
+        $activity = self::create($activityParams);
+        $activityID = $activity->id;
+
+        $returnProperties = array( );
+ 
+        if ( isset( $messageToken['contact'] ) ) { 
+            foreach ( $messageToken['contact'] as $key => $value ) {
+                $returnProperties[$value] = 1; 
+            }
+        }
+        
+        // get token details for contacts, call only if tokens are used
+        $details = array( );
+        if ( !empty( $returnProperties ) ) {
+            list( $details ) = CRM_Utils_Token::getTokenDetails($contactIds,
+                                                                $returnProperties,
+                                                                null, null, false,
+                                                                $messageToken,
+                                                                'CRM_Activity_BAO_Activity' );
+        }
+
+        // call token hook
+        $tokens = array( );
+        CRM_Utils_Hook::tokens( $tokens );
+        $categories = array_keys( $tokens );
+
+        $escapeSmarty = $sent = false;
+        foreach ( $contactDetails  as $values ) {
+            $contactId    = $values['contact_id'];
+            
+            if ( !empty( $details ) && is_array( $details["{$contactId}"] ) ) {
+                // unset email from details since it always returns primary email address
+                unset( $details["{$contactId}"]['email']);
+                unset( $details["{$contactId}"]['email_id']);
+                $values = array_merge( $values, $details["{$contactId}"] );
+            }
+             
+            $tokenText    = CRM_Utils_Token::replaceContactTokens( $text     , $values, false, $messageToken, false, $escapeSmarty );
+            $tokenText    = CRM_Utils_Token::replaceHookTokens   ( $tokenText, $values, $categories, false, $escapeSmarty );
+            
+            $tokenHtml    = CRM_Utils_Token::replaceContactTokens( $html     , $values, true , $messageToken, false, $escapeSmarty );
+            $tokenHtml    = CRM_Utils_Token::replaceHookTokens   ( $tokenHtml, $values, $categories, true, $escapeSmarty );
+            
+            $smsParams['To'] = $values['phone'];
+
+            if ( self::sendSMSMessage(  $contactId, 
+                                        $tokenText, 
+                                        $tokenHtml, 
+                                        $smsParams,
+                                        $activityID ) ) {
+                // even a single successful delivery should set this falg to true
+                $sent = true;
+            }
+        }
+        
+        return array( $sent, $activity->id );
+    }
+    
+    /**
+     * send the sms message to a specific contact
+     *
+     * @param int    $toID              the contact id of the recipient       
+     * @param int    $activityID        the activity ID that tracks the message
+     * @param array  $smsParams         the params used for sending sms
+     * @return boolean                  true if successfull else false.
+     * @access public
+     * @static
+     */
+    
+    static function sendSMSMessage(  $toID, 
+                                     &$tokenText, 
+                                     &$tokenHtml,  
+                                     $smsParams = array(),
+                                     $activityID
+                                     ) {
+        $toDoNotSms    = "";
+        $toPhoneNumber = "";
+
+        if ( $smsParams['To'] ) {
+            $toPhoneNumber = trim( $smsParams['To'] );
+        } elseif ( $toID ) {
+            $filters = array( 'is_deceased' => 0, 'is_deleted' => 0, 'do_not_sms' => 0 );
+            $toPhoneNumbers = CRM_Core_BAO_Phone::allPhones( $toID, false, 'Mobile', $filters );
+            //to get primary mobile ph,if not get a first mobile ph
+            if ( !empty($toPhoneNumbers) ) {
+                $toPhoneNumerDetails = reset($toPhoneNumbers); 
+                $toPhoneNumber = CRM_Utils_Array::value( 'phone', $toPhoneNumerDetails );
+                //contact allows to send sms
+                $toDoNotSms = 0;   
+            }
+        }
+        
+        // make sure both phone are valid
+        // and that the recipient wants to receive sms
+        if ( empty( $toPhoneNumber ) or $toDoNotSms ) {
+            return false;
+        }
+                
+        $message    = $tokenHtml ? $tokenHtml : $tokenText;
+        $recipient  = $smsParams['To'];
+        $smsParams['contact_id'] = $toID;
+
+        $providerObj = CRM_SMS_Provider::singleton( array('provider_id' => $smsParams['provider_id']) );
+        if ( !$providerObj->send( $recipient, $smsParams, $message, null ) ) {
+            return false;
+        }
+
+        // add activity target record for every sms that is send
+        $activityTargetParams = array( 
+                                      'activity_id'       => $activityID,
+                                      'target_contact_id' => $toID
+                                      );
+        self::createActivityTarget( $activityTargetParams );
+
+        return true;
     }
     
     /**

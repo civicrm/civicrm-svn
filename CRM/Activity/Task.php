@@ -45,7 +45,9 @@ class CRM_Activity_Task
         PRINT_ACTIVITIES  =  2,
         EXPORT_ACTIVITIES =  3,
         BATCH_ACTIVITIES  =  4,
-        EMAIL_CONTACTS    =  5;
+        EMAIL_CONTACTS    =  5,
+        EMAIL_SMS    =  6;
+        
         
 
     /**
@@ -90,11 +92,13 @@ class CRM_Activity_Task
                                               'class'  => array( 'CRM_Activity_Form_Task_PickProfile',
                                                                  'CRM_Activity_Form_Task_Batch' ),
                                               'result' => false ),
-                                  
                                   5 => array( 'title'  => ts( 'Send Email to Contacts' ),
                                               'class'  => array( 'CRM_Activity_Form_Task_PickOption',
                                                                  'CRM_Activity_Form_Task_Email' ),
                                               'result' => false ),
+                                  6 => array('title'  => ts( 'Send Reply SMS To Contacts' ),
+                                             'class'  => 'CRM_Activity_Form_Task_SMS',
+                                             'result' => false ),
                                   );
 
             $config = CRM_Core_Config::singleton( );

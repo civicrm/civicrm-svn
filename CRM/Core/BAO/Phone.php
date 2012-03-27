@@ -82,7 +82,7 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone
      * @access public
      * @static
      */
-    static function allPhones( $id, $updateBlankLocInfo = false, $type = null ) 
+    static function allPhones( $id, $updateBlankLocInfo = false, $type = null, $filters = array() ) 
     {
         if ( ! $id ) {
             return null;
@@ -96,6 +96,12 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone
             }
         }
 
+        if ( !empty($filters) && is_array($filters) ) {
+            foreach( $filters as $key => $value ) {
+                $cond .= " AND " . $key . " = " . $value;
+            }
+        }
+        
         $query = "
    SELECT phone, civicrm_location_type.name as locationType, civicrm_phone.is_primary as is_primary,
      civicrm_phone.id as phone_id, civicrm_phone.location_type_id as locationTypeId,
@@ -105,6 +111,7 @@ LEFT JOIN civicrm_phone ON ( civicrm_contact.id = civicrm_phone.contact_id )
 LEFT JOIN civicrm_location_type ON ( civicrm_phone.location_type_id = civicrm_location_type.id )
 WHERE     civicrm_contact.id = %1 $cond
 ORDER BY civicrm_phone.is_primary DESC,  phone_id ASC ";
+        
 
         $params = array( 1 => array( $id, 'Integer' ) );
         
