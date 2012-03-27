@@ -49,8 +49,8 @@ class CRM_Core_Payment_ProcessorForm
             $form->_type = CRM_Utils_Request::retrieve( 'type', 'String', $form );
         }
 
-        if ($form->_type) {
-            $form->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($form->_type, $form->_mode);
+        if ( $form->_type ) {
+            $form->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $form->_type, $form->_mode );
         }
 
         //$form->_paymentProcessor['processorName'] = $form->_paymentObject->_processorName;                                                                                                
@@ -63,37 +63,52 @@ class CRM_Core_Payment_ProcessorForm
         }  
         
         //checks after setting $form->_paymentProcessor
-        // we do this outside of the above conditional to avoid                                                                                                                                                    // saving the country/state list in the session (which could be huge)                                                                                                                               
+        // we do this outside of the above conditional to avoid                                                                                                                                            
+        // saving the country/state list in the session (which could be huge)                                                                                                                              
+ 
         if ( ( $form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) &&                                                                                                    
              CRM_Utils_Array::value('is_monetary', $form->_values) ) {
-            if ( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ){                                                                                                                 CRM_Core_Payment_Form::setDirectDebitFields( $form );                                                                                                                                                   } else {                                                                                                                                                                                                       CRM_Core_Payment_Form::setCreditCardFields( $form );                                                                                                                                                   }                                                                                                                                                                                                      }                                                                                                                                                                                                          
+            if ( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) {
+                CRM_Core_Payment_Form::setDirectDebitFields( $form );
+            } else {
+                CRM_Core_Payment_Form::setCreditCardFields( $form );
+            }
+        }
+        
         $form->assign_by_ref( 'paymentProcessor', $form->_paymentProcessor );                                                                                                                             
         
         // check if this is a paypal auto return and redirect accordingly                                                                                                                                  
         if ( CRM_Core_Payment::paypalRedirect( $form->_paymentProcessor ) ) {                                                                                                                             
-            
-            $url = CRM_Utils_System::url( 'civicrm/contribute/transact',                                                                                                                                                                              "_qf_ThankYou_display=1&qfKey={$form->controller->_key}" );                                                                                                                 CRM_Utils_System::redirect( $url );                                                                                                                                                                    }
+            $url = CRM_Utils_System::url( 'civicrm/contribute/transact',
+                                          "_qf_ThankYou_display=1&qfKey={$form->controller->_key}" );
+            CRM_Utils_System::redirect( $url );
+        }
         
-        // make sure we have a valid payment class, else abort                                                                                                                                              
-        if ( CRM_Utils_Array::value('is_monetary',$form->_values) &&                                                                                                                                                     ! $form->_paymentProcessor['class_name'] &&                                                                                                                                                 
-             !CRM_Utils_Array::value( 'is_pay_later',$form->_values ) ) {                                                                                                                                               CRM_Core_Error::fatal( ts( 'Payment processor is not set for this page' ) );                                                                                                                            }                                                                                                                                                                                                  
+        // make sure we have a valid payment class, else abort
+        if ( CRM_Utils_Array::value('is_monetary',$form->_values) &&
+             ! $form->_paymentProcessor['class_name'] &&                                                                                                                                                 
+             ! CRM_Utils_Array::value( 'is_pay_later',$form->_values ) ) {
+            CRM_Core_Error::fatal( ts( 'Payment processor is not set for this page' ) );
+        }
+        
         if ( ! empty( $form->_membershipBlock ) &&
              CRM_Utils_Array::value( 'is_separate_payment', $form->_membershipBlock ) &&
              ( CRM_Utils_Array::value( 'class_name', $form->_paymentProcessor ) &&
                ! ( CRM_Utils_Array::value( 'billing_mode',  $form->_paymentProcessor ) & CRM_Core_Payment::BILLING_MODE_FORM ) ) ) {
-            CRM_Core_Error::fatal( ts( 'This contribution page is configured to support separate contribution and membership payments. This %1 plugin does not currently support multiple simultaneous paym\
-ents, or the option to "Execute real-time monetary transactions" is disabled. Please contact the site administrator and notify them of this error',
+
+            CRM_Core_Error::fatal( ts( 'This contribution page is configured to support separate contribution and membership payments. This %1 plugin does not currently support multiple simultaneous payments, or the option to "Execute real-time monetary transactions" is disabled. Please contact the site administrator and notify them of this error',
                                        array( 1 => $form->_paymentProcessor['payment_processor_type'] ) ) );
-            
-                                       }
-        
+        }
     }
     
     static function buildQuickform( &$form ) {
         $form->addElement( 'hidden', 'hidden_processor', 1 );
-        if ( ( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) ) {
+        
+        if ( ( $form->_paymentProcessor['payment_type'] & 
+               CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) ) {
             CRM_Core_Payment_Form::buildDirectDebit( $form );
-        } elseif ( ( $form->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_CREDIT_CARD ) )  {
+        } elseif ( ( $form->_paymentProcessor['payment_type'] & 
+                     CRM_Core_Payment::PAYMENT_TYPE_CREDIT_CARD ) )  {
             CRM_Core_Payment_Form::buildCreditCard( $form );
         }
     }
