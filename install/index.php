@@ -845,7 +845,6 @@ class Installer extends InstallRequirements {
 
         flush();
 
-        // Load the sapphire runtime
         echo '<br/>Building database schema and setup files...</div>';
         flush();
 
