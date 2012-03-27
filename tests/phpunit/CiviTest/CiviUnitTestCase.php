@@ -133,6 +133,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                                   $GLOBALS['mysql_user'],
                                   $GLOBALS['mysql_pass'] );
 
+        // also load the class loader
+        require_once 'CRM/Core/ClassLoader.php';
+        $classLoader = new CRM_Core_ClassLoader( );
+        $classLoader->register();
     }
 
     function requireDBReset () {

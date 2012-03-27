@@ -38,11 +38,6 @@
  */
 
 /**
- * Include common API util functions
- */
-
-require_once 'CRM/Contact/BAO/Contact.php';
-/**
  * Create or update a contact (note you should always call this via civicrm_api() & never directly)
  * 
  * @param  array   $params   input parameters
