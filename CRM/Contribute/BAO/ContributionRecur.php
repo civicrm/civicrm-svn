@@ -139,6 +139,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
     }
 
     static function getPaymentProcessor( $id, $mode ) {
+        //FIX ME:
         $sql = "
 SELECT p.payment_processor_id
   FROM civicrm_contribution c,

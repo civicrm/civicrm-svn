@@ -551,6 +551,7 @@ WHERE entity_table = 'civicrm_contribution_page'
      */
     static function checkRecurPaymentProcessor( $contributionPageId ) 
     {
+        //FIXME
         $sql = "
   SELECT pp.is_recur
   FROM   civicrm_contribution_page  cp,

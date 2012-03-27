@@ -248,7 +248,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
         if ( ! in_array( $component, array('membership', 'contribute') ) ) {
             return $result;
         }
-        
+        //FIXME:
         if ( $component == 'membership' ) {
             $sql = " 
     SELECT cr.payment_processor_id as ppID1, cp.payment_processor_id as ppID2, con.is_test 
