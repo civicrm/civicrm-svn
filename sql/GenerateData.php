@@ -93,23 +93,10 @@
 
 require_once '../civicrm.config.php';
 
-require_once 'CRM/Core/Config.php';
-require_once 'CRM/Core/Error.php';
-require_once 'CRM/Core/I18n.php';
-
-require_once 'CRM/Core/DAO/Address.php';
-require_once 'CRM/Core/DAO.php';
-require_once 'CRM/Core/DAO/Phone.php';
-require_once 'CRM/Core/DAO/Email.php';
-require_once 'CRM/Core/DAO/EntityTag.php';
-require_once 'CRM/Core/DAO/Note.php';
-require_once 'CRM/Core/DAO/Domain.php';
-
-require_once 'CRM/Contact/DAO/Group.php';
-require_once 'CRM/Contact/DAO/GroupContact.php';
-require_once 'CRM/Contact/DAO/SubscriptionHistory.php';
-require_once 'CRM/Contact/DAO/Contact.php';
-require_once 'CRM/Contact/DAO/Relationship.php';
+// autoload
+require_once 'CRM/Core/ClassLoader.php';
+$classLoader = new CRM_Core_ClassLoader();
+$classLoader->register();
 
 class CRM_GCD {
 
