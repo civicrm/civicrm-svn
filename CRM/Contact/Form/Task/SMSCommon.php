@@ -194,39 +194,56 @@ class CRM_Contact_Form_Task_SMSCommon
 
             foreach ( $form->_contactIds as $key => $contactId ) {
                 $value = $form->_contactDetails[$contactId];
-                
+    
                 //to check if the phone type is "Mobile"
                 $phoneTypes = CRM_Core_PseudoConstant::phoneType( );
-                          
-                //to check for "if the contact id belongs to a specified activity type"
-                $actDetails = CRM_Activity_BAO_Activity::getContactActivity( $contactId );
-          
-                if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Activity_Form_Task_SMS' && 
-                     (self::RECIEVED_SMS_ACTIVITY_SUBJECT != 
-                      CRM_Utils_Array::retrieveValueRecursive($actDetails, 'subject')) ) {
-                    
-                    $suppressedSms++;
-                    unset( $form->_contactDetails[$contactId] );
-                    
-                } elseif ((isset( $value['phone_type_id']) && $value['phone_type_id'] != CRM_Utils_Array::key( 'Mobile', $phoneTypes )) || $value['do_not_sms'] || empty( $value['phone'] ) || CRM_Utils_Array::value( 'is_deceased', $value ) ) {
-                    $suppressedSms++;
-                   
-                    // unset contact details for contacts that we won't be sending sms. This is prevent extra computation 
-                    // during token evaluation etc.
-                    unset( $form->_contactDetails[$contactId] );
-
-                } else {
-                    if ( empty( $form->_toContactPhone ) ) {
-                        $phone = $value['phone'];
-                    } else {
-                        $phone = CRM_Utils_Array::value($key, $form->_toContactPhone);
-
+                  
+                if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Activity_Form_Task_SMS' ) {
+                    //to check for "if the contact id belongs to a specified activity type"
+                    $actDetails = CRM_Activity_BAO_Activity::getContactActivity( $contactId );
+                    if (self::RECIEVED_SMS_ACTIVITY_SUBJECT != 
+                        CRM_Utils_Array::retrieveValueRecursive($actDetails, 'subject')) {
+                        $suppressedSms++;
+                        unset( $form->_contactDetails[$contactId] );
+                        continue;
                     }
-                    if ( $phone ) {
-                        $toArray[] = array( 'name' => '"'. $value['sort_name'] .'" &lt;' .$phone .'&gt;',
-                                            'id'   => "$contactId::{$phone}" );
+                } 
+                
+                if ( (isset($value['phone_type_id']) && $value['phone_type_id'] != CRM_Utils_Array::key( 'Mobile', $phoneTypes )) || $value['do_not_sms'] || empty( $value['phone'] ) || CRM_Utils_Array::value( 'is_deceased', $value ) ) {
+                 
+                    //if phone is not primary check if non-primary phone is "Mobile"
+                    if ( !empty( $value['phone'] ) 
+                         && $value['phone_type_id'] != CRM_Utils_Array::key( 'Mobile', $phoneTypes ) 
+                         && !CRM_Utils_Array::value( 'is_deceased', $value ) ) {
+                        $filter = array( 'do_not_sms' => 0 );
+                        $contactPhones = CRM_Core_BAO_Phone::allPhones( $contactId, false, 'Mobile', $filter );
+                        if ( count($contactPhones) > 0 ) {
+                            $mobilePhone = CRM_Utils_Array::retrieveValueRecursive($contactPhones, 'phone');
+                        } else {
+                            $suppressedSms++;
+                            unset( $form->_contactDetails[$contactId] );
+                            continue;
+                        }
+                    } else {
+                        $suppressedSms++;
+                        unset( $form->_contactDetails[$contactId] );
+                        continue;
                     }
                 }
+                
+                if ( isset($mobilePhone) ) {
+                    $phone = $mobilePhone;
+                } elseif ( empty( $form->_toContactPhone ) ) {
+                    $phone = $value['phone'];
+                } else {
+                    $phone = CRM_Utils_Array::value($key, $form->_toContactPhone);
+                }
+                
+                if ( $phone ) {
+                    $toArray[] = array( 'name' => '"'. $value['sort_name'] .'" &lt;' .$phone .'&gt;',
+                                        'id'   => "$contactId::{$phone}" );
+                }
+                
             }
             
     		if ( empty( $toArray ) ) {
