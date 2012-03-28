@@ -87,7 +87,7 @@ SELECT @adminSystemSettingsID := MAX(id) FROM civicrm_navigation where name = 'S
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( @domainID, 'civicrm/admin/sms/provider?reset=1', '{ts escape="sql" skip="true"}Configure SMS Providers{/ts}', 'Configure SMS Providers', 'administer CiviCRM', '', @adminSystemSettingsID, '1', NULL, 16 );
+    ( @domainID, 'civicrm/admin/sms/provider?reset=1', '{ts escape="sql" skip="true"}SMS Providers{/ts}', 'SMS Providers', 'administer CiviCRM', '', @adminSystemSettingsID, '1', NULL, 16 );
 
 -- CRM-9799
 

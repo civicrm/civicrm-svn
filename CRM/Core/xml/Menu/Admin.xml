@@ -729,7 +729,7 @@
   </item>
   <item>
      <path>civicrm/admin/sms/provider</path>
-     <title>Configure Sms Provider</title>
+     <title>Sms Providers</title>
      <desc>To configure a sms provider</desc>
      <page_callback>CRM_SMS_Page_Provider</page_callback>
      <access_arguments>administer CiviCRM</access_arguments>
