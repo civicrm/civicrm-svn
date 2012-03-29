@@ -1196,4 +1196,51 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->webtestLogin( );
         $this->waitForPageToLoad( '30000' );
     }
+
+    function addProfile( $profileTitle, $profileFields )
+    {
+        // Go directly to the URL of the screen that you will be testing (New Profile).
+        $this->open( $this->sboxPath . "civicrm/admin/uf/group?reset=1" );
+
+        $this->waitForPageToLoad("30000");
+        $this->click( 'link=Add Profile' );
+
+        // Add membership custom data field to profile
+        $this->waitForElementPresent( '_qf_Group_cancel-bottom' );
+        $this->type( 'title', $profileTitle );
+        $this->click( '_qf_Group_next-bottom' );
+
+        $this->waitForElementPresent( '_qf_Field_cancel-bottom' );
+        $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile '{$profileTitle}' has been added. You can add fields to this profile now." ) );
+
+	/*$profileFields['name'][]
+	$profileFields['type']*/
+	foreach( $profileFields as $field) {
+		$this->waitForElementPresent( 'field_name[0]' );
+		$this->click('field_name[0]');
+		//$this->select('field_name[0]', 'label='.$field['type']);
+		$this->select('field_name[0]', 'value='.$field['type']);
+		$this->click("//option[@value='".$field['type']."']");
+
+		$this->waitForElementPresent( 'field_name[1]' );
+		$this->click('field_name[1]');
+		$this->select('field_name[1]', 'value='.$field['name']);
+		$this->click("//option[@value='".$field['name']."']");
+
+/*		//$this->select('field_name[1]', 'label='.$field['name']);
+		$this->select('field_name[1]', 'value='.$field['name']);
+*/
+		$this->waitForElementPresent('label');
+		$this->type('label', $field['label']);
+		//save the form:
+		$this->waitForElementPresent('_qf_Field_next_new-bottom');
+		//                            _qf_Field_next_new-bottom
+//					      _qf_Field_next_new-bottom
+		$this->click('_qf_Field_next_new-bottom');
+		
+		$this->waitForElementPresent( '_qf_Field_cancel-bottom' );
+
+//		$this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field '".$field['name']."' has been saved to '".$profileTitle."'. You can add another profile field."));
+	}
+    }
 }

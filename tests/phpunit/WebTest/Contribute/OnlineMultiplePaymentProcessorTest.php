@@ -43,10 +43,32 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
         $this->webtestLogin();
 
         $processorName = "Pro " . substr(sha1(rand()), 0, 7);
-        $this->webtestAddPaymentProcessor($processorName, 'PayPal');
+//        $this->webtestAddPaymentProcessor($processorName, 'PayPal');
 
         $processorName = "Standard " . substr(sha1(rand()), 0, 7);
-        $this->webtestAddPaymentProcessor($processorName, 'PayPal_Standard');
+//        $this->webtestAddPaymentProcessor($processorName, 'PayPal_Standard');
 
-    } 
+	$this->addProfile("Personal Info",
+   	    array(
+		array(
+			'name' => 'last_name',
+			'type' => 'Individual',
+			'label' => 'lname',
+		    ),
+		array(
+			'name' => 'first_name',
+			'type' => 'Individual',
+			'label' => 'fname',
+		     ),
+		array(
+			'name' => 'middle_name',
+			'type' => 'Individual',
+			'label' => 'Middle Name',
+		    )
+    	    )
+	);
+
+	
+
+    }     
 }
