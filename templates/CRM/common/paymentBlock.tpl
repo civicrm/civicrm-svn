@@ -28,8 +28,8 @@
 
 function buildPaymentBlock( type ) {
 	if ( type == 0 ) { 
-           return;
-    	} 
+        return;
+    } 
 	 
 	var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type; 
 	
@@ -55,6 +55,24 @@ function buildPaymentBlock( type ) {
 
     cj( fname ).html( response );	
 }
+
+cj( function() {
+    var processorTypeObj = cj('input[name="payment_processor"]');
+
+    if ( processorTypeObj.attr('type') == 'hidden' ) {
+        var processorTypeValue = processorTypeObj.val( );
+    } else {
+        var processorTypeValue = processorTypeObj.filter(':checked').val();
+    }
+
+    if ( processorTypeValue ) {
+        buildPaymentBlock( processorTypeValue );
+    }
+
+    cj('input[name="payment_processor"]').change( function() {
+        buildPaymentBlock( cj(this).val() );    
+    });
+});
 
 </script>
 {/literal}

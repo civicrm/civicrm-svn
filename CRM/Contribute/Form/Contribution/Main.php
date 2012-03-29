@@ -393,7 +393,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         if ( count ( $pps ) > 1 ) {
             $this->addRadio( 'payment_processor', ts('Payment Method'), $pps, 
-                             array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
+                             null, "&nbsp;", true );
+        } else if (!empty( $pps ) ) {
+            $this->addElement( 'hidden', 'payment_processor', array_pop( array_keys( $pps ) ) );
         }
 
         //build pledge block.
