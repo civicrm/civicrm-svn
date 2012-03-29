@@ -52,7 +52,9 @@
         </div><br />
         </td>
     </tr>
-
+<tr>
+    <td>{$form.is_sms.label}<br/>{$form.is_sms.html}</td>
+</tr>
     {* campaign in mailing search *}
     {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
     campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}

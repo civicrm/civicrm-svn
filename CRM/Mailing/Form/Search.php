@@ -55,6 +55,8 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
         foreach ( array('Scheduled', 'Complete', 'Running') as $status ) {
             $this->addElement( 'checkbox', "mailing_status[$status]", null, $status );
         }
+        
+        $this->addElement( 'checkbox', "is_sms", 'Is SMS' );
 
         $this->addButtons(array( 
                                 array ('type'      => 'refresh', 
@@ -67,6 +69,11 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
         $defaults = array( );
         foreach ( array('Scheduled', 'Complete', 'Running') as $status ) {
             $defaults['mailing_status'][$status] = 1;
+        }
+       
+        $parent = $this->controller->getParent( );
+        if ( $parent->_sms ) {
+            $defaults['is_sms'] = 1;
         }
         return $defaults;
     }

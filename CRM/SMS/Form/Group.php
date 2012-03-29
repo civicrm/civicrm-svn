@@ -123,7 +123,7 @@ class CRM_SMS_Form_Group extends CRM_Contact_Form_Task
         //get the mailing groups.
         $groups = CRM_Core_PseudoConstant::group('Mailing');
 
-        $mailings = CRM_Mailing_PseudoConstant::completed();
+        $mailings = CRM_Mailing_PseudoConstant::completed('sms');
         if (! $mailings) {
             $mailings = array();
         }

@@ -161,9 +161,11 @@ class CRM_Mailing_PseudoConstant extends CRM_Core_PseudoConstant
      * @return array - array reference of all mailing templates if any
      * @static
      */
-    public static function &completed( ) {
+    public static function &completed( $mode = null ) {
         if ( ! self::$completed ) {
             $mailingACL = CRM_Mailing_BAO_Mailing::mailingACL( );
+            $mailingACL .= $mode == 'sms' ? " AND sms_provider_id IS NOT NULL " : ""; 
+         
             CRM_Core_PseudoConstant::populate( self::$completed,
                                                'CRM_Mailing_DAO_Mailing',
                                                false,
@@ -173,7 +175,7 @@ class CRM_Mailing_PseudoConstant extends CRM_Core_PseudoConstant
         }
         return self::$completed;
     }
-
+    
     /**
      * Get all mail approval status.
      *
