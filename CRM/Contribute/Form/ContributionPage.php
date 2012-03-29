@@ -225,7 +225,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             $pledgeBlockParams = array( 'entity_id'    => $this->_id,
                                         'entity_table' => ts('civicrm_contribution_page') );
             $pledgeBlockDefaults = array( );
-            CRM_Pledge_BAO_pledgeBlock::retrieve( $pledgeBlockParams, $pledgeBlockDefaults );
+            CRM_Pledge_BAO_PledgeBlock::retrieve( $pledgeBlockParams, $pledgeBlockDefaults );
             if ( $this->_pledgeBlockID = CRM_Utils_Array::value('id', $pledgeBlockDefaults ) ) {
                 $defaults['is_pledge_active'] = true;
             }
