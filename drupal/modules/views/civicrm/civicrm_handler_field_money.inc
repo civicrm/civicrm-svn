@@ -24,27 +24,21 @@
 */
 
 /**
- * Field handler to provide amount raised by given Personal Campaign Page
+ * Field handler to provide a formatted monetary string
  *
  * @ingroup civicrm_field_handlers
  */
-class civicrm_handler_field_pcp_raised_amount extends views_handler_field_numeric {
+class civicrm_handler_field_money extends views_handler_field_numeric {
 
   function construct( ) {
       if ( ! civicrm_initialize( ) ) {
           return;
       }
-      require_once 'CRM/PCP/BAO/PCP.php';
       require_once 'CRM/Utils/Money.php';
   }
 
   function render($values) {
-      $pcp_id =  $values->{$this->field_alias}; // retrieve the value of the "real field"
-      $amount = CRM_PCP_BAO_PCP::thermoMeter( $pcp_id ); // get the total amount raised
-      if ( ! $amount ) {
-          $amount = '0'; // supply a numeric string if function returns NULL or undesirable result
-      }
-      return CRM_Utils_Money::format( $amount );
+      return CRM_Utils_Money::format( $values->{$this->field_alias} );
   } 
 }
 ?>

@@ -293,7 +293,7 @@ function _civicrm_campaign_data (&$data, $enabled) {
                                                       'title' => t('Campaign Monetary Goal'),
                                                       'help' => t('The Monetary goal of the campaign'),
                                                       'field' => array(
-                                                                       'handler' => 'views_handler_field_numeric',
+                                                                       'handler' => 'civicrm_handler_field_money',
                                                                        'click sortable' => TRUE,
                                                                        ),
 

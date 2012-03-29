@@ -641,7 +641,7 @@ function _civicrm_event_data (&$data, $enabled) {
                                                        'title' => t('Fee Amount'),
                                                        'help' => t('The amount the Participant has paid or will have to pay.'),
                                                        'field' => array(
-                                                                        'handler' => 'views_handler_field_numeric',
+                                                                        'handler' => 'civicrm_handler_field_money',
                                                                         'click sortable' => TRUE,
                                                                         ),
 

@@ -40,6 +40,7 @@ files[] = modules/views/civicrm/civicrm_handler_field_link_relationship.inc
 files[] = modules/views/civicrm/civicrm_handler_field_location.inc
 files[] = modules/views/civicrm/civicrm_handler_field_mail.inc
 files[] = modules/views/civicrm/civicrm_handler_field_markup.inc
+files[] = modules/views/civicrm/civicrm_handler_field_money.inc
 files[] = modules/views/civicrm/civicrm_handler_field_option.inc
 files[] = modules/views/civicrm/civicrm_handler_field_pcp_raised_amount.inc
 files[] = modules/views/civicrm/civicrm_handler_field_phone.inc

@@ -214,7 +214,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                                    'title' => t('Non Deductible Amount'),
                                                                    'help' => t('The Non Deductible Part of the Contribution'),
                                                                    'field' => array(
-                                                                                    'handler' => 'views_handler_field_numeric',
+                                                                                    'handler' => 'civicrm_handler_field_money',
                                                                                     'click sortable' => TRUE,
                                                                                     ),
 
@@ -238,7 +238,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                           'title' => t('Total Amount'),
                                                           'help' => t('The Total Contribution made by the Contact'),
                                                           'field' => array(
-                                                                           'handler' => 'views_handler_field_numeric',
+                                                                           'handler' => 'civicrm_handler_field_money',
                                                                            'click sortable' => TRUE,
                                                                            ),
 
@@ -260,7 +260,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                         'title' => t('Fee Amount'),
                                                         'help' => t('The fee charged by the Payment Processor for the transaction.'),
                                                         'field' => array(
-                                                                         'handler' => 'views_handler_field_numeric',
+                                                                         'handler' => 'civicrm_handler_field_money',
                                                                          'click sortable' => TRUE,
                                                                          ),
 
@@ -284,7 +284,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                         'title' => t('Net Amount'),
                                                         'help' => t('The Full Contribution minus Payment Processor Fees.'),
                                                         'field' => array(
-                                                                         'handler' => 'views_handler_field_numeric',
+                                                                         'handler' => 'civicrm_handler_field_money',
                                                                          'click sortable' => TRUE,
                                                                          ),
 
@@ -661,7 +661,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                          'title' => t('Amount'),
                                                          'help' => t('The amount of the soft credit'),
                                                          'field' => array(
-                                                                          'handler' => 'views_handler_field_numeric',
+                                                                          'handler' => 'civicrm_handler_field_money',
                                                                           'click sortable' => TRUE,
                                                                           ),
 
@@ -798,7 +798,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                           'title' => t('Amount'),
                                                           'help' => t('The amount of the recurring contribution'),
                                                           'field' => array(
-                                                                           'handler' => 'views_handler_field_numeric',
+                                                                           'handler' => 'civicrm_handler_field_money',
                                                                            'click sortable' => TRUE,
                                                                            ),
 
@@ -1213,7 +1213,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                 'title' => t('Amount'),
                                                 'help' => t('The total amount of the pledge'),
                                                 'field' => array(
-                                                                'handler' => 'views_handler_field_numeric',
+                                                                'handler' => 'civicrm_handler_field_money',
                                                                 'click sortable' => TRUE,
                                                                 ),
     
@@ -1459,7 +1459,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                 'title' => t('Goal Amount'),
                                                 'help' => t('Goal Amount.'),
                                                 'field' => array(
-                                                                'handler' => 'views_handler_field_numeric',
+                                                                'handler' => 'civicrm_handler_field_money',
                                                                 'click sortable' => TRUE,
                                                                 ),
                                                 'argument' => array(
