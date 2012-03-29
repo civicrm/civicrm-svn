@@ -413,6 +413,14 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $processorSettings = array( 'test_user_name' => '559999327053114',
                                         'test_password'  => 'R2zv2g60-A7GXKJYl0nR0g',
                                         );
+        } elseif ( $processorType == 'PayPal' ) {
+            $processorSettings = array( 'test_user_name' => '559999327053114',
+                                        'test_password'  => 'R2zv2g60-A7GXKJYl0nR0g',
+                                        'test_signature'  => 'R2zv2g60-A7GXKJYl0nR0g',
+                                      ); 
+        } elseif ( $processorType == 'PayPal_Standard' ) {
+            $processorSettings = array( 'test_user_name' => 'V18ki@9r5Bf.org',
+                                      ); 
         } elseif ( empty( $processorSettings ) ) {
             $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
         }
