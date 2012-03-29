@@ -1932,6 +1932,10 @@ div.grippie {
     margin:0 5px 0 0;
 }
 
+#crm-container div.crm-case-dashboard-buttons {
+    height: 33px;
+}
+
 #crm-container div.crm-case-dashboard-switch-view-buttons {
     float: right;
 }
