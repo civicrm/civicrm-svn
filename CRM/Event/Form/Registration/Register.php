@@ -420,7 +420,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
         if ( count ( $pps ) > 1 ) {
             $this->addRadio( 'payment_processor', ts('Payment Method'), $pps,
-                             array('onChange' => "buildPaymentBlock( this.value );"), "&nbsp;", true );
+                             null, "&nbsp;", true );
+        } else if (!empty( $pps ) ) {
+            $this->addElement( 'hidden', 'payment_processor', array_pop( array_keys( $pps ) ) );
         }
 
         //lets add some qf element to bypass payment validations, CRM-4320
