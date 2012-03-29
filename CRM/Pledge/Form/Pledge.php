@@ -123,7 +123,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
                 
         //build custom data
-        CRM_Custom_Form_Customdata::preProcess( $this, null, null, 1, 'Pledge', $this->_id );
+        CRM_Custom_Form_CustomData::preProcess( $this, null, null, 1, 'Pledge', $this->_id );
 
         $this->_values = array( );
         // current pledge id
@@ -262,7 +262,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
 
 		// custom data set defaults
-		$defaults += CRM_Custom_Form_Customdata::setDefaultValues( $this );
+		$defaults += CRM_Custom_Form_CustomData::setDefaultValues( $this );
 
         return $defaults;
     }
@@ -441,7 +441,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
 
         //build custom data
-        CRM_Custom_Form_Customdata::buildQuickForm( $this );
+        CRM_Custom_Form_CustomData::buildQuickForm( $this );
 
         // make this form an upload since we dont know if the custom data injected dynamically
         // is of type file etc $uploadNames = $this->get( 'uploadNames' );

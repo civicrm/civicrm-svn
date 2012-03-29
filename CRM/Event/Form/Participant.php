@@ -376,31 +376,31 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             if ( CRM_Utils_Array::value( 'role_id', $_POST ) ) {
                 foreach( $_POST['role_id'] as $k => $val ) {
                     $roleID = $val;
-                    CRM_Custom_Form_Customdata::preProcess( $this, $this->_roleCustomDataTypeID, $k, 1, 'Participant', $this->_id );
-                    CRM_Custom_Form_Customdata::buildQuickForm( $this );
-                    CRM_Custom_Form_Customdata::setDefaultValues( $this );
+                    CRM_Custom_Form_CustomData::preProcess( $this, $this->_roleCustomDataTypeID, $k, 1, 'Participant', $this->_id );
+                    CRM_Custom_Form_CustomData::buildQuickForm( $this );
+                    CRM_Custom_Form_CustomData::setDefaultValues( $this );
                 }
             }
             
     		//custom data of type participant event
-    		CRM_Custom_Form_Customdata::preProcess( $this, $this->_eventNameCustomDataTypeID, $_POST['event_id'], 1, 'Participant', $this->_id );
-    		CRM_Custom_Form_Customdata::buildQuickForm( $this );
-    		CRM_Custom_Form_Customdata::setDefaultValues( $this );
+    		CRM_Custom_Form_CustomData::preProcess( $this, $this->_eventNameCustomDataTypeID, $_POST['event_id'], 1, 'Participant', $this->_id );
+    		CRM_Custom_Form_CustomData::buildQuickForm( $this );
+    		CRM_Custom_Form_CustomData::setDefaultValues( $this );
 
     		// custom data of type participant event type
             $eventTypeId = null;
             if ( $eventId = CRM_Utils_Array::value( 'event_id', $_POST ) ) {
                 $eventTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventId, 'event_type_id', 'id' );
             }
-    		CRM_Custom_Form_Customdata::preProcess( $this, $this->_eventTypeCustomDataTypeID, $eventTypeId, 
+    		CRM_Custom_Form_CustomData::preProcess( $this, $this->_eventTypeCustomDataTypeID, $eventTypeId, 
                                                     1, 'Participant', $this->_id );
-    		CRM_Custom_Form_Customdata::buildQuickForm( $this );
-    		CRM_Custom_Form_Customdata::setDefaultValues( $this );
+    		CRM_Custom_Form_CustomData::buildQuickForm( $this );
+    		CRM_Custom_Form_CustomData::setDefaultValues( $this );
 
     		//custom data of type participant, ( we 'null' to reset subType and subName)
-    		CRM_Custom_Form_Customdata::preProcess( $this, 'null', 'null', 1, 'Participant', $this->_id );
-    		CRM_Custom_Form_Customdata::buildQuickForm( $this );
-    		CRM_Custom_Form_Customdata::setDefaultValues( $this );
+    		CRM_Custom_Form_CustomData::preProcess( $this, 'null', 'null', 1, 'Participant', $this->_id );
+    		CRM_Custom_Form_CustomData::buildQuickForm( $this );
+    		CRM_Custom_Form_CustomData::setDefaultValues( $this );
 
     	}
         

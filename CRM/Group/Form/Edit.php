@@ -140,7 +140,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         }
 
 		//build custom data
-        CRM_Custom_Form_Customdata::preProcess( $this, null, null, 1, 'Group', $this->_id );
+        CRM_Custom_Form_CustomData::preProcess( $this, null, null, 1, 'Group', $this->_id );
     }
     
     /*
@@ -194,7 +194,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         }
 
 		// custom data set defaults
-		$defaults += CRM_Custom_Form_Customdata::setDefaultValues( $this );
+		$defaults += CRM_Custom_Form_CustomData::setDefaultValues( $this );
         return $defaults;
     }
 
@@ -294,7 +294,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
             $this->addElement('hidden', 'organization_id', '', array( 'id' => 'organization_id') );
         }
 		//build custom data
-		CRM_Custom_Form_Customdata::buildQuickForm( $this );
+		CRM_Custom_Form_CustomData::buildQuickForm( $this );
 
         $this->addButtons( array(
                                  array ( 'type'      => 'upload',

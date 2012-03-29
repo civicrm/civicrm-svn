@@ -122,9 +122,9 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             $this->set('subType',  CRM_Utils_Array::value( 'campaign_type_id', $_POST ) );
             $this->set('entityId', $this->_campaignId );
             
-            CRM_Custom_Form_Customdata::preProcess( $this );
-            CRM_Custom_Form_Customdata::buildQuickForm( $this );
-            CRM_Custom_Form_Customdata::setDefaultValues( $this );
+            CRM_Custom_Form_CustomData::preProcess( $this );
+            CRM_Custom_Form_CustomData::buildQuickForm( $this );
+            CRM_Custom_Form_CustomData::setDefaultValues( $this );
         }
         
     }
