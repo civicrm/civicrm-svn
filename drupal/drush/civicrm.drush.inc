@@ -854,6 +854,15 @@ function _civicrm_init( ) {
         drush_die(dt('Could not locate CiviCRM codebase. Make sure CiviCRM settings file has correct information.'));
     }
 
+    // autoload
+    if (FALSE && module_exists('xautoload')) {
+        _xautoload_finder()->registerPrefixDeep('CRM', 'CRM');
+    } else {
+        require_once $civicrm_root . '/CRM/Core/ClassLoader.php';
+        $classLoader = new CRM_Core_ClassLoader();
+        $classLoader->register();
+    }
+
     // also initialize config object
     require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton( );
