@@ -366,7 +366,7 @@ class InstallRequirements {
         }
 
         foreach ( $writableDirectories as $dir ) {
-            $this->requireWriteable( CIVICRM_DIRECTORY_SEPARATOR . $dir,
+            $this->requireWriteable( (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? '' : CIVICRM_DIRECTORY_SEPARATOR) . $dir,
                 array("File permissions", "Is the $dir folder writeable?", null ),
                 true );
         }
