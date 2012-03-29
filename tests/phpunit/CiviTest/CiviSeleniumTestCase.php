@@ -1213,34 +1213,19 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->waitForElementPresent( '_qf_Field_cancel-bottom' );
         $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile '{$profileTitle}' has been added. You can add fields to this profile now." ) );
 
-	/*$profileFields['name'][]
-	$profileFields['type']*/
-	foreach( $profileFields as $field) {
-		$this->waitForElementPresent( 'field_name[0]' );
-		$this->click('field_name[0]');
-		//$this->select('field_name[0]', 'label='.$field['type']);
-		$this->select('field_name[0]', 'value='.$field['type']);
-		$this->click("//option[@value='".$field['type']."']");
-
-		$this->waitForElementPresent( 'field_name[1]' );
-		$this->click('field_name[1]');
-		$this->select('field_name[1]', 'value='.$field['name']);
-		$this->click("//option[@value='".$field['name']."']");
-
-/*		//$this->select('field_name[1]', 'label='.$field['name']);
-		$this->select('field_name[1]', 'value='.$field['name']);
-*/
-		$this->waitForElementPresent('label');
-		$this->type('label', $field['label']);
-		//save the form:
-		$this->waitForElementPresent('_qf_Field_next_new-bottom');
-		//                            _qf_Field_next_new-bottom
-//					      _qf_Field_next_new-bottom
-		$this->click('_qf_Field_next_new-bottom');
-		
-		$this->waitForElementPresent( '_qf_Field_cancel-bottom' );
-
-//		$this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field '".$field['name']."' has been saved to '".$profileTitle."'. You can add another profile field."));
-	}
+        foreach( $profileFields as $field) {
+            $this->waitForElementPresent( 'field_name[0]' );
+            // $this->waitForPageToLoad("30000");
+            $this->click("id=field_name[0]");
+            $this->select("id=field_name[0]", "label=" . $field['type']);
+            $this->waitForElementPresent( 'field_name[1]' );
+            $this->click("id=field_name[1]");
+            $this->select("id=field_name[1]", "label=" . $field['name']);
+            $this->waitForElementPresent( 'label' );
+            $this->type("id=label", $field['label']);
+            $this->click("id=_qf_Field_next_new-top");
+            $this->waitForPageToLoad("30000");
+            $this->assertTrue( $this->isTextPresent( "Your CiviCRM Profile Field '".$field['name']."' has been saved to '".$profileTitle."'. You can add another profile field."));
+        }
     }
 }
