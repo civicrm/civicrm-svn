@@ -45,10 +45,11 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
 
         $proProcessorName = "Pro " . substr(sha1(rand()), 0, 7);
         $standardProcessorName = "Standard " . substr(sha1(rand()), 0, 7);
-        $this->webtestAddContributionPage( $hash = null,
+        $donationPageTitle = "Donation" . substr(sha1(rand()), 0, 7);
+        $pageId = $this->webtestAddContributionPage( $hash = null,
                                          $rand = null,
-                                         $pageTitle = null,
-                                         $processor = array($proProcessorName => 'PayPal', $standardProcessorName => 'PayPal_Standard'),
+                                         $pageTitle = $donationPageTitle,
+                                         $processor = array($proProcessorName => 'Dummy', $standardProcessorName => 'PayPal_Standard'),
                                          $amountSection = true,
                                          $payLater      = true,
                                          $onBehalf      = false,
@@ -58,7 +59,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
                                          $memPriceSetId = null,
                                          $friend        = false,
                                          $profilePreId  = 1,
-                                         $profilePostId = 7,
+                                         $profilePostId = null,
                                          $premiums      = false,
                                          $widget        = false,
                                          $pcp           = false ,
@@ -69,5 +70,61 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
                                          $allowOtherAmmount = true);
 
         
+
+        $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id=$pageId" );
+        $this->waitForElementPresent('page-title');
+        $this->assertTrue( $this->isTextPresent( $donationPageTitle ));
+
+        $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
+        $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
+        
+        $this->type( "email-5", $firstName . "@example.com" );
+        
+        $this->type( "first_name", $firstName );
+        $this->type( "last_name",$lastName );
+        
+        $this->click("amount_other");
+        $this->type("amount_other",100);
+        
+        $streetAddress = "100 Main Street";
+        $this->type( "street_address-1", $streetAddress );
+        $this->type( "city-1", "San Francisco" );
+        $this->type( "postal_code-1", "94117" );
+        $this->select( "country-1", "value=1228" );
+        $this->select( "state_province-1", "value=1001" );
+
+        $this->assertTrue( $this->isTextPresent( "Payment Method" ));
+        $xpath = "xpath=//label[text() = '{$proProcessorName}']/preceding-sibling::input[1]";
+        $this->check($xpath);
+
+        $this->waitForElementPresent( "credit_card_type" );
+
+        //Credit Card Info
+        $this->select( "credit_card_type", "value=Visa" );
+        $this->type( "credit_card_number", "4111111111111111" );
+        $this->type( "cvv2", "000" );
+        $this->select( "credit_card_exp_date[M]", "value=1" );
+        $this->select( "credit_card_exp_date[Y]", "value=2020" );
+        
+        //Billing Info
+        $this->type( "billing_first_name", $firstName."billing" );
+        $this->type( "billing_last_name", $lastName."billing"  );
+        $this->type( "billing_street_address-5", "15 Main St." );
+        $this->type( " billing_city-5", "San Jose" );
+        $this->select( "billing_country_id-5", "value=1228" );
+        $this->select( "billing_state_province_id-5", "value=1004" );
+        $this->type( "billing_postal_code-5", "94129" );  
+        $this->click( "_qf_Main_upload-bottom" );
+        
+        $this->waitForPageToLoad( '30000' );
+
+        $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+        
+        $this->click( "_qf_Confirm_next-bottom" );
+        $this->waitForPageToLoad( '30000' );
+        
+        //login to check contribution
+        $this->open( $this->sboxPath );
+
     }     
 }

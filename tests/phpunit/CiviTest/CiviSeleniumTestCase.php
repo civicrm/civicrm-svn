@@ -568,11 +568,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      *
      * @return $pageId of newly created online contribution page.
      */
-    function webtestAddContributionPage( $hash, 
-                                         $rand, 
-                                         $pageTitle, 
-                                         $processorType = 'Dummy', 
-                                         $processorName = null,
+    function webtestAddContributionPage( $hash = null, 
+                                         $rand = null, 
+                                         $pageTitle = null, 
+                                         $processor = array('Dummy Processor' => 'Dummy'), 
                                          $amountSection = true,
                                          $payLater      = true, 
                                          $onBehalf      = true,
@@ -593,19 +592,21 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $allowOtherAmmount = true
                                          ) 
     {
-        if ( !$pageTitle ) {
-            $pageTitle = 'Donate Online ' . $hash;
-        }
         if ( !$hash ) {
             $hash = substr(sha1(rand()), 0, 7);
+        }
+        if ( !$pageTitle ) {
+            $pageTitle = 'Donate Online ' . $hash;
         }
         if ( !$rand ) {
             $rand = 2 * rand(2, 50);
         }
 
         // Create a new payment processor if requested
-        if ( $processorName  && $isAddPaymentProcessor ) {
-            $this->webtestAddPaymentProcessor( $processorName, $processorType );                  
+        if ( $isAddPaymentProcessor ) {
+            while(list($processorName, $processorType) = each($processor)) {
+              $this->webtestAddPaymentProcessor( $processorName, $processorType );                  
+            }
         }
 
         // go to the New Contribution Page page
@@ -644,9 +645,14 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->waitForElementPresent('_qf_Amount_next-bottom'); 
 
         // fill in step 2 (Processor, Pay Later, Amounts)
-        if ( $processorName ) {
-            // select newly created processor if required
-            $this->select('payment_processor_id',  "label={$processorName}");
+        if ( $isAddPaymentProcessor ) {
+          reset($processor);
+          while(list($processorName) = each($processor)) {
+              // select newly created processor 
+              $xpath = "xpath=//label[text() = '{$processorName}']/preceding-sibling::input[1]";
+              $this->assertTrue( $this->isTextPresent($processorName));
+              $this->check($xpath);
+          }
         }
 
         if ( $amountSection && !$memPriceSetId ) {
