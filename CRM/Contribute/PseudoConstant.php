@@ -94,6 +94,14 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
      */
     private static $pcPage;
 
+     /**
+     * status of personal campaign page
+     * @var array
+     * @static
+     */
+    private static $pcpStatus = array();
+
+
     /**
      * Get all the contribution types
      *
@@ -287,6 +295,27 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
         }
 
         return $result;
+    }
+
+    /**
+     * Get all PCP Statuses.
+     *
+     * The static array pcpStatus is returned
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all PCP activity statuses
+     */
+    public static function &pcpStatus( $column = 'label' )
+    {
+        if ( ! array_key_exists($column, self::$pcpStatus) ) {
+            self::$pcpStatus[$column] = array( );
+
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$pcpStatus[$column] = CRM_Core_OptionGroup::values('pcp_status', false, 
+                                                                          false, false, null, $column);
+        }
+        return self::$pcpStatus[$column];
     }
 
 }

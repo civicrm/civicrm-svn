@@ -1392,9 +1392,9 @@ function _civicrm_contribute_data (&$data, $enabled) {
     
     // contribution page
     $data['civicrm_pcp']['contribution_page'] = array(
-                                                        'title'     => t('Contribution Page'),
-                                                        'real field' => 'contribution_page_id',
-                                                        'help'      => t('The Contribution Page with which this Personal Campaign Page is associated.'),
+                                                        'title'     => t('Associated Contribution or Event Page'),
+                                                        'real field' => 'page_id',
+                                                        'help'      => t('The Contribution or Event Page with which this Personal Campaign Page is associated.'),
                                                         'field' => array(
                                                                           'handler' => 'civicrm_handler_field_pseudo_constant',
                                                                           'click sortable' => TRUE,
