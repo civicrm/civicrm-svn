@@ -251,7 +251,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
         //FIXME:
         if ( $component == 'membership' ) {
             $sql = " 
-    SELECT cr.payment_processor_id as ppID1, cp.payment_processor_id as ppID2, con.is_test 
+    SELECT cr.payment_processor_id as ppID1, cp.payment_processor as ppID2, con.is_test 
       FROM civicrm_membership mem
 INNER JOIN civicrm_membership_payment mp  ON ( mem.id = mp.membership_id ) 
 INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
@@ -260,7 +260,7 @@ INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
      WHERE mp.membership_id = %1";
         } else if ( $component == 'contribute' ) {
             $sql = " 
-    SELECT cr.payment_processor_id as ppID1, cp.payment_processor_id as ppID2, con.is_test 
+    SELECT cr.payment_processor_id as ppID1, cp.payment_processor as ppID2, con.is_test 
       FROM civicrm_contribution       con
  LEFT JOIN civicrm_contribution_recur cr  ON ( con.contribution_recur_id = cr.id )
  LEFT JOIN civicrm_contribution_page  cp  ON ( con.contribution_page_id  = cp.id )

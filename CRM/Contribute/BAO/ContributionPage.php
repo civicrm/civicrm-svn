@@ -556,7 +556,7 @@ WHERE entity_table = 'civicrm_contribution_page'
   SELECT pp.is_recur
   FROM   civicrm_contribution_page  cp,
          civicrm_payment_processor  pp
-  WHERE  cp.payment_processor_id = pp.id
+  WHERE  cp.payment_processor = pp.id
     AND  cp.id = {$contributionPageId}
 ";
         
