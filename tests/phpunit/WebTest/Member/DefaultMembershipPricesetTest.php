@@ -69,7 +69,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase
       $pageTitle = 'Contribution page for membership ' . $hash;
       $processorName = 'Dummy '.$hash;
       $memPriceSetId = $sid;
-      $membershipContributionPageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', $processorName, true, true, false, false, false, false, $memPriceSetId, false, null, null, true, false, false, true, false, false,  true );
+      $membershipContributionPageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, array($processorName => 'Dummy'),true, true, false, false, false, false, $memPriceSetId, false, null, null, true, false, false, true, false, false,  true );
       
       $firstName = 'John_' . substr(sha1(rand()), 0, 7);
       $lastName  = 'Anderson_' . substr(sha1(rand()), 0, 7);

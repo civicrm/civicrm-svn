@@ -156,6 +156,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->type('last_name', $lname);
         if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
         if ($email) $this->type('email_1_email', $email);
+        $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
         $this->click('_qf_Contact_upload_view-bottom');
         $this->waitForPageToLoad('30000');        
         return $email;

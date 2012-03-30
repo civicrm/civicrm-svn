@@ -74,7 +74,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
 
       $contributionPageTitle = "Contribution Page $title";
       $paymentProcessor      = "Webtest Dummy $title";
-      $this->webtestAddContributionPage( null, null, $contributionPageTitle, 'Dummy', $paymentProcessor, 
+      $this->webtestAddContributionPage( null, null, $contributionPageTitle,  array($paymentProcessor => 'Dummy'),
                                          true, false, false, false, false, true, $sid, false, 1, null );
 
       // Sign up for membership

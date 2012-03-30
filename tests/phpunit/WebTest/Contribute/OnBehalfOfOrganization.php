@@ -64,6 +64,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         //adding contact for membership sign up 
         $this->webtestAddContact( $firstName, $lastName, $email );
         $urlElements = $this->parseURL( );
+        print_r($urlElements);
         $cid = $urlElements['queryString']['cid'];
         $this->assertType( 'numeric', $cid );
         
@@ -96,8 +97,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $pageId = $this->webtestAddContributionPage( $hash, 
                                                      $rand, 
                                                      $pageTitle, 
-                                                     $processorType, 
-                                                     $processorName, 
+                                                     array($processorName => $processorType),
                                                      $amountSection, 
                                                      $payLater, 
                                                      $onBehalf,
