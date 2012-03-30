@@ -127,4 +127,83 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
         $this->open( $this->sboxPath );
 
     }     
+
+    function testOnlineMultpiplePaymentProcessorWithPayLater() 
+    {
+        $this->open( $this->sboxPath );
+
+        // Log in using webtestLogin() method
+        $this->webtestLogin();
+
+
+        $proProcessorName = "Pro " . substr(sha1(rand()), 0, 7);
+        $standardProcessorName = "Standard " . substr(sha1(rand()), 0, 7);
+        $donationPageTitle = "Donation" . substr(sha1(rand()), 0, 7);
+        $hash = substr(sha1(rand()), 0, 7);
+        $pageId = $this->webtestAddContributionPage( $hash,
+                                         $rand = null,
+                                         $pageTitle = $donationPageTitle,
+                                         $processor = array($proProcessorName => 'Dummy'),
+                                         $amountSection = true,
+                                         $payLater      = true,
+                                         $onBehalf      = false,
+                                         $pledges       = true,
+                                         $recurring     = false,
+                                         $membershipTypes = false,
+                                         $memPriceSetId = null,
+                                         $friend        = false,
+                                         $profilePreId  = 1,
+                                         $profilePostId = null,
+                                         $premiums      = false,
+                                         $widget        = false,
+                                         $pcp           = false ,
+                                         $isAddPaymentProcessor = true,
+                                         $isPcpApprovalNeeded = false,
+                                         $isSeparatePayment = false,
+                                         $honoreeSection = false,
+                                         $allowOtherAmmount = true);
+
+        
+
+        $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id=$pageId" );
+        $this->waitForElementPresent('page-title');
+        $this->assertTrue( $this->isTextPresent( $donationPageTitle ));
+
+        $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
+        $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
+        
+        $this->type( "email-5", $firstName . "@example.com" );
+        
+        $this->type( "first_name", $firstName );
+        $this->type( "last_name",$lastName );
+        
+        $this->click("amount_other");
+        $this->type("amount_other",100);
+        
+        $streetAddress = "100 Main Street";
+        $this->type( "street_address-1", $streetAddress );
+        $this->type( "city-1", "San Francisco" );
+        $this->type( "postal_code-1", "94117" );
+        $this->select( "country-1", "value=1228" );
+        $this->select( "state_province-1", "value=1001" );
+
+        $this->assertTrue( $this->isTextPresent( "Payment Method" ));
+        $payLaterText = "Pay later label $hash";
+        $xpath = "xpath=//label[text() = '{$payLaterText}']/preceding-sibling::input[1]";
+        $this->check($xpath);
+        $this->waitForPageToLoad( '30000' );
+
+        $this->waitForElementPresent( "_qf_Confirm_next-bottom" );
+        $this->assertTrue( $this->isTextPresent( $payLaterInstructionsText ));
+        
+        $this->click( "_qf_Confirm_next-bottom" );
+        $this->waitForPageToLoad( '30000' );
+
+        $payLaterInstructionsText = "Pay later instructions $hash";
+        $this->assertTrue( $this->isTextPresent( $payLaterInstructionsText ));
+        
+        //login to check contribution
+        $this->open( $this->sboxPath );
+
+    }
 }
