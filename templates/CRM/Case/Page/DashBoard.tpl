@@ -42,11 +42,11 @@
         {if $myCases}
             {* check for access all cases and activities *}
             {if call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
-                <div><input name="allupcoming" type="radio" class="radio" onClick='window.location.replace("{crmURL p="civicrm/case" q="reset=1&all=1"}")' value-"1"><span>{ts}All Cases with Upcoming Activities{/ts}</span></input></div>
+                <div><input name="allupcoming" type="radio" class="radio" onClick='window.location.replace("{crmURL p="civicrm/case" q="reset=1&all=1"}")' value="1"><span>{ts}All Cases with Upcoming Activities{/ts}</span></input></div>
                 <div><input name="allupcoming" checked type="radio" class="radio" onClick='window.location.replace("{crmURL p="civicrm/case" q="reset=1&all=0"}")' value="0"><span>{ts}My Cases with Upcoming Activities{/ts}</span></input></div>
             {/if}
         {else}
-                <div><input name="allupcoming" checked type="radio" class="radio" onClick='window.location.replace("{crmURL p="civicrm/case" q="reset=1&all=1"}")' value-"1"><span>{ts}All Cases with Upcoming Activities{/ts}</span></input></div>
+                <div><input name="allupcoming" checked type="radio" class="radio" onClick='window.location.replace("{crmURL p="civicrm/case" q="reset=1&all=1"}")' value="1"><span>{ts}All Cases with Upcoming Activities{/ts}</span></input></div>
                 <div><input name="allupcoming" type="radio" class="radio" onClick='window.location.replace("{crmURL p="civicrm/case" q="reset=1&all=0"}")' value="0"><span>{ts}My Cases with Upcoming Activities{/ts}</span></input></div>
         {/if}
     </div>
