@@ -241,6 +241,9 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page
         
         $urlParams = 'reset=1';
         $urlString = 'civicrm/mailing/browse';
+        if ( $this->get( 'sms' ) ) {
+            $urlParams .= '&sms=1';
+        }
         if ( CRM_Utils_Array::value( 3,  $newArgs ) == 'unscheduled' ) {
             $urlString .= '/unscheduled';
             $urlParams .= '&scheduled=false';

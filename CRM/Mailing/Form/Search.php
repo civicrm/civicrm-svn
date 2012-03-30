@@ -56,7 +56,7 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
             $this->addElement( 'checkbox', "mailing_status[$status]", null, $status );
         }
         
-        $this->addElement( 'checkbox', "is_sms", 'Is SMS' );
+        $this->addElement( 'checkbox', "sms", 'Is SMS' );
 
         $this->addButtons(array( 
                                 array ('type'      => 'refresh', 
@@ -73,19 +73,19 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
        
         $parent = $this->controller->getParent( );
         if ( $parent->_sms ) {
-            $defaults['is_sms'] = 1;
+            $defaults['sms'] = 1;
         }
         return $defaults;
     }
 
     function postProcess( ) {
         $params = $this->controller->exportValues( $this->_name );
-
+             
         CRM_Contact_BAO_Query::fixDateValues( $params["mailing_relative"], $params['mailing_from'], $params['mailing_to'] );
         
         $parent = $this->controller->getParent( );
         if ( ! empty( $params ) ) {
-            $fields = array( 'mailing_name', 'mailing_from', 'mailing_to', 'sort_name', 'campaign_id', 'mailing_status' );
+            $fields = array( 'mailing_name', 'mailing_from', 'mailing_to', 'sort_name', 'campaign_id', 'mailing_status', 'sms' );
             foreach ( $fields as $field ) {
                 if ( isset( $params[$field] ) &&
                      ! CRM_Utils_System::isNull( $params[$field] ) ) { 
@@ -101,6 +101,7 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
             }
         }
     }
+    
 }
 
 

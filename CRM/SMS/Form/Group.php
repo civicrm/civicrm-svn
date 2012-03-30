@@ -53,6 +53,9 @@ class CRM_SMS_Form_Group extends CRM_Contact_Form_Task
         if ( !CRM_SMS_BAO_Provider::activeProviderCount( ) ) {
             CRM_Core_Error::fatal( ts( 'The <a href="%1">SMS Provider</a> has not been configured or is not active.', array( 1 => CRM_Utils_System::url('civicrm/admin/sms/provider', 'reset=1'))));
         }
+        
+        $session = CRM_Core_Session::singleton( );
+        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/mailing/browse', 'reset=1&sms=1' ) );
     }
     
     /**
