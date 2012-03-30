@@ -444,11 +444,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 self::buildRecur( $this );
             }
         }
-        /*
-        if ( CRM_Utils_Array::value( 'is_pay_later', $this->_values ) ) {
-            $this->buildPayLater( );
-        }
-        */
+
         if ( $this->_values['is_for_organization'] ) {
             $this->buildOnBehalfOrganization( );
         }
@@ -675,38 +671,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         $this->assign( 'is_for_organization', true );
         $this->assign( 'urlPath', 'civicrm/contribute/transact' );
-    }
-
-    /**
-     * build elements to enable pay later functionality
-     *
-     * @access public
-     */
-    function buildPayLater( ) 
-    {
-
-        $attributes = null;
-        $this->assign( 'hidePaymentInformation', false );
-                   
-        if ( !in_array( $this->_paymentProcessor['billing_mode'], array( 2, 4 ) ) && 
-             $this->_values['is_monetary'] && is_array( $this->_paymentProcessor ) ) {
-            $attributes = array('onclick' => "return showHideByValue('is_pay_later','','billing-payment-block',
-                                                     'block','radio',true);");
-            
-            $this->assign( 'hidePaymentInformation', true );
-        }
-        //hide the paypal exress button and show continue button
-        if ( $this->_paymentProcessor['payment_processor_type'] == 'PayPal_Express' ) {
-            $attributes = array('onclick' => "showHidePayPalExpressOption();" );
-        }
-        
-        $element = $this->addElement( 'checkbox', 'is_pay_later', 
-                                      $this->_values['pay_later_text'], null, $attributes );
-        //if payment processor is not available then freeze
-        //the paylater checkbox with default checked.
-        if ( empty ( $this->_values['payment_processor'] ) ) {
-            $element->freeze();
-        }
     }
 
     /** 
