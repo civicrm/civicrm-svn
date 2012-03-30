@@ -240,34 +240,12 @@ function _civicrm_grant_data (&$data, $enabled) {
                                                                  ),
                                                  );
 
-	//Grant Amount
-	$data['civicrm_grant']['amount_total'] = array(
-                                                   'title' => t('Grant Amount'),
-                                                   'help' => t('Requested grant amount, in default currency'),
-                                                   'field' => array(
-                                                                    'handler' => 'views_handler_field_numeric',
-                                                                    'click sortable' => TRUE,
-                                                                    ),
-                                                   'argument' => array(
-                                                                       'handler' => 'views_handler_argument_numeric',
-                                                                       'numeric' => TRUE,
-                                                                       ),
-                                                   'filter' => array(
-                                                                     'handler' => 'views_handler_filter_numeric',
-                                                                     'allow empty' => TRUE,
-			
-                                                                     ),
-                                                   'sort' => array(
-                                                                   'handler' => 'views_handler_sort',
-                                                                   ),
-                                                   );
-
 	//Grant Amount Requested
 	$data['civicrm_grant']['amount_total'] = array(
                                                    'title' => t('Amount Requested'),
                                                    'help' => t('Grant amount requested'),
                                                    'field' => array(
-                                                                    'handler' => 'views_handler_field_numeric',
+                                                                    'handler' => 'civicrm_handler_field_money',
                                                                     'click sortable' => TRUE,
                                                                     ),
                                                    'argument' => array(
@@ -309,7 +287,7 @@ function _civicrm_grant_data (&$data, $enabled) {
                                                      'title' => t('Amount Granted'),
                                                      'help' => t('Grant amount awarded'),
                                                      'field' => array(
-                                                                      'handler' => 'views_handler_field_numeric',
+                                                                      'handler' => 'civicrm_handler_field_money',
                                                                       'click sortable' => TRUE,
                                                                       ),
                                                      'argument' => array(
