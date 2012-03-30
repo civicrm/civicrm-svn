@@ -42,42 +42,32 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
         // Log in using webtestLogin() method
         $this->webtestLogin();
 
-        $processorName = "Pro " . substr(sha1(rand()), 0, 7);
-        $this->webtestAddPaymentProcessor($processorName, 'PayPal');
 
-        $processorName = "Standard " . substr(sha1(rand()), 0, 7);
-        $this->webtestAddPaymentProcessor($processorName, 'PayPal_Standard');
+        $proProcessorName = "Pro " . substr(sha1(rand()), 0, 7);
+        $standardProcessorName = "Standard " . substr(sha1(rand()), 0, 7);
+        $this->webtestAddContributionPage( $hash = null,
+                                         $rand = null,
+                                         $pageTitle = null,
+                                         $processor = array($proProcessorName => 'PayPal', $standardProcessorName => 'PayPal_Standard'),
+                                         $amountSection = true,
+                                         $payLater      = true,
+                                         $onBehalf      = false,
+                                         $pledges       = true,
+                                         $recurring     = false,
+                                         $membershipTypes = false,
+                                         $memPriceSetId = null,
+                                         $friend        = false,
+                                         $profilePreId  = 1,
+                                         $profilePostId = 7,
+                                         $premiums      = false,
+                                         $widget        = false,
+                                         $pcp           = false ,
+                                         $isAddPaymentProcessor = true,
+                                         $isPcpApprovalNeeded = false,
+                                         $isSeparatePayment = false,
+                                         $honoreeSection = false,
+                                         $allowOtherAmmount = true);
 
-        $personalProfileName = "Personal Info " . substr(sha1(rand()), 0, 7);
-        $this->addProfile($personalProfileName,
-              array(
-                  array(
-                    'name' => 'Last Name',
-                    'type' => 'Individual',
-                    'label' => 'lname',
-                      ),
-                  array(
-                    'name' => 'First Name',
-                    'type' => 'Individual',
-                    'label' => 'fname',
-                       ),
-                  array(
-                    'name' => 'Middle Name',
-                    'type' => 'Individual',
-                    'label' => 'Middle Name',
-                      )
-                )
-        );
-        $otherProfileName = "Other Info " . substr(sha1(rand()), 0, 7);
-	    $this->addProfile($otherProfileName,
-              array(
-                  array(
-                    'name' => 'Nick Name',
-                    'type' => 'Contacts',
-                    'label' => 'Nickname',
-                      ),
-             )
-        );
-
+        
     }     
 }
