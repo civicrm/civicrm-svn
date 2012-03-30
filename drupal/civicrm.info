@@ -64,6 +64,7 @@ files[] = modules/views/civicrm/civicrm_handler_filter_country_multi.inc
 
 ; sort handlers
 files[] = modules/views/civicrm/civicrm_handler_sort_date.inc
+files[] = modules/views/civicrm/civicrm_handler_sort_pcp_raised_amount.inc
 
 ; argument handlers
 files[] = modules/views/civicrm/civicrm_plugin_argument_default.inc

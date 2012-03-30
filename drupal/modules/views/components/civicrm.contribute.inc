@@ -1493,7 +1493,7 @@ function _civicrm_contribute_data (&$data, $enabled) {
                                                                   'allow empty' => TRUE,
                                                                  ),
                                                  'sort' => array(
-                                                                'handler' => 'views_handler_sort',
+                                                                'handler' => 'civicrm_handler_sort_pcp_raised_amount',
                                                                 ),      
                                              );
     
