@@ -74,7 +74,10 @@ if ( $installType == 'drupal' ) {
 }
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $crmPath);
-require_once 'CRM/Utils/System.php';
+
+require_once $crmPath . '/CRM/Core/ClassLoader.php';
+$classLoader = new CRM_Core_ClassLoader();
+$classLoader->register();
 
 $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', false, 'Installation Guide' );
 
@@ -135,7 +138,6 @@ if (isset($_REQUEST['seedLanguage']) and isset($langs[$_REQUEST['seedLanguage']]
 global $cmsPath;
 if ( $installType == 'drupal' ) {
     //CRM-6840 -don't force to install in sites/all/modules/ 
-    require_once "$crmPath/CRM/Utils/System/Drupal.php";
     $object = new CRM_Utils_System_Drupal();
     $cmsPath = $object->cmsRootPath( );
 
