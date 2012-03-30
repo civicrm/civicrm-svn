@@ -28,7 +28,7 @@
  *
  * @ingroup civicrm_field_handlers
  */
-class civicrm_handler_field_money extends views_handler_field_numeric {
+class civicrm_handler_field_money extends views_handler_field {
 
   function construct( ) {
       if ( ! civicrm_initialize( ) ) {
