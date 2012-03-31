@@ -249,14 +249,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 CRM_Utils_Array::value( 'membership_type_default', $this->_membershipBlock );
         }
 
-        //if contribution pay later is enabled and payment
-        //processor is not available then freeze the pay later checkbox with
-        //default check
-        if ( CRM_Utils_Array::value( 'is_pay_later' , $this->_values ) &&
-             empty ( $this->_paymentProcessor ) ) {
-            $this->_defaults['is_pay_later'] = 1;
-        }
-
 //         // hack to simplify credit card entry for testing
 //         $this->_defaults['credit_card_type']     = 'Visa';
 //         $this->_defaults['amount']               = 168;
@@ -341,7 +333,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 CRM_Price_BAO_Set::setDefaultPriceSet($this, $this->_defaults);
             }
         }
-        
+
         if ( !empty( $this->_paymentProcessors ) ) {
             foreach ( $this->_paymentProcessors as $pid => $value ) {
                 if ( CRM_Utils_Array::value( 'is_default', $value ) ) {
@@ -394,8 +386,13 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( count ( $pps ) > 1 ) {
             $this->addRadio( 'payment_processor', ts('Payment Method'), $pps, 
                              null, "&nbsp;", true );
-        } else if (!empty( $pps ) ) {
-            $this->addElement( 'hidden', 'payment_processor', array_pop( array_keys( $pps ) ) );
+        } elseif ( !empty( $pps ) ) {
+            $key = array_pop( array_keys( $pps ) );
+            $this->addElement( 'hidden', 'payment_processor', $key );
+            if ( $key === 0 ) {
+                $this->assign('is_pay_later', $this->_values['is_pay_later']);
+                $this->assign('pay_later_receipt', $this->_values['pay_later_receipt']);
+            }
         }
 
         //build pledge block.
@@ -771,7 +768,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $priceField->find( );
             
             $check = array( );
-            
             while ( $priceField->fetch( ) ) {
                 if ( ! empty( $fields["price_{$priceField->id}"] ) ) {
                     $check[] = $priceField->id; 

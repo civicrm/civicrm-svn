@@ -113,11 +113,7 @@ function clearAmountOther() {
 	    {/if} 
 	{/if} 
 {/if}
-	{if $form.is_pay_later}
-	    <div class="crm-section {$form.is_pay_later.name}-section">
-			<div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
-	    </div>
-	{/if} 
+
 	{if $form.is_recur}
 	    <div class="crm-section {$form.is_recur.name}-section">
 			<div class="content">
@@ -207,6 +203,9 @@ function clearAmountOther() {
 	</fieldset>
     {/if} 
 
+    {if $is_pay_later}
+        <div class="bold pay_later_receipt-section">[x] {$pay_later_receipt}</div>
+    {/if}
     <div class="crm-group custom_pre_profile-group">
     	{include file="CRM/UF/Form/Block.tpl" fields=$customPre} 	
     </div>
@@ -251,11 +250,13 @@ function clearAmountOther() {
          <div class="content">{$form.payment_processor.html}</div>
          <div class="clear"></div>
     </div>
+
     <div id="billing-payment-block"></div>
     {include file="CRM/common/paymentBlock.tpl'}
+    
     <div class="crm-group custom_post_profile-group">
-    	{include file="CRM/UF/Form/Block.tpl" fields=$customPost}
-	</div>
+    {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
+    </div>
 	
     {if $is_monetary and $form.bank_account_number}
     <div id="payment_notice">
@@ -299,7 +300,7 @@ function clearAmountOther() {
     </div>
     {if $footer_text}
     	<div id="footer_text" class="crm-section contribution_footer_text-section">
-			<p>{$footer_text}</p>
+	     <p>{$footer_text}</p>
     	</div>
     {/if}
     <br>
