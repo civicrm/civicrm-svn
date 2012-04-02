@@ -1,12 +1,18 @@
 <?php
 /**
- * This class allows to consume the API, either from within a module that knows civicrm already:
- require_once('api/class/api.php');
- $api = new civicrm_api3();
+
+This class allows to consume the API, either from within a module that knows civicrm already:
+
+  require_once('api/class/api.php');
+  $api = new civicrm_api3();
+
 or from any code on the same server as civicrm
+
   require_once('/your/civi/folder/api/class.api.php');
   $api = new civicrm_api3 (array('conf_path'=> '/your/path/to/your/civicrm/or/joomla/site)); //the path to civicrm.settings.php
+
 or to query a remote server via the rest api
+
   $api = new civicrm_api3 (array ('server' => 'http://example.org','api_key'=>'theusersecretkey','key'=>'thesitesecretkey'));
 
 no matter how initialised and if civicrm is local or remote, you use the class the same way
@@ -14,18 +20,18 @@ no matter how initialised and if civicrm is local or remote, you use the class t
   $api->{entity}->{action}($params);
 
 so to get the individual contacts
+
   if ($api->Contact->Get(array('contact_type'=>'Individual','return'=>'sort_name,current_employer')) {
     echo "\n contacts found " . $api->count; // each key of the result array is an attribute of the api
     foreach ($api->values as $c) {
        echo "\n".$c->sort_name. " working for ". $c->current_employer;
     }
-
-
-  }else { // in theory, doesn't append
+  } else { // in theory, doesn't append
     echo $api->errorMsg();
   }
 
 or to create an event
+
   if ($api->Event->Create(array('title'=>'Test','event_type_id' => 1,'is_public' => 1,'start_date' => 19430429))) {
     echo "created event id:". $api->id;
   } else {
@@ -33,16 +39,19 @@ or to create an event
   }
 
 To make it easier, the Actions can either take for input an associative array $params, or simply an id
-$api->Activity->Get (42);
+
+  $api->Activity->Get (42);
+
 being the same as:
-$api->Activity->Get (array('id'=>42));
+
+  $api->Activity->Get (array('id'=>42));
 
 you can too get the result like what civicrm_api does, but as an object instead of an array (eg $entity->attribute  instead of $entity['attribute']
+
   $result = $api->result;
+  echo $api;// is the json encoded result
 
-echo $api;// is the json encoded result
-
- */
+*/
 
 
 class civicrm_api3  {
