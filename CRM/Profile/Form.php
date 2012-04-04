@@ -1029,7 +1029,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         
     }
 
-    function checkTemplateFileExists( $suffix ) {
+    function checkTemplateFileExists( $suffix = null ) {
         if ( $this->_gid ) {
             $templateFile = "CRM/Profile/Form/{$this->_gid}/{$this->_name}.{$suffix}tpl";
             $template = CRM_Core_Form::getTemplate( );
