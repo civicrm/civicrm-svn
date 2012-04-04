@@ -1,18 +1,19 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function membership_type_get_example(){
-$params = array( 
-  'id' => 1,
-  'version' => 3,
-);
+function membership_type_get_example() {
+  $params = array(
+    'id' => 1,
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'membership_type','get',$params );
+  $result = civicrm_api('membership_type', 'get', $params);
 
   return $result;
 }
@@ -20,32 +21,32 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function membership_type_get_expectedresult(){
+function membership_type_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 1,
-  'values' => array( 
-      '1' => array( 
-          'id' => '1',
-          'domain_id' => '1',
-          'name' => 'General',
-          'member_of_contact_id' => '1',
-          'contribution_type_id' => '1',
-          'minimum_fee' => '0.00',
-          'duration_unit' => 'year',
-          'duration_interval' => '1',
-          'period_type' => 'rolling',
-          'visibility' => '1',
-          'auto_renew' => 0,
-          'is_active' => '1',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 1,
+    'values' => array(
+      '1' => array(
+        'id' => '1',
+        'domain_id' => '1',
+        'name' => 'General',
+        'member_of_contact_id' => '1',
+        'contribution_type_id' => '1',
+        'minimum_fee' => '0.00',
+        'duration_unit' => 'year',
+        'duration_interval' => '1',
+        'period_type' => 'rolling',
+        'visibility' => '1',
+        'auto_renew' => 0,
+        'is_active' => '1',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -64,3 +65,4 @@ function membership_type_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

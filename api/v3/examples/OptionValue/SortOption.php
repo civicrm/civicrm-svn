@@ -1,22 +1,23 @@
 <?php
+// $Id$
 
 
 
 /*
  demonstrates use of Sort param (available in many api functions). Also, getsingle
  */
-function option_value_getsingle_example(){
-$params = array( 
-  'option_group_id' => 1,
-  'version' => 3,
-  'options' => array( 
+function option_value_getsingle_example() {
+  $params = array(
+    'option_group_id' => 1,
+    'version' => 3,
+    'options' => array(
       'sort' => 'label DESC',
       'limit' => 1,
     ),
-);
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'option_value','getsingle',$params );
+  $result = civicrm_api('option_value', 'getsingle', $params);
 
   return $result;
 }
@@ -24,21 +25,21 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function option_value_getsingle_expectedresult(){
+function option_value_getsingle_expectedresult() {
 
-  $expectedResult = array( 
-  'id' => '4',
-  'option_group_id' => '1',
-  'label' => 'SMS',
-  'value' => '4',
-  'filter' => 0,
-  'weight' => '4',
-  'is_optgroup' => 0,
-  'is_reserved' => 0,
-  'is_active' => '1',
-);
+  $expectedResult = array(
+    'id' => '4',
+    'option_group_id' => '1',
+    'label' => 'SMS',
+    'value' => '4',
+    'filter' => 0,
+    'weight' => '4',
+    'is_optgroup' => 0,
+    'is_reserved' => 0,
+    'is_active' => '1',
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -57,3 +58,4 @@ function option_value_getsingle_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

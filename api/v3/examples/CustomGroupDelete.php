@@ -1,18 +1,19 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function custom_group_delete_example(){
-$params = array( 
-  'id' => 1,
-  'version' => 3,
-);
+function custom_group_delete_example() {
+  $params = array(
+    'id' => 1,
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'custom_group','delete',$params );
+  $result = civicrm_api('custom_group', 'delete', $params);
 
   return $result;
 }
@@ -20,16 +21,16 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function custom_group_delete_expectedresult(){
+function custom_group_delete_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'values' => 1,
-);
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'values' => 1,
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -48,3 +49,4 @@ function custom_group_delete_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

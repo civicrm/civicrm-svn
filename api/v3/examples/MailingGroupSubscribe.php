@@ -1,22 +1,23 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function mailing_group_subscribe_example(){
-$params = array( 
-  'email' => 'test@test.test',
-  'group_id' => 2,
-  'contact_id' => 1,
-  'version' => 3,
-  'hash' => 'b15de8b64e2cec34',
-  'time_stamp' => '20101212121212',
-);
+function mailing_group_subscribe_example() {
+  $params = array(
+    'email' => 'test@test.test',
+    'group_id' => 2,
+    'contact_id' => 1,
+    'version' => 3,
+    'hash' => 'b15de8b64e2cec34',
+    'time_stamp' => '20101212121212',
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'mailing_group','subscribe',$params );
+  $result = civicrm_api('mailing_group', 'subscribe', $params);
 
   return $result;
 }
@@ -24,21 +25,21 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function mailing_group_subscribe_expectedresult(){
+function mailing_group_subscribe_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 4,
-  'values' => array( 
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 4,
+    'values' => array(
       'contact_id' => 1,
       'subscribe_id' => 1,
       'hash' => 'b8ece1ca2f339a24',
       'is_error' => 0,
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -57,3 +58,4 @@ function mailing_group_subscribe_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

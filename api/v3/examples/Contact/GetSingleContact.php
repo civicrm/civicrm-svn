@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 
 
@@ -7,14 +8,14 @@
     /* This param causes the only contact to be returned as an array without the other levels.
     /* it will be ignored if there is not exactly 1 result
  */
-function contact_getsingle_example(){
-$params = array( 
-  'version' => 3,
-  'id' => 17,
-);
+function contact_getsingle_example() {
+  $params = array(
+    'version' => 3,
+    'id' => 17,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'contact','getsingle',$params );
+  $result = civicrm_api('contact', 'getsingle', $params);
 
   return $result;
 }
@@ -22,21 +23,21 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function contact_getsingle_expectedresult(){
+function contact_getsingle_expectedresult() {
 
-  $expectedResult = array( 
-  'contact_id' => '17',
-  'contact_type' => 'Individual',
-  'display_name' => 'Test Contact',
-  'is_opt_out' => 0,
-  'first_name' => 'Test',
-  'last_name' => 'Contact',
-  'is_deceased' => 0,
-  'contact_is_deleted' => 0,
-  'id' => '17',
-);
+  $expectedResult = array(
+    'contact_id' => '17',
+    'contact_type' => 'Individual',
+    'display_name' => 'Test Contact',
+    'is_opt_out' => 0,
+    'first_name' => 'Test',
+    'last_name' => 'Contact',
+    'is_deceased' => 0,
+    'contact_is_deleted' => 0,
+    'id' => '17',
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -55,3 +56,4 @@ function contact_getsingle_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

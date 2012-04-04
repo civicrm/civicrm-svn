@@ -1,17 +1,18 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function uf_field_get_example(){
-$params = array( 
-  'version' => 3,
-);
+function uf_field_get_example() {
+  $params = array(
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'uf_field','get',$params );
+  $result = civicrm_api('uf_field', 'get', $params);
 
   return $result;
 }
@@ -19,32 +20,32 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function uf_field_get_expectedresult(){
+function uf_field_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 45,
-  'values' => array( 
-      '45' => array( 
-          'id' => '45',
-          'uf_group_id' => '11',
-          'field_name' => 'country',
-          'is_active' => '1',
-          'is_view' => 0,
-          'is_required' => 0,
-          'weight' => '1',
-          'visibility' => 'Public Pages and Listings',
-          'in_selector' => 0,
-          'is_searchable' => '1',
-          'label' => 'Test Country',
-          'field_type' => 'Contact',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 45,
+    'values' => array(
+      '45' => array(
+        'id' => '45',
+        'uf_group_id' => '11',
+        'field_name' => 'country',
+        'is_active' => '1',
+        'is_view' => 0,
+        'is_required' => 0,
+        'weight' => '1',
+        'visibility' => 'Public Pages and Listings',
+        'in_selector' => 0,
+        'is_searchable' => '1',
+        'label' => 'Test Country',
+        'field_type' => 'Contact',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -63,3 +64,4 @@ function uf_field_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

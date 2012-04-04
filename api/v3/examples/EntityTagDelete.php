@@ -1,19 +1,20 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function entity_tag_delete_example(){
-$params = array( 
-  'contact_id_h' => 2,
-  'tag_id' => 1,
-  'version' => 3,
-);
+function entity_tag_delete_example() {
+  $params = array(
+    'contact_id_h' => 2,
+    'tag_id' => 1,
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'entity_tag','delete',$params );
+  $result = civicrm_api('entity_tag', 'delete', $params);
 
   return $result;
 }
@@ -21,16 +22,16 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function entity_tag_delete_expectedresult(){
+function entity_tag_delete_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'not_removed' => 0,
-  'removed' => 1,
-  'total_count' => 1,
-);
+  $expectedResult = array(
+    'is_error' => 0,
+    'not_removed' => 0,
+    'removed' => 1,
+    'total_count' => 1,
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -49,3 +50,4 @@ function entity_tag_delete_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

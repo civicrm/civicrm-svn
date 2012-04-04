@@ -1,19 +1,20 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function profile_get_example(){
-$params = array( 
-  'profile_id' => 25,
-  'contact_id' => 1,
-  'version' => 3,
-);
+function profile_get_example() {
+  $params = array(
+    'profile_id' => 25,
+    'contact_id' => 1,
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'profile','get',$params );
+  $result = civicrm_api('profile', 'get', $params);
 
   return $result;
 }
@@ -21,13 +22,13 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function profile_get_expectedresult(){
+function profile_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'values' => array( 
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'values' => array(
       'first_name' => 'abc1',
       'last_name' => 'xyz1',
       'email-Primary' => 'abc1.xyz1@yahoo.com',
@@ -35,9 +36,9 @@ function profile_get_expectedresult(){
       'country-1' => '1228',
       'state_province-1' => '1021',
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -56,3 +57,4 @@ function profile_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

@@ -1,18 +1,19 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function membership_get_example(){
-$params = array( 
-  'version' => 3,
-  'membership_type_id' => 9,
-);
+function membership_get_example() {
+  $params = array(
+    'version' => 3,
+    'membership_type_id' => 9,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'membership','get',$params );
+  $result = civicrm_api('membership', 'get', $params);
 
   return $result;
 }
@@ -20,35 +21,35 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function membership_get_expectedresult(){
+function membership_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 6,
-  'values' => array( 
-      '6' => array( 
-          'id' => '6',
-          'contact_id' => '1',
-          'membership_type_id' => '9',
-          'join_date' => '2009-01-21',
-          'start_date' => '2009-01-21',
-          'end_date' => '2009-12-21',
-          'source' => 'Payment',
-          'status_id' => '16',
-          'is_override' => '1',
-          'is_test' => 0,
-          'is_pay_later' => 0,
-          'membership_name' => 'General',
-          'relationship_name' => 'Child of',
-          'custom_1' => 'custom string',
-          'custom_1_1' => 'custom string',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 6,
+    'values' => array(
+      '6' => array(
+        'id' => '6',
+        'contact_id' => '1',
+        'membership_type_id' => '9',
+        'join_date' => '2009-01-21',
+        'start_date' => '2009-01-21',
+        'end_date' => '2009-12-21',
+        'source' => 'Payment',
+        'status_id' => '16',
+        'is_override' => '1',
+        'is_test' => 0,
+        'is_pay_later' => 0,
+        'membership_name' => 'General',
+        'relationship_name' => 'Child of',
+        'custom_1' => 'custom string',
+        'custom_1_1' => 'custom string',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -67,3 +68,4 @@ function membership_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

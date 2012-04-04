@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -32,7 +34,7 @@
  *
  * @package CiviCRM_APIv2
  * @subpackage API_Membership
- * 
+ *
  * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id$
  */
@@ -51,40 +53,41 @@ require_once 'api/v2/utils.php';
  * @static void
  * @access public
  */
-function &civicrm_membershipcontributionlink_create( &$params ) {
-    _civicrm_initialize( );
+function &civicrm_membershipcontributionlink_create(&$params) {
+  _civicrm_initialize();
 
-    if ( empty( $params ) ) {
-        return civicrm_create_error( ts( 'No input parameters present' ) );
-    }
+  if (empty($params)) {
+    return civicrm_create_error(ts('No input parameters present'));
+  }
 
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
-    }
-    
-    if ( ! isset( $params['contribution_id'] ) || 
-         ! isset( $params['membership_id'] ) ) {
-        return civicrm_create_error( ts( 'Required parameters missing' ) );
-    }
+  if (!is_array($params)) {
+    return civicrm_create_error(ts('Input parameters is not an array'));
+  }
 
-    require_once 'CRM/Core/Transaction.php';
-    $transaction = new CRM_Core_Transaction( );
+  if (!isset($params['contribution_id']) ||
+    !isset($params['membership_id'])
+  ) {
+    return civicrm_create_error(ts('Required parameters missing'));
+  }
 
-    require_once 'CRM/Member/DAO/MembershipPayment.php';
-    $mpDAO = new CRM_Member_DAO_MembershipPayment();    
-    $mpDAO->copyValues($params);
-    $result = $mpDAO->save();
-    
-    if ( is_a( $result, 'CRM_Core_Error') ) {
-        $transaction->rollback( );
-        return civicrm_create_error( $result->_errors[0]['message'] );
-    }
-    
-    $transaction->commit( );
-    
-    _civicrm_object_to_array($mpDAO, $mpArray);
-    
-    return $mpArray;
+  require_once 'CRM/Core/Transaction.php';
+  $transaction = new CRM_Core_Transaction();
+
+  require_once 'CRM/Member/DAO/MembershipPayment.php';
+  $mpDAO = new CRM_Member_DAO_MembershipPayment();
+  $mpDAO->copyValues($params);
+  $result = $mpDAO->save();
+
+  if (is_a($result, 'CRM_Core_Error')) {
+    $transaction->rollback();
+    return civicrm_create_error($result->_errors[0]['message']);
+  }
+
+  $transaction->commit();
+
+  _civicrm_object_to_array($mpDAO, $mpArray);
+
+  return $mpArray;
 }
 
 /**
@@ -97,30 +100,31 @@ function &civicrm_membershipcontributionlink_create( &$params ) {
  * @static void
  * @access public
  */
-function &civicrm_membershipcontributionlink_get( &$params ) {
-    _civicrm_initialize( );
+function &civicrm_membershipcontributionlink_get(&$params) {
+  _civicrm_initialize();
 
-    if ( empty( $params ) ) {
-        return civicrm_create_error( ts( 'No input parameters present' ) );
-    }
-    
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
-    }
+  if (empty($params)) {
+    return civicrm_create_error(ts('No input parameters present'));
+  }
 
-    require_once 'CRM/Member/DAO/MembershipPayment.php';
-    $mpDAO = new CRM_Member_DAO_MembershipPayment();    
-    $mpDAO->copyValues($params);
-    $mpDAO->id = CRM_Utils_Array::value( 'membership_contribution_id', $params );
-    $mpDAO->find();
-    
-    $values = array( );
-    while ( $mpDAO->fetch() ) {
-        _civicrm_object_to_array($mpDAO, $mpArray);
-        $mpArray['membership_contribution_id'] = $mpDAO->id; 
-        unset($mpArray['id']);
-        $values[$mpDAO->id] = $mpArray;
-    }
-    
-    return $values;
+  if (!is_array($params)) {
+    return civicrm_create_error(ts('Input parameters is not an array'));
+  }
+
+  require_once 'CRM/Member/DAO/MembershipPayment.php';
+  $mpDAO = new CRM_Member_DAO_MembershipPayment();
+  $mpDAO->copyValues($params);
+  $mpDAO->id = CRM_Utils_Array::value('membership_contribution_id', $params);
+  $mpDAO->find();
+
+  $values = array();
+  while ($mpDAO->fetch()) {
+    _civicrm_object_to_array($mpDAO, $mpArray);
+    $mpArray['membership_contribution_id'] = $mpDAO->id;
+    unset($mpArray['id']);
+    $values[$mpDAO->id] = $mpArray;
+  }
+
+  return $values;
 }
+

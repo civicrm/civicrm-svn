@@ -1,22 +1,23 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function participant_status_type_delete_example(){
-$params = array( 
-  'version' => 3,
-  'name' => 'test status',
-  'label' => 'I'm a test',
-  'class' => 'Positive',
-  'is_reserved' => 0,
-  'is_active' => 1,
-  'is_counted' => 1,
-  'visibility_id' => 1,
-  'weight' => 10,
-);
+function participant_status_type_delete_example() {
+  $params = array(
+    'version' => 3,
+    'name' => 'test status',
+    'label' => 'I\'matest',
+    'class ' => 'Positive',
+    'is_reserved' => 0,
+    'is_active' => 1,
+    'is_counted' => 1,
+    'visibility_id' => 1,
+    'weight' => 10,
+  );
 
   require_once 'api/api.php';
   $result = civicrm_api( 'participant_status_type','delete',$params );
@@ -55,3 +56,4 @@ function participant_status_type_delete_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

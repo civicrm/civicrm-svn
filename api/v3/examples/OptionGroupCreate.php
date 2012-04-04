@@ -1,28 +1,29 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function option_group_create_example(){
-$params = array( 
-  'version' => 3,
-  'sequential' => 1,
-  'name' => 'civicrm_event.amount.560',
-  'is_reserved' => 1,
-  'is_active' => 1,
-  'api.OptionValue.create' => array( 
+function option_group_create_example() {
+  $params = array(
+    'version' => 3,
+    'sequential' => 1,
+    'name' => 'civicrm_event.amount.560',
+    'is_reserved' => 1,
+    'is_active' => 1,
+    'api.OptionValue.create' => array(
       'label' => 'workshop',
       'value' => 35,
       'is_default' => 1,
       'is_active' => 1,
       'format.only_id' => 1,
     ),
-);
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'option_group','create',$params );
+  $result = civicrm_api('option_group', 'create', $params);
 
   return $result;
 }
@@ -30,27 +31,27 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function option_group_create_expectedresult(){
+function option_group_create_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 75,
-  'values' => array( 
-      '0' => array( 
-          'id' => 75,
-          'name' => 'civicrm_event.amount.560',
-          'title' => '',
-          'description' => '',
-          'is_reserved' => 1,
-          'is_active' => 1,
-          'api.OptionValue.create' => 657,
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 75,
+    'values' => array(
+      '0' => array(
+        'id' => 75,
+        'name' => 'civicrm_event.amount.560',
+        'title' => '',
+        'description' => '',
+        'is_reserved' => 1,
+        'is_active' => 1,
+        'api.OptionValue.create' => 657,
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -69,3 +70,4 @@ function option_group_create_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

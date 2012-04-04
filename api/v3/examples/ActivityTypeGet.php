@@ -1,17 +1,18 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function activity_type_get_example(){
-$params = array( 
-  'version' => 3,
-);
+function activity_type_get_example() {
+  $params = array(
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'activity_type','get',$params );
+  $result = civicrm_api('activity_type', 'get', $params);
 
   return $result;
 }
@@ -19,20 +20,20 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function activity_type_get_expectedresult(){
+function activity_type_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 3,
-  'values' => array( 
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 3,
+    'values' => array(
       '1' => 'Test activity type',
       '5' => 'Email processing Test activity type',
       '29' => 'PhoneBank',
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -51,3 +52,4 @@ function activity_type_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

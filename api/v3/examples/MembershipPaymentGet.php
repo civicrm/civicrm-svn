@@ -1,19 +1,20 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function membership_payment_get_example(){
-$params = array( 
-  'contribution_id' => 2,
-  'membership_id' => 2,
-  'version' => 3,
-);
+function membership_payment_get_example() {
+  $params = array(
+    'contribution_id' => 2,
+    'membership_id' => 2,
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'membership_payment','get',$params );
+  $result = civicrm_api('membership_payment', 'get', $params);
 
   return $result;
 }
@@ -21,23 +22,23 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function membership_payment_get_expectedresult(){
+function membership_payment_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 2,
-  'values' => array( 
-      '2' => array( 
-          'membership_id' => '2',
-          'contribution_id' => '2',
-          'membership_contribution_id' => '2',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 2,
+    'values' => array(
+      '2' => array(
+        'membership_id' => '2',
+        'contribution_id' => '2',
+        'membership_contribution_id' => '2',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -53,3 +54,4 @@ function membership_payment_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

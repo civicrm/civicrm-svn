@@ -1,20 +1,21 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function website_delete_example(){
-$params = array( 
-  'version' => 3,
-  'contact_id' => 1,
-  'url' => 'website.com',
-  'website_type_id' => 1,
-);
+function website_delete_example() {
+  $params = array(
+    'version' => 3,
+    'contact_id' => 1,
+    'url' => 'website.com',
+    'website_type_id' => 1,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'website','delete',$params );
+  $result = civicrm_api('website', 'delete', $params);
 
   return $result;
 }
@@ -22,16 +23,16 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function website_delete_expectedresult(){
+function website_delete_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'values' => 1,
-);
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'values' => 1,
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -50,3 +51,4 @@ function website_delete_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

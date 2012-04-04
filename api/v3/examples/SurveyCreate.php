@@ -1,21 +1,22 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function survey_create_example(){
-$params = array( 
-  'version' => 3,
-  'title' => 'survey title',
-  'activity_type_id' => '30',
-  'max_number_of_contacts' => 12,
-  'instructions' => 'Call people, ask for money',
-);
+function survey_create_example() {
+  $params = array(
+    'version' => 3,
+    'title' => 'survey title',
+    'activity_type_id' => '30',
+    'max_number_of_contacts' => 12,
+    'instructions' => 'Call people, ask for money',
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'survey','create',$params );
+  $result = civicrm_api('survey', 'create', $params);
 
   return $result;
 }
@@ -23,36 +24,36 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function survey_create_expectedresult(){
+function survey_create_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 1,
-  'values' => array( 
-      '1' => array( 
-          'id' => 1,
-          'title' => 'survey title',
-          'campaign_id' => '',
-          'activity_type_id' => '30',
-          'recontact_interval' => '',
-          'instructions' => 'Call people, ask for money',
-          'release_frequency' => '',
-          'max_number_of_contacts' => 12,
-          'default_number_of_contacts' => '',
-          'is_active' => '',
-          'is_default' => '',
-          'created_id' => '',
-          'created_date' => '20111031165653',
-          'last_modified_id' => '',
-          'last_modified_date' => '',
-          'result_id' => '',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 1,
+    'values' => array(
+      '1' => array(
+        'id' => 1,
+        'title' => 'survey title',
+        'campaign_id' => '',
+        'activity_type_id' => '30',
+        'recontact_interval' => '',
+        'instructions' => 'Call people, ask for money',
+        'release_frequency' => '',
+        'max_number_of_contacts' => 12,
+        'default_number_of_contacts' => '',
+        'is_active' => '',
+        'is_default' => '',
+        'created_id' => '',
+        'created_date' => '20111031165653',
+        'last_modified_id' => '',
+        'last_modified_date' => '',
+        'result_id' => '',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -71,3 +72,4 @@ function survey_create_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

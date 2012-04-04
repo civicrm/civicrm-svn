@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -40,7 +41,7 @@
 /**
  * Files required for this package
  */
- require_once 'CRM/Event/BAO/Participant.php';
+require_once 'CRM/Event/BAO/Participant.php';
 
 /**
  * Create an Event Participant
@@ -48,34 +49,32 @@
  * This API is used for creating a participants in an event.
  * Required parameters : event_id AND contact_id for new creation
  *                     : participant as name/value with participantid for edit
+ *
  * @param   array  $params     an associative array of name/value property values of civicrm_participant
  *
  * @return array apiresult
  * {@getfields participant_create}
  * @access public
  */
-function civicrm_api3_participant_create($params)
-{
-     //check that event id is not an template
-     // note that check duplicate check was removed as it wasn't actually being called.
-     //check contact exists removed as belongs @ wrapper layer
-     if( CRM_Utils_Array::value( 'event_id', $params ) ) {
-        $isTemplate = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'is_template' );
-        if ( !empty( $isTemplate ) ) {
-            return civicrm_api3_create_error( ts( 'Event templates are not meant to be registered' ));
-        }
-     }
+function civicrm_api3_participant_create($params) {
+  //check that event id is not an template
+  // note that check duplicate check was removed as it wasn't actually being called.
+  //check contact exists removed as belongs @ wrapper layer
+  if (CRM_Utils_Array::value('event_id', $params)) {
+    $isTemplate = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $params['event_id'], 'is_template');
+    if (!empty($isTemplate)) {
+      return civicrm_api3_create_error(ts('Event templates are not meant to be registered'));
+    }
+  }
 
-        $value = array();
-        _civicrm_api3_custom_format_params( $params, $values, 'Participant' );
-        $params = array_merge($values,$params);  
-        require_once 'CRM/Event/BAO/Participant.php';
+  $value = array();
+  _civicrm_api3_custom_format_params($params, $values, 'Participant');
+  $params = array_merge($values, $params);
+  require_once 'CRM/Event/BAO/Participant.php';
 
-        $participantBAO = CRM_Event_BAO_Participant::create($params);
-        _civicrm_api3_object_to_array($participantBAO , $participant[$participantBAO->id]);
-        return civicrm_api3_create_success( $participant,$params,'participant','create',$participantBAO );
-    
-
+  $participantBAO = CRM_Event_BAO_Participant::create($params);
+  _civicrm_api3_object_to_array($participantBAO, $participant[$participantBAO->id]);
+  return civicrm_api3_create_success($participant, $params, 'participant', 'create', $participantBAO);
 }
 /*
  * Adjust Metadata for Create action
@@ -83,12 +82,13 @@ function civicrm_api3_participant_create($params)
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_participant_create_spec(&$params){
+function _civicrm_api3_participant_create_spec(&$params) {
   $params['status_id']['api.default'] = "1";
   $params['register_date']['api.default'] = "now";
-  $params['event_id']['api.required'] =1;
-  $params['contact_id']['api.required'] =1;
+  $params['event_id']['api.required'] = 1;
+  $params['contact_id']['api.required'] = 1;
 }
+
 /**
  * Retrieve a specific participant, given a set of input params
  * If more than one matching participant exists, return an error, unless
@@ -100,58 +100,56 @@ function _civicrm_api3_participant_create_spec(&$params){
  * {@getfields participant_get}
  * @access public
  */
-function civicrm_api3_participant_get( $params ) {
+function civicrm_api3_participant_get($params) {
 
-        $values = array( );
-        if ( isset ( $params['id'] ) ) {
-            $params['participant_id' ] = $params['id'];
-            unset( $params['id'] );
-        }
+  $values = array();
+  if (isset($params['id'])) {
+    $params['participant_id'] = $params['id'];
+    unset($params['id']);
+  }
 
 
-    $options = _civicrm_api3_get_options_from_params($params, true);
-    $sort            = CRM_Utils_Array::value('sort',$options,NULL);
-    $offset          = CRM_Utils_Array::value('offset',$options);
-    $rowCount        = CRM_Utils_Array::value('limit',$options);
-    $smartGroupCache = CRM_Utils_Array::value('smartGroupCache',$params);
-    $inputParams      = CRM_Utils_Array::value('input_params',$options,array( ));
-    $returnProperties =  CRM_Utils_Array::value('return',$options,null);
+  $options          = _civicrm_api3_get_options_from_params($params, TRUE);
+  $sort             = CRM_Utils_Array::value('sort', $options, NULL);
+  $offset           = CRM_Utils_Array::value('offset', $options);
+  $rowCount         = CRM_Utils_Array::value('limit', $options);
+  $smartGroupCache  = CRM_Utils_Array::value('smartGroupCache', $params);
+  $inputParams      = CRM_Utils_Array::value('input_params', $options, array());
+  $returnProperties = CRM_Utils_Array::value('return', $options, NULL);
 
-    // add is_test to the clause if not present
-    if ( ! array_key_exists( 'participant_test', $inputParams ) ) {
-        $inputParams['participant_test'] = 0;
-    }
+  // add is_test to the clause if not present
+  if (!array_key_exists('participant_test', $inputParams)) {
+    $inputParams['participant_test'] = 0;
+  }
 
-    require_once 'CRM/Contact/BAO/Query.php';
-    require_once 'CRM/Event/BAO/Query.php';
-    if ( empty( $returnProperties ) ) {
-        $returnProperties = CRM_Event_BAO_Query::defaultReturnProperties( CRM_Contact_BAO_Query::MODE_EVENT );
-    }
+  require_once 'CRM/Contact/BAO/Query.php';
+  require_once 'CRM/Event/BAO/Query.php';
+  if (empty($returnProperties)) {
+    $returnProperties = CRM_Event_BAO_Query::defaultReturnProperties(CRM_Contact_BAO_Query::MODE_EVENT);
+  }
 
-    $newParams = CRM_Contact_BAO_Query::convertFormValues( $params);
-    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null,
-                                        false, false, CRM_Contact_BAO_Query::MODE_EVENT );
-    list( $select, $from, $where , $having) = $query->query( );
+  $newParams = CRM_Contact_BAO_Query::convertFormValues($params);
+  $query = new CRM_Contact_BAO_Query($newParams, $returnProperties, NULL,
+    FALSE, FALSE, CRM_Contact_BAO_Query::MODE_EVENT
+  );
+  list($select, $from, $where, $having) = $query->query();
 
-    $sql = "$select $from $where $having";
+  $sql = "$select $from $where $having";
 
-    if ( ! empty( $sort ) ) {
-        $sql .= " ORDER BY $sort ";
-    }
-    $sql .= " LIMIT $offset, $rowCount ";
-    $dao = CRM_Core_DAO::executeQuery( $sql );
+  if (!empty($sort)) {
+    $sql .= " ORDER BY $sort ";
+  }
+  $sql .= " LIMIT $offset, $rowCount ";
+  $dao = CRM_Core_DAO::executeQuery($sql);
 
-    $participant = array( );
-    while ( $dao->fetch( ) ) {
-        $participant[$dao->participant_id] = $query->store( $dao );
-          _civicrm_api3_custom_data_get($participant[$dao->participant_id],'Participant',$dao->participant_id,null);          
-    }
+  $participant = array();
+  while ($dao->fetch()) {
+    $participant[$dao->participant_id] = $query->store($dao);
+    _civicrm_api3_custom_data_get($participant[$dao->participant_id], 'Participant', $dao->participant_id, NULL);
+  }
 
-        return civicrm_api3_create_success($participant,$params, 'participant','get',$dao);
-
+  return civicrm_api3_create_success($participant, $params, 'participant', 'get', $dao);
 }
-
-
 
 /**
  * Deletes an existing contact participant
@@ -163,16 +161,15 @@ function civicrm_api3_participant_get( $params ) {
  * {@getfields participant_delete}
  * @access public
  */
-function &civicrm_api3_participant_delete( $params )
-{
-        $participant = new CRM_Event_BAO_Participant();
-        $result = $participant->deleteParticipant( $params['id'] );
+function &civicrm_api3_participant_delete($params) {
+  $participant = new CRM_Event_BAO_Participant();
+  $result = $participant->deleteParticipant($params['id']);
 
-        if ( $result ) {
-            return  civicrm_api3_create_success( );
-        } else {
-            return  civicrm_api3_create_error('Error while deleting participant');
-        }
-
+  if ($result) {
+    return civicrm_api3_create_success();
+  }
+  else {
+    return civicrm_api3_create_error('Error while deleting participant');
+  }
 }
 

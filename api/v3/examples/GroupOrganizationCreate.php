@@ -1,19 +1,20 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function group_organization_create_example(){
-$params = array( 
-  'organization_id' => 1,
-  'group_id' => 1,
-  'version' => 3,
-);
+function group_organization_create_example() {
+  $params = array(
+    'organization_id' => 1,
+    'group_id' => 1,
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'group_organization','create',$params );
+  $result = civicrm_api('group_organization', 'create', $params);
 
   return $result;
 }
@@ -21,21 +22,21 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function group_organization_create_expectedresult(){
+function group_organization_create_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 3,
-  'id' => 3,
-  'values' => array( 
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 3,
+    'id' => 3,
+    'values' => array(
       'id' => 3,
       'group_id' => 1,
       'organization_id' => 1,
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -54,3 +55,4 @@ function group_organization_create_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

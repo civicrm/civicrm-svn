@@ -1,21 +1,22 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function survey_get_example(){
-$params = array( 
-  'version' => 3,
-  'title' => 'survey title',
-  'activity_type_id' => '30',
-  'max_number_of_contacts' => 12,
-  'instructions' => 'Call people, ask for money',
-);
+function survey_get_example() {
+  $params = array(
+    'version' => 3,
+    'title' => 'survey title',
+    'activity_type_id' => '30',
+    'max_number_of_contacts' => 12,
+    'instructions' => 'Call people, ask for money',
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'survey','get',$params );
+  $result = civicrm_api('survey', 'get', $params);
 
   return $result;
 }
@@ -23,28 +24,28 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function survey_get_expectedresult(){
+function survey_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 1,
-  'values' => array( 
-      '1' => array( 
-          'id' => '1',
-          'title' => 'survey title',
-          'activity_type_id' => '30',
-          'instructions' => 'Call people, ask for money',
-          'max_number_of_contacts' => '12',
-          'is_active' => '1',
-          'is_default' => 0,
-          'created_date' => '2011-10-31 16:56:53',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 1,
+    'values' => array(
+      '1' => array(
+        'id' => '1',
+        'title' => 'survey title',
+        'activity_type_id' => '30',
+        'instructions' => 'Call people, ask for money',
+        'max_number_of_contacts' => '12',
+        'is_active' => '1',
+        'is_default' => 0,
+        'created_date' => '2011-10-31 16:56:53',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -63,3 +64,4 @@ function survey_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

@@ -1,22 +1,23 @@
 <?php
+// $Id$
 
 
 
 /*
  demonstrates use of Return as an array
  */
-function tag_get_example(){
-$params = array( 
-  'id' => 7,
-  'name' => 'New Tag31357491965',
-  'version' => 3,
-  'return' => array( 
+function tag_get_example() {
+  $params = array(
+    'id' => 7,
+    'name' => 'New Tag31357491965',
+    'version' => 3,
+    'return' => array(
       '0' => 'name',
     ),
-);
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'tag','get',$params );
+  $result = civicrm_api('tag', 'get', $params);
 
   return $result;
 }
@@ -24,22 +25,22 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function tag_get_expectedresult(){
+function tag_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 7,
-  'values' => array( 
-      '7' => array( 
-          'id' => '7',
-          'name' => 'New Tag31357491965',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 7,
+    'values' => array(
+      '7' => array(
+        'id' => '7',
+        'name' => 'New Tag31357491965',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -58,3 +59,4 @@ function tag_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

@@ -1,23 +1,24 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function activity_type_create_example(){
-$params = array( 
-  'weight' => '2',
-  'label' => 'send out letters',
-  'version' => 3,
-  'filter' => 0,
-  'is_active' => 1,
-  'is_optgroup' => 1,
-  'is_default' => 0,
-);
+function activity_type_create_example() {
+  $params = array(
+    'weight' => '2',
+    'label' => 'send out letters',
+    'version' => 3,
+    'filter' => 0,
+    'is_active' => 1,
+    'is_optgroup' => 1,
+    'is_default' => 0,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'activity_type','create',$params );
+  $result = civicrm_api('activity_type', 'create', $params);
 
   return $result;
 }
@@ -25,36 +26,36 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function activity_type_create_expectedresult(){
+function activity_type_create_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 657,
-  'values' => array( 
-      '657' => array( 
-          'id' => 657,
-          'option_group_id' => '2',
-          'label' => 'send out letters',
-          'value' => 34,
-          'name' => 'send out letters',
-          'grouping' => '',
-          'filter' => 0,
-          'is_default' => 0,
-          'weight' => 2,
-          'description' => '',
-          'is_optgroup' => 1,
-          'is_reserved' => '',
-          'is_active' => 1,
-          'component_id' => '',
-          'domain_id' => '',
-          'visibility_id' => '',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 657,
+    'values' => array(
+      '657' => array(
+        'id' => 657,
+        'option_group_id' => '2',
+        'label' => 'send out letters',
+        'value' => 34,
+        'name' => 'send out letters',
+        'grouping' => '',
+        'filter' => 0,
+        'is_default' => 0,
+        'weight' => 2,
+        'description' => '',
+        'is_optgroup' => 1,
+        'is_reserved' => '',
+        'is_active' => 1,
+        'component_id' => '',
+        'domain_id' => '',
+        'visibility_id' => '',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -73,3 +74,4 @@ function activity_type_create_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

@@ -1,25 +1,26 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function grant_delete_example(){
-$params = array( 
-  'version' => 3,
-  'contact_id' => 1,
-  'application_received_date' => 'now',
-  'decision_date' => 'next Monday',
-  'amount_total' => '500',
-  'status_id' => 1,
-  'rationale' => 'Just Because',
-  'currency' => 'USD',
-  'grant_type_id' => 1,
-);
+function grant_delete_example() {
+  $params = array(
+    'version' => 3,
+    'contact_id' => 1,
+    'application_received_date' => 'now',
+    'decision_date' => 'next Monday',
+    'amount_total' => '500',
+    'status_id' => 1,
+    'rationale' => 'Just Because',
+    'currency' => 'USD',
+    'grant_type_id' => 1,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'grant','delete',$params );
+  $result = civicrm_api('grant', 'delete', $params);
 
   return $result;
 }
@@ -27,16 +28,16 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function grant_delete_expectedresult(){
+function grant_delete_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'values' => true,
-);
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'values' => TRUE,
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -55,3 +56,4 @@ function grant_delete_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

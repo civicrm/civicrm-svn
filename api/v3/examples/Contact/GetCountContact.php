@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 
 
@@ -6,14 +7,14 @@
  /*This demonstrates use of the 'getCount' action 
     /*  This param causes the count of the only function to be returned as an integer
  */
-function contact_get_example(){
-$params = array( 
-  'version' => 3,
-  'id' => 17,
-);
+function contact_get_example() {
+  $params = array(
+    'version' => 3,
+    'id' => 17,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'contact','get',$params );
+  $result = civicrm_api('contact', 'get', $params);
 
   return $result;
 }
@@ -21,11 +22,11 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function contact_get_expectedresult(){
+function contact_get_expectedresult() {
 
   $expectedResult = 1;
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -44,3 +45,4 @@ function contact_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+

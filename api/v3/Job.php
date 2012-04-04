@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -42,27 +44,25 @@
  */
 require_once 'api/v3/utils.php';
 
-
 /**
- * Dumb wrapper to exexute scheduled jobs. Always creates success - errors 
+ * Dumb wrapper to exexute scheduled jobs. Always creates success - errors
  * and results are handled in the job log.
  *
  * @param  array   	  $params (reference ) input parameters
  *
  * @return array API Result Array
- * 
+ *
  * @static void
  * @access public
  *
  */
-function civicrm_api3_job_execute( $params )
-{
-    require_once 'CRM/Core/JobManager.php';
-    $facility = new CRM_Core_JobManager();
-    $facility->execute( CRM_Utils_Array::value( 'auth', $params, true ) );
-                        
-    // always creates success - results are handled elsewhere
-    return civicrm_api3_create_success( );
+function civicrm_api3_job_execute($params) {
+  require_once 'CRM/Core/JobManager.php';
+  $facility = new CRM_Core_JobManager();
+  $facility->execute(CRM_Utils_Array::value('auth', $params, TRUE));
+
+  // always creates success - results are handled elsewhere
+  return civicrm_api3_create_success();
 }
 
 /**
@@ -72,36 +72,35 @@ function civicrm_api3_job_execute( $params )
  *
  * @return array API Result Array
  * {@getfields contact_geocode}
- * 
+ *
  * @static void
  * @access public
- * 
+ *
  *
  */
-function civicrm_api3_job_geocode( $params )
-{
+function civicrm_api3_job_geocode($params) {
 
-    // available params:
-    // 'start=', 'end=', 'geocoding=', 'parse=', 'throttle='
+  // available params:
+  // 'start=', 'end=', 'geocoding=', 'parse=', 'throttle='
 
-    require_once 'CRM/Utils/Address/BatchUpdate.php';
-    $gc = new CRM_Utils_Address_BatchUpdate( $params );
+  require_once 'CRM/Utils/Address/BatchUpdate.php';
+  $gc = new CRM_Utils_Address_BatchUpdate($params);
 
-    
-    $result = $gc->run();
 
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( $result['messages'] );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
+  $result = $gc->run();
+
+  if ($result['is_error'] == 0) {
+    return civicrm_api3_create_success($result['messages']);
+  }
+  else {
+    return civicrm_api3_create_error($result['messages']);
+  }
 }
 /*
  * First check on Code documentation
  */
-function _civicrm_api3_contact_geocode_spec( &$params ){
+function _civicrm_api3_contact_geocode_spec(&$params) {
   $params['start'] = array('title' => 'Start Date');
-  
 }
 
 /**
@@ -116,16 +115,16 @@ function _civicrm_api3_contact_geocode_spec( &$params ){
  * @access public
  *
  */
-function civicrm_api3_job_send_reminder( $params )
-{
-    require_once 'CRM/Core/BAO/ActionSchedule.php';
-    $result = CRM_Core_BAO_ActionSchedule::processQueue( CRM_Utils_Array::value( 'now', $params) );
+function civicrm_api3_job_send_reminder($params) {
+  require_once 'CRM/Core/BAO/ActionSchedule.php';
+  $result = CRM_Core_BAO_ActionSchedule::processQueue(CRM_Utils_Array::value('now', $params));
 
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
+  if ($result['is_error'] == 0) {
+    return civicrm_api3_create_success();
+  }
+  else {
+    return civicrm_api3_create_error($result['messages']);
+  }
 }
 
 /**
@@ -141,24 +140,23 @@ function civicrm_api3_job_send_reminder( $params )
  * @access public
  *
  */
-function civicrm_api3_job_mail_report( $params )
-{
-    require_once 'CRM/Report/Utils/Report.php';
-    $result = CRM_Report_Utils_Report::processReport( $params );
+function civicrm_api3_job_mail_report($params) {
+  require_once 'CRM/Report/Utils/Report.php';
+  $result = CRM_Report_Utils_Report::processReport($params);
 
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
+  if ($result['is_error'] == 0) {
+    return civicrm_api3_create_success();
+  }
+  else {
+    return civicrm_api3_create_error($result['messages']);
+  }
 }
 
-
 /**
- * 
+ *
  * This method allows to update Email Greetings, Postal Greetings and Addressee for a specific contact type.
- * IMPORTANT: You must first create valid option value before using via admin interface. 
- * Check option lists for Email Greetings, Postal Greetings and Addressee 
+ * IMPORTANT: You must first create valid option value before using via admin interface.
+ * Check option lists for Email Greetings, Postal Greetings and Addressee
  *
  * @param  array   	  $params (reference ) input parameters
  *                        ct - String - ct=Individual or ct=Household or ct=Organization
@@ -170,29 +168,31 @@ function civicrm_api3_job_mail_report( $params )
  * @access public
  *
  */
-function civicrm_api3_job_update_greeting( $params )
-{
-    require_once 'CRM/Contact/BAO/Contact/Utils.php';
+function civicrm_api3_job_update_greeting($params) {
+  require_once 'CRM/Contact/BAO/Contact/Utils.php';
 
-    civicrm_api3_verify_mandatory($params,null,array('ct', 'gt'));
-    // fixme - use the wrapper & getfields to do this checking - advertise as an enum
-    if ( ! in_array( $params['ct'],
-                     array( 'Individual', 'Household', 'Organization' ) ) ) {
-        return civicrm_api3_create_error( ts('Invalid contact type (ct) parameter value') );
-    }
-    
-    if ( ! in_array( $params['gt'],
-                     array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
-        return civicrm_api3_create_error( ts('Invalid greeting type (gt) parameter value') );
-    }
+  civicrm_api3_verify_mandatory($params, NULL, array('ct', 'gt'));
+  // fixme - use the wrapper & getfields to do this checking - advertise as an enum
+  if (!in_array($params['ct'],
+      array('Individual', 'Household', 'Organization')
+    )) {
+    return civicrm_api3_create_error(ts('Invalid contact type (ct) parameter value'));
+  }
 
-    $result = CRM_Contact_BAO_Contact_Utils::updateGreeting( $params );
-    
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
+  if (!in_array($params['gt'],
+      array('email_greeting', 'postal_greeting', 'addressee')
+    )) {
+    return civicrm_api3_create_error(ts('Invalid greeting type (gt) parameter value'));
+  }
+
+  $result = CRM_Contact_BAO_Contact_Utils::updateGreeting($params);
+
+  if ($result['is_error'] == 0) {
+    return civicrm_api3_create_success();
+  }
+  else {
+    return civicrm_api3_create_error($result['messages']);
+  }
 }
 
 /**
@@ -205,88 +205,87 @@ function civicrm_api3_job_update_greeting( $params )
  * @access public
  *
  */
-function civicrm_api3_job_process_pledge( $params ) {
+function civicrm_api3_job_process_pledge($params) {
 
-    require_once 'CRM/Pledge/BAO/Pledge.php';
-    $result = CRM_Pledge_BAO_Pledge::updatePledgeStatus( $params );
-    
-    if ( $result['is_error'] == 0 ) {
-        // experiment: detailed execution log is a result here
-        return civicrm_api3_create_success( $result['messages'] );
-    } else {
-        return civicrm_api3_create_error( $result['error_message'] );
-    }
+  require_once 'CRM/Pledge/BAO/Pledge.php';
+  $result = CRM_Pledge_BAO_Pledge::updatePledgeStatus($params);
+
+  if ($result['is_error'] == 0) {
+    // experiment: detailed execution log is a result here
+    return civicrm_api3_create_success($result['messages']);
+  }
+  else {
+    return civicrm_api3_create_error($result['error_message']);
+  }
 }
 
 /**
- * Process mail queue 
+ * Process mail queue
  *
  * @param array $params
+ *
  * @return array
  */
-function civicrm_api3_job_process_mailing( $params ) 
-{
-    require_once 'CRM/Mailing/BAO/Mailing.php';
-    if ( ! CRM_Mailing_BAO_Mailing::processQueue() ) { 
-        return civicrm_api3_create_error( "Process Queue failed");
-    } else {
-        $values = array( );
-        return civicrm_api3_create_success($values, $params,'mailing','process');
-    }
-
+function civicrm_api3_job_process_mailing($params) {
+  require_once 'CRM/Mailing/BAO/Mailing.php';
+  if (!CRM_Mailing_BAO_Mailing::processQueue()) {
+    return civicrm_api3_create_error("Process Queue failed");
+  }
+  else {
+    $values = array();
+    return civicrm_api3_create_success($values, $params, 'mailing', 'process');
+  }
 }
 
 /**
- * Process sms queue 
+ * Process sms queue
  *
  * @param array $params
+ *
  * @return array
  */
-function civicrm_api3_job_process_sms( $params ) 
-{
-    require_once 'CRM/Mailing/BAO/Mailing.php';
-    if ( ! CRM_Mailing_BAO_Mailing::processQueue( 'sms' ) ) { 
-        return civicrm_api3_create_error( "Process Queue failed");
-    } else {
-        $values = array( );
-        return civicrm_api3_create_success($values, $params,'mailing','process');
-    }
+function civicrm_api3_job_process_sms($params) {
+  require_once 'CRM/Mailing/BAO/Mailing.php';
+  if (!CRM_Mailing_BAO_Mailing::processQueue('sms')) {
+    return civicrm_api3_create_error("Process Queue failed");
+  }
+  else {
+    $values = array();
+    return civicrm_api3_create_success($values, $params, 'mailing', 'process');
+  }
 }
 
-function civicrm_api3_job_fetch_bounces( $params ) 
-{
-    require_once 'CRM/Utils/Mail/EmailProcessor.php';
-    require_once 'CRM/Core/Lock.php';
-    $lock = new CRM_Core_Lock('EmailProcessor');
-    if (!$lock->isAcquired()) {
-      return civicrm_api3_create_error( "Could not acquire lock, another EmailProcessor process is running");
-    }
-    if ( ! CRM_Utils_Mail_EmailProcessor::processBounces() )  { 
-       return civicrm_api3_create_error( "Process Bounces failed");
-    }
-    //   FIXME: processBounces doesn't return true/false on success/failure
-    $values = array( );
-    return civicrm_api3_create_success($values, $params,'mailing','bounces');
-    $lock->release();
+function civicrm_api3_job_fetch_bounces($params) {
+  require_once 'CRM/Utils/Mail/EmailProcessor.php';
+  require_once 'CRM/Core/Lock.php';
+  $lock = new CRM_Core_Lock('EmailProcessor');
+  if (!$lock->isAcquired()) {
+    return civicrm_api3_create_error("Could not acquire lock, another EmailProcessor process is running");
+  }
+  if (!CRM_Utils_Mail_EmailProcessor::processBounces()) {
+    return civicrm_api3_create_error("Process Bounces failed");
+  }
+  //   FIXME: processBounces doesn't return true/false on success/failure
+  $values = array();
+  return civicrm_api3_create_success($values, $params, 'mailing', 'bounces');
+  $lock->release();
 }
 
-function civicrm_api3_job_fetch_activities( $params ) 
-{
-    require_once 'CRM/Utils/Mail/EmailProcessor.php';
-    require_once 'CRM/Core/Lock.php';
-    $lock = new CRM_Core_Lock('EmailProcessor');
-    if (!$lock->isAcquired()) {
-      return civicrm_api3_create_error( "Could not acquire lock, another EmailProcessor process is running");
-    }
-    if ( ! CRM_Utils_Mail_EmailProcessor::processActivities() )  { 
-       return civicrm_api3_create_error( "Process Activities failed");
-    }
-    //   FIXME: processActivities doesn't return true/false on success/failure
-    $values = array( );
-    return civicrm_api3_create_success($values, $params,'mailing','activities');
-    $lock->release();
+function civicrm_api3_job_fetch_activities($params) {
+  require_once 'CRM/Utils/Mail/EmailProcessor.php';
+  require_once 'CRM/Core/Lock.php';
+  $lock = new CRM_Core_Lock('EmailProcessor');
+  if (!$lock->isAcquired()) {
+    return civicrm_api3_create_error("Could not acquire lock, another EmailProcessor process is running");
+  }
+  if (!CRM_Utils_Mail_EmailProcessor::processActivities()) {
+    return civicrm_api3_create_error("Process Activities failed");
+  }
+  //   FIXME: processActivities doesn't return true/false on success/failure
+  $values = array();
+  return civicrm_api3_create_success($values, $params, 'mailing', 'activities');
+  $lock->release();
 }
-
 
 /**
  * Process participant statuses
@@ -296,17 +295,16 @@ function civicrm_api3_job_fetch_activities( $params )
  * @return array (reference )        array of properties, if error an array with an error id and error message
  * @access public
  */
-function civicrm_api3_job_process_participant( $params )
-{
-        require_once 'CRM/Event/BAO/ParticipantStatusType.php';
-        $result = CRM_Event_BAO_ParticipantStatusType::process( $params );
+function civicrm_api3_job_process_participant($params) {
+  require_once 'CRM/Event/BAO/ParticipantStatusType.php';
+  $result = CRM_Event_BAO_ParticipantStatusType::process($params);
 
-        if ( !$result['is_error'] ) {
-            return  civicrm_api3_create_success( implode( "\r\r", $result['messages'] ) );
-        } else {
-            return  civicrm_api3_create_error('Error while processing participant statuses');
-        }
-
+  if (!$result['is_error']) {
+    return civicrm_api3_create_success(implode("\r\r", $result['messages']));
+  }
+  else {
+    return civicrm_api3_create_error('Error while processing participant statuses');
+  }
 }
 
 
@@ -325,16 +323,16 @@ function civicrm_api3_job_process_participant( $params )
  * @static void
  * @access public
  */
-function civicrm_api3_job_process_membership( $params )
-{
-    require_once 'CRM/Member/BAO/Membership.php';
-    $result = CRM_Member_BAO_Membership::updateAllMembershipStatus( );
-    
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( $result['messages'] );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
+function civicrm_api3_job_process_membership($params) {
+  require_once 'CRM/Member/BAO/Membership.php';
+  $result = CRM_Member_BAO_Membership::updateAllMembershipStatus();
+
+  if ($result['is_error'] == 0) {
+    return civicrm_api3_create_success($result['messages']);
+  }
+  else {
+    return civicrm_api3_create_error($result['messages']);
+  }
 }
 
 /*
@@ -346,16 +344,16 @@ function civicrm_api3_job_process_membership( $params )
  * @static void
  * @access public
  */
-function civicrm_api3_job_process_respondent( $params )
-{
-    require_once 'CRM/Campaign/BAO/Survey.php';
-    $result = CRM_Campaign_BAO_Survey::releaseRespondent( $params );
-    
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
+function civicrm_api3_job_process_respondent($params) {
+  require_once 'CRM/Campaign/BAO/Survey.php';
+  $result = CRM_Campaign_BAO_Survey::releaseRespondent($params);
+
+  if ($result['is_error'] == 0) {
+    return civicrm_api3_create_success();
+  }
+  else {
+    return civicrm_api3_create_error($result['messages']);
+  }
 }
 
 
@@ -369,49 +367,50 @@ function civicrm_api3_job_process_respondent( $params )
  * @static void
  * @access public
  */
-function civicrm_api3_job_process_membership_reminder_date( $params )
-{
-    require_once 'CRM/Member/BAO/Membership.php';
-    $result = CRM_Member_BAO_Membership::updateMembershipReminderDate( $params );
-    
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
+function civicrm_api3_job_process_membership_reminder_date($params) {
+  require_once 'CRM/Member/BAO/Membership.php';
+  $result = CRM_Member_BAO_Membership::updateMembershipReminderDate($params);
+
+  if ($result['is_error'] == 0) {
+    return civicrm_api3_create_success();
+  }
+  else {
+    return civicrm_api3_create_error($result['messages']);
+  }
 }
 
-/** 
+/**
  * Merges given pair of duplicate contacts.
- * 
+ *
  * @param  array   $params   input parameters
  *
  * Allowed @params array keys are:
  * {int     $rgid        rule group id}
  * {int     $gid         group id}
- * {string  mode        helps decide how to behave when there are conflicts. 
+ * {string  mode        helps decide how to behave when there are conflicts.
  *                      A 'safe' value skips the merge if there are no conflicts. Does a force merge otherwise.}
  * {boolean auto_flip   wether to let api decide which contact to retain and which to delete.}
- * 
+ *
  * @return array  API Result Array
  *
  * @static void
  * @access public
- */ 
-function civicrm_api3_job_process_batch_merge( $params )
-{
-    $rgid = CRM_Utils_Array::value( 'rgid', $params );
-    $gid  = CRM_Utils_Array::value( 'gid',  $params );
+ */
+function civicrm_api3_job_process_batch_merge($params) {
+  $rgid = CRM_Utils_Array::value('rgid', $params);
+  $gid = CRM_Utils_Array::value('gid', $params);
 
-    $mode     = CRM_Utils_Array::value( 'mode', $params, 'safe' );
-    $autoFlip = CRM_Utils_Array::value( 'auto_flip', $params, true );
+  $mode = CRM_Utils_Array::value('mode', $params, 'safe');
+  $autoFlip = CRM_Utils_Array::value('auto_flip', $params, TRUE);
 
-    require_once 'CRM/Dedupe/Merger.php';
-    $result = CRM_Dedupe_Merger::batchMerge( $rgid, $gid, $mode, $autoFlip );
+  require_once 'CRM/Dedupe/Merger.php';
+  $result = CRM_Dedupe_Merger::batchMerge($rgid, $gid, $mode, $autoFlip);
 
-    if ( $result['is_error'] == 0 ) {
-        return civicrm_api3_create_success( );
-    } else {
-        return civicrm_api3_create_error( $result['messages'] );
-    }
+  if ($result['is_error'] == 0) {
+    return civicrm_api3_create_success();
+  }
+  else {
+    return civicrm_api3_create_error($result['messages']);
+  }
 }
+

@@ -1,18 +1,19 @@
 <?php
+// $Id$
 
 
 
 /*
  
  */
-function pledge_get_example(){
-$params = array( 
-  'pledge_id' => 2,
-  'version' => 3,
-);
+function pledge_get_example() {
+  $params = array(
+    'pledge_id' => 2,
+    'version' => 3,
+  );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'pledge','get',$params );
+  $result = civicrm_api('pledge', 'get', $params);
 
   return $result;
 }
@@ -20,35 +21,35 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function pledge_get_expectedresult(){
+function pledge_get_expectedresult() {
 
-  $expectedResult = array( 
-  'is_error' => 0,
-  'version' => 3,
-  'count' => 1,
-  'id' => 2,
-  'values' => array( 
-      '2' => array( 
-          'contact_id' => '1',
-          'contact_type' => 'Individual',
-          'sort_name' => 'Anderson, Anthony',
-          'display_name' => 'Mr. Anthony Anderson II',
-          'pledge_id' => '2',
-          'pledge_amount' => '100.00',
-          'pledge_create_date' => '2012-01-16 00:00:00',
-          'pledge_status' => 'Pending',
-          'pledge_next_pay_date' => '2012-01-18 00:00:00',
-          'pledge_next_pay_amount' => '20.00',
-          'pledge_contribution_type' => 'Donation',
-          'pledge_frequency_interval' => '5',
-          'pledge_frequency_unit' => 'year',
-          'pledge_is_test' => 0,
-          'id' => '2',
-        ),
+  $expectedResult = array(
+    'is_error' => 0,
+    'version' => 3,
+    'count' => 1,
+    'id' => 2,
+    'values' => array(
+      '2' => array(
+        'contact_id' => '1',
+        'contact_type' => 'Individual',
+        'sort_name' => 'Anderson, Anthony',
+        'display_name' => 'Mr. Anthony Anderson II',
+        'pledge_id' => '2',
+        'pledge_amount' => '100.00',
+        'pledge_create_date' => '2012-01-16 00:00:00',
+        'pledge_status' => 'Pending',
+        'pledge_next_pay_date' => '2012-01-18 00:00:00',
+        'pledge_next_pay_amount' => '20.00',
+        'pledge_contribution_type' => 'Donation',
+        'pledge_frequency_interval' => '5',
+        'pledge_frequency_unit' => 'year',
+        'pledge_is_test' => 0,
+        'id' => '2',
+      ),
     ),
-);
+  );
 
-  return $expectedResult  ;
+  return $expectedResult;
 }
 
 
@@ -67,3 +68,4 @@ function pledge_get_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
+
