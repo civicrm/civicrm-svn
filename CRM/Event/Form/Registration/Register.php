@@ -413,11 +413,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $pps[0] = $this->_values['event']['pay_later_text'];
         }
 
-        if ( count ( $pps ) > 1 ) {
-            $this->addRadio( 'payment_processor', ts('Payment Method'), $pps,
-                             null, "&nbsp;", true );
-        } else if (!empty( $pps ) ) {
-            $this->addElement( 'hidden', 'payment_processor', array_pop( array_keys( $pps ) ) );
+        if ( $this->_values['event']['is_monetary'] ) {
+            if ( count ( $pps ) > 1 ) {
+                $this->addRadio( 'payment_processor', ts('Payment Method'), $pps,
+                                 null, "&nbsp;", true );
+            } else if (!empty( $pps ) ) {
+                $this->addElement( 'hidden', 'payment_processor', array_pop( array_keys( $pps ) ) );
+            }
         }
 
         //lets add some qf element to bypass payment validations, CRM-4320
