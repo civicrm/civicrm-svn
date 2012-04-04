@@ -117,9 +117,18 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                                    'entity_id'    => $eventId );
 
             list( $defaults['custom_pre_id'],
-                  $defaults['custom_post'] ) = 
+                  $defaults['custom_post'] ) =
                 CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
-            
+
+            // Get the id for the event registration profile
+            require_once 'CRM/Core/BAO/UFJoin.php';
+            $eventRegistrationIdParams = $eventRegistrationIdDefaults = array('name' => 'event_registration', );
+            CRM_Core_BAO_UFGroup::retrieve($eventRegistrationIdParams, $eventRegistrationIdDefaults);
+
+            // Set event registration as the default profile if none selected
+            if ( !$defaults['custom_pre_id'] && count($defaults['custom_post']) == 0 ) {
+                $defaults['custom_pre_id'] = $eventRegistrationIdDefaults['id'];
+            }
             if ( isset( $defaults['custom_post'] ) && is_numeric($defaults['custom_post'])) {
                 $defaults['custom_post_id'] =  $defaults['custom_post']; 
             } else if (!empty($defaults['custom_post'])) {
@@ -145,7 +154,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 list( $defaults['additional_custom_pre_id'],
                       $defaults['additional_custom_post'] ) = 
                     CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinAddParams );
-                
+
                 if (isset( $defaults['additional_custom_post'] ) && is_numeric($defaults['additional_custom_post'])) {
                     $defaults['additional_custom_post_id'] = $defaults['additional_custom_post']; 
                 } else  if (!empty($defaults['additional_custom_post'])) {
@@ -330,7 +339,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         $profiles = CRM_Core_BAO_UFGroup::getProfiles( $types );
         
         $mainProfiles = array('' => ts('- select -')) + $profiles;
-        $addtProfiles = array('' => ts('- same as for main contact -'), 'none' => ts('- no profile -')) + $profiles;
+        $addtProfiles = array('' => ts('- same as for main contact -')) + $profiles;
 
         $form->add('select', 'custom_pre_id',             ts('Include Profile') . '<br />' . ts('(top of page)'),    $mainProfiles);
         $form->add('select', 'custom_post_id',            ts('Include Profile') . '<br />' . ts('(bottom of page)'), $mainProfiles);
@@ -347,7 +356,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         $profiles = CRM_Core_BAO_UFGroup::getProfiles( $types );
         
         if ( $prefix == 'additional_' ) {
-            $mainProfiles = array('' => ts('- same as for main contact -'), 'none' => ts('- no profile -')) + $profiles;
+            $mainProfiles = array('' => ts('- same as for main contact -')) + $profiles;
         } else {
             $mainProfiles = array('' => ts('- select -')) + $profiles;
         }
@@ -444,6 +453,34 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                     $errorMsg['confirm_from_email'] = ts('Please enter Confirmation Email FROM Email Address.');
                 }
             }
+            //check that the selected profiles have either firstname+lastname or email required
+            $profileIds = array(
+                CRM_Utils_Array::value('custom_pre_id', $values),
+                CRM_Utils_Array::value('custom_post_id', $values)
+            );
+            $additionalProfileIds = array(
+                CRM_Utils_Array::value('additional_custom_pre_id', $values),
+                CRM_Utils_Array::value('additional_custom_post_id', $values)
+            );
+            //additional profile fields default to main if not set
+            if (!is_numeric($additionalProfileIds[0])) {
+                $additionalProfileIds[0] =  $profileIds[0];
+            }
+            if (!is_numeric($additionalProfileIds[1])) {
+                $additionalProfileIds[1] = $profileIds[1];
+            }
+            //add multiple profiles if set
+            self::addMultipleProfiles($profileIds, $values, 'custom_post_id_multiple');
+            self::addMultipleProfiles($additionalProfileIds, $values, 'additional_custom_post_id_multiple');
+            $isProfileComplete = self::isProfileComplete($profileIds);
+            $isAdditionalProfileComplete = self::isProfileComplete($additionalProfileIds);
+            //Check main profiles have an email address available if 'send confirmation email' is selected
+            if ($values['is_email_confirm']) {
+                $emailFields = self::getEmailFields($profileIds);
+                if (!count($emailFields)) {
+                    $errorMsg['is_email_confirm'] = ts("Please add a profile with an email address if 'Send Confirmation Email?' is selected");
+                }
+            }
             $additionalCustomPreId = $additionalCustomPostId = null;
             $isPreError = $isPostError = true;
             if ( CRM_Utils_Array::value( 'allow_same_participant_emails', $values ) &&
@@ -503,7 +540,13 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 if ( $isPostError ) {
                     $errorMsg['additional_custom_post_id'] = ts("Allow multiple registrations from the same email address requires a profile of type 'Individual'");
                 }
-            }  
+            }
+            if (!$isProfileComplete) {
+                $errorMsg['custom_pre_id'] = ts("Please include a Profile for online registration that contains an Email Address field and / or First Name + Last Name fields.");
+            }
+            if (!$isAdditionalProfileComplete) {
+                $errorMsg['additional_custom_pre_id'] = ts("Please include a Profile for online registration of additional participants that contains an Email Address field and / or First Name + Last Name fields.");
+            }
             
             // // CRM-8485
             // $config = CRM_Core_Config::singleton();
@@ -550,6 +593,69 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         }        
         
         return true;
+    }
+
+
+    /**
+     * Collect all email fields for an array of profile ids
+     *
+     * @return boolean
+     */
+    static function getEmailFields($profileIds) {
+        $emailFields = array();
+        foreach ($profileIds as $profileId) {
+            if ($profileId && is_numeric($profileId)) {
+                $fields = CRM_Core_BAO_UFGroup::getFields($profileId);
+                foreach ($fields as $field) {
+                    if (substr_count($field['name'], 'email')) {
+                        $emailFields[] = $field;
+                    }
+                }
+            }
+        }
+        return $emailFields;
+    }
+
+    /**
+     * Check if a profile contains required fields
+     *
+     * @return boolean
+     */
+    static function isProfileComplete($profileIds) {
+        $profileReqFields = array();
+        foreach ($profileIds as $profileId) {
+            if ($profileId && is_numeric($profileId)) {
+                $fields = CRM_Core_BAO_UFGroup::getFields($profileId);
+                foreach ($fields as $field) {
+                    switch (TRUE) {
+                        case substr_count($field['name'], 'email'):
+                            $profileReqFields[] = 'email';
+                            break;
+                        case substr_count($field['name'], 'first_name'):
+                            $profileReqFields[] = 'first_name';
+                            break;
+                        case substr_count($field['name'], 'last_name'):
+                            $profileReqFields[] = 'last_name';
+                            break;
+                    }
+                }
+            }
+        }
+        $profileComplete = (in_array('email', $profileReqFields)
+                || (in_array('first_name', $profileReqFields) && in_array('last_name', $profileReqFields)));
+        return $profileComplete;
+    }
+
+    /**
+     * Add additional profiles from the form to an array of profile ids.
+     *
+     */
+    static function addMultipleProfiles(&$profileIds, $values, $field) {
+        if ($multipleProfiles = CRM_Utils_Array::value($field, $values)) {
+            foreach ($multipleProfiles as $profileId) {
+                $profileIds[] = $profileId;
+            }
+        }
     }
     
     /**

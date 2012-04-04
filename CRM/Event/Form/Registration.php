@@ -599,8 +599,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $this->assign( 'credit_card_number',
                            CRM_Utils_System::mungeCreditCard( CRM_Utils_Array::value( 'credit_card_number', $params ) ) );
         }
-        
-        $this->assign( 'email', $this->controller->exportValue( 'Register', "email-{$this->_bltID}" ) );
+
+        // get the email that the confirmation would have been sent to
+        require_once 'CRM/Event/BAO/Event.php';
+        $session = CRM_Core_Session::singleton();
+        list( $displayName, $email ) = CRM_Event_BAO_Event::getEmailDetails( $session->get('transaction.userID'), $params, $this->_values['event'] );
+        $this->assign( 'email', $email );
         
         // assign is_email_confirm to templates
         if ( isset ($this->_values['event']['is_email_confirm'] ) ) {
@@ -666,15 +670,6 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                                                            null , null, false, null,
                                                            false, null, CRM_Core_Permission::CREATE,
                                                            'field_name', true ); 
-            }
-
-            if ( is_array( $fields ) ) {
-                // unset any email-* fields since we already collect it, CRM-2888
-                foreach ( array_keys( $fields ) as $fieldName ) {
-                    if ( substr( $fieldName, 0, 6 ) == 'email-' ) {
-                        unset( $fields[$fieldName] );
-                    }
-                }
             }
             
             if ( array_intersect_key( $fields, $fieldsToIgnore ) ) {

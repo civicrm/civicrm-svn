@@ -197,12 +197,6 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                       $this->_values['event']['allow_same_participant_emails']  == 1 &&
                       ( $first_name && $last_name ) ) ? false : true;
         
-        $this->add( 'text',
-                    "email-{$this->_bltID}",
-                    ts( 'Email Address' ),
-                    array( 'size' => 30, 'maxlength' => 60 ),
-                    $required );
-        $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
         //add buttons
         $js = null;
         if ( $this->isLastParticipant( true ) && !CRM_Utils_Array::value('is_monetary', $this->_values['event']) ) {
@@ -373,6 +367,9 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
         }
         
         if ( $button != 'skip' ) {
+            //Check that either an email or firstname+lastname is included in the form(CRM-9587)
+            CRM_Event_Form_Registration_Register::checkProfileComplete($fields, &$errors, $self->_eventId);
+
             //Additional Participant can also register for an event only once 
             $isRegistered =  CRM_Event_Form_Registration_Register::checkRegistration( $fields, $self, true );
             if ( $isRegistered ) {
@@ -393,8 +390,21 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 foreach ( $params as $key => $value ) {
                     if ( $key != $addParticipantNum ) {
                         if ( !$self->_values['event']['allow_same_participant_emails'] ) {
-                            if ( $value["email-{$self->_bltID}"] == $fields["email-{$self->_bltID}"] ) {
-                                $errors["email-{$self->_bltID}"] =
+                            //collect all email fields
+                            $existingEmails = array();
+                            $additionalParticipantEmails = array();
+                            foreach ($value as $key => $val) {
+                                if (substr($key, 0, 6) == 'email-' && $val) $existingEmails[] = $val;
+                            }
+                            foreach ($fields as $key => $val) {
+                                if (substr($key, 0, 6) == 'email-' && $val) {
+                                  $additionalParticipantEmails[] = $val;
+                                  $mailKey = $key;
+                                }
+                            }
+                            //check if any emails are common to both arrays
+                            if ( count(array_intersect($existingEmails, $additionalParticipantEmails)) ) {
+                                $errors[$mailKey] =
                                     ts( 'The email address must be unique for each participant.' );
                                 break;
                             }

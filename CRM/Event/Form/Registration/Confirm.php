@@ -232,11 +232,18 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                             $v[$name] = $v['billing_'.$name];
                         }
                     }
-                    if ( CRM_Utils_Array::value( "email-{$this->_bltID}", $v ) ) {
-                        $append = $v["email-{$this->_bltID}"];
+                    
+                    if ( $v['first_name'] && $v['last_name'] ) {
+                        $append = $v['first_name'] . ' ' . $v['last_name'];
                     } else {
-                        $append = $v['first_name'] .' ' . $v['last_name'];  
+                        //use an email if we have one
+                        foreach ( $v as $v_key => $v_val ) {
+                            if ( substr($v_key, 0, 6) == 'email-' ) {
+                                $append = $v[$v_key];
+                            }
+                        }
                     }
+
                     $this->_amount[$k]['amount'] = $v['amount'];
                     if ( CRM_Utils_Array::value( 'discountAmount', $v ) ) {
                         $this->_amount[$k]['amount'] -= $v['discountAmount'];
