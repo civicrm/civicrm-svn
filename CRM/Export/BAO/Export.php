@@ -348,11 +348,11 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             }
             $returnProperties = array_merge( $returnProperties, $moreReturnProperties );
         }
-
+        
         $exportParams['postal_mailing_export']['temp_columns'] = array( );
         if ( $exportParams['exportOption'] == 2 && 
              isset( $exportParams['postal_mailing_export'] ) &&
-             $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
+             CRM_Utils_Array::value( 'postal_mailing_export', $exportParams['postal_mailing_export'] ) == 1 ) {
             $postalColumns = array( 'is_deceased', 'do_not_mail', 'street_address', 'supplemental_address_1' );
             foreach ( $postalColumns as $column ) {
                 if ( ! array_key_exists( $column, $returnProperties ) ) {
@@ -567,7 +567,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
         while ( 1 ) {
             $limitQuery = "{$queryString} LIMIT {$offset}, {$rowCount}";
             $dao = CRM_Core_DAO::executeQuery( $limitQuery );
-           
             if ( $dao->N <= 0 ) {
                 break;
             }
