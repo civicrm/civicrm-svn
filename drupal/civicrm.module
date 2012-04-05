@@ -1025,3 +1025,156 @@ function civicrm_civicrm_merge ( $type, &$data, $mainId, $otherId, $tables ) {
 /*     CRM_Core_Error::debug_var('$mainId',$mainId); */
 /*     CRM_Core_Error::debug_var('$otherId',$otherId); */
 }
+
+/**
+ * Implements hook_reviews().
+ * This implementation is invoked by coder_review module, and defines
+ * specific checks for the CiviCRM Coding Standard.
+ */
+function civicrm_reviews() {
+  $br = 'br';
+  $rules = array(
+    array(
+      '#type' => 'regex',
+      '#value' => '\t',
+      '#warning' => 'Use an indent of 2 spaces, with no tabs',
+    ),
+    array(
+      '#type' => 'regex',
+      '#never' => '<\?php',
+      '#value' => '^ (  )*[^ \'".]',
+      '#warning' => 'Use an indent of 2 spaces, with no tabs',
+      '#severity' => 'minor',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '\s(if|elseif|while|foreach|switch|case|return|for|catch)\(',
+      '#warning' => 'Control statements should have one space between the control keyword and opening parenthesis',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '[\s\(](\w+)\s\(',
+      '#not' => '^(if|elseif|while|foreach|switch|case|return|for|list|catch)$',
+      '#warning' => 'Functions should be called with no spaces between the function name and opening parentheses',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '\){',
+      '#warning' => 'use a space between the closing parenthesis and the open bracket',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '(\S=>|=>\S)',
+      '#source' => 'php',
+      '#warning' => 'Arrays should be formatted with a space separating each element and assignment operator',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '(\.(?:|\s{2,})[^\)\=\s0-9]|[^\(\s0-9](?:|\s{2,})\.)',
+      '#warning' => 'String concatenation should be formatted with a space separating the operators (dot .) and the surrounding terms',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '<\?(\w+)',
+      '#not' => '^(php|xml)$',
+      '#warning' => 'Always use &lt;?php ?&gt; to delimit PHP code, not the &lt;? ?&gt; shorthand',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => 'global\s+\$(\w+)(,\s\$(\w+))*',
+      '#not' => '^_|^(' . _coder_review_style_core_global_regex() . ')$',
+      '#warning' => 'global variables should start with a single underscore followed by the module and another underscore',
+    ),
+    array(
+      '#type' => 'callback',
+      '#source' => 'all',
+      '#value' => '_coder_review_style_closing_php_callback',
+      '#warning' => 'the final ?> should be omitted from all code files',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '}\s*else',
+      '#warning' => 'else statements should begin on a new line',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '[,][^ \n\r]',
+      '#warning' => 'missing space after comma',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '^\s*{',
+      '#warning' => 'curly braces { should end a line, not start one',
+    ),
+    array(
+      '#type' => 'regex',
+      '#source' => 'html',
+      '#value' => '<' . $br . '>', // NOTE: use $br only to avoid a warning.
+      '#warning' => 'use &lt;br /&gt; instead of &lt;br&gt;',
+      '#severity' => 'minor',
+    ),
+    array(
+      '#type' => 'regex',
+      '#source' => 'html',
+      '#value' => '(?-i)<[A-Z]+',
+      '#warning_callback' => '_coder_review_style_xhtml_warning',
+      '#severity' => 'minor',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '\s(if|elseif|while|foreach|switch|return|for|catch)\s*\(.*\) \s*{\s*[^\s]+',
+      '#warning' => 'The control statement should be on a separate line from the control conditional',
+    ),
+    array(
+      '#type' => 'regex',
+      '#filename' => array('tpl.php'),
+      '#value' => '\s(if|elseif)\s*\(.*\) \s*{\s*[^\s]+',
+      '#warning' => 'The control statement should use ":" syntax instead of curly braces.',
+    ),
+    array(
+      '#type' => 'regex',
+      '#source' => 'all',
+      '#value' => '[ \t]+$',
+      '#warning' => 'There should be no trailing spaces',
+      '#severity' => 'minor',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '[\s\(](strlen|strtolower|strtoupper|substr|ucfirst)\s*\(',
+      '#warning' => 'in most cases, replace the string function with the drupal_ equivalent string functions',
+      '#severity' => 'minor',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '\[\s*[A-Za-z][A-Za-z0-9_]*\s*]',
+      '#not' => '\[\s*[A-Z][A-Z0-9_]*\s*]',
+      '#warning' => 'use quotes around a string literal array index, this is not only a style issue, but a known performance problem',
+      '#case-sensitive' => TRUE,
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '[\s=>]+(true|false|null)[\)\s;,\n\r]+',
+      '#case-sensitive' => TRUE,
+      '#warning' => 'Use uppercase for PHP constants, e.g. NULL, TRUE, FALSE',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '\s+else\s+if\s*\(',
+      '#warning' => 'Use "elseif" in place of "else if"',
+    ),
+    array(
+      '#type' => 'regex',
+      '#value' => '\s*[\'"]#value[\'"]\s*=>\s*t\s*\(\s*[\'"]Submit[\'"]\s*\)',
+      '#source' => 'allphp',
+      '#warning' => 'When labelling buttons, make it clear what the button does, "Submit" is too generic.',
+      '#severity' => 'minor',
+    ),
+  );
+  $review = array(
+    '#title' => t('CiviCRM Coding Standards'),
+    '#link' => 'http://civicrm.org',
+    '#rules' => $rules,
+    '#description' => t('Should apply to all CiviCRM code.'),
+  );
+  return array('civicrm_coder' => $review);
+}
