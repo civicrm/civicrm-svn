@@ -12,7 +12,8 @@
  */
 function civicrm_api3_generic_getfields($apiRequest) {
   if (empty($apiRequest['params']['action'])) {
-    return civicrm_api3_create_success(_civicrm_api_get_fields($apiRequest['entity']));
+    $values = _civicrm_api_get_fields($apiRequest['entity']);
+    return civicrm_api3_create_success($values, $apiRequest['params'], $apiRequest['entity'], 'getfields');
   }
   $unique = TRUE;
   // should this be passed in already lower?
@@ -20,7 +21,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
   // defaults based on data model and API policy
   switch (strtolower($apiRequest['params']['action'])) {
     case 'getfields':
-      return civicrm_api3_create_success(_civicrm_api_get_fields($apiRequest['entity'], $apiRequest['params']));
+      $values = _civicrm_api_get_fields($apiRequest['entity'], $apiRequest['params']);
+      return civicrm_api3_create_success($values, $apiRequest['params'], $apiRequest['entity'], 'getfields');
 
     case 'create':
     case 'update':
@@ -54,7 +56,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
     // alter
     $helper($metadata);
   }
-  return civicrm_api3_create_success($metadata, $apiRequest['params'], 'getfields');
+  return civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
 }
 
 function civicrm_api3_generic_getcount($apiRequest) {
