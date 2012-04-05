@@ -123,63 +123,56 @@ WHERE  civicrm_pcp.contact_id = civicrm_contact.id
     {
         $links = self::pcpLinks();
 
-        $query = "
-        SELECT pg.start_date, pg.end_date, pg.title as pageTitle, pcp.id as pcpId, 
-               pcp.title as pcpTitle, pcp.status_id as pcpStatusId, cov_status.label as pcpStatus,
-               pcpblock.is_tellfriend_enabled as tellfriend, 
-               pcpblock.id as blockId, pcp.is_active as pcpActive, pg.id as pageId
-        FROM civicrm_contribution_page pg 
-        LEFT JOIN civicrm_pcp pcp ON  (pg.id= pcp.page_id)
-        LEFT JOIN civicrm_pcp_block as pcpblock ON ( pg.id = pcpblock.entity_id )
-        
-        LEFT JOIN civicrm_option_group cog_status ON cog_status.name = 'pcp_status'
-        LEFT JOIN civicrm_option_value cov_status
-               ON (pcp.status_id = cov_status.value
-               AND cog_status.id = cov_status.option_group_id )
-        
-        INNER JOIN civicrm_contact as ct ON (ct.id = pcp.contact_id  AND pcp.contact_id = %1 )
-        WHERE pcpblock.is_active = 1
-        ORDER BY pcpStatus, pageTitle";
+        $query = "                                                                                                                                                                                                  SELECT * FROM civicrm_pcp pcp                                                                                                                                                                              WHERE pcp.is_active = 1 AND                                                                                                                                                                                      pcp.contact_id = %1                                                                                                                                                                                  ORDER BY page_type, page_id";
 
         $params = array( 1 => array( $contactId, 'Integer' ) );
+
         $pcpInfoDao = CRM_Core_DAO::executeQuery( $query, $params );
         $pcpInfo = array();
         $hide = $mask = array_sum( array_keys( $links['all'] ) );
         $contactPCPPages = array( );
         
-        $approvedId = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );
+        $event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
+        $contribute = CRM_Contribute_PseudoConstant::contributionPage();
+        $pcpStatus = CRM_Contribute_PseudoConstant::pcpStatus();
+        $approved = CRM_Utils_Array::key( 'Approved', $pcpStatus );
+
         while ( $pcpInfoDao->fetch( ) ) {
             $mask = $hide;
             if ( $links ) {
-                $replace = array( 'pcpId'    => $pcpInfoDao->pcpId, 
-                                  'pcpBlock'  => $pcpInfoDao->blockId);
+                $replace = array( 'pcpId'         => $pcpInfoDao->id,
+                                  'pcpBlock'      => $pcpInfoDao->pcp_block_id,
+                                  'pageComponent' => $pcpInfoDao->page_type );
             }
+
             $pcpLink = $links['all'];
             $class = '';
 
-            if ( $pcpInfoDao->pcpStatusId != $approvedId || $pcpInfoDao->pcpActive != 1 ) {
-                $class = "disabled";
+            if ( $pcpInfoDao->status_id != $approved || $pcpInfoDao->is_active != 1 ) {
+                $class = 'disabled';
+                if ( ! $pcpInfoDao->tellfriend ) {
+                    $mask -= CRM_Core_Action::DETACH;
+                }
             }
-            if ( ! $pcpInfoDao->tellfriend || $pcpInfoDao->pcpStatusId != $approvedId ||  $pcpInfoDao->pcpActive != 1 ) {
-                $mask -= CRM_Core_Action::DETACH;
-            }
-            if ( $pcpInfoDao->pcpActive == 1 ) {
+
+            if ( $pcpInfoDao->is_active == 1 ) {
                 $mask -= CRM_Core_Action::ENABLE;
             } else {
                 $mask -= CRM_Core_Action::DISABLE;
             }
             $action  = CRM_Core_Action::formLink( $pcpLink , $mask, $replace );
+            $component = $pcpInfoDao->page_type;
+            $pageTitle = CRM_Utils_Array::value( $pcpInfoDao->page_id, $$component);
+            
             $pcpInfo[] = array ( 
-                                 'start_date'  => $pcpInfoDao->start_date,
-                                 'end_date'    => $pcpInfoDao->end_date,
-                                 'pageTitle'   => $pcpInfoDao->pageTitle,
-                                 'pcpId'       => $pcpInfoDao->pcpId,
-                                 'pcpTitle'    => $pcpInfoDao->pcpTitle,
-                                 'pcpStatus'   => $pcpInfoDao->pcpStatus,
-                                 'action'      => $action,
-                                 'class'       => $class
-                                  );
-            $contactPCPPages[] = $pcpInfoDao->pageId;
+                                'pageTitle'   => $pageTitle,
+                                'pcpId'       => $pcpInfoDao->id,
+                                'pcpTitle'    => $pcpInfoDao->title,
+                                'pcpStatus'   => $pcpStatus[$pcpInfoDao->status_id],
+                                'action'      => $action,
+                                'class'       => $class
+                                 );
+            $contactPCPPages[] = $pcpInfoDao->page_id;
         }
 
         $excludePageClause = null;
@@ -194,7 +187,7 @@ WHERE  civicrm_pcp.contact_id = civicrm_contact.id
         LEFT JOIN civicrm_pcp_block as pcpblock ON ( pg.id = pcpblock.entity_id )
         WHERE pcpblock.is_active = 1 {$excludePageClause}
         ORDER BY pageTitle ASC";
-
+        
         $pcpBlockDao = CRM_Core_DAO::executeQuery( $query );
         $pcpBlock    = array();
         $mask  = 0;
