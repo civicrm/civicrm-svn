@@ -3,27 +3,44 @@
 
 
 /**
- * $apiRequest is an array with keys:
+ * Get information about fields for a given api request. Getfields information 
+ * is used for documentation, validation, default setting
+ * @param array $apiRequest api request as an array. Keys are 
  *  - entity: string
  *  - action: string
  *  - version: string
  *  - function: callback (mixed)
  *  - params: array, varies
+ *  @return array API success object
  */
 function civicrm_api3_generic_getfields($apiRequest) {
-  if (empty($apiRequest['params']['action'])) {
-    $values = _civicrm_api_get_fields($apiRequest['entity']);
-    return civicrm_api3_create_success($values, $apiRequest['params'], $apiRequest['entity'], 'getfields');
+  static $results = array();
+  $entity = strtolower($apiRequest['entity']);
+  $action = strtolower($apiRequest['params']['action']);
+  if (empty($action)) {
+    if (CRM_Utils_Array::value($entity, $results)) {
+      return $results[$entity];
+    }
+    else {
+      $values = _civicrm_api_get_fields($entity);
+      $results[$entity] = civicrm_api3_create_success(
+        $values, $apiRequest['params'], $entity, 'getfields'
+      );
+      return $results[$entity];
+    }
   }
   $unique = TRUE;
-  // should this be passed in already lower?
-  $entity = strtolower($apiRequest['entity']);
+  if(isset($results[$entity]) && CRM_Utils_Array::value($action, $results[$entity])) {
+    return $results[$entity][$action];
+  }
   // defaults based on data model and API policy
-  switch (strtolower($apiRequest['params']['action'])) {
+  switch (strtolower($action)) {
     case 'getfields':
-      $values = _civicrm_api_get_fields($apiRequest['entity'], $apiRequest['params']);
-      return civicrm_api3_create_success($values, $apiRequest['params'], $apiRequest['entity'], 'getfields');
-
+      $values = _civicrm_api_get_fields($entity, $apiRequest['params']);
+      $results[$entity][$action] =  civicrm_api3_create_success($values, 
+        $apiRequest['params'], $entity, 'getfields'
+      );
+      return $results[$entity][$action];
     case 'create':
     case 'update':
     case 'replace':
@@ -56,14 +73,25 @@ function civicrm_api3_generic_getfields($apiRequest) {
     // alter
     $helper($metadata);
   }
+  $results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
   return civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
 }
 
+/**
+ * API return function to reformat results as count
+ * @param array $apiRequest api request as an array. Keys are 
+ * @return integer count of results
+ */
 function civicrm_api3_generic_getcount($apiRequest) {
   $result = civicrm_api($apiRequest['entity'], 'get', $apiRequest['params']);
   return $result['count'];
 }
 
+/**
+ * API return function to reformat results as single result
+ * @param array $apiRequest api request as an array. Keys are 
+ * @return integer count of results
+ */
 function civicrm_api3_generic_getsingle($apiRequest) {
   // so the first entity is always result['values'][0]
   $apiRequest['params']['sequential'] = 1;
@@ -80,6 +108,11 @@ function civicrm_api3_generic_getsingle($apiRequest) {
   return civicrm_api3_create_error("Undefined behavior");
 }
 
+/**
+ * API return function to reformat results as single value
+ * @param array $apiRequest api request as an array. Keys are 
+ * @return integer count of results
+ */
 function civicrm_api3_generic_getvalue($apiRequest) {
   $apiRequest['params']['sequential'] = 1;
   $result = civicrm_api($apiRequest['entity'], 'get', $apiRequest['params']);
@@ -102,7 +135,11 @@ function civicrm_api3_generic_getvalue($apiRequest) {
 
   return civicrm_api3_create_error("missing param return=field you want to read the value of", array('error_type' => 'mandatory_missing', 'missing_param' => 'return'));
 }
-
+/**
+ * API wrapper for replace function
+ * @param array $apiRequest api request as an array. Keys are 
+ * @return integer count of results
+ */
 function civicrm_api3_generic_replace($apiRequest) {
   return _civicrm_api3_generic_replace($apiRequest['entity'], $apiRequest['params']);
 }
