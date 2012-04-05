@@ -58,6 +58,7 @@ class CRM_Core_I18n
             $config = CRM_Core_Config::singleton();
 
             if (defined('CIVICRM_GETTEXT_NATIVE') && CIVICRM_GETTEXT_NATIVE && function_exists('gettext')) {
+                // Note: the file hierarchy for .po must be, for example: l10n/fr_FR/LC_MESSAGES/civicrm.mo
                 require_once 'CRM/Core/I18n/NativeGettext.php';
 
                 $this->_nativegettext = true;
@@ -78,7 +79,7 @@ class CRM_Core_I18n
             require_once 'PHPgettext/streams.php';
             require_once 'PHPgettext/gettext.php';
     
-            $streamer = new FileReader($config->gettextResourceDir . $locale . DIRECTORY_SEPARATOR . 'LC_MESSAGES' . DIRECTORY_SEPARATOR . 'civicrm.mo');
+            $streamer = new FileReader($config->gettextResourceDir . $locale . DIRECTORY_SEPARATOR . 'civicrm.mo');
             $this->_phpgettext = new gettext_reader($streamer);
         }
     }
