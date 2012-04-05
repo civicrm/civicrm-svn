@@ -175,7 +175,7 @@ WHERE  civicrm_pcp.contact_id = civicrm_contact.id
             $contactPCPPages[$pcpInfoDao->page_type][] = $pcpInfoDao->page_id;
         }
 
-        $excludePageClause = null;
+        $excludePageClause = $clause = null;
         if ( !empty( $contactPCPPages ) ) { 
             foreach ($contactPCPPages as $component => $entityIds) {
                 $excludePageClause[] = " 
@@ -192,6 +192,7 @@ FROM civicrm_pcp_block block
 LEFT JOIN civicrm_pcp pcp ON pcp.pcp_block_id = block.id
 WHERE block.is_active = 1 
 {$clause}
+ORDER BY target_entity_type, target_entity_id
 ";
         $pcpBlockDao = CRM_Core_DAO::executeQuery( $query );
         $pcpBlock    = array();
@@ -208,8 +209,6 @@ WHERE block.is_active = 1
             $pageTitle = CRM_Utils_Array::value( $pcpBlockDao->target_entity_id, $$component);
             $pcpBlock[] = array ( 'pageId'     => $pcpBlockDao->target_entity_id,
                                   'pageTitle'  => $pageTitle,
-                                  'start_date' => $pcpBlockDao->start_date,
-                                  'end_date'   => $pcpBlockDao->end_date,
                                   'action'     => $action
                                   );
         }
