@@ -54,7 +54,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
     // alter
     $helper($metadata);
   }
-  return civicrm_api3_create_success($metadata);
+  return civicrm_api3_create_success($metadata, $apiRequest['params'], 'getfields');
 }
 
 function civicrm_api3_generic_getcount($apiRequest) {
