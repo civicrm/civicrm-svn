@@ -219,7 +219,17 @@ function civicrm_initialize( )
         echo "CiviCRM requires PHP Version 5.2 or greater. You are running PHP Version " . PHP_VERSION . "<p>";
         exit( );
     }
-
+    require_once dirname(__FILE__) . '/../CRM/Utils/File.php';
+    // autoload
+    if (FALSE && module_exists('xautoload')) {
+        _xautoload_finder()->registerPrefixDeep('CRM', 'CRM');
+    }
+  
+    elseif (CRM_Utils_File::isIncludable(dirname(__FILE__) . '/../CRM/Core/ClassLoader.php')) {
+        require_once dirname(__FILE__) . '/../CRM/Core/ClassLoader.php';
+        $classLoader = new CRM_Core_ClassLoader();
+        $classLoader->register();
+    }
     static $initialized    = false;
     static $failure        = false;
 
