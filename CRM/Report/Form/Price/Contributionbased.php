@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -33,26 +34,19 @@
  * $Id$
  *
  */
-
-
 class CRM_Report_Form_Price_Contributionbased extends CRM_Report_Form_Extended {
 
-    protected $_baseTable = 'civicrm_contribution' ;
-    
-    function __construct( ) {
-        
-        $this->_columns = $this->getContactColumns()
-                        + $this->getLineItemColumns()
-                        + $this->getContributionColumns() 
-                        ;
-       parent::__construct( );
-    }
+  protected $_baseTable = 'civicrm_contribution'; function __construct() {
 
-    function from( ) {
-      //@todo I think the first line here would make sense as the parent::from function
-       $this->_from = "FROM " . $this->_baseTable  . " " . $this->_aliases[$this->_baseTable];
-       $this->joinLineItemFromContribution();
-       $this->joinContactFromContribution();
-    }
-     
+    $this->_columns = $this->getContactColumns() + $this->getLineItemColumns() + $this->getContributionColumns();
+    parent::__construct();
+  }
+
+  function from() {
+    //@todo I think the first line here would make sense as the parent::from function
+    $this->_from = "FROM " . $this->_baseTable . " " . $this->_aliases[$this->_baseTable];
+    $this->joinLineItemFromContribution();
+    $this->joinContactFromContribution();
+  }
 }
+

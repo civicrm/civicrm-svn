@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -33,77 +34,63 @@
  * $Id$
  *
  */
-
-
 class CRM_Report_Form_Price_Lineitem extends CRM_Report_Form_Extended {
-    protected $_addressField = false;
+  protected $_addressField = FALSE;
 
-    protected $_emailField   = false;
+  protected $_emailField = FALSE;
 
-    protected $_summary      = null;
+  protected $_summary = NULL;
 
-    protected $_customGroupExtends = array( 'Contribution' );
-    
-    protected $_baseTable = 'civicrm_line_item';
-    
-    protected $_aclTable = 'civicrm_contact';
-    
-    function __construct($child = 0 ) {
-      if(empty($child)){
-        // hack because we are currently using this as base for other report
-        // plan is to move functions into Form.php instead & won't be required
-        $this->_columns = $this->getContactColumns()
-   
-                        + $this->getLineItemColumns()    
-                        + $this->getPriceFieldValueColumns()
-                        + $this->getPriceFieldColumns()
-                        + $this->getParticipantColumns()
-                        + $this->getEventColumns()
-                        + $this->getContributionColumns()  
-     
-                        ;
-      }
-        parent::__construct( );
+  protected $_customGroupExtends = array('Contribution');
+
+  protected $_baseTable = 'civicrm_line_item';
+
+  protected $_aclTable = 'civicrm_contact'; function __construct($child = 0) {
+    if (empty($child)) {
+      // hack because we are currently using this as base for other report
+      // plan is to move functions into Form.php instead & won't be required
+      $this->_columns = $this->getContactColumns() + $this->getLineItemColumns() + $this->getPriceFieldValueColumns() + $this->getPriceFieldColumns() + $this->getParticipantColumns() + $this->getEventColumns() + $this->getContributionColumns();
     }
+    parent::__construct();
+  }
 
-    function preProcess( ) {
-        parent::preProcess( );
-    }
+  function preProcess() {
+    parent::preProcess();
+  }
 
-    function select( ) {
-        parent::select( ); }
+  function select() {
+    parent::select();
+  }
 
-    function from( ) {
-      //@todo I think the first line here would make sense as the parent::from function
-       $this->_from = "FROM " . $this->_baseTable  . " " . $this->_aliases[$this->_baseTable];
-       $this->joinPriceFieldValueFromLineItem();
-       $this->joinContributionFromLineItem();
-       $this->joinPriceFieldFromLineItem();
-       $this->joinParticipantFromLineItem();
-       $this->joinContactFromContribution();
-       $this->joinEventFromParticipant();
+  function from() {
+    //@todo I think the first line here would make sense as the parent::from function
+    $this->_from = "FROM " . $this->_baseTable . " " . $this->_aliases[$this->_baseTable];
+    $this->joinPriceFieldValueFromLineItem();
+    $this->joinContributionFromLineItem();
+    $this->joinPriceFieldFromLineItem();
+    $this->joinParticipantFromLineItem();
+    $this->joinContactFromContribution();
+    $this->joinEventFromParticipant();
+  }
 
+  function groupBy() {
+    parent::groupBy();
+  }
 
-    }
-    function groupBy( ) {
-       parent::groupBy();
-       
-    }
+  function orderBy() {
+    parent::orderBy();
+  }
 
-    function orderBy( ) {
-       parent::orderBy();
-    }
+  function statistics(&$rows) {
+    return parent::statistics($rows);
+  }
 
-    function statistics( &$rows ) {
-        return parent::statistics( $rows );
-    }
+  function postProcess() {
+    parent::postProcess();
+  }
 
-    function postProcess( ) {
-      parent::postProcess( );
-    }
-
-    function alterDisplay( &$rows ) {
-       parent::alterDisplay($rows);
-       
-    }
+  function alterDisplay(&$rows) {
+    parent::alterDisplay($rows);
+  }
 }
+
