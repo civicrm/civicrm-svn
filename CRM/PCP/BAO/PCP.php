@@ -172,34 +172,42 @@ WHERE  civicrm_pcp.contact_id = civicrm_contact.id
                                 'action'      => $action,
                                 'class'       => $class
                                  );
-            $contactPCPPages[] = $pcpInfoDao->page_id;
+            $contactPCPPages[$pcpInfoDao->page_type][] = $pcpInfoDao->page_id;
         }
 
         $excludePageClause = null;
-        if ( !empty( $contactPCPPages ) ) {
-            $excludePageClause = " AND pg.id NOT IN ( " .implode( ',', $contactPCPPages ) . ") ";            
+        if ( !empty( $contactPCPPages ) ) { 
+            foreach ($contactPCPPages as $component => $entityIds) {
+                $excludePageClause[] = " 
+( target_entity_type = '{$component}'
+AND target_entity_id NOT IN ( " .implode( ',', $entityIds ) . ") )";
+            }
+            
+            $clause = ' AND ' . implode( ' OR ', $excludePageClause  );
         }
-        
+
         $query = "
-        SELECT pg.id as pageId, pg.title as pageTitle, pg.start_date , 
-                  pg.end_date 
-        FROM civicrm_contribution_page pg 
-        LEFT JOIN civicrm_pcp_block as pcpblock ON ( pg.id = pcpblock.entity_id )
-        WHERE pcpblock.is_active = 1 {$excludePageClause}
-        ORDER BY pageTitle ASC";
-        
+SELECT * 
+FROM civicrm_pcp_block block
+LEFT JOIN civicrm_pcp pcp ON pcp.pcp_block_id = block.id
+WHERE block.is_active = 1 
+{$clause}
+";
         $pcpBlockDao = CRM_Core_DAO::executeQuery( $query );
         $pcpBlock    = array();
         $mask  = 0;
         
         while ( $pcpBlockDao->fetch( ) ) {
             if ( $links ) {
-                $replace = array( 'pageId' => $pcpBlockDao->pageId );
+                $replace = array( 'pageId'        => $pcpBlockDao->target_entity_id,
+                                  'pageComponent' => $pcpBlockDao->target_entity_type );
             }      
             $pcpLink = $links['add'];
             $action = CRM_Core_Action::formLink( $pcpLink , $mask, $replace );
-            $pcpBlock[] = array ( 'pageId'     => $pcpBlockDao->pageId,
-                                  'pageTitle'  => $pcpBlockDao->pageTitle,
+            $component = $pcpBlockDao->target_entity_type;
+            $pageTitle = CRM_Utils_Array::value( $pcpBlockDao->target_entity_id, $$component);
+            $pcpBlock[] = array ( 'pageId'     => $pcpBlockDao->target_entity_id,
+                                  'pageTitle'  => $pageTitle,
                                   'start_date' => $pcpBlockDao->start_date,
                                   'end_date'   => $pcpBlockDao->end_date,
                                   'action'     => $action
@@ -275,7 +283,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
             self::$_pcpLinks['add']  = array (
                                               CRM_Core_Action::ADD => array( 'name'  => ts('Create a Personal Campaign Page'),
                                                                              'url'   => 'civicrm/contribute/campaign',
-                                                                             'qs'    => 'action=add&reset=1&pageId=%%pageId%%&component=contribute',
+                                                                             'qs'    => 'action=add&reset=1&pageId=%%pageId%%&component=%%pageComponent%%',
                                                                              'title' => ts('Configure')
                                                                              )
                                               );
