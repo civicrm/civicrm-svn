@@ -87,7 +87,7 @@ class CRM_Utils_System_Base {
     /*
      * Currently this is just helping out the test class as defaults is calling it - maybe move fix to defaults
      */
-    static function cmsRootPath( )
+    function cmsRootPath( )
     {
     
     }

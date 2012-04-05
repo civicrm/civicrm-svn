@@ -430,7 +430,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
             // CRM-8638
             // SOAP cannot load drupal bootstrap and hence we do it the old way
             // Contact CiviSMTP folks if we run into issues with this :)
-            $cmsPath = self::cmsRootPath( $realPath );
+            $cmsPath = $this->cmsRootPath( $realPath );
 
             require_once( "$cmsPath/includes/bootstrap.inc" );
             require_once( "$cmsPath/includes/password.inc" );
@@ -555,7 +555,7 @@ AND    u.status = 1
     function loadBootStrap( $params = array( ), $loadUser = true, $throwError = true, $realPath = null )
     {
         //take the cms root path.
-        $cmsPath = self::cmsRootPath( $realPath );
+        $cmsPath = $this->cmsRootPath( $realPath );
 
         if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
             if ( $throwError ) {
@@ -644,7 +644,7 @@ AND    u.status = 1
         return false;
     }
     
-    static function cmsRootPath( $scriptFilename = null )
+    function cmsRootPath( $scriptFilename = null )
     {
 
         $cmsRoot = $valid = null;

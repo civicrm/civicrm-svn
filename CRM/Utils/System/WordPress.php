@@ -323,7 +323,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     {
         global $wp, $wp_rewrite, $wp_the_query, $wp_query, $wpdb;
 
-        $cmsRootPath = self::cmsRootPath( );
+        $cmsRootPath = $this->cmsRootPath( );
         if ( ! $cmsRootPath ) {
             CRM_Core_Error::fatal( "Could not find the install directory for WordPress" );
         }
