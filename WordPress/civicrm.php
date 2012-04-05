@@ -439,7 +439,7 @@ function civicrm_check_permission( $args ) {
 
 function wp_civicrm_capability( ){
     global $wp_roles;
-    if ( !isset( $wp_roles ) ){
+    if ( ! isset( $wp_roles ) ){
         $wp_roles = new WP_Roles();
     }
     
@@ -447,7 +447,9 @@ function wp_civicrm_capability( ){
     $roles = array( 'super admin', 'administrator', 'editor' );
     
     foreach( $roles as $role ){
-        if ( is_array( $wp_roles->get_role( $role )->capabilities ) && !array_key_exists( 'access_civicrm_nav_link', $wp_roles->get_role( $role )->capabilities ) ){
+        if ( is_array( $wp_roles->get_role( $role )->capabilities ) && 
+             ! array_key_exists( 'access_civicrm_nav_link',
+                                 $wp_roles->get_role( $role )->capabilities ) ){
             $wp_roles->add_cap( $role, 'access_civicrm_nav_link' );
         }
     }
