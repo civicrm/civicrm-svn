@@ -547,7 +547,7 @@ AND    cf.id IN ( $fieldIDList )
 
         if ( ! empty( $cvParams ) ) {
             self::create( $cvParams );
-            return CRM_Core_Error::createAPISuccess( );
+            return array('is_error' => 0, 'result' => 1 );
         }
 
         return CRM_Core_Error::createAPIError( ts( 'Unknown error' ) );
