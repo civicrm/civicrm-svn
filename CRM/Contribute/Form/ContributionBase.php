@@ -81,7 +81,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
      * @protected
      */
     public $_paymentProcessor;
-    protected $_paymentObject = null;
+    public $_paymentObject = null;
 
     /**
      * The membership block for this page
