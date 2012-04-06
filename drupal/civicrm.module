@@ -239,7 +239,7 @@ function civicrm_initialize() {
     else {
       $settingsFile = conf_init() . '/civicrm.settings.php';
     }
-    $error = include_once ($settingsFile);
+    $error = include_once($settingsFile);
 
     // get ready for problems
     $docLinkInstall = "http://wiki.civicrm.org/confluence/display/CRMDOC/Drupal+Installation+Guide";
@@ -262,7 +262,7 @@ function civicrm_initialize() {
     }
 
     // this does pretty much all of the civicrm initialization
-    $error = include_once ('CRM/Core/Config.php');
+    $error = include_once('CRM/Core/Config.php');
     if ($error == FALSE) {
       $failure = TRUE;
       drupal_set_message("<strong><p class='error'>" .
@@ -358,6 +358,7 @@ function civicrm_invoke() {
   /* FIXME: hack to bypass synchronize if running upgrade to avoid
        any serious non-recoverable error which might hinder the
        upgrade process. */
+
 
 
   if (!isset($args[1]) or $args[1] != 'upgrade') {
