@@ -177,7 +177,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         $config = CRM_Core_Config::singleton( );
         $script = '';
         $separator = $htmlize ? '&amp;' : '&';
- 		$pageID    = '';
+        $pageID    = '';
 
         require_once 'CRM/Utils/String.php';
         $path = CRM_Utils_String::stripPathChars( $path );
@@ -216,7 +216,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         }
         
         if ( isset( $path ) ) {
-            if ( get_option('permalink_structure') != '' ) { 
+            if ( get_option('permalink_structure') != '' && $pageID ) { 
                 if ( isset( $query ) ) {
                     return $script .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
                 } else {
