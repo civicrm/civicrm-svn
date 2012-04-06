@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -22,6 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
+
 /*
  * Heavily based on anonymous code contribution. No claim.
  *
@@ -30,26 +33,27 @@
  *
  */
 class civicrm_handler_field_campaign_type extends views_handler_field {
-    static $_campaignType;
+  static $_campaignType;
+  function construct() {
+    if (!self::$_campaignType) {
+      if (!civicrm_initialize()) {
+        return;
+      }
+      require_once 'CRM/Campaign/PseudoConstant.php';
+      self::$_campaignType = CRM_Campaign_PseudoConstant::campaignType();
+    }
+  }
 
-    function construct( ) {
-        if ( ! self::$_campaignType ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Campaign/PseudoConstant.php';
-            self::$_campaignType = CRM_Campaign_PseudoConstant::campaignType( );
-        }
+  function render($values) {
+    $lid = $values->{$this->field_alias};
+    if (empty($lid) ||
+      (int ) $lid <= 0
+    ) {
+      return NULL;
     }
 
-    function render( $values ) {
-        $lid = $values->{$this->field_alias};
-        if ( empty( $lid ) ||
-             (int ) $lid <= 0 ) {
-            return null;
-        }
-
-        return self::$_campaignType[$values->{$this->field_alias}];
-    }
+    return self::$_campaignType[$values->{$this->field_alias}];
+  }
 }
-?>
+
+

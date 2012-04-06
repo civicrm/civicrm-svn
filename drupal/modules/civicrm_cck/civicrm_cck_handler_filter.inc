@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -23,18 +25,17 @@
  +--------------------------------------------------------------------+
 */
 
-  /**
-   * @file
-   * The subclass simply adds properties,
-   * for field-specific subclasses to use if they need to.
-   */
+/**
+ * @file
+ * The subclass simply adds properties,
+ * for field-specific subclasses to use if they need to.
+ */
 class civicrm_cck_handler_filter extends views_handler_filter_in_operator {
   var $no_single = TRUE;
-
-    function value_form(&$form, &$form_state) {
-   $values = array();
-   $field = $this->definition['content_field_name'];
-   $options = civicrm_cck_allowed_values($field);
+  function value_form(&$form, &$form_state) {
+    $values  = array();
+    $field   = $this->definition['content_field_name'];
+    $options = civicrm_cck_allowed_values($field);
 
     sort($values);
     $default_value = implode(', ', $values);
@@ -43,7 +44,7 @@ class civicrm_cck_handler_filter extends views_handler_filter_in_operator {
       '#title' => t('Contact Name'),
       '#description' => t('Enter a contact name.'),
       '#default_value' => $default_value,
-      '#autocomplete_path' => 'civicrm_cck/autocomplete/'.$field,
+      '#autocomplete_path' => 'civicrm_cck/autocomplete/' . $field,
     );
 
     if (!empty($form_state['exposed']) && !isset($form_state['input'][$this->options['expose']['identifier']])) {
@@ -58,8 +59,8 @@ class civicrm_cck_handler_filter extends views_handler_filter_in_operator {
 
     if ($cids) {
       $form_state['values']['options']['value'] = $cids;
-                }
-            }
+    }
+  }
 
   function accept_exposed_input($input) {
     $rc = parent::accept_exposed_input($input);
@@ -68,20 +69,20 @@ class civicrm_cck_handler_filter extends views_handler_filter_in_operator {
       // If we have previously validated input, override.
       if (isset($this->validated_exposed_input)) {
         $this->value = $this->validated_exposed_input;
-                }
-                }
+      }
+    }
 
     return $rc;
-                }
+  }
 
   function exposed_validate(&$form, &$form_state) {
     if (empty($this->options['exposed'])) {
       return;
-            }
+    }
 
     if (empty($this->options['expose']['identifier'])) {
       return;
-        }
+    }
 
     $identifier = $this->options['expose']['identifier'];
     $values = $form_state['values'][$identifier];
@@ -91,7 +92,7 @@ class civicrm_cck_handler_filter extends views_handler_filter_in_operator {
     if ($cids) {
       $this->validated_exposed_input = $cids;
     }
-        }
+  }
 
   /**
    * Validate the user string. Since this can come from either the form
@@ -99,7 +100,7 @@ class civicrm_cck_handler_filter extends views_handler_filter_in_operator {
    * handle the multiple input sources.
    */
   function validate_contact_strings(&$form, $value) {
-    
+
     $cids = array();
 
     preg_match('/^(?:\s*|(.*) )?\[\s*cid\s*:\s*(\d+)\s*\]$/', $value, $matches);
@@ -113,7 +114,7 @@ class civicrm_cck_handler_filter extends views_handler_filter_in_operator {
       // No explicit nid.
       $references = _civicrm_cck_potential_references($field, $value, TRUE);
       if (empty($references)) {
-    //    form_error($element[$field_key], t('%name: found no valid post with that title.', array('%name' => $field['widget']['label'])));
+        //    form_error($element[$field_key], t('%name: found no valid post with that title.', array('%name' => $field['widget']['label'])));
       }
       else {
         // TODO:
@@ -122,16 +123,15 @@ class civicrm_cck_handler_filter extends views_handler_filter_in_operator {
         // ATM, we pick the first matching candidate...
         $cids[] = array_shift(array_keys($references));
       }
-        }
+    }
 
     return $cids;
   }
 
   // Override to do nothing.
-  function value_submit() {
-    }
+  function value_submit() {}
 
   // Override to do nothing.
-  function get_value_options() { }
-
+  function get_value_options() {}
 }
+

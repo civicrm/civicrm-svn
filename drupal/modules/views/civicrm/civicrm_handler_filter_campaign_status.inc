@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -23,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /*
  * Heavily based on anonymous code campaign. No claim.
  * CiviCRM Views Integration
@@ -31,31 +34,29 @@
  * Filters Campaign Statuses, and is configured using the labels from the database
  *
  */
-
 class civicrm_handler_filter_campaign_status extends views_handler_filter_in_operator {
-    static $_campaignStatus;
-
-    function construct( ) {
-        parent::construct();
-        if ( ! self::$_campaignStatus ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Campaign/PseudoConstant.php';
-            self::$_campaignStatus = CRM_Campaign_PseudoConstant::campaignStatus( );
-        }
+  static $_campaignStatus;
+  function construct() {
+    parent::construct();
+    if (!self::$_campaignStatus) {
+      if (!civicrm_initialize()) {
+        return;
+      }
+      require_once 'CRM/Campaign/PseudoConstant.php';
+      self::$_campaignStatus = CRM_Campaign_PseudoConstant::campaignStatus();
     }
+  }
 
-    function get_value_options() {
-        if (!isset($this->value_options)) {
-            $this->value_title = t('Contribution Status');
-            $options = array( );
-            foreach (self::$_campaignStatus as $id => $name ) {
-                $options[$id] = $name;
-            }
-            $this->value_options = $options;
-        }
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('Contribution Status');
+      $options = array();
+      foreach (self::$_campaignStatus as $id => $name) {
+        $options[$id] = $name;
+      }
+      $this->value_options = $options;
     }
-
+  }
 }
-?>
+
+

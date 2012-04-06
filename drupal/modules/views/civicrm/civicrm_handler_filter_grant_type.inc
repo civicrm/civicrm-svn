@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -23,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /*
  * Heavily based on anonymous code contribution. No claim.
  * CiviCRM Views Integration
@@ -31,30 +34,28 @@
  * Filters Grant Types, and is configured using the labels from the database
  *
  */
-
 class civicrm_handler_filter_grant_type extends views_handler_filter_in_operator {
-    static $_grantType;
-
-    function construct( ) {
-        parent::construct();
-        if ( ! self::$_grantType ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Grant/PseudoConstant.php';
-            self::$_grantType = CRM_Grant_PseudoConstant::grantType( );
-        }
+  static $_grantType;
+  function construct() {
+    parent::construct();
+    if (!self::$_grantType) {
+      if (!civicrm_initialize()) {
+        return;
+      }
+      require_once 'CRM/Grant/PseudoConstant.php';
+      self::$_grantType = CRM_Grant_PseudoConstant::grantType();
     }
+  }
 
-    function get_value_options() {
-        if (!isset($this->value_options)) {
-            $this->value_title = t('Grant Type');
-            $options = array( );
-            foreach (self::$_grantType as $id => $name ) {
-                $options[$id] = $name;
-            }
-            $this->value_options = $options;
-        }
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('Grant Type');
+      $options = array();
+      foreach (self::$_grantType as $id => $name) {
+        $options[$id] = $name;
+      }
+      $this->value_options = $options;
     }
-
+  }
 }
+

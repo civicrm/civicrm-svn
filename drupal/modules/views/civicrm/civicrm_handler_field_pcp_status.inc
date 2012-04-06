@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -23,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /*
  * Heavily based on anonymous code contribution. No claim.
  *
@@ -32,24 +35,25 @@
  */
 class civicrm_handler_field_pcp_status extends views_handler_field {
   static $_pcpStatus;
-
-  function construct( ) {
-    if ( ! self::$_pcpStatus ) {
-      if ( ! civicrm_initialize( ) ) {
+  function construct() {
+    if (!self::$_pcpStatus) {
+      if (!civicrm_initialize()) {
         return;
-      } 
+      }
       require_once 'CRM/Contribute/PseudoConstant.php';
-      self::$_pcpStatus = CRM_Contribute_PseudoConstant::pcpStatus( );
+      self::$_pcpStatus = CRM_Contribute_PseudoConstant::pcpStatus();
     }
   }
 
-  function render( $values ) {
+  function render($values) {
     $sid = $values->{$this->field_alias};
-    if ( empty( $sid ) ||
-      (int ) $sid <= 0 ) {
-      return null;
+    if (empty($sid) ||
+      (int ) $sid <= 0
+    ) {
+      return NULL;
     }
 
     return self::$_pcpStatus[$values->{$this->field_alias}];
   }
 }
+

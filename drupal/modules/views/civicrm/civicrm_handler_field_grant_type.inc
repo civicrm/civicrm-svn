@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -22,6 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
+
 /*
  * Heavily based on anonymous code contribution. No claim.
  *
@@ -30,26 +33,26 @@
  *
  */
 class civicrm_handler_field_grant_type extends views_handler_field {
-    static $_grantType;
+  static $_grantType;
+  function construct() {
+    if (!self::$_grantType) {
+      if (!civicrm_initialize()) {
+        return;
+      }
+      require_once 'CRM/Grant/PseudoConstant.php';
+      self::$_grantType = CRM_Grant_PseudoConstant::grantType();
+    }
+  }
 
-    function construct( ) {
-        if ( ! self::$_grantType ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Grant/PseudoConstant.php';
-            self::$_grantType = CRM_Grant_PseudoConstant::grantType( );
-        }
+  function render($values) {
+    $lid = $values->{$this->field_alias};
+    if (empty($lid) ||
+      (int ) $lid <= 0
+    ) {
+      return NULL;
     }
 
-    function render( $values ) {
-        $lid = $values->{$this->field_alias};
-        if ( empty( $lid ) ||
-             (int ) $lid <= 0 ) {
-            return null;
-        }
-
-        return self::$_grantType[$values->{$this->field_alias}];
-    }
+    return self::$_grantType[$values->{$this->field_alias}];
+  }
 }
 

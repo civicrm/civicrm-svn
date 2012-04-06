@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -23,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /*
  *
  * civicrm_handler_field_file.inc
@@ -30,9 +33,8 @@
  *
  */
 class civicrm_handler_field_file extends views_handler_field {
-
-  function construct( ) {
-    if ( ! civicrm_initialize( ) ) {
+  function construct() {
+    if (!civicrm_initialize()) {
       return;
     }
 
@@ -45,26 +47,29 @@ class civicrm_handler_field_file extends views_handler_field {
     $this->add_additional_fields();
   }
 
-  function render( $values ) {
+  function render($values) {
     $id = $values->{$this->field_alias};
-    if ( $file_id = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $id , 'file_id', 'entity_id') ) {
+    if ($file_id = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $id, 'file_id', 'entity_id')) {
       $params = array(
         'id' => $file_id,
         'file_type_id' => NULL,
       );
       $file = civicrm_file_get($params);
 
-      if ( !array_key_exists('is_error', $file) ) {
+      if (!array_key_exists('is_error', $file)) {
         $filepath = file_directory_path() . '/civicrm/custom/' . $file[$file_id]['uri'];
-        $v = clone $values; // Prevent affecting the original
+        // Prevent affecting the original
+        $v = clone$values;
         $v->{$this->field_alias} = $filepath;
         return parent::render($v);
-      } else {
+      }
+      else {
         return NULL;
       }
-
-    } else {
+    }
+    else {
       return NULL;
     }
   }
 }
+

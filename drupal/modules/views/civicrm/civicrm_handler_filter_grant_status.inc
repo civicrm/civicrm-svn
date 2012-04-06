@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -23,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /*
  * Heavily based on anonymous code contribution. No claim.
  * CiviCRM Views Integration
@@ -31,30 +34,28 @@
  * Filters Grant Statuses, and is configured using the labels from the database
  *
  */
-
 class civicrm_handler_filter_grant_status extends views_handler_filter_in_operator {
-    static $_grantStatus;
-
-    function construct( ) {
-        parent::construct();
-        if ( ! self::$_grantStatus ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Grant/PseudoConstant.php';
-            self::$_grantStatus = CRM_Grant_PseudoConstant::grantStatus( );
-        }
+  static $_grantStatus;
+  function construct() {
+    parent::construct();
+    if (!self::$_grantStatus) {
+      if (!civicrm_initialize()) {
+        return;
+      }
+      require_once 'CRM/Grant/PseudoConstant.php';
+      self::$_grantStatus = CRM_Grant_PseudoConstant::grantStatus();
     }
+  }
 
-    function get_value_options() {
-        if (!isset($this->value_options)) {
-            $this->value_title = t('Grant Status');
-            $options = array( );
-            foreach (self::$_grantStatus as $id => $name ) {
-                $options[$id] = $name;
-            }
-            $this->value_options = $options;
-        }
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('Grant Status');
+      $options = array();
+      foreach (self::$_grantStatus as $id => $name) {
+        $options[$id] = $name;
+      }
+      $this->value_options = $options;
     }
-
+  }
 }
+

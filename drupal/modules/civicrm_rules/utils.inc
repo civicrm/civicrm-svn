@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -41,68 +42,67 @@
 /**
  * Function to get the list of groups
  */
-function _civicrm_get_groups( ) {
-	civicrm_initialize( );
-	require_once 'api/api.php';
-	$params = array( 'return.id' => 1, 'return.title' => 1, 'version' => 2 );
-	$groupInformation = civicrm_api('group', 'get', $params);
+function _civicrm_get_groups() {
+  civicrm_initialize();
+  require_once 'api/api.php';
+  $params = array('return.id' => 1, 'return.title' => 1, 'version' => 2);
+  $groupInformation = civicrm_api('group', 'get', $params);
 
-	$groups = array( );	
-	foreach ( $groupInformation as $values ) {
-		$groups[ $values['id'] ] = $values['title'];
-	}
-	
-	return $groups;
-}	
+  $groups = array();
+  foreach ($groupInformation as $values) {
+    $groups[$values['id']] = $values['title'];
+  }
+
+  return $groups;
+}
 
 /**
  * Function to add contacts to group
  */
-function _civicrm_rules_group_contact( $contactId, $groupId, $action = 'add' ) {	
-	civicrm_initialize( );
-	$params = array( 'contact_id' => $contactId,
-                     'group_id' => $groupId,
-                     'version' => 2
-                     );
+function _civicrm_rules_group_contact($contactId, $groupId, $action = 'add') {
+  civicrm_initialize();
+  $params = array('contact_id' => $contactId,
+    'group_id' => $groupId,
+    'version' => 2,
+  );
   // This used to be civicrm_group_contact_common($params, $action);
-	civicrm_api('group_contact', 'common', $params, $action );
+  civicrm_api('group_contact', 'common', $params, $action);
 }
 
 /**
  * Loads a contact into a version suitable for the rules actions
  */
-function _civicrm_rules_load_contact( $contactID ) {
-    require_once 'CRM/Contact/DAO/Contact.php';
-    $contact = new CRM_Contact_DAO_Contact( );
-    $contact->id = $contactID;
+function _civicrm_rules_load_contact($contactID) {
+  require_once 'CRM/Contact/DAO/Contact.php';
+  $contact = new CRM_Contact_DAO_Contact();
+  $contact->id = $contactID;
 
-    if ( $contact->id ) {
-        // load the contact data here
-        $contact->find( true );
-    }
-    
-    return $contact;
+  if ($contact->id) {
+    // load the contact data here
+    $contact->find(TRUE);
+  }
+
+  return $contact;
 }
 
-
-
-function _civicrm_rules_in_group( $contact, $group ) {
-    // check if contact is in the group gid
-    return true;
+function _civicrm_rules_in_group($contact, $group) {
+  // check if contact is in the group gid
+  return TRUE;
 }
 
 /**
  * Loads a mailing into a version suitable for the rules actions
  */
-function _civicrm_rules_load_mailing( $mailingID ) {
-    require_once 'CRM/Mailing/DAO/Mailing.php';
-    $mailing = new CRM_Mailing_DAO_Mailing( );
-    $mailing->id = $mailingID;
+function _civicrm_rules_load_mailing($mailingID) {
+  require_once 'CRM/Mailing/DAO/Mailing.php';
+  $mailing = new CRM_Mailing_DAO_Mailing();
+  $mailing->id = $mailingID;
 
-    if ( $mailing->id ) {
-        // load the mailing data here
-        $mailing->find( true );
-    }
-    
-    return $mailing;
+  if ($mailing->id) {
+    // load the mailing data here
+    $mailing->find(TRUE);
+  }
+
+  return $mailing;
 }
+

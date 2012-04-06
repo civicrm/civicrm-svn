@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -33,30 +34,29 @@
  * $Id$
  *
  */
-
-function civicrm_install( ) {
-}
+function civicrm_install() {}
 
 /**
  * Implementation of hook_uninstall( )
  */
-function civicrm_uninstall( ) {
-    require_once 'civicrm.module';
+function civicrm_uninstall() {
+  require_once 'civicrm.module';
 
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    }
+  if (!civicrm_initialize()) {
+    return;
+  }
 
-    require_once 'CRM/Core/Config.php';
-    $config =& CRM_Core_Config::singleton();
+  require_once 'CRM/Core/Config.php';
+  $config = &CRM_Core_Config::singleton();
 
-    require_once 'CRM/Core/DAO.php';
-    CRM_Core_DAO::dropAllTables( );
+  require_once 'CRM/Core/DAO.php';
+  CRM_Core_DAO::dropAllTables();
 }
 
 /**
  * Update CiviCRM module weight
  */
 function civicrm_update_6300(&$sandbox) {
-    return array(update_sql("UPDATE {system} SET weight = 100 WHERE name = 'civicrm'"));
+  return array(update_sql("UPDATE {system} SET weight = 100 WHERE name = 'civicrm'"));
 }
+

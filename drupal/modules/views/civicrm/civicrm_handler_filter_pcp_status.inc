@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -23,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /*
  * Heavily based on anonymous code contribution. No claim.
  * CiviCRM Views Integration
@@ -31,30 +34,28 @@
  * Filters PCP Statuses, and is configured using the labels from the database
  *
  */
-
 class civicrm_handler_filter_pcp_status extends views_handler_filter_in_operator {
-    static $_pcpStatus;
-
-    function construct( ) {
-        parent::construct();
-        if ( ! self::$_pcpStatus ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Contribute/PseudoConstant.php';
-            self::$_pcpStatus = CRM_Contribute_PseudoConstant::pcpStatus( );
-        }
+  static $_pcpStatus;
+  function construct() {
+    parent::construct();
+    if (!self::$_pcpStatus) {
+      if (!civicrm_initialize()) {
+        return;
+      }
+      require_once 'CRM/Contribute/PseudoConstant.php';
+      self::$_pcpStatus = CRM_Contribute_PseudoConstant::pcpStatus();
     }
+  }
 
-    function get_value_options() {
-        if (!isset($this->value_options)) {
-            $this->value_title = t('PCP Status');
-            $options = array( );
-            foreach (self::$_pcpStatus as $id => $name ) {
-                $options[$id] = $name;
-            }
-            $this->value_options = $options;
-        }
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('PCP Status');
+      $options = array();
+      foreach (self::$_pcpStatus as $id => $name) {
+        $options[$id] = $name;
+      }
+      $this->value_options = $options;
     }
-
+  }
 }
+

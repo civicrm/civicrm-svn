@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -23,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /*
  * Heavily based on anonymous code contribution. No claim.
  * CiviCRM Views Integration
@@ -31,31 +34,29 @@
  * Filters Campaign Types, and is configured using the labels from the database
  *
  */
-
 class civicrm_handler_filter_campaign_type extends views_handler_filter_in_operator {
-    static $_campaignType;
-
-    function construct( ) {
-        parent::construct();
-        if ( ! self::$_campaignType ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Campaign/PseudoConstant.php';
-            self::$_campaignType = CRM_Campaign_PseudoConstant::campaignType( );
-        }
+  static $_campaignType;
+  function construct() {
+    parent::construct();
+    if (!self::$_campaignType) {
+      if (!civicrm_initialize()) {
+        return;
+      }
+      require_once 'CRM/Campaign/PseudoConstant.php';
+      self::$_campaignType = CRM_Campaign_PseudoConstant::campaignType();
     }
+  }
 
-    function get_value_options() {
-        if (!isset($this->value_options)) {
-            $this->value_title = t('Campaign Type');
-            $options = array( );
-            foreach (self::$_campaignType as $id => $name ) {
-                $options[$id] = $name;
-            }
-            $this->value_options = $options;
-        }
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('Campaign Type');
+      $options = array();
+      foreach (self::$_campaignType as $id => $name) {
+        $options[$id] = $name;
+      }
+      $this->value_options = $options;
     }
-
+  }
 }
-?>
+
+

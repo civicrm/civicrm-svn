@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -29,24 +31,28 @@
  * @ingroup civicrm_field_handlers
  */
 class civicrm_handler_field_pcp_raised_amount extends views_handler_field_numeric {
-
-  function construct( ) {
-    if ( ! civicrm_initialize( ) ) {
+  function construct() {
+    if (!civicrm_initialize()) {
       return;
     }
     require_once 'CRM/Contribute/BAO/PCP.php';
   }
 
   function render($values) {
-    $pcp_id =  $values->{$this->field_alias}; // retrieve the value of the "real field"
-    $value = CRM_Contribute_BAO_PCP::thermoMeter( $pcp_id ); // get the total amount raised
+    // retrieve the value of the "real field"
+    $pcp_id = $values->{$this->field_alias};
+    // get the total amount raised
+    $value = CRM_Contribute_BAO_PCP::thermoMeter($pcp_id);
     if (!$value) {
-      $value = '0'; // supply a numeric string if function returns NULL or undesirable result
+      // supply a numeric string if function returns NULL or undesirable result
+      $value = '0';
     }
 
-    $v = clone $values; // Prevent affecting the original
+    // Prevent affecting the original
+    $v = clone$values;
     $v->{$this->field_alias} = $value;
     return parent::render($v);
-  } 
+  }
 }
-?>
+
+
