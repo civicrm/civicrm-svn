@@ -42,7 +42,6 @@
  */
 class CRM_Contact_Task {
   CONST 
-    GROUP_CONTACTS = 1, 
     GROUP_CONTACTS        =     1,
     REMOVE_CONTACTS       =     2,
     TAG_CONTACTS          =     3,
