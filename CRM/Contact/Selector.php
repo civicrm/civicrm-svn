@@ -41,7 +41,7 @@
  * results of advanced search options.
  *
  */
-class CRM_Contact_Selector extends CRM_Core_Selector_BaseimplementsCRM_Core_Selector_API {
+class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Selector_API {
 
   /**
    * This defines two actions- View and Edit.
