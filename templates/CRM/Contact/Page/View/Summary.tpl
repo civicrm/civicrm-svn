@@ -196,7 +196,13 @@
                     <div class="contact_panel">
                         <div class="contactCardLeft">
                             <table>
-                                {foreach from=$email key="blockId" item=item}
+                               <tr>
+                                 <td id="email-block">
+                                 <table>
+                                 <tr><td colspan="3">
+                                 <div id="edit-email" class="hiddenElement" style="float:right;"><a href="#" title="{ts}click to edit{/ts}">[edit]</a></div>
+                                 </td></tr>
+                                 {foreach from=$email key="blockId" item=item}
                                     {if $item.email}
                                     <tr>
                                         <td class="label">{$item.location_type}&nbsp;{ts}Email{/ts}</td>
@@ -210,6 +216,9 @@
                                     </tr>
                                     {/if}
                                 {/foreach}
+                                </table>
+                                </td>
+                                </tr>
                                 {if $website}
                                 {foreach from=$website item=item}
                                     {if !empty($item.url)}
@@ -466,6 +475,26 @@ function showHideSignature( blockId ) {
 		
 	  });
 }
+
+cj(function(){
+    cj('#email-block').mouseover( function() {
+        cj('#edit-email').show();    
+    }).mouseout( function() {
+        cj('#edit-email').hide();    
+    });
+
+    cj('#edit-email').click( function() {
+        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=1&reset=1&cid='}{$contactId}"{literal}; 
+	    var response = cj.ajax({
+                        type: "POST",
+						data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
+                        url: dataUrl,
+						async: false
+					}).responseText;
+
+	    cj( '#email-block' ).html( response );
+    });
+});
 
 </script>
 {/literal}

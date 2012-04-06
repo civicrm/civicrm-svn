@@ -137,4 +137,9 @@
      <page_callback>CRM_Batch_Page_AJAX::batchSave</page_callback>
      <access_arguments>administer CiviCRM</access_arguments>
   </item>
+  <item>
+      <path>civicrm/ajax/inline</path>
+     <page_callback>CRM_Core_Page_AJAX::run</page_callback>
+     <access_arguments>administer CiviCRM</access_arguments>
+  </item>
 </menu>
