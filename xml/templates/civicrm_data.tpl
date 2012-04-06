@@ -1222,7 +1222,8 @@ INSERT INTO civicrm_uf_group
     (8,  'shared_address',     'Contact',   		  '{ts escape="sql"}Shared Address{/ts}'    , 0,           1,           NULL),
     (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership', 
     '{ts escape="sql"}On Behalf Of Organization{/ts}'    , 0,           1,           NULL),
-    (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Batch Entry{/ts}' , 0,      1,           NULL);
+    (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Batch Entry{/ts}' , 0,      1,           NULL),
+    (11, 'event_registration', 'Individual, Contact', '{ts escape="sql"}Event Registration{/ts}',        0,      0,           NULL);
 
 INSERT INTO civicrm_uf_join
    (is_active,module,entity_table,entity_id,weight,uf_group_id)
@@ -1291,7 +1292,8 @@ INSERT INTO civicrm_uf_field
        (48, 10,     'payment_instrument',          0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Instrument{/ts}', 'Contribution', NULL, NULL ),
        (49, 10,     'check_number',                0, 0, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Check Number{/ts}', 'Contribution', NULL, NULL ),
        (50, 10,     'invoice_id',                  0, 0, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Invoice ID{/ts}', 'Contribution', NULL, NULL ),
-       (51, 10,     'receipt_date',                0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receipt Date{/ts}', 'Contribution', NULL, NULL );
+       (51, 10,     'receipt_date',                0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receipt Date{/ts}', 'Contribution', NULL, NULL ),
+       (52, 11,     'email',                       1, 0, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Email Address{/ts}', 'Contact', NULL, NULL);
 
 
 INSERT INTO civicrm_participant_status_type
