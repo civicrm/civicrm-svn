@@ -73,7 +73,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
     // alter
     $helper($metadata);
   }
-  $results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
+  //$results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
   return civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
 }
 
