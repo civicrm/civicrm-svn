@@ -222,7 +222,7 @@ class CRM_Core_Payment_FirstData extends CRM_Core_Payment
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $requestxml );
         curl_setopt( $ch, CURLOPT_SSLCERT, $key );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );  // see - http://curl.haxx.se/docs/sslcerts.html
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL'));
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );  // return the result on success, FALSE on failure 
         curl_setopt( $ch, CURLOPT_TIMEOUT, 36000 );                                     
         curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );  // ensures any Location headers are followed 

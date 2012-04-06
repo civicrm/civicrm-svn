@@ -680,8 +680,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             if( $allowOtherAmmount ){
                 
                 $this->click('is_allow_other_amount');
-                $this->type('min_amount', $rand / 2);
-                $this->type('max_amount', $rand * 10);
+
+                // there shouldn't be minimums and maximums on test contribution forms unless you specify it
+                //$this->type('min_amount', $rand / 2);
+                //$this->type('max_amount', $rand * 10);
             }
             $this->type('label_1', "Label $hash");
             $this->type('value_1', "$rand");

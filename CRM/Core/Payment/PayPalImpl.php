@@ -573,7 +573,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         curl_setopt($ch, CURLOPT_VERBOSE, 1);
 
         //turning off the server and peer verification(TrustManager Concept).
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL'));
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

@@ -698,26 +698,18 @@ class CRM_Utils_System {
     }
 
     static function checkURL( $url, $addCookie = false ) {
-        CRM_Core_Error::ignoreException( );
-        require_once 'HTTP/Request.php';
-        $params = array( 'method' => 'GET' );
-        $request = new HTTP_Request( $url, $params );
-        if ( $addCookie ) {
-            foreach ( $_COOKIE as $name => $value ) {
-                $request->addCookie( $name, $value );
-            }
-        }
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Standalone' ) {
             session_write_close();
         }
-        $request->sendRequest( );
-        $result = $request->getResponseCode( ) == 200 ? true : false;
-        if ( $config->userFramework == 'Standalone' ) {
-            session_start ();
+
+        // make a GET request to $url
+        $ch = curl_init($url);
+        if($addCookie) {
+            curl_setopt($ch, CURLOPT_COOKIE, http_build_query($_COOKIE));
         }
-        CRM_Core_Error::setCallback( );
-        return $result;
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // it's quite alright to use a self-signed cert
+        return curl_exec($ch);
     }
 
     static function checkPHPVersion( $ver = 5, $abort = true ) {
@@ -851,7 +843,7 @@ class CRM_Utils_System {
     static function redirectToSSL( $abort = false ) {
         $config = CRM_Core_Config::singleton( );
         $req_headers = CRM_Utils_System::getRequestHeaders();
-        if ( $config->enableSSL             &&
+        if ( CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'enableSSL') &&
              ( ! isset( $_SERVER['HTTPS'] ) ||
                strtolower( $_SERVER['HTTPS'] )  == 'off' ) &&
              strtolower( CRM_Utils_Array::value( 'X_FORWARDED_PROTO',

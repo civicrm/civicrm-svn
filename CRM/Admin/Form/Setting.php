@@ -89,6 +89,8 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
             //Set defaults for autocomplete and contact reference options
             $this->_defaults['autocompleteContactSearch'] = array( '1' => 1 ) + $autoSearchFields;
             $this->_defaults['autocompleteContactReference'] = array( '1' => 1 ) + $cRSearchFields;
+            $this->_defaults['enableSSL'] = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'enableSSL', null, 0);
+            $this->_defaults['verifySSL'] = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL', null, 1);
         }
         return $this->_defaults;
     }
@@ -180,6 +182,22 @@ AND    time_format <> ''
             CRM_Core_DAO::executeQuery( $query, $sqlParams );
 
             unset( $params['timeInputFormat'] );
+        }
+
+        // verify ssl peer option
+        if ( isset($params['verifySSL'] ) ) {
+            CRM_Core_BAO_Setting::setItem( $params['verifySSL'],
+                                           CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                           'verifySSL' );
+            unset($params['verifySSL']);
+        }
+        
+        // force secure URLs
+        if ( isset($params['enableSSL'] ) ) {
+            CRM_Core_BAO_Setting::setItem( $params['enableSSL'],
+                                           CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                           'enableSSL' );
+            unset($params['enableSSL']);
         }
         
         CRM_Core_BAO_ConfigSetting::add($params);

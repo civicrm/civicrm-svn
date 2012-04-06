@@ -211,10 +211,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting
         $dao = self::dao( $group, $name, $componentID, $contactID );
         $dao->find( true );
 
-        if ( $value ) {
-            $dao->value = serialize( $value );
-        } else {
+        if ( CRM_Utils_System::isNull($value) ) {
             $dao->value = 'null';
+        } else {
+            $dao->value = serialize( $value );
         }
 
         $dao->created_date = date( 'Ymdhis' );

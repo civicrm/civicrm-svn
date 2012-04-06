@@ -147,6 +147,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         curl_setopt( $submit, CURLOPT_POST, true );
         curl_setopt( $submit, CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $submit, CURLOPT_POSTFIELDS, implode( '&', $postFields ) );
+        curl_setopt( $submit, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL'));
 
         $response = curl_exec( $submit );
 
@@ -282,7 +283,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         curl_setopt($submit, CURLOPT_HEADER, 1);
         curl_setopt($submit, CURLOPT_POSTFIELDS, $arbXML);
         curl_setopt($submit, CURLOPT_POST, 1);
-        curl_setopt($submit, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($submit, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL'));
         
         $response = curl_exec($submit);
 
@@ -599,7 +600,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         curl_setopt($submit, CURLOPT_HEADER, 1);
         curl_setopt($submit, CURLOPT_POSTFIELDS, $arbXML);
         curl_setopt($submit, CURLOPT_POST, 1);
-        curl_setopt($submit, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($submit, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL'));
         
         $response = curl_exec($submit);
 

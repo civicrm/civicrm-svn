@@ -155,7 +155,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             //CRM-7265 --time being fix. 
             $config = CRM_Core_Config::singleton( );
             $image_URL = str_replace( 'https://', 'http://', $image_URL );
-            if ( isset( $config->enableSSL ) && $config->enableSSL ) {
+            if ( CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'enableSSL') ) {
                 $image_URL = str_replace( 'http://', 'https://', $image_URL );    
             }
             
