@@ -18,7 +18,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
   $entity = strtolower($apiRequest['entity']);
   $action = strtolower($apiRequest['params']['action']);
   if (empty($action)) {
-    if (CRM_Utils_Array::value($entity, $results)) {
+    if (CRM_Utils_Array::value($entity, $results) && 
+      CRM_Utils_Array::value('values', $results['entity'])) {
       return $results[$entity];
     }
     else {
@@ -34,7 +35,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
     return $results[$entity][$action];
   }
   // defaults based on data model and API policy
-  switch (strtolower($action)) {
+  switch ($action) {
     case 'getfields':
       $values = _civicrm_api_get_fields($entity, $apiRequest['params']);
       $results[$entity][$action] =  civicrm_api3_create_success($values, 
@@ -73,8 +74,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
     // alter
     $helper($metadata);
   }
-  //$results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
-  return civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
+  $results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
+  return $results[$entity][$action];
 }
 
 /**
