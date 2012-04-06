@@ -590,7 +590,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
                                          $isPcpApprovalNeeded = false,
                                          $isSeparatePayment = false,
                                          $honoreeSection = true,
-                                         $allowOtherAmmount = true
+                                         $allowOtherAmmount = true,
+                                         $isConfirmEnabled = true
                                          ) 
     {
         if ( !$hash ) {
@@ -641,6 +642,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->type('honor_block_title', "Honoree Section Title $hash");
             $this->type('honor_block_text',  "Honoree Introductory Message $hash");
         }
+
+        // is confirm enabled? it starts out enabled, so uncheck it if false
+        if(!$isConfirmEnabled) {
+            $this->click("id=is_confirm_enabled");
+        }
+
         // go to step 2
         $this->click('_qf_Settings_next');
         $this->waitForElementPresent('_qf_Amount_next-bottom'); 

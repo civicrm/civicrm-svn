@@ -79,6 +79,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         // Make the contributionPageID avilable to the template
         $this->assign( 'contributionPageID', $this->_id );
         $this->assign( 'isShare', $this->_values['is_share'] );
+        $this->assign( 'isConfirmEnabled', $this->_values['is_confirm_enabled'] );
 
         // make sure we have right permission to edit this user
         $csContactID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, $this->_userID );
@@ -1093,7 +1094,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     public function postProcess() 
     {   
         $config = CRM_Core_Config::singleton( );
-    
+
+        
         // we first reset the confirm page so it accepts new values
         $this->controller->resetPage( 'Confirm' );
 
@@ -1196,9 +1198,26 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             } else if ( $this->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_NOTIFY ) {
                 $this->set( 'contributeMode', 'notify' );
             }
-        }      
-    }
-    
-}
+        }
 
+        // should we skip the confirm page?
+        if(!$this->_values['is_confirm_enabled']) {
+            // build the confirm page
+            $confirmForm =& $this->controller->_pages['Confirm'];
+            $confirmForm->preProcess();
+            $confirmForm->buildQuickForm(); 
+            
+            // the confirmation page is valid
+            $data =& $this->controller->container();
+            $data['valid']['Confirm'] = 1;
+
+            // confirm the contribution
+            $confirmForm->postProcess();
+            $qfKey = $this->controller->_key;
+
+            // redirect to thank you page
+            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_ThankYou_display=1&qfKey=$qfKey", true, null, false ) );
+        }
+    }
+}
 

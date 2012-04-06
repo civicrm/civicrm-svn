@@ -151,8 +151,11 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         $this->add('text', 'goal_amount', ts('Goal Amount'), array( 'size' => 8, 'maxlength' => 12 ) ); 
         $this->addRule('goal_amount', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
         
+        // is confirmation page enabled?
+        $this->addElement('checkbox', 'is_confirm_enabled', ts('Use a confirmation page?') );
+        
         // is this page shareable through social media ?
-            $this->addElement('checkbox', 'is_share', ts('Allow sharing through social media?') );
+        $this->addElement('checkbox', 'is_share', ts('Allow sharing through social media?') );
             
         // is this page active ?
         $this->addElement('checkbox', 'is_active', ts('Is this Online Contribution Page Active?') );
@@ -221,6 +224,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
             $params['currency'] = $config->defaultCurrency;
         }            
        
+        $params['is_confirm_enabled']    = CRM_Utils_Array::value('is_confirm_enabled'   , $params, false);
         $params['is_share']              = CRM_Utils_Array::value('is_share'             , $params, false);
         $params['is_active']             = CRM_Utils_Array::value('is_active'            , $params, false);
         $params['is_credit_card_only']   = CRM_Utils_Array::value('is_credit_card_only'  , $params, false);

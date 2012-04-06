@@ -76,6 +76,13 @@
       <comment>if true - allows recurring contributions, valid only for PayPal_Standard</comment>   
       <add>1.6</add>   
   </field>
+  <field>   
+      <name>is_confirm_enabled</name>   
+      <type>boolean</type>                   
+      <default>1</default> 
+      <comment>if false, the confirm page in contribution pages gets skipped</comment>   
+      <add>4.2</add>   
+  </field>
   <field>
        <name>recur_frequency_unit</name>
        <type>varchar</type>

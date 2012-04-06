@@ -116,6 +116,11 @@
 	</tr>
 </table>
 <table class="form-layout-compressed">
+        <tr class="crm-contribution-contributionpage-settings-form-block-is_confirm_enabled">
+    		<td>&nbsp;</td>
+    		<td>{$form.is_confirm_enabled.html} {$form.is_confirm_enabled.label}<br />
+    		<span class="description">{ts}If you disable this contributions will be processed immediately after submitting the contribution form.{/ts}</span></td>
+    	</tr>
         <tr class="crm-contribution-contributionpage-settings-form-block-is_share">
     		<td>&nbsp;</td>
     		<td>{$form.is_share.html} {$form.is_share.label}<br />

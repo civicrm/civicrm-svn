@@ -283,6 +283,10 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
             $defaults['is_for_organization'] = 1;
         }
         
+        // confirm page starts out enabled
+        if (! isset($defaults['is_confirm_enabled'])) {
+            $defaults['is_confirm_enabled'] = 1;
+        }
 
         return $defaults;
     }
