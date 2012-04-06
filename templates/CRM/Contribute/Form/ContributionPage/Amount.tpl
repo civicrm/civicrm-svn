@@ -179,9 +179,24 @@
            {/literal}{/foreach}
        {/if}
      {literal}
-   cj( document ).ready( function( ) { 
-       showRecurring( cj( '#payment_processor' ).val( ) ) 
-   });
+    cj( document ).ready( function( ) { 
+        function checked_payment_processors() {
+            var ids = [];
+            cj('.crm-contribution-contributionpage-amount-form-block-payment_processor input[type="checkbox"]').each(function(){
+                if(cj(this).attr('checked')) {
+                    var id = cj(this).attr('id').split('[')[1].split(']')[0];
+                    ids.push(id);
+                }
+            });
+            return ids;
+        }
+
+        // show/hide recurring block
+        cj('.crm-contribution-contributionpage-amount-form-block-payment_processor input[type="checkbox"]').change(function(){
+            showRecurring( checked_payment_processors() ) 
+        });
+        showRecurring( checked_payment_processors() ) 
+    });
 	var element_other_amount = document.getElementsByName('is_allow_other_amount');
   	if (! element_other_amount[0].checked) {
 	   hide('minMaxFields', 'table-row');
@@ -268,16 +283,23 @@
 		 }
 	}
 
-    function showRecurring( paymentProcessorId ) {
-        if ( cj.inArray( paymentProcessorId, paymentProcessorMapper) == -1 ) {
+    function showRecurring( paymentProcessorIds ) {
+        var display = true;
+        cj.each(paymentProcessorIds, function(k, id){
+            if( cj.inArray(id, paymentProcessorMapper) == -1 ) {
+                display = false;
+            }
+        });
+
+        if(display) {
+            cj( '#recurringContribution' ).show( );
+        } else {
             if ( cj( '#is_recur' ).attr( 'checked' ) ) {
                 cj( '#is_recur' ).removeAttr("checked");
                 cj( '#recurFields' ).hide( );
             }
             cj( '#recurringContribution' ).hide( );
-        } else { 
-            cj( '#recurringContribution' ).show( );
-        }  
+        }
     }
 </script>
 {/literal}
