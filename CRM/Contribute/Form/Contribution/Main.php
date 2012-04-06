@@ -78,9 +78,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         // Make the contributionPageID avilable to the template
         $this->assign( 'contributionPageID', $this->_id );
-        $this->assign( 'isShare', $this->_values['is_share'] );
-        $this->assign( 'isConfirmEnabled', $this->_values['is_confirm_enabled'] );
-
+        $this->assign( 'isShare', CRM_Utils_Array::value( 'is_share', $this->_values ) );
+        $this->assign( 'isConfirmEnabled', CRM_Utils_Array::value( 'is_confirm_enabled', $this->_values ) );
+        
         // make sure we have right permission to edit this user
         $csContactID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, $this->_userID );
         $reset       = CRM_Utils_Request::retrieve( 'reset', 'Boolean', CRM_Core_DAO::$_nullObject );
@@ -111,7 +111,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             CRM_Contribute_Form_Contribution_OnBehalfOf::preProcess( $this );
             if ( CRM_Utils_Array::value( 'hidden_onbehalf_profile', $_POST ) &&
                  ( CRM_Utils_Array::value( 'is_for_organization', $_POST ) ||
-                   $this->_values['is_for_organization'] == 2 ) ) {
+                   CRM_Utils_Array::value( 'is_for_organization', $this->_values ) == 2 ) ) {
                 CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
             }
         }
@@ -1201,7 +1201,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         // should we skip the confirm page?
-        if(!$this->_values['is_confirm_enabled']) {
+        if( ! CRM_Utils_Array::value( 'is_confirm_enabled', $this->_values ) ) {
             // build the confirm page
             $confirmForm =& $this->controller->_pages['Confirm'];
             $confirmForm->preProcess();
