@@ -16,7 +16,7 @@
 function civicrm_api3_generic_getfields($apiRequest) {
   static $results = array();
   $entity = strtolower($apiRequest['entity']);
-  $action = strtolower(CRM_Utils_Array('action',$apiRequest['params']));
+  $action = strtolower(CRM_Utils_Array::value('action',$apiRequest['params']));
   if (empty($action)) {
     if (CRM_Utils_Array::value($entity, $results) && 
       CRM_Utils_Array::value('values', $results['entity'])) {
