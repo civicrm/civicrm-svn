@@ -41,7 +41,7 @@ ALTER TABLE civicrm_contribution_page CHANGE COLUMN is_email_receipt is_email_re
 -- CRM-9783
 CREATE TABLE `civicrm_sms_provider` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'SMS Provider ID',
-  `name` varchar(64) unsigned DEFAULT NULL COMMENT 'Provider internal name points to option_value of option_group sms_provider_name',
+  `name` varchar(64) DEFAULT NULL COMMENT 'Provider internal name points to option_value of option_group sms_provider_name',
   `title` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Provider name visible to user',
   `username` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `password` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
