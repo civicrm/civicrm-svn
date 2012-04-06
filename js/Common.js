@@ -565,14 +565,3 @@ function activityStatus( message ) {
     } 
 }
 
-cj( function() {
-    cj(".helpiconanchor").bind("click", function(){ 
-        newwindow2 = window.open('','name','height=250,width=600');
-        var tmp = newwindow2.document;
-        tmp.write('<html><head><title>Help Text Popup</title>');
-        tmp.write('</head><body>');
-        tmp.write(cj(this).siblings("div.helpicon").find(".crm-help").html());
-        tmp.write('</body></html>');
-        tmp.close(); 
-    });
-});
