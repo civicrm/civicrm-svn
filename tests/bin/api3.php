@@ -78,5 +78,8 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 require 'PHPUnit/TextUI/Command.php';
 define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
 
+      require_once 'CRM/Core/ClassLoader.php';
+      $classLoader = new CRM_Core_ClassLoader();
+      $classLoader->register();
 $command = new PHPUnit_TextUI_Command;
 $command->run($_SERVER['argv'], true);
