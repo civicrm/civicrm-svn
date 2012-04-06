@@ -41,7 +41,7 @@ class CRM_ACL_API {
      * 
      * @var int
      */
-    const
+    CONST
         EDIT   = 1,
         VIEW   = 2,
         DELETE = 3,
