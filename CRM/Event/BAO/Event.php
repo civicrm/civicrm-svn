@@ -1040,7 +1040,8 @@ WHERE civicrm_event.is_active = 1
         }
         
         if ( $values['event']['is_email_confirm'] || $returnMessageText ) {
-            list($displayName, $email) = self::getEmailDetails($contactID, $values['params'], $values['event']);
+            require_once 'CRM/Contact/BAO/Contact/Location.php';
+            list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID );
 
             //send email only when email is present
             if ( isset( $email ) || $returnMessageText ) {
@@ -1121,34 +1122,6 @@ WHERE civicrm_event.is_active = 1
         }
     }
 
-
-    /**
-     * Function to get the email address and display name to send a confirmation to.
-     *
-     * @return array( $displayName, $email )
-     * @access public
-     */
-    static function getEmailDetails( $contactID, $params, $event ) {
-        require_once 'CRM/Contact/BAO/Contact/Location.php';
-        //use primary email address, since we are not creating billing address for
-        //1. participant is pay later.
-        //2. participant might be additional participant.
-        //3. participant might be on waiting list.
-        //4. registration might require approval.
-        if ( CRM_Utils_Array::value('is_pay_later', $params ) ||
-             CRM_Utils_Array::value('additionalParticipant', $params ) ||
-             CRM_Utils_Array::value('isOnWaitlist', $params ) ||
-             CRM_Utils_Array::value('isRequireApproval', $params ) ||
-             !CRM_Utils_Array::value('is_monetary', $event ) ) {
-            return CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID );
-        } else {
-            // get the billing location type
-            $locationTypes =& CRM_Core_PseudoConstant::locationType();
-            $bltID = array_search('Billing', $locationTypes);
-            return CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID, false, $bltID );
-        }
-    }
-    
     /**  
      * Function to add the custom fields OR array of participant's
      * profile info

@@ -603,8 +603,6 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         // get the email that the confirmation would have been sent to
         require_once 'CRM/Event/BAO/Event.php';
         $session = CRM_Core_Session::singleton();
-        list( $displayName, $email ) = CRM_Event_BAO_Event::getEmailDetails( $session->get('transaction.userID'), $params, $this->_values['event'] );
-        $this->assign( 'email', $email );
         
         // assign is_email_confirm to templates
         if ( isset ($this->_values['event']['is_email_confirm'] ) ) {

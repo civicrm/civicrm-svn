@@ -862,19 +862,25 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         return empty( $errors ) ? true : $errors;
     }
 
-    /**
+     /**
      * Check if profiles are complete when event registration occurs(CRM-9587)
      *
      */
     static function checkProfileComplete($fields, &$errors, $eventId) {
-        if (!$fields['email-Primary'] && !($fields['first_name'] && $fields['last_name'])) {
+        $email = '';
+        foreach ($fields as $fieldname => $fieldvalue) {
+            if ( substr( $fieldname, 0, 6 ) == 'email-' && $fieldvalue ) {
+                $email = $fieldvalue;
+            }
+        }
+
+        if (!$email && !($fields['first_name'] && $fields['last_name'])) {
             require_once 'CRM/Utils/System.php';
             require_once 'CRM/Event/BAO/Event.php';
             $defaults = $params = array('id' => $eventId);
             CRM_Event_BAO_Event::retrieve($params, $defaults);
-            $message = ts("Mandatory fields (first name and last name, OR email address) are missing from this form. Please contact the event organizer. %1", array(1 => $defaults['confirm_from_email']));
-            $errors['profile_incomplete'] = $message;
-            CRM_Utils_System::setUFMessage($message);
+            $message = ts("Mandatory fields (first name and last name, OR email address) are missing from this form.");
+            $errors['_qf_default'] = $message;
         }
     }
     
@@ -1314,12 +1320,16 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $dedupeParams['check_permission'] = false;
                 $ids       = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual', $level );
                 $contactID = CRM_Utils_Array::value( 0, $ids );
-            } else if ( isset( $fields["email-{$self->_bltID}"] ) ) {
-                $emailString = trim( $fields["email-{$self->_bltID}"] );
-                if ( ! empty( $emailString ) ) {
-                    $match = CRM_Contact_BAO_Contact::matchContactOnEmail( $emailString, 'Individual' ) ;
-                    if ( !empty( $match ) ) {
-                        $contactID = $match->contact_id;
+            } else {
+                foreach ($fields as $fieldname => $fieldvalue) {
+                    if ( substr( $fieldname, 0, 6 ) == 'email-') {
+                        $emailString = trim( $fieldvalue );
+                        if ( !empty( $emailString ) ) {
+                            $match = CRM_Contact_BAO_Contact::matchContactOnEmail( $emailString, 'Individual' );
+                            if ( !empty( $match )) {
+                                $contactID = $match->contact_id;
+                            }
+                        }
                     }
                 }
             }

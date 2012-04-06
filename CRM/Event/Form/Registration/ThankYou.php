@@ -91,6 +91,12 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
      */ 
     public function buildQuickForm( )  
     { 
+        // Assign the email address from a contact id lookup as in CRM_Event_BAO_Event->sendMail()
+        if ( isset( $this->_params[0]['contact_id'] ) ) {
+            require_once 'CRM/Contact/BAO/Contact/Location.php';
+            list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_params[0]['contact_id'] );
+            $this->assign('email', $email);
+        }
         $this->assignToTemplate( );
 
         $this->buildCustom( $this->_values['custom_pre_id'] , 'customPre' , true );

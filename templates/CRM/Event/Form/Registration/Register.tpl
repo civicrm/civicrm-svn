@@ -139,13 +139,6 @@
     </fieldset>
 {/if}
 
-{assign var=n value=email-$bltID}
-    <div class="crm-section email-section">
-        <div class="label">{$form.$n.label}</div>
-        <div class="content">{$form.$n.html}</div>
-        <div class="clear"></div>
-    </div>
-
 {* User account registration option. Displays if enabled for one of the profiles on this page. *}
 {include file="CRM/common/CMSUser.tpl"}
 
