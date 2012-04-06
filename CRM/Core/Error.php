@@ -54,7 +54,11 @@ class CRM_Core_Error extends PEAR_ErrorStack {
   /**
    * status code of various types of errors
    * @var const
-   */CONSTFATAL_ERROR = 2, DUPLICATE_CONTACT = 8001, DUPLICATE_CONTRIBUTION = 8002, DUPLICATE_PARTICIPANT = 8003;
+   */
+   const FATAL_ERROR = 2;
+   const DUPLICATE_CONTACT = 8001;
+   const DUPLICATE_CONTRIBUTION = 8002;
+   const DUPLICATE_PARTICIPANT = 8003;
 
   /**
    * We only need one instance of this object. So we use the singleton
@@ -261,7 +265,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
   static
   function fatal($message = NULL, $code = NULL, $email = NULL) {
     if (self::$modeException) {
-      thrownew Exception("A fatal error was triggered", $code);
+      throw new Exception("A fatal error was triggered", $code);
     }
     if (!$message) {
       $message = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/'));
@@ -539,7 +543,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
   }
 
   public static function exceptionHandler($pearError) {
-    thrownew PEAR_Exception($pearError->getMessage(), $pearError);
+    throw new PEAR_Exception($pearError->getMessage(), $pearError);
   }
 
   /**
@@ -579,7 +583,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
   public static function &createAPIError($msg, $data = NULL) {
     if (self::$modeException) {
-      thrownew Exception($msg, $data);
+      throw new Exception($msg, $data);
     }
 
     $values = array();
