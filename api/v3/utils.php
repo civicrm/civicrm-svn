@@ -141,7 +141,7 @@ function civicrm_api3_verify_mandatory($params, $daoName = NULL, $keys = array()
  *
  * @return <type>
  */
-function &civicrm_api3_create_error($msg, $data = NULL, &$dao = NULL) {
+function civicrm_api3_create_error($msg, $data = array(), &$dao = NULL) {
   if (is_object($dao)) {
     $dao->free();
   }
@@ -153,7 +153,9 @@ function &civicrm_api3_create_error($msg, $data = NULL, &$dao = NULL) {
       $msg = $e->getMessage();
     }
   }
-  return CRM_Core_Error::createAPIError($msg, $data);
+  $data['is_error']      = 1;
+  $data['error_message'] = $msg;
+  return $data;
 }
 
 /**
