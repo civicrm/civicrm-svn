@@ -314,11 +314,8 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form
         $dao->id         = $test ? $this->_testID : $this->_id;
         $dao->domain_id  = $domainID;
         $dao->is_test    = $test;
-        if ( ! $test ) {
-            $dao->is_default = CRM_Utils_Array::value( 'is_default', $values, 0 );
-        } else {
-            $dao->is_default = 0;
-        }
+        $dao->is_default = CRM_Utils_Array::value( 'is_default', $values, 0 );
+
         $dao->is_active  = CRM_Utils_Array::value( 'is_active' , $values, 0 );
 
         $dao->name                   = $values['name'];
