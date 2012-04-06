@@ -269,7 +269,10 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      * @acess public
      */
     static function fatal($message = null, $code = null, $email = null) {
-        if ( ! $message ) {
+      if (self::$modeException) {
+          throw new Exception ("A fatal error was triggered" ,$code);
+      }
+      if ( ! $message ) {
             $message = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/')); 
         }
 
@@ -518,6 +521,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
     /* used for the API, rise the exception instead of catching/fatal it */
     public static function setRaiseException( ) {
+        self::$modeException =1;
         $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
         $GLOBALS['_PEAR_default_error_options'] = array( 'CRM_Core_Error', 'exceptionHandler' );
     }
@@ -564,10 +568,14 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
         $GLOBALS['_PEAR_default_error_options'] = $callback;
     }
-
+/*
+ * @deprecated
+ * This function is no longer used by v3 api. 
+ * @fixme Some core files call it but it should be re-thought & renamed or removed
+ */
     public static function &createAPIError( $msg, $data = null ) {
         if (self::$modeException) {
-          throw CRM_Exception ($msg,$data);
+          throw new Exception ($msg,$data);
         }
 
         $values = array( );
@@ -579,14 +587,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         return $values;
     }
 
-    public static function &createAPISuccess( $result = 1 ) {
-        $values = array( );
-        
-        $values['is_error'] = 0;
-        $values['result'  ] = $result;
-        return $values;
-    }
- 
+
     public static function movedSiteError( $file ) {
         $url = CRM_Utils_System::url( 'civicrm/admin/setting/updateConfigBackend',
                                       'reset=1',
