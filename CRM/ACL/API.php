@@ -41,13 +41,12 @@ class CRM_ACL_API {
      * 
      * @var int
      */
-    CONST
-        EDIT   = 1,
-        VIEW   = 2,
-        DELETE = 3,
-        CREATE = 4,
-        SEARCH = 5,
-        ALL    = 6;
+    const EDIT   = 1;
+    const VIEW   = 2;
+    const DELETE = 3;
+    const CREATE = 4;
+    const SEARCH = 5;
+    const ALL    = 6;
     
 
   /**
