@@ -1590,7 +1590,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('select', $name, $title, 
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::greeting($greeting), $required );
             // add custom greeting element       
-            $form->add('text', $fieldName.'_custom', ts('Custom '.ucwords(str_replace('_', ' ', $fieldName))),
+            $form->add('text', $fieldName.'_custom', ts('Custom %1', array(1 => ucwords(str_replace('_', ' ', $fieldName)))),
                        null, false); 
         } else if ($fieldName === 'preferred_communication_method') {
             $communicationFields = CRM_Core_PseudoConstant::pcm();
