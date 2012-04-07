@@ -120,27 +120,28 @@ function civicrm_rules_get_event( ) {
                 //todo consider building the entity name into the argument rather than calling the same argument for each
                 $events['civicrm_' . $entity . '_create'] = $defaults + 
                     array( 
-                          'label'     => t( "$entity has been created" ),
+                          'label'     => t( "%1 has been created", array( 1 => $entity ) ),
                           'group'     =>  'CiviCRM ' . $entity,
-                          'variables' => civicrm_rules_rules_events_variables( t( 'Created ' . $entity), $entity )
+                          'variables' => civicrm_rules_rules_events_variables( t( 'Created %entity', array( '%entity' => $entity ) ), $entity )
                            );
                 $events['civicrm_' . $entity . '_edit'] = $defaults + 
                     array( 
                           'group'     => 'CiviCRM ' . $entity,
                           'label'     => t( "$entity has been updated" ),
-                          'variables' => civicrm_rules_rules_events_variables( t( 'Updated ' . $entity ), $entity )
+                          'variables' => civicrm_rules_rules_events_variables( t( 'Updated %entity', array( '%entity' => $entity ) ), $entity )
                            );
                 $events['civicrm_' . $entity . '_view'] = $defaults + 
                     array( 
                           'group'     => 'CiviCRM ' . $entity,
                           'label'     => t( "$entity has been viewed" ),
-                          'variables' => civicrm_rules_rules_events_variables( t( 'Viewed ' . $entity ), $entity )
+                          'variables' => civicrm_rules_rules_events_variables( t( 'Viewed %entity', array( '%entity' => $entity ) ), $entity )
                            );
                 $events['civicrm_' . $entity . '_delete'] = $defaults + 
                     array( 
                           'group'     => 'CiviCRM ' . $entity,
                           'label'     => t( "$entity has been deleted" ),
-                          'variables' => civicrm_rules_rules_events_variables( t( 'Deleted ' . $entity ), $entity ),);
+                          'variables' => civicrm_rules_rules_events_variables( t( 'Deleted %entity', array( '%entity' => $entity ) ), $entity ),
+                          );
             }
         }
     }
