@@ -437,8 +437,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->buildAmount( $this->_separateMembershipPayment );
             
             if ( $this->_values['is_monetary'] &&
-                 $this->_values['is_recur']    &&
-                 $this->_paymentProcessor['is_recur'] ) {
+                 $this->_values['is_recur'] ) {
                 self::buildRecur( $this );
             }
         }
