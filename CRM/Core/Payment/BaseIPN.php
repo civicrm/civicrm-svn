@@ -235,9 +235,9 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             $participant->register_date = CRM_Utils_Date::isoToMysql( $participant->register_date );
 
             $objects['participant'] =& $participant;
-
+            
             if ( !$paymentProcessorID ) {
-                $paymentProcessorID = $objects['event']->payment_processor_id;
+                $paymentProcessorID = $objects['event']->payment_processor;
             }
         }
         
