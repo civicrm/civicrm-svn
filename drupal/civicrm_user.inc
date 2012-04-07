@@ -229,7 +229,7 @@ function civicrm_user_view( $user, $view_mode ){
                     '<span class="user-page-link" id="user-page-profile-' .
                     substr($title['title'],0,3) .
                     '" ><span class="user-page-bullet">&raquo;</span> ' .
-                    l( ts("Edit %1", array('%1' => $title['title'] ) ),
+                    l( ts("Edit %1", array(1 => $title['title'] ) ),
                        "user/{$user->uid}/edit/{$title['title']}" ) .
                     '</span>';
             }
