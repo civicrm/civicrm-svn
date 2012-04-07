@@ -1312,7 +1312,7 @@ class CRM_Utils_System {
             if ( substr( $inc_file, 0 - $fext_len ) == $fext ) {
                 $plugin_name = substr( $inc_file, 0, 0 - $fext_len );
                 if ( ! in_array( $plugin_name, $skipList ) ) {
-                    $plugins[$plugin_name] = ts( $plugin_name );
+                    $plugins[$plugin_name] = $plugin_name;
                 }
             }
         }
