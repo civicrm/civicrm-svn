@@ -119,7 +119,7 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
         $template = CRM_Core_Smarty::singleton( );
         $form = $page->toSmarty();
 
-        $json = CRM_Utils_Request::retrieve( 'json', 'Boolean', $page );
+        $json = CRM_Utils_Request::retrieve( 'json', 'Boolean', CRM_Core_DAO::$_nullObject );
         
         if ( $json ) {
           echo json_encode( $form );
