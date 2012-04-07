@@ -187,9 +187,9 @@ function civicrm_api3_create_success($values = 1, $params = array(), $entity = N
         $dao = new $d();
       }
     }
-    if (is_string($action)) {
+    if (is_string($action) && $action != 'getfields') {
       $apiFields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => $action)+ $params);
-    } else {
+    } elseif($action != 'getfields') {
       $apiFields = civicrm_api($entity, 'getfields', array('version' => 3)+ $params);
     }
 
