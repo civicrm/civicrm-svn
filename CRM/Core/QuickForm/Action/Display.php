@@ -117,7 +117,16 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
     function renderForm(&$page, $ret = false) {
         $this->_setRenderTemplates($page);
         $template = CRM_Core_Smarty::singleton( );
-        $template->assign( 'form'   ,  $page->toSmarty());
+        $form = $page->toSmarty();
+
+        $json = CRM_Utils_Request::retrieve( 'json', 'Boolean', $page );
+        
+        if ( $json ) {
+          echo json_encode( $form );
+          CRM_Utils_System::civiExit( );
+        }
+        
+        $template->assign( 'form'   ,  $form );
         $template->assign( 'isForm' , 1 );
 
         $controller =& $page->controller;
