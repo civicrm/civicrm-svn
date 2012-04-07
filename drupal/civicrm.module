@@ -959,7 +959,7 @@ function civicrm_filter_info() {
     $filters = array();
     $filters['civicrm_smarty'] = array(
                                        'title' => t('CiviCRM-Smarty filter'),
-                                       'description' => t('Evaluate Smarty and CiviCRM API codes with CiviCRM\'s embedded Smarty engine'),
+                                       'description' => t("Evaluate Smarty and CiviCRM API codes with CiviCRM's embedded Smarty engine"),
                                        'cache' => FALSE,
                                        'process callback' => '_civicrm_filter_process',
                                        'tips callback' => '_civicrm_filter_tips',
