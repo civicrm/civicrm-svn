@@ -874,9 +874,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             }
         }
 
-        if (!$email && !($fields['first_name'] && $fields['last_name'])) {
-            require_once 'CRM/Utils/System.php';
-            require_once 'CRM/Event/BAO/Event.php';
+        
+        if ( !$email && !( CRM_Utils_Array::value( 'first_name', $fields ) && 
+                           CRM_Utils_Array::value( 'last_name', $fields ) ) ) {
             $defaults = $params = array('id' => $eventId);
             CRM_Event_BAO_Event::retrieve($params, $defaults);
             $message = ts("Mandatory fields (first name and last name, OR email address) are missing from this form.");
