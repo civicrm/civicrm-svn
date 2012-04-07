@@ -22,6 +22,11 @@ class JFormFieldCiviEventsOnline extends JFormField {
         
         // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
+
+		require_once 'CRM/Core/ClassLoader.php';
+		$classLoader = new CRM_Core_ClassLoader();
+		$classLoader->register();
+
 		require_once 'CRM/Core/Config.php';
 		$config = CRM_Core_Config::singleton( );
 		
