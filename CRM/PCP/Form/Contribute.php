@@ -124,7 +124,7 @@ class CRM_PCP_Form_Contribute extends CRM_Contribute_Form_ContributionPage
             
             if ( CRM_Utils_Array::value( 'is_tellfriend_enabled', $params ) && 
                  ( CRM_Utils_Array::value( 'tellfriend_limit', $params ) <= 0 ) ) {
-                $errors['tellfriend_limit'] = ts('if Tell Friend is enable, Maximum recipients limit should be greater than zero.');
+                $errors['tellfriend_limit'] = ts('if Tell Friend is enabled, Maximum recipients limit should be greater than zero.');
             }
             if ( ! CRM_Utils_Array::value( 'supporter_profile_id', $params ) ) {
                 $errors['supporter_profile_id'] = ts('Supporter profile is a required field.');

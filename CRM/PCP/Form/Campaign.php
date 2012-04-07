@@ -168,7 +168,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
             list( $width, $height ) = getimagesize( $files['attachFile_1']['tmp_name'] );
             if ( $width > 360 || $height > 360 ) {
                 $errors['attachFile_1'] = ts( "Your picture or image file cannot be larger than 360 x 360 pixels in size." ) . ' '
-                    . ts( "The dimensions of the image you've selected is %1 x %2.", array( 1 => $width, 2 => $height ) ) . ' '
+                    . ts( "The dimensions of the image you have selected are %1 x %2.", array( 1 => $width, 2 => $height ) ) . ' '
                     . ts( "Please shrink or crop the file or find another smaller image and try again." );
             }
         }       
