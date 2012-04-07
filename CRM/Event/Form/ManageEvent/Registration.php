@@ -127,7 +127,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
 
             // Set event registration as the default profile if none selected
             if ( !$defaults['custom_pre_id'] && count($defaults['custom_post']) == 0 ) {
-                $defaults['custom_pre_id'] = $eventRegistrationIdDefaults['id'];
+                $defaults['custom_pre_id'] = CRM_Utils_Array::value('id', $eventRegistrationIdDefaults);
             }
             if ( isset( $defaults['custom_post'] ) && is_numeric($defaults['custom_post'])) {
                 $defaults['custom_post_id'] =  $defaults['custom_post']; 
