@@ -1657,7 +1657,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 CRM_Core_BAO_CustomField::addQuickFormElement( $form, $name, $customFieldID, false, $required, $search, $title );
             }
         } else if ( in_array($fieldName, array('receive_date', 'receipt_date', 'thankyou_date', 'cancel_date' )) ) {  
-            $form->addDate( $name, $title, $required, array( 'formatType' => 'custom') );
+            $form->addDateTime( $name, $title, $required, array( 'formatType' => 'activityDateTime') );
         } else if ($fieldName == 'payment_instrument' ) {
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::paymentInstrument( ), $required );
@@ -2607,11 +2607,14 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         CRM_Core_DAO::commonRetrieve( $componentBAO, $params, $values );
         
         $formattedGroupTree = array( );
+        $dateTimeFields = array('participant_register_date', 'activity_date_time', 'receive_date', 'receipt_date', 'cancel_date', 'thankyou_date');
         foreach ( $fields as $name => $field ) { 
             $fldName = $isStandalone ? $name : "field[$componentId][$name]";
-            if ( $name == 'participant_register_date'  || $name == 'activity_date_time' ) { 
+            if ( in_array($name, $dateTimeFields) ) { 
             	$timefldName = $isStandalone ? "{$name}_time" : "field[$componentId][{$name}_time]";	
-            	list( $defaults[$fldName], $defaults[$timefldName] ) = CRM_Utils_Date::setDateDefaults( $values[$name] );
+            	if ( CRM_Utils_Array::value( $name, $values ) ) {
+		  list( $defaults[$fldName], $defaults[$timefldName] ) = CRM_Utils_Date::setDateDefaults( $values[$name] );
+		}		
             } else if ( array_key_exists( $name, $values ) ) { 
                 $defaults[$fldName] = $values[$name];
             } else if ( $name == 'participant_note' ) {
