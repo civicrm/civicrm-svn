@@ -309,5 +309,3 @@ SET    version = '$version'
     }
 
 }
-
-
