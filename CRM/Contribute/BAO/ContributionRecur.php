@@ -37,6 +37,19 @@
 
 class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_ContributionRecur
 {
+     /**
+     * funtion to create recurring contribution
+     *
+     * @param array  $params           (reference ) an assoc array of name/value pairs
+     * @return object activity contact object 
+     * @access public
+     * 
+   */
+  
+  function create(&$params){
+    $ids = array('contribution' => $params['contribution_id']);
+    return self::add($params, $ids);
+  }
     /**
      * takes an associative array and creates a contribution object
      *
@@ -50,6 +63,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
      * @return object CRM_Contribute_BAO_Contribution object
      * @access public
      * @static
+     * @todo move hook calls / extended logic to create - requires changing calls to call create not add
      */
     static function add(&$params, &$ids) {
       
