@@ -879,7 +879,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         }
 
-        if ( CRM_Utils_Array::value( 'is_recur', $fields ) && $fields['is_pay_later'] ) {
+        if ( CRM_Utils_Array::value( 'is_recur', $fields ) && 
+             CRM_Utils_Array::value( 'is_pay_later', $fields ) ) {
             $errors['is_pay_later'] = ' ';
             $errors['_qf_default'] = ts('You cannot set up a recurring contribution if you are not paying online by credit card.'); 
         }
