@@ -57,7 +57,7 @@
 	        </td>
              </tr>
         </table>
-      {if $paymentProcessor}
+        {if $paymentProcessor}
          <table id="paymentProcessor" class="form-layout">
              <tr class="crm-event-manage-fee-form-block-payment_processor">            
                 <td class="label">{$form.payment_processor.label}</td>
@@ -69,8 +69,38 @@
                  {ts}If this is a paid event and you want users to be able to register and pay online, select a payment processor to use.{/ts}
                  {ts}NOTE: Alternatively, you can enable the <strong>Pay Later</strong> feature below without setting up a payment processor. All users will then be asked to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts} {docURL page="CiviContribute Payment Processor Configuration"}<td>
              </tr>
-        </table>
+         </table>
         {/if}
+
+        <table id="payLater" class="form-layout">
+            <tr class="crm-event-manage-fee-form-block-is_pay_later">
+               <td class="extra-long-fourty label">{$form.is_pay_later.html}</td>
+               <td>{$form.is_pay_later.label}<br />
+                  <span class="description">{ts}Check this box if you want to give users the option to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts}</span>
+              </td>
+            </tr>
+        </table>
+
+        <table id="payLaterOptions" class="form-layout">
+            <tr class="crm-event-manage-fee-form-block-pay_later_text">
+               <td class="label">{$form.pay_later_text.label}<span class="marker"> *</span> </td>
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_text' id=$id}{/if}{$form.pay_later_text.html|crmReplace:class:big}
+               </td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td class="description">{ts}Text displayed next to the checkbox for the 'pay later' option on the contribution form.{/ts}</td>
+            </tr>
+            <tr class="crm-event-manage-fee-form-block-pay_later_receipt">
+               <td class="label">{$form.pay_later_receipt.label}<span class="marker"> *</span> </td>
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_receipt' id=$id}{/if}{$form.pay_later_receipt.html|crmReplace:class:big}
+               </td>
+            </tr>
+                <td>&nbsp;</td>
+                <td class="description">{ts}Instructions added to Confirmation and Thank-you pages when the user selects the 'pay later' option (e.g. 'Mail your check to ... within 3 business days.').{/ts}
+                </td>
+            </tr>
+        </table>
            
         <table id="contributionType" class="form-layout">
             <tr class="crm-event-manage-fee-form-block-contribution_type_id">
@@ -93,36 +123,7 @@
                <td class="description">{ts}This label is displayed with the list of event fees.{/ts}
                </td>
             </tr>
-         </table>
-      <table id="payLater" class="form-layout">
-          <tr class="crm-event-manage-fee-form-block-is_pay_later">
-             <td class="extra-long-fourty label">{$form.is_pay_later.html}</td>
-             <td>{$form.is_pay_later.label}<br />
-                <span class="description">{ts}Check this box if you want to give users the option to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts}</span>
-            </td>
-          </tr>
-      </table>
-
-      <table id="payLaterOptions" class="form-layout">
-          <tr class="crm-event-manage-fee-form-block-pay_later_text">
-             <td class="label">{$form.pay_later_text.label}<span class="marker"> *</span> </td>
-             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_text' id=$id}{/if}{$form.pay_later_text.html|crmReplace:class:big}
-             </td>
-          </tr>
-          <tr>
-             <td>&nbsp;</td>
-             <td class="description">{ts}Text displayed next to the checkbox for the 'pay later' option on the contribution form.{/ts}</td>
-          </tr>
-          <tr class="crm-event-manage-fee-form-block-pay_later_receipt">
-             <td class="label">{$form.pay_later_receipt.label}<span class="marker"> *</span> </td>
-             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_receipt' id=$id}{/if}{$form.pay_later_receipt.html|crmReplace:class:big}
-             </td>
-          </tr>
-              <td>&nbsp;</td>
-              <td class="description">{ts}Instructions added to Confirmation and Thank-you pages when the user selects the 'pay later' option (e.g. 'Mail your check to ... within 3 business days.').{/ts}
-              </td>
-          </tr>
-      </table>
+        </table>
 
       <table id="priceSet" class="form-layout">
             <tr class="crm-event-manage-fee-form-block-price_set_id">
