@@ -101,7 +101,11 @@ class CRM_Core_BAO_MailSettings extends CRM_Core_DAO_MailSettings
      */
     static function includeMessageId()
     {
-        return self::defaultDAO()->include_message_id;
+        return CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+                                              'include_message_id',
+                                              null,
+                                              false );
+        
     }
     /**
      * Takes a bunch of params that are needed to match certain criteria and

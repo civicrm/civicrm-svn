@@ -82,6 +82,12 @@ class CRM_Admin_Form_Preferences_Mailing extends CRM_Admin_Form_Preferences
                                 'weight'       => 6,
                                 'description'  => null,
                                 ),
+                         'include_message_id'          =>
+                         array( 'html_type'    => 'checkbox',
+                                'title'        => ts( 'Enable CiviMail to generate Message-ID header' ),
+                                'weight'       => 7,
+                                'description'  => null,
+                                ),
                           )
                    );
 
