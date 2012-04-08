@@ -21,6 +21,9 @@
  */
 function civicrm_api3_generic_getfields($apiRequest) {
   static $results = array();
+  if ((CRM_Utils_Array::value('cache_clear',$apiRequest['params']))){
+    $results = array();
+  }
   $entity = strtolower($apiRequest['entity']);
   $action = strtolower(CRM_Utils_Array::value('action',$apiRequest['params']));
   if($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount' ){

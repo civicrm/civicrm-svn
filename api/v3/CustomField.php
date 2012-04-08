@@ -53,12 +53,14 @@ require_once 'CRM/Core/BAO/CustomField.php';
  */
 
 /**
- * Defines 'custom field' within a group.
+ * Create a 'custom field' within a custom field group. 
+ * We also empty the static var in the getfields
+ * function after deletion so that the field is available for us (getfields manages date conversion
+ * among other things
+ * 
+ * @param $params array  Associative array of property name/value pairs to create new custom field.
  *
- *
- * @param $params       array  Associative array of property name/value pairs to create new custom field.
- *
- * @return Newly created custom_field id array
+ * @return Newly API success object
  *
  * @access public
  *
@@ -88,8 +90,8 @@ function civicrm_api3_custom_field_create($params) {
       $params['option_weight'][$key] = $value['weight'];
     }
   }
-
   $customField = CRM_Core_BAO_CustomField::create($params);
+  civicrm_api('custom_field', 'getfields', array('version' => 3, 'cache_clear' => 1));
   _civicrm_api3_object_to_array_unique_fields($customField, $values[$customField->id]);
   return civicrm_api3_create_success($values, $params, 'custom_field', $customField);
 }
@@ -118,9 +120,8 @@ function civicrm_api3_custom_field_delete($params) {
   $field = new CRM_Core_BAO_CustomField();
   $field->id = $params['id'];
   $field->find(TRUE);
-
-
   $customFieldDelete = CRM_Core_BAO_CustomField::deleteField($field);
+  civicrm_api('custom_field', 'getfields', array('version' => 3, 'cache_clear' => 1));
   return $customFieldDelete ? civicrm_api3_create_error('Error while deleting custom field') : civicrm_api3_create_success();
 }
 
