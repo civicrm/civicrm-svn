@@ -229,18 +229,18 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         // save enabled currencies and defaul currency in option group 'currencies_enabled'
         // CRM-1496
         if ( empty( $values['currencyLimit'] ) ) {
-            $values['currencyLimit'] = $values['defaultCurrency'];
+            $values['currencyLimit'] = array( $values['defaultCurrency'] );
         } else if ( ! in_array( $values['defaultCurrency'],
                                 $values['currencyLimit'] ) ) {
             $values['currencyLimit'][] = $values['defaultCurrency'];
-            // sort so that when we display drop down, weights have right value
-            sort( $values['currencyLimit'] );
-        
         }
-        
+
+        // sort so that when we display drop down, weights have right value
+        sort( $values['currencyLimit'] );
         
         // get labels for all the currencies
         $options = array( );
+
         for ( $i = 0; $i < count($values['currencyLimit']); $i++ ) {
             $options[] = array( 'label'      => $this->_currencySymbols[$values['currencyLimit'][$i]],
                                 'value'      => $values['currencyLimit'][$i],
