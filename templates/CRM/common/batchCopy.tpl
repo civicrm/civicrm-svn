@@ -70,7 +70,7 @@ function copyFieldValues( fname ) {
     } else if ( elementType == 'checkbox' ) {
         // handle checkbox
         // get the entity id of first element
-        var firstEntityId = firstElement.parent().parent().attr('entity_id');
+        var firstEntityId = cj('.crm-copy-fields > tbody > tr').attr('entity_id');
     
         var firstCheckElement = cj('.crm-copy-fields [type=checkbox][name^="field['+ firstEntityId +']['+ fname +']"][type!=hidden]');
         
