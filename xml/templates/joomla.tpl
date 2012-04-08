@@ -46,5 +46,6 @@
   </administration>
   <plugins>
       <plugin folder="admin/plugins" plugin="civicrm" name="CiviCRM User Management" group="user" />
+      <plugin folder="admin/plugins" plugin="civicrmicon" name="CiviCRM QuickIcon" group="quickicon" />
   </plugins>
 </extension>
