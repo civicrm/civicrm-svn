@@ -1473,18 +1473,6 @@ SELECT contact_id
             }
 
             $whenName = strtolower($value['when']);
-            $sql = CRM_Utils_Array::value('sql', $value, '');
-            $variables = CRM_Utils_Array::value('variables', $value, '');
-
-            // Add a semicolon if missing, only really useful for 1 line chunks of SQL.
-            if ( substr( $sql, -1 ) != ';' ) {
-                $sql .= ";";
-            }
-
-            // Add a semicolon if missing, only really useful for 1 line chunks of SQL.
-            if ( substr( $variables, -1 ) != ';' ) {
-                $variables .= ";";
-            }
 
             foreach ( $tables as $tableName ) {
                 if ( ! isset( $triggers[$tableName] ) ) {
@@ -1495,13 +1483,12 @@ SELECT contact_id
                     $template_params = array( '{tableName}', '{eventName}' );
                     $template_values = array( $tableName   , $eventName    );
                     
-                    $sql = trim(str_replace($template_params, 
-                                            $template_values, 
-                                            $value['sql']));
-                    
-                    $variables = trim(str_replace($template_params,
-                                                  $template_values, 
-                                                  $value['variables']));
+                    $sql       = str_replace($template_params,
+                                             $template_values, 
+                                             $value['sql'] );
+                    $variables = str_replace($template_params,
+                                             $template_values, 
+                                             CRM_Utils_Array::value( 'variables', $value ) );
                     
                     if ( ! isset( $triggers[$tableName][$eventName] ) ) {
                         $triggers[$tableName][$eventName] = array( );
@@ -1533,11 +1520,16 @@ SELECT contact_id
                     $varString = implode( "\n", $parts['variables'] );
                     $sqlString = implode( "\n", $parts['sql'] );
                     $triggerName = "{$tableName}_{$whenName}_{$eventName}";
-                    $triggerSQL = "
-                        CREATE TRIGGER $triggerName $whenName $eventName ON $tableName FOR EACH ROW BEGIN $varString $sqlString END";
-                    
+                    $triggerSQL = 
+                        "CREATE TRIGGER $triggerName $whenName $eventName ON $tableName FOR EACH ROW BEGIN $varString $sqlString END";
+
                     CRM_Core_DAO::executeQuery( "DROP TRIGGER IF EXISTS $triggerName" );
-                    CRM_Core_DAO::executeQuery( $triggerSQL );
+                    CRM_Core_DAO::executeQuery( $triggerSQL,
+                                                array( ),
+                                                true,
+                                                null,
+                                                false,
+                                                false );
                 }
             }
         }

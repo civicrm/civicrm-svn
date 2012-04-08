@@ -458,13 +458,14 @@ class CRM_Core_I18n_Schema
                         $trigger[] = "IF NEW.{$column}_{$loc} IS NULL THEN SET NEW.{$column}_{$loc} = NEW.{$column}_{$old}; END IF;";
                     }
                 }
+                $trigger[] = 'END IF;';
             }
             
             $sql = implode(' ', $trigger);
             $info[] = array( 'table' => array( $table ),
                              'when'  => 'BEFORE',
                              'event' => array( 'UPDATE' ),
-                             'sql'   => array( $sql ) );
+                             'sql'   => $sql );
         }
         
         // take care of the ON INSERT triggers
@@ -489,9 +490,8 @@ class CRM_Core_I18n_Schema
             $info[] = array( 'table' => array( $table ),
                              'when'  => 'BEFORE',
                              'event' => array( 'INSERT' ),
-                             'sql'   => array( $sql ) );
+                             'sql'   => $sql );
         }
     }
 
 }
-

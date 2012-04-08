@@ -297,10 +297,9 @@ ALTER TABLE {$tableName}
         if ($params['operation'] == 'add') {
             $logging = new CRM_Logging_Schema;
             $logging->fixSchemaDifferencesFor($params['table_name'], array($params['name']));
-        // CRM-7293: if we’re dropping a column – rebuild triggers
         } elseif ($params['operation'] == 'delete') {
-            $logging = new CRM_Logging_Schema;
-            $logging->createTriggersFor($params['table_name']);
+            // CRM-7293: if we’re dropping a column – rebuild triggers
+            CRM_Core_DAO::triggerRebuild( $params['table_name'] );
         }
         
         return true;
