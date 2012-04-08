@@ -5,6 +5,12 @@
 /**
  * Get information about fields for a given api request. Getfields information 
  * is used for documentation, validation, default setting
+ * We first query the scheme using the $dao->fields function & then augment
+ * that information by calling the _spec functions that apply to the relevant function
+ * Note that we use 'unique' field names as described in the xml/schema files
+ * for get requests & just field name for create. This is because some get functions
+ * access multiple objects e.g. contact api accesses is_deleted from the activity 
+ * table & from the contact table
  * @param array $apiRequest api request as an array. Keys are 
  *  - entity: string
  *  - action: string
@@ -17,6 +23,9 @@ function civicrm_api3_generic_getfields($apiRequest) {
   static $results = array();
   $entity = strtolower($apiRequest['entity']);
   $action = strtolower(CRM_Utils_Array::value('action',$apiRequest['params']));
+  if($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount' ){
+    $action = 'get';
+  }
   if (empty($action)) {
     if (CRM_Utils_Array::value($entity, $results) && 
       CRM_Utils_Array::value('values', $results['entity'])) {
@@ -30,7 +39,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
       return $results[$entity];
     }
   }
-  $unique = TRUE;
+  $unique = TRUE; //determines whether to use unique field names - seem comment block above
   if(isset($results[$entity]) && CRM_Utils_Array::value($action, $results[$entity])) {
     return $results[$entity][$action];
   }
@@ -67,7 +76,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
       $metadata = array();
   }
   // find any supplemental information
-  $hypApiRequest = array('entity' => $apiRequest['entity'], 'action' => $apiRequest['params']['action'], 'version' => $apiRequest['version']);
+  $hypApiRequest = array('entity' => $apiRequest['entity'], 'action' => $action, 'version' => $apiRequest['version']);
   $hypApiRequest += _civicrm_api_resolve($hypApiRequest);
   $helper = '_' . $hypApiRequest['function'] . '_spec';
   if (function_exists($helper)) {
