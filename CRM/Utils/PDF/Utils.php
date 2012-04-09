@@ -94,13 +94,13 @@ class CRM_Utils_PDF_Utils {
   </body>
 </html>";
         if ($config->wkhtmltopdfPath) {
-            return self::_html2pdf_wkhtmltopdf( $paper_size, $orientation, $html, $output, $filename );
+            return self::_html2pdf_wkhtmltopdf( $paper_size, $orientation, $html, $output, $fileName );
         } else { 
-            return self::_html2pdf_dompdf( $paper_size, $orientation, $html, $output, $filename );
+            return self::_html2pdf_dompdf( $paper_size, $orientation, $html, $output, $fileName );
         }
     }
 
-    static function _html2pdf_dompdf( $paper_size, $orientation, $html, $output , $filename ) {
+    static function _html2pdf_dompdf( $paper_size, $orientation, $html, $output , $fileName ) {
         require_once 'packages/dompdf/dompdf_config.inc.php';
         spl_autoload_register('DOMPDF_autoload');
         $dompdf = new DOMPDF( );
@@ -115,7 +115,7 @@ class CRM_Utils_PDF_Utils {
         }
     }
     
-    static function _html2pdf_wkhtmltopdf( $paper_size, $orientation, $html, $output , $filename ) {
+    static function _html2pdf_wkhtmltopdf( $paper_size, $orientation, $html, $output , $fileName ) {
         require_once 'packages/snappy/src/autoload.php';
         $config = CRM_Core_Config::singleton(); 
         $snappy = new Knp\Snappy\Pdf($config->wkhtmltopdfPath);
@@ -127,7 +127,7 @@ class CRM_Utils_PDF_Utils {
             return $pdf;
         } else {
             header('Content-Type: application/pdf');
-            header('Content-Disposition: attachment; filename="'.$filename.'"');
+            header('Content-Disposition: attachment; filename="'.$fileName.'"');
             echo $pdf;
         }
     }

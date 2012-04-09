@@ -263,6 +263,10 @@ LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_
         return null;
     }
 
+    /**
+     * Given a label and a set of normalized POST
+     * formValues, create a smart group with that 
+     */
 }
 
 
