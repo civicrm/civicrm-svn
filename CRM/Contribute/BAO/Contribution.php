@@ -1837,10 +1837,11 @@ SELECT source_contact_id
   
   /*
    * Load objects relations to contribution object
+   * Objects are stored in the $_relatedObjects property
    * In the first instance we are just moving functionality from BASEIpn - 
    * see http://issues.civicrm.org/jira/browse/CRM-9996
    * 
-   * 
+   * Note that the unit test for the BaseIPN class tests this function
    */
   
   function loadRelatedObjects(&$input, &$ids,$required = true , $paymentProcessorID = null){
