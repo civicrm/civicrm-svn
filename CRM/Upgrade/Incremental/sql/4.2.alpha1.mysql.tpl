@@ -38,6 +38,21 @@ INSERT INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUE
 -- CRM-9905
 ALTER TABLE civicrm_contribution_page CHANGE COLUMN is_email_receipt is_email_receipt TINYINT(4) DEFAULT 0;
 
+-- CRM-9850
+ALTER TABLE `civicrm_contribution_page`
+  DROP FOREIGN KEY `FK_civicrm_contribution_page_payment_processor_id`;
+
+ ALTER TABLE civicrm_contribution_page DROP INDEX FK_civicrm_contribution_page_payment_processor_id;
+
+ ALTER TABLE `civicrm_contribution_page` CHANGE `payment_processor_id` `payment_processor` VARCHAR( 128 ) NULL DEFAULT NULL COMMENT 'Payment Processor for this contribution Page '
+
+ALTER TABLE `civicrm_event`
+  DROP FOREIGN KEY `FK_civicrm_event_payment_processor_id`;
+
+ ALTER TABLE civicrm_event DROP INDEX FK_civicrm_event_payment_processor_id;
+
+ ALTER TABLE `civicrm_event` CHANGE `payment_processor_id` `payment_processor` VARCHAR( 128 ) NULL DEFAULT NULL COMMENT 'Payment Processor for this event ';
+
 -- CRM-9783
 CREATE TABLE `civicrm_sms_provider` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'SMS Provider ID',
