@@ -79,15 +79,15 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
     {
         $mapping  = self::getMapping( $id );
 
-	$activityStatus = CRM_Core_PseudoConstant::activityStatus(); 
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus(); 
         $activityType = CRM_Core_PseudoConstant::activityType(false) + CRM_Core_PseudoConstant::activityType(false, true);
-
-	$participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
-	$event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
-	$eventType = CRM_Event_PseudoConstant::eventType();
+        
+        $participantStatus = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
+        $event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
+        $eventType = CRM_Event_PseudoConstant::eventType();
 		
-	$membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
-	$membershipType = CRM_Member_PseudoConstant::membershipType();
+        //$membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
+        $membershipType = CRM_Member_PseudoConstant::membershipType();
 
         asort($activityType);
 
@@ -188,12 +188,13 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
                     $vval = $statusLabel + $participantStatus;
                 }
                 break;
-
-  	    case 'civicrm_membership_status':
+                /*
+            case 'civicrm_membership_status':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
                     $vval = $statusLabel + $membershipStatus;
                 }
                 break;
+                */
             }
         }
        
@@ -270,14 +271,14 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule
         $civicrm_event = CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
         $civicrm_participant_status_type = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
 
-	$civicrm_membership_status = CRM_Member_PseudoConstant::membershipStatus();
-	$civicrm_membership_type = CRM_Member_PseudoConstant::membershipType();
+        //$civicrm_membership_status = CRM_Member_PseudoConstant::membershipStatus();
+        $civicrm_membership_type = CRM_Member_PseudoConstant::membershipType();
 
         asort($activity_type);
         $entity = array ( 'civicrm_activity'    => 'Activity',
                           'civicrm_participant' => 'Event',
-			  'civicrm_membership'  => 'Member' );
-
+                          'civicrm_membership'  => 'Member' );
+        
         $query ="
 SELECT 
        title,

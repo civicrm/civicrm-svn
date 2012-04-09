@@ -128,7 +128,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         //CRM-5001
-        if ( $this->_values['is_for_organization'] ) {
+        if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
             $msg = ts('Mixed profile not allowed for on behalf of registration/sign up.');
             if ( $preID = CRM_Utils_Array::value( 'custom_pre_id', $this->_values ) ) {
                 $preProfile = CRM_Core_BAO_UFGroup::profileGroups( $preID );
@@ -359,7 +359,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
         
         $config = CRM_Core_Config::singleton( );
-        if ( $this->_values['is_for_organization'] == 2 ) {
+        if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) == 2 ) {
             $this->assign( 'onBehalfRequired', true );
             $this->_onBehalfRequired = 1;
         }
