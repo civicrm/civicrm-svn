@@ -39,7 +39,10 @@
  */
 class CRM_Utils_Time 
 {
-    static private $_time = null;
+    /**
+     * @var int, the seconds offset from the real world time
+     */
+    static private $_delta = 0;
 
     /**
      * get the time
@@ -52,10 +55,16 @@ class CRM_Utils_Time
      */
     static function getTime( $returnFormat = 'YmdHis' )
     {
-        if ( ! isset( self::$_time ) ) {
-            self::$_time = date( 'YmdHis' );
-        }
-        return date( $returnFormat, strtotime(self::$_time) );
+        return date($returnFormat, self::getTimeRaw());
+    }
+    
+    /**
+     * Get the time
+     *
+     * @return int, seconds since epoch
+     */
+    static function getTimeRaw() {
+        return time() + self::$_delta;
     }
 
     /**
@@ -70,8 +79,15 @@ class CRM_Utils_Time
      */
     static function setTime( $newDateTime, $returnFormat = 'YmdHis' )
     {
-        self::$_time = date( 'YmdHis', $newDateTime );
-
+        self::$_delta = strtotime($newDateTime) - time();
         return self::getTime( $returnFormat );
     }
+    
+    /**
+     * Remove any time overrides
+     */
+    static function resetTime() {
+        self::$_delta = 0;
+    }
+    
 }

@@ -25,6 +25,7 @@
 <xi:include href="Grant/files.xml"             parse="xml" />
 <xi:include href="Friend/files.xml"            parse="xml" />
 <xi:include href="Pledge/files.xml"            parse="xml" />  
+<xi:include href="Queue/files.xml"            parse="xml" />
 <xi:include href="Report/files.xml"            parse="xml" />  
 <xi:include href="Price/files.xml"             parse="xml" /> 
 <xi:include href="PCP/files.xml"             parse="xml" /> 

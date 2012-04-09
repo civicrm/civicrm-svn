@@ -109,6 +109,8 @@
 
   <civicrm_pledge_block />
 
+  <civicrm_queue_item />
+
   <civicrm_report_instance />
 
   <civicrm_price_set />
