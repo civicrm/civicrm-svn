@@ -51,10 +51,20 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @static
    */
   static $_exportableFields = NULL;
+
+  /**
+   * static field for all the objects related to this contribution
+   * @var array of objects (e.g membership object, participant object)
+   * @static
+   */
+  static $_relatedObjects = NULL;
+  
+  /*
+   * construct method
+   */
   function __construct() {
     parent::__construct();
   }
-
   /**
    * takes an associative array and creates a contribution object
    *
@@ -1824,5 +1834,176 @@ SELECT source_contact_id
       'monthDate' => $monthDate,
     );
   }
+  
+  /*
+   * Load objects relations to contribution object
+   * In the first instance we are just moving functionality from BASEIpn - 
+   * see http://issues.civicrm.org/jira/browse/CRM-9996
+   * 
+   * 
+   */
+  
+  function loadRelatedObjects(&$input, &$ids, &$objects,$required = true , $paymentProcessorID = null){
+        
+        $objects['membership']        = null;
+        $objects['contributionRecur'] = null;
+        $objects['contributionType']  = null;
+        $objects['event']             = null;
+        $objects['participant']       = null;
+        $objects['pledge_payment']    = null;
+
+        $contributionType = new CRM_Contribute_BAO_ContributionType( );
+        $contributionType->id = $contribution->contribution_type_id;
+        if ( ! $contributionType->find( true ) ) {
+            CRM_Core_Error::debug_log_message( "Could not find contribution type record: $contributionTypeID" );
+            echo "Failure: Could not find contribution type record for $contributionTypeID<p>";
+            return false;
+        }
+        $objects['contributionType'] = $contributionType;
+        
+        
+        //$paymentProcessorID = null;
+        if ( $input['component'] == 'contribute' ) {
+            
+            // retrieve the other optional objects first so
+            // stuff down the line can use this info and do things
+            // CRM-6056
+            if ( isset( $ids['membership'] ) ) {
+                if ( is_numeric($ids['membership']) ){
+                    // see if there are any other memberships to be considered for same contribution.
+                    $query = "
+SELECT membership_id 
+FROM   civicrm_membership_payment 
+WHERE  contribution_id = %1 AND membership_id != %2";
+                    $dao   = CRM_Core_DAO::executeQuery( $query, 
+                                                         array( 1 => array( $this->id, 'Integer' ),
+                                                                2 => array( $ids['membership'], 'Integer' ) ) );
+                    
+                    $ids['membership'] = array( $ids['membership'] );
+                    while ( $dao->fetch() ) {
+                        $ids['membership'][] = $dao->membership_id;
+                    }
+                }
+
+                if (is_array($ids['membership'])) {
+                    foreach ( $ids['membership'] as $id ) {
+                        if ( !empty($id) ) {
+                            $membership = new CRM_Member_BAO_Membership( );
+                            $membership->id = $id;
+                            if ( ! $membership->find( true ) ) {
+                                CRM_Core_Error::debug_log_message( "Could not find membership record: $id" );
+                                echo "Failure: Could not find membership record: $id<p>";
+                                return false;
+                            }
+                            $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
+                            $membership->start_date    = CRM_Utils_Date::isoToMysql( $membership->start_date     );
+                            $membership->end_date      = CRM_Utils_Date::isoToMysql( $membership->end_date       );
+                            $membership->reminder_date = CRM_Utils_Date::isoToMysql( $membership->reminder_date  );
+
+                            $objects['membership'][] = $membership;
+                            $membership->free();
+                        }
+                    }
+                }  
+            }
+          
+            if ( isset( $ids['pledge_payment'] ) ) {
+                
+                $objects['pledge_payment'] = array( );
+                foreach ( $ids['pledge_payment'] as $key => $paymentID ) { 
+                    $payment = new CRM_Pledge_BAO_PledgePayment( );
+                    $payment->id = $paymentID;
+                    if ( ! $payment->find( true ) ) {
+                        CRM_Core_Error::debug_log_message( "Could not find pledge payment record: $pledge_paymentID" );
+                        echo "Failure: Could not find pledge payment record: $pledge_paymentID<p>";
+                        return false;
+                    } 
+                    $objects['pledge_payment'][] = $payment;
+                } 
+            }
+           
+            if ( isset( $ids['contributionRecur'] ) ) {
+                $recur = new CRM_Contribute_BAO_ContributionRecur( );
+                $recur->id = $ids['contributionRecur'];
+                if ( ! $recur->find( true ) ) {
+                    CRM_Core_Error::debug_log_message( "Could not find recur record: $contributionRecurID" );
+                    echo "Failure: Could not find recur record: $contributionRecurID<p>";
+                    return false;
+                }
+                $objects['contributionRecur'] =& $recur;
+                //get payment processor id from recur object.
+                $paymentProcessorID = $recur->payment_processor_id;
+            }
+
+            //for normal contribution get the payment processor id.
+            if ( ! $paymentProcessorID ) {
+                if ( $this->contribution_page_id ) {
+                    // get the payment processor id from contribution page
+                    $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
+                                                                       $this->contribution_page_id,
+                                                                       'payment_processor' );
+                    
+                }
+                
+                //fail to load payment processor id.
+                if ( !$paymentProcessorID &&
+                     !$this->contribution_page_id &&
+                     !CRM_Utils_Array::value( 'pledge_payment', $ids ) ) {
+                    $loadObjectSuccess = true;
+                    if ( $required ) {
+                        $loadObjectSuccess = false;
+                        CRM_Core_Error::debug_log_message( "Could not find contribution page for contribution record: $contributionID" );
+                        echo "Failure: Could not find contribution page for contribution record: $contributionID<p>";
+                    }
+                    return $loadObjectSuccess;
+                }
+            }
+        } else {
+            // we are in event mode
+            // make sure event exists and is valid
+            $event = new CRM_Event_BAO_Event( );
+            $event->id = $ids['event'];
+            if ( $ids['event'] &&
+                 ! $event->find( true ) ) {
+                CRM_Core_Error::debug_log_message( "Could not find event: $eventID" );
+                echo "Failure: Could not find event: $eventID<p>";
+                return false;
+            }
+
+            $objects['event'] =& $event;
+
+            $participant = new CRM_Event_BAO_Participant( );
+            $participant->id = $ids['participant'];
+            if ( $ids['participant'] &&
+                 ! $participant->find( true ) ) {
+                CRM_Core_Error::debug_log_message( "Could not find participant: $participantID" );
+                echo "Failure: Could not find participant: $participantID<p>";
+                return false;
+            }
+            $participant->register_date = CRM_Utils_Date::isoToMysql( $participant->register_date );
+
+            $objects['participant'] =& $participant;
+            
+            if ( !$paymentProcessorID ) {
+                $paymentProcessorID = $objects['event']->payment_processor;
+            }
+        }
+        
+        $loadObjectSuccess = true;
+        if ( $paymentProcessorID ) {
+            $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $paymentProcessorID,
+                                                                           $contribution->is_test ? 'test' : 'live' );
+            
+            $ids['paymentProcessor']       =  $paymentProcessorID;
+            $objects['paymentProcessor']   =& $paymentProcessor;
+        } else if ( $required ) {
+            $loadObjectSuccess = false;
+            CRM_Core_Error::debug_log_message("Could not find payment processor for contribution record: $contributionID");
+            echo "Failure: Could not find payment processor for contribution record: $contributionID<p>";
+        }
+        
+        return $loadObjectSuccess;
+    }
+
 }
 
