@@ -145,11 +145,12 @@ function civicrm_api3_create_error($msg, $data = array(), &$dao = NULL) {
   if (is_object($dao)) {
     $dao->free();
   }
+
   if (is_array($dao) && $msg == 'DB Error: constraint violation') {
     try {
       _civicrm_api3_validate_fields($dao['entity'], $dao['action'], $dao['params'], True);
     }
-    catch(Exception$e) {
+    catch(Exception $e) {
       $msg = $e->getMessage();
     }
   }
@@ -841,7 +842,8 @@ function _civicrm_api3_custom_data_get(&$returnArray, $entity, $entity_id, $grou
 
 /*
  * Validate fields being passed into API. This function relies on the getFields function working accurately
- * for the given API.
+ * for the given API. If error mode is set to TRUE then it will also check 
+ * foreign keys
  *
  * As of writing only date was implemented.
  * @param string $entity
@@ -867,9 +869,13 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
     }
     if (!empty($errorMode) && strtolower($action) == 'create'
       && CRM_Utils_Array::value('FKClassName', $fieldInfo)
-      && CRM_Utils_Array::value($fieldname, $params)
-    ) {
-      _civicrm_api3_validate_constraint($params, $fieldname, $fieldInfo);
+        ) {
+      if (CRM_Utils_Array::value($fieldname, $params)){
+        _civicrm_api3_validate_constraint($params, $fieldname, $fieldInfo);
+      }
+      elseif(CRM_Utils_Array::value('required', $fieldInfo)){
+        throw new Exception("DB Constraint Violation - possibly $fieldname should possibly be marked as mandatory for this API. If so, please raise a bug report");
+      }
     }
   }
 }
