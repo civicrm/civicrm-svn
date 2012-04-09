@@ -95,7 +95,9 @@ class CRM_Core_Payment_BaseIPN {
 
   function loadObjects( &$input, &$ids, &$objects, $required, $paymentProcessorID ) {
     $contribution =& $objects['contribution'];
-    return $contribution->loadRelatedObjects($input, $ids, $objects, $required, $paymentProcessorID );
+    $success = $contribution->loadRelatedObjects($input, $ids, $required, $paymentProcessorID );
+    $objects = array_merge($objects,$contribution->_relatedObjects); 
+    return $success;
   }
 
     function failed( &$objects, &$transaction ) {
