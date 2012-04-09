@@ -606,7 +606,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
   }
 
-  function membershipTypeCreate($contactID, $contributionTypeID = 1, $version = 2) {
+  function membershipTypeCreate($contactID, $contributionTypeID = 1, $version = 3) {
+    require_once 'CRM/Member/PseudoConstant.php';
+    CRM_Member_PseudoConstant::flush('membershipType');
     $params = array('name' => 'General',
       'duration_unit' => 'year',
       'duration_interval' => 1,
@@ -768,7 +770,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   function participantCreate($params) {
 
-    $params = array(
+    $defaults = array(
       'contact_id' => $params['contactID'],
       'event_id' => $params['eventID'],
       'status_id' => 2,
@@ -778,7 +780,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'event_level' => 'Payment',
       'version' => API_LATEST_VERSION,
     );
-
+    $params = array_merge($defaults, $params);
     $result = civicrm_api('Participant', 'create', $params);
     if (CRM_Utils_Array::value('is_error', $result)) {
       throw new Exception('Could not create participant ' . $result['error_message']);
