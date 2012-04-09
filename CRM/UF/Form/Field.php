@@ -216,12 +216,13 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                                     'phone', 'email', 'im', 'address_name' );
             
             if ( ! $defaults['location_type_id'] &&
+            	  $defaults["field_type"] != "Formatting" &&
                  in_array($defaults['field_name'], $specialFields)  ) {
                 $defaults['location_type_id'] = 0;
             }
             
             $defaults[ 'field_name' ] = array ( $defaults['field_type'],
-                                                $defaults['field_name'],
+                                                ($defaults['field_type']=="Formatting"?"":$defaults['field_name']),
                                                 $defaults['location_type_id'],
                                                 CRM_Utils_Array::value( 'phone_type_id', $defaults ) );
             $this->_gid = $defaults['uf_group_id'];
@@ -383,6 +384,13 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $fields['Activity'] = $activityFields;
         }
         
+        $formattingFields["format_free_html_".rand(1000,9999)] = array( "name" => "free_html",
+                                                                        "import" => FALSE,
+                                                                        "export" => FALSE,
+                                                                        "title" => "Free HTML"
+                                                                        );
+        $fields["Formatting"] = $formattingFields;
+        
         $noSearchable = array();
         $addressCustomFields = array_keys( CRM_Core_BAO_CustomField::getFieldsForImport( 'Address' ) );
 
@@ -453,6 +461,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $sel1['Membership'] = 'Membership';
         }
         
+        if ( ! empty($formattingFields) ) {
+            $sel1['Formatting'] = 'Formatting';
+        }
+
         foreach ( $sel1 as $key => $sel ) {
             if ( $key ) {
                 $sel2[$key] = $this->_mapperFields[$key];
@@ -654,8 +666,13 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $params['field_name'][1] = 'url-1';
         }
         
+        //Hack for Formatting Field Name
+        if ( $params['field_name'][0] == 'Formatting' ) {
+             $params['field_name'][1] = 'formatting_'.rand(1000,9999);
+	       			         }
+
         //check for duplicate fields
-        if ( CRM_Core_BAO_UFField::duplicateField( $params, $ids ) ) {
+        if ($params["field_name"][0] != "Formatting" && CRM_Core_BAO_UFField::duplicateField( $params, $ids ) ) {
             CRM_Core_Session::setStatus( ts('The selected field was not added. It already exists in this profile.') );
             return;
         } else {

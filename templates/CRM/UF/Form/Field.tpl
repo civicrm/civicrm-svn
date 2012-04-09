@@ -112,7 +112,29 @@ cj( function() {
    }                         
 });
 
+var preHelpLabel = "";
 function showLabel( ) {
+
+	if(preHelpLabel) { cj(".crm-uf-field-form-block-help_pre .label").html(preHelpLabel); }
+	cj(".crm-uf-field-form-block-is_view").show();
+	cj(".crm-uf-field-form-block-is_required").show();
+	cj(".crm-uf-field-form-block-visibility").show();
+	cj(".crm-uf-field-form-block-is_searchable").show();
+	cj(".crm-uf-field-form-block-in_selector").show();
+	cj(".crm-uf-field-form-block-help_post").show();
+
+    if("Formatting" == document.forms.Field['field_name[0]'].options[document.forms.Field['field_name[0]'].selectedIndex].value)
+    		     {
+    		     if(!preHelpLabel) { preHelpLabel = cj(".crm-uf-field-form-block-help_post .label").html();  }
+    		     cj(".crm-uf-field-form-block-help_pre .label").html('<label for="help_pre">HTML Code</label>');
+		     	     cj(".crm-uf-field-form-block-is_view").hide();
+			     cj(".crm-uf-field-form-block-is_required").hide();
+			     cj(".crm-uf-field-form-block-visibility").hide();
+			     cj(".crm-uf-field-form-block-is_searchable").hide();
+			     cj(".crm-uf-field-form-block-in_selector").hide();
+			     cj(".crm-uf-field-form-block-help_post").hide();
+    		     }
+
     var labelValue = '';
     /* Code to set the Field Label */		
     if (document.forms.Field['field_name[0]'].options[document.forms.Field['field_name[0]'].selectedIndex].value) { 

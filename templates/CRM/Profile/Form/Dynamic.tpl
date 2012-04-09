@@ -57,7 +57,9 @@
     {foreach from=$fields item=field key=fieldName}
         {assign var="profileID" value=$field.group_id}
         {assign var=n value=$field.name}
-        {if $form.$n}
+        {if $field.field_type eq "Formatting"}
+            {$field.help_pre}
+        {elseif $form.$n}
             {if $field.groupTitle != $fieldset}
                 {if $fieldset != $zeroField}
                    {if $groupHelpPost}
