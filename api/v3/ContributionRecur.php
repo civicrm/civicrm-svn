@@ -57,7 +57,7 @@ function civicrm_api3_contribution_recur_create( $params )
  * @param array $params array or parameters determined by getfields
  */
 function _civicrm_api3_contribution_recur_create_spec(&$params){
-
+  $params['contact_id']['api.required'] = 1;
 }
 /**
  * Returns array of contribution_recurs  matching a set of one or more group properties
