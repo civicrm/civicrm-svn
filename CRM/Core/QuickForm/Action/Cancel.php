@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,33 +34,37 @@
  * $Id$
  *
  */
+
+
 class CRM_Core_QuickForm_Action_Cancel extends CRM_Core_QuickForm_Action {
 
-  /**
-   * class constructor
-   *
-   * @param object $stateMachine reference to state machine object
-   *
-   * @return object
-   * @access public
-   */
-  function __construct(&$stateMachine) {
-    parent::__construct($stateMachine);
-  }
+    /**
+     * class constructor
+     *
+     * @param object $stateMachine reference to state machine object
+     *
+     * @return object
+     * @access public
+     */
+    function __construct( &$stateMachine ) {
+        parent::__construct( $stateMachine );
+    }
 
-  /**
-   * Processes the request.
-   *
-   * @param  object    $page       CRM_Core_Form the current form-page
-   * @param  string    $actionName Current action name, as one Action object can serve multiple actions
-   *
-   * @return void
-   * @access public
-   */
-  function perform(&$page, $actionName) {
-    // $this->_stateMachine->reset( );
+    /**
+     * Processes the request.
+     *
+     * @param  object    $page       CRM_Core_Form the current form-page
+     * @param  string    $actionName Current action name, as one Action object can serve multiple actions
+     *
+     * @return void
+     * @access public
+     */
+    function perform( &$page, $actionName ) {
+        // $this->_stateMachine->reset( );
 
-    $this->popUserContext();
-  }
+        $this->popUserContext( );
+    }
+
 }
+
 

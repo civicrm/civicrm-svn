@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,7 +34,7 @@
  *
  */
 
-/*
+  /*
    * Smarty plugin
    * Type: modifier
    * Name: substring
@@ -55,7 +56,8 @@
    *
    * -------------------------------------------------------------
    */
-function smarty_modifier_substring($string, $position, $length) {
-  return substr($string, $position, $length);
-}
 
+function smarty_modifier_substring($string, $position, $length)
+{
+    return substr($string, $position, $length);
+}

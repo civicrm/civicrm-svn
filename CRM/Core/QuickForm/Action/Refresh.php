@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,48 +34,52 @@
  * $Id$
  *
  */
+
+
 class CRM_Core_QuickForm_Action_Refresh extends CRM_Core_QuickForm_Action {
 
-  /**
-   * class constructor
-   *
-   * @param object $stateMachine reference to state machine object
-   *
-   * @return object
-   * @access public
-   */
-  function __construct(&$stateMachine) {
-    parent::__construct($stateMachine);
-  }
-
-  /**
-   * Processes the request.
-   *
-   * @param  object    $page       CRM_Core_Form the current form-page
-   * @param  string    $actionName Current action name, as one Action object can serve multiple actions
-   *
-   * @return void
-   * @access public
-   */
-  function perform(&$page, $actionName) {
-    // save the form values and validation status to the session
-    $page->isFormBuilt() or $page->buildForm();
-
-    $pageName = $page->getAttribute('name');
-    $data = &$page->controller->container();
-    $data['values'][$pageName] = $page->exportValues();
-    $data['valid'][$pageName] = $page->validate();
-
-
-    // Modal form and page is invalid: don't go further
-    if ($page->controller->isModal() && !$data['valid'][$pageName]) {
-      return $page->handle('display');
+    /**
+     * class constructor
+     *
+     * @param object $stateMachine reference to state machine object
+     *
+     * @return object
+     * @access public
+     */
+    function __construct( &$stateMachine ) {
+        parent::__construct( $stateMachine );
     }
 
-    // the page is valid, process it before we jump to the next state
-    $page->mainProcess();
+    /**
+     * Processes the request. 
+     *
+     * @param  object    $page       CRM_Core_Form the current form-page
+     * @param  string    $actionName Current action name, as one Action object can serve multiple actions
+     *
+     * @return void
+     * @access public
+     */
+    function perform(&$page, $actionName) {
+        // save the form values and validation status to the session
+        $page->isFormBuilt() or $page->buildForm();
+        
+        $pageName =  $page->getAttribute('name');
+        $data     =& $page->controller->container();
+        $data['values'][$pageName] = $page->exportValues();
+        $data['valid'][$pageName]  = $page->validate();
 
-    return $page->handle('jump');
-  }
+
+        // Modal form and page is invalid: don't go further
+        if ($page->controller->isModal() && !$data['valid'][$pageName]) {
+            return $page->handle('display');
+        }
+
+        // the page is valid, process it before we jump to the next state
+        $page->mainProcess( );
+
+        return $page->handle('jump');
+    }
+
 }
+
 

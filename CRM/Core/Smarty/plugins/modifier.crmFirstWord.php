@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -46,9 +47,10 @@
  * @return string        the new modified html string
  * @access public
  */
-function smarty_modifier_crmFirstWord($string) {
-  $string = trim($string);
-  $words = explode(' ', $string);
-  return $words[0];
+function smarty_modifier_crmFirstWord( $string ) {
+    $string = trim( $string );
+    $words = explode( ' ', $string );
+    return $words[0];
 }
+
 

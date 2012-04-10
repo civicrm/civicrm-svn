@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,180 +34,187 @@
  *
  */
 
+
 /**
  * Fix for bug CRM-392. Not sure if this is the best fix or it will impact
  * other similar PEAR packages. doubt it
  */
-if (!class_exists('Smarty')) {
-  require_once 'Smarty/Smarty.class.php';
+if ( ! class_exists( 'Smarty' ) ) {
+    require_once 'Smarty/Smarty.class.php';
 }
+
 
 /**
  *
  */
 class CRM_Core_Smarty extends Smarty {
-  CONST PRINT_PAGE = 1, PRINT_SNIPPET = 2, PRINT_PDF = 3, PRINT_NOFORM = 4;
 
-  /**
-   * We only need one instance of this object. So we use the singleton
-   * pattern and cache the instance in this variable
-   *
-   * @var object
-   * @static
-   */
-  static private $_singleton = NULL;
+    const
+        PRINT_PAGE    = 1,
+        PRINT_SNIPPET = 2,
+        PRINT_PDF     = 3,
+        PRINT_NOFORM  = 4;
 
-  /**
-   * class constructor
-   *
-   * @return CRM_Core_Smarty
-   * @access private
-   */ function __construct() {
-    parent::__construct();
+    /**
+     * We only need one instance of this object. So we use the singleton
+     * pattern and cache the instance in this variable
+     *
+     * @var object
+     * @static
+     */
+    static private $_singleton = null;
 
-    $config = CRM_Core_Config::singleton();
+    /**
+     * class constructor
+     *
+     * @return CRM_Core_Smarty
+     * @access private
+     */
+    function __construct( ) {
+        parent::__construct( );
 
-    if (isset($config->customTemplateDir) && $config->customTemplateDir) {
-      $this->template_dir = array_merge(array($config->customTemplateDir),
-        $config->templateDir
-      );
+        $config = CRM_Core_Config::singleton( );
+
+        if ( isset( $config->customTemplateDir ) && $config->customTemplateDir ) {
+            $this->template_dir = array_merge( array( $config->customTemplateDir ),
+                                               $config->templateDir );
+        } else {
+            $this->template_dir = $config->templateDir;
+        }
+        $this->compile_dir  = $config->templateCompileDir;
+        
+        // check and ensure it is writable
+        // else we sometime suppress errors quietly and this results
+        // in blank emails etc
+        if ( ! is_writable( $this->compile_dir ) ) {
+            echo "CiviCRM doeso not have permission to write temp files in {$smarty->compile_dir}, Exiting";
+            exit( );
+        }
+        
+        //Check for safe mode CRM-2207
+        if ( ini_get('safe_mode') ) {
+            $this->use_sub_dirs = false;
+        } else {
+            $this->use_sub_dirs = true;
+        }
+
+        $customPluginsDir = null;
+        if ( isset( $config->customPHPPathDir ) ) {
+            $customPluginsDir = 
+                $config->customPHPPathDir . DIRECTORY_SEPARATOR .
+                'CRM'         . DIRECTORY_SEPARATOR . 
+                'Core'        . DIRECTORY_SEPARATOR .
+                'Smarty'      . DIRECTORY_SEPARATOR .
+                'plugins'     . DIRECTORY_SEPARATOR ;
+            if ( ! file_exists( $customPluginsDir ) ) {
+                $customPluginsDir = null;
+            }
+        }
+
+        if ( $customPluginsDir ) {
+            $this->plugins_dir  = array ( $customPluginsDir, $config->smartyDir . 'plugins', $config->pluginsDir );
+        } else {
+            $this->plugins_dir  = array ( $config->smartyDir . 'plugins', $config->pluginsDir );
+        }
+
+        // add the session and the config here
+        $session = CRM_Core_Session::singleton();
+
+        $this->assign_by_ref( 'config'        , $config  );
+        $this->assign_by_ref( 'session'       , $session );
+        
+        // check default editor and assign to template, store it in session to reduce db calls
+        $defaultWysiwygEditor = $session->get( 'defaultWysiwygEditor');
+        if ( ! $defaultWysiwygEditor && 
+             ! CRM_Core_Config::isUpgradeMode( ) ) {
+            $editorID = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                                   'editor_id' );
+            if ( ! $session->isEmpty( ) ) {
+                $session->set( 'defaultWysiwygEditor', $editorID );
+            }
+            $defaultWysiwygEditor = $editorID;
+        }
+        
+        $this->assign( 'defaultWysiwygEditor', $defaultWysiwygEditor );
+ 
+        global $tsLocale;
+        $this->assign('tsLocale',   $tsLocale);
+        
+        // CRM-7163 hack: we don’t display langSwitch on upgrades anyway
+        $displayLangSwitch = true;
+        if ( CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET ) == 'civicrm/upgrade' ||
+             CRM_Utils_Array::value( $config->userFrameworkURLVar, $_REQUEST ) == 'civicrm/upgrade' ) {
+            $displayLangSwitch = false;
+        }
+        if ( $displayLangSwitch ) {
+            $this->assign('langSwitch', CRM_Core_I18n::languages(true));
+        }
+        
+        //check if logged in user has access CiviCRM permission and build menu
+        $buildNavigation = CRM_Core_Permission::check( 'access CiviCRM' );
+        $this->assign('buildNavigation', $buildNavigation );
+        
+
+        if ( ! CRM_Core_Config::isUpgradeMode() && 
+             $buildNavigation ) {
+            $contactID = $session->get('userID');
+            if ( $contactID ) {
+                $navigation = CRM_Core_BAO_Navigation::createNavigation( $contactID );
+                $this->assign('navigation', $navigation );
+            }
+        }
+
+        $this->register_function ( 'crmURL' , array( 'CRM_Utils_System', 'crmURL' ) );
+
     }
-    else {
-      $this->template_dir = $config->templateDir;
-    }
-    $this->compile_dir = $config->templateCompileDir;
 
-    // check and ensure it is writable
-    // else we sometime suppress errors quietly and this results
-    // in blank emails etc
-    if (!is_writable($this->compile_dir)) {
-      echo "CiviCRM doeso not have permission to write temp files in {$smarty->compile_dir}, Exiting";
-      exit();
-    }
-
-    //Check for safe mode CRM-2207
-    if (ini_get('safe_mode')) {
-      $this->use_sub_dirs = FALSE;
-    }
-    else {
-      $this->use_sub_dirs = TRUE;
+    /**
+     * Static instance provider.
+     *
+     * Method providing static instance of SmartTemplate, as
+     * in Singleton pattern.
+     */
+    static function &singleton( ) {
+        if ( ! isset( self::$_singleton ) ) {
+            $config = CRM_Core_Config::singleton( );
+            self::$_singleton = new CRM_Core_Smarty( $config->templateDir, $config->templateCompileDir );
+        }
+        return self::$_singleton;
     }
 
-    $customPluginsDir = NULL;
-    if (isset($config->customPHPPathDir)) {
-      $customPluginsDir = $config->customPHPPathDir . DIRECTORY_SEPARATOR . 'CRM' . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'Smarty' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR;
-      if (!file_exists($customPluginsDir)) {
-        $customPluginsDir = NULL;
-      }
+    /**
+     * executes & returns or displays the template results
+     *
+     * @param string $resource_name
+     * @param string $cache_id
+     * @param string $compile_id
+     * @param boolean $display
+     */
+    function fetch($resource_name, $cache_id = null, $compile_id = null, $display = false)
+    {
+        return parent::fetch( $resource_name, $cache_id, $compile_id, $display );
     }
 
-    if ($customPluginsDir) {
-      $this->plugins_dir = array($customPluginsDir, $config->smartyDir . 'plugins', $config->pluginsDir);
-    }
-    else {
-      $this->plugins_dir = array($config->smartyDir . 'plugins', $config->pluginsDir);
-    }
-
-    // add the session and the config here
-    $session = CRM_Core_Session::singleton();
-
-    $this->assign_by_ref('config', $config);
-    $this->assign_by_ref('session', $session);
-
-    // check default editor and assign to template, store it in session to reduce db calls
-    $defaultWysiwygEditor = $session->get('defaultWysiwygEditor');
-    if (!$defaultWysiwygEditor &&
-      !CRM_Core_Config::isUpgradeMode()
-    ) {
-      $editorID = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-        'editor_id'
-      );
-      if (!$session->isEmpty()) {
-        $session->set('defaultWysiwygEditor', $editorID);
-      }
-      $defaultWysiwygEditor = $editorID;
+    function appendValue( $name, $value ) {
+        $currentValue = $this->get_template_vars( $name );
+        if ( ! $currentValue ) {
+            $this->assign( $name, $value );
+        } else {
+            if ( strpos( $currentValue, $value ) === false ) {
+                $this->assign( $name, $currentValue . $value );
+            }
+        }
     }
 
-    $this->assign('defaultWysiwygEditor', $defaultWysiwygEditor);
-
-    global $tsLocale;
-    $this->assign('tsLocale', $tsLocale);
-
-    // CRM-7163 hack: we don’t display langSwitch on upgrades anyway
-    $displayLangSwitch = TRUE;
-    if (CRM_Utils_Array::value($config->userFrameworkURLVar, $_GET) == 'civicrm/upgrade' ||
-      CRM_Utils_Array::value($config->userFrameworkURLVar, $_REQUEST) == 'civicrm/upgrade'
-    ) {
-      $displayLangSwitch = FALSE;
-    }
-    if ($displayLangSwitch) {
-      $this->assign('langSwitch', CRM_Core_I18n::languages(TRUE));
+    function clearTemplateVars( ) {
+        foreach ( array_keys( $this->_tpl_vars ) as $key ) {
+            if ( $key == 'config' || $key == 'session' ) {
+                continue;
+            }
+            unset( $this->_tpl_vars[$key] );
+        }
     }
 
-    //check if logged in user has access CiviCRM permission and build menu
-    $buildNavigation = CRM_Core_Permission::check('access CiviCRM');
-    $this->assign('buildNavigation', $buildNavigation);
-
-
-    if (!CRM_Core_Config::isUpgradeMode() &&
-      $buildNavigation
-    ) {
-      $contactID = $session->get('userID');
-      if ($contactID) {
-        $navigation = CRM_Core_BAO_Navigation::createNavigation($contactID);
-        $this->assign('navigation', $navigation);
-      }
-    }
-
-    $this->register_function('crmURL', array('CRM_Utils_System', 'crmURL'));
-  }
-
-  /**
-   * Static instance provider.
-   *
-   * Method providing static instance of SmartTemplate, as
-   * in Singleton pattern.
-   */
-  static
-  function &singleton() {
-    if (!isset(self::$_singleton)) {
-      $config = CRM_Core_Config::singleton();
-      self::$_singleton = new CRM_Core_Smarty($config->templateDir, $config->templateCompileDir);
-    }
-    return self::$_singleton;
-  }
-
-  /**
-   * executes & returns or displays the template results
-   *
-   * @param string $resource_name
-   * @param string $cache_id
-   * @param string $compile_id
-   * @param boolean $display
-   */
-  function fetch($resource_name, $cache_id = NULL, $compile_id = NULL, $display = FALSE) {
-    return parent::fetch($resource_name, $cache_id, $compile_id, $display);
-  }
-
-  function appendValue($name, $value) {
-    $currentValue = $this->get_template_vars($name);
-    if (!$currentValue) {
-      $this->assign($name, $value);
-    }
-    else {
-      if (strpos($currentValue, $value) === FALSE) {
-        $this->assign($name, $currentValue . $value);
-      }
-    }
-  }
-
-  function clearTemplateVars() {
-    foreach (array_keys($this->_tpl_vars) as $key) {
-      if ($key == 'config' || $key == 'session') {
-        continue;
-      }
-      unset($this->_tpl_vars[$key]);
-    }
-  }
 }
+
 

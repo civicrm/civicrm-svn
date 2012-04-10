@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,66 +34,70 @@
  *
  */
 
+
 /**
  * This class provides the functionality to delete a group of
  * participations. This class provides functionality for the actual
  * deletion.
  */
-class CRM_Grant_Form_Task_Delete extends CRM_Grant_Form_Task {
+class CRM_Grant_Form_Task_Delete extends CRM_Grant_Form_Task 
+{
+    /**
+     * Are we operating in "single mode", i.e. deleting one
+     * specific participation?
+     *
+     * @var boolean
+     */
+    protected $_single = false;
 
-  /**
-   * Are we operating in "single mode", i.e. deleting one
-   * specific participation?
-   *
-   * @var boolean
-   */
-  protected $_single = FALSE;
+    /**
+     * build all the data structures needed to build the form
+     *
+     * @return void
+     * @access public
+     */
+    function preProcess( ) 
+    {
+        parent::preProcess( );
 
-  /**
-   * build all the data structures needed to build the form
-   *
-   * @return void
-   * @access public
-   */ function preProcess() {
-    parent::preProcess();
-
-    //check permission for delete.
-    if (!CRM_Core_Permission::checkActionPermission('CiviGrant', CRM_Core_Action::DELETE)) {
-      CRM_Core_Error::fatal(ts('You do not have permission to access this page'));
-    }
-  }
-
-  /**
-   * Build the form
-   *
-   * @access public
-   *
-   * @return void
-   */
-  function buildQuickForm() {
-    $this->addDefaultButtons(ts('Delete Grants'), 'done');
-  }
-
-  /**
-   * process the form after the input has been submitted and validated
-   *
-   * @access public
-   *
-   * @return None
-   */
-  public function postProcess() {
-    $deletedGrants = 0;
-    foreach ($this->_grantIds as $grantId) {
-      if (CRM_Grant_BAO_Grant::del($grantId)) {
-        $deletedGrants++;
-      }
+        //check permission for delete.
+        if ( !CRM_Core_Permission::checkActionPermission( 'CiviGrant', CRM_Core_Action::DELETE ) ) {
+            CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
+        }
     }
 
-    $status = array(
-      ts('Deleted Grant(s): %1', array(1 => $deletedGrants)),
-      ts('Total Selected Grant(s): %1', array(1 => count($this->_grantIds))),
-    );
-    CRM_Core_Session::setStatus($status);
-  }
+    /**
+     * Build the form
+     *
+     * @access public
+     * @return void
+     */
+    function buildQuickForm( ) 
+    {
+        $this->addDefaultButtons( ts( 'Delete Grants' ), 'done' );
+    }
+
+    /**
+     * process the form after the input has been submitted and validated
+     *
+     * @access public
+     * @return None
+     */
+    public function postProcess( ) 
+    {
+        $deletedGrants = 0;
+        foreach ( $this->_grantIds as $grantId ) {
+            if ( CRM_Grant_BAO_Grant::del( $grantId ) ) {
+                $deletedGrants++;
+            }
+        }
+
+        $status = array(
+                        ts( 'Deleted Grant(s): %1',        array( 1 => $deletedGrants ) ),
+                        ts( 'Total Selected Grant(s): %1', array( 1 => count($this->_grantIds ) ) ),
+                        );
+        CRM_Core_Session::setStatus( $status );
+    }
 }
+
 

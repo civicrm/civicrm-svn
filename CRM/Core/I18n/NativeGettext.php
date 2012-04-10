@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,28 +34,30 @@
  *
  * Convenience class for PHP-Gettext compatibility.
  */
-class CRM_Core_I18n_NativeGettext {
-  function translate($string) {
-    return gettext($string);
-  }
 
-  /**
-   * Based on php-gettext, since native gettext does not support this as is.
-   */
-  function pgettext($context, $text) {
-    $key = $context . chr(4) . $text;
-    $ret = $this->translate($key);
-
-    if (strpos($ret, "\004") !== FALSE) {
-      return $text;
+class CRM_Core_I18n_NativeGettext
+{
+    function translate($string) {
+        return gettext($string);
     }
-    else {
-      return $ret;
-    }
-  }
 
-  function ngettext($text, $plural, $count) {
-    return ngettext($text, $plural, $count);
-  }
+    /**
+     * Based on php-gettext, since native gettext does not support this as is.
+     */
+    function pgettext($context, $text) {
+        $key = $context . chr(4) . $text;
+        $ret = $this->translate($key);
+
+        if (strpos($ret, "\004") !== FALSE) {
+            return $text;
+        }
+        else {
+            return $ret;
+        }
+    }
+
+    function ngettext($text, $plural, $count) {
+        return ngettext($text, $plural, $count);
+    }
 }
 

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -41,7 +42,7 @@
  *
  * @return string       only the first alternative found (or the text without alternatives)
  */
-function smarty_modifier_crmStripAlternatives($full) {
-  return CRM_Utils_String::stripAlternatives($full);
+function smarty_modifier_crmStripAlternatives($full)
+{
+    return CRM_Utils_String::stripAlternatives($full);
 }
-

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -37,11 +38,15 @@
  */
 
 require_once 'CRM/Core/I18n.php';
+
 class CRM_Core_Base {
 
-  /**
-   * constructor
-   */
-  function __construct() {}
+    /**
+     * constructor
+     */
+    function __construct() {
+    }
+
 }
+
 

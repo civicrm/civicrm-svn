@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,7 +34,7 @@
  * $Id$
  */
 
-/**
+/** 
  * Smarty block function providing support for
  * CiviCRM's helptext mechanism
  *
@@ -43,13 +44,14 @@
  *
  * @return string  the string, translated by gettext
  */
-function smarty_block_htxt($params, $text, &$smarty) {
-  $id = $params['id'];
-  if ($id == $smarty->_tpl_vars['id']) {
-    return "<div class='crm-help'>$text</div>";
-  }
-  else {
-    return NULL;
-  }
+function smarty_block_htxt($params, $text, &$smarty)
+{
+    $id = $params['id'];
+    if ( $id == $smarty->_tpl_vars['id'] ) {
+        return "<div class='crm-help'>$text</div>";
+    } else {
+        return null;
+    }
 }
+
 
