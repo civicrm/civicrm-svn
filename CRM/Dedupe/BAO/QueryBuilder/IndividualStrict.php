@@ -59,17 +59,18 @@ INSERT INTO emails
     FROM civicrm_email as email1
     JOIN civicrm_email as email2 USING (email)
     WHERE email1.contact_id < email2.contact_id
-";
+    AND  " . self::internalFilters($rg, "email1.contact_id", "email2.contact_id" );
         CRM_Core_DAO::executeQuery( $sql );
 
         $query = "
-SELECT contact_id1, contact_id2, email
+SELECT contact_id1 as id1, contact_id2 as id2, {$rg->threshold} as weight
 FROM   emails
 JOIN   civicrm_contact as contact1 on contact1.id=contact_id1
 JOIN   civicrm_contact as contact2 on contact2.id=contact_id2
 WHERE  contact1.contact_type='Individual' 
 AND    contact2.contact_type='Individual'
 AND    " . self::internalFilters($rg);
+
         return array("civicrm_contact.{$rg->name}.{$rg->threshold}" => $query);
     }
 

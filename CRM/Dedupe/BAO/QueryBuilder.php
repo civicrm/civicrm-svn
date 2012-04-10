@@ -1,14 +1,14 @@
 <?php
 
 class CRM_Dedupe_BAO_QueryBuilder {
-    static function internalFilters($rg) {
+    static function internalFilters( $rg, $strID1 = 'contact1.id', $strID2 = 'contact2.id' ) {
         // Add a contact id filter for dedupe by group requests and add logic
         // to remove duplicate results with opposing orders, i.e. 1,2 and 2,1
-        if( !empty($o->contactIds) ) {
-            $cids = implode(',',$o->contactIds);
-            return "(contact1.id IN($cids) AND ( contact2.id NOT IN($cids) OR (contact2.id IN($cids) AND contact1.id < contact2.id) ))";
+        if( !empty($rg->contactIds) ) {
+            $cids = implode(',',$rg->contactIds);
+            return "($strID1 IN ($cids) AND ( $strID2 NOT IN ($cids) OR ($strID2 IN ($cids) AND $strID1 < $strID2) ))";
         } else {
-            return "(contact1.id < contact2.id)";
+            return "($strID1 < $strID2)";
         }
     }
 };
