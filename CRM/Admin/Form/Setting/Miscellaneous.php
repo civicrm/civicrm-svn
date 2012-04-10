@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,91 +34,85 @@
  *
  */
 
+
 /**
  * This class generates form components for Miscellaneous
- *
+ * 
  */
-class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
+class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
+{
+    /**
+     * Function to build the form
+     *
+     * @return None
+     * @access public
+     */
+    public function buildQuickForm( ) {
+        CRM_Utils_System::setTitle(ts('Settings - Undelete, Logging and ReCAPTCHA'));
 
-  /**
-   * Function to build the form
-   *
-   * @return None
-   * @access public
-   */
-  public function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Settings - Undelete, Logging and ReCAPTCHA'));
+        $this->addYesNo('contactUndelete', ts('Contact Trash & Undelete'));
 
-    $this->addYesNo('contactUndelete', ts('Contact Trash & Undelete'));
+        // also check if we can enable triggers
+        $validTriggerPermission = CRM_Core_DAO::checkTriggerViewPermission( false );
 
-    // also check if we can enable triggers
-    $validTriggerPermission = CRM_Core_DAO::checkTriggerViewPermission(FALSE);
+        // FIXME: for now, disable logging for multilingual sites OR if triggers are not permittted
+        $domain = new CRM_Core_DAO_Domain;
+        $domain->find(true);
+        $attribs = $domain->locales || ! $validTriggerPermission ? array('disabled' => 'disabled') : null;
 
-    // FIXME: for now, disable logging for multilingual sites OR if triggers are not permittted
-    $domain = new CRM_Core_DAO_Domain;
-    $domain->find(TRUE);
-    $attribs = $domain->locales || !$validTriggerPermission ? array('disabled' => 'disabled') : NULL;
+        $this->assign( 'validTriggerPermission', $validTriggerPermission );
+        $this->addYesNo('logging', ts('Logging'), null, null, $attribs);
 
-    $this->assign('validTriggerPermission', $validTriggerPermission);
-    $this->addYesNo('logging', ts('Logging'), NULL, NULL, $attribs);
+        $this->addYesNo( 'versionCheck', ts( 'Version Check & Statistics Reporting' ));
+        
+        $this->addYesNo( 'doNotAttachPDFReceipt', ts( 'Attach PDF copy to receipts' ) );
+        
+        $this->addElement('text','wkhtmltopdfPath', ts('Path to wkhtmltopdf executable'),
+                          array( 'size' => 64, 'maxlength' => 256 ) );
 
-    $this->addYesNo('versionCheck', ts('Version Check & Statistics Reporting'));
+        $this->addElement('text', 'maxAttachments' , ts('Maximum Attachments'),
+                          array( 'size' => 2, 'maxlength' => 8 ) );
+        $this->addElement('text', 'maxFileSize' , ts('Maximum File Size'),
+                          array( 'size' => 2, 'maxlength' => 8 ) );
+        $this->addElement('text','recaptchaPublicKey' , ts('Public Key'),
+                          array( 'size' => 64, 'maxlength' => 64 ) );
+        $this->addElement('text','recaptchaPrivateKey', ts('Private Key'),
+                          array( 'size' => 64, 'maxlength' => 64 ) );
 
-    $this->addYesNo('doNotAttachPDFReceipt', ts('Attach PDF copy to receipts'));
+        $this->addElement('text', 'dashboardCacheTimeout', ts('Dashboard cache timeout'),
+                          array( 'size' => 3, 'maxlength' => 5 ) );
+        $this->addElement('text', 'checksumTimeout' , ts('CheckSum Lifespan'),
+                          array( 'size' => 2, 'maxlength' => 8 ) );
+        $this->addElement('text','recaptchaOptions', ts('Recaptcha Options'),
+                          array( 'size' => 64, 'maxlength' => 64 ) );
 
-    $this->addElement('text', 'wkhtmltopdfPath', ts('Path to wkhtmltopdf executable'),
-      array('size' => 64, 'maxlength' => 256)
-    );
+        $this->addRule('maxAttachments', ts('Value should be a positive number') , 'positiveInteger');
+        $this->addRule('maxFileSize', ts('Value should be a positive number') , 'positiveInteger');
+        $this->addRule('checksumTimeout', ts('Value should be a positive number') , 'positiveInteger');
+       
+        parent::buildQuickForm();    
+    }
 
-    $this->addElement('text', 'maxAttachments', ts('Maximum Attachments'),
-      array('size' => 2, 'maxlength' => 8)
-    );
-    $this->addElement('text', 'maxFileSize', ts('Maximum File Size'),
-      array('size' => 2, 'maxlength' => 8)
-    );
-    $this->addElement('text', 'recaptchaPublicKey', ts('Public Key'),
-      array('size' => 64, 'maxlength' => 64)
-    );
-    $this->addElement('text', 'recaptchaPrivateKey', ts('Private Key'),
-      array('size' => 64, 'maxlength' => 64)
-    );
+    function setDefaultValues()
+    {
+        parent::setDefaultValues();
 
-    $this->addElement('text', 'dashboardCacheTimeout', ts('Dashboard cache timeout'),
-      array('size' => 3, 'maxlength' => 5)
-    );
-    $this->addElement('text', 'checksumTimeout', ts('CheckSum Lifespan'),
-      array('size' => 2, 'maxlength' => 8)
-    );
-    $this->addElement('text', 'recaptchaOptions', ts('Recaptcha Options'),
-      array('size' => 64, 'maxlength' => 64)
-    );
+        $this->_defaults['checksumTimeout'] = 
+            CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+                                           'checksum_timeout',
+                                           null,
+                                           7 );
+        return $this->_defaults;
+    }
+            
+    public function postProcess()
+    {
+        parent::postProcess();
 
-    $this->addRule('maxAttachments', ts('Value should be a positive number'), 'positiveInteger');
-    $this->addRule('maxFileSize', ts('Value should be a positive number'), 'positiveInteger');
-    $this->addRule('checksumTimeout', ts('Value should be a positive number'), 'positiveInteger');
-
-    parent::buildQuickForm();
-  }
-
-  function setDefaultValues() {
-    parent::setDefaultValues();
-
-    $this->_defaults['checksumTimeout'] = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-      'checksum_timeout',
-      NULL,
-      7
-    );
-    return $this->_defaults;
-  }
-
-  public function postProcess() {
-    parent::postProcess();
-
-    // handle logging
-    // FIXME: do it only if the setting changed
-    $values = $this->exportValues();
-    $logging = new CRM_Logging_Schema;
-    $values['logging'] ? $logging->enableLogging() : $logging->disableLogging();
-  }
+        // handle logging
+        // FIXME: do it only if the setting changed
+        $values = $this->exportValues();
+        $logging = new CRM_Logging_Schema;
+        $values['logging'] ? $logging->enableLogging() : $logging->disableLogging();
+    }
 }
-

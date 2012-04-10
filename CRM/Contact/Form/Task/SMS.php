@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,69 +34,71 @@
  *
  */
 
+
 /**
  * This class provides the functionality to sms a group of
- * contacts.
+ * contacts. 
  */
 class CRM_Contact_Form_Task_SMS extends CRM_Contact_Form_Task {
 
-  /**
-   * Are we operating in "single mode", i.e. sending sms to one
-   * specific contact?
-   *
-   * @var boolean
-   */
-  public $_single = FALSE;
+    /**
+     * Are we operating in "single mode", i.e. sending sms to one
+     * specific contact?
+     *
+     * @var boolean
+     */
+    public $_single = false;
 
-  /**
-   * all the existing templates in the system
-   *
-   * @var array
-   */
-  public $_templates = NULL; function preProcess() {
+    /**
+     * all the existing templates in the system
+     *
+     * @var array
+     */
+    public $_templates = null;
+    
+    function preProcess( ) {
 
-    $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
+        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
 
-    $cid = CRM_Utils_Request::retrieve('cid', 'Positive', $this, FALSE);
-    if ($cid) {
-      CRM_Contact_Page_View::setTitle($cid);
+        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false );
+        if ( $cid ) {
+            CRM_Contact_Page_View::setTitle( $cid );
+        }
+        
+        CRM_Contact_Form_Task_SMSCommon::preProcessProvider( $this );
+        
+        if ( !$cid && $this->_context != 'standalone' ) {
+            parent::preProcess( );
+        }
+        
+        $this->assign( 'single', $this->_single );
+        if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
+            $this->assign( 'isAdmin', 1 );
+        }
+    }
+    
+    /**
+     * Build the form
+     *
+     * @access public
+     * @return void
+     */
+    public function buildQuickForm()
+    {
+        //enable form element
+        $this->assign( 'suppressForm', false );
+        $this->assign( 'SMSTask', true );
+        CRM_Contact_Form_Task_SMSCommon::buildQuickForm( $this );
+        
     }
 
-    CRM_Contact_Form_Task_SMSCommon::preProcessProvider($this);
-
-    if (!$cid && $this->_context != 'standalone') {
-      parent::preProcess();
+    /**
+     * process the form after the input has been submitted and validated
+     *
+     * @access public
+     * @return None
+     */
+    public function postProcess() {
+        CRM_Contact_Form_Task_SMSCommon::postProcess( $this );
     }
-
-    $this->assign('single', $this->_single);
-    if (CRM_Core_Permission::check('administer CiviCRM')) {
-      $this->assign('isAdmin', 1);
-    }
-  }
-
-  /**
-   * Build the form
-   *
-   * @access public
-   *
-   * @return void
-   */
-  public function buildQuickForm() {
-    //enable form element
-    $this->assign('suppressForm', FALSE);
-    $this->assign('SMSTask', TRUE);
-    CRM_Contact_Form_Task_SMSCommon::buildQuickForm($this);
-  }
-
-  /**
-   * process the form after the input has been submitted and validated
-   *
-   * @access public
-   *
-   * @return None
-   */
-  public function postProcess() {
-    CRM_Contact_Form_Task_SMSCommon::postProcess($this);
-  }
 }
-

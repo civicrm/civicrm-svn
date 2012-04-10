@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,89 +34,97 @@
  *
  */
 
+
 /**
  * Page for displaying list of location types
  */
-class CRM_Admin_Page_PreferencesDate extends CRM_Core_Page_Basic {
+class CRM_Admin_Page_PreferencesDate extends CRM_Core_Page_Basic 
+{
+    /**
+     * The action links that we need to display for the browse screen
+     *
+     * @var array
+     * @static
+     */
+    static $_links = null;
 
-  /**
-   * The action links that we need to display for the browse screen
-   *
-   * @var array
-   * @static
-   */
-  static $_links = NULL;
-
-  /**
-   * Get BAO Name
-   *
-   * @return string Classname of BAO.
-   */
-  function getBAOName() {
-    return 'CRM_Core_BAO_PreferencesDate';
-  }
-
-  /**
-   * Get action Links
-   *
-   * @return array (reference) of action links
-   */
-  function &links() {
-    if (!(self::$_links)) {
-      self::$_links = array(
-        CRM_Core_Action::UPDATE => array(
-          'name' => ts('Edit'),
-          'url' => 'civicrm/admin/setting/preferences/date',
-          'qs' => 'action=update&id=%%id%%&reset=1',
-          'title' => ts('Edit Date Type'),
-        ),
-      );
+    /**
+     * Get BAO Name
+     *
+     * @return string Classname of BAO.
+     */
+    function getBAOName() 
+    {
+        return 'CRM_Core_BAO_PreferencesDate';
     }
-    return self::$_links;
-  }
 
-  /**
-   * Run the page.
-   *
-   * This method is called after the page is created. It checks for the
-   * type of action and executes that action.
-   * Finally it calls the parent's run method.
-   *
-   * @return void
-   * @access public
-   *
-   */
-  function run() {
-    // set title and breadcrumb
-    CRM_Utils_System::setTitle(ts('Settings - Date Preferences'));
-    return parent::run();
-  }
+    /**
+     * Get action Links
+     *
+     * @return array (reference) of action links
+     */
+    function &links()
+    {
+        if (!(self::$_links)) {
+            self::$_links = array(
+                                  CRM_Core_Action::UPDATE  => array(
+                                                                    'name'  => ts('Edit'),
+                                                                    'url'   => 'civicrm/admin/setting/preferences/date',
+                                                                    'qs'    => 'action=update&id=%%id%%&reset=1',
+                                                                    'title' => ts('Edit Date Type') 
+                                                                    ),
+                                  );
+        }
+        return self::$_links;
+    }
 
-  /**
-   * Get name of edit form
-   *
-   * @return string Classname of edit form.
-   */
-  function editForm() {
-    return 'CRM_Admin_Form_PreferencesDate';
-  }
+    /**
+        * Run the page.
+     *
+     * This method is called after the page is created. It checks for the  
+     * type of action and executes that action.
+     * Finally it calls the parent's run method.
+     *
+     * @return void
+     * @access public
+     *
+     */
+    function run()
+    {
+        // set title and breadcrumb
+        CRM_Utils_System::setTitle(ts('Settings - Date Preferences'));
+        return parent::run();
+    }
 
-  /**
-   * Get edit form name
-   *
-   * @return string name of this page.
-   */
-  function editName() {
-    return 'Date Preferences';
-  }
-
-  /**
-   * Get user context.
-   *
-   * @return string user context.
-   */
-  function userContext($mode = NULL) {
-    return 'civicrm/admin/setting/preferences/date';
-  }
+    /**
+     * Get name of edit form
+     *
+     * @return string Classname of edit form.
+     */
+    function editForm() 
+    {
+        return 'CRM_Admin_Form_PreferencesDate';
+    }
+    
+    /**
+     * Get edit form name
+     *
+     * @return string name of this page.
+     */
+    function editName() 
+    {
+        return 'Date Preferences';
+    }
+    
+    /**
+     * Get user context.
+     *
+     * @return string user context.
+     */
+    function userContext($mode = null) 
+    {
+        return 'civicrm/admin/setting/preferences/date';
+    }
 }
+
 

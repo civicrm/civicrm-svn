@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,117 +34,118 @@
  *
  */
 
+
 /**
- * This class holds all the Pseudo constants those
- * are specific to Campaign and Survey.
+ * This class holds all the Pseudo constants those 
+ * are specific to Campaign and Survey. 
  */
-class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant {
-
-  /**
-   * Activity types
-   * @var array
-   * @static
-   */
-  private static $activityType;
-
-  /**
-   * Campaign Type
-   * @var array
-   * @static
-   */
-  private static $campaignType = array();
-
-  /**
-   * Campaign Status
-   * @var array
-   * @static
-   */
-  private static $campaignStatus = array();
-
-  /**
-   * Engagement Level
-   * @static
-   */
-  private static $engagementLevel;
-
-  /**
-   * Get all the survey activity types
-   *
-   * @access public
-   *
-   * @return array - array reference of all survey activity types.
-   * @static
-   */
-  public static function &activityType($returnColumn = 'name') {
-    $cacheKey = $returnColumn;
-    if (!isset(self::$activityType[$cacheKey])) {
-      $campaingCompId = CRM_Core_Component::getComponentID('CiviCampaign');
-      if ($campaingCompId) {
-        self::$activityType[$cacheKey] = CRM_Core_OptionGroup::values('activity_type',
-          FALSE, FALSE, FALSE,
-          " AND v.component_id={$campaingCompId}",
-          $returnColumn
-        );
-      }
-    }
-    asort(self::$activityType[$cacheKey]);
-    return self::$activityType[$cacheKey];
-  }
-
-  /**
-   * Get all campaign types.
-   *
-   * The static array campaignType is returned
-   *
-   * @access public
-   * @static
-   *
-   * @return array - array reference of all campaign types.
-   *
-   */
-  public static function &campaignType() {
-    if (!self::$campaignType) {
-      self::$campaignType = CRM_Core_OptionGroup::values('campaign_type');
-    }
-    asort(self::$campaignType);
-    return self::$campaignType;
-  }
-
-  /**
-   * Get all campaign status.
-   *
-   * The static array campaignStatus is returned
-   *
-   * @access public
-   * @static
-   *
-   * @return array - array reference of all campaign status.
-   *
-   */
-  public static function &campaignStatus() {
-    if (!self::$campaignStatus) {
-      self::$campaignStatus = CRM_Core_OptionGroup::values('campaign_status');
-    }
-    asort(self::$campaignStatus);
-    return self::$campaignStatus;
-  }
-
-  /**
-   * Get all Engagement Level.
-   *
-   * The static array Engagement Level is returned
-   *
-   * @access public
-   * @static
-   *
-   * @return array - array reference of all Engagement Level.
-   */
-  public static function &engagementLevel() {
-    if (!isset(self::$engagementLevel)) {
-      self::$engagementLevel = CRM_Core_OptionGroup::values('engagement_index');
+class CRM_Campaign_PseudoConstant extends CRM_Core_PseudoConstant 
+{
+    /**
+     * Activity types
+     * @var array
+     * @static
+     */
+    private static $activityType;
+    
+    /**
+     * Campaign Type
+     * @var array
+     * @static
+     */
+    private static $campaignType = array();
+    
+    /**
+     * Campaign Status
+     * @var array
+     * @static
+     */
+    private static $campaignStatus = array();
+    
+    /**
+     * Engagement Level 
+     * @static
+     */
+    private static $engagementLevel;
+    
+    /**
+     * Get all the survey activity types
+     *
+     * @access public
+     * @return array - array reference of all survey activity types.
+     * @static
+     */
+    public static function &activityType( $returnColumn = 'name' )
+    {
+        $cacheKey = $returnColumn;
+        if ( !isset( self::$activityType[$cacheKey] ) ) {
+            $campaingCompId = CRM_Core_Component::getComponentID('CiviCampaign');
+            if ( $campaingCompId ) {
+                self::$activityType[$cacheKey] = CRM_Core_OptionGroup::values( 'activity_type', 
+                                                                               false, false, false, 
+                                                                               " AND v.component_id={$campaingCompId}" , 
+                                                                               $returnColumn );
+            }
+        }
+        asort( self::$activityType[$cacheKey] );
+        return self::$activityType[$cacheKey];
     }
 
-    return self::$engagementLevel;
-  }
+    /**
+     * Get all campaign types.
+     *
+     * The static array campaignType is returned
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all campaign types.
+     *
+     */
+    public static function &campaignType( )
+    {
+        if ( ! self::$campaignType ) {
+            self::$campaignType = CRM_Core_OptionGroup::values('campaign_type');
+        }
+        asort( self::$campaignType );
+        return self::$campaignType;
+    }
+    
+    /**
+     * Get all campaign status.
+     *
+     * The static array campaignStatus is returned
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all campaign status.
+     *
+     */
+    public static function &campaignStatus( )
+    {
+        if ( ! self::$campaignStatus ) {
+            self::$campaignStatus = CRM_Core_OptionGroup::values('campaign_status');
+        }
+        asort( self::$campaignStatus );
+        return self::$campaignStatus;
+    }
+    
+    /**
+     * Get all Engagement Level.
+     *
+     * The static array Engagement Level is returned
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all Engagement Level.
+     */
+    public static function &engagementLevel( )
+    {
+        if ( ! isset( self::$engagementLevel ) ) {
+            self::$engagementLevel = CRM_Core_OptionGroup::values('engagement_index');
+        }
+        
+        return self::$engagementLevel;
+    }
+    
 }
 

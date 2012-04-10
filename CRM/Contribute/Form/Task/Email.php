@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,67 +34,71 @@
  *
  */
 
+
 /**
  * This class provides the functionality to email a group of
- * contacts.
+ * contacts. 
  */
 class CRM_Contribute_Form_Task_Email extends CRM_Contribute_Form_Task {
 
-  /**
-   * Are we operating in "single mode", i.e. sending email to one
-   * specific contact?
-   *
-   * @var boolean
-   */
-  public $_single = FALSE;
+    /**
+     * Are we operating in "single mode", i.e. sending email to one
+     * specific contact?
+     *
+     * @var boolean
+     */
+    public $_single = false;
 
-  public $_noEmails = FALSE;
+    public $_noEmails = false;
 
-  /**
-   * all the existing templates in the system
-   *
-   * @var array
-   */
-  public $_templates = NULL;
+    /**
+     * all the existing templates in the system
+     *
+     * @var array
+     */
+    public $_templates = null;
 
-  /**
-   * build all the data structures needed to build the form
-   *
-   * @return void
-   * @access public
-   */ function preProcess() {
-    CRM_Contact_Form_Task_EmailCommon::preProcessFromAddress($this);
-    parent::preProcess();
+    /**
+     * build all the data structures needed to build the form
+     *
+     * @return void
+     * @access public
+     */
+    
+    function preProcess( ) {
+        CRM_Contact_Form_Task_EmailCommon::preProcessFromAddress( $this );
+        parent::preProcess( );
 
-    // we have all the contribution ids, so now we get the contact ids
-    parent::setContactIDs();
+        // we have all the contribution ids, so now we get the contact ids
+        parent::setContactIDs( );
+        
+        $this->assign( 'single', $this->_single );
+    }
+    
+    /**
+     * Build the form
+     *
+     * @access public
+     * @return void
+     */
+    public function buildQuickForm()
+    {
+        //enable form element
+        $this->assign( 'emailTask', true );
 
-    $this->assign('single', $this->_single);
-  }
+        CRM_Contact_Form_Task_EmailCommon::buildQuickForm( $this );
+    }
 
-  /**
-   * Build the form
-   *
-   * @access public
-   *
-   * @return void
-   */
-  public function buildQuickForm() {
-    //enable form element
-    $this->assign('emailTask', TRUE);
+    /**
+     * process the form after the input has been submitted and validated
+     *
+     * @access public
+     * @return None
+     */
+    public function postProcess() {
+        CRM_Contact_Form_Task_EmailCommon::postProcess( $this );
+    }
 
-    CRM_Contact_Form_Task_EmailCommon::buildQuickForm($this);
-  }
-
-  /**
-   * process the form after the input has been submitted and validated
-   *
-   * @access public
-   *
-   * @return None
-   */
-  public function postProcess() {
-    CRM_Contact_Form_Task_EmailCommon::postProcess($this);
-  }
 }
+
 

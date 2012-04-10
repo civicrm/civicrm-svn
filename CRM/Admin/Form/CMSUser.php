@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,41 +34,44 @@
  *
  */
 
+
 /**
  * This class generates form components for Synchronizing CMS Users
- *
+ * 
  */
-class CRM_Admin_Form_CMSUser extends CRM_Core_Form {
+class CRM_Admin_Form_CMSUser extends CRM_Core_Form
+{
+    /**
+     * Function to build the form
+     *
+     * @return None
+     * @access public
+     */
+    public function buildQuickForm( ) 
+    {
 
-  /**
-   * Function to build the form
-   *
-   * @return None
-   * @access public
-   */
-  public function buildQuickForm() {
+        $this->addButtons(array(
+                                array ('type'      => 'next',
+                                       'name'      => ts('OK'),
+                                       'isDefault' => true),
+                                array ('type'      => 'cancel',
+                                       'name'      => ts('Cancel')),
+                                )
+                          );
+        
+    }
 
-    $this->addButtons(array(
-        array('type' => 'next',
-          'name' => ts('OK'),
-          'isDefault' => TRUE,
-        ),
-        array('type' => 'cancel',
-          'name' => ts('Cancel'),
-        ),
-      )
-    );
-  }
-
-  /**
-   * Function to process the form
-   *
-   * @access public
-   *
-   * @return None
-   */
-  public function postProcess() {
-    CRM_Core_BAO_CMSUser::synchronize();
-  }
+       
+    /**
+     * Function to process the form
+     *
+     * @access public
+     * @return None
+     */
+    public function postProcess() 
+    {
+        CRM_Core_BAO_CMSUser::synchronize();
+    }
 }
+
 

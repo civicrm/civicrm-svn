@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,32 +34,34 @@
  *
  */
 
+
 /**
  * This class generates form components for Error Handling and Debugging
- *
+ * 
  */
-class CRM_Admin_Form_Setting_Debugging extends CRM_Admin_Form_Setting {
+class CRM_Admin_Form_Setting_Debugging extends CRM_Admin_Form_Setting
+{
+    /**
+     * Function to build the form
+     *
+     * @return None
+     * @access public
+     */
+    public function buildQuickForm( ) {
+        CRM_Utils_System::setTitle(ts(' Settings - Debugging and Error Handling '));
 
-  /**
-   * Function to build the form
-   *
-   * @return None
-   * @access public
-   */
-  public function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts(' Settings - Debugging and Error Handling '));
+        $config = CRM_Core_Config::singleton( );
 
-    $config = CRM_Core_Config::singleton();
+        $this->addYesNo( 'debug', ts( 'Enable Debugging' ));
+        if ( $config->userSystem->is_drupal == '1') {
+            $this->addYesNo( 'userFrameworkLogging', ts( 'Enable Drupal Watchdog Logging' ));
+        }
+        $this->addYesNo( 'backtrace', ts( 'Display Backtrace' ));
+        $this->addElement('text','fatalErrorTemplate', ts('Fatal Error Template'));  
+        $this->addElement('text','fatalErrorHandler', ts('Fatal Error Handler'));  
 
-    $this->addYesNo('debug', ts('Enable Debugging'));
-    if ($config->userSystem->is_drupal == '1') {
-      $this->addYesNo('userFrameworkLogging', ts('Enable Drupal Watchdog Logging'));
+        parent::buildQuickForm();     
     }
-    $this->addYesNo('backtrace', ts('Display Backtrace'));
-    $this->addElement('text', 'fatalErrorTemplate', ts('Fatal Error Template'));
-    $this->addElement('text', 'fatalErrorHandler', ts('Fatal Error Handler'));
-
-    parent::buildQuickForm();
-  }
 }
+
 

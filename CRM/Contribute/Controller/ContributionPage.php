@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,6 +34,7 @@
  *
  */
 
+
 /**
  * This class is used by the Search functionality.
  *
@@ -44,23 +46,26 @@
  * The second form is used to process search results with the asscociated actions
  *
  */
+
 class CRM_Contribute_Controller_ContributionPage extends CRM_Core_Controller {
 
-  /**
-   * class constructor
-   */
-  function __construct($title = NULL, $action = CRM_Core_Action::NONE, $modal = TRUE) {
+    /**
+     * class constructor
+     */
+    function __construct( $title = null, $action = CRM_Core_Action::NONE, $modal = true ) {
 
-    parent::__construct($title, $modal);
+        parent::__construct( $title, $modal );
 
+        
+        $this->_stateMachine = new CRM_Contribute_StateMachine_ContributionPage( $this, $action );
 
-    $this->_stateMachine = new CRM_Contribute_StateMachine_ContributionPage($this, $action);
+        // create and instantiate the pages
+        $this->addPages( $this->_stateMachine, $action );
 
-    // create and instantiate the pages
-    $this->addPages($this->_stateMachine, $action);
+        // add all the actions
+        $this->addActions( );
+    }
 
-    // add all the actions
-    $this->addActions();
-  }
 }
+
 

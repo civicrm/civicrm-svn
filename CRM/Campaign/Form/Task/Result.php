@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,35 +34,39 @@
  *
  */
 
+
 /**
  * Used for displaying results
  *
  *
  */
-class CRM_Campaign_Form_Task_Result extends CRM_Campaign_Form_Task {
+class CRM_Campaign_Form_Task_Result extends CRM_Campaign_Form_Task 
+{
+    
+    /**
+     * build all the data structures needed to build the form
+     *
+     * @return void
+     * @access public
+     */
+    function preProcess( ) 
+    {
+    }
 
-  /**
-   * build all the data structures needed to build the form
-   *
-   * @return void
-   * @access public
-   */
-  function preProcess() {}
+    /**
+     * Function to actually build the form
+     *
+     * @return None
+     * @access public
+     */
+    public function buildQuickForm( ) {
+        $this->addButtons( array(
+                                 array ( 'type'      => 'done',
+                                         'name'      => ts('Done'),
+                                         'isDefault' => true   ),
+                                 )
+                           );
+    }
 
-  /**
-   * Function to actually build the form
-   *
-   * @return None
-   * @access public
-   */
-  public function buildQuickForm() {
-    $this->addButtons(array(
-        array('type' => 'done',
-          'name' => ts('Done'),
-          'isDefault' => TRUE,
-        ),
-      )
-    );
-  }
 }
 

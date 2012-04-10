@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,8 +26,9 @@
  +--------------------------------------------------------------------+
 */
 
+
 /**
- * This class introduces component to the system and provides all the
+ * This class introduces component to the system and provides all the 
  * information about it. It needs to extend CRM_Core_Component_Info
  * abstract class.
  *
@@ -35,72 +37,74 @@
  * $Id$
  *
  */
-class CRM_Contribute_Info extends CRM_Core_Component_Info {
+class CRM_Contribute_Info extends CRM_Core_Component_Info
+{
 
 
-  // docs inherited from interface
-  protected $keyword = 'contribute';
+    // docs inherited from interface
+    protected $keyword = 'contribute';
 
-  // docs inherited from interface
-  public function getInfo() {
-    return array('name' => 'CiviContribute',
-      'translatedName' => ts('CiviContribute'),
-      'title' => ts('CiviCRM Contribution Engine'),
-      'search' => 1,
-      'showActivitiesInCore' => 1,
-    );
-  }
-
-  // docs inherited from interface
-  public function getPermissions() {
-    return array('access CiviContribute',
-      'edit contributions',
-      'make online contributions',
-      'delete in CiviContribute',
-    );
-  }
-
-
-  // docs inherited from interface
-  public function getUserDashboardElement() {
-    return array('name' => ts('Contributions'),
-      'title' => ts('Your Contribution(s)'),
-      'perm' => array('make online contributions'),
-      'weight' => 10,
-    );
-  }
-
-  // docs inherited from interface
-  public function registerTab() {
-    return array('title' => ts('Contributions'),
-      'url' => 'contribution',
-      'weight' => 20,
-    );
-  }
-
-  // docs inherited from interface
-  public function registerAdvancedSearchPane() {
-    return array('title' => ts('Contributions'),
-      'weight' => 20,
-    );
-  }
-
-  // docs inherited from interface
-  public function getActivityTypes() {
-    return NULL;
-  }
-
-  // add shortcut to Create New
-  public function creatNewShortcut(&$shortCuts) {
-    if (CRM_Core_Permission::check('access CiviContribute') &&
-      CRM_Core_Permission::check('edit contributions')
-    ) {
-      $shortCuts = array_merge($shortCuts, array(array('path' => 'civicrm/contribute/add',
-            'query' => "reset=1&action=add&context=standalone",
-            'ref' => 'new-contribution',
-            'title' => ts('Contribution'),
-          )));
+    // docs inherited from interface
+    public function getInfo()
+    {
+        return  array( 'name'	              => 'CiviContribute',
+                       'translatedName'       => ts('CiviContribute'),
+                       'title'                => ts('CiviCRM Contribution Engine'),
+                       'search'               => 1,
+                       'showActivitiesInCore' => 1 
+                       );
     }
-  }
+
+    // docs inherited from interface
+    public function getPermissions()
+    {
+        return array( 'access CiviContribute',
+                      'edit contributions',
+                      'make online contributions',
+                      'delete in CiviContribute' );
+    }
+
+
+    // docs inherited from interface
+    public function getUserDashboardElement()
+    {
+        return array( 'name'    => ts( 'Contributions' ),
+                      'title'   => ts( 'Your Contribution(s)' ),
+                      'perm'    => array( 'make online contributions' ),
+                      'weight'  => 10 );
+    }
+
+    // docs inherited from interface
+    public function registerTab()
+    {
+        return array( 'title'   => ts( 'Contributions' ),
+                      'url'     => 'contribution',
+                      'weight'  => 20 );
+    }
+
+    // docs inherited from interface
+    public function registerAdvancedSearchPane()
+    {
+        return array( 'title'   => ts( 'Contributions' ),
+                      'weight'  => 20 );
+    }
+
+    // docs inherited from interface    
+    public function getActivityTypes()
+    {
+        return null;
+    }
+    
+    // add shortcut to Create New
+    public function creatNewShortcut( &$shortCuts ) {
+        if ( CRM_Core_Permission::check('access CiviContribute') &&
+             CRM_Core_Permission::check('edit contributions') ) {
+            $shortCuts = 
+                array_merge($shortCuts, array( array( 'path'  => 'civicrm/contribute/add',
+                                                      'query' => "reset=1&action=add&context=standalone",
+                                                      'ref'   => 'new-contribution',
+                                                      'title' => ts('Contribution') ) ));
+        }
+    }
 }
 

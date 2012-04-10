@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,171 +34,173 @@
  *
  */
 
+
 /**
  * form to process actions on the group aspect of Custom Data
  */
-class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_ContributionPage {
+class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_ContributionPage 
+{
+    /**
+     * Function to actually build the form
+     *
+     * @return void
+     * @access public
+     */
+    public function buildQuickForm()
+    {
+        $types    = array_merge( array( 'Contact', 'Individual','Contribution','Membership'),
+                                 CRM_Contact_BAO_ContactType::subTypes( 'Individual' ) );
+        
+        $profiles        = CRM_Core_BAO_UFGroup::getProfiles( $types );        
+        $excludeTypes    = array( 'Organization', 'Household', 'Participant', 'Activity' );
+        
+        $excludeProfiles = CRM_Core_BAO_UFGroup::getProfiles( $excludeTypes );
+        
+        foreach ( $excludeProfiles as $key => $value ) {
+            if ( in_array( $value, $profiles ) ) {
+                unset( $profiles[$key] );
+            }
+        }
+                                
+        if ( empty( $profiles ) ) {
+            $this->assign( 'noProfile', true );
+        }
 
-  /**
-   * Function to actually build the form
-   *
-   * @return void
-   * @access public
-   */
-  public function buildQuickForm() {
-    $types = array_merge(array('Contact', 'Individual', 'Contribution', 'Membership'),
-      CRM_Contact_BAO_ContactType::subTypes('Individual')
-    );
+        $this->add( 'select', 'custom_pre_id' , ts('Include Profile') . '<br />' . ts('(top of page)'), array('' => ts('- select -')) + $profiles );
+        $this->add( 'select', 'custom_post_id', ts('Include Profile') . '<br />' . ts('(bottom of page)'), array('' => ts('- select -')) + $profiles );
 
-    $profiles = CRM_Core_BAO_UFGroup::getProfiles($types);
-    $excludeTypes = array('Organization', 'Household', 'Participant', 'Activity');
-
-    $excludeProfiles = CRM_Core_BAO_UFGroup::getProfiles($excludeTypes);
-
-    foreach ($excludeProfiles as $key => $value) {
-      if (in_array($value, $profiles)) {
-        unset($profiles[$key]);
-      }
+        $this->addFormRule( array( 'CRM_Contribute_Form_ContributionPage_Custom', 'formRule' ) , $this->_id);
+        
+        parent::buildQuickForm( );
     }
 
-    if (empty($profiles)) {
-      $this->assign('noProfile', TRUE);
+    /** 
+     * This function sets the default values for the form. Note that in edit/view mode 
+     * the default values are retrieved from the database 
+     * 
+     * @access public 
+     * @return void 
+     */ 
+    function setDefaultValues() 
+    { 
+        $defaults = parent::setDefaultValues( );
+
+         if ( $this->_id ) {
+             $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $this->_id, 'title' );
+             CRM_Utils_System::setTitle(ts('Include Profiles (%1)', array(1 => $title)));
+         }
+            
+
+        $ufJoinParams = array( 'module'       => 'CiviContribute',
+                               'entity_table' => 'civicrm_contribution_page',  
+                               'entity_id'    => $this->_id );
+        list( $defaults['custom_pre_id'],
+              $defaults['custom_post_id'] ) = 
+            CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams ); 
+        
+        return $defaults;
     }
 
-    $this->add('select', 'custom_pre_id', ts('Include Profile') . '<br />' . ts('(top of page)'), array('' => ts('- select -')) + $profiles);
-    $this->add('select', 'custom_post_id', ts('Include Profile') . '<br />' . ts('(bottom of page)'), array('' => ts('- select -')) + $profiles);
+    /**
+     * Process the form
+     *
+     * @return void
+     * @access public
+     */
+    public function postProcess()
+    {
+        // get the submitted form values.
+        $params = $this->controller->exportValues( $this->_name );
 
-    $this->addFormRule(array('CRM_Contribute_Form_ContributionPage_Custom', 'formRule'), $this->_id);
+        if ($this->_action & CRM_Core_Action::UPDATE) {
+            $params['id'] = $this->_id;
+        }
 
-    parent::buildQuickForm();
-  }
+        $transaction = new CRM_Core_Transaction( );
+         
+        // also update uf join table
+        $ufJoinParams = array( 'is_active'    => 1, 
+                               'module'       => 'CiviContribute',
+                               'entity_table' => 'civicrm_contribution_page', 
+                               'entity_id'    => $this->_id );
 
-  /**
-   * This function sets the default values for the form. Note that in edit/view mode
-   * the default values are retrieved from the database
-   *
-   * @access public
-   *
-   * @return void
-   */
-  function setDefaultValues() {
-    $defaults = parent::setDefaultValues();
+        // first delete all past entries
+        CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );
 
-    if ($this->_id) {
-      $title = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $this->_id, 'title');
-      CRM_Utils_System::setTitle(ts('Include Profiles (%1)', array(1 => $title)));
+        if ( ! empty( $params['custom_pre_id'] ) ) {
+            $ufJoinParams['weight'     ] = 1;
+            $ufJoinParams['uf_group_id'] = $params['custom_pre_id'];
+            CRM_Core_BAO_UFJoin::create( $ufJoinParams );
+        }
+
+        unset( $ufJoinParams['id'] );
+
+        if ( ! empty( $params['custom_post_id'] ) ) {
+            $ufJoinParams['weight'     ] = 2; 
+            $ufJoinParams['uf_group_id'] = $params['custom_post_id'];  
+            CRM_Core_BAO_UFJoin::create( $ufJoinParams ); 
+        }
+
+        $transaction->commit( ); 
+        parent::endPostProcess( );
     }
 
-
-    $ufJoinParams = array('module' => 'CiviContribute',
-      'entity_table' => 'civicrm_contribution_page',
-      'entity_id' => $this->_id,
-    );
-    list($defaults['custom_pre_id'],
-      $defaults['custom_post_id']
-    ) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
-
-    return $defaults;
-  }
-
-  /**
-   * Process the form
-   *
-   * @return void
-   * @access public
-   */
-  public function postProcess() {
-    // get the submitted form values.
-    $params = $this->controller->exportValues($this->_name);
-
-    if ($this->_action & CRM_Core_Action::UPDATE) {
-      $params['id'] = $this->_id;
+    /** 
+     * Return a descriptive name for the page, used in wizard header 
+     * 
+     * @return string 
+     * @access public 
+     */ 
+    public function getTitle( ) 
+    {
+        return ts( 'Include Profiles' );
     }
 
-    $transaction = new CRM_Core_Transaction();
+    /**  
+     * global form rule  
+     *  
+     * @param array $fields  the input form values  
+     *  
+     * @return true if no errors, else array of errors  
+     * @access public  
+     * @static  
+     */  
+    static function formRule( $fields, $files, $contributionPageId ) 
+    {  
+        $errors = array( );  
+        $preProfileType = $postProfileType = null;
+        // for membership profile make sure Membership section is enabled
+        // get membership section for this contribution page
+        $dao = new CRM_Member_DAO_MembershipBlock();
+        $dao->entity_table = 'civicrm_contribution_page';
+        $dao->entity_id    = $contributionPageId; 
+        
+        $membershipEnable = false;
+        
+        if ( $dao->find(true) && $dao->is_active ) {
+            $membershipEnable = true;
+        }
+        
+        if ( $fields['custom_pre_id'] ) {
+            $preProfileType  = CRM_Core_BAO_UFField::getProfileType( $fields['custom_pre_id'] );
+        }
 
-    // also update uf join table
-    $ufJoinParams = array('is_active' => 1,
-      'module' => 'CiviContribute',
-      'entity_table' => 'civicrm_contribution_page',
-      'entity_id' => $this->_id,
-    );
+        if ( $fields['custom_post_id'] ) {
+            $postProfileType = CRM_Core_BAO_UFField::getProfileType( $fields['custom_post_id'] );
+        }
+        
+        $errorMsg = ts('You must enable the Membership Block for this Contribution Page if you want to include a Profile with Membership fields.');
 
-    // first delete all past entries
-    CRM_Core_BAO_UFJoin::deleteAll($ufJoinParams);
+        if ( ( $preProfileType == 'Membership' ) && !$membershipEnable ) {
+            $errors['custom_pre_id'] = $errorMsg;
+        }
+        
+        if ( ( $postProfileType == 'Membership' ) && !$membershipEnable ) {
+            $errors['custom_post_id'] = $errorMsg;
+        }
 
-    if (!empty($params['custom_pre_id'])) {
-      $ufJoinParams['weight'] = 1;
-      $ufJoinParams['uf_group_id'] = $params['custom_pre_id'];
-      CRM_Core_BAO_UFJoin::create($ufJoinParams);
+        return empty($errors) ? true : $errors;
     }
-
-    unset($ufJoinParams['id']);
-
-    if (!empty($params['custom_post_id'])) {
-      $ufJoinParams['weight'] = 2;
-      $ufJoinParams['uf_group_id'] = $params['custom_post_id'];
-      CRM_Core_BAO_UFJoin::create($ufJoinParams);
-    }
-
-    $transaction->commit();
-    parent::endPostProcess();
-  }
-
-  /**
-   * Return a descriptive name for the page, used in wizard header
-   *
-   * @return string
-   * @access public
-   */
-  public function getTitle() {
-    return ts('Include Profiles');
-  }
-
-  /**
-   * global form rule
-   *
-   * @param array $fields  the input form values
-   *
-   * @return true if no errors, else array of errors
-   * @access public
-   * @static
-   */
-  static
-  function formRule($fields, $files, $contributionPageId) {
-    $errors = array();
-    $preProfileType = $postProfileType = NULL;
-    // for membership profile make sure Membership section is enabled
-    // get membership section for this contribution page
-    $dao               = new CRM_Member_DAO_MembershipBlock();
-    $dao->entity_table = 'civicrm_contribution_page';
-    $dao->entity_id    = $contributionPageId;
-
-    $membershipEnable = FALSE;
-
-    if ($dao->find(TRUE) && $dao->is_active) {
-      $membershipEnable = TRUE;
-    }
-
-    if ($fields['custom_pre_id']) {
-      $preProfileType = CRM_Core_BAO_UFField::getProfileType($fields['custom_pre_id']);
-    }
-
-    if ($fields['custom_post_id']) {
-      $postProfileType = CRM_Core_BAO_UFField::getProfileType($fields['custom_post_id']);
-    }
-
-    $errorMsg = ts('You must enable the Membership Block for this Contribution Page if you want to include a Profile with Membership fields.');
-
-    if (($preProfileType == 'Membership') && !$membershipEnable) {
-      $errors['custom_pre_id'] = $errorMsg;
-    }
-
-    if (($postProfileType == 'Membership') && !$membershipEnable) {
-      $errors['custom_post_id'] = $errorMsg;
-    }
-
-    return empty($errors) ? TRUE : $errors;
-  }
 }
+
 

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,6 +34,7 @@
  *
  */
 
+
 /**
  * This is a dummy class that does nothing at the moment.
  * the template is used primarily for displaying result page
@@ -40,16 +42,18 @@
  * and then subjected to Tasks/Actions.
  *
  */
-class CRM_Contact_Page_Task extends CRM_Core_Page {
 
-  /**
-   * returns the page title
-   *
-   * @return string the title of the page
-   * @access public
-   */
-  function getTitle() {
-    return "Task Results";
-  }
+class CRM_Contact_Page_Task extends CRM_Core_Page {
+    /**
+     * returns the page title
+     *
+     * @return string the title of the page
+     * @access public
+     */
+    function getTitle()
+    {
+        return "Task Results";
+    }
+
 }
 

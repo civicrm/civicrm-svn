@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,34 +34,35 @@
  *
  */
 
+
 /**
- * This class provides the functionality to map
+ * This class provides the functionality to map 
  * the address for group of
- * contacts.
+ * contacts. 
  */
-class CRM_Contact_Form_Task_Map_Event extends CRM_Contact_Form_Task_Map {
+class CRM_Contact_Form_Task_Map_Event  extends CRM_Contact_Form_Task_Map {
 
-  /**
-   * build all the data structures needed to build the form
-   *
-   * @return void
-   * @access public
-   */
-  function preProcess() {
-    $ids = CRM_Utils_Request::retrieve('eid', 'Positive',
-      $this, TRUE
-    );
-    $lid = CRM_Utils_Request::retrieve('lid', 'Positive',
-      $this, FALSE
-    );
-    $type = 'Event';
-    self::createMapXML($ids, $lid, $this, TRUE, $type);
-    $this->assign('single', FALSE);
-    $this->assign('skipLocationType', TRUE);
-  }
+    /**
+     * build all the data structures needed to build the form
+     *
+     * @return void
+     * @access public
+     */
+    function preProcess( ) {
+        $ids = CRM_Utils_Request::retrieve( 'eid', 'Positive',
+                                            $this, true );
+        $lid = CRM_Utils_Request::retrieve( 'lid', 'Positive',
+                                            $this, false );
+        $type = 'Event';
+        self::createMapXML( $ids, $lid, $this, true ,$type);
+        $this->assign( 'single', false );
+        $this->assign( 'skipLocationType', true );
+    }
 
-  function getTemplateFileName() {
-    return 'CRM/Contact/Form/Task/Map.tpl';
-  }
+    function getTemplateFileName( ) {
+        return 'CRM/Contact/Form/Task/Map.tpl';
+    }
+
 }
+
 

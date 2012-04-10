@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,61 +34,66 @@
  *
  */
 
+
 /**
  * This class generates form components for the component preferences
- *
+ * 
  */
-class CRM_Admin_Form_Preferences_Mailing extends CRM_Admin_Form_Preferences {
-  function preProcess() {
-    CRM_Utils_System::setTitle(ts('CiviMail Component Settings'));
-    $this->_varNames = array(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
-      array(
-        'profile_double_optin' =>
-        array('html_type' => 'checkbox',
-          'title' => ts('Enable Double Opt-in for Profile Group(s) field'),
-          'weight' => 1,
-          'description' => ts('When CiviMail is enabled, users who "subscribe" to a group from a profile Group(s) checkbox will receive a confirmation email. They must respond (opt-in) before they are added to the group.'),
-        ),
-        'profile_add_to_group_double_optin' =>
-        array('html_type' => 'checkbox',
-          'title' => ts('Enable Double Opt-in for Profiles which use the "Add to Group" setting'),
-          'weight' => 2,
-          'description' => ts('When CiviMail is enabled and a profile uses the "Add to Group" setting, users who complete the profile form will receive a confirmation email. They must respond (opt-in) before they are added to the group.'),
-        ),
-        'track_civimail_replies' =>
-        array('html_type' => 'checkbox',
-          'title' => ts('Track replies using VERP in Reply-To header'),
-          'weight' => 3,
-          'description' => ts('If checked, mailings will default to tracking replies using VERP-ed Reply-To.'),
-        ),
-        'civimail_workflow' =>
-        array('html_type' => 'checkbox',
-          'title' => ts('Enable workflow support for CiviMail'),
-          'weight' => 4,
-          'description' => ts('Drupal-only. Rules module must be enabled (beta feature - use with caution).'),
-        ),
-        'civimail_multiple_bulk_emails' =>
-        array('html_type' => 'checkbox',
-          'title' => ts('Enable multiple bulk email address for a contact.'),
-          'weight' => 5,
-          'description' => ts('CiviMail will deliver a copy of the email to each bulk email listed for the contact.'),
-        ),
-        'civimail_server_wide_lock' =>
-        array('html_type' => 'checkbox',
-          'title' => ts('Enable global server wide lock for CiviMail'),
-          'weight' => 6,
-          'description' => NULL,
-        ),
-        'include_message_id' =>
-        array('html_type' => 'checkbox',
-          'title' => ts('Enable CiviMail to generate Message-ID header'),
-          'weight' => 7,
-          'description' => NULL,
-        ),
-      ),
-    );
+class CRM_Admin_Form_Preferences_Mailing extends CRM_Admin_Form_Preferences
+{
+    function preProcess( ) {
+        CRM_Utils_System::setTitle(ts('CiviMail Component Settings'));
+        $this->_varNames = 
+            array( CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME =>
+                   array( 
+                         'profile_double_optin'               =>
+                         array( 'html_type'    => 'checkbox',
+                                'title'        => ts( 'Enable Double Opt-in for Profile Group(s) field' ),
+                                'weight'       => 1,
+                                'description'  => ts( 'When CiviMail is enabled, users who "subscribe" to a group from a profile Group(s) checkbox will receive a confirmation email. They must respond (opt-in) before they are added to the group.'),
+                                ),
+                         'profile_add_to_group_double_optin'  => 
+                         array( 'html_type'    => 'checkbox',
+                                'title'        => ts( 'Enable Double Opt-in for Profiles which use the "Add to Group" setting' ),
+                                'weight'       => 2,
+                                'description'  => ts( 'When CiviMail is enabled and a profile uses the "Add to Group" setting, users who complete the profile form will receive a confirmation email. They must respond (opt-in) before they are added to the group.'),
+                                ),
+                         'track_civimail_replies'             => 
+                         array( 'html_type'    => 'checkbox',
+                                'title'        => ts( 'Track replies using VERP in Reply-To header' ),
+                                'weight'       => 3,
+                                'description'  => ts('If checked, mailings will default to tracking replies using VERP-ed Reply-To.'),
+                                ),
+                         'civimail_workflow'                  => 
+                         array( 'html_type'    => 'checkbox',
+                                'title'        => ts( 'Enable workflow support for CiviMail' ),
+                                'weight'       => 4,
+                                'description'  => ts( 'Drupal-only. Rules module must be enabled (beta feature - use with caution).' ),
+                                ),
+                         'civimail_multiple_bulk_emails'      =>
+                         array( 'html_type'    => 'checkbox',
+                                'title'        => ts( 'Enable multiple bulk email address for a contact.' ),
+                                'weight'       => 5,
+                                'description'  => ts( 'CiviMail will deliver a copy of the email to each bulk email listed for the contact.' ),
+                                ),
+                         'civimail_server_wide_lock'          =>
+                         array( 'html_type'    => 'checkbox',
+                                'title'        => ts( 'Enable global server wide lock for CiviMail' ),
+                                'weight'       => 6,
+                                'description'  => null,
+                                ),
+                         'include_message_id'          =>
+                         array( 'html_type'    => 'checkbox',
+                                'title'        => ts( 'Enable CiviMail to generate Message-ID header' ),
+                                'weight'       => 7,
+                                'description'  => null,
+                                ),
+                          )
+                   );
 
-    parent::preProcess();
-  }
+        parent::preProcess( );
+    }
+
 }
+
 

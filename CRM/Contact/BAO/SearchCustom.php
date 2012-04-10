@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -32,110 +33,104 @@
  * $Id$
  *
  */
+
 class CRM_Contact_BAO_SearchCustom {
 
-  static
-  function details($csID, $ssID = NULL, $gID = NULL) {
-    $error = array(NULL, NULL, NULL);
+    static function details( $csID, $ssID = null, $gID = null ) {
+        $error = array( null, null, null );
 
-    if (!$csID &&
-      !$ssID &&
-      !$gID
-    ) {
-      return $error;
+        if ( ! $csID &&
+             ! $ssID &&
+             ! $gID ) {
+            return $error;
+        }
+
+        $customSearchID = $csID;
+        $formValues     = array( );
+        if ( $ssID || $gID ) {
+            if ( $gID ) {
+                $ssID = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $gID, 'saved_search_id' );
+            }
+
+            $formValues = CRM_Contact_BAO_SavedSearch::getFormValues( $ssID );
+            $customSearchID    = CRM_Utils_Array::value( 'customSearchID',
+                                                         $formValues );
+        }
+
+        if ( ! $customSearchID ) {
+            return $error;
+        }
+
+        // check that the csid exists in the db along with the right file
+        // and implements the right interface
+        $customSearchClass = CRM_Core_OptionGroup::getLabel( 'custom_search',
+                                                             $customSearchID );
+        if ( ! $customSearchClass ) {
+            return $error;
+        }
+
+        $ext = new CRM_Core_Extensions();
+        
+        if( ! $ext->isExtensionKey( $customSearchClass ) ) {
+            $customSearchFile = str_replace( '_',
+                                             DIRECTORY_SEPARATOR,
+                                             $customSearchClass ) . '.php';
+        } else {
+            $customSearchFile = $ext->keyToPath( $customSearchClass );
+            $customSearchClass = $ext->keyToClass( $customSearchClass );
+        }
+
+        $error = include_once( $customSearchFile );
+        if ( $error == false ) {
+            CRM_Core_Error::fatal( 'Custom search file: ' . $customSearchFile . ' does not exist. Please verify your custom search settings in CiviCRM administrative panel.' );
+        }
+
+        return array( $customSearchID, $customSearchClass, $formValues );
     }
 
-    $customSearchID = $csID;
-    $formValues = array();
-    if ($ssID || $gID) {
-      if ($gID) {
-        $ssID = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Group', $gID, 'saved_search_id');
-      }
+    static function customClass( $csID, $ssID ) {
+        list( $customSearchID, $customSearchClass, $formValues ) =
+            self::details( $csID, $ssID );
 
-      $formValues = CRM_Contact_BAO_SavedSearch::getFormValues($ssID);
-      $customSearchID = CRM_Utils_Array::value('customSearchID',
-        $formValues
-      );
+        if ( ! $customSearchID ) {
+            CRM_Core_Error::fatal( 'Could not resolve custom search ID' );
+        }
+
+        // instantiate the new class
+        eval( '$customClass = new ' . $customSearchClass . '( $formValues );' );
+
+        return $customClass;
     }
 
-    if (!$customSearchID) {
-      return $error;
+    static function contactIDSQL( $csID, $ssID ) {
+        $customClass = self::customClass( $csID, $ssID );
+        return $customClass->contactIDs( );
     }
 
-    // check that the csid exists in the db along with the right file
-    // and implements the right interface
-    $customSearchClass = CRM_Core_OptionGroup::getLabel('custom_search',
-      $customSearchID
-    );
-    if (!$customSearchClass) {
-      return $error;
+    static function &buildFormValues( $args ) {
+        $args = trim( $args );
+
+        $values = explode( "\n", $args );
+        $formValues = array( );
+        foreach ( $values as $value ) {
+            list( $n, $v ) = CRM_Utils_System::explode( '=', $value, 2 );
+            if ( ! empty( $v ) ) {
+                $formValues[$n] = $v;
+            }
+        }
+        return $formValues;
     }
 
-    $ext = new CRM_Core_Extensions();
+    static function fromWhereEmail( $csID, $ssID ) {
+        $customClass = self::customClass( $csID, $ssID );
 
-    if (!$ext->isExtensionKey($customSearchClass)) {
-      $customSearchFile = str_replace('_',
-        DIRECTORY_SEPARATOR,
-        $customSearchClass
-      ) . '.php';
-    }
-    else {
-      $customSearchFile = $ext->keyToPath($customSearchClass);
-      $customSearchClass = $ext->keyToClass($customSearchClass);
+        $from  = $customClass->from ( );
+        $where = $customClass->where( );
+
+
+        return array( $from, $where );
     }
 
-    $error = include_once ($customSearchFile);
-    if ($error == FALSE) {
-      CRM_Core_Error::fatal('Custom search file: ' . $customSearchFile . ' does not exist. Please verify your custom search settings in CiviCRM administrative panel.');
-    }
-
-    return array($customSearchID, $customSearchClass, $formValues);
-  }
-
-  static
-  function customClass($csID, $ssID) {
-    list($customSearchID, $customSearchClass, $formValues) = self::details($csID, $ssID);
-
-    if (!$customSearchID) {
-      CRM_Core_Error::fatal('Could not resolve custom search ID');
-    }
-
-    // instantiate the new class
-    eval('$customClass = new ' . $customSearchClass . '( $formValues );');
-
-    return $customClass;
-  }
-
-  static
-  function contactIDSQL($csID, $ssID) {
-    $customClass = self::customClass($csID, $ssID);
-    return $customClass->contactIDs();
-  }
-
-  static
-  function &buildFormValues($args) {
-    $args = trim($args);
-
-    $values = explode("\n", $args);
-    $formValues = array();
-    foreach ($values as $value) {
-      list($n, $v) = CRM_Utils_System::explode('=', $value, 2);
-      if (!empty($v)) {
-        $formValues[$n] = $v;
-      }
-    }
-    return $formValues;
-  }
-
-  static
-  function fromWhereEmail($csID, $ssID) {
-    $customClass = self::customClass($csID, $ssID);
-
-    $from = $customClass->from();
-    $where = $customClass->where();
-
-
-    return array($from, $where);
-  }
 }
+
 

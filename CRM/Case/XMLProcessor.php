@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -32,93 +33,88 @@
  * $Id$
  *
  */
+
 class CRM_Case_XMLProcessor {
 
-  static protected $_xml; function retrieve($caseType) {
+    static protected $_xml;
 
-    // trim all spaces from $caseType
-    $caseType = str_replace('_', ' ', $caseType);
-    $caseType = CRM_Utils_String::munge(ucwords($caseType), '', 0);
+    function retrieve( $caseType ) {
 
-    if (!CRM_Utils_Array::value($caseType, self::$_xml)) {
-      if (!self::$_xml) {
-        self::$_xml = array();
-      }
+        // trim all spaces from $caseType
+        $caseType = str_replace('_', ' ', $caseType );
+        $caseType = CRM_Utils_String::munge( ucwords($caseType), '', 0 );
+       
+        if ( ! CRM_Utils_Array::value( $caseType, self::$_xml ) ) {
+            if ( ! self::$_xml ) {
+                self::$_xml = array( );
+            }
 
-      // first check custom templates directory
-      $fileName = NULL;
-      $config = CRM_Core_Config::singleton();
-      if (isset($config->customTemplateDir) &&
-        $config->customTemplateDir
-      ) {
-        // check if the file exists in the custom templates directory
-        $fileName = implode(DIRECTORY_SEPARATOR,
-          array($config->customTemplateDir,
-            'CRM',
-            'Case',
-            'xml',
-            'configuration',
-            "$caseType.xml",
-          )
-        );
-      }
+            // first check custom templates directory
+            $fileName = null;
+            $config   = CRM_Core_Config::singleton( );
+            if ( isset( $config->customTemplateDir ) &&
+                 $config->customTemplateDir ) {
+                // check if the file exists in the custom templates directory
+                $fileName = implode( DIRECTORY_SEPARATOR,
+                                     array( $config->customTemplateDir,
+                                            'CRM',
+                                            'Case', 
+                                            'xml',
+                                            'configuration',
+                                            "$caseType.xml" ) );
+            } 
+            
+            if ( ! $fileName ||
+                 ! file_exists( $fileName ) ) {
+                // check if file exists locally
+                $fileName = implode( DIRECTORY_SEPARATOR,
+                                     array( dirname( __FILE__ ),
+                                            'xml',
+                                            'configuration',
+                                            "$caseType.xml" ) );
 
-      if (!$fileName ||
-        !file_exists($fileName)
-      ) {
-        // check if file exists locally
-        $fileName = implode(DIRECTORY_SEPARATOR,
-          array(dirname(__FILE__),
-            'xml',
-            'configuration',
-            "$caseType.xml",
-          )
-        );
+                if ( ! file_exists( $fileName ) ) {
+                    // check if file exists locally
+                    $fileName = implode( DIRECTORY_SEPARATOR,
+                                     array( dirname( __FILE__ ),
+                                            'xml',
+                                            'configuration.sample',
+                                            "$caseType.xml" ) );
+                }                
+                if ( ! file_exists( $fileName ) ) {
+                    return false;
+                }
+            }
 
-        if (!file_exists($fileName)) {
-          // check if file exists locally
-          $fileName = implode(DIRECTORY_SEPARATOR,
-            array(dirname(__FILE__),
-              'xml',
-              'configuration.sample',
-              "$caseType.xml",
-            )
-          );
+            // read xml file
+            $dom = DomDocument::load( $fileName );
+            $dom->xinclude( );
+            self::$_xml[$caseType] = simplexml_import_dom( $dom );
         }
-        if (!file_exists($fileName)) {
-          return FALSE;
+        return self::$_xml[$caseType];
+    }
+
+    function &allActivityTypes( $indexName = true, $all = false ) {
+        static $activityTypes = null;
+        if ( ! $activityTypes ) {
+            $activityTypes = CRM_Case_PseudoConstant::caseActivityType( $indexName, $all );
         }
-      }
-
-      // read xml file
-      $dom = DomDocument::load($fileName);
-      $dom->xinclude();
-      self::$_xml[$caseType] = simplexml_import_dom($dom);
-    }
-    return self::$_xml[$caseType];
-  }
-
-  function &allActivityTypes($indexName = TRUE, $all = FALSE) {
-    static $activityTypes = NULL;
-    if (!$activityTypes) {
-      $activityTypes = CRM_Case_PseudoConstant::caseActivityType($indexName, $all);
-    }
-    return $activityTypes;
-  }
-
-  function &allRelationshipTypes() {
-    static $relationshipTypes = array();
-
-    if (!$relationshipTypes) {
-      $relationshipInfo = CRM_Core_PseudoConstant::relationshipType();
-
-      $relationshipTypes = array();
-      foreach ($relationshipInfo as $id => $info) {
-        $relationshipTypes[$id] = $info['label_b_a'];
-      }
+        return $activityTypes; 
     }
 
-    return $relationshipTypes;
-  }
+    function &allRelationshipTypes( ) {
+        static $relationshipTypes = array( );
+
+        if ( ! $relationshipTypes ) {
+            $relationshipInfo  = CRM_Core_PseudoConstant::relationshipType( );
+
+            $relationshipTypes = array( );
+            foreach ( $relationshipInfo as $id => $info ) {
+                $relationshipTypes[$id] = $info['label_b_a'];
+            }
+        }
+
+        return $relationshipTypes;
+    }
+
 }
-

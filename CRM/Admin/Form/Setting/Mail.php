@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,31 +34,34 @@
  *
  */
 
+
 /**
  * This class generates form components for CiviMail
  */
-class CRM_Admin_Form_Setting_Mail extends CRM_Admin_Form_Setting {
-
-  /**
-   * Function to build the form
-   *
-   * @return None
-   * @access public
-   */
-  public function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Settings - CiviMail'));
-    $this->addElement('text', 'verpSeparator', ts('VERP Separator'));
-    $this->addElement('text', 'mailerBatchLimit', ts('Mailer Batch Limit'));
-    $this->addElement('text', 'mailerJobSize', ts('Mailer Job Size'));
-    $this->addElement('advcheckbox', 'replyTo', ts('Enable Custom Reply-To'));
-    $this->addElement('text', 'mailerJobsMax', ts('Mailer CRON job limit'));
-    $check = TRUE;
-
-    // redirect to Administer Section After hitting either Save or Cancel button.
-    $session = CRM_Core_Session::singleton();
-    $session->pushUserContext(CRM_Utils_System::url('civicrm/admin', 'reset=1'));
-
-    parent::buildQuickForm($check);
-  }
+class CRM_Admin_Form_Setting_Mail extends CRM_Admin_Form_Setting
+{
+    /**
+     * Function to build the form
+     *
+     * @return None
+     * @access public
+     */
+    public function buildQuickForm( ) 
+    {
+        CRM_Utils_System::setTitle(ts('Settings - CiviMail'));
+        $this->addElement('text','verpSeparator', ts('VERP Separator'));
+        $this->addElement('text','mailerBatchLimit', ts('Mailer Batch Limit'));
+        $this->addElement('text','mailerJobSize', ts('Mailer Job Size'));
+        $this->addElement( 'advcheckbox', 'replyTo', ts( 'Enable Custom Reply-To' ) );
+        $this->addElement('text','mailerJobsMax', ts('Mailer CRON job limit'));
+        $check = true;
+        
+        // redirect to Administer Section After hitting either Save or Cancel button.
+        $session = CRM_Core_Session::singleton( );
+        $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin', 'reset=1' ) );
+        
+        parent::buildQuickForm( $check );
+    }
 }
+
 

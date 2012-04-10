@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,72 +34,80 @@
  *
  */
 
+
 /**
- * Page for displaying list of current batches
+ * Page for displaying list of current batches 
  */
-class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic {
+class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic 
+{
+    /**
+     * The action links that we need to display for the browse screen
+     *
+     * @var array
+     * @static
+     */
+    static $_links = null;
 
-  /**
-   * The action links that we need to display for the browse screen
-   *
-   * @var array
-   * @static
-   */
-  static $_links = NULL;
-
-  /**
-   * Get BAO Name
-   *
-   * @return string Classname of BAO.
-   */
-  function getBAOName() {
-    return 'CRM_Core_BAO_Batch';
-  }
-
-  /**
-   * Get action Links
-   *
-   * @return array (reference) of action links
-   */
-  function &links() {
-    if (!(self::$_links)) {
-      self::$_links = array(
-        CRM_Core_Action::UPDATE => array(
-          'name' => ts('Enter Records'),
-          'url' => 'civicrm/batch/entry',
-          'qs' => 'id=%%id%%&reset=1',
-          'title' => ts('Batch Entry'),
-        ),
-      );
+    /**
+     * Get BAO Name
+     *
+     * @return string Classname of BAO.
+     */
+    function getBAOName() 
+    {
+        return 'CRM_Core_BAO_Batch';
     }
-    return self::$_links;
-  }
 
-  /**
-   * Get name of edit form
-   *
-   * @return string Classname of edit form.
-   */
-  function editForm() {
-    return 'CRM_Contribute_Form_Batch';
-  }
+    /**
+     * Get action Links
+     *
+     * @return array (reference) of action links
+     */
+    function &links()
+    {            
+        if ( !( self::$_links ) ) {
+            self::$_links = array(
+                CRM_Core_Action::UPDATE  => array(
+                    'name'  => ts('Enter Records'),
+                    'url'   => 'civicrm/batch/entry',
+                    'qs'    => 'id=%%id%%&reset=1',
+                    'title' => ts('Batch Entry') 
+                )
+            );
+        }
+        return self::$_links;
+    }
 
-  /**
-   * Get edit form name
-   *
-   * @return string name of this page.
-   */
-  function editName() {
-    return 'Batch Processing';
-  }
+    /**
+     * Get name of edit form
+     *
+     * @return string Classname of edit form.
+     */
+    function editForm() 
+    {
+        return 'CRM_Contribute_Form_Batch';
+    }
+    
+    /**
+     * Get edit form name
+     *
+     * @return string name of this page.
+     */
+    function editName() 
+    {
+        return 'Batch Processing';
+    }
+    
+    /**
+     * Get user context.
+     *
+     * @return string user context.
+     */
+    function userContext($mode = null) 
+    {
+        return  CRM_Utils_System::currentPath( );
+    }
 
-  /**
-   * Get user context.
-   *
-   * @return string user context.
-   */
-  function userContext($mode = NULL) {
-    return CRM_Utils_System::currentPath();
-  }
 }
+
 

@@ -35,5 +35,10 @@
  * $Id$
  *
  */
-class CRM_Campaign_Config extends CRM_Core_Component_Config {}
+
+
+class CRM_Campaign_Config extends CRM_Core_Component_Config {
+  
+}
+  
 
