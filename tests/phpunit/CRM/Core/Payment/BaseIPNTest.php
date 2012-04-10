@@ -184,6 +184,10 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
       $msg = $this->IPN->sendMail( $this->input, $this->ids, $this->objects, $values,false, true );
       $this->assertTrue(is_array($msg), "Message returned as an array in line" . __LINE__);
       $this->assertEquals('Mr. Anthony Anderson II', $msg['to']);
+      $this->assertContains('<p>Please print this confirmation for your records.</p>',$msg['html']);
+      $this->assertContains('Membership Type: General',$msg['body']);
+      
+
     }  
     
     function testLoadParticipantObjects( )
