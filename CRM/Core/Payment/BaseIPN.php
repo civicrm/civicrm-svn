@@ -99,7 +99,16 @@ class CRM_Core_Payment_BaseIPN {
  */
   function loadObjects( &$input, &$ids, &$objects, $required, $paymentProcessorID ) {
     $ids['paymentProcessorID'] = $paymentProcessorID;
-    $contribution =& $objects['contribution'];
+    if(is_a($objects['contribution'],'CRM_Contribute_BAO_Contribution')){
+      $contribution =& $objects['contribution'];
+    }
+    else{
+      //legacy support - functions are 'used' to be able to pass in a DAO
+      $contribution = new CRM_Contribute_BAO_Contribution();
+      $contribution->id = $ids['contribution'];
+      $contribution->find(true);
+      $objects['contribution'] =& $contribution;
+    }
     $success = $contribution->loadRelatedObjects($input, $ids, $required );
     $objects = array_merge($objects,$contribution->_relatedObjects); 
     return $success;
@@ -433,18 +442,28 @@ LIMIT 1;";
 
     /*
      * Send receipt from contribution. Note that the compose message part has been moved to contribution
-     * You should call loadRelatedObjects before this to get the objects
+     * In general LoadObjects is called first to get the objects but the composeMessageArray function now calls it
+     * 
+     * @params array $input Incoming data from Payment processor
+     * @params array $ids Related object IDs
+     * @params array $values values related to objects that have already been loaded
+     * @params bool $recur is it part of a recurring contribution
+     * @params bool $returnMessageText Should text be returned instead of sent. This
+     * is because the function is also used to generate pdfs
      */
     function sendMail( &$input, &$ids, &$objects, &$values, $recur = false, $returnMessageText = false ) {
       $contribution =& $objects['contribution'];
+      $input['is_recur'] = $recur;
       // set receipt from e-mail and name in value
       if ( !$returnMessageText ) {
         $session  = CRM_Core_Session::singleton( );
         $userID   = $session->get( 'userID' );
-        list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
-        $values['receipt_from_email'] = $userEmail;
-        $values['receipt_from_name']  = $userName;
+        if(!empty($userID)){
+          list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
+          $values['receipt_from_email'] = $userEmail;
+          $values['receipt_from_name']  = $userName;
+        }
      }
-     return $returnMessageText = $contribution->composeMessageArray($input, $ids, $values, $recur, $returnMessageText );
+     return $returnMessageText = $contribution->composeMessageArray($input, $ids, $values,$recur, $returnMessageText );
    }
 }
