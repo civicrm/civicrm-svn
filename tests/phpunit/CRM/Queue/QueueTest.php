@@ -27,7 +27,10 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase 
+/**
+ * Ensure that various queue implementations comply with the interface
+ */
+class CRM_Queue_QueueTest extends CiviUnitTestCase 
 {
   function get_info() {
     return array(
@@ -37,15 +40,33 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
     );
   }
    
+  /* ----------------------- Queue providers ----------------------- */
+  /* Define a list of queue providers which should be tested */
+  
+  /**
+   * Return a list of persistent and transient queue providers
+   */
+  function getQueueSpecs() {
+    $queueSpecs = array();
+    $queueSpecs[] = array(array(
+      'type' => 'Sql',
+      'name' => 'test-queue',
+    ));
+    $queueSpecs[] = array(array(
+      'type' => 'Memory',
+      'name' => 'test-queue',
+    ));
+    return $queueSpecs;
+  }
+  
+  /* ----------------------- Per-provider tests ----------------------- */
+  
   function setUp() {
     parent::setUp();
     require_once 'CRM/Queue/Service.php';
     $this->queueService = CRM_Queue_Service::singleton(TRUE);
-    $this->queue = $this->queueService->create(array(
-      'type' => 'Sql',
-      'name' => 'test-queue',
-    ));
   }
+  
 
   function tearDown() {
     require_once 'CRM/Utils/Time.php';
@@ -57,8 +78,11 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
   
   /**
    * Create a few queue items; alternately enqueue and dequeue various 
+   *
+   * @dataProvider getQueueSpecs
    */
-  function testBasicUsage() {
+  function testBasicUsage($queueSpec) {
+    $this->queue = $this->queueService->create($queueSpec);
     $this->assertTrue($this->queue instanceof CRM_Queue_Queue);
     
     $this->queue->createItem(array(
@@ -100,8 +124,11 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
   
   /**
    * Claim an item from the queue and release it back for subsequent processing
+   *
+   * @dataProvider getQueueSpecs
    */
-  function testManualRelease() {
+  function testManualRelease($queueSpec) {
+    $this->queue = $this->queueService->create($queueSpec);
     $this->assertTrue($this->queue instanceof CRM_Queue_Queue);
     
     $this->queue->createItem(array(
@@ -123,8 +150,11 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
   
   /**
    * Test that item leases expire at the expected time
+   *
+   * @dataProvider getQueueSpecs
    */
-  function testTimeoutRelease() {
+  function testTimeoutRelease($queueSpec) {
+    $this->queue = $this->queueService->create($queueSpec);
     $this->assertTrue($this->queue instanceof CRM_Queue_Queue);
     
     require_once 'CRM/Utils/Time.php';
@@ -155,8 +185,11 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
   
   /**
    * Test that queue content is reset when reset=>TRUE
+   *
+   * @dataProvider getQueueSpecs
    */
-  function testCreateResetTrue() {
+  function testCreateResetTrue($queueSpec) {
+    $this->queue = $this->queueService->create($queueSpec);
     $this->queue->createItem(array(
       'test-key' => 'a',
     ));
@@ -166,18 +199,19 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
     $this->assertEquals(2, $this->queue->numberOfItems());
     unset($this->queue);
     
-    $queue2 = $this->queueService->create(array(
-      'type' => 'Sql',
-      'name' => 'test-queue',
-      'reset' => TRUE,
-    ));
+    $queue2 = $this->queueService->create(
+      $queueSpec + array('reset' => TRUE)
+    );
     $this->assertEquals(0, $queue2->numberOfItems());
   }
   
   /**
    * Test that queue content is not reset when reset is omitted
+   *
+   * @dataProvider getQueueSpecs
    */
-  function testCreateResetFalse() {
+  function testCreateResetFalse($queueSpec) {
+    $this->queue = $this->queueService->create($queueSpec);
     $this->queue->createItem(array(
       'test-key' => 'a',
     ));
@@ -187,11 +221,7 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
     $this->assertEquals(2, $this->queue->numberOfItems());
     unset($this->queue);
     
-    $queue2 = $this->queueService->create(array(
-      'type' => 'Sql',
-      'name' => 'test-queue',
-      //default// 'reset' => FALSE,
-    ));
+    $queue2 = $this->queueService->create($queueSpec);
     $this->assertEquals(2, $queue2->numberOfItems());
     
     $item = $queue2->claimItem();
@@ -201,8 +231,11 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
   
   /**
    * Test that queue content is not reset when using load()
+   *
+   * @dataProvider getQueueSpecs
    */
-  function testLoad() {
+  function testLoad($queueSpec) {
+    $this->queue = $this->queueService->create($queueSpec);
     $this->queue->createItem(array(
       'test-key' => 'a',
     ));
@@ -212,11 +245,7 @@ class CRM_Queue_Queue_SQLTest extends CiviUnitTestCase
     $this->assertEquals(2, $this->queue->numberOfItems());
     unset($this->queue);
     
-    $queue2 = $this->queueService->create(array(
-      'type' => 'Sql',
-      'name' => 'test-queue',
-      //default// 'reset' => FALSE,
-    ));
+    $queue2 = $this->queueService->create($queueSpec);
     $this->assertEquals(2, $queue2->numberOfItems());
     
     $item = $queue2->claimItem();

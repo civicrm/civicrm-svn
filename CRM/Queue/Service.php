@@ -74,6 +74,10 @@ class CRM_Queue_Service {
    * @return CRM_Queue_Queue
    */
   function create($queueSpec) {
+    if (is_object($this->queues[$queueSpec['name']]) && empty($queueSpec['reset'])) {
+      return $this->queues[$queueSpec['name']];
+    }
+    
     $queue = $this->instantiateQueueObject($queueSpec);
     $exists = $queue->existsQueue();
     if (! $exists) {
@@ -84,6 +88,7 @@ class CRM_Queue_Service {
     } else {
       $queue->loadQueue();
     }
+    $this->queues[$queueSpec['name']] = $queue;
     return $queue;
   }
   
@@ -95,8 +100,12 @@ class CRM_Queue_Service {
    * @return CRM_Queue_Queue
    */
   function load($queueSpec) {
+    if (is_object($this->queues[$queueSpec['name']])) {
+      return $this->queues[$queueSpec['name']];
+    }
     $queue = $this->instantiateQueueObject($queueSpec);
     $queue->loadQueue();
+    $this->queues[$queueSpec['name']] = $queue;
     return $queue;
   }
   
