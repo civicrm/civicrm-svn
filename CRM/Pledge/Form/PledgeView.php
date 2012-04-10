@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -36,109 +35,108 @@
 
 /**
  * This class generates form components for Pledge
- * 
+ *
  */
-class CRM_Pledge_Form_PledgeView extends CRM_Core_Form
-{
-    /**  
-     * Function to set variables up before form is built  
-     *                                                            
-     * @return void  
-     * @access public  
-     */
-    public function preProcess( ) 
-    {
-            
-        $values = $ids = array( ); 
-        $params = array( 'id' => $this->get( 'id' ) ); 
-        CRM_Pledge_BAO_Pledge::getValues( $params, 
-                                          $values,  
-                                          $ids );
+class CRM_Pledge_Form_PledgeView extends CRM_Core_Form {
 
-        $values['frequencyUnit'] = ts( '%1(s)', array( 1 => $values['frequency_unit'] ) );
-        
-        if (isset( $values["honor_contact_id"] ) && $values["honor_contact_id"] ) {
-            $sql = "SELECT display_name FROM civicrm_contact WHERE id = " . $values["honor_contact_id"];
-            $dao = new CRM_Core_DAO();
-            $dao->query($sql);
-            if ( $dao->fetch() ) {
-                $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid=$values[honor_contact_id]" );
-                $values["honor_display"] = "<A href = $url>". $dao->display_name ."</A>"; 
-            }
-            $honor =CRM_Core_PseudoConstant::honor( );
-            $values['honor_type'] = $honor[$values['honor_type_id']]; 
-        }
-        
-        //handle custom data.
-        $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Pledge', $this, $params['id'] );
-		CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
-        
-        if ( CRM_Utils_Array::value( 'contribution_page_id', $values ) ) { 
-            $values['contribution_page'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $values['contribution_page_id'], 'title' );
-        }
-        
-        $values['contribution_type'] = CRM_Utils_Array::value( $values['contribution_type_id'], CRM_Contribute_PseudoConstant::contributionType() );
-        
-        if ( $values['status_id'] ) { 
-            $values['pledge_status'] = CRM_Utils_Array::value( $values['status_id'], CRM_Contribute_PseudoConstant::contributionStatus() );
-        }
-        
-        $url = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
-               "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
-        
-        $recentOther = array( );
-        if ( CRM_Core_Permission::checkActionPermission( 'CiviPledge', CRM_Core_Action::UPDATE ) ) {
-            $recentOther['editUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
-                                                             "action=update&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
-        } 
-        if ( CRM_Core_Permission::checkActionPermission( 'CiviPledge', CRM_Core_Action::DELETE ) ) {
-            $recentOther['deleteUrl'] = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
-                                                               "action=delete&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
-        }
-        
-        $displayName = CRM_Contact_BAO_Contact::displayName( $values['contact_id'] );
-        $this->assign( 'displayName', $displayName );
-        
-        $title = $displayName . 
-                 ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format( $values['pledge_amount'] ) . 
-                 ' - ' . $values['contribution_type'] . ')';
+  /**
+   * Function to set variables up before form is built
+   *
+   * @return void
+   * @access public
+   */
+  public function preProcess() {
 
-        // add Pledge to Recent Items
-        CRM_Utils_Recent::add( $title,
-                               $url,
-                               $values['id'],
-                               'Pledge',
-                               $values['contact_id'],
-                               null,
-                               $recentOther
-                               );
-        
-        //do check for campaigns
-        if ( $campaignId = CRM_Utils_Array::value( 'campaign_id', $values ) ) {
-            $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
-            $values['campaign'] = $campaigns[$campaignId];
-        }
-        
-        $this->assign( $values );
+    $values = $ids = array();
+    $params = array('id' => $this->get('id'));
+    CRM_Pledge_BAO_Pledge::getValues($params,
+      $values,
+      $ids
+    );
+
+    $values['frequencyUnit'] = ts('%1(s)', array(1 => $values['frequency_unit']));
+
+    if (isset($values["honor_contact_id"]) && $values["honor_contact_id"]) {
+      $sql = "SELECT display_name FROM civicrm_contact WHERE id = " . $values["honor_contact_id"];
+      $dao = new CRM_Core_DAO();
+      $dao->query($sql);
+      if ($dao->fetch()) {
+        $url = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid=$values[honor_contact_id]");
+        $values["honor_display"] = "<A href = $url>" . $dao->display_name . "</A>";
+      }
+      $honor = CRM_Core_PseudoConstant::honor();
+      $values['honor_type'] = $honor[$values['honor_type_id']];
     }
 
-    /**
-     * Function to build the form
-     *
-     * @return None
-     * @access public
-     */
-    public function buildQuickForm( ) 
-    {
-        $this->addButtons(array(  
-                                array ( 'type'      => 'next',  
-                                        'name'      => ts('Done'),  
-                                        'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',  
-                                        'isDefault' => true   )
-                                )
-                          );
+    //handle custom data.
+    $groupTree = CRM_Core_BAO_CustomGroup::getTree('Pledge', $this, $params['id']);
+    CRM_Core_BAO_CustomGroup::buildCustomDataView($this, $groupTree);
+
+    if (CRM_Utils_Array::value('contribution_page_id', $values)) {
+      $values['contribution_page'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $values['contribution_page_id'], 'title');
     }
 
+    $values['contribution_type'] = CRM_Utils_Array::value($values['contribution_type_id'], CRM_Contribute_PseudoConstant::contributionType());
+
+    if ($values['status_id']) {
+      $values['pledge_status'] = CRM_Utils_Array::value($values['status_id'], CRM_Contribute_PseudoConstant::contributionStatus());
+    }
+
+    $url = CRM_Utils_System::url('civicrm/contact/view/pledge',
+      "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home"
+    );
+
+    $recentOther = array();
+    if (CRM_Core_Permission::checkActionPermission('CiviPledge', CRM_Core_Action::UPDATE)) {
+      $recentOther['editUrl'] = CRM_Utils_System::url('civicrm/contact/view/pledge',
+        "action=update&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home"
+      );
+    }
+    if (CRM_Core_Permission::checkActionPermission('CiviPledge', CRM_Core_Action::DELETE)) {
+      $recentOther['deleteUrl'] = CRM_Utils_System::url('civicrm/contact/view/pledge',
+        "action=delete&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home"
+      );
+    }
+
+    $displayName = CRM_Contact_BAO_Contact::displayName($values['contact_id']);
+    $this->assign('displayName', $displayName);
+
+    $title = $displayName . ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format($values['pledge_amount']) . ' - ' . $values['contribution_type'] . ')';
+
+    // add Pledge to Recent Items
+    CRM_Utils_Recent::add($title,
+      $url,
+      $values['id'],
+      'Pledge',
+      $values['contact_id'],
+      NULL,
+      $recentOther
+    );
+
+    //do check for campaigns
+    if ($campaignId = CRM_Utils_Array::value('campaign_id', $values)) {
+      $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns($campaignId);
+      $values['campaign'] = $campaigns[$campaignId];
+    }
+
+    $this->assign($values);
+  }
+
+  /**
+   * Function to build the form
+   *
+   * @return None
+   * @access public
+   */
+  public function buildQuickForm() {
+    $this->addButtons(array(
+        array('type' => 'next',
+          'name' => ts('Done'),
+          'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+          'isDefault' => TRUE,
+        ),
+      )
+    );
+  }
 }
-
 
