@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,207 +25,211 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'CiviTest/CiviSeleniumTestCase.php';
+
+
+ 
 class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
 
-  protected function setUp() {
-    parent::setUp();
+  protected function setUp()
+  {
+      parent::setUp();
   }
 
-  function testCreateCampaign() {
-    $this->webtestLogin(TRUE);
+  function testCreateCampaign()
+  {
+      $this->webtestLogin( true );
 
-    // Enable CiviCampaign module if necessary
-    $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
-    $this->waitForElementPresent("_qf_Component_next-bottom");
-    $enabledComponents = $this->getSelectOptions("enableComponents-t");
-    if (!in_array("CiviCampaign", $enabledComponents)) {
-      $this->addSelection("enableComponents-f", "label=CiviCampaign");
-      $this->click("//option[@value='CiviCampaign']");
-      $this->click("add");
-      $this->click("_qf_Component_next-bottom");
+      // Enable CiviCampaign module if necessary
+      $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("_qf_Component_next-bottom");
+      $enabledComponents = $this->getSelectOptions("enableComponents-t");
+      if (! in_array( "CiviCampaign", $enabledComponents ) ) {
+          $this->addSelection("enableComponents-f", "label=CiviCampaign");
+          $this->click("//option[@value='CiviCampaign']");
+          $this->click("add");
+          $this->click("_qf_Component_next-bottom");
+          $this->waitForPageToLoad("30000");          
+          $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
+      }
+
+      // add the required Drupal permission
+      $permissions = array('edit-2-administer-civicampaign');
+      $this->changePermissions( $permissions );
+      
+      // Create new group
+      $title = substr(sha1(rand()), 0, 7);
+      $groupName = $this->WebtestAddGroup( );
+      
+      // Adding contact
+      // We're using Quick Add block on the main page for this.
+      $firstName1 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName1, "Smith", "$firstName1.smith@example.org" );
+     
+      // add contact to group
+      // visit group tab
+      $this->click("css=li#tab_group a");
+      $this->waitForElementPresent("group_id");
+
+      // add to group
+      $this->select("group_id", "label=$groupName");
+      $this->click("_qf_GroupContact_next");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
-    }
 
-    // add the required Drupal permission
-    $permissions = array('edit-2-administer-civicampaign');
-    $this->changePermissions($permissions);
+      $firstName2 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName2, "John", "$firstName2.john@example.org" );
+     
+      // add contact to group
+      // visit group tab
+      $this->click("css=li#tab_group a");
+      $this->waitForElementPresent("group_id");
 
-    // Create new group
-    $title = substr(sha1(rand()), 0, 7);
-    $groupName = $this->WebtestAddGroup();
+      // add to group
+      $this->select("group_id", "label=$groupName");
+      $this->click("_qf_GroupContact_next");
+      $this->waitForPageToLoad("30000");
 
-    // Adding contact
-    // We're using Quick Add block on the main page for this.
-    $firstName1 = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($firstName1, "Smith", "$firstName1.smith@example.org");
+      // Go directly to the URL of the screen that you will be testing
+      $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 
-    // add contact to group
-    // visit group tab
-    $this->click("css=li#tab_group a");
-    $this->waitForElementPresent("group_id");
+      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+      // button at the end of this page to show up, to make sure it's fully loaded.
+      $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
-    // add to group
-    $this->select("group_id", "label=$groupName");
-    $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+      // Let's start filling the form with values.
+      $campaignTitle = "Campaign ". $title;
+      $this->type( "title", $campaignTitle );
 
-    $firstName2 = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($firstName2, "John", "$firstName2.john@example.org");
+      // select the campaign type
+      $this->select("campaign_type_id", "value=2");
 
-    // add contact to group
-    // visit group tab
-    $this->click("css=li#tab_group a");
-    $this->waitForElementPresent("group_id");
+      // fill in the description
+      $this->type("description", "This is a test campaign");
 
-    // add to group
-    $this->select("group_id", "label=$groupName");
-    $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+      // include groups for the campaign
+      $this->addSelection("includeGroups-f", "label=$groupName");
+      $this->click("//option[@value=4]");
+      $this->click("add");
 
-    // Go directly to the URL of the screen that you will be testing
-    $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
+      // fill the end date for campaign
+      $this->webtestFillDate("end_date", "+1 year");
+      
+      // select campaign status
+      $this->select("status_id", "value=2");
 
-    // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-    // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForElementPresent("_qf_Campaign_upload-bottom");
-
-    // Let's start filling the form with values.
-    $campaignTitle = "Campaign " . $title;
-    $this->type("title", $campaignTitle);
-
-    // select the campaign type
-    $this->select("campaign_type_id", "value=2");
-
-    // fill in the description
-    $this->type("description", "This is a test campaign");
-
-    // include groups for the campaign
-    $this->addSelection("includeGroups-f", "label=$groupName");
-    $this->click("//option[@value=4]");
-    $this->click("add");
-
-    // fill the end date for campaign
-    $this->webtestFillDate("end_date", "+1 year");
-
-    // select campaign status
-    $this->select("status_id", "value=2");
-
-    // click save
-    $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
-
-    $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
-      "Status message didn't show up after saving campaign!"
-    );
-
-    $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
-    $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
-    $this->activityAddTest($campaignTitle, $id);
+      // click save
+      $this->click("_qf_Campaign_upload-bottom");
+      $this->waitForPageToLoad("30000");
+      
+      $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
+                        "Status message didn't show up after saving campaign!");
+      
+      $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+      $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+      $this->activityAddTest( $campaignTitle, $id );
   }
 
-  function activityAddTest($campaignTitle, $id) {
-    // Adding Adding contact with randomized first name for test testContactContextActivityAdd
-    // We're using Quick Add block on the main page for this.
-    $firstName1 = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($firstName1, "Summerson", $firstName1 . "@summerson.name");
-    $firstName2 = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($firstName2, "Anderson", $firstName2 . "@anderson.name");
+  function activityAddTest( $campaignTitle, $id )
+  {
+      // Adding Adding contact with randomized first name for test testContactContextActivityAdd
+      // We're using Quick Add block on the main page for this.
+      $firstName1 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName1, "Summerson", $firstName1 . "@summerson.name" );
+      $firstName2 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName2, "Anderson", $firstName2 . "@anderson.name" ); 
+      
+      // Go directly to the URL of the screen that you will be testing (Activity Tab).
+      $this->click("css=li#tab_activity a");
+      
+      // waiting for the activity dropdown to show up
+      $this->waitForElementPresent("other_activity");
 
-    // Go directly to the URL of the screen that you will be testing (Activity Tab).
-    $this->click("css=li#tab_activity a");
+      // Select the activity type from the activity dropdown
+      $this->select("other_activity", "label=Meeting");
+      
+      // waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+      // button at the end of this page to show up, to make sure it's fully loaded.
+      $this->waitForElementPresent("_qf_Activity_upload");
 
-    // waiting for the activity dropdown to show up
-    $this->waitForElementPresent("other_activity");
+      // Let's start filling the form with values.
+     
+      // ...and verifying if the page contains properly formatted display name for chosen contact.
+      $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__ );
+      
+      // Now we're filling the "Assigned To" field.
+      // Typing contact's name into the field (using typeKeys(), not type()!)...
+      $this->fireEvent( 'assignee_contact_id', 'focus' );
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
-    // Select the activity type from the activity dropdown
-    $this->select("other_activity", "label=Meeting");
+      // ...waiting for drop down with results to show up...
+      $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
+      $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
+      
+      // ...need to use mouseDownAt on first result (which is a li element), click does not work
+      $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
+      // ...again, waiting for the box with contact name to show up...
+      $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
+      
+      // ...and verifying if the page contains properly formatted display name for chosen contact.
+      $this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__ );
+      
+      // Since we're here, let's check if screen help is being displayed properly
+      // $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
 
-    // waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-    // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForElementPresent("_qf_Activity_upload");
+      // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
+      $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
+      // For simple input fields we can use field id as selector
+      $this->type("subject", $subject);
 
-    // Let's start filling the form with values.
+      // select campaign
+      $this->click("campaign_id");
+      $this->select("campaign_id", "value=$id" );
 
-    // ...and verifying if the page contains properly formatted display name for chosen contact.
-    $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__);
+      $this->type("location", "Some location needs to be put in this field.");
 
-    // Now we're filling the "Assigned To" field.
-    // Typing contact's name into the field (using typeKeys(), not type()!)...
-    $this->fireEvent('assignee_contact_id', 'focus');
-    $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
+      // Choosing the Date.
+      // Please note that we don't want to put in fixed date, since
+      // we want this test to work in the future and not fail because
+      // of date being set in the past. Therefore, using helper webtestFillDateTime function.
+      $this->webtestFillDateTime('activity_date_time','+1 month 11:10PM');
 
-    // ...waiting for drop down with results to show up...
-    $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
-    $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
+      // Setting duration.
+      $this->type("duration", "30");
 
-    // ...need to use mouseDownAt on first result (which is a li element), click does not work
-    $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
-    // ...again, waiting for the box with contact name to show up...
-    $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
+      // Putting in details.
+      $this->type("details", "Really brief details information.");
 
-    // ...and verifying if the page contains properly formatted display name for chosen contact.
-    $this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__);
+      // Making sure that status is set to Scheduled (using value, not label).
+      $this->select("status_id", "value=1");
 
-    // Since we're here, let's check if screen help is being displayed properly
-    // $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
+      // Setting priority.
+      $this->select("priority_id", "value=1");   
 
-    // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
-    $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
-    // For simple input fields we can use field id as selector
-    $this->type("subject", $subject);
+      // Adding attachment
+      // TODO TBD
+      
+      // Scheduling follow-up.
+      $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
+      $this->select( "followup_activity_type_id", "value=1" );
+      $this->webtestFillDateTime('followup_date','+1 month 11:10PM');
+      $this->type( "followup_activity_subject","This is subject of schedule follow-up activity" );
 
-    // select campaign
-    $this->click("campaign_id");
-    $this->select("campaign_id", "value=$id");
+      // Clicking save.
+      $this->click("_qf_Activity_upload");
+      $this->waitForPageToLoad("30000");
 
-    $this->type("location", "Some location needs to be put in this field.");
+      // Is status message correct?
+      $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 
-    // Choosing the Date.
-    // Please note that we don't want to put in fixed date, since
-    // we want this test to work in the future and not fail because
-    // of date being set in the past. Therefore, using helper webtestFillDateTime function.
-    $this->webtestFillDateTime('activity_date_time', '+1 month 11:10PM');
+      $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
+      
+      // click through to the Activity view screen
+      $this->click("xpath=//div[@id='Activities']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
+      $this->waitForElementPresent('_qf_Activity_cancel-bottom');
 
-    // Setting duration.
-    $this->type("duration", "30");
-
-    // Putting in details.
-    $this->type("details", "Really brief details information.");
-
-    // Making sure that status is set to Scheduled (using value, not label).
-    $this->select("status_id", "value=1");
-
-    // Setting priority.
-    $this->select("priority_id", "value=1");
-
-    // Adding attachment
-    // TODO TBD
-
-    // Scheduling follow-up.
-    $this->click("css=.crm-activity-form-block-schedule_followup div.crm-accordion-header");
-    $this->select("followup_activity_type_id", "value=1");
-    $this->webtestFillDateTime('followup_date', '+1 month 11:10PM');
-    $this->type("followup_activity_subject", "This is subject of schedule follow-up activity");
-
-    // Clicking save.
-    $this->click("_qf_Activity_upload");
-    $this->waitForPageToLoad("30000");
-
-    // Is status message correct?
-    $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
-
-    $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
-
-    // click through to the Activity view screen
-    $this->click("xpath=//div[@id='Activities']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
-    $this->waitForElementPresent('_qf_Activity_cancel-bottom');
-
-    // verify Activity created
-    $this->verifyText("xpath=id( 'Activity' )/div[2]/table[1]/tbody/tr[5]/td[2]", preg_quote($campaignTitle));
+      // verify Activity created
+      $this->verifyText( "xpath=id( 'Activity' )/div[2]/table[1]/tbody/tr[5]/td[2]", preg_quote( $campaignTitle ) ); 
   }
+  
 }
-

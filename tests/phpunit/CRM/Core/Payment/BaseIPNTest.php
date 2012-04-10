@@ -25,10 +25,11 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Core/Payment/AuthorizeNetIPN.php';
-class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
+
+class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase 
+{
   protected $_contributionTypeId;
   protected $_contributionParams;
   protected $_contactId;
@@ -45,13 +46,20 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
   protected $input;
   protected $ids;
   protected $objects;
-  public $DBResetRequired = FALSE; function get_info() {
-    return array(
-      'name' => 'BaseIPN test',
-      'description' => 'Test BaseIPN methods (via subclass A.net).',
-      'group' => 'Payment Processor Tests',
-    );
-  }
+  public $DBResetRequired  = false;
+  
+    function get_info( ) 
+    {
+        return array(
+                     'name'        => 'BaseIPN test',
+                     'description' => 'Test BaseIPN methods (via subclass A.net).',
+                     'group'       => 'Payment Processor Tests',
+                     );
+    }
+   
+    function setUp( ) 
+    {
+        parent::setUp();
         $this->input = $this->ids = $this->objects  = array();
         $this->IPN = new CRM_Core_Payment_AuthorizeNetIPN();
         
@@ -95,8 +103,25 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
 
     
     }
-    catch(Exception$e) {
-      echo $e->getMessage();
+
+    function tearDown( )
+    {
+      //  $this->_paymentProcessor->delete( );
+        $tablesToTruncate = array( 
+          'civicrm_contribution', 
+          'civicrm_contribution_recur',
+          'civicrm_membership',
+          'civicrm_membership_type',
+          'civicrm_membership_payment',
+          'civicrm_membership_status',
+          'civicrm_payment_processor',
+          'civicrm_event',
+          'civicrm_participant',
+          'civicrm_pledge',
+        );
+        $this->quickCleanup( $tablesToTruncate );
+        CRM_Member_PseudoConstant::membershipType( $this->_membershipTypeID , true );
+        CRM_Member_PseudoConstant::membershipStatus( null, null, 'name', true );
     }
     
     /**
@@ -331,5 +356,4 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
 
     }
 }
-
-
+ ?>

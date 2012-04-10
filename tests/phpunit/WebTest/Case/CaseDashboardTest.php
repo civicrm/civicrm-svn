@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,38 +25,40 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'CiviTest/CiviSeleniumTestCase.php';
+
 class WebTest_Case_CaseDashboardTest extends CiviSeleniumTestCase {
 
-  protected function setUp() {
-    parent::setUp();
+  protected function setUp()
+  {
+      parent::setUp();
   }
 
-  function testAllOrMyCases() {
+  function testAllOrMyCases()
+  {
 
-    $this->open($this->sboxPath);
+    $this->open( $this->sboxPath );
 
     // Log in as admin first to verify permissions for CiviCase
-    $this->webtestLogin();
+    $this->webtestLogin( );
 
     // Enable CiviCase module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
-    if (!in_array("CiviCase", $enabledComponents)) {
+    if (! in_array( "CiviCase", $enabledComponents ) ) {
       $this->addSelection("enableComponents-f", "label=CiviCase");
       $this->click("//option[@value='CiviCase']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad("30000");          
     }
 
     // let's give full CiviCase permissions to demo user (registered user).
-    $permission = array('edit-2-access-all-cases-and-activities', 'edit-2-access-my-cases-and-activities', 'edit-2-administer-civicase', 'edit-2-delete-in-civicase');
-    $this->changePermissions($permission);
-
+    $permission = array('edit-2-access-all-cases-and-activities','edit-2-access-my-cases-and-activities','edit-2-administer-civicase','edit-2-delete-in-civicase');
+    $this->changePermissions( $permission );
+    
     // Go directly to the URL of the screen that you will be testing (Dashboard).
     $this->open($this->sboxPath . "civicrm/case?reset=1");
 
@@ -63,7 +66,7 @@ class WebTest_Case_CaseDashboardTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("css=a.button");
 
     // Should default to My Cases
-    $this->assertTrue($this->isChecked("name=allupcoming value=0"), 'Case dashboard should default to My Cases.');
+    $this->assertTrue( $this->isChecked("name=allupcoming value=0"), 'Case dashboard should default to My Cases.' );
     // The header text of the table changes too
     $this->assertTextPresent("Summary of Case Involvement");
 
@@ -71,8 +74,8 @@ class WebTest_Case_CaseDashboardTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent("css=a.button");
 
-    $this->assertTrue($this->isChecked("name=allupcoming value=1"), 'Selection of All Cases failed.');
+    $this->assertTrue( $this->isChecked("name=allupcoming value=1"), 'Selection of All Cases failed.' );
     $this->assertTextPresent("Summary of All Cases");
   }
-}
 
+}

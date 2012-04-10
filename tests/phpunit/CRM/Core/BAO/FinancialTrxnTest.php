@@ -24,48 +24,56 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Core/BAO/FinancialTrxn.php';
-class CRM_Core_BAO_FinancialTrxnTest extends CiviUnitTestCase {
-  function get_info() {
-    return array(
-      'name' => 'FinancialTrxn BAOs',
-      'description' => 'Test all CRM_Core_BAO_ContributionTrxn methods.',
-      'group' => 'CiviCRM BAO Tests',
-    );
-  }
 
-  function setUp() {
-    parent::setUp();
-  }
 
-  /**
-   * check method create()
-   */
-  function testCreate() {
-    $contactId          = $this->individualCreate();
-    $contributionTypeId = $this->contributionTypeCreate();
-    $contributionId     = $this->contributionCreate($contactId, $contributionTypeId);
-    $params             = array(
-      'contribution_id' => $contributionTypeId,
-      'trxn_date' => 20091021184930,
-      'trxn_type' => 'Debit',
-      'total_amount' => 10,
-      'net_amount' => 90.00,
-      'currency' => 'USD',
-      'payment_processor' => 'Dummy',
-      'trxn_id' => 'test_01014000',
-    );
-    $FinancialTrxn = CRM_Core_BAO_FinancialTrxn::create($params);
+class CRM_Core_BAO_FinancialTrxnTest extends CiviUnitTestCase 
+{
+    
+    function get_info( ) 
+    {
+        return array(
+                     'name'        => 'FinancialTrxn BAOs',
+                     'description' => 'Test all CRM_Core_BAO_ContributionTrxn methods.',
+                     'group'       => 'CiviCRM BAO Tests',
+                     );
+    }
+    
+    function setUp( ) 
+    {
+        parent::setUp();
+    }
+    
+ 
+    /**
+     * check method create()
+     */
+    function testCreate()
+    {
+        $contactId          = $this->individualCreate( ); 
+        $contributionTypeId = $this->contributionTypeCreate(); 
+        $contributionId     = $this->contributionCreate( $contactId  ,$contributionTypeId);
+        $params = array (
+                         'contribution_id'   => $contributionTypeId,
+                         'trxn_date'         => 20091021184930,
+                         'trxn_type'         => 'Debit',
+                         'total_amount'      => 10,
+                         'net_amount'        => 90.00,
+                         'currency'          => 'USD',
+                         'payment_processor' => 'Dummy',
+                         'trxn_id'           => 'test_01014000'
+                        );
+        $FinancialTrxn = CRM_Core_BAO_FinancialTrxn::create( $params );
 
-    $result = $this->assertDBNotNull('CRM_Core_BAO_FinancialTrxn', $FinancialTrxn->id,
-      'total_amount', 'id',
-      'Database check on updated financial trxn record.'
-    );
+        $result = $this->assertDBNotNull( 'CRM_Core_BAO_FinancialTrxn', $FinancialTrxn->id,
+                                           'total_amount', 'id',
+                                           'Database check on updated financial trxn record.' );
+        
+        $this->assertEquals( $result, 10, 'Verify financial trxn total_amount.');
+    }
 
-    $this->assertEquals($result, 10, 'Verify financial trxn total_amount.');
-  }
+        
+
 }
-
-
+?>

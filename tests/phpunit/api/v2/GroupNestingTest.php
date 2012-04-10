@@ -25,7 +25,6 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v2/GroupNesting.php';
 
@@ -34,267 +33,261 @@ require_once 'api/v2/GroupNesting.php';
  *
  *  @package   CiviCRM
  */
-class api_v2_GroupNestingTest extends CiviUnitTestCase {
+class api_v2_GroupNestingTest extends CiviUnitTestCase
+{
 
-  /**
-   * Sets up the fixture, for example, opens a network connection.
-   * This method is called before a test is executed.
-   *
-   * @access protected
-   */
-  protected function setUp() {
-    parent::setUp();
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     *
+     * @access protected
+     */
+    protected function setUp()
+    {
+        parent::setUp();
 
-    //  Insert a row in civicrm_group creating option group
-    //  from_email_address group
-    $op = new PHPUnit_Extensions_Database_Operation_Insert();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/dataset/group_admins.xml'
-      )
-    );
+        //  Insert a row in civicrm_group creating option group
+        //  from_email_address group
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                             dirname(__FILE__)
+                             . '/dataset/group_admins.xml') );
+                             
+        //  Insert a row in civicrm_group creating option group
+        //  from_email_address group
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                             dirname(__FILE__)
+                             . '/dataset/group_subscribers.xml') );
 
-    //  Insert a row in civicrm_group creating option group
-    //  from_email_address group
-    $op = new PHPUnit_Extensions_Database_Operation_Insert();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/dataset/group_subscribers.xml'
-      )
-    );
+        //  Insert a row in civicrm_group creating option group
+        //  from_email_address group
+        $op = new PHPUnit_Extensions_Database_Operation_Insert( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
+                             dirname(__FILE__)
+                             . '/dataset/group_nesting.xml') );
+                             
+    }
 
-    //  Insert a row in civicrm_group creating option group
-    //  from_email_address group
-    $op = new PHPUnit_Extensions_Database_Operation_Insert();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/dataset/group_nesting.xml'
-      )
-    );
-  }
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     * @access protected
+     */
+    protected function tearDown()
+    {
+        // truncate a few tables
+        $tablesToTruncate = array( 'civicrm_contact',
+                                   'civicrm_group',
+                                   'civicrm_group_nesting',
+                                   'civicrm_group_contact',
+                                   'civicrm_subscription_history' );
+        
+        $this->quickCleanup( $tablesToTruncate );
+    }
 
-  /**
-   * Tears down the fixture, for example, closes a network connection.
-   * This method is called after a test is executed.
-   *
-   * @access protected
-   */
-  protected function tearDown() {
-    // truncate a few tables
-    $tablesToTruncate = array('civicrm_contact',
-      'civicrm_group',
-      'civicrm_group_nesting',
-      'civicrm_group_contact',
-      'civicrm_subscription_history',
-    );
+///////////////// civicrm_group_nesting_get methods
 
-    $this->quickCleanup($tablesToTruncate);
-  }
+    /**
+     * Test civicrm_group_nesting_get.
+     */
+    public function testGet()
+    {
+        $params = array( 'parent_group_id' => 1,
+                         'child_group_id' => 2 );
 
-  ///////////////// civicrm_group_nesting_get methods
+        $result =& civicrm_group_nesting_get($params);                         
 
-  /**
-   * Test civicrm_group_nesting_get.
-   */
-  public function testGet() {
-    $params = array('parent_group_id' => 1,
-      'child_group_id' => 2,
-    );
+        // expected data loaded in setUp
+        $expected = array( 1 => array( 'id' => 1, 
+                                       'child_group_id' => 2, 
+                                       'parent_group_id' => 1 ) );
+        $expected['is_error'] = 0;        
+        $this->assertEquals( $expected, $result );                         
+    }
 
-    $result = &civicrm_group_nesting_get($params);
+    /**
+     * Test civicrm_group_nesting_get with just one
+     * param (child_group_id).
+     */
+    public function testGetWithChildGroupId()
+    {
+        $params = array( 'child_group_id' => 4 );
 
-    // expected data loaded in setUp
-    $expected = array(1 => array('id' => 1,
-        'child_group_id' => 2,
-        'parent_group_id' => 1,
-      ));
-    $expected['is_error'] = 0;
-    $this->assertEquals($expected, $result);
-  }
+        $result =& civicrm_group_nesting_get($params);
+        
+        // expected data loaded in setUp
+        $expected = array( 3 => array( 'id' => 3, 
+                                       'child_group_id' => 4, 
+                                       'parent_group_id' => 1 ),
+                           4 => array( 'id' => 4, 
+                                       'child_group_id' => 4, 
+                                       'parent_group_id' => 2) );
+        $expected['is_error'] = 0;        
+        $this->assertEquals( $expected, $result );
+    }
+    
+    /**
+     * Test civicrm_group_nesting_get with just one
+     * param (parent_group_id).
+     */
+    public function testGetWithParentGroupId()
+    {
+        $params = array( 'parent_group_id' => 1 );
 
-  /**
-   * Test civicrm_group_nesting_get with just one
-   * param (child_group_id).
-   */
-  public function testGetWithChildGroupId() {
-    $params = array('child_group_id' => 4);
+        $result =& civicrm_group_nesting_get($params);
 
-    $result = &civicrm_group_nesting_get($params);
+        // expected data loaded in setUp
+        $expected = array( 1 => array( 'id' => 1, 
+                                       'child_group_id' => 2, 
+                                       'parent_group_id' => 1 ),
+                           2 => array( 'id' => 2, 
+                                       'child_group_id' => 3, 
+                                       'parent_group_id' => 1 ),
+                           3 => array( 'id' => 3, 
+                                       'child_group_id' => 4, 
+                                       'parent_group_id' => 1) );
+        $expected['is_error'] = 0;
+        $this->assertEquals( $expected, $result );
+    }    
+    
+    /**
+     * Test civicrm_group_nesting_get for no records results.
+     * Error expected.
+     */
+    public function testGetEmptyResults()
+    {
+        // no such record in the db
+        $params = array( 'parent_group_id' => 1,
+                         'child_group_id' => 700 );
 
-    // expected data loaded in setUp
-    $expected = array(3 => array('id' => 3,
-        'child_group_id' => 4,
-        'parent_group_id' => 1,
-      ),
-      4 => array('id' => 4,
-        'child_group_id' => 4,
-        'parent_group_id' => 2,
-      ),
-    );
-    $expected['is_error'] = 0;
-    $this->assertEquals($expected, $result);
-  }
+        $result =& civicrm_group_nesting_get($params);
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }    
+        
+    /**
+     * Test civicrm_group_nesting_get with empty params.
+     * Error expected.
+     */
+    public function testGetWithEmptyParams()
+    {
+        $params = array( );
 
-  /**
-   * Test civicrm_group_nesting_get with just one
-   * param (parent_group_id).
-   */
-  public function testGetWithParentGroupId() {
-    $params = array('parent_group_id' => 1);
+        $result =& civicrm_group_nesting_get($params);
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+    
+    /**
+     * Test civicrm_group_nesting_get with wrong parameters type.
+     * Error expected.
+     */
+    public function testGetWithWrongParamsType()
+    {
+        $params = 'a string';
 
-    $result = &civicrm_group_nesting_get($params);
+        $result =& civicrm_group_nesting_get($params);
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
 
-    // expected data loaded in setUp
-    $expected = array(1 => array('id' => 1,
-        'child_group_id' => 2,
-        'parent_group_id' => 1,
-      ),
-      2 => array('id' => 2,
-        'child_group_id' => 3,
-        'parent_group_id' => 1,
-      ),
-      3 => array('id' => 3,
-        'child_group_id' => 4,
-        'parent_group_id' => 1,
-      ),
-    );
-    $expected['is_error'] = 0;
-    $this->assertEquals($expected, $result);
-  }
+///////////////// civicrm_group_nesting_create methods
 
-  /**
-   * Test civicrm_group_nesting_get for no records results.
-   * Error expected.
-   */
-  public function testGetEmptyResults() {
-    // no such record in the db
-    $params = array('parent_group_id' => 1,
-      'child_group_id' => 700,
-    );
+    /**
+     * Test civicrm_group_nesting_create.
+     */
+    public function testCreate()
+    {
+        // groups id=1 and id=2 loaded in setUp
+        $params = array( 'parent_group_id' => 1,
+                         'child_group_id' => 3 );
 
-    $result = &civicrm_group_nesting_get($params);
-    $this->assertEquals($result['is_error'], 1,
-      "In line " . __LINE__
-    );
-  }
+        $result = civicrm_group_nesting_create( $params );
+        $this->assertEquals( $result['is_error'], 0 );
 
-  /**
-   * Test civicrm_group_nesting_get with empty params.
-   * Error expected.
-   */
-  public function testGetWithEmptyParams() {
-    $params = array();
+        // we have 4 group nesting records in the example
+        // data, expecting next number to be the id for newly created
+        $id = 5;
+        $this->assertDBState( 'CRM_Contact_DAO_GroupNesting', $id, $params );
+    }
 
-    $result = &civicrm_group_nesting_get($params);
-    $this->assertEquals($result['is_error'], 1,
-      "In line " . __LINE__
-    );
-  }
+    /**
+     * Test civicrm_group_nesting_create with empty parameter array.
+     * Error expected.
+     */
+    public function testCreateWithEmptyParams()
+    {
+        $params = array( );
 
-  /**
-   * Test civicrm_group_nesting_get with wrong parameters type.
-   * Error expected.
-   */
-  public function testGetWithWrongParamsType() {
-    $params = 'a string';
+        $result =& civicrm_group_nesting_create($params);
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+    
+    /**
+     * Test civicrm_group_nesting_create with wrong parameter type.
+     * Error expected.
+     */
+    public function testCreateWithWrongParamsType()
+    {
+        $params = 'a string';
 
-    $result = &civicrm_group_nesting_get($params);
-    $this->assertEquals($result['is_error'], 1,
-      "In line " . __LINE__
-    );
-  }
+        $result =& civicrm_group_nesting_create($params);
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
 
-  ///////////////// civicrm_group_nesting_create methods
+///////////////// civicrm_group_nesting_remove methods
 
-  /**
-   * Test civicrm_group_nesting_create.
-   */
-  public function testCreate() {
-    // groups id=1 and id=2 loaded in setUp
-    $params = array('parent_group_id' => 1,
-      'child_group_id' => 3,
-    );
+    /**
+     * Test civicrm_group_nesting_remove.
+     */
+    public function testRemove()
+    {
+        // groups id=1 and id=2 loaded in setUp
+        $params = array( 'parent_group_id' => 1,
+                         'child_group_id' => 2 );
 
-    $result = civicrm_group_nesting_create($params);
-    $this->assertEquals($result['is_error'], 0);
+        $result =& civicrm_group_nesting_remove($params);
+        $this->assertEquals( $result['is_error'], 0 );
 
-    // we have 4 group nesting records in the example
-    // data, expecting next number to be the id for newly created
-    $id = 5;
-    $this->assertDBState('CRM_Contact_DAO_GroupNesting', $id, $params);
-  }
+        // group nesting record with above combo of params
+        // has id = 1, asserting it's gone
+        $id = 1;
+        $this->assertDBState( 'CRM_Contact_DAO_GroupNesting', $id, $params, true );
+    }
 
-  /**
-   * Test civicrm_group_nesting_create with empty parameter array.
-   * Error expected.
-   */
-  public function testCreateWithEmptyParams() {
-    $params = array();
 
-    $result = &civicrm_group_nesting_create($params);
-    $this->assertEquals($result['is_error'], 1,
-      "In line " . __LINE__
-    );
-  }
+    /**
+     * Test civicrm_group_nesting_remove with empty parameter array.
+     * Error expected.
+     */
+    public function testRemoveWithEmptyParams()
+    {
+        $params = array( );
 
-  /**
-   * Test civicrm_group_nesting_create with wrong parameter type.
-   * Error expected.
-   */
-  public function testCreateWithWrongParamsType() {
-    $params = 'a string';
+        $result =& civicrm_group_nesting_remove($params);
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }
+    
+    /**
+     * Test civicrm_group_nesting_remove with wrong parameter type.
+     * Error expected.
+     */
+    public function testRemoveWithWrongParamsType()
+    {
+        $params = 'a string';
 
-    $result = &civicrm_group_nesting_create($params);
-    $this->assertEquals($result['is_error'], 1,
-      "In line " . __LINE__
-    );
-  }
+        $result =& civicrm_group_nesting_remove($params);
+        $this->assertEquals( $result['is_error'], 1,
+                             "In line " . __LINE__ );
+    }    
 
-  ///////////////// civicrm_group_nesting_remove methods
-
-  /**
-   * Test civicrm_group_nesting_remove.
-   */
-  public function testRemove() {
-    // groups id=1 and id=2 loaded in setUp
-    $params = array('parent_group_id' => 1,
-      'child_group_id' => 2,
-    );
-
-    $result = &civicrm_group_nesting_remove($params);
-    $this->assertEquals($result['is_error'], 0);
-
-    // group nesting record with above combo of params
-    // has id = 1, asserting it's gone
-    $id = 1;
-    $this->assertDBState('CRM_Contact_DAO_GroupNesting', $id, $params, TRUE);
-  }
-
-  /**
-   * Test civicrm_group_nesting_remove with empty parameter array.
-   * Error expected.
-   */
-  public function testRemoveWithEmptyParams() {
-    $params = array();
-
-    $result = &civicrm_group_nesting_remove($params);
-    $this->assertEquals($result['is_error'], 1,
-      "In line " . __LINE__
-    );
-  }
-
-  /**
-   * Test civicrm_group_nesting_remove with wrong parameter type.
-   * Error expected.
-   */
-  public function testRemoveWithWrongParamsType() {
-    $params = 'a string';
-
-    $result = &civicrm_group_nesting_remove($params);
-    $this->assertEquals($result['is_error'], 1,
-      "In line " . __LINE__
-    );
-  }
 }
-
-
+?>

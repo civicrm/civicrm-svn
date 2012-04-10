@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,95 +25,99 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'CiviTest/CiviSeleniumTestCase.php';
+
+
+ 
 class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
-
-  protected function setUp() {
-    parent::setUp();
+    
+  protected function setUp()
+  {
+      parent::setUp();
   }
+  
+  function testAuthenticAddUser( )
+  {
+      $this->open( $this->sboxPath );
+      
+      $this->webtestLogin( true );
+      
+      // Go directly to the URL of the screen that will Create User Authentically.
+      $this->open( $this->sboxPath . "admin/people/create" );
+      
+      
+      $this->waitForElementPresent( "edit-submit" );
+      
+      $name = "TestUserAuthenticated" . substr(sha1(rand()), 0, 4);
+      $this->type( "edit-name", $name );
+      
+      $emailId   = substr(sha1(rand()), 0, 7).'@web.com';
+      $this->type( "edit-mail", $emailId );
+      $this->type( "edit-pass-pass1", "Test12345" );
+      $this->type( "edit-pass-pass2", "Test12345" );
+      
+      //Add profile Details 
+      $firstName = 'Ma'.substr(sha1(rand()), 0, 4);
+      $lastName  = 'An'.substr(sha1(rand()), 0, 7);
+      
+      $this->type( "first_name", $firstName );
+      $this->type( "last_name", $lastName );
+      
+      //Address Details
+      $this->type( "street_address-1", "902C El Camino Way SW" );
+      $this->type( "city-1", "Dumfries" );
+      $this->type( "postal_code-1", "1234" );
+      $this->select( "state_province-1", "value=1019" );
+      
+      $this->click( "edit-submit" );
+      $this->waitForPageToLoad( "30000" );
+  }  
 
-  function testAuthenticAddUser() {
-    $this->open($this->sboxPath);
+  function testAnonymousAddUser( )
+  {
+      // This is the path where our testing install resides. 
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes.
+      $this->open( $this->sboxPath );
+      
+      // Go directly to the URL of the screen that will Create User Anonymously.
+      $this->open( $this->sboxPath . "user/register" );
+      
+      $this->waitForElementPresent( "edit-submit" );
+      $name = "TestUserAnonymous" . substr(sha1(rand()), 0, 7);
+      $this->type( "edit-name", $name );
+      $emailId   = substr(sha1(rand()), 0, 7).'@web.com';
+      $this->type( "edit-mail", $emailId );
+      
+      
+      //Add profile Details 
+      $firstName = 'Ma'.substr(sha1(rand()), 0, 4);
+      $lastName  = 'An'.substr(sha1(rand()), 0, 7);
+      $this->type( "first_name", $firstName );
+      $this->type( "last_name", $lastName );
+      
+      //Address Details
+      $this->type( "street_address-1", "902C El Camino Way SW" );
+      $this->type( "city-1", "Dumfries" );
+      $this->type( "postal_code-1", "1234" );
+      $this->assertTrue( $this->isTextPresent( "United States" ) );
+      $this->select( "state_province-1", "value=1019" );
+      
+      $this->click( "edit-submit" );
+      $this->waitForPageToLoad( "30000" );
+      $this->assertTrue( $this->isTextPresent( "Thank you for applying for an account. Your account is currently pending approval by the site administrator." ) );
+      $this->webtestLogin( );
+      
+      $this->open( $this->sboxPath . "civicrm/contact/search?reset=1" );
+      $this->waitForElementPresent("_qf_Basic_refresh");
+      $this->type("sort_name", $emailId);
+      $this->click("_qf_Basic_refresh");
+      $this->waitForPageToLoad( "30000" );
 
-    $this->webtestLogin(TRUE);
-
-    // Go directly to the URL of the screen that will Create User Authentically.
-    $this->open($this->sboxPath . "admin/people/create");
-
-
-    $this->waitForElementPresent("edit-submit");
-
-    $name = "TestUserAuthenticated" . substr(sha1(rand()), 0, 4);
-    $this->type("edit-name", $name);
-
-    $emailId = substr(sha1(rand()), 0, 7) . '@web.com';
-    $this->type("edit-mail", $emailId);
-    $this->type("edit-pass-pass1", "Test12345");
-    $this->type("edit-pass-pass2", "Test12345");
-
-    //Add profile Details
-    $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
-    $lastName = 'An' . substr(sha1(rand()), 0, 7);
-
-    $this->type("first_name", $firstName);
-    $this->type("last_name", $lastName);
-
-    //Address Details
-    $this->type("street_address-1", "902C El Camino Way SW");
-    $this->type("city-1", "Dumfries");
-    $this->type("postal_code-1", "1234");
-    $this->select("state_province-1", "value=1019");
-
-    $this->click("edit-submit");
-    $this->waitForPageToLoad("30000");
-  }
-
-  function testAnonymousAddUser() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Go directly to the URL of the screen that will Create User Anonymously.
-    $this->open($this->sboxPath . "user/register");
-
-    $this->waitForElementPresent("edit-submit");
-    $name = "TestUserAnonymous" . substr(sha1(rand()), 0, 7);
-    $this->type("edit-name", $name);
-    $emailId = substr(sha1(rand()), 0, 7) . '@web.com';
-    $this->type("edit-mail", $emailId);
-
-
-    //Add profile Details
-    $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
-    $lastName = 'An' . substr(sha1(rand()), 0, 7);
-    $this->type("first_name", $firstName);
-    $this->type("last_name", $lastName);
-
-    //Address Details
-    $this->type("street_address-1", "902C El Camino Way SW");
-    $this->type("city-1", "Dumfries");
-    $this->type("postal_code-1", "1234");
-    $this->assertTrue($this->isTextPresent("United States"));
-    $this->select("state_province-1", "value=1019");
-
-    $this->click("edit-submit");
-    $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Thank you for applying for an account. Your account is currently pending approval by the site administrator."));
-    $this->webtestLogin();
-
-    $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
-    $this->waitForElementPresent("_qf_Basic_refresh");
-    $this->type("sort_name", $emailId);
-    $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("30000");
-
-    $this->assertTrue($this->isTextPresent($emailId));
-    $this->assertTrue($this->isTextPresent($lastName . ', ' . $firstName));
-    $this->assertTrue($this->isTextPresent("902C El Camino Way SW"));
-    $this->assertTrue($this->isTextPresent("Dumfries"));
-    $this->assertTrue($this->isTextPresent("1234"));
-  }
+      $this->assertTrue( $this->isTextPresent( $emailId ) );
+      $this->assertTrue( $this->isTextPresent( $lastName . ', ' . $firstName ) );
+      $this->assertTrue( $this->isTextPresent( "902C El Camino Way SW" ) );
+      $this->assertTrue( $this->isTextPresent( "Dumfries" ) );
+      $this->assertTrue( $this->isTextPresent( "1234" ) );
+  }  
 }
-

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,32 +25,35 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'CiviTest/CiviSeleniumTestCase.php';
+
+
+ 
 class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
 
-  protected function setUp() {
-    parent::setUp();
+  protected function setUp()
+  {
+      parent::setUp();
   }
+  
+  function testTagSetSearch( ) {
+    $this->open( $this->sboxPath );
+    $this->webtestLogin( );
+    
 
-  function testTagSetSearch() {
-    $this->open($this->sboxPath);
-    $this->webtestLogin();
-
-
-    $tagSet1 = $this->_testAddTagSet();
-    $tagSet2 = $this->_testAddTagSet();
-
+    $tagSet1 = $this->_testAddTagSet( );
+    $tagSet2 = $this->_testAddTagSet( );
+    
     // Individual 1
     $contact1 = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($contact1, "Anderson", "{$contact1}@example.com");
-
-    $this->click('css=li#tab_tag a');
+    $this->webtestAddContact( $contact1, "Anderson", "{$contact1}@example.com" );
+    
+    $this->click( 'css=li#tab_tag a' );
     $this->waitForElementPresent("token-input-contact_taglist_{$tagSet1}");
-
+    
     // Add tag1 for Individual 1
     $tag1 = substr(sha1(rand()), 0, 5);
-    $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
+    $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);    
     // ...waiting for drop down with results to show up...
     $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
     $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
@@ -66,13 +70,13 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
     // ...need to use mouseDownAt on first result (which is a li element), click does not work
     $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
     $this->waitForTextPresent($tag2);
-
-
+    
+ 
     // Individual 2
     $contact2 = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($contact2, "Anderson", "{$contact2}@example.com");
-
-    $this->click('css=li#tab_tag a');
+    $this->webtestAddContact( $contact2, "Anderson", "{$contact2}@example.com" );
+    
+    $this->click( 'css=li#tab_tag a' );
     $this->waitForElementPresent("token-input-contact_taglist_{$tagSet1}");
 
     // Add tag1 for Individual 2
@@ -86,7 +90,7 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
 
 
     // Go to Advance search.
-    $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
+    $this->open( $this->sboxPath . "civicrm/contact/search/advanced?reset=1" );
     $this->waitForPageToLoad("30000");
 
     // Check both the tagset.
@@ -95,22 +99,22 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
 
     // Search contact using tags.
     $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
-
+    
     // ...waiting for drop down with results to show up...
     $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
     $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
-
+    
     // ...need to use mouseDownAt on first result (which is a li element), click does not work
     $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
-
+    
     $this->waitForTextPresent($tag1);
 
     $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet2}", $tag2);
-
+    
     // ...waiting for drop down with results to show up...
     $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
     $this->waitForElementPresent("css=li.token-input-dropdown-item2-facebook");
-
+    
     // ...need to use mouseDownAt on first result (which is a li element), click does not work
     $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
@@ -123,51 +127,51 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("2 Contacts"));
     $this->assertTrue($this->isTextPresent("Anderson, $contact1"));
     $this->assertTrue($this->isTextPresent("Anderson, $contact2"));
+
   }
-
-  function _testAddTagSet() {
+  
+  function _testAddTagSet( ) {
     // Go to add tag set url.
-    $this->open($this->sboxPath . "civicrm/admin/tag?action=add&reset=1&tagset=1");
+    $this->open( $this->sboxPath . "civicrm/admin/tag?action=add&reset=1&tagset=1" );
     $this->waitForPageToLoad("30000");
-
+    
     // take a tagset name
-    $tagSetName = 'tagset_' . substr(sha1(rand()), 0, 7);
-
+    $tagSetName = 'tagset_'.substr(sha1(rand()), 0, 7);
+    
     // fill tagset name
     $this->type("name", $tagSetName);
-
+      
     // fill description
     $this->type("description", "Adding new tag set.");
-
+    
     // select used for contact
     $this->select("used_for", "value=civicrm_contact");
-
+    
     // check reserved
     $this->click("is_reserved");
-
+    
     // Clicking save.
     $this->click("_qf_Tag_next");
     $this->waitForPageToLoad("30000");
-
+    
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The tag '$tagSetName' has been saved."));
-
+    
     // sort by ID desc
     $this->click("xpath=//table//tr/th[text()=\"ID\"]");
     $this->waitForElementPresent("css=table.display tbody tr td");
-
-    // verify text
+    
+    // verify text       
     $this->waitForElementPresent("xpath=//table//tbody/tr/td[1][text()= '$tagSetName']");
-
+    
     $this->click("xpath=//table//tbody/tr/td[1][text()= '$tagSetName']/following-sibling::td[7]/span/a[text()= 'Edit']");
 
     $this->waitForPageToLoad("30000");
-
+    
     // Get contact id from url.
     $matches = array();
     preg_match('/id=([0-9]+)/', $this->getLocation(), $matches);
-
+    
     return $matches[1];
   }
 }
-

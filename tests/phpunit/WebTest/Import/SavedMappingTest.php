@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,117 +25,118 @@
  +--------------------------------------------------------------------+
 */
 
+require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php'; 
 
-require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php';
 class WebTest_Import_SavedMapping extends ImportCiviSeleniumTestCase {
-
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-
-  protected function setUp() {
-    parent::setUp();
-  }
-
-  /*
+    
+    protected $captureScreenshotOnFailure = TRUE;
+    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
+    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
+    
+    protected function setUp()
+    {
+        parent::setUp();
+    }
+    
+    /*
      * Function to test Saved Import Mapping for Individuals.
      */
-  function testSaveIndividualMapping() {
-
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Logging in.
-    $this->webtestLogin();
-
-    // Get sample import data.
-    list($headers, $rows) = $this->_individualCSVData();
-
-    // Create New Mapping Name
-    $mappingName = 'contactimport_' . substr(sha1(rand()), 0, 7);
-
-    $other = array('saveMapping' => TRUE,
-      'saveMappingName' => $mappingName,
-    );
-
-    // Map Fields
-    $fieldMapper = array('mapper[0][0]' => 'individual_prefix',
-      'mapper[4][0]' => 'individual_suffix',
-      'mapper[6][0]' => 'phone',
-      'mapper[6][1]' => '5',
-      'mapper[7][0]' => 'supplemental_address_1',
-      'mapper[7][1]' => '5',
-      'mapper[8][0]' => 'supplemental_address_2',
-      'mapper[8][1]' => '5',
-      'mapper[9][0]' => 'city',
-      'mapper[9][1]' => '5',
-      'mapper[10][0]' => 'state_province',
-      'mapper[10][1]' => '5',
-      'mapper[11][0]' => 'country',
-      'mapper[11][1]' => '5',
-    );
-
-    // Import and check Individual contacts in Skip mode.
-    $this->importContacts($headers, $rows, 'Individual', 'Skip', $fieldMapper, $other);
-
-    list($headers, $rows) = $this->_individualCSVData();
-
-    // Sending Mapped Name for Re-use
-    $other = array('useMappingName' => $mappingName);
-    $this->importContacts($headers, $rows, 'Individual', 'Skip', array(), $other);
-  }
-
-  /*
+    function testSaveIndividualMapping( )
+    {    
+        
+        // This is the path where our testing install resides. 
+        // The rest of URL is defined in CiviSeleniumTestCase base class, in
+        // class attributes.
+        $this->open( $this->sboxPath );
+        
+        // Logging in.
+        $this->webtestLogin( );
+        
+        // Get sample import data.
+        list( $headers, $rows ) = $this->_individualCSVData( );
+        
+        // Create New Mapping Name
+        $mappingName = 'contactimport_' . substr(sha1(rand()), 0, 7);
+        
+        $other = array( 'saveMapping' => true,
+                        'saveMappingName' => $mappingName );
+        
+        // Map Fields
+        $fieldMapper = array( 'mapper[0][0]'  => 'individual_prefix',
+                              'mapper[4][0]'  => 'individual_suffix',
+                              'mapper[6][0]'  => 'phone',
+                              'mapper[6][1]'  => '5',
+                              'mapper[7][0]'  => 'supplemental_address_1',
+                              'mapper[7][1]'  => '5',
+                              'mapper[8][0]'  => 'supplemental_address_2',
+                              'mapper[8][1]'  => '5',
+                              'mapper[9][0]'  => 'city',
+                              'mapper[9][1]'  => '5',
+                              'mapper[10][0]' => 'state_province',
+                              'mapper[10][1]' => '5',
+                              'mapper[11][0]' => 'country',
+                              'mapper[11][1]' => '5' );
+        
+        // Import and check Individual contacts in Skip mode.
+        $this->importContacts( $headers, $rows, 'Individual', 'Skip', $fieldMapper, $other );
+        
+        list( $headers, $rows ) = $this->_individualCSVData( );
+        
+        // Sending Mapped Name for Re-use
+        $other = array( 'useMappingName' => $mappingName );
+        $this->importContacts( $headers, $rows, 'Individual', 'Skip', array( ), $other );
+    }
+    
+    /*
      *  Helper function to provide csv data for Individuals contact import.
      */
-  function _individualCSVData() {
-    $headers = array('individual_prefix' => 'Individual Prefix',
-      'first_name' => 'First Name',
-      'middle_name' => 'Middle Name',
-      'last_name' => 'Last Name',
-      'individual_suffix' => 'Individual Suffix',
-      'email' => 'Email',
-      'phone' => 'Phone',
-      'address_1' => 'Additional Address 1',
-      'address_2' => 'Additional Address 2',
-      'city' => 'City',
-      'state' => 'State',
-      'country' => 'Country',
-    );
-
-    $rows = array(
-      array('individual_prefix' => 'Mr.',
-        'first_name' => substr(sha1(rand()), 0, 7),
-        'middle_name' => substr(sha1(rand()), 0, 7),
-        'last_name' => 'Anderson',
-        'individual_suffix' => 'Jr.',
-        'email' => substr(sha1(rand()), 0, 7) . '@example.com',
-        'phone' => '6949912154',
-        'address_1' => 'Add 1',
-        'address_2' => 'Add 2',
-        'city' => 'Watson',
-        'state' => 'NY',
-        'country' => 'United States',
-      ),
-      array('individual_prefix' => 'Mr.',
-        'first_name' => substr(sha1(rand()), 0, 7),
-        'middle_name' => substr(sha1(rand()), 0, 7),
-        'last_name' => 'Summerson',
-        'individual_suffix' => 'Jr.',
-        'email' => substr(sha1(rand()), 0, 7) . '@example.com',
-        'phone' => '6944412154',
-        'address_1' => 'Add 1',
-        'address_2' => 'Add 2',
-        'city' => 'Watson',
-        'state' => 'NY',
-        'country' => 'United States',
-      ),
-    );
-
-    return array($headers, $rows);
-  }
+    function _individualCSVData( ) {
+        $headers = array( 'individual_prefix' => 'Individual Prefix',
+                          'first_name'        => 'First Name',
+                          'middle_name'       => 'Middle Name',
+                          'last_name'         => 'Last Name',
+                          'individual_suffix' => 'Individual Suffix',
+                          'email'             => 'Email',
+                          'phone'             => 'Phone',  
+                          'address_1'         => 'Additional Address 1',
+                          'address_2'         => 'Additional Address 2',
+                          'city'              => 'City',
+                          'state'             => 'State',
+                          'country'           => 'Country'
+                          );
+        
+        $rows = 
+            array( 
+                  array(  'individual_prefix' => 'Mr.',
+                          'first_name'        => substr(sha1(rand()), 0, 7),
+                          'middle_name'       => substr(sha1(rand()), 0, 7),
+                          'last_name'         => 'Anderson',
+                          'individual_suffix' => 'Jr.',
+                          'email'             => substr(sha1(rand()), 0, 7).'@example.com',
+                          'phone'             => '6949912154',  
+                          'address_1'         => 'Add 1',
+                          'address_2'         => 'Add 2',
+                          'city'              => 'Watson',
+                          'state'             => 'NY',
+                          'country'           => 'United States'
+                          ),
+                  
+                  array(  'individual_prefix' => 'Mr.',
+                          'first_name'        => substr(sha1(rand()), 0, 7),
+                          'middle_name'       => substr(sha1(rand()), 0, 7),
+                          'last_name'         => 'Summerson',
+                          'individual_suffix' => 'Jr.',
+                          'email'             => substr(sha1(rand()), 0, 7).'@example.com',
+                          'phone'             => '6944412154',  
+                          'address_1'         => 'Add 1',
+                          'address_2'         => 'Add 2',
+                          'city'              => 'Watson',
+                          'state'             => 'NY',
+                          'country'           => 'United States'
+                          )
+                   );
+        
+        return array( $headers, $rows );
+    }
 }
-
-
+?>

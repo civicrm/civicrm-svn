@@ -25,7 +25,6 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v3/GroupOrganization.php';
 
@@ -34,222 +33,235 @@ require_once 'api/v3/GroupOrganization.php';
  *
  *  @package   CiviCRM
  */
-class api_v3_GroupOrganizationTest extends CiviUnitTestCase {
-  protected $_apiversion; function get_info() {
-    return array(
-      'name' => 'Group Organization',
-      'description' => 'Test all Group Organization API methods.',
-      'group' => 'CiviCRM API Tests',
-    );
-  }
+class api_v3_GroupOrganizationTest extends CiviUnitTestCase
+{
+    protected $_apiversion;
+    function get_info( )
+    {
+        return array(
+                     'name'        => 'Group Organization',
+                     'description' => 'Test all Group Organization API methods.',
+                     'group'       => 'CiviCRM API Tests',
+                     );
+    }
 
-  /**
-   * Sets up the fixture, for example, opens a network connection.
-   * This method is called before a test is executed.
-   *
-   * @access protected
-   */
-  protected function setUp() {
-    $this->_apiversion = 3;
-    parent::setUp();
-    $this->_groupID = $this->groupCreate(NULL);
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     *
+     * @access protected
+     */
+    protected function setUp()
+    {
+        $this->_apiversion =3;
+        parent::setUp();
+        $this->_groupID = $this->groupCreate(null);
 
-    $this->_orgID = $this->organizationCreate(NULL);
-  }
+        $this->_orgID   = $this->organizationCreate(null );
 
-  /**
-   * Tears down the fixture, for example, closes a network connection.
-   * This method is called after a test is executed.
-   *
-   * @access protected
-   */
-  protected function tearDown() {
-    //  Truncate the tables
-    $op = new PHPUnit_Extensions_Database_Operation_Truncate();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-        dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml'
-      )
-    );
-  }
+    }
 
-  ///////////////// civicrm_group_organization_get methods
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     *
+     * @access protected
+     */
+    protected function tearDown()
+    {
+        //  Truncate the tables
+        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+        $op->execute( $this->_dbconn,
+                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+                             dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml') );
+    }
 
-  /**
-   * Test civicrm_group_organization_get with valid params.
-   */
-  public function testGroupOrganizationGet() {
+    ///////////////// civicrm_group_organization_get methods
 
-    $params = array('organization_id' => $this->_orgID,
-      'group_id' => $this->_groupID,
-      'version' => $this->_apiversion,
-    );
-    $result = civicrm_api('group_organization', 'create', $params);
-    $paramsGet = array('organization_id' => $result['id'],
-      'version' => $this->_apiversion,
-    );
-    $result = civicrm_api('group_organization', 'get', $paramsGet);
-    $this->documentMe($paramsGet, $result, __FUNCTION__, __FILE__);
-    $this->assertEquals($result['is_error'], 0);
-  }
+    /**
+     * Test civicrm_group_organization_get with valid params.
+     */
+    public function testGroupOrganizationGet()
+    {
 
-  /**
-   * Test civicrm_group_organization_get with group_id.
-   */
-  public function testGroupOrganizationGetWithGroupId() {
+        $params = array( 'organization_id' => $this->_orgID,
+                         'group_id'        => $this->_groupID,
+                         'version'			 => $this->_apiversion,
+                         );
+        $result = civicrm_api('group_organization', 'create', $params );
+        $paramsGet = array( 'organization_id' => $result['id'] ,
+                            'version'			 => $this->_apiversion, );       
+        $result    = civicrm_api('group_organization', 'get',$paramsGet);
+        $this->documentMe($paramsGet,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 0);
+    }
 
-    $params = array('organization_id' => $this->_orgID,
-      'group_id' => $this->_groupID,
-      'version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'create', $params);
+     /**
+     * Test civicrm_group_organization_get with group_id.
+     */
+    public function testGroupOrganizationGetWithGroupId()
+    {
 
-    $paramsGet = array('organization_id' => $result['result']['organization_id']);
+        $params = array( 'organization_id' => $this->_orgID,
+                         'group_id'        => $this->_groupID,
+                         'version'			 => $this->_apiversion,
+                         );
+        $result =& civicrm_api('group_organization', 'create', $params );
 
-    $result = civicrm_api('group_organization', 'get', $params);
-    $this->assertEquals($result['is_error'], 0);
-  }
+        $paramsGet = array( 'organization_id' => $result['result']['organization_id']  );
+        
+        $result    = civicrm_api('group_organization', 'get',$params);
+        $this->assertEquals( $result['is_error'], 0);
+    } 
+  
+    /**
+     * Test civicrm_group_organization_get with empty params.
+     */
+    public function testGroupOrganizationGetWithEmptyParams()
+    {
+        $params = array( 'version'   => $this->_apiversion,  );
+        $result =& civicrm_api('group_organization', 'get',$params);
 
-  /**
-   * Test civicrm_group_organization_get with empty params.
-   */
-  public function testGroupOrganizationGetWithEmptyParams() {
-    $params = array('version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'get', $params);
+        $this->assertEquals( $result['is_error'], 0 );
+   }
 
-    $this->assertEquals($result['is_error'], 0);
-  }
+    /**
+     * Test civicrm_group_organization_get with wrong params.
+     */
+    public function testGroupOrganizationGetWithWrongParams()
+    {
+        $params = 'groupOrg';
+        $result =& civicrm_api('group_organization', 'get',$params);
 
-  /**
-   * Test civicrm_group_organization_get with wrong params.
-   */
-  public function testGroupOrganizationGetWithWrongParams() {
-    $params = 'groupOrg';
-    $result = &civicrm_api('group_organization', 'get', $params);
+        $this->assertEquals( $result['is_error'], 1);
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
+    }
 
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
-  }
+    /**
+     * Test civicrm_group_organization_get invalid keys.
+     */
+    public function testGroupOrganizationGetWithInvalidKeys()
+    {
+        $params = array( 'invalid_key' => 1,
+         									'version'   => $this->_apiversion,  );
+        $result =& civicrm_api('group_organization', 'get',$params);
 
-  /**
-   * Test civicrm_group_organization_get invalid keys.
-   */
-  public function testGroupOrganizationGetWithInvalidKeys() {
-    $params = array('invalid_key' => 1,
-      'version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'get', $params);
+        $this->assertEquals( $result['is_error'], 0);
+   }
 
-    $this->assertEquals($result['is_error'], 0);
-  }
+    ///////////////// civicrm_group_organization_create methods
 
-  ///////////////// civicrm_group_organization_create methods
+    /**
+     * check with valid params
+     */
+    public function testGroupOrganizationCreate()
+    {
+        $params = array( 'organization_id' => $this->_orgID,
+                         'group_id'        => $this->_groupID,
+                         'version'         => $this->_apiversion,
+                         );
+        $result =& civicrm_api('group_organization', 'create',$params);
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 0);
+    }    
 
-  /**
-   * check with valid params
-   */
-  public function testGroupOrganizationCreate() {
-    $params = array('organization_id' => $this->_orgID,
-      'group_id' => $this->_groupID,
-      'version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'create', $params);
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertEquals($result['is_error'], 0);
-  }
+    /**
+     * check with empty params array
+     */
+    public function testGroupOrganizationCreateWithEmptyParams()
+    {
+        $params = array( 'version'   => $this->_apiversion,  );
+        $result =& civicrm_api('group_organization', 'create',$params);
 
-  /**
-   * check with empty params array
-   */
-  public function testGroupOrganizationCreateWithEmptyParams() {
-    $params = array('version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'create', $params);
+        $this->assertEquals( $result['is_error'], 1);
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: group_id, organization_id' );
+    }
 
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: group_id, organization_id');
-  }
+    /**
+     * check with invalid params
+     */
+    public function testGroupOrganizationCreateParamsNotArray()
+    {
+        $params = 'group_org';
+        $result =& civicrm_api('group_organization', 'create', $params );
 
-  /**
-   * check with invalid params
-   */
-  public function testGroupOrganizationCreateParamsNotArray() {
-    $params = 'group_org';
-    $result = &civicrm_api('group_organization', 'create', $params);
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
+    }
+    
+    /**
+     * check with invalid params keys
+     */
+    public function testGroupOrganizationCreateWithInvalidKeys()
+    {
+        $params = array( 'invalid_key' => 1,
+                         'version'   => $this->_apiversion,  );
+        $result =& civicrm_api('group_organization', 'create', $params );
 
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
-  }
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: group_id, organization_id' );
+    }
 
-  /**
-   * check with invalid params keys
-   */
-  public function testGroupOrganizationCreateWithInvalidKeys() {
-    $params = array('invalid_key' => 1,
-      'version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'create', $params);
+    ///////////////// civicrm_group_organization_remove methods
 
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: group_id, organization_id');
-  }
+    /**
+     *  Test civicrm_group_organization_remove with params not an array.
+     */
+    public function testGroupOrganizationDeleteParamsNotArray()
+    {
+        $params = 'delete';
+        $result =& civicrm_api('group_organization', 'delete',$params);
+        
+        $this->assertEquals( $result['is_error'], 1);
+        $this->assertEquals( $result['error_message'], 'Input variable `params` is not an array' );
 
-  ///////////////// civicrm_group_organization_remove methods
+    }
 
-  /**
-   *  Test civicrm_group_organization_remove with params not an array.
-   */
-  public function testGroupOrganizationDeleteParamsNotArray() {
-    $params = 'delete';
-    $result = &civicrm_api('group_organization', 'delete', $params);
 
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
-  }
+    /**
+     * Test civicrm_group_organization_remove with empty params.
+     */
+    public function testGroupOrganizationDeleteWithEmptyParams()
+    {
+        $params = array( 'version'   => $this->_apiversion, );
+        $result =& civicrm_api('group_organization', 'delete',$params);
 
-  /**
-   * Test civicrm_group_organization_remove with empty params.
-   */
-  public function testGroupOrganizationDeleteWithEmptyParams() {
-    $params = array('version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'delete', $params);
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id' );
+    }
 
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: id');
-  }
+    /**
+     *  Test civicrm_group_organization_remove with valid params.
+     */
+    public function testGroupOrganizationDelete()
+    {   
+        $paramsC = array( 'organization_id' => $this->_orgID,
+                         'group_id'        => $this->_groupID,
+                         'version'			 => $this->_apiversion,
+                         );
+        $result =& civicrm_api('group_organization', 'create', $paramsC );
 
-  /**
-   *  Test civicrm_group_organization_remove with valid params.
-   */
-  public function testGroupOrganizationDelete() {
-    $paramsC = array('organization_id' => $this->_orgID,
-      'group_id' => $this->_groupID,
-      'version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'create', $paramsC);
+        $params = array( 'id' => $result['id'],
+                                'version'			 => $this->_apiversion,  );
+        $result =& civicrm_api('group_organization', 'delete', $params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+        $this->assertEquals( $result['is_error'], 0, 'in line '  . __LINE__);
 
-    $params = array('id' => $result['id'],
-      'version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'delete', $params);
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
-  }
+    }
 
-  /**
-   *  Test civicrm_group_organization_remove with invalid params key.
-   */
-  public function testGroupOrganizationDeleteWithInvalidKey() {
-    $paramsDelete = array('invalid_key' => 1,
-      'version' => $this->_apiversion,
-    );
-    $result = &civicrm_api('group_organization', 'delete', $paramsDelete);
+    /**
+     *  Test civicrm_group_organization_remove with invalid params key.
+     */
+    public function testGroupOrganizationDeleteWithInvalidKey()
+    {   
+        $paramsDelete = array( 'invalid_key' => 1,
+                                'version'   => $this->_apiversion, );
+        $result =& civicrm_api('group_organization', 'delete', $paramsDelete );
+ 
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'Mandatory key(s) missing from params array: id' );
 
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: id');
-  }
+    }
+
 }
-
-
+?>

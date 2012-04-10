@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,177 +25,180 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once 'CiviTest/CiviSeleniumTestCase.php';
+
+
+ 
 class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
 
   protected $captureScreenshotOnFailure = TRUE;
   protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
   protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-
-  protected function setUp() {
-    parent::setUp();
+    
+  protected function setUp()
+  {
+      parent::setUp();
   }
 
-  function testCreateCampaign() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
+  function testCreateCampaign()
+  {
+      // This is the path where our testing install resides. 
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes.
+      $this->open( $this->sboxPath );
 
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
-    $this->webtestLogin();
+      // Logging in. Remember to wait for page to load. In most cases,
+      // you can rely on 30000 as the value that allows your test to pass, however,
+      // sometimes your test might fail because of this. In such cases, it's better to pick one element
+      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+      // page contents loaded and you can continue your test execution.
+      $this->webtestLogin();
 
-    // Create new group
-    $title = substr(sha1(rand()), 0, 7);
-    $groupName = $this->WebtestAddGroup();
+      // Create new group
+      $title = substr(sha1(rand()), 0, 7);
+      $groupName = $this->WebtestAddGroup( );
 
-    // Adding contact
-    // We're using Quick Add block on the main page for this.
-    $firstName1 = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($firstName1, "Smith", "$firstName1.smith@example.org");
+      // Adding contact
+      // We're using Quick Add block on the main page for this.
+      $firstName1 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName1, "Smith", "$firstName1.smith@example.org" );
+     
+      // add contact to group
+      // visit group tab
+      $this->click("css=li#tab_group a");
+      $this->waitForElementPresent("group_id");
 
-    // add contact to group
-    // visit group tab
-    $this->click("css=li#tab_group a");
-    $this->waitForElementPresent("group_id");
-
-    // add to group
-    $this->select("group_id", "label=$groupName");
-    $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
-
-    $firstName2 = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($firstName2, "John", "$firstName2.john@example.org");
-
-    // add contact to group
-    // visit group tab
-    $this->click("css=li#tab_group a");
-    $this->waitForElementPresent("group_id");
-
-    // add to group
-    $this->select("group_id", "label=$groupName");
-    $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
-
-    // Enable CiviCampaign module if necessary
-    $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
-    $this->waitForElementPresent("_qf_Component_next-bottom");
-    $enabledComponents = $this->getSelectOptions("enableComponents-t");
-    if (!in_array("CiviCampaign", $enabledComponents)) {
-      $this->addSelection("enableComponents-f", "label=CiviCampaign");
-      $this->click("//option[@value='CiviCampaign']");
-      $this->click("add");
-      $this->click("_qf_Component_next-bottom");
+      // add to group
+      $this->select("group_id", "label=$groupName");
+      $this->click("_qf_GroupContact_next");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
-    }
 
-    // add the required Drupal permission
-    $permissions = array('edit-2-administer-civicampaign');
-    $this->changePermissions($permissions);
+      $firstName2 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName2, "John", "$firstName2.john@example.org" );
+     
+      // add contact to group
+      // visit group tab
+      $this->click("css=li#tab_group a");
+      $this->waitForElementPresent("group_id");
 
-    // Go directly to the URL of the screen that you will be testing
-    $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
+      // add to group
+      $this->select("group_id", "label=$groupName");
+      $this->click("_qf_GroupContact_next");
+      $this->waitForPageToLoad("30000");
 
-    // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-    // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForElementPresent("_qf_Campaign_upload-bottom");
+      // Enable CiviCampaign module if necessary
+      $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("_qf_Component_next-bottom");
+      $enabledComponents = $this->getSelectOptions("enableComponents-t");
+      if (! in_array( "CiviCampaign", $enabledComponents ) ) {
+          $this->addSelection("enableComponents-f", "label=CiviCampaign");
+          $this->click("//option[@value='CiviCampaign']");
+          $this->click("add");
+          $this->click("_qf_Component_next-bottom");
+          $this->waitForPageToLoad("30000");          
+          $this->assertTrue($this->isTextPresent("Your changes have been saved."));    
+      }
 
-    // Let's start filling the form with values.
-    $campaignTitle = "Campaign $title";
-    $this->type("title", $campaignTitle);
+      // add the required Drupal permission
+      $permissions = array('edit-2-administer-civicampaign');
+      $this->changePermissions( $permissions );
 
-    // select the campaign type
-    $this->select("campaign_type_id", "value=2");
+      // Go directly to the URL of the screen that you will be testing
+      $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
 
-    // fill in the description
-    $this->type("description", "This is a test campaign");
+      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+      // button at the end of this page to show up, to make sure it's fully loaded.
+      $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
-    // include groups for the campaign
-    $this->addSelection("includeGroups-f", "label=$groupName");
-    $this->click("//option[@value=4]");
-    $this->click("add");
+      // Let's start filling the form with values.
+      $campaignTitle = "Campaign $title";
+      $this->type( "title", $campaignTitle );
 
-    // fill the end date for campaign
-    $this->webtestFillDate("end_date", "+1 year");
+      // select the campaign type
+      $this->select("campaign_type_id", "value=2");
 
-    // select campaign status
-    $this->select("status_id", "value=2");
+      // fill in the description
+      $this->type("description", "This is a test campaign");
 
-    // click save
-    $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+      // include groups for the campaign
+      $this->addSelection("includeGroups-f", "label=$groupName");
+      $this->click("//option[@value=4]");
+      $this->click("add");
 
-    $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
-      "Status message didn't show up after saving campaign!"
-    );
+      // fill the end date for campaign
+      $this->webtestFillDate("end_date", "+1 year");
+      
+      // select campaign status
+      $this->select("status_id", "value=2");
 
-    $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
-    $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
-    $this->memberAddTest($campaignTitle, $id);
+      // click save
+      $this->click("_qf_Campaign_upload-bottom");
+      $this->waitForPageToLoad("30000");
+      
+      $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."), 
+                        "Status message didn't show up after saving campaign!");
+      
+      $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+      $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
+      $this->memberAddTest( $campaignTitle, $id );
   }
 
-  function memberAddTest($campaignTitle, $id) {
-    //Add new memebershipType
-    $memTypeParams = $this->webtestAddMembershipType();
+  function memberAddTest( $campaignTitle, $id )
+  {
+      //Add new memebershipType
+      $memTypeParams = $this->webtestAddMembershipType( );
+      
+      // Adding Adding contact with randomized first name for test testContactContextActivityAdd
+      // We're using Quick Add block on the main page for this.
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "John", $firstName . "john@gmail.com" );
+      $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+      
+      // click through to the membership view screen
+      $this->click("css=li#tab_member a");
+      
+      $this->waitForElementPresent("link=Add Membership");
+      $this->click("link=Add Membership");
+      
+      $this->waitForElementPresent("_qf_Membership_cancel-bottom");
+      
+      // fill in Membership Organization and Type
+      $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
 
-    // Adding Adding contact with randomized first name for test testContactContextActivityAdd
-    // We're using Quick Add block on the main page for this.
-    $firstName = substr(sha1(rand()), 0, 7);
-    $this->webtestAddContact($firstName, "John", $firstName . "john@gmail.com");
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+      // Wait for membership type select to reload
+      $this->waitForTextPresent( $memTypeParams['membership_type'] );
+      $this->select("membership_type_id[1]", "label={$memTypeParams['membership_type']}");
+      
+      $sourceText = "Membership ContactAddTest Webtest";
+      // fill in Source
+      $this->type("source", $sourceText );
+      
+      // select campaign
+      $this->click("campaign_id");
+      $this->select("campaign_id", "value=$id" );
+      
+      
+      // Let Join Date stay default
+      // fill in Start Date
+      $this->webtestFillDate('start_date');
+      
+      // Clicking save.
+      $this->click("_qf_Membership_upload");
+      $this->waitForPageToLoad("30000");
 
-    // click through to the membership view screen
-    $this->click("css=li#tab_member a");
-
-    $this->waitForElementPresent("link=Add Membership");
-    $this->click("link=Add Membership");
-
-    $this->waitForElementPresent("_qf_Membership_cancel-bottom");
-
-    // fill in Membership Organization and Type
-    $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
-
-    // Wait for membership type select to reload
-    $this->waitForTextPresent($memTypeParams['membership_type']);
-    $this->select("membership_type_id[1]", "label={$memTypeParams['membership_type']}");
-
-    $sourceText = "Membership ContactAddTest Webtest";
-    // fill in Source
-    $this->type("source", $sourceText);
-
-    // select campaign
-    $this->click("campaign_id");
-    $this->select("campaign_id", "value=$id");
-
-
-    // Let Join Date stay default
-    // fill in Start Date
-    $this->webtestFillDate('start_date');
-
-    // Clicking save.
-    $this->click("_qf_Membership_upload");
-    $this->waitForPageToLoad("30000");
-
-    // page was loaded
-    $this->waitForTextPresent($sourceText);
-
-    // Is status message correct?
-    $this->assertTrue($this->isTextPresent("membership for $firstName John has been added."),
-      "Status message didn't show up after saving!"
-    );
-
-    // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']");
-    $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
-
-    $this->webtestVerifyTabularData(array('Campaign' => $campaignTitle));
+      // page was loaded
+      $this->waitForTextPresent( $sourceText );
+      
+      // Is status message correct?
+      $this->assertTrue($this->isTextPresent("membership for $firstName John has been added."),
+                        "Status message didn't show up after saving!");
+      
+      // click through to the membership view screen
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
+      
+      $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
   }
+  
 }
-

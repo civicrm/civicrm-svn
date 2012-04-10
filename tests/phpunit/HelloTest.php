@@ -25,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /**
  * @file HelloTest.php
  *
@@ -40,35 +41,39 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-class HelloTest extends PHPUnit_Framework_TestCase {
-  // contains the object handle of the string class
-  var $abc;
-  function __construct($name = NULL) {
-    parent::__construct($name);
-  }
 
-  // called before the test functions will be executed
-  // this function is defined in PHPUnit_TestCase and overwritten
-  // here
-  function setUp() {
-    // create a new instance of String with the
-    // string 'abc'
-    $this->abc = "hello";
-  }
+class HelloTest extends PHPUnit_Framework_TestCase
+{
+	// contains the object handle of the string class
+	var $abc;
 
-  // called after the test functions are executed
-  // this function is defined in PHPUnit_TestCase and overwritten
-  // here
-  function tearDown() {
-    // delete your instance
-    unset($this->abc);
-  }
 
-  // test the toString function
-  function testHello() {
-    $result = $this->abc;
-    $expected = 'hello';
-    $this->assertEquals($result, $expected);
-  }
+	function __construct( $name = NULL)
+	{
+			parent::__construct( $name );
+	}
+
+	// called before the test functions will be executed
+	// this function is defined in PHPUnit_TestCase and overwritten
+	// here
+	function setUp() {
+		// create a new instance of String with the
+		// string 'abc'
+		$this->abc = "hello";
+	}
+
+	// called after the test functions are executed
+	// this function is defined in PHPUnit_TestCase and overwritten
+	// here
+	function tearDown() {
+		// delete your instance
+		unset($this->abc);
+	}
+
+	// test the toString function
+	function testHello() {
+		$result = $this->abc;
+		$expected = 'hello';
+		$this->assertEquals($result, $expected);
+	}
 }
-

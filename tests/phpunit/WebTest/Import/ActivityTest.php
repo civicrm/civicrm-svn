@@ -24,73 +24,74 @@
  +--------------------------------------------------------------------+
 */
 
-
-
 require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php';
+
 class WebTest_Import_ActivityTest extends ImportCiviSeleniumTestCase {
-
-  protected function setUp() {
-    parent::setUp();
-  }
-
-  function testActivityImport() {
-    $this->open($this->sboxPath);
-
-    $this->webtestLogin();
-
-    // Get sample import data.
-    list($headers, $rows) = $this->_activityCSVData();
-    $fieldMapper = array('mapper[0][0]' => 'target_contact_id',
-      'mapper[1][0]' => 'activity_label',
-      'mapper[2][0]' => 'activity_subject',
-      'mapper[3][0]' => 'activity_date_time',
-    );
-    $this->importCSVComponent('Activity', $headers, $rows, NULL, NULL, $fieldMapper);
-  }
-
-  function _activityCSVData() {
-
-    $firstName1 = substr(sha1(rand()), 0, 7);
-    $email1 = 'mail_' . substr(sha1(rand()), 0, 7) . '@example.com';
-    $this->webtestAddContact($firstName1, 'Anderson', $email1);
-    $url = explode('&cid=', $this->getLocation());
-    $id1 = $url[1];
-
-    $firstName2 = substr(sha1(rand()), 0, 7);
-    $email2 = 'mail_' . substr(sha1(rand()), 0, 7) . '@example.com';
-    $this->webtestAddContact($firstName2, 'Anderson', $email2);
-    $url = explode('&cid=', $this->getLocation());
-    $id2 = $url[1];
-
-    $headers = array('target_contact_id' => 'Contact ID',
-      'activity_type_label' => 'Activity Type Label',
-      'subject' => 'Subject',
-      'activity_date' => 'Activity Date',
-      'activity_status_id' => 'Activity Status Id',
-      'duration' => 'Duration',
-      'location' => 'Location',
-    );
-
-    $rows = array(
-      array('target_contact_id' => $id1,
-        'activity_type_label' => 'Meeting',
-        'subject' => 'Test Meeting',
-        'activity_date' => '2009-10-01',
-        'activity_status_id' => 'Completed',
-        'duration' => '20',
-        'location' => 'UK',
-      ),
-      array('target_contact_id' => $id2,
-        'activity_type_label' => 'Phone Call',
-        'subject' => 'Test Phone Call',
-        'activity_date' => '2010-10-15',
-        'activity_status_id' => 'Completed',
-        'duration' => '20',
-        'location' => 'USA',
-      ),
-    );
-
-    return array($headers, $rows);
-  }
+    
+    protected function setUp( )
+    {
+        parent::setUp( );
+    }
+    
+    function testActivityImport( )
+    {
+        $this->open( $this->sboxPath );
+        
+        $this->webtestLogin( );
+        
+        // Get sample import data.
+        list( $headers, $rows ) = $this->_activityCSVData( );
+        $fieldMapper = array( 'mapper[0][0]' => 'target_contact_id',
+                              'mapper[1][0]' => 'activity_label',
+                              'mapper[2][0]' => 'activity_subject',
+                              'mapper[3][0]' => 'activity_date_time'
+                              );
+        $this->importCSVComponent( 'Activity', $headers, $rows, null, null, $fieldMapper );
+    }
+    
+    function _activityCSVData( ) {
+        
+        $firstName1 = substr( sha1( rand( ) ), 0, 7 );
+        $email1     = 'mail_' . substr( sha1( rand( ) ), 0, 7 ) . '@example.com'; 
+        $this->webtestAddContact( $firstName1, 'Anderson', $email1 );
+        $url = explode( '&cid=', $this->getLocation( ) );
+        $id1 = $url[1];
+        
+        $firstName2 = substr( sha1( rand() ), 0, 7 );
+        $email2     = 'mail_' . substr( sha1( rand( ) ), 0, 7 ) . '@example.com'; 
+        $this->webtestAddContact( $firstName2, 'Anderson', $email2 );
+        $url = explode( '&cid=', $this->getLocation( ) );
+        $id2 = $url[1];
+        
+        $headers = array( 'target_contact_id'   => 'Contact ID',
+                          'activity_type_label' => 'Activity Type Label',
+                          'subject'             => 'Subject',
+                          'activity_date'       => 'Activity Date',
+                          'activity_status_id'  => 'Activity Status Id',
+                          'duration'            => 'Duration',
+                          'location'            => 'Location'
+                          );
+        
+        $rows = array( 
+                      array( 'target_contact_id'   => $id1, 
+                             'activity_type_label' => 'Meeting',
+                             'subject'             => 'Test Meeting',
+                             'activity_date'       => '2009-10-01',
+                             'activity_status_id'  => 'Completed',
+                             'duration'            => '20',
+                             'location'            => 'UK'
+                             ),
+                      
+                      array( 'target_contact_id'   => $id2,
+                             'activity_type_label' => 'Phone Call',
+                             'subject'             => 'Test Phone Call',
+                             'activity_date'       => '2010-10-15',
+                             'activity_status_id'  => 'Completed',
+                             'duration'            => '20',
+                             'location'            => 'USA'
+                             )
+                       );
+        
+        return array( $headers, $rows );
+    }
 }
-
