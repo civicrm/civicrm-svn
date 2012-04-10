@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,7 +34,7 @@
  * $Id$
  */
 
-/** 
+/**
  * Smarty block function providing serialization support
  *
  * See CRM_Core_I18n class documentation for details.
@@ -46,9 +45,7 @@
  *
  * @return string  the string, translated by gettext
  */
-function smarty_block_serialize($params, $text, &$smarty)
-{
-    return serialize( $text );
+function smarty_block_serialize($params, $text, &$smarty) {
+  return serialize($text);
 }
-
 

@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,47 +32,45 @@
  * $Id$
  *
  */
+class CRM_Core_Page_File extends CRM_Core_Page {
+  function run() {
 
+    $eid    = CRM_Utils_Request::retrieve('eid', 'Positive', $this, TRUE);
+    $fid    = CRM_Utils_Request::retrieve('fid', 'Positive', $this, FALSE);
+    $id     = CRM_Utils_Request::retrieve('id', 'Positive', $this, TRUE);
+    $quest  = CRM_Utils_Request::retrieve('quest', 'String', $this);
+    $action = CRM_Utils_Request::retrieve('action', 'String', $this);
 
-class CRM_Core_Page_File extends CRM_Core_Page 
-{
-
-    function run( ) 
-    {
-
-        $eid         = CRM_Utils_Request::retrieve( 'eid'   , 'Positive', $this, true );
-        $fid         = CRM_Utils_Request::retrieve( 'fid'   , 'Positive', $this, false );
-        $id          = CRM_Utils_Request::retrieve( 'id'    , 'Positive', $this, true );
-        $quest       = CRM_Utils_Request::retrieve( 'quest' , 'String',   $this );
-        $action      = CRM_Utils_Request::retrieve( 'action', 'String',   $this );
-
-        list( $path, $mimeType ) = CRM_Core_BAO_File::path( $id, $eid, null, $quest);
-        if ( ! $path ) {
-            CRM_Core_Error::statusBounce( 'Could not retrieve the file' );
-        }
-        
-        $buffer = file_get_contents( $path );
-        if ( ! $buffer ) {
-            CRM_Core_Error::statusBounce( 'The file is either empty or you do not have permission to retrieve the file' );
-        }
-
-        if ($action & CRM_Core_Action::DELETE) {
-            if (CRM_Utils_Request::retrieve('confirmed', 'Boolean', CRM_Core_DAO::$_nullObject )) {
-                CRM_Core_BAO_File::delete($id, $eid, $fid);
-                CRM_Core_Session::setStatus( ts('The attached file has been deleted.') );
-                
-                $session = CRM_Core_Session::singleton();   
-                $toUrl   = $session->popUserContext();
-                CRM_Utils_System::redirect($toUrl);
-            } else {
-                $wrapper = new CRM_Utils_Wrapper( );
-                return $wrapper->run( 'CRM_Custom_Form_DeleteFile', ts('Domain Information Page'), null);
-            }
-        } else {
-            CRM_Utils_System::download( CRM_Utils_File::cleanFileName ( basename( $path ) ),
-                                        $mimeType,
-                                        $buffer );
-        }
+    list($path, $mimeType) = CRM_Core_BAO_File::path($id, $eid, NULL, $quest);
+    if (!$path) {
+      CRM_Core_Error::statusBounce('Could not retrieve the file');
     }
+
+    $buffer = file_get_contents($path);
+    if (!$buffer) {
+      CRM_Core_Error::statusBounce('The file is either empty or you do not have permission to retrieve the file');
+    }
+
+    if ($action & CRM_Core_Action::DELETE) {
+      if (CRM_Utils_Request::retrieve('confirmed', 'Boolean', CRM_Core_DAO::$_nullObject)) {
+        CRM_Core_BAO_File::delete($id, $eid, $fid);
+        CRM_Core_Session::setStatus(ts('The attached file has been deleted.'));
+
+        $session = CRM_Core_Session::singleton();
+        $toUrl = $session->popUserContext();
+        CRM_Utils_System::redirect($toUrl);
+      }
+      else {
+        $wrapper = new CRM_Utils_Wrapper();
+        return $wrapper->run('CRM_Custom_Form_DeleteFile', ts('Domain Information Page'), NULL);
+      }
+    }
+    else {
+      CRM_Utils_System::download(CRM_Utils_File::cleanFileName(basename($path)),
+        $mimeType,
+        $buffer
+      );
+    }
+  }
 }
 

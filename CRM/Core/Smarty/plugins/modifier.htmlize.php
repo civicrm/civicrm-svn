@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -38,11 +37,12 @@
  * Convert a given text part a better HTML representation (add paragraphs and make URLs clickable)
  *
  * @param string $text text to HTML-ize
+ *
  * @return string HTML-ized version of $text
  */
-function smarty_modifier_htmlize($text)
-{
-    $text = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1">$1</a>', $text);
-    $text = nl2br($text);
-    return $text;
+function smarty_modifier_htmlize($text) {
+  $text = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1">$1</a>', $text);
+  $text = nl2br($text);
+  return $text;
 }
+

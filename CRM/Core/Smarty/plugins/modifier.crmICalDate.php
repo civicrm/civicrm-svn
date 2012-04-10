@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -42,11 +41,7 @@
  * @return string  formatted text
  * @access public
  */
-
-
-function smarty_modifier_crmICalDate( $str, $gdata = false )
-{
-    return CRM_Utils_ICalendar::formatDate( $str, $gdata );
+function smarty_modifier_crmICalDate($str, $gdata = FALSE) {
+  return CRM_Utils_ICalendar::formatDate($str, $gdata);
 }
-
 

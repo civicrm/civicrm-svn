@@ -55,10 +55,10 @@ class CRM_Core_Error extends PEAR_ErrorStack {
    * status code of various types of errors
    * @var const
    */
-   const FATAL_ERROR = 2;
-   const DUPLICATE_CONTACT = 8001;
-   const DUPLICATE_CONTRIBUTION = 8002;
-   const DUPLICATE_PARTICIPANT = 8003;
+  CONST FATAL_ERROR = 2;
+  CONST DUPLICATE_CONTACT = 8001;
+  CONST DUPLICATE_CONTRIBUTION = 8002;
+  CONST DUPLICATE_PARTICIPANT = 8003;
 
   /**
    * We only need one instance of this object. So we use the singleton
@@ -527,6 +527,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
   /* used for the API, rise the exception instead of catching/fatal it */
 
+
+
   public static function setRaiseException() {
     self::$modeException = 1;
     $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
@@ -580,6 +582,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
  * This function is no longer used by v3 api. 
  * @fixme Some core files call it but it should be re-thought & renamed or removed
  */
+
+
 
   public static function &createAPIError($msg, $data = NULL) {
     if (self::$modeException) {

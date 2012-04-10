@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -34,27 +33,28 @@
  *
  */
 
-
 /**
  * This is base class for all ajax calls
  */
 class CRM_Core_Page_AJAX {
 
-    /**
-     * function to call generic ajax forms
-     *
-     * @static
-     * @access public
-     */ 
-    static function run() {
-        $className =  CRM_Utils_Type::escape( $_POST['class_name'], 'String' );
-        $className = 'CRM_Contact_Form_Inline_Email'; 
-        if ( !$className ) {
-            CRM_Core_Error::fatal( ts('Invalid className: %1', array( 1 => $className )) );
-        }    
-
-        $wrapper = new CRM_Utils_Wrapper( );
-        $wrapper->run( $className );
-        CRM_Utils_System::civiExit( );    
+  /**
+   * function to call generic ajax forms
+   *
+   * @static
+   * @access public
+   */
+  static
+  function run() {
+    $className = CRM_Utils_Type::escape($_POST['class_name'], 'String');
+    $className = 'CRM_Contact_Form_Inline_Email';
+    if (!$className) {
+      CRM_Core_Error::fatal(ts('Invalid className: %1', array(1 => $className)));
     }
+
+    $wrapper = new CRM_Utils_Wrapper();
+    $wrapper->run($className);
+    CRM_Utils_System::civiExit();
+  }
 }
+

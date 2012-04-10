@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,64 +32,56 @@
  * $Id$
  *
  */
-
 class CRM_Core_Payment_BaseIPN {
 
-    static $_now = null;
+  static $_now = NULL;
+  function __construct() {
+    self::$_now = date('YmdHis');
+  }
 
-    function __construct( ) {
-        self::$_now = date( 'YmdHis' );
+  function validateData(&$input, &$ids, &$objects, $required = TRUE, $paymentProcessorID = NULL) {
+
+    // make sure contact exists and is valid
+    $contact = new CRM_Contact_DAO_Contact();
+    $contact->id = $ids['contact'];
+    if (!$contact->find(TRUE)) {
+      CRM_Core_Error::debug_log_message("Could not find contact record: {$ids['contact']}");
+      echo "Failure: Could not find contact record: {$ids['contact']}<p>";
+      return FALSE;
     }
 
-    function validateData( &$input, &$ids, &$objects, $required = true , $paymentProcessorID = null ) {
+    // make sure contribution exists and is valid
+    $contribution = new CRM_Contribute_DAO_Contribution();
+    $contribution->id = $ids['contribution'];
+    if (!$contribution->find(TRUE)) {
+      CRM_Core_Error::debug_log_message("Could not find contribution record: $contributionID");
+      echo "Failure: Could not find contribution record for $contributionID<p>";
+      return FALSE;
+    }
+    $contribution->receive_date = CRM_Utils_Date::isoToMysql($contribution->receive_date);
 
-        // make sure contact exists and is valid
-        $contact = new CRM_Contact_DAO_Contact( );
-        $contact->id = $ids['contact'];
-        if ( ! $contact->find( true ) ) {
-            CRM_Core_Error::debug_log_message( "Could not find contact record: {$ids['contact']}" );
-            echo "Failure: Could not find contact record: {$ids['contact']}<p>";
-            return false;
-        }
-        
-        // make sure contribution exists and is valid
-        $contribution = new CRM_Contribute_DAO_Contribution( );
-        $contribution->id = $ids['contribution'];
-        if ( ! $contribution->find( true ) ) {
-            CRM_Core_Error::debug_log_message( "Could not find contribution record: $contributionID" );
-            echo "Failure: Could not find contribution record for $contributionID<p>";
-            return false;
-        }
-        $contribution->receive_date = CRM_Utils_Date::isoToMysql($contribution->receive_date); 
-
-        $objects['contact']          =& $contact;
-        $objects['contribution']     =& $contribution;
-        if ( ! $this->loadObjects( $input, $ids, $objects, $required, $paymentProcessorID ) ) {
-            return false;
-        }
-        
-        return true;
+    $objects['contact'] = &$contact;
+    $objects['contribution'] = &$contribution;
+    if (!$this->loadObjects($input, $ids, $objects, $required, $paymentProcessorID)) {
+      return FALSE;
     }
 
-    function createContact( &$input, &$ids, &$objects ) {
-        $params    = array( );
-        $billingID = $ids['billing'];
-        $lookup    = array( 'first_name'                  ,
-                            'last_name'                   ,
-                            "street_address-{$billingID}" ,
-                            "city-{$billingID}"           ,
-                            "state-{$billingID}"          ,
-                            "postal_code-{$billingID}"    ,
-                            "country-{$billingID}"        , );
-        foreach ( $lookup as $name ) {
-            $params[$name] = $input[$name];
-        }
-        if ( ! empty( $params ) ) {
-            // update contact record
-            $contact = CRM_Contact_BAO_Contact::createProfileContact( $params, CRM_Core_DAO::$_nullArray, $ids['contact'] );
-        }
-        
-        return true;
+    return TRUE;
+  }
+
+  function createContact(&$input, &$ids, &$objects) {
+    $params    = array();
+    $billingID = $ids['billing'];
+    $lookup    = array('first_name',
+      'last_name',
+      "street_address-{$billingID}",
+      "city-{$billingID}",
+      "state-{$billingID}",
+      "postal_code-{$billingID}",
+      "country-{$billingID}",
+    );
+    foreach ($lookup as $name) {
+      $params[$name] = $input[$name];
     }
 /*
  * Load objects related to contribution
@@ -105,330 +96,471 @@ class CRM_Core_Payment_BaseIPN {
     return $success;
   }
 
-    function failed( &$objects, &$transaction ) {
-        $contribution =& $objects['contribution'];
-        $memberships   =& $objects['membership']  ;
-        if ( is_numeric( $memberships ) ) {
-            $memberships = array( $objects['membership'] );     
-        }
-        $participant  =& $objects['participant'] ;
+  function failed(&$objects, &$transaction) {
+    $contribution = &$objects['contribution'];
+    $memberships = &$objects['membership'];
+    if (is_numeric($memberships)) {
+      $memberships = array($objects['membership']);
+    }
+    $participant = &$objects['participant'];
 
-        $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
-        
-        $contribution->contribution_status_id = array_search( 'Failed', $contributionStatus );
-        $contribution->save( );
+    $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+
+    $contribution->contribution_status_id = array_search('Failed', $contributionStatus);
+    $contribution->save();
+    foreach ($memberships as $membership) {
+      if ($membership) {
+        $membership->status_id = 4;
+        $membership->save();
+
+        //update related Memberships.
+        $params = array('status_id' => 4);
+        CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+      }
+    }
+    if ($participant) {
+      $participant->status_id = 4;
+      $participant->save();
+    }
+
+    $transaction->commit();
+    CRM_Core_Error::debug_log_message("Setting contribution status to failed");
+    //echo "Success: Setting contribution status to failed<p>";
+    return TRUE;
+  }
+
+  function pending(&$objects, &$transaction) {
+    $transaction->commit();
+    CRM_Core_Error::debug_log_message("returning since contribution status is pending");
+    echo "Success: Returning since contribution status is pending<p>";
+    return TRUE;
+  }
+
+  function cancelled(&$objects, &$transaction) {
+    $contribution = &$objects['contribution'];
+    $memberships = &$objects['membership'];
+    if (is_numeric($memberships)) {
+      $memberships = array($objects['membership']);
+    }
+
+    $participant = &$objects['participant'];
+
+    $contribution->contribution_status_id = 3;
+    $contribution->cancel_date = self::$_now;
+    $contribution->cancel_reason = CRM_Utils_Array::value('reasonCode', $input);
+    $contribution->save();
+
+    foreach ($memberships as $membership) {
+      if ($membership) {
+        $membership->status_id = 6;
+        $membership->save();
+
+        //update related Memberships.
+        $params = array('status_id' => 6);
+        CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+      }
+    }
+
+    if ($participant) {
+      $participant->status_id = 4;
+      $participant->save();
+    }
+
+    $transaction->commit();
+    CRM_Core_Error::debug_log_message("Setting contribution status to cancelled");
+    //echo "Success: Setting contribution status to cancelled<p>";
+    return TRUE;
+  }
+
+  function unhandled(&$objects, &$transaction) {
+    $transaction->rollback();
+    // we dont handle this as yet
+    CRM_Core_Error::debug_log_message("returning since contribution status: $status is not handled");
+    echo "Failure: contribution status $status is not handled<p>";
+    return FALSE;
+  }
+
+  function completeTransaction(&$input, &$ids, &$objects, &$transaction, $recur = FALSE) {
+    $contribution = &$objects['contribution'];
+    $memberships = &$objects['membership'];
+    if (is_numeric($memberships)) {
+      $memberships = array($objects['membership']);
+    }
+    $participant  = &$objects['participant'];
+    $event        = &$objects['event'];
+    $changeToday  = CRM_Utils_Array::value('trxn_date', $input, self::$_now);
+    $recurContrib = &$objects['contributionRecur'];
+
+    $values = array();
+    if ($input['component'] == 'contribute') {
+      if ($contribution->contribution_page_id) {
+        CRM_Contribute_BAO_ContributionPage::setValues($contribution->contribution_page_id, $values);
+        $source = ts('Online Contribution') . ': ' . $values['title'];
+      }
+      elseif ($recurContrib->id) {
+        $contribution->contribution_page_id = NULL;
+        $values['amount'] = $recurContrib->amount;
+        $values['contribution_type_id'] = $objects['contributionType']->id;
+        $values['title'] = $source = ts('Offline Recurring Contribution');
+        $values['is_email_receipt'] = $recurContrib->is_email_receipt;
+        $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
+        $values['receipt_from_name'] = $domainValues[0];
+        $values['receipt_from_email'] = $domainValues[1];
+      }
+      $contribution->source = $source;
+      if (CRM_Utils_Array::value('is_email_receipt', $values)) {
+        $contribution->receipt_date = self::$_now;
+      }
+      if (!empty($memberships)) {
         foreach ($memberships as $membership) {
-            if ( $membership ) {
-                $membership->status_id = 4;
-                $membership->save( );
-                
-                //update related Memberships.
-                $params = array( 'status_id' => 4 );
-                CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $params );
-            }
-        }
-        if ( $participant ) {
-            $participant->status_id = 4;
-            $participant->save( );
-        }
-            
-        $transaction->commit( );
-        CRM_Core_Error::debug_log_message( "Setting contribution status to failed" );
-        //echo "Success: Setting contribution status to failed<p>";
-        return true;
-    }
+          if ($membership) {
+            $format = '%Y%m%d';
 
-    function pending( &$objects, &$transaction ) {
-        $transaction->commit( );
-        CRM_Core_Error::debug_log_message( "returning since contribution status is pending" );
-        echo "Success: Returning since contribution status is pending<p>";
-        return true;
-    }
+            $currentMembership = CRM_Member_BAO_Membership::getContactMembership($membership->contact_id,
+              $membership->membership_type_id,
+              $membership->is_test, $membership->id
+            );
 
-    function cancelled( &$objects, &$transaction ) {
-        $contribution =& $objects['contribution'];
-        $memberships   =& $objects['membership']  ;
-        if ( is_numeric( $memberships ) ) {
-            $memberships = array( $objects['membership'] );     
-        }
-        
-        $participant  =& $objects['participant'] ;
-
-        $contribution->contribution_status_id = 3;
-        $contribution->cancel_date = self::$_now;
-        $contribution->cancel_reason = CRM_Utils_Array::value( 'reasonCode', $input );
-        $contribution->save( );
-
-        foreach ($memberships as $membership) {
-            if ( $membership ) {
-                $membership->status_id = 6;
-                $membership->save( );
-                
-                //update related Memberships.
-                $params = array( 'status_id' => 6 );
-                CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $params );
-            }
-        }
-        
-        if ( $participant ) {
-            $participant->status_id = 4;
-            $participant->save( );
-        }
-
-        $transaction->commit( );
-        CRM_Core_Error::debug_log_message( "Setting contribution status to cancelled" );
-        //echo "Success: Setting contribution status to cancelled<p>";
-        return true;
-    }
-
-    function unhandled( &$objects, &$transaction ) {
-        $transaction->rollback( );
-        // we dont handle this as yet
-        CRM_Core_Error::debug_log_message( "returning since contribution status: $status is not handled" );
-        echo "Failure: contribution status $status is not handled<p>";
-        return false;
-    }
-
-    function completeTransaction( &$input, &$ids, &$objects, &$transaction, $recur = false ) {
-        $contribution =& $objects['contribution'];
-        $memberships  =& $objects['membership'] ;
-        if ( is_numeric( $memberships ) ) {
-            $memberships = array( $objects['membership'] );     
-        }
-        $participant  =& $objects['participant'] ;
-        $event        =& $objects['event']       ;
-        $changeToday  =  CRM_Utils_Array::value( 'trxn_date', $input, self::$_now );
-        $recurContrib =& $objects['contributionRecur'];
-        
-        $values = array( );
-        if ( $input['component'] == 'contribute' ) {
-            if ( $contribution->contribution_page_id ) {
-                CRM_Contribute_BAO_ContributionPage::setValues( $contribution->contribution_page_id, $values ); 
-                $source = ts( 'Online Contribution' ) . ': ' . $values['title'];
-            } else if ( $recurContrib->id ) {
-                $contribution->contribution_page_id = null;
-                $values['amount'] = $recurContrib->amount;
-                $values['contribution_type_id'] = $objects['contributionType']->id;
-                $values['title'] = $source = ts( 'Offline Recurring Contribution' );
-                $values['is_email_receipt'] = $recurContrib->is_email_receipt;
-                $domainValues = CRM_Core_BAO_Domain::getNameAndEmail( );
-                $values['receipt_from_name'] = $domainValues[0];
-                $values['receipt_from_email'] = $domainValues[1];
-            }
-            $contribution->source = $source;  
-            if ( CRM_Utils_Array::value( 'is_email_receipt', $values ) ) {
-                $contribution->receipt_date = self::$_now;
-            }
-            if ( !empty( $memberships ) ) {
-                foreach ($memberships as $membership) {
-                    if ( $membership ) {
-                        $format       = '%Y%m%d';
-                        
-                        $currentMembership =  CRM_Member_BAO_Membership::getContactMembership( $membership->contact_id, 
-                                                                                               $membership->membership_type_id, 
-                                                                                               $membership->is_test, $membership->id );
-                        
-                        // CRM-8141 update the membership type with the value recorded in log when membership created/renewed
-                        // this picks up membership type changes during renewals
-                        $sql = "
+            // CRM-8141 update the membership type with the value recorded in log when membership created/renewed
+            // this picks up membership type changes during renewals
+            $sql = "
 SELECT    membership_type_id 
 FROM      civicrm_membership_log 
 WHERE     membership_id=$membership->id 
 ORDER BY  id DESC 
 LIMIT 1;";
-                        $dao = new CRM_Core_DAO;
-                        $dao->query( $sql );
-                        if ( $dao->fetch( ) ) {
-                            if ( ! empty( $dao->membership_type_id ) ) {
-                                $membership->membership_type_id = $dao->membership_type_id;
-                                $membership->save( );
-                            } // else fall back to using current membership type
-                        } // else fall back to using current membership type
-                        $dao->free();
-                        
-                        if ( $currentMembership ) {
-                            /*
+            $dao = new CRM_Core_DAO;
+            $dao->query($sql);
+            if ($dao->fetch()) {
+              if (!empty($dao->membership_type_id)) {
+                $membership->membership_type_id = $dao->membership_type_id;
+                $membership->save();
+              }
+              // else fall back to using current membership type
+            }
+            // else fall back to using current membership type
+            $dao->free();
+
+            if ($currentMembership) {
+              /*
                              * Fixed FOR CRM-4433
                              * In BAO/Membership.php(renewMembership function), we skip the extend membership date and status 
                              * when Contribution mode is notify and membership is for renewal ) 
                              */
-                            CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew( $currentMembership, $changeToday );
-                            
-                            $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $membership->id , 
-                                                                                                      $changeToday );
-                            $dates['join_date'] =  CRM_Utils_Date::customFormat($currentMembership['join_date'], $format );
-                        } else {
-                            $dates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membership->membership_type_id);
-                        }
-                        
-                        //get the status for membership.
-                        $calcStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( $dates['start_date'], 
-                                                                                                  $dates['end_date'], 
-                                                                                                  $dates['join_date'],
-                                                                                                  'today', 
-                                                                                                  true );
-                        
-                        $formatedParams = array( 'status_id'     => CRM_Utils_Array::value( 'id', $calcStatus, 2 ),
-                                                 'join_date'     => CRM_Utils_Date::customFormat( $dates['join_date'],     $format ),
-                                                 'start_date'    => CRM_Utils_Date::customFormat( $dates['start_date'],    $format ),
-                                                 'end_date'      => CRM_Utils_Date::customFormat( $dates['end_date'],      $format ),
-                                                 'reminder_date' => CRM_Utils_Date::customFormat( $dates['reminder_date'], $format ) );
-                        //we might be renewing membership, 
-                        //so make status override false.  
-                        $formatedParams['is_override'] = false;
-                        $membership->copyValues( $formatedParams );
-                        $membership->save( );
-                        
-                        //updating the membership log
-                        $membershipLog = array();
-                        $membershipLog = $formatedParams;
-                        
-                        $logStartDate  = $formatedParams['start_date'];
-                        if ( CRM_Utils_Array::value( 'log_start_date', $dates ) ) {
-                            $logStartDate = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format ); 
-                            $logStartDate = CRM_Utils_Date::isoToMysql( $logStartDate );
-                        }
-                        
-                        $membershipLog['start_date']    = $logStartDate;
-                        $membershipLog['membership_id'] = $membership->id;
-                        $membershipLog['modified_id']   = $membership->contact_id;
-                        $membershipLog['modified_date'] = date('Ymd');
-                        $membershipLog['membership_type_id'] = $membership->membership_type_id;
-                        
-                        CRM_Member_BAO_MembershipLog::add( $membershipLog, CRM_Core_DAO::$_nullArray);
-                        
-                        //update related Memberships.              
-                        CRM_Member_BAO_Membership::updateRelatedMemberships( $membership->id, $formatedParams );
-                    }
-                }
+
+
+              CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew($currentMembership, $changeToday);
+
+              $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType($membership->id,
+                $changeToday
+              );
+              $dates['join_date'] = CRM_Utils_Date::customFormat($currentMembership['join_date'], $format);
             }
-        } else {
-            // event
-            $eventParams     = array( 'id' => $objects['event']->id );
-            $values['event'] = array( );
-
-            CRM_Event_BAO_Event::retrieve( $eventParams, $values['event'] );
-        
-            $eventParams = array( 'id' => $objects['event']->id );
-            $values['event'] = array( );
-
-            CRM_Event_BAO_Event::retrieve( $eventParams, $values['event'] );
-
-            //get location details
-            $locationParams = array( 'entity_id' => $objects['event']->id, 'entity_table' => 'civicrm_event' );
-            $values['location'] = CRM_Core_BAO_Location::getValues($locationParams);
-
-            $ufJoinParams = array( 'entity_table' => 'civicrm_event',
-                                   'entity_id'    => $ids['event'],
-                                   'weight'       => 1 );
-        
-            $values['custom_pre_id'] = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
-        
-            $ufJoinParams['weight'] = 2;
-            $values['custom_post_id'] = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
-
-            $contribution->source                  = ts( 'Online Event Registration' ) . ': ' . $values['event']['title'];
-
-            if ( $values['event']['is_email_confirm'] ) {
-                $contribution->receipt_date = self::$_now;
-                $values['is_email_receipt'] = 1;
+            else {
+              $dates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membership->membership_type_id);
             }
 
-            $participant->status_id = 1;
-            $participant->save( );
-        }
+            //get the status for membership.
+            $calcStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate($dates['start_date'],
+              $dates['end_date'],
+              $dates['join_date'],
+              'today',
+              TRUE
+            );
 
-        if ( CRM_Utils_Array::value( 'net_amount', $input, 0 ) == 0 && 
-             CRM_Utils_Array::value( 'fee_amount', $input, 0 ) != 0 ) {
-            $input['net_amount'] = $input['amount'] - $input['fee_amount'];
-        }
+            $formatedParams = array('status_id' => CRM_Utils_Array::value('id', $calcStatus, 2),
+              'join_date' => CRM_Utils_Date::customFormat($dates['join_date'], $format),
+              'start_date' => CRM_Utils_Date::customFormat($dates['start_date'], $format),
+              'end_date' => CRM_Utils_Date::customFormat($dates['end_date'], $format),
+              'reminder_date' => CRM_Utils_Date::customFormat($dates['reminder_date'], $format),
+            );
+            //we might be renewing membership,
+            //so make status override false.
+            $formatedParams['is_override'] = FALSE;
+            $membership->copyValues($formatedParams);
+            $membership->save();
 
-        $contribution->contribution_status_id  = 1;
-        $contribution->is_test       = $input['is_test'];
-        $contribution->fee_amount    = CRM_Utils_Array::value( 'fee_amount', $input, 0 );
-        $contribution->net_amount    = CRM_Utils_Array::value( 'net_amount', $input, 0 );
-        $contribution->trxn_id       = $input['trxn_id'];
-        $contribution->receive_date  = CRM_Utils_Date::isoToMysql($contribution->receive_date);
-        $contribution->thankyou_date = CRM_Utils_Date::isoToMysql($contribution->thankyou_date);
-        $contribution->cancel_date   = 'null';
-        
-        if ( CRM_Utils_Array::value('check_number', $input) ) {
-            $contribution->check_number = $input['check_number'];
-        }
-       
-        if ( CRM_Utils_Array::value('payment_instrument_id', $input) ) {
-            $contribution->payment_instrument_id = $input['payment_instrument_id'];
-        }
-        
-        $contribution->save( );
-        
-        // next create the transaction record
-        $paymentProcessor = '';
-        if ( isset( $objects['paymentProcessor'] ) ) {
-            if ( is_array( $objects['paymentProcessor'] ) ) {
-                $paymentProcessor = $objects['paymentProcessor']['payment_processor_type'];    
-            } else {
-                $paymentProcessor = $objects['paymentProcessor']->payment_processor_type;    
+            //updating the membership log
+            $membershipLog = array();
+            $membershipLog = $formatedParams;
+
+            $logStartDate = $formatedParams['start_date'];
+            if (CRM_Utils_Array::value('log_start_date', $dates)) {
+              $logStartDate = CRM_Utils_Date::customFormat($dates['log_start_date'], $format);
+              $logStartDate = CRM_Utils_Date::isoToMysql($logStartDate);
             }
-        }
 
-        if ( $contribution->trxn_id ) {
-            
-            $trxnParams = array(
-                                'contribution_id'   => $contribution->id,
-                                'trxn_date'         => isset( $input['trxn_date'] ) ? $input['trxn_date'] : self::$_now,
-                                'trxn_type'         => 'Debit',
-                                'total_amount'      => $input['amount'],
-                                'fee_amount'        => $contribution->fee_amount,
-                                'net_amount'        => $contribution->net_amount,
-                                'currency'          => $contribution->currency,
-                                'payment_processor' => $paymentProcessor,
-                                'trxn_id'           => $contribution->trxn_id,
-                                );
-            
-            $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
-        }
-        
-        self::updateRecurLinkedPledge( $contribution);
+            $membershipLog['start_date'] = $logStartDate;
+            $membershipLog['membership_id'] = $membership->id;
+            $membershipLog['modified_id'] = $membership->contact_id;
+            $membershipLog['modified_date'] = date('Ymd');
+            $membershipLog['membership_type_id'] = $membership->membership_type_id;
 
-        // create an activity record
-        if ( $input['component'] == 'contribute' ) {
-            //CRM-4027
-            $targetContactID = null;
-            if ( CRM_Utils_Array::value( 'related_contact', $ids ) ) {
-                $targetContactID = $contribution->contact_id;
-                $contribution->contact_id = $ids['related_contact']; 
-            }
-            CRM_Activity_BAO_Activity::addActivity( $contribution, null, $targetContactID );
-        } else { // event 
-            CRM_Activity_BAO_Activity::addActivity( $participant );
-        }
-       
-        CRM_Core_Error::debug_log_message( "Contribution record updated successfully" );
-        $transaction->commit( );
-        
-        // CRM-9132 legacy behaviour was that receipts were sent out in all instances. Still sending
-        // when array_key 'is_email_receipt doesn't exist in case some instances where is needs setting haven't been set 
-        if( !array_key_exists('is_email_receipt', $values) || 
-            $values['is_email_receipt'] == 1 ) {
-          self::sendMail( $input, $ids, $objects, $values, $recur, false );
-        }
+            CRM_Member_BAO_MembershipLog::add($membershipLog, CRM_Core_DAO::$_nullArray);
 
-        CRM_Core_Error::debug_log_message( "Success: Database updated and mail sent" );
+            //update related Memberships.
+            CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $formatedParams);
+          }
+        }
+      }
     }
-    
-    function getBillingID( &$ids ) {
-        // get the billing location type
-        $locationTypes  = CRM_Core_PseudoConstant::locationType( );
-        // CRM-8108 remove the ts around the Billing locationtype
-        //$ids['billing'] =  array_search( ts('Billing'),  $locationTypes );
-        $ids['billing'] =  array_search( 'Billing',  $locationTypes );
-        if ( ! $ids['billing'] ) {
-            CRM_Core_Error::debug_log_message( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
-            echo "Failure: Could not find billing location type<p>";
-            return false;
+    else {
+      // event
+      $eventParams = array('id' => $objects['event']->id);
+      $values['event'] = array();
+
+      CRM_Event_BAO_Event::retrieve($eventParams, $values['event']);
+
+      $eventParams = array('id' => $objects['event']->id);
+      $values['event'] = array();
+
+      CRM_Event_BAO_Event::retrieve($eventParams, $values['event']);
+
+      //get location details
+      $locationParams = array('entity_id' => $objects['event']->id, 'entity_table' => 'civicrm_event');
+      $values['location'] = CRM_Core_BAO_Location::getValues($locationParams);
+
+      $ufJoinParams = array('entity_table' => 'civicrm_event',
+        'entity_id' => $ids['event'],
+        'weight' => 1,
+      );
+
+      $values['custom_pre_id'] = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams);
+
+      $ufJoinParams['weight'] = 2;
+      $values['custom_post_id'] = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams);
+
+      $contribution->source = ts('Online Event Registration') . ': ' . $values['event']['title'];
+
+      if ($values['event']['is_email_confirm']) {
+        $contribution->receipt_date = self::$_now;
+        $values['is_email_receipt'] = 1;
+      }
+
+      $participant->status_id = 1;
+      $participant->save();
+    }
+
+    if (CRM_Utils_Array::value('net_amount', $input, 0) == 0 &&
+      CRM_Utils_Array::value('fee_amount', $input, 0) != 0
+    ) {
+      $input['net_amount'] = $input['amount'] - $input['fee_amount'];
+    }
+
+    $contribution->contribution_status_id = 1;
+    $contribution->is_test = $input['is_test'];
+    $contribution->fee_amount = CRM_Utils_Array::value('fee_amount', $input, 0);
+    $contribution->net_amount = CRM_Utils_Array::value('net_amount', $input, 0);
+    $contribution->trxn_id = $input['trxn_id'];
+    $contribution->receive_date = CRM_Utils_Date::isoToMysql($contribution->receive_date);
+    $contribution->thankyou_date = CRM_Utils_Date::isoToMysql($contribution->thankyou_date);
+    $contribution->cancel_date = 'null';
+
+    if (CRM_Utils_Array::value('check_number', $input)) {
+      $contribution->check_number = $input['check_number'];
+    }
+
+    if (CRM_Utils_Array::value('payment_instrument_id', $input)) {
+      $contribution->payment_instrument_id = $input['payment_instrument_id'];
+    }
+
+    $contribution->save();
+
+    // next create the transaction record
+    $paymentProcessor = '';
+    if (isset($objects['paymentProcessor'])) {
+      if (is_array($objects['paymentProcessor'])) {
+        $paymentProcessor = $objects['paymentProcessor']['payment_processor_type'];
+      }
+      else {
+        $paymentProcessor = $objects['paymentProcessor']->payment_processor_type;
+      }
+    }
+
+    if ($contribution->trxn_id) {
+
+      $trxnParams = array(
+        'contribution_id' => $contribution->id,
+        'trxn_date' => isset($input['trxn_date']) ? $input['trxn_date'] : self::$_now,
+        'trxn_type' => 'Debit',
+        'total_amount' => $input['amount'],
+        'fee_amount' => $contribution->fee_amount,
+        'net_amount' => $contribution->net_amount,
+        'currency' => $contribution->currency,
+        'payment_processor' => $paymentProcessor,
+        'trxn_id' => $contribution->trxn_id,
+      );
+
+      $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+    }
+
+    self::updateRecurLinkedPledge($contribution);
+
+    // create an activity record
+    if ($input['component'] == 'contribute') {
+      //CRM-4027
+      $targetContactID = NULL;
+      if (CRM_Utils_Array::value('related_contact', $ids)) {
+        $targetContactID = $contribution->contact_id;
+        $contribution->contact_id = $ids['related_contact'];
+      }
+      CRM_Activity_BAO_Activity::addActivity($contribution, NULL, $targetContactID);
+      // event
+    }
+    else {
+      CRM_Activity_BAO_Activity::addActivity($participant);
+    }
+
+    CRM_Core_Error::debug_log_message("Contribution record updated successfully");
+    $transaction->commit();
+
+    // CRM-9132 legacy behaviour was that receipts were sent out in all instances. Still sending
+    // when array_key 'is_email_receipt doesn't exist in case some instances where is needs setting haven't been set
+    if (!array_key_exists('is_email_receipt', $values) ||
+      $values['is_email_receipt'] == 1
+    ) {
+      self::sendMail($input, $ids, $objects, $values, $recur, FALSE);
+    }
+
+    CRM_Core_Error::debug_log_message("Success: Database updated and mail sent");
+  }
+
+  function getBillingID(&$ids) {
+    // get the billing location type
+    $locationTypes = CRM_Core_PseudoConstant::locationType();
+    // CRM-8108 remove the ts around the Billing locationtype
+    //$ids['billing'] =  array_search( ts('Billing'),  $locationTypes );
+    $ids['billing'] = array_search('Billing', $locationTypes);
+    if (!$ids['billing']) {
+      CRM_Core_Error::debug_log_message(ts('Please set a location type of %1', array(1 => 'Billing')));
+      echo "Failure: Could not find billing location type<p>";
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  function sendMail(&$input, &$ids, &$objects, &$values, $recur = FALSE, $returnMessageText = FALSE) {
+    $contribution = &$objects['contribution'];
+    $participant  = &$objects['participant'];
+    $event        = &$objects['event'];
+    $memberships  = &$objects['membership'];
+    $contact      = &$objects['contact'];
+    if (empty($values)) {
+      $values = array();
+      $contribID = $ids['contribution'];
+      if ($input['component'] == 'contribute') {
+        if (isset($contribution->contribution_page_id)) {
+          CRM_Contribute_BAO_ContributionPage::setValues($contribution->contribution_page_id, $values);
+
+          if ($contribution->contribution_page_id) {
+            // CRM-8254
+            $config = CRM_Core_Config::singleton();
+            $config->defaultCurrency = CRM_Utils_Array::value('currency',
+              $values,
+              $config->defaultCurrency
+            );
+          }
         }
-        return true;
+        else {
+          // Handle re-print receipt for offline contributions (call from PDF.php - no contribution_page_id)
+          $values['is_email_receipt'] = 1;
+          $values['title'] = 'Contribution';
+        }
+        // set lineItem for contribution
+        if ($contribID && $pId = CRM_Price_BAO_Set::getFor('civicrm_contribution', $contribID)) {
+          $values['lineItem'][0] = CRM_Price_BAO_LineItem::getLineItems($contribID, 'contribution');
+          $values['priceSetID'] = $pId;
+        }
+        $relatedContact = CRM_Contribute_BAO_Contribution::getOnbehalfIds($contribID,
+          $contribution->contact_id
+        );
+        // if this is onbehalf of contribution then set related contact
+        if ($relatedContactId = CRM_Utils_Array::value('individual_id', $relatedContact)) {
+          $values['related_contact'] = $ids['related_contact'] = $relatedContactId;
+        }
+      }
+      else {
+        // event
+        $eventParams = array('id' => $objects['event']->id);
+        $values['event'] = array();
+
+        CRM_Event_BAO_Event::retrieve($eventParams, $values['event']);
+
+        //get location details
+        $locationParams = array('entity_id' => $objects['event']->id, 'entity_table' => 'civicrm_event');
+        $values['location'] = CRM_Core_BAO_Location::getValues($locationParams);
+
+        $ufJoinParams = array('entity_table' => 'civicrm_event',
+          'entity_id' => $ids['event'],
+          'weight' => 1,
+        );
+
+        $values['custom_pre_id'] = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams);
+
+        $ufJoinParams['weight'] = 2;
+        $values['custom_post_id'] = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams);
+
+        // set lineItem for event contribution
+        if ($contribID) {
+          $participantIds = CRM_Event_BAO_Participant::getParticipantIds($contribID);
+          if (!empty($participantIds)) {
+            foreach ($participantIds as $pIDs) {
+              $lineItem = CRM_Price_BAO_LineItem::getLineItems($pIDs);
+              if (!CRM_Utils_System::isNull($lineItem)) {
+                $values['lineItem'][] = $lineItem;
+              }
+            }
+          }
+        }
+      }
+
+      // set receipt from e-mail and name in value
+      if (!$returnMessageText) {
+        $session = CRM_Core_Session::singleton();
+        $userID = $session->get('userID');
+        list($userName, $userEmail) = CRM_Contact_BAO_Contact_Location::getEmailDetails($userID);
+        $values['receipt_from_email'] = $userEmail;
+        $values['receipt_from_name'] = $userName;
+      }
+
+      // set display address of contributor
+      if ($contribution->address_id) {
+        $addressParams     = array('id' => $contribution->address_id);
+        $addressDetails    = CRM_Core_BAO_Address::getValues($addressParams, FALSE, 'id');
+        $addressDetails    = array_values($addressDetails);
+        $values['address'] = $addressDetails[0]['display'];
+      }
+    }
+
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign('first_name', $contact->first_name);
+    $template->assign('last_name', $contact->last_name);
+    $template->assign('displayName', $contact->display_name);
+    // CRM_Core_Error::debug('tpl',$template);
+    //assign honor infomation to receiptmessage
+    if ($honarID = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution',
+        $contribution->id,
+        'honor_contact_id'
+      )) {
+      $honorDefault = array();
+      $honorIds = array();
+      $honorIds['contribution'] = $contribution->id;
+
+      $idParams = array('id' => $honarID, 'contact_id' => $honarID);
+
+      CRM_Contact_BAO_Contact::retrieve($idParams, $honorDefault, $honorIds);
+
+      $honorType = CRM_Core_PseudoConstant::honor();
+
+      $template->assign('honor_block_is_active', 1);
+      if (CRM_Utils_Array::value('prefix_id', $honorDefault)) {
+        $prefix = CRM_Core_PseudoConstant::individualPrefix();
+        $template->assign('honor_prefix', $prefix[$honorDefault['prefix_id']]);
+      }
+      $template->assign('honor_first_name', CRM_Utils_Array::value('first_name', $honorDefault));
+      $template->assign('honor_last_name', CRM_Utils_Array::value('last_name', $honorDefault));
+      $template->assign('honor_email', CRM_Utils_Array::value('email', $honorDefault['email'][1]));
+      $template->assign('honor_type', $honorType[$contribution->honor_type_id]);
     }
 
     /*
@@ -447,4 +579,11 @@ LIMIT 1;";
      }
      return $returnMessageText = $contribution->composeMessageArray($input, $ids, $values, $recur, $returnMessageText );
    }
+
+    // update pledge and corresponding payment statuses
+    CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus($pledgeId, $paymentIDs, $contribution->contribution_status_id,
+      NULL, $contribution->total_amount
+    );
+  }
 }
+
