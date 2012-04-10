@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 /*
  +--------------------------------------------------------------------+
@@ -32,13 +32,16 @@
  * $Id$
  *
  */
+
 class CRM_Upgrade_Incremental_php_FourZero {
-  function verifyPreDBstate(&$errors) {
-    return TRUE;
+    
+    function verifyPreDBstate ( &$errors ) {
+        return true;
+    }
+    
+    function upgrade_4_0_alpha1( $rev ) {
+        // do nothing, db is already upgraded to 3.4.alpha1.
+        
+    }
+    
   }
-
-  function upgrade_4_0_alpha1($rev) {
-    // do nothing, db is already upgraded to 3.4.alpha1.
-  }
-}
-

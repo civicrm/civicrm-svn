@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,6 +34,7 @@
  *
  */
 
+
 /**
  * This class is used by the Search functionality.
  *
@@ -44,30 +46,33 @@
  * The second form is used to process search results with the asscociated actions
  *
  */
+
 class CRM_PCP_Controller_PCP extends CRM_Core_Controller {
 
-  /**
-   * class constructor
-   */
-  function __construct($title = NULL, $action = CRM_Core_Action::NONE, $modal = TRUE) {
+    /**
+     * class constructor
+     */
+    function __construct( $title = null, $action = CRM_Core_Action::NONE, $modal = true ) {
 
-    parent::__construct($title, $modal);
+        parent::__construct( $title, $modal );
 
+        
+        $this->_stateMachine = new CRM_PCP_StateMachine_PCP( $this, $action );
 
-    $this->_stateMachine = new CRM_PCP_StateMachine_PCP($this, $action);
+        // create and instantiate the pages
+        $this->addPages( $this->_stateMachine, $action );
 
-    // create and instantiate the pages
-    $this->addPages($this->_stateMachine, $action);
-
-    // add all the actions
-    $uploadNames = $this->get('uploadNames');
-    if (!empty($uploadNames)) {
-      $config = CRM_Core_Config::singleton();
-      $this->addActions($config->customFileUploadDir, $uploadNames);
+        // add all the actions
+        $uploadNames = $this->get( 'uploadNames' );
+        if ( ! empty( $uploadNames ) ) {
+            $config = CRM_Core_Config::singleton( );
+            $this->addActions( $config->customFileUploadDir, $uploadNames );
+        } else {
+            $this->addActions( );
+        }
+    
     }
-    else {
-      $this->addActions();
-    }
-  }
+
 }
+
 

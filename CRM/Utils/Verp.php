@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -34,83 +35,81 @@
  * $Id: $
  *
  */
+
 class CRM_Utils_Verp {
-  /* Mapping of reserved characters to hex codes */
+    /* Mapping of reserved characters to hex codes */
+    static $encodeMap = array(
+        '+' =>  '2B',
+        '@' =>  '40',
+        ':' =>  '3A',
+        '%' =>  '25',
+        '!' =>  '21',
+        '-' =>  '2D',
+        '[' =>  '5B',
+        ']' =>  '5D'
+    );
+    
+    /* Mapping of hex codes to reserved characters */
+    static $decodeMap = array(
+        '40'    =>  '@',
+        '3A'    =>  ':',
+        '25'    =>  '%',
+        '21'    =>  '!',
+        '2D'    =>  '-',
+        '5B'    =>  '[',
+        '5D'    =>  ']',
+        '2B'    =>  '+'
+    );
 
-  static $encodeMap = array(
-    '+' => '2B',
-    '@' => '40',
-    ':' => '3A',
-    '%' => '25',
-    '!' => '21',
-    '-' => '2D',
-    '[' => '5B',
-    ']' => '5D',
-  );
+    /**
+     * Encode the sender's address with the VERPed recipient.
+     *
+     * @param string $sender    The address of the sender
+     * @param string $recipient The address of the recipient
+     * @return string           The VERP encoded address
+     * @access public
+     * @static
+     */
+    public static function encode($sender, $recipient) {
+        preg_match('/(.+)\@([^\@]+)$/', $sender, $match);
+        $slocal     = $match[1];
+        $sdomain    = $match[2];
 
-  /* Mapping of hex codes to reserved characters */
+        preg_match('/(.+)\@([^\@]+)$/', $recipient, $match);
+        $rlocal     = CRM_Utils_Array::value( 1, $match );
+        $rdomain    = CRM_Utils_Array::value( 2, $match );
+        
+        foreach (self::$encodeMap as $char => $code) {
+            $rlocal     = preg_replace('/'.preg_quote($char).'/i', "+$code", $rlocal);
+            $rdomain    = preg_replace('/'.preg_quote($char).'/i', "+$code", $rdomain);
+        }
 
-  static $decodeMap = array(
-    '40' => '@',
-    '3A' => ':',
-    '25' => '%',
-    '21' => '!',
-    '2D' => '-',
-    '5B' => '[',
-    '5D' => ']',
-    '2B' => '+',
-  );
-
-  /**
-   * Encode the sender's address with the VERPed recipient.
-   *
-   * @param string $sender    The address of the sender
-   * @param string $recipient The address of the recipient
-   *
-   * @return string           The VERP encoded address
-   * @access public
-   * @static
-   */
-  public static function encode($sender, $recipient) {
-    preg_match('/(.+)\@([^\@]+)$/', $sender, $match);
-    $slocal = $match[1];
-    $sdomain = $match[2];
-
-    preg_match('/(.+)\@([^\@]+)$/', $recipient, $match);
-    $rlocal = CRM_Utils_Array::value(1, $match);
-    $rdomain = CRM_Utils_Array::value(2, $match);
-
-    foreach (self::$encodeMap as $char => $code) {
-      $rlocal = preg_replace('/' . preg_quote($char) . '/i', "+$code", $rlocal);
-      $rdomain = preg_replace('/' . preg_quote($char) . '/i', "+$code", $rdomain);
+        return "$slocal-$rlocal=$rdomain@$sdomain";
     }
+    
+    /**
+     * Decode the address and return the sender and recipient as an array
+     *
+     * @param string $address   The address to be decoded
+     * @return array            The tuple ($sender, $recipient)
+     * @access public
+     * @static
+     */
+    public static function &verpdecode($address) {
+        preg_match('/^(.+)-([^=]+)=([^\@]+)\@(.+)/', $address, $match);
 
-    return "$slocal-$rlocal=$rdomain@$sdomain";
-  }
+        $slocal     = $match[1];
+        $rlocal     = $match[2];
+        $rdomain    = $match[3];
+        $sdomain    = $match[4];
 
-  /**
-   * Decode the address and return the sender and recipient as an array
-   *
-   * @param string $address   The address to be decoded
-   *
-   * @return array            The tuple ($sender, $recipient)
-   * @access public
-   * @static
-   */
-  public static function &verpdecode($address) {
-    preg_match('/^(.+)-([^=]+)=([^\@]+)\@(.+)/', $address, $match);
+        foreach (self::$decodeMap as $code => $char) {
+            $rlocal     = preg_replace("/+$code/i", $char, $rlocal);
+            $rdomain    = preg_replace("/+$code/i", $char, $rdomain);
+        }
 
-    $slocal  = $match[1];
-    $rlocal  = $match[2];
-    $rdomain = $match[3];
-    $sdomain = $match[4];
-
-    foreach (self::$decodeMap as $code => $char) {
-      $rlocal = preg_replace("/+$code/i", $char, $rlocal);
-      $rdomain = preg_replace("/+$code/i", $char, $rdomain);
+        return array( "$slocal@$sdomain", "$rlocal@$rdomain");
     }
-
-    return array("$slocal@$sdomain", "$rlocal@$rdomain");
-  }
 }
+
 

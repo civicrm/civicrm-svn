@@ -40,7 +40,14 @@ class CRM_Report_Form extends CRM_Core_Form {
   /**
    * Operator types - used for displaying filter elements
    */
-  CONST OP_INT = 1, OP_STRING = 2, OP_DATE = 4, OP_FLOAT = 8, OP_SELECT = 64, OP_MULTISELECT = 65, OP_MULTISELECT_SEPARATOR = 66;
+  const
+    OP_INT         =  1,
+    OP_STRING      =  2,
+    OP_DATE        =  4,
+    OP_FLOAT       =  8,
+    OP_SELECT      =  64,
+    OP_MULTISELECT =  65,
+    OP_MULTISELECT_SEPARATOR = 66;
 
   /**
    * The id of the report instance
@@ -90,7 +97,6 @@ class CRM_Report_Form extends CRM_Core_Form {
      * By default most reports hide contact id. 
      * Setting this to true makes it available
      */
-
 
   protected $_exposeContactID = TRUE;
 
@@ -563,6 +569,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         if (!array_key_exists('order_bys', $this->_defaults)) {
 
           $this->_defaults['order_bys'] = array();
+
         }
         foreach ($table['order_bys'] as $fieldName => $field) {
           if (CRM_Utils_Array::value('default', $field) ||
@@ -796,7 +803,6 @@ class CRM_Report_Form extends CRM_Core_Form {
       /* Add searchable custom fields as order-by options, if so requested
              * (These are already indexed, so allowing to order on them is cheap.)
              */
-
 
       if ($this->_autoIncludeIndexedFieldsAsOrderBys && array_key_exists('extends', $table) && !empty($table['extends'])) {
         foreach ($table['fields'] as $fieldName => $field) {
@@ -2018,7 +2024,6 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
              * overriding this method in the report class.
              */
 
-
                   $query = "select " . implode(", ", $ifnulls) . ", count(*) as ct from ($sql) as subquery group by " . implode(", ", $sectionAliases);
 
                   // initialize array of total counts
@@ -2460,7 +2465,8 @@ ORDER BY cg.weight, cf.weight";
 
                   if ($addFields) {
                     // this makes aliasing work in favor
-                    $curFields[$fieldName] = array('name' => $customDAO->column_name,
+                    $curFields[$fieldName] =
+                    array('name' => $customDAO->column_name,
                       'title' => $customDAO->label,
                       'dataType' => $customDAO->data_type,
                       'htmlType' => $customDAO->html_type,
@@ -2468,7 +2474,8 @@ ORDER BY cg.weight, cf.weight";
                   }
                   if ($this->_customGroupFilters) {
                     // this makes aliasing work in favor
-                    $curFilters[$fieldName] = array('name' => $customDAO->column_name,
+                    $curFilters[$fieldName] =
+                    array('name' => $customDAO->column_name,
                       'title' => $customDAO->label,
                       'dataType' => $customDAO->data_type,
                       'htmlType' => $customDAO->html_type,

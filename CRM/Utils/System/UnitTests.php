@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,126 +34,121 @@
  *
  */
 
+
 /**
  * Helper authentication class for unit tests
  */
 class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
-  function __construct() {
-    $this->is_drupal = FALSE;
-    $this->supports_form_extensions = False;
-  }
-
-  function setTitle($title, $pageTitle = NULL) {
-    return;
-  }
-
-  function authenticate($name, $password) {
-    $retVal = array(1, 1, 12345);
-    return $retVal;
-  }
-
-  function appendBreadCrumb($breadCrumbs) {
-    return;
-  }
-
-  function resetBreadCrumb() {
-    return;
-  }
-
-  function addHTMLHead($head) {
-    return;
-  }
-
-  function mapConfigToSSL() {
-    global $base_url;
-    $base_url = str_replace('http://', 'https://', $base_url);
-  }
-
-  function postURL($action) {
-    return;
-  }
-
-  function url($path = NULL, $query = NULL, $absolute = TRUE, $fragment = NULL, $htmlize = TRUE) {
-    $config = CRM_Core_Config::singleton();
-    static $script = 'index.php';
-
-    if (isset($fragment)) {
-      $fragment = '#' . $fragment;
+    function __construct() {
+      $this->is_drupal = false;
+      $this->supports_form_extensions = False;
+    }
+    function setTitle( $title, $pageTitle = null ) {
+        return;
+    }
+    
+    function authenticate( $name, $password ) {
+        $retVal = array( 1, 1, 12345 );
+        return $retVal;
     }
 
-    if (!isset($config->useFrameworkRelativeBase)) {
-      $base = parse_url($config->userFrameworkBaseURL);
-      $config->useFrameworkRelativeBase = $base['path'];
+    function appendBreadCrumb( $breadCrumbs ) {
+        return;
     }
-    $base = $absolute ? $config->userFrameworkBaseURL : $config->useFrameworkRelativeBase;
 
-    $separator = $htmlize ? '&amp;' : '&';
-
-    if (!$config->cleanURL) {
-      if (isset($path)) {
-        if (isset($query)) {
-          return $base . $script . '?q=' . $path . $separator . $query . $fragment;
-        }
-        else {
-          return $base . $script . '?q=' . $path . $fragment;
-        }
-      }
-      else {
-        if (isset($query)) {
-          return $base . $script . '?' . $query . $fragment;
-        }
-        else {
-          return $base . $fragment;
-        }
-      }
+    function resetBreadCrumb( ) {
+        return;
     }
-    else {
-      if (isset($path)) {
-        if (isset($query)) {
-          return $base . $path . '?' . $query . $fragment;
-        }
-        else {
-          return $base . $path . $fragment;
-        }
-      }
-      else {
-        if (isset($query)) {
-          return $base . $script . '?' . $query . $fragment;
-        }
-        else {
-          return $base . $fragment;
-        }
-      }
+
+    function addHTMLHead( $head ) {
+        return;
     }
-  }
 
-  function getUserID($user) {
-    //FIXME: look here a bit closer when testing UFMatch
+    function mapConfigToSSL( ) {
+        global $base_url;
+        $base_url = str_replace( 'http://', 'https://', $base_url );
+    }
 
-    // this puts the appropriate values in the session, so
-    // no need to return anything
-    CRM_Core_BAO_UFMatch::synchronize($user, TRUE, 'Standalone', 'Individual');
-  }
+    function postURL( $action ) {
+        return;
+    }
 
-  function getAllowedToLogin($user) {
-    return TRUE;
-  }
+    function url($path = null, $query = null, $absolute = true, $fragment = null, $htmlize = true ) {
+        $config        = CRM_Core_Config::singleton( );
+        static $script = 'index.php';
 
-  function setMessage($message) {
-    return;
-  }
+        if (isset($fragment)) {
+            $fragment = '#'. $fragment;
+        }
 
-  function permissionDenied() {
-    CRM_Core_Error::fatal(ts('You do not have permission to access this page'));
-  }
+        if ( ! isset( $config->useFrameworkRelativeBase ) ) {
+            $base = parse_url( $config->userFrameworkBaseURL );
+            $config->useFrameworkRelativeBase = $base['path'];
+        }
+        $base = $absolute ? $config->userFrameworkBaseURL : $config->useFrameworkRelativeBase;
 
-  function logout() {
-    session_destroy();
-    header("Location:index.php");
-  }
+        $separator = $htmlize ? '&amp;' : '&';
 
-  function getUFLocale() {
-    return NULL;
-  }
+        if (! $config->cleanURL ) {
+            if ( isset( $path ) ) {
+                if ( isset( $query ) ) {
+                    return $base . $script .'?q=' . $path . $separator . $query . $fragment;
+                } else {
+                    return $base . $script .'?q=' . $path . $fragment;
+                }
+            } else {
+                if ( isset( $query ) ) {
+                    return $base . $script .'?'. $query . $fragment;
+                } else {
+                    return $base . $fragment;
+                }
+            }
+        } else {
+            if ( isset( $path ) ) {
+                if ( isset( $query ) ) {
+                    return $base . $path .'?'. $query . $fragment;
+                } else {
+                    return $base . $path . $fragment;
+                }
+            } else {
+                if ( isset( $query ) ) {
+                    return $base . $script .'?'. $query . $fragment;
+                } else {
+                    return $base . $fragment;
+                }
+            }
+        }
+    }
+
+    function getUserID( $user ) {
+        //FIXME: look here a bit closer when testing UFMatch
+      
+        // this puts the appropriate values in the session, so
+        // no need to return anything
+        CRM_Core_BAO_UFMatch::synchronize( $user, true, 'Standalone', 'Individual' );
+    }
+
+    function getAllowedToLogin( $user ) {
+        return true;
+    }
+
+    function setMessage( $message ) {
+    	return;
+    }
+
+    function permissionDenied( ) {
+        CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
+    }
+
+    function logout( ) {
+        session_destroy();
+        header("Location:index.php");
+    }
+
+    function getUFLocale()
+    {
+        return null;
+    }
 }
+
 

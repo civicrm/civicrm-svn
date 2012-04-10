@@ -1141,7 +1141,8 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
   ) {
     $currencies = CRM_Core_OptionGroup::values('currencies_enabled');
     if (!$required) {
-      $currencies = array('' => ts('- select -')) + $currencies;
+      $currencies = array('' => ts('- select -')) { + $currencies;
+    }
     }
     $ele = $this->add('select', $name, $label, $currencies, $required);
     if ($freezeCurrency) {

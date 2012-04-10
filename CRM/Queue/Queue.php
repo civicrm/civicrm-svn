@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,7 +36,6 @@
  * Note: This interface closely parallels the DrupalQueueInterface.
  */
 abstract class CRM_Queue_Queue {
-
   /**
    * @var string
    */
@@ -51,10 +51,11 @@ abstract class CRM_Queue_Queue {
    *   - name: string, required, e.g. "upgrade-tasks"
    *   - reset: bool, optional; if a queue is found, then it should be flushed; default to TRUE
    *   - (additional keys depending on the queue provider)
-   */ function __construct($queueSpec) {
+   */
+  function __construct($queueSpec) {
     $this->_name = $queueSpec['name'];
   }
-
+  
   /**
    * Determine the string name of this queue
    *
@@ -63,68 +64,64 @@ abstract class CRM_Queue_Queue {
   function getName() {
     return $this->_name;
   }
-
+  
   /**
    * Perform any registation or resource-allocation for a new queue
    */
   abstract function createQueue();
-
+  
   /**
    * Perform any loading or pre-fetch for an existing queue.
    */
   abstract function loadQueue();
-
+  
   /**
    * Release any resources claimed by the queue (memory, DB rows, etc)
    */
   abstract function deleteQueue();
-
+  
   /**
    * Check if the queue exists
    *
    * @return bool
    */
   abstract function existsQueue();
-
+  
   /**
    * Add a new item to the queue
    *
    * @param $data serializable PHP object or array
-   *
    * @return bool, TRUE on success
    */
   abstract function createItem($data);
-
+  
   /**
    * Determine number of items remaining in the queue
    *
    * @return int
    */
   abstract function numberOfItems();
-
+  
   /**
    * Get and remove the next item
    *
    * @param $lease_time seconds
-   *
    * @return object with key 'data' that matches the inputted data
    */
   abstract function claimItem($lease_time = 3600);
-
+  
   /**
    * Remove an item from the queue
    *
    * @param $item The item returned by claimItem
    */
   abstract function deleteItem($item);
-
+  
   /**
    * Return an item that could not be processed
    *
    * @param $item The item returned by claimItem
-   *
    * @return bool
    */
   abstract function releaseItem($item);
 }
-

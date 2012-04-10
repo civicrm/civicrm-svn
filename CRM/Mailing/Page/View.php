@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 /*
  +--------------------------------------------------------------------+
@@ -37,128 +37,119 @@
 /**
  * a page for mailing preview
  */
-class CRM_Mailing_Page_View extends CRM_Core_Page {
-  protected $_mailingID;
-  protected $_mailing;
-  protected $_contactID;
+class CRM_Mailing_Page_View extends CRM_Core_Page
+{
+    protected $_mailingID;
+    protected $_mailing;
+    protected $_contactID;
 
-  /**
-   * Lets do permission checking here
-   * First check for valid mailing, if false return fatal
-   * Second check for visibility
-   * Call a hook to see if hook wants to override visibility setting
-   */ function checkPermission() {
-    if (!$this->_mailing) {
-      return FALSE;
-    }
+    /**
+     * Lets do permission checking here
+     * First check for valid mailing, if false return fatal
+     * Second check for visibility
+     * Call a hook to see if hook wants to override visibility setting
+     */
+    function checkPermission( )
+    {
+        if ( ! $this->_mailing ) {
+            return false;
+        }
 
-    // check for visibility, if visibility is Public Pages and they have the permission
-    // return true
-    if ($this->_mailing->visibility == 'Public Pages' &&
-      CRM_Core_Permission::check('view public CiviMail content')
-    ) {
-      return TRUE;
-    }
+        // check for visibility, if visibility is Public Pages and they have the permission
+        // return true
+        if ( $this->_mailing->visibility == 'Public Pages' &&
+             CRM_Core_Permission::check( 'view public CiviMail content' )) {
+            return true;
+        }
+		
+        // if user is an admin, return true
+        if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
+             CRM_Core_Permission::check( 'access CiviMail' ) ) {
+            return true;
+        }
 
-    // if user is an admin, return true
-    if (CRM_Core_Permission::check('administer CiviCRM') ||
-      CRM_Core_Permission::check('access CiviMail')
-    ) {
-      return TRUE;
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * run this page (figure out the action needed and perform it).
-   *
-   * @return void
-   */
-  function run($id = NULL, $contact_id = NULL, $print = TRUE) {
-    if (is_numeric($id)) {
-      $this->_mailingID = $id;
-    }
-    else {
-      $print = TRUE;
-      $this->_mailingID = CRM_Utils_Request::retrieve('id', 'Integer', CRM_Core_DAO::$_nullObject, TRUE);
+        return false;
     }
 
-    // # CRM-7651
-    // override contactID from the function level if passed in
-    if (isset($contactID) &&
-      is_numeric($contactID)
-    ) {
-      $this->_contactID = $contactID;
-    }
-    else {
-      $session = CRM_Core_Session::singleton();
-      $this->_contactID = $session->get('userID');
-    }
+    /** 
+     * run this page (figure out the action needed and perform it).
+     * 
+     * @return void
+     */ 
+    function run( $id = null, $contact_id = null, $print = true )
+    {               
+        if ( is_numeric( $id ) ) {
+            $this->_mailingID = $id;
+        } else {
+            $print = true;
+            $this->_mailingID = CRM_Utils_Request::retrieve( 'id', 'Integer', CRM_Core_DAO::$_nullObject, true );
+        }        
 
-    $this->_mailing = new CRM_Mailing_BAO_Mailing();
-    $this->_mailing->id = $this->_mailingID;
+		// # CRM-7651
+		// override contactID from the function level if passed in
+		if ( isset( $contactID ) &&
+             is_numeric( $contactID )) {
+			$this->_contactID = $contactID;
+		} else {
+			$session   = CRM_Core_Session::singleton( );
+			$this->_contactID = $session->get( 'userID' );
+        }
 
-    if (!$this->_mailing->find(TRUE) ||
-      !$this->checkPermission()
-    ) {
-      CRM_Utils_System::permissionDenied();
-      return;
-    }
+        $this->_mailing     = new CRM_Mailing_BAO_Mailing();
+        $this->_mailing->id = $this->_mailingID;
 
-    CRM_Mailing_BAO_Mailing::tokenReplace($this->_mailing);
+        if ( ! $this->_mailing->find( true ) ||
+             ! $this->checkPermission( ) ) {
+            CRM_Utils_System::permissionDenied( );
+            return;
+        }
 
-    if (defined('CIVICRM_MAIL_SMARTY') &&
-      CIVICRM_MAIL_SMARTY
-    ) {
-      require_once 'CRM/Core/Smarty/resources/String.php';
-      civicrm_smarty_register_string_resource();
-    }
+        CRM_Mailing_BAO_Mailing::tokenReplace( $this->_mailing );
+        
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
+             CIVICRM_MAIL_SMARTY ) {
+            require_once 'CRM/Core/Smarty/resources/String.php';     
+            civicrm_smarty_register_string_resource( );
+        }
 
-    // get and format attachments
-    $attachments = &CRM_Core_BAO_File::getEntityFile('civicrm_mailing',
-      $this->_mailing->id
-    );
-
-    // get contact detail and compose if contact id exists
-    if (isset($this->_contactID)) {
-      //get details of contact with token value including Custom Field Token Values.CRM-3734
-      $returnProperties = $this->_mailing->getReturnProperties();
-      $params           = array('contact_id' => $this->_contactID);
-      $details          = CRM_Utils_Token::getTokenDetails($params,
-        $returnProperties,
-        TRUE, TRUE, NULL,
-        $this->_mailing->getFlattenedTokens(),
-        get_class($this)
-      );
-      $details = $details[0][$this->_contactID];
+        // get and format attachments
+        $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
+                                                          $this->_mailing->id );
+		
+		// get contact detail and compose if contact id exists
+		if(isset($this->_contactID)) {
+			//get details of contact with token value including Custom Field Token Values.CRM-3734
+			$returnProperties = $this->_mailing->getReturnProperties( );
+			$params  = array( 'contact_id' => $this->_contactID );
+            $details = CRM_Utils_Token::getTokenDetails( $params,
+                                                         $returnProperties,
+                                                         true, true, null,
+                                                         $this->_mailing->getFlattenedTokens( ),
+                                                         get_class( $this )
+                                                         );
+			$details = $details[0][$this->_contactID];
+		} else {
+			$details = array('test');
+		}
+        $mime =& $this->_mailing->compose( null, null, null, 0,
+                                           $this->_mailing->from_email,
+                                           $this->_mailing->from_email,
+                                           true, $details, $attachments );
+        
+        if ( isset( $this->_mailing->body_html ) ) {
+            $header = 'Content-Type: text/html; charset=utf-8';
+            $content = $mime->getHTMLBody();
+        } else {
+            $header = 'Content-Type: text/plain; charset=utf-8';
+            $content = $mime->getTXTBody();
+        }
+        
+        if ( $print ) {
+            header( $header );
+            print $content;
+            CRM_Utils_System::civiExit( );
+        } else {
+            return $content;
+        }
     }
-    else {
-      $details = array('test');
-    }
-    $mime = &$this->_mailing->compose(NULL, NULL, NULL, 0,
-      $this->_mailing->from_email,
-      $this->_mailing->from_email,
-      TRUE, $details, $attachments
-    );
-
-    if (isset($this->_mailing->body_html)) {
-      $header = 'Content-Type: text/html; charset=utf-8';
-      $content = $mime->getHTMLBody();
-    }
-    else {
-      $header = 'Content-Type: text/plain; charset=utf-8';
-      $content = $mime->getTXTBody();
-    }
-
-    if ($print) {
-      header($header);
-      print $content;
-      CRM_Utils_System::civiExit();
-    }
-    else {
-      return $content;
-    }
-  }
 }
-

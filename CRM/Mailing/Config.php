@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -32,48 +33,51 @@
  * $Id$
  *
  */
+
+
 class CRM_Mailing_Config extends CRM_Core_Component_Config {
 
-  /**
-   * What should be the verp separator we use
-   *
-   * @var char
-   */
-  public $verpSeparator = '.';
+    /**
+      * What should be the verp separator we use
+      *
+      * @var char
+      */
+    public $verpSeparator = '.';
 
-  /**
-   * How long should we wait before checking for new outgoing mailings?
-   *
-   * @var int
-   */
-  public $mailerPeriod = 180;
+    /**
+     * How long should we wait before checking for new outgoing mailings?
+     *
+     * @var int
+     */
+    public $mailerPeriod    = 180;
 
-  /**
-   * TODO
-   *
-   * @var int
-   */
-  public $mailerSpoolLimit = 0;
+   /**
+    * TODO
+    *
+    * @var int
+    */
+    public $mailerSpoolLimit = 0;
+                           
+   /**
+    * How many emails should CiviMail deliver on a given run
+    *
+    * @var int
+    */
+    public $mailerBatchLimit = 0;
 
-  /**
-   * How many emails should CiviMail deliver on a given run
-   *
-   * @var int
-   */
-  public $mailerBatchLimit = 0;
+    /**
+     * How large should each mail thread be
+     *
+     * @var int
+     */
+    public $mailerJobSize = 0;
 
-  /**
-   * How large should each mail thread be
-   *
-   * @var int
-   */
-  public $mailerJobSize = 0;
-
-  /**
-   * How many parallel delivery cron jobs should we run
-   *
-   * @var int
-   */
-  public $mailerJobsMax = 0;
+    /**
+     * How many parallel delivery cron jobs should we run
+     *
+     * @var int
+     */
+    public $mailerJobsMax = 0;
 }
+
 

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,6 +26,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /**
  *
  * @package CRM
@@ -32,10 +34,13 @@
  * $Id$
  *
  */
-class CRM_Mailing_Page_Unsubscribe extends CRM_Mailing_Page_Common {
-  function run() {
-    $this->_type = 'unsubscribe';
-    return parent::run();
-  }
+
+
+class CRM_Mailing_Page_Unsubscribe extends CRM_Mailing_Page_Common
+{
+    function run() {
+        $this->_type = 'unsubscribe';
+        return parent::run( );
+    }
 }
 

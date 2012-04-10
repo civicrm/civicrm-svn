@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -36,54 +37,53 @@
 /**
  * This class contains all the function that are called using AJAX
  */
-class CRM_Pledge_Page_AJAX {
-
-  /**
-   * Function for building Pledge Name combo box
-   */
-  function pledgeName(&$config) {
-
-    $getRecords = FALSE;
-    if (isset($_GET['name']) && $_GET['name']) {
-      $name        = CRM_Utils_Type::escape($_GET['name'], 'String');
-      $name        = str_replace('*', '%', $name);
-      $whereClause = "p.creator_pledge_desc LIKE '%$name%' ";
-      $getRecords  = TRUE;
-    }
-
-    if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-      $pledgeId    = CRM_Utils_Type::escape($_GET['id'], 'Integer');
-      $whereClause = "p.id = {$pledgeId} ";
-      $getRecords  = TRUE;
-    }
-
-    if ($getRecords) {
-      $query = "
+class CRM_Pledge_Page_AJAX
+{
+    /**
+     * Function for building Pledge Name combo box
+     */    
+    function pledgeName( &$config ) 
+    {
+        
+        $getRecords = false;
+        if ( isset( $_GET['name'] ) && $_GET['name'] ) {
+            $name     = CRM_Utils_Type::escape( $_GET['name'], 'String' );
+            $name     = str_replace( '*', '%', $name );
+            $whereClause = "p.creator_pledge_desc LIKE '%$name%' ";
+            $getRecords = true;
+        }
+        
+        if ( isset( $_GET['id'] ) && is_numeric($_GET['id']) ) {
+            $pledgeId    = CRM_Utils_Type::escape( $_GET['id'], 'Integer'  );
+            $whereClause = "p.id = {$pledgeId} ";
+            $getRecords = true;
+        }
+        
+        if ( $getRecords ) {
+            $query = "
 SELECT p.creator_pledge_desc, p.id
 FROM civicrm_pb_pledge p
 WHERE {$whereClause}
 ";
-      $dao = CRM_Core_DAO::executeQuery($query);
-      $elements = array();
-      while ($dao->fetch()) {
-        $elements[] = array('name' => $dao->creator_pledge_desc,
-          'value' => $dao->id,
-        );
-      }
-    }
+            $dao = CRM_Core_DAO::executeQuery( $query );
+            $elements = array( );
+            while ( $dao->fetch( ) ) {
+                $elements[] = array( 'name' => $dao->creator_pledge_desc,
+                                     'value'=> $dao->id );
+            }
+        }
+        
+        if ( empty( $elements) ) { 
+            $name = $_GET['name'];
+            if ( !$name && isset( $_GET['id'] ) ) {
+                $name = $_GET['id'];
+            } 
+            $elements[] = array( 'name' => trim( $name, '*'),
+                                 'value'=> trim( $name, '*') );
+        }
+        
+        echo CRM_Utils_JSON::encode( $elements, 'value');
+        CRM_Utils_System::civiExit( );
+    } 
 
-    if (empty($elements)) {
-      $name = $_GET['name'];
-      if (!$name && isset($_GET['id'])) {
-        $name = $_GET['id'];
-      }
-      $elements[] = array('name' => trim($name, '*'),
-        'value' => trim($name, '*'),
-      );
-    }
-
-    echo CRM_Utils_JSON::encode($elements, 'value');
-    CRM_Utils_System::civiExit();
-  }
 }
-

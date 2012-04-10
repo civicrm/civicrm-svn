@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -36,102 +37,94 @@
 /**
  * Class handles functions for JSON format
  */
-class CRM_Utils_JSON {
-
-  /**
-   * Function to create JSON object
-   *
-   * @param  array  $params     associated array, that needs to be
-   *                            converted to JSON array
-   * @param  string $identifier identifier for the JSON array
-   *
-   * @return string $jsonObject JSON array
-   * @static
-   */
-  static
-  function encode($params, $identifier = 'id') {
-    $buildObject = array();
-    foreach ($params as $value) {
-      $name = addslashes($value['name']);
-      $buildObject[] = "{ name: \"$name\", {$identifier}:\"{$value[$identifier]}\"}";
-    }
-
-    $jsonObject = '{ identifier: "' . $identifier . '", items: [' . implode(',', $buildObject) . ' ]}';
-
-    return $jsonObject;
-  }
-
-  /**
-   * Function to encode json format for flexigrid, NOTE: "id" should be present in $params for each row
-   *
-   * @param array  $params associated array of values rows
-   * @param int    $page  page no for selector
-   * @param array  $selectorElements selector rows
-   *
-   * @return json encode string
-   */
-  static
-  function encodeSelector(&$params, $page, $total, $selectorElements) {
-    $json = "";
-    $json .= "{\n";
-    $json .= "page: $page,\n";
-    $json .= "total: $total,\n";
-    $json .= "rows: [";
-    $rc = FALSE;
-
-    foreach ($params as $key => $value) {
-      if ($rc) {
-        $json .= ",";
-      }
-      $json .= "\n{";
-      $json .= "id:'" . $value['id'] . "',";
-      $json .= "cell:[";
-      $addcomma = FALSE;
-      foreach ($selectorElements as $element) {
-        if ($addcomma) {
-          $json .= ",";
+class CRM_Utils_JSON
+{
+    /**
+     * Function to create JSON object
+     * 
+     * @param  array  $params     associated array, that needs to be
+     *                            converted to JSON array
+     * @param  string $identifier identifier for the JSON array 
+     * 
+     * @return string $jsonObject JSON array     
+     * @static
+     */
+    static function encode ( $params, $identifier = 'id' ) 
+    {
+        $buildObject = array( );
+        foreach ( $params as $value ) {
+            $name = addslashes( $value['name'] );
+            $buildObject[] = "{ name: \"$name\", {$identifier}:\"{$value[$identifier]}\"}";
         }
-        $json .= "'" . addslashes($value[$element]) . "'";
-        $addcomma = TRUE;
-      }
-      $json .= "]}";
-      $rc = TRUE;
+
+        $jsonObject = '{ identifier: "'. $identifier .'", items: [' . implode( ',', $buildObject) . ' ]}';
+
+        return $jsonObject;
     }
 
-    $json .= "]\n";
-    $json .= "}";
+    /**
+     * Function to encode json format for flexigrid, NOTE: "id" should be present in $params for each row 
+     * @param array  $params associated array of values rows
+     * @param int    $page  page no for selector 
+     * @param array  $selectorElements selector rows
+     *
+     * @return json encode string   
+     */
+    static function encodeSelector( &$params, $page, $total, $selectorElements )
+    {
+        $json = "";
+        $json .= "{\n";
+        $json .= "page: $page,\n";
+        $json .= "total: $total,\n";
+        $json .= "rows: [";
+        $rc = false;
 
-    return $json;
-  }
-
-  static
-  function encodeDataTableSelector($params, $sEcho, $iTotal, $iFilteredTotal, $selectorElements) {
-    $sOutput = '{';
-    $sOutput .= '"sEcho": ' . intval($sEcho) . ', ';
-    $sOutput .= '"iTotalRecords": ' . $iTotal . ', ';
-    $sOutput .= '"iTotalDisplayRecords": ' . $iFilteredTotal . ', ';
-    $sOutput .= '"aaData": [ ';
-    foreach ($params as $key => $value) {
-      $addcomma = FALSE;
-      $sOutput .= "[";
-      foreach ($selectorElements as $element) {
-        if ($addcomma) {
-          $sOutput .= ",";
+        foreach( $params as $key => $value) {
+            if ( $rc ) $json .= ",";
+            $json .= "\n{";
+            $json .= "id:'".$value['id']."',";
+            $json .= "cell:[";
+            $addcomma = false;
+            foreach ( $selectorElements as $element ) {
+                if ( $addcomma ) $json .= ",";
+                $json .= "'".addslashes($value[$element])."'";
+                $addcomma = true;
+            }
+            $json .= "]}";
+            $rc = true;
         }
-        //$sOutput .= '"'.addslashes($value[$element]).'"';
+        
+        $json .= "]\n";
+        $json .= "}";
+     
+        return $json;
+    } 
 
-        //CRM-7130 --lets addslashes to only double quotes,
-        //since we are using it to quote the field value.
-        $sOutput .= '"' . addcslashes($value[$element], '"\\') . '"';
+    static function encodeDataTableSelector( $params, $sEcho, $iTotal, $iFilteredTotal, $selectorElements )
+    {
+        $sOutput  = '{';
+        $sOutput .= '"sEcho": '.intval($sEcho).', ';
+        $sOutput .= '"iTotalRecords": '.$iTotal.', ';
+        $sOutput .= '"iTotalDisplayRecords": '.$iFilteredTotal.', ';
+        $sOutput .= '"aaData": [ ';
+        foreach( $params as $key => $value) {
+            $addcomma = false;
+            $sOutput .= "[";
+            foreach ( $selectorElements as $element ) {
+                if ( $addcomma )  $sOutput .= ",";
+                //$sOutput .= '"'.addslashes($value[$element]).'"';
+            
+                //CRM-7130 --lets addslashes to only double quotes, 
+                //since we are using it to quote the field value.
+                $sOutput .= '"'. addcslashes( $value[$element], '"\\') . '"';
+            
+                $addcomma = true;
+            }
+            $sOutput .= "],";
+        }
+        $sOutput  = substr_replace( $sOutput, "", -1 );
+        $sOutput .= '] }';
 
-        $addcomma = TRUE;
-      }
-      $sOutput .= "],";
-    }
-    $sOutput = substr_replace($sOutput, "", -1);
-    $sOutput .= '] }';
-
-    return $sOutput;
-  }
+        return $sOutput;
+    }  
 }
-

@@ -227,33 +227,23 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
 
     /*         if ( array_key_exists('country_id', $this->_params['group_bys']) ) { */
 
-
     /*             $this->_columns['civicrm_contribution']['fields']['total_amount1']['clause'] = ' */
-
 
     /* SUM(contribution1_total_amount_count) as contribution1_total_amount_count, */
 
-
     /* SUM(contribution1_total_amount_sum)   as contribution1_total_amount_sum'; */
-
 
     /*             $this->_columns['civicrm_contribution']['fields']['total_amount2']['clause'] = ' */
 
-
     /* SUM(contribution2_total_amount_count) as contribution2_total_amount_count, */
-
 
     /* SUM(contribution2_total_amount_sum)   as contribution2_total_amount_sum'; */
 
-
     /*             $this->_columns['civicrm_contribution']['fields']['total_amount1']['clause'] = ''; */
-
 
     /*             $this->_columns['civicrm_contribution']['fields']['total_amount2']['clause'] = ''; */
 
-
     /*         } */
-
 
 
     foreach ($this->_columns as $tableName => $table) {
@@ -311,9 +301,7 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
       // Set default sort order
       /*             if(count($this->_params['group_bys']) == 1 && !empty($this->_params['group_bys']['id'])) { */
 
-
       /*               $this->_groupBy .= ' ORDER BY contact_civireport.sort_name'; */
-
 
       /*             } */
     }

@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 /*
  +--------------------------------------------------------------------+
@@ -33,30 +33,30 @@
  * $Id: $
  *
  */
+
+
 class CRM_Utils_Hook_Drupal extends CRM_Utils_Hook {
-  function invoke($numParams,
-    &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-    $fnSuffix
-  ) {
-    static $first = FALSE;
-    static $allModules = array();
 
-    if (!$first ||
-      empty($allModules)
-    ) {
-      $first = TRUE;
+    function invoke( $numParams,
+                     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+                     $fnSuffix ) {
+        static $first = false;
+        static $allModules = array( );
 
-      // copied from user_module_invoke
-      if (function_exists('module_list')) {
-        $allModules = module_list();
-      }
+        if ( ! $first ||
+             empty( $allModules ) ) {
+            $first = true;
 
-      $this->requireCiviModules($allModules);
-    }
+            // copied from user_module_invoke
+            if (function_exists('module_list')) {
+                $allModules =  module_list();
+            }
+            
+            $this->requireCiviModules( $allModules );
+        }
 
-    return $this->runHooks($allModules, $fnSuffix,
-      $numParams, $arg1, $arg2, $arg3, $arg4, $arg5
-    );
-  }
+        return $this->runHooks( $allModules, $fnSuffix,
+                                $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
+   }
+
 }
-
