@@ -37,12 +37,15 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
   protected $_participantId;
   protected $_pledgeId;
   protected $_eventId;
+  protected $_processorId;
   protected $_contributionRecurParams;
   protected $_paymentProcessor;
   protected $IPN;
   protected $_recurId;
   protected $_membershipId;
-  protected $_membershipTypeID;
+  protected $input;
+  protected $ids;
+  protected $objects;
   public $DBResetRequired  = false;
   
     function get_info( ) 
@@ -57,40 +60,29 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
     function setUp( ) 
     {
         parent::setUp();
-
+        $this->input = $this->ids = $this->objects  = array();
         $this->IPN = new CRM_Core_Payment_AuthorizeNetIPN();
         
         $this->_contactId = $this->individualCreate( ) ;
+        $this->ids['contact'] = $this->_contactId;
         require_once 'CRM/Core/BAO/PaymentProcessor.php';
-        $this->paymentProcessorType  = new CRM_Core_BAO_PaymentProcessor();
-        $this->processorParams   = $this->paymentProcessorType->create( );
+        $this->paymentProcessor  = new CRM_Core_BAO_PaymentProcessor();
+
         require_once 'CRM/Core/Payment/AuthorizeNet.php';
         $paymentProcessorParams = array( 'user_name' => 'user_name',
                                    'password'  => 'password',
                                    'url_recur' => 'url_recur' );  
         $this->_paymentProcessor = new CRM_Core_Payment_AuthorizeNet( 'Contribute', $paymentProcessorParams );
+        $paymentProcessorParams['payment_processor_type'] = 'AuthorizeNet';
+        $paymentProcessorParams['domain_id'] = 1;
+        $paymentProcessorParams['is_active'] = 1;
+        $paymentProcessorParams['is_test'] = 0;
+        $processorEntity   = $this->paymentProcessor->create( $paymentProcessorParams);
+
+        $this->_processorId = $processorEntity->id;
         $this->_contributionTypeId = 1;
         $ids = array();
-        $this->_contributionRecurParams = array( 
-          'contact_id'             => $this->_contactId,
-          'amount'                 => 150.00,
-          'currency'               => 'USD',
-          'frequency_unit'         => 'week',
-          'frequency_interval'     => 1,
-          'installments'           => 2,
-          'start_date'             => date( 'Ymd' ),
-          'create_date'            => date( 'Ymd' ),
-          'invoice_id'             => 'c8acb91e080ad7bd8a2adc119c192885',
-          'contribution_status_id' => 2,
-          'is_test'                => 1,
-          'contribution_type_id'   => $this->_contributionTypeId,
-          'version' => 3,
 
-          'payment_processor_id'   => $this->processor->id );
-        $this->_recurId = civicrm_api( 'contribution_recur','create',$this->_contributionRecurParams );
-        $this->assertAPISuccess($this->_recurId,'line ' . __LINE__ . ' set-up of recurring contrib');
-        
-        $this->_recurId = $this->_recurId['id'];
         $this->_contributionParams = array( 
          'contact_id'             => $this->_contactId,
          'version' => 3,
@@ -168,41 +160,32 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
      * Test the LoadObjects function with recurring membership data
      * 
      */
-    function testLoadObjects( )
+    function testLoadMembershipObjects( )
     {
-
-        $ids       = array();
-        //we'll create membership payment here because to make setup more re-usable
-        civicrm_api('membership_payment', 'create', array(
-          'version' => 3, 
-          'contribution_id' => $this->_contributionId,
-          'membership_id' => $this->_membershipId));
-        $contribution = new CRM_Contribute_BAO_Contribution();
-        $contribution->id = $this->_contributionId;
-        $contribution->find();
-        $objects['contribution'] = $contribution; 
-        $input = array(
-          'component' => 'contribute',
-          'total_amount' => 150.00,
-          'invoiceID'  => "c8acb91e080ad7bd8a2adc119c192885",
-          'contactID' => $this->_contactId,
-          'contributionID' => $contribution->id,
-          'contributionRecurID' => $this->_recurId,
-          'membershipID' => $this->_membershipId,
-         );
-
-         $ids = array(
-           'membership' => $this->_membershipId,
-           'contributionRecur' => $this->_recurId,
-         );
-         $this->IPN->loadObjects( $input, $ids, $objects, FALSE, $paymentProcessorID );
-         $this->assertFalse(empty($objects['membership']), 'in line ' . __LINE__);
-         $this->assertArrayHasKey(0, $objects['membership'], 'in line ' . __LINE__);
-         $this->assertTrue(is_a( $objects['membership'][0],'CRM_Member_BAO_Membership'));
-         $this->assertTrue(is_a( $objects['contributionType'],'CRM_Contribute_BAO_ContributionType'));
-         $this->assertFalse(empty($objects['contributionRecur']));
+      $this->_setUpMembershipObjects();
+      $this->_setUpRecurringContribution();
+      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $this->_processorId );
+      $this->assertFalse(empty($this->objects['membership']), 'in line ' . __LINE__);
+      $this->assertArrayHasKey(0, $this->objects['membership'], 'in line ' . __LINE__);
+      $this->assertTrue(is_a( $this->objects['membership'][0],'CRM_Member_BAO_Membership'));
+      $this->assertTrue(is_a( $this->objects['contributionType'],'CRM_Contribute_BAO_ContributionType'));
+      $this->assertFalse(empty($this->objects['contributionRecur']), __LINE__);
+      $this->assertFalse(empty($this->objects['paymentProcessor']), __LINE__);
     }  
-        
+    /**
+     * Test the LoadObjects function with recurring membership data
+     * 
+     */
+    function testsendMailMembershipObjects( )
+    {
+      $this->_setUpMembershipObjects();
+      $values = array();
+      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $this->_processorId );
+      $msg = $this->IPN->sendMail( $this->input, $this->ids, $this->objects, $values,false, true );
+      $this->assertTrue(is_array($msg), "Message returned as an array in line" . __LINE__);
+      $this->assertEquals('Mr. Anthony Anderson II', $msg['to']);
+    }  
+    
     function testLoadParticipantObjects( )
     {
 
@@ -235,10 +218,56 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
          $this->assertTrue(is_a( $objects['contributionType'],'CRM_Contribute_BAO_ContributionType'));
          $this->assertFalse(empty($objects['event']));
          $this->assertTrue(is_a( $objects['event'],'CRM_Event_BAO_Event'));
-
+         $this->assertTrue(is_a( $objects['contribution'],'CRM_Contribute_BAO_Contribution'));
+         
     }  
         
+    function _setUpMembershipObjects(){
+        //we'll create membership payment here because to make setup more re-usable
+        civicrm_api('membership_payment', 'create', array(
+          'version' => 3, 
+          'contribution_id' => $this->_contributionId,
+          'membership_id' => $this->_membershipId));
+        
+        $contribution = new CRM_Contribute_BAO_Contribution();
+        $contribution->id = $this->_contributionId;
+        $contribution->find();
+        $this->objects['contribution'] = $contribution; 
+        $this->input = array(
+          'component' => 'contribute',
+          'total_amount' => 150.00,
+          'invoiceID'  => "c8acb91e080ad7bd8a2adc119c192885",
+          'contactID' => $this->_contactId,
+          'contributionID' => $this->objects['contribution']->id,
+          'membershipID' => $this->_membershipId,
+         );
+
+         $this->ids['membership'] = $this->_membershipId;
+    }
     
+    function _setUpRecurringContribution(){
+        $this->_contributionRecurParams = array( 
+          'contact_id'             => $this->_contactId,
+          'amount'                 => 150.00,
+          'currency'               => 'USD',
+          'frequency_unit'         => 'week',
+          'frequency_interval'     => 1,
+          'installments'           => 2,
+          'start_date'             => date( 'Ymd' ),
+          'create_date'            => date( 'Ymd' ),
+          'invoice_id'             => 'c8acb91e080ad7bd8a2adc119c192885',
+          'contribution_status_id' => 2,
+          'is_test'                => 1,
+          'contribution_type_id'   => $this->_contributionTypeId,
+          'version' => 3,
+
+          'payment_processor_id'   => $this->_processorId );
+        $this->_recurId = civicrm_api( 'contribution_recur','create',$this->_contributionRecurParams );
+        $this->assertAPISuccess($this->_recurId,'line ' . __LINE__ . ' set-up of recurring contrib');
+        $this->_recurId = $this->_recurId['id'];
+        $this->input['contributionRecurId'] = $this->_recurId;
+        $this->ids['contributionRecur'] = $this->_recurId;
+    }
 
 }
  ?>

@@ -1845,7 +1845,6 @@ SELECT source_contact_id
    */
   
   function loadRelatedObjects(&$input, &$ids,$required = true , $paymentProcessorID = null){
-        
         $contributionType = new CRM_Contribute_BAO_ContributionType( );
         $contributionType->id = $contribution->contribution_type_id;
         if ( ! $contributionType->find( true ) ) {
@@ -1928,7 +1927,6 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                 //get payment processor id from recur object.
                 $paymentProcessorID = $recur->payment_processor_id;
             }
-
             //for normal contribution get the payment processor id.
             if ( ! $paymentProcessorID ) {
                 if ( $this->contribution_page_id ) {
@@ -1987,7 +1985,6 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         if ( $paymentProcessorID ) {
             $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $paymentProcessorID,
                                                                            $contribution->is_test ? 'test' : 'live' );
-            
             $ids['paymentProcessor']       =  $paymentProcessorID;
             $this->_relatedObjects['paymentProcessor']   =& $paymentProcessor;
         } else if ( $required ) {

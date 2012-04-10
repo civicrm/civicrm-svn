@@ -602,7 +602,7 @@ LIMIT 1;";
         $template->assign( 'is_monetary', 1 );
         $template->assign( 'is_recur', $recur );
         $template->assign( 'currency', $contribution->currency );
-        if ( $recur ) {
+        if ( $recur && !empty($objects['paymentProcessor'])) {
             $paymentObject =& CRM_Core_Payment::singleton( $contribution->is_test ? 'test' : 'live', 
                                                            $objects['paymentProcessor'] );
             $url = $paymentObject->cancelSubscriptionURL( );
@@ -739,8 +739,10 @@ LIMIT 1;";
                             $url = $paymentObject->cancelSubscriptionURL( $membership->id, 'membership' );
                             $template->assign( 'cancelSubscriptionUrl', $url );
                         }
+
                         $result = CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, 
                                                                                  $isTest, $returnMessageText );
+
                         if ( $returnMessageText ) {
                             return $result;
                         } // otherwise if its about sending emails, continue sending without return, as we
