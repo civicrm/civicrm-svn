@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,6 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
+
 
 require_once 'CRM/Queue/Queue.php';
 require_once 'CRM/Queue/DAO/QueueItem.php';
@@ -55,14 +55,14 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
   function createQueue() {
     // nothing to do -- just start CRUDing items in the appropriate table
   }
-  
+
   /**
    * Perform any loading or pre-fetch for an existing queue.
    */
   function loadQueue() {
     // nothing to do -- just start CRUDing items in the appropriate table
   }
-  
+
   /**
    * Release any resources claimed by the queue (memory, DB rows, etc)
    */
@@ -71,10 +71,10 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
       DELETE FROM civicrm_queue_item
       WHERE queue_name = %1
     ", array(
-      1 => array($this->getName(), 'String'),
-    ));
+        1 => array($this->getName(), 'String'),
+      ));
   }
-  
+
   /**
    * Check if the queue exists
    *
@@ -83,22 +83,23 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
   function existsQueue() {
     return ($this->numberOfItems() > 0);
   }
-  
+
   /**
    * Add a new item to the queue
    *
    * @param $data serializable PHP object or array
+   *
    * @return bool, TRUE on success
    */
   function createItem($data) {
     require_once 'CRM/Utils/Time.php';
-    $dao = new CRM_Queue_DAO_QueueItem();
-    $dao->queue_name = $this->getName();
+    $dao              = new CRM_Queue_DAO_QueueItem();
+    $dao->queue_name  = $this->getName();
     $dao->submit_time = CRM_Utils_Time::getTime('YmdHis');
-    $dao->data = serialize($data);
+    $dao->data        = serialize($data);
     $dao->save();
   }
-  
+
   /**
    * Determine number of items remaining in the queue
    *
@@ -110,14 +111,15 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
       FROM civicrm_queue_item
       WHERE queue_name = %1
     ", array(
-      1 => array($this->getName(), 'String'),
-    ));
+        1 => array($this->getName(), 'String'),
+      ));
   }
-  
+
   /**
    * Get and remove the next item
    *
    * @param $lease_time seconds
+   *
    * @return object with key 'data' that matches the inputted data
    */
   function claimItem($lease_time = 3600) {
@@ -131,27 +133,30 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
     $params = array(
       1 => array($this->getName(), 'String'),
     );
-    $dao = CRM_Core_DAO::executeQuery($sql, $params, true, 'CRM_Queue_DAO_QueueItem');
+    $dao = CRM_Core_DAO::executeQuery($sql, $params, TRUE, 'CRM_Queue_DAO_QueueItem');
     if ($dao->fetch()) {
       $nowEpoch = CRM_Utils_Time::getTimeRaw();
       if ($dao->release_time === NULL || strtotime($dao->release_time) < $nowEpoch) {
         CRM_Core_DAO::executeQuery("UPDATE civicrm_queue_item SET release_time = %1 WHERE id = %2", array(
-          '1' => array(date('YmdHis', $nowEpoch + $lease_time), 'String'),
-          '2' => array($dao->id, 'Integer'),
-        ));
-#        $dao->submit_time = date('YmdHis', strtotime($dao->submit_time)); // work-around: inconsistent date-formatting causes unintentional breakage
-#        $dao->release_time = date('YmdHis', $nowEpoch + $lease_time);
-#        $dao->save();
+            '1' => array(date('YmdHis', $nowEpoch + $lease_time), 'String'),
+            '2' => array($dao->id, 'Integer'),
+          ));
+        // work-around: inconsistent date-formatting causes unintentional breakage
+        #        $dao->submit_time = date('YmdHis', strtotime($dao->submit_time));
+        #        $dao->release_time = date('YmdHis', $nowEpoch + $lease_time);
+        #        $dao->save();
         $dao->data = unserialize($dao->data);
         return $dao;
-      } else {
+      }
+      else {
         return FALSE;
       }
-    } else {
+    }
+    else {
       return FALSE;
     }
   }
-  
+
   /**
    * Remove an item from the queue
    *
@@ -161,11 +166,12 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
     $dao->delete();
     $dao->free();
   }
-  
+
   /**
    * Return an item that could not be processed
    *
    * @param $dao object The item returned by claimItem
+   *
    * @return bool
    */
   function releaseItem($dao) {
@@ -177,3 +183,4 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
     $dao->free();
   }
 }
+

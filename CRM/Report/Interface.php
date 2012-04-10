@@ -35,7 +35,7 @@
  *
  */
 
-  interface CRM_Report_Interface {
+interfaceCRM_Report_Interface {
 
   /**
    * The constructor gets the submitted form values
