@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,48 +32,48 @@
  * $Id$
  *
  */
-
-
 class CRM_Group_Controller extends CRM_Core_Controller {
 
-    /**
-     * class constructor
-     */
-    function __construct( $title = null, $action = CRM_Core_Action::NONE, $modal = true ) {
-        parent::__construct( $title, $modal );
+  /**
+   * class constructor
+   */
+  function __construct($title = NULL, $action = CRM_Core_Action::NONE, $modal = TRUE) {
+    parent::__construct($title, $modal);
 
-        $this->_stateMachine = new CRM_Group_StateMachine( $this, $action );
+    $this->_stateMachine = new CRM_Group_StateMachine($this, $action);
 
-        // create and instantiate the pages
-        $this->addPages( $this->_stateMachine, $action );
+    // create and instantiate the pages
+    $this->addPages($this->_stateMachine, $action);
 
-        // hack for now, set Search to Basic mode
-        $this->_pages['Basic']->setAction( CRM_Core_Action::BASIC );
+    // hack for now, set Search to Basic mode
+    $this->_pages['Basic']->setAction(CRM_Core_Action::BASIC);
 
-        // add all the actions
-        $config = CRM_Core_Config::singleton( );
-        
-        // to handle file type custom data
-        $uploadDir = $config->uploadDir;
+    // add all the actions
+    $config = CRM_Core_Config::singleton();
 
-        $uploadNames = $this->get( 'uploadNames' );
-        if ( ! empty( $uploadNames ) ) {
-            $uploadNames = array_merge( $uploadNames,
-                                        CRM_Core_BAO_File::uploadNames( ) );
-        } else {
-            $uploadNames = CRM_Core_BAO_File::uploadNames( );
-        }
+    // to handle file type custom data
+    $uploadDir = $config->uploadDir;
 
-        // add all the actions
-        $this->addActions( $uploadDir, $uploadNames );
+    $uploadNames = $this->get('uploadNames');
+    if (!empty($uploadNames)) {
+      $uploadNames = array_merge($uploadNames,
+        CRM_Core_BAO_File::uploadNames()
+      );
+    }
+    else {
+      $uploadNames = CRM_Core_BAO_File::uploadNames();
     }
 
-    function run( ) {
-        return parent::run( );
-    }
+    // add all the actions
+    $this->addActions($uploadDir, $uploadNames);
+  }
 
-    public function selectorName( ) {
-        return $this->get( 'selectorName' );
-    }
+  function run() {
+    return parent::run();
+  }
+
+  public function selectorName() {
+    return $this->get('selectorName');
+  }
 }
 
