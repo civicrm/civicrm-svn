@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,14 +32,11 @@
  * $Id$
  *
  */
-
-
 class CRM_Event_Page_ParticipantListing_Name extends CRM_Event_Page_ParticipantListing_Simple {
+  function preProcess() {
+    $this->_participantListingType == 'Name';
 
-    function preProcess( ) {
-        $this->_participantListingType == 'Name';
-
-        parent::preProcess( );
-    }
-
+    parent::preProcess();
+  }
 }
+
