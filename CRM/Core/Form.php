@@ -1113,9 +1113,9 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         $currencies = CRM_Core_OptionGroup::values( 'currencies_enabled' );
         if ( !$required ) $currencies = array( ''=> ts( '- select -' ) ) + $currencies;
         $ele = $this->add( 'select', $name, $label, $currencies, $required );
-	if ( $freezeCurrency ) {
-	       $ele->freeze();
-	    }   
+        if ( $freezeCurrency ) {
+          $ele->freeze();
+        }   
         if ( !$defaultCurrency ) {
             $config = CRM_Core_Config::singleton( );
             $defaultCurrency = $config->defaultCurrency;
