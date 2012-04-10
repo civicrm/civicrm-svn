@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,157 +24,153 @@
  +--------------------------------------------------------------------+
 */
 
+
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-
-
- 
 class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
 
-  protected function setUp()
-  {
-      parent::setUp();
+  protected function setUp() {
+    parent::setUp();
   }
 
-  function testStandaloneMemberAdd()
-  {
+  function testStandaloneMemberAdd() {
 
-      $this->open( $this->sboxPath );
-      $this->webtestLogin();
-    
-      // create contact
-      $firstName = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName, "Memberson", "Memberson{$firstName}@memberson.name" );
-      $contactName = "Memberson, $firstName";
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
 
-      // add membership type  
-      $membershipTypes = $this->webtestAddMembershipType();
-      
-      // now add membership
-      $this->open($this->sboxPath . "civicrm/member/add?reset=1&action=add&context=standalone");
+    // create contact
+    $firstName = substr(sha1(rand()), 0, 7);
+    $this->webtestAddContact($firstName, "Memberson", "Memberson{$firstName}@memberson.name");
+    $contactName = "Memberson, $firstName";
 
-      $this->waitForElementPresent("_qf_Membership_upload");
+    // add membership type
+    $membershipTypes = $this->webtestAddMembershipType();
 
-      // select contact
-      $this->webtestFillAutocomplete( $firstName );
+    // now add membership
+    $this->open($this->sboxPath . "civicrm/member/add?reset=1&action=add&context=standalone");
 
-      // fill in Membership Organization
-      $this->select("membership_type_id[0]", "label={$membershipTypes['member_org']}");
+    $this->waitForElementPresent("_qf_Membership_upload");
 
-      // select membership type  
-      $this->select("membership_type_id[1]", "label={$membershipTypes['membership_type']}");
-      
-      // fill in Source
-      $this->type("source", "Membership StandaloneAddTest Webtest");
+    // select contact
+    $this->webtestFillAutocomplete($firstName);
 
-      // Let Join Date stay default
+    // fill in Membership Organization
+    $this->select("membership_type_id[0]", "label={$membershipTypes['member_org']}");
 
-      // fill in Start Date
-      $this->webtestFillDate('start_date');
+    // select membership type
+    $this->select("membership_type_id[1]", "label={$membershipTypes['membership_type']}");
 
-      // Let End Date be auto computed
+    // fill in Source
+    $this->type("source", "Membership StandaloneAddTest Webtest");
 
-      // fill in Status Override?
-      // fill in Record Membership Payment?
-      
-      $this->click("_qf_Membership_upload");
-      
-      //View Membership
-      $this->waitForElementPresent( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
-      $this->click( "xpath=//div[@id='memberships']//table/tbody/tr[1]/td[7]/span/a[text()='View']" );
-      $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
-      $expected = array(
-                        2  =>  $membershipTypes['membership_type'],
-                        3  => 'New',
-                        4  => 'Membership StandaloneAddTest Webtest',
-                        );
-      foreach ( $expected as $label => $value ) {
-          $this->verifyText("xpath=id('MembershipView')/div[2]/div/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
-      }
-      
+    // Let Join Date stay default
+
+    // fill in Start Date
+    $this->webtestFillDate('start_date');
+
+    // Let End Date be auto computed
+
+    // fill in Status Override?
+    // fill in Record Membership Payment?
+
+    $this->click("_qf_Membership_upload");
+
+    //View Membership
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table/tbody/tr[1]/td[7]/span/a[text()='View']");
+    $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
+    $expected = array(
+      2 => $membershipTypes['membership_type'],
+      3 => 'New',
+      4 => 'Membership StandaloneAddTest Webtest',
+    );
+    foreach ($expected as $label => $value) {
+      $this->verifyText("xpath=id('MembershipView')/div[2]/div/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+    }
   }
-  
-  function testStandaloneMemberOverrideAdd( ) {
-      
-      $this->open( $this->sboxPath );
-      $this->webtestLogin();
-      
-      // add contact
-      $firstName = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName, "Memberson", "Memberson{$firstName}@memberson.name" );
-      $contactName = "Memberson, $firstName";
 
-      // add membership type  
-      $membershipTypes = $this->webtestAddMembershipType();
-      
-      // add membership
-      $this->open($this->sboxPath . "civicrm/member/add?reset=1&action=add&context=standalone");
-      
-      $this->waitForElementPresent("_qf_Membership_upload");
-      
-      // select contact
-      $this->webtestFillAutocomplete( $firstName );
-      
-      // fill in Membership Organization
-      $this->select("membership_type_id[0]", "label={$membershipTypes['member_org']}");
+  function testStandaloneMemberOverrideAdd() {
 
-      // select membership type  
-      $this->select("membership_type_id[1]", "label={$membershipTypes['membership_type']}");
- 
-      // fill in Source
-      $this->type("source", "Membership StandaloneAddTest Webtest");
-      
-      // Let Join Date stay default
-      
-      // fill in Start Date
-      $this->webtestFillDate('start_date');
-      
-      // Let End Date be auto computed
-      
-      // fill in Status Override?
-      $this->click("is_override", "value=1");
-      $this->waitForElementPresent("status_id");
-      $this->select("status_id", "value=3");
-      
-      // fill in Record Membership Payment?
-      $this->click("record_contribution", "value=1");
-      $this->waitForElementPresent("contribution_status_id");
-      // let contribution type be default
-      
-      // let the amount be default
-      
-      // select payment instrument type = Check and enter chk number
-      $this->select("payment_instrument_id", "value=4");
-      $this->waitForElementPresent("check_number");
-      $this->type("check_number", "check #12345");
-      $this->type("trxn_id", "P5476785" . rand(100, 10000));
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
 
-      // fill  the payment status be default
-      $this->select("contribution_status_id", "value=2");
+    // add contact
+    $firstName = substr(sha1(rand()), 0, 7);
+    $this->webtestAddContact($firstName, "Memberson", "Memberson{$firstName}@memberson.name");
+    $contactName = "Memberson, $firstName";
 
-      //----   
-      
-      // Clicking save.
-      $this->click("_qf_Membership_upload");
-      $this->waitForPageToLoad("30000");
-     
-      // page was loaded
-      $this->waitForTextPresent( "Membership StandaloneAddTest Webtest" );
-      
-      // verify if Membership is created
-      $this->waitForElementPresent( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
-      
-      //click through to the Membership view screen
-      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
-      $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
-      
-      $expected = array(
-                        2 => $membershipTypes['membership_type'], 
-                        3 => 'Grace',
-                        4 => 'Membership StandaloneAddTest Webtest',
-                        );
-      foreach ( $expected as $label => $value ) {
-          $this->verifyText("xpath=id('MembershipView')/div[2]/div/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
-      }
+    // add membership type
+    $membershipTypes = $this->webtestAddMembershipType();
+
+    // add membership
+    $this->open($this->sboxPath . "civicrm/member/add?reset=1&action=add&context=standalone");
+
+    $this->waitForElementPresent("_qf_Membership_upload");
+
+    // select contact
+    $this->webtestFillAutocomplete($firstName);
+
+    // fill in Membership Organization
+    $this->select("membership_type_id[0]", "label={$membershipTypes['member_org']}");
+
+    // select membership type
+    $this->select("membership_type_id[1]", "label={$membershipTypes['membership_type']}");
+
+    // fill in Source
+    $this->type("source", "Membership StandaloneAddTest Webtest");
+
+    // Let Join Date stay default
+
+    // fill in Start Date
+    $this->webtestFillDate('start_date');
+
+    // Let End Date be auto computed
+
+    // fill in Status Override?
+    $this->click("is_override", "value=1");
+    $this->waitForElementPresent("status_id");
+    $this->select("status_id", "value=3");
+
+    // fill in Record Membership Payment?
+    $this->click("record_contribution", "value=1");
+    $this->waitForElementPresent("contribution_status_id");
+    // let contribution type be default
+
+    // let the amount be default
+
+    // select payment instrument type = Check and enter chk number
+    $this->select("payment_instrument_id", "value=4");
+    $this->waitForElementPresent("check_number");
+    $this->type("check_number", "check #12345");
+    $this->type("trxn_id", "P5476785" . rand(100, 10000));
+
+    // fill  the payment status be default
+    $this->select("contribution_status_id", "value=2");
+
+    //----
+
+    // Clicking save.
+    $this->click("_qf_Membership_upload");
+    $this->waitForPageToLoad("30000");
+
+    // page was loaded
+    $this->waitForTextPresent("Membership StandaloneAddTest Webtest");
+
+    // verify if Membership is created
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']");
+
+    //click through to the Membership view screen
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']");
+    $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
+
+    $expected = array(
+      2 => $membershipTypes['membership_type'],
+      3 => 'Grace',
+      4 => 'Membership StandaloneAddTest Webtest',
+    );
+    foreach ($expected as $label => $value) {
+      $this->verifyText("xpath=id('MembershipView')/div[2]/div/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+    }
   }
 }
-?>
+

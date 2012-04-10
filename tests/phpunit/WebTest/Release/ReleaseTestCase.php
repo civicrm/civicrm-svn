@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,39 +24,40 @@
  +--------------------------------------------------------------------+
 */
 
+
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-// name of the class doesn't end with Test on purpose - this way this 
+// name of the class doesn't end with Test on purpose - this way this
 // webtest is not picked up by the suite, since it needs to run
 // on specially prepare sandbox
 // more details: http://wiki.civicrm.org/confluence/display/CRMDOC40/Release+testing+script+documentation
 class WebTest_Release_ReleaseTestCase extends CiviSeleniumTestCase {
 
-    /**
-     *  Constructor
-     *
-     *  Because we are overriding the parent class constructor, we
-     *  need to show the same arguments as exist in the constructor of
-     *  PHPUnit_Framework_TestCase, since
-     *  PHPUnit_Framework_TestSuite::createTest() creates a
-     *  ReflectionClass of the Test class and checks the constructor
-     *  of that class to decide how to set up the test.
-     *
-     *  @param  string $name
-     *  @param  array  $data
-     *  @param  string $dataName
-     */
-    function __construct($name = NULL, array $data = array(), $dataName = '', array $browser = array() ) {
-        parent::__construct($name, $data, $dataName, $browser);
+  /**
+   *  Constructor
+   *
+   *  Because we are overriding the parent class constructor, we
+   *  need to show the same arguments as exist in the constructor of
+   *  PHPUnit_Framework_TestCase, since
+   *  PHPUnit_Framework_TestSuite::createTest() creates a
+   *  ReflectionClass of the Test class and checks the constructor
+   *  of that class to decide how to set up the test.
+   *
+   *  @param  string $name
+   *  @param  array  $data
+   *  @param  string $dataName
+   */
+  function __construct($name = NULL, array$data = array(), $dataName = '', array$browser = array()) {
+    parent::__construct($name, $data, $dataName, $browser);
 
-        require_once 'CiviTest/ReleaseTestSettings.php';
-        $this->settings = new ReleaseTestSettings();
-    }
-
-
-  protected function setUp()
-  {
-      parent::setUp();      
+    require_once 'CiviTest/ReleaseTestSettings.php';
+    $this->settings = new ReleaseTestSettings();
   }
 
+
+  protected function setUp() {
+    parent::setUp();
+  }
 }
+

@@ -24,189 +24,176 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php';
 
+require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php';
 class WebTest_Import_MemberTest extends ImportCiviSeleniumTestCase {
-    
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-    
-    /*
+
+  protected function setUp() {
+    parent::setUp();
+  }
+
+  /*
      *  Test participant import for Individuals.
      */
-    function testMemberImportIndividual( )
-    {
-        $this->open( $this->sboxPath );
+  function testMemberImportIndividual() {
+    $this->open($this->sboxPath);
 
-        $this->webtestLogin();
-        
-        // make sure default strict dedupe rules are in place
-        $this->webtestStrictDedupeRuleDefault( "Individual" );
-        
-        // Get membership import data for Individuals.
-        list( $headers, $rows, $fieldMapper ) = $this->_memberIndividualCSVData( );
-        
-        // Import participants and check imported data.
-        $this->importCSVComponent( 'Membership', $headers, $rows, 'Individual', 'Skip', $fieldMapper );
-    }
-    
-    /*
+    $this->webtestLogin();
+
+    // make sure default strict dedupe rules are in place
+    $this->webtestStrictDedupeRuleDefault("Individual");
+
+    // Get membership import data for Individuals.
+    list($headers, $rows, $fieldMapper) = $this->_memberIndividualCSVData();
+
+    // Import participants and check imported data.
+    $this->importCSVComponent('Membership', $headers, $rows, 'Individual', 'Skip', $fieldMapper);
+  }
+
+  /*
      *  Test participant import for Households.
-     */ 
-    function testMemberImportHousehold()
-    {
-        $this->open( $this->sboxPath );
-        
-        $this->webtestLogin();
-        
-        // Get membership import data for Households.
-        list( $headers, $rows, $fieldMapper ) = $this->_memberHouseholdCSVData( );
-        
-        // Import participants and check imported data.
-        $this->importCSVComponent( 'Membership', $headers, $rows, 'Household', 'Skip', $fieldMapper );
-    }
-    
-    /*
+     */
+  function testMemberImportHousehold() {
+    $this->open($this->sboxPath);
+
+    $this->webtestLogin();
+
+    // Get membership import data for Households.
+    list($headers, $rows, $fieldMapper) = $this->_memberHouseholdCSVData();
+
+    // Import participants and check imported data.
+    $this->importCSVComponent('Membership', $headers, $rows, 'Household', 'Skip', $fieldMapper);
+  }
+
+  /*
      *  Test participant import for Organizations.
      */
-    function testMemberImportOrganization()
-    {
-        $this->open( $this->sboxPath );
-        
-        $this->webtestLogin();
-        
-        // Get membership import data for Organizations.
-        list( $headers, $rows, $fieldMapper ) = $this->_memberOrganizationCSVData( );
-        
-        // Import participants and check imported data.
-        $this->importCSVComponent( 'Membership', $headers, $rows, 'Organization', 'Skip', $fieldMapper );
-    }    
-    
-    /*
+  function testMemberImportOrganization() {
+    $this->open($this->sboxPath);
+
+    $this->webtestLogin();
+
+    // Get membership import data for Organizations.
+    list($headers, $rows, $fieldMapper) = $this->_memberOrganizationCSVData();
+
+    // Import participants and check imported data.
+    $this->importCSVComponent('Membership', $headers, $rows, 'Organization', 'Skip', $fieldMapper);
+  }
+
+  /*
      * Helper function to provide data for Membeship import for Individuals.
      */
-    function _memberIndividualCSVData( ) 
-    {
-        $memTypeParams = $this->webtestAddMembershipType( );
-                
-        $firstName1 = substr(sha1(rand()), 0, 7);
-        $email1     = 'mail_' . substr(sha1(rand()), 0, 7) . '@example.com'; 
-        $this->webtestAddContact( $firstName1, 'Anderson', $email1 );
-        $startDate1 = date( 'Y-m-d' );
-        
-        $firstName2 = substr(sha1(rand()), 0, 7);
-        $email2     = 'mail_' . substr(sha1(rand()), 0, 7) . '@example.com'; 
-        $this->webtestAddContact( $firstName2, 'Anderson', $email2 );
-        $year  = date( 'Y' ) - 1;
-        $startDate2 = date( 'Y-m-d', mktime( 0, 0, 0, 9, 10, $year ) );
-        
-        $headers = array( 'email'                 => 'Email',
-                          'membership_type_id'    => 'Membership Type',
-                          'membership_start_date' => 'Membership Start Date',
-                          );
-        
-        $rows = 
-            array( 
-                  array( 'email'                 => $email1, 
-                         'membership_type_id'    => $memTypeParams['membership_type'],
-                         'membership_start_date' => $startDate1,
-                         ),
-                  
-                  array( 'email'                 => $email2,
-                         'membership_type_id'    => $memTypeParams['membership_type'],
-                         'membership_start_date' => $startDate2,
-                         )
-                   );
-        
-        $fieldMapper = array( 'mapper[0][0]' => 'email',
-                              'mapper[1][0]' => 'membership_type_id',
-                              'mapper[2][0]' => 'membership_start_date'
-                              );
-        return array( $headers, $rows, $fieldMapper );
-    }
+  function _memberIndividualCSVData() {
+    $memTypeParams = $this->webtestAddMembershipType();
 
-    /*
+    $firstName1 = substr(sha1(rand()), 0, 7);
+    $email1 = 'mail_' . substr(sha1(rand()), 0, 7) . '@example.com';
+    $this->webtestAddContact($firstName1, 'Anderson', $email1);
+    $startDate1 = date('Y-m-d');
+
+    $firstName2 = substr(sha1(rand()), 0, 7);
+    $email2 = 'mail_' . substr(sha1(rand()), 0, 7) . '@example.com';
+    $this->webtestAddContact($firstName2, 'Anderson', $email2);
+    $year = date('Y') - 1;
+    $startDate2 = date('Y-m-d', mktime(0, 0, 0, 9, 10, $year));
+
+    $headers = array('email' => 'Email',
+      'membership_type_id' => 'Membership Type',
+      'membership_start_date' => 'Membership Start Date',
+    );
+
+    $rows = array(
+      array('email' => $email1,
+        'membership_type_id' => $memTypeParams['membership_type'],
+        'membership_start_date' => $startDate1,
+      ),
+      array('email' => $email2,
+        'membership_type_id' => $memTypeParams['membership_type'],
+        'membership_start_date' => $startDate2,
+      ),
+    );
+
+    $fieldMapper = array('mapper[0][0]' => 'email',
+      'mapper[1][0]' => 'membership_type_id',
+      'mapper[2][0]' => 'membership_start_date',
+    );
+    return array($headers, $rows, $fieldMapper);
+  }
+
+  /*
      * Helper function to provide data for Membeship import for Households.
      */
-    function _memberHouseholdCSVData( ) 
-    {
-        $memTypeParams = $this->webtestAddMembershipType( );
-        
-        $household1 = substr(sha1(rand()), 0, 7) . ' home';
-        $this->webtestAddHousehold( $household1, true );
-        $startDate1 = date( 'Y-m-d' );
-        
-        $household2 = substr(sha1(rand()), 0, 7) . ' home';
-        $this->webtestAddHousehold( $household2, true );
-        $year  = date( 'Y' ) - 1;
-        $startDate2 = date( 'Y-m-d', mktime( 0, 0, 0, 12, 31, $year ) );
-        
-        $headers = array( 'household_name'        => 'Household Name',
-                          'membership_type_id'    => 'Membership Type',
-                          'membership_start_date' => 'Membership Start Date',
-                          );
-        
-        $rows = 
-            array( 
-                  array( 'household_name'        => $household1, 
-                         'membership_type_id'    => $memTypeParams['membership_type'],
-                         'membership_start_date' => $startDate1,
-                         ),
-                  
-                  array( 'household_name'        => $household2,
-                         'membership_type_id'    => $memTypeParams['membership_type'],
-                         'membership_start_date' => $startDate2,
-                         )
-                   );
-        
-        $fieldMapper = array( 'mapper[0][0]' => 'household_name',
-                              'mapper[1][0]' => 'membership_type_id',
-                              'mapper[2][0]' => 'membership_start_date'
-                              );
-        return array( $headers, $rows, $fieldMapper );
-    }
-    
-    /*
+  function _memberHouseholdCSVData() {
+    $memTypeParams = $this->webtestAddMembershipType();
+
+    $household1 = substr(sha1(rand()), 0, 7) . ' home';
+    $this->webtestAddHousehold($household1, TRUE);
+    $startDate1 = date('Y-m-d');
+
+    $household2 = substr(sha1(rand()), 0, 7) . ' home';
+    $this->webtestAddHousehold($household2, TRUE);
+    $year = date('Y') - 1;
+    $startDate2 = date('Y-m-d', mktime(0, 0, 0, 12, 31, $year));
+
+    $headers = array('household_name' => 'Household Name',
+      'membership_type_id' => 'Membership Type',
+      'membership_start_date' => 'Membership Start Date',
+    );
+
+    $rows = array(
+      array('household_name' => $household1,
+        'membership_type_id' => $memTypeParams['membership_type'],
+        'membership_start_date' => $startDate1,
+      ),
+      array('household_name' => $household2,
+        'membership_type_id' => $memTypeParams['membership_type'],
+        'membership_start_date' => $startDate2,
+      ),
+    );
+
+    $fieldMapper = array('mapper[0][0]' => 'household_name',
+      'mapper[1][0]' => 'membership_type_id',
+      'mapper[2][0]' => 'membership_start_date',
+    );
+    return array($headers, $rows, $fieldMapper);
+  }
+
+  /*
      * Helper function to provide data for Membeship import for Organizations.
      */
-    function _memberOrganizationCSVData( ) 
-    {
-        $memTypeParams = $this->webtestAddMembershipType( );
-        
-        $organization1 = substr(sha1(rand()), 0, 7) . ' org';
-        $this->webtestAddOrganization( $organization1, true );
-        $startDate1 = date( 'Y-m-d' );
-        
-        $organization2 = substr(sha1(rand()), 0, 7) . ' org';
-        $this->webtestAddOrganization( $organization2, true );
-        $year  = date( 'Y' ) - 1;
-        $startDate2 = date( 'Y-m-d', mktime( 0, 0, 0, 12, 31, $year ) );
-        
-        $headers = array( 'organization_name'     => 'Organization Name',
-                          'membership_type_id'    => 'Membership Type',
-                          'membership_start_date' => 'Membership Start Date',
-                          );
-        
-        $rows = 
-            array( 
-                  array( 'organization_name'     => $organization1, 
-                         'membership_type_id'    => $memTypeParams['membership_type'],
-                         'membership_start_date' => $startDate1,
-                         ),
-                  
-                  array( 'organization_name'     => $organization2,
-                         'membership_type_id'    => $memTypeParams['membership_type'],
-                         'membership_start_date' => $startDate2,
-                         )
-                   );
-        
-        $fieldMapper = array( 'mapper[0][0]' => 'organization_name',
-                              'mapper[1][0]' => 'membership_type_id',
-                              'mapper[2][0]' => 'membership_start_date'
-                              );
-        return array( $headers, $rows, $fieldMapper );
-    }
+  function _memberOrganizationCSVData() {
+    $memTypeParams = $this->webtestAddMembershipType();
+
+    $organization1 = substr(sha1(rand()), 0, 7) . ' org';
+    $this->webtestAddOrganization($organization1, TRUE);
+    $startDate1 = date('Y-m-d');
+
+    $organization2 = substr(sha1(rand()), 0, 7) . ' org';
+    $this->webtestAddOrganization($organization2, TRUE);
+    $year = date('Y') - 1;
+    $startDate2 = date('Y-m-d', mktime(0, 0, 0, 12, 31, $year));
+
+    $headers = array('organization_name' => 'Organization Name',
+      'membership_type_id' => 'Membership Type',
+      'membership_start_date' => 'Membership Start Date',
+    );
+
+    $rows = array(
+      array('organization_name' => $organization1,
+        'membership_type_id' => $memTypeParams['membership_type'],
+        'membership_start_date' => $startDate1,
+      ),
+      array('organization_name' => $organization2,
+        'membership_type_id' => $memTypeParams['membership_type'],
+        'membership_start_date' => $startDate2,
+      ),
+    );
+
+    $fieldMapper = array('mapper[0][0]' => 'organization_name',
+      'mapper[1][0]' => 'membership_type_id',
+      'mapper[2][0]' => 'membership_start_date',
+    );
+    return array($headers, $rows, $fieldMapper);
+  }
 }
-    
+

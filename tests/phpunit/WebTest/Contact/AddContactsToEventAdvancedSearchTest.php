@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,63 +24,60 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CiviTest/CiviSeleniumTestCase.php';
 
+require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Contact_AddContactsToEventAdvancedSearchTest extends CiviSeleniumTestCase {
 
-  protected function setUp()
-  {
-      parent::setUp();
+  protected function setUp() {
+    parent::setUp();
   }
 
-  function testAddContactsToEventAdvanceSearch( )
-  {
-      // This is the path where our testing install resides. 
-      // The rest of URL is defined in CiviSeleniumTestCase base class, in
-      // class attributes.
-      $this->open( $this->sboxPath );	
+  function testAddContactsToEventAdvanceSearch() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
 
-      // Logging in. Remember to wait for page to load. In most cases,
-      // you can rely on 30000 as the value that allows your test to pass, however,
-      // sometimes your test might fail because of this. In such cases, it's better to pick one element
-      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-      // page contents loaded and you can continue your test execution.
-      $this->webtestLogin( );
-      $this->waitForPageToLoad("30000");
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+    $this->waitForPageToLoad("30000");
 
-      
-      // Advanced Search
-      $this->open( $this->sboxPath . 'civicrm/contact/search/advanced?reset=1' );
-   
-      $this->waitForElementPresent( '_qf_Advanced_refresh' );
-      $this->click( '_qf_Advanced_refresh' );	   
 
-      $this->waitForElementPresent( 'CIVICRM_QFID_ts_all_12' );	 
-      $this->click( 'CIVICRM_QFID_ts_all_12' );
+    // Advanced Search
+    $this->open($this->sboxPath . 'civicrm/contact/search/advanced?reset=1');
 
-      $this->select('task', "label=Add Contacts to Event");	   
-      $this->click( 'Go' );
+    $this->waitForElementPresent('_qf_Advanced_refresh');
+    $this->click('_qf_Advanced_refresh');
 
-      // Select event. Based on label for now.
-      $this->waitForElementPresent( 'event_id' );
-      $this->select('event_id', "label=regexp:Rain-forest Cup Youth Soccer Tournament.");	 
+    $this->waitForElementPresent('CIVICRM_QFID_ts_all_12');
+    $this->click('CIVICRM_QFID_ts_all_12');
 
-      // Select role
-      $this->click('role_id[2]');
-     
-      // Select participant status
-      $this->select('status_id', 'value=1');
+    $this->select('task', "label=Add Contacts to Event");
+    $this->click('Go');
 
-      // Setting registration source
-      $this->type('source', 'Event StandaloneAddTest Webtest');
-	
-      $this->assertTrue($this->isTextPresent('Source for this registration (if applicable).'));
+    // Select event. Based on label for now.
+    $this->waitForElementPresent('event_id');
+    $this->select('event_id', "label=regexp:Rain-forest Cup Youth Soccer Tournament.");
 
-   
-      // Clicking save.
-      $this->click('_qf_Participant_upload-bottom');
-      $this->waitForPageToLoad('30000');
+    // Select role
+    $this->click('role_id[2]');
+
+    // Select participant status
+    $this->select('status_id', 'value=1');
+
+    // Setting registration source
+    $this->type('source', 'Event StandaloneAddTest Webtest');
+
+    $this->assertTrue($this->isTextPresent('Source for this registration (if applicable).'));
+
+
+    // Clicking save.
+    $this->click('_qf_Participant_upload-bottom');
+    $this->waitForPageToLoad('30000');
   }
+}
 
-  }
-      

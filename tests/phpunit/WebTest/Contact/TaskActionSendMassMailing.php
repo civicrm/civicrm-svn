@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,139 +24,135 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-
-
-
 class WebTest_Contact_TaskActionSendMassMailing extends CiviSeleniumTestCase {
 
-  protected function setUp()
-  {
-      parent::setUp();
+  protected function setUp() {
+    parent::setUp();
   }
 
-  function testSelectedContacts( )
-  {
-      $this->open( $this->sboxPath );
-      $this->webtestLogin( );
+  function testSelectedContacts() {
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
 
-      // Go directly to the URL of the screen that you will be testing (New Group).
-      $this->open($this->sboxPath . "civicrm/group/add&reset=1");
-      $this->waitForElementPresent("_qf_Edit_upload");
+    // Go directly to the URL of the screen that you will be testing (New Group).
+    $this->open($this->sboxPath . "civicrm/group/add&reset=1");
+    $this->waitForElementPresent("_qf_Edit_upload");
 
-      // make group name
-      $groupName = 'group_'.substr(sha1(rand()), 0, 7);
+    // make group name
+    $groupName = 'group_' . substr(sha1(rand()), 0, 7);
 
-      // fill group name
-      $this->type("title", $groupName);
-      
-      // fill description
-      $this->type("description", "New mailing group for Webtest");
+    // fill group name
+    $this->type("title", $groupName);
 
-      // enable Mailing List
-      $this->click("group_type[2]");
+    // fill description
+    $this->type("description", "New mailing group for Webtest");
 
-      // select Visibility as Public Pages
-      $this->select("visibility", "value=Public Pages");
-      
-      // Clicking save.
-      $this->click("_qf_Edit_upload");
-      $this->waitForPageToLoad("30000");
+    // enable Mailing List
+    $this->click("group_type[2]");
 
-      // Use class names for menu items since li array can change based on which components are enabled
-      $this->click("css=ul#civicrm-menu li.crm-Search");
-      $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
+    // select Visibility as Public Pages
+    $this->select("visibility", "value=Public Pages");
 
-      $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent("email");
-	  $this->click("_qf_Advanced_refresh");
-      $this->waitForPageToLoad("30000");
+    // Clicking save.
+    $this->click("_qf_Edit_upload");
+    $this->waitForPageToLoad("30000");
+
+    // Use class names for menu items since li array can change based on which components are enabled
+    $this->click("css=ul#civicrm-menu li.crm-Search");
+    $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
+
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("email");
+    $this->click("_qf_Advanced_refresh");
+    $this->waitForPageToLoad("30000");
 
 
-	  // Click "check all" box and act on "Add to group" action
-	  $this->click("//form[@id='Advanced']/div[3]/div/div[2]/table/thead/tr/th[1]/input");
-	  $this->select("task", "label=Schedule/Send a Mass Mailing");
-	  $this->click("Go");
-      $this->waitForPageToLoad("30000");
+    // Click "check all" box and act on "Add to group" action
+    $this->click("//form[@id='Advanced']/div[3]/div/div[2]/table/thead/tr/th[1]/input");
+    $this->select("task", "label=Schedule/Send a Mass Mailing");
+    $this->click("Go");
+    $this->waitForPageToLoad("30000");
 
-      //-------select recipients----------
+    //-------select recipients----------
 
-      $mailingName = 'Selected Contact Mailing Test ' . substr(sha1(rand()), 0, 7);
+    $mailingName = 'Selected Contact Mailing Test ' . substr(sha1(rand()), 0, 7);
 
-      $this->waitForElementPresent("name");
-      $this->type("name", "$mailingName");
-      $this->select("baseGroup", "label=$groupName");
-      $this->click("//option[@value='4']");
-      $this->click("_qf_Group_next");
+    $this->waitForElementPresent("name");
+    $this->type("name", "$mailingName");
+    $this->select("baseGroup", "label=$groupName");
+    $this->click("//option[@value='4']");
+    $this->click("_qf_Group_next");
 
-      //--------track and respond----------
-      
-      $this->waitForElementPresent("_qf_Settings_next");
+    //--------track and respond----------
 
-      // check for default settings options
-      $this->assertChecked("url_tracking");
-      $this->assertChecked("open_tracking");
+    $this->waitForElementPresent("_qf_Settings_next");
 
-      $this->click("_qf_Settings_next");
+    // check for default settings options
+    $this->assertChecked("url_tracking");
+    $this->assertChecked("open_tracking");
 
-      //--------Mailing content------------
-      // fill subject for mailing
-      $this->waitForElementPresent("subject");
-      $this->type("subject", "Test subject {$mailingName} for Webtest");
+    $this->click("_qf_Settings_next");
 
-      // check for default option enabled
-      $this->assertChecked("CIVICRM_QFID_1_4");
+    //--------Mailing content------------
+    // fill subject for mailing
+    $this->waitForElementPresent("subject");
+    $this->type("subject", "Test subject {$mailingName} for Webtest");
 
-      // HTML format message
-      $HTMLMessage = "This is HTML formatted content for Mailing {$mailingName} Webtest.";
-      $this->fillRichTextField("html_message", $HTMLMessage);
+    // check for default option enabled
+    $this->assertChecked("CIVICRM_QFID_1_4");
 
-      // Open Plain-text Format pane and type text format msg
-      $this->click("//fieldset[@id='compose_id']/div[2]/div[1]");
-      $this->type("text_message", "This is text formatted content for Mailing {$mailingName} Webtest.");
+    // HTML format message
+    $HTMLMessage = "This is HTML formatted content for Mailing {$mailingName} Webtest.";
+    $this->fillRichTextField("html_message", $HTMLMessage);
 
-      // select default header and footer ( with label ) 
-      $this->select("header_id", "label=Mailing Header");
-      $this->select("footer_id", "label=Mailing Footer");      
-      $this->click("_qf_Upload_upload");
+    // Open Plain-text Format pane and type text format msg
+    $this->click("//fieldset[@id='compose_id']/div[2]/div[1]");
+    $this->type("text_message", "This is text formatted content for Mailing {$mailingName} Webtest.");
 
-      $this->waitForElementPresent("_qf_Test_next");
-      $this->click("_qf_Test_next");
+    // select default header and footer ( with label )
+    $this->select("header_id", "label=Mailing Header");
+    $this->select("footer_id", "label=Mailing Footer");
+    $this->click("_qf_Upload_upload");
 
-      //----------Schedule or Send------------
-      
-      $this->waitForElementPresent("_qf_Schedule_next");
+    $this->waitForElementPresent("_qf_Test_next");
+    $this->click("_qf_Test_next");
 
-      $this->assertChecked("now");
+    //----------Schedule or Send------------
 
-      $this->click("_qf_Schedule_next");
-      $this->waitForPageToLoad("30000");
-      
-      //----------end New Mailing-------------
+    $this->waitForElementPresent("_qf_Schedule_next");
 
-      //check redirected page to Scheduled and Sent Mailings and  verify for mailing name
-      $this->assertTrue($this->isTextPresent("Scheduled and Sent Mailings"));
-      $this->assertTrue($this->isTextPresent("$mailingName"));
+    $this->assertChecked("now");
 
-      //--------- mail delivery verification---------
+    $this->click("_qf_Schedule_next");
+    $this->waitForPageToLoad("30000");
 
-      // test undelivered report
+    //----------end New Mailing-------------
 
-      // click report link of created mailing
-      $this->click("xpath=//table//tbody/tr[td[1]/text()='$mailingName']/descendant::a[text()='Report']");
-      $this->waitForPageToLoad("30000");
-      
-      // verify undelivered status message
-      $this->assertTrue($this->isTextPresent("Delivery has not yet begun for this mailing. If the scheduled delivery date and time is past, ask the system administrator or technical support contact for your site to verify that the automated mailer task ('cron job') is running - and how frequently."));
-      
-      // directly send schedule mailing -- not working right now
-      $this->open($this->sboxPath . "civicrm/mailing/queue&reset=1");
-      $this->waitForPageToLoad("300000");
-      
-      //click report link of created mailing
-      $this->click("xpath=//table//tbody/tr[td[1]/text()='$mailingName']/descendant::a[text()='Report']");
-      $this->waitForPageToLoad("30000");
+    //check redirected page to Scheduled and Sent Mailings and  verify for mailing name
+    $this->assertTrue($this->isTextPresent("Scheduled and Sent Mailings"));
+    $this->assertTrue($this->isTextPresent("$mailingName"));
+
+    //--------- mail delivery verification---------
+
+    // test undelivered report
+
+    // click report link of created mailing
+    $this->click("xpath=//table//tbody/tr[td[1]/text()='$mailingName']/descendant::a[text()='Report']");
+    $this->waitForPageToLoad("30000");
+
+    // verify undelivered status message
+    $this->assertTrue($this->isTextPresent("Delivery has not yet begun for this mailing. If the scheduled delivery date and time is past, ask the system administrator or technical support contact for your site to verify that the automated mailer task ('cron job') is running - and how frequently."));
+
+    // directly send schedule mailing -- not working right now
+    $this->open($this->sboxPath . "civicrm/mailing/queue&reset=1");
+    $this->waitForPageToLoad("300000");
+
+    //click report link of created mailing
+    $this->click("xpath=//table//tbody/tr[td[1]/text()='$mailingName']/descendant::a[text()='Report']");
+    $this->waitForPageToLoad("30000");
   }
-
 }
-?>
+
+

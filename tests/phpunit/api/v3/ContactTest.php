@@ -1284,7 +1284,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result['values'][$result['id']]['api.contribution.create'], 'in line ' . __LINE__);
     $params = array('id' => $result['id'], 'version' => 3,
       'api.website.getValue' => array('return' => 'url'),
-      'api.Contribution.getCount' => array(), 
+      'api.Contribution.getCount' => array(),
       'api.CustomValue.get' => 1,
       'api.Note.get' => 1,
       'api.Membership.getCount' => array(),
@@ -1373,7 +1373,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
     $params = array('id' => $result['id'], 'version' => 3,
       'api.website.getValue' => array('return' => 'url'),
-      'api.Contribution.getCount' => array(), 
+      'api.Contribution.getCount' => array(),
       'api.CustomValue.get' => 1,
     );
     $result = civicrm_api('Contact', 'Get', $params);

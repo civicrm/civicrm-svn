@@ -25,49 +25,45 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Core/BAO/ConfigSetting.php';
+class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
+  function get_info() {
+    return array(
+      'name' => 'Setting BAO',
+      'description' => 'Test set/get on setting variables.',
+      'group' => 'CiviCRM BAO Tests',
+    );
+  }
 
-class CRM_Core_BAO_SettingTest extends CiviUnitTestCase 
-{
-    function get_info( ) 
-    {
-        return array(
-                     'name'        => 'Setting BAO',
-                     'description' => 'Test set/get on setting variables.',
-                     'group'       => 'CiviCRM BAO Tests',
-                     );
-    }
-    
-    function setUp( ) 
-    {
-        parent::setUp();
-    }
+  function setUp() {
+    parent::setUp();
+  }
 
-    function testEnableComponentValid( ) {
-        $config = CRM_Core_Config::singleton( true, true );
+  function testEnableComponentValid() {
+    $config = CRM_Core_Config::singleton(TRUE, TRUE);
 
-        $result = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviCampaign' );
+    $result = CRM_Core_BAO_ConfigSetting::enableComponent('CiviCampaign');
 
-        $this->assertTrue( $result );
-    }
+    $this->assertTrue($result);
+  }
 
-    function testEnableComponentAlreadyPresent( ) {
-        $config = CRM_Core_Config::singleton( true, true );
+  function testEnableComponentAlreadyPresent() {
+    $config = CRM_Core_Config::singleton(TRUE, TRUE);
 
-        $result = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviCampaign' );
-        $result = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviCampaign' );
+    $result = CRM_Core_BAO_ConfigSetting::enableComponent('CiviCampaign');
+    $result = CRM_Core_BAO_ConfigSetting::enableComponent('CiviCampaign');
 
-        $this->assertTrue( $result );
-    }
+    $this->assertTrue($result);
+  }
 
+  function testEnableComponentInvalid() {
+    $config = CRM_Core_Config::singleton(TRUE, TRUE);
 
-    function testEnableComponentInvalid( ) {
-        $config = CRM_Core_Config::singleton( true, true );
+    $result = CRM_Core_BAO_ConfigSetting::enableComponent('CiviFake');
 
-        $result = CRM_Core_BAO_ConfigSetting::enableComponent( 'CiviFake' );
-
-        $this->assertFalse( $result );
-    }
-
+    $this->assertFalse($result);
+  }
 }
+

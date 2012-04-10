@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,177 +24,175 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CiviTest/CiviSeleniumTestCase.php';
 
+
+require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Report_AddTest extends CiviSeleniumTestCase {
 
-  protected function setUp()
-  {
-      parent::setUp();
+  protected function setUp() {
+    parent::setUp();
   }
 
-  function testAddReport( )
-  {
-      // This is the path where our testing install resides. 
-      // The rest of URL is defined in CiviSeleniumTestCase base class, in
-      // class attributes.
-      $this->open( $this->sboxPath );
-      
-      // Logging in. Remember to wait for page to load. In most cases,
-      // you can rely on 30000 as the value that allows your test to pass, however,
-      // sometimes your test might fail because of this. In such cases, it's better to pick one element
-      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-      // page contents loaded and you can continue your test execution.
-      $this->webtestLogin( );
-      
-      // create contact
-      $firstName   = 'reportuser_'.substr(sha1(rand()), 0, 7);
-      $displayName = "Anderson, $firstName";
-      $emailId     = "$firstName.anderson@example.org";
-      $this->webtestAddContact( $firstName, "Anderson", $emailId );
-      
-      // Go directly to the URL of the screen that you will be testing (New Tag).
-      $this->open($this->sboxPath . "civicrm/report/contact/summary?reset=1");
+  function testAddReport() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
 
-      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-      // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Summary_submit");
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
 
-      // enable email field 
-      $this->click("fields[email]");
+    // create contact
+    $firstName   = 'reportuser_' . substr(sha1(rand()), 0, 7);
+    $displayName = "Anderson, $firstName";
+    $emailId     = "$firstName.anderson@example.org";
+    $this->webtestAddContact($firstName, "Anderson", $emailId);
 
-      // enable phone field
-      $this->click("fields[phone]");
+    // Go directly to the URL of the screen that you will be testing (New Tag).
+    $this->open($this->sboxPath . "civicrm/report/contact/summary?reset=1");
 
-      // apply Contact Name filter
-      $this->select("sort_name_op", "value=has" );
-      $this->type("sort_name_value", $firstName );
-      
-      // preview result 
-      $this->click("_qf_Summary_submit");
-      $this->waitForPageToLoad("30000");
+    // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+    // button at the end of this page to show up, to make sure it's fully loaded.
+    $this->waitForElementPresent("_qf_Summary_submit");
 
-      // Is filter statistics present?
-      $this->assertTrue($this->isTextPresent("Contains $firstName"), "Statistics did not found!");
+    // enable email field
+    $this->click("fields[email]");
 
-      // Is Contact Name present in result?
-      $this->assertTrue($this->isTextPresent($displayName), "Contact Name did not found!");
-      
-      // Is email Id present on result?
-      $this->assertTrue($this->isTextPresent($emailId), "Email did not found!");
-      
-      // check criteria
-      $this->click("css=div.crm-report_criteria-accordion div.crm-accordion-header");
-      $this->waitForElementPresent("sort_name_value");
+    // enable phone field
+    $this->click("fields[phone]");
 
-      // Is Contact Name filter?
-      $this->assertContains($firstName, $this->getValue("sort_name_value"), "Filter Contact Name expected $firstName");
+    // apply Contact Name filter
+    $this->select("sort_name_op", "value=has");
+    $this->type("sort_name_value", $firstName);
 
-      // Is Email Field?
-      $this->assertEquals("on", $this->getValue("fields[email]"));
-      
-      // Is Phone Field?
-      $this->assertEquals("on", $this->getValue("fields[phone]"));
-      
-      // Create report
-      $this->click("css=div.crm-report_setting-accordion div.crm-accordion-header");
-      $this->waitForElementPresent("title");
+    // preview result
+    $this->click("_qf_Summary_submit");
+    $this->waitForPageToLoad("30000");
 
-      $reportName        = 'ContactSummary_'.substr(sha1(rand()), 0, 7);
-      $reportDescription = "New Contact Summary Report";
-      $emaiSubject       = "Contact Summary Report";
-      $emailCC           = "tesmail@example.org";
+    // Is filter statistics present?
+    $this->assertTrue($this->isTextPresent("Contains $firstName"), "Statistics did not found!");
 
-      // Fill Report Title
-      $this->type("title", $reportName );
+    // Is Contact Name present in result?
+    $this->assertTrue($this->isTextPresent($displayName), "Contact Name did not found!");
 
-      // Fill Report Description
-      $this->type("description", $reportDescription);
-      
-      // Fill Email Subject
-      $this->type("email_subject", $emaiSubject);
+    // Is email Id present on result?
+    $this->assertTrue($this->isTextPresent($emailId), "Email did not found!");
 
-      // Fill Email To
-      $this->type("email_to", $emailId);
-      
-      // Fill Email CC
-      $this->type("email_cc", $emailCC);
+    // check criteria
+    $this->click("css=div.crm-report_criteria-accordion div.crm-accordion-header");
+    $this->waitForElementPresent("sort_name_value");
 
-      // We want navigation menu
-      $this->click("is_navigation");
-      $this->waitForElementPresent("parent_id");
+    // Is Contact Name filter?
+    $this->assertContains($firstName, $this->getValue("sort_name_value"), "Filter Contact Name expected $firstName");
 
-      // Navigation menu under Reports section
-      $this->select("parent_id", "label=Reports" );
+    // Is Email Field?
+    $this->assertEquals("on", $this->getValue("fields[email]"));
 
-      // Set permission as access CiviCRM
-      $this->select("permission", "value=access CiviCRM");
+    // Is Phone Field?
+    $this->assertEquals("on", $this->getValue("fields[phone]"));
 
-      // click to create report
-      $this->click("_qf_Summary_submit_save");
-      $this->waitForPageToLoad("30000");
+    // Create report
+    $this->click("css=div.crm-report_setting-accordion div.crm-accordion-header");
+    $this->waitForElementPresent("title");
 
-      // Open report list
-      $this->open($this->sboxPath . "civicrm/report/list?reset=1");
-      $this->waitForPageToLoad("30000");
+    $reportName        = 'ContactSummary_' . substr(sha1(rand()), 0, 7);
+    $reportDescription = "New Contact Summary Report";
+    $emaiSubject       = "Contact Summary Report";
+    $emailCC           = "tesmail@example.org";
 
-      // Is report is resent in list?
-      $this->assertTrue($this->isTextPresent($reportName));
+    // Fill Report Title
+    $this->type("title", $reportName);
 
-      // Visit report
-      $this->click("link=$reportName");
-      $this->waitForPageToLoad("30000");
+    // Fill Report Description
+    $this->type("description", $reportDescription);
 
-      // Is filter statistics present?
-      $this->assertTrue($this->isTextPresent("Contains $firstName"), "Statistics did not found!");
+    // Fill Email Subject
+    $this->type("email_subject", $emaiSubject);
 
-      // Is Contact Name present in result?
-      $this->assertTrue($this->isTextPresent($displayName), "Contact Name did not found!");
-      
-      // Is email Id present on result?
-      $this->assertTrue($this->isTextPresent($emailId), "Email did not found!");
+    // Fill Email To
+    $this->type("email_to", $emailId);
 
-      // check report criteria
-      $this->click("css=div.crm-report_criteria-accordion div.crm-accordion-header");
-      $this->waitForElementPresent("sort_name_value");
+    // Fill Email CC
+    $this->type("email_cc", $emailCC);
 
-      // Is Contact Name filter?
-      $this->assertContains($firstName, $this->getValue("sort_name_value"), "Filter Contact Name expected $firstName");
+    // We want navigation menu
+    $this->click("is_navigation");
+    $this->waitForElementPresent("parent_id");
 
-      // Is Email Field?
-      $this->assertEquals("on", $this->getValue("fields[email]"));
+    // Navigation menu under Reports section
+    $this->select("parent_id", "label=Reports");
 
-      // Is Phone Field?
-      $this->assertEquals("on", $this->getValue("fields[phone]"));
+    // Set permission as access CiviCRM
+    $this->select("permission", "value=access CiviCRM");
 
-      // Check Report settings
-      $this->click("css=div.crm-report_setting-accordion div.crm-accordion-header");
-      $this->waitForElementPresent("title");
+    // click to create report
+    $this->click("_qf_Summary_submit_save");
+    $this->waitForPageToLoad("30000");
 
-      // Is correct Report Title?
-      $this->assertContains($reportName, $this->getValue("title"), "Report Title expected $reportName");
+    // Open report list
+    $this->open($this->sboxPath . "civicrm/report/list?reset=1");
+    $this->waitForPageToLoad("30000");
 
-      // Is correct Report Description?
-      $this->assertContains($reportDescription, $this->getValue("description"), "Report Description expected $reportDescription");
-      
-      // Is correct email Subject?
-      $this->assertContains($emaiSubject, $this->getValue("email_subject"), "Email Subject expected $emaiSubject");
+    // Is report is resent in list?
+    $this->assertTrue($this->isTextPresent($reportName));
 
-      // Is correct email to?
-      $this->assertContains($emailId, $this->getValue("email_to"), "Email To expected $emailId");
+    // Visit report
+    $this->click("link=$reportName");
+    $this->waitForPageToLoad("30000");
 
-      // Is correct email cc?
-      $this->assertContains($emailCC, $this->getValue("email_cc"), "Email CC expected $emailCC");
+    // Is filter statistics present?
+    $this->assertTrue($this->isTextPresent("Contains $firstName"), "Statistics did not found!");
 
-      // Is Navigation?
-      $this->assertEquals("on", $this->getValue("is_navigation"));
+    // Is Contact Name present in result?
+    $this->assertTrue($this->isTextPresent($displayName), "Contact Name did not found!");
 
-      // Is correct Navigation Parent?
-      $this->assertSelectedLabel("parent_id", "Reports");
-      
-      // Is correct access permission?
-      $this->assertSelectedLabel("permission", "access CiviCRM");
-  }  
+    // Is email Id present on result?
+    $this->assertTrue($this->isTextPresent($emailId), "Email did not found!");
 
+    // check report criteria
+    $this->click("css=div.crm-report_criteria-accordion div.crm-accordion-header");
+    $this->waitForElementPresent("sort_name_value");
+
+    // Is Contact Name filter?
+    $this->assertContains($firstName, $this->getValue("sort_name_value"), "Filter Contact Name expected $firstName");
+
+    // Is Email Field?
+    $this->assertEquals("on", $this->getValue("fields[email]"));
+
+    // Is Phone Field?
+    $this->assertEquals("on", $this->getValue("fields[phone]"));
+
+    // Check Report settings
+    $this->click("css=div.crm-report_setting-accordion div.crm-accordion-header");
+    $this->waitForElementPresent("title");
+
+    // Is correct Report Title?
+    $this->assertContains($reportName, $this->getValue("title"), "Report Title expected $reportName");
+
+    // Is correct Report Description?
+    $this->assertContains($reportDescription, $this->getValue("description"), "Report Description expected $reportDescription");
+
+    // Is correct email Subject?
+    $this->assertContains($emaiSubject, $this->getValue("email_subject"), "Email Subject expected $emaiSubject");
+
+    // Is correct email to?
+    $this->assertContains($emailId, $this->getValue("email_to"), "Email To expected $emailId");
+
+    // Is correct email cc?
+    $this->assertContains($emailCC, $this->getValue("email_cc"), "Email CC expected $emailCC");
+
+    // Is Navigation?
+    $this->assertEquals("on", $this->getValue("is_navigation"));
+
+    // Is correct Navigation Parent?
+    $this->assertSelectedLabel("parent_id", "Reports");
+
+    // Is correct access permission?
+    $this->assertSelectedLabel("permission", "access CiviCRM");
+  }
 }
-?>
+

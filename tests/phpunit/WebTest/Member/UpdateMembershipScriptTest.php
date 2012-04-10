@@ -24,117 +24,117 @@
  +--------------------------------------------------------------------+
 */
 
+
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-
 class WebTest_Member_UpdateMembershipScriptTest extends CiviSeleniumTestCase {
-    
-    protected $captureScreenshotOnFailure = TRUE;
-    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
 
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-    
-    function testAddMembership( ) 
-    {
-        // This is the path where our testing install resides. 
-        // The rest of URL is defined in CiviSeleniumTestCase base class, in
-        // class attributes.
-        $this->open( $this->sboxPath );
+  protected $captureScreenshotOnFailure = TRUE;
+  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
+  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
 
-        // Log in using webtestLogin() method
-        $this->webtestLogin();
-        
-        // Add a new membership type
-        $memTypeParams = $this->addMembershipType( );
-        
-        $firstName = substr(sha1(rand()), 0, 7);
-        $email     = "$firstName.Anderson@example.com"; 
-        $this->webtestAddContact( $firstName, 'Anderson', $email );
-        
-        $this->waitForElementPresent( 'css=li#tab_member a' );
-        $this->click( 'css=li#tab_member a' );
-        $this->waitForElementPresent( 'link=Add Membership' );
-        $this->click( 'link=Add Membership' );
+  protected function setUp() {
+    parent::setUp();
+  }
 
-        $this->waitForElementPresent( '_qf_Membership_cancel-bottom' );
-        $this->select( 'membership_type_id[0]', "label={$memTypeParams['member_org']}" );
-        $this->select( 'membership_type_id[1]', "label={$memTypeParams['membership_type']}" );
-        
-        // Fill join date
-        $this->webtestFillDate( 'join_date', "1 March 2008" );
-        
-        // Override status
-        $this->check( 'is_override' );
-        $this->select( 'status_id', "label=Current" );
+  function testAddMembership() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
 
-        // Clicking save.
-        $this->click( '_qf_Membership_upload' );
-        $this->waitForPageToLoad("30000");
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
 
-        // Is status message correct?
-        $this->assertTrue( $this->isTextPresent( "{$memTypeParams['membership_type']} membership for $firstName Anderson has been added." ),
-                           "Status message didn't show up after saving!");
+    // Add a new membership type
+    $memTypeParams = $this->addMembershipType();
 
-        // click through to the membership view screen
-        $this->waitForElementPresent( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]" );
-        $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
-        $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
-        
-        $this->webtestVerifyTabularData( 
-                                        array( 'Membership Type' => "{$memTypeParams['membership_type']}",
-                                               'Status'          => 'Current',
-                                               'Member Since'    => 'March 1st, 2008',
-                                               'Start date'      => 'March 1st, 2008',
-                                               'End date'        => 'February 28th, 2009',
-                                               )
-                                         );
-    }
+    $firstName = substr(sha1(rand()), 0, 7);
+    $email = "$firstName.Anderson@example.com";
+    $this->webtestAddContact($firstName, 'Anderson', $email);
 
-    function addMembershipType( )
-    {
-        $membershipTitle = substr(sha1(rand()), 0, 7);
-        $membershipOrg   = $membershipTitle . ' memorg';
-        $this->webtestAddOrganization( $membershipOrg, true );
+    $this->waitForElementPresent('css=li#tab_member a');
+    $this->click('css=li#tab_member a');
+    $this->waitForElementPresent('link=Add Membership');
+    $this->click('link=Add Membership');
 
-        $title = "Membership Type " . substr(sha1(rand()), 0, 7);
-        $memTypeParams = array( 'membership_type'   => $title,
-                                'member_org'        => $membershipOrg,
-                                'contribution_type' => 2,
-                                'relationship_type' => '4_b_a' 
-                                );
-        
-        $this->open( $this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse" );
-        $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent('_qf_Membership_cancel-bottom');
+    $this->select('membership_type_id[0]', "label={$memTypeParams['member_org']}");
+    $this->select('membership_type_id[1]', "label={$memTypeParams['membership_type']}");
 
-        $this->click( "link=Add Membership Type" );
-        $this->waitForElementPresent( '_qf_MembershipType_cancel-bottom' );
-        
-        // New membership type
-        $this->type( 'name', $memTypeParams['membership_type'] );
-        $this->type( 'member_org', $membershipTitle );
-        $this->click( '_qf_MembershipType_refresh' );
-        $this->waitForElementPresent( "xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]" );
-        
-        // Membership fees
-        $this->type( 'minimum_fee', '100' );
-        $this->select( 'contribution_type_id', "value={$memTypeParams['contribution_type']}" );
-        
-        // Duration for which the membership will be active
-        $this->type( 'duration_interval', 1 );
-        $this->select( 'duration_unit', "label=year" );
-        
-        // Membership period type
-        $this->select( 'period_type', "label=rolling" );
-        $this->click( 'relationship_type_id', "value={$memTypeParams['relationship_type']}" );
-        
-        // Clicking save
-        $this->click( '_qf_MembershipType_upload-bottom' );
-        $this->waitForElementPresent( 'link=Add Membership Type' );
-        $this->assertTrue( $this->isTextPresent( "The membership type '$title' has been saved." ) );
+    // Fill join date
+    $this->webtestFillDate('join_date', "1 March 2008");
 
-        return $memTypeParams;
-    }
+    // Override status
+    $this->check('is_override');
+    $this->select('status_id', "label=Current");
+
+    // Clicking save.
+    $this->click('_qf_Membership_upload');
+    $this->waitForPageToLoad("30000");
+
+    // Is status message correct?
+    $this->assertTrue($this->isTextPresent("{$memTypeParams['membership_type']} membership for $firstName Anderson has been added."),
+      "Status message didn't show up after saving!"
+    );
+
+    // click through to the membership view screen
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']");
+    $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
+
+    $this->webtestVerifyTabularData(
+      array('Membership Type' => "{$memTypeParams['membership_type']}",
+        'Status' => 'Current',
+        'Member Since' => 'March 1st, 2008',
+        'Start date' => 'March 1st, 2008',
+        'End date' => 'February 28th, 2009',
+      )
+    );
+  }
+
+  function addMembershipType() {
+    $membershipTitle = substr(sha1(rand()), 0, 7);
+    $membershipOrg = $membershipTitle . ' memorg';
+    $this->webtestAddOrganization($membershipOrg, TRUE);
+
+    $title = "Membership Type " . substr(sha1(rand()), 0, 7);
+    $memTypeParams = array('membership_type' => $title,
+      'member_org' => $membershipOrg,
+      'contribution_type' => 2,
+      'relationship_type' => '4_b_a',
+    );
+
+    $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
+    $this->waitForPageToLoad("30000");
+
+    $this->click("link=Add Membership Type");
+    $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
+
+    // New membership type
+    $this->type('name', $memTypeParams['membership_type']);
+    $this->type('member_org', $membershipTitle);
+    $this->click('_qf_MembershipType_refresh');
+    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
+
+    // Membership fees
+    $this->type('minimum_fee', '100');
+    $this->select('contribution_type_id', "value={$memTypeParams['contribution_type']}");
+
+    // Duration for which the membership will be active
+    $this->type('duration_interval', 1);
+    $this->select('duration_unit', "label=year");
+
+    // Membership period type
+    $this->select('period_type', "label=rolling");
+    $this->click('relationship_type_id', "value={$memTypeParams['relationship_type']}");
+
+    // Clicking save
+    $this->click('_qf_MembershipType_upload-bottom');
+    $this->waitForElementPresent('link=Add Membership Type');
+    $this->assertTrue($this->isTextPresent("The membership type '$title' has been saved."));
+
+    return $memTypeParams;
+  }
 }
+

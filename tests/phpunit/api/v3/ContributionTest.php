@@ -30,6 +30,7 @@
 
 
 
+
 require_once 'api/v3/Contribution.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_ContributionTest extends CiviUnitTestCase {
@@ -212,14 +213,13 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
 
-    $check = civicrm_api($this->_entity, 'get', array('return.custom_'. $ids['custom_field_id']=> 1,'version' => 3, 'id' => $result['id']));
+    $check = civicrm_api($this->_entity, 'get', array('return.custom_' . $ids['custom_field_id'] => 1, 'version' => 3, 'id' => $result['id']));
     $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' . $ids['custom_field_id']], ' in line ' . __LINE__);
 
     $this->customFieldDelete($ids['custom_field_id']);
     $this->customGroupDelete($ids['custom_group_id']);
   }
-  
-  
+
   /**
    * check with complete array + custom field
    * Note that the test is written on purpose without any
@@ -227,17 +227,17 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    * and / or moved to the automated test suite
    */
   function testCreateGetFieldsWithCustom() {
-    $ids = $this->entityCustomGroupWithSingleFieldCreate(__FUNCTION__, __FILE__);
+    $ids        = $this->entityCustomGroupWithSingleFieldCreate(__FUNCTION__, __FILE__);
     $idsContact = $this->entityCustomGroupWithSingleFieldCreate(__FUNCTION__, 'ContactTest.php');
-    $result = civicrm_api('Contribution','getfields',array('version'=>3));
-    $this->assertArrayHasKey('custom_' .$ids['custom_field_id'] , $result['values']);
-    $this->assertArrayNotHasKey('custom_' .$idsContact['custom_field_id'] , $result['values']);
+    $result     = civicrm_api('Contribution', 'getfields', array('version' => 3));
+    $this->assertArrayHasKey('custom_' . $ids['custom_field_id'], $result['values']);
+    $this->assertArrayNotHasKey('custom_' . $idsContact['custom_field_id'], $result['values']);
     $this->customFieldDelete($ids['custom_field_id']);
     $this->customGroupDelete($ids['custom_group_id']);
     $this->customFieldDelete($idsContact['custom_field_id']);
     $this->customGroupDelete($idsContact['custom_group_id']);
   }
-  
+
   function testCreateContribution() {
 
     $params = array(

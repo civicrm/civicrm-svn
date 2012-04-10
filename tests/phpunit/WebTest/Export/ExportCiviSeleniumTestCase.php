@@ -24,14 +24,14 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 require_once 'CRM/Utils/Array.php';
-
 class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
 
   /**
    * Function to download CSV file.
-   * 
+   *
    * @params string $selector element selector(download button in most of the cases).
    * @params sting  $fileName file name to be download.
    * @params string $downloadDir download dir.
@@ -46,15 +46,15 @@ class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
     if (file_exists($file)) {
       @unlink($file);
     }
-    
+
     // Download file.
     // File will automatically download without confirmation.
     $this->click($selector);
     sleep(20);
-    
+
     // File was downloaded?
     $this->assertTrue(file_exists($file), "CSV {$file} was not downloaded.");
-   
+
     return $file;
   }
 
@@ -67,11 +67,12 @@ class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
    * @params array  $checkRows    array of header and rows according to row index
    *                              eg: array(
    *                                    1 => array( // Row index 1
-   *                                      'First Name' => 'Jones', // column name 'First Name', value 'Jones'
+   // column name 'First Name', value 'Jones'
+   *                                      'First Name' => 'Jones',
    *                                      'Last Name'  => 'Franklin'
    *                                    ),
    *                                    2 => array( // Row index 2
-   *                                      'First Name' => 'Rajan', 
+   *                                      'First Name' => 'Rajan',
    *                                      'Last Name'  => 'mayekar'
    *                                    ),
    *                                   );
@@ -81,27 +82,27 @@ class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
   function reviewCSV($file, $checkColumns = array(), $checkRows = array(), $rowCount = 0, $settings = array()) {
     // Check file exists before proceed.
     $this->assertTrue(($file && file_exists($file)), "Not able to locate {$file}.");
-   
+
     // We are going to read downloaded file.
     $fd = fopen($file, 'r');
     if (!$fd) {
       $this->fail("Could not read {$file}.");
     }
-    
+
     // Default seperator ','.
-    $fieldSeparator = CRM_Utils_Array::value('fieldSeparator', $settings, ','); 
-    
+    $fieldSeparator = CRM_Utils_Array::value('fieldSeparator', $settings, ',');
+
     $allRows = array();
 
     // Read header row.
     $headerRow = fgetcsv($fd, 0, $fieldSeparator);
     $allRows[] = $headerRow;
-    
+
     // Read all other rows.
     while ($row = fgetcsv($fd, 0, $fieldSeparator)) {
       $allRows[] = $row;
     }
-    
+
     // We have done with the CSV reading.
     fclose($fd);
 
@@ -122,19 +123,19 @@ class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
     // Check all other rows.
     if (!empty($checkRows)) {
       foreach ($checkRows as $rowIndex => $row) {
-        if ( $rowIndex == 0 ) {
+        if ($rowIndex == 0) {
           // Skip checking header row, since we are already doing it above.
           continue;
         }
-        
+
         foreach ($row as $column => $value) {
           $headerIndex = array_search($column, $headerRow);
-          if ($headerIndex === false) {
+          if ($headerIndex === FALSE) {
             $this->fail("Not able to locate column {$column} for row index {$rowIndex}.");
           }
-          
+
           if (!isset($allRows[$rowIndex][$headerIndex]) || !($value == $allRows[$rowIndex][$headerIndex])) {
-            $this->fail("Expected: {$value}, Got: {$allRows[$rowIndex][$headerIndex]}, for column {$column} for row index {$rowIndex}." );
+            $this->fail("Expected: {$value}, Got: {$allRows[$rowIndex][$headerIndex]}, for column {$column} for row index {$rowIndex}.");
           }
         }
       }
@@ -146,3 +147,4 @@ class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
     }
   }
 }
+
