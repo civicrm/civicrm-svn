@@ -36,7 +36,7 @@
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout">
         <tr class="crm-group-form-block-title">
-	    <td class="label">{$form.title.label}</td>
+	    <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_group' field='title' id=$group.id}{/if}</td>
             <td>{$form.title.html|crmReplace:class:huge}
                 {if $group.saved_search_id}&nbsp;({ts}Smart Group{/ts}){/if}
             </td>
