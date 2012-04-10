@@ -138,3 +138,15 @@ ALTER TABLE `civicrm_mailing_recipients` CHANGE `email_id` `email_id` int(10) un
 -- CRM-9982
 ALTER TABLE `civicrm_contribution_page` ADD COLUMN is_confirm_enabled tinyint(4) DEFAULT '1'; 
 
+-- CRM-9980
+{if $multilingual}
+  {foreach from=$locales item=locale}
+    ALTER TABLE civicrm_group ADD title_{$locale} VARCHAR(64);
+    ALTER TABLE civicrm_group ADD UNIQUE KEY `UI_title_{$locale}` (title_{$locale});
+    UPDATE civicrm_group SET title_{$locale} = title;
+  {/foreach}
+
+  ALTER TABLE civicrm_group DROP INDEX `UI_title`;
+  ALTER TABLE civicrm_group DROP title;
+{/if}
+
