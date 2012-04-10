@@ -22,6 +22,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
+
+
 /*
  * Unchanged anonymous code contribution. No claim.
  *
@@ -30,6 +32,7 @@
  *
  */
 class civicrm_handler_field_contact_link extends views_handler_field {
+
   /**
    * Constructor to provide additional field to add.
    */
@@ -63,9 +66,10 @@ class civicrm_handler_field_contact_link extends views_handler_field {
    */
   function render_link($data, $values) {
     if (!empty($this->options['link_to_civicrm_contact']) && user_access('access CiviCRM') && $data !== NULL && $data !== '') {
-      return civicrm_views_href( $data,
-                                      'civicrm/contact/view',
-                                      "reset=1&cid={$values->{$this->aliases['id']}}" );
+      return civicrm_views_href($data,
+        'civicrm/contact/view',
+        "reset=1&cid={$values->{$this->aliases['id']}}"
+      );
     }
     else {
       return $data;
@@ -76,3 +80,4 @@ class civicrm_handler_field_contact_link extends views_handler_field {
     return $this->render_link(check_plain($values->{$this->field_alias}), $values);
   }
 }
+

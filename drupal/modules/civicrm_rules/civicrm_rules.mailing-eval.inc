@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,49 +34,52 @@
  */
 
 require_once 'civicrm_rules_utils.inc';
-
-function civicrm_rules_rules_action_mailing_send_email( $to,
-                                                        $subject,
-                                                        $message,
-                                                        $from = NULL,
-                                                        $settings,
-                                                        RulesState $state,
-                                                        RulesPlugin $element ) {
-    if ( isset($state->variables['mailing']) && $state->variables['mailing']->id ) {
-        $to       = str_replace( array( "\r", "\n" ), ',', $to );
-        $toEmails = explode( ',', $to );
-        if ( empty( $toEmails ) ) { 
-            return;
-        }
-        require_once 'CRM/Utils/Token.php';
-        $tokens['mailing'] = array( 'mailing.editUrl',
-                                    'mailing.scheduleUrl', 
-                                    'mailing.html', 
-                                    'mailing.creatorEmail', 
-                                    'mailing.creator' );
-
-        $params = array( );
-        $params['from']    = !empty( $from ) ? str_replace( array( "\r", "\n" ), '', $from ) : 'Admin';
-        $params['subject'] = CRM_Utils_Token::replaceMailingTokens( $subject, $state->variables['mailing'], null, $tokens );
-        $params['html']  = CRM_Utils_Token::replaceMailingTokens( $message, $state->variables['mailing'], null, $tokens );
-
-        // also allow some user permission tokens for the toEmail
-        $tokens['user'] = array( 'user.permission-schedule mailings',
-                                 'user.permission-create_mailings',
-                                 'user.permission-approve_mailings' );
-        foreach ( $toEmails as $toEmail ) {
-            $params['toEmail'] = CRM_Utils_Token::replaceMailingTokens( $toEmail, $state->variables['mailing'], null, $tokens );
-            $params['toEmail'] = CRM_Utils_Token::replaceUserTokens( $params['toEmail'], $tokens );
-
-            CRM_Utils_Mail::send( $params );
-        }
+function civicrm_rules_rules_action_mailing_send_email($to,
+  $subject,
+  $message,
+  $from = NULL,
+  $settings,
+  RulesState$state,
+  RulesPlugin$element
+) {
+  if (isset($state->variables['mailing']) && $state->variables['mailing']->id) {
+    $to = str_replace(array("\r", "\n"), ',', $to);
+    $toEmails = explode(',', $to);
+    if (empty($toEmails)) {
+      return;
     }
+    require_once 'CRM/Utils/Token.php';
+    $tokens['mailing'] = array('mailing.editUrl',
+      'mailing.scheduleUrl',
+      'mailing.html',
+      'mailing.creatorEmail',
+      'mailing.creator',
+    );
+
+    $params            = array();
+    $params['from']    = !empty($from) ? str_replace(array("\r", "\n"), '', $from) : 'Admin';
+    $params['subject'] = CRM_Utils_Token::replaceMailingTokens($subject, $state->variables['mailing'], NULL, $tokens);
+    $params['html']    = CRM_Utils_Token::replaceMailingTokens($message, $state->variables['mailing'], NULL, $tokens);
+
+    // also allow some user permission tokens for the toEmail
+    $tokens['user'] = array('user.permission-schedule mailings',
+      'user.permission-create_mailings',
+      'user.permission-approve_mailings',
+    );
+    foreach ($toEmails as $toEmail) {
+      $params['toEmail'] = CRM_Utils_Token::replaceMailingTokens($toEmail, $state->variables['mailing'], NULL, $tokens);
+      $params['toEmail'] = CRM_Utils_Token::replaceUserTokens($params['toEmail'], $tokens);
+
+      CRM_Utils_Mail::send($params);
+    }
+  }
 }
 
 function civicrm_rules_condition_mailing_approved($mailing, $settings) {
-    return $mailing->approval_status_id == 1; 
+  return $mailing->approval_status_id == 1;
 }
 
 function civicrm_rules_condition_mailing_rejected($mailing, $settings) {
-    return $mailing->approval_status_id != 1; 
+  return $mailing->approval_status_id != 1;
 }
+

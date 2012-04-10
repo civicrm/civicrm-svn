@@ -29,75 +29,74 @@
  * @ingroup civicrm_field_handlers
  */
 class civicrm_handler_field_address extends civicrm_handler_field_location {
-    static $_locationOps;
-
-    function construct( ) {
-        parent::construct();
-        if ( ! self::$_locationOps ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            self::$_locationOps = array(0=>'AND',1=>'OR');
-        }
-    }
-    
-    /**
-     * Get this field's label.
-     */
-    function label() {
-      if (!isset($this->options['label'])) {
-        return $this->ui_name();
+  static $_locationOps;
+  function construct() {
+    parent::construct();
+    if (!self::$_locationOps) {
+      if (!civicrm_initialize()) {
+        return;
       }
-      return $this->options['label'];
+      self::$_locationOps = array(0 => 'AND', 1 => 'OR');
     }
-    
-    function option_definition() {
-        $options = parent::option_definition();
-        $label = !empty($this->definition['label']) ? $this->definition['label'] : $this->label();
-        $options['label'] = array('default' => $label, 'translatable' => TRUE);
-        $options['is_billing'] = array('default' => '');
-        return $options;
-    }
+  }
 
-    function options_form(&$form, &$form_state) {
-        parent::options_form($form, $form_state);
-        $form['is_billing'] = array(
-                                    '#type' => 'checkbox',
-                                    '#title' => 'Show only Billing Address record?',
-                                    '#options' => array(0=>'No',1=>'Yes'),
-                                    '#description' => t('Check above box if you want only the <strong>Billing Address</strong> record displayed.'),
-                                    '#default_value' =>  $this->options['is_billing'],
-                                    '#fieldset' => 'location_choices',
-                                    );
-
+  /**
+   * Get this field's label.
+   */
+  function label() {
+    if (!isset($this->options['label'])) {
+      return $this->ui_name();
     }
-    
-    function ensure_my_table() {
-        if (!isset($this->table_alias)) {
-            if (!method_exists($this->query, 'ensure_table')) { vpr_trace(); exit; }
-            $extra = array();
-            $extra = parent::location_extras();
-            if(isset($this->options['is_billing']) && $this->options['is_billing']){
-                $extra[] = array(
-                                'value' => $this->options['is_billing'],
-                                'numeric' => TRUE,
-                                'field' => 'is_billing',
-                                'operator' => '=',
-                                );
-            }
-            if(isset($extra)) {
-                $join = $this->get_join();
-                $join->extra = $extra;
-                $join->extra_type = self::$_locationOps[$this->options['location_op']];
-                $this->table_alias = $this->query->add_table($this->table, $this->relationship,  $join);                
-            }
-            else {
-                $this->table_alias = $this->query->ensure_table($this->table, $this->relationship); 
-            }
-            
-        }
-        return $this->table_alias;
-    }
+    return $this->options['label'];
+  }
 
+  function option_definition() {
+    $options = parent::option_definition();
+    $label = !empty($this->definition['label']) ? $this->definition['label'] : $this->label();
+    $options['label'] = array('default' => $label, 'translatable' => TRUE);
+    $options['is_billing'] = array('default' => '');
+    return $options;
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['is_billing'] = array(
+      '#type' => 'checkbox',
+      '#title' => 'Show only Billing Address record?',
+      '#options' => array(0 => 'No', 1 => 'Yes'),
+      '#description' => t('Check above box if you want only the <strong>Billing Address</strong> record displayed.'),
+      '#default_value' => $this->options['is_billing'],
+      '#fieldset' => 'location_choices',
+    );
+  }
+
+  function ensure_my_table() {
+    if (!isset($this->table_alias)) {
+      if (!method_exists($this->query, 'ensure_table')) {
+        vpr_trace();
+        exit;
+      }
+      $extra = array();
+      $extra = parent::location_extras();
+      if (isset($this->options['is_billing']) && $this->options['is_billing']) {
+        $extra[] = array(
+          'value' => $this->options['is_billing'],
+          'numeric' => TRUE,
+          'field' => 'is_billing',
+          'operator' => '=',
+        );
+      }
+      if (isset($extra)) {
+        $join              = $this->get_join();
+        $join->extra       = $extra;
+        $join->extra_type  = self::$_locationOps[$this->options['location_op']];
+        $this->table_alias = $this->query->add_table($this->table, $this->relationship, $join);
+      }
+      else {
+        $this->table_alias = $this->query->ensure_table($this->table, $this->relationship);
+      }
+    }
+    return $this->table_alias;
+  }
 }
-?>
+

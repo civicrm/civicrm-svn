@@ -23,6 +23,8 @@
  +--------------------------------------------------------------------+
 */
 
+
+
 /*
  * Developed by Jim Taylor.
  * CiviCRM Views Integration
@@ -31,39 +33,37 @@
  * Filters Activity Statuses, and is configured using the labels from the database
  *
  */
-
 class civicrm_handler_filter_pseudo_constant extends views_handler_filter_in_operator {
-    public $_pseudo_constant;
-
-    function construct( ) {
-        parent::construct();
-        if ( ! civicrm_initialize( ) ||
-             ! isset($this->definition['pseudo class']) ||
-             ! isset($this->definition['pseudo method']) ) {
-            return;
-        }
-        
-        // Load pseudo arguments if passed as array from hook_views_data
-        if ( isset($this->definition['pseudo args']) && is_array($this->definition['pseudo args']) ) {
-          $this->definition['pseudo args'];
-        }
-        else {
-          $pseudo_args = array();    
-        }
-        require_once str_replace('_',DIRECTORY_SEPARATOR,$this->definition['pseudo class']) .'.php';
-        // Include and call the Pseudo Class method
-        $this->_pseudo_constant = call_user_func_array($this->definition['pseudo class'] ."::". $this->definition['pseudo method'],$pseudo_args);
+  public $_pseudo_constant; function construct() {
+    parent::construct();
+    if (!civicrm_initialize() ||
+      !isset($this->definition['pseudo class']) ||
+      !isset($this->definition['pseudo method'])
+    ) {
+      return;
     }
 
-    function get_value_options() {
-        if (!isset($this->value_options)) {
-            $this->value_title = $this->definition['title'];
-            $options = array( );
-            foreach ($this->_pseudo_constant as $id => $name ) {
-                $options[$id] = $name;
-            }
-            $this->value_options = $options;
-        }
+    // Load pseudo arguments if passed as array from hook_views_data
+    if (isset($this->definition['pseudo args']) && is_array($this->definition['pseudo args'])) {
+      $this->definition['pseudo args'];
     }
+    else {
+      $pseudo_args = array();
+    }
+    require_once str_replace('_', DIRECTORY_SEPARATOR, $this->definition['pseudo class']) . '.php';
+    // Include and call the Pseudo Class method
+    $this->_pseudo_constant = call_user_func_array($this->definition['pseudo class'] . "::" . $this->definition['pseudo method'], $pseudo_args);
+  }
 
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = $this->definition['title'];
+      $options = array();
+      foreach ($this->_pseudo_constant as $id => $name) {
+        $options[$id] = $name;
+      }
+      $this->value_options = $options;
+    }
+  }
 }
+

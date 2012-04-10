@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -37,18 +36,19 @@
  * Implementation of hook_install().
  */
 function civicrmtheme_install() {
-    // update module weight to 11, to make it run after system.
-    db_query("UPDATE {system} SET weight = 11 WHERE name = 'civicrm_theme'");
-    
-    $link = array('!link' => l(t('Administer > Appearance > Administration theme'), 'admin/appearance'));
-    drupal_set_message(t("CiviCRM theme configuration setting is available under !link", $link));
+  // update module weight to 11, to make it run after system.
+  db_query("UPDATE {system} SET weight = 11 WHERE name = 'civicrm_theme'");
+
+  $link = array('!link' => l(t('Administer > Appearance > Administration theme'), 'admin/appearance'));
+  drupal_set_message(t("CiviCRM theme configuration setting is available under !link", $link));
 }
 
 /**
  * Implementation of hook_uninstall().
  */
 function civicrmtheme_uninstall() {
-    // cleaning variables
-    variable_del('civicrmtheme_theme_admin');
-    variable_del('civicrmtheme_theme_public');
+  // cleaning variables
+  variable_del('civicrmtheme_theme_admin');
+  variable_del('civicrmtheme_theme_public');
 }
+

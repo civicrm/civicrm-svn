@@ -23,6 +23,8 @@
  +--------------------------------------------------------------------+
 */
 
+
+
 /*
  *
  * civicrm_handler_field_file.inc
@@ -30,9 +32,8 @@
  *
  */
 class civicrm_handler_field_file extends views_handler_field {
-
-  function construct( ) {
-    if ( ! civicrm_initialize( ) ) {
+  function construct() {
+    if (!civicrm_initialize()) {
       return;
     }
 
@@ -45,27 +46,30 @@ class civicrm_handler_field_file extends views_handler_field {
     $this->add_additional_fields();
   }
 
-  function render( $values ) {
+  function render($values) {
     $id = $values->{$this->field_alias};
-    if ( $file_id = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $id , 'file_id', 'entity_id') ) {
+    if ($file_id = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $id, 'file_id', 'entity_id')) {
       $params = array(
-                      'id'           => $file_id,
-                      'file_type_id' => NULL,
-                      'version'      => 3
-                      );
-      $file = civicrm_api( 'File', 'get', $params );
+        'id' => $file_id,
+        'file_type_id' => NULL,
+        'version' => 3,
+      );
+      $file = civicrm_api('File', 'get', $params);
 
-      if ( !civicrm_error( $file ) ) {
-          $filepath = file_directory_path() . '/civicrm/custom/' . $file['values'][$file_id]['uri'];
-          $v = clone $values; // Prevent affecting the original
-          $v->{$this->field_alias} = $filepath;
-          return parent::render($v);
-      } else {
-          return NULL;
+      if (!civicrm_error($file)) {
+        $filepath = file_directory_path() . '/civicrm/custom/' . $file['values'][$file_id]['uri'];
+        // Prevent affecting the original
+        $v = clone$values;
+        $v->{$this->field_alias} = $filepath;
+        return parent::render($v);
       }
-
-    } else {
+      else {
+        return NULL;
+      }
+    }
+    else {
       return NULL;
     }
   }
 }
+
