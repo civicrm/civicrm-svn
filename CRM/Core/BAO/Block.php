@@ -182,6 +182,12 @@ class CRM_Core_BAO_Block
     {
         $allBlocks = array( );
         $name = ucfirst( $blockName );
+        if ( $blockName == 'im' ) {
+            $name = 'IM';
+        } elseif ( $blockName == 'openid' ) {
+            $name = 'OpenID';
+        }
+
         if ( $contactId ) {
             eval ( '$allBlocks = CRM_Core_BAO_' . $name . '::all' . $name . 's( $contactId, $updateBlankLocInfo );');
         } else if ( !empty($entityElements) && $blockName != 'openid' ) {
