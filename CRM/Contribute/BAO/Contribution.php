@@ -53,11 +53,20 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
   static $_exportableFields = NULL;
 
   /**
-   * static field for all the objects related to this contribution
+   * field for all the objects related to this contribution
    * @var array of objects (e.g membership object, participant object)
-   * @static
    */
-  static $_relatedObjects = NULL;
+  public $_relatedObjects = array();
+  
+   /**
+   * field for the component - either 'event' (participant) or 'contribute' 
+   * (any item related to a contribution page e.g. membership, pledge, contribution)
+   * This is used for composing messages because they have dependency on the 
+   * contribution_page or event page - although over time we may eliminate that
+   * 
+   * @var string component or event
+   */
+  public $_component = NULL;
   
   /*
    * construct method
@@ -1843,9 +1852,13 @@ SELECT source_contact_id
    * 
    * Note that the unit test for the BaseIPN class tests this function
    */
+  
   function loadRelatedObjects(&$input, &$ids,$required = false ){
-        $paymentProcessorID = CRM_Utils_Array::value('paymentProcessorId', $ids);
-        $contributionType = new CRM_Contribute_BAO_ContributionType( );
+    if(empty($this->_component)){
+      $this->_component = strtolower(CRM_Utils_Array::value('component', $input));
+    }
+    $paymentProcessorID = CRM_Utils_Array::value('paymentProcessorId', $ids);
+    $contributionType = new CRM_Contribute_BAO_ContributionType( );
         $contributionType->id = $contribution->contribution_type_id;
         if ( ! $contributionType->find( true ) ) {
             CRM_Core_Error::debug_log_message( "Could not find contribution type record: $contributionTypeID" );
@@ -1960,6 +1973,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             }
 
             $this->_relatedObjects['event'] =& $event;
+
             $participant = new CRM_Event_BAO_Participant( );
             $participant->id = $ids['participant'];
             if ( $ids['participant'] &&
@@ -2018,52 +2032,170 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     /*
      * Create array of message information - ie. return html version, txt version, to field
      * 
+     * @param array $input incoming information
+     *  - is_recur - should this be treated as recurring (not sure why you wouldn't 
+     *    just check presence of recur object but maintaining legacy approach 
+     *    to be careful)
+     * @param array $ids IDs of related objects
+     * @param array $values any values that may have already been compiled by calling process
+     *   This is augmented by values 'gathered' by gatherMessageValues
+     * @param bool $returnMessageText distinguishes between whether to send message or return
+     *   message text. We are working towards this function ALWAYS returning message text & calling 
+     *   function doing emails / pdfs with it
      * @return array $messageArray - messages
      */
   function composeMessageArray( &$input, &$ids, &$values, $recur = false,$returnMessageText = true){
     if(empty($this->_relatedObjects)){
        $this->loadRelatedObjects($input, $ids);
     }
-    if ( empty( $values ) ) {
-      $values = array( );
-      $contribID = $ids['contribution'];
-            if ( $input['component'] == 'contribute' ) {
-                if ( isset( $this->contribution_page_id ) ) {
-                    CRM_Contribute_BAO_ContributionPage::setValues( $this->contribution_page_id, $values );
+    if(empty($this->_component)){
+      $this->_component = CRM_Utils_Array::value('component', $input);
+    }
+    //not really sure what params might be passed in but lets merge em into values
+    $values = array_merge($this->_gatherMessageValues($input,$values),$values);
+    $template = CRM_Core_Smarty::singleton( );
+    $this->_assignMessageVariablesToTemplate($values,$input, $template );
+    //what does recur 'mean here - to do with payment processor return functionality but
+    // what is the importance
+    if ( $recur && !empty($this->_relatedObjects['paymentProcessor'])) {
+      $paymentObject =& CRM_Core_Payment::singleton(
+        $this->is_test ? 'test' : 'live',
+        $this->_relatedObjects['paymentProcessor']
+      );
+      $url = $paymentObject->cancelSubscriptionURL( );
+      $template->assign( 'cancelSubscriptionUrl', $url );
+      if ( $this->_relatedObjects['paymentProcessor']['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
+                //direct mode showing billing block, so use directIPN for temporary
+                $template->assign( 'contributeMode', 'directIPN' );
+      }            
+    }
+    if(strtolower($this->_component) == 'event'){//todo remove strtolower - check consistency
+      return CRM_Event_BAO_Event::sendMail( $ids['contact'], $values, 
+      $this->_relatedObjects['participant']->id, $this->is_test, true );
+    }
+    else {
+      $values['contribution_id']     = $this->id;
+      if ( CRM_Utils_Array::value( 'related_contact', $ids ) ) {
+        $values['related_contact'] = $ids['related_contact'];
+        if ( isset($ids['onbehalf_dupe_alert']) ) {
+          $values['onbehalf_dupe_alert'] = $ids['onbehalf_dupe_alert'];
+        }
+        $entityBlock = array(
+          'contact_id'       => $ids['contact'], 
+          'location_type_id' => CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 
+                                                                                         'Home', 'id', 'name' ) );
+                $address = CRM_Core_BAO_Address::getValues( $entityBlock );
+                $template->assign('onBehalfAddress', $address[$entityBlock['location_type_id']]['display']);
+            }
+            $isTest = false;
+            if ( $this->is_test ) {
+                $isTest = true;
+            }
+            // CRM_Core_Error::debug('val',$values);
+            if ( !empty( $this->_relatedObjects['membership']) ) {
+                foreach ( $this->_relatedObjects['membership'] as $membership ) {
+                    if ( $membership->id ) {
+                        $values['membership_id'] = $membership->id;
+                        
+                        // need to set the membership values here
+                        $template->assign( 'membership_assign', 1 );
+                        $template->assign( 'membership_name',
+                                           CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id ) );
+                        $template->assign( 'mem_start_date', $membership->start_date );
+                        $template->assign( 'mem_join_date', $membership->join_date );
+                        $template->assign( 'mem_end_date'  , $membership->end_date );
+                        $membership_status = CRM_Member_PseudoConstant::membershipStatus( $membership->status_id, null, 'label' );
+                        $template->assign( 'mem_status', $membership_status);
+                        if($membership_status == 'Pending' && $membership->is_pay_later ==1){
+                          $template->assign( 'is_pay_later' ,1);
+                        }
+                                                
+                        // if separate payment there are two contributions recorded and the 
+                        // admin will need to send a receipt for each of them separately.
+                        // we dont link the two in the db (but can potentially infer it if needed)
+                        $template->assign( 'is_separate_payment', 0);
+                        
+                        if ( $recur && $paymentObject ) {
+                            $url = $paymentObject->cancelSubscriptionURL( $membership->id, 'membership' );
+                            $template->assign( 'cancelSubscriptionUrl', $url );
+                        }
 
-                    if ( $this->contribution_page_id ) {
-                        // CRM-8254
-                        $config = CRM_Core_Config::singleton( );
-                        $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
-                                                                           $values, 
-                                                                           $config->defaultCurrency );
+                        $result = CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, 
+                                                                                 $isTest, true );
+
+                        
+                        return $result;
+                         // otherwise if its about sending emails, continue sending without return, as we
+                        // don't want to exit the loop.
                     }
-                } else {
-                    // Handle re-print receipt for offline contributions (call from PDF.php - no contribution_page_id)
-                    $values['is_email_receipt'] = 1;
-                    $values['title']            = 'Contribution';
                 }
-                // set lineItem for contribution
-                if ( $contribID && $pId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $contribID ) ) {
-                    $values['lineItem'][0] = CRM_Price_BAO_LineItem::getLineItems( $contribID, 'contribution' );
-                    $values['priceSetID']  = $pId;
-                }
-                $relatedContact = CRM_Contribute_BAO_Contribution::getOnbehalfIds( $contribID,
-                                                                                  $this->contact_id );
-                // if this is onbehalf of contribution then set related contact
-                if ( $relatedContactId = CRM_Utils_Array::value( 'individual_id', $relatedContact ) ) {
+            } else {
+                return CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, $isTest, true );
+            }
+        }
+    }
+    /*
+     * Gather values for contribution mail - this function has been created 
+     * as part of CRM-9996 refactoring as a step towards simplifying the composeMessage function
+     * Values related to the contribution in question are gathered
+     * 
+     * @param array $input input into function (probably from payment processor)
+     * @return array $values
+     */
+  function _gatherMessageValues( $input,&$values){
+   // set display address of contributor
+   if ( $this->address_id ) {
+                $addressParams     = array( 'id' => $this->address_id );	
+                $addressDetails    = CRM_Core_BAO_Address::getValues( $addressParams, false, 'id' );
+                $addressDetails    = array_values( $addressDetails );
+                $values['address'] = $addressDetails[0]['display'];                
+    }
+    if ($this->_component == 'contribute' ) {
+      if ( isset( $this->contribution_page_id ) ) {
+        CRM_Contribute_BAO_ContributionPage::setValues( 
+          $this->contribution_page_id, 
+          $values );
+        if ( $this->contribution_page_id ) {
+          // CRM-8254 - override default currency if applicable
+          $config = CRM_Core_Config::singleton( );
+          $config->defaultCurrency = CRM_Utils_Array::value( 
+            'currency',
+            $values, 
+            $config->defaultCurrency );
+         }
+      } 
+      else {// no contribution page -probably back office
+        // Handle re-print receipt for offline contributions (call from PDF.php - no contribution_page_id)
+        $values['is_email_receipt'] = 1;
+        $values['title']            = 'Contribution';
+      }
+       // set lineItem for contribution
+      if ( $this->id && $pId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $this->id ) ) {
+         $values['lineItem'][0] = CRM_Price_BAO_LineItem::getLineItems( $this->id, 'contribution' );
+         $values['priceSetID']  = $pId;
+       }
+       $relatedContact = CRM_Contribute_BAO_Contribution::getOnbehalfIds(
+         $this->id,
+         $this->contact_id
+       );
+       // if this is onbehalf of contribution then set related contact
+       if ( $relatedContactId = CRM_Utils_Array::value( 'individual_id', $relatedContact ) ) {
                     $values['related_contact'] = $ids['related_contact'] = $relatedContactId;
                 }
                 
-            } else {
-                // event
-                $eventParams = array( 'id' => $this->_relatedObjects['event']->id );
-                $values['event'] = array( );
+       } else {
+         // event
+         $eventParams = array(
+           'id' => $this->_relatedObjects['event']->id
+         );
+         $values['event'] = array( );
                 
                 CRM_Event_BAO_Event::retrieve( $eventParams, $values['event'] );
                 
                 //get location details
-                $locationParams = array( 'entity_id' => $this->_relatedObjects['event']->id, 'entity_table' => 'civicrm_event' );
+                $locationParams = array(
+                  'entity_id' => $this->_relatedObjects['event']->id,
+                  'entity_table' => 'civicrm_event' );
                 $values['location'] = CRM_Core_BAO_Location::getValues($locationParams);
                 
                 $ufJoinParams = array( 'entity_table' => 'civicrm_event',
@@ -2076,8 +2208,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                 $values['custom_post_id'] = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
 
                 // set lineItem for event contribution
-                if ( $contribID  ) {
-                    $participantIds = CRM_Event_BAO_Participant::getParticipantIds( $contribID );
+                if ( $this->id  ) {
+                    $participantIds = CRM_Event_BAO_Participant::getParticipantIds( $this->id );
                     if ( !empty ( $participantIds ) ) {
                         foreach ( $participantIds as $pIDs ) {
                             $lineItem = CRM_Price_BAO_LineItem::getLineItems( $pIDs );
@@ -2091,44 +2223,39 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             }
             
 
-            
-            // set display address of contributor
-            if ( $this->address_id ) {
-                $addressParams     = array( 'id' => $this->address_id );	
-                $addressDetails    = CRM_Core_BAO_Address::getValues( $addressParams, false, 'id' );
-                $addressDetails    = array_values( $addressDetails );
-                $values['address'] = $addressDetails[0]['display'];                
-            }
+    return $values; 
     }
-
-        $template = CRM_Core_Smarty::singleton( );
-        $template->assign('first_name', $this->_relatedObjects['contact']->first_name);
-        $template->assign('last_name', $this->_relatedObjects['contact']->last_name);
-        $template->assign('displayName', $this->_relatedObjects['contact']->display_name);
-        // CRM_Core_Error::debug('tpl',$template);
-        //assign honor infomation to receiptmessage
-        if ( $honorID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
-                                                     $this->id,
-                                                     'honor_contact_id' ) ) {
-            $honorDefault = array( );
-            $honorIds     = array( );
-            $honorIds['contribution'] =  $this->id;
+    /*
+     * Apply variables for message to smarty template - this function is part of analysing what is in the huge
+     * function & breaking it down into manageable chunks. Eventually it will be refactored into something else
+     */
+    function _assignMessageVariablesToTemplate(&$values,$input,&$template){
+      $template->assign('first_name', $this->_relatedObjects['contact']->first_name);
+      $template->assign('last_name', $this->_relatedObjects['contact']->last_name);
+      $template->assign('displayName', $this->_relatedObjects['contact']->display_name);
+      // CRM_Core_Error::debug('tpl',$template);
+      //assign honor infomation to receiptmessage
+      if ( $honorID = CRM_Core_DAO::getFieldValue(
+          'CRM_Contribute_DAO_Contribution',
+          $this->id,
+          'honor_contact_id' ) 
+        ){
+          $honorDefault = array( );
+          $honorIds     = array( );
+          $honorIds['contribution'] =  $this->id;
+          $idParams = array( 'id' => $honorID, 'contact_id' => $honorID );
+          CRM_Contact_BAO_Contact::retrieve( $idParams, $honorDefault, $honorIds );
+          $honorType = CRM_Core_PseudoConstant::honor( );
             
-            $idParams = array( 'id' => $honorID, 'contact_id' => $honorID );
-            
-            CRM_Contact_BAO_Contact::retrieve( $idParams, $honorDefault, $honorIds );
-            
-            $honorType = CRM_Core_PseudoConstant::honor( );
-            
-            $template->assign( 'honor_block_is_active', 1 );
-            if ( CRM_Utils_Array::value( 'prefix_id', $honorDefault ) ) {
-                $prefix    = CRM_Core_PseudoConstant::individualPrefix();
-                $template->assign( 'honor_prefix',     $prefix[$honorDefault['prefix_id']] );
-            }
-            $template->assign( 'honor_first_name', CRM_Utils_Array::value( 'first_name', $honorDefault ) );
-            $template->assign( 'honor_last_name',  CRM_Utils_Array::value( 'last_name', $honorDefault ) );
-            $template->assign( 'honor_email',      CRM_Utils_Array::value( 'email', $honorDefault['email'][1] ) );
-            $template->assign( 'honor_type',       $honorType[$contribution->honor_type_id] );
+          $template->assign( 'honor_block_is_active', 1 );
+          if ( CRM_Utils_Array::value( 'prefix_id', $honorDefault ) ) {
+            $prefix    = CRM_Core_PseudoConstant::individualPrefix();
+            $template->assign( 'honor_prefix',     $prefix[$honorDefault['prefix_id']] );
+           }
+           $template->assign( 'honor_first_name', CRM_Utils_Array::value( 'first_name', $honorDefault ) );
+           $template->assign( 'honor_last_name',  CRM_Utils_Array::value( 'last_name', $honorDefault ) );
+           $template->assign( 'honor_email',      CRM_Utils_Array::value( 'email', $honorDefault['email'][1] ) );
+           $template->assign( 'honor_type',       $honorType[$contribution->honor_type_id] );
         }
 
         $dao = new CRM_Contribute_DAO_ContributionProduct();
@@ -2145,12 +2272,14 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             $template->assign('price',         $productDAO->price );
             $template->assign('sku',           $productDAO->sku );
         }
-
         // add the new contribution values
-        if ( $input['component'] == 'contribute' ) {
+        if ( strtolower($this->_component) == 'contribute' ) {
             $template->assign( 'title', $values['title']);
-            $template->assign( 'amount' , $input['amount'] );
-
+            if(CRM_Utils_Array::value('total_amount', $input)){
+              $template->assign( 'amount' , $input['total_amount'] );
+            }else{
+              $template->assign( 'amount' , $input['amount'] );
+            }
             //PCP Info
             $softDAO = new CRM_Contribute_DAO_ContributionSoft();
             $softDAO->contribution_id =  $contribution->id;
@@ -2172,34 +2301,24 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             $template->assign( 'totalAmount' , $input['amount'] );
         }
 
-        if ( $contribution->contribution_type_id ) {
-            $values['contribution_type_id'] = $contribution->contribution_type_id;
-        } 
+        if ( $this->contribution_type_id ) {
+            $values['contribution_type_id'] = $this->contribution_type_id;
+        }
+         
 
-        $template->assign( 'trxn_id', $contribution->trxn_id );
+        $template->assign( 'trxn_id', $this->trxn_id );
         $template->assign( 'receive_date', 
                            CRM_Utils_Date::mysqlToIso( $contribution->receive_date ) );
         $template->assign( 'contributeMode', 'notify' );
-        $template->assign( 'action', $contribution->is_test ? 1024 : 1 );
+        $template->assign( 'action', $this->is_test ? 1024 : 1 );
         $template->assign( 'receipt_text',
                            CRM_Utils_Array::value( 'receipt_text',
                                                    $values ) );
         $template->assign( 'is_monetary', 1 );
         $template->assign( 'is_recur', $recur );
-        $template->assign( 'currency', $contribution->currency );
-        if ( $recur && !empty($this->_relatedObjects['paymentProcessor'])) {
-            $paymentObject =& CRM_Core_Payment::singleton( $contribution->is_test ? 'test' : 'live', 
-                                                           $this->_relatedObjects['paymentProcessor'] );
-            $url = $paymentObject->cancelSubscriptionURL( );
-            $template->assign( 'cancelSubscriptionUrl', $url );
-            if ( $this->_relatedObjects['paymentProcessor']['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
-                //direct mode showing billing block, so use directIPN for temporary
-                $template->assign( 'contributeMode', 'directIPN' );
-            }            
-        }
-        
-        $template->assign( 'address', CRM_Utils_Address::format( $input ) );
-        if ( $input['component'] == 'event' ) { 
+        $template->assign( 'currency', $this->currency );
+          $template->assign( 'address', CRM_Utils_Address::format( $input ) );
+        if ( $this->_component == 'event' ) { 
             $participantRoles = CRM_Event_PseudoConstant::participantRole();
             $viewRoles = array( );
             foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $this->_relatedObjects['participant']->role_id) as $k => $v ) {
@@ -2272,71 +2391,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             // carry paylater, since we did not created billing,
             // so need to pull email from primary location, CRM-4395 
             $values['params']['is_pay_later'] = $this->_relatedObjects['participant']->is_pay_later;
-            return CRM_Event_BAO_Event::sendMail( $ids['contact'], $values, $this->_relatedObjects['participant']->id, $isTest, true );
-            
-        } else {
-            $values['contribution_id']     = $contribution->id;
-            if ( CRM_Utils_Array::value( 'related_contact', $ids ) ) {
-                $values['related_contact'] = $ids['related_contact'];
-                if ( isset($ids['onbehalf_dupe_alert']) ) {
-                    $values['onbehalf_dupe_alert'] = $ids['onbehalf_dupe_alert'];
-                }
-
-                $entityBlock = array( 'contact_id'       => $ids['contact'], 
-                                      'location_type_id' => CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 
-                                                                                         'Home', 'id', 'name' ) );
-                $address = CRM_Core_BAO_Address::getValues( $entityBlock );
-                $template->assign('onBehalfAddress', $address[$entityBlock['location_type_id']]['display']);
-            }
-
-            $isTest = false;
-            if ( $this->is_test ) {
-                $isTest = true;
-            }
-            // CRM_Core_Error::debug('val',$values);
-
-
-            if ( !empty( $this->_relatedObjects['membership']) ) {
-                foreach ( $this->_relatedObjects['membership'] as $membership ) {
-                    if ( $membership->id ) {
-                        $values['membership_id'] = $membership->id;
-                        
-                        // need to set the membership values here
-                        $template->assign( 'membership_assign', 1 );
-                        $template->assign( 'membership_name',
-                                           CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id ) );
-                        $template->assign( 'mem_start_date', $membership->start_date );
-                        $template->assign( 'mem_join_date', $membership->join_date );
-                        $template->assign( 'mem_end_date'  , $membership->end_date );
-                        $membership_status = CRM_Member_PseudoConstant::membershipStatus( $membership->status_id, null, 'label' );
-                        $template->assign( 'mem_status', $membership_status);
-                        if($membership_status == 'Pending' && $membership->is_pay_later ==1){
-                          $template->assign( 'is_pay_later' ,1);
-                        }
-                                                
-                        // if separate payment there are two contributions recorded and the 
-                        // admin will need to send a receipt for each of them separately.
-                        // we dont link the two in the db (but can potentially infer it if needed)
-                        $template->assign( 'is_separate_payment', 0);
-                        
-                        if ( $recur && $paymentObject ) {
-                            $url = $paymentObject->cancelSubscriptionURL( $membership->id, 'membership' );
-                            $template->assign( 'cancelSubscriptionUrl', $url );
-                        }
-
-                        $result = CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, 
-                                                                                 $isTest, true );
-
-                        
-                        return $result;
-                         // otherwise if its about sending emails, continue sending without return, as we
-                        // don't want to exit the loop.
-                    }
-                }
-            } else {
-                return CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, $isTest, true );
-            }
         }
+      return $template;
     }
 }
 
