@@ -336,6 +336,28 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             }
         }
     }
+    /*
+     * Construct the message to be sent by the send function
+     * 
+     */
+    function composeMessage($tplParams, $contactID, $isTest){
+      $sendTemplateParams = array(
+        'groupName'   => $tplParams['membershipID'] ? 'msg_tpl_workflow_membership' : 'msg_tpl_workflow_contribution',
+        'valueName'   => $tplParams['membershipID'] ? 'membership_online_receipt'   : 'contribution_online_receipt',
+        'contactId'   => $contactID,
+        'tplParams'   => $tplParams,
+        'isTest'      => $isTest,
+        'PDFFilename' => 'receipt.pdf',
+      );
+      if ( $returnMessageText ) {
+        list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
+        return array( 
+          'subject' => $subject,
+          'body'    => $message,
+          'to'      => $displayName,
+          'html'    => $html );
+      }
+    }
     
     /**
      * Function to send the emails for Recurring Contribution Notication

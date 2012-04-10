@@ -1844,7 +1844,7 @@ SELECT source_contact_id
    * Note that the unit test for the BaseIPN class tests this function
    */
   
-  function loadRelatedObjects(&$input, &$ids,$required = true , $paymentProcessorID = null){
+  function loadRelatedObjects(&$input, &$ids,$required = false , $paymentProcessorID = null){
         $contributionType = new CRM_Contribute_BAO_ContributionType( );
         $contributionType->id = $contribution->contribution_type_id;
         if ( ! $contributionType->find( true ) ) {
@@ -1853,9 +1853,6 @@ SELECT source_contact_id
             return false;
         }
         $this->_relatedObjects['contributionType'] = $contributionType;
-        
-        
-        //$paymentProcessorID = null;
         if ( $input['component'] == 'contribute' ) {
             
             // retrieve the other optional objects first so
@@ -2002,19 +1999,20 @@ WHERE  contribution_id = %1 AND membership_id != %2";
      * @return array $messageArray - messages
      */
     function composeMessageArray( &$input, &$ids, &$objects, &$values, $recur = false,$returnMessageText = true){
-        $contribution =& $objects['contribution'];
-        $participant  =& $objects['participant'] ;
+      if(empty($this->_relatedObjects)){
+          $this->loadRelatedObjects($input, $ids);
+      }
         $event        =& $objects['event']       ;
-        $memberships  =& $objects['membership']  ;
         $contact      =& $objects['contact']  ;
+
         if ( empty( $values ) ) {
             $values = array( );
             $contribID = $ids['contribution'];
             if ( $input['component'] == 'contribute' ) {
-                if ( isset( $contribution->contribution_page_id ) ) {
-                    CRM_Contribute_BAO_ContributionPage::setValues( $contribution->contribution_page_id, $values );
+                if ( isset( $this->contribution_page_id ) ) {
+                    CRM_Contribute_BAO_ContributionPage::setValues( $this->contribution_page_id, $values );
 
-                    if ( $contribution->contribution_page_id ) {
+                    if ( $this->contribution_page_id ) {
                         // CRM-8254
                         $config = CRM_Core_Config::singleton( );
                         $config->defaultCurrency = CRM_Utils_Array::value( 'currency', 
@@ -2032,7 +2030,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                     $values['priceSetID']  = $pId;
                 }
                 $relatedContact = CRM_Contribute_BAO_Contribution::getOnbehalfIds( $contribID,
-                                                                                   $contribution->contact_id );
+                                                                                  $this->contact_id );
                 // if this is onbehalf of contribution then set related contact
                 if ( $relatedContactId = CRM_Utils_Array::value( 'individual_id', $relatedContact ) ) {
                     $values['related_contact'] = $ids['related_contact'] = $relatedContactId;
@@ -2076,8 +2074,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
 
             
             // set display address of contributor
-            if ( $contribution->address_id ) {
-                $addressParams     = array( 'id' => $contribution->address_id );	
+            if ( $this->address_id ) {
+                $addressParams     = array( 'id' => $this->address_id );	
                 $addressDetails    = CRM_Core_BAO_Address::getValues( $addressParams, false, 'id' );
                 $addressDetails    = array_values( $addressDetails );
                 $values['address'] = $addressDetails[0]['display'];                
@@ -2185,7 +2183,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         if ( $input['component'] == 'event' ) { 
             $participantRoles = CRM_Event_PseudoConstant::participantRole();
             $viewRoles = array( );
-            foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $participant->role_id) as $k => $v ) {
+            foreach( explode(CRM_Core_DAO::VALUE_SEPARATOR, $this->_relatedObjects['participant']->role_id) as $k => $v ) {
                 $viewRoles[] = $participantRoles[$v];
             }
             $values['event']['participant_role'] = implode( ', ', $viewRoles );
@@ -2195,17 +2193,17 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             $template->assign( 'customPost', $values['custom_post_id'] );
           
             $isTest = false;
-            if ( $participant->is_test ) {
+            if ( $this->_relatedObjects['participant']->is_test ) {
                 $isTest = true;
             }
             
             $values['params'] = array( );
             //to get email of primary participant.
-            $primaryEmail = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Email',  $participant->contact_id, 'email', 'contact_id' );  
-            $primaryAmount[] = array( 'label' => $participant->fee_level.' - '.$primaryEmail, 'amount' => $participant->fee_amount);
+            $primaryEmail = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Email',  $this->_relatedObjects['participant']->contact_id, 'email', 'contact_id' );  
+            $primaryAmount[] = array( 'label' => $this->_relatedObjects['participant']->fee_level.' - '.$primaryEmail, 'amount' => $this->_relatedObjects['participant']->fee_amount);
             //build an array of cId/pId of participants
-            $additionalIDs = CRM_Event_BAO_Event::buildCustomProfile( $participant->id, null, $ids['contact'], $isTest, true );
-            unset( $additionalIDs[$participant->id] ); 
+            $additionalIDs = CRM_Event_BAO_Event::buildCustomProfile( $this->_relatedObjects['participant']->id, null, $ids['contact'], $isTest, true );
+            unset( $additionalIDs[$this->_relatedObjects['participant']->id] ); 
             //send receipt to additional participant if exists
             if ( count($additionalIDs) ) {
                 $template->assign( 'isPrimary', 0 ); 
@@ -2219,7 +2217,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                     $additional->id = $pId;
                     $additional->contact_id = $cId; 
                     $additional->find(true);
-                    $additional->register_date = $participant->register_date;
+                    $additional->register_date = $this->_relatedObjects['participant']->register_date;
                     $additional->status_id = 1;
                     $additionalParticipantInfo = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Email',  $additional->contact_id, 'email', 'contact_id' ); 
                     //if additional participant dont have email
@@ -2237,7 +2235,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             }
             
             //build an array of custom profile and assigning it to template
-            $customProfile = CRM_Event_BAO_Event::buildCustomProfile( $participant->id, $values, null, $isTest );
+            $customProfile = CRM_Event_BAO_Event::buildCustomProfile( $this->_relatedObjects['participant']->id, $values, null, $isTest );
             
             if ( count($customProfile) ) {
                 $template->assign( 'customProfile', $customProfile );
@@ -2247,16 +2245,16 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             $values['params']['additionalParticipant'] = false;
             $template->assign( 'isPrimary', 1 );
             $template->assign( 'amount', $primaryAmount );
-            $template->assign( 'register_date', CRM_Utils_Date::isoToMysql($participant->register_date) );
+            $template->assign( 'register_date', CRM_Utils_Date::isoToMysql($this->_relatedObjects['participant']->register_date) );
             if ( $contribution->payment_instrument_id ) {
                 $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
                 $template->assign( 'paidBy', $paymentInstrument[$contribution->payment_instrument_id] );
             }
             // carry paylater, since we did not created billing,
             // so need to pull email from primary location, CRM-4395 
-            $values['params']['is_pay_later'] = $participant->is_pay_later;
+            $values['params']['is_pay_later'] = $this->_relatedObjects['participant']->is_pay_later;
             
-            return CRM_Event_BAO_Event::sendMail( $ids['contact'], $values, $participant->id, $isTest, $returnMessageText );
+            return CRM_Event_BAO_Event::sendMail( $ids['contact'], $values, $this->_relatedObjects['participant']->id, $isTest, $returnMessageText );
             
         } else {
             $values['contribution_id']     = $contribution->id;
@@ -2274,14 +2272,14 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             }
 
             $isTest = false;
-            if ( $contribution->is_test ) {
+            if ( $this->is_test ) {
                 $isTest = true;
             }
             // CRM_Core_Error::debug('val',$values);
 
 
-            if ( !empty( $memberships ) ) {
-                foreach ( $memberships as $membership ) {
+            if ( !empty( $this->_relatedObjects['membership']) ) {
+                foreach ( $this->_relatedObjects['membership'] as $membership ) {
                     if ( $membership->id ) {
                         $values['membership_id'] = $membership->id;
                         

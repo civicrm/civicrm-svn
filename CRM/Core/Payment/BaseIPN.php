@@ -92,7 +92,11 @@ class CRM_Core_Payment_BaseIPN {
         
         return true;
     }
-
+/*
+ * Load objects related to contribution
+ * 
+ * @input array information from Payment processor
+ */
   function loadObjects( &$input, &$ids, &$objects, $required, $paymentProcessorID ) {
     $contribution =& $objects['contribution'];
     $success = $contribution->loadRelatedObjects($input, $ids, $required, $paymentProcessorID );
