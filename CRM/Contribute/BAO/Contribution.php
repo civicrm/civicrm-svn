@@ -58,13 +58,14 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @static
    */
   static $_relatedObjects = NULL;
-  
+
   /*
    * construct method
    */
   function __construct() {
     parent::__construct();
   }
+
   /**
    * takes an associative array and creates a contribution object
    *
@@ -1834,7 +1835,7 @@ SELECT source_contact_id
       'monthDate' => $monthDate,
     );
   }
-  
+
   /*
    * Load objects relations to contribution object
    * Objects are stored in the $_relatedObjects property
@@ -1866,117 +1867,61 @@ SELECT source_contact_id
 SELECT membership_id 
 FROM   civicrm_membership_payment 
 WHERE  contribution_id = %1 AND membership_id != %2";
-                    $dao   = CRM_Core_DAO::executeQuery( $query, 
-                                                         array( 1 => array( $this->id, 'Integer' ),
-                                                                2 => array( $ids['membership'], 'Integer' ) ) );
-                    
-                    $ids['membership'] = array( $ids['membership'] );
-                    while ( $dao->fetch() ) {
-                        $ids['membership'][] = $dao->membership_id;
-                    }
-                }
+          $dao = CRM_Core_DAO::executeQuery($query,
+            array(1 => array($this->id, 'Integer'),
+              2 => array($ids['membership'], 'Integer'),
+            )
+          );
 
-                if (is_array($ids['membership'])) {
-                    foreach ( $ids['membership'] as $id ) {
-                        if ( !empty($id) ) {
-                            $membership = new CRM_Member_BAO_Membership( );
-                            $membership->id = $id;
-                            if ( ! $membership->find( true ) ) {
-                                CRM_Core_Error::debug_log_message( "Could not find membership record: $id" );
-                                echo "Failure: Could not find membership record: $id<p>";
-                                return false;
-                            }
-                            $membership->join_date     = CRM_Utils_Date::isoToMysql( $membership->join_date      );
-                            $membership->start_date    = CRM_Utils_Date::isoToMysql( $membership->start_date     );
-                            $membership->end_date      = CRM_Utils_Date::isoToMysql( $membership->end_date       );
-                            $membership->reminder_date = CRM_Utils_Date::isoToMysql( $membership->reminder_date  );
+          $ids['membership'] = array($ids['membership']);
+          while ($dao->fetch()) {
+            $ids['membership'][] = $dao->membership_id;
+          }
+        }
 
-                            $this->_relatedObjects['membership'][] = $membership;
-                            $membership->free();
-                        }
-                    }
-                }  
+        if (is_array($ids['membership'])) {
+          foreach ($ids['membership'] as $id) {
+            if (!empty($id)) {
+              $membership = new CRM_Member_BAO_Membership();
+              $membership->id = $id;
+              if (!$membership->find(TRUE)) {
+                CRM_Core_Error::debug_log_message("Could not find membership record: $id");
+                echo "Failure: Could not find membership record: $id<p>";
+                return FALSE;
+              }
+              $membership->join_date = CRM_Utils_Date::isoToMysql($membership->join_date);
+              $membership->start_date = CRM_Utils_Date::isoToMysql($membership->start_date);
+              $membership->end_date = CRM_Utils_Date::isoToMysql($membership->end_date);
+              $membership->reminder_date = CRM_Utils_Date::isoToMysql($membership->reminder_date);
+              $this->_relatedObjects['membership'][] = $membership;
+              $membership->free();
             }
-          
-            if ( isset( $ids['pledge_payment'] ) ) {
-                
-                $this->_relatedObjects['pledge_payment'] = array( );
-                foreach ( $ids['pledge_payment'] as $key => $paymentID ) { 
-                    $payment = new CRM_Pledge_BAO_PledgePayment( );
-                    $payment->id = $paymentID;
-                    if ( ! $payment->find( true ) ) {
-                        CRM_Core_Error::debug_log_message( "Could not find pledge payment record: $pledge_paymentID" );
-                        echo "Failure: Could not find pledge payment record: $pledge_paymentID<p>";
-                        return false;
-                    } 
-                    $this->_relatedObjects['pledge_payment'][] = $payment;
-                } 
-            }
-           
-            if ( isset( $ids['contributionRecur'] ) ) {
-                $recur = new CRM_Contribute_BAO_ContributionRecur( );
-                $recur->id = $ids['contributionRecur'];
-                if ( ! $recur->find( true ) ) {
-                    CRM_Core_Error::debug_log_message( "Could not find recur record: $contributionRecurID" );
-                    echo "Failure: Could not find recur record: $contributionRecurID<p>";
-                    return false;
-                }
-                $this->_relatedObjects['contributionRecur'] =& $recur;
-                //get payment processor id from recur object.
-                $paymentProcessorID = $recur->payment_processor_id;
-            }
-            //for normal contribution get the payment processor id.
-            if ( ! $paymentProcessorID ) {
-                if ( $this->contribution_page_id ) {
-                    // get the payment processor id from contribution page
-                    $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
-                                                                       $this->contribution_page_id,
-                                                                       'payment_processor' );
-                    
-                }
-                
-                //fail to load payment processor id.
-                if ( !$paymentProcessorID &&
-                     !$this->contribution_page_id &&
-                     !CRM_Utils_Array::value( 'pledge_payment', $ids ) ) {
-                    $loadObjectSuccess = true;
-                    if ( $required ) {
-                        $loadObjectSuccess = false;
-                        CRM_Core_Error::debug_log_message( "Could not find contribution page for contribution record: $contributionID" );
-                        echo "Failure: Could not find contribution page for contribution record: $contributionID<p>";
-                    }
-                    return $loadObjectSuccess;
-                }
-            }
-        } else {
-            // we are in event mode
-            // make sure event exists and is valid
-            $event = new CRM_Event_BAO_Event( );
-            $event->id = $ids['event'];
-            if ( $ids['event'] &&
-                 ! $event->find( true ) ) {
-                CRM_Core_Error::debug_log_message( "Could not find event: $eventID" );
-                echo "Failure: Could not find event: $eventID<p>";
-                return false;
-            }
+          }
+        }
+      }
 
-            $this->_relatedObjects['event'] =& $event;
+      if (isset($ids['pledge_payment'])) {
 
-            $participant = new CRM_Event_BAO_Participant( );
-            $participant->id = $ids['participant'];
-            if ( $ids['participant'] &&
-                 ! $participant->find( true ) ) {
-                CRM_Core_Error::debug_log_message( "Could not find participant: $participantID" );
-                echo "Failure: Could not find participant: $participantID<p>";
-                return false;
-            }
-            $participant->register_date = CRM_Utils_Date::isoToMysql( $participant->register_date );
+        $this->_relatedObjects['pledge_payment'] = array();
+        foreach ($ids['pledge_payment'] as $key => $paymentID) {
+          $payment = new CRM_Pledge_BAO_PledgePayment();
+          $payment->id = $paymentID;
+          if (!$payment->find(TRUE)) {
+            CRM_Core_Error::debug_log_message("Could not find pledge payment record: $pledge_paymentID");
+            echo "Failure: Could not find pledge payment record: $pledge_paymentID<p>";
+            return FALSE;
+          }
+          $this->_relatedObjects['pledge_payment'][] = $payment;
+        }
+      }
 
-            $this->_relatedObjects['participant'] =& $participant;
-            
-            if ( !$paymentProcessorID ) {
-                $paymentProcessorID = $this->_relatedObjects['event']->payment_processor;
-            }
+      if (isset($ids['contributionRecur'])) {
+        $recur = new CRM_Contribute_BAO_ContributionRecur();
+        $recur->id = $ids['contributionRecur'];
+        if (!$recur->find(TRUE)) {
+          CRM_Core_Error::debug_log_message("Could not find recur record: $contributionRecurID");
+          echo "Failure: Could not find recur record: $contributionRecurID<p>";
+          return FALSE;
         }
         
         $loadObjectSuccess = true;
@@ -1990,8 +1935,21 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             CRM_Core_Error::debug_log_message("Could not find payment processor for contribution record: $contributionID");
             echo "Failure: Could not find payment processor for contribution record: $contributionID<p>";
         }
-        
-        return $loadObjectSuccess;
+
+        //fail to load payment processor id.
+        if (!$paymentProcessorID &&
+          !$this->contribution_page_id &&
+          !CRM_Utils_Array::value('pledge_payment', $ids)
+        ) {
+          $loadObjectSuccess = TRUE;
+          if ($required) {
+            $loadObjectSuccess = FALSE;
+            CRM_Core_Error::debug_log_message("Could not find contribution page for contribution record: $contributionID");
+            echo "Failure: Could not find contribution page for contribution record: $contributionID<p>";
+          }
+          return $loadObjectSuccess;
+        }
+      }
     }
     
     /*
