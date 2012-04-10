@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,23 +25,25 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-function run() {
-  session_start();
 
-  require_once '../../civicrm.config.php';
-  require_once 'CRM/Core/Config.php';
+function run( ) {
+    session_start( );                               
+                                            
+    require_once '../../civicrm.config.php'; 
+    require_once 'CRM/Core/Config.php'; 
+    
+    $config = CRM_Core_Config::singleton(); 
 
-  $config = CRM_Core_Config::singleton();
+    // this does not return on failure
+    CRM_Utils_System::authenticateScript( true );
 
-  // this does not return on failure
-  CRM_Utils_System::authenticateScript(TRUE);
+    require_once 'CRM/Core/BAO/ConfigSetting.php';
+    $moveStatus = CRM_Core_BAO_ConfigSetting::doSiteMove( );
 
-  require_once 'CRM/Core/BAO/ConfigSetting.php';
-  $moveStatus = CRM_Core_BAO_ConfigSetting::doSiteMove();
-
-  echo $moveStatus . '<br />';
-  echo ts("If no errors are displayed above, the site move steps have completed successfully. Please visit <a href=\"{$config->userFrameworkBaseURL}\">your moved site</a> and test the move.");
+    echo $moveStatus . '<br />';
+    echo ts("If no errors are displayed above, the site move steps have completed successfully. Please visit <a href=\"{$config->userFrameworkBaseURL}\">your moved site</a> and test the move.");
 }
 
-run();
+run( );
+
 

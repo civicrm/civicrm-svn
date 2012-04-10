@@ -22,8 +22,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-
-
 /*
  * Heavily based on anonymous code contribution. No claim.
  *
@@ -32,37 +30,37 @@
  *
  */
 class civicrm_handler_field_relationship_type extends views_handler_field {
-  static $_relationshipType;
-  function construct() {
-    if (!self::$_relationshipType) {
-      if (!civicrm_initialize()) {
-        return;
-      }
-      require_once 'CRM/Core/PseudoConstant.php';
-      $relationshipType_array = CRM_Core_PseudoConstant::relationshipType('name');
+    static $_relationshipType;
 
-      // relationshipType() returns information about relations as array with fields
-      // 'name_a_b', 'name_b_a', 'contact_type_a' and 'contact_type_b'.
-      // We keep just 'name_a_b' for simplicity.
-
-      $options = array();
-      foreach ($relationshipType_array as $id => $value_array) {
-        $options[$id] = $value_array['label_a_b'];
-      }
-
-      self::$_relationshipType = $options;
-    }
-  }
-
-  function render($values) {
-    $lid = $values->{$this->field_alias};
-    if (empty($lid) ||
-      (int ) $lid <= 0
-    ) {
-      return NULL;
+    function construct( ) {
+        if ( ! self::$_relationshipType ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/PseudoConstant.php';
+            $relationshipType_array = CRM_Core_PseudoConstant::relationshipType( 'name' );
+			
+			// relationshipType() returns information about relations as array with fields
+			// 'name_a_b', 'name_b_a', 'contact_type_a' and 'contact_type_b'.
+			// We keep just 'name_a_b' for simplicity.
+			
+			$options = array( );
+            foreach ($relationshipType_array as $id => $value_array ) {
+                $options[$id] = $value_array['label_a_b'];
+            }
+			
+			self::$_relationshipType = $options;
+        }
     }
 
-    return self::$_relationshipType[$values->{$this->field_alias}];
-  }
+    function render( $values ) {
+        $lid = $values->{$this->field_alias};
+        if ( empty( $lid ) ||
+             (int ) $lid <= 0 ) {
+            return null;
+        }
+
+        return self::$_relationshipType[$values->{$this->field_alias}];
+    }
 }
-
+?>

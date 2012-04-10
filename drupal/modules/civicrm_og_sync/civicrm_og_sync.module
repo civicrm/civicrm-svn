@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -59,256 +60,249 @@
  * Implementation of hook_node_delete
  *
  */
-function civicrm_og_sync_node_insert($node) {
-  _civicrm_og_sync_node_action($node);
+function civicrm_og_sync_node_insert( $node ) {
+    _civicrm_og_sync_node_action( $node ) ;
 }
 
-function civicrm_og_sync_node_update($node) {
-  _civicrm_og_sync_node_action($node);
+function civicrm_og_sync_node_update( $node ) {
+    _civicrm_og_sync_node_action( $node );
 }
 
-function civicrm_og_sync_node_delete($node) {
-  if (!_civicrm_og_sync_check_isvalid($node)) {
-    return;
-  }
-  require_once 'CRM/Bridge/OG/Drupal.php';
-
-  if ($group = og_get_group('node', $node->nid)) {
-    if (empty($group->gid)) {
-      return;
+function civicrm_og_sync_node_delete( $node ) {
+    if ( !_civicrm_og_sync_check_isvalid( $node ) ) {
+        return;
     }
+    require_once 'CRM/Bridge/OG/Drupal.php';
 
-    _civicrm_og_sync_skip_process_request(TRUE);
-
-    $params = array('name' => $node->title,
-      'title' => $node->title,
-      'og_id' => $group->gid,
-    );
-
-    CRM_Bridge_OG_Drupal::nodeapi($params, 'delete');
-  }
+    if ( $group = og_get_group('node', $node->nid) ) {
+        if ( empty($group->gid) ) {
+            return;
+        }
+        
+        _civicrm_og_sync_skip_process_request(true);
+        
+        $params = array( 'name'        => $node->title,
+                         'title'       => $node->title,
+                         'og_id'       => $group->gid );
+        
+        CRM_Bridge_OG_Drupal::nodeapi( $params, 'delete' );
+    }
 }
 
-function civicrm_og_sync_og_membership_insert($membership) {
-  _civicrm_og_sync_group_action($membership, 'add');
+function civicrm_og_sync_og_membership_insert($membership){
+    _civicrm_og_sync_group_action($membership, 'add');
 }
 
 function civicrm_og_sync_og_membership_update($membership) {
-  if ($membership->entity_type != 'user') {
-    return;
-  }
+    if ( $membership->entity_type != 'user' ) {
+        return;
+    }
 
-  if ($membership->original->state != OG_STATE_ACTIVE && $membership->state == OG_STATE_ACTIVE) {
-    _civicrm_og_sync_group_action($membership, 'add');
-  }
-  if ($membership->original->state != OG_STATE_BLOCKED && $membership->state == OG_STATE_BLOCKED) {
+    if ($membership->original->state != OG_STATE_ACTIVE && $membership->state == OG_STATE_ACTIVE) {
+        _civicrm_og_sync_group_action($membership, 'add');
+    }
+    if ($membership->original->state != OG_STATE_BLOCKED && $membership->state == OG_STATE_BLOCKED) {
+        _civicrm_og_sync_group_action($membership, 'remove');
+    }
+}
+
+function civicrm_og_sync_og_membership_delete( $membership ) {
     _civicrm_og_sync_group_action($membership, 'remove');
-  }
 }
 
-function civicrm_og_sync_og_membership_delete($membership) {
-  _civicrm_og_sync_group_action($membership, 'remove');
-}
+function civicrm_og_sync_civicrm_post( $op, $objectName, $objectID, $objectRef ) {
+    //If this is called, we need to ignore hook_og.
+    if ( _civicrm_og_sync_skip_process_request( ) ) {
+        return;
+    }
+    
+    require_once 'CRM/Bridge/OG/Utils.php';
+    if ( ! CRM_Bridge_OG_Utils::syncFromCiviCRM( ) ) {
+        return;
+    }
+    
+    _civicrm_og_sync_skip_process_request(true);
 
-function civicrm_og_sync_civicrm_post($op, $objectName, $objectID, $objectRef) {
-  //If this is called, we need to ignore hook_og.
-  if (_civicrm_og_sync_skip_process_request()) {
-    return;
-  }
-
-  require_once 'CRM/Bridge/OG/Utils.php';
-  if (!CRM_Bridge_OG_Utils::syncFromCiviCRM()) {
-    return;
-  }
-
-  _civicrm_og_sync_skip_process_request(TRUE);
-
-  switch ($objectName) {
+    switch ( $objectName ) {
     case 'Group':
-      require_once 'CRM/Bridge/OG/CiviCRM.php';
-      switch ($op) {
+        require_once 'CRM/Bridge/OG/CiviCRM.php';
+        switch ( $op ) {
         case 'create':
         case 'edit':
-          //We have created a CiviCRM group, but if no OG exists,
-          //we *do not* create one.
-          //CRM_Bridge_OG_CiviCRM::group( $objectID, $objectRef, 'add' );
-          break;
-
+            //We have created a CiviCRM group, but if no OG exists,
+            //we *do not* create one.
+            //CRM_Bridge_OG_CiviCRM::group( $objectID, $objectRef, 'add' );
+            break;
+            
         case 'delete':
-          //This is a corner case.  Actually, we should
-          //try to make sure that the group delete *fails* on the
-          //CiviCRM side, but that will be done later, if hook_pre
-          //even makes this possible.
-
-          //TODO: block CRM group deletes if an OG exists for it.
-          //CRM_Bridge_OG_CiviCRM::group( $objectID, $objectRef, 'delete' );
-          break;
-
+            //This is a corner case.  Actually, we should
+            //try to make sure that the group delete *fails* on the
+            //CiviCRM side, but that will be done later, if hook_pre
+            //even makes this possible.
+            
+            //TODO: block CRM group deletes if an OG exists for it.
+            //CRM_Bridge_OG_CiviCRM::group( $objectID, $objectRef, 'delete' );
+            break;
+            
         default:
-          break;
-      }
-      break;
-
+            break;
+        }
+        break;
+        
     case 'GroupContact':
-      require_once 'CRM/Bridge/OG/CiviCRM.php';
-      switch ($op) {
+        require_once 'CRM/Bridge/OG/CiviCRM.php';
+        switch ( $op ) {
         case 'create':
         case 'edit':
-          CRM_Bridge_OG_CiviCRM::groupContact($objectID, $objectRef, 'add');
-          break;
-
+            CRM_Bridge_OG_CiviCRM::groupContact( $objectID, $objectRef, 'add' );
+            break;
+            
         case 'delete':
-          CRM_Bridge_OG_CiviCRM::groupContact($objectID, $objectRef, 'delete');
-          break;
-
+            CRM_Bridge_OG_CiviCRM::groupContact( $objectID, $objectRef, 'delete' );
+            break;
+            
         default:
-          break;
-      }
-      break;
-
+            break;
+        }
+        break;
+        
     default:
-      break;
-  }
+        break;
+    }        
 }
 
 /**
  * Implemenation of hook_enable.  Use to synchronise with pre-existing groups
- *
  * @return
  */
 function civicrm_og_sync_enable() {
-  if (!civicrm_initialize()) {
-    return;
-  }
-
-  $ogGroupIds = og_get_group_ids('node');
-
-  // FIX ME
-  $subscribers = array();
-  // $subscribers = og_get_group_ids('user');
-
-  foreach ($ogGroupIds as $nid => $gid) {
-    $node = node_load($nid);
-    $title = trim($node->title);
-    // length of 49 so that the admin group can fit ': administrator' afterwards within 64 char field
-    $params = array('name' => substr(trim($title), 0, 49),
-      'title' => $title,
-      'is_active' => 1,
-      'og_id' => $gid,
-    );
-
-    _civicrm_og_sync_skip_process_request(TRUE);
-
-    // add the group
-    require_once 'CRM/Bridge/OG/Drupal.php';
-    CRM_Bridge_OG_Drupal::nodeapi($params, 'add');
-
-    // add the subscribers
-    foreach ($subscribers as $uid) {
-      $is_admin = FALSE;
-      if ($uid == $node->uid) {
-        $is_admin = TRUE;
-      }
-
-      $addToGroupParams = array('og_id' => $gid,
-        'uf_id' => $uid,
-        'is_active' => 1,
-        'is_admin' => $is_admin,
-      );
-
-      // add contact in group
-      CRM_Bridge_OG_Drupal::og($addToGroupParams, 'add');
+    if ( ! civicrm_initialize( ) ) {
+        return;
     }
-  }
+          
+    $ogGroupIds  =  og_get_group_ids('node');
+    
+    // FIX ME
+    $subscribers = array( ); 
+    // $subscribers = og_get_group_ids('user');
+
+    foreach( $ogGroupIds as $nid => $gid ) {
+        $node = node_load( $nid );
+        $title  = trim( $node->title );
+        $params = array( 'name'        => substr(trim($title),0,49),// length of 49 so that the admin group can fit ': administrator' afterwards within 64 char field
+                         'title'       => $title,
+                         'is_active'   => 1,
+                         'og_id'       => $gid );
+        
+        _civicrm_og_sync_skip_process_request( true );
+
+        // add the group
+        require_once 'CRM/Bridge/OG/Drupal.php';
+        CRM_Bridge_OG_Drupal::nodeapi( $params, 'add' );
+        
+        // add the subscribers
+        foreach($subscribers as $uid ) {
+            $is_admin = false;
+            if ( $uid == $node->uid ) $is_admin = true;
+
+            $addToGroupParams = array( 'og_id'     => $gid,
+                                       'uf_id'     => $uid,
+                                       'is_active' => 1,
+                                       'is_admin'  => $is_admin,
+                                       );
+            
+            // add contact in group
+            CRM_Bridge_OG_Drupal::og( $addToGroupParams, 'add' );
+        }
+    }
 }
 
 /*
  *Update or Add node 
  */
-function _civicrm_og_sync_node_action($node) {
-  if (!_civicrm_og_sync_check_isvalid($node)) {
-    return;
-  }
-
-  $title = trim($node->title);
-  if ($group = og_get_group('node', $node->nid)) {
-    if (empty($group->gid)) {
-      return;
+function _civicrm_og_sync_node_action( $node ) {
+    if ( !_civicrm_og_sync_check_isvalid( $node ) ) {
+        return;
     }
-    $params = array('name' => $title,
-      'title' => $title,
-      'is_active' => 1,
-      'og_id' => $group->gid,
-    );
 
-    require_once 'CRM/Bridge/OG/Drupal.php';
+    $title  = trim( $node->title );
+    if ( $group = og_get_group('node', $node->nid) ) {
+        if ( empty($group->gid) ) {
+            return;
+        }
+        $params = array( 'name'        => $title,
+                         'title'       => $title,
+                         'is_active'   => 1,
+                         'og_id'       => $group->gid );
+        
+        require_once 'CRM/Bridge/OG/Drupal.php'; 
+        
+        CRM_Bridge_OG_Drupal::nodeapi( $params, 'add' );
 
-    CRM_Bridge_OG_Drupal::nodeapi($params, 'add');
+        _civicrm_og_sync_skip_process_request( true );
 
-    _civicrm_og_sync_skip_process_request(TRUE);
+        // also call the user hook since OG does not for admin        
+        $params = array( 'og_id'     => $group->gid,
+                         'uf_id'     => $node->uid,
+                         'is_active' => 1,
+                         'is_admin'  => 1,
+                         );
 
-    // also call the user hook since OG does not for admin
-    $params = array('og_id' => $group->gid,
-      'uf_id' => $node->uid,
-      'is_active' => 1,
-      'is_admin' => 1,
-    );
-
-    CRM_Bridge_OG_Drupal::og($params, 'add');
-  }
+        CRM_Bridge_OG_Drupal::og( $params, 'add' );
+        
+    }
 }
 
-function _civicrm_og_sync_group_action($membership, $op = 'add') {
-  if ($membership->entity_type != 'user' || !civicrm_initialize() || _civicrm_og_sync_skip_process_request()) {
-    return;
-  }
+function _civicrm_og_sync_group_action( $membership, $op = 'add' ) {
+    if ($membership->entity_type != 'user' || !civicrm_initialize() || _civicrm_og_sync_skip_process_request()) {
+        return;
+    }
+    
+    require_once 'CRM/Bridge/OG/Drupal.php';
+    $group = og_load($membership->gid);
+    
+    _civicrm_og_sync_skip_process_request( true );
 
-  require_once 'CRM/Bridge/OG/Drupal.php';
-  $group = og_load($membership->gid);
+    // add node
+    $createGroupParams = array('og_id' => $group->gid,
+                               'title' => $group->label,
+                               'name'  => substr(trim($group->label),0,49),// length of 49 so that the admin group can fit ': administrator' afterwards within 64 char field
+                               'is_active'=> 1,
+                               );
+    
+    CRM_Bridge_OG_Drupal::nodeapi( $createGroupParams, 'add' );
+        
+    $addToGroupParams = array( 'og_id'     => $membership->gid,
+                               'uf_id'     => $membership->etid,
+                               'is_active' => 1,
+                               'is_admin'  => 0,
+                               );
+    
+    // add contact in group
+    CRM_Bridge_OG_Drupal::og( $addToGroupParams, $op );
 
-  _civicrm_og_sync_skip_process_request(TRUE);
-
-  // add node
-  $createGroupParams = array('og_id' => $group->gid,
-    'title' => $group->label,
-    // length of 49 so that the admin group can fit ': administrator' afterwards within 64 char field
-    'name' => substr(trim($group->label), 0, 49),
-    'is_active' => 1,
-  );
-
-  CRM_Bridge_OG_Drupal::nodeapi($createGroupParams, 'add');
-
-  $addToGroupParams = array('og_id' => $membership->gid,
-    'uf_id' => $membership->etid,
-    'is_active' => 1,
-    'is_admin' => 0,
-  );
-
-  // add contact in group
-  CRM_Bridge_OG_Drupal::og($addToGroupParams, $op);
 }
 
 /*
  *Check for context ,node type & civicrm initialization
  */
-function _civicrm_og_sync_check_isvalid($node) {
-
-  // check if the node if of type og
-  if (!og_is_group_type('node', $node->type)) {
-    return FALSE;
-  }
-
-  if (!civicrm_initialize()) {
-    return FALSE;
-  }
-  return TRUE;
+function _civicrm_og_sync_check_isvalid( $node ){
+    
+    // check if the node if of type og
+    if ( ! og_is_group_type( 'node', $node->type ) ) {
+        return false;
+    }
+    
+    if ( ! civicrm_initialize( ) ) {
+        return false;
+    }  
+    return true;
 }
 
-function _civicrm_og_sync_skip_process_request($skip = FALSE) {
-  static $_process_request;
-  if ($skip) {
-    $_process_request = $skip;
-  }
-  return $_process_request;
+function _civicrm_og_sync_skip_process_request($skip = false) {
+    static $_process_request;
+    if ( $skip ) {
+        $_process_request = $skip;
+    }
+    return $_process_request;
 }
-

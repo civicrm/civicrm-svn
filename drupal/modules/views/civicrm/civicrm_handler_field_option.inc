@@ -29,18 +29,18 @@
  * @ingroup civicrm_field_handlers
  */
 class civicrm_handler_field_option extends civicrm_handler_field {
-  static $_options;
-  function render($values) {
-    $this->initialize();
+    static $_options;
 
-    $id = $values->{$this->field_alias};
-    if (empty($id) ||
-      (int ) $id <= 0
-    ) {
-      return NULL;
+    function render( $values ) {
+        $this->initialize( );
+
+        $id = $values->{$this->field_alias};
+        if ( empty( $id ) ||
+             (int ) $id <= 0 ) {
+            return null;
+        }
+
+        return self::$_options[$values->{$this->field_alias}];
     }
-
-    return self::$_options[$values->{$this->field_alias}];
-  }
 }
-
+?>

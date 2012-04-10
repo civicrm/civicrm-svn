@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,31 +26,28 @@
  +--------------------------------------------------------------------+
 */
 
-
 require_once '../civicrm.config.php';
-require_once 'CRM/Core/Config.php';
-require_once 'CRM/Utils/Request.php';
-$config = CRM_Core_Config::singleton();
+require_once 'CRM/Core/Config.php'; 
+require_once 'CRM/Utils/Request.php'; 
+$config = CRM_Core_Config::singleton(); 
 
-CRM_Utils_System::authenticateScript(TRUE);
+CRM_Utils_System::authenticateScript( true );
 
-$job = CRM_Utils_Request::retrieve('job', 'String', CRM_Core_DAO::$_nullArray, FALSE, NULL, 'REQUEST');
+$job = CRM_Utils_Request::retrieve( 'job', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
 
 require_once 'CRM/Core/JobManager.php';
 $facility = new CRM_Core_JobManager();
 
-if ($job === NULL) {
-  $facility->execute();
-}
-else {
-  $ignored = array("name", "pass", "key", "job");
-  $params = array();
-  foreach ($_REQUEST as $name => $value) {
-    if (!in_array($name, $ignored)) {
-      $params[$name] = CRM_Utils_Request::retrieve($name, 'String', CRM_Core_DAO::$_nullArray, FALSE, NULL, 'REQUEST');
+if( $job === null ) {
+    $facility->execute();
+} else {
+    $ignored = array( "name", "pass", "key", "job" );
+    $params = array();
+    foreach( $_REQUEST as $name => $value ) {
+        if( ! in_array( $name, $ignored ) ) {
+            $params[$name] = CRM_Utils_Request::retrieve( $name, 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
+        }
     }
-  }
-  $facility->setSingleRunParams('job', $job, $params, 'From cron.php');
-  $facility->executeJobByAction('job', $job);
+    $facility->setSingleRunParams( 'job', $job, $params, 'From cron.php' );
+    $facility->executeJobByAction( 'job', $job );
 }
-

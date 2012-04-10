@@ -226,13 +226,5 @@
     <fieldName>custom_group_id</fieldName>
     <unique>true</unique>
     <add>1.1</add>
-    <drop>4.1</drop>
-  </index>
-  <index>
-    <name>UI_name_custom_group_id</name>
-    <fieldName>name</fieldName>
-    <fieldName>custom_group_id</fieldName>
-    <unique>true</unique>
-    <add>4.1</add>
   </index>
 </table>

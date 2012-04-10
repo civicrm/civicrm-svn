@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -34,24 +35,24 @@
  */
 
 require_once 'civicrm_rules_utils.inc';
-function civicrm_rules_condition_event_node(&$entityobj, $roleID, $field) {
-  //just a hack for our site
-  //SELECT * FROM `content_type_og_node` WHERE `field_civicrm_event_value` =993
-  $sql = "SELECT * FROM `content_type_og_node` WHERE `field_civicrm_event_value` = $entityobj->id";
-  $nid = db_result(db_query($sql));
-  return $entityobj->id == $nid ? TRUE : FALSE;
+
+function civicrm_rules_condition_event_node(&$entityobj,$roleID,$field) {
+    //just a hack for our site
+    //SELECT * FROM `content_type_og_node` WHERE `field_civicrm_event_value` =993
+    $sql = "SELECT * FROM `content_type_og_node` WHERE `field_civicrm_event_value` = $entityobj->id"; 
+    $nid = db_result(db_query($sql));
+    return $entityobj->id == $nid  ? true : false;
 }
 
 /**
  * Condition civicrm_event type
  */
 function civicrm_rules_condition_event_type($entityobj, $eventTypes) {
-  if (!isset($eventTypes[$entityobj->event_type_id]) ||
-    empty($eventTypes[$entityobj->event_type_id])
-  ) {
-    return FALSE;
-  }
-  return TRUE;
+    if ( !isset($eventTypes[$entityobj->event_type_id]) || 
+         empty($eventTypes[$entityobj->event_type_id]) ) {
+        return false;
+    }
+    return true;
 }
 
 /**
@@ -59,37 +60,35 @@ function civicrm_rules_condition_event_type($entityobj, $eventTypes) {
  * @todo this should either move into an event specific file or be more generic
  */
 function civicrm_rules_events_argument_civicrm_event($eventobj) {
-  if (!isset($eventobj['event'])) {
-    return;
-  }
-  static $result;
-  static $contact;
-
-  if (empty($result) || empty($contact)) {
-    $event = $eventobj['event'];
-    //todo BAO POST hook leaves created_id blank, the api call is a work-around for now
-    if (empty($event->created_id)) {
-      require_once 'api/api.php';
-      $result = civicrm_api('Event', 'get', array('version' => 3, 'id' => $event->id, 'sequential' => 1));
-      if (!CRM_Utils_Array::value('is_error', $result) && CRM_Utils_Array::value('created_id', $result['values'][0])) {
-        $contact = civicrm_api('UFMatch', 'get', array('version' => 3, 'contact_id' => $result['values'][0]['created_id'], 'sequential' => 1));
-      }
+    if ( !isset($eventobj['event']) ) {
+        return;
     }
-    else {
-      $contact = civicrm_api('UFMatch', 'get', array('version' => 3, 'contact_id' => $event->created_id, 'sequential' => 1));
-    }
-  }
+    static $result;
+    static $contact;
 
-  if (!empty($contact) && !CRM_Utils_Array::value('is_error', $result) && is_numeric($contact['values'][0]['uf_id'])) {
-    return $contact['values'][0]['uf_id'];
-  }
-  return NULL;
+    if (empty($result) || empty($contact)) {
+        $event = $eventobj['event'];
+        //todo BAO POST hook leaves created_id blank, the api call is a work-around for now 
+        if (empty($event->created_id)){
+            require_once 'api/api.php';
+            $result = civicrm_api('Event','get',array('version' => 3,'id' => $event->id, 'sequential' =>1));
+            if ( !CRM_Utils_Array::value('is_error', $result) && CRM_Utils_Array::value('created_id', $result['values'][0]) ) {
+                $contact = civicrm_api('UFMatch','get',array('version' => 3,'contact_id' => $result['values'][0]['created_id'], 'sequential' =>1)); 
+            }
+        } else {
+            $contact = civicrm_api('UFMatch','get',array('version' => 3,'contact_id' => $event->created_id, 'sequential' =>1));  
+        }
+    }
+
+    if(!empty($contact) && !CRM_Utils_Array::value('is_error', $result) && is_numeric($contact['values'][0]['uf_id'])) {
+        return $contact['values'][0]['uf_id'];
+    }
+    return null;
 }
 
 /**
  * Event type options
  */
-function civicrm_rules_get_event_type_options() {
-  return civicrm_rules_get_options('event_type');
+function civicrm_rules_get_event_type_options( ) {
+    return civicrm_rules_get_options( 'event_type' );
 }
-

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -32,21 +33,21 @@
  * $Id$
  *
  */
-function run() {
-  session_start();
 
-  require_once '../../civicrm.config.php';
-  require_once 'CRM/Core/Config.php';
-  $config = CRM_Core_Config::singleton();
+function run( ) {
+    session_start( );
 
-  // this does not return on failure
-  // CRM_Utils_System::authenticateScript( true );
+    require_once '../../civicrm.config.php';
+    require_once 'CRM/Core/Config.php'; 
+    $config = CRM_Core_Config::singleton( );
 
-  require_once 'CRM/Utils/Migrate/ImportJSON.php';
-  $import = new CRM_Utils_Migrate_ImportJSON();
+    // this does not return on failure
+    // CRM_Utils_System::authenticateScript( true );
 
-  $import->run('/tmp/export.json');
+    require_once 'CRM/Utils/Migrate/ImportJSON.php';
+    $import = new CRM_Utils_Migrate_ImportJSON( );
+
+    $import->run( '/tmp/export.json' );
 }
 
-run();
-
+run( );

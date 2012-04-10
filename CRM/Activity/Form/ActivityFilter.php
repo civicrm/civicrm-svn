@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,18 +34,19 @@
  *
  */
 
+
 /**
  * This class generates form components for Activity Filter
- *
+ * 
  */
-class CRM_Activity_Form_ActivityFilter extends CRM_Core_Form {
-  public function buildQuickForm() {
-    // add activity search filter
-    $activityOptions = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE);
-    asort($activityOptions);
-
-    $this->add('select', 'activity_type_filter_id', ts('Activity Type'), array('' => ts('- all activity type(s) -')) + $activityOptions);
-    $this->assign('suppressForm', TRUE);
-  }
+class CRM_Activity_Form_ActivityFilter extends CRM_Core_Form
+{
+    public function buildQuickForm( ) {
+        // add activity search filter
+        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true, false, 'label', true );
+        asort( $activityOptions );
+        
+        $this->add('select', 'activity_type_filter_id',  ts( 'Activity Type' ), array( '' => ts( '- all activity type(s) -' ) ) +  $activityOptions );
+        $this->assign( 'suppressForm', true );
+    }
 }
-

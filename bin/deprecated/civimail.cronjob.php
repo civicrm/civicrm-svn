@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,35 +34,34 @@
  * script and hence does not have any UF issues. You should be able to run
  * this script using a web url or from the command line
  */
-function run() {
-  session_start();
 
-  if (!function_exists('drush_get_context')) {
-    require_once '../civicrm.config.php';
-  }
+function run( ) {
+    session_start( );                               
+                                            
+    if (! function_exists( 'drush_get_context' ) ) {
+        require_once '../civicrm.config.php'; 
+    }
 
-  require_once 'CRM/Core/Config.php';
-  $config = CRM_Core_Config::singleton();
+    require_once 'CRM/Core/Config.php'; 
+    $config = CRM_Core_Config::singleton(); 
 
-  // this does not return on failure
-  CRM_Utils_System::authenticateScript(TRUE);
+    // this does not return on failure
+    CRM_Utils_System::authenticateScript( true );
 
-  // we now use DB locks on a per job basis
-  require_once 'CRM/Mailing/BAO/Mailing.php';
-  CRM_Mailing_BAO_Mailing::processQueue();
+    // we now use DB locks on a per job basis
+    require_once 'CRM/Mailing/BAO/Mailing.php';
+    CRM_Mailing_BAO_Mailing::processQueue( );
 }
 
 // you can run this program either from an apache command, or from the cli
-if (php_sapi_name() == "cli") {
+if ( php_sapi_name() == "cli" ) {
   require_once ("bin/cli.php");
-  $cli = new civicrm_cli();
+  $cli=new civicrm_cli ();
 
   require_once 'CRM/Mailing/BAO/Mailing.php';
-  CRM_Mailing_BAO_Mailing::processQueue();
+  CRM_Mailing_BAO_Mailing::processQueue( );
 
-  // from the webserver
-}
-else {
-  run();
+} else  { //from the webserver
+  run( );
 }
 

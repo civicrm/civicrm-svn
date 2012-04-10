@@ -23,8 +23,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-
 /*
  * Heavily based on anonymous code contribution. No claim.
  * CiviCRM Views Integration
@@ -32,28 +30,31 @@
  * Filters Prefix, and is configured using the labels from the database
  *
  */
+
 class civicrm_handler_filter_prefix extends views_handler_filter_in_operator {
-  static $_individualPrefix;
-  function construct() {
-    parent::construct();
-    if (!self::$_individualPrefix) {
-      if (!civicrm_initialize()) {
-        return;
-      }
-      require_once 'CRM/Core/PseudoConstant.php';
-      self::$_individualPrefix = CRM_Core_PseudoConstant::individualPrefix();
-    }
-  }
+    static $_individualPrefix;
 
-  function get_value_options() {
-    if (!isset($this->value_options)) {
-      $this->value_title = t('Prefix');
-      $options = array();
-      foreach (self::$_individualPrefix as $id => $name) {
-        $options[$id] = $name;
-      }
-      $this->value_options = $options;
+    function construct( ) {
+        parent::construct();
+        if ( ! self::$_individualPrefix ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/PseudoConstant.php';
+            self::$_individualPrefix = CRM_Core_PseudoConstant::individualPrefix( );
+        }
     }
-  }
+
+    function get_value_options() {
+        if (!isset($this->value_options)) {
+            $this->value_title = t('Prefix');
+            $options = array( );
+            foreach (self::$_individualPrefix as $id => $name ) {
+                $options[$id] = $name;
+            }
+            $this->value_options = $options;
+        }
+    }
+
 }
-
+?>

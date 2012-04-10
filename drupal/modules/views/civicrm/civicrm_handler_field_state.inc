@@ -29,51 +29,49 @@
  * @ingroup civicrm_field_handlers
  */
 class civicrm_handler_field_state extends civicrm_handler_field_address {
-  static $_states;
-  static $_states_full;
-  function construct() {
-    parent::construct();
-    if (!self::$_states || !self::$_states_full) {
-      if (!civicrm_initialize()) {
-        return;
-      }
-      require_once 'CRM/Core/PseudoConstant.php';
-      self::$_states = CRM_Core_PseudoConstant::stateProvinceAbbreviation();
-      self::$_states_full = CRM_Core_PseudoConstant::stateProvince();
-    }
-  }
-
-  function render($values) {
-    $sid = $values->{$this->field_alias};
-    if (empty($sid) ||
-      (int ) $sid <= 0
-    ) {
-      return NULL;
+    static $_states;
+    static $_states_full;
+    
+    function construct( ) {
+        parent::construct();
+        if ( ! self::$_states || ! self::$_states_full) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/PseudoConstant.php';
+            self::$_states = CRM_Core_PseudoConstant::stateProvinceAbbreviation( );
+            self::$_states_full = CRM_Core_PseudoConstant::stateProvince( );
+        }
     }
 
-    if ($this->options['prov_display'] == 1) {
-      return self::$_states[$values->{$this->field_alias}];
+    function render( $values ) {
+        $sid = $values->{$this->field_alias};
+        if ( empty( $sid ) ||
+             (int ) $sid <= 0 ) {
+            return null;
+        }
+        
+        if ( $this->options['prov_display'] == 1 ) {
+            return self::$_states[$values->{$this->field_alias}];
+        } else {
+            return self::$_states_full[$values->{$this->field_alias}];
+        }
     }
-    else {
-      return self::$_states_full[$values->{$this->field_alias}];
+    
+    function option_definition() {
+        $options = parent::option_definition();
+        $options['prov_display'] = array('default' => '');
+        return $options;
     }
-  }
-
-  function option_definition() {
-    $options = parent::option_definition();
-    $options['prov_display'] = array('default' => '');
-    return $options;
-  }
-
-  function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
-    $form['prov_display'] = array(
-      '#type' => 'radios',
-      '#title' => 'Display complete name or abbreviation',
-      '#options' => array(1 => 'Display state/province abbreviations', 2 => 'Display full state/province name'),
-      '#description' => t('Display full or abbreviated province name'),
-      '#default_value' => $this->options['prov_display'],
-    );
-  }
+    
+    function options_form(&$form, &$form_state) {
+        parent::options_form($form, $form_state);
+        $form['prov_display'] = array(
+                                      '#type' => 'radios',
+                                      '#title' => 'Display complete name or abbreviation',
+                                      '#options' => array(1 => 'Display state/province abbreviations', 2 => 'Display full state/province name'),
+                                      '#description' => t('Display full or abbreviated province name'),
+                                      '#default_value' => $this->options['prov_display']
+                                      );
+    }
 }
-

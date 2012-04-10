@@ -23,8 +23,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-
 /*
  *
  * civicrm_handler_field_link_pcp.inc
@@ -38,7 +36,6 @@
  * Field handler to provide simple renderer that allows linking to various pages involving the PCP.
  */
 class civicrm_handler_field_link_pcp extends views_handler_field {
-
   /**
    * Constructor to provide additional field to add.
    */
@@ -54,59 +51,58 @@ class civicrm_handler_field_link_pcp extends views_handler_field {
     return $options;
   }
 
+
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     $form['link_to_civicrm_pcp'] = array(
       '#type' => 'select',
       '#title' => t('Choose which kind of link to create'),
       '#options' => array(
-        'view' => t('Link to View Personal Campaign Page'),
-        'contribute' => t('Link to Make Contribution via Personal Campaign Page'),
-      ),
+         'view' => t('Link to View Personal Campaign Page'),
+         'contribute' => t('Link to Make Contribution via Personal Campaign Page'),
+         ),
       '#default_value' => $this->options['link_to_civicrm_pcp'],
     );
   }
+
 
   function render_link($data, $values) {
 
     $link_choice = $this->options['link_to_civicrm_pcp'];
 
     switch ($link_choice) {
-
-      /*
+      
+    /*
      * LINKING TO PCP VIEW PAGE - this provides a URL for users to use however they like in their view
      * (e.g., exclude this field from view and output the Title of the PCP as a link, using Views'
      * replacement patterns to supply the link path
      */
-
       case 'view':
-        // why bother displaying PCP pages if the user can't follow through with a donation?
-        if (user_access('make online contributions')) {
-          return civicrm_views_url(
-            'civicrm/pcp/info',
-            "reset=1&id={$values->id}",
-            // results in an absolute URL
-            TRUE
-          );
-        }
+          // why bother displaying PCP pages if the user can't follow through with a donation?
+          if ( user_access('make online contributions') ) {
+            return civicrm_views_url(
+              'civicrm/pcp/info',
+              "reset=1&id={$values->id}",
+              TRUE // results in an absolute URL
+            );
+          }
 
-        /*
+    /*
      * LINKING TO PCP CONTRIBUTION PAGE - this provides a URL for users to use however they like in their view
      * (e.g., exclude this field from view and output the Text For Donate Link of the PCP as a link, using Views'
      * replacement patterns to supply the link path
      */
       case 'contribute':
-        if (user_access('make online contributions')) {
-          return civicrm_views_url(
-            'civicrm/contribute/transact',
-            "id={$values->civicrm_pcp_contribution_page_id}&pcpId={$values->id}&reset=1",
-            // results in an absolute URL
-            TRUE
-          );
-        }
+          if ( user_access('make online contributions') ) {
+            return civicrm_views_url(
+              'civicrm/contribute/transact',
+              "id={$values->civicrm_pcp_contribution_page_id}&pcpId={$values->id}&reset=1",
+              TRUE // results in an absolute URL
+            );
+          }
     }
   }
-
+  
   function query() {
     $this->ensure_my_table();
     $this->add_additional_fields();
@@ -116,4 +112,3 @@ class civicrm_handler_field_link_pcp extends views_handler_field {
     return $this->render_link(check_plain($values->{$this->field_alias}), $values);
   }
 }
-

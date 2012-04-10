@@ -1,5 +1,5 @@
 <?php
-/*
+  /*
    +--------------------------------------------------------------------+
    | CiviCRM version 4.0                                                |
    +--------------------------------------------------------------------+
@@ -29,44 +29,48 @@
    * based on civicrm_handler_filter_custom_option and civicrm_handler_filter_country
    */
 class civicrm_handler_filter_country_multi extends views_handler_filter_in_operator {
-  function construct() {
-    parent::construct();
-    if (!civicrm_initialize()) {
-      return;
-    }
-  }
 
-  function get_value_options() {
-    if (!isset($this->value_options)) {
-      require_once 'CRM/Core/PseudoConstant.php';
-      $countries = CRM_Core_PseudoConstant::country();
-      $options = array();
-      if (is_array($countries)) {
-        foreach ($countries as $id => $name) {
-          $options[$id] = $name;
+    function construct( ) {
+        parent::construct();
+        if ( ! civicrm_initialize( ) ) {
+            return;
         }
-      }
-      $this->value_options = $options;
-    }
-  }
-
-  function op_simple() {
-    if (empty($this->value)) {
-      return;
     }
 
-    $this->ensure_my_table();
-
-    $sep = CRM_Core_DAO::VALUE_SEPARATOR;
-
-    // negated operator uses AND, positive uses OR
-    $op = ($this->operator == 'in') ? 'LIKE' : 'NOT LIKE';
-    $glue = ($this->operator == 'in') ? 'OR ' : 'AND ';
-    foreach ($this->value as $value) {
-      $clauses[] = "$this->table_alias.$this->real_field " . $op . " '%" . $sep . $value . $sep . "%' ";
+    function get_value_options() {
+        if (!isset($this->value_options)) {
+            require_once 'CRM/Core/PseudoConstant.php';
+            $countries = CRM_Core_PseudoConstant::country( );
+            $options = array( );
+            if (is_array($countries)) {
+                foreach ($countries as $id => $name ) {
+                    $options[$id] = $name;
+                }
+            }
+            $this->value_options = $options;
+        }
     }
-    $clause = implode($glue, $clauses);
-    $this->query->add_where_expression($this->options['group'], $clause);
-  }
+
+
+    function op_simple() {
+        if (empty($this->value)) {
+            return;
+        }
+        
+        $this->ensure_my_table();
+        
+        $sep = CRM_Core_DAO::VALUE_SEPARATOR;
+        
+        // negated operator uses AND, positive uses OR
+        $op = ($this->operator == 'in') ? 'LIKE' : 'NOT LIKE';
+        $glue = ($this->operator == 'in') ? 'OR ' : 'AND ';
+        foreach ($this->value as $value){
+            $clauses[] = "$this->table_alias.$this->real_field " . $op . " '%" . $sep . $value . $sep . "%' ";
+        }
+        $clause = implode($glue, $clauses);
+        $this->query->add_where_expression($this->options['group'], $clause);
+    }
+
 }
+
 

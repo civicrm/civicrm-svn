@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,9 +25,9 @@
  +--------------------------------------------------------------------+
 */
 
+require_once('cli.class.php');
+$cli = new civicrm_Cli( );
+$cli->initialize( ) || die(  );
+$cli->callApi( ) || die(  );
 
-require_once ('cli.class.php');
-$cli = new civicrm_Cli();
-$cli->initialize() || die();
-$cli->callApi() || die();
 

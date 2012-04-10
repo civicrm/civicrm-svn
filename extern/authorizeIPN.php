@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,15 +26,15 @@
  +--------------------------------------------------------------------+
 */
 
-/**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
- * $Id$
- *
- */
+/** 
+ * 
+ * @package CRM 
+ * @copyright CiviCRM LLC (c) 2004-2011 
+ * $Id$ 
+ * 
+ */ 
 
-session_start();
+session_start( );
 
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
@@ -41,6 +42,6 @@ require_once 'CRM/Core/Config.php';
 $config = CRM_Core_Config::singleton();
 
 require_once 'CRM/Core/Payment/AuthorizeNetIPN.php';
-$authorizeNetIPN = new CRM_Core_Payment_AuthorizeNetIPN();
-$authorizeNetIPN->main();
+$authorizeNetIPN = new CRM_Core_Payment_AuthorizeNetIPN( );
+$authorizeNetIPN->main( );
 

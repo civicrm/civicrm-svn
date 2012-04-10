@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,19 +26,18 @@
  +--------------------------------------------------------------------+
 */
 
-/**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
- * $Id$
- *
- */
+/** 
+ * 
+ * @package CRM 
+ * @copyright CiviCRM LLC (c) 2004-2011 
+ * $Id$ 
+ * 
+ */ 
 
-session_start();
+session_start( );
 
 require_once '../civicrm.config.php';
 $config = CRM_Core_Config::singleton();
 
-$provider = CRM_SMS_Provider::singleton($_REQUEST);
-$provider->inbound();
-
+$provider = CRM_SMS_Provider::singleton( $_REQUEST );
+$provider->inbound( );

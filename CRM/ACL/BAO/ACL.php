@@ -120,8 +120,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
 
     /* Include clause if we're looking for a specific table/id permission */
 
-
-
     if (!empty($object_table)) {
       $where .= " AND ( {$t['ACL']}.object_table IS null
                          OR ({$t['ACL']}.object_table   = '" . CRM_Utils_Type::escape($object_table, 'String') . "'";
@@ -133,8 +131,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
     }
 
     /* Include clause if we're granting an ACL or ACL Role */
-
-
 
     if (!empty($acl_id)) {
       $where .= " AND ({$t['ACL']}.acl_id IS null 
@@ -151,8 +147,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
 
     /* Query for permissions granted to all contacts in the domain */
 
-
-
     $query[] = "SELECT      {$t['ACL']}.*, 0 as override
                     FROM        {$t['ACL']}
                     
@@ -160,8 +154,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
                             AND ($where)";
 
     /* Query for permissions granted to all contacts through an ACL group */
-
-
 
     $query[] = "SELECT      {$t['ACL']}.*, 0 as override
                     FROM        {$t['ACL']}
@@ -182,8 +174,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
 
     /* Query for permissions granted directly to the contact */
 
-
-
     $query[] = "SELECT      {$t['ACL']}.*, 1 as override
                     FROM        {$t['ACL']}
                     
@@ -195,8 +185,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
                             AND ($where)";
 
     /* Query for permissions granted to the contact through an ACL group */
-
-
 
     $query[] = "SELECT      {$t['ACL']}.*, 1 as override
                     FROM        {$t['ACL']}
@@ -217,8 +205,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
 
     /* Query for permissions granted to the contact through a group */
 
-
-
     $query[] = "SELECT      {$t['ACL']}.*, 0 as override
                     FROM        {$t['ACL']}
                     
@@ -234,8 +220,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
 
     /* Query for permissions granted through an ACL group to a Contact
          * group */
-
-
 
     $query[] = "SELECT      {$t['ACL']}.*, 0 as override
                     FROM        {$t['ACL']}
@@ -274,8 +258,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
              * 3) the rule governs the specific object we want
              */
 
-
-
       if (empty($dao->object_table) ||
         ($dao->object_table == $object_table
           && (empty($dao->object_id)
@@ -288,8 +270,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
       else {
         /* Otherwise try to generate a clause for this rule */
 
-
-
         $clause = self::getClause(
           $dao->object_table, $dao->object_id, $tables
         );
@@ -298,8 +278,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
                  * (id is null) on a table other than the one we're interested
                  * in.  So skip it. */
 
-
-
         if (empty($clause)) {
           continue;
         }
@@ -307,8 +285,6 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
 
       /* Now we figure out if this is an allow or deny rule, and possibly
              * a contact-level override */
-
-
 
       if ($dao->deny) {
         $deny[] = $clause;
@@ -652,13 +628,9 @@ SELECT $acl.*
 
     /* First, the contact-specific ACLs, including ACL Roles */
 
-
-
     $result += self::getACLs($contact_id, NULL, TRUE);
 
     /* Then, all ACLs granted through group membership */
-
-
 
     $result += self::getGroupACLs($contact_id, TRUE);
 

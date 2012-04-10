@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                               |
@@ -25,44 +26,47 @@
  +--------------------------------------------------------------------+
 */
 
-
 /*
  */
+
 class CRM_Cron_Action {
-  function __construct() {
-    // you can run this program either from an apache command, or from the cli
-    if (php_sapi_name() == "cli") {
-      require_once ("cli.php");
-      $cli = new civicrm_cli();
-      //if it doesn't die, it's authenticated
+    
+    function __construct() 
+    {
+        // you can run this program either from an apache command, or from the cli
+        if ( php_sapi_name( ) == "cli" ) {
+            require_once ("cli.php");
+            $cli = new civicrm_cli ( );
+            //if it doesn't die, it's authenticated
+        } else { 
+            //from the webserver
+            $this->initialize( );
+          
+            $config = CRM_Core_Config::singleton();
+           
+            // this does not return on failure
+            CRM_Utils_System::authenticateScript( true );
+            
+            //log the execution time of script
+            CRM_Core_Error::debug_log_message( 'action.cronjob.php' );
+        }
     }
-    else {
-      //from the webserver
-      $this->initialize();
 
-      $config = CRM_Core_Config::singleton();
+    function initialize( ) {
+        require_once '../civicrm.config.php';
+        require_once 'CRM/Core/Config.php';
 
-      // this does not return on failure
-      CRM_Utils_System::authenticateScript(TRUE);
-
-      //log the execution time of script
-      CRM_Core_Error::debug_log_message('action.cronjob.php');
+        $config = CRM_Core_Config::singleton();
     }
-  }
 
-  function initialize() {
-    require_once '../civicrm.config.php';
-    require_once 'CRM/Core/Config.php';
+    public function run( $now = null )
+    {
+        require_once 'CRM/Core/BAO/ActionSchedule.php';
+        CRM_Core_BAO_ActionSchedule::processQueue( $now );
+    }
 
-    $config = CRM_Core_Config::singleton();
-  }
-
-  public function run($now = NULL) {
-    require_once 'CRM/Core/BAO/ActionSchedule.php';
-    CRM_Core_BAO_ActionSchedule::processQueue($now);
-  }
 }
 
-$cron = new CRM_Cron_Action();
-$cron->run();
+$cron = new CRM_Cron_Action( );
+$cron->run( );
 
