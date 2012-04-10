@@ -44,7 +44,18 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
      * static holder for the default payment processor
      */
     static $_defaultPaymentProcessor = null;
-
+    /*
+     * Create Payment Processor
+     * 
+     * @params array parameters for Processor entity
+     */
+    function create( &$params ) 
+    {
+        $processor = new CRM_Core_DAO_PaymentProcessor();
+        $processor->copyValues( $params );
+        $processor->save( );
+        return $processor;
+    }
     /**
      * class constructor
      */
