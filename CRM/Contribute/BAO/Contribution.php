@@ -1999,13 +1999,13 @@ WHERE  contribution_id = %1 AND membership_id != %2";
      * 
      * @return array $messageArray - messages
      */
-  function composeMessageArray( &$input, &$ids, &$objects, &$values, $recur = false,$returnMessageText = true){
+  function composeMessageArray( &$input, &$ids, &$values, $recur = false,$returnMessageText = true){
     if(empty($this->_relatedObjects)){
        $this->loadRelatedObjects($input, $ids);
     }
     if ( empty( $values ) ) {
-            $values = array( );
-            $contribID = $ids['contribution'];
+      $values = array( );
+      $contribID = $ids['contribution'];
             if ( $input['component'] == 'contribute' ) {
                 if ( isset( $this->contribution_page_id ) ) {
                     CRM_Contribute_BAO_ContributionPage::setValues( $this->contribution_page_id, $values );
@@ -2036,7 +2036,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                 
             } else {
                 // event
-                $eventParams = array( 'id' => $objects['event']->id );
+                $eventParams = array( 'id' => $this->_relatedObjects['event']->id );
                 $values['event'] = array( );
                 
                 CRM_Event_BAO_Event::retrieve( $eventParams, $values['event'] );
@@ -2166,12 +2166,12 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         $template->assign( 'is_monetary', 1 );
         $template->assign( 'is_recur', $recur );
         $template->assign( 'currency', $contribution->currency );
-        if ( $recur && !empty($objects['paymentProcessor'])) {
+        if ( $recur && !empty($this->_relatedObjects['paymentProcessor'])) {
             $paymentObject =& CRM_Core_Payment::singleton( $contribution->is_test ? 'test' : 'live', 
-                                                           $objects['paymentProcessor'] );
+                                                           $this->_relatedObjects['paymentProcessor'] );
             $url = $paymentObject->cancelSubscriptionURL( );
             $template->assign( 'cancelSubscriptionUrl', $url );
-            if ( $objects['paymentProcessor']['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
+            if ( $this->_relatedObjects['paymentProcessor']['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM ) {
                 //direct mode showing billing block, so use directIPN for temporary
                 $template->assign( 'contributeMode', 'directIPN' );
             }            
@@ -2228,7 +2228,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                     $additional->save( );
                     $additional->free( );
                     $template->assign( 'amount', $amount );
-                    CRM_Event_BAO_Event::sendMail( $cId, $values, $pId, $isTest, $returnMessageText );
+                    CRM_Event_BAO_Event::sendMail( $cId, $values, $pId, $isTest, true );
                 } 
             }
             
@@ -2251,7 +2251,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             // carry paylater, since we did not created billing,
             // so need to pull email from primary location, CRM-4395 
             $values['params']['is_pay_later'] = $this->_relatedObjects['participant']->is_pay_later;
-            return CRM_Event_BAO_Event::sendMail( $ids['contact'], $values, $this->_relatedObjects['participant']->id, $isTest, $returnMessageText );
+            return CRM_Event_BAO_Event::sendMail( $ids['contact'], $values, $this->_relatedObjects['participant']->id, $isTest, true );
             
         } else {
             $values['contribution_id']     = $contribution->id;
@@ -2304,16 +2304,16 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                         }
 
                         $result = CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, 
-                                                                                 $isTest, $returnMessageText );
+                                                                                 $isTest, true );
 
-                        if ( $returnMessageText ) {
-                            return $result;
-                        } // otherwise if its about sending emails, continue sending without return, as we
+                        
+                        return $result;
+                         // otherwise if its about sending emails, continue sending without return, as we
                         // don't want to exit the loop.
                     }
                 }
             } else {
-                return CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, $isTest, $returnMessageText );
+                return CRM_Contribute_BAO_ContributionPage::sendMail( $ids['contact'], $values, $isTest, true );
             }
         }
     }

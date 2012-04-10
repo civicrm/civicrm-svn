@@ -445,6 +445,6 @@ LIMIT 1;";
         $values['receipt_from_email'] = $userEmail;
         $values['receipt_from_name']  = $userName;
      }
-     return $returnMessageText = $contribution->composeMessageArray($input, $ids, $objects,$values, $recur, $returnMessageText );
+     return $returnMessageText = $contribution->composeMessageArray($input, $ids, $values, $recur, $returnMessageText );
    }
 }
