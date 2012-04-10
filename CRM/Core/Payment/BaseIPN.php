@@ -98,8 +98,9 @@ class CRM_Core_Payment_BaseIPN {
  * @input array information from Payment processor
  */
   function loadObjects( &$input, &$ids, &$objects, $required, $paymentProcessorID ) {
+    $ids['paymentProcessorID'] = $paymentProcessorID;
     $contribution =& $objects['contribution'];
-    $success = $contribution->loadRelatedObjects($input, $ids, $required, $paymentProcessorID );
+    $success = $contribution->loadRelatedObjects($input, $ids, $required );
     $objects = array_merge($objects,$contribution->_relatedObjects); 
     return $success;
   }

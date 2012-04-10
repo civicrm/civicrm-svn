@@ -1844,7 +1844,8 @@ SELECT source_contact_id
    * Note that the unit test for the BaseIPN class tests this function
    */
   
-  function loadRelatedObjects(&$input, &$ids,$required = false , $paymentProcessorID = null){
+  function loadRelatedObjects(&$input, &$ids,$required = false ){
+        $paymentProcessorID = CRM_Utils_Array::value('paymentProcessorId', $ids);
         $contributionType = new CRM_Contribute_BAO_ContributionType( );
         $contributionType->id = $contribution->contribution_type_id;
         if ( ! $contributionType->find( true ) ) {
@@ -1998,14 +1999,11 @@ WHERE  contribution_id = %1 AND membership_id != %2";
      * 
      * @return array $messageArray - messages
      */
-    function composeMessageArray( &$input, &$ids, &$objects, &$values, $recur = false,$returnMessageText = true){
-      if(empty($this->_relatedObjects)){
-          $this->loadRelatedObjects($input, $ids);
-      }
-        $event        =& $objects['event']       ;
-        $contact      =& $objects['contact']  ;
-
-        if ( empty( $values ) ) {
+  function composeMessageArray( &$input, &$ids, &$objects, &$values, $recur = false,$returnMessageText = true){
+    if(empty($this->_relatedObjects)){
+       $this->loadRelatedObjects($input, $ids);
+    }
+    if ( empty( $values ) ) {
             $values = array( );
             $contribID = $ids['contribution'];
             if ( $input['component'] == 'contribute' ) {
@@ -2044,7 +2042,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                 CRM_Event_BAO_Event::retrieve( $eventParams, $values['event'] );
                 
                 //get location details
-                $locationParams = array( 'entity_id' => $objects['event']->id, 'entity_table' => 'civicrm_event' );
+                $locationParams = array( 'entity_id' => $this->_relatedObjects['event']->id, 'entity_table' => 'civicrm_event' );
                 $values['location'] = CRM_Core_BAO_Location::getValues($locationParams);
                 
                 $ufJoinParams = array( 'entity_table' => 'civicrm_event',
@@ -2080,12 +2078,12 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                 $addressDetails    = array_values( $addressDetails );
                 $values['address'] = $addressDetails[0]['display'];                
             }
-        }
+    }
 
         $template = CRM_Core_Smarty::singleton( );
-        $template->assign('first_name', $contact->first_name);
-        $template->assign('last_name', $contact->last_name);
-        $template->assign('displayName', $contact->display_name);
+        $template->assign('first_name', $this->_relatedObjects['contact']->first_name);
+        $template->assign('last_name', $this->_relatedObjects['contact']->last_name);
+        $template->assign('displayName', $this->_relatedObjects['contact']->display_name);
         // CRM_Core_Error::debug('tpl',$template);
         //assign honor infomation to receiptmessage
         if ( $honorID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
@@ -2253,7 +2251,6 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             // carry paylater, since we did not created billing,
             // so need to pull email from primary location, CRM-4395 
             $values['params']['is_pay_later'] = $this->_relatedObjects['participant']->is_pay_later;
-            
             return CRM_Event_BAO_Event::sendMail( $ids['contact'], $values, $this->_relatedObjects['participant']->id, $isTest, $returnMessageText );
             
         } else {
