@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,6 +34,7 @@
  *
  */
 
+
 /**
  * This class is used by the Search functionality.
  *
@@ -44,37 +46,37 @@
  * The second form is used to process search results with the asscociated actions
  *
  */
-class CRM_Event_Controller_Search extends CRM_Core_Controller {
+class CRM_Event_Controller_Search extends CRM_Core_Controller
+{
+    /**
+     * class constructor
+     */
+    function __construct( $title = null, $action = CRM_Core_Action::NONE, $modal = true )
+    {
+        
+        parent::__construct( $title, $modal );
+        
+        $this->_stateMachine = new CRM_Event_StateMachine_Search( $this, $action );
+        
+        // create and instantiate the pages
+        $this->addPages( $this->_stateMachine, $action );
+        
 
-  /**
-   * class constructor
-   */
-  function __construct($title = NULL, $action = CRM_Core_Action::NONE, $modal = TRUE) {
+        $session = CRM_Core_Session::singleton( );
+        $uploadNames = $session->get( 'uploadNames' );
+        if ( ! empty( $uploadNames ) ) {
+            $uploadNames = array_merge( $uploadNames,
+                                        CRM_Core_BAO_File::uploadNames( ) );
+            
+        } else {
+            $uploadNames = CRM_Core_BAO_File::uploadNames( );
+        }
 
-    parent::__construct($title, $modal);
+        $config  = CRM_Core_Config::singleton( );
+        $uploadDir = $config->uploadDir;
 
-    $this->_stateMachine = new CRM_Event_StateMachine_Search($this, $action);
-
-    // create and instantiate the pages
-    $this->addPages($this->_stateMachine, $action);
-
-
-    $session = CRM_Core_Session::singleton();
-    $uploadNames = $session->get('uploadNames');
-    if (!empty($uploadNames)) {
-      $uploadNames = array_merge($uploadNames,
-        CRM_Core_BAO_File::uploadNames()
-      );
+        // add all the actions
+        $this->addActions( $uploadDir, $uploadNames );
     }
-    else {
-      $uploadNames = CRM_Core_BAO_File::uploadNames();
-    }
-
-    $config = CRM_Core_Config::singleton();
-    $uploadDir = $config->uploadDir;
-
-    // add all the actions
-    $this->addActions($uploadDir, $uploadNames);
-  }
 }
 

@@ -1,113 +1,122 @@
 <?php
-class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant { public $email = NULL;
-public $contribution_id = NULL;
-public $cart = NULL;
 
-//XXX function __construct($participant = NULL) {
-parent::__construct();
-$a = (array)$participant;
-$this->copyValues($a);
 
-$this->email = CRM_Utils_Array::value('email', $participant);
-}
-public static function create($params) {
-  $participantParams = array(
-    'id' => CRM_Utils_Array::value('id', $params),
-    'role_id' => self::get_attendee_role_id(),
-    'status_id' => self::get_pending_in_cart_status_id(),
-    'contact_id' => $params['contact_id'],
-    'event_id' => $params['event_id'],
-    'cart_id' => $params['cart_id'],
+class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant
+{
+  public $email = null;
+  public $contribution_id = null;
+  public $cart = null;
+
     //XXX
-    //'registered_by_id'  =>
-    //'discount_amount'   =>
-    //'fee_level'         => $params['fee_level'],
-  );
-  $participant = CRM_Event_BAO_Participant::create($participantParams);
+  function __construct($participant = null)
+  {
+    parent::__construct();
+    $a = (array)$participant;
+    $this->copyValues($a);
 
-  if (is_a($participant, 'CRM_Core_Error')) {
-    CRM_Core_Error::fatal(ts('There was an error creating a cart participant'));
+    $this->email = CRM_Utils_Array::value('email', $participant);
   }
 
-  $mer_participant = new CRM_Event_Cart_BAO_MerParticipant($participant);
+  public static function create( $params )
+  {
+        $participantParams = array
+        (
+            'id'                => CRM_Utils_Array::value('id', $params),
+            'role_id'           => self::get_attendee_role_id(),
+            'status_id'         => self::get_pending_in_cart_status_id(),
+            'contact_id'        => $params['contact_id'],
+            'event_id'          => $params['event_id'],
+            'cart_id'           => $params['cart_id'],
+            //XXX
+            //'registered_by_id'  =>
+            //'discount_amount'   =>
+            //'fee_level'         => $params['fee_level'],
+        );
+        $participant = CRM_Event_BAO_Participant::create($participantParams);
 
-  return $mer_participant;
-}
+	if ( is_a( $participant, 'CRM_Core_Error') ) {
+	  CRM_Core_Error::fatal( ts( 'There was an error creating a cart participant') );
+	}
 
-static
-function get_attendee_role_id() {
-  $roles = CRM_Event_PseudoConstant::participantRole(NULL, "v.label='Attendee'");
-  return array_pop(array_keys($roles));
-}
+	$mer_participant = new CRM_Event_Cart_BAO_MerParticipant($participant);
 
-static
-function get_pending_in_cart_status_id() {
-  $status_types = CRM_Event_PseudoConstant::participantStatus(NULL, "name='Pending in cart'");
-  return array_pop(array_keys($status_types));
-}
-
-public static function find_all_by_cart_id($event_cart_id) {
-  if ($event_cart_id == NULL) {
-    return NULL;
+        return $mer_participant;
   }
-  return self::find_all_by_params(array('cart_id' => $event_cart_id));
-}
 
-public static function find_all_by_event_and_cart_id($event_id, $event_cart_id) {
-  if ($event_cart_id == NULL) {
-    return NULL;
+  static function get_attendee_role_id()
+  {
+    $roles = CRM_Event_PseudoConstant::participantRole(null, "v.label='Attendee'");
+    return array_pop(array_keys($roles));
   }
-  return self::find_all_by_params(array('event_id' => $event_id, 'cart_id' => $event_cart_id));
-}
 
-public static function find_all_by_params($params) {
-  $participant = new CRM_Event_BAO_Participant();
-  $participant->copyValues($params);
-  $result = array();
-  if ($participant->find()) {
-    while ($participant->fetch()) {
-      $result[] = new CRM_Event_Cart_BAO_MerParticipant(clone($participant));
+  static function get_pending_in_cart_status_id()
+  {
+    $status_types = CRM_Event_PseudoConstant::participantStatus(null, "name='Pending in cart'");
+    return array_pop(array_keys($status_types));
+  }
+
+  public static function find_all_by_cart_id( $event_cart_id )
+  {
+        if ($event_cart_id == null)
+            return null;
+        return self::find_all_by_params( array( 'cart_id' => $event_cart_id ) );
+  }
+
+  public static function find_all_by_event_and_cart_id( $event_id, $event_cart_id )
+  {
+        if ($event_cart_id == null)
+            return null;
+        return self::find_all_by_params( array( 'event_id' => $event_id, 'cart_id' => $event_cart_id ) );
+  }
+
+  public static function find_all_by_params( $params )
+  {
+        $participant = new CRM_Event_BAO_Participant( );
+        $participant->copyValues( $params );
+        $result = array();
+        if ( $participant->find( ) ) {
+          while ( $participant->fetch( ) ) {
+                $result[] = new CRM_Event_Cart_BAO_MerParticipant(clone( $participant ));
+          }
+        }
+        return $result;
+  }
+
+  public static function get_by_id($id)
+  {
+    $results = self::find_all_by_params(array('id' => $id));
+    return array_pop($results);
+  }
+
+  function load_associations()
+  {
+    $contact_details = CRM_Contact_BAO_Contact::getContactDetails($this->contact_id);
+    $this->email = $contact_details[1];
+  }
+
+  function get_participant_index( )
+  {
+    if (!$this->cart) {
+        $this->cart = CRM_Event_Cart_BAO_Cart::find_by_id($this->cart_id);
+        $this->cart->load_associations();
     }
+    $index = $this->cart->get_participant_index_from_id($this->id);
+    return $index + 1;
   }
-  return $result;
-}
 
-public static function get_by_id($id) {
-  $results = self::find_all_by_params(array('id' => $id));
-  return array_pop($results);
-}
-
-function load_associations() {
-  $contact_details = CRM_Contact_BAO_Contact::getContactDetails($this->contact_id);
-  $this->email = $contact_details[1];
-}
-
-function get_participant_index() {
-  if (!$this->cart) {
-    $this->cart = CRM_Event_Cart_BAO_Cart::find_by_id($this->cart_id);
-    $this->cart->load_associations();
+  static function billing_address_from_contact( $contact )
+  {
+        foreach ($contact->address as $loc) {
+            if ($loc['is_billing']) return $loc;
+        }
+        foreach ($contact->address as $loc) {
+            if ($loc['is_primary']) return $loc;
+        }
+        return null;
   }
-  $index = $this->cart->get_participant_index_from_id($this->id);
-  return $index + 1;
-}
 
-static
-function billing_address_from_contact($contact) {
-  foreach ($contact->address as $loc) {
-    if ($loc['is_billing']) {
-      return $loc;
-    }
+  function get_form()
+  {
+    return new CRM_Event_Cart_Form_MerParticipant($this);
   }
-  foreach ($contact->address as $loc) {
-    if ($loc['is_primary']) {
-      return $loc;
-    }
-  }
-  return NULL;
 }
-
-function get_form() {
-  return new CRM_Event_Cart_Form_MerParticipant($this);
-}
-}
-

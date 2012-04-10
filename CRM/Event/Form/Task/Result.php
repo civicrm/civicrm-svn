@@ -33,6 +33,7 @@
  *
  */
 
+
 /**
  * Used for displaying results
  *
@@ -40,32 +41,29 @@
  */
 class CRM_Event_Form_Task_Result extends CRM_Event_Form_Task {
 
-  /**
-   * build all the data structures needed to build the form
-   *
-   * @return void
-   * @access public
-   */
-  function preProcess() {
-    $session = CRM_Core_Session::singleton();
+    /**
+     * build all the data structures needed to build the form
+     *
+     * @return void
+     * @access public
+     */
+    function preProcess( ) {
+        $session = CRM_Core_Session::singleton( );
+        
+        //this is done to unset searchRows variable assign during AddToHousehold and AddToOrganization
+        $this->set( 'searchRows', '');
 
-    //this is done to unset searchRows variable assign during AddToHousehold and AddToOrganization
-    $this->set('searchRows', '');
+        $ssID = $this->get( 'ssID' );
 
-    $ssID = $this->get('ssID');
-
-    $path = 'force=1';
-    if (isset($ssID)) {
-      $path .= "&reset=1&ssID={$ssID}";
+        $path = 'force=1';
+        if ( isset( $ssID ) ) {
+            $path .= "&reset=1&ssID={$ssID}";
+        }
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $path .= "&qfKey=$qfKey";
+        
+        $url = CRM_Utils_System::url( 'civicrm/event/search', $path );
+        $session->replaceUserContext( $url );
+        CRM_Utils_System::redirect($url);
     }
-    $qfKey = CRM_Utils_Request::retrieve('qfKey', 'String', $this);
-    if (CRM_Utils_Rule::qfKey($qfKey)) {
-      $path .= "&qfKey=$qfKey";
-    }
-
-    $url = CRM_Utils_System::url('civicrm/event/search', $path);
-    $session->replaceUserContext($url);
-    CRM_Utils_System::redirect($url);
-  }
 }
-

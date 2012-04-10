@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -32,67 +33,66 @@
  * $Id$
  *
  */
+
+
 class CRM_Event_Page_ParticipantListing extends CRM_Core_Page {
 
-  protected $_id;
+    protected $_id;
 
-  protected $_participantListingID;
+    protected $_participantListingID;
 
-  protected $_eventTitle;
+    protected $_eventTitle;
+    
+    protected $_pager;
 
-  protected $_pager; function preProcess() {
-    $this->_id = CRM_Utils_Request::retrieve('id', 'Integer', $this, TRUE);
+    function preProcess( ) {
+        $this->_id   = CRM_Utils_Request::retrieve( 'id'  , 'Integer', $this, true );
 
-    // ensure that there is a particpant type for this
-    $this->_participantListingID = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event',
-      $this->_id,
-      'participant_listing_id'
-    );
-    if (!$this->_participantListingID) {
-      CRM_Core_Error::fatal(ts('The Participant Listing feature is not currently enabled for this event.'));
+        // ensure that there is a particpant type for this
+        $this->_participantListingID = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event',
+                                                                    $this->_id,
+                                                                    'participant_listing_id' );
+        if ( ! $this->_participantListingID ) {
+            CRM_Core_Error::fatal( ts( 'The Participant Listing feature is not currently enabled for this event.' ) );
+        }
+
+        // retrieve Event Title and include it in page title
+        $this->_eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event',
+                                                          $this->_id,
+                                                          'title' );
+        CRM_Utils_System::setTitle(ts('%1 - Participants', array(1 => $this->_eventTitle)));        
+
+        // we do not want to display recently viewed contacts since this is potentially a public page
+        $this->assign       ( 'displayRecent' , false );
     }
 
-    // retrieve Event Title and include it in page title
-    $this->_eventTitle = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event',
-      $this->_id,
-      'title'
-    );
-    CRM_Utils_System::setTitle(ts('%1 - Participants', array(1 => $this->_eventTitle)));
+    function run( ) {
+        $this->preProcess( );
 
-    // we do not want to display recently viewed contacts since this is potentially a public page
-    $this->assign('displayRecent', FALSE);
-  }
+        // get the class name from the participantListingID
+        $className = CRM_Core_OptionGroup::getValue( 'participant_listing',
+                                                     $this->_participantListingID,
+                                                     'value',
+                                                     'Integer',
+                                                     'description' );
 
-  function run() {
-    $this->preProcess();
+        if ( $className == 'CRM_Event_Page_ParticipantListing' ) {
+            CRM_Core_Error::fatal( ts( "Participant listing code file cannot be '%1'",
+                                      array( 1 => $className ) ) );
+        }
 
-    // get the class name from the participantListingID
-    $className = CRM_Core_OptionGroup::getValue('participant_listing',
-      $this->_participantListingID,
-      'value',
-      'Integer',
-      'description'
-    );
+        $classFile = str_replace( '_',
+                                  DIRECTORY_SEPARATOR,
+                                  $className ) . '.php';
+        $error = include_once( $classFile );
+        if ( $error == false ) {
+            CRM_Core_Error::fatal( 'Participant listing code file: ' . $classFile . ' does not exist. Please verify your custom particpant listing settings in CiviCRM administrative panel.' );
+        }
 
-    if ($className == 'CRM_Event_Page_ParticipantListing') {
-      CRM_Core_Error::fatal(ts("Participant listing code file cannot be '%1'",
-          array(1 => $className)
-        ));
+        eval( "\$participantListingClass = new $className( );" );
+        
+        $participantListingClass->preProcess( );
+        $participantListingClass->run( );
     }
 
-    $classFile = str_replace('_',
-      DIRECTORY_SEPARATOR,
-      $className
-    ) . '.php';
-    $error = include_once ($classFile);
-    if ($error == FALSE) {
-      CRM_Core_Error::fatal('Participant listing code file: ' . $classFile . ' does not exist. Please verify your custom particpant listing settings in CiviCRM administrative panel.');
-    }
-
-    eval("\$participantListingClass = new $className( );");
-
-    $participantListingClass->preProcess();
-    $participantListingClass->run();
-  }
 }
-

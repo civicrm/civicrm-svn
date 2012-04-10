@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,66 +34,67 @@
  *
  */
 
-/**
- * This class provides the functionality for cancel registration for event participations
- */
-class CRM_Event_Form_Task_Cancel extends CRM_Event_Form_Task {
 
-  /**
-   * variable to store redirect path
-   *
-   */
-  protected $_userContext;
+ /**
+  * This class provides the functionality for cancel registration for event participations
+  */
+class CRM_Event_Form_Task_Cancel extends CRM_Event_Form_Task 
+{ 
+    /**
+     * variable to store redirect path
+     *
+     */
+    protected $_userContext;
 
-  /**
-   * build all the data structures needed to build the form
-   *
-   * @return void
-   * @access public
-   */ function preProcess() {
-    /*
+    /**
+     * build all the data structures needed to build the form
+     *
+     * @return void
+     * @access public
+     */
+    function preProcess( ) 
+    {
+        /*
          * initialize the task and row fields
          */
+        parent::preProcess( );
 
-
-    parent::preProcess();
-
-    $session = CRM_Core_Session::singleton();
-    $this->_userContext = $session->readUserContext();
-  }
-
-  /**
-   * Build the form
-   *
-   * @access public
-   *
-   * @return void
-   */
-  function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Cancel Registration for Event Participation'));
-    $session = CRM_Core_Session::singleton();
-    $this->addDefaultButtons(ts('Continue'), 'done');
-  }
-
-  /**
-   * process the form after the input has been submitted and validated
-   *
-   * @access public
-   *
-   * @return None
-   */
-  public function postProcess() {
-    $params = $this->exportValues();
-    $value = array();
-
-    foreach ($this->_participantIds as $participantId) {
-      $value['id'] = $participantId;
-
-      // Cancelled status id = 4
-      $value['status_id'] = 4;
-      CRM_Event_BAO_Participant::create($value);
+        $session = CRM_Core_Session::singleton();
+        $this->_userContext = $session->readUserContext( );
     }
-  }
-  //end of function
+  
+    /**
+     * Build the form
+     *
+     * @access public
+     * @return void
+     */
+    function buildQuickForm( ) 
+    {
+        CRM_Utils_System::setTitle( ts('Cancel Registration for Event Participation') );        
+        $session = CRM_Core_Session::singleton( );
+        $this->addDefaultButtons( ts('Continue'), 'done' );
+    }
+    
+
+    /**
+     * process the form after the input has been submitted and validated
+     *
+     * @access public
+     * @return None
+     */
+    public function postProcess() 
+    {
+        $params = $this->exportValues( );
+        $value  = array( );
+
+        foreach( $this->_participantIds as $participantId ) {
+            $value['id']    = $participantId;      
+            
+            // Cancelled status id = 4
+            $value['status_id']    = 4;
+            CRM_Event_BAO_Participant::create( $value );
+        }
+    }//end of function
 }
 

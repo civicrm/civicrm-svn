@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -38,134 +39,124 @@
  */
 class CRM_Custom_Form_MoveField extends CRM_Core_Form {
 
-  /**
-   * the src group id
-   *
-   * @var int
-   */
-  protected $_srcGID;
+    /**
+     * the src group id
+     *
+     * @var int
+     */
+    protected $_srcGID;
 
-  /**
-   * the src field id
-   *
-   * @var int
-   */
-  protected $_srcFID;
+    /**
+     * the src field id
+     *
+     * @var int
+     */
+    protected $_srcFID;
 
-  /**
-   * the dst group id
-   *
-   * @var int
-   */
-  protected $_dstGID;
+    /**
+     * the dst group id
+     *
+     * @var int
+     */
+    protected $_dstGID;
 
-  /**
-   * the dst field id
-   *
-   * @var int
-   */
-  protected $_dstFID;
+    /**
+     * the dst field id
+     *
+     * @var int
+     */
+    protected $_dstFID;
 
-  /**
-   * The title of the field being moved
-   *
-   * @var string
-   */
-  protected $_srcFieldLabel;
+    /**
+     * The title of the field being moved
+     *
+     * @var string
+     */
+    protected $_srcFieldLabel;
 
-  /**
-   * set up variables to build the form
-   *
-   * @return void
-   * @acess protected
-   */ function preProcess() {
-    $this->_srcFID = CRM_Utils_Request::retrieve('fid', 'Positive',
-      $this, TRUE
-    );
+    /**
+     * set up variables to build the form
+     *
+     * @return void
+     * @acess protected
+     */
+    function preProcess( ) {
+        $this->_srcFID    = CRM_Utils_Request::retrieve( 'fid', 'Positive',
+                                                         $this, true );
 
-    $this->_srcGID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField',
-      $this->_srcFID,
-      'custom_group_id'
-    );
+        $this->_srcGID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
+                                                      $this->_srcFID,
+                                                      'custom_group_id' );
 
-    $this->_srcFieldLabel = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField',
-      $this->_srcFID,
-      'label'
-    );
+        $this->_srcFieldLabel  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',
+                                                              $this->_srcFID,
+                                                              'label' );
 
-    CRM_Utils_System::setTitle(ts('Custom Field Move: %1',
-        array(1 => $this->_srcFieldLabel)
-      ));
+        CRM_Utils_System::setTitle( ts( 'Custom Field Move: %1',
+                                        array( 1 => $this->_srcFieldLabel ) ) );
+                                        
+        $session = CRM_Core_Session::singleton( );
+        $session->pushUserContext( CRM_Utils_System::url('civicrm/admin/custom/group/field', "reset=1&action=browse&gid={$this->_srcGID}") );
 
-    $session = CRM_Core_Session::singleton();
-    $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/field', "reset=1&action=browse&gid={$this->_srcGID}"));
-  }
-
-  /**
-   * Function to actually build the form
-   *
-   * @return None
-   * @access public
-   */
-  public function buildQuickForm() {
-
-    $customGroup = CRM_Core_PseudoConstant::customGroup();
-    unset($customGroup[$this->_srcGID]);
-    if (empty($customGroup)) {
-      CRM_Core_Error::statusBounce(ts('You need more than one custom group to move fields'));
     }
 
-    $customGroup = array('' => ts('- select -')) + $customGroup;
-    $this->add('select',
-      'dst_group_id',
-      ts('Destination'),
-      $customGroup,
-      TRUE
-    );
+    /**
+     * Function to actually build the form
+     *
+     * @return None
+     * @access public
+     */
+    public function buildQuickForm( ) {
+        
+        $customGroup = CRM_Core_PseudoConstant::customGroup( );
+        unset( $customGroup[$this->_srcGID] );
+        if ( empty( $customGroup ) ) {
+            CRM_Core_Error::statusBounce( ts( 'You need more than one custom group to move fields' ) );
+        }
 
-    $this->addButtons(array(
-        array('type' => 'next',
-          'name' => ts('Move Custom Field'),
-          'isDefault' => TRUE,
-        ),
-        array('type' => 'cancel',
-          'name' => ts('Cancel'),
-        ),
-      )
-    );
+        $customGroup = array( ''  => ts( '- select -' ) ) + $customGroup;
+        $this->add( 'select',
+                    'dst_group_id',
+                    ts( 'Destination' ),
+                    $customGroup,
+                    true );
+                    
+        $this->addButtons( array(
+                                 array ( 'type'      => 'next',
+                                         'name'      => ts('Move Custom Field'),
+                                         'isDefault' => true   ),
+                                 array ( 'type'       => 'cancel',
+                                         'name'      => ts('Cancel') ),
+                                 )
+                           );
 
-    $this->addFormRule(array('CRM_Custom_Form_MoveField', 'formRule'), $this);
-  }
-
-  static
-  function formRule($fields, $files, $self) {
-    $self->_dstGID = $fields['dst_group_id'];
-    $tmp           = CRM_Core_BAO_CustomField::_moveFieldValidate($self->_srcFID, $self->_dstGID);
-    $errors        = array();
-    if ($tmp['newGroupID']) {
-      $errors['dst_group_id'] = $tmp['newGroupID'];
+        $this->addFormRule( array( 'CRM_Custom_Form_MoveField', 'formRule' ), $this );
     }
-    return empty($errors) ? TRUE : $errors;
-  }
 
-  /**
-   * Process the form when submitted
-   *
-   * @return void
-   * @access public
-   */
-  public function postProcess() {
-    CRM_Core_BAO_CustomField::moveField($this->_srcFID, $this->_dstGID);
+    static function formRule( $fields, $files, $self) {
+        $self->_dstGID = $fields['dst_group_id'];
+        $tmp = CRM_Core_BAO_CustomField::_moveFieldValidate( $self->_srcFID, $self->_dstGID );
+        $errors = array();
+        if ($tmp['newGroupID']) { $errors['dst_group_id'] = $tmp['newGroupID']; }
+        return empty($errors) ? true : $errors;
+    }    
 
-    $dstGroup = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup',
-      $this->_dstGID,
-      'title'
-    );
-    $srcUrl = CRM_Utils_System::url('civicrm/admin/custom/group/field', "reset=1&action=browse&gid={$this->_dstGID}");
-    CRM_Core_Session::setStatus(ts("%1 has been moved to the custom set <a href='%3'>%2</a>.", array(1 => $this->_srcFieldLabel,
-          2 => $dstGroup,
-          3 => $srcUrl,
-        )));
-  }
+    /**
+     * Process the form when submitted
+     *
+     * @return void
+     * @access public
+     */
+    public function postProcess( ) {
+        CRM_Core_BAO_CustomField::moveField( $this->_srcFID, $this->_dstGID );
+        
+        $dstGroup  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
+                                                  $this->_dstGID,
+                                                  'title' );
+        $srcUrl = CRM_Utils_System::url('civicrm/admin/custom/group/field', "reset=1&action=browse&gid={$this->_dstGID}");
+        CRM_Core_Session::setStatus( ts("%1 has been moved to the custom set <a href='%3'>%2</a>.", array( 1 => $this->_srcFieldLabel,
+                                                                                                           2 => $dstGroup,
+                                                                                                           3 => $srcUrl ) ) );
+    }
+
 }
-

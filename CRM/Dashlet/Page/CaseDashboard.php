@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,35 +34,35 @@
  *
  */
 
+
 /**
  * Main page for Case Dashboard dashlet
  *
  */
-class CRM_Dashlet_Page_CaseDashboard extends CRM_Core_Page {
+class CRM_Dashlet_Page_CaseDashboard extends CRM_Core_Page 
+{
+    /**
+     * Case dashboard as dashlet
+     *
+     * @return none
+     *
+     * @access public
+     */
+	function run( ) {
+ 
+		//check for civicase access.
+		if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
+            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+        }
+		
+		$session =& CRM_Core_Session::singleton();
+		$userID  = $session->get('userID');        
+		$summary  = CRM_Case_BAO_Case::getCasesSummary( true, $userID );
+     
+		if ( !empty( $summary ) ) {
+			$this->assign('casesSummary', $summary);
+		}
 
-  /**
-   * Case dashboard as dashlet
-   *
-   * @return none
-   *
-   * @access public
-   */
-  function run() {
-
-    //check for civicase access.
-    if (!CRM_Case_BAO_Case::accessCiviCase()) {
-      CRM_Core_Error::fatal(ts('You are not authorized to access this page.'));
-    }
-
-    $session = &CRM_Core_Session::singleton();
-    $userID  = $session->get('userID');
-    $summary = CRM_Case_BAO_Case::getCasesSummary(TRUE, $userID);
-
-    if (!empty($summary)) {
-      $this->assign('casesSummary', $summary);
-    }
-
-    return parent::run();
-  }
+		return parent::run( );
+	}
 }
-
