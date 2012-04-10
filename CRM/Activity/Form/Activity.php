@@ -472,8 +472,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         // if we're editing...
         if ( isset( $this->_activityId ) ) {
-            $defaults['source_contact_qid'] = $defaults['source_contact_id'];
-            $defaults['source_contact_id']  = $defaults['source_contact'];
+            $defaults['source_contact_qid'] = CRM_Utils_Array::value( 'source_contact_id',
+                                                                      $defaults );
+            $defaults['source_contact_id']  = CRM_Utils_Array::value( 'source_contact',
+                                                                      $defaults );
             
             if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['target_contact'] ) ) {
                 $target_contact_value = explode(';', trim($defaults['target_contact_value'] ) );
