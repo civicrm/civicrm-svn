@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -37,9 +36,5 @@
  * $Id$
  *
  */
-
-
-class CRM_Case_Config extends CRM_Core_Component_Config {
-
-}
+class CRM_Case_Config extends CRM_Core_Component_Config {}
 
