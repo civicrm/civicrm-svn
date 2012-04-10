@@ -186,9 +186,8 @@ class CRM_Utils_System {
     $frontend = FALSE
   ) {
     // we have a valid query and it has not yet been transformed
-    if ($htmlize && !empty($query) {
-      && strpos($query, '&amp;
-    }') === FALSE) {
+    if ($htmlize && !empty($query)
+      && strpos($query, '&amp;' ) === FALSE) {
       $query = htmlentities($query);
     }
 
@@ -951,11 +950,11 @@ class CRM_Utils_System {
   }
 
   /*
-     * Get logged in user's IP address. 
-     * 
-     * Get IP address from HTTP Header. If the CMS is Drupal then use the Drupal function 
+     * Get logged in user's IP address.
+     *
+     * Get IP address from HTTP Header. If the CMS is Drupal then use the Drupal function
      * as this also handles reverse proxies (based on proper configuration in settings.php)
-     * 
+     *
      * @return string ip address of logged in user
      */
 

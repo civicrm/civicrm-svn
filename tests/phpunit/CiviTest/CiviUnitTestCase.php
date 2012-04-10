@@ -451,7 +451,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $dbValues = array();
     CRM_Core_DAO::commonRetrieve($daoName, $searchParams, $dbValues);
 
-
     // compare db values with expected values
     self::assertAttributesEquals($expectedValues, $dbValues);
   }
@@ -1517,14 +1516,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     return $ids;
   }
   /*
-     * Create a custom group with a single text custom field.  See 
+     * Create a custom group with a single text custom field.  See
      * participant:testCreateWithCustom for how to use this
-     * 
+     *
      * @param string $function __FUNCTION__
      * @param string $file __FILE__
-     * 
+     *
      * @return array $ids ids of created objects
-     * 
+     *
      */
   function entityCustomGroupWithSingleFieldCreate($function, $filename) {
     $entity = substr(basename($filename), 0, strlen(basename($filename)) - 8);
@@ -1646,7 +1645,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
   /*
      * Create test generated example in api/v3/examples.
-     * To turn this off (e.g. on the server) set 
+     * To turn this off (e.g. on the server) set
      * define(DONT_DOCUMENT_TEST_CONFIG ,1);
      * in your settings file
      * @param array $params array as passed to civicrm_api function
@@ -1880,7 +1879,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
    * @param string $entity name of entity concerned (e.g. membership)
    * @param bool $delete should the entity be deleted as part of this check
    * @param string $errorText text to print on error
-   * 
+   *
    */
   function getAndCheck($params, $id, $entity, $delete = 1, $errorText = '') {
 
@@ -1920,7 +1919,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
       $this->assertEquals($value, $result[$keys[$key]], $key . "EGetandCheck function determines that value: $value doesn't match " . print_r($result, TRUE) . $errorText);
     }
   }
-  /* 
+  /*
    *Function to get formatted values in  the actual and expected result
    *@param array $actual actual calculated values
    *@param array $expected expected values
