@@ -89,7 +89,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
 
     return $result;
   }
-  catch(PEAR_Exception$e) {
+  catch(PEAR_Exception $e) {
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
       return 0;
     }
@@ -102,11 +102,15 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     return $err;
   }
-  catch(Exception$e) {
+  catch(Exception $e) {
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
       return 0;
     }
-    return civicrm_api3_create_error($e->getMessage(), NULL, $apiRequest);
+    $err = civicrm_api3_create_error($e->getMessage(), NULL, $apiRequest);
+    if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
+      $err['trace'] = $e->getTraceAsString();
+    }
+    return $err;
   }
 }
 
