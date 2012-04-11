@@ -87,11 +87,12 @@ class CRM_Contact_BAO_GroupTest extends CiviUnitTestCase {
         'description' => 'Group Two',
         'visibility'  => 'User and User Admin Only',
         'is_active'   => 1,
-        'formValues'  => array( 'contact_type' => 'Individual' ),
+        'formValues'  => array( 'sort_name' => 'Adams' ),
       );
 
-    $group = CRM_Contact_BAO_Group::createGroup( $params );
+    $group = CRM_Contact_BAO_Group::createSmartGroup( $params );
 
+    unset( $checkParams['formValues'] );
     $this->assertDBCompareValues(
       'CRM_Contact_DAO_Group',
       array( 'id' => $group->id ),

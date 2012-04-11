@@ -39,7 +39,7 @@
  * Business object for Saved searches
  *
  */
-class CRM_Contact_BAO_SavedSearch extends CRM_Contact_DAO_SavedSearch 
+class CRM_Contact_BAO_SavedSearch extends CRM_Contact_DAO_SavedSearch
 {
 
     /**
@@ -200,7 +200,7 @@ WHERE  $where";
         } else {
             // fix for CRM-7240
             $from = "
-FROM      civicrm_contact contact_a 
+FROM      civicrm_contact contact_a
 LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1)
 ";
             $where = " ( 1 ) ";
@@ -265,7 +265,7 @@ LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_
 
     /**
      * Given a label and a set of normalized POST
-     * formValues, create a smart group with that 
+     * formValues, create a smart group with that
      */
     static function create( &$params ) {
       require_once 'CRM/Contact/DAO/SavedSearch.php';
@@ -285,6 +285,8 @@ LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_
       $savedSearch->id = CRM_Utils_Array::value( 'id', $params, null );
 
       $savedSearch->save( );
+
+      return $savedSearch;
     }
 }
 
