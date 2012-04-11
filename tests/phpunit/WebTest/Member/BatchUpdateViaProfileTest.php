@@ -67,7 +67,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
                            "Status message didn't show up after saving!" );
 
         // click through to the membership view screen
-        $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
         $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
         
         // Verify End date
@@ -94,7 +94,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
                            "Status message didn't show up after saving!" );
 
         // click through to the membership view screen
-        $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+        $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
         $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
         
         // Verify End date
