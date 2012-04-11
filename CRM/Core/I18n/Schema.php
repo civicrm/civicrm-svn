@@ -235,7 +235,7 @@ class CRM_Core_I18n_Schema
             $queries[] = self::createViewQuery($locale, $table, $dao);
 
             // add new indices
-            $queries = array_merge($queries, self::createIndexQueries($locale, $table));
+            $queries = array_merge($queries, array_values( self::createIndexQueries($locale, $table) ) );
         }
 
         // execute the queries without i18n rewriting
