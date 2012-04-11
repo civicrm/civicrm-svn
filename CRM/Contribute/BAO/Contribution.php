@@ -1990,29 +1990,6 @@ WHERE  contribution_id = %1 AND membership_id != %2";
                 $paymentProcessorID = $this->_relatedObjects['event']->payment_processor;
             }
         }
-
-      if (isset($ids['pledge_payment'])) {
-        $this->_relatedObjects['pledge_payment'] = array();
-        foreach ($ids['pledge_payment'] as $key => $paymentID) {
-          $payment = new CRM_Pledge_BAO_PledgePayment();
-          $payment->id = $paymentID;
-          if (!$payment->find(TRUE)) {
-            CRM_Core_Error::debug_log_message("Could not find pledge payment record: $pledge_paymentID");
-            echo "Failure: Could not find pledge payment record: $pledge_paymentID<p>";
-            return FALSE;
-          }
-          $this->_relatedObjects['pledge_payment'][] = $payment;
-        }
-      }
-
-      if (isset($ids['contributionRecur'])) {
-        $recur = new CRM_Contribute_BAO_ContributionRecur();
-        $recur->id = $ids['contributionRecur'];
-        if (!$recur->find(TRUE)) {
-          CRM_Core_Error::debug_log_message("Could not find recur record: $contributionRecurID");
-          echo "Failure: Could not find recur record: $contributionRecurID<p>";
-          return FALSE;
-        }
         
         $loadObjectSuccess = true;
         if ( $paymentProcessorID ) {
