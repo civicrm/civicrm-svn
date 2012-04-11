@@ -34,7 +34,7 @@
  * $Id$
  *
  */
-class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNestingimplements Iterator {
+class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implements Iterator {
     
     static $_sortOrder = 'ASC';
     
