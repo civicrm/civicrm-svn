@@ -627,6 +627,47 @@ class CRM_Core_SelectValues
         }
         return $tokens;
     }
+
+    /**
+     * different type of Event Tokens
+     *
+     * @static
+     * return array
+     */
+    static function &contributionTokens( )
+    {
+        static $tokens = null;
+
+        if (! $tokens ) {
+            $tokens = array(
+                            '{contribution.contribution_id}' => ts('Contribution ID'),
+                            '{contribution.total_amount}' => ts('Total Amount'),
+                            '{contribution.fee_amount}' => ts('Fee Amount'),
+                            '{contribution.net_amount}' => ts('Net Amount'),
+                            '{contribution.non_deductible_amount}' => ts('Non Deductible Amount'),
+                            '{contribution.receive_date}' => ts('Contribution Receive Date'),
+                            '{contribution.payment_instrument}' => ts('Payment Instrument'),
+                            '{contribution.trxn_id}' => ts('Transaction ID'),
+                            '{contribution.invoice_id}' => ts('Invoice ID'),
+                            '{contribution.currency}' => ts('Currency'),
+                            '{contribution.cancel_date}' => ts('Contribution Cancel Date'),
+                            '{contribution.cancel_reason}' => ts('Contribution Cancel Reason'),
+                            '{contribution.receipt_date}' => ts('Receipt Date'),
+                            '{contribution.thankyou_date}' => ts('Thank You Date'),
+                            '{contribution.contribution_source}' => ts('Contribution Source'),
+                            '{contribution.amount_level}' => ts('Amount Level'),
+                            //'{contribution.contribution_recur_id}' => ts('Contribution Recurring ID'),
+                            //'{contribution.honor_contact_id}' => ts('Honor Contact ID'),
+                            '{contribution.contribution_status_id}' => ts('Contribution Status'),
+                            //'{contribution.honor_type_id}' => ts('Honor Type ID'),
+                            //'{contribution.address_id}' => ts('Address ID'),
+                            '{contribution.check_number}' => ts('Check Number'),
+                            '{contribution.campaign}' => ts('Contribution Campaign'),
+                          );
+        }
+        return $tokens;
+    }
+
     
     /**
      * different type of Contact Tokens

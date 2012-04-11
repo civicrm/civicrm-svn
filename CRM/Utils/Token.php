@@ -74,6 +74,7 @@ class CRM_Utils_Token
                                                       'role:',
                                                       ),
                              'contact'       => null,  // populate this dynamically
+                             'contribution'   => null,  // populate this dynamically
                              'domain'        => array( 
                                                       'name', 
                                                       'phone', 
@@ -876,7 +877,7 @@ class CRM_Utils_Token
      * gives required details of contacts in an indexed array format so we
      * can iterate in a nice loop and do token evaluation
      *
-     * @param  array   $contactIds       of conatcts
+     * @param  array   $contactIds       of contacts
      * @param  array   $returnProperties of required properties
      * @param  boolean $skipOnHold       don't return on_hold contact info also.
      * @param  boolean $skipDeceased     don't return deceased contact info.
@@ -988,6 +989,67 @@ class CRM_Utils_Token
                                      null,
                                      $tokens,
                                      $className );
+        return $details; 
+    }
+
+
+    /**
+     * gives required details of contribuion in an indexed array format so we
+     * can iterate in a nice loop and do token evaluation
+     *
+     * @param  array   $contributionId   one contribution id
+     * @param  array   $returnProperties of required properties
+     * @param  boolean $skipOnHold       don't return on_hold contact info.
+     * @param  boolean $skipDeceased     don't return deceased contact info.
+     * @param  array   $extraParams      extra params
+     * @param  array   $tokens           the list of tokens we've extracted from the content
+     *
+     * @return array
+     * @access public
+     * @static
+     */
+    function getContributionTokenDetails($contributionIDs,
+                                         $returnProperties = null,
+                                         $extraParams = null,
+                                         $tokens = array( ),
+                                         $className = null ) 
+    {
+        if ( empty( $contributionIDs ) ) {
+            // putting a fatal here so we can track if/when this happens
+            CRM_Core_Error::fatal( );
+        }
+        
+        $details = array();
+ 
+        // no apiQuery helper yet, so do a loop and find contribution by id
+        foreach ($contributionIDs as $contributionID) {
+
+            $dao = new CRM_Contribute_DAO_Contribution();
+            $dao->id = $contributionID;
+      
+            if ( $dao->find(true) ) {
+   
+                $details[$dao->id] = array();
+                CRM_Core_DAO::storeValues( $dao,  $details[$dao->id] );
+                
+                // do the necessary transformation
+                if ( CRM_Utils_Array::value( 'payment_instrument_id', $details[$dao->id] ) ) {
+                   $piId = $details[$dao->id]['payment_instrument_id'];
+                   $pis = CRM_Contribute_PseudoConstant::paymentInstrument( );
+                   $details[$dao->id]['payment_instrument'] = $pis[$piId]; 
+                }
+                if ( CRM_Utils_Array::value( 'campaign_id', $details[$dao->id] ) ) {
+                    $campaignId = $details[$dao->id]['campaign_id'];
+                    $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
+                    $details[$dao->id]['campaign'] = $campaigns[$campaignId];
+                }
+                
+                // TODO: call a hook to get token contribution details
+
+            }      
+                  
+        }
+
         return $details; 
     }
 
@@ -1104,6 +1166,70 @@ class CRM_Utils_Token
         return $value;
     }
 
+
+    protected static function _buildContributionTokens() 
+    {
+        $key = 'contribution';
+        if (self::$_tokens[$key] == null) {
+            self::$_tokens[$key] = array_keys( array_merge( CRM_Contribute_BAO_Contribution::exportableFields('All'),
+                                               array( 'campaign', 'contribution_type' ) ) );
+        }
+    }
+
+    public static function &replaceContributionTokens($str, &$contribution, $html = false, $knownTokens = null, $escapeSmarty = false )
+    {
+        self::_buildContributionTokens();
+
+        // here we intersect with the list of pre-configured valid tokens
+        // so that we remove anything we do not recognize
+        // I hope to move this step out of here soon and
+        // then we will just iterate on a list of tokens that are passed to us
+        $key = 'contribution';
+        if ( !$knownTokens || ! CRM_Utils_Array::value( $key, $knownTokens ) ) return $str;
+
+        $str = preg_replace(self::tokenRegex($key),
+                            'self::getContributionTokenReplacement(\'\\1\', $contribution, $html, $escapeSmarty)',
+                            $str);
+
+        $str = preg_replace( '/\\\\|\{(\s*)?\}/', ' ', $str );
+        return $str;
+    }
+
+    public static function getContributionTokenReplacement($token, &$contribution, $html = false, $escapeSmarty = false)
+    {
+        self::_buildContributionTokens();
+ 
+        switch ( $token ) {
+        case 'total_amount':
+        case 'net_amount':
+        case 'fee_amount':
+        case 'non_deductible_amount':
+            $value = CRM_Utils_Money::format( CRM_Utils_Array::retrieveValueRecursive($contribution, $token) );
+            break;
+
+        case 'receive_date':
+            $value = CRM_Utils_Array::retrieveValueRecursive($contribution, $token);
+            $value = CRM_Utils_Date::customFormat($value, null, array('j','m','Y'));
+
+            break;
+
+        default:
+            if (!in_array($token,self::$_tokens['contribution'])) {
+                $value = "{contribution.$token}";
+            } else {
+                $value = CRM_Utils_Array::retrieveValueRecursive($contribution, $token);
+            }
+            break;
+        }
+
+
+        if ( $escapeSmarty ) {
+            $value = self::tokenEscapeSmarty( $value );
+        }
+        return $value;
+
+    }
+
     function getPermissionEmails( $permissionName ) {
         
     }
@@ -1112,6 +1238,3 @@ class CRM_Utils_Token
     }
     
 }
-
-
-

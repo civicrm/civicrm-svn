@@ -101,6 +101,9 @@ class CRM_Contribute_Task
                                   7 => array( 'title'  => ts( 'Print or Email Contribution Receipts' ),
                                               'class'  => 'CRM_Contribute_Form_Task_PDF',
                                               'result' => false ),
+                                  8 => array( 'title' => ts( 'Send PDF Letter for Contributions' ),
+                                              'class' => 'CRM_Contribute_Form_Task_PDFLetter',
+                                              'result' => false ),
                                   );
             
             //CRM-4418, check for delete 

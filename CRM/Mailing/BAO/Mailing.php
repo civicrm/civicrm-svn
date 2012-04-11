@@ -2304,6 +2304,10 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
             $tokens = array_merge( CRM_Core_SelectValues::mailingTokens( ), $tokens );
         }
 
+        if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Contribute_Form_Task_PDFLetter' ) {
+            $tokens = array_merge( CRM_Core_SelectValues::contributionTokens( ), $tokens );
+        }
+
         //sorted in ascending order tokens by ignoring word case
         natcasesort($tokens);
 
