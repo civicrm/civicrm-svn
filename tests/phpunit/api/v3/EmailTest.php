@@ -59,7 +59,7 @@ class api_v3_EmailTest extends CiviUnitTestCase {
    */
   
   
-  public function testCreateEmailPrimaryHandling() {
+  public function testCreateEmailPrimaryHandlingChangeToPrimary() {
     $params = $this->_params;
     unset($params['is_primary']);
     $email1 = civicrm_api('email', 'create', $params);
@@ -70,9 +70,20 @@ class api_v3_EmailTest extends CiviUnitTestCase {
       'is_primary' => 1,
       'id' => $email1['id'],
      ));
-
-    $email1  = civicrm_api('email', 'create', $params);
-    $this->assertApiSuccess( $email2 , 'In line ' . __LINE__);
+    $this->assertEquals(1, $check );
+    
+  }
+    public function testCreateEmailPrimaryHandlingChangeExisting() {
+     $email1 = civicrm_api('email', 'create', $this->_params);
+     $this->assertApiSuccess( $email1, 'In line ' . __LINE__);
+     $email2 = civicrm_api('email', 'create', $this->_params);
+     $this->assertApiSuccess( $email2, 'In line ' . __LINE__);
+     $check = civicrm_api('email', 'getcount',array(
+      'version' => 3,
+      'is_primary' => 1,
+      'contact_id' => $this->_contactID,
+     ));
+    $this->assertEquals(1, $check );
   }
   
   public function testCreateEmailWithoutEmail() {
