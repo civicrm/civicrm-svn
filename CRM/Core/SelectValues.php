@@ -299,7 +299,7 @@ class CRM_Core_SelectValues
         if (!$ufGroupType) {
             $ufGroupType = array(
                                   'Profile'           => ts('Standalone Form or Directory'),
-                                  'Search Profile'    => ts('Search Results'),
+                                  'Search Profile'    => ts('Search Views'),
                                   );
             $config = CRM_Core_Config::singleton( );
             if ( $config->userSystem->supports_form_extensions ) {
