@@ -1912,7 +1912,7 @@ class CRM_Contact_BAO_Query
         $value = array( );
 
         foreach ( $this->_element as $key => $dontCare ) {
-            if ( isset( $dao->$key ) ) {
+            if ( property_exists( $dao,$key ) ) {
                 if ( strpos( $key, '-' ) !== false ) {
                     $values = explode( '-', $key );
                     $lastElement = array_pop( $values );
