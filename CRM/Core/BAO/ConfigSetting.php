@@ -286,8 +286,8 @@ class CRM_Core_BAO_ConfigSetting
             }
             global $dbLocale;
 
-            // if unset and the install is so configured, try to inherit the language from the hosting CMS
-            if ($lcMessages === null and CRM_Utils_Array::value( 'inheritLocale', $defaults ) ) {
+            // try to inherit the language from the hosting CMS
+            if ( CRM_Utils_Array::value( 'inheritLocale', $defaults ) ) {
                 // FIXME: On multilanguage installs, CRM_Utils_System::getUFLocale() in many cases returns nothing if $dbLocale is not set
                 $dbLocale = $multiLang ? "_{$defaults['lcMessages']}" : '';
                 $lcMessages = CRM_Utils_System::getUFLocale();

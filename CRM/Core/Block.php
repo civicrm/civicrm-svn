@@ -554,6 +554,12 @@ class CRM_Core_Block {
             }
         }
 
+        // Suppress Language switcher if language is inherited from CMS - CRM-9971
+        $config = CRM_Core_Config::singleton();
+        if ( $id == self::LANGSWITCH && $config->inheritLocale ) {
+            return null;
+        }
+
         $block = array( );
         $block['name'   ] = 'block-civicrm';
         $block['id'     ] = $block['name'] . '_' . $id;
