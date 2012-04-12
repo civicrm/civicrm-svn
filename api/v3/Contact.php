@@ -262,7 +262,7 @@ function civicrm_api3_contact_delete($params) {
 
 
   require_once 'CRM/Contact/BAO/Contact.php';
-  civicrm_api3_verify_mandatory($params, NULL, array('id'));
+
   $contactID = CRM_Utils_Array::value('id', $params);
 
 
