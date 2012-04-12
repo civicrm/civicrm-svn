@@ -556,7 +556,7 @@ class CRM_Core_Block {
 
         // Suppress Language switcher if language is inherited from CMS - CRM-9971
         $config = CRM_Core_Config::singleton();
-        if ( $id == self::LANGSWITCH && property_exists( $config->inheritLocale ) ) {
+        if ( $id == self::LANGSWITCH && property_exists( $config, "inheritLocale" ) ) {
             return null;
         }
 
