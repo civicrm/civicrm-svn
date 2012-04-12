@@ -1809,18 +1809,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     self::formatCustomDate( $params, $formatted, $dateType, $key );
                 } else if ( $customFields[$customFieldID]['data_type'] == 'Boolean' ) {
                     $params[$key] = CRM_Utils_String::strtoboolstr( $val );
-                } else if ( $val && $customFields[$customFieldID]['html_type'] == 'CheckBox' ) {
-                    $chkVal = array();
-                    $checkVal = explode(",",$val);
-                    foreach ($checkVal as $ckey => $cvalue ) {
-                        $chkVal[trim($cvalue)] = 1;
-                    }
-                    $params[$key] = $chkVal;
-                } else if ( $val && $customFields[$customFieldID]['html_type'] == 'Multi-Select' ) {
-                    $selectVal = array();
-                    $selectVal = explode(",",$val);
-                    $params[trim($key)] = $selectVal;
-                }
+                } 
             }
             
             if ( $key == 'birth_date' && $val ) {
@@ -1893,6 +1882,33 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                  && array_key_exists( $customFieldID, $customFields ) ) {
                 
                 $extends = CRM_Utils_Array::value( 'extends', $customFields[$customFieldID] );
+                $htmlType = CRM_Utils_Array::value( 'html_type', $customFields[$customFieldID] );
+                switch ( $htmlType ) {
+                case 'CheckBox':
+                case 'AdvMulti-Select':
+                case 'Multi-Select':
+
+                    if ( CRM_Utils_Array::value( $key, $formatted ) && CRM_Utils_Array::value( $key, $params ) ) {
+                        $mulValues       = explode( ',', $formatted[$key] );
+                        $customOption    = CRM_Core_BAO_CustomOption::getCustomOption( $customFieldID, true );
+                        $formatted[$key] = array( );
+                        $params[$key]    = array( );
+                        foreach ( $mulValues as $v1 ) {
+                            foreach ( $customOption as $v2 ) {
+                                if ( ( strtolower( $v2['label'] ) == strtolower( trim( $v1 ) ) ) || 
+                                     ( strtolower( $v2['value'] ) == strtolower( trim( $v1 ) ) ) ) { 
+                                    if ( $htmlType == 'CheckBox' ) {
+                                        $params[$key][$v2['value']] = $formatted[$key][$v2['value']] = 1;
+                                    } else {
+                                        $params[$key][] = $formatted[$key][] = $v2['value'];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                break;
+                }
+                
                 //@todo calling api functions directly is not supported
                 _civicrm_api3_custom_format_params( $params, $formatted, $extends );
             }
