@@ -108,7 +108,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
                         "Status message didn't show up after saving!");
       
       // click through to the membership view screen
-      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
       $verifyData = array(
@@ -131,7 +131,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->waitForTextPresent( 'Membership Signup' );
 
       // click through to the activiy view screen (which is the membership view
-      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
       $verifyData = array(
@@ -148,7 +148,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       
       $this->waitForPageToLoad("30000");
       $this->waitForElementPresent("xpath=//div[@id='memberships']/div/table/tbody//tr/td[1][text()='{$memTypeParams['membership_type']}']/../td[7]");
-      $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[1][text()='{$memTypeParams['membership_type']}']/../td[7]/span/a[2][text()='Edit']" );
+      $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[1][text()='{$memTypeParams['membership_type']}']/../td[8]/span/a[2][text()='Edit']" );
       
       $this->waitForElementPresent("_qf_Membership_cancel-bottom");
       
@@ -160,14 +160,14 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->select("membership_type_id[1]", "label={$lifeTimeMemTypeParams['membership_type']}");
       
       $this->waitForElementPresent("xpath=//form[@id='Membership']/div[2]/div[2]//table/tbody//tr[@class='crm-membership-form-block-end_date']/td[2]");
-      $this->click("xpath=//form[@id='Membership']/div[2]/div[2]//table/tbody//tr[@class='crm-membership-form-block-end_date']/td[2]/span/a[text()='clear']");
+      $this->click("xpath=//form[@id='Membership']/div[2]/div[2]//table/tbody//tr[@class='crm-membership-form-block-end_date']/td[2]/span/a[text()='Clear End Date  ']");
       
       $this->click("_qf_Membership_upload-bottom");
       $this->waitForPageToLoad("30000");
      
       // page was loaded
       $this->waitForTextPresent( $sourceText );
-      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
       $verifyData = array(
@@ -249,7 +249,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
                         "Status message didn't show up after saving!");
       
       // click through to the membership view screen
-      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
       $verifyData = array(
