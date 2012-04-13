@@ -465,10 +465,15 @@ function _civicrm_api3_get_options_from_params(&$params, $legacy = 0) {
 
   $returnProperties = array();
   // handle the format return =sort_name,display_name...
-  if (array_key_exists('return', $params)) {
-    $returnProperties = explode(',', $params['return']);
-    $returnProperties = array_flip($returnProperties);
-    $returnProperties[key($returnProperties)] = 1;
+  if (array_key_exists('return', $params)){
+    if(is_array($params['return'])) {
+      $returnProperties = array_flip($params['return']);
+    }
+    else{
+      $returnProperties = explode(',', $params['return']);
+      $returnProperties = array_flip($returnProperties);
+      $returnProperties[key($returnProperties)] = 1;
+    }
   }
 
 
