@@ -35,7 +35,10 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $apiRequest['extra'] = $extra;
     // look up function, file, is_generic
     $apiRequest += _civicrm_api_resolve($apiRequest);
-
+    if(strtolower($action) == 'create' || strtolower($action) == 'delete'){
+      $apiRequest['is_transactional'] =1;
+      $tx = new CRM_Core_Transaction();
+    }
     $errorFnName = ($apiRequest['version'] == 2) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
     if ($apiRequest['version'] > 2) {
       _civicrm_api3_api_check_permission($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
@@ -100,6 +103,9 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     else {
       $err['tip'] = "add debug=1 to your API call to have more info about the error";
     }
+    if(CRM_Utils_Array::value('is_transactional',$apiRequest)){
+      $tx->rollback();
+    }
     return $err;
   }
   catch(Exception $e) {
@@ -109,6 +115,9 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $err = civicrm_api3_create_error($e->getMessage(), NULL, $apiRequest);
     if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
       $err['trace'] = $e->getTraceAsString();
+    }
+    if(CRM_Utils_Array::value('is_transactional',$apiRequest)){
+      $tx->rollback();
     }
     return $err;
   }
@@ -390,12 +399,16 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
 
         $subParams['version'] = $version;
         $subParams['sequential'] = 1;
+        $subParams['api.has_parent'] = 1;
         if (array_key_exists(0, $newparams)) {
           // it is a numerically indexed array - ie. multiple creates
           foreach ($newparams as $entity => $entityparams) {
             $subParams = array_merge($subParams, $entityparams);
             _civicrm_api_replace_variables($subAPI[1], $subaction, $subParams, $result['values'][$idIndex], $separator);
             $result['values'][$result['id']][$field][] = civicrm_api($subEntity, $subaction, $subParams);
+            if($result['is_error'] ===1 ){
+              throw new Exception ($subEntity .' ' . $subaction .  'call failed with' .$result['error_message']);
+            }
           }
         }
         else {
@@ -403,6 +416,9 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
           $subParams = array_merge($subParams, $newparams);
           _civicrm_api_replace_variables($subAPI[1], $subaction, $subParams, $result['values'][$idIndex], $separator);
           $result['values'][$idIndex][$field] = civicrm_api($subEntity, $subaction, $subParams);
+          if($result['is_error'] ===1 ){
+            throw new Exception ($subEntity .' ' . $subaction .  'call failed with' .$result['error_message']);
+          }
         }
       }
     }
