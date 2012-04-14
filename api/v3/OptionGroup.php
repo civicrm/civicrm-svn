@@ -22,13 +22,11 @@ function civicrm_api3_option_group_get($params) {
  * @access public
  */
 function civicrm_api3_option_group_create($params) {
-  civicrm_api3_verify_mandatory($params);
 
   $ids = array();
   $bao = CRM_Core_BAO_OptionGroup::add($params, $ids);
 
   if (is_null($bao)) {
-
     return civicrm_api3_create_error('Entity not created');
   }
   else {
@@ -38,3 +36,12 @@ function civicrm_api3_option_group_create($params) {
   }
 }
 
+/*
+ * Adjust Metadata for Create action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_option_group_create_spec(&$params){
+  $params['name']['api.unique'] = 1; 
+}
