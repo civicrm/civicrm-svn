@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 
-{* enclosed all tabs and its content in a block *}	
+{* enclosed all tabs and its content in a block *}
 <div class="crm-block crm-content-block">
 
 {if $tabHeader and count($tabHeader) gt 1}
@@ -44,14 +44,14 @@
 {/if}
 
 
-<script type="text/javascript"> 
+<script type="text/javascript">
    var selectedTab = 'EventInfo';
    {if $selectedTab}selectedTab = "{$selectedTab}";{/if}
-   var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';    
+   var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
 {literal}
 //explicitly stop spinner
 function stopSpinner( ) {
- cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})	 
+ cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})
 }
 
     cj( function() {
@@ -62,7 +62,7 @@ function stopSpinner( ) {
             select: function(event, ui) {
                 // we need to change the action of parent form, so that form submits to correct page
                 var url = cj.data(ui.tab, 'load.tabs');
-                {/literal}{if $config->userFramework eq 'Drupal'}{literal}
+                {/literal}{if $config->userSystem->is_drupal}{literal}
                     var actionUrl = url.split( '?' );
                     {/literal}{if $config->cleanURL}{literal}
                       var actualUrl = actionUrl[0];
@@ -75,8 +75,8 @@ function stopSpinner( ) {
                     var actualUrl = actionUrl[0] + '&' + actionUrl[1];
                 {/literal}{/if}{literal}
 
-                cj(this).parents("form").attr("action", actualUrl )                
-                
+                cj(this).parents("form").attr("action", actualUrl )
+
                 if ( !global_formNavigate ) {
                     var message = '{/literal}{ts escape="js"}Confirm\n\nAre you sure you want to navigate away from this tab?\n\nYou have unsaved changes.\n\nPress OK to continue, or Cancel to stay on the current tab.{/ts}{literal}';
                     if ( !confirm( message ) ) {
@@ -93,7 +93,7 @@ function stopSpinner( ) {
             	 Drupal.attachBehaviors(ui.panel);
             	}
             }
-        });        
+        });
     });
 {/literal}
 </script>
