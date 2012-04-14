@@ -35,7 +35,7 @@
  */
 class CRM_Report_Form_Price_Contributionbased extends CRM_Report_Form_Extended {
 
-  protected $_baseTable = 'civicrm_contribution'; function __construct() {
+  protected $_baseTable = 'civicrm_contribution';
 
   function __construct( ) {
 
