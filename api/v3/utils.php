@@ -142,20 +142,26 @@ function civicrm_api3_verify_mandatory($params, $daoName = NULL, $keys = array()
  * @return <type>
  */
 function civicrm_api3_create_error($msg, $data = array(), &$dao = NULL) {
+  //fix me - $dao should be param 4 & 3 should be $apiRequest
   if (is_object($dao)) {
     $dao->free();
   }
 
-  if (is_array($dao) && $msg == 'DB Error: constraint violation') {
-    try {
-      _civicrm_api3_validate_fields($dao['entity'], $dao['action'], $dao['params'], True);
-    }
-    catch(Exception $e) {
-      $msg = $e->getMessage();
+  if (is_array($dao)){
+    if ($msg == 'DB Error: constraint violation' || $msg = 'DB Error: already exists') {
+      try {
+        _civicrm_api3_validate_fields($dao['entity'], $dao['action'], $dao['params'], True);
+      }
+      catch(Exception $e) {
+        $msg = $e->getMessage();
+      }
     }
   }
   $data['is_error']      = 1;
   $data['error_message'] = $msg;
+  if (is_array($dao) && CRM_Utils_Array::value('api.has_parent', $dao['params'])){
+    throw new Exception('Error in call to ' . $dao['entity'] .'_' . $dao['action'] .' : ' . $msg);
+  }
   return $data;
 }
 
@@ -862,7 +868,7 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
   if (in_array(strtolower($entity), $skippedEntities) || strtolower($action) == 'getfields') {
     return;
   }
-  $fields = civicrm_api($entity, 'getfields', array('version' => 3));
+  $fields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => $action));
   $fields = $fields['values'];
   foreach ($fields as $fieldname => $fieldInfo) {
     switch (CRM_Utils_Array::value('type', $fieldInfo)) {
@@ -872,14 +878,20 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
         _civicrm_api3_validate_date($params, $fieldname, $fieldInfo);
         break;
     }
-    if (!empty($errorMode) && strtolower($action) == 'create'
-      && CRM_Utils_Array::value('FKClassName', $fieldInfo)
-        ) {
-      if (CRM_Utils_Array::value($fieldname, $params)){
-        _civicrm_api3_validate_constraint($params, $fieldname, $fieldInfo);
+    
+    // intensive checks - usually only called after DB level fail
+    if (!empty($errorMode) && strtolower($action) == 'create'){
+      if( CRM_Utils_Array::value('FKClassName', $fieldInfo)) {
+        if (CRM_Utils_Array::value($fieldname, $params)){
+          _civicrm_api3_validate_constraint($params, $fieldname, $fieldInfo);
+        }
+        elseif(CRM_Utils_Array::value('required', $fieldInfo)){
+          throw new Exception("DB Constraint Violation - possibly $fieldname should possibly be marked as mandatory for this API. If so, please raise a bug report");
+        }
       }
-      elseif(CRM_Utils_Array::value('required', $fieldInfo)){
-        throw new Exception("DB Constraint Violation - possibly $fieldname should possibly be marked as mandatory for this API. If so, please raise a bug report");
+      if(CRM_Utils_Array::value('api.unique',$fieldInfo)){
+        $params['entity'] = $entity;
+        _civicrm_api3_validate_uniquekey($params, $fieldname, $fieldInfo);
       }
     }
   }
@@ -927,7 +939,25 @@ function _civicrm_api3_validate_constraint(&$params, &$fieldname, &$fieldInfo) {
   $dao->selectAdd();
   $dao->selectAdd('id');
   if (!$dao->find()) {
-    throw new Exception($fieldname . " is not valid : " . $params[$fieldname]);
+    throw new Exception("$fieldname is not valid : " . $params[$fieldname]);
+  }
+}
+
+/*
+ * Validate foreign constraint fields being passed into API.
+ *
+ * @param array $params params from civicrm_api
+ * @param string $fieldname uniquename of field being checked
+ * @param array $fieldinfo array of fields from getfields function
+ */
+function _civicrm_api3_validate_uniquekey(&$params, &$fieldname, &$fieldInfo) {
+  $existing = civicrm_api($params['entity'], 'get', array(
+    'version' => $params['version'],
+    $fieldname => $params[$fieldname],
+  ));
+  if($existing['count'] ==1){// an entry already exists for this unique field
+    // question - could this ever be a security issue?
+    throw new Exception("Field: `$fieldname` must be unique. An conflicting entity already exists - id: " . $existing['id']);
   }
 }
 
