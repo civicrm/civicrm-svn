@@ -1,9 +1,7 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 4.1                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -202,8 +200,14 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           ),
         ),
         'group_bys' =>
-        array('label' =>
-          array('title' => ts('Price Field Value Label')),
+        //note that we have a requirement to group by label such that all 'Promo book' lines
+        // are grouped together across price sets but there may be a separate need to group
+        // by id so that entries in one price set are distinct from others. Not quite sure what
+        // to call the distinction for end users benefit
+        array('price_field_value_label' =>
+          array('title' => ts('Price Field Value Label'),
+            'name' => 'label',
+          ),
         ),
       ),
     );
@@ -213,15 +217,23 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     return array('civicrm_price_field' =>
       array('dao' => 'CRM_Price_BAO_Field',
         'fields' =>
-        array('label' =>
+        array('price_field_label' =>
           array('title' => ts('Price Field Label'),
+            'name' => 'label',
           ),
         ),
         'filters' =>
-        array('label' =>
+        array('price_field_label' =>
           array('title' => ts('Price Field Label'),
             'type' => CRM_Utils_Type::T_STRING,
             'operator' => 'like',
+            'name' => 'label',
+          ),
+        ),
+        'group_bys' =>
+        array('price_field_label' =>
+          array('title' => ts('Price Field Label'),
+            'name' => 'label',
           ),
         ),
       ),
@@ -332,7 +344,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'default' => TRUE,
             'alter_display' => 'alterContributionType',
           ),
-          'payment_instrument_id' => array('title' => ts('Payment Type'),
+          'payment_instrument_id' => array('title' => ts('Payment Instrument'),
             'alter_display' => 'alterPaymentType',
           ),
           'trxn_id' => NULL,
@@ -370,6 +382,8 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
         'group_bys' =>
         array('contribution_type_id' =>
           array('title' => ts('Contribution Type')),
+          'payment_instrument_id' =>
+          array('title' => ts('Payment Instrument')),
         ),
         'grouping' => 'contribution-fields',
       ),
@@ -442,7 +456,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     $this->_from .= "  LEFT JOIN (SELECT line_item_civireport.id as lid, contribution_civireport_direct.* 
 FROM civicrm_line_item line_item_civireport
 LEFT JOIN civicrm_contribution contribution_civireport_direct 
-                       ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
+                       ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
 
 			
 WHERE 	contribution_civireport_direct.id IS NOT NULL
