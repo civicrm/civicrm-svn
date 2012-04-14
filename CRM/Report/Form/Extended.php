@@ -32,6 +32,9 @@
  * $Id$
  *
  */
+
+require_once 'CRM/Report/Form.php';
+require_once 'CRM/Contribute/PseudoConstant.php';
 class CRM_Report_Form_Extended extends CRM_Report_Form {
   protected $_addressField = FALSE;
 
@@ -52,10 +55,26 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
   function select() {
     parent::select();
   }
-
+/*
+ * From clause build where baseTable & fromClauses are defined
+ */
   function from() {
-    //@todo I think the first line here would make sense as the parent::from function
-    $this->_from = "FROM " . $this->_baseTable . " " . $this->_aliases[$this->_baseTable];
+    $this->buildACLClause($this->_aliases['civicrm_contact']);
+    $this->_from = "FROM {$this->_baseTable}   {$this->_aliases[$this->_baseTable]}";
+    $availableClauses = $this->getAvailableJoins();
+    foreach ($this->fromClauses() as $fromClause ) {
+      $fn = $availableClauses[$fromClause]['callback'];
+      $this->$fn();
+    }
+    if(strstr($this->_from, 'civicrm_contact')){
+      $this->_from .= $this->_aclFrom;
+    }
+  }
+  /*
+   * Define any from clauses in use (child classes to override)
+   */
+  function fromClauses( ){
+   return array();
   }
 
   function groupBy() {
@@ -418,69 +437,162 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
       ),
     );
   }
+  /*
+   * Get Information about advertised Joins
+   */
+  function getAvailableJoins(){
+    return array(
+      'priceFieldValue_from_lineItem' => array(
+        'leftTable' => 'civicrm_line_item',
+        'rightTable' => 'civicrm_price_field_value',
+        'callback'   => 'joinPriceFieldValueFromLineItem',
+       ),
+      'priceField_from_lineItem' => array(
+        'leftTable' => 'civicrm_line_item',
+        'rightTable' => 'civicrm_price_field',
+        'callback'   => 'joinPriceFieldFromLineItem',
+       ),
+      'participant_from_lineItem' => array(
+        'leftTable' => 'civicrm_line_item',
+        'rightTable' => 'civicrm_participant',
+        'callback'   => 'joinParticipantFromLineItem',
+       ),
+      'contribution_from_lineItem' => array(
+        'leftTable' => 'civicrm_line_item',
+        'rightTable' => 'civicrm_contribution',
+        'callback'   => 'joinContributionFromLineItem',
+       ),
+      'membership_from_lineItem' => array(
+        'leftTable' => 'civicrm_line_item',
+        'rightTable' => 'civicrm_membership',
+        'callback'   => 'joinMembershipFromLineItem',
+       ),
+      'contribution_from_participant' => array(
+        'leftTable' => 'civicrm_participant',
+        'rightTable' => 'civicrm_contribution',
+        'callback'   => 'joinParticipantFromContribution',
+       ),
+       'contribution_from_membership' => array(
+        'leftTable' => 'civicrm_membership',
+        'rightTable' => 'civicrm_contribution',
+        'callback'   => 'joinMembershipFromContribution',
+       ),
+      'lineItem_from_contribution' => array(
+        'leftTable' => 'civicrm_contribution',
+        'rightTable' => 'civicrm_line_item',
+        'callback'   => 'joinLineItemFromContribution',
+       ),
+       'contact_from_participant' => array(
+        'leftTable' => 'civicrm_participant',
+        'rightTable' => 'civicrm_contact',
+        'callback'   => 'joinContactFromParticipant',
+       ),
+       'contact_from_contribution' => array(
+        'leftTable' => 'civicrm_contribution',
+        'rightTable' => 'civicrm_contact',
+        'callback'   => 'joinContactFromContribution',
+       ),
+       'event_from_participant' => array(
+        'leftTable' => 'civicrm_participant',
+        'rightTable' => 'civicrm_event',
+        'callback'   => 'joinEventFromParticipant',
+       ),
+     );
+  }
+
 
   function joinPriceFieldValueFromLineItem() {
-    $this->_from .= " LEFT JOIN civicrm_price_field_value {$this->_aliases['civicrm_price_field_value']} 
+    $this->_from .= " LEFT JOIN civicrm_price_field_value {$this->_aliases['civicrm_price_field_value']}
                           ON {$this->_aliases['civicrm_line_item']}.price_field_value_id = {$this->_aliases['civicrm_price_field_value']}.id";
   }
 
   function joinPriceFieldFromLineItem() {
-    $this->_from .= " LEFT JOIN civicrm_price_field {$this->_aliases['civicrm_price_field']} 
+    $this->_from .= " LEFT JOIN civicrm_price_field {$this->_aliases['civicrm_price_field']}
                           ON {$this->_aliases['civicrm_line_item']}.price_field_id = {$this->_aliases['civicrm_price_field']}.id";
   }
-
+  /*
+   * Define join from line item table to participant table
+   */
   function joinParticipantFromLineItem() {
-    $this->_from .= " LEFT JOIN civicrm_participant {$this->_aliases['civicrm_participant']} 
-                          ON ( {$this->_aliases['civicrm_line_item']}.entity_id = {$this->_aliases['civicrm_participant']}.id AND {$this->_aliases['civicrm_line_item']}.entity_table = 'civicrm_participant')
-                          ";
+    $this->_from .=
+      " LEFT JOIN civicrm_participant {$this->_aliases['civicrm_participant']}
+      ON ( {$this->_aliases['civicrm_line_item']}.entity_id = {$this->_aliases['civicrm_participant']}.id
+      AND {$this->_aliases['civicrm_line_item']}.entity_table = 'civicrm_participant')
+    ";
   }
 
+  /*
+   * Define join from line item table to Membership table
+   */
+  function joinMembershipFromLineItem() {
+    $this->_from .=
+    " LEFT JOIN civicrm_membership {$this->_aliases['civicrm_membership']}
+      ON ( {$this->_aliases['civicrm_line_item']}.entity_id = {$this->_aliases['civicrm_membership']}.id
+      AND {$this->_aliases['civicrm_line_item']}.entity_table = 'civicrm_membership')
+    ";
+  }
+  /*
+   * Define join from Participant to Contribution table
+   */
   function joinContributionFromParticipant() {
-    $this->_from .= " LEFT JOIN civicrm_participant_payment pp 
-                          ON {$this->_aliases['civicrm_participant']}.id = pp.participant_id
-        LEFT JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
-                          ON pp.contribution_id = {$this->_aliases['civicrm_contribution']}.id";
+    $this->_from .=
+      " LEFT JOIN civicrm_participant_payment pp
+        ON {$this->_aliases['civicrm_participant']}.id = pp.participant_id
+        LEFT JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']}
+        ON pp.contribution_id = {$this->_aliases['civicrm_contribution']}.id
+      ";
+  }
+
+  /*
+   * Define join from Membership to Contribution table
+   */
+  function joinContributionFromMembership() {
+    $this->_from .=
+      " LEFT JOIN civicrm_membership_payment pp
+        ON {$this->_aliases['civicrm_membership']}.id = pp.membership_id
+        LEFT JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']}
+        ON pp.contribution_id = {$this->_aliases['civicrm_contribution']}.id
+      ";
   }
 
   function joinParticipantFromContribution() {
-    $this->_from .= " LEFT JOIN civicrm_participant_payment pp 
+    $this->_from .= " LEFT JOIN civicrm_participant_payment pp
                           ON {$this->_aliases['civicrm_contribution']}.id = pp.contribution_id
-        LEFT JOIN civicrm_participant {$this->_aliases['civicrm_participant']} 
+        LEFT JOIN civicrm_participant {$this->_aliases['civicrm_participant']}
                           ON pp.participant_id = {$this->_aliases['civicrm_participant']}.id";
   }
-
   function joinContributionFromLineItem() {
 
     // this can be stored as a temp table & indexed for more speed. Not done at this state.
     // another option is to cache it but I haven't tried to put that code in yet (have used it before for one hour caching
-    $this->_from .= "  LEFT JOIN (SELECT line_item_civireport.id as lid, contribution_civireport_direct.* 
+    $this->_from .= "  LEFT JOIN (SELECT line_item_civireport.id as lid, contribution_civireport_direct.*
 FROM civicrm_line_item line_item_civireport
-LEFT JOIN civicrm_contribution contribution_civireport_direct 
+LEFT JOIN civicrm_contribution contribution_civireport_direct
                        ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
 
-			
-WHERE 	contribution_civireport_direct.id IS NOT NULL
-			
-UNION SELECT line_item_civireport.id as lid, contribution_civireport.*
-			FROM civicrm_line_item line_item_civireport
-			LEFT JOIN civicrm_participant participant_civireport 
-                          ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = participant_civireport.id AND line_item_civireport.entity_table = 'civicrm_participant')
 
-LEFT JOIN civicrm_participant_payment pp 
+WHERE 	contribution_civireport_direct.id IS NOT NULL
+
+UNION SELECT line_item_civireport.id as lid, contribution_civireport.*
+  FROM civicrm_line_item line_item_civireport
+  LEFT JOIN civicrm_participant participant_civireport
+                          ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = participant_civireport.id AND line_item_civireport.entity_table = 'civicrm_participant')
+
+LEFT JOIN civicrm_participant_payment pp
                           ON participant_civireport.id = pp.participant_id
-        LEFT JOIN civicrm_contribution contribution_civireport 
-                          ON pp.contribution_id = contribution_civireport.id 				
+        LEFT JOIN civicrm_contribution contribution_civireport
+                          ON pp.contribution_id = contribution_civireport.id
 
 UNION SELECT line_item_civireport.id as lid,contribution_civireport.*
-			FROM civicrm_line_item line_item_civireport
-			LEFT JOIN civicrm_membership membership_civireport 
-                          ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id =membership_civireport.id AND line_item_civireport.entity_table = 'civicrm_membership')
+  FROM civicrm_line_item line_item_civireport
+  LEFT JOIN civicrm_membership membership_civireport
+                          ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id =membership_civireport.id AND line_item_civireport.entity_table = 'civicrm_membership')
 
-LEFT JOIN civicrm_membership_payment pp 
+LEFT JOIN civicrm_membership_payment pp
                           ON membership_civireport.id = pp.membership_id
-        LEFT JOIN civicrm_contribution contribution_civireport 
-                          ON pp.contribution_id = contribution_civireport.id 				
-) as {$this->_aliases['civicrm_contribution']} 
+        LEFT JOIN civicrm_contribution contribution_civireport
+                          ON pp.contribution_id = contribution_civireport.id
+) as {$this->_aliases['civicrm_contribution']}
   ON {$this->_aliases['civicrm_contribution']}.lid = {$this->_aliases['civicrm_line_item']}.id
  ";
   }
@@ -489,50 +601,50 @@ LEFT JOIN civicrm_membership_payment pp
 
     // this can be stored as a temp table & indexed for more speed. Not done at this stage.
     // another option is to cache it but I haven't tried to put that code in yet (have used it before for one hour caching
-    $this->_from .= "  
+    $this->_from .= "
        LEFT JOIN (
 SELECT contribution_civireport_direct.id AS contid, line_item_civireport.*
-FROM civicrm_contribution contribution_civireport_direct  
-LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
-WHERE 	line_item_civireport.id IS NOT NULL 
+FROM civicrm_contribution contribution_civireport_direct
+LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
+WHERE line_item_civireport.id IS NOT NULL
 
-UNION 
+UNION
 SELECT contribution_civireport_direct.id AS contid, line_item_civireport.*
-FROM civicrm_contribution contribution_civireport_direct  
+FROM civicrm_contribution contribution_civireport_direct
 LEFT JOIN civicrm_participant_payment pp ON contribution_civireport_direct.id = pp.contribution_id
 LEFT JOIN civicrm_participant p ON pp.participant_id = p.id
-LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_participant')
-WHERE 	line_item_civireport.id IS NOT NULL 
+LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_participant')
+WHERE line_item_civireport.id IS NOT NULL
 
 UNION
 
 SELECT contribution_civireport_direct.id AS contid, line_item_civireport.*
-FROM civicrm_contribution contribution_civireport_direct  
+FROM civicrm_contribution contribution_civireport_direct
 LEFT JOIN civicrm_membership_payment pp ON contribution_civireport_direct.id = pp.contribution_id
 LEFT JOIN civicrm_membership p ON pp.membership_id = p.id
-LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total <> 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_membership')
-WHERE 	line_item_civireport.id IS NOT NULL 
-) as {$this->_aliases['civicrm_line_item']} 
+LEFT JOIN civicrm_line_item line_item_civireport ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = p.id AND line_item_civireport.entity_table = 'civicrm_membership')
+WHERE 	line_item_civireport.id IS NOT NULL
+) as {$this->_aliases['civicrm_line_item']}
   ON {$this->_aliases['civicrm_line_item']}.contid = {$this->_aliases['civicrm_contribution']}.id
- 
-  
+
+
   ";
   }
 
   function joinContactFromParticipant() {
-    $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
+    $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
                           ON {$this->_aliases[civicrm_participant]}.contact_id = {$this->_aliases['civicrm_contact']}.id";
   }
 
   function joinContactFromContribution() {
-    $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
+    $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
                           ON {$this->_aliases['civicrm_contribution']}.contact_id = {$this->_aliases['civicrm_contact']}.id";
   }
 
   function joinEventFromParticipant() {
-    $this->_from .= "  LEFT JOIN civicrm_event {$this->_aliases['civicrm_event']} 
-                    ON ({$this->_aliases['civicrm_event']}.id = {$this->_aliases['civicrm_participant']}.event_id ) AND 
-                       ({$this->_aliases['civicrm_event']}.is_template IS NULL OR  
+    $this->_from .= "  LEFT JOIN civicrm_event {$this->_aliases['civicrm_event']}
+                    ON ({$this->_aliases['civicrm_event']}.id = {$this->_aliases['civicrm_participant']}.event_id ) AND
+                       ({$this->_aliases['civicrm_event']}.is_template IS NULL OR
                         {$this->_aliases['civicrm_event']}.is_template = 0)";
   }
 
