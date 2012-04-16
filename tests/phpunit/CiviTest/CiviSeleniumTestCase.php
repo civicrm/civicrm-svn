@@ -434,6 +434,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->waitForPageToLoad('30000');
         // Is new processor created?
         $this->assertTrue($this->isTextPresent($processorName), 'Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).');
+        
+        $paymentProcessorId = explode( '&id=', $this->getAttribute( "xpath=//table[@class='selector']//tbody//tr/td[text()='{$processorName}']/../td[6]/span/a[1]@href" ) );
+        $paymentProcessorId = explode( '&', $paymentProcessorId[1] );
+        return $paymentProcessorId[0];
     }
 
     function webtestAddCreditCardDetails( ) {

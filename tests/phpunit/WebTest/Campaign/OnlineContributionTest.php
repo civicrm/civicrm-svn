@@ -153,7 +153,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     {
         // We need a payment processor
         $processorName = "Webtest Dummy" . substr( sha1( rand( ) ), 0, 7 );
-        $this->webtestAddPaymentProcessor( $processorName );
+        $paymentProcessorId = $this->webtestAddPaymentProcessor( $processorName );
         
         $this->open( $this->sboxPath . "civicrm/admin/contribute/add?reset=1&action=add" );
         
@@ -177,7 +177,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( "_qf_Amount_next-bottom" );
         
         //this contribution page for online contribution 
-        $this->select( "payment_processor_id", "label=" . $processorName );
+        $this->check( "payment_processor[{$paymentProcessorId}]" );
         $this->isTextPresent( "Contribution Amounts section enabled" );
         $this->type( "label_1", "amount 1" );
         $this->type( "value_1", "100" );
@@ -191,8 +191,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
         // go to step 4
         $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Receipt']");
         $this->waitForElementPresent( '_qf_ThankYou_next-bottom' );
-        $this->waitForElementPresent( "cke_thankyou_footer" );
-        
+                
         // fill in step 4 (Thanks and Receipt)
         $this->type( 'thankyou_title',     "Thank-you Page Title $contributionTitle" );
         $this->type( 'receipt_from_name',  "Receipt From Name $contributionTitle" );

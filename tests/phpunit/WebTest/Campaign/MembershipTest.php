@@ -193,9 +193,9 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("membership for $firstName John has been added."),
                         "Status message didn't show up after saving!");
-      
+     
       // click through to the membership view screen
-      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
       $this->webtestVerifyTabularData( array( 'Campaign' => $campaignTitle ) );
