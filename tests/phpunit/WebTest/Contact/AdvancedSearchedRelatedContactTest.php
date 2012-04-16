@@ -46,7 +46,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
         
         // We need a payment processor
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
-        $this->webtestAddPaymentProcessor($processorName);
+        $paymentProcessorId = $this->webtestAddPaymentProcessor($processorName);
         
         // Go directly to the URL of the screen that you will be testing (New Event).
         $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
@@ -58,7 +58,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
         $streetAddress = "100 Main Street";
         $this->_testAddLocation( $streetAddress );
         
-        $this->_testAddFees( false, false, $processorName );
+        $this->_testAddFees( false, false, $paymentProcessorId );
         $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
         $this->waitForPageToLoad("300000");
         $this->type( 'title', $eventTitle );
@@ -201,12 +201,12 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
         
     }
     
-    function _testAddFees( $discount=false, $priceSet=false, $processorName = "PP Pro" ){
+    function _testAddFees( $discount=false, $priceSet=false, $processorId ){
         // Go to Fees tab
         $this->click("link=Fees");
         $this->waitForElementPresent("_qf_Fee_upload-bottom");
         $this->click("CIVICRM_QFID_1_2");
-        $this->select("payment_processor_id", "label=" . $processorName);
+        $this->check("payment_processor[{$processorId}]");
         $this->select("contribution_type_id", "value=4");
         if ( $priceSet) {
             // get one - TBD

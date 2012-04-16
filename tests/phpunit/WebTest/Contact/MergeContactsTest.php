@@ -158,7 +158,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad( "30000" );
         
         // Select the contacts to be merged
-        $this->select( "xpath=//div[@id='option51_length']/select", "value=25" );
+        $this->select( "xpath=//div[@id='option51_length']//select", "value=25" );
         $this->waitForElementPresent( "xpath=//table[@class='pagerDisplay']/tbody//tr/td[1]/a[text()='$prefix $firstName $lastName']/../../td[2]/a[text()='$firstName $lastName']" );
         $this->click( "xpath=//table[@class='pagerDisplay']/tbody//tr/td[1]/a[text()='$prefix $firstName $lastName']/../../td[2]/a[text()='$firstName $lastName']/../../td[4]/a[text()='merge']" );
         $this->waitForElementPresent( '_qf_Merge_cancel-bottom' );
@@ -189,7 +189,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         $this->click( '_qf_Advanced_refresh' );
         $this->waitForPageToLoad( "30000" );
         $this->assertTrue( $this->isTextPresent( '1 Contact' ), "Deletion of duplicate contact during merge was not successful. Dupe contact not found when searching trash." );
-
+        
         // Search for the main contact
         $this->open( $this->sboxPath . 'civicrm/contact/search/advanced?reset=1' );
         $this->waitForElementPresent( '_qf_Advanced_refresh' );
@@ -204,8 +204,8 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
         // $this->verifyText( "xpath=//div[@class='left-corner']/h2", preg_quote( "$prefix $firstName $lastName" ) );
 
         // Verify billing email merged
-        $this->verifyText( "xpath=//div[@class='contact_details']/div[1][@class='contact_panel']/div[1][@class='contactCardLeft']/table/tbody/tr[3]/td[2]/span/a", preg_quote( "$firstName.$lastName@billing.com" ) );
-
+        $this->isElementPresent( "xpath=//div[@class='contact_details']/div[1][@class='contact_panel']/div[1][@class='contactCardLeft']/table/tbody/tr[4]/td[2]/span/a[text()='$firstName.$lastName@billing.com']" );
+        
         // Verify activity merged
         $this->click( "css=li#tab_activity a" );
         $this->waitForElementPresent( "xpath=//table[@id='contact-activity-selector-activity']/tbody/tr" );
