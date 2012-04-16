@@ -1,4 +1,3 @@
-
 <?php
 
 /*
@@ -49,18 +48,11 @@ class CRM_SMS_Controller_Send extends CRM_Core_Controller {
         // also get the text and html file
         $txtFile  = CRM_Utils_Request::retrieve( 'txtFile', 'String',
                                                  CRM_Core_DAO::$_nullObject, false, null );
-        $htmlFile = CRM_Utils_Request::retrieve( 'htmlFile', 'String',
-                                                 CRM_Core_DAO::$_nullObject, false, null );
 
         $config = CRM_Core_Config::singleton( );
         if ( $txtFile &&
              file_exists( $config->uploadDir . $txtFile ) ) {
             $this->set( 'textFilePath', $config->uploadDir . $txtFile );
-        }
-
-        if ( $htmlFile &&
-             file_exists( $config->uploadDir . $htmlFile ) ) {
-            $this->set( 'htmlFilePath', $config->uploadDir . $htmlFile );
         }
 
         $this->_stateMachine = new CRM_SMS_StateMachine_Send( $this, $action, $mailingID);
@@ -70,7 +62,7 @@ class CRM_SMS_Controller_Send extends CRM_Core_Controller {
 
         // add all the actions
         $uploadNames =
-            array_merge( array( 'textFile', 'htmlFile' ),
+            array_merge( array( 'textFile' ),
                          CRM_Core_BAO_File::uploadNames( ) );
 
         $config = CRM_Core_Config::singleton( );

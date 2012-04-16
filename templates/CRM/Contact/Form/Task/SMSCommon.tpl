@@ -31,7 +31,7 @@
   {ts}Plain-Text Format{/ts}
 	</div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
- 
+ <div id='char-count-message'></div>
  <span class="helpIcon" id="helptext">
 	<a href="#" onClick="return showToken('Text', 1);">{$form.token1.label}</a>
 	{help id="id-token-text" file="CRM/Contact/Form/Task/SMS.hlp"}
@@ -42,7 +42,6 @@
 	</div>
     </span>
     <div class="clear"></div>
- 
     <div class='text'>
 	{$form.text_message.html}<br />
     </div>
@@ -69,17 +68,42 @@ cj(function() {
    cj().crmaccordions(); 
 });
 
-{/literal}{if $max_sms_length}{literal}
-cj('#text_message').change(function() {
-   var len = cj(this).val().length;
-   var maxLength = {/literal}{$max_sms_length}{literal};
+{/literal}{if $max_sms_length}{literal}	
+maxCharInfoDisplay();
 
+cj('#text_message').bind({
+  change: function() {
+   maxLengthMessage();
+  },
+  keyup:  function() {
+   maxCharInfoDisplay();
+  }
+});
+
+function maxLengthMessage()
+{
+   var len = cj('#text_message').val().length;
+   var maxLength = {/literal}{$max_sms_length}{literal};
    if (len > maxLength) {				     
       alert('SMS body exceeding limit of 160 characters');
-      cj(this).focus();		 
+      cj('#text_message').focus();		 
       return false;
    }
-});
+return true;
+}
+
+function maxCharInfoDisplay(){
+   var maxLength = {/literal}{$max_sms_length}{literal};
+   var enteredCharLength = cj('#text_message').val().length;
+   var count = maxLength - enteredCharLength;
+
+   if( count < 0 ) {
+      cj('#text_message').val(cj('#text_message').val().substring(0, maxLength));
+      count = 0;
+   }
+   cj('#char-count-message').text( "You can insert upto " + count + " characters" );
+}
 {/literal}{/if}{literal}
+
 </script>
 {/literal}
