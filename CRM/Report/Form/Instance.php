@@ -44,15 +44,15 @@ class CRM_Report_Form_Instance {
         if ( $form->_section ) {
             return;
         }
-		
+
 		// check role based permission
 		$instanceID = $form->getVar( '_id' );
 		if ( $instanceID && !CRM_Report_Utils_Report::isInstanceGroupRoleAllowed($instanceID) ) {
 		    $url = CRM_Utils_System::url( 'civicrm/report/list', 'reset=1' );
-			CRM_Core_Error::statusBounce( ts( 'You do not have permission to access this report.' ), 
+			CRM_Core_Error::statusBounce( ts( 'You do not have permission to access this report.' ),
 			                              $url );
 		}
-        
+
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Report_DAO_Instance' );
 
         $form->add( 'text',
@@ -74,27 +74,27 @@ class CRM_Report_Form_Instance {
                     'email_to',
                     ts( 'To' ),
                     $attributes['email_to'] );
-        
+
         $form->add( 'text',
                     'email_cc',
                     ts( 'CC' ),
                     $attributes['email_subject'] );
-        
+
         $form->add( 'textarea',
                     'report_header',
                     ts( 'Report Header' ),
                     $attributes['header'] );
-        
+
         $form->add( 'textarea',
                     'report_footer',
                     ts( 'Report Footer' ),
                     $attributes['footer'] );
 
-        $form->addElement( 'checkbox', 'is_navigation', ts('Include Report in Navigation Menu?'), null, 
+        $form->addElement( 'checkbox', 'is_navigation', ts('Include Report in Navigation Menu?'), null,
                            array('onclick' =>"return showHideByValue('is_navigation','','navigation_menu','table-row','radio',false);") );
 
         $form->addElement( 'checkbox', 'addToDashboard', ts('Available for Dashboard?') );
-        
+
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework != 'Joomla' ||
              $config->userFramework != 'WordPress' ) {
@@ -121,9 +121,9 @@ class CRM_Report_Form_Instance {
 
         // navigation field
         $parentMenu = CRM_Core_BAO_Navigation::getNavigationList( );
-       
+
         $form->add( 'select', 'parent_id', ts( 'Parent Menu' ), array( '' => ts('-- select --') ) + $parentMenu );
-        
+
         $form->addButtons( array(
                                  array ( 'type'      => 'submit',
                                          'name'      => ts('Save Report'),
@@ -139,7 +139,7 @@ class CRM_Report_Form_Instance {
     static function formRule( $fields, $errors, $self ) {
         $buttonName = $self->controller->getButtonName( );
         $selfButtonName = $self->getVar( '_instanceButtonName' );
-        
+
         $errors = array( );
         if ( $selfButtonName == $buttonName ) {
             if ( empty( $fields['title'] ) ) {
@@ -156,11 +156,15 @@ class CRM_Report_Form_Instance {
         if ( $form->_section ) {
             return;
         }
- 
+
         $instanceID = $form->getVar( '_id' );
         $navigationDefaults = array();
+
+        $permissions = array_flip(CRM_Core_Permission::basicPermissions( ));
+        $defaults['permission'] = $permissions['CiviReport: access CiviReport'];
+
         require_once 'CRM/Core/Config.php';
-        $config = CRM_Core_Config::singleton(); 
+        $config = CRM_Core_Config::singleton();
         $defaults['report_header'] = $report_header = "<html>
   <head>
     <title>CiviCRM Report</title>
@@ -172,7 +176,7 @@ class CRM_Report_Form_Instance {
         $defaults['report_footer'] = $report_footer = "<p><img src=\"{$config->userFrameworkResourceURL}i/powered_by.png\" /></p></div></body>
 </html>
 ";
-       
+
         if ( $instanceID ) {
             // this is already retrieved via Form.php
             $defaults['description']   = CRM_Utils_Array::value( 'description', $defaults );
@@ -185,11 +189,11 @@ class CRM_Report_Form_Instance {
                 CRM_Core_BAO_Navigation::retrieve( $params, $navigationDefaults );
                 $defaults['is_navigation'] = 1;
                 $defaults['parent_id']     = CRM_Utils_Array::value( 'parent_id', $navigationDefaults );
-                
+
                 if ( CRM_Utils_Array::value( 'is_active', $navigationDefaults ) ) {
                     $form->assign('is_navigation', true);
                 }
-                
+
                 if ( CRM_Utils_Array::value( 'id', $navigationDefaults ) ) {
                     $form->_navigation['id']        = $navigationDefaults['id'];
                     $form->_navigation['parent_id'] = $navigationDefaults['parent_id'];
@@ -210,7 +214,7 @@ class CRM_Report_Form_Instance {
 
     static function postProcess( &$form ) {
         $params = $form->getVar( '_params' );
-        $config = CRM_Core_Config::singleton(); 
+        $config = CRM_Core_Config::singleton();
         $params['header']    = $params['report_header'];
         $params['footer']    = $params['report_footer'];
         $params['domain_id'] = CRM_Core_Config::domainID( );
@@ -222,11 +226,11 @@ class CRM_Report_Form_Instance {
         //navigation parameters
         if ( CRM_Utils_Array::value( 'is_navigation', $params ) ) {
             $permission = CRM_Utils_Array::value( 'permission', $params );
-            
+
             $form->_navigation['current_parent_id']  = CRM_Utils_Array::value( 'parent_id', $form->_navigation );
             $form->_navigation['parent_id']          = CRM_Utils_Array::value( 'parent_id', $params );
             $form->_navigation['is_active']          = 1;
-            
+
             if ( $permission ) {
                 $form->_navigation['permission'][] = $permission;
             }
@@ -251,14 +255,14 @@ class CRM_Report_Form_Instance {
         if ( CRM_Utils_Array::value( 'addToDashboard', $params ) ) {
             $dashletParams = array( 'label'     =>  $params['title'],
                                     'is_active' => 1 );
-                                
+
             $permission = CRM_Utils_Array::value( 'permission', $params );
             if ( $permission ) {
                 $dashletParams['permission'][] = $permission;
             }
             unset( $params['addToDashboard'] );
         }
-        
+
         require_once 'CRM/Report/DAO/Instance.php';
         $dao = new CRM_Report_DAO_Instance( );
         $dao->copyValues( $params );
@@ -307,16 +311,16 @@ class CRM_Report_Form_Instance {
                     CRM_Core_DAO::setFieldValue( 'CRM_Report_DAO_Instance', $dao->id, 'navigation_id', $navigation->id );
                 } else {
                     // has been removed from the navigation bar
-                    CRM_Core_DAO::setFieldValue( 'CRM_Report_DAO_Instance', $dao->id, 'navigation_id', 'NULL'); 
+                    CRM_Core_DAO::setFieldValue( 'CRM_Report_DAO_Instance', $dao->id, 'navigation_id', 'NULL');
                 }
 
                 //reset navigation
                 CRM_Core_BAO_Navigation::resetNavigation( );
 
-                // in order to reflect change in navigation, template needs to be reloaded 
+                // in order to reflect change in navigation, template needs to be reloaded
                 $reloadTemplate = true;
             }
-            
+
             // add to dashlet
             if ( !empty( $dashletParams ) ) {
                 $section = 2;
@@ -332,7 +336,7 @@ class CRM_Report_Form_Instance {
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 CRM_Core_BAO_Dashboard::addDashlet(  $dashletParams );
             }
-            
+
             $instanceParams   = array( 'value' => $dao->report_id );
             $instanceDefaults = array();
             $cmpName   = "Contact";
@@ -346,7 +350,7 @@ class CRM_Report_Form_Instance {
                                                         'name', 'id');
                 $cmpName = substr( $cmpName, 4 );
             }
-            
+
             // Url to view this report and others created FROM this template
             $instanceUrl = CRM_Utils_System::url( 'civicrm/report/list',
                                                   "reset=1&ovid={$instanceDefaults['id']}" );
@@ -358,9 +362,9 @@ class CRM_Report_Form_Instance {
         }
 
         if ( $reloadTemplate ) {
-            // as there's been change in navigation, reload the template 
+            // as there's been change in navigation, reload the template
             return CRM_Utils_System::redirect( CRM_Utils_System::url(CRM_Utils_System::currentPath( ), 'force=1') );
         }
     }
-    
+
 }
