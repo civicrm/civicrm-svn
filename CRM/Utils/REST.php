@@ -162,13 +162,18 @@ class CRM_Utils_REST
       return $json;
     }
 
+
+    if (isset($result['count'])) 
+      $count=' count="'.$result['count'].'" ';
+    else 
+      $count = "";
     $xml = "<?xml version=\"1.0\"?>
-      <ResultSet xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+      <ResultSet xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" $count>
       ";
     // check if this is a single element result (contact_get etc)
     // or multi element
     if ( $hier ) {
-      foreach ( $result as $n => $v ) {
+      foreach ( $result['values'] as $n => $v ) {
         $xml .= "<Result>\n" . CRM_Utils_Array::xml( $v ) . "</Result>\n";
     }
     } else {
