@@ -385,7 +385,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser
                 $dao->id = $formatValues['membership_id'];
                 $dates = array('join_date','start_date','end_date');
                 foreach ( $dates as $v ) {
-                    if ( !$formatted[$v] ) {
+                    if (!CRM_Utils_Array::value( $v, $formatted )) {
                         $formatted[$v] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $formatValues['membership_id'], $v );
                     }
                 }
