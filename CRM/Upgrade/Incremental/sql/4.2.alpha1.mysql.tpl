@@ -157,6 +157,6 @@ DELETE FROM civicrm_country WHERE id = @country_id;
 
 SELECT @region_id   := max(id) from civicrm_worldregion where name = "America South, Central, North and Caribbean";
 
-INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Curaçao", "CW", @region_id, "0");
+INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Curaçao", "CW", @region_id, 0);
 INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Sint Maarten (Dutch Part)", "SX", @region_id, 0);
 INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Bonaire, Saint Eustatius and Saba", "BQ", @region_id, 0);
