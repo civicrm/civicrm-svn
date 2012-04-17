@@ -1098,7 +1098,7 @@ function _civicrm_api3_deprecated_membership_format_params( $params, &$values, $
       if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
           $values[$key] = $value;
           $type = $customFields[$customFieldID]['html_type'];
-          if( $type == 'CheckBox' || $type == 'Multi-Select' ) {
+          if( $type == 'CheckBox' || $type == 'Multi-Select' || $type == 'AdvMulti-Select') {
                 $mulValues = explode( ',' , $value );
                 $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
                 $values[$key] = array();
