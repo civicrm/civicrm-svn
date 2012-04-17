@@ -103,6 +103,14 @@
 cj(function() {
    cj().crmtooltip(); 
 });
+
+cj(document).ready(function() {
+  advmultiselectResize();
+});
+
+cj(window).resize(function() {
+  advmultiselectResize();
+});
 </script>
 {/literal}
 {* We need to set jquery $ object back to $*}

@@ -565,3 +565,59 @@ function activityStatus( message ) {
     } 
 }
 
+/**
+ * Function to make multiselect boxes behave as fields in small screens
+ */
+
+function advmultiselectResize() {
+  var amswidth = cj("#crm-container form:has(table.advmultiselect)").width();
+  if (amswidth < 700) {
+    cj("form table.advmultiselect td").each( function() {
+      cj(this).css('display', 'block');
+    });
+  } else {
+    cj("form table.advmultiselect td").each( function() {
+      cj(this).css('display', 'table-cell');
+    });
+  }
+  var contactwidth = cj('#crm-container #mainTabContainer #contact-summary').width();
+  if (contactwidth < 550) {
+    cj('#crm-container #mainTabContainer').addClass('narrowpage');
+    cj('#crm-container #mainTabContainer').addClass('narrowpage');
+    cj('#crm-container #mainTabContainer.narrowpage #contactTopBar td').each( function(index) {
+      if (index > 1) {
+        if (index%2 == 0) {
+          cj(this).parent().after('<tr class="narrowadded"></tr>');
+        }
+        var item = cj(this);
+        cj(this).parent().next().append(item);
+      }
+    });
+  } else {
+    cj('#crm-container #mainTabContainer.narrowpage').removeClass('narrowpage');
+    cj('#crm-container #mainTabContainer #contactTopBar tr.narrowadded td').each( function() {
+      var nitem = cj(this);
+      var parent = cj(this).parent();
+      cj(this).parent().prev().append(nitem);
+      if ( parent.children().size() == 0 ) {
+        parent.remove();
+      }
+    }); 
+    cj('#crm-container #mainTabContainer.narrowpage #contactTopBar tr.added').detach();
+  }
+  var cformwidth = cj('#crm-container #Contact .contact_basic_information-section').width();
+ 
+  if (cformwidth < 720) {
+    cj('#crm-container .contact_basic_information-section').addClass('narrowform');
+    cj('#crm-container .contact_basic_information-section table.form-layout-compressed td .helpicon').parent().addClass('hashelpicon');
+    if (cformwidth < 480) {
+      cj('#crm-container .contact_basic_information-section').addClass('xnarrowform');
+    } else {
+      cj('#crm-container .contact_basic_information-section.xnarrowform').removeClass('xnarrowform');
+    }
+  } else {
+    cj('#crm-container .contact_basic_information-section.narrowform').removeClass('narrowform');
+    cj('#crm-container .contact_basic_information-section.xnarrowform').removeClass('xnarrowform');
+  }
+}
+
