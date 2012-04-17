@@ -301,7 +301,7 @@ ORDER BY e.is_primary DESC, email_id ASC ";
      *            - if one other entry exists change that to 1
      *            - if more than one other entry exists change first one to 1
      *              @fixme - perhaps should choose by location_type
-     *  #  empty - same as 0 as one we have checked first step 
+     *  #  empty - same as 0 as once we have checked first step 
      *             we know if it should be 1 or 0
      *  
      *  if $params['id'] is set $params['contact_id'] may need to be retrieved
