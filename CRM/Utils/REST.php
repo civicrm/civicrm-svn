@@ -1,5 +1,4 @@
 <?php
-
 /*
    +--------------------------------------------------------------------+
    | CiviCRM version 4.1                                                |
@@ -249,6 +248,7 @@ class CRM_Utils_REST
   }
 
   function handle( ) {
+    require_once ('CRM/Utils/Request.php');
     // Get the function name being called from the q parameter in the query string
     $q = CRM_Utils_array::value( 'q', $_REQUEST );
     // or for the rest interface, from fnName
@@ -334,6 +334,7 @@ class CRM_Utils_REST
   }
 
   static function process( &$args, $restInterface = true ) {
+    require_once ('CRM/Utils/String.php');
     $params =& self::buildParamList( );
     
     $params['check_permissions'] = true;
@@ -553,9 +554,8 @@ class CRM_Utils_REST
       }
 
     if ( !$uid ) {
-
       $store      = null;
-      $api_key    = CRM_::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
+      $api_key    = AAAAAAAAACRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
       $contact_id = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
       if ( $contact_id ) {
         $uid = CRM_Core_BAO_UFMatch::getUFId( $contact_id );
