@@ -3725,13 +3725,6 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (10002, 1107, "VS", "Medio Campidano"),
 (10003, 1107, "OG", "Ogliastra"),
 
--- states of the Netherlands Antilles (CRM-4686)
-(10004, 1151, "BON", "Bonaire"),
-(10005, 1151, "CUR", "Curaçao"),
-(10006, 1151, "SAB", "Saba"),
-(10007, 1151, "EUA", "St. Eustatius"),
-(10008, 1151, "SXM", "St. Maarten"),
-
 -- department of France (CRM-4769)
 (10009, 1076, "39", "Jura"),
 

@@ -150,3 +150,13 @@ ALTER TABLE `civicrm_contribution_page` ADD COLUMN is_confirm_enabled tinyint(4)
   ALTER TABLE civicrm_group DROP title;
 {/if}
 
+-- CRM-9780
+SELECT @country_id   := max(id) from civicrm_country where iso_code = "AN";
+DELETE FROM civicrm_state_province WHERE country_id = @country_id;
+DELETE FROM civicrm_country WHERE id = @country_id;
+
+SELECT @region_id   := max(id) from civicrm_worldregion where name = "America South, Central, North and Caribbean";
+
+INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Curaçao", "CW", @region_id, "0");
+INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Sint Maarten (Dutch Part)", "SX", @region_id, 0);
+INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Bonaire, Saint Eustatius and Saba", "BQ", @region_id, 0);
