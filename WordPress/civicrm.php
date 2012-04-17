@@ -325,10 +325,12 @@ function civicrm_wp_frontend( $shortcode = false ) {
     }
     
     require_once 'wp-includes/pluggable.php';
-
+    
     // if snippet is set, which means ajax call, we just
     // output civicrm html and skip the header 
-    if ( CRM_Utils_Array::value( 'snippet', $_GET ) ) {
+    if ( CRM_Utils_Array::value( 'snippet', $_GET ) ||
+         ( CRM_Utils_Array::value( 0, $args ) == 'civicrm' &&
+         CRM_Utils_Array::value( 1, $args ) == 'ajax' ) ) {
       civicrm_wp_invoke( );
       exit;
     }
