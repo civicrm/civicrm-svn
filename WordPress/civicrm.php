@@ -325,12 +325,19 @@ function civicrm_wp_frontend( $shortcode = false ) {
     }
     
     require_once 'wp-includes/pluggable.php';
+
+    // if snippet is set, which means ajax call, we just
+    // output civicrm html and skip the header 
+    if ( CRM_Utils_Array::value( 'snippet', $_GET ) ) {
+      civicrm_wp_invoke( );
+      exit;
+    }
     
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
     // but best way is to check other plugin implementation :) 
 
-    if ( $shortcode ) {
+   if ( $shortcode ) {
         civicrm_wp_invoke( );
     } else {
         add_filter('the_content', 'civicrm_wp_invoke');
