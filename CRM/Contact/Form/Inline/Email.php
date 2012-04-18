@@ -76,12 +76,14 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
 
     $totalBlocks++;
     $this->assign('totalBlocks', $totalBlocks);
+    
     $this->applyFilter('__ALL__','trim');
 
     for ( $blockId = 1; $blockId < $totalBlocks; $blockId++ ) {
       // email
       $this->addElement('text',"email[$blockId][email]", ts('Email'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email'));
       $this->addRule( "email[$blockId][email]", ts('Email is not valid.'), 'email' );
+      
       //location type
       $this->addElement('select', "email[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
 
@@ -89,6 +91,17 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
       $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
       $this->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $js );
     }
+
+    $buttons = array( 
+      array( 
+        'type'      => 'upload',
+        'name'      => ts('Save'),
+        'isDefault' => true),
+      array( 
+        'type'      => 'refresh',
+        'name'      => ts('Cancel') ) );
+
+    $this->addButtons(  $buttons );
   }
 
   /**
@@ -112,13 +125,22 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
    * @access public
    */
   public function postProcess() {
-    $params = $this->controller->exportValues( $this->_name );
+    $params = $this->exportValues(  );
+    
+    if ( CRM_Utils_Array::value( '_qf_Email_refresh', $params ) ) {
+      $response = array( 'cancel' => 1 );
+    }
+    else {
+      // need to process / save emails
+      
+      $params['contact_id'] = $this->_contactId;
 
-    // need to process / save emails
-    // TO DO
+      // save email changes
+      CRM_Core_BAO_Block::create( 'email', $params );
 
+      $response = array( 'save' => 1 );
+    }
 
-    $response = array( 'success' => 1 );
     echo json_encode( $response );
     CRM_Utils_System::civiExit( );    
   }

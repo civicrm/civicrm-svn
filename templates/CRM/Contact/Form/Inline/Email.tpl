@@ -25,7 +25,13 @@
 *}
 {* This file provides the template for inline editing of emails *}
 <table>
-    <tr><td colspan="2"><input type="submit" value="{ts}Save{/ts}"></td></tr>
+    <tr>
+      <td colspan="2">
+        <div class="crm-submit-buttons"> 
+          {include file="CRM/common/formButtons.tpl"}{if $isDuplicate}<span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>{/if}
+        </div>
+      </td>
+    </tr>
     {section name='i' start=1 loop=$totalBlocks} 
     {assign var='blockId' value=$smarty.section.i.index} 
         <tr id="Email_Block_{$blockId}">
