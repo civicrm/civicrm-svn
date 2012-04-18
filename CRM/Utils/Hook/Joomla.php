@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  +--------------------------------------------------------------------+
@@ -47,8 +47,8 @@ class CRM_Utils_Hook_Joomla extends CRM_Utils_Hook {
        if ( defined( '_JEXEC' ) ) {
            //Invoke the Joomla plugin system to observe to civicrm events.
            JPluginHelper::importPlugin('civicrm');
-           
-           $app = JFactory::getApplication();
+
+           $app = JFactory::getApplication( 'administrator' );
            // for cli usage
            if ( get_class($app) == 'JException' ) {
                $app = JCli::getInstance( );
