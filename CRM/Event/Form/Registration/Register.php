@@ -720,7 +720,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     {
         $errors = array( );
         //check that either an email or firstname+lastname is included in the form(CRM-9587)
-        $self::checkProfileComplete($fields, &$errors, $self->_eventId);
+        self::checkProfileComplete($fields, &$errors, $self->_eventId);
         //To check if the user is already registered for the event(CRM-2426)
         if (!$self->_skipDupeRegistrationCheck) {
             $self->checkRegistration($fields, $self);
