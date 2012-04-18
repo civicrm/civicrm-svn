@@ -25,6 +25,7 @@
 *}
 {* This file provides the template for inline editing of emails *}
 <table>
+    <tr><td colspan="2"><input type="submit" value="{ts}Save{/ts}"></td></tr>
     {section name='i' start=1 loop=$totalBlocks} 
     {assign var='blockId' value=$smarty.section.i.index} 
         <tr id="Email_Block_{$blockId}">
@@ -38,3 +39,42 @@
         </tr>
     {/section}
 </table>
+
+{literal}
+<script type="text/javascript">
+    cj( function() {
+      var options = { 
+          beforeSubmit:  showRequest  // pre-submit callback  
+      }; 
+      
+      // bind form using 'ajaxForm'
+      cj('#Email').ajaxForm( options );
+
+      // pre-submit callback 
+      function showRequest(formData, jqForm, options) { 
+          // formData is an array; here we use $.param to convert it to a string to display it 
+          // but the form plugin does this for you automatically when it submits the data 
+          var queryString = cj.param(formData); 
+          queryString = queryString + '&snippet=5&cid=' + {/literal}"{$contactId}"{literal};
+          var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 }"{literal}; 
+          var response = cj.ajax({
+             type: "POST",
+             url: postUrl,
+             async: false,
+             data: queryString,
+             dataType: "json",
+             success: function( response ) {
+               console.log("form submitted");
+             }
+           }).responseText;
+
+           cj('#email-block').html( response );
+
+          // here we could return false to prevent the form from being submitted; 
+          // returning anything other than false will allow the form submit to continue 
+          return false; 
+      }
+    });
+
+</script>
+{/literal}

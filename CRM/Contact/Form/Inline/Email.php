@@ -38,63 +38,88 @@
  * form helper class for an Email object
  */
 class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
-    /**
-     * contact id of the contact that is been viewed
-     */
-    private $_contactId;
+  /**
+   * contact id of the contact that is been viewed
+   */
+  private $_contactId;
     
-    /**
-     * email addresses of the contact that is been viewed
-     */
-    private $_emails = array();
+  /**
+   * email addresses of the contact that is been viewed
+   */
+  private $_emails = array();
 
-    /**
-     * call preprocess
-     */
-    function preProcess() {
-        //get all the existing email addresses
-        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
-        $email = new CRM_Core_BAO_Email( );
-        $email->contact_id = $this->_contactId;
+  /**
+   * call preprocess
+   */
+  public function preProcess() {
+    //get all the existing email addresses
+    $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true, null, $_REQUEST );
+    
+    $this->assign( 'contactId', $this->_contactId );
+    $email = new CRM_Core_BAO_Email( );
+    $email->contact_id = $this->_contactId;
 
-        $this->_emails = CRM_Core_BAO_Block::retrieveBlock( $email, null );
+    $this->_emails = CRM_Core_BAO_Block::retrieveBlock( $email, null );
+  }
+
+  /**
+   * build the form elements for an email object
+   *
+   * @return void
+   * @access public
+   */
+  public function buildQuickForm( ) {        
+    $totalBlocks = 1;
+    if ( count( $this->_emails ) > 1 ) {
+      $totalBlocks = count( $this->_emails );
     }
 
-    /**
-     * build the form elements for an email object
-     *
-     * @return void
-     * @access public
-     */
-    function buildQuickForm( ) {        
-        
-        /*
-        // passing this via the session is AWFUL. we need to fix this
-        if ( ! $addressBlockCount ) {
-            $blockId = ( $form->get( 'Email_Block_Count' ) ) ? $form->get( 'Email_Block_Count' ) : 1;
-        } else {
-            $blockId = $addressBlockCount;
-        }
-         */
-        $totalBlocks = 1;
-        if ( count( $this->_emails ) > 1 ) {
-            $totalBlocks = count( $this->_emails );
-        }
+    $totalBlocks++;
+    $this->assign('totalBlocks', $totalBlocks);
+    $this->applyFilter('__ALL__','trim');
 
-        $totalBlocks++;
-        $this->assign('totalBlocks', $totalBlocks);
-        $this->applyFilter('__ALL__','trim');
+    for ( $blockId = 1; $blockId < $totalBlocks; $blockId++ ) {
+      // email
+      $this->addElement('text',"email[$blockId][email]", ts('Email'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email'));
+      $this->addRule( "email[$blockId][email]", ts('Email is not valid.'), 'email' );
+      //location type
+      $this->addElement('select', "email[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
 
-        for ( $blockId = 1; $blockId < $totalBlocks; $blockId++ ) {
-            // email
-            $this->addElement('text',"email[$blockId][email]", ts('Email'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email'));
-            $this->addRule( "email[$blockId][email]", ts('Email is not valid.'), 'email' );
-            //location type
-            $this->addElement('select', "email[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
-
-            //is primary radio
-            $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
-            $this->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $js );
-        }
+      //is primary radio
+      $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
+      $this->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $js );
     }
+  }
+
+  /**
+   * set defaults for the form
+   * @return void
+   * @access public
+   */
+  public function setDefaultValues() {
+    $defaults = array();
+    if ( !empty( $this->_emails ) ) { 
+      foreach( $this->_emails as $id => $value ) {
+        $defaults['email'][$id] = $value;
+      }
+    }
+    return $defaults;
+  }
+
+  /**
+   * process the form 
+   * @return void
+   * @access public
+   */
+  public function postProcess() {
+    $params = $this->controller->exportValues( $this->_name );
+
+    // need to process / save emails
+    // TO DO
+
+
+    $response = array( 'success' => 1 );
+    echo json_encode( $response );
+    CRM_Utils_System::civiExit( );    
+  }
 }

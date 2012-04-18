@@ -484,12 +484,12 @@ cj(function(){
     });
 
     cj('#edit-email').click( function() {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=1&reset=1&cid='}{$contactId}"{literal}; 
-	    var response = cj.ajax({
+        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+        var response = cj.ajax({
                         type: "POST",
-						data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
+                        data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
                         url: dataUrl,
-						async: false
+                        async: false
 					}).responseText;
 
 	    cj( '#email-block' ).html( response );

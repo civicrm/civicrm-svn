@@ -66,7 +66,7 @@ class CRM_Utils_Wrapper
      * @return none.
      * @access public
      */
-    function run( $formName, $formLabel, $arguments = null ) {
+    function run( $formName, $formLabel = null, $arguments = null ) {
         if ( is_array($arguments) ) {
             $mode         = CRM_Utils_Array::value( 'mode',        $arguments );
             $imageUpload  = (bool) CRM_Utils_Array::value( 'imageUpload' , $arguments, false );
