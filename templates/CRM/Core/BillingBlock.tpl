@@ -24,9 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {if $form.credit_card_number or $form.bank_account_number}
-   {if $profileAddressFields}
-   <input type="checkbox" id="billingcheckbox" value=0> {ts}Billing Address is same as above{/ts}
-   {/if}
     <div id="payment_information">
         <fieldset class="billing_mode-group {if $paymentProcessor.payment_type & 2}direct_debit_info-group{else}credit_card_info-group{/if}">
             <legend>
@@ -106,6 +103,9 @@
 
                 <fieldset class="billing_name_address-group">
                 	<legend>{ts}Billing Name and Address{/ts}</legend>
+                	  {if $profileAddressFields}
+                        <input type="checkbox" id="billingcheckbox" value=0> {ts}Billing Address is same as above{/ts}
+                      {/if}
                     <div class="crm-section billing_name_address-section">
                         <div class="crm-section billingNameInfo-section">	
                         	<div class="content description">
