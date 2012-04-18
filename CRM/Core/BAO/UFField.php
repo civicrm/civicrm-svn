@@ -685,17 +685,16 @@ SELECT  id
      */
     static function assignAddressField($key, &$profileAddressFields){
       $billing_id = CRM_Core_BAO_LocationType::getBilling();
-          list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $key, 2 );
-                    
-                    if(!empty($index) && (
-                            !CRM_Utils_array::value($prefixName, $profileAddressFields)
-                              || $index == $billing_id
-                              || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id)
-                              || ($index = CRM_Core_BAO_LocationType::getDefault() 
-                                          && $profileAddressFields[$prefixName] != $billing_id
-                                          && $profileAddressFields[$prefixName] != 'Primary'))){
-                       $profileAddressFields[$prefixName] = $index;
+        list( $prefixName, $index ) = CRM_Utils_System::explode( '-', $key, 2 );
+        if(!empty($index) && (
+              !CRM_Utils_array::value($prefixName, $profileAddressFields)// it's empty so we set it OR
+              || $index == $billing_id //we are dealing with billing id (precedence)
+              || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id) // we are dealing with primary & billing not set
+              || ($index == CRM_Core_BAO_LocationType::getDefault()->id
+                   && $profileAddressFields[$prefixName] != $billing_id
+                   && $profileAddressFields[$prefixName] != 'Primary'))){
+                        $profileAddressFields[$prefixName] = $index;
                       }
                     
-    } 
+    }  
 }
