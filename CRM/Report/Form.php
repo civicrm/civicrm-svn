@@ -2791,9 +2791,22 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                 $addressFields = array('civicrm_address' =>
                   array('dao' => 'CRM_Core_DAO_Address',
                     'fields' =>
-                    array('street_address' =>
+                    array(
+                    'name' =>
+                      array('title' => ts('Address Name'),
+                        'default' => CRM_Utils_Array::value('name', $defaults, FALSE),
+                      ),
+                      'street_address' =>
                       array('title' => ts('Street Address'),
                         'default' => CRM_Utils_Array::value('street_address', $defaults, FALSE),
+                      ),
+                      'supplemental_address_1' =>
+                      array('title' => ts('Supplmentary Address Field 1'),
+                        'default' => CRM_Utils_Array::value('supplemental_address_1', $defaults, FALSE),
+                      ),
+                      'supplemental_address_2' =>
+                      array('title' => ts('Supplmentary Address Field 2'),
+                        'default' => CRM_Utils_Array::value('supplemental_address_2', $defaults, FALSE),
                       ),
                       'street_number' =>
                       array('name' => 'street_number',
@@ -2813,6 +2826,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                         'type' => 1,
                         'default' => CRM_Utils_Array::value('street_unit', $defaults, FALSE),
                       ),
+                      
                       'city' =>
                       array('title' => ts('City'),
                         'default' => CRM_Utils_Array::value('city', $defaults, FALSE),
