@@ -44,7 +44,7 @@ ALTER TABLE `civicrm_contribution_page`
 
  ALTER TABLE civicrm_contribution_page DROP INDEX FK_civicrm_contribution_page_payment_processor_id;
 
- ALTER TABLE `civicrm_contribution_page` CHANGE `payment_processor_id` `payment_processor` VARCHAR( 128 ) NULL DEFAULT NULL COMMENT 'Payment Processor for this contribution Page '
+ ALTER TABLE `civicrm_contribution_page` CHANGE `payment_processor_id` `payment_processor` VARCHAR( 128 ) NULL DEFAULT NULL COMMENT 'Payment Processor for this contribution Page ';
 
 ALTER TABLE `civicrm_event`
   DROP FOREIGN KEY `FK_civicrm_event_payment_processor_id`;
@@ -96,7 +96,7 @@ VALUES
      (@option_group_id_sms_api_type, 'smtp',  3, 'smtp',  3, NULL, 0, 1, NULL);
 
 -- CRM-9784
-
+SELECT @domainID := min(id) FROM civicrm_domain;
 SELECT @adminSystemSettingsID := MAX(id) FROM civicrm_navigation where name = 'System Settings';
 
 INSERT INTO civicrm_navigation
