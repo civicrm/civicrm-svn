@@ -3212,18 +3212,30 @@ div#crm-toolTip
 
 /* classes related to batch entry operation */
 #crm-container span.batch-edit {
-    background-position: -66px -114px;
-    background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
+  padding: 2px 9px 2px 3px;
+  margin: 2px 2px 3px 2px;
+  cursor: pointer;
+  cursor: hand;
+  background-position: -66px -114px;
+  background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
 }
 
 #crm-container span.batch-valid {
-    background-position: -322px -143px;
-    background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
+  padding: 2px 9px 2px 3px;
+  margin: 2px 2px 3px 2px;
+  cursor: pointer;
+  cursor: hand;
+  background-position: -322px -143px;
+  background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
 }
 
 #crm-container span.batch-invalid {
-    background-position: -258px -143px;
-    background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
+  padding: 2px 9px 2px 3px;
+  margin: 2px 2px 3px 2px;
+  cursor: pointer;
+  cursor: hand;
+  background-position: -258px -143px;
+  background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
 }
 
 /* Responsive layout changes */

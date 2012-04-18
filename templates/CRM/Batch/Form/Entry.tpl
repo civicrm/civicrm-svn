@@ -45,7 +45,7 @@
     {section name='i' start=1 loop=$rowCount} 
     {assign var='rowNumber' value=$smarty.section.i.index} 
     <tr class="{cycle values="odd-row,even-row"} selector-rows" entity_id="{$rowNumber}">
-        <td class="compressed"><span class="batch-edit">&nbsp;&nbsp;&nbsp;</span></td>
+        <td class="compressed"><span class="batch-edit"></span></td>
         {* contact select/create option*}
         <td class="compressed">
             {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true}
