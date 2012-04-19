@@ -174,11 +174,11 @@
                             {/if}
                         </tr>
                         {/if}
-                        {if !empty($contactTag) OR !empty($userRecordUrl) OR !empty($source)}
                         <tr>
                             {if !empty($contactTag)}
                             <td class="label" id="tagLink"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a></td><td id="tags">{$contactTag}</td>
                             {/if}
+                            <td class="label">{ts}CiviCRM ID{/ts}</td><td class="crm-contact-contact_id">{$contactId}</td>
                             {if !empty($userRecordUrl)}
                             <td class="label">{ts}User ID{/ts}</td><td class="crm-contact-user_record_id"><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></td>
                             {/if}
@@ -186,7 +186,6 @@
                             <td class="label">{ts}Source{/ts}</td><td class="crm-contact_source">{$source}</td>
                             {/if}
                         </tr>
-                        {/if}
                     </table>
 
                     <div class="clear"></div>
