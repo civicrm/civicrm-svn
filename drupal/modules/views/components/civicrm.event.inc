@@ -422,7 +422,8 @@ function _civicrm_event_data (&$data, $enabled) {
 
                                                      'relationship' => array(
                                                                              'base' => 'civicrm_event',
-                                                                             'field' => 'id',
+                                                                             'field' => 'event_id',
+                                                                             'left_field' => 'id',
                                                                              'handler' => 'views_handler_relationship',
                                                                              'label' => t('CiviCRM Event, with custom fields'),
                                                                              ),
