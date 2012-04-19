@@ -25,22 +25,49 @@
 *}
 {* template for building email block*}
 <table>
-<tr><td colspan="3">
-<span id="edit-email" class="hiddenElement batch-edit" title="{ts}Click to edit{/ts}"></span>
-</td></tr>
-{foreach from=$email key="blockId" item=item}
-{if $item.email}
-<tr>
-<td class="label">{$item.location_type}&nbsp;{ts}Email{/ts}</td>
-<td class="crm-contact_email"><span class={if $privacy.do_not_email}"do-not-email" title="{ts}Privacy flag: Do Not Email{/ts}" {elseif $item.on_hold}"email-hold" title="{ts}Email on hold - generally due to bouncing.{/ts}" {elseif $item.is_primary eq 1}"primary"{/if}><a href="mailto:{$item.email}">{$item.email}</a>{if $item.on_hold == 2}&nbsp;({ts}On Hold - Opt Out{/ts}){elseif $item.on_hold}&nbsp;({ts}On Hold{/ts}){/if}{if $item.is_bulkmail}&nbsp;({ts}Bulk{/ts}){/if}</span></td>
-<td class="description">{if $item.signature_text OR $item.signature_html}<a href="#" title="{ts}Signature{/ts}" onClick="showHideSignature( '{$blockId}' ); return false;">{ts}(signature){/ts}</a>{/if}</td>
-</tr>
-<tr id="Email_Block_{$blockId}_signature" class="hiddenElement">
-<td><strong>{ts}Signature HTML{/ts}</strong><br />{$item.signature_html}<br /><br />
-<strong>{ts}Signature Text{/ts}</strong><br />{$item.signature_text|nl2br}</td>
-<td colspan="2"></td>
-</tr>
-{/if}
-{/foreach}
+  <tr>
+    <td colspan="3">
+      <span id="edit-email" class="hiddenElement batch-edit" title="{ts}click to add/edit{/ts}"></span>
+    </td>
+  </tr>
+  {foreach from=$email key="blockId" item=item}
+    {if $item.email}
+    <tr>
+      <td class="label">{$item.location_type}&nbsp;{ts}Email{/ts}</td>
+      <td class="crm-contact_email"><span class={if $privacy.do_not_email}"do-not-email" title="{ts}Privacy flag: Do Not Email{/ts}" {elseif $item.on_hold}"email-hold" title="{ts}Email on hold - generally due to bouncing.{/ts}" {elseif $item.is_primary eq 1}"primary"{/if}><a href="mailto:{$item.email}">{$item.email}</a>{if $item.on_hold == 2}&nbsp;({ts}On Hold - Opt Out{/ts}){elseif $item.on_hold}&nbsp;({ts}On Hold{/ts}){/if}{if $item.is_bulkmail}&nbsp;({ts}Bulk{/ts}){/if}</span></td>
+      <td class="description">{if $item.signature_text OR $item.signature_html}<a href="#" title="{ts}Signature{/ts}" onClick="showHideSignature( '{$blockId}' ); return false;">{ts}(signature){/ts}</a>{/if}</td>
+    </tr>
+    <tr id="Email_Block_{$blockId}_signature" class="hiddenElement">
+        <td><strong>{ts}Signature HTML{/ts}</strong><br />{$item.signature_html}<br /><br />
+        <strong>{ts}Signature Text{/ts}</strong><br />{$item.signature_text|nl2br}</td>
+        <td colspan="2"></td>
+    </tr>
+    {/if}
+  {/foreach}
 </table>
+
+{literal}
+<script type="text/javascript">
+cj(function(){
+    cj('#email-block').mouseover( function() {
+        cj('#edit-email').show();    
+    }).mouseout( function() {
+        cj('#edit-email').hide();    
+    });
+
+    cj('#edit-email').live( 'click', function() {
+        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+        var response = cj.ajax({
+                        type: "POST",
+                        data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
+                        url: dataUrl,
+                        async: false
+					}).responseText;
+
+	    cj( '#email-block' ).html( response );
+    });
+});
+
+</script>
+{/literal}
 

@@ -457,26 +457,6 @@ function showHideSignature( blockId ) {
 	  });
 }
 
-cj(function(){
-    cj('#email-block').mouseover( function() {
-        cj('#edit-email').show();    
-    }).mouseout( function() {
-        cj('#edit-email').hide();    
-    });
-
-    cj('#edit-email').live( 'click', function() {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-        var response = cj.ajax({
-                        type: "POST",
-                        data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
-                        url: dataUrl,
-                        async: false
-					}).responseText;
-
-	    cj( '#email-block' ).html( response );
-    });
-});
-
 </script>
 {/literal}
 

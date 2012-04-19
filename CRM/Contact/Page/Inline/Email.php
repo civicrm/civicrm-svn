@@ -62,6 +62,7 @@ class CRM_Contact_Page_Inline_Email {
     }
     
     $template = CRM_Core_Smarty::singleton( );
+    $template->assign( 'contactId', $contactId );
     $template->assign( 'email', $emails );
 
     echo $content = $template->fetch('CRM/Contact/Page/Inline/Email.tpl');
