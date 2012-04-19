@@ -872,6 +872,10 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
   $fields = $fields['values'];
   foreach ($fields as $fieldname => $fieldInfo) {
     switch (CRM_Utils_Array::value('type', $fieldInfo)) {
+	  case 1:
+		//field is of type integer
+		_civicrm_api3_validate_integer($params, $fieldname, $fieldInfo);
+		break;	
       case 4:
       case 12:
         //field is of type date or datetime
@@ -1187,5 +1191,25 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest) {
       // note that it would make sense to unset the original field here but tests need to be in place first
     }
   }
+}
+/*
+ * Validate integer fields being passed into API.
+ * It currently converts the incoming value 'user_contact_id' into the id of the currenty logged in user
+ *
+ * @param array $params params from civicrm_api
+ * @param string $fieldname uniquename of field being checked
+ * @param array $fieldinfo array of fields from getfields function
+ */
+function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
+	//if fieldname exists in params
+	if ( CRM_Utils_Array::value( $fieldname, $params ) ) {
+		//if value = 'user_contact_id' replace value with logged in user id
+		if ( $params[$fieldname] == "user_contact_id" ) {
+			if ( !$session ) {
+				$session =& CRM_Core_Session::singleton();
+			}
+			$params[$fieldname] = $session->get( 'userID' );
+		}
+	}
 }
 
