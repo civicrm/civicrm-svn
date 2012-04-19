@@ -96,8 +96,8 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
       $this->addElement('select', "email[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
 
       //is primary radio
-      $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
-      $this->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $js );
+      $attrib = array( 'id' => "email-is_primary-".$blockId );
+      $this->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $attrib );
     }
 
     $buttons = array( 

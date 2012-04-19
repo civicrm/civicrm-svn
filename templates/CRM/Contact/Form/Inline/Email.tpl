@@ -44,10 +44,10 @@
         <tr id="Email_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
             <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
             </td>
-            <td align="center" id="Email-Primary-html"><span {if $blockId eq 1}class="hiddenElement"{/if}>{$form.email.$blockId.is_primary.1.html}</span></td>
+            <td align="center" id="Email-Primary-html">{$form.email.$blockId.is_primary.1.html}</td>
             <td>
               {if $blockId gt 1}
-                <a href="#" title="{ts}Delete Email Block{/ts}" onClick="removeBlock( 'Email', '{$blockId}' ); return false;">{ts}delete{/ts}</a>
+                <a href="#" title="{ts}Delete Email Block{/ts}" class="crm-delete-email">{ts}delete{/ts}</a>
               {/if}
             </td>
         </tr>
@@ -57,12 +57,38 @@
 {literal}
 <script type="text/javascript">
     cj( function() {
+      // check first primary radio
+      cj('#email-is_primary-1').prop('checked', true );
+     
+      // make sure only one is primary radio is checked
+      cj('input[id^="email-is_primary-"]').click(function(){
+       cj('input[id^="email-is_primary-"]').each(function(){
+        cj(this).prop('checked', false);
+       });
+
+        cj(this).prop('checked', true);
+      });
+
+      // handle delete of block
+      cj('.crm-delete-email').click( function(){
+        cj(this).closest('tr').each(function(){
+          cj(this).find('input').val('');
+          //if the primary is checked for deleted block
+          //unset and set first as primary
+          if (cj(this).find('.form-radio').prop('checked') ) {
+            cj(this).find('.form-radio').prop('checked', false);
+            cj('#email-is_primary-1').prop('checked', true );     
+          }
+          cj(this).addClass('hiddenElement');
+        });
+      });
+
       // add more
       cj('#add-more').click(function() {
         var showAdd = false;
         cj('tr[id^="Email_Block_"]').each( function () {
           if ( !showAdd && cj(this).hasClass('hiddenElement') ) {
-               cj(this).removeClass('hiddenElement');
+            cj(this).removeClass('hiddenElement');
             showAdd = true; 
           }
         });
