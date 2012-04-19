@@ -39,9 +39,9 @@
       <td>{ts}Primary?{/ts}</td>
       <td>&nbsp;</td>
     </tr>
-    {section name='i' start=1 loop=$totalBlocks} 
+    {section name='i' start=1 loop=$totalBlocks}
     {assign var='blockId' value=$smarty.section.i.index} 
-        <tr id="Email_Block_{$blockId}" {if $blockId gt $additionalBlocks}class="hiddenElement"{/if}>
+        <tr id="Email_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
             <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
             </td>
             <td align="center" id="Email-Primary-html"><span {if $blockId eq 1}class="hiddenElement"{/if}>{$form.email.$blockId.is_primary.1.html}</span></td>
