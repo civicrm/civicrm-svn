@@ -69,18 +69,6 @@ function civicrm_api3_activity_create($params) {
     }
   }
 
-  if (!CRM_Utils_Array::value('source_contact_id',
-      $params
-    )) {
-    $session = CRM_Core_Session::singleton();
-    // sometimes this is not set, this happens for sure with tests
-    // since this gives an FK, adding a check
-    // also should we check if its an update and then skip the check?
-    if ($session->get('userID')) {
-      $params['source_contact_id'] = $session->get('userID');
-    }
-  }
-
   if (!CRM_Utils_Array::value('id', $params)) {
     // an update does not require any mandatory parameters
     civicrm_api3_verify_mandatory($params,
@@ -201,6 +189,10 @@ function civicrm_api3_activity_create($params) {
  */
 function _civicrm_api3_activity_create_spec(&$params) {
   $params['subject']['api.required'] = 1;
+  
+  //default for source_contact_id = currently logged in user
+  $params['source_contact_id']['api.default'] = 'user_contact_id';
+  
   $params['assignee_contact_id'] = array('name' => 'assignee_id',
     'title' => 'assigned to',
     'type' => 1,
