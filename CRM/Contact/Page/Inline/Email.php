@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  *
@@ -34,36 +33,32 @@
  *
  */
 
-
 /**
- * This is base class for all ajax calls
+ * Dummy page for details of Email
+ *
  */
-class CRM_Core_Page_AJAX {
+class CRM_Contact_Page_Inline_Email {
+  /**
+   * Run the page.
+   *
+   * This method is called after the page is created.
+   *
+   * @return void
+   * @access public
+   *
+   */
+  function run() {
+    // get the emails for this contact      
+    $contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', CRM_Core_DAO::$_nullObject, true, null, $_REQUEST );
+ 
+    $entityBlock = array( 'contact_id' => $contactId );
+    $email = CRM_Core_BAO_Email::getValues( $entityBlock );
+    
+    $template = CRM_Core_Smarty::singleton( );
+    $template->assign( 'email', $email );
 
-    /**
-     * function to call generic ajax forms
-     *
-     * @static
-     * @access public
-     */ 
-    static function run() {
-        $className =  CRM_Utils_Type::escape( $_POST['class_name'], 'String' );
-        $type = '';
-        if ( CRM_Utils_Array::value( 'type', $_POST ) ) {
-          $type = CRM_Utils_Type::escape( $_POST['type'], 'String' );
-        }
-
-        if ( !$className ) {
-            CRM_Core_Error::fatal( ts('Invalid className: %1', array( 1 => $className )) );
-        }    
-
-        if ( !$type ) {
-          $wrapper = new CRM_Utils_Wrapper( );
-          $wrapper->run( $className );
-        } 
-        else {
-          eval("{$className}::run();");
-        }
-        CRM_Utils_System::civiExit( );    
-    }
+    echo $content = $template->fetch('CRM/Contact/Page/Inline/Email.tpl');    
+    CRM_Utils_System::civiExit( ); 
+  }
 }
+

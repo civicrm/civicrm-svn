@@ -128,7 +128,7 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
     $params = $this->exportValues(  );
     
     if ( CRM_Utils_Array::value( '_qf_Email_refresh', $params ) ) {
-      $response = array( 'cancel' => 1 );
+      $response = array( 'status' => 'cancel' );
     }
     else {
       // need to process / save emails
@@ -138,7 +138,7 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
       // save email changes
       CRM_Core_BAO_Block::create( 'email', $params );
 
-      $response = array( 'save' => 1 );
+      $response = array( 'status' => 'save' );
     }
 
     echo json_encode( $response );
