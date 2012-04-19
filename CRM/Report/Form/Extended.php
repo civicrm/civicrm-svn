@@ -59,19 +59,20 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     if(!empty($this->_baseTable)){
       $this->buildACLClause($this->_aliases['civicrm_contact']);
       $this->_from = "FROM {$this->_baseTable}   {$this->_aliases[$this->_baseTable]}";
-    $availableClauses = $this->getAvailableJoins();
-    foreach ( $this->fromClauses() as $fromClause ) {
-      $fn = $availableClauses [$fromClause] ['callback'];
-      $this->$fn();
-    }
-    if (strstr( $this->_from, 'civicrm_contact' )) {
-      $this->_from .= $this->_aclFrom;
+      $availableClauses = $this->getAvailableJoins();
+      foreach ( $this->fromClauses() as $fromClause ) {
+        $fn = $availableClauses [$fromClause] ['callback'];
+        $this->$fn();
+      }
+      if (strstr( $this->_from, 'civicrm_contact' )) {
+        $this->_from .= $this->_aclFrom;
+      }
     }
   }
   /*
    * Define any from clauses in use (child classes to override)
    */
-  function fromClauses( ){
+  function fromClauses(){
    return array();
   }
 
