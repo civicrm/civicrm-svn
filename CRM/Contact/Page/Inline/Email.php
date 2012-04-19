@@ -51,13 +51,20 @@ class CRM_Contact_Page_Inline_Email {
     // get the emails for this contact      
     $contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', CRM_Core_DAO::$_nullObject, true, null, $_REQUEST );
  
+    $locationTypes = CRM_Core_PseudoConstant::locationDisplayName();
+    
     $entityBlock = array( 'contact_id' => $contactId );
-    $email = CRM_Core_BAO_Email::getValues( $entityBlock );
+    $emails = CRM_Core_BAO_Email::getValues( $entityBlock );
+    if ( !empty( $emails ) ) {
+      foreach( $emails as $key => &$value ) {
+        $value['location_type'] = $locationTypes[$value['location_type_id']];
+      }  
+    }
     
     $template = CRM_Core_Smarty::singleton( );
-    $template->assign( 'email', $email );
+    $template->assign( 'email', $emails );
 
-    echo $content = $template->fetch('CRM/Contact/Page/Inline/Email.tpl');    
+    echo $content = $template->fetch('CRM/Contact/Page/Inline/Email.tpl');
     CRM_Utils_System::civiExit( ); 
   }
 }
