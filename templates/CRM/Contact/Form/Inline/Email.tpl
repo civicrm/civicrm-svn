@@ -128,8 +128,8 @@
           //check if form is submitted successfully
           if ( status ) {
             // fetch the view of email block after edit
-            var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 }"{literal}; 
-            var queryString = 'class_name=CRM_Contact_Page_Inline_Email&type=page&snippet=4&cid=' + {/literal}"{$contactId}"{literal};
+            var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1' }"{literal}; 
+            var queryString = 'class_name=CRM_Contact_Page_Inline_Email&type=page&cid=' + {/literal}"{$contactId}"{literal};
             var response = cj.ajax({
                type: "POST",
                url: postUrl,
