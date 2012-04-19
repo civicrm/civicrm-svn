@@ -28,20 +28,28 @@
     <tr>
       <td colspan="2">
         <div class="crm-submit-buttons"> 
-          {include file="CRM/common/formButtons.tpl"}{if $isDuplicate}<span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>{/if}
+          {include file="CRM/common/formButtons.tpl"}
         </div>
       </td>
     </tr>
+    <tr>
+      <td>{ts}Email{/ts}&nbsp; 
+      <span id="add-more" title="{ts}click to add more{/ts}"><a href="#">{ts}add{/ts}</a></span>
+      </td>
+      <td>{ts}Primary?{/ts}</td>
+      <td>&nbsp;</td>
+    </tr>
     {section name='i' start=1 loop=$totalBlocks} 
     {assign var='blockId' value=$smarty.section.i.index} 
-        <tr id="Email_Block_{$blockId}">
-            <td class="label">{ts}Email{/ts}</td>
+        <tr id="Email_Block_{$blockId}" {if $blockId gt $additionalBlocks}class="hiddenElement"{/if}>
             <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
             </td>
-            <td align="center" id="Email-Primary-html" {if $blockId eq 1}class="hiddenElement"{/if}>{$form.email.$blockId.is_primary.1.html}</td>
-            {if $blockId gt 1}
-            <td><a href="#" title="{ts}Delete Email Block{/ts}" onClick="removeBlock( 'Email', '{$blockId}' ); return false;">{ts}delete{/ts}</a></td>
-            {/if}
+            <td align="center" id="Email-Primary-html"><span {if $blockId eq 1}class="hiddenElement"{/if}>{$form.email.$blockId.is_primary.1.html}</span></td>
+            <td>
+              {if $blockId gt 1}
+                <a href="#" title="{ts}Delete Email Block{/ts}" onClick="removeBlock( 'Email', '{$blockId}' ); return false;">{ts}delete{/ts}</a>
+              {/if}
+            </td>
         </tr>
     {/section}
 </table>
@@ -49,6 +57,22 @@
 {literal}
 <script type="text/javascript">
     cj( function() {
+      // add more
+      cj('#add-more').click(function() {
+        var showAdd = false;
+        cj('tr[id^="Email_Block_"]').each( function () {
+          if ( !showAdd && cj(this).hasClass('hiddenElement') ) {
+               cj(this).removeClass('hiddenElement');
+            showAdd = true; 
+          }
+        });
+
+        if (!showAdd ) {
+          cj('#add-more').hide();
+        }
+      });
+
+      // handle ajax form submitting
       var options = { 
           beforeSubmit:  showRequest  // pre-submit callback  
       }; 

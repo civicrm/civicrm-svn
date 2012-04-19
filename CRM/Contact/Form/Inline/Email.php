@@ -49,6 +49,11 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
   private $_emails = array();
 
   /**
+   * No of email blocks for inline edit
+   */
+  private $_blockCount = 5;
+
+  /**
    * call preprocess
    */
   public function preProcess() {
@@ -69,13 +74,19 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm( ) {        
-    $totalBlocks = 1;
+    $totalBlocks    = $this->_blockCount;
+    $hideBlockCount = 2;
     if ( count( $this->_emails ) > 1 ) {
-      $totalBlocks = count( $this->_emails );
+      $totalBlocks      = count( $this->_emails );
+      $additionalBlocks = $this->_blockCount - $totalBlocks;
+      $totalBlocks      += $additionalBlocks;  
     }
 
     $totalBlocks++;
-    $this->assign('totalBlocks', $totalBlocks);
+    $additionalBlocks++;
+
+    $this->assign('additionalBlocks', $additionalBlocks);
+    $this->assign('totalBlocks',    $totalBlocks);
     
     $this->applyFilter('__ALL__','trim');
 
