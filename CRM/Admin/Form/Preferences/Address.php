@@ -138,6 +138,20 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
 
         $this->addFormRule( array( 'CRM_Admin_Form_Preferences_Address', 'formRule' ) );
 
+        //get the tokens for Mailing Label field
+        $tokens = CRM_Core_SelectValues::contactTokens( );
+        natcasesort($tokens);
+        $this->assign( 'tokens', json_encode( $tokens ) );
+
+        $this->add( 'select', 'token1',  ts( 'Insert Token' ), 
+                    $tokens , false, 
+                    array(
+                          'size'     => "5",
+                          'multiple' => true,
+                          'onclick'  => "return tokenReplText(this);"
+                          )
+                    );
+
         parent::buildQuickForm();
     }
 

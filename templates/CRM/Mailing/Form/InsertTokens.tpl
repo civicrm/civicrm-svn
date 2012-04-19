@@ -36,6 +36,11 @@ var isMailing    = false;
     text_message = "msg_text";
     html_message = "msg_html";
     {/literal}
+{elseif $form.formName eq 'Address'}
+    {literal}
+    text_message = "mailing_format";
+    isMailing = false;
+    {/literal}
 {else}
     {literal}
     text_message = "text_message";
@@ -249,9 +254,7 @@ function selectValue( val ) {
         var token     = cj("#"+element.id).val( )[0];
         if ( element.id == 'token3' ) {
            ( isMailing ) ? text_message = "subject" : text_message = "msg_subject"; 
-        }else {
-           ( isMailing ) ? text_message = "text_message" : text_message = "msg_text";
-        }          
+        }         
         
         cj( "#"+ text_message ).replaceSelection( token ); 
 
