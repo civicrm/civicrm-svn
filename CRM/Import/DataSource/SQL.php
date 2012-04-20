@@ -42,12 +42,12 @@ class CRM_Import_DataSource_SQL extends CRM_Import_DataSource
     {
         return array('title' => ts('SQL Query'));
     }
-
-    static public function preProcess(&$form)
+    
+    public function preProcess(&$form)
     {
     }
 
-    static public function buildQuickForm(&$form)
+    public function buildQuickForm(&$form)
     {
         $form->add('hidden', 'hidden_dataSource', 'CRM_Import_DataSource_SQL');
         $form->add('textarea', 'sqlQuery', ts('Specify SQL Query'), 'rows=10 cols=45', true );
