@@ -317,6 +317,63 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
       "In line " . __LINE__
     );
   }
+  function testActivityCreateWithInvalidPriority() {
+    $params = array(
+      'source_contact_id' => 17,
+      'subject' => 'Make-it-Happen Meeting',
+      'activity_date_time' => date('Ymd'),
+      'duration' => 120,
+      'location' => 'Pensulvania',
+      'details' => 'a test activity',
+      'status_id' => 1,
+      'priority_id' => 44,
+      'activity_type_id' => 1,
+      'version' => $this->_apiversion,
+    );
+
+    $result = &civicrm_api('activity', 'create', $params);
+    $this->assertEquals($result['is_error'], 1, "In line " . __LINE__    );
+    $this->assertEquals('priority_id is not valid', $result['error_message']);
+  }
+
+  function testActivityCreateWithValidStringPriority() {
+    $params = array(
+      'source_contact_id' => 17,
+      'subject' => 'Make-it-Happen Meeting',
+      'activity_date_time' => date('Ymd'),
+      'duration' => 120,
+      'location' => 'Pensulvania',
+      'details' => 'a test activity',
+      'status_id' => 1,
+      'priority_id' => 'Urgent',
+      'activity_type_id' => 1,
+      'version' => $this->_apiversion,
+    );
+
+    $result = &civicrm_api('activity', 'create', $params);
+    $this->assertEquals($result['is_error'], 0, "In line " . __LINE__    );
+    $this->assertEquals(1, $result['values'][$result['id']]['priority_id']);
+  }
+
+  function testActivityCreateWithInValidStringPriority() {
+    $params = array(
+      'source_contact_id' => 17,
+      'subject' => 'Make-it-Happen Meeting',
+      'activity_date_time' => date('Ymd'),
+      'duration' => 120,
+      'location' => 'Pensulvania',
+      'details' => 'a test activity',
+      'status_id' => 1,
+      'priority_id' => 'ergUrgent',
+      'activity_type_id' => 1,
+      'version' => $this->_apiversion,
+    );
+
+    $result = &civicrm_api('activity', 'create', $params);
+    $this->assertEquals($result['is_error'], 1, "In line " . __LINE__    );
+    $this->assertEquals('priority_id ergUrgentis not valid', $result['error_message']);
+  }
+
 
   /**
    *  Test civicrm_activity_create() with valid parameters

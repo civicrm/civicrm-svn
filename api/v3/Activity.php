@@ -207,6 +207,7 @@ function _civicrm_api3_activity_create_spec(&$params) {
     'title' => 'Status Id',
     'type' => 1,
   );
+    $params['priority_id']['pseudoconstant'] = 'priority';
 }
 
 /**
@@ -397,18 +398,7 @@ SELECT  count(*)
     }
   }
 
-  if (isset($params['priority_id'])) {
-    if (is_numeric($params['priority_id'])) {
-      require_once "CRM/Core/PseudoConstant.php";
-      $activityPriority = CRM_Core_PseudoConstant::priority();
-      if (!array_key_exists($params['priority_id'], $activityPriority)) {
-        return civicrm_api3_create_error('Invalid Priority');
-      }
-    }
-    else {
-      return civicrm_api3_create_error('Invalid Priority');
-    }
-  }
+
 
   // check for activity duration minutes
   if (isset($params['duration_minutes']) && !is_numeric($params['duration_minutes'])) {

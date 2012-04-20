@@ -1210,6 +1210,21 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
 			}
 			$params[$fieldname] = $session->get( 'userID' );
 		}
+		if(CRM_Utils_Array::value('pseudoconstant',$fieldInfo)){
+		  $constant = civicrm_api('constant', 'get', array('version' => 3, 'name' => $fieldInfo['pseudoconstant']));
+		  if(is_integer($params[$fieldname])&& !array_key_exists($params[$fieldname], $constant['values'])){
+		    throw new Exception ("$fieldname is not valid");
+		  }
+		  elseif (is_string($params[$fieldname])){
+            $numericvalue = array_search($params[$fieldname], $constant['values']);
+            if(empty($numericvalue)){
+              throw new Exception ("$fieldname " .$params[$fieldname]. "is not valid");
+            }
+            else{
+              $params[$fieldname] = $numericvalue;
+            }
+		  }
+		}
 	}
 }
 
