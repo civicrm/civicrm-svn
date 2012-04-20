@@ -1815,6 +1815,9 @@ div.grippie {
     display:block;
 }
 
+#crm-container div.contact_panel table.inline-edit-placeholder {
+    border: 3px dashed lightgrey;
+}
 
 #crm-container div.contact_panel *, 
 #crm-container div#contactTopBar * {
@@ -3301,4 +3304,6 @@ div#crm-toolTip
   -moz-box-sizing: border-box;
   float: none;
   width: 100%;
-} 
+}
+
+

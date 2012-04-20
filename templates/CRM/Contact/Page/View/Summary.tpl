@@ -425,49 +425,14 @@ function stopSpinner( ) {
  </script>
 
 {/if}
-{literal}
-<script type="text/javascript">
-function showHideSignature( blockId ) {
-	  cj("#Email_Block_" + blockId + "_signature").show( );   
-	  
-	  cj("#Email_Block_" + blockId + "_signature").dialog({
-		title: "Signature",
-		modal: true,
-		bgiframe: true,
-		width: 900,
-		height: 500,
-		overlay: { 
-			opacity: 0.5, 
-			background: "black"
-		},
-
-		beforeclose: function(event, ui) {
-            		cj(this).dialog("destroy");
-        	},
-
-		open:function() {
-		},
-
-		buttons: { 
-			"Done": function() { 
-				cj(this).dialog("destroy"); 
-			} 
-		} 
-		
-	  });
-}
-
-</script>
-{/literal}
-
 {if !empty($isAddressCustomPresent)}
-    {literal}
-        <script type="text/javascript">
-            cj(function() {
-                cj().crmaccordions(); 
-            });
-        </script>
-    {/literal}
+  {literal}
+  <script type="text/javascript">
+      cj(function() {
+          cj().crmaccordions(); 
+      });
+  </script>
+  {/literal}
 {/if}
 <div class="clear"></div>
 </div><!-- /.crm-content-block -->

@@ -27,7 +27,7 @@
 <table>
   <tr>
     <td colspan="3">
-      <span id="edit-email" class="hiddenElement batch-edit" title="{ts}click to add/edit{/ts}"></span>
+      <a href="#" id="edit-email" class="hiddenElement" title="{ts}click to add/edit{/ts}"><span class="batch-edit"></span>{ts}add / edit email{/ts}
     </td>
   </tr>
   {foreach from=$email key="blockId" item=item}
@@ -50,9 +50,13 @@
 <script type="text/javascript">
 cj(function(){
     cj('#email-block').mouseover( function() {
-        cj('#edit-email').show();    
+        var editemail = cj('#edit-email');
+        editemail.show();
+        editemail.closest('table').addClass('inline-edit-placeholder');
     }).mouseout( function() {
-        cj('#edit-email').hide();    
+        var editemail = cj('#edit-email');
+        editemail.hide();
+        editemail.closest('table').removeClass('inline-edit-placeholder');
     });
 
     cj('#edit-email').live( 'click', function() {
@@ -68,6 +72,32 @@ cj(function(){
     });
 });
 
+function showHideSignature( blockId ) {
+  cj("#Email_Block_" + blockId + "_signature").show( );   
+
+  cj("#Email_Block_" + blockId + "_signature").dialog({
+      title: "Signature",
+      modal: true,
+      bgiframe: true,
+      width: 900,
+      height: 500,
+      overlay: { 
+          opacity: 0.5, 
+          background: "black"
+      },
+
+      beforeclose: function(event, ui) {
+        cj(this).dialog("destroy");
+      },
+      open:function() {
+      },
+
+      buttons: { 
+        "Done": function() { 
+                  cj(this).dialog("destroy"); 
+                } 
+      } 
+  });
+}
 </script>
 {/literal}
-
