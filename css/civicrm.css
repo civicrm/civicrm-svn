@@ -1933,7 +1933,7 @@ div.grippie {
   font-size: 11px;
 }
 
-#crm-container span.signature-link {
+#crm-container div.crm-config-option {
   float: right;
   padding-right: 10px;
 }
