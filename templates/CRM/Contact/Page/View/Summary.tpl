@@ -133,7 +133,7 @@
             {/foreach}
         </ul>
 
-        <div title="Summary" id="contact-summary" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+        <div id="contact-summary" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
             {if (isset($hookContentPlacement) and ($hookContentPlacement neq 3)) or empty($hookContentPlacement)}
                 
                 {if !empty($hookContent) and isset($hookContentPlacement) and $hookContentPlacement eq 2}
