@@ -37,7 +37,7 @@
 /**
  * form helper class for an Email object
  */
-class CRM_Contact_Form_Edit_Email 
+class CRM_Contact_Form_Edit_Email
 {
     /**
      * build the form elements for an email object
@@ -51,8 +51,8 @@ class CRM_Contact_Form_Edit_Email
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form, $addressBlockCount = null ) 
-    {        
+    static function buildQuickForm( &$form, $addressBlockCount = null )
+    {
         // passing this via the session is AWFUL. we need to fix this
         if ( ! $addressBlockCount ) {
             $blockId = ( $form->get( 'Email_Block_Count' ) ) ? $form->get( 'Email_Block_Count' ) : 1;
@@ -83,6 +83,7 @@ class CRM_Contact_Form_Edit_Email
             }
 
             //Bulkmail checkbox
+            $form->assign( 'multipleBulk', $multipleBulk );
             if ( $multipleBulk ) {
                 $js = array( 'id' => "Email_".$blockId."_IsBulkmail" );
                 $form->addElement('advcheckbox', "email[$blockId][is_bulkmail]", null, '', $js);
@@ -94,13 +95,13 @@ class CRM_Contact_Form_Edit_Email
             //is_Primary radio
             $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
             $form->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $js );
-            
+
             if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Contact_Form_Contact' ) {
-           
-                $form->add('textarea', "email[$blockId][signature_text]", ts('Signature (Text)'), 
+
+                $form->add('textarea', "email[$blockId][signature_text]", ts('Signature (Text)'),
                            array( 'rows' => 2, 'cols' => 40 ) );
-                
-                $form->addWysiwyg( "email[$blockId][signature_html]", ts('Signature (HTML)'), 
+
+                $form->addWysiwyg( "email[$blockId][signature_html]", ts('Signature (HTML)'),
                                    array( 'rows' => 2, 'cols' => 40 ) );
             }
         }
