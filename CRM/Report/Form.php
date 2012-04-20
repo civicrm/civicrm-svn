@@ -47,7 +47,8 @@ class CRM_Report_Form extends CRM_Core_Form {
     OP_FLOAT       =  8,
     OP_SELECT      =  64,
     OP_MULTISELECT =  65,
-    OP_MULTISELECT_SEPARATOR = 66;
+    OP_MULTISELECT_SEPARATOR = 66,
+    OP_MONTH       =  128;
 
   /**
    * The id of the report instance
@@ -681,6 +682,28 @@ class CRM_Report_Form extends CRM_Core_Form {
         $filters[$table][$fieldName] = $field;
 
         switch (CRM_Utils_Array::value('operatorType', $field)) {
+          
+            case CRM_Report_Form::OP_MONTH:
+              if (!array_key_exists('options', $field) || !is_array($field['options']) || empty($field['options'])) {
+                // If there's no option list for this filter, define one.
+                $field['options'] = array(
+                  1 => ts('January'),
+                  2 => ts('February'),
+                  3 => ts('March'),
+                  4 => ts('April'),
+                  5 => ts('May'),
+                  6 => ts('June'),
+                  7 => ts('July'),
+                  8 => ts('August'),
+                  9 => ts('September'),
+                  10 => ts('October'),
+                  11 => ts('November'),
+                  12 => ts('December'),
+                );
+                // Add this option list to this column _columns. This is
+                // required so that filter statistics show properly.
+                $this->_columns[$table]['filters'][$fieldName]['options'] = $field['options'];
+              }
           case CRM_Report_FORM::OP_MULTISELECT:
           case CRM_Report_FORM::OP_MULTISELECT_SEPARATOR:
             // assume a multi-select field
@@ -947,6 +970,7 @@ class CRM_Report_Form extends CRM_Core_Form {
       case CRM_Report_FORM::OP_SELECT:
         return array('eq' => ts('Is equal to'));
 
+      case CRM_Report_FORM::OP_MONTH :
       case CRM_Report_FORM::OP_MULTISELECT:
         return array('in' => ts('Is one of'),
           'notin' => ts('Is not one of'),
@@ -1722,12 +1746,21 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
                     foreach ($table['filters'] as $fieldName => $field) {
                       $clause = NULL;
                       if (CRM_Utils_Array::value('type', $field) & CRM_Utils_Type::T_DATE) {
-                        $relative = CRM_Utils_Array::value("{$fieldName}_relative", $this->_params);
-                        $from     = CRM_Utils_Array::value("{$fieldName}_from", $this->_params);
-                        $to       = CRM_Utils_Array::value("{$fieldName}_to", $this->_params);
-                        $fromTime = CRM_Utils_Array::value("{$fieldName}_from_time", $this->_params);
-                        $toTime   = CRM_Utils_Array::value("{$fieldName}_to_time", $this->_params);
-                        $clause   = $this->dateClause($field['name'], $relative, $from, $to, $field['type'], $fromTime, $toTime);
+                        if (CRM_Utils_Array::value('operatorType', $field) == CRM_Report_Form::OP_MONTH) {
+                          $op = CRM_Utils_Array::value("{$fieldName}_op", $this->_params);
+                          $value = CRM_Utils_Array::value("{$fieldName}_value", $this->_params);
+                          if (is_array($value) && !empty($value)) {
+                            $clause = "(month({$field['name']}) $op (" . implode(', ', $value) . '))';
+                          }
+                        }
+                        else {
+                          $relative = CRM_Utils_Array::value("{$fieldName}_relative", $this->_params);
+                          $from     = CRM_Utils_Array::value("{$fieldName}_from", $this->_params);
+                          $to       = CRM_Utils_Array::value("{$fieldName}_to", $this->_params);
+                          $fromTime = CRM_Utils_Array::value("{$fieldName}_from_time", $this->_params);
+                          $toTime   = CRM_Utils_Array::value("{$fieldName}_to_time", $this->_params);
+                          $clause   = $this->dateClause($field['name'], $relative, $from, $to, $field['type'], $fromTime, $toTime);
+                        }
                       }
                       else {
                         $op = CRM_Utils_Array::value("{$fieldName}_op", $this->_params);
@@ -2122,7 +2155,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
                 foreach ($this->_columns as $tableName => $table) {
                   if (array_key_exists('filters', $table)) {
                     foreach ($table['filters'] as $fieldName => $field) {
-                      if (CRM_Utils_Array::value('type', $field) & CRM_Utils_Type::T_DATE) {
+                      if (CRM_Utils_Array::value('type', $field) & CRM_Utils_Type::T_DATE && CRM_Utils_Array::value('operatorType', $field) != CRM_Report_Form::OP_MONTH) {
                         list($from, $to) = $this->getFromTo(CRM_Utils_Array::value("{$fieldName}_relative", $this->_params),
                           CRM_Utils_Array::value("{$fieldName}_from", $this->_params),
                           CRM_Utils_Array::value("{$fieldName}_to", $this->_params),
