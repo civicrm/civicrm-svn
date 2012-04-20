@@ -3307,4 +3307,27 @@ div#crm-toolTip
   width: 100%;
 }
 
+#crm-container div.crm-clear {
+  clear:both;
+  margin-bottom: 1px;
+}
+
+#crm-container div.crm-label {
+  background-color: #FAFAFA;
+  color: #7A7A60;
+  text-align: left;
+  width: 103px;
+  float:left;
+  padding: 4px 0px 5px 4px;
+}
+
+#crm-container div.crm-content {
+  background-color: #F4F4ED;
+  padding: 4px 0px 5px 4px;
+  margin-bottom: 1px;
+}
+
+#crm-container div.crm-table2div-layout {
+  font-size: 11px;
+}
 

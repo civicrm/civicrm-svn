@@ -194,63 +194,75 @@
                 <div class="contact_details">
                     <div class="contact_panel">
                         <div class="contactCardLeft">
-                            <table>
-                               <tr>
-                                <td id="email-block">
+                           <div class="crm-table2div-layout">
+                              <div class="crm-clear" id="email-block">
                                   {include file="CRM/Contact/Page/Inline/Email.tpl"}
-                                </td>
-                                </tr>
-                                {if $website}
+                              </div>
+
+                              {if $website}
+                              <div class="crm-clear">
                                 {foreach from=$website item=item}
                                     {if !empty($item.url)}
-                                    <tr>
-                                        <td class="label">{$item.website_type} {ts}Website{/ts}</td>
-                                        <td class="crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></td>
-                                        <td></td>
-                                    </tr>
+                                        <div class="crm-label">{$item.website_type} {ts}Website{/ts}</div>
+                                        <div class="crm-content crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></div>
                                     {/if}
                                 {/foreach}
-                                {/if}
-                                {if $user_unique_id}
-                                    <tr>
-                                        <td class="label">{ts}Unique Id{/ts}</td>
-                                        <td class="crm-contact-user_unique_id">{$user_unique_id}</td>
-                                        <td></td>
-                                    </tr>
-                                {/if}
-                            </table>
+                              </div>  
+                              {/if}
+                              {if $user_unique_id}
+                                  <div class="crm-clear">
+                                      <div class="crm-label">{ts}Unique Id{/ts}</div>
+                                      <div class="crm-content crm-contact-user_unique_id">{$user_unique_id}</div>
+                                  </div>
+                              {/if}
+                           </div>
                         </div><!-- #contactCardLeft -->
 
                         <div class="contactCardRight">
                             {if $phone OR $im OR $openid}
-                                <table>
+                                <div class="crm-table2div-layout">
+                                    {if $phone}
+                                    <div class="crm-clear" id="phone-block">
                                     {foreach from=$phone item=item}
                                         {if $item.phone}
-                                        <tr>
-                                            <td class="label">{$item.location_type}&nbsp;{$item.phone_type}</td>
-                                            <td {if $item.is_primary eq 1}class="primary"{/if}><span {if $privacy.do_not_phone} class="do-not-phone" title={ts}"Privacy flag: Do Not Phone"{/ts} {/if}>{$item.phone}{if $item.phone_ext}&nbsp;&nbsp;{ts}ext.{/ts} {$item.phone_ext}{/if}</span></td>
-                                        </tr>
+                                            <div class="crm-label">{$item.location_type}&nbsp;{$item.phone_type}</div>
+                                            <div class="crm-content {if $item.is_primary eq 1}crm-content primary{/if}">
+                                              <span {if $privacy.do_not_phone} class="do-not-phone" title={ts}"Privacy flag: Do Not Phone"{/ts} {/if}>
+                                                {$item.phone}{if $item.phone_ext}&nbsp;&nbsp;{ts}ext.{/ts} {$item.phone_ext}{/if}
+                                              </span>
+                                            </div>
                                         {/if}
                                     {/foreach}
+                                    </div>
+                                    {/if}
+                                    {if $im}
+                                    <div class="crm-clear" id="im-block">
                                     {foreach from=$im item=item}
                                         {if $item.name or $item.provider}
-                                        {if $item.name}<tr><td class="label">{$item.provider}&nbsp;({$item.location_type})</td><td class="crm-contact_im{if $item.is_primary eq 1} primary{/if}">{$item.name}</td></tr>{/if}
+                                          {if $item.name}
+                                            <div class="crm-label">{$item.provider}&nbsp;({$item.location_type})</div>
+                                            <div class="crm-content crm-contact_im {if $item.is_primary eq 1} primary{/if}">{$item.name}</div>
+                                          {/if}
                                         {/if}
                                     {/foreach}
+                                    </div>
+                                    {/if}
+                                    {if $openid}
+                                    <div class="crm-clear" id="openid-block">
                                     {foreach from=$openid item=item}
                                         {if $item.openid}
-                                            <tr>
-                                                <td class="label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</td>
-                                                <td class="crm-contact_openid{if $item.is_primary eq 1} primary{/if}"><a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>
-                                                    {if $config->userFramework eq "Standalone" AND $item.allowed_to_login eq 1}
-                                                        <br/> <span style="font-size:9px;">{ts}(Allowed to login){/ts}</span>
-                                                    {/if}
-                                                </td>
-                                            </tr>
+                                          <div class="crm-label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</div>
+                                          <div class="crm-content crm-contact_openid {if $item.is_primary eq 1} primary{/if}"><a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>
+                                          {if $config->userFramework eq "Standalone" AND $item.allowed_to_login eq 1}
+                                            <br/> <span style="font-size:9px;">{ts}(Allowed to login){/ts}</span>
+                                          {/if}
+                                           </div>
                                         {/if}
                                     {/foreach}
-                                </table>
-    						{/if}
+                                    </div>
+                                    {/if}
+                                </div>
+    						            {/if}
                         </div><!-- #contactCardRight -->
 
                         <div class="clear"></div>
