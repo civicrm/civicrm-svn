@@ -1909,6 +1909,34 @@ div.grippie {
     color: #ff6655 !important
 }
 
+#crm-container div.crm-clear {
+  clear:both;
+  margin-bottom: 1px;
+}
+
+#crm-container div.crm-label {
+  background-color: #FAFAFA;
+  color: #7A7A60;
+  text-align: left;
+  width: 103px;
+  float:left;
+  padding: 4px 0px 5px 4px;
+}
+
+#crm-container div.crm-content {
+  background-color: #F4F4ED;
+  padding: 4px 0px 5px 4px;
+  margin-bottom: 1px;
+}
+
+#crm-container div.crm-table2div-layout {
+  font-size: 11px;
+}
+
+#crm-container span.signature-link {
+  float: right;
+  padding-right: 10px;
+}
 
 #crm-container div.buttons {
     TEXT-ALIGN       : right;
@@ -3307,27 +3335,4 @@ div#crm-toolTip
   width: 100%;
 }
 
-#crm-container div.crm-clear {
-  clear:both;
-  margin-bottom: 1px;
-}
-
-#crm-container div.crm-label {
-  background-color: #FAFAFA;
-  color: #7A7A60;
-  text-align: left;
-  width: 103px;
-  float:left;
-  padding: 4px 0px 5px 4px;
-}
-
-#crm-container div.crm-content {
-  background-color: #F4F4ED;
-  padding: 4px 0px 5px 4px;
-  margin-bottom: 1px;
-}
-
-#crm-container div.crm-table2div-layout {
-  font-size: 11px;
-}
 
