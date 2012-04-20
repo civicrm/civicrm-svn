@@ -1921,6 +1921,7 @@ div.grippie {
   width: 103px;
   float:left;
   padding: 4px 0px 5px 4px;
+  margin-right: 5px;
 }
 
 #crm-container div.crm-content {
