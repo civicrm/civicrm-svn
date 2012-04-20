@@ -42,16 +42,15 @@ class CRM_Contact_Form_Edit_Email
     /**
      * build the form elements for an email object
      *
-     * @param CRM_Core_Form $form       reference to the form object
-     * @param array         $location   the location object to store all the form elements in
-     * @param int           $locationId the locationId we are dealing with
-     * @param int           $count      the number of blocks to create
+     * @param CRM_Core_Form $form              reference to the form object
+     * @param int           $addressBlockCount block number to build
+     * @param boolean       $blockEdit         is it block edit
      *
      * @return void
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form, $addressBlockCount = null )
+    static function buildQuickForm( &$form, $addressBlockCount = null, $blockEdit = false )
     {
         // passing this via the session is AWFUL. we need to fix this
         if ( ! $addressBlockCount ) {
@@ -65,7 +64,7 @@ class CRM_Contact_Form_Edit_Email
         //Email box
         $form->addElement('text',"email[$blockId][email]", ts('Email'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email'));
         $form->addRule( "email[$blockId][email]", ts('Email is not valid.'), 'email' );
-        if ( isset( $form->_contactType ) ) {
+        if ( isset( $form->_contactType ) || $blockEdit ) {
             //Block type
             $form->addElement('select', "email[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
 
@@ -88,12 +87,19 @@ class CRM_Contact_Form_Edit_Email
                 $js = array( 'id' => "Email_".$blockId."_IsBulkmail" );
                 $form->addElement('advcheckbox', "email[$blockId][is_bulkmail]", null, '', $js);
             } else {
-                $js = array( 'id' => "Email_".$blockId."_IsBulkmail", 'onClick' => 'singleSelect( this.id );');
-                $form->addElement('radio', "email[$blockId][is_bulkmail]", '', '', '1', $js );
+              $js = array( 'id' => "Email_".$blockId."_IsBulkmail");
+              if ( !$blockEdit ) {
+                $js['onClick'] =  'singleSelect( this.id );';
+              } 
+              $form->addElement('radio', "email[$blockId][is_bulkmail]", '', '', '1', $js );
             }
 
             //is_Primary radio
-            $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
+            $js = array( 'id' => "Email_".$blockId."_IsPrimary");
+            if ( !$blockEdit ) {
+              $js['onClick'] =  'singleSelect( this.id );';
+            } 
+
             $form->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $js );
 
             if ( CRM_Utils_System::getClassName( $form ) == 'CRM_Contact_Form_Contact' ) {

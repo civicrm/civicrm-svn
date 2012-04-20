@@ -36,15 +36,23 @@
       <td>{ts}Email{/ts}&nbsp; 
       <span id="add-more" title="{ts}click to add more{/ts}"><a href="#">{ts}add{/ts}</a></span>
       </td>
+	    <td>{ts}On Hold?{/ts}</td>
+	    <td>{ts}Bulk Mailings?{/ts}</td>
       <td>{ts}Primary?{/ts}</td>
       <td>&nbsp;</td>
     </tr>
     {section name='i' start=1 loop=$totalBlocks}
     {assign var='blockId' value=$smarty.section.i.index} 
         <tr id="Email_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
-            <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
+            <td>{$form.email.$blockId.email.html|crmReplace:class:eighteen}&nbsp;{$form.email.$blockId.location_type_id.html}
             </td>
-            <td align="center" id="Email-Primary-html">{$form.email.$blockId.is_primary.1.html}</td>
+            <td align="center">{$form.email.$blockId.on_hold.html}</td>
+            {if $multipleBulk}
+              <td align="center">{$form.email.$blockId.is_bulkmail.html}</td>
+            {else}
+              <td align="center" class="crm-email-bulkmail">{$form.email.$blockId.is_bulkmail.1.html}</td>
+            {/if}
+            <td align="center" class="crm-email-is_primary">{$form.email.$blockId.is_primary.1.html}</td>
             <td>
               {if $blockId gt 1}
                 <a href="#" title="{ts}Delete Email Block{/ts}" class="crm-delete-email">{ts}delete{/ts}</a>
@@ -58,14 +66,21 @@
 <script type="text/javascript">
     cj( function() {
       // check first primary radio
-      cj('#email-is_primary-1').prop('checked', true );
+      cj('#Email_1_IsPrimary').prop('checked', true );
      
       // make sure only one is primary radio is checked
-      cj('input[id^="email-is_primary-"]').click(function(){
-       cj('input[id^="email-is_primary-"]').each(function(){
-        cj(this).prop('checked', false);
-       });
+      cj('.crm-email-is_primary input').click(function(){
+        cj('.crm-email-is_primary input').each(function(){
+          cj(this).prop('checked', false);
+        });
+        cj(this).prop('checked', true);
+      });
 
+      // make sure only one bulkmail radio is checked
+      cj('.crm-email-bulkmail input').click(function(){
+        cj('.crm-email-bulkmail input').each(function(){
+          cj(this).prop('checked', false);
+        });
         cj(this).prop('checked', true);
       });
 
@@ -75,9 +90,9 @@
           cj(this).find('input').val('');
           //if the primary is checked for deleted block
           //unset and set first as primary
-          if (cj(this).find('.form-radio').prop('checked') ) {
-            cj(this).find('.form-radio').prop('checked', false);
-            cj('#email-is_primary-1').prop('checked', true );     
+          if (cj(this).find('.crm-email-is_primary input').prop('checked') ) {
+            cj(this).find('.crm-email-is_primary input').prop('checked', false);
+            cj('#Email_1_IsPrimary').prop('checked', true );
           }
           cj(this).addClass('hiddenElement');
         });

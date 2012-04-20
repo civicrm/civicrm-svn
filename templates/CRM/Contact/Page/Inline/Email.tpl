@@ -59,7 +59,7 @@ cj(function(){
         editemail.closest('table').removeClass('inline-edit-placeholder');
     });
 
-    cj('#edit-email').live( 'click', function() {
+    cj('#edit-email').click( function() {
         var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
         var response = cj.ajax({
                         type: "POST",

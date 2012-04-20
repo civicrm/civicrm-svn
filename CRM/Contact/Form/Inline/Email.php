@@ -88,16 +88,7 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
     $this->applyFilter('__ALL__','trim');
 
     for ( $blockId = 1; $blockId < $totalBlocks; $blockId++ ) {
-      // email
-      $this->addElement('text',"email[$blockId][email]", ts('Email'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email'));
-      $this->addRule( "email[$blockId][email]", ts('Email is not valid.'), 'email' );
-      
-      //location type
-      $this->addElement('select', "email[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
-
-      //is primary radio
-      $attrib = array( 'id' => "email-is_primary-".$blockId );
-      $this->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $attrib );
+      CRM_Contact_Form_Edit_Email::buildQuickForm( $this, $blockId, true );
     }
 
     $buttons = array( 
