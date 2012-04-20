@@ -141,8 +141,9 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
     else {
       // need to process / save emails
       
-      $params['contact_id'] = $this->_contactId;
-
+      $params['contact_id']         = $this->_contactId;
+      $params['updateBlankLocInfo'] = true;
+      
       // save email changes
       CRM_Core_BAO_Block::create( 'email', $params );
 
