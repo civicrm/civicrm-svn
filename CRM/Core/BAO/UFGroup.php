@@ -1441,7 +1441,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      */
     static function buildProfile( &$form, &$field, $mode, $contactId = null, $online = false, $onBehalf = false )  
     {
-
         $defaultValues = array( );
         $fieldName  = $field['name'];
         $title      = $field['title'];
@@ -1556,8 +1555,12 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::individualSuffix(), $required);
         } else if ( $fieldName === 'contact_sub_type' ){
             $gId         = $form->get('gid') ? $form->get('gid') : CRM_Utils_Array::value('group_id', $form->_fields[$fieldName]);
-            $profileType = $gId ? CRM_Core_BAO_UFField::getProfileType( $gId ) : null;
-            
+            if ( $onBehalf ) {
+                $profileType = 'Organization';
+            } else {
+                $profileType = $gId ? CRM_Core_BAO_UFField::getProfileType( $gId ) : null;   
+            }
+
             $setSubtype  = false;
             if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                 $setSubtype  = $profileType;
