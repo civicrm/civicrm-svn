@@ -26,7 +26,7 @@
 {* This file provides the template for inline editing of emails *}
 <table>
     <tr>
-      <td colspan="2">
+      <td colspan="5">
         <div class="crm-submit-buttons"> 
           {include file="CRM/common/formButtons.tpl"}
         </div>

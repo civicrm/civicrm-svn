@@ -195,12 +195,13 @@
                     <div class="contact_panel">
                         <div class="contactCardLeft">
                            <div class="crm-table2div-layout">
-                              <div class="crm-clear" id="email-block">
+                              <div class="crm-clear crm-summary-block" id="email-block">
                                   {include file="CRM/Contact/Page/Inline/Email.tpl"}
                               </div>
 
                               {if $website}
-                              <div class="crm-clear">
+	
+                              <div class="crm-clear crm-summary-block">
                                 {foreach from=$website item=item}
                                     {if !empty($item.url)}
                                         <div class="crm-label">{$item.website_type} {ts}Website{/ts}</div>
@@ -210,7 +211,8 @@
                               </div>  
                               {/if}
                               {if $user_unique_id}
-                                  <div class="crm-clear">
+                                  <br/>
+                                  <div class="crm-clear crm-summary-block">
                                       <div class="crm-label">{ts}Unique Id{/ts}</div>
                                       <div class="crm-content crm-contact-user_unique_id">{$user_unique_id}</div>
                                   </div>
@@ -222,7 +224,7 @@
                             {if $phone OR $im OR $openid}
                                 <div class="crm-table2div-layout">
                                     {if $phone}
-                                    <div class="crm-clear" id="phone-block">
+                                    <div class="crm-clear crm-summary-block" id="phone-block">
                                     {foreach from=$phone item=item}
                                         {if $item.phone}
                                             <div class="crm-label">{$item.location_type}&nbsp;{$item.phone_type}</div>
@@ -236,7 +238,7 @@
                                     </div>
                                     {/if}
                                     {if $im}
-                                    <div class="crm-clear" id="im-block">
+                                    <div class="crm-clear crm-summary-block" id="im-block">
                                     {foreach from=$im item=item}
                                         {if $item.name or $item.provider}
                                           {if $item.name}
@@ -248,7 +250,7 @@
                                     </div>
                                     {/if}
                                     {if $openid}
-                                    <div class="crm-clear" id="openid-block">
+                                    <div class="crm-clear crm-summary-block" id="openid-block">
                                     {foreach from=$openid item=item}
                                         {if $item.openid}
                                           <div class="crm-label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</div>

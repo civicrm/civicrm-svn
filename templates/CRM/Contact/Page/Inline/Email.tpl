@@ -24,19 +24,22 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building email block*}
-<div class="crm-table2div-layout">
-  <!--div class="crm-clear">
-    <div class="">
-      <a href="#" id="edit-email" class="hiddenElement" title="{ts}click to add/edit{/ts}"><span class="batch-edit"></span>{ts}add / edit email{/ts}
-    </div>
-  </div-->
+<div class="crm-table2div-layout" id="crm-email-content">
 
   <div class="crm-clear"> <!-- start of main --!>
-     <div style="float:right;">
+     {if $email}
+     <div class="crm-config-option">
       <a href="#" id="edit-email" class="hiddenElement" title="{ts}click to add/edit{/ts}">
         <span class="batch-edit"></span>{ts}add / edit email{/ts}
       </a>
     </div>
+    {else}
+      <div>
+        <a href="#" id="edit-email" title="{ts}click to add/edit{/ts}">
+          <span class="batch-edit"></span>{ts}add / edit email{/ts}
+        </a>
+      </div>
+    {/if}
  
   {foreach from=$email key="blockId" item=item}
     {if $item.email}
@@ -60,15 +63,15 @@
 {literal}
 <script type="text/javascript">
 cj(function(){
+    {/literal}{if $email}{literal}
     cj('#email-block').mouseover( function() {
-        var editemail = cj('#edit-email');
-        editemail.show();
-        editemail.closest('table').addClass('inline-edit-placeholder');
+      cj(this).addClass('crm-inline-edit-hover');
+      cj('#edit-email').show();
     }).mouseout( function() {
-        var editemail = cj('#edit-email');
-        editemail.hide();
-        editemail.closest('table').removeClass('inline-edit-placeholder');
+      cj(this).removeClass('crm-inline-edit-hover');
+      cj('#edit-email').hide();
     });
+    {/literal}{/if}{literal}
 
     cj('#edit-email').click( function() {
         var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
