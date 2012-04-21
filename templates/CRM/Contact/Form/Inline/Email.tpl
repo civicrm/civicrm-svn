@@ -100,15 +100,9 @@
 
       // add more
       cj('#add-more').click(function() {
-        var showAdd = false;
-        cj('tr[id^="Email_Block_"]').each( function () {
-          if ( !showAdd && cj(this).hasClass('hiddenElement') ) {
-            cj(this).removeClass('hiddenElement');
-            showAdd = true; 
-          }
-        });
-
-        if (!showAdd ) {
+        cj('tr[id^="Email_Block_"][class="hiddenElement"] :first').parent().removeClass('hiddenElement');
+        
+        if ( cj('tr[id^="Email_Block_"][class="hiddenElement"]').length == 0  ) {
           cj('#add-more').hide();
         }
       });

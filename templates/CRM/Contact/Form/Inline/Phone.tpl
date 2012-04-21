@@ -54,12 +54,6 @@
           {/if}
         </td>
     </tr>
-    
-    <!--tr>
-    <td colspan="4">
-    &nbsp;&nbsp;<a id='addPhone' href="#" title={ts}Add{/ts} onClick="buildAdditionalBlocks( 'Phone', '{$className}');return false;">{ts}Add another Phone number{/ts}</a>
-    </td>
-    </tr-->
     {/section}
 </table>
 
@@ -93,15 +87,9 @@
 
       // add more
       cj('#add-more').click(function() {
-        var showAdd = false;
-        cj('tr[id^="Phone_Block_"]').each( function () {
-          if ( !showAdd && cj(this).hasClass('hiddenElement') ) {
-            cj(this).removeClass('hiddenElement');
-            showAdd = true; 
-          }
-        });
+        cj('tr[id^="Phone_Block_"][class="hiddenElement"] :first').parent().removeClass('hiddenElement');
 
-        if (!showAdd ) {
+        if ( cj('tr[id^="Phone_Block_"][class="hiddenElement"]').length == 0  ) {
           cj('#add-more').hide();
         }
       });
