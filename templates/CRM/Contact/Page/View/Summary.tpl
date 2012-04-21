@@ -221,41 +221,37 @@
                         </div><!-- #contactCardLeft -->
 
                         <div class="contactCardRight">
-                            {if $phone OR $im OR $openid}
-                                <div class="crm-table2div-layout">
-                                    {if $phone}
-                                    <div class="crm-clear crm-summary-block" id="phone-block">
-                                      {include file="CRM/Contact/Page/Inline/Phone.tpl"}
-                                    </div>
-                                    {/if}
-                                    {if $im}
-                                    <div class="crm-clear crm-summary-block" id="im-block">
-                                    {foreach from=$im item=item}
-                                        {if $item.name or $item.provider}
-                                          {if $item.name}
-                                            <div class="crm-label">{$item.provider}&nbsp;({$item.location_type})</div>
-                                            <div class="crm-content crm-contact_im {if $item.is_primary eq 1} primary{/if}">{$item.name}</div>
-                                          {/if}
-                                        {/if}
-                                    {/foreach}
-                                    </div>
-                                    {/if}
-                                    {if $openid}
-                                    <div class="crm-clear crm-summary-block" id="openid-block">
-                                    {foreach from=$openid item=item}
-                                        {if $item.openid}
-                                          <div class="crm-label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</div>
-                                          <div class="crm-content crm-contact_openid {if $item.is_primary eq 1} primary{/if}"><a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>
-                                          {if $config->userFramework eq "Standalone" AND $item.allowed_to_login eq 1}
-                                            <br/> <span style="font-size:9px;">{ts}(Allowed to login){/ts}</span>
-                                          {/if}
-                                           </div>
-                                        {/if}
-                                    {/foreach}
-                                    </div>
-                                    {/if}
+                            <div class="crm-table2div-layout">
+                                <div class="crm-clear crm-summary-block" id="phone-block">
+                                  {include file="CRM/Contact/Page/Inline/Phone.tpl"}
                                 </div>
-    						            {/if}
+                                {if $im}
+                                <div class="crm-clear crm-summary-block" id="im-block">
+                                {foreach from=$im item=item}
+                                    {if $item.name or $item.provider}
+                                      {if $item.name}
+                                        <div class="crm-label">{$item.provider}&nbsp;({$item.location_type})</div>
+                                        <div class="crm-content crm-contact_im {if $item.is_primary eq 1} primary{/if}">{$item.name}</div>
+                                      {/if}
+                                    {/if}
+                                {/foreach}
+                                </div>
+                                {/if}
+                                {if $openid}
+                                <div class="crm-clear crm-summary-block" id="openid-block">
+                                {foreach from=$openid item=item}
+                                    {if $item.openid}
+                                      <div class="crm-label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</div>
+                                      <div class="crm-content crm-contact_openid {if $item.is_primary eq 1} primary{/if}"><a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>
+                                      {if $config->userFramework eq "Standalone" AND $item.allowed_to_login eq 1}
+                                        <br/> <span style="font-size:9px;">{ts}(Allowed to login){/ts}</span>
+                                      {/if}
+                                       </div>
+                                    {/if}
+                                {/foreach}
+                                </div>
+                                {/if}
+                            </div>
                         </div><!-- #contactCardRight -->
 
                         <div class="clear"></div>
