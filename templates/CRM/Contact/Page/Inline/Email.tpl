@@ -25,17 +25,16 @@
 *}
 {* template for building email block*}
 <div class="crm-table2div-layout" id="crm-email-content">
-
   <div class="crm-clear"> <!-- start of main --!>
      {if $email}
      <div class="crm-config-option">
-      <a href="#" id="edit-email" class="hiddenElement" title="{ts}click to add/edit{/ts}">
+      <a id="edit-email" class="hiddenElement crm-link-action" title="{ts}click to add / edit{/ts}">
         <span class="batch-edit"></span>{ts}add / edit email{/ts}
       </a>
     </div>
     {else}
       <div>
-        <a href="#" id="edit-email" title="{ts}click to add/edit{/ts}">
+        <a id="edit-email" class="crm-link-action" title="{ts}click to add / edit{/ts}">
           <span class="batch-edit"></span>{ts}add / edit email{/ts}
         </a>
       </div>
@@ -63,15 +62,15 @@
 {literal}
 <script type="text/javascript">
 cj(function(){
-    {/literal}{if $email}{literal}
     cj('#email-block').mouseover( function() {
       cj(this).addClass('crm-inline-edit-hover');
       cj('#edit-email').show();
     }).mouseout( function() {
       cj(this).removeClass('crm-inline-edit-hover');
+      {/literal}{if $email}{literal}
       cj('#edit-email').hide();
+      {/literal}{/if}{literal}
     });
-    {/literal}{/if}{literal}
 
     cj('#edit-email').click( function() {
         var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 

@@ -34,7 +34,7 @@
     </tr>
     <tr>
       <td>{ts}Email{/ts}&nbsp; 
-      <span id="add-more" title="{ts}click to add more{/ts}"><a href="#">{ts}add{/ts}</a></span>
+      <span id="add-more" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
       </td>
 	    <td>{ts}On Hold?{/ts}</td>
 	    <td>{ts}Bulk Mailings?{/ts}</td>
@@ -55,7 +55,7 @@
             <td align="center" class="crm-email-is_primary">{$form.email.$blockId.is_primary.1.html}</td>
             <td>
               {if $blockId gt 1}
-                <a href="#" title="{ts}Delete Email Block{/ts}" class="crm-delete-email">{ts}delete{/ts}</a>
+                <a title="{ts}delete email block{/ts}" class="crm-delete-email crm-link-action">{ts}delete{/ts}</a>
               {/if}
             </td>
         </tr>

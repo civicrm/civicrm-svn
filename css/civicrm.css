@@ -31,10 +31,10 @@ table.crm-table-group-summary {
     border-collapse: collapse;
     width: 100%;
 }
-    #crm-container table.criteria-group {
-        margin-bottom: .1em;
-}
 
+#crm-container table.criteria-group {
+  margin-bottom: .1em;
+}
 
 #crm-container th, 
 #crm-container table.display thead th, 
@@ -1942,6 +1942,11 @@ div.grippie {
   float: right;
   padding-right: 10px;
   padding-top: 5px;
+}
+
+#crm-container a.crm-link-action {
+  cursor: pointer;
+  cursor: hand;
 }
 
 #crm-container div.buttons {
