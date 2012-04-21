@@ -39,12 +39,12 @@ class CRM_Dedupe_Merger
     // FIXME: this should be auto-generated from the schema
     static $validFields = array(
         'addressee', 'addressee_custom', 'birth_date', 'contact_source', 'contact_type',
-        'deceased_date', 'do_not_email', 'do_not_mail', 'do_not_sms', 'do_not_phone', 
-        'do_not_trade', 'external_identifier', 'email_greeting', 'email_greeting_custom', 'first_name', 'gender', 
-        'home_URL', 'household_name', 'image_URL', 
-        'individual_prefix', 'individual_suffix', 'is_deceased', 'is_opt_out', 
-        'job_title', 'last_name', 'legal_identifier', 'legal_name', 
-        'middle_name', 'nick_name', 'organization_name', 'postal_greeting', 'postal_greeting_custom', 
+        'deceased_date', 'do_not_email', 'do_not_mail', 'do_not_sms', 'do_not_phone',
+        'do_not_trade', 'external_identifier', 'email_greeting', 'email_greeting_custom', 'first_name', 'gender',
+        'home_URL', 'household_name', 'image_URL',
+        'individual_prefix', 'individual_suffix', 'is_deceased', 'is_opt_out',
+        'job_title', 'last_name', 'legal_identifier', 'legal_name',
+        'middle_name', 'nick_name', 'organization_name', 'postal_greeting', 'postal_greeting_custom',
         'preferred_communication_method', 'preferred_mail_format', 'sic_code'
     );
 
@@ -54,18 +54,18 @@ class CRM_Dedupe_Merger
     static function &relTables()
     {
         static $relTables;
-        
+
         $config = CRM_Core_Config::singleton( );
         if ( $config->userSystem->is_drupal ) {
             $userRecordUrl = CRM_Utils_System::url( 'user/%ufid' );
             $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         } else if ( $config->userFramework == 'Joomla' ) {
-            $userRecordUrl = $config->userFrameworkVersion > 1.5 ? 
-                $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". '%ufid' : 
+            $userRecordUrl = $config->userFrameworkVersion > 1.5 ?
+                $config->userFrameworkBaseURL ."index.php?option=com_users&view=user&task=user.edit&id=". '%ufid' :
                 $config->userFrameworkBaseURL ."index2.php?option=com_users&view=user&task=edit&id[]=". '%ufid';
             $title = ts('%1 User: %2; user id: %3', array(1 => $config->userFramework, 2 => '$ufname', 3 => '$ufid'));
         }
-        
+
         if (!$relTables) {
             $relTables = array(
                 'rel_table_contributions' => array(
@@ -107,12 +107,12 @@ class CRM_Dedupe_Merger
                     'title'  => ts('Custom Groups'),
                     'tables' => array('civicrm_custom_group'),
                     'url'    => CRM_Utils_System::url('civicrm/admin/custom/group', 'reset=1'),
-                ),    
+                ),
                 'rel_table_uf_groups' => array(
                     'title'  => ts('Profiles'),
                     'tables' => array('civicrm_uf_group'),
                     'url'    => CRM_Utils_System::url('civicrm/admin/uf/group', 'reset=1'),
-                ),    
+                ),
                 'rel_table_groups' => array(
                     'title'  => ts('Groups'),
                     'tables' => array('civicrm_group_contact'),
@@ -211,7 +211,7 @@ class CRM_Dedupe_Merger
     {
         static $cidRefs;
         if (!$cidRefs) {
-            // FIXME: this should be generated dynamically from the schema's 
+            // FIXME: this should be generated dynamically from the schema's
             // foreign keys referencing civicrm_contact(id)
             $cidRefs = array(
                 'civicrm_acl_cache'               => array('contact_id'),
@@ -288,7 +288,7 @@ class CRM_Dedupe_Merger
         }
         return $eidRefs;
     }
-    
+
     /**
      * return custom processing tables.
      */
@@ -305,10 +305,10 @@ class CRM_Dedupe_Merger
                              );
 
         }
-        
+
         return $tables;
     }
-    
+
     /**
      * return payment related table.
      */
@@ -318,10 +318,10 @@ class CRM_Dedupe_Merger
         if ( !$tables ) {
             $tables = array( 'civicrm_pledge', 'civicrm_membership', 'civicrm_participant' );
         }
-        
+
         return $tables;
     }
-    
+
     /**
      * return payment update Query.
      */
@@ -331,18 +331,18 @@ class CRM_Dedupe_Merger
         if ( !$tableName || !$mainContactId || !$otherContactId ) {
             return $sqls;
         }
-        
+
         $paymentTables = self::paymentTables( );
         if ( !in_array( $tableName, $paymentTables ) ) {
-            return $sqls; 
+            return $sqls;
         }
-        
+
         switch ( $tableName ) {
         case 'civicrm_pledge' :
             $sqls[] = "
     UPDATE  IGNORE  civicrm_contribution contribution
 INNER JOIN  civicrm_pledge_payment payment ON ( payment.contribution_id = contribution.id )
-INNER JOIN  civicrm_pledge pledge ON ( pledge.id = payment.pledge_id )                                               
+INNER JOIN  civicrm_pledge pledge ON ( pledge.id = payment.pledge_id )
        SET  contribution.contact_id = $mainContactId
      WHERE  pledge.contact_id = $otherContactId";
             break;
@@ -351,7 +351,7 @@ INNER JOIN  civicrm_pledge pledge ON ( pledge.id = payment.pledge_id )
             $sqls[] = "
     UPDATE  IGNORE  civicrm_contribution contribution
 INNER JOIN  civicrm_membership_payment payment ON ( payment.contribution_id = contribution.id )
-INNER JOIN  civicrm_membership membership ON ( membership.id = payment.membership_id )      
+INNER JOIN  civicrm_membership membership ON ( membership.id = payment.membership_id )
        SET  contribution.contact_id = $mainContactId
      WHERE  membership.contact_id = $otherContactId";
             break;
@@ -360,7 +360,7 @@ INNER JOIN  civicrm_membership membership ON ( membership.id = payment.membershi
             $sqls[] = "
     UPDATE  IGNORE  civicrm_contribution contribution
 INNER JOIN  civicrm_participant_payment payment ON ( payment.contribution_id = contribution.id )
-INNER JOIN  civicrm_participant participant ON ( participant.id = payment.participant_id )      
+INNER JOIN  civicrm_participant participant ON ( participant.id = payment.participant_id )
        SET  contribution.contact_id = $mainContactId
      WHERE  participant.contact_id = $otherContactId";
             break;
@@ -368,7 +368,7 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
 
         return $sqls;
     }
-    
+
     static function operationSql( $mainId, $otherId, $tableName, $tableOperations = array(), $mode = 'add' )
     {
         $sqls = array( );
@@ -379,18 +379,18 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
 
         switch ( $tableName ) {
         case 'civicrm_membership' :
-            if ( array_key_exists($tableName, $tableOperations) && $tableOperations[$tableName]['add'] ) 
+            if ( array_key_exists($tableName, $tableOperations) && $tableOperations[$tableName]['add'] )
                 break;
             if ( $mode == 'add' ) {
                 $sqls[] = "
 DELETE membership1.* FROM civicrm_membership membership1
- INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = membership2.membership_type_id 
-             AND membership1.contact_id = {$mainId} 
+ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = membership2.membership_type_id
+             AND membership1.contact_id = {$mainId}
              AND membership2.contact_id = {$otherId} ";
             }
             if ( $mode == 'payment' ) {
                 $sqls[] = "
-DELETE contribution.* FROM civicrm_contribution contribution 
+DELETE contribution.* FROM civicrm_contribution contribution
 INNER JOIN  civicrm_membership_payment payment ON payment.contribution_id = contribution.id
 INNER JOIN  civicrm_membership membership1 ON membership1.id = payment.membership_id
             AND membership1.contact_id = {$mainId}
@@ -410,7 +410,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
     }
 
     /**
-     * Based on the provided two contact_ids and a set of tables, move the 
+     * Based on the provided two contact_ids and a set of tables, move the
      * belongings of the other contact to the main one.
      */
     function moveContactBelongings($mainId, $otherId, $tables = false, $tableOperations = array())
@@ -419,12 +419,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $eidRefs       = self::eidRefs( );
         $cpTables      = self::cpTables( );
         $paymentTables = self::paymentTables( );
-        
+
         $affected = array_merge(array_keys($cidRefs), array_keys($eidRefs));
         if ($tables !== false) {
             // if there are specific tables, sanitize the list
             $affected = array_unique(array_intersect($affected, $tables));
-        } else { 
+        } else {
             // if there aren't any specific tables, don't affect the ones handled by relTables()
             $relTables = self::relTables();
             $handled = array();
@@ -433,11 +433,11 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             }
             $affected = array_diff($affected, $handled);
         }
-       
+
         $mainId  = (int) $mainId;
         $otherId = (int) $otherId;
-                
-        // use UPDATE IGNORE + DELETE query pair to skip on situations when 
+
+        // use UPDATE IGNORE + DELETE query pair to skip on situations when
         // there's a UNIQUE restriction on ($field, some_other_field) pair
         $sqls = array( );
         foreach ($affected as $table) {
@@ -451,20 +451,20 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 }
                 continue;
             }
-            
+
             if (isset($cidRefs[$table])) {
                 foreach ($cidRefs[$table] as $field) {
                     // carry related contributions CRM-5359
                     if ( in_array( $table, $paymentTables ) ) {
                         $payOprSqls = self::operationSql( $mainId, $otherId, $table, $tableOperations, 'payment' );
-                        $sqls = array_merge( $sqls, $payOprSqls ); 
+                        $sqls = array_merge( $sqls, $payOprSqls );
 
-                        $paymentSqls = self::paymentSql( $table, $mainId, $otherId ); 
-                        $sqls = array_merge( $sqls, $paymentSqls ); 
+                        $paymentSqls = self::paymentSql( $table, $mainId, $otherId );
+                        $sqls = array_merge( $sqls, $paymentSqls );
                     }
 
                     $preOperationSqls = self::operationSql( $mainId, $otherId, $table, $tableOperations );
-                    $sqls = array_merge( $sqls, $preOperationSqls ); 
+                    $sqls = array_merge( $sqls, $preOperationSqls );
 
                     $sqls[] = "UPDATE IGNORE $table SET $field = $mainId WHERE $field = $otherId";
                     $sqls[] = "DELETE FROM $table WHERE $field = $otherId";
@@ -485,7 +485,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         // Allow hook_civicrm_merge() to add SQL statements for the merge operation.
         CRM_Utils_Hook::merge( 'sqls', $sqls, $mainId, $otherId, $tables);
-        
+
         // call the SQL queries in one transaction
         $transaction = new CRM_Core_Transaction( );
         foreach ($sqls as $sql) {
@@ -509,11 +509,11 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         }
         $main  =& civicrm_api('contact', 'get', $mainParams);
         $other =& civicrm_api('contact', 'get', $otherParams);
-        
+
         //CRM-4524
         $main  = reset( $main );
         $other = reset( $other );
-        
+
         if ($main['contact_type'] != $other['contact_type']) {
             return false;
         }
@@ -537,29 +537,29 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         return $diffs;
     }
 
-    /** 
+    /**
      * Function to batch merge a set of contacts based on rule-group and group.
-     * 
+     *
      * @param  int     $rgid        rule group id
      * @param  int     $gid         group id
      * @param  array   $cacheParams prev-next-cache params based on which next pair of contacts are computed.
      *                              Generally used with batch-merge.
-     * @param  string  $mode        helps decide how to behave when there are conflicts. 
-     *                              A 'safe' value skips the merge if there are any un-resolved conflicts. 
+     * @param  string  $mode        helps decide how to behave when there are conflicts.
+     *                              A 'safe' value skips the merge if there are any un-resolved conflicts.
      *                              Does a force merge otherwise.
      * @param  boolean $autoFlip   wether to let api decide which contact to retain and which to delete.
-     * 
+     *
      *
      * @static void
      * @access public
-     */ 
+     */
     function batchMerge( $rgid, $gid = null, $mode = 'safe', $autoFlip = true, $redirectForPerformance = false )
     {
         $contactType = CRM_Core_DAO::getFieldValue( 'CRM_Dedupe_DAO_RuleGroup', $rgid, 'contact_type' );
         $cacheKeyString  = "merge {$contactType}";
         $cacheKeyString .= $rgid ? "_{$rgid}" : '_0';
         $cacheKeyString .= $gid  ? "_{$gid}"  : '_0';
-        $join  = "LEFT JOIN civicrm_dedupe_exception de ON ( pn.entity_id1 = de.contact_id1 AND 
+        $join  = "LEFT JOIN civicrm_dedupe_exception de ON ( pn.entity_id1 = de.contact_id1 AND
                                                              pn.entity_id2 = de.contact_id2 )";
 
         $limit = $redirectForPerformance ? 75 : 1;
@@ -567,7 +567,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
         if ( empty($dupePairs) && !$redirectForPerformance ) {
-            // If we haven't found any dupes, probably cache is empty. 
+            // If we haven't found any dupes, probably cache is empty.
             // Try filling cache and give another try.
             CRM_Core_BAO_PrevNextCache::refillCache( $rgid, $gid, $cacheKeyString );
             $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, $join, $where );
@@ -579,27 +579,27 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         return CRM_Dedupe_Merger::merge( $dupePairs, $cacheParams, $mode, $autoFlip, $redirectForPerformance );
     }
 
-    /** 
+    /**
      * Function to merge given set of contacts. Performs core operation.
-     * 
+     *
      * @param  array   $dupePairs   set of pair of contacts for whom merge is to be done.
      * @param  array   $cacheParams prev-next-cache params based on which next pair of contacts are computed.
      *                              Generally used with batch-merge.
-     * @param  string  $mode       helps decide how to behave when there are conflicts. 
-     *                             A 'safe' value skips the merge if there are any un-resolved conflicts. 
+     * @param  string  $mode       helps decide how to behave when there are conflicts.
+     *                             A 'safe' value skips the merge if there are any un-resolved conflicts.
      *                             Does a force merge otherwise (aggressive mode).
      * @param  boolean $autoFlip   wether to let api decide which contact to retain and which to delete.
-     * 
+     *
      *
      * @static void
      * @access public
-     */ 
-    function merge( $dupePairs = array(), $cacheParams = array(), $mode = 'safe', 
+     */
+    function merge( $dupePairs = array(), $cacheParams = array(), $mode = 'safe',
                     $autoFlip = true, $redirectForPerformance = false ) {
         $cacheKeyString = CRM_Utils_Array::value( 'cache_key_string', $cacheParams );
         $resultStats = array( 'merged' => array(), 'skipped' => array() );
 
-        // we don't want dupe caching to get reset after every-merge, and therefore set the 
+        // we don't want dupe caching to get reset after every-merge, and therefore set the
         // doNotResetCache flag
         $config = CRM_Core_Config::singleton( );
         $config->doNotResetCache = 1;
@@ -618,10 +618,10 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     return false;
                 }
 
-                // Generate var $migrationInfo. The variable structure is exactly same as 
+                // Generate var $migrationInfo. The variable structure is exactly same as
                 // $formValues submitted during a UI merge for a pair of contacts.
                 $rowsElementsAndInfo =& CRM_Dedupe_Merger::getRowsElementsAndInfo( $mainId, $otherId );
-                
+
                 $migrationInfo =& $rowsElementsAndInfo['migration_info'];
 
                 // add additional details that we might need to resolve conflicts
@@ -629,7 +629,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 $migrationInfo['other_details'] =& $rowsElementsAndInfo['other_details'];
                 $migrationInfo['main_loc_block'] =& $rowsElementsAndInfo['main_loc_block'];
                 $migrationInfo['rows']             =& $rowsElementsAndInfo['rows'];
-                
+
                 // go ahead with merge if there is no conflict
                 if ( !CRM_Dedupe_Merger::skipMerge( $mainId, $otherId, $migrationInfo, $mode ) ) {
                     CRM_Dedupe_Merger::moveAllBelongings( $mainId, $otherId, $migrationInfo );
@@ -649,8 +649,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
             if ( $cacheKeyString && !$redirectForPerformance ) {
                 // retrieve next pair of dupes
-                $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString, 
-                                                                   $cacheParams['join'], 
+                $dupePairs = CRM_Core_BAO_PrevNextCache::retrieve( $cacheKeyString,
+                                                                   $cacheParams['join'],
                                                                    $cacheParams['where'] );
             } else {
                 // do not proceed. Terminate the loop
@@ -660,20 +660,20 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         return $resultStats;
     }
 
-    /** 
-     * A function which uses various rules / algorithms for choosing which contact to bias to 
+    /**
+     * A function which uses various rules / algorithms for choosing which contact to bias to
      * when there's a conflict (to handle "gotchas"). Plus the safest route to merge.
-     * 
+     *
      * @param  int     $mainId         main contact with whom merge has to happen
      * @param  int     $otherId        duplicate contact which would be deleted after merge operation
      * @param  array   $migrationInfo  array of information about which elements to merge.
-     * @param  string  $mode           helps decide how to behave when there are conflicts. 
-     *                                 A 'safe' value skips the merge if there are any un-resolved conflicts. 
+     * @param  string  $mode           helps decide how to behave when there are conflicts.
+     *                                 A 'safe' value skips the merge if there are any un-resolved conflicts.
      *                                 Does a force merge otherwise (aggressive mode).
      *
      * @static void
      * @access public
-     */ 
+     */
     function skipMerge( $mainId, $otherId, &$migrationInfo, $mode = 'safe' )
     {
         $conflicts     = array();
@@ -686,14 +686,14 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 // Rule: no overwriting with empty values in any mode
                 unset($migrationInfo[$key]);
                 continue;
-            } else if ( ( in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or 
+            } else if ( ( in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or
                           substr($key, 0, 12) == 'move_custom_' ) and $val != null ) {
-                // Rule: if both main-contact has other-contact, let $mode decide if to merge a 
+                // Rule: if both main-contact has other-contact, let $mode decide if to merge a
                 // particular field or not
                 if ( !empty($migrationInfo['rows'][$key]['main']) ) {
                     // if main also has a value its a conflict
                     if ( $mode == 'safe' ) {
-                        // note it down & lets wait for response from the hook. 
+                        // note it down & lets wait for response from the hook.
                         // For no response skip this merge
                         $conflicts[$key] = null;
                     } else if ( $mode == 'aggressive' ) {
@@ -723,11 +723,11 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                             // try insert address at new available loc-type
                             $migrationInfo['location'][$fieldName][$fieldCount]['locTypeId'] = $newTypeId;
                         } else if ( $mode == 'safe' ) {
-                            // note it down & lets wait for response from the hook. 
+                            // note it down & lets wait for response from the hook.
                             // For no response skip this merge
                             $conflicts[$key] = null;
                         } else if ( $mode == 'aggressive' ) {
-                            // let the loc-type-id be same as that of other-contact & go ahead 
+                            // let the loc-type-id be same as that of other-contact & go ahead
                             // with merge assuming aggressive mode
                             continue;
                         }
@@ -740,7 +740,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             }
         }
 
-        // A hook to implement other algorithms for choosing which contact to bias to when 
+        // A hook to implement other algorithms for choosing which contact to bias to when
         // there's a conflict (to handle "gotchas"). fields_in_conflict could be modified here
         // merge happens with new values filled in here. For a particular field / row not to be merged
         // field should be unset from fields_in_conflict.
@@ -762,19 +762,19 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         return false;
     }
 
-    /** 
+    /**
      * A function to build an array of information required by merge function and the merge UI.
-     * 
+     *
      * @param  int     $mainId         main contact with whom merge has to happen
      * @param  int     $otherId        duplicate contact which would be deleted after merge operation
      *
      * @static void
      * @access public
-     */ 
+     */
     function &getRowsElementsAndInfo( $mainId, $otherId )
-    { 
+    {
         $qfZeroBug   = 'e8cddb72-a257-11dc-b9cc-0016d3330ee9';
-        $mainParams  = array( 'contact_id' => $mainId,  'return.display_name' => 1, 'return.contact_sub_type' => 1 ); 
+        $mainParams  = array( 'contact_id' => $mainId,  'return.display_name' => 1, 'return.contact_sub_type' => 1 );
         $otherParams = array( 'contact_id' => $otherId, 'return.display_name' => 1, 'return.contact_sub_type' => 1 );
         $mainParams['version'] = $otherParams['version'] = 3;
 
@@ -806,14 +806,14 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         // FIXME: there must be a better way
         foreach (array('main', 'other') as $moniker) {
             $contact =& $$moniker;
-            $specialValues[$moniker] = array('preferred_communication_method' => 
+            $specialValues[$moniker] = array('preferred_communication_method' =>
                                              CRM_Utils_array::value('preferred_communication_method', $contact));
 
             // api 3 returns pref_comm_method as an array, which breaks the lookup; so we reconstruct
             $prefCommList = implode(CRM_Core_DAO::VALUE_SEPARATOR, $specialValues[$moniker]['preferred_communication_method']);
             $specialValues[$moniker]['preferred_communication_method'] = CRM_Core_DAO::VALUE_SEPARATOR . $prefCommList . CRM_Core_DAO::VALUE_SEPARATOR;
 
-            $names = array('preferred_communication_method' => 
+            $names = array('preferred_communication_method' =>
                            array('newName'   => 'preferred_communication_method_display',
                                  'groupName' => 'preferred_communication_method'));
             CRM_Core_OptionGroup::lookupValues($specialValues[$moniker], $names);
@@ -868,7 +868,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
         // handle location blocks.
         $locationBlocks = array( 'email', 'phone', 'address' );
-        
+
         foreach ( $locationBlocks as $block ) {
             foreach ( array( 'main', 'other' ) as $locBlocks ) {
                 $cnt       = 1;
@@ -883,7 +883,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                 $display = CRM_Utils_Address::format($value);
                                 $locations[$locBlocks][$block][$cnt] = $value;
                                 $locations[$locBlocks][$block][$cnt]['display'] = $display;
-                                
+
                             } else {
                                 $locations[$locBlocks][$block][$cnt] = $value;
                             }
@@ -897,7 +897,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                 $display = CRM_Utils_Address::format($values['values'][$id]);
                                 $locations[$locBlocks][$block][$cnt] = $values['values'][$id];
                                 $locations[$locBlocks][$block][$cnt]['display'] = $display;
-                                
+
                             } else {
                                 $locations[$locBlocks][$block][$cnt] = $values['values'][$id];
                             }
@@ -907,29 +907,29 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         }
 
         $allLocationTypes = CRM_Core_PseudoConstant::locationType( );
-        
+
         $mainLocBlock = $locBlockIds = array();
         $locBlockIds['main'] = $locBlockIds['other'] = array();
         foreach ( array( 'Email', 'Phone', 'IM', 'OpenID', 'Address' ) as $block ) {
             $name = strtolower( $block );
             foreach ( array('main', 'other') as $moniker ) {
                 $blockValue = CRM_Utils_Array::value( $name, $locations[$moniker], array( ) );
-                
+
                 if ( empty( $blockValue ) ) {
                     $locValue[$moniker][$name] = 0;
                     $locLabel[$moniker][$name] = $locTypes[$moniker][$name] = array( );
                 } else {
-                    $locValue[$moniker][$name] = true; 
+                    $locValue[$moniker][$name] = true;
                     foreach ( $blockValue as $count => $blkValues ) {
                         $fldName = $name;
                         $locTypeId = $blkValues['location_type_id'];
                         if ( $name == 'im' ) $fldName = 'name';
                         if ( $name == 'address' ) $fldName = 'display';
-                        $locLabel[$moniker][$name][$count] = CRM_Utils_Array::value($fldName, 
+                        $locLabel[$moniker][$name][$count] = CRM_Utils_Array::value($fldName,
                                                                                     $blkValues);
                         $locTypes[$moniker][$name][$count] = $locTypeId;
                         if ( $moniker == 'main' && in_array($name,$locationBlocks) ) {
-                            $mainLocBlock["main_$name$locTypeId"] = CRM_Utils_Array::value($fldName, 
+                            $mainLocBlock["main_$name$locTypeId"] = CRM_Utils_Array::value($fldName,
                                                                                         $blkValues);
                             $locBlockIds['main'][$name][$locTypeId] = $blkValues['id'];
                         }
@@ -939,18 +939,18 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     }
                 }
             }
-            
+
             if ( $locValue['other'][$name] != 0 ) {
                 foreach ( $locLabel['other'][$name] as $count => $value ) {
                     $locTypeId = $locTypes['other'][$name][$count];
                     $rows["move_location_{$name}_$count"]['other'] = $value;
-                    $rows["move_location_{$name}_$count"]['main']  = CRM_Utils_Array::value( $count, 
+                    $rows["move_location_{$name}_$count"]['main']  = CRM_Utils_Array::value( $count,
                                                                                              $locLabel['main'][$name] );
                     $rows["move_location_{$name}_$count"]['title'] = ts( '%1:%2:%3',
-                                                                         array( 1 => $block, 
-                                                                                2 => $count, 
+                                                                         array( 1 => $block,
+                                                                                2 => $count,
                                                                                 3 => $allLocationTypes[$locTypeId] ) );
-                    
+
                     $elements[] = array( 'advcheckbox', "move_location_{$name}_{$count}" );
                     $migrationInfo["move_location_{$name}_{$count}"] = 1;
 
@@ -959,13 +959,13 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     $locTypeValues  = $allLocationTypes;
                     $defaultLocType = array( $mainLocTypeId => $locTypeValues[$mainLocTypeId] );
                     unset($locTypeValues[$mainLocTypeId]);
-                    
+
                     // keep 1-1 mapping for address - location type.
                     $js = null;
                     if ( in_array($name,$locationBlocks) && !empty( $mainLocBlock ) ) {
                         $js = array( 'onChange' => "mergeBlock('$name', this, $count );" );
                     }
-                    $elements[] = array( 'select', "location[{$name}][$count][locTypeId]", null, 
+                    $elements[] = array( 'select', "location[{$name}][$count][locTypeId]", null,
                                          $defaultLocType + $locTypeValues, $js );
                     // keep location-type-id same as that of other-contact
                     $migrationInfo['location'][$name][$count]['locTypeId'] = $locTypeId;
@@ -1009,12 +1009,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $activeRelTables = CRM_Dedupe_Merger::getActiveRelTables($otherId);
         $activeMainRelTables = CRM_Dedupe_Merger::getActiveRelTables($mainId);
         foreach ($relTables as $name => $null) {
-            if ( !in_array( $name, $activeRelTables ) &&  
+            if ( !in_array( $name, $activeRelTables ) &&
                  !( ( $name == 'rel_table_users' ) && in_array( $name, $activeMainRelTables ) ) ) {
                 unset($relTables[$name]);
                 continue;
             }
-            
+
             $relTableElements[] = array( 'checkbox', "move_$name" );
             $migrationInfo["move_$name"] = 1;
 
@@ -1078,7 +1078,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                         }
                     }
                     $rows["move_custom_$fid"]['title'] = $field['label'];
-                    
+
                     $elements[] = array( 'advcheckbox', "move_custom_$fid", null, null, null, $value );
                     $migrationInfo["move_custom_$fid"] = $value;
                 }
@@ -1097,17 +1097,17 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $result['other_details']['loc_block_ids'] = $locBlockIds['other'];
 
         // unset all vars to avoid any possible leaks
-        unset( $diffs, $contact, $mainTree, $otherTree, $rows, 
+        unset( $diffs, $contact, $mainTree, $otherTree, $rows,
                $elements, $relTableElements, $mainLocBlock, $relTables, $main, $other, $migrationInfo );
 
         return $result;
     }
 
     /**
-     * Based on the provided two contact_ids and a set of tables, move the belongings of the 
+     * Based on the provided two contact_ids and a set of tables, move the belongings of the
      * other contact to the main one - be it Location / CustomFields or Contact .. related info.
      * A superset of moveContactBelongings() function.
-     * 
+     *
      * @param  int     $mainId         main contact with whom merge has to happen
      * @param  int     $otherId        duplicate contact which would be deleted after merge operation
      *
@@ -1125,7 +1125,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $moveTables = $locBlocks = $tableOperations = array( );
         foreach ( $migrationInfo as $key => $value ) {
             if ($value == $qfZeroBug) $value = '0';
-            if ((in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or 
+            if ((in_array(substr($key, 5), CRM_Dedupe_Merger::$validFields) or
                  substr($key, 0, 12) == 'move_custom_') and $value != null) {
                 $submitted[substr($key, 5)] = $value;
             } elseif (substr($key, 0, 14) == 'move_location_' and $value != null) {
@@ -1135,11 +1135,11 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 $operation  = CRM_Utils_Array::value( 'operation', $migrationInfo['location'][$fieldName][$fieldCount] );
                 // default operation is overwrite.
                 if ( !$operation ) {
-                    $operation = 2; 
+                    $operation = 2;
                 }
-                
+
                 $locBlocks[$fieldName][$fieldCount]['operation'] = $operation;
-                $locBlocks[$fieldName][$fieldCount]['locTypeId'] = 
+                $locBlocks[$fieldName][$fieldCount]['locTypeId'] =
                     CRM_Utils_Array::value( 'locTypeId', $migrationInfo['location'][$fieldName][$fieldCount] );
             } elseif (substr($key, 0, 15) == 'move_rel_table_' and $value == '1') {
                 $moveTables = array_merge($moveTables, $relTables[substr($key, 5)]['tables']);
@@ -1161,55 +1161,55 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                    'im'      => 'IM',
                                    'openid'  => 'OpenID',
                                    'address' => 'Address' );
-            
+
             $primaryBlockIds = CRM_Contact_BAO_Contact::getLocBlockIds( $mainId, array( 'is_primary' => 1 ) );
             $billingBlockIds = CRM_Contact_BAO_Contact::getLocBlockIds( $mainId, array( 'is_billing' => 1 ) );
-            
+
             foreach ( $locBlocks as $name => $block ) {
-                if ( !is_array($block) || CRM_Utils_System::isNull($block) ) continue; 
+                if ( !is_array($block) || CRM_Utils_System::isNull($block) ) continue;
                 $daoName = $locComponent[$name];
                 $primaryDAOId = (array_key_exists($name, $primaryBlockIds) )?array_pop($primaryBlockIds[$name]):null;
                 $billingDAOId = (array_key_exists($name, $billingBlockIds) )?array_pop($billingBlockIds[$name]):null;
-                
+
                 foreach ( $block as $blkCount => $values ) {
                     $locTypeId      = CRM_Utils_Array::value( 'locTypeId', $values, 1 );
                     $operation      = CRM_Utils_Array::value( 'operation', $values, 2 );
-                    $otherBlockId   = CRM_Utils_Array::value( $blkCount,   
+                    $otherBlockId   = CRM_Utils_Array::value( $blkCount,
                                                               $migrationInfo['other_details']['loc_block_ids'][$name] );
-                    
+
                     // keep 1-1 mapping for address - loc type.
                     $idKey = $blkCount;
-                    if ( array_key_exists($name,$locComponent) ) $idKey = $locTypeId;  
+                    if ( array_key_exists($name,$locComponent) ) $idKey = $locTypeId;
 
                     $mainBlockId = CRM_Utils_Array::value( $idKey, $migrationInfo['main_details']['loc_block_ids'][$name] );
-                    
+
                     if ( !$otherBlockId ) continue;
-                    
+
                     // for the block which belongs to other-contact, link the contact to main-contact
                     eval("\$otherBlockDAO = new CRM_Core_DAO_$daoName();");
                     $otherBlockDAO->id = $otherBlockId;
                     $otherBlockDAO->contact_id = $mainId;
                     $otherBlockDAO->location_type_id = $locTypeId;
-                    
+
                     // if main contact already has primary & billing, set the falgs to 0.
                     if ( $primaryDAOId ) $otherBlockDAO->is_primary = 0;
                     if ( $billingDAOId ) $otherBlockDAO->is_billing = 0;
-                    
+
                     // overwrite - need to delete block which belongs to  main-contact.
                     if ( $mainBlockId && ($operation == 2) ) {
                         eval("\$deleteDAO = new CRM_Core_DAO_$daoName();");
                         $deleteDAO->id = $mainBlockId;
                         $deleteDAO->find( true );
-                        
-                        // if we about to delete a primary / billing block, set the flags for new block 
+
+                        // if we about to delete a primary / billing block, set the flags for new block
                         // that we going to assign to main-contact
                         if ( $primaryDAOId && ($primaryDAOId == $deleteDAO->id) ) $otherBlockDAO->is_primary = 1;
                         if ( $billingDAOId && ($billingDAOId == $deleteDAO->id) ) $otherBlockDAO->is_billing = 1;
-                        
+
                         $deleteDAO->delete( );
                         $deleteDAO->free( );
                     }
-                    
+
                     $otherBlockDAO->update( );
                     $otherBlockDAO->free( );
                 }
@@ -1221,7 +1221,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             CRM_Dedupe_Merger::moveContactBelongings( $mainId, $otherId, $moveTables, $tableOperations );
             unset( $moveTables, $tableOperations );
         }
-        
+
         // **** Do contact related migrations
         CRM_Dedupe_Merger::moveContactBelongings( $mainId, $otherId );
 
@@ -1237,8 +1237,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         // fix custom fields so they're edible by createProfileContact()
         static $treeCache = array();
         if ( !array_key_exists($migrationInfo['main_details']['contact_type'], $treeCache) ) {
-            $treeCache[$migrationInfo['main_details']['contact_type']] = 
-                CRM_Core_BAO_CustomGroup::getTree( $migrationInfo['main_details']['contact_type'], 
+            $treeCache[$migrationInfo['main_details']['contact_type']] =
+                CRM_Core_BAO_CustomGroup::getTree( $migrationInfo['main_details']['contact_type'],
                                                    CRM_Core_DAO::$_nullObject, null, -1      );
         }
         $cgTree =& $treeCache[$migrationInfo['main_details']['contact_type']];
@@ -1250,7 +1250,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 $cFields[$fid]['attributes'] = $field;
             }
         }
-        
+
         if ( !isset( $submitted ) ) {
             $submitted = array();
         }
@@ -1259,7 +1259,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 $fid = (int) substr($key, 7);
                 $htmlType = $cFields[$fid]['attributes']['html_type'];
                 switch ( $htmlType ) {
-                    
+
                 case 'File':
                     $customFiles[] = $fid;
                     unset($submitted["custom_$fid"]);
@@ -1269,7 +1269,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                 case 'Select State/Province':
                     $submitted[$key] = CRM_Core_BAO_CustomField::getDisplayValue($value, $fid, $cFields);
                     break;
-                    
+
                 case 'CheckBox':
                 case 'AdvMulti-Select':
                 case 'Multi-Select':
@@ -1286,30 +1286,30 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                             if ( $value ) {
                                 $submmtedCustomValue = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
                             }
-                            
+
                             //hack to remove null and duplicate values from array.
                             foreach ( array_merge( $submmtedCustomValue, $existingValue ) as $k => $v ) {
                                 if ( $v != '' && !in_array( $v, $mergeValue ) ) {
                                     $mergeValue[] = $v;
                                 }
                             }
-                            
-                            //keep state and country as array format. 
+
+                            //keep state and country as array format.
                             //for checkbox and m-select format w/ VALUE_SEPARATOR
                             if ( in_array( $htmlType, array( 'CheckBox', 'Multi-Select', 'AdvMulti-Select' ) ) ) {
-                                $submitted[$key] = 
+                                $submitted[$key] =
                                     CRM_Core_DAO::VALUE_SEPARATOR .
                                     implode( CRM_Core_DAO::VALUE_SEPARATOR,
                                              $mergeValue ) .
                                     CRM_Core_DAO::VALUE_SEPARATOR;
                             } else {
-                                $submitted[$key] = $mergeValue; 
+                                $submitted[$key] = $mergeValue;
                             }
                         }
                     } else if ( in_array( $htmlType, array( 'Multi-Select Country', 'Multi-Select State/Province' ) ) ) {
                         //we require submitted values should be in array format
                         if ( $value ) {
-                            $mergeValueArray = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );   
+                            $mergeValueArray = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
                             //hack to remove null values from array.
                             $mergeValue = array( );
                             foreach (  $mergeValueArray as $k => $v ) {
@@ -1317,11 +1317,11 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                                     $mergeValue[] = $v;
                                 }
                             }
-                            $submitted[$key] = $mergeValue; 
+                            $submitted[$key] = $mergeValue;
                         }
                     }
                     break;
-                    
+
                 default:
                     break;
                 }
@@ -1352,19 +1352,19 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             if ( !empty($fileIds[$mainId]) ) {
                 CRM_Core_BAO_File::delete($fileIds[$mainId], $mainId, $customId);
             }
-            
+
             // move the other contact's file to main contact
             $sql = "UPDATE {$tableName} SET {$columnName} = {$fileIds[$otherId]} WHERE entity_id = {$mainId}";
             CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
             $sql = "UPDATE civicrm_entity_file SET entity_id = {$mainId} WHERE entity_table = '{$tableName}' AND file_id = {$fileIds[$otherId]}";
             CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
         }
-        
+
         // move view only custom fields CRM-5362
         $viewOnlyCustomFields = array( );
         foreach ( $submitted as $key => $value ) {
             $fid = (int) substr($key, 7);
-            if ( array_key_exists( $fid, $cFields ) && 
+            if ( array_key_exists( $fid, $cFields ) &&
                  CRM_Utils_Array::value( 'is_view', $cFields[$fid]['attributes'] ) ) {
                 $viewOnlyCustomFields[$key] = $value;
             }
@@ -1380,14 +1380,14 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         $otherParams = array( 'contact_id' => $otherId,
                               'id'         => $otherId,
                               'version'    => 3 );
-        if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) && 
+        if ( CRM_Core_Permission::check( 'merge duplicate contacts' ) &&
              CRM_Core_Permission::check( 'delete contacts' ) ) {
             // if ext id is submitted then set it null for contact to be deleted
             if ( CRM_Utils_Array::value( 'external_identifier', $submitted ) ) {
                 $query = "UPDATE civicrm_contact SET external_identifier = null WHERE id = {$otherId}";
                 CRM_Core_DAO::executeQuery( $query );
             }
-            
+
             civicrm_api( 'contact', 'delete', $otherParams );
             CRM_Core_BAO_PrevNextCache::deleteItem( $otherId );
         }
