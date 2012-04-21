@@ -37,18 +37,18 @@
  *
  */
 
-class CRM_Core_Invoke 
+class CRM_Core_Invoke
 {
     /**
      * This is the main function that is called on every click action and based on the argument
      * respective functions are called
      *
-     * @param $args array this array contains the arguments of the url 
-     * 
+     * @param $args array this array contains the arguments of the url
+     *
      * @static
      * @access public
-     */    
-    static function invoke( $args ) 
+     */
+    static function invoke( $args )
     {
         if ( $args[0] !== 'civicrm' ) {
             return;
@@ -58,7 +58,7 @@ class CRM_Core_Invoke
 
         $config = CRM_Core_Config::singleton( );
 
-        if ( isset($args[1]) and $args[1] == 'menu' and 
+        if ( isset($args[1]) and $args[1] == 'menu' and
              isset($args[2]) and $args[2] == 'rebuild' ) {
             // ensure that the user has a good privilege level
             if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
@@ -92,7 +92,7 @@ class CRM_Core_Invoke
         $i18n   = CRM_Core_I18n::singleton( );
 
         if ( $config->userFramework == 'Standalone' ) {
-            $session = CRM_Core_Session::singleton( ); 
+            $session = CRM_Core_Session::singleton( );
             if ( $session->get('new_install') !== true ) {
                 CRM_Core_Standalone::sidebarLeft( );
             } else if ( $args[1] == 'standalone' && $args[2] == 'register' ) {
@@ -110,7 +110,7 @@ class CRM_Core_Invoke
             CRM_Core_Menu::store( false );
             $item = CRM_Core_Menu::get( $path );
         }
-        
+
         if ( $config->userFramework == 'Joomla' && $item ) {
             $config->userFrameworkURLVar = 'task';
 
@@ -127,7 +127,7 @@ class CRM_Core_Invoke
 
         if ( $item ) {
             // CRM-7656 - make sure we send a clean sanitized path to create printer friendly url
-            $printerFriendly = CRM_Utils_System::makeURL( 'snippet', false, false, 
+            $printerFriendly = CRM_Utils_System::makeURL( 'snippet', false, false,
                                                           CRM_Utils_Array::value( 'path', $item ) ) . '2';
             $template->assign ( 'printerFriendly', $printerFriendly );
 
@@ -173,7 +173,7 @@ class CRM_Core_Invoke
                 $args = CRM_Utils_Array::value( 'return_url_args',
                                                 $item,
                                                 'reset=1' );
-                $session->pushUserContext( CRM_Utils_System::url( $item['return_url'], 
+                $session->pushUserContext( CRM_Utils_System::url( $item['return_url'],
                                                                   $args ) );
             }
 
@@ -184,12 +184,12 @@ class CRM_Core_Invoke
                 require_once( str_replace( '_',
                                            DIRECTORY_SEPARATOR,
                                            $item['page_callback'][0] ) . '.php' );
-                $result = call_user_func( $item['page_callback'], 
+                $result = call_user_func( $item['page_callback'],
                                           $newArgs );
             } else if (strstr($item['page_callback'], '_Form')) {
                 $wrapper = new CRM_Utils_Wrapper( );
                 $result = $wrapper->run( CRM_Utils_Array::value('page_callback', $item),
-                                         CRM_Utils_Array::value('title', $item), 
+                                         CRM_Utils_Array::value('title', $item),
                                          isset($pageArgs) ? $pageArgs : null );
             } else {
                 $newArgs  = explode( '/',
@@ -206,7 +206,7 @@ class CRM_Core_Invoke
                 if (strstr($item['page_callback'], '_Page')) {
                     eval ( '$object = ' .
                            "new {$item['page_callback']}( \$title, \$mode );" );
-                } else if (strstr($item['page_callback'], '_Controller')) { 
+                } else if (strstr($item['page_callback'], '_Controller')) {
                     $addSequence = 'false';
                     if ( isset( $pageArgs['addSequence'] ) ) {
                         $addSequence = $pageArgs['addSequence'];
@@ -224,7 +224,7 @@ class CRM_Core_Invoke
             CRM_Core_Session::storeSessionObjects( );
             return $result;
         }
-        
+
         CRM_Core_Menu::store( );
         CRM_Core_Session::setStatus( ts( 'Menu has been rebuilt' ) );
         return CRM_Utils_System::redirect( );
@@ -233,16 +233,16 @@ class CRM_Core_Invoke
     /**
      * This function contains the default action
      *
-     * @param $action 
+     * @param $action
      *
      * @static
      * @access public
      */
-    static function form( $action, $contact_type, $contact_sub_type ) 
+    static function form( $action, $contact_type, $contact_sub_type )
     {
         CRM_Utils_System::setUserContext( array( 'civicrm/contact/search/basic', 'civicrm/contact/view' ) );
         $wrapper = new CRM_Utils_Wrapper( );
-        
+
         $properties = CRM_Core_Component::contactSubTypeProperties( $contact_sub_type, 'Edit' );
         if( $properties ) {
             $wrapper->run( $properties['class'], ts('New %1', array(1 => $contact_sub_type)), $action, true );
@@ -250,37 +250,37 @@ class CRM_Core_Invoke
             $wrapper->run( 'CRM_Contact_Form_Contact', ts( 'New Contact' ), $action, true );
         }
     }
-    
-    /** 
-     * This function contains the actions for profile arguments 
-     * 
-     * @param $args array this array contains the arguments of the url 
-     * 
-     * @static 
-     * @access public 
-     */ 
-    static function profile( $args ) 
-    { 
-        if ( $args[1] !== 'profile' ) { 
-            return; 
-        } 
 
-        $secondArg = CRM_Utils_Array::value( 2, $args, '' ); 
+    /**
+     * This function contains the actions for profile arguments
+     *
+     * @param $args array this array contains the arguments of the url
+     *
+     * @static
+     * @access public
+     */
+    static function profile( $args )
+    {
+        if ( $args[1] !== 'profile' ) {
+            return;
+        }
+
+        $secondArg = CRM_Utils_Array::value( 2, $args, '' );
 
         if ($secondArg == 'map' ) {
             $controller = new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Task_Map',
                                                            ts('Map Contact'),
                                                            null, false, false, true );
-                
+
             $gids = explode( ',', CRM_Utils_Request::retrieve('gid', 'String', CRM_Core_DAO::$_nullObject, false, 0, 'GET') );
 
             if ( count( $gids ) > 1 ) {
                 foreach( $gids as $pfId  ) {
-                   $profileIds[ ] = CRM_Utils_Type::escape( $pfId, 'Positive' ); 
+                   $profileIds[ ] = CRM_Utils_Type::escape( $pfId, 'Positive' );
                 }
                 $controller->set( 'gid', $profileIds[0] );
                 $profileGID = $profileIds[0];
-            } else {         
+            } else {
                 $profileGID = CRM_Utils_Request::retrieve( 'gid', 'Integer',
                                                             $controller,
                                                             true );
@@ -294,7 +294,7 @@ class CRM_Core_Invoke
             if ( ! $isMap ) {
                 CRM_Core_Error::statusBounce( ts('This profile does not have the map feature turned on.') );
             }
-            
+
             $profileView = CRM_Utils_Request::retrieve( 'pv', 'Integer',
                                                         $controller,
                                                         false );
@@ -314,8 +314,8 @@ class CRM_Core_Invoke
 
         if ( $secondArg == 'edit' || $secondArg == 'create' ) {
             // set the userContext stack
-            $session = CRM_Core_Session::singleton(); 
-            $session->pushUserContext( CRM_Utils_System::url('civicrm/profile', 'reset=1' ) ); 
+            $session = CRM_Core_Session::singleton();
+            $session->pushUserContext( CRM_Utils_System::url('civicrm/profile', 'reset=1' ) );
 
             $buttonType = CRM_Utils_Array::value('_qf_Edit_cancel',$_POST);
             // CRM-5849: we should actually check the button *type*, but we get the *value*, potentially translated;
@@ -341,13 +341,13 @@ class CRM_Core_Invoke
                 $controller->process( );
                 return $controller->run( );
             } else {
-                $wrapper = new CRM_Utils_Wrapper( ); 
+                $wrapper = new CRM_Utils_Wrapper( );
                 return $wrapper->run( 'CRM_Profile_Form_Edit',
                                       ts( 'Create Profile' ),
                                       array( 'mode' => CRM_Core_Action::ADD,
                                              'ignoreKey' => true ) );
-            } 
-        } 
+            }
+        }
 
         $page = new CRM_Profile_Page_Listings( );
         return $page->run( );
