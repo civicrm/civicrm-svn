@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* This file provides the template for inline editing of emails *}
-<table>
+<table class="crm-inline-edit-form">
     <tr>
       <td colspan="5">
         <div class="crm-submit-buttons"> 

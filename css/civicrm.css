@@ -1949,6 +1949,10 @@ div.grippie {
   cursor: hand;
 }
 
+#crm-container div.contact_panel table.crm-inline-edit-form td {
+  background-color: #E6E6DC;
+}
+
 #crm-container div.buttons {
     TEXT-ALIGN       : right;
     margin           : 8px 0 0;
