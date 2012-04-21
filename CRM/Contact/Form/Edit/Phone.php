@@ -43,16 +43,14 @@ class CRM_Contact_Form_Edit_Phone
      * build the form elements for a phone object
      *
      * @param CRM_Core_Form $form       reference to the form object
-     * @param array         $location   the location object to store all the form elements in
-     * @param int           $locationId the locationId we are dealing with
-     * @param int           $count      the number of blocks to create
-     *
+     * @param int           $addressBlockCount block number to build
+     * @param boolean       $blockEdit         is it block edit
+     * 
      * @return void
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form, $addressBlockCount = null ) {
-        
+    static function buildQuickForm( &$form, $addressBlockCount = null, $blockEdit = false ) {
         // passing this via the session is AWFUL. we need to fix this
         if ( ! $addressBlockCount ) {
             $blockId = ( $form->get( 'Phone_Block_Count' ) ) ? $form->get( 'Phone_Block_Count' ) : 1;
@@ -70,7 +68,7 @@ class CRM_Contact_Form_Edit_Phone
         // phone extension
 		$form->addElement('text', "phone[$blockId][phone_ext]", ts('Extension'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone', 'phone_ext'));
 		
-		if( isset( $form->_contactType ) ) {
+		if( isset( $form->_contactType ) || $blockEdit ) {
 			//Block type select
 			$form->addElement('select',"phone[$blockId][location_type_id]", '' , CRM_Core_PseudoConstant::locationType());
 			
