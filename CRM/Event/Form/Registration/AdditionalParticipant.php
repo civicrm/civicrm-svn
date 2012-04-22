@@ -282,15 +282,15 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
              !$this->_allowConfirmation ) {
 
             if ( $this->_isEventFull ) {
-                $statusMessage = ts('This event is currently full. You are registering in a waiting list. You will be notified if spaces become available.');
+                $statusMessage = ts('This event is currently full. You are registering for the waiting list. You will be notified if spaces become available.');
             } else if ( $this->_allowWaitlist ||
                         (!$this->_allowWaitlist && ($processedCnt + $pricesetFieldsCount) > $this->_availableRegistrations) ) {
 
-                $waitingMsg   = ts('It looks like you are now registering a group participants which are extending the event availability. All participant will be listed in the waiting list and you will be notified if spaces become available.');
-                $confirmedMsg = ts('It look like that total participant recorded will fit in the event availability (you will not be wait listed).');
+                $waitingMsg   = ts('It looks like you are registering more participants then there are spaces available. All participants will be added to the waiting list. You will be notified if spaces become available.');
+                $confirmedMsg = ts('It looks like there are enough spaces in this event for your group (you will not be wait listed).');
                 if ( $this->_requireApproval ) {
                     $waitingMsg   = ts('It looks like you are now registering a group of %1 participants. The event has %2 available spaces (you will not be wait listed). Registration for this event requires approval. You will receive an email once your registration has been reviewed.');
-                    $confirmedMsg = ts('It look like that total participant recorded will fit in the event availability (you will not be wait listed). Registration for this event requires approval. You will receive an email once your registration has been reviewed.');
+                    $confirmedMsg = ts('It looks there are enough spaces in this event for your group (you will not be wait listed). Registration for this event requires approval. You will receive an email once your registration has been reviewed.');
                 }
 
                 $this->assign( 'waitingMsg', $waitingMsg );
