@@ -125,7 +125,11 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
                 $urlQry = "reset=1&action=map&rgid={$rgid}";
                 if ( $gid ) $urlQry .= "&gid={$gid}";
                 $urlQry .= "&skipped={$skippedCount}&merged={$mergedCount}";
-                CRM_Utils_System::jsRedirect(CRM_Utils_System::url( 'civicrm/contact/dedupefind', $urlQry ));
+                CRM_Utils_System::jsRedirect(
+                  CRM_Utils_System::url( 'civicrm/contact/dedupefind', $urlQry ),
+                  ts( 'Batch Merge Task in progress' ),
+                  ts( 'The batch merge task is still in progress. This page will be refreshed automatically.' )
+                );
             }
         }
 
