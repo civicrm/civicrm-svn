@@ -475,7 +475,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
              $self->_values['event']['is_monetary'] &&
              !isset($errors['_qf_default']) &&
              !$self->validatePaymentValues($self, $fields)  ) {
-            $errors['_qf_default'] = ts("Your payement information looks incomplete. Please go back to the main registration page, to complete payment information.");
+            $errors['_qf_default'] = ts("Your payment information looks incomplete. Please go back to the main registration page, to complete payment information.");
             $self->set( 'forcePayement', true ) ;
         } else if ( $button == 'skip' )  {
             $self->set( 'forcePayement', true ) ;
