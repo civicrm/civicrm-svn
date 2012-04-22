@@ -38,7 +38,7 @@ class CRM_ACL_API {
 
     /**
      * The various type of permissions
-     * 
+     *
      * @var int
      */
     const EDIT   = 1;
@@ -47,7 +47,7 @@ class CRM_ACL_API {
     const CREATE = 4;
     const SEARCH = 5;
     const ALL    = 6;
-    
+
 
   /**
    * given a permission string, check for access requirements
@@ -146,7 +146,9 @@ class CRM_ACL_API {
    * @return array the ids of the groups for which the user has permissions
    * @access public
    */
-  public static function group($type, $contactID = NULL,
+  public static function group(
+    $type,
+    $contactID = NULL,
     $tableName      = 'civicrm_saved_search',
     $allGroups      = NULL,
     $includedGroups = NULL
@@ -173,12 +175,23 @@ class CRM_ACL_API {
    * @return array the ids of the groups for which the user has permissions
    * @access public
    */
-  public static function groupPermission($type, $groupID, $contactID = NULL,
+  public static function groupPermission(
+    $type,
+    $groupID,
+    $contactID = NULL,
     $tableName      = 'civicrm_saved_search',
     $allGroups      = NULL,
     $includedGroups = NULL
   ) {
     static $cache = array();
+
+    if ( ! $contactID ) {
+      $session = CRM_Core_Session::singleton();
+      $contactID = NULL;
+      if ($session->get( 'userID' )) {
+        $contactID = $session->get( 'userID' );
+      }
+    }
 
     $key = "{$tableName}_{$type}_{$contactID}";
     if (array_key_exists($key, $cache)) {
