@@ -25,8 +25,7 @@
 *}
 <div class="crm-block crm-form-block crm-map-form-block">
 <div id="help">
-    {ts}CiviCRM includes plugins for several mapping and geocoding web services. These services allow your users to display contact and event location addresses on a map.{/ts} {help id='map-intro-id'}
-    <div class="status-removed"><div class="icon alert-icon"></div> &nbsp; {ts}Yahoo recently discontinued their geocoding and mapping API service. If you previously used Yahoo, you will need to select and configure an alternate service in order to continue using geocoding/mapping tools.{/ts}</div>
+    {ts}CiviCRM includes plugins for several mapping and geocoding web services. When your users save a contact or event location address, a geocoding service will convert the address into geographical coordinates, which are required for mapping. Yahoo&rsquo;s geocoder will also automatically populate the postal code field. Mapping services allow your users to display addresses on a map.{/ts} {help id='map-intro-id'}
 </div>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout-compressed">
