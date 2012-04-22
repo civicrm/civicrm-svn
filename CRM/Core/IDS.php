@@ -127,6 +127,8 @@ class CRM_Core_IDS {
     exceptions[]        = instructions
     exceptions[]        = suggested_message
     exceptions[]        = page_text
+    exceptions[]        = activity_include
+    exceptions[]        = activity_exclude
 ";
             if ( file_put_contents( $configFile, $contents ) === false ) {
                 CRM_Core_Error::movedSiteError( $configFile );
