@@ -42,24 +42,24 @@ class CRM_Core_Extensions_Extension
 {
 
     /**
-     * 
+     *
      */
     const OPTION_GROUP_NAME = 'system_extensions';
 
     const STATUS_INSTALLED = 'installed';
-    
+
     const STATUS_LOCAL = 'local';
-    
+
     const STATUS_REMOTE = 'remote';
 
     public $type = null;
-    
+
     public $path = null;
-    
+
     public $upgradable = false;
-    
-    public $upgradeVersion = null;    
-    
+
+    public $upgradeVersion = null;
+
     function __construct( $key, $type = null, $name = null, $label = null, $file = null, $is_active = 1 ) {
         $this->key = $key;
         $this->type = $type;
@@ -67,7 +67,7 @@ class CRM_Core_Extensions_Extension
         $this->label = $label;
         $this->file = $file;
         $this->is_active = $is_active;
-        
+
         $config = CRM_Core_Config::singleton( );
         $this->path = $config->extensionsDir . DIRECTORY_SEPARATOR . $key . DIRECTORY_SEPARATOR;
     }
@@ -79,19 +79,19 @@ class CRM_Core_Extensions_Extension
     public function setUpgradable( ) {
         $this->upgradable = true;
     }
-    
+
     public function setUpgradeVersion( $version ) {
         $this->upgradeVersion = $version;
-    }    
+    }
 
     public function setInstalled( ) {
         $this->setStatus( self::STATUS_INSTALLED );
     }
-    
+
     public function setLocal( ) {
         $this->setStatus( self::STATUS_LOCAL );
     }
-    
+
     public function setRemote( ) {
         $this->setStatus( self::STATUS_REMOTE );
     }
@@ -131,11 +131,11 @@ class CRM_Core_Extensions_Extension
         } else {
             $info = $this->_parseXMLString( $xml );
         }
-        
+
         if ( $info == false ) {
             $this->name = 'Invalid extension';
         } else {
-        
+
         $this->type = (string) $info->attributes()->type;
         $this->file = (string) $info->file;
         $this->label = (string) $info->name;
@@ -173,7 +173,7 @@ class CRM_Core_Extensions_Extension
         }
         return array();
     }
-    
+
     public function install( ) {
         if( $this->status != self::STATUS_LOCAL ) {
             $this->download();
@@ -182,9 +182,9 @@ class CRM_Core_Extensions_Extension
         $this->_registerExtensionByType();
         $this->_createExtensionEntry();
     }
-    
+
     public function uninstall( ) {
-        $this->removeFiles();    
+        $this->removeFiles();
         $this->_removeExtensionByType();
         $this->_removeExtensionEntry();
     }
@@ -195,7 +195,7 @@ class CRM_Core_Extensions_Extension
         $config = CRM_Core_Config::singleton( );
         CRM_Utils_File::cleanDir( $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key, true );
     }
-    
+
     public function installFiles() {
         require_once 'CRM/Utils/File.php';
         require_once 'CRM/Core/Config.php';
@@ -204,7 +204,7 @@ class CRM_Core_Extensions_Extension
         $zip = new ZipArchive;
         $res = $zip->open( $this->tmpFile );
         if ($res === TRUE) {
-            $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';        
+            $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
             $zip->extractTo( $path );
             $zip->close();
         } else {
@@ -219,34 +219,34 @@ class CRM_Core_Extensions_Extension
         if( $check->version != $this->version ) {
             CRM_Core_Error::fatal( 'Cannot install - there are differences between extdir XML file and archive XML file!' );
         }
-        
+
         CRM_Utils_File::copyDir( $path . DIRECTORY_SEPARATOR . $this->key,
                                  $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key );
-        
-        
+
+
     }
-    
+
     public function download( ) {
         require_once 'CRM/Core/Config.php';
         $config = CRM_Core_Config::singleton( );
-        
+
         $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
         $filename = $path . DIRECTORY_SEPARATOR . $this->key . '.zip';
 
         if( !$this->downloadUrl ) {
             CRM_Core_Error::fatal( 'Cannot install this extension - downloadUrl is not set!' );
         }
-        
+
         file_put_contents( $filename, file_get_contents( $this->downloadUrl ) );
-        
+
         $this->tmpFile = $filename;
-    }    
+    }
 
     public function enable( ) {
         $this->_setActiveByType( 1 );
         CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $this->id, 'is_active', 1 );
     }
-    
+
     public function disable( ) {
         $this->_setActiveByType( 0 );
         CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_OptionValue', $this->id, 'is_active', 0 );
@@ -266,23 +266,23 @@ class CRM_Core_Extensions_Extension
         $ext = new $hcName( $this );
         $ext->install();
     }
-    
+
     private function _removeExtensionByType() {
         $hcName = "CRM_Core_Extensions_" . ucwords($this->type);
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
         $ext = new $hcName( $this );
         $ext->uninstall();
-    }    
+    }
 
     private function _removeExtensionEntry() {
         CRM_Core_BAO_OptionValue::del($this->id);
         CRM_Core_Session::setStatus( ts('Selected option value has been deleted.') );
     }
-    
+
     private function _createExtensionEntry() {
         $groupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', self::OPTION_GROUP_NAME, 'id', 'name' );
         $weight = CRM_Utils_Weight::getDefaultWeight( 'CRM_Core_DAO_OptionValue', array( 'option_group_id' => $groupId) );
-            
+
         $params = array( 'option_group_id' => $groupId,
                          'weight' => $weight,
                          'label' => $this->label,
@@ -294,8 +294,8 @@ class CRM_Core_Extensions_Extension
                       );
 
         $ids = array();
-        $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);    
+        $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
     }
-    
+
 
 }
