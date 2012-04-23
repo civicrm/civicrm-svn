@@ -168,6 +168,10 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
             $errors['monetaryThousandSeparator'] = ts( 'Thousands Separator and Decimal Delimiter can not be the same.' );
         }
 
+        if ( strlen($fields['monetaryThousandSeparator'] ) == 0 ) {
+            $errors['monetaryThousandSeparator'] = ts( 'Thousands Separator can not be empty. You can use a space character instead.' );
+        }
+
         if ( strlen($fields['monetaryThousandSeparator'] ) > 1 ) {
             $errors['monetaryThousandSeparator'] = ts( 'Thousands Separator can not have more than 1 character.' );
         }
