@@ -1752,7 +1752,7 @@ ORDER BY name";
      * @static
      * @return array - array reference of all batch types
      */
-    public static function &getBatchTypes( )
+    public static function &getBatchType( )
     {
         if ( !self::$batchTypes ) {
             self::$batchTypes = CRM_Core_OptionGroup::values( 'batch_type' );
@@ -1770,7 +1770,7 @@ ORDER BY name";
      * @static
      * @return array - array reference of all batch statuses
      */
-    public static function &getBatchStatues( )
+    public static function &getBatchStatus( )
     {
         if ( !self::$batchStatues ) {
             self::$batchStatues = CRM_Core_OptionGroup::values( 'batch_status' );
