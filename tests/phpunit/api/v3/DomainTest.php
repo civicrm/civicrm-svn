@@ -39,7 +39,7 @@ require_once 'api/v3/Domain.php';
  */
 class api_v3_DomainTest extends CiviUnitTestCase {
 
-  /* This test case doesn't require DB reset - apart from 
+  /* This test case doesn't require DB reset - apart from
        where cleanDB() is called. */
 
 
@@ -47,6 +47,15 @@ class api_v3_DomainTest extends CiviUnitTestCase {
 
   protected $_apiversion;
   protected $params;
+
+  /**
+   *  Constructor
+   *
+   *  Initialize configuration
+   */
+  function __construct() {
+      parent::__construct();
+  }
 
   /**
    * Sets up the fixture, for example, opens a network connection.

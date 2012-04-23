@@ -51,8 +51,9 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    *  Constructor
    *
    *  Initialize configuration
-   */ function __construct() {
-    parent::__construct();
+   */
+  function __construct() {
+      parent::__construct();
   }
 
   /**
@@ -416,7 +417,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->customGroupDelete($ids['custom_group_id']);
   }
   /*
-     * check with complete array + custom field 
+     * check with complete array + custom field
      * Note that the test is written on purpose without any
      * variables specific to participant so it can be replicated into other entities
      * and / or moved to the automated test suite
@@ -799,7 +800,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       $this->_dbconn
     );
     $actual->addTable('civicrm_contact');
-    $expected->assertEquals($actual);
+    $expected->matches($actual);
   }
 
   /**
@@ -832,7 +833,6 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     //  Result should indicate successful update
     $this->assertEquals(0, $result['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $result)
     );
-    // $this->assertEquals( $expected, $result, "In line " . __LINE__ );
 
     //  Check updated civicrm_contact against expected
     $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
@@ -842,7 +842,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       $this->_dbconn
     );
     $actual->addTable('civicrm_contact');
-    $expected->assertEquals($actual);
+    $expected->matches($actual);
   }
 
   /**
@@ -874,7 +874,6 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     //  Result should indicate successful update
     $this->assertEquals(0, $result['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $result)
     );
-    //   $this->assertEquals( $expected, $result, "In line " . __LINE__ );
 
     //  Check updated civicrm_contact against expected
     $expected = new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
@@ -884,7 +883,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       $this->_dbconn
     );
     $actual->addTable('civicrm_contact');
-    $expected->assertEquals($actual);
+    $expected->matches($actual);
   }
 
   /**
@@ -1111,7 +1110,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
                         'location_type_id' => 1,
                         'version' 				=> $this->_apiversion,
                         'api.contribution.create'    => array(
-                                                   
+
                              'receive_date'           => '2010-01-01',
                              'total_amount'           => 100.00,
                              'contribution_type_id'   => 1,
@@ -1124,15 +1123,15 @@ class api_v3_ContactTest extends CiviUnitTestCase {
                              'source'                 => 'SSF',
                              'contribution_status_id' => 1,
                              ),
-		      
+
     );
 
     $contact = & civicrm_api('Contact', 'Create',$params);
     $params  = array('version' => 3, 'id' => $contact['id'], 'api.activity' => array());
     $result  = civicrm_api('Contact', 'Get', $params);
-    $this->documentMe($params,$result,__FUNCTION__,__FILE__); 
+    $this->documentMe($params,$result,__FUNCTION__,__FILE__);
     $this->assertGreaterThan(0, $result['values'][$result['id']]['api.activity']['count']);
-    $this->assertEquals('Contribution', $result['values'][$result['id']]['api.activity']['values'][0]['activity_name']);   
+    $this->assertEquals('Contribution', $result['values'][$result['id']]['api.activity']['values'][0]['activity_name']);
  }
  */
 
@@ -1418,7 +1417,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    */
   function testContactGetFormatIsSuccessTrue() {
     $this->createContactFromXML();
-    $description = "This demonstrates use of the 'format.is_success' param. 
+    $description = "This demonstrates use of the 'format.is_success' param.
     This param causes only the success or otherwise of the function to be returned as BOOLEAN";
     $subfile = "FormatIsSuccess_True";
     $params  = array('version' => 3, 'id' => 17, 'format.is_success' => 1);
@@ -1432,7 +1431,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    */
   function testContactCreateFormatIsSuccessFalse() {
 
-    $description = "This demonstrates use of the 'format.is_success' param. 
+    $description = "This demonstrates use of the 'format.is_success' param.
     This param causes only the success or otherwise of the function to be returned as BOOLEAN";
     $subfile = "FormatIsSuccess_Fail";
     $params  = array('version' => 3, 'id' => 500, 'format.is_success' => 1);
@@ -1445,7 +1444,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    */
   function testContactGetSingle_entity_array() {
     $this->createContactFromXML();
-    $description = "This demonstrates use of the 'format.single_entity_array' param. 
+    $description = "This demonstrates use of the 'format.single_entity_array' param.
     /* This param causes the only contact to be returned as an array without the other levels.
     /* it will be ignored if there is not exactly 1 result";
     $subfile = "GetSingleContact";
@@ -1461,7 +1460,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    */
   function testContactGetFormatcount_only() {
     $this->createContactFromXML();
-    $description = "/*This demonstrates use of the 'getCount' action 
+    $description = "/*This demonstrates use of the 'getCount' action
     /*  This param causes the count of the only function to be returned as an integer";
     $subfile = "GetCountContact";
     $params  = array('version' => 3, 'id' => 17);
@@ -1475,7 +1474,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     */
   function testContactGetFormatID_only() {
     $this->createContactFromXML();
-    $description = "This demonstrates use of the 'format.id_only' param. 
+    $description = "This demonstrates use of the 'format.id_only' param.
     /* This param causes the id of the only entity to be returned as an integer.
     /* it will be ignored if there is not exactly 1 result";
     $subfile = "FormatOnlyID";
@@ -1491,7 +1490,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     */
   function testContactGetFormatSingleValue() {
     $this->createContactFromXML();
-    $description = "This demonstrates use of the 'format.single_value' param. 
+    $description = "This demonstrates use of the 'format.single_value' param.
     /* This param causes only a single value of the only entity to be returned as an string.
     /* it will be ignored if there is not exactly 1 result";
     $subfile = "FormatSingleValue";

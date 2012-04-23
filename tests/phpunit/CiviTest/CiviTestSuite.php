@@ -4,7 +4,7 @@
  *  File for the CiviTestSuite class
  *
  *  (PHP 5)
- *  
+ *
  *   @copyright Copyright CiviCRM LLC (C) 2009
  *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
  *              GNU Affero General Public License version 3
@@ -41,13 +41,25 @@ require_once 'PHPUnit/Framework/TestSuite.php';
 class CiviTestSuite extends PHPUnit_Framework_TestSuite
 {
     /**
+     * Simple name based constructor
+     */
+    function __construct( $theClass = '', $name = '') {
+        parent::__construct( 'CiviCRM TestSuite' );
+
+        // also load the class loader
+        require_once 'CRM/Core/ClassLoader.php';
+        $classLoader = new CRM_Core_ClassLoader();
+        $classLoader->register();
+    }
+
+    /**
      *  Test suite setup
      */
     protected function setUp()
     {
         //print __METHOD__ . "\n";
     }
- 
+
     /**
      *  Test suite teardown
      */
@@ -70,7 +82,8 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
     protected function implSuite( $myfile )
     {
         //echo get_class($this)."::implSuite($myfile)\n";
-        $suite = new PHPUnit_Framework_TestSuite( get_class( $this ) );
+        // $suite = new PHPUnit_Framework_TestSuite( get_class( $this ) );
+        $suite = new PHPUnit_Framework_TestSuite( 'CiviCRM TestSuite' );
         $this->addAllTests( $suite, $myfile,
                             new SplFileInfo( dirname( $myfile ) ) );
         return $suite;
@@ -91,7 +104,7 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
             || !$dirInfo->isDir( ) ) {
             return;
         }
-        
+
         //  Pass 1:  Check all *Tests.php files
         //echo "start Pass 1 on {$dirInfo->getRealPath()}\n";
         $dir = new DirectoryIterator( $dirInfo->getRealPath( ) );
@@ -153,7 +166,7 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
                     if ( preg_match( '/Test$/', $name ) ) {
                         //echo "adding suite $name\n";
                         $suite->addTestSuite( $name );
-                    } 
+                    }
                 }
             }
         }

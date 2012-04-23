@@ -226,7 +226,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
     $this->assertEquals(6, $result['count']);
   }
   /*
- * Test that creating a payment will add the contribution ID where only one pledge payment 
+ * Test that creating a payment will add the contribution ID where only one pledge payment
  * in schedule
  */
   function testCreatePledgePaymentWhereOnlyOnePayment() {
