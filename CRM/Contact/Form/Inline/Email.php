@@ -97,10 +97,19 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
         'name'      => ts('Save'),
         'isDefault' => true),
       array( 
-        'type'      => 'refresh',
+        'type'      => 'cancel',
         'name'      => ts('Cancel') ) );
 
     $this->addButtons(  $buttons );
+  }
+
+  /**
+   * Override default cancel action
+   */  
+  function cancelAction() {
+    $response = array( 'status' => 'cancel' );
+    echo json_encode( $response );
+    CRM_Utils_System::civiExit( );    
   }
 
   /**
@@ -126,21 +135,14 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
   public function postProcess() {
     $params = $this->exportValues(  );
     
-    if ( CRM_Utils_Array::value( '_qf_Email_refresh', $params ) ) {
-      $response = array( 'status' => 'cancel' );
-    }
-    else {
-      // need to process / save emails
-      
-      $params['contact_id']         = $this->_contactId;
-      $params['updateBlankLocInfo'] = true;
-      
-      // save email changes
-      CRM_Core_BAO_Block::create( 'email', $params );
+    // need to process / save emails
+    $params['contact_id']         = $this->_contactId;
+    $params['updateBlankLocInfo'] = true;
 
-      $response = array( 'status' => 'save' );
-    }
+    // save email changes
+    CRM_Core_BAO_Block::create( 'email', $params );
 
+    $response = array( 'status' => 'save' );
     echo json_encode( $response );
     CRM_Utils_System::civiExit( );    
   }
