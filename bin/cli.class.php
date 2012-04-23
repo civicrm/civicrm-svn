@@ -142,6 +142,10 @@ class civicrm_cli {
         $civicrm_root = dirname(__DIR__);
         chdir( $civicrm_root );
         require_once('civicrm.config.php');
+	// autoload
+	require_once $civicrm_root . '/CRM/Core/ClassLoader.php';
+	$classLoader = new CRM_Core_ClassLoader();
+	$classLoader->register();
 
         require_once ('CRM/Core/Config.php');
         $this->_config = CRM_Core_Config::singleton( );
@@ -156,8 +160,8 @@ class civicrm_cli {
         }
 
         if( strtolower($this->_entity) == 'job' ) {
-            if( ! $cms->authenticate( $this->_user, $this->_password, false, $civicrm_root ) ) {
-              $this->_log( ts("Jobs called from cli.php require valid user and password as parameter", array('1' => $this->_user )));
+            if( !  $this->_user ) {
+              $this->_log( ts("Jobs called from cli.php require valid user as parameter"));
               return false;
             }
         }
