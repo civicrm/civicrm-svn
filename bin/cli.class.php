@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 
 /*
@@ -46,12 +45,20 @@ class civicrm_cli {
     var $_errors = array();
 
     public function initialize( ) {
+	if( !$this->_accessing_from_cli( ) ) return false;
         if( !$this->_parseOptions( ) ) return false; 
         if( !$this->_bootstrap( ) ) return false;
         if( !$this->_validateOptions( ) ) return false;
         return true;
     }
 
+    public function _accessing_from_cli( ) {
+        if (PHP_SAPI === 'cli') {
+            return true;
+        } else {
+            trigger_error("cli.php can only be run from command line.",E_USER_ERROR);
+        }
+    }
     public function callApi( ) {
         require_once 'api/api.php';
 
