@@ -1137,4 +1137,12 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         }
     }
 
+    /**
+     * Function that can be defined in Form to override or
+     * perform specific action on cancel action
+     *
+     * @access public
+     */ 
+    function cancelAction() {
+    }
 }

@@ -692,7 +692,9 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         $this->set( 'civicrmDestination', $this->_destination );
     }
 
-
+    public function cancelAction( ) {
+      $actionName = $this->getActionName( );
+      list($pageName, $action) = $actionName;
+      return $this->_pages[$pageName]->cancelAction( );
+    }
 }
-
-

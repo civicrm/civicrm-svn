@@ -347,6 +347,10 @@ class CRM_Core_StateMachine {
         return $this->_controller->fini( );
     }
 
+    function cancelAction( ) {
+        return $this->_controller->cancelAction( );
+    }
+
 }
 
 
