@@ -56,7 +56,7 @@ class CRM_Utils_Mail
      *   cleanName: the user friendly name of the attachmment
      *
      * @param array $params (by reference)
-     * 
+     *
      * @access public
      * @return boolean true if a mail was sent, else false
      */
@@ -88,7 +88,7 @@ class CRM_Utils_Mail
             $htmlMessage = false;
         }
 
-        $headers = array( );  
+        $headers = array( );
         $headers['From']                      = $params['from'];
         $headers['To']                        = self::formatRFC822Email( CRM_Utils_Array::value( 'toName', $params ),
                                                                          CRM_Utils_Array::value( 'toEmail', $params ),
@@ -97,18 +97,18 @@ class CRM_Utils_Mail
         $headers['Bcc']                       = CRM_Utils_Array::value( 'bcc', $params );
         $headers['Subject']                   = CRM_Utils_Array::value( 'subject', $params );
         $headers['Content-Type']              = $htmlMessage ? 'multipart/mixed; charset=utf-8' : 'text/plain; charset=utf-8';
-        $headers['Content-Disposition']       = 'inline';  
-        $headers['Content-Transfer-Encoding'] = '8bit';  
+        $headers['Content-Disposition']       = 'inline';
+        $headers['Content-Transfer-Encoding'] = '8bit';
         $headers['Return-Path']               = CRM_Utils_Array::value( 'returnPath', $params );
         $headers['Reply-To']                  = CRM_Utils_Array::value( 'replyTo', $params, $from );
         $headers['Date']                      = date('r');
         if ( $includeMessageId ) {
           $headers['Message-ID']              = '<' . uniqid( 'civicrm_', true ) . "@$emailDomain>";
-        }  
+        }
         if (CRM_Utils_Array::value( 'autoSubmitted', $params )) {
           $headers['Auto-Submitted']          = "Auto-Generated";
         }
-        
+
         //make sure we has to have space, CRM-6977
         foreach ( array( 'From', 'To', 'Cc', 'Bcc', 'Reply-To', 'Return-Path' ) as $fld ) {
             $headers[$fld] = str_replace( '"<', '" <', $headers[$fld] );
@@ -139,13 +139,13 @@ class CRM_Utils_Mail
                                      $attach['cleanName'] );
             }
         }
-        
+
         $message = self::setMimeParams( $msg );
         $headers =& $msg->headers($headers);
-        
+
         $to = array( $params['toEmail'] );
 
-        //get emails from headers, since these are 
+        //get emails from headers, since these are
         //combination of name and email addresses.
         if ( CRM_Utils_Array::value( 'Cc', $headers ) ) {
             $to[] = CRM_Utils_Array::value( 'Cc', $headers );
@@ -154,7 +154,7 @@ class CRM_Utils_Mail
             $to[] = CRM_Utils_Array::value( 'Bcc', $headers );
             unset( $headers['Bcc'] );
         }
-        
+
         $result = null;
         $mailer = CRM_Core_Config::getMailer( );
         CRM_Core_Error::ignoreException( );
@@ -164,7 +164,7 @@ class CRM_Utils_Mail
             if ( is_a( $result, 'PEAR_Error' ) ) {
                 $message = self::errorMessage ($mailer, $result );
                 // append error message in case multiple calls are being made to
-                // this method in the course of sending a batch of messages. 
+                // this method in the course of sending a batch of messages.
                 CRM_Core_Session::setStatus( $message, true );
                 return false;
             }
@@ -192,18 +192,18 @@ class CRM_Utils_Mail
             '<li>' . ts('Your Sendmail path is incorrect.')     . '</li>' .
             '<li>' . ts('Your Sendmail argument is incorrect.') . '</li>';
         }
-        
+
         $message .=
             '<li>' . ts('The FROM Email Address configured for this feature may not be a valid sender based on your email service provider rules.') . '</li>' .
             '</ul>' .
             '<p>' . ts('Check <a href="%1">this page</a> for more information.', array(1 => CRM_Utils_System::docURL2('Outbound Email (SMTP)', true))) . '</p>';
-        
+
         return $message;
     }
 
     function logger( &$to, &$headers, &$message ) {
         if ( is_array( $to ) ) {
-            $toString = implode( ', ', $to ); 
+            $toString = implode( ', ', $to );
             $fileName = $to[0];
         } else {
             $toString = $fileName = $to;
@@ -238,15 +238,15 @@ class CRM_Utils_Mail
      */
     static function pluckEmailFromHeader($header) {
         preg_match('/<([^<]*)>$/', $header, $matches);
-        
+
         if ( isset($matches[1]) ) {
             return $matches[1];
         }
         return null;
     }
-    
+
     /**
-     * Get the Active outBound email 
+     * Get the Active outBound email
      * @return boolean true if valid outBound email configuration found, false otherwise
      * @access public
      * @static
@@ -257,8 +257,8 @@ class CRM_Utils_Mail
         if ( $mailingInfo['outBound_option'] == 3 ) {
            return true;
         } else  if ( $mailingInfo['outBound_option'] == 0 ) {
-            if ( !isset( $mailingInfo['smtpServer'] ) || $mailingInfo['smtpServer'] == '' || 
-                 $mailingInfo['smtpServer'] == 'YOUR SMTP SERVER'|| 
+            if ( !isset( $mailingInfo['smtpServer'] ) || $mailingInfo['smtpServer'] == '' ||
+                 $mailingInfo['smtpServer'] == 'YOUR SMTP SERVER'||
                  ( $mailingInfo['smtpAuth'] && ( $mailingInfo['smtpUsername'] == '' || $mailingInfo['smtpPassword'] == '' ) ) ) {
                 return false;
             }
@@ -269,7 +269,7 @@ class CRM_Utils_Mail
             }
             return true;
         }
-        return false;        
+        return false;
     }
 
     static function &setMimeParams( &$message, $params = null ) {
@@ -299,7 +299,7 @@ class CRM_Utils_Mail
              substr( $name, -1,  1 ) == '"' ) {
             $name = substr( $name, 1, -1 );
         }
-            
+
         if ( ! empty( $name ) ) {
             // escape the special characters
             $name = str_replace( array( '<' , '"' , '>'  ),
@@ -317,14 +317,14 @@ class CRM_Utils_Mail
         $result .= "<{$email}>";
         return $result;
     }
-    
+
     /**
      * Takes a string and checks to see if it needs to be escaped / double quoted
      * and if so does the needful and return the formatted name
      *
      * This code has been copied and adapted from ezc/Mail/src/tools.php
      */
-    static function formatRFC2822Name( $name ) 
+    static function formatRFC2822Name( $name )
     {
         $name = trim( $name );
         if ( ! empty( $name ) ) {
@@ -332,16 +332,16 @@ class CRM_Utils_Mail
             if ( substr( $name, 0, 1 ) == '"' && substr( $name, -1 ) == '"' ) {
                 $name = substr( $name, 1, -1 );
             }
-            
+
             // add slashes to " and \ and surround the name part with quotes
             if ( strpbrk( $name, ",@<>:;'\"" ) !== false ) {
                 $name = '"'. addcslashes( $name, '\\"' ) . '"';
             }
         }
-        
+
         return $name;
     }
-    
+
 }
 
 

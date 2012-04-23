@@ -37,7 +37,7 @@ require_once 'Mail/mime.php';
 
 
 
-class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing 
+class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
 {
     /**
      * An array that holds the complete templates
@@ -93,12 +93,12 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
     /**
      * class constructor
      */
-    function __construct( ) 
+    function __construct( )
     {
         parent::__construct( );
     }
 
-    function &getRecipientsCount($job_id, $mailing_id = null, $mode = null) 
+    function &getRecipientsCount($job_id, $mailing_id = null, $mode = null)
     {
         // need this for backward compatibility, so we can get count for old mailings
         // please do not use this function if possible
@@ -112,17 +112,17 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
                             $offset = NULL, $limit = NULL,
                             $storeRecipients = false,
                             $dedupeEmail = false,
-                            $mode = null) 
+                            $mode = null)
     {
         $mailingGroup = new CRM_Mailing_DAO_Group();
-        
+
         $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
         $job        = CRM_Mailing_BAO_Job::getTableName();
         $mg         = CRM_Mailing_DAO_Group::getTableName();
         $eq         = CRM_Mailing_Event_DAO_Queue::getTableName();
         $ed         = CRM_Mailing_Event_DAO_Delivered::getTableName();
         $eb         = CRM_Mailing_Event_DAO_Bounce::getTableName();
-        
+
         $email      = CRM_Core_DAO_Email::getTableName();
         if ( $mode == 'sms' ) {
             $phone  = CRM_Core_DAO_Phone::getTableName();
@@ -134,8 +134,8 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
 
         /* Create a temp table for contact exclusion */
         $mailingGroup->query(
-            "CREATE TEMPORARY TABLE X_$job_id 
-            (contact_id int primary key) 
+            "CREATE TEMPORARY TABLE X_$job_id
+            (contact_id int primary key)
             ENGINE=HEAP"
         );
 
@@ -152,9 +152,9 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
                         AND             $g2contact.status = 'Added'
                         AND             $mg.group_type = 'Exclude'";
         $mailingGroup->query($excludeSubGroup);
-        
+
         /* Add all unsubscribe members of base group from this mailing to the temp
-         * table */ 
+         * table */
         $unSubscribeBaseGroup =
                     "INSERT INTO        X_$job_id (contact_id)
                     SELECT  DISTINCT    $g2contact.contact_id
@@ -166,10 +166,10 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
                         AND             $g2contact.status = 'Removed'
                         AND             $mg.group_type = 'Base'";
         $mailingGroup->query($unSubscribeBaseGroup);
-        
+
         /* Add all the (intended) recipients of an excluded prior mailing to
          * the temp table */
-        $excludeSubMailing = 
+        $excludeSubMailing =
                     "INSERT IGNORE INTO X_$job_id (contact_id)
                     SELECT  DISTINCT    $eq.contact_id
                     FROM                $eq
@@ -181,7 +181,7 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
                                         $mg.mailing_id = {$mailing_id}
                         AND             $mg.group_type = 'Exclude'";
         $mailingGroup->query($excludeSubMailing);
-        
+
         // get all the saved searches AND hierarchical groups
         // and load them in the cache
         $sql = "
@@ -203,7 +203,7 @@ WHERE      $mg.entity_table = '$group'
             }
 
             $smartGroupExclude = "
-INSERT IGNORE INTO X_$job_id (contact_id) 
+INSERT IGNORE INTO X_$job_id (contact_id)
 SELECT c.contact_id
 FROM   civicrm_group_contact_cache c
 WHERE  c.group_id = {$groupDAO->id}
@@ -218,11 +218,11 @@ WHERE  c.group_id = {$groupDAO->id}
 
         /* Get all the group contacts we want to include */
         $mailingGroup->query(
-            "CREATE TEMPORARY TABLE I_$job_id 
+            "CREATE TEMPORARY TABLE I_$job_id
             ($tempColumn int, contact_id int primary key)
             ENGINE=HEAP"
         );
-        
+
         /* Get the group contacts, but only those which are not in the
          * exclusion temp table */
         $query =    "REPLACE INTO       I_$job_id (email_id, contact_id)
@@ -239,7 +239,7 @@ WHERE  c.group_id = {$groupDAO->id}
                                 AND     $mg.entity_table = '$group'
                     LEFT JOIN           X_$job_id
                             ON          $contact.id = X_$job_id.contact_id
-                    WHERE           
+                    WHERE
                                        ($mg.group_type = 'Include')
                         AND             $mg.search_id IS NULL
                         AND             $g2contact.status = 'Added'
@@ -271,7 +271,7 @@ WHERE  c.group_id = {$groupDAO->id}
                                 AND     $mg.entity_table = '$group'
                     LEFT JOIN           X_$job_id
                             ON          $contact.id = X_$job_id.contact_id
-                    WHERE           
+                    WHERE
                                        ($mg.group_type = 'Include')
                         AND             $mg.search_id IS NULL
                         AND             $g2contact.status = 'Added'
@@ -313,7 +313,7 @@ WHERE  c.group_id = {$groupDAO->id}
                     ORDER BY $email.is_bulkmail";
 
         if ( $mode == 'sms' ) {
-            $query = 
+            $query =
                     "REPLACE INTO       I_$job_id (phone_id, contact_id)
                     SELECT DISTINCT     $phone.id as phone_id,
                                         $contact.id as contact_id
@@ -338,7 +338,7 @@ WHERE  c.group_id = {$groupDAO->id}
                         AND             X_$job_id.contact_id IS null";
         }
         $mailingGroup->query( $query );
-        
+
         $sql = "
 SELECT     $group.id, $group.cache_date, $group.saved_search_id, $group.children
 FROM       $group
@@ -359,7 +359,7 @@ WHERE      $mg.entity_table = '$group'
             }
 
             $smartGroupInclude = "
-INSERT IGNORE INTO I_$job_id (email_id, contact_id) 
+INSERT IGNORE INTO I_$job_id (email_id, contact_id)
 SELECT     e.id as email_id, c.id as contact_id
 FROM       civicrm_contact c
 INNER JOIN civicrm_email e                ON e.contact_id         = c.id
@@ -376,7 +376,7 @@ ORDER BY   e.is_bulkmail
 ";
             if ( $mode == 'sms' ) {
                 $smartGroupInclude = "
-INSERT IGNORE INTO I_$job_id (phone_id, contact_id) 
+INSERT IGNORE INTO I_$job_id (phone_id, contact_id)
 SELECT     p.id as phone_id, c.id as contact_id
 FROM       civicrm_contact c
 INNER JOIN civicrm_phone e                ON p.contact_id         = c.id
@@ -424,7 +424,7 @@ AND    $mg.mailing_id = {$mailing_id}
                             ON          $g2contact.group_id = $mg.entity_id
                     LEFT JOIN           X_$job_id
                             ON          $contact.id = X_$job_id.contact_id
-                    WHERE           
+                    WHERE
                                         $mg.entity_table = '$group'
                         AND             $mg.group_type = 'Include'
                         AND             $g2contact.status = 'Added'
@@ -437,7 +437,7 @@ AND    $mg.mailing_id = {$mailing_id}
                         AND             X_$job_id.contact_id IS null
                     ORDER BY $email.is_bulkmail";
         if ( $mode == "sms" ) {
-            $query =    
+            $query =
                     "REPLACE INTO       I_$job_id (phone_id, contact_id)
                     SELECT DISTINCT     $phone.id as phone_id,
                                         $contact.id as contact_id
@@ -450,7 +450,7 @@ AND    $mg.mailing_id = {$mailing_id}
                             ON          $g2contact.group_id = $mg.entity_id
                     LEFT JOIN           X_$job_id
                             ON          $contact.id = X_$job_id.contact_id
-                    WHERE           
+                    WHERE
                                         $mg.entity_table = '$group'
                         AND             $mg.group_type = 'Include'
                         AND             $g2contact.status = 'Added'
@@ -463,22 +463,22 @@ AND    $mg.mailing_id = {$mailing_id}
 
         }
         $mailingGroup->query($query);
-                    
+
         $results = array();
 
         $eq = new CRM_Mailing_Event_BAO_Queue();
-        
+
         list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( );
         $aclWhere = $aclWhere ? "WHERE {$aclWhere}" : '';
         $limitString = null;
         if ( $limit && $offset !== null) {
             $limitString = "LIMIT $offset, $limit";
         }
-        
+
         if ( $storeRecipients &&
              $mailing_id ) {
             $sql = "
-DELETE 
+DELETE
 FROM   civicrm_mailing_recipients
 WHERE  mailing_id = %1
 ";
@@ -491,7 +491,7 @@ WHERE  mailing_id = %1
                 $groupJoin = " INNER JOIN civicrm_email e ON e.id = i.email_id";
                 $groupBy = " GROUP BY e.email ";
             }
-      
+
             $sql = "
 INSERT INTO civicrm_mailing_recipients ( mailing_id, contact_id, {$tempColumn} )
 SELECT %1, i.contact_id, i.{$tempColumn}
@@ -503,7 +503,7 @@ INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
            $groupBy
 ORDER BY   i.contact_id, i.{$tempColumn}
 ";
-            
+
             CRM_Core_DAO::executeQuery( $sql, $params );
 
             // if we need to add all emails marked bulk, do it as a post filter
@@ -520,8 +520,8 @@ ORDER BY   i.contact_id, i.{$tempColumn}
 
         return $eq;
     }
-    
-    private function _getMailingGroupIds( $type = 'Include' ) 
+
+    private function _getMailingGroupIds( $type = 'Include' )
     {
         $mailingGroup = new CRM_Mailing_DAO_Group();
         $group = CRM_Contact_DAO_Group::getTableName();
@@ -539,28 +539,28 @@ ORDER BY   i.contact_id, i.{$tempColumn}
                       AND    entity_table = '$group'";
         }
         $mailingGroup->query( $query );
-        
+
         $groupIds = array( );
         while ( $mailingGroup->fetch( ) ) {
             $groupIds[] = $mailingGroup->entity_id;
         }
-        
+
         return $groupIds;
     }
 
 
     /**
-     * 
+     *
      * Returns the regex patterns that are used for preparing the text and html templates
-     *   
+     *
      * @access private
-     * 
+     *
      **/
-    private function &getPatterns($onlyHrefs = false) 
+    private function &getPatterns($onlyHrefs = false)
     {
-        
+
         $patterns = array();
-        
+
         $protos = '(https?|ftp)';
         $letters = '\w';
         $gunk = '\{\}/#~:.?+=&;%@!\,\-';
@@ -571,13 +571,13 @@ ORDER BY   i.contact_id, i.{$tempColumn}
         } else {
             $pattern = "\\b($protos:[$any]+?(?=[$punc]*[^$any]|$))";
         }
-        
+
         $patterns[] = $pattern;
         $patterns[] = '\\\\\{\w+\.\w+\\\\\}|\{\{\w+\.\w+\}\}';
         $patterns[] = '\{\w+\.\w+\}';
-        
+
         $patterns = '{'.join('|',$patterns).'}im';
-        
+
         return $patterns;
     }
 
@@ -586,17 +586,17 @@ ORDER BY   i.contact_id, i.{$tempColumn}
      *  we use the type later on when we are doing a token replcement lookup
      *
      *  @param string $token       The token for which we will be doing adata lookup
-     *  
+     *
      *  @return array $funcStruct  An array that holds the token itself and the type.
      *                             the type will tell us which function to use for the data lookup
      *                             if we need to do a lookup at all
      */
-    function &getDataFunc($token) 
+    function &getDataFunc($token)
     {
         static $_categories = null;
         static $_categoryString = null;
         if ( ! $_categories ) {
-            $_categories = array( 'domain'  => null, 
+            $_categories = array( 'domain'  => null,
                                   'action'  => null,
                                   'mailing' => null,
                                   'contact' => null );
@@ -629,7 +629,7 @@ ORDER BY   i.contact_id, i.{$tempColumn}
             } else {
                 $funcStruct['type'] = 'url';
             }
-            
+
         } else if ( preg_match('/^\{(' . $_categoryString . ')\.(\w+)\}$/', $token, $matches) ) {
             $funcStruct['type'] = $matches[1];
             $funcStruct['token'] = $matches[2];
@@ -643,13 +643,13 @@ ORDER BY   i.contact_id, i.{$tempColumn}
     }
 
     /**
-     * 
+     *
      * Prepares the text and html templates
      * for generating the emails and returns a copy of the
      * prepared templates
-     *   
+     *
      * @access private
-     * 
+     *
      **/
     private function getPreparedTemplates( )
     {
@@ -657,18 +657,18 @@ ORDER BY   i.contact_id, i.{$tempColumn}
             $patterns['html'] = $this->getPatterns(true);
             $patterns['subject'] = $patterns['text'] = $this->getPatterns();
             $templates = $this->getTemplates();
-            
+
             $this->preparedTemplates = array();
-            
+
             foreach (array('html','text', 'subject') as $key) {
                 if (!isset($templates[$key])) {
                     continue;
                 }
-                
+
                 $matches = array();
                 $tokens = array();
                 $split_template = array();
-                
+
                 $email = $templates[$key];
                 preg_match_all($patterns[$key],$email,$matches,PREG_PATTERN_ORDER);
                 foreach ($matches[0] as $idx => $token) {
@@ -687,22 +687,22 @@ ORDER BY   i.contact_id, i.{$tempColumn}
     }
 
     /**
-     * 
+     *
      *  Retrieve a ref to an array that holds the email and text templates for this email
      *  assembles the complete template including the header and footer
      *  that the user has uploaded or declared (if they have dome that)
-     *  
-     *  
+     *
+     *
      * @return array reference to an assoc array
      * @access private
-     * 
+     *
      **/
     private function &getTemplates( )
     {
         if (!$this->templates) {
           $this->getHeaderFooter();
           $this->templates = array(  );
-          
+
           if ( $this->body_text ) {
               $template = array();
               if ( $this->header ) {
@@ -710,7 +710,7 @@ ORDER BY   i.contact_id, i.{$tempColumn}
               }
 
               $template[] = $this->body_text;
-              
+
               if ( $this->footer ) {
                   $template[] = $this->footer->body_text;
               }
@@ -719,7 +719,7 @@ ORDER BY   i.contact_id, i.{$tempColumn}
           }
 
           if ( $this->body_html ) {
-              
+
               $template = array();
               if ( $this->header ) {
                   $template[] = $this->header->body_html;
@@ -730,9 +730,9 @@ ORDER BY   i.contact_id, i.{$tempColumn}
               if ( $this->footer ) {
                   $template[] = $this->footer->body_html;
               }
-              
+
               $this->templates['html'] = join("\n",$template);
-    
+
               // this is where we create a text template from the html template if the text template did not exist
               // this way we ensure that every recipient will receive an email even if the pref is set to text and the
               // user uploads an html email only
@@ -747,35 +747,35 @@ ORDER BY   i.contact_id, i.{$tempColumn}
               $this->templates['subject'] = join("\n",$template);
           }
       }
-      return $this->templates;    
+      return $this->templates;
     }
 
     /**
-     * 
+     *
      *  Retrieve a ref to an array that holds all of the tokens in the email body
      *  where the keys are the type of token and the values are ordinal arrays
      *  that hold the token names (even repeated tokens) in the order in which
      *  they appear in the body of the email.
-     *  
+     *
      *  note: the real work is done in the _getTokens() function
-     *  
+     *
      *  this function needs to have some sort of a body assigned
      *  either text or html for this to have any meaningful impact
-     *  
+     *
      * @return array               reference to an assoc array
      * @access public
-     * 
+     *
      **/
-    public function &getTokens( ) 
+    public function &getTokens( )
     {
         if (! $this->tokens) {
-            
+
             $this->tokens = array( 'html' => array(), 'text' => array(), 'subject' => array() );
-            
+
             if ($this->body_html) {
                 $this->_getTokens('html');
             }
-            
+
             if ($this->body_text) {
                 $this->_getTokens('text');
             }
@@ -785,16 +785,16 @@ ORDER BY   i.contact_id, i.{$tempColumn}
             }
         }
 
-        return $this->tokens;      
+        return $this->tokens;
     }
 
     /**
      * Returns the token set for all 3 parts as one set. This allows it to be sent to the
      * hook in one call and standardizes it across other token workflows
-     *  
+     *
      * @return array               reference to an assoc array
      * @access public
-     * 
+     *
      **/
     public function &getFlattenedTokens( )
     {
@@ -806,7 +806,7 @@ ORDER BY   i.contact_id, i.{$tempColumn}
 
         return $this->flattenedTokens;
     }
-    
+
     /**
      *
      *  _getTokens parses out all of the tokens that have been
@@ -817,15 +817,15 @@ ORDER BY   i.contact_id, i.{$tempColumn}
      *  The difference is that there might be repeated token names as we want the
      *  structures to represent the order in which tokens were found from left to right, top to bottom.
      *
-     *  
+     *
      * @param str $prop     name of the property that holds the text that we want to scan for tokens (html, text)
      * @access private
      * @return void
      */
-    private function _getTokens( $prop ) 
+    private function _getTokens( $prop )
     {
         $templates = $this->getTemplates();
-        
+
         $newTokens = CRM_Utils_Token::getTokens( $templates[$prop] );
 
         foreach ( $newTokens as $type => $names ) {
@@ -839,20 +839,20 @@ ORDER BY   i.contact_id, i.{$tempColumn}
     }
 
     /**
-     * Generate an event queue for a test job 
+     * Generate an event queue for a test job
      *
      * @params array $params contains form values
      * @return void
      * @access public
      */
-    public function getTestRecipients($testParams) 
+    public function getTestRecipients($testParams)
     {
         if (array_key_exists($testParams['test_group'], CRM_Core_PseudoConstant::group())) {
             $group = new CRM_Contact_DAO_Group();
             $group->id = $testParams['test_group'];
             $contacts = CRM_Contact_BAO_GroupContact::getGroupContacts($group);
             foreach ($contacts as $contact) {
-                $query = 
+                $query =
                     "SELECT DISTINCT civicrm_email.id AS email_id, civicrm_email.is_primary as is_primary,
                                  civicrm_email.is_bulkmail as is_bulkmail
 FROM civicrm_email
@@ -870,9 +870,9 @@ AND civicrm_contact.is_opt_out =0";
                                     'email_id'      => $dao->email_id,
                                     'contact_id'    => $contact->contact_id
                                     );
-                    $queue = CRM_Mailing_Event_BAO_Queue::create($params);  
+                    $queue = CRM_Mailing_Event_BAO_Queue::create($params);
                 } else {
-                    $query = 
+                    $query =
                     "SELECT DISTINCT civicrm_email.id AS email_id, civicrm_email.is_primary as is_primary,
                                  civicrm_email.is_bulkmail as is_bulkmail
 FROM civicrm_email
@@ -890,13 +890,13 @@ AND civicrm_contact.is_opt_out =0";
                                         'email_id'      => $dao->email_id,
                                         'contact_id'    => $contact->contact_id
                                         );
-                        $queue = CRM_Mailing_Event_BAO_Queue::create($params);  
-                    }                    
+                        $queue = CRM_Mailing_Event_BAO_Queue::create($params);
+                    }
                 }
             }
         }
     }
-    
+
     /**
      * Retrieve the header and footer for this mailing
      *
@@ -904,7 +904,7 @@ AND civicrm_contact.is_opt_out =0";
      * @return void
      * @access private
      */
-    private function getHeaderFooter() 
+    private function getHeaderFooter()
     {
         if (!$this->header and $this->header_id) {
             $this->header = new CRM_Mailing_BAO_Component();
@@ -912,7 +912,7 @@ AND civicrm_contact.is_opt_out =0";
             $this->header->find(true);
             $this->header->free( );
         }
-        
+
         if (!$this->footer and $this->footer_id) {
             $this->footer = new CRM_Mailing_BAO_Component();
             $this->footer->id = $this->footer_id;
@@ -924,30 +924,30 @@ AND civicrm_contact.is_opt_out =0";
     /**
      * Given and array of headers and a prefix, job ID, event queue ID, and hash,
      * add a Message-ID header if needed.
-     * 
-     * i.e. if the global includeMessageId is set and there isn't already a 
+     *
+     * i.e. if the global includeMessageId is set and there isn't already a
      * Message-ID in the array.
      * The message ID is structured the same way as a verp. However no interpretation
      * is placed on the values received, so they do not need to follow the verp
-     * convention. 
-     * 
+     * convention.
+     *
      * @param array  $headers         Array of message headers to update, in-out
      * @param string $prefix          Prefix for the message ID, use same prefixes as verp
      *                                wherever possible
      * @param string $job_id          Job ID component of the generated message ID
      * @param string $event_queue_id  Event Queue ID component of the generated message ID
-     * @param string $hash            Hash component of the generated message ID.                     
+     * @param string $hash            Hash component of the generated message ID.
      * @return void
      */
-    static function addMessageIdHeader ( &$headers, $prefix, $job_id, $event_queue_id, $hash ) 
-    {	
-    	$config = CRM_Core_Config::singleton( );    	 
+    static function addMessageIdHeader ( &$headers, $prefix, $job_id, $event_queue_id, $hash )
+    {
+    	$config = CRM_Core_Config::singleton( );
     	$localpart        = CRM_Core_BAO_MailSettings::defaultLocalpart();
     	$emailDomain      = CRM_Core_BAO_MailSettings::defaultDomain();
     	$includeMessageId = CRM_Core_BAO_MailSettings::includeMessageId();
-    	
+
         if ( $includeMessageId && ( ! array_key_exists ( 'Message-ID', $headers ) ) ) {
-           $headers['Message-ID'] = '<' . 
+           $headers['Message-ID'] = '<' .
                                     implode($config->verpSeparator,
     		                                array(
     		                                      $localpart . $prefix,
@@ -958,7 +958,7 @@ AND civicrm_contact.is_opt_out =0";
     		                               ) . "@{$emailDomain}>";
     	}
     }
-    
+
     /**
      * static wrapper for getting verp and urls
      *
@@ -1008,40 +1008,40 @@ AND civicrm_contact.is_opt_out =0";
                              'unsubscribe' => 'u' ,
                              'resubscribe' => 'e',
                              'optOut'      => 'o');
-        
+
         $localpart        = CRM_Core_BAO_MailSettings::defaultLocalpart();
         $emailDomain      = CRM_Core_BAO_MailSettings::defaultDomain();
-        
+
         foreach ($verpTokens as $key => $value ) {
             $verp[$key] = implode($config->verpSeparator,
                                   array(
                                         $localpart . $value,
-                                        $job_id, 
+                                        $job_id,
                                         $event_queue_id,
                                         $hash
                                         )
                                   ) . "@$emailDomain";
         }
-        
-        //handle should override VERP address.    
+
+        //handle should override VERP address.
         $skipEncode = false;
 
-        if ( $job_id && 
+        if ( $job_id &&
              self::overrideVerp( $job_id ) ) {
-            $verp['reply'] = "\"{$this->from_name}\" <{$this->from_email}>"; 
+            $verp['reply'] = "\"{$this->from_name}\" <{$this->from_email}>";
         }
-        
+
         $urls = array(
-                      'forward'        => CRM_Utils_System::url('civicrm/mailing/forward', 
+                      'forward'        => CRM_Utils_System::url('civicrm/mailing/forward',
                                                                 "reset=1&jid={$job_id}&qid={$event_queue_id}&h={$hash}",
                                                                 true, null, true, true),
-                      'unsubscribeUrl' => CRM_Utils_System::url('civicrm/mailing/unsubscribe', 
+                      'unsubscribeUrl' => CRM_Utils_System::url('civicrm/mailing/unsubscribe',
                                                                 "reset=1&jid={$job_id}&qid={$event_queue_id}&h={$hash}",
                                                                 true, null, true, true),
-                      'resubscribeUrl' => CRM_Utils_System::url('civicrm/mailing/resubscribe', 
+                      'resubscribeUrl' => CRM_Utils_System::url('civicrm/mailing/resubscribe',
                                                                 "reset=1&jid={$job_id}&qid={$event_queue_id}&h={$hash}",
                                                                 true, null, true, true),
-                      'optOutUrl'      => CRM_Utils_System::url('civicrm/mailing/optout', 
+                      'optOutUrl'      => CRM_Utils_System::url('civicrm/mailing/optout',
                                                                 "reset=1&jid={$job_id}&qid={$event_queue_id}&h={$hash}",
                                                                 true, null, true, true),
                       'subscribeUrl'   => CRM_Utils_System::url( 'civicrm/mailing/subscribe',
@@ -1059,7 +1059,7 @@ AND civicrm_contact.is_opt_out =0";
         self::addMessageIdHeader( $headers, 'm', $job_id, $event_queue_id, $hash );
         if( $isForward ) {
             $headers['Subject'] = "[Fwd:{$this->subject}]";
-        } 
+        }
         return array( &$verp, &$urls, &$headers );
     }
 
@@ -1078,14 +1078,14 @@ AND civicrm_contact.is_opt_out =0";
      * @return object               The mail object
      * @access public
      */
-    public function &compose($job_id, $event_queue_id, $hash, $contactId, 
-                             $email, &$recipient, $test, 
-                             $contactDetails, &$attachments, $isForward = false, 
-                             $fromEmail = null, $replyToEmail = null ) 
+    public function &compose($job_id, $event_queue_id, $hash, $contactId,
+                             $email, &$recipient, $test,
+                             $contactDetails, &$attachments, $isForward = false,
+                             $fromEmail = null, $replyToEmail = null )
     {
         $config = CRM_Core_Config::singleton( );
         $knownTokens = $this->getTokens();
-               
+
         if ($this->_domain == null) {
             $this->_domain = CRM_Core_BAO_Domain::getDomain( );
         }
@@ -1095,37 +1095,37 @@ AND civicrm_contact.is_opt_out =0";
                                                                         $hash,
                                                                         $email,
                                                                         $isForward );
-        //set from email who is forwarding it and not original one.      
+        //set from email who is forwarding it and not original one.
         if ( $fromEmail ) {
             unset( $headers['From'] );
             $headers['From'] = "<{$fromEmail}>";
-        } 
+        }
 
         if ( $replyToEmail && ( $fromEmail != $replyToEmail ) ) {
             $headers['Reply-To'] = "{$replyToEmail}";
         }
-        
+
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            require_once 'CRM/Core/Smarty/resources/String.php';     
+            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
         }
-        
+
         if ( $contactDetails ) {
             $contact = $contactDetails;
         } else {
             $params = array(array('contact_id', '=', $contactId, 0, 0));
             list($contact, $_) = CRM_Contact_BAO_Query::apiQuery($params);
-            
+
             //CRM-4524
             $contact = reset( $contact );
-            
+
             if ( ! $contact || is_a( $contact, 'CRM_Core_Error' ) ) {
                 CRM_Core_Error::debug_log_message( ts( 'CiviMail will not send email to a non-existent contact: %1',
                                                        array( 1 => $contactId ) ) );
                 return null;
             }
-            
+
             // also call the hook to get contact details
             CRM_Utils_Hook::tokenValues( $contact, $contactId, $job_id );
         }
@@ -1149,7 +1149,7 @@ AND civicrm_contact.is_opt_out =0";
             } else {
                 array_push($pEmail, $template[$idx]);
             }
-            
+
             if ( isset( $template[($idx + 1)] ) ) {
                 array_push($pEmail, $template[($idx + 1)]);
             }
@@ -1164,15 +1164,15 @@ AND civicrm_contact.is_opt_out =0";
         if ( isset( $pEmails['text'] ) && is_array( $pEmails['text'] ) && count( $pEmails['text'] ) ){
             $text = &$pEmails['text'];
         }
-        
+
         // push the tracking url on to the html email if necessary
         if ($this->open_tracking && $html ) {
-            array_push($html,"\n".'<img src="' . $config->userFrameworkResourceURL . 
+            array_push($html,"\n".'<img src="' . $config->userFrameworkResourceURL .
                        "extern/open.php?q=$event_queue_id\" width='1' height='1' alt='' border='0'>");
         }
-        
+
         $message = new Mail_mime("\n");
-        
+
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
             $smarty = CRM_Core_Smarty::singleton( );
@@ -1193,7 +1193,7 @@ AND civicrm_contact.is_opt_out =0";
             }
             $mailParams['text'] = $textBody;
         }
-        
+
         if ( $html && ( $test ||  ( $contact['preferred_mail_format'] == 'HTML' ||
                                     $contact['preferred_mail_format'] == 'Both') ) ) {
             $htmlBody = join( '', $html );
@@ -1216,7 +1216,7 @@ AND civicrm_contact.is_opt_out =0";
         }
 
         $mailParams['attachments'] = $attachments;
-        
+
         $mailingSubject = CRM_Utils_Array::value( 'subject', $pEmails );
         if ( is_array( $mailingSubject ) ) {
             $mailingSubject  = join( '', $mailingSubject );
@@ -1228,7 +1228,7 @@ AND civicrm_contact.is_opt_out =0";
         $mailParams['toEmail'] = $email;
 
         CRM_Utils_Hook::alterMailParams( $mailParams, 'civimail' );
-        
+
         //cycle through mailParams and set headers array
         foreach ( $mailParams as $paramKey => $paramValue ) {
 			//exclude values not intended for the header
@@ -1236,7 +1236,7 @@ AND civicrm_contact.is_opt_out =0";
                 $headers[$paramKey] = $paramValue;
             }
         }
-            
+
         if ( ! empty( $mailParams['text'] ) ) {
             $message->setTxtBody( $mailParams['text'] );
         }
@@ -1252,19 +1252,19 @@ AND civicrm_contact.is_opt_out =0";
                                          $attach['cleanName'] );
             }
         }
-        
+
         //pickup both params from mail params.
         $toName  = trim( $mailParams['toName']  );
         $toEmail = trim( $mailParams['toEmail'] );
-        if ( $toName == $toEmail || 
+        if ( $toName == $toEmail ||
              strpos( $toName, '@' ) !== false ) {
             $toName = null;
         } else {
             $toName = CRM_Utils_Mail::formatRFC2822Name( $toName );
         }
-        
+
         $headers['To'] = "$toName <$toEmail>";
-        
+
         $headers['Precedence'] = 'bulk';
         // Will test in the mail processor if the X-VERP is set in the bounced email.
         // (As an option to replace real VERP for those that can't set it up)
@@ -1273,13 +1273,13 @@ AND civicrm_contact.is_opt_out =0";
         //CRM-5058
         //token replacement of subject
         $headers['Subject'] = $mailingSubject;
-        
+
         CRM_Utils_Mail::setMimeParams( $message );
         $headers = $message->headers( $headers );
-        
+
         //get formatted recipient
         $recipient = $headers['To'];
-        
+
         // make sure we unset a lot of stuff
         unset( $verp );
         unset( $urls );
@@ -1303,14 +1303,14 @@ AND civicrm_contact.is_opt_out =0";
         foreach ( array('text', 'html') as $type ) {
             $tokens = $mailing->getTokens();
             if ( isset( $mailing->templates[$type] ) ) {
-                $mailing->templates[$type] =  
+                $mailing->templates[$type] =
                     CRM_Utils_Token::replaceSubscribeInviteTokens($mailing->templates[$type]);
-                $mailing->templates[$type] = 
+                $mailing->templates[$type] =
                     CRM_Utils_Token::replaceDomainTokens( $mailing->templates[$type],
-                                                          $domain, 
+                                                          $domain,
                                                           $type == 'html' ? true : false,
                                                           $tokens[$type] );
-                $mailing->templates[$type] = 
+                $mailing->templates[$type] =
                     CRM_Utils_Token::replaceMailingTokens($mailing->templates[$type], $mailing, null, $tokens[$type]);
             }
         }
@@ -1322,7 +1322,7 @@ AND civicrm_contact.is_opt_out =0";
      *
      */
     private function getTokenData(&$token_a, $html = false, &$contact, &$verp, &$urls, $event_queue_id)
-    { 
+    {
         $type = $token_a['type'];
         $token = $token_a['token'];
         $data = $token;
@@ -1369,13 +1369,13 @@ AND civicrm_contact.is_opt_out =0";
             } else if ( $token == 'group' ) {
                 $groups = $this->getGroupNames( );
                 $data = implode(', ', $groups);
-            }         
+            }
         } else {
             $data = CRM_Utils_Array::value( "{$type}.{$token}", $contact );
         }
         return $data;
     }
-    
+
     /**
      * Return a list of group names for this mailing.  Does not work with
      * prior-mailing targets.
@@ -1391,7 +1391,7 @@ AND civicrm_contact.is_opt_out =0";
         $mgtable = CRM_Mailing_DAO_Group::getTableName();
         $group = CRM_Contact_BAO_Group::getTableName();
 
-        $mg->query("SELECT      $group.title as name FROM $mgtable 
+        $mg->query("SELECT      $group.title as name FROM $mgtable
                     INNER JOIN  $group ON $mgtable.entity_id = $group.id
                     WHERE       $mgtable.mailing_id = {$this->id}
                         AND     $mgtable.entity_table = '$group'
@@ -1405,30 +1405,30 @@ AND civicrm_contact.is_opt_out =0";
         $mg->free( );
         return $groups;
     }
-    
+
     /**
      * function to add the mailings
      *
      * @param array $params reference array contains the values submitted by the form
      * @param array $ids    reference array contains the id
-     * 
+     *
      * @access public
-     * @static 
+     * @static
      * @return object
      */
     static function add( &$params, &$ids )
     {
-        
+
         if ( CRM_Utils_Array::value( 'mailing', $ids ) ) {
             CRM_Utils_Hook::pre( 'edit', 'Mailing', $ids['mailing_id'], $params );
         } else {
-            CRM_Utils_Hook::pre( 'create', 'Mailing', null, $params ); 
+            CRM_Utils_Hook::pre( 'create', 'Mailing', null, $params );
         }
-        
+
         $mailing = new CRM_Mailing_DAO_Mailing( );
         $mailing->id = CRM_Utils_Array::value( 'mailing_id', $ids );
         $mailing->domain_id = CRM_Utils_Array::value( 'domain_id', $params, CRM_Core_Config::domainID( ) );
-        
+
         if (  ! isset( $params['replyto_email'] ) &&
               isset( $params['from_email'] ) ) {
             $params['replyto_email'] = $params['from_email'];
@@ -1456,31 +1456,31 @@ AND civicrm_contact.is_opt_out =0";
      * @access public
      * @static
      */
-    public static function create( &$params, &$ids ) 
+    public static function create( &$params, &$ids )
     {
         $transaction = new CRM_Core_Transaction( );
-        
+
         $mailing = self::add($params, $ids);
 
         if( is_a( $mailing, 'CRM_Core_Error') ) {
             $transaction->rollback( );
             return $mailing;
         }
-        
+
 
         $groupTableName   = CRM_Contact_BAO_Group::getTableName( );
-        $mailingTableName = CRM_Mailing_BAO_Mailing::getTableName( ); 
+        $mailingTableName = CRM_Mailing_BAO_Mailing::getTableName( );
 
         /* Create the mailing group record */
         $mg = new CRM_Mailing_DAO_Group();
         foreach( array( 'groups', 'mailings' ) as $entity ) {
-            foreach( array( 'include', 'exclude', 'base' ) as $type ) {                
-                if( CRM_Utils_Array::value( $type, $params[$entity] ) && is_array( $params[$entity][$type] ) ) {                    
+            foreach( array( 'include', 'exclude', 'base' ) as $type ) {
+                if( CRM_Utils_Array::value( $type, $params[$entity] ) && is_array( $params[$entity][$type] ) ) {
                     foreach( $params[$entity][$type] as $entityId ) {
                         $mg->reset( );
-                        $mg->mailing_id = $mailing->id;                        
+                        $mg->mailing_id = $mailing->id;
                         $mg->entity_table   =
-                            ( $entity == 'groups' ) 
+                            ( $entity == 'groups' )
                             ? $groupTableName
                             : $mailingTableName;
                         $mg->entity_id  = $entityId;
@@ -1525,7 +1525,7 @@ AND civicrm_contact.is_opt_out =0";
      */
     public static function &report( $id, $skipDetails = false, $isSMS = false ) {
         $mailing_id = CRM_Utils_Type::escape($id, 'Integer');
-        
+
         $mailing = new CRM_Mailing_BAO_Mailing();
 
         $t = array(
@@ -1545,10 +1545,10 @@ AND civicrm_contact.is_opt_out =0";
                 'urlopen'   =>
                     CRM_Mailing_Event_BAO_TrackableURLOpen::getTableName(),
                 'component' =>  CRM_Mailing_BAO_Component::getTableName(),
-                'spool'     => CRM_Mailing_BAO_Spool::getTableName() 
+                'spool'     => CRM_Mailing_BAO_Spool::getTableName()
             );
-        
-        
+
+
         $report = array();
         $additionalWhereClause = " AND ";
         if( !$isSMS ) {
@@ -1556,26 +1556,26 @@ AND civicrm_contact.is_opt_out =0";
         } else {
             $additionalWhereClause .= " {$t['mailing']}.sms_provider_id IS NOT NULL ";
         }
-        
+
         /* Get the mailing info */
         $mailing->query("
             SELECT          {$t['mailing']}.*
             FROM            {$t['mailing']}
             WHERE           {$t['mailing']}.id = $mailing_id {$additionalWhereClause}");
-       
+
         $mailing->fetch();
-        
+
         $report['mailing'] = array();
         foreach (array_keys(self::fields()) as $field) {
             $report['mailing'][$field] = $mailing->$field;
         }
-        
+
         //get the campaign
         if ( $campaignId = CRM_Utils_Array::value( 'campaign_id', $report['mailing'] ) ) {
             $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns( $campaignId );
             $report['mailing']['campaign'] = $campaigns[$campaignId];
         }
-        
+
         //mailing report is called by activity
         //we dont need all detail report
         if ( $skipDetails ) {
@@ -1584,7 +1584,7 @@ AND civicrm_contact.is_opt_out =0";
 
         /* Get the component info */
         $query = array();
-        
+
         $components = array(
                         'header'        => ts('Header'),
                         'footer'        => ts('Footer'),
@@ -1611,11 +1611,11 @@ AND civicrm_contact.is_opt_out =0";
                                     'type'  => $components[$mailing->type],
                                     'name'  => $mailing->name,
                                     'link'  =>
-                                    CRM_Utils_System::url('civicrm/mailing/component', 
+                                    CRM_Utils_System::url('civicrm/mailing/component',
                                                           "reset=1&action=update&id={$mailing->id}"),
                                     );
         }
-        
+
         /* Get the recipient group info */
         $mailing->query("
             SELECT          {$t['mailing_group']}.group_type as group_type,
@@ -1637,7 +1637,7 @@ AND civicrm_contact.is_opt_out =0";
 
             WHERE           {$t['mailing_group']}.mailing_id = $mailing_id
             ");
-        
+
         $report['group'] = array('include' => array(), 'exclude' => array(), 'base' => array());
         while ($mailing->fetch()) {
             $row = array();
@@ -1658,7 +1658,7 @@ AND civicrm_contact.is_opt_out =0";
             if($mailing->group_hidden == 1) {
                 $row['name'] = "Search Results";
             }
-            
+
             if ($mailing->group_type == 'Include') {
                 $report['group']['include'][] = $row;
             } else if($mailing->group_type == 'Base') {
@@ -1697,7 +1697,7 @@ AND civicrm_contact.is_opt_out =0";
             WHERE           {$t['job']}.mailing_id = $mailing_id
                     AND     {$t['job']}.is_test = 0
             GROUP BY        {$t['job']}.id");
-        
+
         $report['jobs'] = array();
         $report['event_totals'] = array();
         $elements = array(  'queue', 'delivered', 'url', 'forward',
@@ -1716,12 +1716,12 @@ AND civicrm_contact.is_opt_out =0";
                     $report['event_totals'][$field] += $mailing->$field;
                 }
             }
-            
+
             // compute open total separately to discount duplicates
             // CRM-1258
             $row['opened'] = CRM_Mailing_Event_BAO_Opened::getTotalCount( $mailing_id, $mailing->id, true );
             $report['event_totals']['opened'] += $row['opened'];
-            
+
             // compute unsub total separately to discount duplicates
             // CRM-1783
             $row['unsubscribe'] = CRM_Mailing_Event_BAO_Unsubscribe::getTotalCount( $mailing_id, $mailing->id, true, true );
@@ -1733,7 +1733,7 @@ AND civicrm_contact.is_opt_out =0";
             foreach ( array_keys(CRM_Mailing_BAO_Job::fields( ) ) as $field ) {
                 $row[$field] = $mailing->$field;
             }
-            
+
             if ($mailing->queue) {
                 $row['delivered_rate'] = (100.0 * $mailing->delivered ) /
                     $mailing->queue;
@@ -1749,7 +1749,7 @@ AND civicrm_contact.is_opt_out =0";
                 $row['unsubscribe_rate'] = 0;
                 $row['optout_rate'] = 0;
             }
-            
+
             $row['links'] = array(
                 'clicks' => CRM_Utils_System::url(
                         'civicrm/mailing/report/event',
@@ -1790,7 +1790,7 @@ AND civicrm_contact.is_opt_out =0";
             }
             $report['jobs'][] = $row;
         }
-        
+
         $newTableSize = CRM_Mailing_BAO_Recipients::mailingSize( $mailing_id );
 
         // we need to do this for backward compatibility, since old mailings did not
@@ -1829,9 +1829,9 @@ AND civicrm_contact.is_opt_out =0";
             WHERE       {$t['url']}.mailing_id = $mailing_id
                     AND {$t['job']}.is_test = 0
             GROUP BY    {$t['url']}.id");
-       
+
         $report['click_through'] = array();
-        
+
         while ($mailing->fetch()) {
             $report['click_through'][] = array(
                                     'url' => $mailing->url,
@@ -1891,21 +1891,21 @@ AND civicrm_contact.is_opt_out =0";
 
         $actionLinks = array( CRM_Core_Action::VIEW => array( 'name' => ts('Report'), ), );
         if ( CRM_Core_Permission::check( 'view all contacts' ) ) {
-            $actionLinks[CRM_Core_Action::ADVANCED] = 
+            $actionLinks[CRM_Core_Action::ADVANCED] =
                 array( 'name'  => ts('Advanced Search'),
                        'url'   => 'civicrm/contact/search/advanced', );
         }
         $action = array_sum(array_keys($actionLinks));
 
         $report['event_totals']['actionlinks'] = array();
-        foreach ( array('clicks', 'clicks_unique', 'queue', 'delivered', 'bounce', 'unsubscribe', 
+        foreach ( array('clicks', 'clicks_unique', 'queue', 'delivered', 'bounce', 'unsubscribe',
                         'forward', 'reply', 'opened', 'optout' ) as $key ) {
             $url          = 'mailing/detail';
             $reportFilter = "reset=1&mailing_id_value={$mailing_id}";
             $searchFilter = "force=1&mailing_id={$mailing_id}";
             switch ( $key ) {
             case 'delivered':
-                $reportFilter .= "&delivery_status_value=successful"; 
+                $reportFilter .= "&delivery_status_value=successful";
                 $searchFilter .= "&mailing_delivery_status=Y";
                 break;
             case 'bounce':
@@ -1913,19 +1913,19 @@ AND civicrm_contact.is_opt_out =0";
                 $searchFilter .= "&mailing_delivery_status=N";
                 break;
             case 'forward':
-                $reportFilter .= "&is_forwarded_value=1"; 
+                $reportFilter .= "&is_forwarded_value=1";
                 $searchFilter .= "&mailing_forward=1";
                 break;
             case 'reply':
-                $reportFilter .= "&is_replied_value=1"; 
+                $reportFilter .= "&is_replied_value=1";
                 $searchFilter .= "&mailing_reply_status=Y";
                 break;
             case 'unsubscribe':
-                $reportFilter .= "&is_unsubscribed_value=1"; 
+                $reportFilter .= "&is_unsubscribed_value=1";
                 $searchFilter .= "&mailing_unsubscribe=1";
                 break;
             case 'optout':
-                $reportFilter .= "&is_optout_value=1"; 
+                $reportFilter .= "&is_optout_value=1";
                 $searchFilter .= "&mailing_optout=1";
                 break;
             case 'opened':
@@ -1938,12 +1938,12 @@ AND civicrm_contact.is_opt_out =0";
                 $searchFilter .= "&mailing_click_status=Y";
                 break;
             }
-            $actionLinks[CRM_Core_Action::VIEW]['url'] = 
+            $actionLinks[CRM_Core_Action::VIEW]['url'] =
                 CRM_Report_Utils_Report::getNextUrl( $url, $reportFilter, false, true );
             if ( array_key_exists(CRM_Core_Action::ADVANCED, $actionLinks) ) {
                 $actionLinks[CRM_Core_Action::ADVANCED]['qs'] = $searchFilter;
             }
-            $report['event_totals']['actionlinks'][$key] = 
+            $report['event_totals']['actionlinks'][$key] =
                 CRM_Core_Action::formLink($actionLinks, $action, array());
         }
 
@@ -1951,7 +1951,7 @@ AND civicrm_contact.is_opt_out =0";
     }
 
     /**
-     * Get the count of mailings 
+     * Get the count of mailings
      *
      * @param
      * @return int              Count
@@ -1960,10 +1960,10 @@ AND civicrm_contact.is_opt_out =0";
     public function getCount() {
         $this->selectAdd();
         $this->selectAdd('COUNT(id) as count');
-        
+
         $session = CRM_Core_Session::singleton();
         $this->find(true);
-        
+
         return $this->count;
     }
 
@@ -2005,7 +2005,7 @@ AND civicrm_contact.is_opt_out =0";
             $selectClause = ( $count ) ? 'COUNT( DISTINCT m.id) as count' : 'DISTINCT( m.id ) as id';
             // get all the mailings that are in this subset of groups
             $query = "
-SELECT    $selectClause 
+SELECT    $selectClause
   FROM    civicrm_mailing m
 LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
  WHERE ( ( g.entity_table = 'civicrm_group' AND g.entity_id IN ( $groupIDs ) )
@@ -2031,7 +2031,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
      * @param int $offset       The row number to start from
      * @param int $rowCount     The nmber of rows to return
      * @param string $sort      The sql string that describes the sort order
-     * 
+     *
      * @return array            The rows
      * @access public
      */
@@ -2045,20 +2045,20 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
 
         //get all campaigns.
         $allCampaigns = CRM_Campaign_BAO_Campaign::getCampaigns( null, null, false, false, false, true );
-        
+
         // we only care about parent jobs, since that holds all the info on
         // the mailing
         $query = "
             SELECT      $mailing.id,
-                        $mailing.name, 
+                        $mailing.name,
                         $job.status,
                         $mailing.approval_status_id,
-                        MIN($job.scheduled_date) as scheduled_date, 
+                        MIN($job.scheduled_date) as scheduled_date,
                         MIN($job.start_date) as start_date,
                         MAX($job.end_date) as end_date,
-                        createdContact.sort_name as created_by, 
+                        createdContact.sort_name as created_by,
                         scheduledContact.sort_name as scheduled_by,
-                        $mailing.created_id as created_id, 
+                        $mailing.created_id as created_id,
                         $mailing.scheduled_id as scheduled_id,
                         $mailing.is_archived as archived,
                         $mailing.created_date as created_date,
@@ -2067,8 +2067,8 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
             FROM        $mailing
             LEFT JOIN   $job ON ( $job.mailing_id = $mailing.id AND $job.is_test = 0 AND $job.parent_id IS NULL )
             LEFT JOIN   civicrm_contact createdContact ON ( civicrm_mailing.created_id = createdContact.id )
-            LEFT JOIN   civicrm_contact scheduledContact ON ( civicrm_mailing.scheduled_id = scheduledContact.id ) 
-            WHERE       $mailingACL $additionalClause  
+            LEFT JOIN   civicrm_contact scheduledContact ON ( civicrm_mailing.scheduled_id = scheduledContact.id )
+            WHERE       $mailingACL $additionalClause
             GROUP BY    $mailing.id ";
 
         if ($sort) {
@@ -2087,17 +2087,17 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
         }
 
         $dao = CRM_Core_DAO::executeQuery( $query, $additionalParams );
-        
+
         $rows = array();
         while ($dao->fetch()) {
             $rows[] = array(
-                            'id'            => $dao->id,                            
-                            'name'          => $dao->name, 
-                            'status'        => $dao->status ? $dao->status : 'Not scheduled', 
+                            'id'            => $dao->id,
+                            'name'          => $dao->name,
+                            'status'        => $dao->status ? $dao->status : 'Not scheduled',
                             'created_date'  => CRM_Utils_Date::customFormat($dao->created_date),
                             'scheduled'     => CRM_Utils_Date::customFormat($dao->scheduled_date),
                             'scheduled_iso' => $dao->scheduled_date,
-                            'start'         => CRM_Utils_Date::customFormat($dao->start_date), 
+                            'start'         => CRM_Utils_Date::customFormat($dao->start_date),
                             'end'           => CRM_Utils_Date::customFormat($dao->end_date),
                             'created_by'    => $dao->created_by,
                             'scheduled_by'  => $dao->scheduled_by,
@@ -2115,7 +2115,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
 
 
     /**
-     * Function to show detail Mailing report 
+     * Function to show detail Mailing report
      *
      * @param int $id
      *
@@ -2130,7 +2130,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
 
      /**
      * Delete Mails and all its associated records
-     * 
+     *
      * @param  int  $id id of the mail to delete
      *
      * @return void
@@ -2142,19 +2142,19 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
             CRM_Core_Error::fatal( );
         }
 
-        // delete all file attachments 
+        // delete all file attachments
         CRM_Core_BAO_File::deleteEntityFile( 'civicrm_mailing',
                                              $id );
 
         $dao = new CRM_Mailing_DAO_Mailing();
         $dao->id = $id;
         $dao->delete( );
-        
+
         CRM_Core_Session::setStatus(ts('Selected mailing has been deleted.'));
     }
-    
+
     /**
-     * Delete Jobss and all its associated records 
+     * Delete Jobss and all its associated records
      * related to test Mailings
      *
      * @param  int  $id id of the Job to delete
@@ -2191,9 +2191,9 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
              isset( $tokens['subject']['contact'] ) ) {
             $properties = array_merge( $properties, $tokens['subject']['contact'] );
         }
-        
+
         $returnProperties = array( );
-        $returnProperties['display_name'] = 
+        $returnProperties['display_name'] =
             $returnProperties['contact_id'] = $returnProperties['preferred_mail_format'] = $returnProperties['hash'] = 1;
 
         foreach ( $properties as $p ) {
@@ -2202,23 +2202,23 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
 
         return $returnProperties;
     }
-    
+
     /**
      * Function to build the  compose mail form
-     * @param   $form 
+     * @param   $form
      * @return None
      * @access public
      */
-    
+
     public function commonCompose ( &$form )
     {
         //get the tokens.
         $tokens = CRM_Core_SelectValues::contactTokens( );
-     
+
         //token selector for subject
         //CRM-5058
-        $form->add( 'select', 'token3',  ts( 'Insert Token' ), 
-                    $tokens , false, 
+        $form->add( 'select', 'token3',  ts( 'Insert Token' ),
+                    $tokens , false,
                     array(
                           'size'     => "5",
                           'multiple' => true,
@@ -2239,17 +2239,17 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
         //sorted in ascending order tokens by ignoring word case
         natcasesort($tokens);
         $form->assign( 'tokens', json_encode( $tokens ) );
-        
-        $form->add( 'select', 'token1',  ts( 'Insert Tokens' ), 
-                    $tokens , false, 
+
+        $form->add( 'select', 'token1',  ts( 'Insert Tokens' ),
+                    $tokens , false,
                     array(
                           'size'     => "5",
                           'multiple' => true,
                           'onclick'  => "return tokenReplText(this);"
                           )
                     );
-        
-        $form->add( 'select', 'token2',  ts( 'Insert Tokens' ), 
+
+        $form->add( 'select', 'token2',  ts( 'Insert Tokens' ),
                     $tokens , false,
                     array(
                           'size'     => "5",
@@ -2257,8 +2257,8 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                           'onclick'  => "return tokenReplHtml(this);"
                           )
                     );
-        
-               
+
+
         $form->_templates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
         if ( !empty( $form->_templates ) ) {
             $form->assign('templates', true);
@@ -2266,36 +2266,36 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                        array( '' => ts( '- select -' ) ) + $form->_templates, false,
                        array('onChange' => "selectValue( this.value );") );
             $form->add('checkbox','updateTemplate',ts('Update Template'), null);
-        } 
-        
+        }
+
         $form->add('checkbox','saveTemplate',ts('Save As New Template'), null,false,
                           array( 'onclick' => "showSaveDetails(this);" ));
         $form->add('text','saveTemplateName',ts('Template Title'));
-      
-       
+
+
         //insert message Text by selecting "Select Template option"
-        $form->add( 'textarea', 
-                    'text_message', 
+        $form->add( 'textarea',
+                    'text_message',
                     ts('Plain-text format'),
                     array('cols' => '80', 'rows' => '8',
                           'onkeyup' => "return verify(this)"));
-        
+
         if ( $className != 'CRM_SMS_Form_Upload' && $className != 'CRM_Contact_Form_Task_SMS' &&
              $className != 'CRM_Contact_Form_Task_SMS' ) {
             $form->addWysiwyg( 'html_message',
                                ts('HTML format'),
                                array('cols' => '80', 'rows' => '8',
                                      'onkeyup' =>"return verify(this)" ) );
-        }   
+        }
     }
 
     /**
      * Function to build the  compose PDF letter form
-     * @param   $form 
+     * @param   $form
      * @return None
      * @access public
      */
-    
+
     public function commonLetterCompose ( &$form )
     {
         //get the tokens.
@@ -2313,15 +2313,15 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
 
         $form->assign( 'tokens', json_encode( $tokens ) );
 
-        $form->add( 'select', 'token1',  ts( 'Insert Tokens' ), 
-                    $tokens , false, 
+        $form->add( 'select', 'token1',  ts( 'Insert Tokens' ),
+                    $tokens , false,
                     array(
                           'size'     => "5",
                           'multiple' => true,
                           'onchange' => "return tokenReplHtml(this);"
                           )
                     );
-        
+
         $form->_templates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
         if ( !empty( $form->_templates ) ) {
             $form->assign('templates', true);
@@ -2329,48 +2329,48 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
                        array( '' => ts( '- select -' ) ) + $form->_templates, false,
                        array('onChange' => "selectValue( this.value );") );
             $form->add('checkbox','updateTemplate',ts('Update Template'), null);
-        } 
-        
+        }
+
         $form->add('checkbox','saveTemplate',ts('Save As New Template'), null,false,
                           array( 'onclick' => "showSaveDetails(this);" ));
         $form->add('text','saveTemplateName',ts('Template Title'));
-      
-       
+
+
         $form->addWysiwyg( 'html_message',
                            ts('Your Letter'),
                            array('cols' => '80', 'rows' => '8',
                                  'onkeyup' =>"return verify(this)" ) );
         $action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false );
-        if ( ( CRM_Utils_System::getClassName( $form )  == 'CRM_Contact_Form_Task_PDF' )&& 
-             $action == CRM_Core_Action::VIEW ) { 
+        if ( ( CRM_Utils_System::getClassName( $form )  == 'CRM_Contact_Form_Task_PDF' )&&
+             $action == CRM_Core_Action::VIEW ) {
             $form->freeze( 'html_message' );
         }
-        
+
     }
-    
+
     /**
      * Get the search based mailing Ids
      *
      * @return array $mailingIDs, searched base mailing ids.
      * @access public
      */
-    public function searchMailingIDs( ) 
+    public function searchMailingIDs( )
     {
         $group   = CRM_Mailing_DAO_Group::getTableName( );
         $mailing = self::getTableName();
-        
+
         $query = "
 SELECT  $mailing.id as mailing_id
   FROM  $mailing, $group
  WHERE  $group.mailing_id = $mailing.id
-   AND  $group.group_type = 'Base'"; 
-        
+   AND  $group.group_type = 'Base'";
+
         $searchDAO = CRM_Core_DAO::executeQuery( $query );
         $mailingIDs = array( );
         while ( $searchDAO->fetch( ) ) {
             $mailingIDs[] = $searchDAO->mailing_id;
         }
-        
+
         return $mailingIDs;
     }
 
@@ -2378,27 +2378,27 @@ SELECT  $mailing.id as mailing_id
      * Get the content/components of mailing based on mailing Id
      *
      * @param $report array of mailing report
-     * 
-     * @param $form reference of this  
+     *
+     * @param $form reference of this
      *
      * @return $report array content/component.
      * @access public
      */
-    public function getMailingContent( &$report, &$form, $isSMS = false ) 
+    public function getMailingContent( &$report, &$form, $isSMS = false )
     {
         $htmlHeader = $textHeader = null;
         $htmlFooter = $textFooter = null;
 
         if( !$isSMS ) {
-            if ($report['mailing']['header_id']) { 
+            if ($report['mailing']['header_id']) {
                 $header = new CRM_Mailing_BAO_Component();
                 $header->id = $report['mailing']['header_id'];
                 $header->find(true);
                 $htmlHeader = $header->body_html;
                 $textHeader = $header->body_text;
             }
-            
-            if ($report['mailing']['footer_id']) { 
+
+            if ($report['mailing']['footer_id']) {
                 $footer = new CRM_Mailing_BAO_Component();
                 $footer->id = $report['mailing']['footer_id'];
                 $footer->find(true);
@@ -2406,13 +2406,13 @@ SELECT  $mailing.id as mailing_id
                 $textFooter = $footer->body_text;
             }
         }
-        
+
         $text = CRM_Utils_Request::retrieve( 'text', 'Boolean', $form );
         if ( $text ) {
             echo "<pre>{$textHeader}</br>{$report['mailing']['body_text']}</br>{$textFooter}</pre>";
             CRM_Utils_System::civiExit( );
         }
-        
+
         if( !$isSMS ) {
             $html = CRM_Utils_Request::retrieve( 'html', 'Boolean', $form );
             if ( $html ) {
@@ -2426,7 +2426,7 @@ SELECT  $mailing.id as mailing_id
             $popup =  "javascript:popUp(\"$url\");";
             $form->assign( 'textViewURL' , $popup  );
         }
-        
+
         if( !$isSMS ) {
             if ( ! empty( $report['mailing']['body_html'] ) ) {
                 $url   = CRM_Utils_System::url( 'civicrm/mailing/report', 'reset=1&html=1&mid=' . $form->_mailing_id );
@@ -2434,7 +2434,7 @@ SELECT  $mailing.id as mailing_id
                 $form->assign( 'htmlViewURL' , $popup  );
             }
         }
-        
+
         if ( !$isSMS ) {
             $report['mailing']['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_mailing',
                                                                                   $form->_mailing_id );
@@ -2447,7 +2447,7 @@ SELECT  $mailing.id as mailing_id
 
         if ( ! isset( $_cache[$jobID] ) ) {
             $query = "
-SELECT     override_verp 
+SELECT     override_verp
 FROM       civicrm_mailing
 INNER JOIN civicrm_mailing_job ON civicrm_mailing.id = civicrm_mailing_job.mailing_id
 WHERE  civicrm_mailing_job.id = %1
@@ -2458,7 +2458,7 @@ WHERE  civicrm_mailing_job.id = %1
         return $_cache[$jobID];
     }
 
-    static function processQueue( $mode = null ) 
+    static function processQueue( $mode = null )
     {
         $config =& CRM_Core_Config::singleton();
         CRM_Core_Error::debug_log_message( "Beginning processQueue run: {$config->mailerJobsMax}, {$config->mailerJobSize}" );
@@ -2516,14 +2516,14 @@ WHERE  civicrm_mailing_job.id = %1
 INSERT INTO civicrm_mailing_recipients
     (mailing_id, email_id, contact_id)
 SELECT %1, e.id, e.contact_id FROM civicrm_email e
-WHERE  e.on_hold = 0 
+WHERE  e.on_hold = 0
 AND    e.is_bulkmail = 1
 AND    e.contact_id IN
     ( SELECT contact_id FROM civicrm_mailing_recipients mr WHERE mailing_id = %1 )
 AND    e.id NOT IN ( SELECT email_id FROM civicrm_mailing_recipients mr WHERE mailing_id = %1 )
 ";
         $params = array( 1 => array( $mailingID, 'Integer' ) );
-        
+
         $dao = CRM_Core_DAO::executeQuery( $sql, $params );
     }
 
@@ -2535,15 +2535,15 @@ AND    e.id NOT IN ( SELECT email_id FROM civicrm_mailing_recipients mr WHERE ma
         } else {
             $where .= " civicrm_mailing.sms_provider_id IS NOT NULL ";
         }
-        
+
         if ( empty($list) ) {
             $query   = "
-SELECT civicrm_mailing.id, civicrm_mailing.name, civicrm_mailing_job.end_date 
-FROM   civicrm_mailing 
+SELECT civicrm_mailing.id, civicrm_mailing.name, civicrm_mailing_job.end_date
+FROM   civicrm_mailing
 INNER JOIN civicrm_mailing_job ON civicrm_mailing.id = civicrm_mailing_job.mailing_id {$where}
 ORDER BY civicrm_mailing.name";
             $mailing = CRM_Core_DAO::executeQuery($query);
-            
+
             while($mailing->fetch()) {
                 $list[mysql_real_escape_string($mailing->id)] = "{$mailing->name} :: {$mailing->end_date}";
             }
