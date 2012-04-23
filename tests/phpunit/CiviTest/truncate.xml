@@ -37,6 +37,8 @@
 
   <civicrm_component />
 
+  <civicrm_discount />
+
   <civicrm_persistent />
 
   <civicrm_prevnext_cache />
@@ -160,8 +162,6 @@
   <civicrm_timezone />
 
   <civicrm_openid />
-
-  <civicrm_discount />
 
   <civicrm_website />
 

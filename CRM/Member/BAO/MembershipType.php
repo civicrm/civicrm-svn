@@ -373,30 +373,13 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                     $startDate = $actualStartDate;
                 }
             } else if ( $membershipTypeDetails['duration_unit'] == 'month' ) {
-                
-                if ( $membershipTypeDetails['fixed_period_start_day'] ) {
-
-                    //get start fixed day if defined
-                    $startMonth     = substr( $membershipTypeDetails['fixed_period_start_day'], 0,
-                                              strlen($membershipTypeDetails['fixed_period_start_day'])-2);
-                    $startDay       = substr( $membershipTypeDetails['fixed_period_start_day'], -2 );
-
-                    $actualStartDate = date('Y-m-d', mktime( 0, 0, 0, $startMonth, $startDay, $year ) );
- 
-                } else {
-
-                    //here start date is always from start of the joining
-                    //month irrespective when you join during the month,
-                    //so if you join on 1 Jan or 15 Jan your start
-                    //date will always be 1 Jan
-                    $actualStartDate = $year.'-'.$month.'-01';
-                    
-                }
-               
+                //here start date is always from start of the joining
+                //month irrespective when you join during the month,
+                //so if you join on 1 Jan or 15 Jan your start
+                //date will always be 1 Jan
                 if ( !$startDate ) {
-                    $startDate = $actualStartDate;
+                    $actualStartDate = $startDate = $year.'-'.$month.'-01';
                 }
-
             }
         }
 

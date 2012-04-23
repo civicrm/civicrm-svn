@@ -712,7 +712,7 @@ function civicrm_enable( ) {
     CRM_Core_Menu::store( );
 
     //Update the 'blocks' DB table with the blocks
-    //_block_rehash();
+    _block_rehash();
 }
 
 /**
