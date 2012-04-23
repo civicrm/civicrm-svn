@@ -55,14 +55,14 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
   function createQueue() {
     // nothing to do -- just start CRUDing items in the appropriate table
   }
-  
+
   /**
    * Perform any loading or pre-fetch for an existing queue.
    */
   function loadQueue() {
     // nothing to do -- just start CRUDing items in the appropriate table
   }
-  
+
   /**
    * Release any resources claimed by the queue (memory, DB rows, etc)
    */
@@ -74,7 +74,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
       1 => array($this->getName(), 'String'),
     ));
   }
-  
+
   /**
    * Check if the queue exists
    *
@@ -83,7 +83,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
   function existsQueue() {
     return ($this->numberOfItems() > 0);
   }
-  
+
   /**
    * Add a new item to the queue
    *
@@ -98,7 +98,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
     $dao->data = serialize($data);
     $dao->save();
   }
-  
+
   /**
    * Determine number of items remaining in the queue
    *
@@ -113,7 +113,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
       1 => array($this->getName(), 'String'),
     ));
   }
-  
+
   /**
    * Get and remove the next item
    *
@@ -132,6 +132,11 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
       1 => array($this->getName(), 'String'),
     );
     $dao = CRM_Core_DAO::executeQuery($sql, $params, true, 'CRM_Queue_DAO_QueueItem');
+    if ( is_a( $dao, 'DB_Error' ) ) {
+      // FIXME - Adding code to allow tests to pass
+      CRM_Core_Error::fatal( );
+    }
+
     if ($dao->fetch()) {
       $nowEpoch = CRM_Utils_Time::getTimeRaw();
       if ($dao->release_time === NULL || strtotime($dao->release_time) < $nowEpoch) {
@@ -151,7 +156,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
       return FALSE;
     }
   }
-  
+
   /**
    * Remove an item from the queue
    *
@@ -161,7 +166,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
     $dao->delete();
     $dao->free();
   }
-  
+
   /**
    * Return an item that could not be processed
    *
