@@ -43,6 +43,13 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
   );
   protected $_customGroupExtends = array('Contribution');
   protected $_customGroupGroupBy = TRUE; function __construct() {
+    $config = CRM_Core_Config::singleton();
+    $campaignEnabled = in_array("CiviCampaign", $config->enableComponents);
+    if ( $campaignEnabled ) {
+      $getCampaigns = CRM_Campaign_BAO_Campaign::getPermissionedCampaigns(NULL, NULL, TRUE, FALSE, TRUE);
+      $this->activeCampaigns = $getCampaigns['campaigns'];
+      asort($this->activeCampaigns);
+    }
     $this->_columns = array('civicrm_contact' =>
       array('dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
@@ -150,11 +157,11 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
           ),
         ),
         'group_bys' =>
-        array('receive_date' =>
-          array('frequency' => TRUE,
-            'default' => TRUE,
-            'chart' => TRUE,
-          ),
+          array('receive_date' =>
+            array('frequency' => TRUE,
+              'default' => TRUE,
+              'chart' => TRUE,
+            ),
           'contribution_source' => NULL,
         ),
       ),
@@ -174,6 +181,17 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
     ) + $this->addAddressFields();
 
     $this->_tagFilter = TRUE;
+    if ( $campaignEnabled && !empty($this->activeCampaigns) ) {
+      $this->_columns['civicrm_contribution']['fields']['campaign_id'] = array('title' => 'Campaign',
+        'default' => 'false',
+      );
+      $this->_columns['civicrm_contribution']['filters']['campaign_id'] = array('title' => ts('Campaign'),
+        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+        'options' => $this->activeCampaigns,
+      );
+      $this->_columns['civicrm_contribution']['grouping']['campaign_id'] = 'contri-fields';
+      $this->_columns['civicrm_contribution']['group_bys']['campaign_id'] = array( 'title' => ts('Campaign') );
+    }
     parent::__construct();
   }
 
@@ -540,6 +558,13 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
         $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("Lists detailed contribution(s) for this record.");
         $entryFound = TRUE;
+      }
+      // convert campaign_id to campaign title
+      if (array_key_exists('civicrm_contribution_campaign_id', $row)) {
+        if ($value = $row['civicrm_contribution_campaign_id']) {
+          $rows[$rowNum]['civicrm_contribution_campaign_id'] = $this->activeCampaigns[$value];
+          $entryFound = TRUE;
+        }
       }
       $entryFound = $this->alterDisplayAddressFields($row, $rows, $rowNum, 'contribute/detail', 'List all contribution(s) for this ') ? TRUE : $entryFound;
 
