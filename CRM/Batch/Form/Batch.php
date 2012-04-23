@@ -48,6 +48,10 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
   public function buildQuickForm( ) {
     parent::buildQuickForm( );
 
+    // set the usercontext
+    $session = CRM_Core_Session::singleton( );
+    $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch', "reset=1" ));
+
     if ( $this->_action & CRM_Core_Action::DELETE ) { 
       return;
     }
@@ -89,7 +93,6 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
     $batch = CRM_Core_BAO_Batch::create( $params ); 
 
     // redirect to batch entry page.
-    $session = CRM_Core_Session::singleton( );
     $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch/entry', "id={$batch->id}&reset=1" ));
   } //end of function
 }
