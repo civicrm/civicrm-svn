@@ -47,7 +47,7 @@ class CRM_Core_Page_AJAX {
      * @access public
      */ 
     static function run() {
-        $className =  CRM_Utils_Type::escape( $_POST['class_name'], 'String' );
+        $className =  CRM_Utils_Type::escape( $_REQUEST['class_name'], 'String' );
         $type = '';
         if ( CRM_Utils_Array::value( 'type', $_POST ) ) {
           $type = CRM_Utils_Type::escape( $_POST['type'], 'String' );
