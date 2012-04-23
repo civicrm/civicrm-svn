@@ -85,10 +85,13 @@
         });
       });
 
-      // add more
+      // add more and set focus to new row
       cj('#add-more').click(function() {
-        cj('tr[id^="Phone_Block_"][class="hiddenElement"] :first').parent().removeClass('hiddenElement');
-
+        var rowSelector = cj('tr[id^="Phone_Block_"][class="hiddenElement"] :first').parent(); 
+        rowSelector.removeClass('hiddenElement');
+        var rowId = rowSelector.attr('id').replace('Phone_Block_', '');
+        cj('#phone_' + rowId + '_phone').focus();
+        console.log(rowId);
         if ( cj('tr[id^="Phone_Block_"][class="hiddenElement"]').length == 0  ) {
           cj('#add-more').hide();
         }

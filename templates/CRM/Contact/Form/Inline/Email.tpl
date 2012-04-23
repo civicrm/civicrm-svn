@@ -98,9 +98,12 @@
         });
       });
 
-      // add more
+      // add more and set focus to new row
       cj('#add-more').click(function() {
-        cj('tr[id^="Email_Block_"][class="hiddenElement"] :first').parent().removeClass('hiddenElement');
+        var rowSelector = cj('tr[id^="Email_Block_"][class="hiddenElement"] :first').parent(); 
+        rowSelector.removeClass('hiddenElement');
+        var rowId = rowSelector.attr('id').replace('Email_Block_', '');
+        cj('#email_' + rowId + '_email').focus();
         
         if ( cj('tr[id^="Email_Block_"][class="hiddenElement"]').length == 0  ) {
           cj('#add-more').hide();

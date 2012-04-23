@@ -1843,7 +1843,7 @@ div.grippie {
 
 #crm-container div#contactTopBar table,
 #crm-container div.contact_panel table {
-	margin-bottom: 4px;
+	margin-bottom: 0px;
 	}
 
 #crm-container div#contactTopBar .label, 
@@ -2784,8 +2784,8 @@ div#crm-toolTip #hide-tooltip {
     border: 0px none;
 } 
 
-/* Override Drupal .2em margin-bottom on forms for Dashboard elements (we don't want to give up that space) */
-div#civicrm-dashboard form {
+/* Override Drupal .2em margin-bottom on forms (we don't want to give up that space) */
+div#crm-container form {
     margin-bottom:0em;
 }
 
