@@ -146,7 +146,7 @@ INSERT INTO `civicrm_dashboard`
 -- INSERT sample data for membership 
 
 SELECT @priceSetID := max(id) FROM `civicrm_price_set` WHERE `name` LIKE 'default_membership_type_amount' AND `is_quick_config` = 1;
-INSERT INTO `priceamount_crm`.`civicrm_price_field` ( `price_set_id`, `name`, `label`, `html_type` ) 
+INSERT INTO `civicrm_price_field` ( `price_set_id`, `name`, `label`, `html_type` ) 
 VALUES ( '2', '1', 'Membership Amount', 'Radio' );
 
 SELECT @priceFieldId := max(id) FROM `civicrm_price_field` WHERE `name` LIKE '1';
