@@ -546,7 +546,6 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         $entryFound = TRUE;
       }
 
-
       // convert display name to links
       if (array_key_exists('civicrm_contact_sort_name', $row) &&
         array_key_exists('civicrm_contact_id', $row)
@@ -559,12 +558,13 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("Lists detailed contribution(s) for this record.");
         $entryFound = TRUE;
       }
+
       // convert campaign_id to campaign title
       if (array_key_exists('civicrm_contribution_campaign_id', $row)) {
         if ($value = $row['civicrm_contribution_campaign_id']) {
           $rows[$rowNum]['civicrm_contribution_campaign_id'] = $this->activeCampaigns[$value];
-          $entryFound = TRUE;
         }
+        $entryFound = TRUE;
       }
       $entryFound = $this->alterDisplayAddressFields($row, $rows, $rowNum, 'contribute/detail', 'List all contribution(s) for this ') ? TRUE : $entryFound;
 
