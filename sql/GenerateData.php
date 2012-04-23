@@ -1770,7 +1770,112 @@ VALUES
         ";
         CRM_Core_DAO::executeQuery( $pledgePayment, CRM_Core_DAO::$_nullArray );
     }
+
+    function addLineItem() 
+    {
+        $query=" INSERT INTO civicrm_line_item ( entity_table, entity_id, price_field_id, label, qty, unit_price, line_total, participant_count, price_field_value_id ) VALUES ('civicrm_contribution', 1, 1, 'contribution_amount', 125, '1.00', '125.00', 0, 1),
+                   ('civicrm_contribution', 2, 1, 'contribution_amount', 50, '1.00', '50.00', 0, 1),
+                   ('civicrm_contribution', 3, 1, 'contribution_amount', 25, '1.00', '25.00', 0, 1),
+                   ('civicrm_contribution', 4, 1, 'contribution_amount', 50, '1.00', '50.00', 0, 1),
+                   ('civicrm_contribution', 5, 1, 'contribution_amount', 500, '1.00', '500.00', 0, 1),
+                   ('civicrm_contribution', 6, 1, 'contribution_amount', 175, '1.00', '175.00', 0, 1),
+                   ('civicrm_contribution', 7, 1, 'contribution_amount', 50, '1.00', '50.00', 0, 1),
+                   ('civicrm_contribution', 8, 1, 'contribution_amount', 10, '1.00', '10.00', 0, 1),
+                   ('civicrm_contribution', 9, 1, 'contribution_amount', 250, '1.00', '250.00', 0, 1),
+                   ('civicrm_contribution', 10, 1, 'contribution_amount', 500, '1.00', '500.00', 0, 1),
+                   ('civicrm_contribution', 11, 1, 'contribution_amount', 200, '1.00', '200.00', 0, 1),
+                   ('civicrm_contribution', 12, 1, 'contribution_amount', 200, '1.00', '200.00', 0, 1),
+                   ('civicrm_contribution', 13, 1, 'contribution_amount', 200, '1.00', '200.00', 0, 1);";
+        CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $entitySet = "INSERT INTO civicrm_price_set_entity ( entity_table, entity_id, price_set_id) 
+                      VALUES ( 'civicrm_contribution', 1, 1),
+                             ( 'civicrm_contribution', 2, 1),
+                             ( 'civicrm_contribution', 3, 1),
+                             ( 'civicrm_contribution', 4, 1),
+                             ( 'civicrm_contribution', 5, 1),
+                             ( 'civicrm_contribution', 6, 1),
+                             ( 'civicrm_contribution', 7, 1),
+                             ( 'civicrm_contribution', 8, 1),
+                             ( 'civicrm_contribution', 9, 1), 
+                             ( 'civicrm_contribution', 10, 1),
+                             ( 'civicrm_contribution', 11, 1),
+                             ( 'civicrm_contribution', 12, 1),
+                             ( 'civicrm_contribution', 13, 1);";
+        CRM_Core_DAO::executeQuery( $entitySet, CRM_Core_DAO::$_nullArray );
+    }
     
+    function addLineItemParticipants() {
+        $participant = new CRM_Event_DAO_Participant();
+        $participant->query("SELECT id FROM civicrm_participant");
+        while ( $participant->fetch() ) {
+            $ids[] = $participant->id;
+        }
+        $query = " INSERT INTO `civicrm_line_item` (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id` ) 
+ VALUES ( 'civicrm_participant', ".$ids[0].", 7, 'Single', 1, '50.00', '50.00', 0 , 15),
+        ( 'civicrm_participant', ".$ids[1].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[2].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[3].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[4].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[5].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[6].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[7].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[8].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[9].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[10].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[11].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[12].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[13].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[14].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[15].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[16].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[17].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[18].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[19].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[20].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[21].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[22].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[23].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[24].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[25].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[26].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[27].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[28].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[29].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[30].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[31].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[32].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[33].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[34].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[35].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[36].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[37].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[38].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[39].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[40].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[41].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[42].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[43].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[44].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[45].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[46].", 7, 'Single', 1, '50.00', '50.00', 0, 15),
+        ( 'civicrm_participant', ".$ids[47].", 8, 'Soprano', 1, '50.00', '50.00', 0, 20),
+        ( 'civicrm_participant', ".$ids[48].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12),
+        ( 'civicrm_participant', ".$ids[49].", 6, 'Tiny-tots (ages 5-8)', 1, '800.00', '800.00', 0, 12);";
+        CRM_Core_DAO::executeQuery( $query , CRM_Core_DAO::$_nullArray );
+    }
+
+    function membership(){
+
+        $query1 = " INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`,`weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`,`visibility_id` ) 
+VALUES ( 2, 'inner_city_arts_1', 'inner_city_arts_1', 'Radio', '1', '1', '1', '1', '0', '1' ),( 2, 'inner_city_arts_2', 'inner_city_arts_2', 'Radio', '1', '1', '1', '1', '0', '1' ),( 2, 'inner_city_arts_3', 'inner_city_arts_3', 'Radio', '1', '1', '1', '1', '0', '1' );  ";
+        
+        CRM_Core_DAO::executeQuery( $query1 , CRM_Core_DAO::$_nullArray );
+        
+        $query2 = " INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `membership_type_id`,  `is_default`, `is_active`) VALUES ( 8, 'General', 'General', '100.00', '1', 1, '0', '1'), 
+                   ( 9, 'Student', 'Student', '50.00', '1', 2, '0', '1'),
+                   ( 10, 'Lifetime', 'Lifetime', '50.00', '1', 3, '0', '1'); ";
+        CRM_Core_DAO::executeQuery( $query2 , CRM_Core_DAO::$_nullArray );
+    }
 }
 function user_access( $str = null ) {
     return true;
@@ -1806,6 +1911,9 @@ $obj1->addPCP();
 $obj1->addSoftContribution();
 $obj1->addPledge();
 $obj1->addPledgePayment();
+$obj1->addLineItem();
+//$obj1->membership();
+//$obj1->addLineItemParticipants();
 echo("Ending data generation on " . date("F dS h:i:s A") . "\n");
 
 

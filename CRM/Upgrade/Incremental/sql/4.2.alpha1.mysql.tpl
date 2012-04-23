@@ -160,3 +160,58 @@ SELECT @region_id   := max(id) from civicrm_worldregion where name = "America So
 INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Curaçao", "CW", @region_id, 0);
 INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Sint Maarten (Dutch Part)", "SX", @region_id, 0);
 INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Bonaire, Saint Eustatius and Saba", "BQ", @region_id, 0);
+
+-- CRM-9714
+ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`;
+
+ALTER TABLE `civicrm_price_set` ADD `is_quick_config` TINYINT( 4 ) NOT NULL DEFAULT '0' COMMENT 'Is set if information from the Regular Fees section is being stored as price set' AFTER `contribution_type_id`;
+
+
+-- CRM-9714 create a default price set for contribution and membership
+INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`) 
+VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1'),
+ ( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1');
+
+SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_contribution_amount' AND extends = 2 AND is_quick_config = 1 ;
+
+INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`,`weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`,`visibility_id` ) 
+VALUES ( @setID, 'contribution_amount', 'Contribution Amount', 'Text', '1', '1', '1', '1', '1', '1' );
+
+SELECT @fieldID := max(id) FROM civicrm_price_field WHERE name = 'contribution_amount' AND price_set_id = @setID;
+
+INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `is_default`, `is_active`) 
+VALUES ( @fieldID, 'contribution_amount', 'Contribution Amount', '1', '1', '0', '1');
+ALTER TABLE `civicrm_custom_group` CHANGE `extends_entity_column_value` `extends_entity_column_value` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'linking custom group for dynamic object.';
+
+-- CRM-9714 create price fields for all membershiptype
+SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_membership_type_amount' AND extends = 3 AND is_quick_config = 1 ; 
+
+INSERT INTO civicrm_price_field ( price_set_id, name, label, html_type, help_pre, is_display_amounts, is_required )
+SELECT @setID as price_set_id,  CONCAT_WS( '_', LOWER( REPLACE( TRIM( cc.sort_name ), ' ', '_' ) ), CAST(cc.id AS CHAR)) as name, cc.sort_name as label, 'Radio' as html_type, CONCAT('id_',CAST(cc.id AS CHAR)) as help_pre, 0 as is_display_amounts, 0 as is_required
+FROM `civicrm_membership_type` cmt
+LEFT JOIN civicrm_contact cc ON cmt.member_of_contact_id = cc.id
+GROUP BY cc.id;
+
+INSERT INTO civicrm_price_field_value ( price_field_id, name, label, description, amount, membership_type_id)
+SELECT 
+cpf.id, cmt.name as label1, cmt.name as label2, cmt.description, cmt.minimum_fee, cmt.id
+FROM `civicrm_membership_type` cmt
+LEFT JOIN civicrm_contact cc ON cmt.member_of_contact_id = cc.id
+LEFT JOIN civicrm_price_field cpf ON cc.id = SUBSTRING(cpf.help_pre,4);
+
+UPDATE civicrm_price_field SET help_pre = NULL WHERE price_set_id = @setID;
+
+-- CRM-9714
+SELECT @fieldID := cpf.id, @fieldValueID := cpfv.id FROM civicrm_price_set cps 
+LEFT JOIN civicrm_price_field cpf ON  cps.id = cpf.price_set_id 
+LEFT JOIN civicrm_price_field_value cpfv ON cpf.id = cpfv.price_field_id
+WHERE cps.name = 'default_contribution_amount';
+
+INSERT INTO civicrm_line_item ( entity_table, entity_id, price_field_id, label, qty, unit_price, line_total, participant_count, price_field_value_id )
+SELECT 'civicrm_contribution', cc.id, @fieldID, 'Contribution Amount', ROUND(total_amount,0), '1.00', total_amount , 0, @fieldValueID 
+FROM `civicrm_contribution` cc
+LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
+LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
+WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NULL
+GROUP BY cc.id;

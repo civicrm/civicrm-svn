@@ -52,12 +52,6 @@
       <comment>Displayed title for the Price Set.</comment>
       <add>1.8</add>
   </field>
-  <index>
-      <name>UI_title</name>
-      <fieldName>title</fieldName>
-      <unique>true</unique>
-      <add>1.8</add>
-  </index>
   <field>
       <name>is_active</name>
       <type>boolean</type>
@@ -114,5 +108,12 @@
        <add>3.4</add>  
        <onDelete>SET NULL</onDelete>
   </foreignKey>  
+  <field>
+       <name>is_quick_config</name>
+       <type>boolean</type>  
+       <default>0</default>
+      <comment>Is set if information from the Regular Fees section is being stored as price set</comment>
+       <add>4.1</add>
+  </field>
 </table>
 

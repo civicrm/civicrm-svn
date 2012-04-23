@@ -30,14 +30,16 @@
 {else}
 {literal}
 <script type="text/javascript">
-<!--
+
 // Putting these functions directly in template so they are available for standalone forms
 
 function useAmountOther() {
+    var priceset = {/literal}{if $contriPriceset}'{$contriPriceset}'{else}0{/if}{literal};	 
+   	
     for( i=0; i < document.Main.elements.length; i++ ) {
         element = document.Main.elements[i];
-        if ( element.type == 'radio' && element.name == 'amount' ) {
-            if (element.value == 'amount_other_radio' ) {
+        if ( element.type == 'radio' && element.name == priceset ) {
+            if (element.value == '0' ) {
                 element.checked = true;
             } else {
                 element.checked = false;
@@ -47,11 +49,15 @@ function useAmountOther() {
 }
 
 function clearAmountOther() {
+var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}	 
+    if( priceset ){
+    	cj(priceset).val('');
+	cj(priceset).blur();
+    }
   if (document.Main.amount_other == null) return; // other_amt field not present; do nothing
   document.Main.amount_other.value = "";
 }
 
-//-->
 </script>
 {/literal}
 
@@ -69,30 +75,19 @@ function clearAmountOther() {
 {if $islifetime or $ispricelifetime }
 <div id="help">You have a current Lifetime Membership which does not need top be renewed.</div> 
 {/if}
-{if $priceSet && empty($useForMember)}
-    <div id="priceset"> 
+ 
+       {if !empty($useForMember)}
+        {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
+	{else}
+    <div id="priceset-div"> 
         <fieldset>
             <legend>{ts}Contribution{/ts}</legend>
             {include file="CRM/Price/Form/PriceSet.tpl" extends="Contribution"}
         </fieldset>
     </div>
-{else}  
-        {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
+    {/if}
 
-	{if $form.amount}
-	    <div class="crm-section {$form.amount.name}-section">
-			<div class="label">{$form.amount.label}</div>
-			<div class="content">{$form.amount.html}</div>
-			<div class="clear"></div> 
-	    </div>
-	{/if} 
-	{if $is_allow_other_amount}
-	    <div class="crm-section {$form.amount_other.name}-section">
-			<div class="label">{$form.amount_other.label}</div>
-			<div class="content">{$form.amount_other.html|crmMoney}</div>
-			<div class="clear"></div> 
-	    </div>
-	{/if} 
+
 	{if $pledgeBlock} 
 	    {if $is_pledge_payment}
 	    <div class="crm-section {$form.pledge_amount.name}-section">
@@ -112,7 +107,7 @@ function clearAmountOther() {
 	    </div>
 	    {/if} 
 	{/if} 
-{/if}
+
 
 	{if $form.is_recur}
 	    <div class="crm-section {$form.is_recur.name}-section">

@@ -1060,12 +1060,19 @@ WHERE  contribution_id = {$this->_id}
         }    
         
         // get the submitted form values.  
-        $submittedValues = $this->controller->exportValues( $this->_name );        
+        $submittedValues = $this->controller->exportValues( $this->_name );
 
         // process price set and get total amount and line items.
         $lineItem = array( );
         $priceSetId = null;
-        if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $submittedValues ) ) {
+        if ( !$priceSetId = CRM_Utils_Array::value( 'price_set_id', $submittedValues ) ) {
+            $priceSetId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', 'default_contribution_amount', 'id','name' );
+            $this->_priceSet = current( CRM_Price_BAO_Set::getSetDetail( $priceSetId ) );
+            $fieldID = key( $this->_priceSet['fields'] );
+            $submittedValues['price_'.$fieldID] = $submittedValues['total_amount'];
+        }
+
+        if ( $priceSetId ) {
             CRM_Price_BAO_Set::processAmount( $this->_priceSet['fields'], 
                                               $submittedValues, $lineItem[$priceSetId] );
             $submittedValues['total_amount'] = CRM_Utils_Array::value( 'amount', $submittedValues );

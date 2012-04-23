@@ -161,7 +161,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                                                         "reset=1&action=renew&cid={$this->_contactID}&id={$hasMembership['id']}&context=membership&selectedChild=member" );
                     }
                     if ( $hasMembership['membership_end_date'] ) {
-                        CRM_Core_Session::setStatus( ts('This contact has an existing %1 membership record with %2 status and end date of %3. <a href="%4">Click here if you want to renew this membership</a> (rather than creating a new membership record). <a href="%5">Click here to view all existing and / or expired memberships for this contact.</a>', array( 1 => $hasMembership['membership_type'], 2 => $hasMembership['membership_status'], 3 => CRM_Utils_date::customformat($hasMembership['membership_end_date']), 4 => $renewUrl, 5 => $membershipTab ) ) );                        
+                        CRM_Core_Session::setStatus( ts('This contact has an existing %1 membership record with %2 status and end date of %3. <a href="%4">Click here if you want to renew this membership</a> (rather than creating a new membership record). <a href="%5">Click here to view all existing and / or expired memberships for this contact.</a>', array( 1 => $hasMembership['membership_type'], 2 => $hasMembership['membership_status'], 3 => CRM_Utils_Date::customformat($hasMembership['membership_end_date']), 4 => $renewUrl, 5 => $membershipTab ) ) );                        
                     } else {
                         CRM_Core_Session::setStatus( ts('This contact has an existing %1 membership record with %2 status. <a href="%3">Click here if you want to renew this membership</a> (rather than creating a new membership record). <a href="%4">Click here to view all existing and / or expired memberships for this contact.</a>', array( 1 => $hasMembership['membership_type'], 2 => $hasMembership['membership_status'], 3 => $renewUrl, 4 => $membershipTab ) ) );                        
                     }
@@ -918,7 +918,35 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         // process price set and get total amount and line items.
         $lineItem = array( );
         $priceSetId = null;
-        if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $this->_params ) ) {
+           if ( !$priceSetId = CRM_Utils_Array::value( 'price_set_id', $formValues ) ) {
+            $priceSetId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', 'default_membership_type_amount', 'id','name' );
+            if($priceSetId)
+            $this->_priceSet = $priceSets = current( CRM_Price_BAO_Set::getSetDetail( $priceSetId ) );
+            $editedFieldParams = array( 'price_set_id ' => $priceSetId,
+                                        'name'          => $formValues['membership_type_id'][0] );
+            $editedResults = array( );
+            CRM_Price_BAO_Field::retrieve( &$editedFieldParams, &$editedResults );
+            
+            if( !empty( $editedResults) ){
+                unset( $this->_priceSet['fields'] );
+                $this->_priceSet['fields'][$editedResults['id']] = $priceSets['fields'][$editedResults['id']];
+                unset( $this->_priceSet['fields'][$editedResults['id']]['options'] );
+                $fid = $editedResults['id'];
+                $editedFieldParams = array( 'price_field_id'     => $editedResults['id'],
+                                            'membership_type_id' => $formValues['membership_type_id'][1]);
+                $editedResults = array( );
+                CRM_Price_BAO_FieldValue::retrieve( &$editedFieldParams, &$editedResults );
+                $this->_priceSet['fields'][$fid]['options'][$editedResults['id']] = $priceSets['fields'][$fid]['options'][$editedResults['id']];
+                if( CRM_Utils_Array::value( 'total_amount', $this->_params ) )
+                    $this->_priceSet['fields'][$fid]['options'][$editedResults['id']]['amount'] = $this->_params['total_amount'];
+            }
+           
+            $fieldID = key( $this->_priceSet['fields'] );
+            $this->_params['price_'.$fieldID] = $editedResults['id'];
+        }
+         
+        if ( $priceSetId ) {
+            require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::processAmount( $this->_priceSet['fields'], 
                                               $this->_params, $lineItem[$priceSetId] );
             $params['total_amount'] = CRM_Utils_Array::value( 'amount', $this->_params );

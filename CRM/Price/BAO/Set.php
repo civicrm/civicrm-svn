@@ -294,19 +294,20 @@ WHERE     ct.id = cp.contribution_type_id AND
      *
      * @return integer|false price_set_id, or false if none found
      */
-    public static function getFor( $entityTable, $entityId, $usedFor = null )
+    public static function getFor( $entityTable, $entityId, $usedFor = null, $isQuickConfig = null )
     {
         if ( !$entityTable || !$entityId ) return false;  
 
         $sql = 'SELECT ps.id as price_set_id 
                 FROM civicrm_price_set ps
                 INNER JOIN civicrm_price_set_entity pse ON ps.id = pse.price_set_id
-                WHERE pse.entity_table = %1 AND pse.entity_id = %2';
-
+                WHERE pse.entity_table = %1 AND pse.entity_id = %2 ';
+        if( $isQuickConfig ) 
+            $sql .= " AND ps.is_quick_config = 0 "; 
         $params = array( 1 => array( $entityTable, 'String' ),
                          2 => array( $entityId, 'Integer' ) );
         if ( $usedFor ) {
-            $sql .= ' AND ps.extends = %3 ';
+            $sql .= " AND ps.extends LIKE '%%3%' ";
             $params[3] = array( $usedFor, 'Integer' );
         }
 
@@ -364,7 +365,7 @@ WHERE     ct.id = cp.contribution_type_id AND
        civicrm_price_field, 
        civicrm_price_set 
     WHERE 
-       civicrm_price_set.id = civicrm_price_field.price_set_id ";
+       civicrm_price_set.id = civicrm_price_field.price_set_id  AND is_quick_config = 0 ";
         
         if ( !$withInactive ) {
             $query .= " AND civicrm_price_set.is_active = 1 ";
@@ -485,10 +486,14 @@ WHERE  id = %1";
         return $setTree;
     }
 
-    static function initSet( &$form, $id, $entityTable = 'civicrm_event', $validOnly = false ) 
+    static function initSet( &$form, $id, $entityTable = 'civicrm_event', $validOnly = false, $priceSetId = null ) 
     {
+        if( !$priceSetId ){
+            $priceSetId = self::getFor( $entityTable, $id );
+        }
+        
         // get price info
-        if ( $priceSetId = self::getFor( $entityTable, $id ) ) {
+        if( $priceSetId ) {
             if ( $form->_action & CRM_Core_Action::UPDATE ) {
                 $entityId = $entity = null;
                 
@@ -505,8 +510,8 @@ WHERE  id = %1";
                 case 'civicrm_contribution_page':
                 case 'civicrm_contribution':
                     $entity   = 'contribution';
-                    $entityId = $form->_id;
-                    break;
+                $entityId = $form->_id;
+                break;
                 }
                 
                 if ( $entityId && $entity ) {
@@ -689,9 +694,17 @@ WHERE  id = %1";
         if ( in_array($className, array('CRM_Contribute_Form_Contribution', 'CRM_Member_Form_Membership') ) ) {
             $validFieldsOnly = false;
         }
-
+        
         $priceSet = self::getSetDetail( $priceSetId, true, $validFieldsOnly );
         $form->_priceSet = CRM_Utils_Array::value( $priceSetId, $priceSet );
+        $form->_quickConfig = $quickConfig = 0;
+        if( CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $priceSetId, 'is_quick_config' ) ) 
+            $quickConfig = 1;
+            
+        $form->assign( 'quickConfig',  $quickConfig );
+        if( $className == "CRM_Contribute_Form_Contribution_Main" ){
+            $form->_quickConfig = $quickConfig;            
+        }
         $form->assign( 'priceSet',  $form->_priceSet );
         
         $component = 'contribution';

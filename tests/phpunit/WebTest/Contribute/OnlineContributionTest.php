@@ -111,8 +111,8 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
       $this->type( "first_name", $firstName );
       $this->type( "last_name",$lastName );
       
-      $this->click("amount_other");
-      $this->type("amount_other",100);
+      $this->click("xpath=//div[@class='crm-section other_amount-section']//div[2]/input");
+      $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input",100);
       
       $streetAddress = "100 Main Street";
       $this->type( "street_address-1", $streetAddress );

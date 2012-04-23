@@ -351,7 +351,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       $this->waitForElementPresent( '_qf_Amount_next-bottom' );
 
       //this contribution page for online contribution 
-      $this->select( 'payment_processor_id', 'label=' . $processorName );
+      //$this->select( 'payment_processor_id', 'label=' . $processorName ); 
+      $this->click( "xpath=//tr[@class='crm-contribution-contributionpage-amount-form-block-payment_processor']/td/label[text()='$processorName']" );
       $this->select( 'price_set_id', 'label=' . $setTitle );
       $this->click( '_qf_Amount_next-bottom' );
       $this->waitForPageToLoad( '30000' );    
@@ -496,7 +497,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase
       $this->waitForElementPresent( '_qf_Amount_next-bottom' );
 
       //this contribution page for online contribution 
-      $this->select( 'payment_processor_id', 'label=' . $processorName );
+      //$this->select( 'payment_processor_id', 'label=' . $processorName );
+      $this->click( "xpath=//tr[@class='crm-contribution-contributionpage-amount-form-block-payment_processor']/td/label[text()='$processorName']" );
       $this->select( 'price_set_id', 'label=' . $setTitle );
       $this->click( '_qf_Amount_next-bottom' );
       $this->waitForPageToLoad( '30000' );    

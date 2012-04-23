@@ -55,7 +55,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         // We need a payment processor
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
         $this->webtestAddPaymentProcessor($processorName);
-        
+
         // create custom group1
         $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
         $this->click("newCustomDataGroup");
@@ -72,7 +72,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $customId = $this->_testGetCustomFieldId( $customGrpId1 );
         
         $profileId = $this->_testGetProfileId( $customId );
-        
+
         // Go directly to the URL of the screen that you will be testing (New Event).
         $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
         
@@ -560,7 +560,11 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->click("link=Fees");
         $this->waitForElementPresent("_qf_Fee_upload-bottom");
         $this->click("CIVICRM_QFID_1_2");
-        $this->select("payment_processor_id", "label=" . $processorName);
+
+        // select newly created processor 
+        $xpath = "xpath=//label[text() = '{$processorName}']/preceding-sibling::input[1]";
+        $this->assertTrue( $this->isTextPresent($processorName));
+        $this->check($xpath);
         $this->select("contribution_type_id", "value=4");
         if ( $priceSet) {
             // get one - TBD

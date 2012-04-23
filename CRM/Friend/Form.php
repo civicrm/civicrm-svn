@@ -87,7 +87,9 @@ class CRM_Friend_Form extends CRM_Core_Form
             $this->_title      = CRM_Utils_Array::value( 'title',       $values );
             $this->_campaignId = CRM_Utils_Array::value( 'campaign_id', $values );
             $this->_entityTable = 'civicrm_contribution_page';
-            if ( $pcomponent == 'event' ) $this->_entityTable = 'civicrm_event'; 
+            if ( $pcomponent == 'event' ) { 
+                $this->_entityTable = 'civicrm_event'; 
+            }
         } else if ( $pcomponent == 'pcp' ) {
             $this->_pcpBlockId = CRM_Utils_Request::retrieve( 'blockId', 'Positive', $this, true ); 
             

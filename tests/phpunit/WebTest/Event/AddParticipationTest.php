@@ -84,10 +84,9 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent('Source for this registration (if applicable).'));
 
       // Select an event fee
-      $feeHelp = 'Event Fee Level (if applicable).';
-      $this->waitForTextPresent($feeHelp);
-
-      $this->click("xpath=id('feeBlock')/table/tbody/tr[1]/td/table/tbody/tr/td[2]/label[1]");
+      $this->waitForElementPresent('priceset');
+     
+      $this->click("xpath=//input[@class='form-radio']");
       
       // Select 'Record Payment'
       $this->click('record_contribution');
@@ -120,8 +119,8 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
                                       array( 'Event'            => 'Rain-forest Cup Youth Soccer Tournament',
                                              'Participant Role' => 'Attendee',
                                              'Status'           => 'Registered',
-                                             'Event Source'     => 'Event StandaloneAddTest Webtest', 
-                                             'Event Level'      => 'Tiny-tots (ages 5-8) - $ 800.00',
+                                             'Event Source'     => 'Event StandaloneAddTest Webtest',
+                                             'Event Fees'       => '$ 800.00'
                                              )
                                        );
 
@@ -302,10 +301,9 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent('Source for this registration (if applicable).'));
 
       // Select an event fee
-      $feeHelp = 'Event Fee Level (if applicable).';
-      $this->waitForTextPresent($feeHelp);
+      $this->waitForElementPresent('priceset');
       
-      $this->click("xpath=id('feeBlock')/table/tbody/tr[1]/td/table/tbody/tr/td[2]/label[1]");
+      $this->click("xpath=//input[@class='form-radio']");
 
       // Select 'Record Payment'
       $this->click('record_contribution');
@@ -336,7 +334,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
                                              'Participant Role' => 'Attendee, Volunteer, Host',
                                              'Status'           => 'Registered',
                                              'Event Source'     => 'Event StandaloneAddTest Webtest', 
-                                             'Event Level'      => 'Tiny-tots (ages 5-8) - $ 800.00',
+                                             'Event Fees'       => '$ 800.00',
                                              )
                                        );
 

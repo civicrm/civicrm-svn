@@ -142,11 +142,9 @@ class WebTest_Event_ChangeParticipantStatus extends CiviSeleniumTestCase {
         $this->assertTrue( $this->isTextPresent( 'Source for this registration (if applicable).' ) );
         
         // Select an event fee
-        $feeHelp = 'Event Fee Level (if applicable).';
-        $this->waitForTextPresent( $feeHelp );
+        $this->waitForElementPresent( 'priceset' );
         
-        $this->click( "xpath=id('feeBlock')/table/tbody/tr[1]/td/table/tbody/tr/td[2]/label[1]" );
-        
+        $this->click("xpath=//input[@class='form-radio']");
         // Select 'Record Payment'
         $this->click( 'record_contribution' );
         
@@ -176,7 +174,7 @@ class WebTest_Event_ChangeParticipantStatus extends CiviSeleniumTestCase {
                                                'Participant Role' => 'Attendee',
                                                'Status'           => 'Registered',
                                                'Event Source'     => 'Event StandaloneAddTest Webtest', 
-                                               'Event Level'      => 'Tiny-tots (ages 5-8) - $ 800.00',
+                                               'Event Fees'       => '$ 800.00',
                                                )
                                          );
         

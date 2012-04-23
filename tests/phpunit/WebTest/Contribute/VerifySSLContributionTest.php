@@ -110,7 +110,7 @@ class WebTest_Contribute_VerifySSLContributionTest extends CiviSeleniumTestCase 
         $this->waitForElementPresent("_qf_Main_upload-bottom");
 
         // fill out info
-        $this->type("id=amount_other", "30");
+        $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", "30");
         $this->type( 'email-5', "smith@example.com" );
 
         // choose the payment processor

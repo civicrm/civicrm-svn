@@ -158,7 +158,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         // fill billing related info
         $this->_fillRegisterWithBillingInfo( );
@@ -184,7 +184,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         // exceed maximun count for text field, check for form rule
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '2');
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
 
         // fill billing related info and register
         $this->_fillRegisterWithBillingInfo( );
@@ -340,7 +340,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '3');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         // fill billing related info
         $this->_fillRegisterWithBillingInfo( );
@@ -368,7 +368,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         // check for form rule
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '2');
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
 
         // fill billing related info and register
         $this->_fillRegisterWithBillingInfo( );
@@ -526,7 +526,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '7');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         // fill billing related info
         $this->_fillRegisterWithBillingInfo( );
@@ -545,7 +545,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '6');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
 
         $this->click('_qf_Participant_1_next-Array');
         $this->waitForPageToLoad('30000');
@@ -564,7 +564,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '3');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         $this->click('_qf_Participant_2_next-Array');
         $this->waitForPageToLoad('30000');
@@ -607,7 +607,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '3');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         // fill billing related info
         $this->_fillRegisterWithBillingInfo( );
@@ -636,7 +636,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '2');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
 
         $this->click('_qf_Participant_1_next-Array');
         $this->waitForPageToLoad('30000');
@@ -800,7 +800,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '7');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         // fill billing related info
         $this->_fillRegisterWithBillingInfo( );
@@ -819,7 +819,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '6');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
 
         $this->click('_qf_Participant_1_next-Array');
         $this->waitForPageToLoad('30000');
@@ -838,7 +838,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '3');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         $this->click('_qf_Participant_2_next-Array');
         $this->waitForPageToLoad('30000');
@@ -881,7 +881,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '3');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         // fill billing related info
         $this->_fillRegisterWithBillingInfo( );
@@ -910,7 +910,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@id='price_{$textFieldId}']", '2');
 
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
 
         $this->click('_qf_Participant_1_next-Array');
         $this->waitForPageToLoad('30000');
@@ -1056,7 +1056,8 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->click('link=Fees');
         $this->waitForElementPresent('_qf_Fee_upload-bottom');
         $this->click('CIVICRM_QFID_1_2');
-        $this->select('payment_processor_id', 'label=' . $params['payment_processor']);
+        $processorName = $params['payment_processor'];
+        $this->click( "xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']" );
         $this->select('contribution_type_id', 'value=4');
         
         if ( array_key_exists( 'price_set', $params ) ) {
@@ -1106,6 +1107,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     }
     
     function _fillRegisterWithBillingInfo( ) {
+        $this->waitForElementPresent('credit_card_type');        
         $this->select('credit_card_type', 'value=Visa');
         $this->type('credit_card_number', '4111111111111111');
         $this->type('cvv2', '000');

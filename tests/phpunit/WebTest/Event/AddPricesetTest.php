@@ -242,7 +242,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->click('link=Fees');
       $this->waitForElementPresent('_qf_Fee_upload-bottom');
       $this->click('CIVICRM_QFID_1_2');
-      $this->select('payment_processor_id', 'label=' . $processorName);
+      $this->click( "xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']" );
       $this->select('contribution_type_id', 'value=4');
       $this->select('price_set_id', 'label=' . $setTitle);
       
@@ -287,8 +287,9 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->type("xpath=//input[@class='form-text four required']", "1");
       $this->click("xpath=//input[@class='form-radio']");
       $this->click("xpath=//input[@class='form-checkbox']");
-      $this->type('email-5', $email);
+      $this->type('email-Primary', $email);
       
+      $this->waitForElementPresent('credit_card_type');
       $this->select('credit_card_type', 'value=Visa');
       $this->type('credit_card_number', '4111111111111111');
       $this->type('cvv2', '000');
@@ -417,7 +418,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->click('link=Fees');
       $this->waitForElementPresent('_qf_Fee_upload-bottom');
       $this->click('CIVICRM_QFID_1_2');
-      $this->select('payment_processor_id', 'label=' . $processorName);
+      $this->click( "xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']" );
       $this->select('contribution_type_id', 'value=4');
       $this->select('price_set_id', 'label=' . $setTitle);
       

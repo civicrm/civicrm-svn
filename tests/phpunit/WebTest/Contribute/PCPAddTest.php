@@ -113,8 +113,8 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
         
-        $this->click("amount_other");
-        $this->type("amount_other", $contributionAmount);
+        $this->click("xpath=//div[@class='crm-section other_amount-section']//div[2]/input");
+        $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", $contributionAmount);
         $this->type( "email-5", $email);
         
         $this->webtestAddCreditCardDetails( );
@@ -168,8 +168,8 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=$pageId&pcpId=$id[1]" );
         
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-        $this->click("amount_other");
-        $this->type("amount_other", $contributionAmount);
+        $this->click("xpath=//div[@class='crm-section other_amount-section']//div[2]/input");
+        $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", $contributionAmount);
         $this->type( "email-5", $firstName . "@example.com" );
         
         $this->webtestAddCreditCardDetails( );

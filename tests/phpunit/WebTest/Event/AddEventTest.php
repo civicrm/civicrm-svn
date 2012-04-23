@@ -70,7 +70,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $eventInfoStrings = array( $eventTitle, $eventDescription, $streetAddress );
       $this->_testVerifyEventInfo( $eventTitle, $eventInfoStrings );
      
-      $registerStrings = array("250.00 Member", "325.00 Non-member", $registerIntro );
+      $registerStrings = array("250.00","Member", "325.00", "Non-member", $registerIntro );
       $registerUrl = $this->_testVerifyRegisterPage( $registerStrings );
       
       $numberRegistrations = 3;
@@ -113,7 +113,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $eventInfoStrings = array( $eventTitle, $streetAddress );
       $this->_testVerifyEventInfo( $eventTitle, $eventInfoStrings );
       
-      $registerStrings = array("250.00 Member", "325.00 Non-member", $registerIntro );
+      $registerStrings = array("250.00", "Member", "325.00", "Non-member", $registerIntro );
       $this->_testVerifyRegisterPage( $registerStrings );
 
   }
@@ -245,7 +245,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->click("link=Fees");
       $this->waitForElementPresent("_qf_Fee_upload-bottom");
       $this->click("CIVICRM_QFID_1_2");
-      $this->select("payment_processor_id", "label=" . $processorName);
+      $this->click( "xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']" );
       $this->select("contribution_type_id", "value=4");
       if ( $priceSet) {
           // get one - TBD
@@ -321,7 +321,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->open($registerUrl);
 
       $this->select("additional_participants", "value=" . $numberRegistrations);
-      $this->type("email-5", "smith" . substr(sha1(rand()), 0, 7) . "@example.org" );
+      $this->type("email-Primary", "smith" . substr(sha1(rand()), 0, 7) . "@example.org" );
 
       $this->select("credit_card_type", "value=Visa");
       $this->type("credit_card_number", "4111111111111111");
@@ -343,7 +343,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
               $this->waitForPageToLoad('30000');
               // Look for Skip button
               $this->waitForElementPresent("_qf_Participant_{$i}_next_skip-Array");
-              $this->type("email-5", "smith" . substr(sha1(rand()), 0, 7) . "@example.org" );
+              $this->type("email-Primary", "smith" . substr(sha1(rand()), 0, 7) . "@example.org" );
               $this->click("_qf_Participant_{$i}_next");
           }
       }

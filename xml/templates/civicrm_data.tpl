@@ -1349,3 +1349,19 @@ VALUES
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Process Survey Respondents{/ts}',   '{ts escape="sql" skip="true"}Releases reserved survey respondents when they have been reserved for longer than the Release Frequency days specified for that survey.{/ts}','civicrm_api3', 'job', 'process_respondent',NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Set Membership Reminder Dates{/ts}','{ts escape="sql" skip="true"}Sets membership renewal reminder dates for current membership records where reminder date is null{/ts}','civicrm_api3', 'job', 'process_membership_reminder_date',NULL, 0);
 
+-- CRM-9714
+
+SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';
+INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `contribution_type_id` ) 
+VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', NULL),
+( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @contribution_type_id);
+
+SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_contribution_amount' AND extends = 2 AND is_quick_config = 1 ;
+
+INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`,`weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`,`visibility_id` ) 
+VALUES ( @setID, 'contribution_amount', 'Contribution Amount', 'Text', '1', '1', '1', '1', '1', '1' );
+
+SELECT @fieldID := max(id) FROM civicrm_price_field WHERE name = 'contribution_amount' AND price_set_id = @setID;
+
+INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `is_default`, `is_active`) 
+VALUES ( @fieldID, 'contribution_amount', 'Contribution Amount', '1', '1', '0', '1');

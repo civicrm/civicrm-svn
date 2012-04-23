@@ -65,7 +65,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         
         if ( CRM_Utils_Array::value( 'contribution_page_id', $values ) ){
             $contribPages = CRM_Contribute_PseudoConstant::contributionPage( null, true );
-            $values["contribution_page_title"] = CRM_Utils_Array::value( CRM_Utils_Array::value( 'contribution_page_id', $values ) , $contribPages );
+            $values['contribution_page_title'] = CRM_Utils_Array::value( CRM_Utils_Array::value( 'contribution_page_id', $values ) , $contribPages );
         }
         
         if ( CRM_Utils_Array::value( 'honor_contact_id', $values ) ) {
@@ -74,10 +74,10 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
             $dao = CRM_Core_DAO::executeQuery( $sql, $params );
             if ( $dao->fetch() ) {
                 $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid=$values[honor_contact_id]" );
-                $values["honor_display"] = "<A href = $url>". $dao->display_name ."</A>"; 
+                $values['honor_display'] = "<A href = $url>". $dao->display_name ."</A>"; 
             }
             $honor =CRM_Core_PseudoConstant::honor( );
-            $values['honor_type'] = $honor[$values['honor_type_id']]; 
+            $values['honor_type'] = CRM_Utils_Array::value( CRM_Utils_Array::value( 'honor_type_id', $values ), $honor ); 
         }
         
         if ( CRM_Utils_Array::value( 'contribution_recur_id', $values ) ) {
@@ -85,9 +85,9 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
             $params = array( 1 => array( $values['contribution_recur_id'], 'Integer' ) );
             $dao = CRM_Core_DAO::executeQuery( $sql, $params );
             if ( $dao->fetch() ) {
-                $values["recur_installments"]       = $dao->installments  ;
-                $values["recur_frequency_unit"]     = $dao->frequency_unit;
-                $values["recur_frequency_interval"] = $dao->frequency_interval;
+                $values['recur_installments']       = $dao->installments  ;
+                $values['recur_frequency_unit']     = $dao->frequency_unit;
+                $values['recur_frequency_interval'] = $dao->frequency_interval;
             }
         }
 

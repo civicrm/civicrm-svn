@@ -580,13 +580,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form
             $params['is_active']           = array( 1 => 1 );
         }
         
-        $ids = array( );
-        
         if ( $this->_fid ) {
-            $ids['id'] = $this->_fid;
+            $params['id'] = $this->_fid;
         }
         
-        $priceField = CRM_Price_BAO_Field::create( $params, $ids );
+        $priceField = CRM_Price_BAO_Field::create( $params );
         
         if( ! is_a( $priceField, 'CRM_Core_Error' ) ) {
             CRM_Core_Session::setStatus(ts('Price Field \'%1\' has been saved.', array(1 => $priceField->label)));

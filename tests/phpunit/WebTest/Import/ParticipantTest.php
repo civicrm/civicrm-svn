@@ -299,7 +299,12 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
         $this->click("link=Fees");
         $this->waitForElementPresent("_qf_Fee_upload-bottom");
         $this->click("CIVICRM_QFID_1_2");
-        $this->select("payment_processor_id", "label=" . $params['payment_processor']);
+    
+        // select newly created processor 
+        $xpath = "xpath=//label[text() = '{$processorName}']/preceding-sibling::input[1]";
+        $this->assertTrue( $this->isTextPresent($processorName));
+        $this->check($xpath);
+
         $this->select("contribution_type_id", "value=4");
 
         $counter = 1;

@@ -53,12 +53,15 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->webtestAddPaymentProcessor( $processorName );
         
         $this->open( $this->sboxPath . "civicrm/admin/contribute/amount?reset=1&action=update&id=2" );
-        
-        //this contribution page for membership signup
-        $this->waitForElementPresent( 'payment_processor_id' );
-        $this->select( "payment_processor_id", "label=" . $processorName );
-        
+        $this->waitForElementPresent( "_qf_Amount_next" );
+        // this contribution page for membership signup
+        // select newly created processor 
+        $xpath = "xpath=//label[text() = '{$processorName}']/preceding-sibling::input[1]";
+        $this->assertTrue( $this->isTextPresent($processorName));
+        $this->check($xpath);
+                
         // save
+        $this->waitForElementPresent( "_qf_Amount_next" );
         $this->click( '_qf_Amount_next' );
         $this->waitForPageToLoad( );
         
@@ -226,12 +229,15 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->webtestAddPaymentProcessor( $processorName );
         
         $this->open( $this->sboxPath . "civicrm/admin/contribute/amount?reset=1&action=update&id=2" );
-        
+        $this->waitForElementPresent( '_qf_Amount_next' );
+
         //this contribution page for membership signup
-        $this->waitForElementPresent( 'payment_processor_id' );
-        $this->select( "payment_processor_id", "label=" . $processorName );
+        $xpath = "xpath=//label[text() = '{$processorName}']/preceding-sibling::input[1]";
+        $this->assertTrue( $this->isTextPresent($processorName));
+        $this->check($xpath);
         
         // save
+        $this->waitForElementPresent( '_qf_Amount_next' );
         $this->click( '_qf_Amount_next' );
         $this->waitForPageToLoad( );
         

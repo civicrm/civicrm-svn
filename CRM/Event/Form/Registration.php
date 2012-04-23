@@ -399,10 +399,10 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 //$this->_paymentProcessor['processorName'] = $payment->_processorName;
                 //$this->set( 'paymentProcessor', $this->_paymentProcessor );
             }
-            
+         
             //init event fee.
             self::initEventFee( $this, $eventID );
-            
+         
             // get the profile ids
             $ufJoinParams = array( 'entity_table' => 'civicrm_event',   
                                    'module'       => 'CiviEvent',       // CRM-4377: CiviEvent for the main participant, CiviEvent_Additional for additional participants
@@ -731,23 +731,15 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         // get price info
          
         // retrive all active price set fields.
-        $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event', true );
-        
-        if ( $price == false ) {
-            CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventID}", $form->_values['fee'], true );
-            
-            $discountedEvent = CRM_Core_BAO_Discount::getOptionGroup( $eventID, 'civicrm_event' );
-            if ( is_array( $discountedEvent ) ) {
-                foreach ( $discountedEvent as $key => $optionGroupId ) {
-                    $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId );
-                    CRM_Core_OptionGroup::getAssoc( $name, $form->_values['discount'][$key], true );
-                    $form->_values['discount'][$key]['name'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
-                                                                                            $optionGroupId,
-                                                                                            'title' );
-                }
-            }
+        require_once 'CRM/Core/BAO/Discount.php';
+        $discountId = CRM_Core_BAO_Discount::findSet( $eventID, 'civicrm_event' );
+        if( $discountId ){
+            $priceSetId =  CRM_Core_DAO::getFieldValue( 'CRM_Core_BAO_Discount', $discountId, 'option_group_id' );
+            $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event', true, $priceSetId );
+        }else{
+            $price = CRM_Price_BAO_Set::initSet( $form, $eventID, 'civicrm_event', true );
         }
-        
+             
         $eventFee = CRM_Utils_Array::value( 'fee', $form->_values ); 
         if ( !is_array( $eventFee ) || empty( $eventFee )  ) {
             $form->_values['fee'] = array( );

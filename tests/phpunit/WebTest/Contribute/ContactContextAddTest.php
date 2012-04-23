@@ -87,14 +87,15 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
       
       // soft credit
-      $this->typeKeys("soft_credit_to", $softCreditFname);
+      $this->type("soft_credit_to", $softCreditFname);
+      $this->click("soft_credit_to");
       $this->fireEvent("soft_credit_to", "focus");
       $this->waitForElementPresent("css=div.ac_results-inner li");
       $this->click("css=div.ac_results-inner li");
 
       //Custom Data
-      $this->waitForElementPresent('CIVICRM_QFID_3_6');
-      $this->click('CIVICRM_QFID_3_6');
+      //$this->waitForElementPresent('CIVICRM_QFID_3_6');
+      //$this->click('CIVICRM_QFID_3_6');
 
       //Additional Detail section
       $this->click("AdditionalDetail");
@@ -143,8 +144,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
                           'Contribution Type'               => 'Donation',
                           'Contribution Status'             => 'Completed',
                           'Paid By'                         => 'Check',
-                          'How long have you been a donor?' => 'Less than 1 year',
-                          'Total Amount'                    => '$ 100.00',
+                          'Contribution Amount'             => '$ 100.00',
                           'Check Number'                    => 'check #1041'
                           );
       foreach ( $verifyData as $label => $value ) {
@@ -164,7 +164,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
 
       
       // go to soft creditor contact view page
-      $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[16]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
+      $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[17]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
 
       // go to contribution tab
       $this->waitForElementPresent("css=li#tab_contribute a");

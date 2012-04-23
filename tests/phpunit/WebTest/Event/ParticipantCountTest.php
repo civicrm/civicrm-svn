@@ -71,7 +71,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->click("xpath=//input[@class='form-radio']");
         
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         // fill billing details and register
         $this->_testRegisterWithBillingInfo( );
@@ -86,7 +86,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         
         $this->click("xpath=//input[@class='form-radio']");
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
 
         // fill billing details and register
         $this->_testRegisterWithBillingInfo( );
@@ -209,7 +209,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->type("xpath=//input[@class='form-text four required']", '1');
         
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
         
         $participants[1] = array( 'email'      => $email, 
                                   'first_name' => 'Jane_'. substr(sha1(rand()), 0, 5) ,
@@ -237,7 +237,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         
         $this->type("xpath=//input[@class='form-text four required']", '2');
         $email = 'jane_'.substr(sha1(rand()), 0, 5) .'@example.org'; 
-        $this->type('email-5', $email);
+        $this->type('email-Primary', $email);
 
         $participants[2] = array( 'email'      => $email, 
                                   'first_name' => 'Jane_'. substr(sha1(rand()), 0, 5) ,
@@ -339,7 +339,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->click('link=Fees');
         $this->waitForElementPresent('_qf_Fee_upload-bottom');
         $this->click('CIVICRM_QFID_1_2');
-        $this->select('payment_processor_id', 'label=' . $params['payment_processor']);
+        $this->click( "xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='".$params['payment_processor']."']" );
         $this->select('contribution_type_id', 'value=4');
         
         if ( array_key_exists( 'price_set', $params ) ) {
@@ -385,6 +385,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     }
     
     function _testRegisterWithBillingInfo( $participant = array( ) ) {
+        $this->waitForElementPresent("credit_card_type");        
         $this->select('credit_card_type', 'value=Visa');
         $this->type('credit_card_number', '4111111111111111');
         $this->type('cvv2', '000');

@@ -58,13 +58,13 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
      * @access public
      * @static
      */
-    static function &add( &$params, $ids ) 
+    static function &add( &$params ) 
     {
         $priceFieldBAO         = new CRM_Price_BAO_Field( );
         
         $priceFieldBAO->copyValues( $params );
         
-        if ( $id = CRM_Utils_Array::value( 'id', $ids ) ) {
+        if ( $id = CRM_Utils_Array::value( 'id', $params ) ) {
             $priceFieldBAO->id = $id;
         }
         
@@ -83,12 +83,12 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
      * @access public
      * @static
      */
-    static function create( &$params, $ids )
+    static function create( &$params )
     {
 
         $transaction = new CRM_Core_Transaction( );
         
-        $priceField = self::add( $params, $ids );
+        $priceField = self::add( $params );
         
         if ( is_a( $priceField, 'CRM_Core_Error') ) {
             $transaction->rollback( );
@@ -142,6 +142,15 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                                  'is_active'      => 1,
                                  'is_default'     => CRM_Utils_Array::value( $index, $defaultArray )
                                  );
+               
+                if( $opIds = CRM_Utils_Array::value( 'option_id', $params ) ){
+                    if( $opId = CRM_Utils_Array::value( $index, $opIds ) ){
+                        $optionsIds['id'] = $opId;
+                    }
+                    else 
+                        $optionsIds['id'] = null;
+                }
+                    
                 CRM_Price_BAO_FieldValue::add($options, $optionsIds);
             }
         }
@@ -222,6 +231,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                                                 $fieldOptions = null,
                                                 $feezeOptions = array( ) ) 
     {
+       
         $field = new CRM_Price_DAO_Field();
         $field->id = $fieldId;
         if (! $field->find(true)) {
@@ -229,12 +239,15 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             return null;
         }
         
+        $otherAmount = $qf->get( 'values' );
         $config    = CRM_Core_Config::singleton();
         $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') );
         if (!isset($label)) {
-            $label = $field->label;
+            $label = ( CRM_Utils_Array::value( 'is_separate_payment', $qf->_membershipBlock ) && $field->name == 'contribution_amount' && !CRM_Utils_Array::value( 'is_allow_other_amount', $otherAmount ) ) ? 'Additional Contribution' : $field->label;
+            
         }
         
+            
         if ( isset($qf->_online) && $qf->_online ) {
             $useRequired = false;
         }
@@ -242,6 +255,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
         $customOption = $fieldOptions;
         if ( !is_array( $customOption ) ) {
             $customOption = CRM_Price_BAO_Field::getOptions($field->id, $inactiveNeeded);
+            
         }
         
         //use value field.
@@ -254,6 +268,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             $max_value    = CRM_Utils_Array::value( 'max_value', $customOption[$optionKey], '' );
             $priceVal     = implode( $seperator, array( $customOption[$optionKey][$valueFieldName], $count, $max_value ) );
             
+            $extra = array();
+            if( $qf->_quickConfig ){
+                $qf->assign( 'priceset', $elementName );
+                $extra = array( 'onclick' => 'useAmountOther();' );
+            }
             //check for label.
             if ( CRM_Utils_Array::value( 'label', $fieldOptions[$optionKey] ) ) {
                 $label = $fieldOptions[$optionKey]['label'];
@@ -265,8 +284,9 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             }
             
             $element =& $qf->add( 'text', $elementName, $label, 
-                                  array_merge( array('size' =>"4"), 
-                                               array( 'price' => json_encode( array($optionKey, $priceVal) ) ) 
+                                  array_merge( $extra, 
+                                               array( 'price' => json_encode( array($optionKey, $priceVal) ),
+                                                      'size' => '4' ) 
                                              ),
                                   $useRequired && $field->is_required
                                   );
@@ -282,7 +302,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             
         case 'Radio':
             $choice = array();
-
+            
+            if( property_exists( $qf, '_quickConfig' ) && $qf->_quickConfig ) {
+                $qf->assign( 'contriPriceset', $elementName );
+            }
+                
             foreach ($customOption as $opId => $opt) {
                 if ($field->is_display_amounts) {
                     $opt['label'] .= '&nbsp;-&nbsp;';
@@ -291,20 +315,44 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                 $count     = CRM_Utils_Array::value( 'count', $opt, '' );
                 $max_value = CRM_Utils_Array::value( 'max_value', $opt, '' );
                 $priceVal  = implode( $seperator, array(  $opt[$valueFieldName], $count, $max_value ) );
-
-                $choice[$opId] = $qf->createElement('radio', null, '', $opt['label'], $opt['id'],
-                                               array('price' => json_encode( array( $elementName, $priceVal ) ) )
-                                              );
+                if ( property_exists( $qf, '_quickConfig' ) && $qf->_quickConfig ) {
+                    $extra = array( 'price'   => json_encode( array( $elementName, $priceVal ) ),
+                                    'onclick' => 'clearAmountOther();', 
+                                   );
+                } else{
+                    $extra = array( 'price' => json_encode( array( $elementName, $priceVal ) ) );
+                }
+                $choice[$opId] = $qf->createElement('radio', null, '', $opt['label'], $opt['id'], $extra );
                 
                 // CRM-6902
                 if ( in_array($opId, $feezeOptions) ) {
                     $choice[$opId]->freeze( );
                 }
             }
+               
+            if( CRM_Utils_Array::value( 'is_separate_payment', $qf->_membershipBlock ) && $field->name == 'contribution_amount') {
+                $choice[] = $qf->createElement('radio', null, '', 'No thank you', '00', 
+                                               array( 'price' => json_encode( array( $elementName, "0" ) ),
+                                                      'onclick' => 'clearAmountOther();' ) 
+                                               );  
+            }    
 
             if ( !$field->is_required ) {
                 // add "none" option
-                $choice[] = $qf->createElement('radio', null, '', '-none-', '0', 
+                if( CRM_Utils_Array::value( 'is_allow_other_amount', $otherAmount ) && $field->name == 'contribution_amount') {
+                    
+                    $none = 'Other Amount';
+                }elseif( !CRM_Utils_Array::value( 'is_required', $qf->_membershipBlock ) && $field->name == 'membership_amount' ) {
+                    
+                    $none = 'No thank you';
+                }
+                else{
+                    $none = '-none-';
+                }
+                
+               
+                
+                $choice[] = $qf->createElement('radio', null, '', $none, '0', 
                                                 array('price' => json_encode( array( $elementName, "0" ) ) ) 
                                               );
             }

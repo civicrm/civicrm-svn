@@ -26,20 +26,34 @@ SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 
 -- Sample Extended Property Group and Fields
 
-INSERT INTO 
-   `civicrm_option_group` (`name`, `description`, `is_reserved`, `is_active`) 
-VALUES 
-    ('civicrm_contribution_page.amount.1', 'Contribution Page Amount: 1', 1, 1);
+INSERT INTO `civicrm_price_set` (`name`,`title`,`is_active`,`extends`,`is_quick_config`)
+VALUES ('help_support_civicrm_amount', 'Help Support CiviCRM!', 1, 2, 1);
 
-SELECT @option_cpage_id   := max(id) from civicrm_option_group where name = 'civicrm_contribution_page.amount.1';
+SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1;
+
+INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`, `is_enter_qty`, `weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`, `visibility_id`)
+VALUES ( @priceSetId, 'contribution_amount', 'Contribution Amount', 'Radio', 0, 1, 1, 1, 1, 0, 1),
+( @priceSetId, 'other_amount', 'Other Amount', 'Text', 0, 2, 0, 1, 1, 0, 1);
+
+INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id`) 
+         VALUES ('civicrm_contribution_page', 1, @priceSetId);
+
+SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'contribution_amount';
 
 INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `weight`, `is_active`, `is_default`) 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
 VALUES
-    (@option_cpage_id,   'Friend','1.00',1,1,0),
-    (@option_cpage_id,   'Supporter','5.00',2,1,0),
-    (@option_cpage_id,   'Booster','10.00',3,1,1),
-    (@option_cpage_id,   'Sustainer','50.00',4,1,0);
+    (@priceFieldID,'Friend','Friend','1.00',1,1,0),
+    (@priceFieldID,'Supporter', 'Supporter','5.00',2,1,0),
+    (@priceFieldID,'Booster','Booster','10.00',3,1,1),
+    (@priceFieldID,'Sustainer','Sustainer','50.00',4,1,0);
+
+SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'other_amount';
+
+INSERT INTO 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+VALUES
+     (@priceFieldID, 'Other_Amount', 'Other Amount', 1, 2, 1, 0);
     
 INSERT INTO civicrm_contribution_page
   (title,intro_text,contribution_type_id,is_monetary,is_allow_other_amount,default_amount_id,min_amount,max_amount,goal_amount,thankyou_title,thankyou_text,thankyou_footer,receipt_from_name,receipt_from_email,cc_receipt,bcc_receipt,receipt_text,is_active,footer_text,amount_block_is_active,honor_block_is_active,honor_block_title,honor_block_text, currency )
@@ -129,3 +143,73 @@ INSERT INTO `civicrm_dashboard`
     ( @domain_id, '{ts escape="sql"}Event Income Report (Summary){/ts}', 'civicrm/report/instance/23&reset=1&section=1&snippet=5&charts=pieChart', 'access CiviEvent'     , 'AND', 0, 0,'1', 6, '1', 'civicrm/report/instance/23&reset=1&section=1&snippet=5&charts=pieChart&context=dashletFullscreen'),
     ( @domain_id, '{ts escape="sql"}Membership Report (Summary){/ts}'  , 'civicrm/report/instance/19&reset=1&section=2&snippet=5',                 'access CiviMember'    , 'AND', 0, 0,'1', 7, '1', 'civicrm/report/instance/19&reset=1&section=2&snippet=5&context=dashletFullscreen');
    
+-- INSERT sample data for membership 
+
+SELECT @priceSetID := max(id) FROM `civicrm_price_set` WHERE `name` LIKE 'default_membership_type_amount' AND `is_quick_config` = 1;
+INSERT INTO `priceamount_crm`.`civicrm_price_field` ( `price_set_id`, `name`, `label`, `html_type` ) 
+VALUES ( '2', '1', 'Membership Amount', 'Radio' );
+
+SELECT @priceFieldId := max(id) FROM `civicrm_price_field` WHERE `name` LIKE '1';
+
+INSERT civicrm_price_field_value ( price_field_id, name, label, description, amount, weight, membership_type_id )
+SELECT @priceFieldId, LOWER(name), name, description, minimum_fee, id as weight, id  FROM `civicrm_membership_type`;
+
+-- Insert sample data for event
+
+INSERT INTO `civicrm_price_set` (`name`,`title`,`is_active`,`extends`, `is_quick_config`)
+VALUES ('Rain-forest Cup Youth Soccer Tournament', 'Rain-forest Cup Youth Soccer Tournament', 1, 1, 1),
+       ('Fall Fundraiser Dinner', 'Fall Fundraiser Dinner', 1, 1, 1),
+       ('Summer Solstice Festival Day Concert', 'Summer Solstice Festival Day Concert',1,1,1);
+
+SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 AND `name` = 'Rain-forest Cup Youth Soccer Tournament';
+
+INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`, `is_enter_qty`, `weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`, `visibility_id`)
+VALUES ( @priceSetId, 'Tournament Fees', 'Tournament Fees', 'Radio', 0, 1, 1, 1, 1, 1, 1);
+
+INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id`) 
+         VALUES ('civicrm_event', 3, @priceSetId);
+
+SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'Tournament Fees';
+
+INSERT INTO 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+VALUES
+    (@priceFieldID,'Tiny_tots__ages_5_8_','Tiny-tots (ages 5-8)','800',1,1,1),
+    (@priceFieldID,'Junior_Stars__ages_9_12_','Junior Stars (ages 9-12)','1000',2,1,0),
+    (@priceFieldID,'Super_Stars__ages_13_18_','Super Stars (ages 13-18)','1500',3,1,0);
+
+SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 AND `name` = 'Fall Fundraiser Dinner';
+
+INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`, `is_enter_qty`, `weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`, `visibility_id`)
+VALUES ( @priceSetId, 'Dinner Contribution', 'Dinner Contribution', 'Radio', 0, 1, 1, 1, 1, 1, 1);
+
+INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id`) 
+         VALUES ('civicrm_event', 1, @priceSetId);
+
+SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'Dinner Contribution';
+
+INSERT INTO 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+VALUES
+    (@priceFieldID,'Single','Single','50',1,1,1),
+    (@priceFieldID,'Couple','Couple','100',2,1,0),
+    (@priceFieldID,'Family','Family','200',3,1,0);
+
+SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 AND `name` = 'Summer Solstice Festival Day Concert';
+
+INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`, `is_enter_qty`, `weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`, `visibility_id`)
+VALUES ( @priceSetId, 'Festival Fee', 'Festival Fee', 'Radio', 0, 1, 1, 1, 1, 1, 1);
+
+INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id`) 
+         VALUES ('civicrm_event', 2, @priceSetId);
+
+SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'Festival Fee';
+
+INSERT INTO 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+VALUES
+    (@priceFieldID,'Bass','Bass','25',1,1,1),
+    (@priceFieldID,'Tenor','Tenor','40',2,1,0),
+    (@priceFieldID,'Soprano','Soprano','50',3,1,0);
+
+

@@ -62,6 +62,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     protected $_waitlistMsg = null;
     protected $_requireApprovalMsg = null;
     
+    public $_quickConfig = null;
     /**
      * Allow deveopera to use hook_civicrm_buildForm()
      * to override the registration dupe check
@@ -399,8 +400,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 }
             }*/
         }
-
-        $this->_paymentProcessors = $this->get( 'paymentProcessors' );
+        $pps = null;
+            $this->_paymentProcessors = $this->get( 'paymentProcessors' );
         if ( !empty ( $this->_paymentProcessors ) ) {
             $pps = $this->_paymentProcessors;
             foreach ( $pps as $key => &$name ){

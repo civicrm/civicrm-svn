@@ -51,6 +51,14 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
     public $_values;
 
     /**
+     * the values for the quickconfig for priceset
+     *
+     * @var boolean
+     * @protected
+     */
+    public $_quickConfig = null;
+
+    /**
      * Price Set ID, if the new price set method is used
      *
      * @var int
@@ -1320,6 +1328,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 //insert contribution type name in receipt.
                 $this->assign( 'contributionTypeName', CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
                                                                                     $contributionParams['contribution_type_id'] ) );
+                
                 $contributions = array( );
                 if ( $this->_single ) {
                     $contributions[] = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );

@@ -85,7 +85,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( '_qf_Register_upload-bottom' );
         
         $firstName = substr(sha1(rand()), 0, 7);
-        $this->type( 'email-5', "$firstName@Anderson.com" );
+        $this->type( 'email-Primary', "$firstName@Anderson.com" );
         $this->click( '_qf_Register_upload-bottom' );
         $this->waitForPageToLoad('30000');
         $this->click( "css=div.crm-event-thankyou-form-block div#tell-a-friend a" );

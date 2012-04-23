@@ -90,7 +90,6 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
                 
         // We need a payment processor
         $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
-        $this->webtestAddPaymentProcessor($processorName);
         
         //create contribution page for event pcp with campaign type as contribution
         $contributionPageId = $this->webtestAddContributionPage(          $conHash, 
@@ -110,7 +109,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
                                                                           $conPremiums, 
                                                                           $conWidget, 
                                                                           $conPcp, 
-                                                                          false,
+                                                                          true,
                                                                           $conIsAprovalNeeded);
         
         //event add for contribute campaign type
@@ -207,7 +206,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
         $this->click("link=Fees");
         $this->waitForElementPresent("_qf_Fee_upload-bottom");
         $this->click("CIVICRM_QFID_1_2");
-        $this->select("payment_processor_id", "label=" . $processorName);
+        $this->click( "xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']" );
         $this->select("contribution_type_id", "value=4");
         if ( $priceSet) {
             // get one - TBD
@@ -275,8 +274,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->open($this->sboxPath . $registerUrl);
       
       $this->select("additional_participants", "value=" . $numberRegistrations);
-      $this->type("email-5", $emailParticipants);
-      
+      $this->type("email-Primary", $emailParticipants);
       $this->select("credit_card_type", "value=Visa");
       $this->type("credit_card_number", "4111111111111111");
       $this->type("cvv2", "000");
@@ -297,7 +295,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
               $this->waitForPageToLoad('30000');
               // Look for Skip button
               $this->waitForElementPresent("_qf_Participant_{$i}_next_skip-Array");
-              $this->type("email-5", "{$firstName}" . substr(sha1(rand()), 0, 7) . "@example.org" );
+              $this->type("email-Primary", "{$firstName}" . substr(sha1(rand()), 0, 7) . "@example.org" );
               $this->click("_qf_Participant_{$i}_next");
           }
       }
@@ -367,8 +365,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       }
       
       if( $campaignType == 'contribute' ) {
-          $this->click("amount_other");
-          $this->type("amount_other", $contributionAmount);
+          $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", "$contributionAmount");
           $feeLevel = null;
       }
       elseif( $campaignType == 'event' ){
@@ -379,7 +376,6 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $lastNameDonar = 'Roger' .substr( sha1( rand( ) ), 0, 7 );
       $middleNameDonar = 'Nicholas' .substr( sha1( rand( ) ), 0, 7 );
       $this->type( "email-5", $firstNameDonar . "@example.com" );
-      
       $this->webtestAddCreditCardDetails( );
       $this->webtestAddBillingDetails( $firstNameDonar, $middleNameDonar, $lastNameDonar );
       
@@ -495,7 +491,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->click("_qf_Basic_refresh");
       $this->waitForPageToLoad("30000");
       
-      $this->click( "xpath=//div[@class='crm-search-results']/table/tbody//tr/td[3]/a[text()='{$sortName}']" );
+      $this->click( "xpath=//div[@class='crm-search-results']//table/tbody//tr/td[3]/a[text()='{$sortName}']" );
       $this->waitForPageToLoad("30000");
       
       $this->click("css=li#tab_contribute a");
@@ -505,7 +501,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       
       $this->webtestVerifyTabularData( 
                                       array( 'From'            => "{$firstName} {$lastName}",
-                                             'Total Amount' => $amount,
+                                             'Net Amount' => $amount,
                                              'Contribution Status'     => 'Completed', 
                                              'Soft Credit To'          => "{$pcpCreatorFirstName} {$pcpCreatorLastName}",
                                              )

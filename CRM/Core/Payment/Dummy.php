@@ -62,7 +62,7 @@ class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
      */ 
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
-        if (self::$_singleton[$processorName] === null ) {
+        if ( CRM_Utils_Array::value( $processorName, self::$_singleton ) === null ) {
             self::$_singleton[$processorName] = new CRM_Core_Payment_Dummy( $mode, $paymentProcessor );
         }
         return self::$_singleton[$processorName];

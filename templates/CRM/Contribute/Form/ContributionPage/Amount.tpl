@@ -80,6 +80,36 @@
         </tr>
     </table>
    
+    <div id="recurringFields">
+        <table class="form-layout-compressed">
+       	
+
+	{if $recurringPaymentProcessor}
+        <tr id="recurringContribution" class="crm-contribution-form-block-is_recur"><th scope="row" class="label" width="20%">{$form.is_recur.label}</th>
+               <td>{$form.is_recur.html}<br />
+                  <span class="description">{ts}Check this box if you want to give users the option to make recurring contributions. This feature requires that you use a payment processor which supports recurring billing / subscriptions functionality.{/ts} {docURL page="CiviContribute Payment Processor Configuration"}</span>
+               </td>
+        </tr>
+        <tr id="recurFields" class="crm-contribution-form-block-recurFields"><td>&nbsp;</td>
+               <td>
+                  <table class="form-layout-compressed">
+            <tr class="crm-contribution-form-block-recur_frequency_unit"><th scope="row" class="label">{$form.recur_frequency_unit.label}<span class="marker" title="This field is required.">*</span></th>
+                        <td>{$form.recur_frequency_unit.html}<br />
+                        <span class="description">{ts}Select recurring units supported for recurring payments.{/ts}</span></td>
+                    </tr> 
+                    <tr class="crm-contribution-form-block-is_recur_interval"><th scope="row" class="label">{$form.is_recur_interval.label}</th>
+                        <td>{$form.is_recur_interval.html}<br />
+                        <span class="description">{ts}Can users also set an interval (e.g. every '3' months)?{/ts}</span></td>
+                    </tr>
+                  </table>
+                </td>
+        </tr>
+        {/if}  
+
+        </table>
+    </div>
+
+
     <div id="amountFields">
         <table class="form-layout-compressed">
             {* handle CiviPledge fields *} 
@@ -115,28 +145,6 @@
                 </td>
             </tr>
             {/if}
-
-            {if $recurringPaymentProcessor}
-            <tr id="recurringContribution" class="crm-contribution-form-block-is_recur"><th scope="row" class="label" width="20%">{$form.is_recur.label}</th>
-               <td>{$form.is_recur.html}<br />
-                  <span class="description">{ts}Check this box if you want to give users the option to make recurring contributions. This feature requires that you use a payment processor which supports recurring billing / subscriptions functionality.{/ts} {docURL page="CiviContribute Payment Processor Configuration"}</span>
-               </td>
-            </tr>
-            <tr id="recurFields" class="crm-contribution-form-block-recurFields"><td>&nbsp;</td>
-               <td>
-                  <table class="form-layout-compressed">
-                    <tr class="crm-contribution-form-block-recur_frequency_unit"><th scope="row" class="label">{$form.recur_frequency_unit.label}<span class="marker" title="This field is required.">*</span></th>
-                        <td>{$form.recur_frequency_unit.html}<br />
-                        <span class="description">{ts}Select recurring units supported for recurring payments.{/ts}</span></td>
-                    </tr> 
-                    <tr class="crm-contribution-form-block-is_recur_interval"><th scope="row" class="label">{$form.is_recur_interval.label}</th>
-                        <td>{$form.is_recur_interval.html}<br />
-                        <span class="description">{ts}Can users also set an interval (e.g. every '3' months)?{/ts}</span></td>
-                    </tr>
-                  </table>
-                </td>
-            </tr>
-            {/if}    
 	
             <tr class="crm-contribution-form-block-is_allow_other_amount"><th scope="row" class="label" width="20%">{$form.is_allow_other_amount.label}</th>
             <td>{$form.is_allow_other_amount.html}<br />
@@ -266,10 +274,12 @@
 			     cj( "#price_set_id" ).val( '' ); 
 			  }
 			  show('priceSet', 'table-row' );
+		    	  show( 'recurringFields', 'block' );
 		       } else {
 		    	  cj( "#price_set_id" ).val( '' );
 		    	  hide('amountFields', 'block' );
 			  hide('priceSet', 'table-row' );
+		    	  hide( 'recurringFields', 'block' );
 		       }
 		  break;
 	   }

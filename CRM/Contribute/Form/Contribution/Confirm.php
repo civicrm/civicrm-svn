@@ -1305,7 +1305,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         
         $prefix = CRM_Core_PseudoConstant::individualPrefix();
         $honorType = CRM_Core_PseudoConstant::honor( );
-        $this->assign('honor_type',       $honorType[$params['honor_type_id']]);
+        $this->assign('honor_type',       CRM_Utils_Array::value( CRM_Utils_Array::value( 'honor_type_id', $params ), $honorType) );
         $this->assign('honor_prefix',     CRM_Utils_Array::value( CRM_Utils_Array::value( 'honor_prefix_id', $params ), $prefix ) );
         $this->assign('honor_first_name', CRM_Utils_Array::value( 'honor_first_name', $params ));
         $this->assign('honor_last_name',  CRM_Utils_Array::value( 'honor_last_name', $params ));
