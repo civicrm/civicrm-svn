@@ -245,7 +245,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
         }
            
@@ -264,7 +263,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            require_once 'CRM/Core/Smarty/resources/String.php';      
             civicrm_smarty_register_string_resource( );
         }
 

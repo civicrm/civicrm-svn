@@ -121,7 +121,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
                 CRM_Core_BAO_UFJoin::getUFGroupIds( $ufJoinParams );
 
             // Get the id for the event registration profile
-            require_once 'CRM/Core/BAO/UFJoin.php';
             $eventRegistrationIdParams = $eventRegistrationIdDefaults = array('name' => 'event_registration', );
             CRM_Core_BAO_UFGroup::retrieve($eventRegistrationIdParams, $eventRegistrationIdDefaults);
 

@@ -59,7 +59,6 @@ class CRM_Core_I18n
 
             if (defined('CIVICRM_GETTEXT_NATIVE') && CIVICRM_GETTEXT_NATIVE && function_exists('gettext')) {
                 // Note: the file hierarchy for .po must be, for example: l10n/fr_FR/LC_MESSAGES/civicrm.mo
-                require_once 'CRM/Core/I18n/NativeGettext.php';
 
                 $this->_nativegettext = true;
 

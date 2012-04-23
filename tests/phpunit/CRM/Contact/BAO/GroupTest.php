@@ -60,7 +60,6 @@ class CRM_Contact_BAO_GroupTest extends CiviUnitTestCase {
    */
   function testAddSimple( )
   {
-    require_once 'CRM/Contact/BAO/Group.php';
 
     $checkParams = $params =
       array(
@@ -79,7 +78,6 @@ class CRM_Contact_BAO_GroupTest extends CiviUnitTestCase {
   }
 
   function testAddSmart( ) {
-    require_once 'CRM/Contact/BAO/Group.php';
 
     $checkParams = $params =
       array(

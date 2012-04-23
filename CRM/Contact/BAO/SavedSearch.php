@@ -268,7 +268,6 @@ LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_
      * formValues, create a smart group with that
      */
     static function create( &$params ) {
-      require_once 'CRM/Contact/DAO/SavedSearch.php';
 
       $savedSearch = new CRM_Contact_DAO_SavedSearch( );
       if ( isset( $params['formValues'] ) &&

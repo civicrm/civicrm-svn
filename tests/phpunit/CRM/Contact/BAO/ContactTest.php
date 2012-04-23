@@ -26,7 +26,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
      */
     function testAddWithEmptyParams( )
     {
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::add( $params = array() );
         
         //Now check Contact object
@@ -47,7 +46,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                               'contact_type' => 'Individual'
                               );
         
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::add( $params );
         
         //Now check $contact is object of contact DAO..
@@ -85,7 +83,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         unset( $params['location'] ); 
         $prefComm = $params['preferred_communication_method'];
-        require_once 'CRM/Contact/BAO/Contact.php';
         
         //create the contact using add()
         $contact = CRM_Contact_BAO_Contact::add( $params );
@@ -114,12 +111,10 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertEquals( $params['job_title'], $contact->job_title, 'Check for job_title creation.' ); 
         $this->assertEquals( $params['gender_id'], $contact->gender_id, 'Check for gender_id creation.' ); 
         $this->assertEquals( '1', $contact->is_deceased, 'Check for is_deceased creation.' );
-        require_once 'CRM/Utils/Date.php';
         $this->assertEquals( CRM_Utils_Date::processDate( $params['birth_date'] ), 
                             $contact->birth_date, 'Check for birth_date creation.' ); 
         $this->assertEquals( CRM_Utils_Date::processDate( $params['deceased_date'] ), 
                             $contact->deceased_date, 'Check for deceased_date creation.' ); 
-        require_once 'CRM/Core/BAO/CustomOption.php';
         $dbPrefComm = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                $contact->preferred_communication_method );
         $checkPrefComm = array( );
@@ -169,7 +164,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         $prefComm = $updateParams['preferred_communication_method'];
         $updateParams['contact_id'] = $contactId;
-        require_once 'CRM/Contact/BAO/Contact.php';
         //create the contact using add()
         $contact = CRM_Contact_BAO_Contact::create( $updateParams );
         $contactId = $contact->id;
@@ -199,12 +193,10 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertEquals( $updateParams['job_title'], $contact->job_title, 'Check for job_title creation.' ); 
         $this->assertEquals( $updateParams['gender_id'], $contact->gender_id, 'Check for gender_id creation.' ); 
         $this->assertEquals( '1', $contact->is_deceased, 'Check for is_deceased creation.' );
-        require_once 'CRM/Utils/Date.php';
         $this->assertEquals( CRM_Utils_Date::processDate( $updateParams['birth_date'] ), 
                             $contact->birth_date, 'Check for birth_date creation.' ); 
         $this->assertEquals( CRM_Utils_Date::processDate( $updateParams['deceased_date'] ), 
                             $contact->deceased_date, 'Check for deceased_date creation.' ); 
-        require_once 'CRM/Core/BAO/CustomOption.php';
         $dbPrefComm = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                $contact->preferred_communication_method );
         $checkPrefComm = array( );
@@ -232,7 +224,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                              'contact_type' => 'Individual'
                              );
         
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::add( $params );
         $this->assertEquals( $firstName, $contact->first_name, 'Check for first name creation.' );
         $this->assertEquals( $lastName, $contact->last_name, 'Check for last name creation.' );
@@ -294,7 +285,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                         'first_name' => 'Bill',
                         'last_name'  => 'Adams',
                         );
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         
         //Now check Contact object
@@ -312,7 +302,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $params = $this->contactParams( );
         $params['note'] = 'test note';
         
-        require_once 'CRM/Contact/BAO/Contact.php';
         //create the contact with given params.
         $contact = CRM_Contact_BAO_Contact::create( $params );
         
@@ -415,7 +404,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                           );
 
         $updateParams['contact_id'] = $contactId;
-        require_once 'CRM/Contact/BAO/Contact.php';
         //create the contact with given params.
         $contact = CRM_Contact_BAO_Contact::create( $updateParams );
         
@@ -467,7 +455,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                           'Database check for New created note ' );
         
         //delete all notes related to contact
-        require_once 'CRM/Core/BAO/Note.php';
         CRM_Core_BAO_Note::cleanContactNotes( $contactId );
 
         
@@ -493,11 +480,9 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                         'country_id'        => 1228,
                                         'state_province_id' => 1004,
                                         );
-        require_once 'CRM/Contact/BAO/Contact.php';
         CRM_Contact_BAO_Contact::resolveDefaults( $params );
         
         //check the resolve values.
-        require_once 'CRM/Core/PseudoConstant.php';
         $genders = CRM_Core_PseudoConstant::gender( );
         $this->assertEquals( $genders[$params['gender_id']], $params['gender'], 'Check for gender.' );
         $prefix = CRM_Core_PseudoConstant::individualPrefix( );
@@ -523,7 +508,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $params['note']            = 'test note';
         $params['create_employer'] = 'Yahoo';
         
-        require_once 'CRM/Contact/BAO/Contact.php';
         //create the contact with given params.
         $contact = CRM_Contact_BAO_Contact::create( $params );
         //Now check $contact is object of contact DAO..
@@ -531,7 +515,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $contactId = $contact->id;
 
         //create employee of relationship.
-        require_once 'CRM/Contact/BAO/Contact/Utils.php';
         CRM_Contact_BAO_Contact_Utils::createCurrentEmployerRelationship( $contactId, $params['create_employer'] );
 
         //retrieve the contact values from database.
@@ -595,7 +578,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         }
         
         //delete all notes related to contact
-        require_once 'CRM/Core/BAO/Note.php';
         CRM_Core_BAO_Note::cleanContactNotes( $contactId );
 
         
@@ -636,7 +618,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                         );
 
         //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $contactParams );
         $contactId = $contact->id;
 
@@ -665,7 +646,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertDBNull( 'CRM_Core_DAO_OpenID',$contactId ,
                              'id', 'openid', 'Database check, openId deleted successfully.' );
         
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
 
         // Check that the custom field value is no longer present
         $params = array( 'entityID'                  => $contactId,
@@ -689,7 +669,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
      */
     function testCreateProfileContact( )
     {
-        require_once 'CRM/Contact/BAO/Contact.php';
         $fields = CRM_Contact_BAO_Contact::exportableFields('Individual');
         
         //current employer field for individual
@@ -772,14 +751,12 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'user_unique_id', 
                                       'id', $profileParams['user_unique_id'], 'Check for user_unique_id creation.');
         
-        require_once 'CRM/Utils/Date.php';
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'birth_date', 
                                       'id', $params['birth_date'],'Check for birth_date creation.');
         
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'deceased_date', 
                                       'id', $params['deceased_date'],'Check for deceased_date creation.');
         
-        require_once 'CRM/Core/BAO/CustomOption.php';
         $dbPrefComm = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactId, 'preferred_communication_method' ) );
         $checkPrefComm = array( );
@@ -846,7 +823,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         }
         
         //Now check values of tag ids.
-        require_once 'CRM/Core/BAO/EntityTag.php';
         $tags = CRM_Core_BAO_EntityTag::getTag( $contactId );
         foreach( $tags as $key => $val ) {
             $tagIds[$key] = 1;
@@ -962,14 +938,12 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'user_unique_id', 
                                       'id', $updatePfParams['user_unique_id'], 'Check for user_unique_id creation.');
         
-        require_once 'CRM/Utils/Date.php';
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'birth_date', 'id', 
                                        $updateCParams['birth_date'],'Check for birth_date creation.');
         
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'deceased_date', 'id',
                                       $updateCParams['deceased_date'],'Check for deceased_date creation.');
         
-        require_once 'CRM/Core/BAO/CustomOption.php';
         $dbPrefComm = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactId, 'preferred_communication_method' ) );
         $checkPrefComm = array( );
@@ -1035,7 +1009,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         }
         
         //Now check values of tag ids.
-        require_once 'CRM/Core/BAO/EntityTag.php';
         $tags = CRM_Core_BAO_EntityTag::getTag( $contactId );
         foreach( $tags as $key => $val ) {
             $tagIds[$key] = 1;
@@ -1055,7 +1028,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $params = $this->contactParams( );
         
         //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         $contactId = $contact->id;
         
@@ -1078,7 +1050,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
      */
     function testFields( )
     {
-        require_once 'CRM/Contact/BAO/Contact.php';
         $allImpFileds = CRM_Contact_BAO_Contact::importableFields( 'All' );
         $allExpFileds = CRM_Contact_BAO_Contact::importableFields( 'All' );
         //Now check all fields
@@ -1114,7 +1085,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         unset( $params['email'][1]['is_primary'] );
         
         //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         $contactId = $contact->id;
         //get the primary email.
@@ -1141,7 +1111,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         unset( $params['openid'][1]['is_primary'] );
         
         //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         $contactId = $contact->id;
         //get the primary openid
@@ -1163,7 +1132,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         //get the contact params
         $params = $this->contactParams( ); 
         //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         $contactId = $contact->id;
         
@@ -1186,7 +1154,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         //get the contact params
         $params = $this->contactParams( ); 
         //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         $contactId = $contact->id;
         
@@ -1209,14 +1176,12 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $params = $this->contactParams( ); 
         
         //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         $contactId = $contact->id;
         
         //get display name.
         $dbDisplayName = CRM_Contact_BAO_Contact::displayName( $contactId );
         
-        require_once 'CRM/Core/PseudoConstant.php';
         $prefix = CRM_Core_PseudoConstant::individualPrefix( );
         $suffix = CRM_Core_PseudoConstant::individualSuffix( );
         
@@ -1243,17 +1208,14 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $params = $this->contactParams( ); 
         
         //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::create( $params );
         $contactId = $contact->id;
         
         //get DisplayAndImage.
         list( $displayName, $image ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $contactId );
         
-        require_once 'CRM/Contact/BAO/Contact/Utils.php';
         $checkImage = CRM_Contact_BAO_Contact_Utils::getImage( $params['contact_type'], false, $contactId );
         
-        require_once 'CRM/Core/PseudoConstant.php';
         $prefix = CRM_Core_PseudoConstant::individualPrefix( );
         $suffix = CRM_Core_PseudoConstant::individualSuffix( );
         
@@ -1293,7 +1255,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
      */
     private function contactParams( ) 
     {
-        require_once 'CRM/Core/OptionGroup.php';
 
         $params = array(
                         'first_name'            => 'john',

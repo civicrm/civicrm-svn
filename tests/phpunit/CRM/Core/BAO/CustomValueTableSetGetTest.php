@@ -44,7 +44,6 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase
         $params = array( 'label'   => 'test_Date');
         $field  = array( );
         
-        require_once 'CRM/Core/BAO/CustomField.php';
         CRM_Core_BAO_CustomField::retrieve( $params, $field );
         $fieldID = $field['id'];
 
@@ -52,7 +51,6 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase
         $date = '20080608000000';
         $params = array( 'entityID'           => $contactID,
                          'custom_' . $fieldID => $date );
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         $result = CRM_Core_BAO_CustomValueTable::setValues( $params );
         $this->assertEquals( $result['is_error'], 0, 'Verify that is_error = 0 (success).');
 
@@ -63,7 +61,6 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase
         $values = CRM_Core_BAO_CustomValueTable::getValues( $params );
 
         $this->assertEquals( $values['is_error'], 0, 'Verify that is_error = 0 (success).');
-        require_once 'CRM/Utils/Date.php';
         $this->assertEquals( $values['custom_' . $fieldID . '_1'], 
                              CRM_Utils_Date::mysqlToIso($date), 
                              'Verify that the date value is stored for contact ' . $contactID);
@@ -72,7 +69,6 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase
         $badDate = '20080631000000';
         $params   = array( 'entityID'           => $contactID,
                            'custom_' . $fieldID => $badDate );
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         $result = CRM_Core_BAO_CustomValueTable::setValues( $params );
         
         // Check that the error flag is set AND that custom date value has not been modified
@@ -88,7 +84,6 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase
         // Test setting test_Date to null
         $params = array( 'entityID'           => $contactID,
                          'custom_' . $fieldID => null );
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         $result = CRM_Core_BAO_CustomValueTable::setValues( $params );
         
         // Check that the date value is empty
@@ -128,7 +123,6 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase
       $field  = array( );
       
       //get field Id
-      require_once 'CRM/Core/BAO/CustomField.php';
       CRM_Core_BAO_CustomField::retrieve( $params, $field );
       
       $fieldID = $field['id'];
@@ -137,7 +131,6 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase
       $yesNo = '1';
       $params = array( 'entityID'           => $contactID,
                        'custom_' . $fieldID => $yesNo );
-      require_once 'CRM/Core/BAO/CustomValueTable.php';
       $result = CRM_Core_BAO_CustomValueTable::setValues( $params );
 	
       $this->assertEquals( $result['is_error'], 0, 'Verify that is_error = 0 (success).');
@@ -157,7 +150,6 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase
       $badYesNo = '20';
       $params   = array( 'entityID'           => $contactID,
                          'custom_' . $fieldID => $badYesNo );
-      require_once 'CRM/Core/BAO/CustomValueTable.php';
       $result = CRM_Core_BAO_CustomValueTable::setValues( $params );
       
       // Check that the error flag is set AND that custom date value has not been modified

@@ -33,7 +33,6 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Member/Form/Membership.php';
 
 /**
  *  Test APIv2 civicrm_activity_* functions

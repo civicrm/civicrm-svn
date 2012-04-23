@@ -32,7 +32,6 @@ class CRM_Core_BAO_EmailTest extends CiviUnitTestCase
                          'location_type_id' => 1,
                          'contact_id'       => $contactId );
         
-        require_once 'CRM/Core/BAO/Email.php';
         CRM_Core_BAO_Email::add( $params );
         
         $emailId = $this->assertDBNotNull( 'CRM_Core_DAO_Email', 'jane.doe@example.com' , 'id', 'email',
@@ -68,7 +67,6 @@ class CRM_Core_BAO_EmailTest extends CiviUnitTestCase
                         'location_type_id' => 1,
                         'contact_id'       => $contactId );
         
-        require_once 'CRM/Core/BAO/Email.php';
         CRM_Core_BAO_Email::add( $params );
         
         $emailId = $this->assertDBNotNull( 'CRM_Core_DAO_Email', 'jane.doe@example.com' , 'id', 'email',
@@ -129,7 +127,6 @@ class CRM_Core_BAO_EmailTest extends CiviUnitTestCase
 
         $contactId = Contact::createIndividual( $contactParams );
 
-        require_once 'CRM/Core/BAO/Email.php';
         $emails = CRM_Core_BAO_Email::allEmails( $contactId );
 
         $this->assertEquals( count( $emails ) , 3, 'Checking number of returned emails.' );

@@ -26,8 +26,6 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Pledge/BAO/PledgePayment.php';
-require_once 'CRM/Pledge/BAO/Pledge.php';
 /**
  * Test class for CRM_Pledge_BAO_PledgePayment BAO
  *

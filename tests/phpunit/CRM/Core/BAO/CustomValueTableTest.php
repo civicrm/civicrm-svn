@@ -48,7 +48,6 @@ class CRM_Core_BAO_CustomValueTableTest extends CiviUnitTestCase
 						      'file_id'          => ''
 						      ));
 
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::store( $params, 'civicrm_contact', $contactID );
         //        $this->assertDBCompareValue('CRM_Custom_DAO_CustomValue', )
         
@@ -84,7 +83,6 @@ class CRM_Core_BAO_CustomValueTableTest extends CiviUnitTestCase
 						      'file_id'          => 1
 						      ));
 
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::store( $params, 'civicrm_contact', $contactID );
         //        $this->assertDBCompareValue('CRM_Custom_DAO_CustomValue', )
         
@@ -120,7 +118,6 @@ class CRM_Core_BAO_CustomValueTableTest extends CiviUnitTestCase
 						      'file_id'          => 1
 						      ));
 	
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::store( $params, 'civicrm_contact', $contactID );
         //        $this->assertDBCompareValue('CRM_Custom_DAO_CustomValue', )
         
@@ -156,7 +153,6 @@ class CRM_Core_BAO_CustomValueTableTest extends CiviUnitTestCase
 						      'file_id'          => ''
 						      ));
 
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::store( $params, 'civicrm_contact', $contactID );
         //        $this->assertDBCompareValue('CRM_Custom_DAO_CustomValue', )
         
@@ -192,7 +188,6 @@ class CRM_Core_BAO_CustomValueTableTest extends CiviUnitTestCase
 						      'file_id'          => ''
 						      ));
         
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::store( $params, 'civicrm_contact', $contactID );
         //        $this->assertDBCompareValue('CRM_Custom_DAO_CustomValue', )
         
@@ -229,11 +224,9 @@ class CRM_Core_BAO_CustomValueTableTest extends CiviUnitTestCase
 						      'file_id'          => ''
 						      ));
         
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::store( $params, 'civicrm_contact', $contactID );
         //        $this->assertDBCompareValue('CRM_Custom_DAO_CustomValue', )
 
-        require_once 'CRM/Core/BAO/CustomValueTable.php';
         $entityValues =  CRM_Core_BAO_CustomValueTable::getEntityValues( $contactID, 'Individual' );
               
         $this->assertEquals( $entityValues[$customField->id] ,'<p><strong>This is a <u>test</u></p>',

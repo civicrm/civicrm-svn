@@ -25,7 +25,6 @@
  +--------------------------------------------------------------------+
 */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Contribute/BAO/ContributionType.php';
 
 class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase 
 {

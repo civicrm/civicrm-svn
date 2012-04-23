@@ -1,7 +1,6 @@
 <?php
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Utils/String.php';
 
 class CRM_Utils_StringTest extends CiviUnitTestCase
 {

@@ -311,7 +311,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
         if ( ! array_key_exists($column, self::$pcpStatus) ) {
             self::$pcpStatus[$column] = array( );
 
-            require_once 'CRM/Core/OptionGroup.php';
             self::$pcpStatus[$column] = CRM_Core_OptionGroup::values('pcp_status', false, 
                                                                           false, false, null, $column);
         }

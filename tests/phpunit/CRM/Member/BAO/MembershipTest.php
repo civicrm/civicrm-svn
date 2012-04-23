@@ -28,10 +28,8 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
 require_once 'CiviTest/Custom.php';
-require_once 'CRM/Member/BAO/Membership.php';
 require_once 'CiviTest/ContributionPage.php';
 require_once 'CiviTest/Membership.php';
-require_once 'CRM/Member/BAO/MembershipType.php';
 
 class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
 {
@@ -533,8 +531,6 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                                 'membership_id', 
                                 'Database checked on membershiplog record.' );
 
-        require_once 'CRM/Core/Controller.php';
-        require_once 'CRM/Core/Form.php';
         $membershipRenewal = new CRM_Core_Form( );
         $membershipRenewal->controller = new CRM_Core_Controller( );
         $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $this->_membershipTypeID, $isTestMembership = 0, $membershipRenewal, null, null );
@@ -598,8 +594,6 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase
                                 'membership_id', 
                                 'Database checked on membershiplog record.' );
 
-        require_once 'CRM/Core/Controller.php';
-        require_once 'CRM/Core/Form.php';
         $membershipRenewal = new CRM_Core_Form( );
         $membershipRenewal->controller = new CRM_Core_Controller( );
         $MembershipRenew = CRM_Member_BAO_Membership::renewMembership( $contactId, $this->_membershipTypeID, $isTestMembership = 0, $membershipRenewal, null, null );

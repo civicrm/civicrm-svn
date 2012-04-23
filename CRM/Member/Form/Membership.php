@@ -946,7 +946,6 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
         }
 
         if ( $priceSetId ) {
-            require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::processAmount( $this->_priceSet['fields'],
                                               $this->_params, $lineItem[$priceSetId] );
             $params['total_amount'] = CRM_Utils_Array::value( 'amount', $this->_params );

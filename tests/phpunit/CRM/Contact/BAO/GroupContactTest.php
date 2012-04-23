@@ -62,7 +62,6 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
      */
     function testAdd( )
     {
-        require_once 'CRM/Contact/BAO/GroupContact.php';
 
         //creates a test group contact by recursively creation
         //lets create 10 groupContacts for fun
@@ -81,7 +80,6 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
     function testGetGroupId()
     {
 
-        require_once 'CRM/Contact/BAO/GroupContact.php';
 
         //creates a test groupContact object
         //force group_id to 1 so we can compare
@@ -102,7 +100,6 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
     function testContactSearchByParentGroup()
     {
         // create a parent group
-        require_once 'CRM/Contact/BAO/Group.php';
         // TODO: This is not an API test!!
         $groupParams1 = array (
                                'title'       => 'Parent Group',

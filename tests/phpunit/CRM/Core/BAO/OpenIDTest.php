@@ -39,7 +39,6 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase
                         'is_primary'       => 1,
                         );
         
-        require_once 'CRM/Core/BAO/OpenID.php';
         $openObject = CRM_Core_BAO_OpenID::add( $params );
         
         $openId = $openObject->id;
@@ -78,7 +77,6 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase
                         'is_primary'       => 1,
                         );
         
-        require_once 'CRM/Core/BAO/OpenID.php';
         $openObject = CRM_Core_BAO_OpenID::add( $params );
         
         $openId = $openObject->id;
@@ -121,7 +119,6 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase
                          'allowed_to_login' => 1
                          );
         
-        require_once 'CRM/Core/BAO/OpenID.php';
         $openObjectOne = CRM_Core_BAO_OpenID::add( $params );
         
         $openIdOne = $openObjectOne->id;

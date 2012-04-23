@@ -66,7 +66,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
                         'contact_id'       => $this->_contactId
                         );
         
-        require_once 'CRM/Event/BAO/Participant.php';
         // New Participant Created
         $participant = CRM_Event_BAO_Participant::add($params);
         
@@ -154,7 +153,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
      */
     function testEventFull()
     {
-        require_once 'CRM/Event/BAO/Event.php';
         CRM_Event_BAO_Event::add(
                                  $eventParams = array( 'max_participants' => 1 , 
                                                        'id'               => $this->_eventId 
@@ -176,7 +174,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
      */
     function testimportableFields()
     {
-        require_once 'CRM/Event/BAO/Participant.php';
         $importableFields = CRM_Event_BAO_Participant::importableFields();
         $this->assertNotEquals( count( $importableFields ) , 0, 'Checking array not to be empty.' );
 
@@ -220,7 +217,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
                         'contact_id'       => $this->_contactId
                         );
         
-        require_once 'CRM/Event/BAO/Participant.php';
         // New Participant Created
         $participant = CRM_Event_BAO_Participant::add($params);
         
@@ -273,7 +269,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
      */
     function testCreate( )
     {
-        require_once 'CRM/Event/BAO/Participant.php';
         $params = array(
                         'send_receipt'     => 1,
                         'is_test'          => 0,
@@ -337,7 +332,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
      */
     function testexportableFields() 
     {
-        require_once 'CRM/Event/BAO/Participant.php';
         $exportableFields = CRM_Event_BAO_Participant::exportableFields();
         $this->assertNotEquals( count( $exportableFields ) , 0, 'Checking array not to be empty.' );
         
@@ -350,15 +344,12 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
      */
     function testfixEventLevel() 
     {
-        require_once  'CRM/Utils/String.php';
-        require_once  'CRM/Utils/Array.php';
 
         $paramsSet['title']     = 'Price Set';
         $paramsSet['name']      = CRM_Utils_String::titleToVar( 'Price Set' );
         $paramsSet['is_active'] = CRM_Utils_Array::value('is_active', $params, false);
         $paramsSet['extends']   = 1;
         
-        require_once 'CRM/Price/BAO/Set.php';
         $priceset = CRM_Price_BAO_Set::create( $paramsSet );
 
          //Checking for priceset added in the table.
@@ -381,7 +372,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
                               );
         
         $ids = array();
-        require_once 'CRM/Price/BAO/Field.php';
         $pricefield = CRM_Price_BAO_Field::create( $paramsField, $ids );
         
         //Checking for priceset added in the table.
@@ -402,7 +392,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
                                    'fee_level'        => 'Price_Field - 55' 
                                    );
         
-        require_once 'CRM/Event/BAO/Participant.php';
         $participant = CRM_Event_BAO_Participant::add($participantParams);
         
         //Checking for participant added in the table.
@@ -413,7 +402,6 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
         $ids    = array( );
         $params = array( 'id' =>  $participant->id);
         
-        require_once 'CRM/Event/BAO/Participant.php';
         CRM_Event_BAO_Participant::getValues( $params, $values, $ids );
         $this->assertNotEquals( count($values), 0, 'Checking for empty array.' );
 

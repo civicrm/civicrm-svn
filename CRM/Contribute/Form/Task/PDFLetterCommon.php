@@ -1,6 +1,5 @@
 <?php
 
-require_once 'CRM/Contact/Form/Task/PDFLetterCommon.php';
 
 /**
  * This class provides the common functionality for creating PDF letter for
@@ -85,7 +84,6 @@ class CRM_Contribute_Form_Task_PDFLetterCommon extends CRM_Contact_Form_Task_PDF
 
         self::createActivities( $form, $html_message, $form->_contactIds );
       
-        require_once 'CRM/Utils/PDF/Utils.php';
         CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", false, $formValues );
 
         $form->postProcessHook( );

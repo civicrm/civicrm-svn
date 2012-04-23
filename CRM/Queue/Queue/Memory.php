@@ -26,8 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CRM/Queue/Queue.php';
-require_once 'CRM/Queue/DAO/QueueItem.php';
 
 /**
  * A queue implementation which stores items in the CiviCRM SQL database

@@ -26,7 +26,6 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Member/BAO/MembershipStatus.php';
 
 class CRM_Member_BAO_MembershipStatusTest extends CiviUnitTestCase
 {

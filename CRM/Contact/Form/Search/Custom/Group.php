@@ -688,7 +688,6 @@ print $xActs . ' / ' . $iActs . ' / '; */
     }
     
     function buildACLClause( $tableAlias = 'contact' ) {
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
         list( $this->_aclFrom, $this->_aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( $tableAlias );
     }
 

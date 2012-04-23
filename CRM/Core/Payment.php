@@ -219,7 +219,6 @@ abstract class CRM_Core_Payment {
             CRM_Core_Error::fatal( "Missing 'processor_name' param for payment callback" );
         
         // Query db for processor ..
-        require_once "CRM/Core/DAO.php";
         $mode = @$params['mode'];
         
         $dao = CRM_Core_DAO::executeQuery( "
@@ -249,7 +248,6 @@ abstract class CRM_Core_Payment {
         while ( $dao->fetch() ) {
 
             // Check pp is extension
-            require_once 'CRM/Core/Extensions.php';
             $ext = new CRM_Core_Extensions( );
             if ( $ext->isExtensionKey( $dao->class_name ) ) {
                 $extension_instance_found = true;
@@ -262,7 +260,6 @@ abstract class CRM_Core_Payment {
                 continue;
             }
             
-            require_once "CRM/Core/BAO/PaymentProcessor.php";
             $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $dao->processor_id, $mode );
             
             // Should never be empty - we already established this processor_id exists and is active. 

@@ -26,7 +26,6 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Activity/BAO/ActivityAssignment.php';
 /**
  * Test class for CRM_Activity_BAO_ActivityAssignment BAO
  *

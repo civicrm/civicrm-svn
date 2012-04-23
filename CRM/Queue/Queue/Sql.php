@@ -26,8 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CRM/Queue/Queue.php';
-require_once 'CRM/Queue/DAO/QueueItem.php';
 
 /**
  * A queue implementation which stores items in the CiviCRM SQL database
@@ -91,7 +89,6 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
    * @return bool, TRUE on success
    */
   function createItem($data) {
-    require_once 'CRM/Utils/Time.php';
     $dao = new CRM_Queue_DAO_QueueItem();
     $dao->queue_name = $this->getName();
     $dao->submit_time = CRM_Utils_Time::getTime('YmdHis');

@@ -37,22 +37,18 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 /**
  *  Include class under test
  */
-require_once 'CRM/Contact/Form/Search/Custom/Group.php';
 
 /**
  *  Include form definitions
  */
-require_once 'CRM/Core/Form.php';
 
 /**
  *  Include DAO to do queries
  */
-require_once 'CRM/Core/DAO.php';
 
 /**
  *  Include dataProvider for tests
  */
-require_once 'tests/phpunit/CRM/Contact/Form/Search/Custom/GroupTestDataProvider.php';
 
 /**
  *  Test contact custom search functions

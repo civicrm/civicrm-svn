@@ -3,12 +3,10 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
 
-require_once 'CRM/Contact/BAO/Query.php';
 
 /**                                                                                                                                                                         
  *  Include dataProvider for tests                                                                                                                                          
  */
-require_once 'tests/phpunit/CRM/Mailing/BAO/QueryTestDataProvider.php';
 
 class CRM_Mailing_BAO_QueryTest extends CiviUnitTestCase 
 {

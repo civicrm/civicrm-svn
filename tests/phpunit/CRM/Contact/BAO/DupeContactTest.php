@@ -91,8 +91,6 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
         // verify that all contacts have been created separately
         $this->assertEquals( count($contactIds), 7, 'Check for number of contacts.' );
 
-        require_once 'CRM/Dedupe/DAO/RuleGroup.php';
-        require_once 'CRM/Dedupe/Finder.php';
         $dao = new CRM_Dedupe_DAO_RuleGroup();
         $dao->contact_type = 'Individual';
         $dao->level        = 'Fuzzy';
@@ -181,8 +179,6 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase
         // verify that all contacts have been created separately
         $this->assertEquals( count($contactIds), 7, 'Check for number of contacts.' );
 
-        require_once 'CRM/Dedupe/DAO/RuleGroup.php';
-        require_once 'CRM/Dedupe/Finder.php';
         $dao = new CRM_Dedupe_DAO_RuleGroup();
         $dao->contact_type = 'Individual';
         $dao->level        = 'Fuzzy';

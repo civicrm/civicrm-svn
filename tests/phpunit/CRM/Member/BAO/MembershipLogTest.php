@@ -25,11 +25,8 @@
  */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Member/BAO/MembershipLog.php';
 require_once 'CiviTest/Contact.php';
 require_once 'CiviTest/Membership.php';
-require_once 'CRM/Member/BAO/Membership.php';
-require_once 'CRM/Member/BAO/MembershipType.php';
 
 /**
  *  Test CRM/Member/BAO Membership Log add , delete functions

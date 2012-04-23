@@ -41,7 +41,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'activity_type_id'   => 2
                         );
         
-        require_once 'CRM/Activity/BAO/Activity.php';
         CRM_Activity_BAO_Activity::create( $params );
         
         $activityId = $this->assertDBNotNull( 'CRM_Activity_DAO_Activity', 'Scheduling Meeting' , 'id', 
@@ -89,7 +88,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'activity_date_time' => date('Ymd'),
                         );
         
-        require_once 'CRM/Activity/BAO/Activity.php';
         CRM_Activity_BAO_Activity::create( $params );
         
         $activityId = $this->assertDBNotNull( 'CRM_Activity_DAO_Activity', 'Scheduling Meeting' ,
@@ -126,7 +124,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'activity_date_time' => date('Ymd'),
                         );
         
-        require_once 'CRM/Activity/BAO/Activity.php';
         CRM_Activity_BAO_Activity::create( $params );
         
         $activityId = $this->assertDBNotNull( 'CRM_Activity_DAO_Activity', 'Scheduling Meeting' , 'id', 
@@ -175,7 +172,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'activity_date_time' => date('Ymd'),
                         );
         
-        require_once 'CRM/Activity/BAO/Activity.php';
         CRM_Activity_BAO_Activity::create( $params );
         
         $activityId = $this->assertDBNotNull( 'CRM_Activity_DAO_Activity', 'Scheduling Meeting' , 'id', 
@@ -221,7 +217,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'activity_date_time' => date('Ymd'),
                         );
         
-        require_once 'CRM/Activity/BAO/Activity.php';
         CRM_Activity_BAO_Activity::create( $params );
         
         $activityId = $this->assertDBNotNull( 'CRM_Activity_DAO_Activity', 'Scheduling Meeting' , 'id', 
@@ -261,7 +256,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'activity_date_time' => date('Ymd'),
                         );
         
-        require_once 'CRM/Activity/BAO/Activity.php';
         CRM_Activity_BAO_Activity::create( $params );
         
         $activityId = $this->assertDBNotNull( 'CRM_Activity_DAO_Activity', 'Scheduling Meeting' , 'id', 
@@ -290,7 +284,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                             dirname(__FILE__)
                             . '/activities_for_dashboard_count.xml') );
 
-        require_once 'CRM/Activity/BAO/Activity.php';
         $params = array(
                         'contact_id'       => null,
                         'admin'            => true,
@@ -330,7 +323,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'sort'             => null,
                         );
 
-        require_once 'CRM/Activity/BAO/Activity.php';
         $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact
@@ -359,7 +351,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'rowCount'         => 0,
                         'sort'             => null,
                         );
-        require_once 'CRM/Activity/BAO/Activity.php';
         $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
         
         //since we are loading activities from dataset, we know total number of activities for this contact
@@ -388,7 +379,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'rowCount'         => 0,
                         'sort'             => null,
                         );
-        require_once 'CRM/Activity/BAO/Activity.php';
         $activityCount = CRM_Activity_BAO_Activity::getActivitiesCount( $params );
        
         //since we are loading activities from dataset, we know total number of activities for this contact
@@ -416,7 +406,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'rowCount'         => 0,
                         'sort'             => null,
                         );
-        require_once 'CRM/Activity/BAO/Activity.php';
         $activities = CRM_Activity_BAO_Activity::getActivities( $params );
 
         //since we are loading activities from dataset, we know total number of activities
@@ -452,7 +441,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'rowCount'         => 0,
                         'sort'             => null,
                         );
-        require_once 'CRM/Activity/BAO/Activity.php';
         $activities = CRM_Activity_BAO_Activity::getActivities( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact
@@ -494,7 +482,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'rowCount'         => 0,
                         'sort'             => null,
                         );
-        require_once 'CRM/Activity/BAO/Activity.php';
         $activities = CRM_Activity_BAO_Activity::getActivities( $params );
         
         //since we are loading activities from dataset, we know total number of activities for this contact
@@ -545,7 +532,6 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                         'rowCount'         => 0,
                         'sort'             => null,
                         );
-        require_once 'CRM/Activity/BAO/Activity.php';
         $activities = CRM_Activity_BAO_Activity::getActivities( $params );
 
         //since we are loading activities from dataset, we know total number of activities for this contact

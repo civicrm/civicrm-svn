@@ -79,7 +79,6 @@ class CRM_Pledge_BAO_PledgeTest extends CiviUnitTestCase
                         );
         
         //do test for normal add.
-        require_once "CRM/Pledge/BAO/Pledge.php";
         $pledge = CRM_Pledge_BAO_Pledge::add( $params );
         
         foreach ( $params as $param => $value ) {
@@ -94,7 +93,6 @@ class CRM_Pledge_BAO_PledgeTest extends CiviUnitTestCase
     {
         $defaults = array();
 		$params   = array( 'pledge_id' => 0 );
-        require_once 'CRM/Pledge/BAO/Pledge.php';
 		$pledgeId = CRM_Pledge_BAO_Pledge::retrieve( $params, $defaults );
 		
 		$this->assertEquals( count($pledgeId), 0, "Pledge Id must be greater than 0" );	
@@ -107,7 +105,6 @@ class CRM_Pledge_BAO_PledgeTest extends CiviUnitTestCase
     {        
         $defaults = array();
         $params   = array( 'pledge_id' => 'random text' );
-        require_once 'CRM/Pledge/BAO/Pledge.php';
 		$pledgeId = CRM_Pledge_BAO_Pledge::retrieve( $params, $defaults );
 		
 		$this->assertEquals( count($pledgeId), 0, "Pledge Id must be a string" );	
@@ -134,7 +131,6 @@ class CRM_Pledge_BAO_PledgeTest extends CiviUnitTestCase
                         'amount'               => 300
                         );
         
-        require_once "CRM/Pledge/BAO/Pledge.php";
         $pledge = CRM_Pledge_BAO_Pledge::add( $params );
         
         $defaults     = array();

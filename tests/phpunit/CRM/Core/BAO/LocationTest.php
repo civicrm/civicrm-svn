@@ -75,7 +75,6 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
         $params = array( 'contact_id'       => $contactId,
                          'street_address' => 'Saint Helier St' );
         
-        require_once 'CRM/Core/BAO/Location.php';
         CRM_Core_BAO_Location::create( $params );
         
         //Now check DB for Address
@@ -150,7 +149,6 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
         
         $params['contact_id'] = $contactId;
         
-        require_once 'CRM/Core/BAO/Location.php';
         $location   = CRM_Core_BAO_Location::create( $params );
 
         $locBlockId = CRM_Utils_Array::value( 'id', $location ); 
@@ -266,12 +264,10 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
         //create location block.
         //with various element of location block 
         //like address, phone, email, im.
-        require_once 'CRM/Core/BAO/Location.php';
         $location   = CRM_Core_BAO_Location::create( $params, null, true );
         $locBlockId = CRM_Utils_Array::value( 'id', $location );
 
         //update event record with location block id
-        require_once 'CRM/Event/BAO/Event.php';
         $eventParams = array( 'id'           => $eventId,
                               'loc_block_id' => $locBlockId );
         
@@ -391,11 +387,9 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
         //create location block.
         //with various elements
         //like address, phone, email, im.
-        require_once 'CRM/Core/BAO/Location.php';
         $location   = CRM_Core_BAO_Location::create( $params, null, true );
         $locBlockId = CRM_Utils_Array::value( 'id', $location );
         //update event record with location block id
-        require_once 'CRM/Event/BAO/Event.php';
         $eventParams = array( 'id'           => $eventId,
                               'loc_block_id' => $locBlockId );
         CRM_Event_BAO_Event::add( $eventParams );
@@ -492,7 +486,6 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase
         $params['contact_id'] = $contactId;
                 
         //create location elements.
-        require_once 'CRM/Core/BAO/Location.php';
         CRM_Core_BAO_Location::create( $params );
                 
         //get the values from DB

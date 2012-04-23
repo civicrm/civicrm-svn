@@ -79,7 +79,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                          'thankyou_date'          => '20080522'
                          );
 
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contribution = CRM_Contribute_BAO_Contribution::create( $params ,$ids );
         
         $this->assertEquals( $params['trxn_id'], $contribution->trxn_id, 'Check for transcation id creation.' );
@@ -156,7 +155,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                                  );
         
         
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contribution = CRM_Contribute_BAO_Contribution::create( $params ,$ids );
         
         // Check that the custom field value is saved
@@ -203,7 +201,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                          'thankyou_date'          => '20080522'
                          );
 
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contribution = CRM_Contribute_BAO_Contribution::create( $params ,$ids );
         
         $this->assertEquals( $params['trxn_id'], $contribution->trxn_id, 'Check for transcation id creation.' );
@@ -235,7 +232,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                           'honor_last_name'  => $lastName,
                           'honor_email'      => $email
                           );
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contact = CRM_Contribute_BAO_Contribution::createHonorContact( $params, $honorId );
         
         $this->assertDBCompareValue( 'CRM_Contact_DAO_Contact', $contact , 'first_name', 'id', $firstName,
@@ -256,7 +252,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                         'honor_contact_id'       => $contact
                         );
 
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contribution = CRM_Contribute_BAO_Contribution::create( $param ,$ids );
         $id = $contribution->id;
         $this->assertDBCompareValue('CRM_Contribute_DAO_Contribution',  $id, 'honor_contact_id', 
@@ -269,7 +264,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         
         //get annual contribution information
         $annual = CRM_Contribute_BAO_Contribution::annual( $contactId );
-        require_once 'CRM/Core/DAO.php';
         
         $config = CRM_Core_Config::singleton();
         $currencySymbol = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') ;
@@ -297,7 +291,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                              'contact_type' => 'Individual'
                              );
         
-        require_once 'CRM/Contact/BAO/Contact.php';
         $contact = CRM_Contact_BAO_Contact::add( $params );
         
         //Now check $contact is object of contact DAO..
@@ -326,7 +319,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                         'thankyou_date'          => '20080522'
                         );
 
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contribution = CRM_Contribute_BAO_Contribution::create( $param ,$ids );
         
         $this->assertEquals( $param['trxn_id'], $contribution->trxn_id, 'Check for transcation id creation.' );
@@ -366,7 +358,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                         'min_contribution' => 100,
                         'is_active'        => 1
                         );
-        require_once 'CRM/Contribute/BAO/ManagePremiums.php';
        $premium = CRM_Contribute_BAO_ManagePremiums::add( $params,$ids );
 
        $this->assertEquals( 'TEST Premium', $premium->name, 'Check for premium  name.' );
@@ -392,7 +383,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                        'thankyou_date'          => '20080522'
                        );
 
-       require_once 'CRM/Contribute/BAO/Contribution.php';
        $contribution = CRM_Contribute_BAO_Contribution::create( $param ,$ids );
 
        $this->assertEquals( $param['trxn_id'], $contribution->trxn_id, 'Check for transcation id creation.' );
@@ -449,7 +439,6 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                         'thankyou_date'          => '20080522'
                        );
 
-        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contribution = CRM_Contribute_BAO_Contribution::create( $param ,$ids );
         
         $this->assertEquals( $param['trxn_id'], $contribution->trxn_id, 'Check for transcation id creation.' );

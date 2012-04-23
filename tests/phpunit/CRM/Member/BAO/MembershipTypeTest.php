@@ -26,7 +26,6 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Member/BAO/MembershipType.php';
 
 class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase
 {
@@ -282,7 +281,6 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase
      *
      */
     function testGetRenewalDatesForMembershipType( ) {
-        require_once 'CRM/Member/BAO/Membership.php';
         $ids    = array( 'memberOfContact' => $this->_orgContactID );
         $params = array( 'name' => 'General',
                          'description' => null,

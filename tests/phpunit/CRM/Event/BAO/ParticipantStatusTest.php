@@ -26,7 +26,6 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Event/BAO/ParticipantStatusType.php';
 
 /**
  * Test class for CRM_Event_BAO_ParticipantStatus BAO

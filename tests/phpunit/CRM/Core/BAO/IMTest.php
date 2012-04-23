@@ -33,7 +33,6 @@ class CRM_Core_BAO_IMTest extends CiviUnitTestCase
                          'location_type_id' => 1,
                          'contact_id'       => $contactId );
         
-        require_once 'CRM/Core/BAO/IM.php';
         CRM_Core_BAO_IM::add( $params );
         
         $imId = $this->assertDBNotNull( 'CRM_Core_DAO_IM', 'jane.doe' , 'id', 'name',
@@ -69,7 +68,6 @@ class CRM_Core_BAO_IMTest extends CiviUnitTestCase
         );
 
         $contactId = 69;
-        require_once 'CRM/Core/BAO/IM.php';
         $IMs = CRM_Core_BAO_IM::allIMs( $contactId );
 
         $this->assertEquals( count( $IMs ) , 3, 'Checking number of returned IMs.' );

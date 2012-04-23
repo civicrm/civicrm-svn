@@ -61,7 +61,6 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
         $query = "
 DELETE FROM civicrm_contact_type
       WHERE name IN ('{$this->student}','{$this->parent}','{$this->sponsor}', '{$this->team}');";
-        require_once 'CRM/Core/DAO.php';
         CRM_Core_DAO::executeQuery( $query );
     }
 

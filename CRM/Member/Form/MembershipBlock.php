@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Price/BAO/FieldValue.php';
 
 
 /**
@@ -294,7 +293,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             if ( $params['member_is_active'] && is_array( $membershipTypes ) && !$priceSetID ) {
                 $usedPriceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id, 2 );
                 if( ! CRM_Utils_Array::value( 'mem_price_field_id', $params)  && !$usedPriceSetId ){
-                    require_once 'CRM/Price/BAO/Set.php';
                     $pageTitle = strtolower( CRM_Utils_String::munge( $this->_values['title'], '_', 245 ) );
                     $setParams['title'] = $this->_values['title'];
                     if(  !CRM_Core_DAO::getFieldValue( 'CRM_Price_BAO_Set', $pageTitle, 'id', 'name' ) ){
@@ -347,7 +345,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
                 
                 }
                 
-                require_once 'CRM/Price/BAO/Field.php';
                 $priceField = CRM_Price_BAO_Field::create( $fieldParams );
             }else{
                 $deletePriceSet = 1;

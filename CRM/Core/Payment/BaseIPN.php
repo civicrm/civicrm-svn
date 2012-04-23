@@ -655,14 +655,12 @@ LIMIT 1;";
     }
 
     function addrecurLineItems( $recurId, $contributionId ){
-        require_once 'CRM/Price/BAO/LineItem.php';
         $lineSets = $lineItems = array();
 
         //Get the first contribution id with recur id
         if( $recurId ){
             $contriID = CRM_Core_DAO::getFieldValue( 'CRM_Contibution_DAO_Contibution', $recurId, 'id', 'contribution_recur_id' );
             $lineItems = CRM_Price_BAO_LineItem::getLineItems( $contriID, 'contribution' );
-            require_once 'CRM/Price/DAO/Field.php';
             if ( !empty( $lineItems ) ) {
                 foreach( $lineItems as $key => $value ) {
                     $pricesetID     = new CRM_Price_DAO_Field();
@@ -672,7 +670,6 @@ LIMIT 1;";
                 }
             }
 
-            require_once "CRM/Contribute/Form/AdditionalInfo.php";
             CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contributionId, $lineSets );
         }
     }

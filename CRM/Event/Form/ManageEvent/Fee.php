@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Price/BAO/FieldValue.php';
 
 /**
  * This class generates form components for Event Fees
@@ -605,7 +604,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                         $params['default_fee_id'] = null;
                         if( !CRM_Utils_Array::value( 'price_set_id', $params ) ){
                             if( ! CRM_Utils_Array::value( 'price_field_id', $params ) ){
-                            require_once 'CRM/Price/BAO/Set.php';
                             $eventTitle = $this->_defaultValues['title'];
                             if( !CRM_Core_DAO::getFieldValue( 'CRM_Price_BAO_Set', $eventTitle, 'id', 'title' ) ){
                                 $setParams['name'] = $setParams['title'] = $eventTitle;
@@ -640,7 +638,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                             foreach( $options as $value )
                                 $fieldParams['option_weight'][$value['weight']] = $value['weight'];
                             $fieldParams['default_option'] = $params['default'];
-                            require_once 'CRM/Price/BAO/Field.php';
                             $priceField = CRM_Price_BAO_Field::create( $fieldParams );
                         }
                         

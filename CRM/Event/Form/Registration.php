@@ -601,7 +601,6 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         }
 
         // get the email that the confirmation would have been sent to
-        require_once 'CRM/Event/BAO/Event.php';
         $session = CRM_Core_Session::singleton();
         
         // assign is_email_confirm to templates
@@ -731,7 +730,6 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         // get price info
          
         // retrive all active price set fields.
-        require_once 'CRM/Core/BAO/Discount.php';
         $discountId = CRM_Core_BAO_Discount::findSet( $eventID, 'civicrm_event' );
         if( $discountId ){
             $priceSetId =  CRM_Core_DAO::getFieldValue( 'CRM_Core_BAO_Discount', $discountId, 'option_group_id' );

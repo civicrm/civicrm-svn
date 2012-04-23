@@ -4,7 +4,6 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
 require_once 'CiviTest/Custom.php';
-require_once 'CRM/Core/BAO/CustomValueTable.php';
 
 class CRM_Core_BAO_CustomValueTableMultipleTest extends CiviUnitTestCase 
 {

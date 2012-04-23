@@ -64,10 +64,8 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
 
         $this->_contactId = $this->individualCreate( ) ;
         $this->ids['contact'] = $this->_contactId;
-        require_once 'CRM/Core/BAO/PaymentProcessor.php';
         $this->paymentProcessor  = new CRM_Core_BAO_PaymentProcessor();
 
-        require_once 'CRM/Core/Payment/AuthorizeNet.php';
         $paymentProcessorParams = array( 'user_name' => 'user_name',
                                    'password'  => 'password',
                                    'url_recur' => 'url_recur' );
@@ -241,7 +239,6 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
         catch (Exception $e){
           echo $e->getMessage();
         }
-        require_once 'CRM/Member/PseudoConstant.php';
         CRM_Member_PseudoConstant::membershipType( $this->_membershipTypeID , true );
         CRM_Member_PseudoConstant::membershipStatus( null, null, 'name', true );
         $this->_membershipParams = array(

@@ -34,7 +34,6 @@
  *
  */
 
-require_once 'CRM/Price/BAO/FieldValue.php';
 
 /**
  * form to process actions on the group aspect of Custom Data
@@ -482,7 +481,6 @@ SELECT id
                         
                         $usedPriceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id, 3 );
                         if( ! CRM_Utils_Array::value( 'price_field_id', $params ) && !$usedPriceSetId ){
-                            require_once 'CRM/Price/BAO/Set.php';
                             $pageTitle = strtolower( CRM_Utils_String::munge( $this->_values['title'], '_', 245 ) );
                             $setParams['title'] = $this->_values['title'];
                             if( !CRM_Core_DAO::getFieldValue( 'CRM_Price_BAO_Set', $pageTitle, 'id', 'name' ) ){
@@ -531,7 +529,6 @@ SELECT id
                         foreach( $options as $value )
                             $fieldParams['option_weight'][$value['weight']] = $value['weight'];
                         $fieldParams['default_option'] = $params['default'];
-                        require_once 'CRM/Price/BAO/Field.php';
                         $priceField = CRM_Price_BAO_Field::create( $fieldParams );
                         if(  CRM_Utils_Array::value( 'is_allow_other_amount', $params ) && !CRM_Utils_Array::value( 'price_field_other', $params )){
                             $fieldParams['label']                = "Other Amount";

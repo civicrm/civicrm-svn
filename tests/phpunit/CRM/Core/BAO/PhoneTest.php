@@ -60,7 +60,6 @@ class CRM_Core_BAO_PhoneTest extends CiviUnitTestCase
                          'phone_type'       => 'Mobile',
                          'contact_id'       => $contactId );
         
-        require_once 'CRM/Core/BAO/Phone.php';
         CRM_Core_BAO_Phone::add( $params );
         
         $phoneId = $this->assertDBNotNull( 'CRM_Core_DAO_Phone', $contactId , 'id', 'contact_id',
@@ -98,7 +97,6 @@ class CRM_Core_BAO_PhoneTest extends CiviUnitTestCase
         
         $contactId = Contact::createIndividual( $contactParams );
 
-        require_once 'CRM/Core/BAO/Phone.php';
         $Phones = CRM_Core_BAO_Phone::allPhones( $contactId );
 
         $this->assertEquals( count( $Phones ) , 2, 'Checking number of returned Phones.' );

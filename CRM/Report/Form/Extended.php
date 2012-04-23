@@ -350,7 +350,6 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     );
   }
   function getMembershipTypeColumns() {
-    require_once 'CRM/Member/PseudoConstant.php';
     return array(
       'civicrm_membership_type' => array(
         'dao' => 'CRM_Member_DAO_MembershipType', 
@@ -971,12 +970,10 @@ WHERE 	line_item_civireport.id IS NOT NULL
   }
   
   function alterMembershipTypeID($value, &$row) {
-    require_once 'CRM/Member/PseudoConstant.php';
     return is_string( CRM_Member_PseudoConstant::membershipType( $value, FALSE ) ) ? CRM_Member_PseudoConstant::membershipType( $value, FALSE ) : '';
   }
   
   function alterMembershipStatusID($value, &$row) {
-    require_once 'CRM/Member/PseudoConstant.php';
     return is_string( CRM_Member_PseudoConstant::membershipStatus( $value, FALSE ) ) ? CRM_Member_PseudoConstant::membershipStatus( $value, FALSE ) : '';
   }
   function alterCountryID($value, &$row) {
@@ -986,7 +983,6 @@ WHERE 	line_item_civireport.id IS NOT NULL
     return CRM_Core_PseudoConstant::county( $value, FALSE );
   }
   function alterStateProvinceID($value, &$row) {
-    require_once 'CRM/Core/PseudoConstant.php';
     $url = CRM_Utils_System::url( CRM_Utils_System::currentPath(), "reset=1&force=1&state_province_id_op=in&state_province_id_value={$value}", $this->_absoluteUrl );
     $row ['civicrm_address_state_province_id_link'] = $url;
     $row ['civicrm_address_state_province_id_hover'] = ts( "%1 for this state.", array(

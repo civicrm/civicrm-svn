@@ -25,7 +25,6 @@
  +--------------------------------------------------------------------+
 */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Core/BAO/FinancialTrxn.php';
 
 
 class CRM_Core_BAO_FinancialTrxnTest extends CiviUnitTestCase 

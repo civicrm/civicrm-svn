@@ -1040,7 +1040,6 @@ WHERE civicrm_event.is_active = 1
         }
         
         if ( $values['event']['is_email_confirm'] || $returnMessageText ) {
-            require_once 'CRM/Contact/BAO/Contact/Location.php';
             list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID );
 
             //send email only when email is present

@@ -28,8 +28,6 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/AuthorizeNet.php';
 require_once 'CiviTest/Contact.php';
-require_once 'CRM/Contribute/BAO/Contribution.php';
-require_once 'CRM/Contribute/BAO/ContributionRecur.php';
 
 class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
 {
@@ -45,8 +43,6 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase
     function setUp( )
     {
         parent::setUp();
-        require_once 'CRM/Core/Payment/AuthorizeNet.php';
-        require_once 'CRM/Core/BAO/PaymentProcessorType.php';
         $this->paymentProcessor  = new AuthorizeNet( );
         $this->processorParams   = $this->paymentProcessor->create( );
 

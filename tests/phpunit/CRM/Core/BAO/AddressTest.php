@@ -72,7 +72,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
         
         $fixAddress = true;
         
-        require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::create( $params, $fixAddress, $entity = null );
         $addressId = $this->assertDBNotNull( 'CRM_Core_DAO_Address', 'Oberoi Garden' , 'id', 'street_address',
                                            'Database check for created address.' );
@@ -99,7 +98,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
         $params['contact_id'] = $contactId;
         
         
-        require_once 'CRM/Core/BAO/Address.php';
         $block = CRM_Core_BAO_Address::create( $params, $fixAddress, $entity = null );
 
         $cid = $this->assertDBNotNull( 'CRM_Core_DAO_Address', $contactId, 'id', 'contact_id',
@@ -133,7 +131,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
                            'contact_id' => $contactId
                            ); 
         
-        require_once 'CRM/Core/BAO/Address.php';
         $addAddress = CRM_Core_BAO_Address::add( $fixParams, $fixAddress = true ) ;
              
         $addParams = $this->assertDBNotNull( 'CRM_Core_DAO_Address', $contactId , 'id', 'contact_id',
@@ -172,7 +169,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
                            'contact_id' => $contactId
                            ); 
         
-        require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::add( $fixParams, $fixAddress=true ) ;
         
         $addParams = $this->assertDBNotNull( 'CRM_Core_DAO_Address', $contactId , 'id', 'contact_id',
@@ -194,13 +190,11 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
                            'contact_id' => $contactId
                            );
         
-        require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::add( $fixParams, $fixAddress=true ) ;
         
         $addParams = $this->assertDBNotNull( 'CRM_Core_DAO_Address', $contactId , 'id', 'contact_id',
                                              'Database check for created contact address.' );
         
-        require_once 'CRM/Core/BAO/Address.php';
         $allAddress = CRM_Core_BAO_Address::allAddress( $contactId ) ;
                
         $this->assertEquals( count( $allAddress ) , 2, 'Checking number of returned addresses.' );
@@ -231,7 +225,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
                            'contact_id' => $contactId
                            );
         
-        require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::add( $fixParams, $fixAddress=true ) ;
         
         $addParams = $this->assertDBNotNull( 'CRM_Core_DAO_Address', $contactId , 'id', 'contact_id',
@@ -239,7 +232,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
         
         $contact_Id = null;
         
-        require_once 'CRM/Core/BAO/Address.php';
         $allAddress = CRM_Core_BAO_Address::allAddress( $contact_Id ) ;
         
         $this->assertEquals( $allAddress  , null, 'Checking null for returned addresses.' );
@@ -276,7 +268,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
         
         $fixAddress = true;
         
-        require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::create( $params, $fixAddress, $entity = null );
         
         $addressId = $this->assertDBNotNull( 'CRM_Core_DAO_Address', $contactId, 'id', 'contact_id',
@@ -297,7 +288,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
     {
         
         // valid Street address to be parsed ( without locale )
-        require_once 'CRM/Core/BAO/Address.php';
         $street_address =  "54A Excelsior Ave. Apt 1C";
         $parsedStreetAddress = CRM_Core_BAO_Address::parseStreetAddress( $street_address );
         $this->assertEquals( $parsedStreetAddress['street_name'], 'Excelsior Ave.' );
@@ -306,7 +296,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase
         $this->assertEquals( $parsedStreetAddress['street_number_suffix'], 'A' );
        
         // valid Street address to be parsed ( $locale = 'en_US' )
-        require_once 'CRM/Core/BAO/Address.php';
         $street_address =  "54A Excelsior Ave. Apt 1C";
         $locale = 'en_US';
         $parsedStreetAddress = CRM_Core_BAO_Address::parseStreetAddress( $street_address, $locale );

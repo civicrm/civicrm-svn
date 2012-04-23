@@ -32,7 +32,6 @@
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/api.php';
-require_once 'CRM/Bridge/OG/Drupal.php';
 /**
  *  Test contact custom search functions
  *
