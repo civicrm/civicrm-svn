@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  +--------------------------------------------------------------------+
@@ -40,32 +40,32 @@
 class CRM_Mailing_Page_Preview extends CRM_Core_Page
 {
 
-    /** 
+    /**
      * run this page (figure out the action needed and perform it).
-     * 
+     *
      * @return void
-     */ 
+     */
     function run()
     {
 
         $session = CRM_Core_Session::singleton();
-        
+
         $qfKey = CRM_Utils_Request::retrieve('qfKey', 'String', CRM_Core_DAO::$_nullObject, false, 'text');
         $type  = CRM_Utils_Request::retrieve('type', 'String', CRM_Core_DAO::$_nullObject, false, 'text');
-        
+
         $options = array();
         $session->getVars($options, "CRM_Mailing_Controller_Send_$qfKey");
-        
+
         //get the options if control come from search context, CRM-3711
         if ( empty( $options ) ) {
             $session->getVars($options, "CRM_Contact_Controller_Search_$qfKey");
         }
-        
+
         // FIXME: the below and CRM_Mailing_Form_Test::testMail()
         // should be refactored
         $fromEmail = null;
         $mailing = new CRM_Mailing_BAO_Mailing();
-        if ( !empty( $options ) ) { 
+        if ( !empty( $options ) ) {
             $mailing->id = $options['mailing_id'];
             $fromEmail   = CRM_Utils_Array::value( 'from_email', $options );
         }
@@ -73,10 +73,10 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
         $mailing->find(true);
 
         CRM_Mailing_BAO_Mailing::tokenReplace($mailing);
-        
+
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            civicrm_smarty_register_string_resource( );
+          CRM_Core_Smarty::registerStringResource( );
         }
 
         // get and format attachments
@@ -86,7 +86,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
         //get details of contact with token value including Custom Field Token Values.CRM-3734
         $returnProperties = $mailing->getReturnProperties( );
         $params  = array( 'contact_id' => $session->get('userID') );
- 
+
         $details = CRM_Utils_Token::getTokenDetails( $params,
                                                      $returnProperties,
                                                      true, true, null,
@@ -96,7 +96,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
 
         $mime =& $mailing->compose(null, null, null, $session->get('userID'), $fromEmail, $fromEmail,
                                    true, $details[0][$session->get('userID')], $attachments );
-        
+
         if ($type == 'html') {
             header('Content-Type: text/html; charset=utf-8');
             print $mime->getHTMLBody();

@@ -82,7 +82,7 @@ class CRM_Core_Smarty extends Smarty {
             $this->template_dir = $config->templateDir;
         }
         $this->compile_dir  = $config->templateCompileDir;
-        
+
         // check and ensure it is writable
         // else we sometime suppress errors quietly and this results
         // in blank emails etc
@@ -90,7 +90,7 @@ class CRM_Core_Smarty extends Smarty {
             echo "CiviCRM doeso not have permission to write temp files in {$smarty->compile_dir}, Exiting";
             exit( );
         }
-        
+
         //Check for safe mode CRM-2207
         if ( ini_get('safe_mode') ) {
             $this->use_sub_dirs = false;
@@ -100,9 +100,9 @@ class CRM_Core_Smarty extends Smarty {
 
         $customPluginsDir = null;
         if ( isset( $config->customPHPPathDir ) ) {
-            $customPluginsDir = 
+            $customPluginsDir =
                 $config->customPHPPathDir . DIRECTORY_SEPARATOR .
-                'CRM'         . DIRECTORY_SEPARATOR . 
+                'CRM'         . DIRECTORY_SEPARATOR .
                 'Core'        . DIRECTORY_SEPARATOR .
                 'Smarty'      . DIRECTORY_SEPARATOR .
                 'plugins'     . DIRECTORY_SEPARATOR ;
@@ -122,10 +122,10 @@ class CRM_Core_Smarty extends Smarty {
 
         $this->assign_by_ref( 'config'        , $config  );
         $this->assign_by_ref( 'session'       , $session );
-        
+
         // check default editor and assign to template, store it in session to reduce db calls
         $defaultWysiwygEditor = $session->get( 'defaultWysiwygEditor');
-        if ( ! $defaultWysiwygEditor && 
+        if ( ! $defaultWysiwygEditor &&
              ! CRM_Core_Config::isUpgradeMode( ) ) {
             $editorID = CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                    'editor_id' );
@@ -134,12 +134,12 @@ class CRM_Core_Smarty extends Smarty {
             }
             $defaultWysiwygEditor = $editorID;
         }
-        
+
         $this->assign( 'defaultWysiwygEditor', $defaultWysiwygEditor );
- 
+
         global $tsLocale;
         $this->assign('tsLocale',   $tsLocale);
-        
+
         // CRM-7163 hack: we don’t display langSwitch on upgrades anyway
         $displayLangSwitch = true;
         if ( CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET ) == 'civicrm/upgrade' ||
@@ -149,13 +149,13 @@ class CRM_Core_Smarty extends Smarty {
         if ( $displayLangSwitch ) {
             $this->assign('langSwitch', CRM_Core_I18n::languages(true));
         }
-        
+
         //check if logged in user has access CiviCRM permission and build menu
         $buildNavigation = CRM_Core_Permission::check( 'access CiviCRM' );
         $this->assign('buildNavigation', $buildNavigation );
-        
 
-        if ( ! CRM_Core_Config::isUpgradeMode() && 
+
+        if ( ! CRM_Core_Config::isUpgradeMode() &&
              $buildNavigation ) {
             $contactID = $session->get('userID');
             if ( $contactID ) {
@@ -215,6 +215,10 @@ class CRM_Core_Smarty extends Smarty {
         }
     }
 
+    static function registerStringResource( ) {
+      require_once 'CRM/Core/Smarty/resources/String.php';
+      civicrm_smarty_register_string_resource( );
+    }
 }
 
 

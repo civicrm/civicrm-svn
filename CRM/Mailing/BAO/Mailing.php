@@ -1107,7 +1107,7 @@ AND civicrm_contact.is_opt_out =0";
 
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            civicrm_smarty_register_string_resource( );
+          CRM_Core_Smarty::registerStringResource( );
         }
 
         if ( $contactDetails ) {

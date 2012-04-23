@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  +--------------------------------------------------------------------+
@@ -61,7 +61,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
              CRM_Core_Permission::check( 'view public CiviMail content' )) {
             return true;
         }
-		
+
         // if user is an admin, return true
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
              CRM_Core_Permission::check( 'access CiviMail' ) ) {
@@ -71,19 +71,19 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
         return false;
     }
 
-    /** 
+    /**
      * run this page (figure out the action needed and perform it).
-     * 
+     *
      * @return void
-     */ 
+     */
     function run( $id = null, $contact_id = null, $print = true )
-    {               
+    {
         if ( is_numeric( $id ) ) {
             $this->_mailingID = $id;
         } else {
             $print = true;
             $this->_mailingID = CRM_Utils_Request::retrieve( 'id', 'Integer', CRM_Core_DAO::$_nullObject, true );
-        }        
+        }
 
 		// # CRM-7651
 		// override contactID from the function level if passed in
@@ -105,16 +105,16 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
         }
 
         CRM_Mailing_BAO_Mailing::tokenReplace( $this->_mailing );
-        
+
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
-            civicrm_smarty_register_string_resource( );
+          CRM_Core_Smarty::registerStringResource( );
         }
 
         // get and format attachments
         $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
                                                           $this->_mailing->id );
-		
+
 		// get contact detail and compose if contact id exists
 		if(isset($this->_contactID)) {
 			//get details of contact with token value including Custom Field Token Values.CRM-3734
@@ -134,7 +134,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
                                            $this->_mailing->from_email,
                                            $this->_mailing->from_email,
                                            true, $details, $attachments );
-        
+
         if ( isset( $this->_mailing->body_html ) ) {
             $header = 'Content-Type: text/html; charset=utf-8';
             $content = $mime->getHTMLBody();
@@ -142,7 +142,7 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
             $header = 'Content-Type: text/plain; charset=utf-8';
             $content = $mime->getTXTBody();
         }
-        
+
         if ( $print ) {
             header( $header );
             print $content;
