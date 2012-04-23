@@ -3,10 +3,10 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Utils/String.php';
 
-class CRM_Utils_StringTest extends CiviUnitTestCase 
+class CRM_Utils_StringTest extends CiviUnitTestCase
 {
-    
-    function get_info( ) 
+
+    function get_info( )
     {
         return array(
                      'name'        => 'String Test',
@@ -14,8 +14,8 @@ class CRM_Utils_StringTest extends CiviUnitTestCase
                      'group'       => 'CiviCRM BAO Tests',
                      );
     }
-    
-    function setUp( ) 
+
+    function setUp( )
     {
         parent::setUp();
     }
@@ -29,7 +29,7 @@ class CRM_Utils_StringTest extends CiviUnitTestCase
                           'civicrm/<hack>attempt</hack>' => 'civicrm/_hack_attempt_/hack_',
                           'civicrm dashboard & force = 1,;' => 'civicrm_dashboard___force___1__'
                           );
-        
+
 
 
         foreach ( $testSet as $in => $expected ) {
@@ -86,5 +86,5 @@ class CRM_Utils_StringTest extends CiviUnitTestCase
             $this->assertEquals($actual['middle_name'], $case['middle_name']);
         }
     }
-    
+
 }

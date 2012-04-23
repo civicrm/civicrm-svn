@@ -2,15 +2,12 @@
 <?php
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Contact/BAO/Relationship.php';
-require_once 'CRM/Contact/BAO/RelationshipType.php';
 require_once 'CiviTest/Contact.php';
-require_once 'CRM/Contact/BAO/ContactType.php';
 
-class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase 
+class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
 {
-    
-    function get_info( ) 
+
+    function get_info( )
     {
         return array(
                      'name'        => 'Relationship Subtype',
@@ -18,9 +15,9 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                      'group'       => 'CiviCRM BAO Tests',
                      );
     }
-    
-    function setUp( ) 
-    {        
+
+    function setUp( )
+    {
         parent::setUp();
 
         //create contact subtypes
@@ -30,15 +27,15 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                          'is_active' => 1
                          );
         $result  = CRM_Contact_BAO_ContactType::add( $params );
-        $this->student = $params['name']; 
-        
+        $this->student = $params['name'];
+
         $params = array( 'label'     => 'indivi_parent',
                          'name'      => 'indivi_parent',
                          'parent_id' => 1,//Individual
                          'is_active' => 1
                          );
         $result  = CRM_Contact_BAO_ContactType::add( $params );
-        $this->parent = $params['name']; 
+        $this->parent = $params['name'];
 
         $params = array( 'label'     => 'org_sponsor',
                          'name'      => 'org_sponsor',
@@ -49,45 +46,45 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $this->sponsor =  $params['name'];
 
         //create contacts
-        $params = array( 'first_name'   => 'Anne',     
+        $params = array( 'first_name'   => 'Anne',
                          'last_name'    => 'Grant',
                          'contact_type' => 'Individual',
                          );
         $this->individual = Contact::create( $params );
-        
-        $params = array( 'first_name'   => 'Bill',     
+
+        $params = array( 'first_name'   => 'Bill',
                          'last_name'    => 'Adams',
                          'contact_type' => 'Individual',
                          'contact_sub_type' => $this->student
                          );
         $this->indivi_student = Contact::create( $params );
-        
-        $params = array( 'first_name'   => 'Alen',     
+
+        $params = array( 'first_name'   => 'Alen',
                          'last_name'    => 'Adams',
                          'contact_type' => 'Individual',
                          'contact_sub_type' => $this->parent
                          );
         $this->indivi_parent = Contact::create( $params );
-        
-        $params = array( 'organization_name' => 'Compumentor' ,     
+
+        $params = array( 'organization_name' => 'Compumentor' ,
                          'contact_type'      => 'Organization',
                          );
-        $this->organization = Contact::create( $params );  
-        
-        $params = array( 'organization_name' => 'Conservation Corp' ,     
+        $this->organization = Contact::create( $params );
+
+        $params = array( 'organization_name' => 'Conservation Corp' ,
                          'contact_type'      => 'Organization',
                          'contact_sub_type'  => $this->sponsor
                          );
         $this->organization_sponsor = Contact::create( $params );
-        
+
     }
 
     function tearDown ( )
     {
         $this->quickCleanup( array( 'civicrm_contact' ) );
-                   
+
         $query = "
-DELETE FROM civicrm_contact_type 
+DELETE FROM civicrm_contact_type
       WHERE name IN ('{$this->student}','{$this->parent}','{$this->sponsor}');
     ";
         require_once 'CRM/Core/DAO.php';
@@ -96,11 +93,11 @@ DELETE FROM civicrm_contact_type
     /**
      * methods create relationshipType with valid data
      * success expected
-     * 
+     *
      */
     function testRelationshipTypeAddIndiviParent( )
     {
-        //check Individual to Parent RelationshipType 
+        //check Individual to Parent RelationshipType
         $params = array( 'name_a_b'           => 'indivToparent',
                          'name_b_a'           => 'parentToindiv',
                          'contact_type_a'     => 'Individual',
@@ -133,7 +130,7 @@ DELETE FROM civicrm_contact_type
         $this->assertEquals( $result->contact_type_b , 'Individual' );
         $this->relationshipTypeDelete( $result->id );
     }
-    
+
     function testRelationshipTypeAddStudentSponcor( )
     {
         //check Student to Sponcer RelationshipType
@@ -156,9 +153,9 @@ DELETE FROM civicrm_contact_type
 
     /**
      * methods create relationshipe within same contact type with invalid Relationships
-     * 
+     *
      */
-    function testRelationshipCreateInvalidWithinSameType( ) 
+    function testRelationshipCreateInvalidWithinSameType( )
     {
         //check for Individual to Parent
         $relTypeParams = array( 'name_a_b'           => 'indivToparent',
@@ -174,19 +171,19 @@ DELETE FROM civicrm_contact_type
                              );
         $ids = array('contact' => $this->individual );
 
-        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
+        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)
             = CRM_Contact_BAO_Relationship::create( $params, $ids );
- 
+
         $this->assertEquals( $invalid, 1, 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), true , 'In line '. __LINE__ );
         $this->relationshipTypeDelete( $relType->id );
     }
-    
+
     /**
      * methods create relationshipe within diff contact type with invalid Relationships
-     * 
+     *
      */
-    function testRelCreateInvalidWithinDiffTypeSpocorIndivi( ) 
+    function testRelCreateInvalidWithinDiffTypeSpocorIndivi( )
     {
         //check for Sponcer to Individual
         $relTypeParams = array( 'name_a_b'           => 'SponsorToIndiv',
@@ -202,15 +199,15 @@ DELETE FROM civicrm_contact_type
                              );
         $ids = array('contact' => $this->indivi_parent );
 
-        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
+        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)
             = CRM_Contact_BAO_Relationship::create( $params, $ids );
 
         $this->assertEquals( $invalid, 1, 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), true , 'In line '. __LINE__ );
         $this->relationshipTypeDelete( $relType->id );
     }
-    
-    function testRelCreateInvalidWithinDiffTypeStudentSponcor( ) 
+
+    function testRelCreateInvalidWithinDiffTypeStudentSponcor( )
     {
         //check for Student to Sponcer
         $relTypeParams =  array( 'name_a_b'           => 'StudentToSponser',
@@ -227,20 +224,20 @@ DELETE FROM civicrm_contact_type
                              );
         $ids = array('contact' => $this->indivi_parent );
 
-        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
+        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)
             = CRM_Contact_BAO_Relationship::create( $params, $ids );
 
         $this->assertEquals( $invalid, 1, 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), true , 'In line '. __LINE__ );
         $this->relationshipTypeDelete( $relType->id );
     }
-    
+
     /**
      * methods create relationshipe within same contact type with valid data
-     * success expected 
-     * 
+     * success expected
+     *
      */
-    function testRelationshipCreateWithinSameType( ) 
+    function testRelationshipCreateWithinSameType( )
     {
         //check for Individual to Parent
         $relTypeParams = array( 'name_a_b'           => 'indivToparent',
@@ -256,7 +253,7 @@ DELETE FROM civicrm_contact_type
                              'contact_check'        => array( $this->indivi_parent => $this->indivi_parent )
                              );
         $ids = array('contact' => $this->individual );
-        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
+        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)
             = CRM_Contact_BAO_Relationship::create( $params, $ids );
 
         $this->assertEquals( $valid, 1 , 'In line '. __LINE__ );
@@ -266,11 +263,11 @@ DELETE FROM civicrm_contact_type
 
     /**
      * methods create relationshipe within different contact type with valid data
-     * success expected 
-     * 
+     * success expected
+     *
      */
-    function testRelCreateWithinDiffTypeSponsorIndivi( ) 
-    { 
+    function testRelCreateWithinDiffTypeSponsorIndivi( )
+    {
         //check for Sponcer to Individual
         $relTypeParams = array( 'name_a_b'           => 'SponsorToIndiv',
                                 'name_b_a'           => 'IndivToSponsor',
@@ -285,16 +282,16 @@ DELETE FROM civicrm_contact_type
                              'contact_check'        => array( $this->indivi_student => 1 )
                              );
         $ids = array('contact' => $this->organization_sponsor );
-        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
+        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)
             = CRM_Contact_BAO_Relationship::create( $params, $ids );
-       
+
         $this->assertEquals( $valid, 1 , 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), false , 'In line '. __LINE__ );
         $this->relationshipTypeDelete( $relType->id );
-    } 
+    }
 
-    function testRelCreateWithinDiffTypeStudentSponsor( ) 
-    { 
+    function testRelCreateWithinDiffTypeStudentSponsor( )
+    {
         //check for Student to Sponcer
         $relTypeParams =  array( 'name_a_b'           => 'StudentToSponsor',
                                  'name_b_a'           => 'SponsorToStudent',
@@ -310,14 +307,14 @@ DELETE FROM civicrm_contact_type
                              'contact_check'        => array( $this->organization_sponsor => 1 )
                              );
         $ids = array('contact' => $this->indivi_student );
-        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
+        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)
             = CRM_Contact_BAO_Relationship::create( $params, $ids );
 
         $this->assertEquals( $valid, 1 , 'In line '. __LINE__ );
         $this->assertEquals( empty($relationshipIds), false , 'In line '. __LINE__ );
         $this->relationshipTypeDelete( $relType->id );
     }
-    
+
 }
 
 ?>
