@@ -37,16 +37,17 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 
         if ( $participant->must_wait ) {
           $participant_status = 'On waitlist';
-          //XXX magic:
-          $this->assign('isOnWaitlist', true);
 	} else if ( CRM_Utils_Array::value('is_pay_later', $params, false) ) {
           $participant_status = 'Pending from pay later';
 	} else {
           $participant_status = 'Registered';
         }
-        $participantParams['participant_status'] = $participant_status;
         $participant_statuses = CRM_Event_PseudoConstant::participantStatus();
         $participantParams['status_id'] = array_search( $participant_status, $participant_statuses );
+        $participant_status_label = CRM_Utils_Array::value($participantParams['status_id'], CRM_Event_PseudoConstant::participantStatus(null, null, 'label'));
+        $participantParams['participant_status'] = $participant_status_label;
+
+        $this->assign('isOnWaitlist', $participant->must_wait);
 
 	if ( $this->_action & CRM_Core_Action::PREVIEW || CRM_Utils_Array::value( 'mode', $params ) == 'test' ) {
 	  $participantParams['is_test'] = 1;
@@ -91,7 +92,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
                                      'entity_table' => 'civicrm_event');
             $location = CRM_Core_BAO_Location::getValues( $locationParams, true );
             CRM_Core_BAO_Address::fixAddress( $location['address'][1] );
-            $event_values['location'] = $location;
         }
 
         list ($pre_id, $post_id) = CRM_Event_Cart_Form_MerParticipant::get_profile_groups($participant->event_id);
@@ -109,8 +109,9 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
             );
         }
         $values = array(
-          'params' => $participantParams,
+          'params' => array($participant->id => $participantParams),
           'event' => $event_values,
+          'location' => $location,
           'custom_pre_id' => $pre_id,
           'custom_post_id' => $post_id,
           'payer' => $payer_values,
@@ -547,6 +548,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart
 
           $this->sub_trxn_index += 1;
 
+          unset($params['contributionID']);
           if ($mer_participant->must_wait) {
               $this->registerParticipant( $params, $mer_participant, $event_in_cart->event );
           } else {

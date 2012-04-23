@@ -27,6 +27,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
     {
       $event_titles[] = $event_in_cart->event->title;
     }
+    $this->description = ts("Online Registration for %1", array(1 => implode(", ", $event_titles)));
     if (!isset($this->discounts)) {
       $this->discounts = array();
     }
@@ -71,9 +72,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form
 		continue;
 	  }
 	  foreach ( $event_in_cart->participants as $participant ) {
-		if ( $empty_seats <= 0 ) {
-		  $participant->must_wait = true;
-		}
+                $participant->must_wait = ( $empty_seats <= 0 );
 		$empty_seats--;
 	  }
 	}

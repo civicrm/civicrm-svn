@@ -132,7 +132,10 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
       
       foreach ( $event_in_cart->participants as $mer_participant )
       {
-          $participant_fields = $fields['event'][$event_in_cart->event_id]['participant'][$mer_participant->id];
+          $participant_fields = $fields
+              ['event'][$event_in_cart->event_id]
+                  ['participant'][$mer_participant->id];
+          //TODO what to do when profile responses differ for the same contact?
           $contact_id = self::find_contact($participant_fields);
 
           if ($contact_id)
@@ -189,9 +192,18 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
   function postProcess()
   {
     if (!array_key_exists('event', $this->_submitValues)) return;
+    $email_to_contact_id = array(); //XXX de facto primary key
     foreach ( $this->_submitValues['event'] as $event_id => $participants ) {
       foreach ($participants['participant'] as $participant_id => $fields) {
-        $contact_id = self::find_or_create_contact( $this->getContactID(), $fields );
+        if (array_key_exists($fields['email'], $email_to_contact_id))
+        {
+          $contact_id = $email_to_contact_id[$fields['email']];
+        }
+        else
+        {
+          $contact_id = self::find_or_create_contact( $this->getContactID(), $fields );
+          $email_to_contact_id[$fields['email']] = $contact_id;
+        }
 
         $participant = $this->cart->get_event_in_cart_by_event_id($event_id)->get_participant_by_id($participant_id);
         if ($participant->contact_id && $contact_id != $participant->contact_id)
