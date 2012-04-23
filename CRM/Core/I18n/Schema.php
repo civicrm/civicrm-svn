@@ -436,6 +436,11 @@ class CRM_Core_I18n_Schema
         $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
         $locale  = array_pop( $locales);
 
+        // CRM-10027
+        if ( count($locales) == 0 ) {
+            return;
+        }
+
         $columns =& CRM_Core_I18n_SchemaStructure::columns();
 
         foreach ($columns as $table => $hash) {

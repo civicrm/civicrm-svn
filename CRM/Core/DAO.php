@@ -615,7 +615,7 @@ LIKE %1
             $show[$tableName] = $dao->Create_Table;
         }
 
-        return preg_match("/$constraint/i", $show[$tableName]) ? true : false;
+        return preg_match("/\b$constraint\b/i", $show[$tableName]) ? true : false;
     }
 
     /**

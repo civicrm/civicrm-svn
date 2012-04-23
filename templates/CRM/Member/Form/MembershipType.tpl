@@ -240,19 +240,36 @@
          ( document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
  	        show('fixed_start_day_row', 'table-row');
  	        show('fixed_rollover_day_row', 'table-row');
+        show('fixed_period_start_day[d]');
+    } else if ( ( document.getElementsByName("period_type")[0].value   == "fixed" ) && 
+                ( document.getElementsByName("duration_unit")[0].value == "month" ) ) {
+        show('fixed_start_day_row', 'table-row');
+        hide('fixed_rollover_day_row', 'table-row');
+        hide('fixed_period_start_day[d]');
     } else {
         hide('fixed_start_day_row', 'table-row');
         hide('fixed_rollover_day_row', 'table-row');
     }
-	function showHidePeriodSettings(){
+
+    function showHidePeriodSettings(){
         if ( ( document.getElementsByName("period_type")[0].value   == "fixed" ) && 
              ( document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
 	        show('fixed_start_day_row', 'table-row');
 	        show('fixed_rollover_day_row', 'table-row');
+            show('fixed_period_start_day[d]');
 		    document.getElementsByName("fixed_period_start_day[M]")[0].value = "1";
 		    document.getElementsByName("fixed_period_start_day[d]")[0].value = "1";
             document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "12";
 		    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "31";
+        } else if ( ( document.getElementsByName("period_type")[0].value   == "fixed" ) && 
+                    ( document.getElementsByName("duration_unit")[0].value == "month" ) ) {
+            show('fixed_start_day_row', 'table-row');
+            hide('fixed_rollover_day_row', 'table-row');
+            hide('fixed_period_start_day[d]');
+            document.getElementsByName("fixed_period_start_day[M]")[0].value = "";
+            document.getElementsByName("fixed_period_start_day[d]")[0].value = "1";
+            document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
+            document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "";
         } else {
             hide('fixed_start_day_row', 'table-row');
             hide('fixed_rollover_day_row', 'table-row');
