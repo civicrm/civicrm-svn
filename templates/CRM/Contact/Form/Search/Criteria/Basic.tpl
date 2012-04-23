@@ -36,7 +36,7 @@
                 {$form.uf_group_id.label} {help id="id-search-views"}<br />{$form.uf_group_id.html}
             </td>
             <td>
-                {if $form.component_mode}  
+                {if $form.component_mode}
                     {$form.component_mode.label} {help id="id-display-results"}
                     <br />
                     {$form.component_mode.html}
@@ -54,7 +54,7 @@
                 <div class="crm-submit-buttons reset-advanced-search">
                     <a href="{crmURL p='civicrm/contact/search/advanced' q='reset=1'}" id="resetAdvancedSearch" class="button" style="width:70px; text-align:center;"><span>{ts}Reset Form{/ts}</span></a>
                 </div>
-            </td>       
+            </td>
         </tr>
 		<tr>
 {if $form.contact_type}
@@ -118,7 +118,7 @@
 
 
                 </script>
-                {/literal}   
+                {/literal}
             </td>
 {else}
             <td>&nbsp;</td>
@@ -182,9 +182,19 @@
                 {$form.job_title.label}<br />
                 {$form.job_title.html|crmReplace:class:medium}
             </td>
-            <td colspan="2">
+        </tr>
+        <tr>
+             <td>
+                 {$form.id.label}<br />
+                 {$form.id.html|crmReplace:class:medium}
+             </td>
+             <td>
+                 {$form.external_identifier.label}<br />
+                 {$form.external_identifier.html|crmReplace:class:medium}
+             </td>
+            <td colspan="3">
                 {$form.preferred_language.label}<br />
                 {$form.preferred_language.html|crmReplace:class:medium}
-            </td>             
+            </td>
         </tr>
     </table>
