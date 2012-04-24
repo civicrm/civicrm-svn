@@ -44,8 +44,9 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
      */
     function __construct( $theClass = '', $name = '') {
         if ( empty( $name ) ) {
-            $name = get_class( $this );
-            $name = str_replace( '_', ' ', $name );
+            $name = str_replace( '_',
+                                 ' ',
+                                 get_class( $this ) );
         }
         parent::__construct( $name );
 
@@ -84,9 +85,10 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
      */
     protected function implSuite( $myfile )
     {
-        //echo get_class($this)."::implSuite($myfile)\n";
-        // $suite = new PHPUnit_Framework_TestSuite( get_class( $this ) );
-        $suite = new PHPUnit_Framework_TestSuite( 'CiviCRM TestSuite' );
+        $name = str_replace( '_',
+                             ' ',
+                             get_class( $this ) );
+        $suite = new PHPUnit_Framework_TestSuite( $name );
         $this->addAllTests( $suite, $myfile,
                             new SplFileInfo( dirname( $myfile ) ) );
         return $suite;
