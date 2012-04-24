@@ -3,15 +3,15 @@
 
 
 /**
- * Get information about fields for a given api request. Getfields information 
+ * Get information about fields for a given api request. Getfields information
  * is used for documentation, validation, default setting
  * We first query the scheme using the $dao->fields function & then augment
  * that information by calling the _spec functions that apply to the relevant function
  * Note that we use 'unique' field names as described in the xml/schema files
  * for get requests & just field name for create. This is because some get functions
- * access multiple objects e.g. contact api accesses is_deleted from the activity 
+ * access multiple objects e.g. contact api accesses is_deleted from the activity
  * table & from the contact table
- * @param array $apiRequest api request as an array. Keys are 
+ * @param array $apiRequest api request as an array. Keys are
  *  - entity: string
  *  - action: string
  *  - version: string
@@ -30,7 +30,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
     $action = 'get';
   }
   if (empty($action)) {
-    if (CRM_Utils_Array::value($entity, $results) && 
+    if (CRM_Utils_Array::value($entity, $results) &&
       CRM_Utils_Array::value('values', $results['entity'])) {
       return $results[$entity];
     }
@@ -50,7 +50,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
   switch ($action) {
     case 'getfields':
       $values = _civicrm_api_get_fields($entity, $apiRequest['params']);
-      $results[$entity][$action] =  civicrm_api3_create_success($values, 
+      $results[$entity][$action] =  civicrm_api3_create_success($values,
         $apiRequest['params'], $entity, 'getfields'
       );
       return $results[$entity][$action];
@@ -86,13 +86,23 @@ function civicrm_api3_generic_getfields($apiRequest) {
     // alter
     $helper($metadata);
   }
+
+  foreach ($metadata as $fieldname => $field) {
+    if(array_key_exists('pseudoconstant', $field)){
+      $options = civicrm_api('constant', 'get', array('version' =>3, 'name' => $field['pseudoconstant']));
+      if(is_array(CRM_Utils_Array::value('values',$options))){
+
+        $metadata[$fieldname]['options'] = $options['values'];
+      }
+    }
+  }
   $results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
   return $results[$entity][$action];
 }
 
 /**
  * API return function to reformat results as count
- * @param array $apiRequest api request as an array. Keys are 
+ * @param array $apiRequest api request as an array. Keys are
  * @return integer count of results
  */
 function civicrm_api3_generic_getcount($apiRequest) {
@@ -102,7 +112,7 @@ function civicrm_api3_generic_getcount($apiRequest) {
 
 /**
  * API return function to reformat results as single result
- * @param array $apiRequest api request as an array. Keys are 
+ * @param array $apiRequest api request as an array. Keys are
  * @return integer count of results
  */
 function civicrm_api3_generic_getsingle($apiRequest) {
@@ -123,7 +133,7 @@ function civicrm_api3_generic_getsingle($apiRequest) {
 
 /**
  * API return function to reformat results as single value
- * @param array $apiRequest api request as an array. Keys are 
+ * @param array $apiRequest api request as an array. Keys are
  * @return integer count of results
  */
 function civicrm_api3_generic_getvalue($apiRequest) {
@@ -150,7 +160,7 @@ function civicrm_api3_generic_getvalue($apiRequest) {
 }
 /**
  * API wrapper for replace function
- * @param array $apiRequest api request as an array. Keys are 
+ * @param array $apiRequest api request as an array. Keys are
  * @return integer count of results
  */
 function civicrm_api3_generic_replace($apiRequest) {

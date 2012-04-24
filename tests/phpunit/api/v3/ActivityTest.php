@@ -1334,8 +1334,11 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
   }
 
   function testGetFields() {
-    $result = civicrm_api('activity', 'getfields', array('version' => 3));
+    $params = array('version' => 3, 'action' => 'create');
+    $result = civicrm_api('activity', 'getfields', $params);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__, null, null, 'getfields');
     $this->assertTrue(is_array($result['values']), 'get fields doesnt return values array in line ' . __LINE__);
+   // $this->assertTrue(is_array($result['values']['priority_id']['options']));
     foreach ($result['values'] as $key => $value) {
       $this->assertTrue(is_array($value), $key . " is not an array in line " . __LINE__);
     }
