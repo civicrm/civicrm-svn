@@ -44,7 +44,10 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
      * Simple name based constructor
      */
     function __construct( $theClass = '', $name = '') {
-        parent::__construct( 'CiviCRM TestSuite' );
+        if ( empty( $name ) ) {
+            $name = get_class( $this );
+        }
+        parent::__construct( $name );
 
         // also load the class loader
         require_once 'CRM/Core/ClassLoader.php';

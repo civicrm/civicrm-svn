@@ -30,7 +30,7 @@
  * The Contact Wrapper is a wrapper class which is called by
  * contact.module after it parses the menu path.
  *
- * The key elements of the wrapper are the controller and the 
+ * The key elements of the wrapper are the controller and the
  * run method as explained below.
  *
  * @package CRM
@@ -40,7 +40,7 @@
  */
 
 
-class CRM_Utils_Wrapper 
+class CRM_Utils_Wrapper
 {
     /**
      * Simple Controller
@@ -95,9 +95,9 @@ class CRM_Utils_Wrapper
                     $type       = CRM_Utils_Array::value( 'type',       $params );
                     $default    = CRM_Utils_Array::value( 'default',    $params );
                     $abort      = CRM_Utils_Array::value( 'abort',      $params, false );
-                    
-                    $value = null; 
-                    $value = CRM_Utils_Request::retrieve( $urlVar, 
+
+                    $value = null;
+                    $value = CRM_Utils_Request::retrieve( $urlVar,
                                                           $type,
                                                           $this->_controller,
                                                           $abort,
@@ -106,7 +106,7 @@ class CRM_Utils_Wrapper
                 }
             }
         }
-        
+
         if ( array_key_exists('setEmbedded', $arguments) ) {
             $this->_controller->setEmbedded( true );
         }

@@ -77,12 +77,12 @@ class CRM_Core_Controller_Simple extends CRM_Core_Controller {
         $this->_stateMachine->addSequentialPages($params, $mode);
 
         $this->addPages( $this->_stateMachine, $mode );
-        
+
         //changes for custom data type File
         $uploadNames = $this->get( 'uploadNames' );
-        
+
         $config = CRM_Core_Config::singleton( );
-        
+
         if ( is_array( $uploadNames ) && ! empty ( $uploadNames ) ) {
             $uploadArray = $uploadNames;
             $this->addActions( $config->customFileUploadDir, $uploadArray );
@@ -98,7 +98,7 @@ class CRM_Core_Controller_Simple extends CRM_Core_Controller {
                 $this->addActions( );
             }
         }
-        
+
     }
 
     public function setParent( $parent ) {
