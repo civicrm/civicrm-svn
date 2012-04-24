@@ -8,7 +8,6 @@
  *   @copyright Copyright CiviCRM LLC (C) 2009
  *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
  *              GNU Affero General Public License version 3
- *   @version   $Id$
  *   @package   CiviCRM
  *
  *   This file is part of CiviCRM
@@ -46,6 +45,7 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
     function __construct( $theClass = '', $name = '') {
         if ( empty( $name ) ) {
             $name = get_class( $this );
+            $name = str_replace( '_', ' ', $name );
         }
         parent::__construct( $name );
 
