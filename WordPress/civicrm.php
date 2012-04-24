@@ -37,7 +37,7 @@ Plugin Name: CiviCRM
 Plugin URI: http://civicrm.org/
 Description: CiviCRM WP Plugin
 Author: CiviCRM LLC
-Version: 4.1.0
+Version: 4.1.3
 Author URI: http://civicrm.org/
 License: AGPL3
 */
@@ -60,8 +60,8 @@ function civicrm_wp_add_menu_items( ) {
 }
 
 function civicrm_db_settings( ) {
-    $installFile = 
-            WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .         
+    $installFile =
+            WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
             'civicrm' . DIRECTORY_SEPARATOR .
             'civicrm' . DIRECTORY_SEPARATOR .
             'install' . DIRECTORY_SEPARATOR .
@@ -109,29 +109,29 @@ function civicrm_wp_initialize( ) {
         $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
                         'civicrm' . DIRECTORY_SEPARATOR .
                         'civicrm.settings.php';
-        
+
         if( !file_exists($settingsFile) ){
             $error = false;
         } else {
             $error = include_once( $settingsFile );
         }
-        
+
         // get ready for problems
         $installLink    = admin_url() . "options-general.php?page=civicrm-settings";
         $docLinkInstall = "http://wiki.civicrm.org/confluence/display/CRMDOC/WordPress+Installation+Guide";
         $docLinkTrouble = "http://wiki.civicrm.org/confluence/display/CRMDOC/Installation+and+Configuration+Trouble-shooting";
         $forumLink      = "http://forum.civicrm.org/index.php/board,6.0.html";
 
-        $errorMsgAdd = t("Please review the <a href='!1'>WordPress Installation Guide</a> and the <a href='!2'>Trouble-shooting page</a> for assistance. If you still need help installing, you can often find solutions to your issue by searching for the error message in the <a href='!3'>installation support section of the community forum</a>.</strong></p>", 
+        $errorMsgAdd = t("Please review the <a href='!1'>WordPress Installation Guide</a> and the <a href='!2'>Trouble-shooting page</a> for assistance. If you still need help installing, you can often find solutions to your issue by searching for the error message in the <a href='!3'>installation support section of the community forum</a>.</strong></p>",
                          array('!1' => $docLinkInstall, '!2' => $docLinkTrouble, '!3' => $forumLink ) );
-        
-        $installMessage = t("Click <a href='!1'>here</a> for fresh install.", array( '!1' => $installLink ) );  
-            
+
+        $installMessage = t("Click <a href='!1'>here</a> for fresh install.", array( '!1' => $installLink ) );
+
         if ( $error == false ) {
             header( 'Location: ' . admin_url() . 'options-general.php?page=civicrm-settings' );
             return false;
         }
-        
+
         // this does pretty much all of the civicrm initialization
         if ( !file_exists( $civicrm_root.'CRM/Core/Config.php' )  ){
             $error = false;
@@ -142,11 +142,11 @@ function civicrm_wp_initialize( ) {
         if ( $error == false ) {
             $failure = true;
             //FIX ME
-            wp_die( "<strong><p class='error'>" . 
-                                t("Oops! - The path for including CiviCRM code files is not set properly. Most likely there is an error in the <em>civicrm_root</em> setting in your CiviCRM settings file (!1).", 
+            wp_die( "<strong><p class='error'>" .
+                                t("Oops! - The path for including CiviCRM code files is not set properly. Most likely there is an error in the <em>civicrm_root</em> setting in your CiviCRM settings file (!1).",
                                    array( '!1' => $settingsFile ) ) .
-                                "</p><p class='error'> &raquo; " . 
-                                t("civicrm_root is currently set to: <em>!1</em>.", array( '!1' => $civicrm_root ) ) . 
+                                "</p><p class='error'> &raquo; " .
+                                t("civicrm_root is currently set to: <em>!1</em>.", array( '!1' => $civicrm_root ) ) .
                                 "</p><p class='error'>" .  $errorMsgAdd . "</p></strong>" );
             return false;
         }
@@ -175,7 +175,7 @@ function civicrm_wp_initialize( ) {
  *
  * @return $ctype contact type
  */
-function civicrm_get_ctype( $default = null ) 
+function civicrm_get_ctype( $default = null )
 {
     // here we are creating a new contact
     // get the contact type from the POST variables if any
@@ -194,7 +194,7 @@ function civicrm_get_ctype( $default = null )
          $ctype != 'Household' ) {
         $ctype = $default;
     }
-    return $ctype; 
+    return $ctype;
 }
 
 function civicrm_wp_invoke( ) {
@@ -221,13 +221,13 @@ function civicrm_wp_invoke( ) {
         $_GET['reset'] = 1;
         $args = array( 'civicrm', 'dashboard' );
     }
-   
+
     global $current_user;
     get_currentuserinfo( );
-    
-    /* bypass synchronize if running upgrade 
-     * to avoid any serious non-recoverable error 
-     * which might hinder the upgrade process. 
+
+    /* bypass synchronize if running upgrade
+     * to avoid any serious non-recoverable error
+     * which might hinder the upgrade process.
      */
     require_once 'CRM/Utils/Array.php';
     if ( CRM_Utils_Array::value( 'q', $_GET ) != 'civicrm/upgrade' ) {
@@ -243,7 +243,7 @@ function civicrm_wp_scripts( ) {
     if ( ! civicrm_wp_initialize( ) ) {
         return;
     }
-    
+
     require_once 'CRM/Core/Smarty.php';
     $template = CRM_Core_Smarty::singleton( );
     $buffer = $template->fetch( 'CRM/common/jquery.files.tpl' );
@@ -257,7 +257,7 @@ function civicrm_wp_scripts( ) {
             wp_enqueue_script( $line, WP_PLUGIN_URL . "/civicrm/civicrm/$line" );
         }
     }
-    
+
     // add Common.js
     wp_enqueue_script( 'js/Common.js', WP_PLUGIN_URL . '/civicrm/civicrm/js/Common.js' );
     return;
@@ -267,7 +267,7 @@ function civicrm_wp_styles( ) {
     if ( ! civicrm_wp_initialize( ) ) {
         return;
     }
-    
+
     require_once 'CRM/Core/Smarty.php';
     $template = CRM_Core_Smarty::singleton( );
     $buffer = $template->fetch( 'CRM/common/jquery.files.tpl' );
@@ -313,7 +313,7 @@ function civicrm_wp_frontend( $shortcode = false ) {
         add_filter('get_header', 'civicrm_turn_comments_off');
         add_filter('get_header', 'civicrm_set_post_blank');
     }
-    
+
     // check permission
     if ( ! civicrm_check_permission( $args ) ) {
         if ( $shortcode ) {
@@ -323,21 +323,21 @@ function civicrm_wp_frontend( $shortcode = false ) {
         }
         return;
     }
-    
+
     require_once 'wp-includes/pluggable.php';
-    
+
     // if snippet is set, which means ajax call, we just
-    // output civicrm html and skip the header 
+    // output civicrm html and skip the header
     if ( CRM_Utils_Array::value( 'snippet', $_GET ) ||
          ( CRM_Utils_Array::value( 0, $args ) == 'civicrm' &&
          CRM_Utils_Array::value( 1, $args ) == 'ajax' ) ) {
       civicrm_wp_invoke( );
       exit;
     }
-    
+
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
-    // but best way is to check other plugin implementation :) 
+    // but best way is to check other plugin implementation :)
 
    if ( $shortcode ) {
         civicrm_wp_invoke( );
@@ -356,7 +356,7 @@ function civicrm_set_frontendmessage() {
 
 function civicrm_set_post_blank(){
     global $post;
-    $post->post_type = ''; //to hide posted on 
+    $post->post_type = ''; //to hide posted on
     $post->post_title = '';//to hide post title
     add_action('edit_post_link' , 'civicrm_set_blank');//hide the edit link
 }
@@ -372,8 +372,8 @@ function civicrm_check_permission( $args ) {
     }
 
     $config = CRM_Core_Config::singleton( );
-    
-    // set frontend true 
+
+    // set frontend true
     $config->userFrameworkFrontend = true;
 
     require_once 'CRM/Utils/Array.php';
@@ -383,7 +383,7 @@ function civicrm_check_permission( $args ) {
     if ( in_array( $arg1 , $validPaths ) ) {
         return true;
     }
-    
+
     $arg2 = CRM_Utils_Array::value( 2, $args );
     $arg3 = CRM_Utils_Array::value( 3, $args );
 
@@ -393,13 +393,13 @@ function civicrm_check_permission( $args ) {
         return true;
     }
 
-    // a contribution page 
+    // a contribution page
     if ( in_array( 'CiviContribute', $config->enableComponents ) ) {
         if ( $arg1 == 'contribute' &&
             in_array( $arg2, array( 'transact', 'campaign', 'pcp') ) ) {
             return true;
         }
-        
+
         if ( $arg1 == 'pcp' &&
             in_array( $arg2, array( 'info') ) ) {
             return true;
@@ -425,7 +425,7 @@ function civicrm_check_permission( $args ) {
             return true;
         }
     }
-    
+
     // allow mailing urls to be processed
     if ( $arg1 == 'mailing' &&
          in_array( 'CiviMail', $config->enableComponents ) ) {
@@ -451,12 +451,12 @@ function wp_civicrm_capability( ){
     if ( ! isset( $wp_roles ) ){
         $wp_roles = new WP_Roles();
     }
-    
+
     //access civicrm page menu link to particular roles
     $roles = array( 'super admin', 'administrator', 'editor' );
-    
+
     foreach( $roles as $role ){
-        if ( is_array( $wp_roles->get_role( $role )->capabilities ) && 
+        if ( is_array( $wp_roles->get_role( $role )->capabilities ) &&
              ! array_key_exists( 'access_civicrm_nav_link',
                                  $wp_roles->get_role( $role )->capabilities ) ){
             $wp_roles->add_cap( $role, 'access_civicrm_nav_link' );
@@ -479,9 +479,9 @@ function civicrm_wp_main( ) {
         // check if settings file exist, do not show configuration link on
         // install / settings page
         if ( isset( $_GET['page'] ) && $_GET['page'] != 'civicrm-settings' ) {
-            $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 
+            $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR .
                 'civicrm' . DIRECTORY_SEPARATOR .'civicrm.settings.php';
-        
+
             if ( !file_exists( $settingsFile ) ) {
                 add_action( 'admin_notices', 'civicrm_setup_warning' );
             }
@@ -496,14 +496,14 @@ function civicrm_wp_main( ) {
     if ( !is_admin( ) ) {
         add_filter('get_header', 'civicrm_wp_shortcode_includes');
     }
-    
+
     if ( ! civicrm_wp_in_civicrm( ) ) {
         return;
     }
 
     if ( ! is_admin( ) ) {
         add_action( 'wp_print_styles' , 'civicrm_wp_styles' );
- 
+
         add_action('wp_footer', 'civicrm_buffer_end');
 
         // we do this here rather than as an action, since we dont control
@@ -596,10 +596,10 @@ OR       ( start_date >= $now )
                     case 'user-dashboard':
                         break;
                 }
-                
-                // [ civicrm component=contribution/event/profile id=N mode=test/live action=info/register/create/search/edit/view ] 
+
+                // [ civicrm component=contribution/event/profile id=N mode=test/live action=info/register/create/search/edit/view ]
                 var shortcode = '[civicrm component="' + component + '"';
-                
+
                 if ( pid ) {
                     shortcode = shortcode + ' id="'+ pid +'"';
                 }
@@ -651,7 +651,7 @@ OR       ( start_date >= $now )
                         <?php echo $title; ?>
                         </h3>
                         <span>
-                            <?php echo $title; ?> 
+                            <?php echo $title; ?>
                         </span>
                     </div>
                     <div style="padding:15px 15px 0 15px;">
@@ -673,7 +673,7 @@ OR       ( start_date >= $now )
                             ?>
                             </select>
                         </span>
-                        
+
                         <span id="event-section" style="display:none;">
                             <select id="add_eventpage_id">
                             <?php
@@ -687,14 +687,14 @@ OR       ( start_date >= $now )
                         </span>
                         <br>
                         <span id="action-section-event" style="display:none;">
-                           <div style="padding:15px 15px 0 15px;"> 
+                           <div style="padding:15px 15px 0 15px;">
                             <input type="radio" name="event_action" value="info" checked="checked" /> Event Info Page
                             <input type="radio" name="event_action" value="register" /> Event Registration Page
                            </div>
                         </span>
                         <br/>
                         <span id="component-section" style="display:none;">
-                           <div style="padding:15px 15px 0 15px;"> 
+                           <div style="padding:15px 15px 0 15px;">
                             <input type="radio" name="component_mode" value="live" checked="checked"/> Live Page
                             <input type="radio" name="component_mode" value="test" /> Test Drive
                            </div>
@@ -726,7 +726,7 @@ function civicrm_shortcode_handler( $atts ) {
 
     $args = array( 'reset' => 1,
                    'id'    => $id );
-    
+
     switch ( $component ) {
     case 'contribution':
         $args['q' ] = 'civicrm/contribute/transact';
@@ -755,11 +755,11 @@ function civicrm_shortcode_handler( $atts ) {
         $args['q'] = 'civicrm/user';
         unset($args['id']);
         break;
-        
+
     default:
         echo 'Do not know how to handle this shortcode<p>';
         return;
-        
+
     }
 
     foreach ( $args as $key => $value ) {
@@ -829,7 +829,7 @@ function civicrm_buffer_start() {
 function civicrm_buffer_end() {
     ob_end_flush();
 }
- 
+
 function civicrm_buffer_callback($buffer) {
     // modify buffer here, and then return the updated code
     return $buffer;
