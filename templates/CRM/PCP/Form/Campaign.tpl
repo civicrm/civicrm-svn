@@ -34,9 +34,9 @@
 		<td>{$form.title.html|crmReplace:class:big}</td>
 	</tr>
 	<tr class="crm-contribution-form-block-intro_text">
-		<td class="label">{$form.intro_text.label}</td>
+		<td class="label">{$form.pcp_intro_text.label}</td>
 		<td>
-            {$form.intro_text.html|crmReplace:class:big}<br />
+            {$form.pcp_intro_text.html|crmReplace:class:big}<br />
             <span class="description">{ts}Introduce the campaign and why you're supporting it. This text will appear at the top of your personal page AND at the top of the main contribution or event registration page.{/ts}</span>
         </td>
 	</tr>
@@ -61,7 +61,7 @@
 	<tr class="crm-contribution-form-block-page_text">
 		<td class="label" width="15%">{$form.page_text.label}</td>
 		<td width="85%">
-            <span class="description">{ts}Tell people why this campaign is important to you.{/ts}</span><br />        
+            <span class="description">{ts}Tell people why this campaign is important to you.{/ts}</span><br />
             {$form.page_text.html|crmReplace:class:huge}
         </td>
 	</tr>
@@ -78,7 +78,7 @@
 		<td class="label">{$form.is_active.label}</td>
 		<td>{$form.is_active.html}
             <span class="description">{ts}Is your Personal Campaign Page active? You can activate/de-activate it any time during it's lifecycle.{/ts}</span></td>
-	</tr>	
+	</tr>
 </table>
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
