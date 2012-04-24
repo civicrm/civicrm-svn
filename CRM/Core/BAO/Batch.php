@@ -141,12 +141,24 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    */
   static function deleteBatch( $batchId ) {
     //delete batch entries from cache
-    $cacheKeyString = "batch-entry-{$batchId}";
+    $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch( $batchId );
     CRM_Core_BAO_Cache::deleteGroup( 'batch entry', $cacheKeyString, false );
 
     // delete entry from batch table
     $batch = new CRM_Core_DAO_Batch( );
     $batch->id = $batchId;
     $batch->delete();
+  }
+
+  /**
+   * function to get cachekey for batch
+   * @param int $batchId batch id
+   *
+   * @retun string $cacheString
+   * @static
+   * @access public
+   */
+  static function getCacheKeyForBatch( $batchId ) {
+    return "batch-entry-{$batchId}";
   }
 }

@@ -41,7 +41,7 @@ class CRM_Batch_Page_AJAX {
     // save in cache table
     $batchId = CRM_Utils_Type::escape( $_POST['batch_id'], 'Positive' );
 
-    $cacheKeyString = "batch-entry-{$batchId}";
+    $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch( $batchId );
 
     // check if we can retrieve from database cache
     unset($_POST['qfKey']);
