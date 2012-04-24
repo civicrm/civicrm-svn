@@ -131,4 +131,23 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         $entityBatch->save( );
         return $entityBatch;
     }
+
+    /**
+     * function to delete batch entry
+     *
+     * @param int $batchId batch id
+     *
+     * @return void
+     * @access public
+     */
+    static function deleteBatch( $batchId ) {
+      //delete batch entries from cache
+      $cacheKeyString = "batchEntry {$batchId}";
+      CRM_Core_BAO_Cache::deleteItem( 'batch entry', $cacheKeyString );
+
+      // delete entry from batch table
+      $batch = new CRM_Core_DAO_Batch( );
+      $batch->id = $batchId;
+      $batch->delete();
+    }
 }

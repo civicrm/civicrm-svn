@@ -23,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  *
@@ -39,6 +39,14 @@
  * 
  */
 class CRM_Batch_Form_Batch extends CRM_Admin_Form {
+
+  public function preProcess( ) {
+    parent::preProcess();
+    // set the usercontext
+    $session = CRM_Core_Session::singleton( );
+    $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch', "reset=1" ));
+  }
+
   /**
    * Function to build the form
    *
@@ -47,10 +55,6 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
    */
   public function buildQuickForm( ) {
     parent::buildQuickForm( );
-
-    // set the usercontext
-    $session = CRM_Core_Session::singleton( );
-    $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch', "reset=1" ));
 
     if ( $this->_action & CRM_Core_Action::DELETE ) { 
       return;
@@ -89,10 +93,20 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
    */
   public function postProcess( ) {
     $params = $this->controller->exportValues( $this->_name );
+    if ( $this->_action & CRM_Core_Action::DELETE ) { 
+      CRM_Core_Session::setStatus("Batch has been deleted successfully.");
+      CRM_Core_BAO_Batch::deleteBatch( $this->_id );
+      return;
+    }
 
+    if ( $this->_id ) {
+      $params['id'] = $this->_id;
+    }
     $batch = CRM_Core_BAO_Batch::create( $params ); 
 
     // redirect to batch entry page.
+    $session = CRM_Core_Session::singleton( );
     $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch/entry', "id={$batch->id}&reset=1" ));
+
   } //end of function
 }

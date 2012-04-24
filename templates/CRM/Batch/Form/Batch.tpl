@@ -24,13 +24,17 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing batch  *}
-<h3>{ts}New Batch{/ts}</h3>
+{if $action eq 8}
+  <h3>{ts}Delete Batch{/ts}</h3>
+{else}
+  <h3>{ts}New Batch{/ts}</h3>
+{/if}
 <div class="crm-block crm-form-block crm-batch-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $action eq 8}
   <div class="messages status">
      <div class="icon inform-icon"></div>
-        {ts}WARNING: Deleting this batch will result in the loss of all assocatiated contribution/membership records which use the batch.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
+        {ts}WARNING: Deleting this batch will result in the loss of all data entered for the batch.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
       </div>
 {else}
   <table class="form-layout-compressed">

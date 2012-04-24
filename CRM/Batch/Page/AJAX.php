@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -24,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  *
@@ -37,19 +36,18 @@
 /**
  * This class contains all the function that are called using AJAX
  */
-class CRM_Batch_Page_AJAX
-{
-    function batchSave(  ) {
-        // save in cache table
-        $batchId = CRM_Utils_Type::escape( $_POST['batch_id'], 'Positive' );
+class CRM_Batch_Page_AJAX {
+  function batchSave(  ) {
+    // save in cache table
+    $batchId = CRM_Utils_Type::escape( $_POST['batch_id'], 'Positive' );
 
-        $cacheKeyString = "batchEntry {$batchId}";
+    $cacheKeyString = "batchEntry {$batchId}";
 
-        // check if we can retrieve from database cache
-        unset($_POST['qfKey']);
-        CRM_Core_BAO_Cache::setItem( $_POST, 'batch entry', $cacheKeyString );
- 
-        // return true if saved correctly 
-        CRM_Utils_System::civiExit( );
-    }
+    // check if we can retrieve from database cache
+    unset($_POST['qfKey']);
+    CRM_Core_BAO_Cache::setItem( $_POST, 'batch entry', $cacheKeyString );
+
+    // return true if saved correctly 
+    CRM_Utils_System::civiExit( );
+  }
 }

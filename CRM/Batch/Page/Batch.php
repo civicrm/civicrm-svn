@@ -69,6 +69,12 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
           'url'   => 'civicrm/batch/entry',
           'qs'    => 'id=%%id%%&reset=1',
           'title' => ts('Batch Entry') 
+        ),
+        CRM_Core_Action::DELETE  => array(
+          'name'  => ts('Delete'),
+          'url'   => 'civicrm/batch',
+          'qs'    => 'action=delete&id=%%id%%',
+          'title' => ts('Delete Batch') 
         )
       );
     }
@@ -81,7 +87,7 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
    * @return string Classname of edit form.
    */
   function editForm() {
-    return 'CRM_Contribute_Form_Batch';
+    return 'CRM_Batch_Form_Batch';
   }
 
   /**
@@ -145,4 +151,5 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
     }
     $this->assign( 'rows', $values );
   }
+
 }
