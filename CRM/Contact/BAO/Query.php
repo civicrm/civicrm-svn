@@ -3106,19 +3106,15 @@ WHERE  id IN ( $groupIDs )
         foreach ( array_keys( $this->_params ) as $id ) {  
             if( $this->_params[$id][0] == 'log_date') {
                 if( $this->_params[$id][2] == 1 ) {
-                    $changeDate = 'added_log_date';
-                    $values[0]  = 'added_'.$values[0];
                     $fieldTitle = 'Added Date';
                 } else if( $this->_params[$id][2] == 2 ){
-                    $changeDate = 'modified_log_date';
-                    $values[0]  = 'modified_'.$values[0];
                     $fieldTitle = 'Modified Date';
                 }
             }
         }
         
         $this->dateQueryBuilder( $values,
-                                 'civicrm_log', $changeDate, 'modified_date', $fieldTitle );
+                                 'civicrm_log', 'log_date', 'modified_date', $fieldTitle );
     }
     
     
@@ -4094,19 +4090,23 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
             
             if ( $date ) {
                 $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op '$date'";
-                if ( $tableName == 'civicrm_log' &&
-                     $fieldName == 'added_log_date' ) {
-                    //CRM-6903 --hack to check modified date of first record.
-                    //as added date means first modified date of object.
-                    $addedDateQuery = 'select id from civicrm_log group by entity_id order by id';
-                    $this->_where[$grouping][] = "civicrm_log.id IN ( {$addedDateQuery} )";
-                }
             } else {
                 $this->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op";
             }
             $this->_tables[$tableName] = $this->_whereTables[$tableName] = 1;
             $this->_qill[$grouping][]  = "$fieldTitle - $phrase \"$format\"";
         }
+
+        if (
+          $tableName == 'civicrm_log' &&
+          $fieldTitle == 'Added Date'
+        ) {
+          //CRM-6903 --hack to check modified date of first record.
+          //as added date means first modified date of object.
+          $addedDateQuery = 'select id from civicrm_log group by entity_id order by id';
+          $this->_where[$grouping][] = "civicrm_log.id IN ( {$addedDateQuery} )";
+    }
+
     }
 
     function numberRangeBuilder( &$values,
