@@ -443,7 +443,7 @@ function _civicrm_api3_apply_filters_to_dao($filterField, $filterValue, &$dao) {
   }
 }
 /*
- * 
+ *
  * Get sort, limit etc options from the params - supporting old & new formats.
  * get returnproperties for legacy
  * @param array $params params array as passed into civicrm_api
@@ -853,7 +853,7 @@ function _civicrm_api3_custom_data_get(&$returnArray, $entity, $entity_id, $grou
 
 /*
  * Validate fields being passed into API. This function relies on the getFields function working accurately
- * for the given API. If error mode is set to TRUE then it will also check 
+ * for the given API. If error mode is set to TRUE then it will also check
  * foreign keys
  *
  * As of writing only date was implemented.
@@ -875,14 +875,14 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
 	  case 1:
 		//field is of type integer
 		_civicrm_api3_validate_integer($params, $fieldname, $fieldInfo);
-		break;	
+		break;
       case 4:
       case 12:
         //field is of type date or datetime
         _civicrm_api3_validate_date($params, $fieldname, $fieldInfo);
         break;
     }
-    
+
     // intensive checks - usually only called after DB level fail
     if (!empty($errorMode) && strtolower($action) == 'create'){
       if( CRM_Utils_Array::value('FKClassName', $fieldInfo)) {
@@ -1211,12 +1211,12 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
 			$params[$fieldname] = $session->get( 'userID' );
 		}
 		if(CRM_Utils_Array::value('pseudoconstant',$fieldInfo)){
-		  $constant = civicrm_api('constant', 'get', array('version' => 3, 'name' => $fieldInfo['pseudoconstant']));
-		  if(is_integer($params[$fieldname])&& !array_key_exists($params[$fieldname], $constant['values'])){
+		  $constant = $fieldInfo['options'];
+		  if(is_integer($params[$fieldname])&& !array_key_exists($params[$fieldname], $fieldInfo['options'])){
 		    throw new Exception ("$fieldname is not valid");
 		  }
 		  elseif (is_string($params[$fieldname])){
-            $numericvalue = array_search($params[$fieldname], $constant['values']);
+            $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
             if(empty($numericvalue)){
               throw new Exception ("$fieldname " .$params[$fieldname]. "is not valid");
             }
