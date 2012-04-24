@@ -106,43 +106,17 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
     }
 
     /**
-     * detele an item in the DB cache
-     *
-     * @param string $group (required) The group name of the item
-     * @param string $path  (required) The path under which this item is stored
-     * @param int    $componentID The optional component ID (so componenets can share the same name space)
-     *
-     * @return void
-     * @static
-     * @access public
-     */
-    static function deleteItem( $group, $path, $componentID = null ) {
-        $dao = new CRM_Core_DAO_Cache( );
-
-        $dao->group_name = $group;
-        $dao->path  = $path;
-        $dao->component_id = $componentID;
-
-        $dao->find( true );
-
-        $dao->delete( );
-        
-        $dao->free( );
-    }
-
-
-    /**
      * Delete all the cache elements that belong to a group OR
      * delete the entire cache if group is not specified
      *
      * @param string $group The group name of the entries to be deleted
      * @param string $path  path of the item that needs to be deleted
-     *
+     * @param booleab $clearAll clear all caches
      * @return void
      * @static
      * @access public
      */
-    static function deleteGroup( $group = null, $path = null ) {
+    static function deleteGroup( $group = null, $path = null, $clearAll = true ) {
         $dao = new CRM_Core_DAO_Cache( );
         
         if ( ! empty( $group ) ) {
@@ -155,11 +129,13 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
  
         $dao->delete( );
 
-        // also reset ACL Cache
-        CRM_ACL_BAO_Cache::resetCache( );
+        if ( $clearAll ) {
+          // also reset ACL Cache
+          CRM_ACL_BAO_Cache::resetCache( );
 
-        // also reset memory cache if any
-        CRM_Utils_System::flushCache( );
+          // also reset memory cache if any
+          CRM_Utils_System::flushCache( );
+        }
     }
 
     /**

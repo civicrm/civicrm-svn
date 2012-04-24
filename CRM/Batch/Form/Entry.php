@@ -171,7 +171,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     }
 
     // get the existing batch values from cache table
-    $cacheKeyString = "batchEntry {$this->_batchId}";
+    $cacheKeyString = "batch-entry-{$this->_batchId}";
     $defaults = CRM_Core_BAO_Cache::getItem( 'batch entry', $cacheKeyString );
 
     return $defaults;
@@ -201,8 +201,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     CRM_Core_BAO_Batch::create( $paramValues ); 
 
     // delete from cache table
-    $cacheKeyString = "batchEntry {$this->_batchId}";
-    CRM_Core_BAO_Cache::deleteGroup( 'batch entry', $cacheKeyString );
+    $cacheKeyString = "batch-entry-{$this->_batchId}";
+    CRM_Core_BAO_Cache::deleteGroup( 'batch entry', $cacheKeyString, false );
 
     CRM_Core_Session::setStatus("Your batch is processed.");
     CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/batch', "reset=1" ) );
