@@ -65,7 +65,7 @@ class CRM_Core_Permission_WordPress {
      * Get all groups from database, filtered by permissions
      * for this user
      *
-     * @param string $groupType     type of group(Access/Mailing) 
+     * @param string $groupType     type of group(Access/Mailing)
      * @param boolen $excludeHidden exclude hidden groups.
      *
      * @access public
@@ -92,13 +92,13 @@ class CRM_Core_Permission_WordPress {
         if ( !function_exists('current_user_can') ){
             return true;
         }
-        
+
         if ( current_user_can('super admin') ||
              current_user_can('administrator') ||
              current_user_can('editor') ) {
             return true;
         }
-        
+
         static $otherPerms = null;
         if ( ! $otherPerms ) {
             $otherPerms = array( 'access CiviMail subscribe/unsubscribe pages' => 1,
@@ -111,6 +111,7 @@ class CRM_Core_Permission_WordPress {
                                  'register for events'                         => 1,
                                  'view event info'                             => 1,
                                  'access Contact Dashboard'                    => 1,
+                                 'sign CiviCRM Petition'                       => 1,
                                  );
 
         }
@@ -158,7 +159,7 @@ class CRM_Core_Permission_WordPress {
     public static function roleEmails( $roleName ) {
         return '';
     }
-    
+
 }
 
 
