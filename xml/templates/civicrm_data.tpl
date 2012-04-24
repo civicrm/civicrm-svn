@@ -1224,7 +1224,8 @@ INSERT INTO civicrm_uf_group
     (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership', 
     '{ts escape="sql"}On Behalf Of Organization{/ts}'    , 0,           1,           NULL),
     (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Batch Entry{/ts}' , 0,      1,           NULL),
-    (11, 'event_registration', 'Individual, Contact', '{ts escape="sql"}Your Registration Info{/ts}',        0,      0,           NULL);
+    (11,  'membership_batch_entry', 'Membership', '{ts escape="sql"}Membership Batch Entry{/ts}' , 0,      1,           NULL),
+    (12, 'event_registration', 'Individual, Contact', '{ts escape="sql"}Your Registration Info{/ts}',        0,      0,           NULL);
 
 INSERT INTO civicrm_uf_join
    (is_active,module,entity_table,entity_id,weight,uf_group_id)
@@ -1239,7 +1240,9 @@ VALUES
    (1, 'Profile', NULL, NULL, 6, 7),
    (1, 'Profile', NULL, NULL, 7, 8),
    (1, 'Profile', NULL, NULL, 8, 9),
-   (1, 'Profile', NULL, NULL, 9, 10);
+   (1, 'Profile', NULL, NULL, 9, 10),
+   (1, 'Profile', NULL, NULL, 9, 11),
+   (1, 'Profile', NULL, NULL, 9, 12);
    
 INSERT INTO civicrm_uf_field
        (id, uf_group_id, field_name,              is_required, is_reserved, weight, visibility,                  in_selector, is_searchable, location_type_id, label,                                         		field_type,    help_post, phone_type_id ) VALUES
@@ -1294,7 +1297,10 @@ INSERT INTO civicrm_uf_field
        (49, 10,     'check_number',                0, 0, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Check Number{/ts}', 'Contribution', NULL, NULL ),
        (50, 10,     'invoice_id',                  0, 0, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Invoice ID{/ts}', 'Contribution', NULL, NULL ),
        (51, 10,     'receipt_date',                0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receipt Date{/ts}', 'Contribution', NULL, NULL ),
-       (52, 11,     'email',                       1, 0, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Email Address{/ts}', 'Contact', NULL, NULL);
+       (52, 11,     'membership_type',             1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Membership', NULL, NULL ),
+       (53, 11,     'membership_status',           1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Membership', NULL, NULL ),
+       (54, 11,     'membership_source',           0, 0, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Membership', NULL, NULL ),
+       (55, 12,     'email',                       1, 0, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Email Address{/ts}', 'Contact', NULL, NULL);
 
 
 INSERT INTO civicrm_participant_status_type
