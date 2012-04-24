@@ -64,11 +64,17 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
   function &links() {            
     if ( !( self::$_links ) ) {
       self::$_links = array(
-        CRM_Core_Action::UPDATE  => array(
-          'name'  => ts('Enter Records'),
+        CRM_Core_Action::COPY  => array(
+          'name'  => ts('Enter records'),
           'url'   => 'civicrm/batch/entry',
           'qs'    => 'id=%%id%%&reset=1',
           'title' => ts('Batch Entry') 
+        ),
+        CRM_Core_Action::UPDATE  => array(
+          'name'  => ts('Edit'),
+          'url'   => 'civicrm/batch',
+          'qs'    => 'action=update&id=%%id%%&reset=1',
+          'title' => ts('Edit Batch') 
         ),
         CRM_Core_Action::DELETE  => array(
           'name'  => ts('Delete'),
@@ -140,12 +146,19 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
     $object->find();
     $permission = array();
     while ($object->fetch()) {
+      $action = array_sum(array_keys($links));
       $values[$object->id] = array( );
       CRM_Core_DAO::storeValues( $object, $values[$object->id]);
       
       $values[$object->id]['status'] = $batchStatuses[$object->status_id];
       $values[$object->id]['type'  ] = $batchTypes[$object->type_id];
- 
+
+      // if batch is closed don't allow delete and update action
+      if ( $object->status_id == 2 ){
+        $action -= CRM_Core_Action::UPDATE;
+        $action -= CRM_Core_Action::DELETE;
+      }
+
       // populate action links
       $this->action( $object, $action, $values[$object->id], $links, $permission );
     }

@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $action eq 8}
+{if $action eq 8 or $action eq 2}
   {include file="CRM/Batch/Form/Batch.tpl"}
 {else}
   <div id="help">
