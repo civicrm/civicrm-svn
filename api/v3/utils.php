@@ -1192,7 +1192,7 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest) {
     }
   }
 }
-/*
+  /*
  * Validate integer fields being passed into API.
  * It currently converts the incoming value 'user_contact_id' into the id of the currenty logged in user
  *
@@ -1201,30 +1201,30 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest) {
  * @param array $fieldinfo array of fields from getfields function
  */
 function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
-	//if fieldname exists in params
-	if ( CRM_Utils_Array::value( $fieldname, $params ) ) {
-		//if value = 'user_contact_id' replace value with logged in user id
-		if ( $params[$fieldname] == "user_contact_id" ) {
-			if ( !$session ) {
-				$session =& CRM_Core_Session::singleton();
-			}
-			$params[$fieldname] = $session->get( 'userID' );
-		}
-		if(CRM_Utils_Array::value('pseudoconstant',$fieldInfo)){
-		  $constant = $fieldInfo['options'];
-		  if(is_integer($params[$fieldname])&& !array_key_exists($params[$fieldname], $fieldInfo['options'])){
-		    throw new Exception ("$fieldname is not valid");
-		  }
-		  elseif (is_string($params[$fieldname])){
-            $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
-            if(empty($numericvalue)){
-              throw new Exception ("$fieldname " .$params[$fieldname]. "is not valid");
-            }
-            else{
-              $params[$fieldname] = $numericvalue;
-            }
-		  }
-		}
-	}
+  //if fieldname exists in params
+  if (CRM_Utils_Array::value($fieldname, $params)) {
+    //if value = 'user_contact_id' replace value with logged in user id
+    if ($params[$fieldname] == "user_contact_id") {
+      if (! $session) {
+        $session = & CRM_Core_Session::singleton();
+      }
+      $params[$fieldname] = $session->get('userID');
+    }
+    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo)) {
+      $constant = $fieldInfo['options'];
+      if (is_integer($params[$fieldname]) && ! array_key_exists($params[$fieldname], $fieldInfo['options'])) {
+        throw new Exception("$fieldname is not valid");
+      }
+      elseif (is_string($params[$fieldname])) {
+        $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
+        if (empty($numericvalue)) {
+          throw new Exception("$fieldname " . $params[$fieldname] . "is not valid");
+        }
+        else {
+          $params[$fieldname] = $numericvalue;
+        }
+      }
+    }
+  }
 }
 
