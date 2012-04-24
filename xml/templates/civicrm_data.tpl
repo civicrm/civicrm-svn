@@ -1298,9 +1298,12 @@ INSERT INTO civicrm_uf_field
        (50, 10,     'invoice_id',                  0, 0, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Invoice ID{/ts}', 'Contribution', NULL, NULL ),
        (51, 10,     'receipt_date',                0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receipt Date{/ts}', 'Contribution', NULL, NULL ),
        (52, 11,     'membership_type',             1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Membership', NULL, NULL ),
-       (53, 11,     'membership_status',           1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Membership', NULL, NULL ),
-       (54, 11,     'membership_source',           0, 0, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Membership', NULL, NULL ),
-       (55, 12,     'email',                       1, 0, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Email Address{/ts}', 'Contact', NULL, NULL);
+       (53, 11,     'join_date',                   1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Member Since{/ts}', 'Membership', NULL, NULL ),
+       (54, 11,     'membership_status',           0, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Membership', NULL, NULL ),
+       (55, 11,     'membership_start_date',       0, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Start Date{/ts}', 'Membership', NULL, NULL ),
+       (56, 11,     'membership_end_date',         0, 1, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}End Date{/ts}', 'Membership', NULL, NULL ),
+       (57, 11,     'membership_source',           0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Membership', NULL, NULL ),
+       (58, 12,     'email',                       1, 0, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Email Address{/ts}', 'Contact', NULL, NULL);
 
 
 INSERT INTO civicrm_participant_status_type
