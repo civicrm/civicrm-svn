@@ -970,12 +970,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
                     // keep location-type-id same as that of other-contact
                     $migrationInfo['location'][$name][$count]['locTypeId'] = $locTypeId;
 
-                    if ( $name != 'address'  && $name != 'email' && $name != 'phone' ) {
-                        $elements[] = array( 'advcheckbox', "location[{$name}][$count][operation]", null, ts('add new') );
-                        // always use add operation
-                        $migrationInfo['location'][$name][$count]['operation'] = 1;
-                    }
-                    if ( ( $name == 'email' || $name == 'phone' ) && $mainLocTypeId == $locTypeId && $rows["move_location_{$name}_$count"]['main'] != null ){
+                    if ( $name != 'address') {
                         $elements[] = array( 'advcheckbox', "location[{$name}][$count][operation]", null, ts('add new') );
                         // always use add operation
                         $migrationInfo['location'][$name][$count]['operation'] = 1;

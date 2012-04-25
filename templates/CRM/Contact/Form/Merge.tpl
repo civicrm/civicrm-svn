@@ -68,10 +68,34 @@
                 {assign var=blockName value=$field|substr:14:$position-14}
 
                 {$form.location.$blockName.$blockId.locTypeId.html}&nbsp;
-                {if $blockName eq 'address' || $blockName eq 'email' || $blockName eq 'phone' }
-                <span id="main_{$blockName}_{$blockId}_overwrite">{if $row.main}(overwrite){else}(add){/if}</span>
-                {/if} 
-                {$form.location.$blockName.$blockId.operation.html}&nbsp;<br />
+                {if $blockName eq 'email' || $blockName eq 'phone' }
+		 <span id="main_{$blockName}_{$blockId}_overwrite">{if $row.main}(overwrite){$form.location.$blockName.$blockId.operation.html}&nbsp;<br />{else}(add){/if}</span>
+		{literal}
+		<script type="text/javascript">
+		function mergeBlock(blockname, element, blockId) {
+   		    var allBlock = {/literal}{$mainLocBlock}{literal};
+   		    var block    = eval( "allBlock." + 'main_'+ blockname + element.value);
+		    if(blockname == 'email' || blockname == 'phone'){
+   		          var label = '(overwrite)'+<span id="main_blockname_blockId_overwrite">{/literal}{$form.location.$blockName.$blockId.operation.html}{literal}<br /></span>;
+		    }
+		    else
+		    {
+		        label = '(overwrite)<br />';
+		    }
+ 	
+		    if ( !block ) { 
+     		       	block = '';
+     			label   = '(add)';
+   		    }
+   			cj( "#main_"+ blockname +"_" + blockId ).html( block );	
+   			cj( "#main_"+ blockname +"_" + blockId +"_overwrite" ).html( label );
+		}
+		</script>
+		{/literal}
+		{else}
+		<span id="main_{$blockName}_{$blockId}_overwrite">{if $row.main}(overwrite)<br />{else}(add){/if}</span>
+                {/if}
+	
             {/if}
             <span id="main_{$blockName}_{$blockId}">{$row.main}</span>
         </td>
@@ -142,19 +166,6 @@ cj(document).ready(function(){
        }
     });
 });
-
-function mergeBlock(blockname, element, blockId ) {
-   var allBlock = {/literal}{$mainLocBlock}{literal};
-   var block    = eval( "allBlock." + 'main_'+ blockname + element.value);
-   var label      = '(overwrite)';
-
-   if ( !block ) { 
-     block = '';
-     label   = '(add)';
-   }
-   cj( "#main_"+ blockname +"_" + blockId ).html( block );	
-   cj( "#main_"+ blockname +"_" + blockId +"_overwrite" ).html( label );
-}
 
 </script>
 {/literal}
