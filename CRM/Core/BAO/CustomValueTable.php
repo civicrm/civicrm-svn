@@ -560,7 +560,7 @@ AND    cf.id IN ( $fieldIDList )
      * To get the values of custom fields with IDs 13 and 43 for contact ID 1327, use:
      * $params = array( 'entityID' => 1327, 'custom_13' => 1, 'custom_43' => 1 );
      *
-     * Entity Type will be infered by the custom fields you request 
+     * Entity Type will be infered by the custom fields you request
      * Specify $params['entityType'] if you do not supply any custom fields to return
      * and entity type is other than Contact
      *
@@ -618,7 +618,12 @@ AND    cf.id IN ( $fieldIDList )
                                          $type,
                                          $fieldIDs );
         if ( empty( $values ) ) {
-            return CRM_Core_Error::createAPIError( ts( 'No values found for the specified entity ID and custom field(s).' ) );
+          // note that this behaviour is undesirable from an API point of view - it should return an empty array
+          // since this is also called by the merger code & not sure the consequences of changing
+          // are just handling undoing this in the api layer. ie. converting the error back into a success
+            $result = array( 'is_error' => 1,
+                             'error_message' => 'No values found for the specified entity ID and custom field(s).' );
+            return $result;
         } else {
             $result = array( 'is_error' => 0,
                              'entityID' => $params['entityID'] );
