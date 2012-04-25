@@ -75,8 +75,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   function testGetEmptyParamsContribution() {
 
     $params = array();
-    $contribution = &civicrm_api('contribution', 'get', $params);
-
+    $contribution = civicrm_api('contribution', 'get', $params);
     $this->assertEquals($contribution['is_error'], 1);
     $this->assertEquals($contribution['error_message'], 'Mandatory key(s) missing from params array: version');
   }
@@ -172,6 +171,19 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   }
 
 
+  ///////////////// civicrm_contribution_
+  function testCreateEmptyContributionID() {
+    $params = array(
+      'contribution_id' => false,
+      'contact_id' => 1,
+      'total_amount' => 1,
+      'version' => 3,
+      'check_permissions' => false,
+      'contribution_type_id' => 1,
+    );
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $this->assertEquals($contribution['is_error'], 0, 'In line ' . __LINE__);
+  }
   ///////////////// civicrm_contribution_
   function testCreateEmptyParamsContribution() {
 
