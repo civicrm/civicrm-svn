@@ -37,9 +37,9 @@
 
 /**
  * file contains functions used in civicrm configuration
- * 
+ *
  */
-class CRM_Core_BAO_ConfigSetting 
+class CRM_Core_BAO_ConfigSetting
 {
     /**
      * Function to add civicrm settings
@@ -49,14 +49,14 @@ class CRM_Core_BAO_ConfigSetting
      * @return null
      * @static
      */
-    static function add(&$params) 
+    static function add(&$params)
     {
         self::fixParams($params);
 
         // also set a template url so js files can use this
         // CRM-6194
         $params['civiRelativeURL'] = CRM_Utils_System::url( 'CIVI_BASE_TEMPLATE' );
-        $params['civiRelativeURL'] = str_replace( 'CIVI_BASE_TEMPLATE', 
+        $params['civiRelativeURL'] = str_replace( 'CIVI_BASE_TEMPLATE',
                                                   '',
                                                   $params['civiRelativeURL'] );
 
@@ -73,7 +73,7 @@ class CRM_Core_BAO_ConfigSetting
              is_array( $params['localeCustomStrings'] ) ) {
             $domain->locale_custom_strings = serialize( $params['localeCustomStrings'] );
         }
-            
+
         // unset any of the variables we read from file that should not be stored in the database
         // the username and certpath are stored flat with _test and _live
         // check CRM-1470
@@ -90,7 +90,7 @@ class CRM_Core_BAO_ConfigSetting
                 unset( $params[$name] );
             }
         }
-        
+
         //keep user preferred language upto date, CRM-7746
         $session = CRM_Core_Session::singleton( );
         $lcMessages = CRM_Utils_Array::value( 'lcMessages', $params );
@@ -100,7 +100,7 @@ class CRM_Core_BAO_ConfigSetting
                  !in_array( $lcMessages, array_keys( $languageLimit ) ) ) {
                 $lcMessages = $session->get( 'lcMessages' );
             }
-            
+
             $ufm = new CRM_Core_DAO_UFMatch();
             $ufm->contact_id = $session->get('userID');
             if ( $lcMessages && $ufm->find( true ) ) {
@@ -110,7 +110,7 @@ class CRM_Core_BAO_ConfigSetting
                 $params['lcMessages'] = $lcMessages;
             }
         }
-        
+
         $domain->config_backend = serialize($params);
         $domain->save();
     }
@@ -123,25 +123,25 @@ class CRM_Core_BAO_ConfigSetting
      * @return null
      * @static
      */
-    static function fixParams(&$params) 
+    static function fixParams(&$params)
     {
         // in our old civicrm.settings.php we were using ISO code for country and
         // province limit, now we have changed it to use ids
 
         $countryIsoCodes = CRM_Core_PseudoConstant::countryIsoCode( );
-        
+
         $specialArray = array('countryLimit', 'provinceLimit');
-        
+
         foreach($params as $key => $value) {
             if ( in_array($key, $specialArray) && is_array($value) ) {
                 foreach( $value as $k => $val ) {
                     if ( !is_numeric($val) ) {
-                        $params[$key][$k] = array_search($val, $countryIsoCodes); 
+                        $params[$key][$k] = array_search($val, $countryIsoCodes);
                     }
                 }
             } else if ( $key == 'defaultContactCountry' ) {
                 if ( !is_numeric($value) ) {
-                    $params[$key] =  array_search($value, $countryIsoCodes); 
+                    $params[$key] =  array_search($value, $countryIsoCodes);
                 }
             }
         }
@@ -156,7 +156,7 @@ class CRM_Core_BAO_ConfigSetting
      * @return null
      * @static
      */
-    static function formatParams(&$params, &$values) 
+    static function formatParams(&$params, &$values)
     {
         if ( empty( $params ) ||
              ! is_array( $params ) ) {
@@ -174,13 +174,13 @@ class CRM_Core_BAO_ConfigSetting
     /**
      * Function to retrieve the settings values from db
      *
-     * @return array $defaults  
+     * @return array $defaults
      * @static
      */
-    static function retrieve(&$defaults) 
+    static function retrieve(&$defaults)
     {
         $domain = new CRM_Core_DAO_Domain();
-        
+
         //we are initializing config, really can't use, CRM-7863
         $urlVar = 'q';
         if ( defined( 'CIVICRM_UF' ) && CIVICRM_UF == 'Joomla' ) {
@@ -194,7 +194,7 @@ class CRM_Core_BAO_ConfigSetting
         } else {
             $domain->selectAdd( 'config_backend, locales, locale_custom_strings' );
         }
-        
+
         $domain->id = CRM_Core_Config::domainID( );
         $domain->find(true);
         if ($domain->config_backend) {
@@ -232,23 +232,17 @@ class CRM_Core_BAO_ConfigSetting
 
             $session = CRM_Core_Session::singleton();
 
-            // for logging purposes, pass the userID to the db
-            if ($session->get('userID')) {
-                CRM_Core_DAO::executeQuery('SET @civicrm_user_id = %1',
-                                           array( 1 => array( $session->get('userID'), 'Integer' ) ) );
-            }
-
             // on multi-lang sites based on request and civicrm_uf_match
             if ($multiLang) {
                 $lcMessagesRequest = CRM_Utils_Request::retrieve('lcMessages', 'String', $this);
-                $languageLimit = array( ); 
+                $languageLimit = array( );
                 if ( array_key_exists( 'languageLimit', $defaults ) && is_array( $defaults['languageLimit'] ) ) {
                     $languageLimit = $defaults['languageLimit'];
                 }
-                
+
                 if ( in_array($lcMessagesRequest, array_keys( $languageLimit ) ) ) {
                     $lcMessages = $lcMessagesRequest;
-                    
+
                     //CRM-8559, cache navigation do not respect locale if it is changed, so reseting cache.
                     CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
                 } else {
@@ -273,11 +267,11 @@ class CRM_Core_BAO_ConfigSetting
                     }
                     $session->set('lcMessages', $lcMessages);
                 }
-                
+
                 if (!$lcMessages and $session->get('userID')) {
                     $ufm = new CRM_Core_DAO_UFMatch();
                     $ufm->contact_id = $session->get('userID');
-                    if ( $ufm->find( true ) && 
+                    if ( $ufm->find( true ) &&
                          in_array( $ufm->language, array_keys( $languageLimit ) ) ) {
                         $lcMessages = $ufm->language;
                     }
@@ -296,7 +290,7 @@ class CRM_Core_BAO_ConfigSetting
                     $lcMessages = null;
                 }
             }
-            
+
             if ( $lcMessages ) {
                 // update config lcMessages - CRM-5027 fixed.
                 $defaults['lcMessages'] = $lcMessages;
@@ -304,7 +298,7 @@ class CRM_Core_BAO_ConfigSetting
                 // if a single-lang site or the above didn't yield a result, use default
                 $lcMessages = $defaults['lcMessages'];
             }
-            
+
             // set suffix for table names - use views if more than one language
             $dbLocale = $multiLang ? "_{$lcMessages}" : '';
 
@@ -312,7 +306,7 @@ class CRM_Core_BAO_ConfigSetting
             global $tsLocale;
             $tsLocale = $lcMessages;
 
-            // FIXME: as bad aplace as any to fix CRM-5428 
+            // FIXME: as bad aplace as any to fix CRM-5428
             // (to be moved to a sane location along with the above)
             if (function_exists('mb_internal_encoding')) mb_internal_encoding('UTF-8');
         }
@@ -347,7 +341,7 @@ class CRM_Core_BAO_ConfigSetting
             $url = preg_replace( '|sites/[\w\.\-\_]+/modules/civicrm/|',
                                  '',
                                  $config->userFrameworkResourceURL );
-            
+
             // lets use imageUploadDir since we dont mess around with its values
             // in the config object, lets kep it a bit generic since folks
             // might have different values etc
@@ -406,7 +400,7 @@ class CRM_Core_BAO_ConfigSetting
                 }
             }
         }
-        
+
         return array( $url, $dir, $siteName, $siteRoot );
     }
 
@@ -415,9 +409,9 @@ class CRM_Core_BAO_ConfigSetting
         // get the current and guessed values
         list( $oldURL, $oldDir, $oldSiteName, $oldSiteRoot ) = self::getConfigSettings( );
         list( $newURL, $newDir, $newSiteName, $newSiteRoot ) = self::getBestGuessSettings( );
-    
 
-        // retrieve these values from the argument list 
+
+        // retrieve these values from the argument list
         $variables = array( 'URL', 'Dir', 'SiteName', 'SiteRoot', 'Val_1', 'Val_2', 'Val_3' );
         $states     = array( 'old', 'new' );
         foreach ( $variables as $varSuffix ) {
@@ -489,11 +483,11 @@ WHERE  id = %1
 
                 if ($from && $to && $from != $to) {
                     $sql = '
-UPDATE civicrm_option_value 
-SET    value = REPLACE(value, %1, %2) 
-WHERE  option_group_id = ( 
-  SELECT id 
-  FROM   civicrm_option_group 
+UPDATE civicrm_option_value
+SET    value = REPLACE(value, %1, %2)
+WHERE  option_group_id = (
+  SELECT id
+  FROM   civicrm_option_group
   WHERE  name = %3 )
 ';
                     $params = array( 1 => array ( $from, 'String' ),
@@ -503,8 +497,8 @@ WHERE  option_group_id = (
                 }
             }
         }
-        
-        $moveStatus .= 
+
+        $moveStatus .=
             ts('Directory and Resource URLs have been updated in the moved database to reflect current site location.') .
             '<br />';
 
@@ -513,7 +507,7 @@ WHERE  option_group_id = (
         // clear the template_c and upload directory also
         $config->cleanup( 3, true );
         $moveStatus .= ts('Template cache and upload directory have been cleared.') . '<br />';
-    
+
         // clear all caches
         CRM_Core_Config::clearDBCache( );
         $moveStatus .= ts('Database cache tables cleared.') . '<br />';
@@ -537,7 +531,7 @@ WHERE  option_group_id = (
         return $moveStatus;
 
     }
-    
+
     /**
      * takes a componentName and enables it in the config
      * Primarily used during unit testing
@@ -582,7 +576,7 @@ WHERE  id = %1
             return self::enableComponent( $componentName );
         }
         $configBackend = unserialize( $configBackend );
-        
+
         $configBackend['enableComponents'][] = $componentName;
         $configBackend['enableComponentIDs'][] = $components[$componentName]->componentID;
 
@@ -609,7 +603,7 @@ WHERE  id = %1
     static function skipVars( ) {
         return array( 'dsn', 'templateCompileDir',
                       'userFrameworkDSN',
-                      'userFramework', 
+                      'userFramework',
                       'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                       'userPermissionClass', 'userFrameworkURLVar', 'userFrameworkVersion',
                       'newBaseURL', 'newBaseDir', 'newSiteName', 'configAndLogDir',
