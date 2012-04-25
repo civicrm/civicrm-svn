@@ -364,7 +364,30 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     civicrm_api($this->_entity, 'delete', array('version' => 3, 'id' => $c1['id']));
     civicrm_api($this->_entity, 'delete', array('version' => 3, 'id' => $c2['id']));
   }
-
+  /*
+   * Test variants on deleted behaviour
+   */
+    function testGetDeleted() {
+      $params = $this->_params;
+      $contact1 = civicrm_api('contact', 'create', $params);
+      $params['is_deleted'] = 1;
+      $params['last_name'] = 'bcd';
+      $contact2 = civicrm_api('contact', 'create', $params);
+      $countActive = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'active'));
+      $countAll = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'all'));
+      $countTrash = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'trash'));
+      $countDefault = civicrm_api('contact', 'getcount', array('version' => 3,));
+      $countDeleted = civicrm_api('contact', 'getcount', array('version' => 3,'contact_is_deleted' => 1,));
+      $countNotDeleted = civicrm_api('contact', 'getcount', array('version' => 3,'contact_is_deleted' => 0,));
+      civicrm_api('contact','delete',array('version' => 3, 'id' => $contact1['id']));
+      civicrm_api('contact','delete',array('version' => 3, 'id' => $contact2['id']));
+      $this->assertEquals(1, $countNotDeleted, 'contact_is_deleted => 0 is respected in line ' . __LINE__);
+      $this->assertEquals(1, $countActive, 'in line ' . __LINE__);
+      $this->assertEquals(1, $countTrash, 'in line ' . __LINE__);
+      $this->assertEquals(2, $countAll, 'in line ' . __LINE__);
+      $this->assertEquals(1, $countDeleted, 'in line ' . __LINE__);
+      $this->assertEquals(1, $countDefault, 'Only active by default in line ' . __LINE__);
+    }
   /*
      * Test that sort works - new syntax
      */
