@@ -40,7 +40,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $rand = 2 * rand(2, 50);
         $pageTitle = 'Donate Online ' . $hash;
         // create contribution page with randomized title and default params
-        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, array('Dummy Processor' => 'Dummy'), true, true, 'required' );
+        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, array( "Webtest Dummy".substr( sha1( rand( ) ), 0, 7 ) => 'Dummy'), true, true, 'required' );
 
         $this->open($this->sboxPath . 'civicrm/admin/contribute?reset=1');
         $this->waitForPageToLoad();        
@@ -60,8 +60,8 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $texts = array(
             "Title - New Membership $hash",
             "This is introductory message for $pageTitle",
-            'Student  (contribute at least $ 50.00 to be eligible for this membership)',
-            "$ $rand.00 Label $hash",
+            'Student - $ 50.00',
+            "Label $hash - $ $rand.00",
             "Pay later label $hash",
             'Organization Details',
             'Other Amount',
@@ -91,7 +91,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $pageTitle = 'Donate Online ' . $hash;
         
         // create contribution page with randomized title, default params and separate payment for Membership and Contribution
-        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, array('Dummy Processor' => 'Dummy'), 
+        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, array( "Webtest Dummy".substr( sha1( rand( ) ), 0, 7 ) => 'Dummy'), 
                                                      true, true, 'required', true, false, true, null, true,
                                                      1, 7, true, true, true, true, false, true );
         
@@ -111,7 +111,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $texts = array(
             "Title - New Membership $hash",
             "This is introductory message for $pageTitle",
-            "$ $rand.00 Label $hash",
+            "Label $hash - $ $rand.00",
             "Pay later label $hash",
             'Organization Details',
             'Other Amount',
@@ -141,7 +141,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $pageTitle = 'Donate Online ' . $hash;
         
         // create contribution page with randomized title, default params and separate payment for Membership and Contribution
-        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, 'Dummy', 
+        $pageId = $this->webtestAddContributionPage( $hash, $rand, $pageTitle, array( "Webtest Dummy".substr( sha1( rand( ) ), 0, 7 ) => 'Dummy'), 
                                                      null, true, true, false, false, false, true, null, false,
                                                      1, 0, false, false, false, false, false, true, false );
         

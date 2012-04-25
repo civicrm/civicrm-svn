@@ -531,12 +531,14 @@ SELECT id
                         $fieldParams['default_option'] = $params['default'];
                         $priceField = CRM_Price_BAO_Field::create( $fieldParams );
                         if(  CRM_Utils_Array::value( 'is_allow_other_amount', $params ) && !CRM_Utils_Array::value( 'price_field_other', $params )){
-                            $fieldParams['label']                = "Other Amount";
-                            $fieldParams['name']                 = strtolower( CRM_Utils_String::munge( $fieldParams['label'], '_', 245 ) );
-                            $fieldParams['price_set_id']         = $priceSetId;  
-                            $fieldParams['html_type']            = 'Text'; 
-                            $fieldParams['is_display_amounts']   = $fieldParams['is_required'] = 0; 
-                            $fieldParams['weight']               = $fieldParams['option_weight'][1] = 2;
+                            $fieldParams = array( 'label'              => "Other Amount",
+                                                  'name'               => 'other_amount',
+                                                  'price_set_id'       => $priceSetId,
+                                                  'html_type'          => 'Text',
+                                                  'is_required'        => 0,
+                                                  'is_display_amounts' => 0,
+                                                  'weight'             => 2 );
+                            $fieldParams['option_weight'][1]     = 2;
                             $fieldParams['option_label'][1]      = "Other Amount";
                             $fieldParams['option_amount'][1]     = 1;
                             $priceField = CRM_Price_BAO_Field::create( $fieldParams );

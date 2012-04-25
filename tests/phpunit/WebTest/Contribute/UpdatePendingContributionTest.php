@@ -184,7 +184,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
       
         $expected = array(
                           'Contribution Type'      => 'Donation', 
-                          'Total Amount'           => '100.00',
+                          'Contribution Amount'    => '100.00',
                           'Contribution Status'    => 'Pending',
                           'Paid By'                => 'Check',
                           'Check Number'           => 'check #1041',
@@ -266,9 +266,8 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
         $this->type( "first_name", $firstName );
         $this->type( "last_name", $lastName );
       
-        $this->click( "amount_other" );
-        $this->type( "amount_other", 100 );
-        $this->check( "name=is_pay_later", "value=1" );
+        $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", 100 );
+        $this->click(  "xpath=//div[@class='crm-section payment_processor-section']/div[2]//label[text()='Pay later label {$hash}']" );
         $streetAddress = "100 Main Street";
         $this->type( "street_address-1", $streetAddress );
         $this->type( "city-1", "San Francisco" );

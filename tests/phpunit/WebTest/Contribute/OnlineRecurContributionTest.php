@@ -103,8 +103,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       $this->waitForElementPresent( "_qf_Main_upload-bottom" );
 
       // helper AddContributionPage sets Minimum Other Amout = $rand / 2 so must contribute more than that
-      $this->click("amount_other");
-      $this->type("amount_other", $contributionAmount);
+      $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", $contributionAmount);
       
       // recurring contribution - each month for 12 months
       $this->click("CIVICRM_QFID_1_8");
@@ -150,7 +149,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
       $verifyData = array(
                           'From'                     => "$contactName",
                           'Contribution Type'        => 'Donation (test)',
-                          'Total Amount'             => 'Installments: 12, Interval: 1 month(s)',
+                          'Contribution Amount'      => 'Installments: 12, Interval: 1 month(s)',
                           'Contribution Status'      => 'Pending : Incomplete Transaction',
                           'Paid By'                  => 'Credit Card',
                           'Online Contribution Page' => $pageTitle,

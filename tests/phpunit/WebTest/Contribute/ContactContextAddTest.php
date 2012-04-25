@@ -164,7 +164,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
 
       
       // go to soft creditor contact view page
-      $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[17]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
+      $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[16]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
 
       // go to contribution tab
       $this->waitForElementPresent("css=li#tab_contribute a");
