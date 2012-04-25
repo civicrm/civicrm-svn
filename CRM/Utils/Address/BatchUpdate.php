@@ -52,15 +52,15 @@ class CRM_Utils_Address_BatchUpdate
         foreach ( $params as $name => $value ) {
             $this->$name = $value;
         }
-        
+
         // fixme: more params verification
-        
-    }    
+
+    }
 
     public function run( ) {
 
         $config =& CRM_Core_Config::singleton();
-    
+
         // do check for geocoding.
         $processGeocode = false;
         if ( empty( $config->geocodeMethod ) ) {
@@ -97,7 +97,7 @@ class CRM_Utils_Address_BatchUpdate
                 $parseStreetAddress = false;
             }
         }
-    
+
         // don't process.
         if ( !$parseStreetAddress && !$processGeocode ) {
             $this->returnMessages[] = ts( 'Error: Both Geocode mapping as well as Street Address Parsing are disabled. You must configure one or both options to use this script.' );
@@ -110,7 +110,7 @@ class CRM_Utils_Address_BatchUpdate
     }
 
 
-    function processContacts( &$config, $processGeocode, $parseStreetAddress ) 
+    function processContacts( &$config, $processGeocode, $parseStreetAddress )
     {
         // build where clause.
         $clause = array( '( c.id = a.contact_id )' );
@@ -129,7 +129,7 @@ class CRM_Utils_Address_BatchUpdate
         }
 
         $whereClause = implode( ' AND ', $clause );
-    
+
         $query = "
     SELECT     c.id,
                a.id as address_id,
@@ -145,16 +145,16 @@ class CRM_Utils_Address_BatchUpdate
     WHERE      {$whereClause}
       ORDER BY a.id
     ";
-   
+
         $totalGeocoded = $totalAddresses = $totalAddressParsed = 0;
 
         $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-    
+
         if ( $processGeocode ) {
             require_once( str_replace('_', DIRECTORY_SEPARATOR, $config->geocodeMethod ) . '.php' );
         }
-    
-    
+
+
         $unparseableContactAddress = array( );
         while ( $dao->fetch( ) ) {
             $totalAddresses++;
@@ -163,26 +163,26 @@ class CRM_Utils_Address_BatchUpdate
                              'city'              => $dao->city,
                              'state_province'    => $dao->state,
                              'country'           => $dao->country );
-            
+
             $addressParams = array( );
-        
+
             // process geocode.
             if ( $processGeocode ) {
                 // loop through the address removing more information
                 // so we can get some geocode for a partial address
                 // i.e. city -> state -> country
-            
-                $maxTries = 5; do { 
-                    if ( $this->throttle ) { 
-                        usleep( 50000 ); 
+
+                $maxTries = 5; do {
+                    if ( $this->throttle ) {
+                        usleep( 50000 );
                     }
-                
+
                     eval( $config->geocodeMethod . '::format( $params, true );' );
                     array_shift( $params );
                     $maxTries--;
                 } while ( ( ! isset( $params['geo_code_1'] ) ) &&
                       ( $maxTries > 1 ) );
-            
+
                 if ( isset( $params['geo_code_1'] ) &&
                     $params['geo_code_1'] != 'null' ) {
                     $totalGeocoded++;
@@ -190,7 +190,7 @@ class CRM_Utils_Address_BatchUpdate
                     $addressParams['geo_code_2'] = $params['geo_code_2'];
                 }
             }
-        
+
             // parse street address
             if ( $parseStreetAddress ) {
                 $parsedFields = CRM_Core_BAO_Address::parseStreetAddress( $dao->street_address );
@@ -201,21 +201,21 @@ class CRM_Utils_Address_BatchUpdate
                      ! CRM_Utils_Array::value( 'street_number', $parsedFields ) ) {
                      $success = false;
                 }
-            
+
                 // do check for all elements.
                 if ( $success ) {
                     $totalAddressParsed++;
-                } else if ( $dao->street_address ) { 
-                    //build contact edit url, 
+                } else if ( $dao->street_address ) {
+                    //build contact edit url,
                     //so that user can manually fill the street address fields if the street address is not parsed, CRM-5886
-                    $url = CRM_Utils_System::url( 'civicrm/contact/add', "reset=1&action=update&cid={$dao->id}"  );                  
+                    $url = CRM_Utils_System::url( 'civicrm/contact/add', "reset=1&action=update&cid={$dao->id}"  );
                     $unparseableContactAddress[] = " Contact ID: " . $dao->id . " <a href =\"$url\"> ". $dao->street_address . " </a> ";
                     // reset element values.
                     $parsedFields = array_fill_keys( array_keys($parsedFields), '' );
                 }
                 $addressParams = array_merge( $addressParams, $parsedFields );
             }
-        
+
             // finally update address object.
             if ( !empty( $addressParams ) ) {
                 $address = new CRM_Core_DAO_Address( );
@@ -225,7 +225,7 @@ class CRM_Utils_Address_BatchUpdate
                 $address->free( );
             }
         }
-    
+
         $this->returnMessages[] = ts( "Addresses Evaluated: %1", array( 1 => $totalAddresses ) ) . "\n";
         if ( $processGeocode ) {
             $this->returnMessages[] = ts( "Addresses Geocoded: %1", array( 1 => $totalGeocoded ) ) . "\n";
@@ -243,12 +243,12 @@ class CRM_Utils_Address_BatchUpdate
         return $this->returnResult();
 
     }
-    
+
     function returnResult( ) {
         $result = array();
         $result['is_error'] = $this->returnError;
         $result['messages'] = implode( "", $this->returnMessages);
-        return $result;        
+        return $result;
     }
 
 }
