@@ -294,11 +294,11 @@ WHERE     ct.id = cp.contribution_type_id AND
      *
      * @return integer|false price_set_id, or false if none found
      */
-    public static function getFor( $entityTable, $entityId, $usedFor = null, $isQuickConfig = null )
+    public static function getFor( $entityTable, $entityId, $usedFor = null, $isQuickConfig = null, &$setName = null )
     {
-        if ( !$entityTable || !$entityId ) return false;  
+        if ( !$entityTable || !$entityId ) return false;
 
-        $sql = 'SELECT ps.id as price_set_id 
+        $sql = 'SELECT ps.id as price_set_id, ps.name as price_set_name 
                 FROM civicrm_price_set ps
                 INNER JOIN civicrm_price_set_entity pse ON ps.id = pse.price_set_id
                 WHERE pse.entity_table = %1 AND pse.entity_id = %2 ';
@@ -313,7 +313,7 @@ WHERE     ct.id = cp.contribution_type_id AND
 
         $dao = CRM_Core_DAO::executeQuery( $sql, $params );
         $dao->fetch();
-
+        $setName = (isset($dao->price_set_name)) ? $dao->price_set_name : false;
         return (isset($dao->price_set_id)) ? $dao->price_set_id : false; 
     }
 

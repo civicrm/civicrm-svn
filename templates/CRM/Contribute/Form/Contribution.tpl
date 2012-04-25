@@ -85,7 +85,7 @@
         {/if} {help id="id-contribution_type"}
         </td></tr>
 	
-	{if $action eq 2 and $lineItem}
+	{if $action eq 2 and $lineItem and !$defaultContribution}
 	    <tr>
             <td class="label">{ts}Contribution Amount{/ts}</td>
             <td>{include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}</td>
