@@ -148,7 +148,7 @@ function civicrm_api3_create_error($msg, $data = array(), &$dao = NULL) {
   }
 
   if (is_array($dao)){
-    if ($msg == 'DB Error: constraint violation' || $msg = 'DB Error: already exists') {
+    if ($msg == 'DB Error: constraint violation' || $msg == 'DB Error: already exists') {
       try {
         _civicrm_api3_validate_fields($dao['entity'], $dao['action'], $dao['params'], True);
       }
