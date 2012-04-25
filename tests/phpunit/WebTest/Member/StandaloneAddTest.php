@@ -80,8 +80,8 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->click("_qf_Membership_upload");
       
       //View Membership
-      $this->waitForElementPresent( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
-      $this->click( "xpath=//div[@id='memberships']//table/tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->waitForElementPresent( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']//table/tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       $expected = array(
                         2  =>  $membershipTypes['membership_type'],
@@ -162,10 +162,10 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->waitForTextPresent( "Membership StandaloneAddTest Webtest" );
       
       // verify if Membership is created
-      $this->waitForElementPresent( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->waitForElementPresent( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       
       //click through to the Membership view screen
-      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       
       $expected = array(

@@ -119,7 +119,7 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
         $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
         $text = "'MembershipBlock' information has been saved.";
         $this->assertTrue( $this->isTextPresent( $text ), 'Missing text: ' . $text );
-        $this->_testOnlineMembershipSignup( $pageId, $memTypeId1, $cid );
+        $this->_testOnlineMembershipSignup( $pageId, $memTypeTitle1, $cid );
         
         //Find Member
         $this->open($this->sboxPath . "civicrm/member/search?reset=1");
@@ -151,7 +151,7 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
         //View Contribution Record
         $verifyData = array(
                             'From'=> $firstName1.' '.$lastName1,
-                            'Total Amount'=> '$ 100.00',
+                            'Contribution Amount'=> '$ 100.00',
                             );
         foreach ( $verifyData as $label => $value ) {
             $this->verifyText( "xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td", 
@@ -173,9 +173,8 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
         $this->waitForElementPresent("_qf_Main_upload-bottom");
         
         // Select membership type 1
-        $this->check( "name=selectMembership value={$memTypeId}" );
-        $this->click( 'CIVICRM_QFID_amount_other_radio_12' );
-        $this->type( 'amount_other', 60 );
+        $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'$memTypeId')]" );
+        $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", 60);
         $this->click("_qf_Main_upload-bottom");
         $this->waitForPageToLoad('30000');
         $this->waitForElementPresent("_qf_Confirm_next-bottom");

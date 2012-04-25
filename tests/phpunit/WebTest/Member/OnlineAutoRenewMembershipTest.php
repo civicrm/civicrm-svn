@@ -48,7 +48,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->waitForPageToLoad( "3000" );
       $this->waitForElementPresent("_qf_Main_upload-bottom");
       
-      $this->click("CIVICRM_QFID_2_4");
+      $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]" );
 
       $this->click("auto_renew");
       
@@ -86,7 +86,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->waitForPageToLoad( "3000" );
       $this->waitForElementPresent("_qf_Main_upload-bottom");
       
-      $this->click("CIVICRM_QFID_2_4");
+      $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]" );
       
       $this->click("auto_renew");
       
@@ -120,7 +120,7 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->waitForPageToLoad( "3000" );
       $this->waitForElementPresent("_qf_Main_upload-bottom");
       
-      $this->click("CIVICRM_QFID_2_4");
+      $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]" );
       
       $this->click("auto_renew");
       

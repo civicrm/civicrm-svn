@@ -219,20 +219,18 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
           $this->type( 'source', 'Offline membership Sign Up Test Text' );
           $this->click( '_qf_Membership_upload-bottom' );
       } else {
-          $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
+          $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[8]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
           $this->waitForElementPresent( '_qf_MembershipRenewal_cancel-bottom' );
           $this->click( '_qf_MembershipRenewal_upload-bottom' );
 
           $this->waitForElementPresent( "xpath=//div[@id='memberships']/div/table/tbody/tr");
-          $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[7]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
+          $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[8]/span[2][text()='more ']/ul/li/a[text()='Renew']" );
           $this->waitForElementPresent( '_qf_MembershipRenewal_cancel-bottom' );
           $this->click( '_qf_MembershipRenewal_upload-bottom' );
       }
-      
       $this->waitForElementPresent( "xpath=//div[@id='memberships']/div/table/tbody/tr");
-      $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[8]/span/a[text()='View']" );
       $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
-
       //View Membership Record
       $verifyData = array( 'Membership Type' => "{$memTypeTitle1}",
                            'Status'          => 'New',
@@ -247,7 +245,7 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
 
       $this->click( '_qf_MembershipView_cancel-bottom' );
       $this->waitForElementPresent( "xpath=//div[@id='memberships']/div/table/tbody/tr");
-      $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[7]/span/a[text()='View']" );
+      $this->click( "xpath=//div[@id='memberships']/div/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[8]/span/a[text()='View']" );
       $this->waitForElementPresent( "_qf_MembershipView_cancel-bottom" );
 
       //View Membership Record

@@ -133,7 +133,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $firstName = 'Ma'.substr( sha1( rand( ) ), 0, 4 );
         $lastName  = 'An'.substr( sha1( rand( ) ), 0, 7 );
         
-        $this->_testOnlineMembershipSignup( $pageId, $memTypeId1, $firstName, $lastName, $payLater );
+        $this->_testOnlineMembershipSignup( $pageId, $memTypeTitle1, $firstName, $lastName, $payLater, $hash);
         //login to check membership
         $this->open( $this->sboxPath );
         
@@ -191,7 +191,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->open($this->sboxPath . "civicrm/logout?reset=1");
         $this->waitForPageToLoad('30000');
         
-        $this->_testOnlineMembershipSignup( $pageId, $memTypeId2, $firstName, $lastName, $payLater);
+        $this->_testOnlineMembershipSignup( $pageId, $memTypeTitle2, $firstName, $lastName, $payLater, $hash );
         //login to check membership
         $this->open( $this->sboxPath );
         
@@ -210,7 +210,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         
     }  
     
-    function _testOnlineMembershipSignup( $pageId, $memTypeId, $firstName, $lastName, $payLater )
+    function _testOnlineMembershipSignup( $pageId, $memTypeId, $firstName, $lastName, $payLater, $hash )
     {
         //Open Live Contribution Page
         $makeContribUrl = "{$this->sboxPath}civicrm/contribute/transact?reset=1&id=$pageId";
@@ -218,10 +218,11 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("_qf_Main_upload-bottom");
         
         // Select membership type 1
-        $this->check( "name=selectMembership value={$memTypeId}" );
-        $this->check( "name=amount value=no_thanks" );
+        $this->waitForElementPresent("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label");
+        $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'$memTypeId')]" );
+        $this->click( "xpath=//div[@class='crm-section contribution_amount-section']/div[2]//span/label[text()='No thank you']" );
         if( $payLater )
-            $this->check( "name=is_pay_later value=1" );
+             $this->click(  "xpath=//div[@class='crm-section payment_processor-section']/div[2]//label[text()='Pay later label {$hash}']" );
         $this->type("email-5", $firstName . "@example.com");
         
         $this->type("first_name", $firstName);

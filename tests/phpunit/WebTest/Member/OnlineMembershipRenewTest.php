@@ -87,7 +87,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         //Go to online membership signup page
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-        $this->click( "CIVICRM_QFID_2_4");
+        $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]" );
         
         //Type first name and last name and email
         $this->type( "first_name", $firstName );
@@ -153,7 +153,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
 
-        $this->click( "CIVICRM_QFID_2_4");
+        $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]" );
         
         //Type first name and last name and email
         $this->type( "first_name", $firstName );
@@ -258,8 +258,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         //Go to online membership signup page
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-        $this->click( "CIVICRM_QFID_1_2");
-        
+        $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'General')]" );
         //Type first name and last name
         $this->type( "first_name", $firstName );
         $this->type( "last_name", $lastName );
@@ -320,8 +319,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         }
         $this->open( $this->sboxPath . "civicrm/contribute/transact?reset=1&id=2" );
         $this->waitForElementPresent( "_qf_Main_upload-bottom" );
-        
-        $this->click( "CIVICRM_QFID_2_4");
+        $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]" );
         
         //Credit Card Info
         $this->select( "credit_card_type", "value=Visa" );
@@ -495,7 +493,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         //get Url for Live Contribution Page
         $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=".$pageId);
         $this->waitForElementPresent('_qf_Main_upload-bottom');
-        
+        $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'$membershipTypeTitle')]" );
         $firstName = 'Eia' . substr(sha1(rand()), 0, 4);
         $lastName = 'Ande' . substr(sha1(rand()), 0, 4);
         $name = $firstName .' ' .$lastName;
@@ -601,6 +599,8 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad('30000');
         
         $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=".$pageId);
+        
+        $this->click(  "xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'$membershipTypeTitle')]" );
         $this->type( "email-5", $email );
         $this->click('is_for_organization');
         $this->type( 'onbehalf_organization_name', $organisationName );
