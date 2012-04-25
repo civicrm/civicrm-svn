@@ -190,7 +190,7 @@ function civicrm_api3_create_success( $values = 1,$params=array(), $entity = nul
         $undefined = array_diff ($paramFields, $allFields,array_keys($_COOKIE),array ('action','entity','debug','version','check_permissions','IDS_request_uri','IDS_user_agent','return','sequential','rowCount','option_offset','option_limit','custom', 'option_sort'));
         if ($undefined)
                 $result['undefined_fields'] = array_merge ($undefined);
-        
+
          }
     if(is_object ($dao)){
         $dao->free();
@@ -360,14 +360,14 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
         case 'IS NOT NULL':
             $dao->whereAdd(sprintf('%s %s', $field, $operator));
             break;
-            
+
         // ternary operators
         case 'BETWEEN':
         case 'NOT BETWEEN':
             if (empty($criteria[0]) || empty($criteria[1])) error();
             $dao->whereAdd(sprintf('%s BETWEEN "%s" AND "%s"', $field, DAO::escapeString($criteria[0]), DAO::escapeString($criteria[1])));
             break;
-        
+
         // n-ary operators
         case 'IN':
         case 'NOT IN':
@@ -375,15 +375,15 @@ function _civicrm_api3_dao_set_filter (&$dao,$params, $unique = TRUE ) {
             $escapedCriteria = array_map(array('CRM_Core_DAO','escapeString'), $criteria);
             $dao->whereAdd(sprintf('%s %s ("%s")', $field, $operator, implode('", "', $escapedCriteria)));
             break;
-        
+
         // binary operators
         default:
-            
-            $dao->whereAdd(sprintf('%s %s "%s"', $field, $operator, CRM_Core_DAO::escapeString($criteria))); 
+
+            $dao->whereAdd(sprintf('%s %s "%s"', $field, $operator, CRM_Core_DAO::escapeString($criteria)));
               }
               }
-          
-        } 
+
+        }
       }else{
         $dao->$field = $params [$field];
       }
@@ -529,11 +529,11 @@ function _civicrm_api3_dao_to_array ($dao, $params = null,$uniqueFields = TRUE, 
             }
         }
         $result[$dao->id] = $tmp;
-        if(!empty($custom)){  
+        if(!empty($custom)){
            _civicrm_api3_custom_data_get($result[$dao->id],$entity,$dao->id);
         }
    }
-      
+
 
     return $result;
 }
@@ -823,8 +823,8 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
             _civicrm_api3_validate_date($params,$fieldname,$fieldInfo);
             break;
         }
-   if(!empty($errorMode) && strtolower($action) == 'create' 
-      && CRM_Utils_Array::value('FKClassName', $fieldInfo) 
+   if(!empty($errorMode) && strtolower($action) == 'create'
+      && CRM_Utils_Array::value('FKClassName', $fieldInfo)
       && CRM_Utils_Array::value($fieldname, $params)){
             _civicrm_api3_validate_constraint($params,$fieldname,$fieldInfo);
    }
@@ -977,11 +977,11 @@ function _civicrm_api_get_fields($entity, $unique = FALSE, &$params = array()){
     foreach ($fields as $name => &$field) {
       //getting rid of unused attributes
       foreach ($unsetIfEmpty as $attr) {
-        if (empty($field[$attr])) { 
+        if (empty($field[$attr])) {
           unset($field[$attr]);
         }
       }
-      if ($name == $field['name']) 
+      if ($name == $field['name'])
         continue;
       if (array_key_exists ($field['name'],$fields)) {
         $field['error']='name conflict';
@@ -1014,7 +1014,7 @@ function _civicrm_api_get_custom_fields($entity, &$params){
                                                          empty($params['contact_sub_type']),
                                                          false,
                                                          false ) ;
-                                                      
+
     foreach ($customfields as $key => $value) {
         $customfields['custom_' . $key] = $value;
         unset($customfields[$key]);
@@ -1062,34 +1062,49 @@ function _civicrm_api3_getrequired($apiRequest) {
  * Fill params array with alternate (alias) values where a field has an alias and that is filled & the main field isn't
  * If multiple aliases the last takes precedence
  */
-function _civicrm_api3_swap_out_aliases(&$apiRequest ) {
-    if(strtolower($apiRequest['action'] =='getfields')){
-      if (!CRM_Utils_Array::value('action',$apiRequest['params'] ) && CRM_Utils_Array::value('api_action',$apiRequest['params'] )){
-        $apiRequest['params']['action'] = $apiRequest['params']['api_action'];
+function _civicrm_api3_swap_out_aliases(&$apiRequest) {
+  if (strtolower($apiRequest['action'] == 'getfields')) {
+    if (!CRM_Utils_Array::value('action', $apiRequest['params']) && CRM_Utils_Array::value('api_action', $apiRequest['params'])) {
+      $apiRequest['params']['action'] = $apiRequest['params']['api_action'];
+    }
+    return;
+  }
+  $result = civicrm_api($apiRequest['entity'],
+    'getfields',
+    array('version' => 3,
+      'action' => $apiRequest['action'],
+    )
+  );
+
+  foreach ($result['values'] as $field => $values) {
+    if (CRM_Utils_Array::value('api.aliases', $values)) {
+      // if aliased field is not set we try to use field alias
+      if (!isset($apiRequest['params'][$field])) {
+        foreach ($values['api.aliases'] as $alias) {
+          if(isset($apiRequest['params'][$alias])){
+            $apiRequest['params'][$field] = $apiRequest['params'][$alias];
+          }
+          //unset original field  nb - need to be careful with this as it may bring inconsistencies
+          // out of the woodwork but will be implementing only as _spec function extended
+          unset($apiRequest['params'][$alias]);
+        }
       }
-      return;
     }
-    $result = civicrm_api($apiRequest['entity'],
-                          'getfields',
-                          array('version' => 3,
-                                'action' => $apiRequest['action']));
-   
-    foreach ($result['values'] as $field => $values) {
-        if (CRM_Utils_Array::value('api.aliases',$values)){
-            if (!CRM_Utils_Array::value($field,$apiRequest['params'])){ // aliased field is empty so we try to use field alias
-                foreach ($values['api.aliases'] as $alias) {
-                    $apiRequest['params'][$field] = CRM_Utils_Array::value($alias,$apiRequest['params']);
-                    //unset original field  nb - need to be careful with this as it may bring inconsistencies
-                    // out of the woodwork but will be implementing only as _spec function extended
-                    unset($apiRequest['params'][$alias]);
-                }
-            }
-        }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('name', $values) && $field != $values['name']){
-            $apiRequest['params'][$field] = CRM_Utils_Array::value($values['name'],$apiRequest['params']);
-            // note that it would make sense to unset the original field here but tests need to be in place first
-        }elseif(empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('uniqueName', $values) && $field != $values['uniqueName'] && array_key_exists($values['uniqueName'], $apiRequest['params'])){
-          $apiRequest['params'][$field] = CRM_Utils_Array::value($values['uniqueName'],$apiRequest['params']);
-            // note that it would make sense to unset the original field here but tests need to be in place first
-       }
+    elseif (!isset($apiRequest['params'][$field])
+        && CRM_Utils_Array::value('name', $values)
+        && $field != $values['name']
+        && isset($apiRequest['params'][$values['name']])
+    ) {
+      $apiRequest['params'][$field] = $apiRequest['params'][$values['name']];
+      // note that it would make sense to unset the original field here but tests need to be in place first
     }
+    elseif (!isset($apiRequest['params'][$field])
+        && CRM_Utils_Array::value('uniqueName', $values)
+        && $field != $values['uniqueName']
+        && array_key_exists($values['uniqueName'], $apiRequest['params'])
+    ) {
+        $apiRequest['params'][$field] = CRM_Utils_Array::value($values['uniqueName'], $apiRequest['params']);
+        // note that it would make sense to unset the original field here but tests need to be in place first
+    }
+  }
 }
