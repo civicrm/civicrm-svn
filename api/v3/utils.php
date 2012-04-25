@@ -1125,7 +1125,7 @@ function _civicrm_api3_getdefaults($apiRequest) {
   );
 
   foreach ($result['values'] as $field => $values) {
-    if (CRM_Utils_Array::value('api.default', $values)) {
+    if (isset($values['api.default'])) {
       $defaults[$field] = $values['api.default'];
     }
   }
@@ -1172,23 +1172,33 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest) {
 
   foreach ($result['values'] as $field => $values) {
     if (CRM_Utils_Array::value('api.aliases', $values)) {
-      // aliased field is empty so we try to use field alias
-      if (!CRM_Utils_Array::value($field, $apiRequest['params'])) {
+      // if aliased field is not set we try to use field alias
+      if (!isset($apiRequest['params'][$field])) {
         foreach ($values['api.aliases'] as $alias) {
-          $apiRequest['params'][$field] = CRM_Utils_Array::value($alias, $apiRequest['params']);
+          if(isset($apiRequest['params'][$alias])){
+            $apiRequest['params'][$field] = $apiRequest['params'][$alias];
+          }
           //unset original field  nb - need to be careful with this as it may bring inconsistencies
           // out of the woodwork but will be implementing only as _spec function extended
           unset($apiRequest['params'][$alias]);
         }
       }
     }
-    elseif (empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('name', $values) && $field != $values['name']) {
-      $apiRequest['params'][$field] = CRM_Utils_Array::value($values['name'], $apiRequest['params']);
+    elseif (!isset($apiRequest['params'][$field])
+        && CRM_Utils_Array::value('name', $values)
+        && $field != $values['name']
+        && isset($apiRequest['params'][$values['name']])
+    ) {
+      $apiRequest['params'][$field] = $apiRequest['params'][$values['name']];
       // note that it would make sense to unset the original field here but tests need to be in place first
     }
-    elseif (empty($apiRequest['params'][$field]) && CRM_Utils_Array::value('uniqueName', $values) && $field != $values['uniqueName'] && array_key_exists($values['uniqueName'], $apiRequest['params'])) {
-      $apiRequest['params'][$field] = CRM_Utils_Array::value($values['uniqueName'], $apiRequest['params']);
-      // note that it would make sense to unset the original field here but tests need to be in place first
+    elseif (!isset($apiRequest['params'][$field])
+        && CRM_Utils_Array::value('uniqueName', $values)
+        && $field != $values['uniqueName']
+        && array_key_exists($values['uniqueName'], $apiRequest['params'])
+    ) {
+        $apiRequest['params'][$field] = CRM_Utils_Array::value($values['uniqueName'], $apiRequest['params']);
+        // note that it would make sense to unset the original field here but tests need to be in place first
     }
   }
 }
