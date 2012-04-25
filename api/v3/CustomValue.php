@@ -166,7 +166,12 @@ function civicrm_api3_custom_value_get($params) {
   $result = CRM_Core_BAO_CustomValueTable::getValues($getParams);
 
   if ($result['is_error']) {
-    return civicrm_api3_create_error($result['error_message']);
+    if($result['error_message'] == "No values found for the specified entity ID and custom field(s)."){
+      $values = array();
+      return civicrm_api3_create_success($values, $params);
+    }else{
+      return civicrm_api3_create_error($result['error_message']);
+    }
   }
   else {
     $entity_id = $result['entityID'];
