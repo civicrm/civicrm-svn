@@ -84,7 +84,7 @@ function civicrm_api3_contribution_create($params) {
 }
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -190,7 +190,7 @@ function civicrm_api3_contribution_get($params) {
 }
 /*
  * Adjust Metadata for Get action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -251,7 +251,7 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
         break;
 
       case 'contribution_type':
-        $contributionTypeId = CRM_Utils_Array::key(ucfirst($value), CRM_Contribute_PseudoConstant::contributionType());
+        $contributionTypeId = CRM_Utils_Array::key($value, CRM_Contribute_PseudoConstant::contributionType());
         if ($contributionTypeId) {
           if (CRM_Utils_Array::value('contribution_type_id', $values) && $contributionTypeId != $values['contribution_type_id']) {
             return civicrm_api3_create_error("Mismatched Contribution Type and Contribution Type Id");
