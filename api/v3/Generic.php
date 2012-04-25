@@ -25,6 +25,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
     $results = array();
   }
   $entity = _civicrm_api_get_camel_name($apiRequest['entity']);
+  $lcase_entity = _civicrm_api_get_entity_name_from_camel($entity);
   $action = strtolower(CRM_Utils_Array::value('action',$apiRequest['params']));
   if($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount' ){
     $action = 'get';
@@ -61,8 +62,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
     case 'get':
       $metadata = _civicrm_api_get_fields($apiRequest['entity'], $unique, $apiRequest['params']);
       if (empty($metadata['id']) && !empty($metadata[$apiRequest['entity'] . '_id'])) {
-        $metadata['id'] = $metadata[$entity . '_id'];
-        $metadata['id']['api.aliases'] = array($entity . '_id');
+        $metadata['id'] = $metadata[$lcase_entity . '_id'];
+        $metadata['id']['api.aliases'] = array($lcase_entity . '_id');
         unset($metadata[$entity . '_id']);
       }
       break;
@@ -70,7 +71,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
     case 'delete':
       $metadata = array('id' => array('title' => 'Unique Identifier',
           'api.required' => 1,
-          'api.aliases' => array($entity . '_id'),
+          'api.aliases' => array($lcase_entity . '_id'),
         ));
       break;
 
