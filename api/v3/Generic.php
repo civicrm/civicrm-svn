@@ -64,7 +64,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
       if (empty($metadata['id']) && !empty($metadata[$apiRequest['entity'] . '_id'])) {
         $metadata['id'] = $metadata[$lcase_entity . '_id'];
         $metadata['id']['api.aliases'] = array($lcase_entity . '_id');
-        unset($metadata[$entity . '_id']);
+        unset($metadata[$lcase_entity  . '_id']);
       }
       break;
 
