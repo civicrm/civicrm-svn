@@ -56,14 +56,14 @@
     </table>
 
     <div class="action-link">
-      <a href="{crmURL p='civicrm/batch/add' q='action=add&reset=1'}" id="newBatch" class="button"><span>&raquo; {ts}New Batch{/ts}</span></a>
+      <a href="{crmURL p='civicrm/batch/add' q='action=add&reset=1'}" id="newBatch" class="button"><span><div class="icon add-icon"></div> {ts}Add Batch{/ts}</span></a>
     </div>
   </div>
   {else}
-      <div class="messages status">
-          <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
-          {capture assign=crmURL}{crmURL p="civicrm/batch/add" q="action=add&reset=1"}{/capture}
-          {ts 1=$crmURL}There are no batches. You can <a href='%1'>add one</a>.{/ts}
-      </div>    
+    <div class="messages status">
+      <div class="icon inform-icon"></div>
+      {capture assign=crmURL}{crmURL p="civicrm/batch/add" q="action=add&reset=1"}{/capture}
+      {ts 1=$crmURL}There are no batches. You can <a href='%1'>add one</a>.{/ts}
+    </div>    
   {/if}
 {/if}
