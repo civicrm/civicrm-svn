@@ -48,6 +48,14 @@ class api_v3_UFGroupTest extends CiviUnitTestCase {
   protected function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
+    //  Truncate the tables
+    $op = new PHPUnit_Extensions_Database_Operation_Truncate();
+    $op->execute($this->_dbconn,
+      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+        dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml'
+      )
+    );
+
     $op = new PHPUnit_Extensions_Database_Operation_Insert;
     $op->execute(
       $this->_dbconn,
