@@ -1092,10 +1092,11 @@ function _civicrm_api_get_fields($entity, $unique = FALSE, &$params = array()) {
 function _civicrm_api_get_custom_fields($entity, &$params) {
   require_once 'CRM/Core/BAO/CustomField.php';
   $customfields = array();
+  $entity = _civicrm_api_get_camel_name($entity);
   if (strtolower($entity) == 'contact') {
     $entity = CRM_Utils_Array::value('contact_type', $params);
   }
-  $customfields = CRM_Core_BAO_CustomField::getFields(_civicrm_api_get_camel_name($entity),
+  $customfields = CRM_Core_BAO_CustomField::getFields($entity,
     FALSE,
     FALSE,
     CRM_Utils_Array::value('contact_sub_type', $params, FALSE),

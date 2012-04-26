@@ -26,14 +26,15 @@ function civicrm_api3_generic_getfields($apiRequest) {
   }
   $entity = _civicrm_api_get_camel_name($apiRequest['entity']);
   $lcase_entity = _civicrm_api_get_entity_name_from_camel($entity);
+  $subentity = CRM_Utils_Array::value('contact_type', $apiRequest['params']);
   $action = strtolower(CRM_Utils_Array::value('action',$apiRequest['params']));
   if($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount' ){
     $action = 'get';
   }
   if (empty($action)) {
-    if (CRM_Utils_Array::value($entity, $results) &&
+    if (CRM_Utils_Array::value($entity .$subentity, $results) &&
       CRM_Utils_Array::value('values', $results['entity'])) {
-      return $results[$entity];
+      return $results[$entity .$subentity];
     }
     else {
       $values = _civicrm_api_get_fields($entity);
@@ -44,8 +45,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
     }
   }
   $unique = TRUE; //determines whether to use unique field names - seem comment block above
-  if(isset($results[$entity]) && CRM_Utils_Array::value($action, $results[$entity])) {
-    return $results[$entity][$action];
+  if(isset($results[$entity . $subentity]) && CRM_Utils_Array::value($action, $results[$entity])) {
+    return $results[$entity . $subentity][$action];
   }
   // defaults based on data model and API policy
   switch ($action) {
