@@ -30,8 +30,6 @@
 
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/UFGroup.php';
-require_once 'api/v3/UFField.php';
 
 /**
  * Test class for UFGroup API - civicrm_uf_*
