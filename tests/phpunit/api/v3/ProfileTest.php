@@ -5,7 +5,6 @@
  *  Include class definitions
  */
 require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/Profile.php';
 
 /**
  *  Test APIv3 civicrm_profile_* functions
@@ -26,7 +25,9 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     parent::setUp();
   }
 
-  function tearDown() {}
+  function tearDown() {
+      $this->quickCleanup(array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact'));
+  }
 
   ////////////// test civicrm_api3_profile_get //////////////////
 
@@ -91,8 +92,6 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
 
     $this->assertEquals($result['is_error'], 1);
     $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: activity_id');
-
-    $this->quickCleanup(array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact'));
   }
 
   /*
@@ -469,7 +468,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
   }
 
   /*
-     * Helper function to create an Individual with address/email/phone info. Import UF Group and UF Fields  
+     * Helper function to create an Individual with address/email/phone info. Import UF Group and UF Fields
      */
   function _createIndividualContact() {
     $contactParams = array(
