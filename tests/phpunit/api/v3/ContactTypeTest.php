@@ -31,8 +31,7 @@
 
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Contact/BAO/ContactType.php';
-require_once 'api/v3/Contact.php';
+
 class api_v3_ContactTypeTest extends CiviUnitTestCase {
   protected $_apiversion; function setUp() {
     parent::setUp();
