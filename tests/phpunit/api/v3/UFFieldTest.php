@@ -30,8 +30,6 @@
 
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/UFGroup.php';
-require_once 'api/v3/UFField.php';
 
 /**
  * Test class for UFGroup API - civicrm_uf_*
@@ -49,6 +47,12 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
   protected $_entity;
   protected function setUp() {
     parent::setUp();
+    $op = new PHPUnit_Extensions_Database_Operation_Truncate();
+    $op->execute($this->_dbconn,
+      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+        dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml'
+      )
+    );
     $this->_apiversion = 3;
     $op = new PHPUnit_Extensions_Database_Operation_Insert;
     $op->execute(
