@@ -30,7 +30,7 @@
  *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2011
- *	
+ *
  */
 
 
@@ -163,9 +163,9 @@ class CRM_Utils_REST
     }
 
 
-    if (isset($result['count'])) 
+    if (isset($result['count']))
       $count=' count="'.$result['count'].'" ';
-    else 
+    else
       $count = "";
     $xml = "<?xml version=\"1.0\"?>
       <ResultSet xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" $count>
@@ -222,9 +222,9 @@ class CRM_Utils_REST
           }
           break;
         case ',':
-          if ($inquote || $inarray) 
+          if ($inquote || $inarray)
             $result .= $char;
-          else 
+          else
             $result .= $char . $newline . str_repeat($tab, $tabcount);
           break;
         case '"':
@@ -288,7 +288,7 @@ class CRM_Utils_REST
       $args[1] = CRM_Utils_array::value( 'entity', $_REQUEST );
       $args[2] = CRM_Utils_array::value( 'action', $_REQUEST );
     }
-    // Everyone should be required to provide the server key, so the whole 
+    // Everyone should be required to provide the server key, so the whole
     //  interface can be disabled in more change to the configuration file.
     //  This used to be done in the authenticate function, but that was bad...trust me
     // first check for civicrm site key
@@ -300,7 +300,7 @@ class CRM_Utils_REST
     }
 
 
-    // At this point we know we are not calling either login or ping (neither of which 
+    // At this point we know we are not calling either login or ping (neither of which
     //  require authentication prior to being called.  Therefore, at this point we need
     //  to make sure we're working with a trusted user.
 
@@ -311,15 +311,15 @@ class CRM_Utils_REST
     $valid_user = false;
 
     // Check for valid session.  Session ID's only appear here if you have
-    // run the rest_api login function.  That might be a problem for the 
-    // AJAX methods.  
+    // run the rest_api login function.  That might be a problem for the
+    // AJAX methods.
     $session = CRM_Core_Session::singleton();
     if ($session->get('PHPSESSID') ) {
       $valid_user = true;
     }
 
     // If the user does not have a valid session (most likely to be used by people using
-    // an ajax interface), we need to check to see if they are carring a valid user's 
+    // an ajax interface), we need to check to see if they are carring a valid user's
     // secret key.
     if ( !$valid_user ) {
       $api_key = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
@@ -339,7 +339,7 @@ class CRM_Utils_REST
 
   static function process( &$args, $restInterface = true ) {
     $params =& self::buildParamList( );
-    
+
     $params['check_permissions'] = true;
     $fnName = $apiFile = null;
     // clean up all function / class names. they should be alphanumeric and _ only
@@ -360,7 +360,7 @@ class CRM_Utils_REST
         count($class) < 4    ||
         $class[ count($class) - 1 ] != 'AJAX' ) {
           return self::error( 'Unknown function invocation.' );
-        } 
+        }
 
       $params['fnName'] = CRM_Utils_String::munge( $params['fnName'] );
 
@@ -373,15 +373,15 @@ class CRM_Utils_REST
       return call_user_func( array( $params['className'], $params['fnName'] ), $params );
     }
 
-    if (!array_key_exists ('version',$params)) {  
+    if (!array_key_exists ('version',$params)) {
       $params ['version'] = 3;
-    } 
+    }
 
-    if ( $params['version'] == 2) { 
-      $result['is_error']=1; 
-      $result['error_message'] = "FATAL: API v2 not accessible from ajax/REST"; 
-      $result['deprecated'] = "Please upgrade to API v3"; 
-      return $result; 
+    if ( $params['version'] == 2) {
+      $result['is_error']=1;
+      $result['error_message'] = "FATAL: API v2 not accessible from ajax/REST";
+      $result['deprecated'] = "Please upgrade to API v3";
+      return $result;
     }
 
     // trap all fatal errors
@@ -408,7 +408,7 @@ class CRM_Utils_REST
       }
     }
     if (array_key_exists('return',$_REQUEST) && is_array($_REQUEST['return'])) {
-      foreach ( $_REQUEST['return'] as $key => $v) 
+      foreach ( $_REQUEST['return'] as $key => $v)
         $params['return.'.$key]=1;
     }
     return $params;
@@ -454,9 +454,9 @@ class CRM_Utils_REST
    * works both as GET or POST
    **/
   static function ajaxJson () {
-    if (!empty ($_POST)) 
+    if (!empty ($_POST))
       $params = $_POST;
-    else 
+    else
       $params = $_GET;
 
     foreach ($params as $k => $v) {
@@ -482,7 +482,7 @@ class CRM_Utils_REST
     // the request has to be sent by an ajax call. First line of protection against csrf
     $config = CRM_Core_Config::singleton( );
     if ( false &&
-         ! $config->debug && 
+         ! $config->debug &&
          ( ! array_key_exists ( 'HTTP_X_REQUESTED_WITH', $_SERVER ) ||
            $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest" ) ) {
         require_once 'api/v3/utils.php';
@@ -518,7 +518,7 @@ class CRM_Utils_REST
       count( $args ) != 3 ) && !$className ) {
         return self::error( 'Unknown function invocation.' );
       }
-    
+
     $result = self::process( $args, false );
 
     echo self::output( $result );
@@ -532,7 +532,7 @@ class CRM_Utils_REST
 
     // If the function isn't in the civicrm namespace or request
     // is for login or ping
-    if ( empty($args) || 
+    if ( empty($args) ||
       $args[0] != 'civicrm' ||
       ( ( count( $args ) != 3 ) && ( $args[1] != 'login' ) && ( $args[1] != 'ping') ) ||
       $args[1] == 'ping' ) {
@@ -558,7 +558,7 @@ class CRM_Utils_REST
 
     if ( !$uid ) {
       $store      = null;
-      $api_key    = AAAAAAAAACRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
+      $api_key    = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, null, 'REQUEST' );
       $contact_id = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
       if ( $contact_id ) {
         $uid = CRM_Core_BAO_UFMatch::getUFId( $contact_id );
