@@ -426,7 +426,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
   function debug_log_message($message, $out = FALSE, $comp = '') {
     $config = CRM_Core_Config::singleton();
 
-    $file_log = self::createDebugLogger();
+    $file_log = self::createDebugLogger($comp);
     $file_log->log("$message\n");
     $str = "<p/><code>$message</code>";
     if ($out) {
@@ -449,7 +449,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
    * @return Log
    */
   static
-  function createDebugLogger() {
+  function createDebugLogger($comp = '') {
     $config = CRM_Core_Config::singleton();
 
     if ($comp) {
