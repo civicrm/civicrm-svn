@@ -351,7 +351,7 @@ function _civicrm_api_get_camel_name($entity, $version = NULL) {
 function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $version) {
   $entity = _civicrm_api_get_entity_name_from_camel($entity);
   foreach ($params as $field => $newparams) {
-    if ((is_array($newparams) || $newparams === 1) && substr($field, 0, 3) == 'api') {
+    if ((is_array($newparams) || $newparams === 1) && $field <> 'api.has_parent' && substr($field, 0, 3) == 'api') {
 
       // 'api.participant.delete' => 1 is a valid options - handle 1 instead of an array
       if ($newparams === 1) {
@@ -428,7 +428,7 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
 /*
  * Swap out any $values vars - ie. the value after $value is swapped for the parent $result
  * 'activity_type_id' => '$value.testfield',
-   'tag_id'  => '$value.api.tag.create.id',  
+   'tag_id'  => '$value.api.tag.create.id',
     'tag1_id' => '$value.api.entity.create.0.id'
  */
 function _civicrm_api_replace_variables($entity, $action, &$params, &$parentResult, $separator = '.') {
