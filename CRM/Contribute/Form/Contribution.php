@@ -445,14 +445,12 @@ WHERE  contribution_id = {$this->_id}
             CRM_Custom_Form_CustomData::setDefaultValues( $this );
         }
         
-        $this->_lineItems = array( ); $setName = null;
+        $this->_lineItems = array( );
         if ( $this->_id  && 
-             $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $this->_id, null, null, $setName ) ) {
+             $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $this->_id, null, 1 ) ) {
             $this->_priceSetId = $priceSetId;
             $this->_lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $this->_id, 'contribution' );
         }
-        $this->_setName = $setName;
-        $this->assign( 'defaultContribution', ( $this->_setName == 'default_contribution_amount' || $this->_setName == 'default_membership_type_amount' )? $this->_defaultContri = 1 : $this->_defaultContri = 0 );
         $this->assign( 'lineItem', empty( $this->_lineItems ) ? false : $this->_lineItems );
     }
 
@@ -872,7 +870,7 @@ WHERE  contribution_id = {$this->_id}
             $element->freeze( );
         }
         
-        if ( empty( $this->_lineItems ) || $this->_defaultContri) {
+        if ( empty( $this->_lineItems ) ) {
             $buildPriceSet = false;
             $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'CiviContribute');
             if ( !empty( $priceSets ) && !$this->_ppID ) {
@@ -1078,23 +1076,23 @@ WHERE  contribution_id = {$this->_id}
             CRM_Price_BAO_Set::processAmount( $this->_priceSet['fields'], 
                                               $submittedValues, $lineItem[$priceSetId] );
             $submittedValues['total_amount'] = CRM_Utils_Array::value( 'amount', $submittedValues );
-        } 
-        if( !empty( $this->_lineItems ) && $this->_defaultContri && CRM_Utils_Array::value( 'total_amount', $submittedValues ) ){
-            $lineItem = $this->_lineItems;
-            foreach( $this->_lineItems as $key => $items){
-                foreach( $items as $k=> $v){
-                    if( $this->_setName == 'default_contribution_amount')
-                        $v['qty'] = (int)$submittedValues['total_amount'];
-                    else
-                        $v['unit_price'] = $submittedValues['total_amount'];   
-                    $v['line_total'] = $submittedValues['total_amount'];
-                    $v['id'] = $k;
-                    $lineItem[$this->_priceSetId][$k]=$v;
-                }
-            }
-            
         }
-           
+        if( !$priceSetId && CRM_Utils_Array::value( 'total_amount', $submittedValues ) && $this->_id ){
+            $this->_priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $this->_id );
+            $lineItems = CRM_Price_BAO_LineItem::getLineItems( $this->_id, 'contribution' );
+            $itemId = key( $lineItems );$fieldType = null;
+            if( $itemId && CRM_Utils_Array::value( 'price_field_id', $lineItems[$itemId] )){
+                $fieldType = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'html_type' );  
+            }
+            if( $fieldType == 'Text' )
+                $lineItems[$itemId]['qty'] = (int)$submittedValues['total_amount'];
+            else
+                $lineItems[$itemId]['unit_price'] = $submittedValues['total_amount'];   
+            $lineItems[$itemId]['line_total'] = $submittedValues['total_amount'];
+            $lineItems[$itemId]['id']         = $itemId;
+            $lineItem[$this->_priceSetId] = $lineItems;
+        }
+        
         if ( !CRM_Utils_Array::value( 'total_amount', $submittedValues ) ) {
             $submittedValues['total_amount'] = $this->_values['total_amount']; 
         }
@@ -1359,7 +1357,7 @@ WHERE  contribution_id = {$this->_id}
             }
           
             // process line items, until no previous line items.
-            if ( ( empty( $this->_lineItems ) || $this->_defaultContri )  && $contribution->id && !empty( $lineItem ) ) {
+            if ( empty( $this->_lineItems ) && $contribution->id && !empty( $lineItem ) ) {
                 CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $lineItem );
             }
             
@@ -1494,7 +1492,7 @@ WHERE  contribution_id = {$this->_id}
             $contribution = CRM_Contribute_BAO_Contribution::create( $params, $ids );
             
             // process line items, until no previous line items.
-            if ( (empty( $this->_lineItems ) || $this->_defaultContri )  && $contribution->id && !empty( $lineItem ) ) {
+            if ( empty( $this->_lineItems )  && $contribution->id && !empty( $lineItem ) ) {
                 CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $lineItem );
             }
             
