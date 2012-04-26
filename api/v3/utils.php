@@ -1216,17 +1216,15 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
   if (CRM_Utils_Array::value($fieldname, $params)) {
     //if value = 'user_contact_id' replace value with logged in user id
     if ($params[$fieldname] == "user_contact_id") {
-      if (! $session) {
-        $session = & CRM_Core_Session::singleton();
-      }
+      $session = & CRM_Core_Session::singleton();
       $params[$fieldname] = $session->get('userID');
     }
     if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo)) {
       $constant = $fieldInfo['options'];
-      if (is_integer($params[$fieldname]) && ! array_key_exists($params[$fieldname], $fieldInfo['options'])) {
+      if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
         throw new Exception("$fieldname is not valid");
       }
-      elseif (is_string($params[$fieldname])) {
+      elseif (!is_numeric($params[$fieldname])) {
         $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
         if (empty($numericvalue)) {
           throw new Exception("$fieldname " . $params[$fieldname] . "is not valid");
