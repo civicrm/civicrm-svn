@@ -1291,7 +1291,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     }
     //FIX ME not working for relative
     if ($relative) {
-      list($term, $unit) = explode('.', $relative);
+      list($term, $unit) = CRM_Utils_System::explode('.', $relative, 2);
       $dateRange = CRM_Utils_Date::relativeToAbsolute($term, $unit);
       $from = $dateRange['from'];
       //Take only Date Part, Sometime Time part is also present in 'to'
