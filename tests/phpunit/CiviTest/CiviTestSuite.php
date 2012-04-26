@@ -47,6 +47,9 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
             $name = str_replace( '_',
                                  ' ',
                                  get_class( $this ) );
+
+            // also split AllTests to All Tests
+            $name = str_replace( 'AllTests', 'All Tests', $name );
         }
         parent::__construct( $name );
 
@@ -88,6 +91,10 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite
         $name = str_replace( '_',
                              ' ',
                              get_class( $this ) );
+
+        // also split AllTests to All Tests
+        $name = str_replace( 'AllTests', 'All Tests', $name );
+
         $suite = new PHPUnit_Framework_TestSuite( $name );
         $this->addAllTests( $suite, $myfile,
                             new SplFileInfo( dirname( $myfile ) ) );
