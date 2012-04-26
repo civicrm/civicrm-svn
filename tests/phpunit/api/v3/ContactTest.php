@@ -80,6 +80,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $tablesToTruncate = array('civicrm_contact',
       'civicrm_email',
       'civicrm_contribution',
+      'civicrm_website',
     );
 
     $this->quickCleanup($tablesToTruncate);
