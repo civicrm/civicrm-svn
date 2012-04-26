@@ -84,7 +84,10 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if (CRM_Utils_Array::value('format.smarty', $apiRequest['params']) || CRM_Utils_Array::value('format_smarty', $apiRequest['params'])) {
       // return _civicrm_api_parse_result_through_smarty($result,$apiRequest['params']);
     }
-    if (function_exists('xdebug_time_index') && CRM_Utils_Array::value('debug', $apiRequest['params'])) {
+    if (function_exists('xdebug_time_index')
+      && CRM_Utils_Array::value('debug', $apiRequest['params'])
+      && is_array($result)// result would not be an array for getvalue
+    ) {
       $result['xdebug']['peakMemory'] = xdebug_peak_memory_usage();
       $result['xdebug']['memory'] = xdebug_memory_usage();
       $result['xdebug']['timeIndex'] = xdebug_time_index();
