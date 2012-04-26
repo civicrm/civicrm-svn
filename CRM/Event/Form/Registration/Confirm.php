@@ -233,7 +233,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                         }
                     }
 
-                    if ( $v['first_name'] && $v['last_name'] ) {
+                    if ( CRM_Utils_Array::value( 'first_name', $v ) && CRM_Utils_Array::value( 'last_name', $v ) ) {
                         $append = $v['first_name'] . ' ' . $v['last_name'];
                     } else {
                         //use an email if we have one
