@@ -26,7 +26,15 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
-      $this->quickCleanup(array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_custom_field', 'civicrm_custom_group', 'civicrm_contact'));
+    $this->quickCleanup(array(
+      'civicrm_uf_field',
+      'civicrm_uf_join',
+      'civicrm_uf_group',
+      'civicrm_custom_field',
+      'civicrm_custom_group',
+      'civicrm_contact',
+      'civicrm_phone',
+    ));
   }
 
   ////////////// test civicrm_api3_profile_get //////////////////
@@ -245,9 +253,11 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'state_province-1' => '1000',
     );
 
-    $params = array_merge(array('profile_id' => 25, 'contact_id' => $contactId, 'version' => 3),
-      $updateParams
-    );
+    $params = array_merge(array(
+      'profile_id' => 25,
+      'contact_id' => $contactId,
+      'version' => 3
+    ), $updateParams);
 
     $result = civicrm_api('profile', 'set', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
@@ -260,7 +270,6 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'version' => 3,
     );
     $profileDetails = civicrm_api('profile', 'get', $getParams);
-
     $this->assertEquals(0, $profileDetails['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $profileDetails)
     );
 
@@ -268,8 +277,6 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       $this->assertEquals($value, CRM_Utils_Array::value($profileField, $profileDetails['values']), "In line " . __LINE__ . " error message: " . "missing/mismatching value for {$profileField}"
       );
     }
-
-    $this->quickCleanup(array('civicrm_uf_field', 'civicrm_uf_join', 'civicrm_uf_group', 'civicrm_contact'));
   }
 
   /*
