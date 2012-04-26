@@ -37,7 +37,7 @@
 
 /**
  * This class generates form components for Miscellaneous
- * 
+ *
  */
 class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
 {
@@ -64,9 +64,9 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         $this->addYesNo('logging', ts('Logging'), null, null, $attribs);
 
         $this->addYesNo( 'versionCheck', ts( 'Version Check & Statistics Reporting' ));
-        
+
         $this->addYesNo( 'doNotAttachPDFReceipt', ts( 'Attach PDF copy to receipts' ) );
-        
+
         $this->addElement('text','wkhtmltopdfPath', ts('Path to wkhtmltopdf executable'),
                           array( 'size' => 64, 'maxlength' => 256 ) );
 
@@ -89,29 +89,35 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         $this->addRule('maxAttachments', ts('Value should be a positive number') , 'positiveInteger');
         $this->addRule('maxFileSize', ts('Value should be a positive number') , 'positiveInteger');
         $this->addRule('checksumTimeout', ts('Value should be a positive number') , 'positiveInteger');
-       
-        parent::buildQuickForm();    
+
+        parent::buildQuickForm();
     }
 
     function setDefaultValues()
     {
         parent::setDefaultValues();
 
-        $this->_defaults['checksumTimeout'] = 
+        $this->_defaults['checksumTimeout'] =
             CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'checksum_timeout',
                                            null,
                                            7 );
         return $this->_defaults;
     }
-            
+
     public function postProcess()
     {
+        // store the submitted values in an array
+        $params = $this->controller->exportValues($this->_name);
+
+
+        // get current logging status
+        $values = $this->exportValues();
+
         parent::postProcess();
 
         // handle logging
         // FIXME: do it only if the setting changed
-        $values = $this->exportValues();
         $logging = new CRM_Logging_Schema;
         $values['logging'] ? $logging->enableLogging() : $logging->disableLogging();
     }

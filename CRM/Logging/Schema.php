@@ -58,10 +58,10 @@ class CRM_Logging_Schema
         $civiDBName = $dao->_database;
 
         $dao = CRM_Core_DAO::executeQuery("
-SELECT TABLE_NAME 
-FROM   INFORMATION_SCHEMA.TABLES 
+SELECT TABLE_NAME
+FROM   INFORMATION_SCHEMA.TABLES
 WHERE  TABLE_SCHEMA = '{$civiDBName}'
-AND    TABLE_TYPE = 'BASE TABLE' 
+AND    TABLE_TYPE = 'BASE TABLE'
 AND    TABLE_NAME LIKE 'civicrm_%'
 ");
         while ($dao->fetch()) {
@@ -71,7 +71,7 @@ AND    TABLE_NAME LIKE 'civicrm_%'
         // do not log temp import, cache and log tables
         $this->tables = preg_grep('/^civicrm_import_job_/',       $this->tables, PREG_GREP_INVERT);
         $this->tables = preg_grep('/_cache$/',                    $this->tables, PREG_GREP_INVERT);
-        $this->tables = preg_grep('/_log/',                    $this->tables, PREG_GREP_INVERT);
+        $this->tables = preg_grep('/_log/',                       $this->tables, PREG_GREP_INVERT);
         $this->tables = preg_grep('/^civicrm_task_action_temp_/', $this->tables, PREG_GREP_INVERT);
         $this->tables = preg_grep('/^civicrm_export_temp_/',      $this->tables, PREG_GREP_INVERT);
 
@@ -79,10 +79,10 @@ AND    TABLE_NAME LIKE 'civicrm_%'
         $this->db = $dsn['database'];
 
         $dao = CRM_Core_DAO::executeQuery("
-SELECT TABLE_NAME 
-FROM   INFORMATION_SCHEMA.TABLES 
+SELECT TABLE_NAME
+FROM   INFORMATION_SCHEMA.TABLES
 WHERE  TABLE_SCHEMA = '{$this->db}'
-AND    TABLE_TYPE = 'BASE TABLE' 
+AND    TABLE_TYPE = 'BASE TABLE'
 AND    TABLE_NAME LIKE 'log_civicrm_%'
 ");
         while ($dao->fetch()) {
@@ -119,8 +119,8 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
     {
         if ($this->isEnabled()) return;
 
-        foreach ($this->tables as $table) {
-            $this->createLogTableFor($table);
+        foreach ($this->schemaDifferences() as $table => $cols) {
+            $this->fixSchemaDifferencesFor($table, $cols);
         }
 
         // invoke the meta trigger creation call
@@ -149,10 +149,9 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
      */
     function fixSchemaDifferencesFor($table, $cols = null)
     {
-        if (!$this->isEnabled()) return;
-
         if (empty($this->logs[$table])) {
             $this->createLogTableFor($table);
+            return;
         }
 
         if (is_null($cols)) {
@@ -223,7 +222,10 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
         $from = (substr($table, 0, 4) == 'log_') ? "`{$this->db}`.$table" : $table;
 
         if (!isset($columnsOf[$table])) {
+            CRM_Core_Error::ignoreException();
             $dao = CRM_Core_DAO::executeQuery("SHOW COLUMNS FROM $from");
+            CRM_Core_Error::setCallback();
+            if ( is_a( $dao, 'DB_Error' ) ) return array();
             $columnsOf[$table] = array();
             while ($dao->fetch()) {
                 $columnsOf[$table][] = $dao->Field;
@@ -238,8 +240,6 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
      */
     private function createLogTableFor($table)
     {
-        CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS `{$this->db}`.log_$table");
-
         $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
         $dao->fetch();
         $query = $dao->Create_Table;
@@ -295,7 +295,12 @@ COLS;
      */
     public function isEnabled()
     {
+      $config = CRM_Core_Config::singleton( );
+
+      if ( $config->logging ) {
         return $this->tablesExist() and $this->triggersExist();
+      }
+      return false;
     }
 
     /**
@@ -342,7 +347,7 @@ COLS;
             }
             $upsertSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
             $deleteSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
-            
+
             foreach ( $columns as $column ) {
                 $upsertSQL .= "NEW.$column, ";
                 $deleteSQL .= "OLD.$column, ";

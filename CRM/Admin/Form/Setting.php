@@ -37,7 +37,7 @@
 
 /**
  * This class generates form components generic to CiviCRM settings
- * 
+ *
  */
 class CRM_Admin_Form_Setting extends CRM_Core_Form
 {
@@ -47,11 +47,11 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
     /**
      * This function sets the default values for the form.
      * default values are retrieved from the database
-     * 
+     *
      * @access public
      * @return None
      */
-    function setDefaultValues( ) 
+    function setDefaultValues( )
     {
         if ( ! $this->_defaults ) {
             $this->_defaults = array( );
@@ -60,15 +60,15 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
             if ( in_array( $this->_name, $formArray ) ) {
                 $formMode = true;
             }
-            
+
             CRM_Core_BAO_ConfigSetting::retrieve($this->_defaults);
 
-            CRM_Core_Config_Defaults::setValues($this->_defaults, $formMode); 
+            CRM_Core_Config_Defaults::setValues($this->_defaults, $formMode);
 
-            $list = array_flip( CRM_Core_OptionGroup::values( 'contact_autocomplete_options', 
+            $list = array_flip( CRM_Core_OptionGroup::values( 'contact_autocomplete_options',
                                                               false, false, true, null, 'name' ) );
 
-            $cRlist = array_flip( CRM_Core_OptionGroup::values( 'contact_reference_options', 
+            $cRlist = array_flip( CRM_Core_OptionGroup::values( 'contact_reference_options',
                                                                 false, false, true, null, 'name' ) );
 
             $listEnabled = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
@@ -77,15 +77,15 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
                                                                'contact_reference_options' );
 
             $autoSearchFields = array();
-            if ( !empty( $list ) && !empty( $listEnabled ) ) { 
+            if ( !empty( $list ) && !empty( $listEnabled ) ) {
                 $autoSearchFields = array_combine($list, $listEnabled);
             }
 
             $cRSearchFields = array();
-            if ( !empty( $cRlist ) && !empty( $cRlistEnabled ) ) { 
+            if ( !empty( $cRlist ) && !empty( $cRlistEnabled ) ) {
                 $cRSearchFields = array_combine($cRlist, $cRlistEnabled);
             }
-            
+
             //Set defaults for autocomplete and contact reference options
             $this->_defaults['autocompleteContactSearch'] = array( '1' => 1 ) + $autoSearchFields;
             $this->_defaults['autocompleteContactReference'] = array( '1' => 1 ) + $cRSearchFields;
@@ -116,14 +116,14 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
                                  )
                            );
     }
-    
+
     /**
      * Function to process the form
      *
      * @access public
      * @return None
      */
-    public function postProcess() 
+    public function postProcess()
     {
         // store the submitted values in an array
         $params = $this->controller->exportValues($this->_name);
@@ -135,7 +135,7 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
 
         // save autocomplete search options
         if ( CRM_Utils_Array::value( 'autocompleteContactSearch', $params ) ) {
-            $value = 
+            $value =
                 CRM_Core_DAO::VALUE_SEPARATOR .
                 implode( CRM_Core_DAO::VALUE_SEPARATOR,
                          array_keys( $params['autocompleteContactSearch'] ) ) .
@@ -150,7 +150,7 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
 
         // save autocomplete contact reference options
         if ( CRM_Utils_Array::value( 'autocompleteContactReference', $params ) ) {
-            $value = 
+            $value =
                 CRM_Core_DAO::VALUE_SEPARATOR .
                 implode( CRM_Core_DAO::VALUE_SEPARATOR,
                          array_keys( $params['autocompleteContactReference'] ) ) .
@@ -169,13 +169,13 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
                                            CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                            'checksum_timeout' );
         }
-            
+
         // update time for date formats when global time is changed
         if ( CRM_Utils_Array::value( 'timeInputFormat', $params ) ) {
             $query = "
-UPDATE civicrm_preferences_date 
+UPDATE civicrm_preferences_date
 SET    time_format = %1
-WHERE  time_format IS NOT NULL 
+WHERE  time_format IS NOT NULL
 AND    time_format <> ''
 ";
             $sqlParams = array( 1 => array( $params['timeInputFormat'], 'String' ) );
@@ -191,7 +191,7 @@ AND    time_format <> ''
                                            'verifySSL' );
             unset($params['verifySSL']);
         }
-        
+
         // force secure URLs
         if ( isset($params['enableSSL'] ) ) {
             CRM_Core_BAO_Setting::setItem( $params['enableSSL'],
@@ -199,7 +199,7 @@ AND    time_format <> ''
                                            'enableSSL' );
             unset($params['enableSSL']);
         }
-        
+
         CRM_Core_BAO_ConfigSetting::add($params);
 
         // also delete the CRM_Core_Config key from the database
