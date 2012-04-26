@@ -29,8 +29,6 @@
 
 
 
-
-require_once 'api/v3/Pledge.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_PledgeTest extends CiviUnitTestCase {
 
@@ -43,7 +41,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   protected $_params;
   protected $_entity;
   protected $scheduled_date;
-  public $DBResetRequired = True; function setUp() {
+  public $DBResetRequired = True;
+  function setUp() {
     $this->_apiversion = 3;
     parent::setUp();
     //need to set scheduled payment in advance we are running test @ midnight & it becomes unexpectedly overdue
@@ -100,7 +99,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   }
 
   /*
-   * 
+   *
    */
   function testgetfieldspledge() {
     $result = civicrm_api('pledge', 'getfields', array('version' => 3, 'action' => 'get'));
@@ -269,10 +268,10 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
 
   /*
      * Test creation of pledge with only one payment.
-     * 
-     * Pledge status id left empty as it is not a required field 
+     *
+     * Pledge status id left empty as it is not a required field
      * http://issues.civicrm.org/jira/browse/CRM-8551
-     * 
+     *
      */
   function testCreatePledgeSinglePayment() {
     $params = array('scheduled_date' => '20110510',
@@ -449,8 +448,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $this->assertEquals($result['is_error'], 0);
   }
   /*
-     * test to make sure empty get returns nothing 
-     * Note that the function gives incorrect results if no pledges exist as it does a 
+     * test to make sure empty get returns nothing
+     * Note that the function gives incorrect results if no pledges exist as it does a
      * contact search instead - test only checks that the get finds the one existing
      */
   function testGetEmpty() {
