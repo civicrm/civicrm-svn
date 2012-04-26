@@ -243,11 +243,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             }
         }
 
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
-             CIVICRM_MAIL_SMARTY ) {
-          CRM_Core_Smarty::registerStringResource( );
-        }
-
         return array( $formValues, $categories, $html_message, $messageToken, $returnProperties );
     }
 
@@ -260,11 +255,6 @@ class CRM_Contact_Form_Task_PDFLetterCommon
     static function postProcess( &$form )
     {
         list( $formValues, $categories, $html_message, $messageToken, $returnProperties ) = self::processMessageTemplate($form);
-
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
-             CIVICRM_MAIL_SMARTY ) {
-          CRM_Core_Smarty::registerStringResource( );
-        }
 
         $skipOnHold   = isset( $form->skipOnHold ) ? $form->skipOnHold : false;
         $skipDeceased = isset( $form->skipDeceased ) ? $form->skipDeceased : true;

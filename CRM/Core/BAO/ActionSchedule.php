@@ -402,7 +402,6 @@ WHERE   cas.entity_value = $id AND
             $text = $body_text;
 
             $smarty = CRM_Core_Smarty::singleton( );
-            CRM_Core_Smarty::registerStringResource( );
             foreach( array( 'text', 'html') as $elem) {
                 $$elem = $smarty->fetch("string:{$$elem}");
             }

@@ -106,11 +106,6 @@ class CRM_Mailing_Page_View extends CRM_Core_Page
 
         CRM_Mailing_BAO_Mailing::tokenReplace( $this->_mailing );
 
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
-             CIVICRM_MAIL_SMARTY ) {
-          CRM_Core_Smarty::registerStringResource( );
-        }
-
         // get and format attachments
         $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
                                                           $this->_mailing->id );

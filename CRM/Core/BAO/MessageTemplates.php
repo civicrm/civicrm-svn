@@ -211,7 +211,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $text = $body_text;
 
             $smarty = CRM_Core_Smarty::singleton( );
-            CRM_Core_Smarty::registerStringResource( );
             foreach( array( 'text', 'html') as $elem) {
                 $$elem = $smarty->fetch("string:{$$elem}");
             }

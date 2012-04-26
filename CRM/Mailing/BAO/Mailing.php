@@ -1105,11 +1105,6 @@ AND civicrm_contact.is_opt_out =0";
             $headers['Reply-To'] = "{$replyToEmail}";
         }
 
-        if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
-             CIVICRM_MAIL_SMARTY ) {
-          CRM_Core_Smarty::registerStringResource( );
-        }
-
         if ( $contactDetails ) {
             $contact = $contactDetails;
         } else {

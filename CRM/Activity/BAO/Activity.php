@@ -1288,8 +1288,6 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) &&
              CIVICRM_MAIL_SMARTY ) {
             $smarty = CRM_Core_Smarty::singleton( );
-            CRM_Core_Smarty::registerStringResource( );
-
             $escapeSmarty = true;
         }
 
