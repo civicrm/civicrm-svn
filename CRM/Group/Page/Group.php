@@ -35,11 +35,11 @@
  */
 
 
-class CRM_Group_Page_Group extends CRM_Core_Page_Basic 
+class CRM_Group_Page_Group extends CRM_Core_Page_Basic
 {
     protected $_sortByCharacter;
 
-    function getBAOName( ) 
+    function getBAOName( )
     {
         return 'CRM_Contact_BAO_Group';
     }
@@ -53,25 +53,25 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
     function &links()
     {
     }
-    
+
     /**
      * return class name of edit form
      *
      * @return string
      * @access public
      */
-    function editForm( ) 
+    function editForm( )
     {
         return 'CRM_Group_Form_Edit';
     }
-    
+
     /**
      * return name of edit form
      *
      * @return string
      * @access public
      */
-    function editName( ) 
+    function editName( )
     {
         return ts('Edit Group');
     }
@@ -82,40 +82,40 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
      * @return string
      * @access public
      */
-    function deleteForm( ) 
+    function deleteForm( )
     {
         return 'CRM_Group_Form_Delete';
     }
-    
+
     /**
      * return name of delete form
      *
      * @return string
      * @access public
      */
-    function deleteName( ) 
+    function deleteName( )
     {
         return 'Delete Group';
     }
-    
+
     /**
      * return user context uri to return to
      *
      * @return string
      * @access public
      */
-    function userContext( $mode = null ) 
+    function userContext( $mode = null )
     {
         return 'civicrm/group';
     }
-    
+
     /**
      * return user context uri params
      *
      * @return string
      * @access public
      */
-    function userContextParams( $mode = null ) 
+    function userContextParams( $mode = null )
     {
         return 'reset=1&action=browse';
     }
@@ -129,11 +129,11 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
      * @return string   the permission that the user has (or null)
      * @access public
      */
-    function checkPermission( $id, $title ) 
+    function checkPermission( $id, $title )
     {
         return CRM_Contact_BAO_Group::checkPermission( $id, $title );
     }
-    
+
     /**
      * We need to do slightly different things for groups vs saved search groups, hence we
      * reimplement browse from Page_Basic
@@ -142,13 +142,19 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
      * @return void
      * @access public
      */
-    function browse($action = null) 
+    function browse($action = null)
     {
         $groupPermission =
             CRM_Core_Permission::check( 'edit groups' ) ? CRM_Core_Permission::EDIT : CRM_Core_Permission::VIEW;
         $this->assign( 'groupPermission', $groupPermission );
 
         $showOrgInfo = false;
+
+        // CRM-9936
+        $reservedPermission =
+          CRM_Core_Permission::check( 'administer reserved groups' ) ? CRM_Core_Permission::EDIT : CRM_Core_Permission::VIEW;
+        $this->assign( 'reservedPermission', $reservedPermission );
+
         if ( CRM_Core_Permission::check( 'administer Multiple Organizations' ) &&
              CRM_Core_Permission::isMultisiteEnabled( ) ) {
             $showOrgInfo = true;
@@ -157,7 +163,7 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
 
         $this->search( );
     }
-    
+
     function search( ) {
         if ( $this->_action &
              ( CRM_Core_Action::ADD    |

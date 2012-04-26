@@ -657,18 +657,6 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
    * @access public
    */
   static function getGroupList( &$params ) {
-
-    /*
-      $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
-      'String',
-      $this );
-      if ( strtolower( $this->_sortByCharacter ) == 'all' ||
-      ! empty( $_POST ) ) {
-      $this->_sortByCharacter = '';
-      $this->set( 'sortByCharacter', '' );
-      }
-    */
-
     $config = CRM_Core_Config::singleton( );
 
     $whereClause = self::whereClause( $params, false );
@@ -722,6 +710,9 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
       $groupPermissions[] = CRM_Core_Permission::DELETE;
     }
 
+    // CRM-9936
+    $reservedPermission = CRM_Core_Permission::check( 'administer reserved groups' );
+
     $links = self::links( );
 
     $allTypes = CRM_Core_OptionGroup::values( 'group_type' );
@@ -736,9 +727,13 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         if ( $object->saved_search_id ) {
           $values[$object->id]['title'] .= ' (' . ts('Smart Group') . ')';
           // check if custom search, if so fix view link
-          $customSearchID = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch',
-                            $object->saved_search_id,
-                            'search_custom_id' );
+          $customSearchID =
+            CRM_Core_DAO::getFieldValue(
+              'CRM_Contact_DAO_SavedSearch',
+              $object->saved_search_id,
+              'search_custom_id'
+            );
+
           if ( $customSearchID ) {
             $newLinks[CRM_Core_Action::VIEW]['url'] = 'civicrm/contact/search/custom';
             $newLinks[CRM_Core_Action::VIEW]['qs' ] = "reset=1&force=1&ssID={$object->saved_search_id}";
@@ -746,6 +741,17 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         }
 
         $action = array_sum(array_keys($newLinks));
+
+
+        // CRM-9936
+        if ( array_key_exists( 'is_reserved', $object ) ) {
+          //if group is reserved and I don't have reserved permission, suppress delete/edit
+          if ( $object->is_reserved && ! $reservedPermission ) {
+            $action -= CRM_Core_Action::DELETE;
+            $action -= CRM_Core_Action::UPDATE;
+            $action -= CRM_Core_Action::DISABLE;
+          }
+        }
 
         $values[$object->id]['class'] = '';
         if ( array_key_exists( 'is_active', $object ) ) {
