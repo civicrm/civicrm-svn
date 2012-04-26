@@ -90,7 +90,7 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase {
     );
     $activitycreate = &civicrm_api('activity_type', 'create', $params);
     $activityID = $activitycreate['id'];
-    $this->assertNotContains('is_error', $activitycreate);
+    $this->assertAPISuccess($activitycreate, "in line ". __LINE__);
     $this->assertArrayHasKey('id', $activitycreate);
     $this->assertArrayHasKey('option_group_id', $activitycreate['values'][$activitycreate['id']]);
   }
