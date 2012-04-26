@@ -103,12 +103,20 @@ abstract class CRM_Queue_Queue {
   abstract function numberOfItems();
   
   /**
-   * Get and remove the next item
+   * Get the next item
    *
    * @param $lease_time seconds
    * @return object with key 'data' that matches the inputted data
    */
   abstract function claimItem($lease_time = 3600);
+  
+  /**
+   * Get the next item, even if there's an active lease
+   *
+   * @param $lease_time seconds
+   * @return object with key 'data' that matches the inputted data
+   */
+  abstract function stealItem($lease_time = 3600);
   
   /**
    * Remove an item from the queue

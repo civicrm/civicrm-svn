@@ -181,6 +181,40 @@ class CRM_Queue_QueueTest extends CiviUnitTestCase
   }
   
   /**
+   * Test that item leases can be ignored
+   *
+   * @dataProvider getQueueSpecs
+   */
+  function testStealItem($queueSpec) {
+    $this->queue = $this->queueService->create($queueSpec);
+    $this->assertTrue($this->queue instanceof CRM_Queue_Queue);
+    
+    require_once 'CRM/Utils/Time.php';
+    CRM_Utils_Time::setTime('2012-04-01 1:00:00');
+    $this->queue->createItem(array(
+      'test-key' => 'a',
+    ));
+    
+    $item = $this->queue->claimItem();
+    $this->assertEquals('a', $item->data['test-key']);
+    $this->assertEquals(1, $this->queue->numberOfItems());
+    // forget to release
+    
+    // haven't reached expiration yet, so claimItem fails
+    CRM_Utils_Time::setTime('2012-04-01 1:59:00');
+    $item2 = $this->queue->claimItem();
+    $this->assertEquals(FALSE, $item2);
+
+    // but stealItem works
+    $item3 = $this->queue->stealItem();
+    $this->assertEquals('a', $item3->data['test-key']);
+    $this->assertEquals(1, $this->queue->numberOfItems());
+    $this->queue->deleteItem($item3);
+        
+    $this->assertEquals(0, $this->queue->numberOfItems());
+  }
+  
+  /**
    * Test that queue content is reset when reset=>TRUE
    *
    * @dataProvider getQueueSpecs

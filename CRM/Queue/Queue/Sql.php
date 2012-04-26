@@ -112,7 +112,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
   }
 
   /**
-   * Get and remove the next item
+   * Get the next item
    *
    * @param $lease_time seconds
    * @return object with key 'data' that matches the inputted data
@@ -147,13 +147,47 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
         $dao->data = unserialize($dao->data);
         return $dao;
       } else {
+        CRM_Core_Error::debug_var('not ready for release', $dao);
         return FALSE;
       }
     } else {
+        CRM_Core_Error::debug_var('no items found');
       return FALSE;
     }
   }
 
+  /**
+   * Get the next item, even if there's an active lease
+   *
+   * @param $lease_time seconds
+   * @return object with key 'data' that matches the inputted data
+   */
+  function stealItem($lease_time = 3600) {
+    $sql = "
+      SELECT id, queue_name, submit_time, release_time, data
+      FROM civicrm_queue_item
+      WHERE queue_name = %1
+      ORDER BY id asc
+      LIMIT 1
+    ";
+    $params = array(
+      1 => array($this->getName(), 'String'),
+    );
+    $dao = CRM_Core_DAO::executeQuery($sql, $params, true, 'CRM_Queue_DAO_QueueItem');
+    if ($dao->fetch()) {
+      $nowEpoch = CRM_Utils_Time::getTimeRaw();
+      CRM_Core_DAO::executeQuery("UPDATE civicrm_queue_item SET release_time = %1 WHERE id = %2", array(
+        '1' => array(date('YmdHis', $nowEpoch + $lease_time), 'String'),
+        '2' => array($dao->id, 'Integer'),
+      ));
+      $dao->data = unserialize($dao->data);
+      return $dao;
+    } else {
+      CRM_Core_Error::debug_var('no items found');
+      return FALSE;
+    }
+  }
+  
   /**
    * Remove an item from the queue
    *

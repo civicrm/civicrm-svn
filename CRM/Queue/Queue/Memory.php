@@ -137,6 +137,26 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
   }
   
   /**
+   * Get the next item
+   *
+   * @param $leaseTime seconds
+   * @return object with key 'data' that matches the inputted data
+   */
+  function stealItem($leaseTime = 3600) {
+    // foreach hits the items in order -- but we short-circuit after the first
+    foreach ($this->items as $id => $data) {
+      $nowEpoch = CRM_Utils_Time::getTimeRaw();
+      $this->releaseTimes[$id] = $nowEpoch + $leaseTime;
+        
+      $item = new stdClass();
+      $item->id = $id;
+      $item->data = unserialize($data);
+      return $item;
+    }
+    return FALSE; // nothing in queue
+  }
+  
+  /**
    * Remove an item from the queue
    *
    * @param $item object The item returned by claimItem

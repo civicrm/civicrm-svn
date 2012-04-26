@@ -66,6 +66,15 @@ class CRM_Queue_Service {
   }
   
   /**
+   * @var array(queueName => CRM_Queue_Queue)
+   */
+  var $queues;
+  
+  function __construct() {
+    $this->queues = array();
+  }
+  
+  /**
    * @param $queueSpec, array with keys:
    *   - type: string, required, e.g. "interactive", "immediate", "stomp", "beanstalk"
    *   - name: string, required, e.g. "upgrade-tasks"
@@ -74,7 +83,7 @@ class CRM_Queue_Service {
    * @return CRM_Queue_Queue
    */
   function create($queueSpec) {
-    if (is_object($this->queues[$queueSpec['name']]) && empty($queueSpec['reset'])) {
+    if (@is_object($this->queues[$queueSpec['name']]) && empty($queueSpec['reset'])) {
       return $this->queues[$queueSpec['name']];
     }
     
