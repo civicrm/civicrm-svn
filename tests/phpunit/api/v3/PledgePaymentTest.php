@@ -27,11 +27,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
-require_once 'api/v3/Pledge.php';
-require_once 'api/v3/PledgePayment.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_PledgePaymentTest extends CiviUnitTestCase {
 
@@ -58,14 +53,14 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
-    $tablesToTruncate = array('civicrm_contribution',
-      'civicrm_contact', 'civicrm_pledge',
+    $tablesToTruncate = array(
+      'civicrm_contribution',
+      'civicrm_contact',
+      'civicrm_pledge',
+      'civicrm_pledge_payment'
     );
 
     $this->quickCleanup($tablesToTruncate);
-
-    $error = $this->confirmEntitiesDeleted(array('pledge', 'pledge_payment', 'contribution', 'contact'));
-    $this->assertNotEquals(1, $error);
     $this->contributionTypeDelete();
   }
 
