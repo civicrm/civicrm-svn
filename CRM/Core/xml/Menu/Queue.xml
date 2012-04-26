@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<menu>
+  <!-- FIXME: Move to CRM/Queue/xml/Menu/Queue.xml -->
+  <item>
+     <path>civicrm/queue/runner</path>
+     <title>Queue Runner</title>
+     <page_callback>CRM_Queue_Page_Runner</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/ajax/queueRunNext</path>
+     <page_callback>CRM_Queue_Page_AJAX::runNext</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/ajax/queueSkipNext</path>
+     <page_callback>CRM_Queue_Page_AJAX::skipNext</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>

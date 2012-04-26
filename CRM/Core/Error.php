@@ -426,6 +426,32 @@ class CRM_Core_Error extends PEAR_ErrorStack {
   function debug_log_message($message, $out = FALSE, $comp = '') {
     $config = CRM_Core_Config::singleton();
 
+    $file_log = self::createDebugLogger();
+    $file_log->log("$message\n");
+    $str = "<p/><code>$message</code>";
+    if ($out) {
+      echo $str;
+    }
+    $file_log->close();
+
+    if ($config->userFrameworkLogging) {
+      if ($config->userSystem->is_drupal and function_exists('watchdog')) {
+        watchdog('civicrm', $message, NULL, WATCHDOG_DEBUG);
+      }
+    }
+
+    return $str;
+  }
+  
+  /**
+   * Obtain a reference to the error log
+   *
+   * @return Log
+   */
+  static
+  function createDebugLogger() {
+    $config = CRM_Core_Config::singleton();
+
     if ($comp) {
       $comp = $comp . '.';
     }
@@ -447,22 +473,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         );
       }
     }
-
-    $file_log = Log::singleton('file', $fileName);
-    $file_log->log("$message\n");
-    $str = "<p/><code>$message</code>";
-    if ($out) {
-      echo $str;
-    }
-    $file_log->close();
-
-    if ($config->userFrameworkLogging) {
-      if ($config->userSystem->is_drupal and function_exists('watchdog')) {
-        watchdog('civicrm', $message, NULL, WATCHDOG_DEBUG);
-      }
-    }
-
-    return $str;
+    
+    return Log::singleton('file', $fileName);
   }
 
   static
