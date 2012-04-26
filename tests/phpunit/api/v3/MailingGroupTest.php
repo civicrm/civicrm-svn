@@ -26,7 +26,6 @@
  */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/MailingGroup.php';
 
 /**
  *  Test APIv3 civicrm_mailing_group_* functions
@@ -101,7 +100,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase {
     );
     $result = civicrm_api('mailing_group_event', 'subscribe', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $this->assertEquals($result['values']['contact_id'], $contactID);
 
     $this->contactDelete($contactID);
@@ -193,9 +192,9 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase {
       'hash' => 'b15de8b64e2cec34',
       'time_stamp' => '20101212121212',
     );
-    $result = &civicrm_api('mailing_group_event', 'subscribe', $params);
+    $result = civicrm_api('mailing_group_event', 'subscribe', $params);
 
-    $this->assertEquals($result['is_error'], 0);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $this->assertEquals($result['values']['contact_id'], $contactID);
 
     $params = array(
@@ -207,10 +206,10 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase {
       'event_subscribe_id' => $result['values']['subscribe_id'],
     );
 
-    require_once 'api/v3/Mailing.php';
-    $result = &civicrm_api('mailing_event', 'confirm', $params);
 
-    $this->assertEquals($result['is_error'], 0);
+    $result = civicrm_api('mailing_event', 'confirm', $params);
+
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $this->contactDelete($contactID);
   }
 }
