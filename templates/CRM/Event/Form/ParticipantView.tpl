@@ -73,7 +73,7 @@
 	{/if}
     <tr class="crm-event-participantview-form-block-event">
 	    <td class="label">{ts}Event{/ts}</td><td>
-	    	<a href="{crmURL p='civicrm/event/manage/eventInfo' q="action=update&reset=1&id=$event_id"}" title="{ts}Configure this event{/ts}">{$event}</a>
+	    	<a href="{crmURL p='civicrm/event/manage/settings' q="action=update&reset=1&id=$event_id"}" title="{ts}Configure this event{/ts}">{$event}</a>
 	    </td>
 	</tr>
 

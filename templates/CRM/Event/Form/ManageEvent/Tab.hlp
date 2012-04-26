@@ -26,7 +26,7 @@
 {htxt id="id-configure-events"}
 <table class="report"> 
 <tr>
-    <td class="nowrap"><a href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$eventId`"}" id="idEventInformationandSettings">&raquo; {ts}Info &amp; Settings{/ts}</a></td>
+    <td class="nowrap"><a href="{crmURL p='civicrm/event/manage/settings' q="reset=1&action=update&id=`$eventId`"}" id="idEventInformationandSettings">&raquo; {ts}Info &amp; Settings{/ts}</a></td>
     <td>{ts}Set event title, type (conference, performance etc.), description, start and end dates, maximum number of participants, and activate the event. Enable the public participant listing feature.{/ts}</td>
 </tr>
 <tr>
@@ -57,7 +57,7 @@
         {/if}
     {else}
         <td class="nowrap">&raquo; {ts}Participant Listing{/ts}</td>
-        <td>{ts}Participant Listing is not enabled for this event. You can enable it from{/ts} <a href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$eventId`"}">{ts}Event Information and Settings{/ts}</a>.
+        <td>{ts}Participant Listing is not enabled for this event. You can enable it from{/ts} <a href="{crmURL p='civicrm/event/manage/settings' q="reset=1&action=update&id=`$eventId`"}">{ts}Event Information and Settings{/ts}</a>.
     {/if}
     </tr>
 
