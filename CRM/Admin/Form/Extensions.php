@@ -37,7 +37,7 @@
 
 /**
  * This class generates form components for Extensions
- * 
+ *
  */
 class CRM_Admin_Form_Extensions extends CRM_Admin_Form
 {
@@ -49,7 +49,7 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
      * @return None
      * @access public
      */
-    public function preProcess( ) 
+    public function preProcess( )
     {
         parent::preProcess( );
 
@@ -61,7 +61,7 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
         $session->pushUserContext( $url );
         $this->assign('id', $this->_id);
         $this->assign('key', $this->_key);
-        
+
         $ext = new CRM_Core_Extensions( );
             $extension = $ext->getExtensions( );
 
@@ -69,9 +69,9 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
     }
 
     /**
-     * This function sets the default values for the form. 
+     * This function sets the default values for the form.
      * the default values are retrieved from the database
-     * 
+     *
      * @access public
      * @return None
      */
@@ -86,7 +86,7 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
      * @return None
      * @access public
      */
-    public function buildQuickForm( ) 
+    public function buildQuickForm( )
     {
 
         switch ( $this->_action ) {
@@ -127,63 +127,70 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form
                                 )
                           );
     }
-    
-    /**  
-     * global form rule  
-     *  
-     * @param array $fields  the input form values  
-     * @param array $files   the uploaded files if any  
+
+    /**
+     * global form rule
+     *
+     * @param array $fields  the input form values
+     * @param array $files   the uploaded files if any
      * @param array $self    this object.
-     *  
-     * @return true if no errors, else an array of errors  
-     * @access public  
-     * @static  
-     */  
-    static function formRule( $fields, $files, $self ) 
-    {  
+     *
+     * @return true if no errors, else an array of errors
+     * @access public
+     * @static
+     */
+    static function formRule( $fields, $files, $self )
+    {
         $errors = array( );
-        
+
         return empty( $errors ) ? true : $errors;
     }
-    
+
     /**
      * Function to process the form
      *
      * @access public
      * @return None
      */
-    public function postProcess() 
+    public function postProcess()
     {
-        CRM_Utils_System::flushCache( );
+      CRM_Utils_System::flushCache( );
 
-        if ( $this->_action & CRM_Core_Action::DELETE ) {
-            $ext = new CRM_Core_Extensions();
-            $ext->uninstall($this->_id, $this->_key);
-            CRM_Core_Session::setStatus( ts('Extension has been uninstalled.') );
-        }
-        
-        if ( $this->_action & CRM_Core_Action::ADD ) {
-            $ext = new CRM_Core_Extensions();
-            $ext->install($this->_id, $this->_key);
-            CRM_Core_Session::setStatus( ts('Extension has been installed.') );
-        }
-        
-        if ( $this->_action & CRM_Core_Action::ENABLE ) {
-            $ext = new CRM_Core_Extensions();
-            $ext->enable($this->_id, $this->_key);
-            CRM_Core_Session::setStatus( ts('Extension has been enabled.') );
-        }
-        
-        if ( $this->_action & CRM_Core_Action::DISABLE ) {
-            $ext = new CRM_Core_Extensions();
-            $ext->disable($this->_id, $this->_key);
-            CRM_Core_Session::setStatus( ts('Extension has been disabled.') );
-        }
-        
-        if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            $ext = new CRM_Core_Extensions();
-            $ext->upgrade($this->_id, $this->_key);
-            CRM_Core_Session::setStatus( ts('Extension has been upgraded.') );
-        }        
+      if ( $this->_action & CRM_Core_Action::DELETE ) {
+        $ext = new CRM_Core_Extensions();
+        $ext->uninstall($this->_id, $this->_key);
+        CRM_Core_Session::setStatus( ts('Extension has been uninstalled.') );
+      }
+
+      if ( $this->_action & CRM_Core_Action::ADD ) {
+        $ext = new CRM_Core_Extensions();
+        $ext->install($this->_id, $this->_key);
+        CRM_Core_Session::setStatus( ts('Extension has been installed.') );
+      }
+
+      if ( $this->_action & CRM_Core_Action::ENABLE ) {
+        $ext = new CRM_Core_Extensions();
+        $ext->enable($this->_id, $this->_key);
+        CRM_Core_Session::setStatus( ts('Extension has been enabled.') );
+      }
+
+      if ( $this->_action & CRM_Core_Action::DISABLE ) {
+        $ext = new CRM_Core_Extensions();
+        $ext->disable($this->_id, $this->_key);
+        CRM_Core_Session::setStatus( ts('Extension has been disabled.') );
+      }
+
+      if ( $this->_action & CRM_Core_Action::UPDATE ) {
+        $ext = new CRM_Core_Extensions();
+        $ext->upgrade($this->_id, $this->_key);
+        CRM_Core_Session::setStatus( ts('Extension has been upgraded.') );
+      }
+
+      CRM_Utils_System::redirect(
+        CRM_Utils_System::url(
+          'civicrm/admin/extensions',
+          'reset=1&action=browse'
+        )
+      );
     }
 }

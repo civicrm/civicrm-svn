@@ -99,7 +99,7 @@ class CRM_Utils_File {
     /**
      * create a directory given a path name, creates parent directories
      * if needed
-     * 
+     *
      * @param string $path  the path name
      * @param boolean $abort should we abort or just return an invalid code
      *
@@ -126,16 +126,16 @@ class CRM_Utils_File {
         return true;
     }
 
-    /** 
+    /**
      * delete a directory given a path name, delete children directories
-     * and files if needed 
-     *  
-     * @param string $path  the path name 
-     * 
-     * @return void 
-     * @access public 
-     * @static 
-     */ 
+     * and files if needed
+     *
+     * @param string $path  the path name
+     *
+     * @return void
+     * @access public
+     * @static
+     */
     public static function cleanDir( $target, $rmdir = true ) {
         static $exceptions = array( '.', '..' );
 
@@ -143,7 +143,7 @@ class CRM_Utils_File {
             while ( false !== ( $sibling = readdir( $sourcedir ) ) ) {
                 if ( ! in_array( $sibling, $exceptions ) ) {
                     $object = $target . DIRECTORY_SEPARATOR . $sibling;
-                    
+
                     if ( is_dir( $object ) ) {
                         CRM_Utils_File::cleanDir( $object, $rmdir );
                     } else if ( is_file( $object ) ) {
@@ -152,7 +152,7 @@ class CRM_Utils_File {
                 }
             }
             closedir( $sourcedir );
-            
+
             if ( $rmdir ) {
                 $result = @rmdir( $target );
             }
@@ -173,7 +173,7 @@ class CRM_Utils_File {
             }
         }
         closedir($dir);
-    } 
+    }
 
 
     /**
@@ -211,19 +211,19 @@ class CRM_Utils_File {
     }
 
 
-    /** 
+    /**
      * Appends trailing slashed to paths
-     * 
+     *
      * @return string
      * @access public
      * @static
      */
-    static function addTrailingSlash( $name, $separator = null ) 
+    static function addTrailingSlash( $name, $separator = null )
     {
         if ( ! $separator ) {
             $separator = DIRECTORY_SEPARATOR;
         }
-            
+
         if ( substr( $name, -1, 1 ) != $separator ) {
             $name .= $separator;
         }
@@ -250,7 +250,7 @@ class CRM_Utils_File {
 
         $string = preg_replace("/^#[^\n]*$/m", "\n", $string );
         $string = preg_replace("/^(--[^-]).*/m", "\n", $string );
-        
+
         $queries  = preg_split('/;\s*$/m', $string);
         foreach ( $queries as $query ) {
             $query = trim( $query );
@@ -271,14 +271,14 @@ class CRM_Utils_File {
         static $extensions = null;
         if ( ! $extensions ) {
             $extensions = CRM_Core_OptionGroup::values( 'safe_file_extension', true );
-            
+
             //make extensions to lowercase
             $extensions = array_change_key_case( $extensions, CASE_LOWER );
-            // allow html/htm extension ONLY if the user is admin 
+            // allow html/htm extension ONLY if the user is admin
             // and/or has access CiviMail
             if ( ! ( CRM_Core_Permission::check( 'access CiviMail' ) ||
                      CRM_Core_Permission::check( 'administer CiviCRM' ) ||
-                     ( CRM_Mailing_Info::workflowEnabled( ) && 
+                     ( CRM_Mailing_Info::workflowEnabled( ) &&
                        CRM_Core_Permission::check( 'create mailings' ) ) ) ) {
                 unset( $extensions['html'] );
                 unset( $extensions['htm' ] );
@@ -287,7 +287,7 @@ class CRM_Utils_File {
         //support lower and uppercase file extensions
         return isset( $extensions[strtolower( $ext )] ) ? true : false;
     }
-    
+
     /**
      * Determine whether a given file is listed in the PHP include path
      *
@@ -322,7 +322,7 @@ class CRM_Utils_File {
                            -( strlen( CRM_Utils_Array::value( 'extension', $info ) ) + ( CRM_Utils_Array::value( 'extension', $info ) == '' ? 0 : 1 ) ) );
         if ( ! self::isExtensionSafe( CRM_Utils_Array::value( 'extension', $info ) ) ) {
             // munge extension so it cannot have an embbeded dot in it
-            // The maximum length of a filename for most filesystems is 255 chars.  
+            // The maximum length of a filename for most filesystems is 255 chars.
             // We'll truncate at 240 to give some room for the extension.
             return CRM_Utils_String::munge( "{$basename}_". CRM_Utils_Array::value( 'extension', $info ) . "_{$uniqID}", '_',  240 ) . ".unknown";
         } else {
@@ -350,7 +350,7 @@ class CRM_Utils_File {
      */
     static function restrictAccess($dir)
     {
-        // note: empty value for $dir can play havoc, since that might result in putting '.htaccess' to root dir 
+        // note: empty value for $dir can play havoc, since that might result in putting '.htaccess' to root dir
         // of site, causing site to stop functioning.
         // FIXME: we should do more checks here -
         if ( ! empty( $dir ) ) {
@@ -379,18 +379,18 @@ HTACCESS;
                 $config = CRM_Core_Config::singleton( );
                 $templateCompileDir = $config->templateCompileDir;
             }
-            
+
             $path = dirname( $templateCompileDir );
-            
+
             //this fix is to avoid creation of upload dirs inside templates_c directory
             $checkPath = explode( DIRECTORY_SEPARATOR, $path );
-            
+
             $cnt = count($checkPath) - 1;
             if ( $checkPath[$cnt] == 'templates_c' ) {
                 unset( $checkPath[$cnt] );
                 $path = implode( DIRECTORY_SEPARATOR, $checkPath );
             }
-            
+
             $_path = CRM_Utils_File::addTrailingSlash( $path );
         }
         return $_path;
@@ -401,12 +401,12 @@ HTACCESS;
     	if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
     		return $directory;
     	}
-    	
+
         // check if directory is relative, if so return immediately
         if ( substr( $directory, 0, 1 ) != DIRECTORY_SEPARATOR ) {
             return $directory;
         }
-        
+
         // make everything relative from the baseFilePath
         $basePath = self::baseFilePath( );
         // check if basePath is a substr of $directory, if so
@@ -414,7 +414,7 @@ HTACCESS;
         if ( substr( $directory, 0, strlen( $basePath ) ) == $basePath ) {
             return substr( $directory, strlen( $basePath ) );
         }
-        
+
         // return the original value
         return $directory;
     }
@@ -424,12 +424,12 @@ HTACCESS;
     	if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
     		return $directory;
     	}
-    	
+
         // check if directory is already absolute, if so return immediately
         if ( substr( $directory, 0, 1 ) == DIRECTORY_SEPARATOR ) {
             return $directory;
         }
-        
+
         // make everything absolute from the baseFilePath
         $basePath = self::baseFilePath( );
 

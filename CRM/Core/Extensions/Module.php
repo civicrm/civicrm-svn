@@ -44,7 +44,6 @@ class CRM_Core_Extensions_Module
         $this->config = CRM_Core_Config::singleton( );
     }
 
-    
     public function install( ) {
         if ( array_key_exists( $this->ext->file, $this->config->civiModules ) ) {
             // CRM_Core_Error::fatal( 'This civiModule is already registered.' );
@@ -74,30 +73,29 @@ class CRM_Core_Extensions_Module
     }
 
     public function uninstall( ) {
-        if( !array_key_exists( $this->ext->file, $this->config->civiModules ) ) {
-            CRM_Core_Error::fatal( 'This civiModule is not registered.' );
-        }
-
         $this->commonUNInstall( 'uninstall' );
     }
 
     private function commonUNInstall( $type = 'uninstall' ) {
-        $params = array( );
-        $params['civiModules'] = array_diff( $this->config->civiModules,
-                                             array( $this->ext->key ) );
+        $params = array( 'civiModules' => $this->config->civiModules );
+
+        if( array_key_exists( $this->ext->file, $this->config->civiModules ) ) {
+          unset( $params['civiModules'][$this->ext->file] );
+        }
+
         CRM_Admin_Form_Setting::commonProcess( $params );
 
         $this->callHook( $this->ext->file,
                          $this->ext->path,
                          $type );
     }
-    
+
     public function disable() {
         $this->commonUNInstall( 'disable' );
     }
-    
+
     public function enable() {
         $this->commonInstall( 'enable' );
     }
-    
+
 }

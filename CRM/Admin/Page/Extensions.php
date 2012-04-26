@@ -39,7 +39,7 @@
 /**
  * This page displays the list of extensions registered in the system.
  */
-class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic 
+class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
 {
 
     /**
@@ -73,7 +73,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      *
      * @return string Classname of BAO.
      */
-    function getBAOName() 
+    function getBAOName()
     {
         return 'CRM_Core_BAO_OptionValue';
     }
@@ -85,45 +85,46 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
      */
     function &links()
     {
-        if (!(self::$_links)) {
-            self::$_links = array(
-                                  CRM_Core_Action::ADD     => array(
-                                                                    'name'  => ts('Install'),
-                                                                    'url'   => 'civicrm/admin/extensions',
-                                                                    'qs'    => 'action=add&id=%%id%%&key=%%key%%',
-                                                                    'title' => ts('Install')
-                                                                    ),
-                                  CRM_Core_Action::ENABLE  => array(
-                                                                    'name'  => ts('Enable'),
-                                                                    'url'   => 'civicrm/admin/extensions',
-                                                                    'qs'    => 'action=enable&id=%%id%%&key=%%key%%',
-                                                                    'ref'   => 'enable-action',
-                                                                    'title' => ts('Enable')
-                                                                    ),
-                                  CRM_Core_Action::DISABLE => array(
-                                                                    'name'  => ts('Disable'),
-                                                                    'url'   => 'civicrm/admin/extensions',
-                                                                    'qs'    => 'action=disable&id=%%id%%&key=%%key%%',
-                                                                    'ref'   => 'disable-action',
-                                                                    'title' => ts('Disable')
-                                                                    ),
+      if (!(self::$_links)) {
+        self::$_links =
+          array(
+            CRM_Core_Action::ADD     => array(
+              'name'  => ts('Install'),
+              'url'   => 'civicrm/admin/extensions',
+              'qs'    => 'action=add&id=%%id%%&key=%%key%%',
+              'title' => ts('Install')
+            ),
+            CRM_Core_Action::ENABLE  => array(
+              'name'  => ts('Enable'),
+              'url'   => 'civicrm/admin/extensions',
+              'qs'    => 'action=enable&id=%%id%%&key=%%key%%',
+              'ref'   => 'enable-action',
+              'title' => ts('Enable')
+            ),
+            CRM_Core_Action::DISABLE => array(
+              'name'  => ts('Disable'),
+              'url'   => 'civicrm/admin/extensions',
+              'qs'    => 'action=disable&id=%%id%%&key=%%key%%',
+              'ref'   => 'disable-action',
+              'title' => ts('Disable')
+            ),
 
-                                  CRM_Core_Action::DELETE  => array(
-                                                                    'name'  => ts('Uninstall'),
-                                                                    'url'   => 'civicrm/admin/extensions',
-                                                                    'qs'    => 'action=delete&id=%%id%%&key=%%key%%',
-                                                                    'title' => ts('Uninstall Extension') 
-                                                                    ),
-                                  CRM_Core_Action::UPDATE  => array(
-                                                                    'name'  => ts('Upgrade'),
-                                                                    'url'   => 'civicrm/admin/extensions',
-                                                                    'qs'    => 'action=update&id=%%id%%&key=%%key%%',
-                                                                    'title' => ts('Upgrade Extension') 
-                                                                    )                                                                    
-                                  );
-            
-        }
-        return self::$_links;
+            CRM_Core_Action::DELETE  => array(
+              'name'  => ts('Uninstall'),
+              'url'   => 'civicrm/admin/extensions',
+              'qs'    => 'action=delete&id=%%id%%&key=%%key%%',
+              'title' => ts('Uninstall Extension')
+            ),
+            CRM_Core_Action::UPDATE  => array(
+              'name'  => ts('Upgrade'),
+              'url'   => 'civicrm/admin/extensions',
+              'qs'    => 'action=update&id=%%id%%&key=%%key%%',
+              'title' => ts('Upgrade Extension')
+            )
+          );
+
+      }
+      return self::$_links;
     }
 
     /**
@@ -136,11 +137,11 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
         $this->preProcess();
         return parent::run();
     }
-    
+
     /**
      * Browse all options
-     *  
-     * 
+     *
+     *
      * @return void
      * @access public
      * @static
@@ -161,7 +162,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
         $fid = 1;
         foreach( $em as $key => $obj ) {
 
-            // rewrite ids to be numeric, but keep those which are 
+            // rewrite ids to be numeric, but keep those which are
             // installed (they have option_value table id)
             // It's totally unlikely, that installed extensions will
             // have ids below 50.
@@ -190,8 +191,8 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
                 }
                 $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
                                                                           $action,
-                                                                          array('id' => $id, 
-                                                                                'key' => $obj->key ));                
+                                                                          array('id' => $id,
+                                                                                'key' => $obj->key ));
             } else {
                 $action = array_sum(array_keys($this->links()));
                 $action -= CRM_Core_Action::DISABLE;
@@ -200,43 +201,43 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
                 $action -= CRM_Core_Action::UPDATE;
                 $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
                                                                           $action,
-                                                                          array('id' => $id, 
-                                                                                'key' => $obj->key ));            
-            } 
-                        
-            
+                                                                          array('id' => $id,
+                                                                                'key' => $obj->key ));
+            }
+
+
         }
 
-        $this->assign('extensionRows', $extensionRows);        
+        $this->assign('extensionRows', $extensionRows);
 
     }
-    
+
     /**
      * Get name of edit form
      *
      * @return string Classname of edit form.
      */
-    function editForm() 
+    function editForm()
     {
         return 'CRM_Admin_Form_Extensions';
     }
-    
+
     /**
      * Get edit form name
      *
      * @return string name of this page.
      */
-    function editName() 
+    function editName()
     {
         return 'CRM_Admin_Form_Extensions';
     }
-    
+
     /**
      * Get user context.
      *
      * @return string user context.
      */
-    function userContext($mode = null) 
+    function userContext($mode = null)
     {
         return 'civicrm/admin/extensions';
     }

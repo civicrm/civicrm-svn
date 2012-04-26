@@ -62,21 +62,9 @@ class CRM_Core_Invoke
              isset($args[2]) and $args[2] == 'rebuild' ) {
             // ensure that the user has a good privilege level
             if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
-                CRM_Core_Menu::store( );
-                CRM_Core_Session::setStatus( ts( 'Menu has been rebuilt' ) );
-
-                // also reset navigation
-                CRM_Core_BAO_Navigation::resetNavigation( );
-
-                // also cleanup all caches
-                $config->cleanupCaches( );
-
-                // also rebuild triggers if set
-                if ( CRM_Utils_Request::retrieve( 'triggerRebuild', 'Boolean', CRM_Core_DAO::$_nullObject, false, 0, 'GET' ) ) {
-                    CRM_Core_DAO::triggerRebuild( );
-                }
-
-                return CRM_Utils_System::redirect( );
+              self::rebuildMenuAndCaches( );
+              CRM_Core_Session::setStatus( ts( 'Menu has been rebuilt' ) );
+              return CRM_Utils_System::redirect( );
             } else {
                 CRM_Core_Error::fatal( 'You do not have permission to execute this url' );
             }
@@ -177,6 +165,7 @@ class CRM_Core_Invoke
                                                                   $args ) );
             }
 
+            // CRM_Core_Error::debug( $item ); exit( );
             $result = null;
             if ( is_array( $item['page_callback'] ) ) {
                 $newArgs = explode( '/',
@@ -351,6 +340,26 @@ class CRM_Core_Invoke
 
         $page = new CRM_Profile_Page_Listings( );
         return $page->run( );
+    }
+
+    static function rebuildMenuAndCaches( $triggerRebuild = false ) {
+      $config = CRM_Core_Config::singleton( );
+
+      CRM_Core_Menu::store( );
+
+      // also reset navigation
+      CRM_Core_BAO_Navigation::resetNavigation( );
+
+      // also cleanup all caches
+      $config->cleanupCaches( );
+
+      // also rebuild triggers if requested explicitly
+      if (
+        $triggerRebuild ||
+        CRM_Utils_Request::retrieve( 'triggerRebuild', 'Boolean', CRM_Core_DAO::$_nullObject, false, 0, 'GET' )
+      ) {
+        CRM_Core_DAO::triggerRebuild( );
+      }
     }
 
 }
