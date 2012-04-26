@@ -31,8 +31,6 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 
-require_once 'api/v3/UFMatch.php';
-
 /**
  * Test class for UFGroup API - civicrm_uf_*
  * @todo Split UFGroup and UFJoin tests
@@ -48,6 +46,12 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
   protected function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
+    $op = new PHPUnit_Extensions_Database_Operation_Truncate();
+    $op->execute($this->_dbconn,
+      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+        dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml'
+      )
+    );
     $op = new PHPUnit_Extensions_Database_Operation_Insert;
     $op->execute(
       $this->_dbconn,
