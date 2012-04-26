@@ -27,7 +27,7 @@
 */
 
 /**
- * The queue service provides an interface for creating or locating a
+ * The queue service provides an interface for creating or locating
  * queues. Note that this approach hides the details of data-storage:
  * different queue-providers may store the queue content in different
  * ways (in memory, in SQL, or in an external service).

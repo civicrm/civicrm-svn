@@ -52,8 +52,8 @@ class CRM_Queue_Task {
 
   /**
    *
-   * @param $callback mixed, a callable PHP item; must accept at least one argument (CRM_Queue_TaskContext)
-   * @param $arguments array, extra arguments to pass to the callback (in order)
+   * @param $callback mixed, serializable, a callable PHP item; must accept at least one argument (CRM_Queue_TaskContext)
+   * @param $arguments array, serializable, extra arguments to pass to the callback (in order)
    * @param $title string, a printable string which describes this task
    */
   function __construct($callback, $arguments, $title = NULL) {
