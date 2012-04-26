@@ -137,7 +137,7 @@ function civicrm_api3_pledge_get($params) {
     $params['pledge_id'] = $params['id'];
     unset($params['id']);
   }
-  $options = _civicrm_api3_get_options_from_params($params);
+  $options = _civicrm_api3_get_options_from_params($params, true);
   require_once 'CRM/Pledge/BAO/Query.php';
   require_once 'CRM/Contact/BAO/Query.php';
   if (empty($options['return'])) {
