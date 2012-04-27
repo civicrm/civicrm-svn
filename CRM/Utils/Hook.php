@@ -245,13 +245,31 @@ abstract class CRM_Utils_Hook {
      * @param array  &$fields   the POST parameters as filtered by QF
      * @param array  &$files    the FILES parameters as sent in by POST
      * @param array  &$form     the form object
-     * @param array  $
+     *
      * @return mixed             formRule hooks return a boolean or
      *                           an array of error messages which display a QF Error
      * @access public
      */
     static function validate( $formName, &$fields, &$files, &$form ) {
         return self::singleton( )->invoke( 4, $formName, $fields, $files, $form, $formName, 'civicrm_validate' );
+    }
+
+    /**
+     * This hook is invoked during all CiviCRM form validation. An array of errors
+     * detected is returned. Else we assume validation succeeded.
+     *
+     * @param string $formName  the name of the form
+     * @param array  &$fields   the POST parameters as filtered by QF
+     * @param array  &$files    the FILES parameters as sent in by POST
+     * @param array  &$form     the form object
+     * @param array &$errors    the array of errors.
+     *
+     * @return mixed             formRule hooks return a boolean or
+     *                           an array of error messages which display a QF Error
+     * @access public
+     */
+    static function validateForm( $formName, &$fields, &$files, &$form, &$errors ) {
+        return self::singleton( )->invoke( 5, $formName, $fields, $files, $form, $errors, 'civicrm_validateForm' );
     }
 
     /**
