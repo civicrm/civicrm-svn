@@ -468,9 +468,10 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $rows[$rowNum]['civicrm_contribution_honor_type_id'] = $honorTypes[$value];
         $entryFound = TRUE;
       }
+
+      // Contribution amount links to viewing contribution
       if (($value = CRM_Utils_Array::value('civicrm_contribution_total_amount_sum', $row)) &&
-        CRM_Core_Permission::check('access CiviContribute')
-      ) {
+        CRM_Core_Permission::check('access CiviContribute') ) {
         $url = CRM_Utils_System::url("civicrm/contact/view/contribution",
           "reset=1&id=" . $row['civicrm_contribution_contribution_id'] . "&cid=" . $row['civicrm_contact_id'] . "&action=view&context=contribution&selectedChild=contribute",
           $this->_absoluteUrl
@@ -479,6 +480,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $rows[$rowNum]['civicrm_contribution_total_amount_sum_hover'] = ts("View Details of this Contribution.");
         $entryFound = TRUE;
       }
+
       // convert campaign_id to campaign title
       if (array_key_exists('civicrm_contribution_campaign_id', $row)) {
         if ($value = $row['civicrm_contribution_campaign_id']) {
