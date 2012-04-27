@@ -55,6 +55,18 @@ class CRM_Utils_Hook_Joomla extends CRM_Utils_Hook {
            }
 
            $result = $app->triggerEvent($fnSuffix,array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5));
+
+           $moduleResult = $this->commonInvoke( $numParams,
+                                                $arg1, $arg2, $arg3, $arg4, $arg5,
+                                                $fnSuffix, 'joomla' );
+           if ( ! empty( $moduleResult ) && is_array( $moduleResult ) ) {
+             if ( empty( $result ) ) {
+               $result = $moduleResult;
+             } else if ( is_array( $moduleResult ) ) {
+               $result = array_merge( $result, $moduleResult );
+             }
+           }
+
            if ( ! empty( $result ) ) {
                // collapse result returned from hooks
                // CRM-9XXX
