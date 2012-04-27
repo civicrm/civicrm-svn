@@ -50,7 +50,7 @@ class CRM_Core_Permission {
 
     /**
      * The various type of permissions
-     * 
+     *
      * @var int
      */
     const
@@ -61,7 +61,7 @@ class CRM_Core_Permission {
         SEARCH = 5,
         ALL    = 6,
         ADMIN  = 7;
-    
+
     /**
      * get the current permission of this user
      *
@@ -102,7 +102,7 @@ class CRM_Core_Permission {
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userPermissionClass ) . '.php' );
         return eval( 'return ' . $config->userPermissionClass . '::checkGroupRole( $array ); ' );
     }
-    
+
     /**
      * Get the permissioned where clause for the user
      *
@@ -123,7 +123,7 @@ class CRM_Core_Permission {
      * Get all groups from database, filtered by permissions
      * for this user
      *
-     * @param string $groupType     type of group(Access/Mailing) 
+     * @param string $groupType     type of group(Access/Mailing)
      * @param boolen $excludeHidden exclude hidden groups.
      *
      * @access public
@@ -151,7 +151,7 @@ class CRM_Core_Permission {
              self::isMultisiteEnabled( ) ) {
             return true;
         }
-        
+
         if ( self::check( 'administer CiviCRM' ) ) {
             return true;
         }
@@ -282,7 +282,7 @@ class CRM_Core_Permission {
         if ( ! in_array( $module, $config->enableComponents ) ) {
             return false;
         }
-        
+
         if ( $checkPermission ) {
             if ( $module == 'CiviCase' ) {
                 return CRM_Case_BAO_Case::accessCiviCase( );
@@ -290,15 +290,15 @@ class CRM_Core_Permission {
                 return CRM_Core_Permission::check( "access $module" );
             }
         }
-        
+
         return true;
     }
-    
-    /** 
+
+    /**
      * check permissions for delete and edit actions
      *
      * @param string  $module component name.
-     * @param $action action to be check across component    
+     * @param $action action to be check across component
      *
      **/
     static function checkActionPermission( $module, $action ) {
@@ -316,7 +316,7 @@ class CRM_Core_Permission {
                                       );
             $permissionName = CRM_Utils_Array::value( $module, $editPermissions );
         }
-        
+
         if ( $module == 'CiviCase' && !$permissionName ) {
             return CRM_Case_BAO_Case::accessCiviCase( );
         } else {
@@ -324,7 +324,7 @@ class CRM_Core_Permission {
             return CRM_Core_Permission::check( $permissionName );
         }
     }
-    
+
     static function checkMenu( &$args, $op = 'and' ) {
         if ( ! is_array( $args ) ) {
             return $args;
@@ -391,19 +391,19 @@ class CRM_Core_Permission {
 
         if ( ! $permissions ) {
             $prefix = ts( 'CiviCRM' ) . ': ';
-            $permissions = self::getCorePermissions( ); 
+            $permissions = self::getCorePermissions( );
 
             if ( self::isMultisiteEnabled( ) ) {
-                $permissions['administer Multiple Organizations'] = 
+                $permissions['administer Multiple Organizations'] =
                     $prefix . ts( 'administer Multiple Organizations' );
             }
 
             $config = CRM_Core_Config::singleton( );
-            
+
             if ( !$all ) {
                 $components = CRM_Core_Component::getEnabledComponents( );
             } else {
-                $components = CRM_Core_Component::getComponents( ); 
+                $components = CRM_Core_Component::getComponents( );
             }
 
             foreach ( $components as $comp ) {
@@ -422,7 +422,7 @@ class CRM_Core_Permission {
 
     static function getCorePermissions( ) {
         $prefix = ts( 'CiviCRM' ) . ': ';
-        $permissions = 
+        $permissions =
             array(
                    'add contacts'                      => $prefix . ts( 'add contacts' ),
                    'view all contacts'                 => $prefix . ts( 'view all contacts' ),
@@ -444,6 +444,7 @@ class CRM_Core_Permission {
                    'access CiviCRM'                    => $prefix . ts( 'access CiviCRM' ),
                    'access Contact Dashboard'          => $prefix . ts( 'access Contact Dashboard' ),
                    'translate CiviCRM'                 => $prefix . ts( 'translate CiviCRM' ),
+                   'administer reserved groups'        => $prefix . ts( 'administer reserved groups' ),
                    'administer Tagsets'                => $prefix . ts( 'administer Tagsets' ),
                    'administer reserved tags'          => $prefix . ts( 'administer reserved tags' ),
                    'administer dedupe rules'           => $prefix . ts( 'administer dedupe rules' ),
@@ -452,29 +453,29 @@ class CRM_Core_Permission {
                    'access AJAX API'                   => $prefix . ts( 'access AJAX API' ),
                    'access contact reference fields'   => $prefix . ts( 'access contact reference fields' )
                );
-       
+
         return $permissions;
     }
 
-    /** 
-     * Validate user permission across 
+    /**
+     * Validate user permission across
      * edit or view or with supportable acls.
      *
      * return boolean true/false.
      **/
-    static function giveMeAllACLs( ) 
+    static function giveMeAllACLs( )
     {
         if ( CRM_Core_Permission::check( 'view all contacts' ) ||
              CRM_Core_Permission::check( 'edit all contacts' ) ) {
             return true;
         }
-        
+
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
 
         if ( self::isMultisiteEnabled( ) ) {
             // For multisite just check if there are contacts in acl_contact_cache table for now.
-            // FixMe: so even if a user in multisite has very limited permission could still 
+            // FixMe: so even if a user in multisite has very limited permission could still
             // see search / contact navigation options for example.
             return CRM_Contact_BAO_Contact_Permission::hasContactsInCache( CRM_Core_Permission::VIEW,
                                                                            $contactID );
@@ -482,7 +483,7 @@ class CRM_Core_Permission {
 
         //check for acl.
         $aclPermission = self::getPermission( );
-        if ( in_array( $aclPermission, array( CRM_Core_Permission::EDIT, 
+        if ( in_array( $aclPermission, array( CRM_Core_Permission::EDIT,
                                               CRM_Core_Permission::VIEW ) ) ) {
             return true;
         }
@@ -491,27 +492,27 @@ class CRM_Core_Permission {
         // that is not false
         $tables = $whereTables = array( );
         $where  = null;
-        
+
         CRM_Utils_Hook::aclWhereClause( CRM_Core_Permission::VIEW,
                                         $tables, $whereTables,
                                         $contactID, $where );
         return empty( $whereTables ) ? false : true;
     }
-    
+
     /**
      * Function to get component name from given permission.
-     * 
-     * @param string  $permission  
+     *
+     * @param string  $permission
      *
      * return string $componentName the name of component.
      * @static
      */
-    static function getComponentName( $permission ) 
+    static function getComponentName( $permission )
     {
         $componentName = null;
         $permission = trim( $permission );
         if ( empty( $permission ) ) return $componentName;
-        
+
         static $allCompPermissions;
         if ( !is_array( $allCompPermissions ) ) {
             $components = CRM_Core_Component::getComponents( );
@@ -519,7 +520,7 @@ class CRM_Core_Permission {
                 $allCompPermissions[$name] = $comp->getPermissions( );
             }
         }
-        
+
         if ( is_array( $allCompPermissions ) ) {
             foreach ( $allCompPermissions as $name => $permissions ) {
                 if ( in_array( $permission, $permissions ) ) {
@@ -528,7 +529,7 @@ class CRM_Core_Permission {
                 }
             }
         }
-        
+
         return $componentName;
     }
 
