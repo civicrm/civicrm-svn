@@ -241,3 +241,20 @@ UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @
 
 -- CRM-9936
 ALTER TABLE civicrm_group ADD is_reserved TINYINT( 4 ) NULL DEFAULT '0' ;
+
+-- CRM-9501 price set report templates
+SELECT @option_group_id_report := MAX(id)     FROM civicrm_option_group WHERE name = 'report_template';
+SELECT @weight                 := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_report;
+SELECT @CompId       := MAX(id)     FROM civicrm_component where name = 'CiviContribute';
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
+  (@option_group_id_report, {localize}'Line Item Report'{/localize}, 'price/lineitem', 'CRM_Report_Form_Price_Lineitem', @weight := @weight + 1, {localize}'Price set report by line item.'{/localize}, 0, @CompId);
+SELECT @weight                 := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_report;
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
+  (@option_group_id_report, {localize}'Contribution Report with Line Item information'{/localize}, 'price/contributionbased', 'CRM_Report_Form_Price_Contributionbased', @weight := @weight + 1, {localize}'Contribution Line Item Report.'{/localize}, 0, @CompId);
+SELECT @weight                 := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_report;
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
+  (@option_group_id_report, {localize}'Participant Report with Line Item information'{/localize}, 'price/lineitemparticipant', 'CRM_Report_Form_Price_Lineitemparticipant', @weight := @weight + 1, {localize}'Participant Line Item Report.'{/localize}, 0, @CompId);
+
