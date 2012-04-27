@@ -17,4 +17,9 @@
      <page_callback>CRM_Queue_Page_AJAX::skipNext</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+     <path>civicrm/ajax/queueOnEnd</path>
+     <page_callback>CRM_Queue_Page_AJAX::onEnd</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

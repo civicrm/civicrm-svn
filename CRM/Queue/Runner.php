@@ -126,7 +126,10 @@ class CRM_Queue_Runner {
     }
     
     if ($taskResult['numberOfItems'] == 0) {
-      $this->handleEnd();
+      $result = $this->handleEnd();
+      if (!empty($result['redirect_url'])) {
+        CRM_Utils_System::redirect($result['redirect_url']);
+      }
       return TRUE;
     } else {
       return FALSE;
@@ -211,16 +214,27 @@ class CRM_Queue_Runner {
     }
   }
 
+  /**
+   * @return array(is_error => bool, is_continue => bool, numberOfItems => int, redirect_url => string)
+   */
   public function handleEnd() {
-    if (!empty($_SESSION['queueRunners'][$this->qrid])) {
-      unset($_SESSION['queueRunners'][$this->qrid]);
-    }
     if (is_callable($this->onEnd)) {
       call_user_func($this->onEnd, $this->getTaskContext());
     }
-    if (!empty($this->onEndUrl)) {
-      CRM_Utils_System::redirect($this->onEndUrl);
+    // Don't remove queueRunner until onEnd succeeds
+    if (!empty($_SESSION['queueRunners'][$this->qrid])) {
+      unset($_SESSION['queueRunners'][$this->qrid]);
     }
+    
+    // Fallback; web UI does redirect in Javascript
+    $result = array();
+    $result['is_error'] = 0;
+    $result['numberOfItems'] = 0;
+    $result['is_continue'] = 0;
+    if (!empty($this->onEndUrl)) {
+      $result['redirect_url'] = $this->onEndUrl;
+    }
+    return $result;
   }
   
   /**

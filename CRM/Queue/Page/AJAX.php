@@ -74,4 +74,29 @@ class CRM_Queue_Page_AJAX {
       CRM_Utils_System::civiExit();
     });
   }
+  
+  /**
+   * Run the next task and return status information
+   *
+   * @return array(is_error => bool, is_continue => bool, numberOfItems => int, message => string)
+   */
+  static function onEnd() {
+    $errorPolicy = new CRM_Queue_ErrorPolicy();
+    $errorPolicy->call(function() {
+      global $activeQueueRunner;
+      $qrid = CRM_Utils_Request::retrieve('qrid', 'String', CRM_Core_DAO::$_nullObject, true, null, 'POST');
+      $activeQueueRunner = CRM_Queue_Runner::instance($qrid);
+      if (!is_object($activeQueueRunner)) {
+        throw new Exception('Queue runner must be configured before execution. - onEnd');
+      }
+
+      $result = $activeQueueRunner->handleEnd(FALSE);
+      if ($result['is_error']) {
+        CRM_Core_Error::debug_var('CRM_Queue_Page_AJAX_runNext_result', $result);
+      }
+      echo json_encode($result);
+      CRM_Utils_System::civiExit();
+    });
+  }
+  
 }

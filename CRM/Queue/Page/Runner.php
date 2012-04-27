@@ -58,8 +58,9 @@ class CRM_Queue_Page_Runner extends CRM_Core_Page {
     CRM_Utils_System::setTitle($runner->title);
     $this->assign('queueRunnerData', array(
       'qrid' => $runner->qrid,
-      'runNextUrl' => CRM_Utils_System::url('civicrm/ajax/queueRunNext'),
-      'skipNextUrl' => CRM_Utils_System::url('civicrm/ajax/queueSkipNext'),
+      'runNextAjax' => CRM_Utils_System::url('civicrm/ajax/queueRunNext'),
+      'skipNextAjax' => CRM_Utils_System::url('civicrm/ajax/queueSkipNext'),
+      'onEndAjax' => CRM_Utils_System::url('civicrm/ajax/queueOnEnd'),
       'completed' => 0,
       'numberOfItems' => $runner->queue->numberOfItems(),
     ));

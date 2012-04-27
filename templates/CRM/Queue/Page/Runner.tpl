@@ -22,38 +22,59 @@ cj(function() {
   var queueRunnerData = {/literal}{$queueRunnerData|@json}{literal};
 
   var displayResponseData = function(data, textStatus, jqXHR) {
-    // console.log(data);
-
-    if (!data.is_error) {
-      queueRunnerData.completed++;
-      queueRunnerData.numberOfItems = parseInt(data.numberOfItems);
+    if (data.redirect_url) {
+      window.location = data.redirect_url;
+      return;
     }
+    
     var pct = 100 * queueRunnerData.completed / (queueRunnerData.completed + queueRunnerData.numberOfItems);
     cj("#crm-queue-runner-progress").progressbar({ value: pct });
-    // console.log('comp='+queueRunnerData.completed + ' rem='+queueRunnerData.numberOfItems + ' pct='+pct); // REMOVE
-        
+    
     if (data.is_error) {
       cj("#crm-queue-runner-buttonset").show();
+      if (queueRunnerData.isEnded) {
+        cj('#crm-queue-runner-skip').button('disable');
+      }
       cj('#crm-queue-runner-title').text('Error: ' + data.last_task_title);
+    } else if (!data.is_continue && queueRunnerData.numberOfItems == 0) {
+      cj('#crm-queue-runner-title').text('Done');
     } else {
       cj('#crm-queue-runner-title').text('Executed: ' + data.last_task_title);
     }
+    
     if (data.message) {
       cj('#crm-queue-runner-message').html('');
       cj('<pre></pre>').text(data.message).prependTo('#crm-queue-runner-message');
     }
-    if (data.is_continue) {
-      window.setTimeout(runNext, 50);
-    }
+    
   };
   
-  var displayError = function(jqXHR, textStatus, errorThrown) {
+  var handleError = function(jqXHR, textStatus, errorThrown) {
     // Do this regardless of whether the response was well-formed
     cj("#crm-queue-runner-buttonset").show();
-        
+    
     var data = cj.parseJSON(jqXHR.responseText)
     if (data) {
       displayResponseData(data);
+    }
+  };
+  
+  var handleSuccess = function(data, textStatus, jqXHR) {
+    if (!data.is_error) {
+      queueRunnerData.completed++;
+    }
+    if (data.numberOfItems) {
+      queueRunnerData.numberOfItems = parseInt(data.numberOfItems);
+    }
+    
+    displayResponseData(data);
+    
+    // FIXME re-consider merits of is_continue in the corner-case of executing last step
+    if (data.is_continue) {
+      window.setTimeout(runNext, 50);
+    } else if (!data.is_continue && queueRunnerData.numberOfItems == 0 && !queueRunnerData.isEnded) {
+      queueRunnerData.isEnded = true;
+      window.setTimeout(runNext, 50);
     }
   };
   
@@ -61,7 +82,7 @@ cj(function() {
   var runNext = function() {
     cj.ajax({
       type: 'POST',
-      url: queueRunnerData.runNextUrl,
+      url: (queueRunnerData.isEnded ? queueRunnerData.onEndAjax : queueRunnerData.runNextAjax),
       data: {
         qrid: queueRunnerData.qrid
       },
@@ -69,8 +90,8 @@ cj(function() {
       beforeSend: function(jqXHR, settings) {
           cj("#crm-queue-runner-buttonset").hide();
       },
-      error: displayError,
-      success: displayResponseData
+      error: handleError,
+      success: handleSuccess
     });
   }
   
@@ -83,17 +104,17 @@ cj(function() {
   var skipNext = function() {
     cj.ajax({
       type: 'POST',
-      url: queueRunnerData.skipNextUrl,
+      url: queueRunnerData.skipNextAjax,
       data: {
         qrid: queueRunnerData.qrid
       },
       dataType: 'json',
       beforeSend: function(jqXHR, settings) {
         cj('#crm-queue-runner-message').html('');
-          cj("#crm-queue-runner-buttonset").hide();
+        cj("#crm-queue-runner-buttonset").hide();
       },
-      error: displayError,
-      success: displayResponseData
+      error: handleError,
+      success: handleSuccess
     });
   }
   
