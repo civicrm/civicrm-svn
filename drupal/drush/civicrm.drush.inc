@@ -452,7 +452,12 @@ function civicrm_upgrade_db() {
 
     require_once( 'CRM/Upgrade/Page/Upgrade.php' );
     $upgrade = new CRM_Upgrade_Page_Upgrade( );
-    $upgrade->setPrint(true);
+
+    // new since CiviCRM 4.1
+    if (is_callable(array($upgrade, 'setPrint'))) {
+      $upgrade->setPrint(true);
+    }
+
     ob_start(); // to suppress html output /w source code.
     $upgrade->run( );
     $result = $template->get_template_vars('message'); // capture the required message.
