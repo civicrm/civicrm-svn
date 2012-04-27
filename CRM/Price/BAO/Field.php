@@ -241,6 +241,9 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
         $otherAmount = $qf->get( 'values' );
         $config    = CRM_Core_Config::singleton();
         $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') );
+        // get currency name for price field and option attributes
+        $currencyName = $config->defaultCurrency;
+        
         if (!isset($label)) {
             $label = ( CRM_Utils_Array::value( 'is_separate_payment', $qf->_membershipBlock ) && $field->name == 'contribution_amount' && !CRM_Utils_Array::value( 'is_allow_other_amount', $otherAmount ) ) ? 'Additional Contribution' : $field->label;
             
@@ -315,11 +318,15 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                 $max_value = CRM_Utils_Array::value( 'max_value', $opt, '' );
                 $priceVal  = implode( $seperator, array(  $opt[$valueFieldName], $count, $max_value ) );
                 if ( property_exists( $qf, '_quickConfig' ) && $qf->_quickConfig ) {
-                    $extra = array( 'price'   => json_encode( array( $elementName, $priceVal ) ),
+                    $extra = array( 'price'         => json_encode( array( $elementName, $priceVal ) ),
+                                    'data-amount'   => $opt[$valueFieldName],
+                                    'data-currency' => $currencyName,
                                     'onclick' => 'clearAmountOther();', 
                                    );
                 } else{
-                    $extra = array( 'price' => json_encode( array( $elementName, $priceVal ) ) );
+                    $extra = array( 'price'         => json_encode( array( $elementName, $priceVal ) ),
+                                    'data-amount'   => $opt[$valueFieldName],
+                                    'data-currency' => $currencyName,  );
                 }
                 $choice[$opId] = $qf->createElement('radio', null, '', $opt['label'], $opt['id'], $extra );
                 
@@ -407,7 +414,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                     $opt['label'] .= CRM_Utils_Money::format( $opt[$valueFieldName] );
                 }
                 $check[$opId] =& $qf->createElement('checkbox', $opt['id'], null, $opt['label'], 
-                                               array('price' => json_encode( array( $opt['id'] , $priceVal ) ) ) 
+                                               array('price' => json_encode( array( $opt['id'] , $priceVal ) ),
+                                                     'data-amount'   => $opt[$valueFieldName],
+                                                     'data-currency' => $currencyName,
+                                                ) 
                                               );
 
                 // CRM-6902
