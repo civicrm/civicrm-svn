@@ -35,7 +35,7 @@
     		{ts}OR{/ts}<br/>{$form.profiles.$blockNo.html}<div id="contact-dialog-{$blockNo}" class="hiddenElement"></div>
     	    {/if}
     	</div>
-       
+
     {else}
     <tr id="contact-success-{$blockNo}" class="hiddenElement">
     <td></td>
@@ -67,11 +67,11 @@
   });
 
   function newContact{/literal}{$blockNo}{literal}( gid, blockNo ) {
-  
-      if ( allowMultiClient ) { 
+
+      if ( allowMultiClient ) {
       	 existingTokens = '';
       	 var cid = cj('#contact_' + blockNo ).val();
-      	 var cids = new Array(); 
+      	 var cids = new Array();
       	 cids = cid.split(',');
       	 var i = 0;
       	 cj('li.token-input-token-facebook').each(function(){
@@ -92,10 +92,10 @@
              cj( '#contact-dialog-' + blockNo ).show( ).html( content ).dialog({
          	    	title: "Create New Contact",
              		modal: true,
-             		width: 680, 
-             		overlay: { 
-             			opacity: 0.5, 
-             			background: "black" 
+             		width: 680,
+             		overlay: {
+             			opacity: 0.5,
+             			background: "black"
              		},
 
                  close: function(event, ui) {
@@ -103,7 +103,7 @@
         		     cj('#profiles-' + blockNo).val('');
         		     {/literal}
         		     {if $newContactCallback}
-                       eval({$newContactCallback});   
+                       eval({$newContactCallback});
         		     {/if}
         		     {literal}
                  }
@@ -111,7 +111,7 @@
          }
       });
   }
-        
+
   function addMultiClientOption{/literal}{$blockNo}{literal}( newToken, blockNo ) {
       existingTokens = existingTokens + newToken;
       eval( 'existingTokens = [' + existingTokens + ']');
@@ -121,9 +121,9 @@
 
       cj('#contact_' + blockNo).tokenInput( contactUrl, { prePopulate:existingTokens, theme: 'facebook', hintText: hintText });
       cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px');
-      
+
   }
-  
+
   function addSingleClientOption{/literal}{$blockNo}{literal}( blockNo ) {
       var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
       {/literal}{if $action eq 2}{literal}
@@ -131,22 +131,22 @@
       {/literal}{/if}{literal}
 
       var contactElement = '#contact_' + blockNo;
-      var contactHiddenElement = 'input[name="contact_select_id[' + blockNo +']"]';
-      cj( contactElement ).autocomplete( contactUrl, { 
+      var contactHiddenElement = 'input[name="{/literal}{$prefix}{literal}contact_select_id[' + blockNo +']"]';
+      cj( contactElement ).autocomplete( contactUrl, {
           selectFirst : false, matchContains: true, minChars: 1
-      }).result( function(event, data, formatted) { 
+      }).result( function(event, data, formatted) {
           cj( contactHiddenElement ).val(data[1]);
       }).focus( );
 
       cj( contactElement ).click( function( ) {
           cj( contactHiddenElement ).val('');
       });
-                                  
+
       cj( contactElement ).bind("keypress keyup", function(e) {
           if ( e.keyCode == 13 ) {
               return false;
           }
-      });  
+      });
   }
 </script>
 {/literal}
