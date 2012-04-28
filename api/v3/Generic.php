@@ -97,6 +97,9 @@ function civicrm_api3_generic_getfields($apiRequest) {
         $metadata[$fieldname]['options'] = $options['values'];
       }
     }
+     if(array_key_exists('enumValues', $field)){
+       $metadata[$fieldname]['options'] = explode(',',$field['enumValues']);
+     }
   }
   $results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
   return $results[$entity][$action];
