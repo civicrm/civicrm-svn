@@ -13,8 +13,8 @@ $classLoader->register();
 
 $genCode = new CRM_GenCode_Main('../CRM/Core/DAO/', '../sql/', '../', '../templates/');
 $genCode->main(
-    @$argv[2], 
-    @$argv[3], 
+    @$argv[2],
+    @$argv[3],
     empty($argv[1]) ? 'schema/Schema.xml' : $argv[1]
     );
 
@@ -24,31 +24,31 @@ class CRM_GenCode_Util_File {
             mkdir( $dir, $perm, true );
         }
     }
-    
+
     static function removeDir( $dir ) {
         foreach(glob("$dir/*") as $tempFile) {
             unlink($tempFile);
         }
         rmdir($dir);
     }
-    
+
     static function createTempDir($prefix) {
         if ( isset ( $_SERVER['TMPDIR'] ) ) {
             $tempDir = $_SERVER['TMPDIR'];
         } else {
             $tempDir = '/tmp';
         }
-        
+
         $newTempDir =
              $tempDir .
              '/' . $prefix .
              rand( 1, 10000 );
-        
+
         if (file_exists($newTempDir)) {
             self::removeDir($newTempDir);
         }
         self::createDir($newTempDir);
-        
+
         return $newTempDir;
     }
 }
@@ -57,12 +57,12 @@ class CRM_GenCode_Main {
     var $buildVersion;
     var $compileDir;
     var $classNames;
-    
+
     var $CoreDAOCodePath;
     var $sqlCodePath;
     var $phpCodePath;
     var $tplCodePath;
-    
+
     var $smarty;
     
     function __construct($CoreDAOCodePath, $sqlCodePath, $phpCodePath, $tplCodePath) {
@@ -662,7 +662,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
         $field['headerPattern'] = $this->value( 'headerPattern', $fieldXML );
         $field['dataPattern'] = $this->value( 'dataPattern', $fieldXML );
         $field['uniqueName'] = $this->value( 'uniqueName', $fieldXML );
-    
+        $field['pseudoconstant'] = $this->value( 'pseudoconstant', $fieldXML );
         $fields[$name] =& $field;
     }
     
@@ -830,7 +830,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
             }
         }
     }
-    
+
     /**
      * four
      * eight

@@ -206,11 +206,13 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
 {if $field.FKClassName}
 								      'FKClassName' => '{$field.FKClassName}',
 {/if} {* field.FKClassName *}
-                                                                    ), 
+{if $field.pseudoconstant}
+								      'pseudoconstant' => '{$field.pseudoconstant}',
+{/if} {* field.pseudoconstant *}                                                                    ),
 {/foreach} {* table.fields *}
                                       );
           {rdelim}
-          return self::$_fields;   
+          return self::$_fields;
       {rdelim}
 
       /**
