@@ -148,7 +148,7 @@ function civicrm_api3_contact_create($params) {
 
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * @param array $params array or parameters determined by getfields
  */
 function _civicrm_api3_contact_create_spec(&$params) {
@@ -240,7 +240,7 @@ function civicrm_api3_contact_get($params) {
 }
 /*
  * Adjust Metadata for Get action
- * 
+ *
  * @param array $params array or parameters determined by getfields
  */
 function _civicrm_api3_contact_get_spec(&$params) {
@@ -280,7 +280,7 @@ function civicrm_api3_contact_delete($params) {
   }
 }
 
-function _civicrm_api3_contact_check_params(&$params, $dupeCheck = TRUE, $dupeErrorArray = FALSE, $requiredCheck = TRUE, $dedupeRuleGroupID = NULL) {
+function _civicrm_api3_contact_check_params(&$params, $dupeCheck = TRUE) {
   if (isset($params['id']) && is_numeric($params['id'])) {
     $requiredCheck = FALSE;
   }
@@ -304,9 +304,6 @@ function _civicrm_api3_contact_check_params(&$params, $dupeCheck = TRUE, $dupeEr
 
     // contact_type has a limited number of valid values
     $fields = CRM_Utils_Array::value($params['contact_type'], $required);
-    if ($fields == NULL) {
-      return civicrm_api3_create_error("Invalid Contact Type: {$params['contact_type']}");
-    }
 
     if ($csType = CRM_Utils_Array::value('contact_sub_type', $params)) {
       if (!(CRM_Contact_BAO_ContactType::isExtendsContactType($csType, $params['contact_type']))) {
@@ -360,15 +357,7 @@ function _civicrm_api3_contact_check_params(&$params, $dupeCheck = TRUE, $dupeEr
     $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Strict', array(), $dedupeRuleGroupID));
 
     if ($ids != NULL) {
-      if ($dupeErrorArray) {
-        $error = CRM_Core_Error::createError("Found matching contacts: $ids",
-          CRM_Core_Error::DUPLICATE_CONTACT,
-          'Fatal', $ids
-        );
-        return civicrm_api3_create_error($error->pop());
-      }
-
-      return civicrm_api3_create_error("Found matching contacts: $ids");
+      throw new Exception("Found matching contacts: $ids");
     }
   }
 
@@ -718,7 +707,7 @@ function civicrm_api3_contact_quicksearch($params) {
   $additionalFrom = '';
   if ($relType) {
     $additionalFrom = "
-            INNER JOIN civicrm_relationship_type r ON ( 
+            INNER JOIN civicrm_relationship_type r ON (
                 r.id = {$relType}
                 AND ( cc.contact_type = r.contact_type_{$rel} OR r.contact_type_{$rel} IS NULL )
                 AND ( cc.contact_sub_type = r.contact_sub_type_{$rel} OR r.contact_sub_type_{$rel} IS NULL )
