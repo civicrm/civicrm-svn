@@ -1271,7 +1271,7 @@ SELECT contact_id
               if (isset($value['default'])){
                   $object->$dbName = $value['default'];
               }
-              elseif($value['name'] == 'is_deleted'){
+              elseif($value['name'] == 'is_deleted' || $value['name'] == 'is_test'){
                 $object->$dbName = 0;
               }else{
                 $object->$dbName = 1;
