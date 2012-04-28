@@ -1250,6 +1250,10 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
     //if value = 'user_contact_id' replace value with logged in user id
     if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo)) {
       $constant = $fieldInfo['options'];
+       $enum = CRM_Utils_Array::value('enumValues', $fieldInfo);
+       if(empty($constant) && !empty($enum)){
+        $constant = explode(',',$enum);
+      }
       if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
         throw new Exception("$fieldname is not valid");
       }
