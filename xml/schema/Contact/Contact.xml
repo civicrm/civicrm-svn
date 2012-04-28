@@ -28,6 +28,7 @@
        <length>64</length>
        <comment>Type of Contact.</comment>
        <export>true</export>
+       <pseudoconstant>contactType</pseudoconstant>
        <add>1.1</add>
        <change>3.1</change>
   </field>
