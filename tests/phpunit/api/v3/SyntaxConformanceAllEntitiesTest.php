@@ -339,6 +339,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
   }
   /**
    * @dataProvider entities_updatesingle
+   * 
+   * limitations include the problem with avoiding loops when creating test objects -
+   * hence FKs only set by createTestObject when required
+   * Currency - only seems to support US
    */
   public function testCreateSingleValueAlter($entityName) {
     $baoString = 'CRM_Grant_BAO_Grant';
@@ -385,8 +389,11 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         case CRM_Utils_Type::T_INT:
           $entity[$field] = 111;// probably created with a 1
           if(CRM_Utils_Array::value('FKClassName',$specs)){
-            
-            $entity[$field] = empty($entity2[$field])?$entity2[$specs['uniqueName']]:$entity2[$field];
+            $entity[$field] = empty($entity2[$field])?CRM_Utils_Array::value($specs['uniqueName'],$entity2):$entity2[$field];
+            //todo - there isn't always something set here - & our checking on unset values is limited
+            if(empty($entity[$field])){
+              unset($entity[$field]);
+            }
           }
           break;
         case CRM_Utils_Type::T_BOOL:
