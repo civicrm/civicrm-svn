@@ -572,7 +572,7 @@ WHERE  civicrm_pledge.id = %2
          $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
          
          //retrieve all pledge payments for this particular pledge
-         $allPledgePayments = array( );
+         $allPledgePayments = $allStatus = array( );
          $returnProperties  = array( 'status_id' );
          CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'pledge_id', $pledgeId, $allPledgePayments, $returnProperties );
 
