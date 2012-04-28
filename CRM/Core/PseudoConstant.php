@@ -363,6 +363,13 @@ class CRM_Core_PseudoConstant {
   private static $batchStatues;
 
   /**
+   * contact Type
+   * @var array
+   * @static
+   */
+  private static $contactType = array();
+
+  /**
    * populate the object from the database. generic populate
    * method
    *
@@ -1998,6 +2005,22 @@ ORDER BY name";
     return self::$batchStatues;
   }
 
+  /*
+  * The static array contactType is returned
+  *
+  * @access public
+  * @static
+  * @param string $column db column name/label.
+  *
+  * @return array - array reference of all Types
+  *
+     */
+  public static function &contactType($column = 'label') {
+    if (! self::$contactType) {
+      self::$contactType = CRM_Contact_BAO_ContactType::basicTypePairs(true);
+    }
+    return self::$contactType;
+  }
 
 }
 
