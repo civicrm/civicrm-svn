@@ -138,7 +138,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'Contribution',
       'ContributionRecur',
       'ActivityType',
-      'Campaign',
+
       'Case',
 
       'ContactType',
@@ -370,6 +370,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         case CRM_Utils_Type::T_TIMESTAMP:
           $entity[$field] = '2012-05-20';
           break;
+        case CRM_Utils_Type::T_DATETIME:
+        case 12:
+          $entity[$field] = '2012-05-20 03:05:20';
+          break;
         case CRM_Utils_Type::T_STRING:
         case CRM_Utils_Type::T_BLOB:
         case CRM_Utils_Type::T_MEDIUMBLOB:
@@ -381,7 +385,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         case CRM_Utils_Type::T_INT:
           $entity[$field] = 111;// probably created with a 1
           if(CRM_Utils_Array::value('FKClassName',$specs)){
-            $entity[$field] = empty($entity2[$field])?$entity2[$specs]['uniqueName']:$entity2[$field];
+            
+            $entity[$field] = empty($entity2[$field])?$entity2[$specs['uniqueName']]:$entity2[$field];
           }
           break;
         case CRM_Utils_Type::T_BOOL:
