@@ -34,7 +34,7 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/Contact.php';
+require_once 'api/v3/DeprecatedUtils.php';
 
 /**
  *  Test APIv3 civicrm_activity_* functions
@@ -129,9 +129,11 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $params = array(
       'email' => 'man1@yahoo.com',
       'contact_type' => 'Does not Exist',
+      'version' => $this->_apiversion,
     );
     $contact = &civicrm_api('contact', 'create', $params);
     $this->assertEquals($contact['is_error'], 1, "In line " . __LINE__);
+    $this->assertEquals('contact_type `Does not Exist` is not valid.', $contact['error_message']);
   }
 
   /**
@@ -694,7 +696,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    */
   function testCheckParamsWithNoParams() {
     $params = array();
-    $contact = &_civicrm_api3_contact_check_params($params, FALSE);
+    $contact = &_civicrm_api3_deprecated_contact_check_params($params, FALSE);
     $this->assertEquals(1, $contact['is_error'], "In line " . __LINE__);
   }
 
@@ -712,7 +714,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    */
   function testCheckParamsWithNoContactType() {
     $params = array('foo' => 'bar');
-    $contact = &_civicrm_api3_contact_check_params($params, FALSE);
+    $contact = &_civicrm_api3_deprecated_contact_check_params($params, FALSE);
     $this->assertEquals(1, $contact['is_error'], "In line " . __LINE__);
   }
 
@@ -768,7 +770,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'email' => 'TestContact@example.com',
       'contact_type' => 'Individual',
     );
-    $contact = &_civicrm_api3_contact_check_params($params, TRUE, TRUE);
+    $contact = &_civicrm_api3_deprecated_contact_check_params($params, TRUE, TRUE);
     $this->assertEquals(1, $contact['is_error']);
     $this->assertRegexp("/matching contacts.*17/s",
       $contact['error_message']['message']
