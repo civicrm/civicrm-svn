@@ -740,7 +740,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'email' => 'TestContact@example.com',
       'contact_type' => 'Individual',
     );
-    $contact = &_civicrm_api3_contact_check_params($params, TRUE);
+    $contact = &_civicrm_api3_deprecated_contact_check_params($params, TRUE);
     $this->assertEquals(1, $contact['is_error']);
     $this->assertRegexp("/matching contacts.*17/s",
       CRM_Utils_Array::value('error_message', $contact)
