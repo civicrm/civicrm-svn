@@ -2021,6 +2021,26 @@ ORDER BY name";
     }
     return self::$contactType;
   }
+    /**
+     * Get constant
+     *
+     * Wrapper for Pseudoconstant methods. We use this so the calling function
+     * doesn't need to know which class the Pseudoconstant is on
+     * (some are on the Contribute_Pseudoconsant Class etc
+     *
+     * @access public
+     * @static
+     * @return array - array reference of all relevant constant
+     */
+    public static function getConstant($constant)
+    {
+        if ( !self::$$constant ) {
+          if(method_exists(get_class(), $constant)){
+            self::$$constant = self::$constant();
+          }
+        }
 
+        return self::$$constant;
+    }
 }
 
