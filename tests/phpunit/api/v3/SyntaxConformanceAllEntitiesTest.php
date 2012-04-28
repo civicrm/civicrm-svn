@@ -142,7 +142,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'Case',
 
       'ContactType',
-      'Phone',
+
       'UFGroup',
       'Survey',
       'Activity',
@@ -341,7 +341,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
    * @dataProvider entities_updatesingle
    * 
    * limitations include the problem with avoiding loops when creating test objects -
-   * hence FKs only set by createTestObject when required
+   * hence FKs only set by createTestObject when required. e.g parent_id on campaign is not being followed through
    * Currency - only seems to support US
    */
   public function testCreateSingleValueAlter($entityName) {
