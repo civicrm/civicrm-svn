@@ -1254,9 +1254,15 @@ SELECT contact_id
             continue;
           }
           $constant = CRM_Utils_Array::value('pseudoconstant', $value);
-          if (! empty($constant)) {
+          if (!empty($constant)) {
             $constantOptions = array_keys(CRM_Core_PseudoConstant::getConstant($constant));
             $object->$dbName = $constantOptions[0];
+            continue;
+          }
+          $enum = CRM_Utils_Array::value('enumValues', $value);
+          if(!empty($enum)){
+            $options = explode(',',$enum);
+            $object->$dbName = $options[0];
             continue;
           }
           switch ($value['type']) {
