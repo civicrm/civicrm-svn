@@ -36,7 +36,8 @@
       <title>Phone Location Type</title>
       <type>int unsigned</type>
       <comment>Which Location does this phone belong to.</comment>
-       <add>2.0</add>
+      <pseudoconstant>locationType</pseudoconstant>
+      <add>2.0</add>
   </field>
   <index>
     <name>index_location_type</name>
@@ -114,6 +115,7 @@
       <title>Phone Type</title>
       <type>int unsigned</type>
       <comment>Which type of phone does this number belongs.</comment>
+      <pseudoconstant>phoneType</pseudoconstant>
       <add>2.2</add>
   </field> 
 </table>
