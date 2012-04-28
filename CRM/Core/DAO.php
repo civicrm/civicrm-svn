@@ -1219,71 +1219,84 @@ SELECT contact_id
   //Creates a test object, including any required objects it needs via recursion
   //createOnly: only create in database, do not store or return the objects (useful for perf testing)
   //ONLY USE FOR TESTING
-  static function createTestObject($daoName, $params=array(), $numObjects = 1, $createOnly=false) {
-
-    static $counter=0;
-
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-
-    for ($i=0;$i<$numObjects;++$i) {
-
-      ++$counter;
-      eval( '$object   = new ' . $daoName . '( );' );
-
-      $fields =& $object->fields( );
-      foreach ( $fields as $name => $value ) {
+  static function createTestObject($daoName, $params = array(), $numObjects = 1, $createOnly = false) {
+    
+    static $counter = 0;
+    
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+    
+    for($i = 0; $i < $numObjects; ++ $i) {
+      
+      ++ $counter;
+      eval('$object   = new ' . $daoName . '( );');
+      
+      $fields = & $object->fields();
+      foreach ($fields as $name => $value) {
         $dbName = $value['name'];
-
-        $FKClassName = CRM_Utils_Array::value( 'FKClassName', $value );
-        $required = CRM_Utils_Array::value( 'required', $value );
-        if ( CRM_Utils_Array::value( $dbName, $params ) &&
-          ! is_array( $params[$dbName] ) ) {
-          $object->$dbName=$params[$dbName];
-        } elseif ( $dbName != 'id' ) {
-          if ( $FKClassName != null ) {
+        
+        $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
+        $required = CRM_Utils_Array::value('required', $value);
+        if (CRM_Utils_Array::value($dbName, $params) && ! is_array($params[$dbName])) {
+          $object->$dbName = $params[$dbName];
+        }
+        elseif ($dbName != 'id') {
+          if ($FKClassName != null) {
             //skip the FK if it is not required
-            if ( ! $required) {
+            if (! $required && $dbName != 'contact_id') {// if it's contact id we should create even if not required
               continue;
             }
-
+            
             //if it is required we need to generate the dependency object first
-            $depObject = CRM_Core_DAO::createTestObject( $FKClassName,
-                         CRM_Utils_Array::value( $dbName, $params, 1 ) );
+            $depObject = CRM_Core_DAO::createTestObject($FKClassName, CRM_Utils_Array::value($dbName, $params, 1));
             $object->$dbName = $depObject->id;
             unset($depObject);
-
+            
             continue;
           }
-
+          $constant = CRM_Utils_Array::value('pseudoconstant', $value);
+          if (! empty($constant)) {
+            $constantOptions = array_keys(CRM_Core_PseudoConstant::getConstant($constant));
+            $object->$dbName = $constantOptions[0];
+            continue;
+          }
           switch ($value['type']) {
-
+            
             case CRM_Utils_Type::T_INT:
-            case CRM_Utils_Type::T_BOOL:
-            case CRM_Utils_Type::T_BOOLEAN:
             case CRM_Utils_Type::T_FLOAT:
             case CRM_Utils_Type::T_MONEY:
-              $object->$dbName=$counter;
+              $object->$dbName = $counter;
               break;
-
+            case CRM_Utils_Type::T_BOOL:
+            case CRM_Utils_Type::T_BOOLEAN:
+              if (isset($value['default'])){
+                  $object->$dbName = $value['default'];
+              }
+              elseif($value['name'] == 'is_deleted'){
+                $object->$dbName = 0;
+              }else{
+                $object->$dbName = 1;
+              }
+              break;
             case CRM_Utils_Type::T_DATE:
             case CRM_Utils_Type::T_TIMESTAMP:
-              $object->$dbName='19700101';
+              $object->$dbName = '19700101';
               break;
-
+            
             case CRM_Utils_Type::T_TIME:
               CRM_Core_Error::fatal('T_TIME shouldnt be used.');
-              //$object->$dbName='000000';
-              //break;
+            //$object->$dbName='000000';
+            //break;
+            
 
             case CRM_Utils_Type::T_CCNUM:
-              $object->$dbName='4111 1111 1111 1111';
+              $object->$dbName = '4111 1111 1111 1111';
               break;
-
+            
 
             case CRM_Utils_Type::T_URL:
-              $object->$dbName='http://www.civicrm.org';
+              $object->$dbName = 'http://www.civicrm.org';
               break;
-
+            
 
             case CRM_Utils_Type::T_STRING:
             case CRM_Utils_Type::T_BLOB:
@@ -1292,38 +1305,45 @@ SELECT contact_id
             case CRM_Utils_Type::T_LONGTEXT:
             case CRM_Utils_Type::T_EMAIL:
             default:
-              if ( isset( $value['enumValues'] ) ) {
-                if (isset($value['default'])) $object->$dbName=$value['default'];
+              if (isset($value['enumValues'])) {
+                if (isset($value['default']))
+                  $object->$dbName = $value['default'];
                 else {
-                  if ( is_array($value['enumValues']) ) {
-                    $object->$dbName=$value['enumValues'][0];
-                  } else {
-                    $defaultValues = explode( ',', $value['enumValues'] );
+                  if (is_array($value['enumValues'])) {
+                    $object->$dbName = $value['enumValues'][0];
+                  }
+                  else {
+                    $defaultValues = explode(',', $value['enumValues']);
                     $object->$dbName = $defaultValues[0];
                   }
                 }
-              } else {
-                $object->$dbName=$dbName.'_'.$counter;
-                $maxlength = CRM_Utils_Array::value( 'maxlength', $value );
-                if ( $maxlength > 0 && strlen($object->$dbName) > $maxlength ) {
-                  $object->$dbName=substr($object->$dbName,0,$value['maxlength']);
+              }
+              else {
+                $object->$dbName = $dbName . '_' . $counter;
+                $maxlength = CRM_Utils_Array::value('maxlength', $value);
+                if ($maxlength > 0 && strlen($object->$dbName) > $maxlength) {
+                  $object->$dbName = substr($object->$dbName, 0, $value['maxlength']);
                 }
               }
           }
         }
       }
-
       $object->save();
-
-      if (!$createOnly) $objects[$i]=$object;
-      else unset($object);
+      
+      if (! $createOnly)
+        $objects[$i] = $object;
+      else
+        unset($object);
     }
-
-    if ($createOnly) return;
-    else if ($numObjects==1) return $objects[0];
-    else return $objects;
+    
+    if ($createOnly)
+      return;
+    else if ($numObjects == 1)
+      return $objects[0];
+    else
+      return $objects;
   }
-
+  
   //deletes the this object plus any dependent objects that are associated with it
   //ONLY USE FOR TESTING
 
