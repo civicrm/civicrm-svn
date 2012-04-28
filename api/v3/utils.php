@@ -337,8 +337,8 @@ function _civicrm_api3_store_values(&$fields, &$params, &$values) {
 function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
   $entity = substr($dao->__table, 8);
 
-  $fields = _civicrm_api3_build_fields_array($dao, $unique);
-  $fields = array_intersect(array_keys($fields), array_keys($params));
+  $allfields = _civicrm_api3_build_fields_array($dao, $unique);
+  $fields = array_intersect(array_keys($allfields), array_keys($params));
   if (isset($params[$entity . "_id"])) {
     //if entity_id is set then treat it as ID (will be overridden by id if set)
     $dao->id = $params[$entity . "_id"];
@@ -418,7 +418,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
   if (!empty($params['return']) && is_array($params['return'])) {
     $dao->selectAdd();
     foreach ($params['return'] as $returnValue) {
-      if (in_array($returnValue, $fields)) {
+      if (in_array($returnValue, array_keys($allfields))) {
         $dao->selectAdd($returnValue);
       }
     }
