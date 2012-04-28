@@ -66,7 +66,7 @@ SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 
 -- Sample location types
 -- CRM-9120 for legacy reasons we are continuing to translate the 'name', but this
--- field is used mainly as an ID, and display_name will be shown to the user, but 
+-- field is used mainly as an ID, and display_name will be shown to the user, but
 -- we have not yet finished modifying all places where the 'name' is shown.
 INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active, is_default ) VALUES( '{ts escape="sql"}Home{/ts}', '{ts escape="sql"}Home{/ts}', 'HOME', '{ts escape="sql"}Place of residence{/ts}', 0, 1, 1 );
 INSERT INTO civicrm_location_type( name, display_name, vcard_name, description, is_reserved, is_active ) VALUES( '{ts escape="sql"}Work{/ts}', '{ts escape="sql"}Work{/ts}', 'WORK', '{ts escape="sql"}Work location{/ts}', 0, 1 );
@@ -133,15 +133,15 @@ INSERT INTO
    civicrm_contribution_type(name, is_reserved, is_active, is_deductible)
 VALUES
   ( '{ts escape="sql"}Donation{/ts}'             , 0, 1, 1 ),
-  ( '{ts escape="sql"}Member Dues{/ts}'          , 0, 1, 1 ), 
+  ( '{ts escape="sql"}Member Dues{/ts}'          , 0, 1, 1 ),
   ( '{ts escape="sql"}Campaign Contribution{/ts}', 0, 1, 0 ),
   ( '{ts escape="sql"}Event Fee{/ts}'            , 0, 1, 0 );
-  
+
 -- option groups and values for 'preferred communication methods' , 'activity types', 'gender', etc.
 
-INSERT INTO 
-   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`) 
-VALUES 
+INSERT INTO
+   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`)
+VALUES
    ('preferred_communication_method', '{ts escape="sql"}Preferred Communication Method{/ts}'     , 1, 1),
    ('activity_type'                 , '{ts escape="sql"}Activity Type{/ts}'                      , 1, 1),
    ('gender'                        , '{ts escape="sql"}Gender{/ts}'                             , 1, 1),
@@ -174,13 +174,13 @@ VALUES
    ('from_email_address'            , '{ts escape="sql"}From Email Address{/ts}'                 , 1, 1),
    ('mapping_type'                  , '{ts escape="sql"}Mapping Type{/ts}'                       , 1, 1),
    ('wysiwyg_editor'                , '{ts escape="sql"}WYSIWYG Editor{/ts}'                     , 1, 1),
-   ('recur_frequency_units'         , '{ts escape="sql"}Recurring Frequency Units{/ts}'          , 1, 1), 
+   ('recur_frequency_units'         , '{ts escape="sql"}Recurring Frequency Units{/ts}'          , 1, 1),
    ('phone_type'                    , '{ts escape="sql"}Phone Type{/ts}'                         , 1, 1),
-   ('custom_data_type'              , '{ts escape="sql"}Custom Data Type{/ts}'                   , 1, 1),  
+   ('custom_data_type'              , '{ts escape="sql"}Custom Data Type{/ts}'                   , 1, 1),
    ('visibility'                    , '{ts escape="sql"}Visibility{/ts}'                         , 1, 1),
    ('mail_protocol'                 , '{ts escape="sql"}Mail Protocol{/ts}'                      , 1, 1),
    ('priority'                      , '{ts escape="sql"}Priority{/ts}'                           , 1, 1),
-   ('redaction_rule'                , '{ts escape="sql"}Redaction Rule{/ts}'                     , 1, 1),	
+   ('redaction_rule'                , '{ts escape="sql"}Redaction Rule{/ts}'                     , 1, 1),
    ('report_template'               , '{ts escape="sql"}Report Template{/ts}'                    , 1, 1),
    ('email_greeting'                , '{ts escape="sql"}Email Greeting Type{/ts}'                , 1, 1),
    ('postal_greeting'               , '{ts escape="sql"}Postal Greeting Type{/ts}'               , 1, 1),
@@ -286,15 +286,15 @@ SELECT @grantCompId      := max(id) FROM civicrm_component where name = 'CiviGra
 SELECT @campaignCompId   := max(id) FROM civicrm_component where name = 'CiviCampaign';
 SELECT @mailCompId       := max(id) FROM civicrm_component where name = 'CiviMail';
 
-INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+INSERT INTO
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
    (@option_group_id_pcm, '{ts escape="sql"}Phone{/ts}', 1, NULL, NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_pcm, '{ts escape="sql"}Email{/ts}', 2, NULL, NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_pcm, '{ts escape="sql"}Postal Mail{/ts}', 3, NULL, NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_pcm, '{ts escape="sql"}SMS{/ts}', 4, NULL, NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_pcm, '{ts escape="sql"}Fax{/ts}', 5, NULL, NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
- 
+
    (@option_group_id_act, '{ts escape="sql"}Meeting{/ts}',                            1, 'Meeting', NULL, 0, NULL, 1, NULL,                       				                                                0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Phone Call{/ts}',                         2, 'Phone Call',          NULL, 0, NULL, 2, NULL,                                                          				0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Email{/ts}',                              3, 'Email',               NULL, 1, NULL, 3, '{ts escape="sql"}Email sent.{/ts}',                                                          0, 1, 1, NULL, NULL),
@@ -307,15 +307,15 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Pledge Acknowledgment{/ts}',              10, 'Pledge Acknowledgment',  NULL, 1, NULL, 10, '{ts escape="sql"}Send Pledge Acknowledgment.{/ts}',                                     0, 1, 1, @pledgeCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Pledge Reminder{/ts}',                    11, 'Pledge Reminder',    NULL, 1, NULL, 11, '{ts escape="sql"}Send Pledge Reminder.{/ts}',                                               0, 1, 1, @pledgeCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Inbound Email{/ts}',                      12, 'Inbound Email',      NULL, 1, NULL, 12, '{ts escape="sql"}Inbound Email.{/ts}',                                                      0, 1, 1, NULL, NULL),
-  
+
 -- Activity Types for case activities
    (@option_group_id_act, '{ts escape="sql"}Open Case{/ts}',          13, 'Open Case',          NULL, 0,  0, 13, '', 0, 0, 1, @caseCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Follow up{/ts}',          14, 'Follow up',          NULL, 0,  0, 14, '', 0, 0, 1, @caseCompId, NULL ),
-   (@option_group_id_act, '{ts escape="sql"}Change Case Type{/ts}',   15, 'Change Case Type',   NULL, 0,  0, 15, '', 0, 0, 1, @caseCompId, NULL ),  
-   (@option_group_id_act, '{ts escape="sql"}Change Case Status{/ts}', 16, 'Change Case Status', NULL, 0,  0, 16, '', 0, 0, 1, @caseCompId, NULL ),  
-  
+   (@option_group_id_act, '{ts escape="sql"}Change Case Type{/ts}',   15, 'Change Case Type',   NULL, 0,  0, 15, '', 0, 0, 1, @caseCompId, NULL ),
+   (@option_group_id_act, '{ts escape="sql"}Change Case Status{/ts}', 16, 'Change Case Status', NULL, 0,  0, 16, '', 0, 0, 1, @caseCompId, NULL ),
+
    (@option_group_id_act, '{ts escape="sql"}Membership Renewal Reminder{/ts}',        17, 'Membership Renewal Reminder',  NULL, 1, NULL, 17, '{ts escape="sql"}offline membership renewal reminder.{/ts}',                      0, 1, 1, @memberCompId, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Change Case Start Date{/ts}',         18, 'Change Case Start Date',         NULL, 0,  0, 18, '', 0, 0, 1, @caseCompId, NULL ), 
+   (@option_group_id_act, '{ts escape="sql"}Change Case Start Date{/ts}',         18, 'Change Case Start Date',         NULL, 0,  0, 18, '', 0, 0, 1, @caseCompId, NULL ),
    (@option_group_id_act, '{ts escape="sql"}Bulk Email{/ts}',                         19, 'Bulk Email',         NULL, 1, NULL, 19, '{ts escape="sql"}Bulk Email Sent.{/ts}',                                                    0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Assign Case Role{/ts}',                   20, 'Assign Case Role', NULL,0, 0, 20, '', 0, 0, 1, @caseCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Remove Case Role{/ts}',                   21, 'Remove Case Role', NULL,0, 0, 21, '', 0, 0, 1, @caseCompId, NULL),
@@ -526,16 +526,16 @@ VALUES
   (@option_group_id_report , '{ts escape="sql"}Contributions by Household Report{/ts}',       'contribute/householdSummary',    'CRM_Report_Form_Contribute_HouseholdSummary',    NULL, 0, NULL, 10, '{ts escape="sql"}Displays a detailed list of contributions grouped by household which includes contributions made by members of the household.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Top Donors Report{/ts}',                       'contribute/topDonor',            'CRM_Report_Form_Contribute_TopDonor',            NULL, 0, NULL, 11, '{ts escape="sql"}Provides a list of the top donors during a time period you define. You can include as many donors as you want (for example, top 100 of your donors).{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}SYBUNT Report{/ts}',                           'contribute/sybunt',              'CRM_Report_Form_Contribute_Sybunt',              NULL, 0, NULL, 12, '{ts escape="sql"}SYBUNT means some year(s) but not this year. Provides a list of constituents who donated at some time in the history of your organization but did not donate during the time period you specify.{/ts}', 0, 0, 1, @contributeCompId, NULL),
-  (@option_group_id_report , '{ts escape="sql"}LYBUNT Report{/ts}',                           'contribute/lybunt',              'CRM_Report_Form_Contribute_Lybunt',              NULL, 0, NULL, 13, '{ts escape="sql"}LYBUNT means last year but not this year. Provides a list of constituents who donated last year but did not donate during the time period you specify as the current year.{/ts}', 0, 0, 1, @contributeCompId, NULL),	
+  (@option_group_id_report , '{ts escape="sql"}LYBUNT Report{/ts}',                           'contribute/lybunt',              'CRM_Report_Form_Contribute_Lybunt',              NULL, 0, NULL, 13, '{ts escape="sql"}LYBUNT means last year but not this year. Provides a list of constituents who donated last year but did not donate during the time period you specify as the current year.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Soft Credit Report{/ts}',                      'contribute/softcredit',          'CRM_Report_Form_Contribute_SoftCredit',          NULL, 0, NULL, 14, '{ts escape="sql"}Shows contributions made by contacts that have been soft-credited to other contacts.{/ts}', 0, 0, 1,@contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Membership Report (Summary){/ts}',             'member/summary',                 'CRM_Report_Form_Member_Summary',                 NULL, 0, NULL, 15, '{ts escape="sql"}Provides a summary of memberships by type and join date.{/ts}', 0, 0, 1, @memberCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Membership Report (Detail){/ts}',              'member/detail',                  'CRM_Report_Form_Member_Detail',                  NULL, 0, NULL, 16, '{ts escape="sql"}Provides a list of members along with their membership status and membership details (Join Date, Start Date, End Date).{/ts}', 0, 0, 1, @memberCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Membership Report (Lapsed){/ts}',              'member/lapse',                   'CRM_Report_Form_Member_Lapse',                   NULL, 0, NULL, 17, '{ts escape="sql"}Provides a list of memberships that lapsed or will lapse before the date you specify.{/ts}', 0, 0, 1, @memberCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Event Participant Report (List){/ts}',         'event/participantListing',       'CRM_Report_Form_Event_ParticipantListing',       NULL, 0, NULL, 18, '{ts escape="sql"}Provides lists of participants for an event.{/ts}', 0, 0, 1, @eventCompId, NULL),
-  (@option_group_id_report , '{ts escape="sql"}Event Income Report (Summary){/ts}',           'event/summary',                  'CRM_Report_Form_Event_Summary',                  NULL, 0, NULL, 19, '{ts escape="sql"}Provides an overview of event income. You can include key information such as event ID, registration, attendance, and income generated to help you determine the success of an event.{/ts}', 0, 0, 1, @eventCompId, NULL),			
+  (@option_group_id_report , '{ts escape="sql"}Event Income Report (Summary){/ts}',           'event/summary',                  'CRM_Report_Form_Event_Summary',                  NULL, 0, NULL, 19, '{ts escape="sql"}Provides an overview of event income. You can include key information such as event ID, registration, attendance, and income generated to help you determine the success of an event.{/ts}', 0, 0, 1, @eventCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Event Income Report (Detail){/ts}',            'event/income',                   'CRM_Report_Form_Event_Income',                   NULL, 0, NULL, 20, '{ts escape="sql"}Helps you to analyze the income generated by an event. The report can include details by participant type, status and payment method.{/ts}', 0, 0, 1, @eventCompId, NULL),
-  (@option_group_id_report , '{ts escape="sql"}Pledge Report{/ts}',                           'pledge/detail',                 'CRM_Report_Form_Pledge_Detail',                 NULL, 0, NULL, 21,   '{ts escape="sql"}Pledge Report{/ts}', 0, 0, 1, @pledgeCompId, NULL),			
-  (@option_group_id_report , '{ts escape="sql"}Pledged But not Paid Report{/ts}',             'pledge/pbnp',                    'CRM_Report_Form_Pledge_Pbnp',                    NULL, 0, NULL, 22, '{ts escape="sql"}Pledged but not Paid Report{/ts}', 0, 0, 1, @pledgeCompId, NULL),  
+  (@option_group_id_report , '{ts escape="sql"}Pledge Report{/ts}',                           'pledge/detail',                 'CRM_Report_Form_Pledge_Detail',                 NULL, 0, NULL, 21,   '{ts escape="sql"}Pledge Report{/ts}', 0, 0, 1, @pledgeCompId, NULL),
+  (@option_group_id_report , '{ts escape="sql"}Pledged But not Paid Report{/ts}',             'pledge/pbnp',                    'CRM_Report_Form_Pledge_Pbnp',                    NULL, 0, NULL, 22, '{ts escape="sql"}Pledged but not Paid Report{/ts}', 0, 0, 1, @pledgeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Relationship Report{/ts}',                     'contact/relationship',           'CRM_Report_Form_Contact_Relationship',           NULL, 0, NULL, 23, '{ts escape="sql"}Relationship Report{/ts}', 0, 0, 1, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Case Summary Report{/ts}',                     'case/summary',                   'CRM_Report_Form_Case_Summary',                   NULL, 0, NULL, 24, '{ts escape="sql"}Provides a summary of cases and their duration by date range, status, staff member and / or case role.{/ts}', 0, 0, 1, @caseCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Case Time Spent Report{/ts}',                  'case/timespent',                 'CRM_Report_Form_Case_TimeSpent',                 NULL, 0, NULL, 25, '{ts escape="sql"}Aggregates time spent on case and / or or non-case activities by activity type and contact.{/ts}', 0, 0, 1, @caseCompId, NULL),
@@ -559,7 +559,7 @@ VALUES
   (@option_group_id_report, {localize}'{ts escape="sql"}Survey Report (Detail){/ts}'{/localize},    'survey/detail', 'CRM_Report_Form_Campaign_SurveyDetails',  NULL, 0, NULL, 43, {localize}'{ts escape="sql"}Detailed report for canvassing, phone-banking, walk lists or other surveys.{/ts}'{/localize}, 0, 0, 1, @campaignCompId, NULL),
   (@option_group_id_report, {localize}'{ts escape="sql"}Personal Campaign Page Report{/ts}'{/localize}, 'contribute/pcp', 'CRM_Report_Form_Contribute_PCP', NULL, 0, NULL, 44, {localize}'{ts escape="sql"}Summarizes amount raised and number of contributors for each Personal Campaign Page.{/ts}'{/localize}, 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , {localize}'{ts escape="sql"}Pledge Summary Report{/ts}'{/localize}, 'pledge/summary', 'CRM_Report_Form_Pledge_Summary', NULL, 0, NULL, 45, {localize}'{ts escape="sql"}Summary of pledges including amount pledged, pledge status, next payment date, balance due, total amount paid etc.{/ts}'{/localize}, 0, 0, 1, @pledgeCompId, NULL),
-  (@option_group_id_report , '{ts escape="sql"}Contribution History By Relationship Report{/ts}',                   'contribute/history',              'CRM_Report_Form_Contribute_History',              NULL, 0, NULL, 46,  '{ts escape="sql"}List contact\'s donation history, grouped by year, along with contributions attributed to any of the contact\'s related contacts.{/ts}', 0, 0, 1, @contributeCompId, NULL),			
+  (@option_group_id_report , '{ts escape="sql"}Contribution History By Relationship Report{/ts}',                   'contribute/history',              'CRM_Report_Form_Contribute_History',              NULL, 0, NULL, 46,  '{ts escape="sql"}List contact\'s donation history, grouped by year, along with contributions attributed to any of the contact\'s related contacts.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report,  {localize}'{ts escape="sql"}Mail Detail Report{/ts}'{/localize},                                            'mailing/detail',     'CRM_Report_Form_Mailing_Detail',          NULL, 0, NULL, 47,  {localize}'{ts escape="sql"}Provides reporting on Intended and Successful Deliveries, Unsubscribes and Opt-outs, Replies and Forwards.{/ts}'{/localize},   0, 0, 1, @mailCompId, NULL),
   (@option_group_id_report, {localize}'{ts escape="sql"}Contribution and Membership Details{/ts}'{/localize}, 'contribute/membershipDetail', 'CRM_Report_Form_Contribute_MembershipDetail', NULL, 0, NULL, 44, {localize}'{ts escape="sql"}Contribution and Membership Details{/ts}'{/localize}, 0, 0, 1, @contributeCompId, NULL),
 
@@ -592,12 +592,12 @@ VALUES
   (@option_group_id_sfe, 'docx'     , 12, NULL   ,  NULL, 0, 0, 12, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_sfe, 'xlsx'     , 13, NULL   ,  NULL, 0, 0, 13, NULL, 0, 0, 1, NULL, NULL),
 
- 
+
   (@option_group_id_we, 'TinyMCE'    , 1, NULL, NULL, 0, NULL, 1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_we, 'CKEditor'  , 2, NULL, NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
-  (@option_group_id_we, 'Joomla Default Editor'  , 3, NULL, NULL, 0, NULL, 3, NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_we, 'Drupal Default Editor',  4, NULL, NULL, 0, NULL, 4, NULL, 0, 1, 1, NULL, NULL), 
- 
+  (@option_group_id_we, 'Joomla Default Editor'  , 3, NULL, NULL, 0, NULL, 3, NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_we, 'Drupal Default Editor',  4, NULL, NULL, 0, NULL, 4, NULL, 0, 1, 1, NULL, NULL),
+
   (@option_group_id_mt, '{ts escape="sql"}Search Builder{/ts}',      1, 'Search Builder',      NULL, 0, 0,    1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_mt, '{ts escape="sql"}Import Contact{/ts}',      2, 'Import Contact',      NULL, 0, 0,    2, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_mt, '{ts escape="sql"}Import Activity{/ts}',     3, 'Import Activity',     NULL, 0, 0,    3, NULL, 0, 1, 1, NULL, NULL),
@@ -632,11 +632,11 @@ VALUES
 
 -- visibility.
   (@option_group_id_vis, 'Public', 1, 'public', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL ),
-  (@option_group_id_vis, 'Admin', 2, 'admin', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL ),	
+  (@option_group_id_vis, 'Admin', 2, 'admin', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL ),
 
 -- mail protocol.
   (@option_group_id_mp, 'IMAP',    1, 'IMAP',    NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL ),
-  (@option_group_id_mp, 'Maildir', 2, 'Maildir', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL ),	
+  (@option_group_id_mp, 'Maildir', 2, 'Maildir', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL ),
   (@option_group_id_mp, 'POP3',    3, 'POP3',    NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL ),
   (@option_group_id_mp, 'Localdir', 4, 'Localdir', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL ),
 
@@ -705,7 +705,7 @@ VALUES
   (@option_group_id_campaignType, '{ts escape="sql"}Constituent Engagement{/ts}', 3, 'Constituent Engagement',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
 -- Campaign Status
-  (@option_group_id_campaignStatus, '{ts escape="sql"}Planned{/ts}', 1, 'Planned',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL), 
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Planned{/ts}', 1, 'Planned',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_campaignStatus, '{ts escape="sql"}In Progress{/ts}', 2, 'In Progress',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_campaignStatus, '{ts escape="sql"}Completed{/ts}', 3, 'Completed',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
@@ -781,12 +781,12 @@ VALUES
   (@option_group_id_paperSize, '{ts escape="sql"}ISO SRA3{/ts}',        '{literal}{"metric":"pt","width":907.09,"height":1275.59}{/literal}',  'sra3',        NULL, NULL, 0, 61, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_paperSize, '{ts escape="sql"}ISO SRA4{/ts}',        '{literal}{"metric":"pt","width":637.8,"height":907.09}{/literal}',    'sra4',        NULL, NULL, 0, 62, NULL, 0, 0, 1, NULL, NULL),
 
--- activity_contacts 
+-- activity_contacts
    (@option_group_id_aco, '{ts escape="sql"}Activity Assignees{/ts}', 1, 'Activity Assignees', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, '{ts escape="sql"}Activity Source{/ts}', 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, '{ts escape="sql"}Activity Targets{/ts}', 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
--- event_contacts 
+-- event_contacts
    (@option_group_id_ere, '{ts escape="sql"}Participant Role{/ts}', 1, 'participant_role', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
 -- default conference slots
@@ -810,29 +810,29 @@ VALUES
    (@option_group_id_sms_provider_name, 'Clickatell', 'Clickatell', 'Clickatell', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
 -- Label Formats
-  (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery 5160{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.21975,"tMargin":0.5,"NX":3,"NY":10,"SpaceX":0.14,"SpaceY":0,"width":2.5935,"height":1,"lPadding":0.20,"tPadding":0.20}{/literal}', '5160',  'Avery', NULL, 0, 2,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery 5161{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.175,"tMargin":0.5,"NX":2,"NY":10,"SpaceX":0.15625,"SpaceY":0,"width":4,"height":1,"lPadding":0.20,"tPadding":0.20}{/literal}',     '5161',  'Avery', NULL, 0, 3,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery 5162{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.1525,"tMargin":0.88,"NX":2,"NY":7,"SpaceX":0.195,"SpaceY":0,"width":4,"height":1.33,"lPadding":0.20,"tPadding":0.20}{/literal}',   '5162',  'Avery', NULL, 0, 4,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery 5163{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.5,"NX":2,"NY":5,"SpaceX":0.14,"SpaceY":0,"width":4,"height":2,"lPadding":0.20,"tPadding":0.20}{/literal}',          '5163',  'Avery', NULL, 0, 5,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery 5164{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":12,"font-style":"","metric":"in","lMargin":0.156,"tMargin":0.5,"NX":2,"NY":3,"SpaceX":0.1875,"SpaceY":0,"width":4,"height":3.33,"lPadding":0.20,"tPadding":0.20}{/literal}',   '5164',  'Avery', NULL, 0, 6,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery 8600{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"mm","lMargin":7.1,"tMargin":19,"NX":3,"NY":10,"SpaceX":9.5,"SpaceY":3.1,"width":66.6,"height":25.4,"lPadding":5.08,"tPadding":5.08}{/literal}',    '8600',  'Avery', NULL, 0, 7,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery L7160{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.28,"tMargin":0.6,"NX":3,"NY":7,"SpaceX":0.1,"SpaceY":0,"width":2.5,"height":1.5,"lPadding":0.20,"tPadding":0.20}{/literal}',          'L7160', 'Avery', NULL, 0, 8,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery L7161{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.28,"tMargin":0.35,"NX":3,"NY":6,"SpaceX":0.1,"SpaceY":0,"width":2.5,"height":1.83,"lPadding":0.20,"tPadding":0.20}{/literal}',        'L7161', 'Avery', NULL, 0, 9,  NULL, 0, 1, 1, NULL, NULL), 
-  (@option_group_id_label, '{ts escape="sql"}Avery L7162{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.51,"NX":2,"NY":8,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.33,"lPadding":0.20,"tPadding":0.20}{/literal}',        'L7162', 'Avery', NULL, 0, 10, NULL, 0, 1, 1, NULL, NULL), 
+  (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery 5160{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.21975,"tMargin":0.5,"NX":3,"NY":10,"SpaceX":0.14,"SpaceY":0,"width":2.5935,"height":1,"lPadding":0.20,"tPadding":0.20}{/literal}', '5160',  'Avery', NULL, 0, 2,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery 5161{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.175,"tMargin":0.5,"NX":2,"NY":10,"SpaceX":0.15625,"SpaceY":0,"width":4,"height":1,"lPadding":0.20,"tPadding":0.20}{/literal}',     '5161',  'Avery', NULL, 0, 3,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery 5162{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.1525,"tMargin":0.88,"NX":2,"NY":7,"SpaceX":0.195,"SpaceY":0,"width":4,"height":1.33,"lPadding":0.20,"tPadding":0.20}{/literal}',   '5162',  'Avery', NULL, 0, 4,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery 5163{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.5,"NX":2,"NY":5,"SpaceX":0.14,"SpaceY":0,"width":4,"height":2,"lPadding":0.20,"tPadding":0.20}{/literal}',          '5163',  'Avery', NULL, 0, 5,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery 5164{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":12,"font-style":"","metric":"in","lMargin":0.156,"tMargin":0.5,"NX":2,"NY":3,"SpaceX":0.1875,"SpaceY":0,"width":4,"height":3.33,"lPadding":0.20,"tPadding":0.20}{/literal}',   '5164',  'Avery', NULL, 0, 6,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery 8600{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"mm","lMargin":7.1,"tMargin":19,"NX":3,"NY":10,"SpaceX":9.5,"SpaceY":3.1,"width":66.6,"height":25.4,"lPadding":5.08,"tPadding":5.08}{/literal}',    '8600',  'Avery', NULL, 0, 7,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery L7160{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.28,"tMargin":0.6,"NX":3,"NY":7,"SpaceX":0.1,"SpaceY":0,"width":2.5,"height":1.5,"lPadding":0.20,"tPadding":0.20}{/literal}',          'L7160', 'Avery', NULL, 0, 8,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery L7161{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.28,"tMargin":0.35,"NX":3,"NY":6,"SpaceX":0.1,"SpaceY":0,"width":2.5,"height":1.83,"lPadding":0.20,"tPadding":0.20}{/literal}',        'L7161', 'Avery', NULL, 0, 9,  NULL, 0, 1, 1, NULL, NULL),
+  (@option_group_id_label, '{ts escape="sql"}Avery L7162{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.51,"NX":2,"NY":8,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.33,"lPadding":0.20,"tPadding":0.20}{/literal}',        'L7162', 'Avery', NULL, 0, 10, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_label, '{ts escape="sql"}Avery L7163{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.6,"NX":2,"NY":7,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.5,"lPadding":0.20,"tPadding":0.20}{/literal}',          'L7163', 'Avery', NULL, 0, 11, NULL, 0, 1, 1, NULL, NULL);
 
 -- Now insert option values which require domainID
 --
 
-INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `domain_id`, `visibility_id`) 
+INSERT INTO
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `domain_id`, `visibility_id`)
 VALUES
 -- from email address.
   (@option_group_id_fma, '"FIXME" <info@FIXME.ORG>', '1', '"FIXME" <info@FIXME.ORG>', NULL, 0, 1, 1, '{ts escape="sql"}Default domain email address and from name.{/ts}', 0, 0, 1, NULL, @domainID, NULL ),
 
 -- grant types
-  (@option_group_id_grantTyp, '{ts escape="sql"}Emergency{/ts}'          , 1, 'Emergency'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),    
+  (@option_group_id_grantTyp, '{ts escape="sql"}Emergency{/ts}'          , 1, 'Emergency'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}Family Support{/ts}'     , 2, 'Family Support'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}General Protection{/ts}' , 3, 'General Protection', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
@@ -896,9 +896,9 @@ VALUES
 -- Table structure for table `civicrm_payment_processor_type`
 --
 
-INSERT INTO `civicrm_payment_processor_type` 
+INSERT INTO `civicrm_payment_processor_type`
  (name, title, description, is_active, is_default, user_name_label, password_label, signature_label, subject_label, class_name, url_site_default, url_api_default, url_recur_default, url_button_default, url_site_test_default, url_api_test_default, url_recur_test_default, url_button_test_default, billing_mode, is_recur )
-VALUES 
+VALUES
  ('PayPal_Standard',    '{ts escape="sql"}PayPal - Website Payments Standard{/ts}', NULL,1,0,'{ts escape="sql"}Merchant Account Email{/ts}',NULL,NULL,NULL,'Payment_PayPalImpl','https://www.paypal.com/',NULL,'https://www.paypal.com/',NULL,'https://www.sandbox.paypal.com/',NULL,'https://www.sandbox.paypal.com/',NULL,4,1),
  ('PayPal',             '{ts escape="sql"}PayPal - Website Payments Pro{/ts}',      NULL,1,0,'{ts escape="sql"}User Name{/ts}','{ts escape="sql"}Password{/ts}','{ts escape="sql"}Signature{/ts}',NULL,'Payment_PayPalImpl','https://www.paypal.com/','https://api-3t.paypal.com/','https://www.paypal.com/','https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif','https://www.sandbox.paypal.com/','https://api-3t.sandbox.paypal.com/','https://www.sandbox.paypal.com/','https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif',3, 1 ),
  ('PayPal_Express',     '{ts escape="sql"}PayPal - Express{/ts}',       NULL,1,0,'{ts escape="sql"}User Name{/ts}','{ts escape="sql"}Password{/ts}','{ts escape="sql"}Signature{/ts}',NULL,'Payment_PayPalImpl','https://www.paypal.com/','https://api-3t.paypal.com/',NULL,'https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif','https://www.sandbox.paypal.com/','https://api-3t.sandbox.paypal.com/',NULL,'https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif',2,NULL),
@@ -917,7 +917,7 @@ VALUES
 
 
 -- the fuzzy default dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
 VALUES ('Individual', 20, 'Fuzzy', 1, 'IndividualFuzzy', '{ts escape="sql"}Individual Fuzzy In-built{/ts}', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
@@ -926,7 +926,7 @@ VALUES (@drgid, 'civicrm_contact', 'first_name', 5),
        (@drgid, 'civicrm_contact', 'last_name',  7),
        (@drgid, 'civicrm_email'  , 'email',     10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
 VALUES ('Organization', 10, 'Fuzzy', 1, 'OrganizationFuzzy', '{ts escape="sql"}Organization Fuzzy{/ts}', 0);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
@@ -934,7 +934,7 @@ INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, r
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
 VALUES ('Household', 10, 'Fuzzy', 1, 'HouseholdFuzzy', '{ts escape="sql"}Household Fuzzy{/ts}', 0);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
@@ -943,14 +943,14 @@ VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
 
 -- the strict dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
 VALUES ('Individual', 10, 'Strict', 1, 'IndividualStrict', '{ts escape="sql"}Individual Strict In-built{/ts}', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_email', 'email', 10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved) 
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
 VALUES ('Organization', 10, 'Strict', 1, 'OrganizationStrict', '{ts escape="sql"}Organization Strict{/ts}', 0);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
@@ -986,46 +986,46 @@ INSERT INTO civicrm_county (name, state_province_id) VALUES ('San Mateo', 1004);
 INSERT INTO civicrm_county (name, state_province_id) VALUES ('Santa Clara', 1004);
 
 -- Bounce classification patterns
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('AOL', '{ts escape="sql"}AOL Terms of Service complaint{/ts}', 1);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'AOL';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, 'Client TOS Notification');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Away', '{ts escape="sql"}Recipient is on vacation{/ts}', 30);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Away';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, '(be|am)? (out of|away from) (the|my)? (office|computer|town)'),
     (@bounceTypeID, 'i am on vacation');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Dns', '{ts escape="sql"}Unable to resolve recipient domain{/ts}', 3);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Dns';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, 'name(server entry| lookup failure)'),
     (@bounceTypeID, 'no (mail server|matches to nameserver query|dns entries)'),
     (@bounceTypeID, 'reverse dns entry');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Host', '{ts escape="sql"}Unable to deliver to destintation mail server{/ts}', 3);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Host';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, '(unknown|not local) host'),
     (@bounceTypeID, 'all hosts have been failing'),
@@ -1043,13 +1043,13 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'too many connections'),
     (@bounceTypeID, 'unable to connect');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Inactive', '{ts escape="sql"}User account is no longer active{/ts}', 1);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Inactive';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, '(my )?e-?mail( address)? has changed'),
     (@bounceTypeID, 'account (inactive|expired|deactivated)'),
@@ -1068,13 +1068,13 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'this address no longer accepts mail'),
     (@bounceTypeID, 'user account suspended');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Invalid', '{ts escape="sql"}Email address is not valid{/ts}', 1);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Invalid';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, '(user|recipient( name)?) is not recognized'),
     (@bounceTypeID, '554 delivery error'),
@@ -1117,13 +1117,13 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'user(\'s e-?mail name is)? not found'),
     (@bounceTypeID, '^Validation failed for:');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Loop', '{ts escape="sql"}Mail routing error{/ts}', 3);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Loop';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, '(mail|routing) loop'),
     (@bounceTypeID, 'excessive recursion'),
@@ -1132,13 +1132,13 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'message was forwarded more than the maximum allowed times'),
     (@bounceTypeID, 'too many hops');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Quota', '{ts escape="sql"}User inbox is full{/ts}', 3);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Quota';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, '(disk|over the allowed|exceed(ed|s)?|storage) quota'),
     (@bounceTypeID, '522_mailbox_full'),
@@ -1155,13 +1155,13 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'recipient storage full'),
     (@bounceTypeID, 'not able to receive more mail');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Relay', '{ts escape="sql"}Unable to reach destination mail server{/ts}', 3);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Relay';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, 'cannot find your hostname'),
     (@bounceTypeID, 'ip name lookup'),
@@ -1171,13 +1171,13 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'sender ip must resolve'),
     (@bounceTypeID, 'unable to relay');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Spam', '{ts escape="sql"}Message caught by a content filter{/ts}', 1);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Spam';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, '(bulk( e-?mail)|content|attachment blocking|virus|mail system) filters?'),
     (@bounceTypeID, '(hostile|questionable|unacceptable) content'),
@@ -1197,13 +1197,13 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'blocked by a user configured filter'),
     (@bounceTypeID, 'detected as spam');
 
-INSERT INTO civicrm_mailing_bounce_type 
-        (name, description, hold_threshold) 
+INSERT INTO civicrm_mailing_bounce_type
+        (name, description, hold_threshold)
         VALUES ('Syntax', '{ts escape="sql"}Error in SMTP transaction{/ts}', 3);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Syntax';
-INSERT INTO civicrm_mailing_bounce_pattern 
-        (bounce_type_id, pattern) 
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, 'nonstandard smtp line terminator'),
     (@bounceTypeID, 'syntax error in from address'),
@@ -1221,7 +1221,7 @@ INSERT INTO civicrm_uf_group
     (6,  'new_household',      'Household,Contact',   '{ts escape="sql"}New Household{/ts}'     , 0,           1,           NULL),
     (7,  'summary_overlay',    'Contact',   		  '{ts escape="sql"}Summary Overlay{/ts}'   , 0,           1,           NULL),
     (8,  'shared_address',     'Contact',   		  '{ts escape="sql"}Shared Address{/ts}'    , 0,           1,           NULL),
-    (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership', 
+    (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership',
     '{ts escape="sql"}On Behalf Of Organization{/ts}'    , 0,           1,           NULL),
     (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Batch Entry{/ts}' , 0,      1,           NULL),
     (11,  'membership_batch_entry', 'Membership', '{ts escape="sql"}Membership Batch Entry{/ts}' , 0,      1,           NULL),
@@ -1243,7 +1243,7 @@ VALUES
    (1, 'Profile', NULL, NULL, 9, 10),
    (1, 'Profile', NULL, NULL, 9, 11),
    (1, 'Profile', NULL, NULL, 9, 12);
-   
+
 INSERT INTO civicrm_uf_field
        (id, uf_group_id, field_name,              is_required, is_reserved, weight, visibility,                  in_selector, is_searchable, location_type_id, label,                                         		field_type,    help_post, phone_type_id ) VALUES
        (1,  1,           'first_name',            1,           0,           1,      'User and User Admin Only', 0,           1,             NULL,             '{ts escape="sql"}First Name{/ts}',            		'Individual',  NULL,  NULL),
@@ -1325,7 +1325,7 @@ INSERT INTO civicrm_participant_status_type
 
 -- CRM-8150
 INSERT INTO civicrm_action_mapping
-(entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient) 
+(entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient)
 VALUES
 ( 'civicrm_activity', 'activity_type', 'Activity Type', 'activity_status', 'Activity Status', 'activity_date_time', NULL, 'activity_contacts'),
 ( 'civicrm_participant', 'event_type', 'Event Type', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts'),
@@ -1344,9 +1344,9 @@ INSERT INTO `civicrm_contact_type`
 -- CRM-8358
 
 INSERT INTO `civicrm_job`
-    ( domain_id, run_frequency, last_run, name, description, api_prefix, api_entity, api_action, parameters, is_active ) 
-VALUES 
-    ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Send Scheduled Mailings{/ts}',      '{ts escape="sql" skip="true"}Sends out scheduled CiviMail mailings{/ts}',                                                       'civicrm_api3', 'job', 'process_mailing',         NULL, 0),
+    ( domain_id, run_frequency, last_run, name, description, api_prefix, api_entity, api_action, parameters, is_active )
+VALUES
+    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Send Scheduled Mailings{/ts}',      '{ts escape="sql" skip="true"}Sends out scheduled CiviMail mailings{/ts}',                                                       'civicrm_api3', 'job', 'process_mailing',         NULL, 0),
     ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Fetch Bounces{/ts}',                '{ts escape="sql" skip="true"}Fetches bounces from mailings and writes them to mailing statistics{/ts}',                         'civicrm_api3', 'job', 'fetch_bounces',           NULL, 0),
     ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Process Inbound Emails{/ts}',       '{ts escape="sql" skip="true"}nserts activity for a contact or a case by retrieving inbound emails from a mail directory{/ts}',  'civicrm_api3', 'job', 'fetch_activities',        NULL, 0),
     ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Process Pledges{/ts}',              '{ts escape="sql" skip="true"}Updates pledge records and sends out reminders{/ts}',                                              'civicrm_api3', 'job', 'process_pledge',          NULL, 0),
@@ -1355,23 +1355,23 @@ VALUES
     ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Mail Reports{/ts}',                 '{ts escape="sql" skip="true"}Generates and sends out reports via email{/ts}',                                                   'civicrm_api3', 'job', 'mail_report',             NULL, 0),
     ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Send Scheduled Reminders{/ts}',     '{ts escape="sql" skip="true"}Sends out scheduled reminders via email{/ts}',                                                     'civicrm_api3', 'job', 'send_reminder',           NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Update Participant Statuses{/ts}',  '{ts escape="sql" skip="true"}Updates pending event participant statuses based on time{/ts}',                                    'civicrm_api3', 'job', 'process_participant',     NULL, 0),
-    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Update Membership Statuses and Send Renewal Reminders{/ts}', '{ts escape="sql" skip="true"}Updates membership statuses and conditionally sends renewal reminders{/ts}', 'civicrm_api3', 'job', 'process_membership',   NULL, 0),
+    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Update Membership Statuses and Send Renewal Reminders{/ts}', '{ts escape="sql" skip="true"}Updates membership statuses and conditionally sends renewal reminders{/ts}', 'civicrm_api3', 'job', 'process_membership',   NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Process Survey Respondents{/ts}',   '{ts escape="sql" skip="true"}Releases reserved survey respondents when they have been reserved for longer than the Release Frequency days specified for that survey.{/ts}','civicrm_api3', 'job', 'process_respondent',NULL, 0),
-    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Set Membership Reminder Dates{/ts}','{ts escape="sql" skip="true"}Sets membership renewal reminder dates for current membership records where reminder date is null{/ts}','civicrm_api3', 'job', 'process_membership_reminder_date',NULL, 0);
+    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Set Membership Reminder Dates{/ts}','{ts escape="sql" skip="true"}Sets membership renewal reminder dates for current membership records where reminder date is null{/ts}','civicrm_api3', 'job', 'process_membership_reminder_date',NULL, 0);
 
 -- CRM-9714
 
 SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';
-INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `contribution_type_id` ) 
+INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `contribution_type_id` )
 VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', NULL),
 ( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @contribution_type_id);
 
 SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_contribution_amount' AND extends = 2 AND is_quick_config = 1 ;
 
-INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`,`weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`,`visibility_id` ) 
+INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`,`weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`,`visibility_id` )
 VALUES ( @setID, 'contribution_amount', 'Contribution Amount', 'Text', '1', '1', '1', '1', '1', '1' );
 
 SELECT @fieldID := max(id) FROM civicrm_price_field WHERE name = 'contribution_amount' AND price_set_id = @setID;
 
-INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `is_default`, `is_active`) 
+INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `is_default`, `is_active`)
 VALUES ( @fieldID, 'contribution_amount', 'Contribution Amount', '1', '1', '0', '1');
