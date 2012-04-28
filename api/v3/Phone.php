@@ -53,70 +53,7 @@ require_once 'CRM/Core/BAO/Phone.php';
  * @access public
  */
 function civicrm_api3_phone_create($params) {
-
-  /*
-	 * if is_primary is not set in params, set default = 0
-	 */
-
-  if (!CRM_Utils_Array::value('is_primary', $params)) {
-    $params['is_primary'] = 0;
-  }
-  /*
-	 * if phone_type_id in params, it should exist as option value
-	 */
-
-  if (CRM_Utils_Array::value('phone_type_id', $params)) {
-    $option_group_params = array(
-      'version' => '3',
-      'name' => 'phone_type',
-    );
-    $option_group = civicrm_api('OptionGroup', 'Get', $option_group_params);
-    if ($option_group['count'] == 0) {
-      return civicrm_api3_create_error("There is no option group 
-				phone_type in CiviCRM, can not create phone.");
-    }
-    else {
-      $option_value_params = array(
-        'version' => '3',
-        'option_group_id' => $option_group['id'],
-        'value' => $params['phone_type_id'],
-      );
-      $option_value = civicrm_api('OptionValue', 'Get', $option_value_params);
-      if ($option_value['count'] == 0) {
-        return civicrm_api3_create_error("Phone_type_id does not
-					exist, could not create phone");
-      }
-    }
-  }
-  /*
-	 * if location_type_id in params, it should exist.
-	 */
-
-  if (CRM_Utils_Array::value('location_type_id', $params)) {
-    $location_params = array(
-      'version' => '3',
-      'name' => 'locationType',
-    );
-    $locTypes = civicrm_api('Constant', 'Get', $location_params);
-    if (!CRM_Utils_Array::value($params['location_type_id'],
-        $locTypes['values']
-      )) {
-      return civicrm_api3_create_error("Location_type_id does not
-				exist, could not create phone");
-    }
-  }
-  require_once 'CRM/Core/BAO/Phone.php';
-  $phoneBAO = CRM_Core_BAO_Phone::add($params);
-
-  if (is_a($phoneBAO, 'CRM_Core_Error')) {
-    return civicrm_api3_create_error("Phone is not created or updated ");
-  }
-  else {
-    $values = array();
-    unset($phoneBAO->location_type_id);
-    CRM_Core_DAO::storeValues($phoneBAO, $values[$phoneBAO->id]);
-    return civicrm_api3_create_success($values, $params, $phoneBAO);
-  }
+  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
 /*
@@ -128,6 +65,7 @@ function civicrm_api3_phone_create($params) {
 function _civicrm_api3_phone_create_spec(&$params) {
   $params['contact_id']['api.required'] = 1;
   $params['phone']['api.required'] = 1;
+  $params['is_primary']['api.default'] =0;// hopefully change to use handleprimary
 }
 
 /**
