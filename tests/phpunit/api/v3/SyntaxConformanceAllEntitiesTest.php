@@ -12,7 +12,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
   public $DBResetRequired = FALSE;
 
   /* they are two types of missing APIs:
-       - Those that are to be implemented 
+       - Those that are to be implemented
          (in some future version when someone steps in -hint hint-). List the entities in toBeImplemented[ {$action} ]
        Those that don't exist
          and that will never exist (eg an obsoleted Entity
@@ -52,6 +52,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
 
   public static function entities_create() {
     return api_v3_SyntaxConformanceAllEntitiesTest::entities(api_v3_SyntaxConformanceAllEntitiesTest::toBeSkipped_create(TRUE));
+  }
+
+  public static function entities_updatesingle() {
+    return api_v3_SyntaxConformanceAllEntitiesTest::entities(api_v3_SyntaxConformanceAllEntitiesTest::toBeSkipped_updatesingle(TRUE));
   }
 
   public static function entities_delete() {
@@ -94,6 +98,78 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     }
     return $entities;
   }
+ /*
+  * At this stage exclude the ones that don't pass & add them as we can troubleshoot them
+  */
+  public static function toBeSkipped_updatesingle($sequential = FALSE) {
+    $entitiesWithout = array(
+      'Mailing',
+      'MailingGroup',
+      'Constant',
+      'Entity',
+      'Location',
+      'Domain',
+      'Profile',
+      'CustomValue',
+      'DeprecatedUtils',
+      'SurveyRespondant',
+      'Tag',
+      'UFMatch',
+      'UFJoin',
+      'UFField',
+      'OptionValue',
+      'Relationship',
+      'RelationshipType',
+      'ParticipantStatusType',
+      'Note',
+      'OptionGroup',
+      'Membership',
+      'MembershipType',
+      'ParticipantStatusType',
+      'MembershipStatus',
+      'Group',
+      'GroupOrganization',
+      'GroupNesting',
+      'Job',
+      'File',
+      'EntityTag',
+      'CustomField',
+      'CustomGroup',
+      'Contribution',
+      'ContributionRecur',
+      'ActivityType',
+      'Campaign',
+      'Case',
+      'Contact',
+      'ContactType',
+      'Phone',
+      'UFGroup',
+      'Website',
+      'Survey',
+      'Activity',
+      'Address',
+      'Email',
+      'Event',
+      'GroupContact',
+      'MembershipPayment',
+      'Participant',
+      'ParticipantPayment',
+      'Pledge',
+      'PledgePayment',
+
+    );
+    if ($sequential === TRUE) {
+      return $entitiesWithout;
+    }
+    $entities = array();
+    foreach ($entitiesWithout as $e) {
+      $entities[] = array(
+        $e
+      );
+    }
+    return $entities;
+  }
+
 
   /** testing the _get **/
 
@@ -262,6 +338,86 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals("Input variable `params` is not an array", $result['error_message']);
   }
+  /**
+   * @dataProvider entities_updatesingle
+   */
+  public function testCreateSingleValueAlter($entityName) {
+    $baoString = 'CRM_Grant_BAO_Grant';
+    $baoString = _civicrm_api3_get_DAO($entityName);
+    $this->assertNotEmpty($baoString, $entityName);
+    $this->assertNotEmpty($entityName, $entityName);
+    $fields = civicrm_api($entityName, 'getfields', array(
+        'version' => 3
+      )
+    );
+
+    $fields = $fields['values'];
+    $return = array_keys($fields);
+    $baoObj = new CRM_Core_DAO();
+    $baoObj->createTestObject($baoString, array('currency' => 'USD'), 2, 0);
+    $getentities = civicrm_api($entityName, 'get', array(
+      'version' => 3,
+      'sequential' => 1,
+      'return' => $return,
+    ));
+
+    $entity = $getentities['values'][0]; // lets use first rather than assume only one exists
+    $entity2 = $getentities['values'][1];
+    foreach ($fields as $field => $specs) {
+      if($field == 'currency' || $field == 'id'){
+        continue;
+      }
+      switch ($specs['type']) {
+        case CRM_Utils_Type::T_DATE:
+        case CRM_Utils_Type::T_TIMESTAMP:
+          $entity[$field] = '2012-05-20';
+          break;
+        case CRM_Utils_Type::T_STRING:
+        case CRM_Utils_Type::T_BLOB:
+        case CRM_Utils_Type::T_MEDIUMBLOB:
+        case CRM_Utils_Type::T_TEXT:
+        case CRM_Utils_Type::T_LONGTEXT:
+        case CRM_Utils_Type::T_EMAIL:
+          $entity[$field] = 'New String';
+          break;
+        case CRM_Utils_Type::T_INT:
+          $entity[$field] = 111;// probably created with a 1
+          if(CRM_Utils_Array::value('FKClassName',$specs)){
+            $entity[$field] = empty($entity2[$field])?$entity2[$specs]['uniqueName']:$entity2[$field];
+          }
+          break;
+        case CRM_Utils_Type::T_BOOL:
+        case CRM_Utils_Type::T_BOOLEAN:
+          $entity[$field] = 0;// probably created with a 1
+          break;
+        case CRM_Utils_Type::T_FLOAT:
+        case CRM_Utils_Type::T_MONEY:
+          $entity[$field] = 222;
+          break;
+        case CRM_Utils_Type::T_URL:
+          $entity[$field] = 'warm.beer.com';
+      }
+      $updateParams = array(
+        'version' => 3,
+        'id' => $entity['id'],
+        $field => $entity[$field],
+      );
+      $update = civicrm_api($entityName, 'create', $updateParams);
+
+      $this->assertAPISuccess($update, 'in line ' . __LINE__);
+      $checkParams = array(
+        'id' => $entity['id'],
+        'version' => 3,
+        'sequential' => 1,
+      );
+      $checkEntity = civicrm_api($entityName, 'getsingle',$checkParams );
+      $this->assertEquals($entity, $checkEntity, "changing field $field");
+    }
+    $baoObj->deleteTestObjects($baoString);
+    $baoObj->free();
+  }
+
+
 
   /** testing the _getFields **/
 
