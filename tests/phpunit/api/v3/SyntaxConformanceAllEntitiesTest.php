@@ -140,11 +140,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'ActivityType',
       'Campaign',
       'Case',
-      'Contact',
+
       'ContactType',
       'Phone',
       'UFGroup',
-      'Website',
       'Survey',
       'Activity',
       'Address',
@@ -360,7 +359,6 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'sequential' => 1,
       'return' => $return,
     ));
-
     $entity = $getentities['values'][0]; // lets use first rather than assume only one exists
     $entity2 = $getentities['values'][1];
     foreach ($fields as $field => $specs) {
@@ -397,21 +395,31 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         case CRM_Utils_Type::T_URL:
           $entity[$field] = 'warm.beer.com';
       }
+      $constant = CRM_Utils_Array::value('pseudoconstant', $specs);
+      if (!empty($constant)){
+        $constantOptions = array_reverse(array_keys(CRM_Core_PseudoConstant::getConstant($constant)));
+        $entity[$field] = $constantOptions[0];
+      }
       $updateParams = array(
         'version' => 3,
         'id' => $entity['id'],
         $field => $entity[$field],
+        'return' => $return,
       );
+
       $update = civicrm_api($entityName, 'create', $updateParams);
 
-      $this->assertAPISuccess($update, 'in line ' . __LINE__);
+      $this->assertAPISuccess($update, print_r($updateParams, true ) . 'in line ' . __LINE__);
       $checkParams = array(
         'id' => $entity['id'],
         'version' => 3,
         'sequential' => 1,
+        'return' => $return,
       );
+
       $checkEntity = civicrm_api($entityName, 'getsingle',$checkParams );
       $this->assertEquals($entity, $checkEntity, "changing field $field");
+      
     }
     $baoObj->deleteTestObjects($baoString);
     $baoObj->free();
