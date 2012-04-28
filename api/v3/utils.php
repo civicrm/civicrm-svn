@@ -881,6 +881,8 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
         //field is of type date or datetime
         _civicrm_api3_validate_date($params, $fieldname, $fieldInfo);
         break;
+       case CRM_Utils_Type::T_STRING:
+        _civicrm_api3_validate_string($params, $fieldname, $fieldInfo);
     }
 
     // intensive checks - usually only called after DB level fail
@@ -1236,4 +1238,32 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
     }
   }
 }
+  /*
+ * Validate string fields being passed into API.
+ * @param array $params params from civicrm_api
+ * @param string $fieldname uniquename of field being checked
+ * @param array $fieldinfo array of fields from getfields function
+ */
+function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
+  //if fieldname exists in params
+  if (CRM_Utils_Array::value($fieldname, $params)) {
+    //if value = 'user_contact_id' replace value with logged in user id
+    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo)) {
+      $constant = $fieldInfo['options'];
+      if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
+        throw new Exception("$fieldname is not valid");
+      }
+      elseif (!is_numeric($params[$fieldname])) {
+        $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
+        if (empty($numericvalue)) {
+          throw new Exception("$fieldname `" . $params[$fieldname] . "` is not valid.");
+        }
+        else {
+          $params[$fieldname] = $numericvalue;
+        }
+      }
+    }
+  }
+}
+
 
