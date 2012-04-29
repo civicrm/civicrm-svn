@@ -105,6 +105,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $entitiesWithout = array(
       'Mailing',
       'MailingGroup',
+      'MailingEventUnsubscribe',
+      'MailingEventSubscribe',
       'Constant',
       'Entity',
       'Location',
@@ -140,7 +142,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'ActivityType',
 
       'Case',
-
+      'Contact',
       'ContactType',
 
       'UFGroup',
@@ -366,17 +368,21 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $entity = $getentities['values'][0]; // lets use first rather than assume only one exists
     $entity2 = $getentities['values'][1];
     foreach ($fields as $field => $specs) {
+      $fieldName = $field;
+      if(!empty($specs['uniquename'])){
+        $fieldName = $specs['uniquename']; 
+      }
       if($field == 'currency' || $field == 'id'){
         continue;
       }
       switch ($specs['type']) {
         case CRM_Utils_Type::T_DATE:
         case CRM_Utils_Type::T_TIMESTAMP:
-          $entity[$field] = '2012-05-20';
+          $entity[$fieldName] = '2012-05-20';
           break;
-        case CRM_Utils_Type::T_DATETIME:
+        //case CRM_Utils_Type::T_DATETIME:
         case 12:
-          $entity[$field] = '2012-05-20 03:05:20';
+          $entity[$fieldName] = '2012-05-20 03:05:20';
           break;
         case CRM_Utils_Type::T_STRING:
         case CRM_Utils_Type::T_BLOB:
@@ -384,12 +390,12 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         case CRM_Utils_Type::T_TEXT:
         case CRM_Utils_Type::T_LONGTEXT:
         case CRM_Utils_Type::T_EMAIL:
-          $entity[$field] = 'New String';
+          $entity[$fieldName] = 'New String';
           break;
         case CRM_Utils_Type::T_INT:
-          $entity[$field] = 111;// probably created with a 1
+          $entity[$fieldName] = 111;// probably created with a 1
           if(CRM_Utils_Array::value('FKClassName',$specs)){
-            $entity[$field] = empty($entity2[$field])?CRM_Utils_Array::value($specs['uniqueName'],$entity2):$entity2[$field];
+            $entity[$fieldName] = empty($entity2[$field])?CRM_Utils_Array::value($specs['uniqueName'],$entity2):$entity2[$field];
             //todo - there isn't always something set here - & our checking on unset values is limited
             if(empty($entity[$field])){
               unset($entity[$field]);
@@ -398,7 +404,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
           break;
         case CRM_Utils_Type::T_BOOL:
         case CRM_Utils_Type::T_BOOLEAN:
-          $entity[$field] = 0;// probably created with a 1
+          $entity[$fieldName] = 0;// probably created with a 1
           break;
         case CRM_Utils_Type::T_FLOAT:
         case CRM_Utils_Type::T_MONEY:
@@ -412,11 +418,15 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         $constantOptions = array_reverse(array_keys(CRM_Core_PseudoConstant::getConstant($constant)));
         $entity[$field] = $constantOptions[0];
       }
+      $enum = CRM_Utils_Array::value('enumValues', $specs);
+      if(!empty($enum)){
+        $options = array_reverse(explode(',',$enum));// reverse so we 'change' value
+        $entity[$fieldName]  = $options[0];
+      }
       $updateParams = array(
         'version' => 3,
         'id' => $entity['id'],
         $field => $entity[$field],
-        'return' => $return,
       );
 
       $update = civicrm_api($entityName, 'create', $updateParams);
@@ -430,7 +440,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       );
 
       $checkEntity = civicrm_api($entityName, 'getsingle',$checkParams );
-      $this->assertEquals($entity, $checkEntity, "changing field $field");
+      $this->assertEquals($entity, $checkEntity, "changing field $fieldName");
       
     }
     $baoObj->deleteTestObjects($baoString);
