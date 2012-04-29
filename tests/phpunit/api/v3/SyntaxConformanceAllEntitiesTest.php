@@ -364,6 +364,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'version' => 3,
       'sequential' => 1,
       'return' => $return,
+      'options' => array('sort' => 'id DESC',
+                         'limit' => 2,),
     ));
     $entity = $getentities['values'][0]; // lets use first rather than assume only one exists
     $entity2 = $getentities['values'][1];
@@ -437,6 +439,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         'version' => 3,
         'sequential' => 1,
         'return' => $return,
+        'options' => array('sort' => 'id DESC',
+                           'limit' => 2,),
       );
 
       $checkEntity = civicrm_api($entityName, 'getsingle',$checkParams );
