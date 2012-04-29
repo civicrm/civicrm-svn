@@ -70,7 +70,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     public function preProcess()  
     {
         parent::preProcess( );
-        
+
         // Make the contributionPageID avilable to the template
         $this->assign( 'contributionPageID', $this->_id );
         $this->assign( 'isShare', $this->_values['is_share'] );
@@ -79,7 +79,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $csContactID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, $this->_userID );
         $reset       = CRM_Utils_Request::retrieve( 'reset', 'Boolean', CRM_Core_DAO::$_nullObject );
         $mainDisplay = CRM_Utils_Request::retrieve( '_qf_Main_display', 'Boolean', CRM_Core_DAO::$_nullObject );
-                
+
         require_once 'CRM/Contact/BAO/Contact.php';
         if ( $csContactID != $this->_userID ) {
             require_once 'CRM/Contact/BAO/Contact/Permission.php';
@@ -120,6 +120,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->assign( 'intro_text' , $this->_values['intro_text'] );
         }
         
+        $qParams = "reset=1&amp;id={$this->_id}";
+        if ( $pcpId = CRM_Utils_Array::value( 'pcp_id', $this->_pcpInfo ) ) {
+            $qParams .= "&amp;pcpId={$pcpId}";
+        }
+        $this->assign( 'qParams' , $qParams );
+
         if ( CRM_Utils_Array::value( 'footer_text', $this->_values ) ) {
             $this->assign( 'footer_text', $this->_values['footer_text'] );
         }
