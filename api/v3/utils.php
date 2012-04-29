@@ -877,13 +877,13 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
     return;
   }
   $fields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => $action));
-  $fields = $fields['values'];
+  $fields = array_intersect_key($fields['values'], $params);
   foreach ($fields as $fieldname => $fieldInfo) {
     switch (CRM_Utils_Array::value('type', $fieldInfo)) {
-	  case 1:
-		//field is of type integer
-		_civicrm_api3_validate_integer($params, $fieldname, $fieldInfo);
-		break;
+      case CRM_Utils_Type::T_INT:
+        //field is of type integer
+        _civicrm_api3_validate_integer($params, $fieldname, $fieldInfo);
+        break;
       case 4:
       case 12:
         //field is of type date or datetime
@@ -891,6 +891,11 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
         break;
        case CRM_Utils_Type::T_STRING:
         _civicrm_api3_validate_string($params, $fieldname, $fieldInfo);
+        break;
+       case CRM_Utils_Type::T_MONEY:
+         if (!CRM_Utils_Rule::money($params[$fieldname])) {
+          throw new Exception($fieldname . " is  not a valid amount: ". $params[$fieldname]);
+        }
     }
 
     // intensive checks - usually only called after DB level fail
@@ -914,6 +919,10 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
 /*
  * Validate date fields being passed into API.
  * It currently converts both unique fields and DB field names to a mysql date.
+ * @todo - probably the unique field handling & the if exists handling is now done before this 
+ * function is reached in the wrapper - can reduce this code down to assume we
+ * are only checking the passed in field
+ * 
  * It also checks against the RULE:date function. This is a centralisation of code that was scattered and
  * may not be the best thing to do. There is no code level documentation on the existing functions to work off
  *
@@ -1255,7 +1264,13 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
 function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
   //if fieldname exists in params
   if (CRM_Utils_Array::value($fieldname, $params)) {
-    //if value = 'user_contact_id' replace value with logged in user id
+
+    if($fieldname == 'currency'){
+      if (!CRM_Utils_Rule::currencyCode($params[$fieldname])) {
+          throw new Exception("currency not a valid code: " . $params[$fieldname]);
+      }
+    }
+    
     if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo)) {
       $constant = $fieldInfo['options'];
        $enum = CRM_Utils_Array::value('enumValues', $fieldInfo);
@@ -1277,5 +1292,4 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
     }
   }
 }
-
 

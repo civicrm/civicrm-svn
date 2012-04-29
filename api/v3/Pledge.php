@@ -57,13 +57,8 @@ require_once 'CRM/Utils/Rule.php';
  *
  */
 function civicrm_api3_pledge_create($params) {
-
-  $values = array();
-  //check that fields are in appropriate format. Dates will be formatted (within reason) by this function
-  $error = _civicrm_api3_pledge_format_params($params, $values, TRUE);
-  if (civicrm_error($error)) {
-    return $error;
-  }
+  _civicrm_api3_pledge_format_params($params,  TRUE);
+  $values = $params;
   //format the custom fields
   _civicrm_api3_custom_format_params($params, $values, 'Pledge');
   return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $values);
@@ -175,6 +170,8 @@ function _civicrm_api3_pledge_get_defaults() {
 }
 
 /**
+ * Legacy function - I removed a bunch of stuff no longer required from here but it still needs 
+ * more culling
  * take the input parameter list as specified in the data model and
  * convert it into the same format that we use in QF and BAO object
  *
@@ -186,59 +183,18 @@ function _civicrm_api3_pledge_get_defaults() {
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_api3_pledge_format_params($params, &$values, $create = FALSE) {
-  // based on contribution apis - copy all the pledge fields - this function filters out non -valid fields but unfortunately
-  // means we have to put them back where there are 2 names for the field (name in table & unique name)
-  // since there is no clear std to use one or the other. Generally either works ? but not for create date
-  // perhaps we should just copy $params across rather than run it through the 'filter'?
-  // but at least the filter forces anomalies into the open. In several cases it turned out the unique names wouldn't work
-  // even though they are 'generally' what is returned in the GET - implying they should
-  $fields = CRM_Pledge_DAO_Pledge::fields();
-  _civicrm_api3_store_values($fields, $params, $values);
-  $values['sequential'] = CRM_Utils_Array::value('sequential', $params, 0);
+function _civicrm_api3_pledge_format_params( &$values, $create = FALSE) {
 
-
-
-  //create_date may have been dropped by the $fields function so retrieve it
-  $values['create_date'] = CRM_Utils_Array::value('create_date', $params);
-
-  //field has been renamed - don't lose it! Note that this must be called
-  // installment amount not pledge_installment_amount, pledge_original_installment_amount
-  // or original_installment_amount to avoid error
-  // Division by zero in CRM\Pledge\BAO\PledgePayment.php:162
-  // but we should accept the variant because they are all 'logical assumptions' based on the
-  // 'standards'
-  $values['installment_amount'] = CRM_Utils_Array::value('installment_amount', $params);
-
-
-  if (array_key_exists('original_installment_amount', $params)) {
-    $values['installment_amount'] = $params['original_installment_amount'];
+// probably most of the below can be removed.... just needs a little more review
+  if (array_key_exists('original_installment_amount', $values)) {
+    $values['installment_amount'] = $values['original_installment_amount'];
     //it seems it will only create correctly with BOTH installment amount AND pledge_installment_amount set
     //pledge installment amount required for pledge payments
-    $values['pledge_original_installment_amount'] = $params['original_installment_amount'];
+    $values['pledge_original_installment_amount'] = $values['original_installment_amount'];
   }
 
-  if (array_key_exists('pledge_original_installment_amount', $params)) {
-    $values['installment_amount'] = $params['pledge_original_installment_amount'];
-  }
-
-  if (array_key_exists('status_id', $params)) {
-    $values['pledge_status_id'] = $params['status_id'];
-  }
-  if (array_key_exists('contact_id', $params)) {
-    //this is validity checked further down to make sure the contact exists
-    $values['pledge_contact_id'] = $params['contact_id'];
-  }
-  if (array_key_exists('id', $params)) {
-    //retrieve the id key dropped from params. Note we can't use pledge_id because it
-    //causes an error in CRM_Pledge_BAO_PledgePayment - approx line 302
-    $values['id'] = $params['id'];
-  }
-  if (array_key_exists('pledge_id', $params)) {
-    //retrieve the id key dropped from params. Note we can't use pledge_id because it
-    //causes an error in CRM_Pledge_BAO_PledgePayment - approx line 302
-    $values['id'] = $params['pledge_id'];
-    unset($values['pledge_id']);
+  if (array_key_exists('pledge_original_installment_amount', $values)) {
+    $values['installment_amount'] = $values['pledge_original_installment_amount'];
   }
 
   if (empty($values['id'])) {
@@ -249,75 +205,14 @@ function _civicrm_api3_pledge_format_params($params, &$values, $create = FALSE) 
     //if you have a single installment when creating & you don't set the pledge status (not a required field) then
     //status id is left null for pledge payments in BAO
     // so we are hacking in the addition of the pledge_status_id to pending here
-    if (empty($values['status_id']) && $params['installments'] == 1) {
+    if (empty($values['status_id']) && $values['installments'] == 1) {
       require_once 'CRM/Contribute/PseudoConstant.php';
       $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
       $values['status_id'] = array_search('Pending', $contributionStatus);
     }
   }
-  if (!empty($params['scheduled_date'])) {
-    //scheduled date is required to set next payment date - defaults to start date
-    $values['scheduled_date'] = $params['scheduled_date'];
+  if (empty($values['scheduled_date']) && array_key_exists('start_date', $values)) {
+    $values['scheduled_date'] = $values['start_date'];
   }
-  elseif (array_key_exists('start_date', $params)) {
-    $values['scheduled_date'] = $params['start_date'];
-  }
-
-  foreach ($values as $key => $value) {
-    // ignore empty values or empty arrays etc
-    if (CRM_Utils_System::isNull($value)) {
-      continue;
-    }
-    switch ($key) {
-      case 'pledge_contact_id':
-        if (!CRM_Utils_Rule::integer($value)) {
-          return civicrm_api3_create_error("contact_id not valid: $value");
-        }
-        $dao     = new CRM_Core_DAO();
-        $qParams = array();
-        $svq     = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
-          $qParams
-        );
-        if (!$svq) {
-          return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
-        }
-
-        $values['contact_id'] = $values['pledge_contact_id'];
-        unset($values['pledge_contact_id']);
-        break;
-
-      case 'pledge_id':
-        if (!CRM_Utils_Rule::integer($value)) {
-          return civicrm_api3_create_error("contact_id not valid: $value");
-        }
-        $dao     = new CRM_Core_DAO();
-        $qParams = array();
-        $svq     = $dao->singleValueQuery("SELECT id FROM civicrm_pledge WHERE id = $value",
-          $qParams
-        );
-        if (!$svq) {
-          return civicrm_api3_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
-        }
-        break;
-
-      case 'installment_amount':
-      case 'amount':
-        if (!CRM_Utils_Rule::money($value)) {
-          return civicrm_api3_create_error("$key not a valid amount: $value");
-        }
-        break;
-
-      case 'currency':
-        if (!CRM_Utils_Rule::currencyCode($value)) {
-          return civicrm_api3_create_error("currency not a valid code: $value");
-        }
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  return array();
 }
 
