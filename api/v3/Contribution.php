@@ -229,21 +229,6 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
     }
 
     switch ($key) {
-      case 'non_deductible_amount':
-      case 'total_amount':
-      case 'fee_amount':
-      case 'net_amount':
-        if (!CRM_Utils_Rule::money($value)) {
-          return civicrm_api3_create_error("$key not a valid amount: $value");
-        }
-        break;
-
-      case 'currency':
-        if (!CRM_Utils_Rule::currencyCode($value)) {
-          return civicrm_api3_create_error("currency not a valid code: $value");
-        }
-        break;
-
       case 'contribution_type_id':
         if (!CRM_Utils_Array::value($value, CRM_Contribute_PseudoConstant::contributionType())) {
           return civicrm_api3_create_error("Invalid Contribution Type Id");
