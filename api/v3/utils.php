@@ -449,7 +449,7 @@ function _civicrm_api3_apply_filters_to_dao($filterField, $filterValue, &$dao) {
  * @param array $params params array as passed into civicrm_api
  * @return array $options options extracted from params
  */
-function _civicrm_api3_get_options_from_params(&$params, $legacy = 0) {
+function _civicrm_api3_get_options_from_params(&$params, $legacy = 0, $entity = '', $action = '') {
   $sort = CRM_Utils_Array::value('sort', $params, 0);
   $sort = CRM_Utils_Array::value('option.sort', $params, $sort);
   $sort = CRM_Utils_Array::value('option_sort', $params, $sort);
@@ -507,6 +507,14 @@ function _civicrm_api3_get_options_from_params(&$params, $legacy = 0) {
   }
   $options['return'] = array_merge($returnProperties, $legacyreturnProperties);
   $options['input_params'] = $inputParams;
+  if($entity && strtolower($action) == 'get'){
+    $fields = _civicrm_api3_build_fields_array(_civicrm_api3_load_DAO($entity),1);
+    foreach ($options['return'] as $return => $dontcare) {
+      if(in_array('$return',$fields)&& CRM_Utils_Array::value($fields[$return]['uniquename'])){
+        $options['return'][$fields[$return]['uniquename']] = 1; ;
+      }
+    }
+  }
   return $options;
 }
 /*
