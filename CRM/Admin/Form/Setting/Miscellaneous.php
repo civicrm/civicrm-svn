@@ -116,9 +116,16 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
 
         parent::postProcess();
 
-        // handle logging
-        // FIXME: do it only if the setting changed
-        $logging = new CRM_Logging_Schema;
-        $values['logging'] ? $logging->enableLogging() : $logging->disableLogging();
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->logging != $values['logging'] ) {
+          $logging = new CRM_Logging_Schema;
+          if ( $values['logging'] ) {
+            $config->logging = true;
+            $logging->enableLogging();
+          } else {
+            $config->logging = false;
+            $logging->disableLogging();
+          }
+        }
     }
 }

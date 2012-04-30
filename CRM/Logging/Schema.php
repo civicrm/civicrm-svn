@@ -104,12 +104,25 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
      */
     function disableLogging()
     {
-        if (!$this->isEnabled()) return;
+      $this->dropTriggers( );
 
-        // invoke the meta trigger creation call
-        CRM_Core_DAO::triggerRebuild( );
+      // invoke the meta trigger creation call
+      CRM_Core_DAO::triggerRebuild( );
 
-        $this->deleteReports();
+      $this->deleteReports();
+    }
+
+    /**
+     * Drop triggers for all logged tables.
+     */
+    private function dropTriggers()
+    {
+      $dao = new CRM_Core_DAO;
+      foreach ($this->tables as $table) {
+        $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_insert");
+        $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_update");
+        $dao->executeQuery("DROP TRIGGER IF EXISTS {$table}_after_delete");
+      }
     }
 
     /**
@@ -117,8 +130,6 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
      */
     function enableLogging()
     {
-        if ($this->isEnabled()) return;
-
         foreach ($this->schemaDifferences() as $table => $cols) {
             $this->fixSchemaDifferencesFor($table, $cols);
         }
@@ -134,8 +145,6 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
      */
     function fixSchemaDifferences()
     {
-        if (!$this->isEnabled()) return;
-
         foreach ($this->schemaDifferences() as $table => $cols) {
             $this->fixSchemaDifferencesFor($table, $cols);
         }
@@ -317,7 +326,7 @@ COLS;
     private function triggersExist()
     {
         // FIXME: probably should be a bit more thorough…
-        return (bool) CRM_Core_DAO::singleValueQuery("SHOW TRIGGERS LIKE 'civicrm_contact'");
+        return (bool) CRM_Core_DAO::singleValueQuery("SHOW TRIGGERS LIKE 'civicrm_contact_before_update'");
     }
 
     function triggerInfo( &$info, $tableName = null ) {
