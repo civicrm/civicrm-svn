@@ -1197,6 +1197,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $locationType = new CRM_Core_DAO_LocationType();
     $locationType->copyValues($params);
     $locationType->save();
+    // clear getfields cache
+    civicrm_api('phone', 'getfields', array('version' => 3, 'cache_clear' => 1));
     return $locationType;
   }
 
