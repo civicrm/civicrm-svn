@@ -1,7 +1,7 @@
 <?php
 // $Id$
 
-require_once 'api/v3/Email.php';
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_EmailTest extends CiviUnitTestCase {
   protected $_apiversion;
