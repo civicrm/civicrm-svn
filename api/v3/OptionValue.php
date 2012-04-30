@@ -70,7 +70,7 @@ function civicrm_api3_option_value_create($params) {
     $ids = array('optionValue' => $params['id']);
   }
   $optionValueBAO = CRM_Core_BAO_OptionValue::add($params, $ids);
-
+  civicrm_api('option_value', 'getfields', array('version' => 3, 'cache_clear' => 1));
   $values = array();
   _civicrm_api3_object_to_array($optionValueBAO, $values[$optionValueBAO->id]);
   return civicrm_api3_create_success($values, $params);
