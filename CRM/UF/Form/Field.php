@@ -328,8 +328,27 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $fields['Student'] = CRM_Quest_BAO_Student::exportableFields();
         }
 
+        // add current employer for individuals
+        $fields['Contact']['id'] = array( 'name'  => 'id',
+                                          'title' => ts('Internal Contact ID') );
+
+        $batchEntryFields = array( 
+          'send_receipt' => array( 
+            'name'  => 'send_receipt',
+            'title' => ts('Send Receipt')
+          ),                           
+          'soft_credit'  => array( 
+            'name'  => 'soft_credit',
+            'title' => ts('Soft Credit')
+          ),
+          'premium'      => array( 
+            'name'  => 'premiun',
+            'title' => ts('Premiums')
+          )      
+        );
+
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
-            $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields();
+            $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields( false );
             if ( ! empty( $contribFields ) ) {
                 unset( $contribFields['is_test'] );
                 unset( $contribFields['is_pay_later'] );

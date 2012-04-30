@@ -751,13 +751,20 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
    * For now we only allow custom contribution fields to be in
    * profile
    *
+   * @param boolean $addExtraFields true if special fields needs to be added 
+   *
    * @return return the list of contribution fields
    * @static
    * @access public
    */
-  static function getContributionFields() {
+  static function getContributionFields( $addExtraFields = true ) {
     $contributionFields = CRM_Contribute_DAO_Contribution::export();
     $contributionFields = array_merge($contributionFields, CRM_Core_OptionValue::getFields($mode = 'contribute'));
+
+    if ( $addExtraFields ) { 
+      $contributionFields = array_merge( $contributionFields, self::getSpecialContributionFields() );
+    }
+
     $contributionFields = array_merge($contributionFields, CRM_Contribute_DAO_ContributionType::export());
 
     foreach ($contributionFields as $key => $var) {
@@ -774,8 +781,67 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
     return $fields;
   }
 
-  static
-  function getCurrentandGoalAmount($pageID) {
+ /**
+  * Function to add extra fields specific to contribtion
+  *
+  * @static
+  */ 
+  static function getSpecialContributionFields( ) {
+    $extraFields = array(
+      'honor_contact_name' => array( 
+        'name' => 'honor_contact_name',
+        'title'=> 'Honor Contact Name',
+        'headerPattern' => '/^honor_contact_name$/i',
+        'where' => 'civicrm_contact_c.display_name'
+      ),
+      'honor_contact_email' => array(
+        'name' => 'honor_contact_email',
+        'title'=> 'Honor Contact Email',
+        'headerPattern' => '/^honor_contact_email$/i',
+        'where' => 'honor_email.email'
+      ),
+      'honor_contact_id' => array(
+        'name' => 'honor_contact_id',
+        'title'=> 'Honor Contact ID',
+        'headerPattern' => '/^honor_contact_id$/i',
+        'where' => 'civicrm_contribution.honor_contact_id'
+      ),
+      'honor_type_label' => array(
+        'name' => 'honor_type_label',
+        'title'=> 'Honor Type Label',
+        'headerPattern' => '/^honor_type_label$/i',
+        'where' => 'honor_type.label'
+      ),
+      'soft_credit_name' => array(
+        'name' => 'soft_credit_name',
+        'title'=> 'Soft Credit Name',
+        'headerPattern' => '/^soft_credit_name$/i',
+        'where' => 'civicrm_contact_d.display_name'
+      ),
+      'soft_credit_email' => array(
+        'name' => 'soft_credit_email',
+        'title'=> 'Soft Credit Email',
+        'headerPattern' => '/^soft_credit_email$/i',
+        'where' => 'soft_email.email'
+      ),
+      'soft_credit_phone' => array(
+        'name' => 'soft_credit_phone',
+        'title'=> 'Soft Credit Phone',
+        'headerPattern' => '/^soft_credit_phone$/i',
+        'where' => 'soft_phone.phone'
+      ),
+      'soft_credit_contact_id' => array(
+        'name' => 'soft_credit_contact_id',
+        'title'=> 'Soft Credit Contact ID',
+        'headerPattern' => '/^soft_credit_contact_id$/i',
+        'where' => 'civicrm_contribution_soft.contact_id'
+      )
+    );
+
+    return $extraFields;
+  }
+
+  static function getCurrentandGoalAmount($pageID) {
     $query = "
 SELECT p.goal_amount as goal, sum( c.total_amount ) as total
   FROM civicrm_contribution_page p,
