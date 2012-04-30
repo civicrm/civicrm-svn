@@ -1,13 +1,13 @@
 <?php
 
 // Set a variable on your shell $export CIVICRM_TEST_DSN= mysql://db_username:db_password@localhost/civicrm_tests_dev
-// or modify and uncomment the configuration string under with your own config 
+// or modify and uncomment the configuration string under with your own config
 
 //define( 'CIVICRM_DSN'          , "mysql://db_username:db_password@localhost/civicrm_tests_dev" );
 
 //--- you shouldn't have to modify anything under this line, but might want to put the compiled templates CIVICRM_TEMPLATE_COMPILEDIR in a different folder than our default location ----------
 
-if ( !empty( $GLOBALS['mysql_user'] ) ) {
+if ( ! defined( 'CIVICRM_DSN' ) && ! empty( $GLOBALS['mysql_user'] ) ) {
   $dbName = ! empty( $GLOBALS['mysql_db'] ) ? $GLOBALS['mysql_db'] : 'civicrm_tests_dev';
   define( 'CIVICRM_DSN'          , "mysql://{$GLOBALS['mysql_user']}:{$GLOBALS['mysql_pass']}@{$GLOBALS['mysql_host']}/{$dbName}?new_link=true" );
 }
@@ -18,7 +18,7 @@ if (!defined("CIVICRM_DSN")) {
   if (!empty ($dsn)) {
     define("CIVICRM_DSN",$dsn);
   } else {
-    echo "\nFATAL: no DB connection configured (CIVICRM_DSN). \nYou can either edit " . __FILE__ . " (user guide inside)\n"; 
+    echo "\nFATAL: no DB connection configured (CIVICRM_DSN). \nYou can either edit " . __FILE__ . " (user guide inside)\n";
     if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
       echo "OR set it in your shell:\n \$export CIVICRM_TEST_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
     } else {
@@ -49,7 +49,7 @@ $GLOBALS['mysql_db'] = $dsninfo['database'];
  * Content Management System (CMS) Host:
  *
  * CiviCRM can be hosted in either Drupal, Joomla or WordPress.
-*/ 
+*/
 define('CIVICRM_UF', 'Drupal');
 
 
@@ -98,13 +98,13 @@ define( 'CIVICRM_UF_BASEURL'      , 'http://FIX ME' );
 
 
 /**
- * 
+ *
  * Do not change anything below this line. Keep as is
  *
  */
 
 $include_path = '.'        . PATH_SEPARATOR .
-                $civicrm_root . PATH_SEPARATOR . 
+                $civicrm_root . PATH_SEPARATOR .
                 $civicrm_root . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR .
                 get_include_path( );
 set_include_path( $include_path );
