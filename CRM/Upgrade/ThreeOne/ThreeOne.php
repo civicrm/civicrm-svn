@@ -243,7 +243,7 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
         $template = CRM_Core_Smarty::singleton( );
         $afterUpgradeMessage = '';
         if ( $afterUpgradeMessage = $template->get_template_vars('afterUpgradeMessage') ) $afterUpgradeMessage .= "<br/><br/>";
-        $afterUpgradeMessage .= ts("Date Input Format has been set to %1 format. If you want to use a different format please check Administer CiviCRM &raquo; Global Settings &raquo; Date Formats.", array( 1 => $defaults['dateInputFormat']) );
+        $afterUpgradeMessage .= ts("Date Input Format has been set to %1 format. If you want to use a different format please check Administer CiviCRM &raquo; Localization &raquo; Date Formats.", array( 1 => $defaults['dateInputFormat']) );
         $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
     }
 

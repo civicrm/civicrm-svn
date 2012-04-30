@@ -72,7 +72,7 @@
 {capture assign="miscURL"}{crmURL p="civicrm/admin/setting/misc" q="reset=1"}{/capture}
 {htxt id='id-add_captcha'}
 {ts}When reCAPTCHA is included in an add / edit profile form, users are required to read an image with letters and numbers and enter the value in a field. This helps prevent abuse by automated scripts.{/ts}
-<p>{ts 1="http://recaptcha.net/api/getkey" 2=$miscURL}To use reCAPTCHA you must get an API key from <a href="%1" target="_blank">reCAPTCHA.net</a>, and enter the key information in <a href="%2">Administer CiviCRM &raquo; Global Settings &raquo; Miscellaneous Settings</a>.{/ts}</p>
+<p>{ts 1="http://recaptcha.net/api/getkey" 2=$miscURL}To use reCAPTCHA you must get an API key from <a href="%1" target="_blank">reCAPTCHA.net</a>, and enter the key information in <a href="%2">Administer CiviCRM &raquo; System Settings &raquo; Undelete, Logging and ReCAPTCHA</a>.{/ts}</p>
 <p><strong>{ts}Do not enable this feature for stand-alone profile forms. reCAPTCHA requires dynamic page generation. Submitting a stand-alone form with reCAPTCHA included will always result in a reCAPTCHA validation error.{/ts}</strong></p>
 {if $config->userSystem->supports_form_extensions EQ '1'} 
     <p><strong>{ts}reCAPTCHA is also not available when a profile is used inside the User Registration and My Account screens.{/ts}</strong></p>

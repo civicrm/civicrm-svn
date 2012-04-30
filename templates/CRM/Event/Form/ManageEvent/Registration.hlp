@@ -39,7 +39,7 @@
         <li>{ts}Add your field(s) this custom field group.{/ts}</li>
         <li>{ts}Create a profile (e.g. 'Participant Information').{/ts}</li>
         <li>{ts}Add your custom field(s) to this profile as profile fields.{/ts}</li>
-        <li>{ts}Return to this screen (<strong>Administer CiviCRM &raquo; Manage Events &raquo; Configure &raquo; Online Registration</strong>) and select your profile.{/ts}</li>
+        <li>{ts}Return to this screen (<strong>Administer CiviCRM &raquo; CiviEvent &raquo; Manage Events &raquo; Configure &raquo; Online Registration</strong>) and select your profile.{/ts}</li>
         </ol>
 
         {capture assign=docLinkCustom}{docURL page="Custom Data Fields & Custom Data Groups Admin" text="custom fields"}{/capture}

@@ -87,11 +87,11 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
         $error = array( );
 
         if ( empty( $this->_paymentProcessor['user_name'] ) ) {
-            $error[] = ts( 'UserID is not set in the Administer CiviCRM &raquo; Payment Processor.' );
+            $error[] = ts( 'UserID is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.' );
         }
         
         if ( empty( $this->_paymentProcessor['password'] ) ) {
-            $error[] = ts( 'pxAccess / pxPay Key is not set in the Administer CiviCRM &raquo; Payment Processor.' );
+            $error[] = ts( 'pxAccess / pxPay Key is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.' );
         }
         
         if ( ! empty( $error ) ) {

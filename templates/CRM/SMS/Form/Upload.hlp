@@ -27,7 +27,7 @@
 <p>{ts}Select the SMS Provider for this Mass SMS from the dropdown list.{/ts}</p>
 {if $isAdmin}
     {capture assign="fromConfig"}{crmURL p="civicrm/admin/sms/provider" q="reset=1"}{/capture}
-    <p>{ts 1=$fromConfig}Go to <a href='%1'>Administer CiviCRM &raquo; System Settings &raquo;Configure SMS Provider</a> to add or edit SMS Provider.{/ts}</p>
+    <p>{ts 1=$fromConfig}Go to <a href='%1'>Administer CiviCRM &raquo; System Settings &raquo; SMS Providers</a> to add or edit SMS Provider.{/ts}</p>
 {else}
     {ts}Contact your site administrator if you need to use a SMS Provider which is not in the dropdown list.{/ts}
 {/if}

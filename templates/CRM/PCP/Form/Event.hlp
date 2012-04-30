@@ -29,7 +29,7 @@
     {ts}You can also place additional links (or menu items) allowing constituents to create their own fundraising pages using the following URL:{/ts}<br /><br />
     <strong>{crmURL a=true p='civicrm/contribute/campaign' q="action=add&reset=1&pageId=`$pageId`"}</strong></dd>
 {elseif $config->userFramework EQ 'Joomla'}
-    {ts}You can also create front-end links (or menu items) allowing constituents to create their own fundraising pages using the Menu Manager. Select <strong>CiviCRM &raquo; Create Personal Campaign Pages</strong> and then select this event.{/ts}
+    {ts}You can also create front-end links (or menu items) allowing constituents to create their own fundraising pages using the Menu Manager. Select <strong>Contributions &raquo; Personal Campaign Pages</strong> and then select this event.{/ts}
 {/if}
 {/htxt}
 
@@ -64,7 +64,7 @@
     {ts}When Personal Campaign Pages are enabled, you can also place additional links (or menu items) inviting constituents to create personal campaign pages using the following URL:{/ts}<br /><br />
     <strong>{crmURL a=true p='civicrm/contribute/campaign' q="action=add&reset=1&pageId=`$pageId`"}</strong></dd>
 {elseif $config->userFramework EQ 'Joomla'}
-    {ts}When Personal Campaign Pages are enabled, you can create front-end links inviting constituents to create personal fundraising pages using the Menu Manager. Select <strong>CiviCRM &raquo; Create Personal Campaign Pages</strong> and then select this event.{/ts}
+    {ts}When Personal Campaign Pages are enabled, you can create front-end links inviting constituents to create personal fundraising pages using the Menu Manager. Select <strong>Contributions &raquo; Personal Campaign Pages</strong> and then select this event.{/ts}
 {/if}
 </p>
 {/htxt}
