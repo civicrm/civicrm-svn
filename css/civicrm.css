@@ -6,7 +6,7 @@
     display: inline;
 }
 
-#crm-container .hiddenElement {
+#crm-container .hiddenElement, #crm-container-snippet .hiddenElement {
     display   	    : none;
 }
 
