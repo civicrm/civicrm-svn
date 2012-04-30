@@ -412,7 +412,7 @@ class CRM_Core_BAO_Block
         $entity = new $class();
         $entity->id = $params['id'];
         $entity->find(true);
-        $contactId = $entity['contact_id'];
+        $contactId = $entity->contact_id;
       }else{
         $contactId = $params['contact_id'];
       }
