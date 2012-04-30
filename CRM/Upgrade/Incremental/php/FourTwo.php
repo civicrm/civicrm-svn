@@ -39,6 +39,12 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         return true;
     }
     
+    function setPostUpgradeMessage( &$postUpgradeMessage, $currentVer, $latestVer ) {
+        if ( version_compare( $currentVer, '4.2.0' ) < 0 ) {
+            $postUpgradeMessage .= '<br />' . ts('Default versions of the following System Workflow Message Templates have been modified to handle new functionality: <ul><li>Events - Registration Confirmation and Receipt (on-line)</li><li>Pledges - Acknowledgement</li><li>Pledges - Payment Reminder</li></ul>. If you have modified these templates, please review the new default versions and implement updates as needed to your copies (Administer > Communications > Message Templates > System Workflow Messages).');
+        }
+    }
+    
     function upgrade_4_2_alpha1( $rev ) {
         
         $upgrade = new CRM_Upgrade_Form( );
@@ -208,9 +214,10 @@ GROUP BY cc.id;";
                 CRM_Price_BAO_LineItem::create( $lineParams );
           }
 
-        // Create an event registration profile with a single email field
+        // Create an event registration profile with a single email field CRM-9587
+        $profileTitle = ts('Your Registration Info');
         $sql = "INSERT INTO `civicrm_uf_group` (`is_active`, `group_type`, `title`, `help_pre`, `help_post`, `limit_listings_group_id`, `post_URL`, `add_to_group_id`, `add_captcha`, `is_map`, `is_edit_link`, `is_uf_link`, `is_update_dupe`, `cancel_URL`, `is_cms_user`, `notify`, `is_reserved`, `name`, `created_id`, `created_date`, `is_proximity_search`)
-              VALUES (1, 'Individual, Contact', 'Event Registration', NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, 'event_registration', NULL, NULL, 0);";
+              VALUES (1, 'Individual, Contact', '{$profileTitle}', NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, 'event_registration', NULL, NULL, 0);";
         CRM_Core_DAO::executeQuery($sql);
         $eventRegistrationId = CRM_Core_DAO::singleValueQuery('SELECT LAST_INSERT_ID()');
         $sql = "INSERT INTO `civicrm_uf_field` (`uf_group_id`, `field_name`, `is_active`, `is_view`, `is_required`, `weight`, `help_post`, `help_pre`, `visibility`, `in_selector`, `is_searchable`, `location_type_id`, `phone_type_id`, `label`, `field_type`, `is_reserved`)
