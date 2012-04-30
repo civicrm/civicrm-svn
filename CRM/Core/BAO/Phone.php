@@ -39,6 +39,34 @@
  * Class contains functions for phone
  */
 class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone {
+  
+    /*
+   * Create phone address - note that the create function calls 'add' but 
+   * has more business logic & calls the hooks
+   * 
+   * @param array $params input parameters
+   */
+  static function create($params){
+    if ( !empty($params['contact_id']) ) {
+      CRM_Utils_Hook::pre( 'edit', 'Phone', $params['id'], $params );
+    } else {
+      CRM_Utils_Hook::pre( 'create', 'Phone', null, $params ); 
+      $isEdit = false;
+    }
+    if(is_integer(CRM_Utils_Array::value('is_primary', $params)) ||
+      empty($params['id'])){// if id is set & is_primary isn't we can assume no change
+      CRM_Core_BAO_Block::handlePrimary($params,get_class());
+    }
+    $phone =  self::add($params);
+    
+    if ( CRM_Utils_Array::value( 'id', $params ) ) {
+      CRM_Utils_Hook::post( 'edit', 'Phone', $phone->id, $phone );
+    } else {
+      CRM_Utils_Hook::post( 'create', 'phone', $phone->id, $phone ); 
+   }
+   return $phone;
+  }
+  
   /**
    * takes an associative array and adds phone 
    *

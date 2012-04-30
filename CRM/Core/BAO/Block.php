@@ -395,6 +395,18 @@ class CRM_Core_BAO_Block
      *  @param array $params
      */
     public function handlePrimary(&$params, $class){
+      
+      switch ($class){
+        case 'CRM_Core_BAO_Phone':
+          $table = 'civicrm_phone';
+          break;
+        case 'CRM_Core_BAO_Email':
+          $table = 'civicrm_email';
+          break;
+        case 'CRM_Core_BAO_Address':
+          $table = 'civicrm_address';
+          break;
+      }
       // if id is set & we don't have contact_id we need to retrieve it
       if(!empty($params['id']) && empty($params['contact_id']) ){
         $entity = new $class();
@@ -406,7 +418,7 @@ class CRM_Core_BAO_Block
       }
       // if params is_primary then set all others to not be primary & exit out
       if(CRM_Utils_Array::value('is_primary',$params)){
-        $sql = 'UPDATE civicrm_email SET is_primary = 0 WHERE contact_id = %1';
+        $sql = "UPDATE $table SET is_primary = 0 WHERE contact_id = %1";
         CRM_Core_DAO::executeQuery($sql,array(1 => array($contactId, 'Integer')));
         return;
       }
