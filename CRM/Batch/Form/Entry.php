@@ -145,7 +145,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber, null, true );
 
       foreach ( $this->_fields as $name => $field ) {
-        CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $rowNumber );
+        CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, null, false, false, $rowNumber );
       }
     }
 

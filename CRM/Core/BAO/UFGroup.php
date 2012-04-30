@@ -1439,7 +1439,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      * @static
      * @access public
      */
-    static function buildProfile( &$form, &$field, $mode, $contactId = null, $online = false, $onBehalf = false )  
+    static function buildProfile( &$form, &$field, $mode, $contactId = null, $online = false, $onBehalf = false, $rowNumber = null )  
     {
         $defaultValues = array( );
         $fieldName  = $field['name'];
@@ -1458,11 +1458,16 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         }
         
         if ( $onBehalf ) {
-            $name = "onbehalf[$fieldName]";
-        } else if ( $contactId && !$online ) {
-            $name = "field[$contactId][$fieldName]";
-        } else {
-            $name = $fieldName;
+          $name = "onbehalf[$fieldName]";
+        } 
+        else if ( $contactId && !$online ) {
+          $name = "field[$contactId][$fieldName]";
+        } 
+        else if ( $rowNumber ) {
+          $name = "field[$rowNumber][$fieldName]";
+        } 
+        else {
+          $name = $fieldName;
         }
         
         if ( $fieldName  == 'image_URL' && $mode == CRM_Profile_Form::MODE_EDIT ) {
@@ -1661,6 +1666,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             }
         } else if ( in_array($fieldName, array('receive_date', 'receipt_date', 'thankyou_date', 'cancel_date' )) ) {  
             $form->addDateTime( $name, $title, $required, array( 'formatType' => 'activityDateTime') );
+        } else if ($fieldName == 'send_receipt' ) {
+          $form->addElement( 'checkbox', $name, $title );
+        } else if ($fieldName == 'soft_credit' ) {
+          CRM_Contact_Form_NewContact::buildQuickForm( $form, $rowNumber, null, false, 'soft_credit_' );
+        } else if ($fieldName == 'premium' ) {
         } else if ($fieldName == 'payment_instrument' ) {
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::paymentInstrument( ), $required );

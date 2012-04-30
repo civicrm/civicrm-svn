@@ -56,6 +56,9 @@
         {assign var=n value=$field.name}
         {if ( $fields.$n.data_type eq 'Date') or ( in_array( $n, array( 'thankyou_date', 'cancel_date', 'receipt_date', 'receive_date', 'join_date', 'membership_start_date', 'membership_end_date' ) ) ) }
             <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$rowNumber batchUpdate=1}</td>
+        {elseif $n eq 'soft_credit'}
+            <td class="compressed">{include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="soft_credit_"}
+            </td>
         {else}
             <td class="compressed">{$form.field.$rowNumber.$n.html}</td> 
         {/if}

@@ -97,13 +97,17 @@ class CRM_UF_Form_Field extends CRM_Core_Form
     protected $_hasSearchableORInSelector;
 
     /**
+     * Batch entry fields
+     */
+    protected $_batchEntryFields;
+
+    /**
      * Function to set variables up before form is built
      *
      * @return void
      * @access public
      */
-    public function preProcess()
-    {
+    public function preProcess() {
         $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this );
         $this->_id  = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this );
         if ( $this->_gid ) {
@@ -128,6 +132,25 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->_fields = CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
         $this->_fields = array_merge( CRM_Activity_BAO_Activity::exportableFields( 'Activity' ), $this->_fields );
 
+        $this->_batchEntryFields = array( 
+          'send_receipt' => array( 
+            'name'  => 'send_receipt',
+            'title' => ts('Send Receipt')
+          ),                           
+          'soft_credit'  => array( 
+            'name'  => 'soft_credit',
+            'title' => ts('Soft Credit')
+          ),
+          'premium'      => array( 
+            'name'  => 'premiun',
+            'title' => ts('Premiums')
+          ),
+          'contribution_note' => array(
+            'name'  => 'contribution_note',
+            'title' => ts('Contribution Note')
+          )
+        );
+
         //unset campaign related fields.
         if ( isset( $this->_fields['activity_campaign_id'] ) ) {
             $this->_fields['activity_campaign_id']['title'] = ts( 'Campaign' );
@@ -137,7 +160,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         }
 
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
-            $this->_fields = array_merge ( CRM_Contribute_BAO_Contribution::getContributionFields(), $this->_fields );
+            $this->_fields = array_merge ( CRM_Contribute_BAO_Contribution::getContributionFields( false ), $this->_fields );
+            $this->_fields = array_merge ( $this->_batchEntryFields, $this->_fields );
         }
 
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
@@ -184,8 +208,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      * @return void
      * @access public
      */
-    public function buildQuickForm()
-    {
+    public function buildQuickForm() {
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             $this->addButtons( array(
                                      array ( 'type'      => 'next',
@@ -332,28 +355,13 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $fields['Contact']['id'] = array( 'name'  => 'id',
                                           'title' => ts('Internal Contact ID') );
 
-        $batchEntryFields = array( 
-          'send_receipt' => array( 
-            'name'  => 'send_receipt',
-            'title' => ts('Send Receipt')
-          ),                           
-          'soft_credit'  => array( 
-            'name'  => 'soft_credit',
-            'title' => ts('Soft Credit')
-          ),
-          'premium'      => array( 
-            'name'  => 'premiun',
-            'title' => ts('Premiums')
-          )      
-        );
-
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
             $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields( false );
             if ( ! empty( $contribFields ) ) {
                 unset( $contribFields['is_test'] );
                 unset( $contribFields['is_pay_later'] );
                 unset( $contribFields['contribution_id'] );
-                $fields['Contribution'] =& $contribFields;
+                $fields['Contribution'] =& array_merge( $contribFields, $this->_batchEntryFields );
             }
         }
 
@@ -390,7 +398,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             unset( $membershipFields['is_override'] );
             unset( $membershipFields['status_id'] );
             unset( $membershipFields['member_is_pay_later'] );
-            $fields['Membership'] =& $membershipFields;
+            $fields['Membership'] =& array_merge( $membershipFields, $this->_batchEntryFields );
         }
 
         $activityFields = CRM_Activity_BAO_Activity::getProfileFields( );
@@ -649,8 +657,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      * @return void
      * @access public
      */
-    public function postProcess()
-    {
+    public function postProcess() {
         $ids = array( 'uf_group' => $this->_gid );
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             $fieldValues = array( 'uf_group_id' => $this->_gid );
@@ -761,8 +768,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRuleSubType( $fieldType, $groupType, $errors )
-    {
+    static function formRuleSubType( $fieldType, $groupType, $errors ) {
         if ( in_array( $fieldType, array( 'Participant', 'Contribution', 'Membership', 'Activity' ) ) ) {
             $individualSubTypes  = CRM_Contact_BAO_ContactType::subTypes( 'Individual' );
             foreach( $groupType as $value ) {
@@ -801,8 +807,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRuleCustomDataExtentColumnValue( $customField, $gid, $fieldType, &$errors )
-    {
+    static function formRuleCustomDataExtentColumnValue( $customField, $gid, $fieldType, &$errors ) {
         // fix me : check object $customField
         if ( in_array( $fieldType, array( 'Participant', 'Contribution', 'Membership', 'Activity' ) ) ) {
             $params      = array( 'id' => $customField->custom_group_id );
@@ -845,8 +850,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( $fields, $files, $self )
-    {
+    static function formRule( $fields, $files, $self ) {
         $is_required     = CRM_Utils_Array::value( 'is_required'    , $fields, false );
         $is_registration = CRM_Utils_Array::value( 'is_registration', $fields, false );
         $is_view         = CRM_Utils_Array::value( 'is_view'        , $fields, false );
@@ -1053,10 +1057,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                     ts( 'Cannot add or update profile field Contact Subtype as profile type is not one of Individual, Household or Organization.' );
             }
         }
-
         return empty($errors) ? true : $errors;
     }
-
 }
-
 
