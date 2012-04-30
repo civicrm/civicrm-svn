@@ -55,16 +55,16 @@ class CRM_Contact_Form_NewContact {
     $attributes = array(
       'width' => '200px'
     );
-    $form->add('text', "contact[{$blockNo}]", ts('Select Contact'), $attributes, $required);
-    $form->addElement('hidden', $prefix . "contact_select_id[{$blockNo}]");
+    $form->add('text', "{$prefix}contact[{$blockNo}]", ts('Select Contact'), $attributes, $required);
+    $form->addElement('hidden', "{$prefix}contact_select_id[{$blockNo}]");
 
     if (CRM_Core_Permission::check('edit all contacts') || CRM_Core_Permission::check('add contacts')) {
       // build select for new contact
       $contactProfiles = CRM_Core_BAO_UFGroup::getReservedProfiles('Contact', $extraProfiles);
-      $form->add('select', "profiles[{$blockNo}]", ts('Create New Contact'), array(
+      $form->add('select', "{$prefix}profiles[{$blockNo}]", ts('Create New Contact'), array(
         '' => ts('- create new contact -')
       ) + $contactProfiles, false, array(
-        'onChange' => "if (this.value) newContact{$blockNo}( this.value, {$blockNo} );"
+        'onChange' => "if (this.value) newContact{$prefix}{$blockNo}( this.value, {$blockNo}, '{$prefix}' );"
       ));
     }
 
