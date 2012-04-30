@@ -142,7 +142,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $fileFieldExists = false;
 
     for ( $rowNumber = 1; $rowNumber<= $this->_batchInfo['item_count']; $rowNumber++  ) {
-      CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber, null, true );
+      CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber, null, true, 'primary_contact_' );
 
       foreach ( $this->_fields as $name => $field ) {
         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, null, false, false, $rowNumber );
