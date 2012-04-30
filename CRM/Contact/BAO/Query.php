@@ -3723,9 +3723,13 @@ civicrm_relationship.start_date > {$today}
                 // that are restricted and we'll then do the final clause with it
                 // CRM-5954
                 if ( isset( $this->_distinctComponentClause ) ) {
+                  if ( strpos( $this->_distinctComponentClause, 'DISTINCT' ) == false ) {
+                    $limitSelect = "SELECT DISTINCT {$this->_distinctComponentClause}";
+                  } else {
                     $limitSelect = "SELECT {$this->_distinctComponentClause}";
+                  }
                 } else {
-                    $limitSelect = 'SELECT DISTINCT(contact_a.id) as id';
+                    $limitSelect = 'SELECT DISTINCT contact_a.id as id';
                 }
 
                 if ( $doOpt ) {
