@@ -143,7 +143,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             
             $this->assign('profilePostMultiple', CRM_Utils_Array::value('custom_post', $defaults ));
 
-            if ($defaults['is_multiple_registrations']) {
+            if ( CRM_Utils_Array::value( 'is_multiple_registrations', $defaults ) ) {
                 // CRM-4377: set additional participants’ profiles – set to ‘none’ if explicitly unset (non-active)
                 
                 $ufJoinAddParams = array( 'entity_table' => 'civicrm_event',
@@ -227,7 +227,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             $this->_showHide->addHide( 'confirm_show' );            
             $this->_showHide->addHide( 'mail_show' );
             $this->_showHide->addHide( 'thankyou_show' );
-            if ( ! $defaults['is_multiple_registrations']) {
+            if ( ! CRM_Utils_Array::value( 'is_multiple_registrations', $defaults ) ) {
                 $this->_showHide->addHide( 'additional_profile_pre' );
                 $this->_showHide->addHide( 'additional_profile_post' );
             }

@@ -1509,12 +1509,12 @@ VALUES
         CRM_Core_DAO::executeQuery( $eventTemplates, CRM_Core_DAO::$_nullArray );
         
         $ufJoinValues = $tellFriendValues = array( );
-        $profileID = CRM_Core_DAO::singleValueQuery( "Select id from civicrm_uf_group where name ='new_individual'" ); 
+        $profileID = CRM_Core_DAO::singleValueQuery( "Select id from civicrm_uf_group where name ='event_registration'" ); 
         
+        // grab id's for all events and event templates
         $query = "
 SELECT  id
-  FROM  civicrm_event 
- WHERE  template_title IN ( 'Free Meeting with Online Registration', 'Paid Conference with Online Registration' )";
+  FROM  civicrm_event";
         
         $template = CRM_Core_DAO::executeQuery( $query );
         while ( $template->fetch( ) ) {
@@ -1524,7 +1524,7 @@ SELECT  id
             $tellFriendValues[] = "( 'civicrm_event', {$template->id}, 'Tell A Friend', '<p>Help us spread the word about this event. Use the space below to personalize your email message - let your friends know why you''re attending. Then fill in the name(s) and email address(es) and click ''Send Your Message''.</p>', 'Thought you might be interested in checking out this event. I''m planning on attending.', NULL, 'Thanks for Spreading the Word', '<p>Thanks for spreading the word about this event to your friends.</p>', 1)";
         }
         
-        //insert values in civicrm_uf_join
+        //insert values in civicrm_uf_join for the required event_registration profile - CRM-9587
         if ( !empty( $ufJoinValues ) ) {
             $includeProfile = "INSERT INTO civicrm_uf_join
                                (is_active, module, entity_table, entity_id, weight, uf_group_id )

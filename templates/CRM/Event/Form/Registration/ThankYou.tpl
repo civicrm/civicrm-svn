@@ -151,18 +151,6 @@
         </div>
     {/if}
 
-    <div class="crm-group registered_email-group">
-        <div class="header-dark">
-            {ts}Registered Email{/ts}
-        </div>
-        <div class="crm-section no-label registered_email-section">
-            <div class="content">
-                {$email}
-            </div>
-    		<div class="clear"></div>
-		</div>
-    </div>
-    
     {if $event.participant_role neq 'Attendee' and $defaultRole}
         <div class="crm-group participant_role-group">
             <div class="header-dark">
@@ -178,13 +166,13 @@
     {/if}
 
     {if $customPre}
-            <fieldset class="label-left">
+            <fieldset class="label-left no-border">
                 {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
             </fieldset>
     {/if}
 
     {if $customPost}
-            <fieldset class="label-left">  
+            <fieldset class="label-left no-border">  
                 {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
             </fieldset>
     {/if}
@@ -194,23 +182,23 @@
         {foreach from=$addParticipantProfile item=participant key=participantNo}
             <div class="crm-group participant_info-group">
                 <div class="header-dark">
-                    {ts 1=$participantNo+1}Participant Information - Participant %1{/ts}	
+                    {ts 1=$participantNo+1}Participant %1{/ts}	
                 </div>
-                {if $participant.additionalCustomPre}
-		    <fieldset class="label-left"><div class="header-dark">{$participant.additionalCustomPreGroupTitle}</div>	
-                        {foreach from=$participant.additionalCustomPre item=value key=field}
-                            <div class="crm-section {$field}-section">
-                                <div class="label">{$field}</div>
-                                <div class="content">{$value}</div>
-                                <div class="clear"></div>
-                            </div>
-                        {/foreach}
-                    </fieldset>
-                {/if}
+            {if $participant.additionalCustomPre}
+		        <fieldset class="label-left no-border"><div class="bold crm-additional-profile-view-title">{$participant.additionalCustomPreGroupTitle}</div>	
+                    {foreach from=$participant.additionalCustomPre item=value key=field}
+                        <div class="crm-section {$field}-section">
+                            <div class="label">{$field}</div>
+                            <div class="content">{$value}</div>
+                            <div class="clear"></div>
+                        </div>
+                    {/foreach}
+                </fieldset>
+            {/if}
 
-                {if $participant.additionalCustomPost}
-		{foreach from=$participant.additionalCustomPost item=value key=field}
-		<fieldset class="label-left"><div class="header-dark">{$participant.additionalCustomPostGroupTitle.$field.groupTitle}</div>
+            {if $participant.additionalCustomPost}
+		        {foreach from=$participant.additionalCustomPost item=value key=field}
+		            <fieldset class="label-left no-border"><div class="bold crm-additional-profile-view-title">{$participant.additionalCustomPostGroupTitle.$field.groupTitle}</div>
                         {foreach from=$participant.additionalCustomPost.$field item=value key=field}
                             <div class="crm-section {$field}-section">
                                 <div class="label">{$field}</div>
@@ -218,12 +206,11 @@
                                 <div class="clear"></div>
                             </div>
                         {/foreach}		 
-		{/foreach}		
-
                     </fieldset>
-                {/if}
+		        {/foreach}
+            {/if}
             </div>
-        <div class="spacer"></div>
+            <div class="spacer"></div>
         {/foreach}
     {/if}
 
