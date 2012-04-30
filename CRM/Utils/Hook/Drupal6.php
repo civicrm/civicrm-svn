@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  +--------------------------------------------------------------------+
@@ -41,31 +41,23 @@ class CRM_Utils_Hook_Drupal6 extends CRM_Utils_Hook {
     function invoke( $numParams,
                      &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
                      $fnSuffix ) {
-        $result = array( );
+        static $first = false;
+        static $allModules = array( );
 
-        // copied from user_module_invoke
-        if (function_exists('module_list')) {
-            foreach ( module_list() as $module) { 
-                $fnName = "{$module}_{$fnSuffix}";
-                if ( function_exists( $fnName ) ) {
-                    if ( $numParams == 1 ) {
-                        $fResult = $fnName( $arg1 );
-                    } else if ( $numParams == 2 ) {
-                        $fResult = $fnName( $arg1, $arg2 );
-                    } else if ( $numParams == 3 ) {
-                        $fResult = $fnName( $arg1, $arg2, $arg3 );
-                    } else if ( $numParams == 4 ) {
-                        $fResult = $fnName( $arg1, $arg2, $arg3, $arg4 );
-                    } else if ( $numParams == 5 ) {
-                        $fResult = $fnName( $arg1, $arg2, $arg3, $arg4, $arg5 );
-                    }
-                    if ( is_array( $fResult ) ) {
-                        $result = array_merge( $result, $fResult );
-                    }
-                }
+        if ( ! $first ||
+             empty( $allModules ) ) {
+            $first = true;
+
+            // copied from user_module_invoke
+            if (function_exists('module_list')) {
+                $allModules =  module_list();
             }
+
+            $this->requireCiviModules( $allModules );
         }
-        return empty( $result ) ? true : $result;
+
+        return $this->runHooks( $allModules, $fnSuffix,
+                                $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
    }
 
 }
