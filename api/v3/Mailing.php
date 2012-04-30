@@ -86,29 +86,13 @@ function civicrm_api3_mailing_event_bounce($params) {
 
 /**
  * Handle a confirm event
- *
+ * @deprecated
  * @param array $params
  *
  * @return array
  */
 function civicrm_api3_mailing_event_confirm($params) {
-
-  civicrm_api3_verify_mandatory($params,
-    'CRM_Mailing_Event_DAO_Confirm',
-    array('contact_id', 'subscribe_id', 'hash'),
-    FALSE
-  );
-
-  $contact_id   = $params['contact_id'];
-  $subscribe_id = $params['subscribe_id'];
-  $hash         = $params['hash'];
-
-  $confirm = CRM_Mailing_Event_BAO_Confirm::confirm($contact_id, $subscribe_id, $hash) !== FALSE;
-
-  if (!$confirm) {
-    return civicrm_api3_create_error('Confirmation failed');
-  }
-  return civicrm_api3_create_success($params);
+  return civicrm_api('mailing_event_confirm', 'create', $params);
 }
 
 /**
