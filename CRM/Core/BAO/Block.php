@@ -413,8 +413,10 @@ class CRM_Core_BAO_Block
         $entity->id = $params['id'];
         $entity->find(true);
         $contactId = $entity->contact_id;
-      }else{
+      }elseif (CRM_Utils_Array::value('contact_id', $params)){
         $contactId = $params['contact_id'];
+      }else{
+        return;// entity not associated with contact so concept of is_primary not relevant
       }
       // if params is_primary then set all others to not be primary & exit out
       if(CRM_Utils_Array::value('is_primary',$params)){
