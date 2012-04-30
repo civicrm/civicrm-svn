@@ -88,8 +88,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @access public
    * @static
    */
-  static
-  function add(&$params, &$ids) {
+  static function add(&$params, &$ids) {
     if (empty($params)) {
       return;
     }
@@ -194,8 +193,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @access public
    * @static
    */
-  static
-  function &getValues(&$params, &$values, &$ids) {
+  static function &getValues(&$params, &$values, &$ids) {
     if (empty($params)) {
       return NULL;
     }
@@ -223,8 +221,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @access public
    * @static
    */
-  static
-  function &create(&$params, &$ids) {
+  static function &create(&$params, &$ids) {
 
     // FIXME: a cludgy hack to fix the dates to MySQL format
     $dateFields = array('receive_date', 'cancel_date', 'receipt_date', 'thankyou_date');
@@ -392,8 +389,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @access public
    * @static
    */
-  static
-  function resolveDefaults(&$defaults, $reverse = FALSE) {
+  static function resolveDefaults(&$defaults, $reverse = FALSE) {
     self::lookupValue($defaults, 'contribution_type', CRM_Contribute_PseudoConstant::contributionType(), $reverse);
     self::lookupValue($defaults, 'payment_instrument', CRM_Contribute_PseudoConstant::paymentInstrument(), $reverse);
     self::lookupValue($defaults, 'contribution_status', CRM_Contribute_PseudoConstant::contributionStatus(), $reverse);
@@ -408,8 +404,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * the api needs the name => value conversion, also the view layer typically
    * requires value => name conversion
    */
-  static
-  function lookupValue(&$defaults, $property, &$lookup, $reverse) {
+  static function lookupValue(&$defaults, $property, &$lookup, $reverse) {
     $id = $property . '_id';
 
     $src = $reverse ? $property : $id;
@@ -445,8 +440,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults, &$ids) {
+  static function retrieve(&$params, &$defaults, &$ids) {
     $contribution = CRM_Contribute_BAO_Contribution::getValues($params, $defaults, $ids);
     return $contribution;
   }
@@ -462,8 +456,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @access public
    * @static
    */
-  static
-  function &importableFields($contacType = 'Individual', $status = TRUE) {
+  static function &importableFields($contacType = 'Individual', $status = TRUE) {
     if (!self::$_importableFields) {
       if (!self::$_importableFields) {
         self::$_importableFields = array();
@@ -526,8 +519,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
     return self::$_importableFields;
   }
 
-  static
-  function &exportableFields() {
+  static function &exportableFields() {
     if (!self::$_exportableFields) {
       if (!self::$_exportableFields) {
         self::$_exportableFields = array();
@@ -622,8 +614,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
    * @access public
    * @static
    */
-  static
-  function deleteContribution($id) {
+  static function deleteContribution($id) {
     CRM_Utils_Hook::pre('delete', 'Contribution', $id, CRM_Core_DAO::$_nullArray);
 
     $transaction = new CRM_Core_Transaction();
@@ -696,8 +687,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
    * @access public
    * static
    */
-  static
-  function checkDuplicate($input, &$duplicates, $id = NULL) {
+  static function checkDuplicate($input, &$duplicates, $id = NULL) {
     if (!$id) {
       $id = CRM_Utils_Array::value('id', $input);
     }
@@ -750,9 +740,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
    * @access public
    * @static
    */
-  static
-  function addPremium(&$params) {
-
+  static function addPremium(&$params) {
     $contributionProduct = new CRM_Contribute_DAO_ContributionProduct();
     $contributionProduct->copyValues($params);
     return $contributionProduct->save();
@@ -767,8 +755,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
    * @static
    * @access public
    */
-  static
-  function getContributionFields() {
+  static function getContributionFields() {
     $contributionFields = CRM_Contribute_DAO_Contribution::export();
     $contributionFields = array_merge($contributionFields, CRM_Core_OptionValue::getFields($mode = 'contribute'));
     $contributionFields = array_merge($contributionFields, CRM_Contribute_DAO_ContributionType::export());
@@ -853,8 +840,7 @@ GROUP BY p.id
    * @access public
    * @static
    */
-  static
-  function getHonorContacts($honorId) {
+  static function getHonorContacts($honorId) {
     $params = array();
     $honorDAO = new CRM_Contribute_DAO_Contribution();
     $honorDAO->honor_contact_id = $honorId;
@@ -886,8 +872,7 @@ GROUP BY p.id
    * @static
    * @access public
    */
-  static
-  function sortName($id) {
+  static function sortName($id) {
     $id = CRM_Utils_Type::escape($id, 'Integer');
 
     $query = "
@@ -982,8 +967,7 @@ GROUP BY currency
    * @access public
    * static
    */
-  static
-  function checkDuplicateIds($params) {
+  static function checkDuplicateIds($params) {
     $dao = new CRM_Contribute_DAO_Contribution();
 
     $clause = array();
@@ -1015,9 +999,7 @@ GROUP BY currency
    * @static
    * @access public
    */
-  static
-  function getContributionDetails($exportMode, $componentIds) {
-
+  static function getContributionDetails($exportMode, $componentIds) {
     $paymentDetails = array();
     $componentClause = ' IN ( ' . implode(',', $componentIds) . ' ) ';
 
@@ -1077,8 +1059,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
    *  @return address id
    *  @static
    */
-  static
-  function createAddress(&$params, $billingLocationTypeID) {
+  static function createAddress(&$params, $billingLocationTypeID) {
     $billingFields = array('street_address',
       'city',
       'state_province_id',
@@ -1108,8 +1089,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
    *  @return soft contribution id
    *  @static
    */
-  static
-  function addSoftContribution($params) {
+  static function addSoftContribution($params) {
     $softContribution = new CRM_Contribute_DAO_ContributionSoft();
     $softContribution->copyValues($params);
 
@@ -1129,9 +1109,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
    *  @return soft contribution id
    *  @static
    */
-  static
-  function getSoftContribution($params, $all = FALSE) {
-
+  static function getSoftContribution($params, $all = FALSE) {
     $cs = new CRM_Contribute_DAO_ContributionSoft();
     $cs->copyValues($params);
     $softContribution = array();
@@ -1154,8 +1132,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
    *  @return array
    *  @static
    */
-  static
-  function getSoftContributionList($contact_id, $isTest = 0) {
+  static function getSoftContributionList($contact_id, $isTest = 0) {
     $query = "SELECT ccs.id, ccs.amount as amount,
                          ccs.contribution_id,
                          ccs.pcp_id,
@@ -1206,8 +1183,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
     return $result;
   }
 
-  static
-  function getSoftContributionTotals($contact_id, $isTest = 0) {
+  static function getSoftContributionTotals($contact_id, $isTest = 0) {
     $query = "SELECT SUM(amount) as amount,
                          AVG(total_amount) as average,
                          cc.currency
@@ -1249,8 +1225,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
    * @access public
    * @static
    */
-  static
-  function deleteAddress($contributionId = NULL, $contactId = NULL) {
+  static function deleteAddress($contributionId = NULL, $contactId = NULL) {
     $clauses = array();
     $contactJoin = NULL;
 
@@ -1294,8 +1269,7 @@ WHERE      $condition
    * @return $contributionId pending contribution id.
    * @static
    */
-  static
-  function checkOnlinePendingContribution($componentId, $componentName) {
+  static function checkOnlinePendingContribution($componentId, $componentName) {
     $contributionId = NULL;
     if (!$componentId ||
       !in_array($componentName, array('Event', 'Membership'))
@@ -1728,8 +1702,7 @@ WHERE     c.id = $contributionId";
     return $componentDetails;
   }
 
-  static
-  function contributionCount($contactId, $includeSoftCredit = TRUE, $includeHonoree = TRUE) {
+  static function contributionCount($contactId, $includeSoftCredit = TRUE, $includeHonoree = TRUE) {
     if (!$contactId) {
       return 0;
     }
@@ -2224,10 +2197,11 @@ WHERE  contribution_id = %1 AND membership_id != %2";
 
     return $values;
   }
-  /*
-     * Apply variables for message to smarty template - this function is part of analysing what is in the huge
-     * function & breaking it down into manageable chunks. Eventually it will be refactored into something else
-     */
+
+  /**
+   * Apply variables for message to smarty template - this function is part of analysing what is in the huge
+   * function & breaking it down into manageable chunks. Eventually it will be refactored into something else
+   */
   function _assignMessageVariablesToTemplate(&$values, $input, &$template) {
     $template->assign('first_name', $this->_relatedObjects['contact']->first_name);
     $template->assign('last_name', $this->_relatedObjects['contact']->last_name);
