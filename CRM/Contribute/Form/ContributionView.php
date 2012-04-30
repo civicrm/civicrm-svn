@@ -139,8 +139,8 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
         } 
         
         $lineItems = array( );
-        if ( $id && ( CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $id, CRM_Core_Component::getComponentID( 'CiviContribute' ) )
-                      || CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $id, CRM_Core_Component::getComponentID( 'CiviMember' ) ) ) ) {
+        if ( $id && ( CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $id, CRM_Core_Component::getComponentID( 'CiviContribute' ), 1  )
+                      || CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $id, CRM_Core_Component::getComponentID( 'CiviMember' ), 1 ) ) ) {
             $lineItems[] = CRM_Price_BAO_LineItem::getLineItems( $id, 'contribution' );
         }
         $this->assign( 'lineItem', empty( $lineItems ) ? false : $lineItems );
@@ -193,6 +193,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form
      */
     public function buildQuickForm( ) 
     {
+       
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  

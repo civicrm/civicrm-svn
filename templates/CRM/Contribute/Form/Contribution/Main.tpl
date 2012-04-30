@@ -40,7 +40,7 @@ function useAmountOther() {
         element = document.Main.elements[i];
         if ( element.type == 'radio' && element.name == priceset ) {
             if (element.value == '0' ) {
-                element.checked = true;
+		element.click();
             } else {
                 element.checked = false;
             }

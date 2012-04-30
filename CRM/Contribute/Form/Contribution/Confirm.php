@@ -348,7 +348,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
         $this->_separateMembershipPayment = $this->get( 'separateMembershipPayment' );
         $this->assign( 'is_separate_payment', $this->_separateMembershipPayment );
-        $this->assign( 'lineItem', $this->_lineItem );
+        if( $this->_priceSetId && !CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config' ) )
+            $this->assign( 'lineItem', $this->_lineItem );
         $this->assign( 'priceSetID', $this->_priceSetId );
 
         if ( $this->_paymentProcessor['payment_processor_type'] == 'Google_Checkout' 

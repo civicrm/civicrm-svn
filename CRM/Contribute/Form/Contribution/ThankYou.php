@@ -109,8 +109,8 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         if ( $productID ) {
             CRM_Contribute_BAO_Premium::buildPremiumBlock( $this , $this->_id ,false ,$productID, $option);
         }
-        
-        $this->assign( 'lineItem', $this->_lineItem );
+        if( $this->_priceSetId && !CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config' ) )
+            $this->assign( 'lineItem', $this->_lineItem );
         $this->assign( 'priceSetID', $this->_priceSetId );
         $this->assign(  'useForMember', $this->get('useForMember'));
 

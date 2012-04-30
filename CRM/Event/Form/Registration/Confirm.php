@@ -249,7 +249,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                         $this->_amount[$k]['amount'] -= $v['discountAmount'];
                     }
 
-                    $this->_amount[$k]['label'] = $v['amount_level'].'  -  '. $append;
+                    $this->_amount[$k]['label'] = preg_replace( '//', '', $v['amount_level'] ).'  -  '. $append;
                     $this->_part[$k]['info'] = CRM_Utils_Array::value( 'first_name', $v ) . ' ' . CRM_Utils_Array::value( 'last_name', $v );
                     if ( !CRM_Utils_Array::value( 'first_name', $v ) ) {
                         $this->_part[$k]['info'] = $append;
@@ -272,8 +272,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
 
         $this->buildCustom( $this->_values['custom_pre_id'] , 'customPre' , true );
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost', true );
-
-        $this->assign( 'lineItem', $this->_lineItem );
+        
+        if( $this->_priceSetId && !CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config' ) )
+            $this->assign( 'lineItem', $this->_lineItem );
         //display additional participants profile.
 
         $participantParams = $this->_params;

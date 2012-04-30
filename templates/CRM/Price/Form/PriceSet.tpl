@@ -1,4 +1,4 @@
-{*
+{debug}{*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
  +--------------------------------------------------------------------+
@@ -75,7 +75,9 @@
     {if $priceSet.help_post}
     	<div class="messages help">{$priceSet.help_post}</div>
     {/if}
-
+ 
+{if $priceSet.fields|@count > 1 || !$quickConfig}
     {include file="CRM/Price/Form/Calculate.tpl"} 
+{/if}
 
 </div>
