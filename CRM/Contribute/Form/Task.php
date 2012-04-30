@@ -37,7 +37,7 @@
 
 /**
  * This class generates form components for relationship
- * 
+ *
  */
 class CRM_Contribute_Form_Task extends CRM_Core_Form
 {
@@ -83,7 +83,7 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
      * @return void
      * @access public
      */
-    function preProcess( ) 
+    function preProcess( )
     {
         self::preProcessCommon( $this );
     }
@@ -107,11 +107,11 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
             }
         } else {
             $queryParams =  $form->get( 'queryParams' );
-            $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
+            $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false,
                                                        CRM_Contact_BAO_Query::MODE_CONTRIBUTE);
             $query->_distinctComponentClause = " civicrm_contribution.id";
             $query->_groupByComponentClause  = " GROUP BY civicrm_contribution.id ";
-            
+
             $result = $query->searchQuery(0, 0, null);
             while ($result->fetch()) {
                 $ids[] = $result->contribution_id;
@@ -123,7 +123,7 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
             $form->_componentClause =
                 ' civicrm_contribution.id IN ( ' .
                 implode( ',', $ids ) . ' ) ';
-            
+
             $form->assign( 'totalSelectedContributions', count( $ids ) );
         }
 
@@ -131,7 +131,7 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
 
         //set the context for redirection for any task actions
         $session = CRM_Core_Session::singleton( );
-        
+
         $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
         $urlParams = 'force=1';
         if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
@@ -149,7 +149,7 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
      * Given the contribution id, compute the contact id
      * since its used for things like send email
      */
-    public function setContactIDs( ) 
+    public function setContactIDs( )
     {
         $this->_contactIds =& CRM_Core_DAO::getContactIDsFromComponent( $this->_contributionIds,
                                                                         'civicrm_contribution' );
@@ -164,7 +164,7 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
      * @return void
      * @access public
      */
-    function addDefaultButtons( $title, $nextType = 'next', $backType = 'back' ) 
+    function addDefaultButtons( $title, $nextType = 'next', $backType = 'back' )
     {
         $this->addButtons( array(
                                  array ( 'type'      => $nextType,

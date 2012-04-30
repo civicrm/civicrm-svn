@@ -35,7 +35,7 @@
  */
 
 
-class CRM_Utils_Type 
+class CRM_Utils_Type
 {
     const
         T_INT       =     1,
@@ -69,37 +69,37 @@ class CRM_Utils_Type
         FORTYFIVE    = 45,
         HUGE         = 45;
 
-   
+
 
     /**
      * Convert Constant Data type to String
      *
      * @param  $type       integer datatype
-     * 
+     *
      * @return $string     String datatype respective to integer datatype
      *
      * @access public
      * @static
      */
-    static function typeToString( $type ) 
+    static function typeToString( $type )
     {
         switch ( $type ) {
         case     1: $string = 'Int'      ; break;
         case     2: $string = 'String'   ; break;
         case     3: $string = 'Enum'     ; break;
-        case     4: $string = 'Date'     ; break; 
+        case     4: $string = 'Date'     ; break;
         case     8: $string = 'Time'     ; break;
-        case    16: $string = 'Boolean'  ; break;    
+        case    16: $string = 'Boolean'  ; break;
         case    32: $string = 'Text'     ; break;
-        case    64: $string = 'Blob'     ; break;    
+        case    64: $string = 'Blob'     ; break;
         case   256: $string = 'Timestamp'; break;
         case   512: $string = 'Float'    ; break;
         case  1024: $string = 'Money'    ; break;
         case  2048: $string = 'Date'     ; break;
         case  4096: $string = 'Email'    ; break;
-        case 16384: $string = 'Mediumblob'    ; break;    
+        case 16384: $string = 'Mediumblob'    ; break;
         }
-        
+
         return (isset($string)) ? $string : "";
 
     }
@@ -107,7 +107,7 @@ class CRM_Utils_Type
 
     /**
      * Verify that a variable is of a given type
-     * 
+     *
      * @param mixed   $data         The variable
      * @param string  $type         The type
      * @param boolean $abort        Should we abort if invalid
@@ -115,7 +115,7 @@ class CRM_Utils_Type
      * @access public
      * @static
      */
-    public static function escape($data, $type, $abort = true) 
+    public static function escape($data, $type, $abort = true)
     {
         switch($type) {
         case 'Integer':
@@ -153,34 +153,34 @@ class CRM_Utils_Type
                 return $data;
             }
             break;
-            
+
         case 'String':
         case 'Memo'  :
             return CRM_Core_DAO::escapeString($data);
             break;
-            
+
         case 'Date':
         case 'Timestamp':
             // a null date or timestamp is valid
             if ( strlen( trim( $data ) ) == 0 ) {
                 return trim( $data );
             }
-                
+
             if ( ( preg_match('/^\d{8}$/', $data) ||
                    preg_match('/^\d{14}$/', $data) ) &&
                  CRM_Utils_Rule::mysqlDate($data) ) {
                 return $data;
             }
             break;
-        
+
         case 'ContactReference':
             if ( strlen( trim( $data ) ) == 0 ) {
                 return trim( $data );
             }
 
-            if ( CRM_Utils_Rule::validContact( $data ) ) { 
+            if ( CRM_Utils_Rule::validContact( $data ) ) {
                 return $data;
-            } 
+            }
             break;
 
         default:
@@ -197,7 +197,7 @@ class CRM_Utils_Type
 
     /**
      * Verify that a variable is of a given type
-     * 
+     *
      * @param mixed   $data         The variable
      * @param string  $type         The type
      * @param boolean $abort        Should we abort if invalid
@@ -206,7 +206,7 @@ class CRM_Utils_Type
      * @access public
      * @static
      */
-    public static function validate($data, $type, $abort = true, $name = 'One of parameters ') 
+    public static function validate($data, $type, $abort = true, $name = 'One of parameters ')
     {
         switch($type) {
         case 'Integer':
@@ -234,14 +234,14 @@ class CRM_Utils_Type
                 return $data;
             }
             break;
-            
+
         case 'Text' :
         case 'String':
         case 'Link':
         case 'Memo':
             return $data;
             break;
-            
+
         case 'Date':
             // a null date is valid
             if ( strlen( trim( $data ) ) == 0 ) {
@@ -253,13 +253,13 @@ class CRM_Utils_Type
                 return $data;
             }
             break;
-            
+
         case 'Timestamp':
             // a null timestamp is valid
             if ( strlen( trim( $data ) ) == 0 ) {
                 return trim( $data );
             }
-            
+
             if ( ( preg_match('/^\d{14}$/', $data) ||
                    preg_match('/^\d{8}$/', $data) ) &&
                  CRM_Utils_Rule::mysqlDate($data) ) {
@@ -272,9 +272,9 @@ class CRM_Utils_Type
                 return trim( $data );
             }
 
-            if ( CRM_Utils_Rule::validContact( $data ) ) { 
+            if ( CRM_Utils_Rule::validContact( $data ) ) {
                 return $data;
-            } 
+            }
             break;
 
         default:
