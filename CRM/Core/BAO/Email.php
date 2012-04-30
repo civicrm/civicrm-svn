@@ -64,6 +64,7 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
     else {
       CRM_Utils_Hook::post('create', 'Email', $email->id, $email);
     }
+    return $email;
   }
   
   /**
