@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -55,6 +54,7 @@ class CRM_Contact_Form_NewContact {
     $attributes = array(
       'width' => '200px'
     );
+
     $form->add('text', "{$prefix}contact[{$blockNo}]", ts('Select Contact'), $attributes, $required);
     $form->addElement('hidden', "{$prefix}contact_select_id[{$blockNo}]");
 
@@ -68,7 +68,7 @@ class CRM_Contact_Form_NewContact {
       ));
     }
 
-    $form->assign('blockNo', $blockNo);
+    $form->assign( 'blockNo', $blockNo );
     $form->assign( 'prefix', $prefix );
   }
 }

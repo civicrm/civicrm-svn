@@ -29,28 +29,27 @@
   {assign var='profSelect' value=$prefix|cat:'profiles'}
     {if $noLabel}
      	<div>
-            <div id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
-                <span class="success-status">{ts}New contact has been created.{/ts}</span>
-            </div>
-            {$form.$fldName.$blockNo.html} <br/>
-    	      {if $form.$profSelect}
-              {ts}OR{/ts}<br/>{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
-    	      {/if}
+          <div id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
+              <span class="success-status">{ts}New contact has been created.{/ts}</span>
+          </div>
+          {$form.$fldName.$blockNo.html} <br/>
+          {if $form.$profSelect}
+            {ts}OR{/ts}<br/>{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
+          {/if}
     	</div>
-
     {else}
-    <tr id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
-    <td></td>
-    <td><span class="success-status">{ts}New contact has been created.{/ts}</span></td>
-    </tr>
-    <tr class="crm-new-contact-form-block-contact crm-new-contact-form-block-contact-{$blockNo}">
-    	<td class="label">{$form.$fldName.$blockNo.label}</td>
-    	<td>{$form.$fldName.$blockNo.html}
-    	    {if $form.$profSelect}
-    		&nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
-    	    {/if}
-    	</td>
-    </tr>
+      <tr id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
+      <td></td>
+      <td><span class="success-status">{ts}New contact has been created.{/ts}</span></td>
+      </tr>
+      <tr class="crm-new-contact-form-block-contact crm-new-contact-form-block-contact-{$blockNo}">
+        <td class="label">{$form.$fldName.$blockNo.label}</td>
+        <td>{$form.$fldName.$blockNo.html}
+            {if $form.$profSelect}
+          &nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
+            {/if}
+        </td>
+      </tr>
     {/if}
 {/if}
 
@@ -83,7 +82,7 @@
       	 });
       }
 
-      var dataURL = {/literal}"{crmURL p='civicrm/profile/create' q="reset=1&snippet=5&context=dialog&blockNo=$blockNo" h=0 }"{literal};
+      var dataURL = {/literal}"{crmURL p='civicrm/profile/create' q="reset=1&snippet=5&context=dialog&blockNo=$blockNo&prefix=$prefix" h=0 }"{literal};
       dataURL = dataURL + '&gid=' + gid;
       {/literal}{if $profileCreateCallback}{literal}
         dataURL = dataURL + '&createCallback=1';

@@ -49,6 +49,7 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
     protected $_errorURL  = null;
     protected $_context;
     protected $_blockNo;
+    protected $_prefix;
 
     /**
      * pre processing work done here.
@@ -68,12 +69,17 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
         
         //set the block no
         $this->_blockNo = CRM_Utils_Request::retrieve( 'blockNo', 'String', $this );
+        
+        //set the prefix
+        $this->_prefix = CRM_Utils_Request::retrieve( 'prefix', 'String', $this );
             
         $this->assign( 'context', $this->_context );
 
         if ( $this->_blockNo ) {
             $this->assign( 'blockNo', $this->_blockNo );
+            $this->assign( 'prefix',  $this->_prefix );
         }
+        
         $this->assign( 'createCallback', CRM_Utils_Request::retrieve( 'createCallback', 'String', $this ) );
         
         if ( $this->get( 'skipPermission' ) ) {
