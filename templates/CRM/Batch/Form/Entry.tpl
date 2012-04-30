@@ -32,13 +32,14 @@
     <div class="label">{ts}Actual total amount{/ts}: {$config->defaultCurrencySymbol} <span class="batch-actual-total"></span></div>
 </div>
 <br/>
-<table>
+<table class="crm-copy-fields">
     <thead>
         <tr class="columnheader">
             <td>&nbsp;</td>
             <td>{ts}Contact{/ts}</td>
         {foreach from=$fields item=field key=fieldName}
-            <td>{$field.title}</td>
+            <!--td>{$field.title}</td-->
+            <td><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td> 
         {/foreach}
         </tr>
     </thead>
@@ -145,6 +146,8 @@ var n = amount,
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
 }
 
-
 </script>
 {/literal}
+
+{*include batch copy js js file*}
+{include file="CRM/common/batchCopy.tpl"}

@@ -315,6 +315,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             CRM_Core_BAO_CustomField::getFields( 'Membership',
             false, false, null, null, true ) );
         }
+
         //check for custom data
         $value['custom'] = CRM_Core_BAO_CustomField::postProcess( $params['field'][$key],
           $customFields,
