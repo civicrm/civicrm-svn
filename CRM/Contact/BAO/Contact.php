@@ -111,8 +111,6 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
                 $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR .
                     trim($params['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
             }
-        } else {
-            $params['contact_sub_type'] = 'null';
         }
 
         //fixed contact source
