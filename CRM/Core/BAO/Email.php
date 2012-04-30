@@ -55,7 +55,7 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email
     }
     if(is_integer(CRM_Utils_Array::value('is_primary', $params)) ||
       empty($params['id'])){// if id is set & is_primary isn't we can assume no change
-      self::handlePrimary($params);
+      CRM_Core_BAO_Block::handlePrimary($params,get_class());
     }
     return CRM_Core_BAO_Email::add($params);
     
@@ -292,55 +292,6 @@ ORDER BY e.is_primary DESC, email_id ASC ";
                                               false );
         
     }
-    /*
-     * Handling for is_primary. 
-     * $params is_primary could be
-     *  #  1 - find other entries with is_primary = 1 &  reset them to 0
-     *  #  0 - make sure at least one entry is set to 1 
-     *            - if no other entry is 1 change to 1
-     *            - if one other entry exists change that to 1
-     *            - if more than one other entry exists change first one to 1
-     *              @fixme - perhaps should choose by location_type
-     *  #  empty - same as 0 as once we have checked first step 
-     *             we know if it should be 1 or 0
-     *  
-     *  if $params['id'] is set $params['contact_id'] may need to be retrieved
-     *  
-     *  @param array $params
-     */
-    public function handlePrimary(&$params){
-      // if id is set & we don't have contact_id we need to retrieve it
-      if(!empty($params['id']) && empty($params['contact_id']) ){
-        $email = new CRM_Core_BAO_Email();
-        $email->id = $params['id'];
-        $email->find(true);
-        $contactId = $email['contact_id'];
-      }else{
-        $contactId = $params['contact_id'];
-      }
-      // if params is_primary then set all others to not be primary & exit out
-      if(CRM_Utils_Array::value('is_primary',$params)){
-        $sql = 'UPDATE civicrm_email SET is_primary = 0 WHERE contact_id = %1';
-        CRM_Core_DAO::executeQuery($sql,array(1 => array($contactId, 'Integer')));
-        return;
-      }
-      
-      //Check what other emails exist for the contact
-      $existingEmails = new CRM_Core_BAO_Email();
-      $existingEmails->contact_id = $contactId;
-      $existingEmails->orderBy('is_primary DESC');
-      if(!$existingEmails->find(true)){
-        // ie. 0 / null is an invalid options as there are no others set to 1 so change
-        $params['is_primary'] = 1; 
-        return;
-      }else{
-      // so at this point we are only dealing with ones explicity setting is_primary to 0
-      // since we have reverse sorted by email we can either set the first one to
-      // primary or return if is already is
-        $existingEmails->is_primary = 1;
-        $existingEmails->save();
-      }
-      
-    }
+
 }
 
