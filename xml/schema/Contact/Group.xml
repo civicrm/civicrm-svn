@@ -125,6 +125,12 @@
     <comment>Is this group hidden?</comment>
     <add>2.2</add>
   </field>
+  <field>
+    <name>is_reserved</name>
+    <type>boolean</type>
+    <default>0</default>
+    <add>4.2</add>
+  </field>
   <index>
     <name>index_group_type</name>
     <fieldName>group_type</fieldName>     
