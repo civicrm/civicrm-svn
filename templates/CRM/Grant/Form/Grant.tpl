@@ -25,6 +25,10 @@
 *}
 {* this template is used for adding/editing/deleting grant *}
 
+{if $cdType}
+  {include file="CRM/Custom/Form/CustomData.tpl"}
+{else}
+
 {if $action eq 1 and $context ne 'standalone'}
 	<h3>{ts}New Grant{/ts}</h3>
 {elseif $action eq 2}
@@ -114,9 +118,27 @@
 
 		</table>
 		
-		<div class="crm-grant-form-block-custom_data">
-		     {include file="CRM/Custom/Form/CustomData.tpl"}
-		</div>
+        <div id="customData" class="crm-grant-form-block-custom_data"></div>
+        {*include custom data js file*}
+        {include file="CRM/common/customData.tpl"}
+
+{literal}
+<script type="text/javascript">
+    cj( function( ) {
+        {/literal}
+        buildCustomData( '{$customDataType}' );
+        {if $customDataSubType}
+        buildCustomData( '{$customDataType}', {$customDataSubType} );
+        {/if}
+        {literal}
+    });
+
+    cj(function() {
+       cj().crmaccordions(); 
+    });
+</script>
+{/literal}
+
 		<div class="crm-grant-form-block-attachment">
 		     {include file="CRM/Form/attachment.tpl"}
 		</div>
@@ -124,3 +146,5 @@
    {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
+
+{/if} {* closing of main custom data if *} 

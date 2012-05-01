@@ -216,6 +216,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $activityType = CRM_Core_PseudoConstant::activityType( false, true, false, 'label', true );
         
         $eventType       = CRM_Core_OptionGroup::values( 'event_type' );
+        $grantType       = CRM_Core_OptionGroup::values( 'grant_type' );
         $campaignTypes   = CRM_Campaign_PseudoConstant::campaignType( );
         $membershipType  = CRM_Member_BAO_MembershipType::getMembershipTypes( false );
         $participantRole = CRM_Core_OptionGroup::values( 'participant_role' );
@@ -226,6 +227,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         ksort( $sel1 );
         asort( $activityType );
         asort( $eventType );
+        asort( $grantType );
         asort( $membershipType );
         asort( $participantRole );
         $allRelationshipType = array();
@@ -242,6 +244,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         }
 
         $sel2['Event']                = $eventType;
+        $sel2['Grant']                = $grantType;
         $sel2['Activity']             = $activityType;
         $sel2['Campaign']             = $campaignTypes;
         $sel2['Membership']           = $membershipType;
