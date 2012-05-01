@@ -2447,7 +2447,7 @@ class CRM_Contact_BAO_Query
 
     }
 
-    function addGroupContactCache( $groups, $tableAlias = "civicrm_group_contact_cache", $joinTable = "contact_a" ) {
+    function addGroupContactCache( $groups, $tableAlias = null, $joinTable = "contact_a" ) {
         $config = CRM_Core_Config::singleton( );
 
         // find all the groups that are part of a saved search
@@ -2463,18 +2463,24 @@ WHERE  id IN ( $groupIDs )
         $group = CRM_Core_DAO::executeQuery( $sql );
         $ssWhere = array();
         while ( $group->fetch( ) ) {
-            $this->_useDistinct = true;
+          if ( $tableAlias == null ) {
+            $alias = "`civicrm_group_contact_cache_{$group->id}`";
+          } else {
+            $alias = $tableAlias;
+          }
 
-            if ( ! $this->_smartGroupCache || $group->cache_date == null ) {
-                CRM_Contact_BAO_GroupContactCache::load( $group );
-            }
+          $this->_useDistinct = true;
 
-            $ssWhere[] = "{$tableAlias}.group_id = {$group->id}";
+          if ( ! $this->_smartGroupCache || $group->cache_date == null ) {
+            CRM_Contact_BAO_GroupContactCache::load( $group );
+          }
+
+          $this->_tables[$alias] = $this->_whereTables[$alias] =
+            " LEFT JOIN civicrm_group_contact_cache {$alias} ON {$joinTable}.id = {$alias}.contact_id ";
+          $ssWhere[] = "{$alias}.group_id = {$group->id}";
         }
 
         if ( ! empty( $ssWhere ) ) {
-            $this->_tables[$tableAlias] = $this->_whereTables[$tableAlias] =
-                " LEFT JOIN civicrm_group_contact_cache {$tableAlias} ON {$joinTable}.id = {$tableAlias}.contact_id ";
             return implode(' OR ', $ssWhere);
         }
         return null;
