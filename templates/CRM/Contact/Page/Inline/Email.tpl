@@ -28,14 +28,14 @@
   <div class="crm-clear"> <!-- start of main --!>
      {if $email}
      <div class="crm-config-option">
-      <a id="edit-email" class="hiddenElement crm-link-action" title="{ts}click to add / edit{/ts}">
-        <span class="batch-edit"></span>{ts}add / edit email{/ts}
+      <a id="edit-email" class="hiddenElement crm-link-action" title="{ts}click to add or edit email addresses{/ts}">
+        <span class="batch-edit"></span>{ts}add or edit email{/ts}
       </a>
     </div>
     {else}
       <div>
-        <a id="edit-email" class="crm-link-action" title="{ts}click to add / edit{/ts}">
-          <span class="batch-edit"></span>{ts}add / edit email{/ts}
+        <a id="edit-email" class="crm-link-action" title="{ts}click to add email address{/ts}">
+          <span class="batch-edit"></span>{ts}add email{/ts}
         </a>
       </div>
     {/if}
