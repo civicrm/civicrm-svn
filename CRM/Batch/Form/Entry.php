@@ -142,7 +142,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $fileFieldExists = false;
 
     for ( $rowNumber = 1; $rowNumber<= $this->_batchInfo['item_count']; $rowNumber++  ) {
-      CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber, null, true, 'primary_contact_' );
+      CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber, null, true, 'primary_' );
 
       foreach ( $this->_fields as $name => $field ) {
         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, null, false, false, $rowNumber );
@@ -226,11 +226,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     if ( isset( $params['field'] ) ) {
       foreach ( $params['field'] as $key => $value ) {
         // if contact is not selected we should skip the row
-        if ( !CRM_Utils_Array::value( $key, $params['contact_select_id'] ) ) {
+        if ( !CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] ) ) {
           continue;
         }
 
-        $value['contact_id'] = CRM_Utils_Array::value( $key, $params['contact_select_id'] );                          
+        $value['contact_id'] = CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] );                          
         $value['custom'] = CRM_Core_BAO_CustomField::postProcess( $value,
           CRM_Core_DAO::$_nullObject,
           $key,
@@ -253,19 +253,16 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $value['source'] = $value['contribution_source'];
         }
 
+        if ( CRM_Utils_Array::value( 'contribution_note', $value ) ) {
+          $value['note'] = $value['contribution_note'];
+        }
+
         unset($value['contribution_type']);
         unset($value['contribution_source']);
 
         $value['batch_id'] = $this->_batchId;
-        $contribution = CRM_Contribute_BAO_Contribution::add( $value, CRM_Core_DAO::$_nullArray ); 
-
-        // add custom field values           
-        if ( CRM_Utils_Array::value( 'custom', $value ) &&
-          is_array( $value['custom'] ) ) {
-            CRM_Core_BAO_CustomValueTable::store( $value['custom'], 'civicrm_contribution', $contribution->id );
-          }            
+        $contribution = CRM_Contribute_BAO_Contribution::create( $value, CRM_Core_DAO::$_nullArray ); 
       }
-
     }
   }//end of function
 
@@ -282,11 +279,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       $customFields = array( );
       foreach ( $params['field'] as $key => $value ) {               
         // if contact is not selected we should skip the row
-        if ( !CRM_Utils_Array::value( $key, $params['contact_select_id'] ) ) {
+        if ( !CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] ) ) {
           continue;
         }
 
-        $value['contact_id'] = CRM_Utils_Array::value( $key, $params['contact_select_id'] );                          
+        $value['contact_id'] = CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] );                          
  
         if ( CRM_Utils_Array::value( 'membership_source', $value ) ) {
           $value['source'] = $value['membership_source'];

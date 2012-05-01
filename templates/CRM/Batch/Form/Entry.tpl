@@ -49,7 +49,7 @@
         <td class="compressed"><span class="batch-edit"></span></td>
         {* contact select/create option*}
         <td class="compressed">
-            {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="primary_contact_"}
+            {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="primary_"}
         </td>
 
         {foreach from=$fields item=field key=fieldName}
