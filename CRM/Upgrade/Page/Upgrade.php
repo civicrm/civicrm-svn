@@ -224,7 +224,7 @@ SELECT  count( id ) as statusCount
                         // follow old upgrade process for all version
                         // below 3.2.alpha1 
                         if ( version_compare( $rev , '3.2.alpha1' ) < 0 ) {
-                            if ( is_callable(array($this, $phpFunctionName)) ) {
+                            if ( is_callable(array('CRM_Upgrade_Incremental_Legacy', $phpFunctionName)) ) {
                                 call_user_func(array('CRM_Upgrade_Incremental_Legacy', $phpFunctionName), $rev);
                             } else {
                                 $upgrade->processSQL( $rev );
