@@ -450,30 +450,56 @@ class CRM_Utils_REST
   }
 
   /** This is a wrapper so you can call an api via json (it returns json too)
-   * http://example.org/civicrm/api/json?{"entity":"Contact","action":"Get","debug":1}
-   * works both as GET or POST
+   * http://example.org/civicrm/api/json?entity=Contact&action=Get"&json={"contact_type":"Individual","email.get.email":{}} to take all the emails from individuals
+   * works for POST & GET (POST recommended)
    **/
   static function ajaxJson () {
-    if (!empty ($_POST))
-      $params = $_POST;
-    else
-      $params = $_GET;
-
-    foreach ($params as $k => $v) {
-      if ($k[0] == '{')  {
-        $p=stripslashes($k);
-        $a_params = json_decode (stripslashes($p),true);
-        if (is_array($a_params)) {
-          $_REQUEST = $a_params;
-          $_REQUEST['json'] = 1;
-          CRM_Utils_REST::ajax();
-          return;
-        }
-      }
-    }
     require_once 'api/v3/utils.php';
-    civicrm_api3_create_error( 'missing json param, eg: /civicrm/api/json?{"entity":"Contact","action":"Get"}');
+    if ( !$config->debug && ( ! array_key_exists ( 'HTTP_X_REQUESTED_WITH',$_SERVER ) ||
+      $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest" ) ) {
+      $error =
+        civicrm_api3_create_error( "SECURITY ALERT: Ajax requests can only be issued by javascript clients, eg. $().crmAPI().",
+          array( 'IP'      => $_SERVER['REMOTE_ADDR'],
+          'level'   => 'security',
+          'referer' => $_SERVER['HTTP_REFERER'],
+          'reason'  => 'CSRF suspected' ) );
+      echo json_encode( $error );
+      CRM_Utils_System::civiExit( );
+    }
+    if (empty ($_REQUEST['entity'])) {
+      echo json_encode(civicrm_api3_create_error( 'missing entity param'));
+      CRM_Utils_System::civiExit( );
+    }
+    if (empty ($_REQUEST['entity'])) {
+      echo json_encode(civicrm_api3_create_error( 'missing entity entity'));
+      CRM_Utils_System::civiExit( );
+    }
+    if (!empty ($_REQUEST['json'])) {
+      $params = json_decode($_REQUEST['json'],true);
+    }
+    $entity = CRM_Utils_String::munge(CRM_Utils_Array::value( 'entity', $_REQUEST ));
+    $action = CRM_Utils_String::munge(CRM_Utils_Array::value( 'action', $_REQUEST ));
+    if (!is_array($params)) {
+      echo json_encode (array('is_error'=>1,'error_message','invalid json format: ?{"param_with_double_quote":"value"}'));
+      CRM_Utils_System::civiExit( );
+    }
+
+    $params['check_permissions'] = true;
+    $params['version'] = 3;
+    $_REQUEST['json'] = 1;
+    if (!$params['sequential']) {
+      $params['sequential'] = 1;
+    }
+    // trap all fatal errors
+    CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
+    $result = civicrm_api ($entity, $action,$params);
+
+    CRM_Core_Error::setCallback( );
+
+    echo self::output( $result );
+
     CRM_Utils_System::civiExit( );
+       
   }
 
   static function ajax( ) {
