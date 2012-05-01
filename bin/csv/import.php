@@ -60,6 +60,11 @@ class EntityImporter extends civicrm_cli {
   function run() {
 	$this->row = 1;
 	$handle = fopen($this->file, "r");
+
+	if (!$handle) {
+		die("Could not open file: ". $this->file .". Please provide an absolute path.\n");
+	}
+
 	//header
 	$header = fgetcsv($handle, 1000, $this->separator);
 //  $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
@@ -69,7 +74,7 @@ class EntityImporter extends civicrm_cli {
 	  $header = fgetcsv($handle, 1000, $this->separator);
   }
   if (!$header) {
-    die ("invalid file format for". $this->file . ". I must be a valid csv with separator ',' or ';'");
+    die ("Invalid file format for ". $this->file . ". It must be a valid csv with separator ',' or ';'\n");
   }
   $undefined = array_diff ($header,$this->columns);
   if (count ($undefined) == count ($header))
