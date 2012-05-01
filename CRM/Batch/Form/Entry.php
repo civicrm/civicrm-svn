@@ -231,6 +231,12 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         }
 
         $value['contact_id'] = CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] );                          
+
+        // handle soft credit
+        if ( !CRM_Utils_Array::value( $key, $params['soft_credit_contact_select_id'] ) ) {
+          $value['soft_credit_to'] = CRM_Utils_Array::value( $key, $params['soft_credit_contact_select_id'] );                          
+        }
+
         $value['custom'] = CRM_Core_BAO_CustomField::postProcess( $value,
           CRM_Core_DAO::$_nullObject,
           $key,
@@ -257,6 +263,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $value['note'] = $value['contribution_note'];
         }
 
+        unset($value['contribution_note']);
         unset($value['contribution_type']);
         unset($value['contribution_source']);
 
