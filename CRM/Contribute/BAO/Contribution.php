@@ -157,17 +157,6 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
     // Add soft_contribution details as part of fix for CRM-8908
     $contribution->soft_credit_to = CRM_Utils_Array::value('soft_credit_to', $params);
 
-    // make entry in batch entity batch table
-    if (CRM_Utils_Array::value('batch_id', $params)) {
-      $entityParams = array(
-        'batch_id' => $params['batch_id'],
-        'entity_table' => 'civicrm_contribution',
-        'entity_id' => $contribution->id,
-      );
-
-      CRM_Core_BAO_Batch::addBatchEntity($entityParams);
-    }
-
     // reset the group contact cache for this group
     CRM_Contact_BAO_GroupContactCache::remove();
 
@@ -249,6 +238,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $softCredit->id = $params['softID'];
       $softCredit->delete();
     }
+
     // delete the soft credit record if no soft credit contact ID AND no PCP is set in the form
     if (CRM_Utils_Array::value('contribution', $ids) &&
       (!CRM_Utils_Array::value('soft_credit_to', $params) &&
@@ -260,6 +250,18 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $softCredit->id = $params['softID'];
       $softCredit->delete();
     }
+
+    // make entry in batch entity batch table
+    if (CRM_Utils_Array::value('batch_id', $params)) {
+      $entityParams = array(
+        'batch_id' => $params['batch_id'],
+        'entity_table' => 'civicrm_contribution',
+        'entity_id' => $contribution->id,
+      );
+
+      CRM_Core_BAO_Batch::addBatchEntity($entityParams);
+    }
+    
     $contribution = self::add($params, $ids);
 
     if (is_a($contribution, 'CRM_Core_Error')) {

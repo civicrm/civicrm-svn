@@ -129,11 +129,13 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     //$this->_fields  = array_slice($this->_fields, 0, $this->_maxFields);
 
     $this->addButtons( array(
-      array ( 'type'      => 'submit',
-      'name'      => ts('Validate & Process the Batch'),
-      'isDefault' => true   ),
-      array ( 'type'      => 'cancel',
-      'name'      => ts('Save & Continue Later') )
+      array ( 
+        'type'      => 'submit',
+        'name'      => ts('Validate & Process the Batch'),
+        'isDefault' => true   ),
+      array ( 
+        'type'      => 'cancel',
+        'name'      => ts('Save & Continue Later') )
       )
     );
 
@@ -268,6 +270,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         unset($value['contribution_source']);
 
         $value['batch_id'] = $this->_batchId;
+        $value['skipRecentView'] = true;
         $contribution = CRM_Contribute_BAO_Contribution::create( $value, CRM_Core_DAO::$_nullArray ); 
       }
     }
