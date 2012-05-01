@@ -43,7 +43,8 @@
         <td>{ts}Localization settings include user language, default currency and available countries for address input.{/ts}</td>
     </tr>
     <tr class="even">
-        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/domain" q="action=update&reset=1&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Domain Information{/ts}</a></td>
+        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/domain" q="action=update&reset=1&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Organization Address and Contact Info
+        {/ts}</a></td>
         <td>{ts}Organization name, email address for system-generated emails, organization address{/ts}</li>
     </tr>
 
@@ -51,7 +52,7 @@
         <td colspan="2">{ts}Viewing and Editing Contacts{/ts}</td>
     </tr>
     <tr class="even">
-        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/setting/preferences/display" q="reset=1&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Site Preferences{/ts}</a></td>
+        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/setting/preferences/display" q="reset=1&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Display Preferences{/ts}</a></td>
         <td>{ts}Configure screen and form elements for Viewing Contacts, Editing Contacts, Advanced Search, Contact Dashboard and WYSIWYG Editor.{/ts}</td>
     </tr>
     <tr class="even">
@@ -67,7 +68,7 @@
         <td>{ts}Adjust search behaviors including wildcards, and data to include in quick search results. Adjusting search settings can improve performance for larger datasets.{/ts}</li>
     </tr>
     <tr class="even">
-        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/setting/misc" q="reset=1&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Miscellaneous{/ts}</a></td>
+        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/setting/misc" q="reset=1&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Undelete, Logging and ReCAPTCHA{/ts}</a></td>
         <td>{ts}Version reporting and alerts, reCAPTCHA configuration and attachments.{/ts}</li>
     </tr>
     <tr class="even">
@@ -133,7 +134,7 @@
         <td colspan="2">{ts}Customize Data, Forms and Screens{/ts}</td>
     </tr>
     <tr class="even">
-        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/custom/group" q="reset=1&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Custom Data{/ts}</a></td>
+        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/custom/group" q="reset=1&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Custom Fields{/ts}</a></td>
         <td>{ts}Configure custom fields to collect and store custom data which is not included in the standard CiviCRM forms.{/ts}</td>
     </tr>
     <tr class="even">
