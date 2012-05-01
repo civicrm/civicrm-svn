@@ -60,6 +60,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
    */
   protected $_profileId;
 
+  public $_action;
   /**
    * build all the data structures needed to build the form
    *
@@ -219,7 +220,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
    * @return None
    */
   private function processContribution( &$params ) {
-    $dates = array( 'receive_date',
+    $dates = array( 
+      'receive_date',
       'receipt_date',
       'thankyou_date',
       'cancel_date'
@@ -235,8 +237,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         $value['contact_id'] = CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] );                          
 
         // handle soft credit
-        if ( !CRM_Utils_Array::value( $key, $params['soft_credit_contact_select_id'] ) ) {
-          $value['soft_credit_to'] = CRM_Utils_Array::value( $key, $params['soft_credit_contact_select_id'] );                          
+        if ( CRM_Utils_Array::value( 'soft_credit_contact_select_id', $value ) ) {
+          $value['soft_credit_to'] = $value['soft_credit_contact_select_id'];                          
         }
 
         $value['custom'] = CRM_Core_BAO_CustomField::postProcess( $value,
@@ -249,6 +251,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             $value[$val] = CRM_Utils_Date::processDate( $value[$val] );
           }
         }
+
+        if ( CRM_Utils_Array::value( 'send_receipt', $value ) ) {
+          $value['receipt_date'] = date("Y-m-d");
+        }
+
         if ( $value['contribution_type'] ) {
           $value['contribution_type_id'] = $value['contribution_type'];
         }
@@ -271,7 +278,13 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $value['batch_id'] = $this->_batchId;
         $value['skipRecentView'] = true;
-        $contribution = CRM_Contribute_BAO_Contribution::create( $value, CRM_Core_DAO::$_nullArray ); 
+        $contribution = CRM_Contribute_BAO_Contribution::create( $value, CRM_Core_DAO::$_nullArray );
+
+        //send receipt mail.
+        if ( $contribution->id && CRM_Utils_Array::value( 'send_receipt', $value ) ) {
+          $value['contribution_id'] = $contribution->id;
+          CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
+        }
       }
     }
   }//end of function

@@ -250,18 +250,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $softCredit->id = $params['softID'];
       $softCredit->delete();
     }
-
-    // make entry in batch entity batch table
-    if (CRM_Utils_Array::value('batch_id', $params)) {
-      $entityParams = array(
-        'batch_id' => $params['batch_id'],
-        'entity_table' => 'civicrm_contribution',
-        'entity_id' => $contribution->id,
-      );
-
-      CRM_Core_BAO_Batch::addBatchEntity($entityParams);
-    }
-    
+   
     $contribution = self::add($params, $ids);
 
     if (is_a($contribution, 'CRM_Core_Error')) {
@@ -295,6 +284,17 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       CRM_Core_BAO_Note::add($noteParams,
         CRM_Utils_Array::value('note', $ids)
       );
+    }
+
+    // make entry in batch entity batch table
+    if (CRM_Utils_Array::value('batch_id', $params)) {
+      $entityParams = array(
+        'batch_id' => $params['batch_id'],
+        'entity_table' => 'civicrm_contribution',
+        'entity_id' => $contribution->id,
+      );
+
+      CRM_Core_BAO_Batch::addBatchEntity($entityParams);
     }
 
     // check if activity record exist for this contribution, if

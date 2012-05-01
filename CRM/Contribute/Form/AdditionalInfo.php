@@ -381,7 +381,10 @@ class CRM_Contribute_Form_AdditionalInfo
             //offline contribution
             // assigned various dates to the templates
             $form->assign('receipt_date',  CRM_Utils_Date::processDate( $params['receipt_date'] ) );
-            $form->assign('cancel_date',   CRM_Utils_Date::processDate( $params['cancel_date']  ) );
+            
+            if ( CRM_Utils_Array::value( 'cancel_date', $params ) ) {
+              $form->assign('cancel_date',   CRM_Utils_Date::processDate( $params['cancel_date']  ) );
+            }
             if ( CRM_Utils_Array::value( 'thankyou_date', $params ) ) {
                 $form->assign('thankyou_date', CRM_Utils_Date::processDate( $params['thankyou_date'] ) );
             }
@@ -423,7 +426,11 @@ class CRM_Contribute_Form_AdditionalInfo
               $contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $params['contact_id'] );
         $this->assign( 'contactID', $params['contact_id'] );
         $this->assign( 'contributionID', $params['contribution_id'] );
-        $this->assign( 'currency', $params['currency']);
+        
+        if ( CRM_Utils_Array::value( 'currency', $params ) ) {
+          $this->assign( 'currency', $params['currency']);
+        }
+        
         $this->assign( 'receive_date',  CRM_Utils_Date::processDate( $params['receive_date'] ) );
 
         list ($sendReceipt, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
