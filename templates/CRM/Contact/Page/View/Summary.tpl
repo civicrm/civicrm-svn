@@ -52,15 +52,15 @@
         {/if}
 
         {* Check for permissions to provide Restore and Delete Permanently buttons for contacts that are in the trash. *}
-        {if (call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and 
+        {if (call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and
         $is_deleted)}
             <li class="crm-contact-restore">
                 <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&cid=$contactId&restore=1"}" class="delete button" title="{ts}Restore{/ts}">
                 <span><div class="icon restore-icon"></div>{ts}Restore from Trash{/ts}</span>
                 </a>
             </li>
-    
-            {if call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')} 
+
+            {if call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')}
                 <li class="crm-contact-permanently-delete">
                     <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId&skip_undelete=1"}" class="delete button" title="{ts}Delete Permanently{/ts}">
                     <span><div class="icon delete-icon"></div>{ts}Delete Permanently{/ts}</span>
@@ -106,11 +106,11 @@
         <li class="crm-contact-associated-groups">
             <a href="{$groupOrganizationUrl}" class="associated-groups button" title="{ts}Associated Multi-Org Group{/ts}">
             <span><div class="icon associated-groups-icon"></div>{ts}Associated Multi-Org Group{/ts}</span>
-            </a>   
+            </a>
         </li>
         {/if}
-    </ul> 
-    <div class="clear"></div>                        
+    </ul>
+    <div class="clear"></div>
 </div><!-- .crm-actions-ribbon -->
 
 <div class="crm-block crm-content-block crm-contact-page">
@@ -135,7 +135,7 @@
 
         <div id="contact-summary" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
             {if (isset($hookContentPlacement) and ($hookContentPlacement neq 3)) or empty($hookContentPlacement)}
-                
+
                 {if !empty($hookContent) and isset($hookContentPlacement) and $hookContentPlacement eq 2}
                     {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
                 {/if}
@@ -145,7 +145,7 @@
                         {include file="CRM/Contact/Page/ContactImage.tpl"}
                     </div>
                 {/if}
-                
+
                 {if !empty($contact_type_label) OR !empty($current_employer_id) OR !empty($job_title) OR !empty($legal_name) OR $sic_code OR !empty($nick_name) OR !empty($contactTag) OR !empty($source)}
                 <div id="contactTopBar">
                     <table>
@@ -200,7 +200,7 @@
                               </div>
 
                               {if $website}
-	
+
                               <div class="crm-clear crm-summary-block">
                                 {foreach from=$website item=item}
                                     {if !empty($item.url)}
@@ -208,7 +208,7 @@
                                         <div class="crm-content crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></div>
                                     {/if}
                                 {/foreach}
-                              </div>  
+                              </div>
                               {/if}
                               {if $user_unique_id}
                                   <br/>
@@ -243,9 +243,6 @@
                                     {if $item.openid}
                                       <div class="crm-label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</div>
                                       <div class="crm-content crm-contact_openid {if $item.is_primary eq 1} primary{/if}"><a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>
-                                      {if $config->userFramework eq "Standalone" AND $item.allowed_to_login eq 1}
-                                        <br/> <span style="font-size:9px;">{ts}(Allowed to login){/ts}</span>
-                                      {/if}
                                        </div>
                                     {/if}
                                 {/foreach}
@@ -264,11 +261,11 @@
                             <table>
                                 <tr>
                                     <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
-                                        {if $config->mapProvider AND 
+                                        {if $config->mapProvider AND
 					 !empty($add.geo_code_1) AND
 					 is_numeric($add.geo_code_1) AND
-					 !empty($add.geo_code_2) AND 
-					 is_numeric($add.geo_code_2) 
+					 !empty($add.geo_code_2) AND
+					 is_numeric($add.geo_code_2)
 					 }
                                             <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
                                         {/if}</td>
@@ -312,7 +309,7 @@
                         <div class="clear"></div>
                     </div>
 					{/if}
-					
+
                     <div class="contact_panel">
                         <div class="contactCardLeft">
                             <table>
@@ -339,10 +336,10 @@
                         </div>
 
                         {include file="CRM/Contact/Page/View/Demographics.tpl"}
-						
+
                         <div class="clear"></div>
                         <div class="separator"></div>
-						
+
 						<div class="contactCardLeft">
 						 <table>
 							<tr>
@@ -363,7 +360,7 @@
 							</tr>
 						 </table>
 						</div>
-						
+
                         <div class="clear"></div>
                     </div>
                 </div><!--contact_details-->
@@ -387,7 +384,7 @@
                         var aTagObj = cj(this).find('a');
                         if ( aTagObj.hasClass( "expanded" ) ) {
                             cj(this).parent().find('tr:not(".columnheader")').hide( );
-                        } else {    
+                        } else {
                             cj(this).parent().find('tr:not(".columnheader")').show( );
                         }
                         aTagObj.toggleClass("expanded");
@@ -404,10 +401,10 @@
         </div>
 		<div class="clear"></div>
     </div>
- <script type="text/javascript"> 
+ <script type="text/javascript">
  var selectedTab  = 'summary';
  var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
- {if $selectedChild}selectedTab = "{$selectedChild}";{/if}  
+ {if $selectedChild}selectedTab = "{$selectedChild}";{/if}
  {literal}
  function fixTabAbort(event,ui){
 //	jQuery(ui.tab).data("cache.tabs",(jQuery(ui.panel).html() == "") ? false : true);
@@ -415,12 +412,12 @@
 
 //explicitly stop spinner
 function stopSpinner( ) {
- cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})	 
+ cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})
 }
  cj( function() {
      var tabIndex = cj('#tab_' + selectedTab).prevAll().length;
      cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage,cache: true, select: fixTabAbort, load: stopSpinner});
-     cj(".crm-tab-button").addClass("ui-corner-bottom");     
+     cj(".crm-tab-button").addClass("ui-corner-bottom");
  });
  {/literal}
  </script>
@@ -430,7 +427,7 @@ function stopSpinner( ) {
   {literal}
   <script type="text/javascript">
       cj(function() {
-          cj().crmaccordions(); 
+          cj().crmaccordions();
       });
   </script>
   {/literal}

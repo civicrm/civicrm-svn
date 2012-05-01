@@ -325,8 +325,9 @@ COLS;
      */
     private function triggersExist()
     {
-        // FIXME: probably should be a bit more thorough…
-        return (bool) CRM_Core_DAO::singleValueQuery("SHOW TRIGGERS LIKE 'civicrm_contact_before_update'");
+      // FIXME: probably should be a bit more thorough…
+      // note that the LIKE parameter is TABLE NAME
+      return (bool) CRM_Core_DAO::singleValueQuery("SHOW TRIGGERS LIKE 'civicrm_contact'");
     }
 
     function triggerInfo( &$info, $tableName = null ) {
