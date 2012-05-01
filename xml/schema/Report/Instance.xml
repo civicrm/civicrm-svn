@@ -146,4 +146,10 @@
        <add>3.0</add> 
        <onDelete>SET NULL</onDelete>
   </foreignKey> 
+  <field>
+    <name>is_reserved</name>
+    <type>boolean</type>
+    <default>0</default>
+    <add>4.2</add>
+  </field>
 </table>
