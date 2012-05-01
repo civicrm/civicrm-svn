@@ -272,7 +272,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
 
         $this->buildCustom( $this->_values['custom_pre_id'] , 'customPre' , true );
         $this->buildCustom( $this->_values['custom_post_id'], 'customPost', true );
-        
+
         if( $this->_priceSetId && !CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config' ) )
             $this->assign( 'lineItem', $this->_lineItem );
         //display additional participants profile.
@@ -631,6 +631,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
 
             // handle register date CRM-4320
             if ( $this->_allowConfirmation ) {
+              CRM_Core_Error::debug( $params ); exit( );
                 $registerDate = $params['participant_register_date'];
             } else if ( CRM_Utils_Array::value( 'participant_register_date', $params ) &&
                         is_array( $params['participant_register_date'] ) &&
