@@ -29,7 +29,6 @@
     {assign var="tElement" value=$elementName|cat:"_time"}
     {assign var="timeElement" value=field_`$elementIndex`_`$elementName`_time}
     {$form.field.$elementIndex.$elementName.html|crmReplace:class:hiddenElement}
-    &nbsp;&nbsp;{$form.field.$elementIndex.$tElement.label}&nbsp;&nbsp;{$form.field.$elementIndex.$tElement.html|crmReplace:class:six}
 {elseif $elementIndex}
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
@@ -51,7 +50,10 @@
 {if $action neq 1028}
     <input type="text" name="{$displayDate}" id="{$displayDate}" class="dateplugin" autocomplete="off"/>
 {/if}
-{if $timeElement AND !$tElement}
+
+{if $batchUpdate AND $timeElement AND $tElement}
+    &nbsp;&nbsp;{$form.field.$elementIndex.$tElement.label}&nbsp;&nbsp;{$form.field.$elementIndex.$tElement.html|crmReplace:class:six}
+{elseif $timeElement AND !$tElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 {/if}
 
