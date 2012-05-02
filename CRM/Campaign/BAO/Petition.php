@@ -454,7 +454,7 @@ AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
             a.activity_date_time AS activity_date_time,
             a.activity_type_id AS activity_type_id,
             a.status_id AS status_id,
-            %1 AS survey_title,
+            %1 AS survey_title
             FROM   civicrm_activity a
             WHERE  a.source_record_id = %2
             AND a.activity_type_id = %3

@@ -291,7 +291,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     public function buildQuickForm()
     {
     	$this->assign( 'survey_id', $this->_surveyId);
-    
+      $this->assign( 'petitionTitle', $this->petition['title']);
     	if (isset($_COOKIE['signed_'.$this->_surveyId])) {
 			if (isset($_COOKIE['confirmed_'.$this->_surveyId])) { 		
     			$this->assign( 'duplicate', "confirmed");
@@ -356,11 +356,8 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				$tag_params['is_reserved'] = 1;
 				$tag_params['used_for'] = 'civicrm_contact';
 				$tag = civicrm_api('tag', 'create', $tag_params); 
-				$this->_tagId = $tag['tag_id'];
-			} else {
-				$this->_tagId = $tag['id'];
 			}
-
+			$this->_tagId = $tag['id'];
 		}
 		
 		// export the field values to be used for saving the profile form
