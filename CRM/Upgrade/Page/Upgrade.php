@@ -215,56 +215,7 @@ SELECT  count( id ) as statusCount
                 foreach ( $revisions as $rev ) {
                     // proceed only if $currentVer < $rev
                     if ( version_compare($currentVer, $rev) < 0 ) {
-                        // as soon as we start doing anything we append ".upgrade" to version.
-                        // this also helps detect any partial upgrade issues
-                        $upgrade->setVersion( $rev . '.upgrade' );
-
-                        $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev );
-
-                        // follow old upgrade process for all version
-                        // below 3.2.alpha1 
-                        if ( version_compare( $rev , '3.2.alpha1' ) < 0 ) {
-                            if ( is_callable(array('CRM_Upgrade_Incremental_Legacy', $phpFunctionName)) ) {
-                                call_user_func(array('CRM_Upgrade_Incremental_Legacy', $phpFunctionName), $rev);
-                            } else {
-                                $upgrade->processSQL( $rev );
-                            }
-                        } else {
-                            // new upgrade process from version
-                            // 3.2.alpha1 
-                            $versionObject = $upgrade->incrementalPhpObject( $rev );
-                            
-                            // pre-db check for major release.
-                            if ( $upgrade->checkVersionRelease( $rev, 'alpha1' ) ) {
-                                if ( !(is_callable(array($versionObject, 'verifyPreDBstate'))) ) {
-                                    CRM_Core_Error::fatal("verifyPreDBstate method was not found for $rev");
-                                }
-                                
-                                $error = null;
-                                if ( !($versionObject->verifyPreDBstate($error)) ) {
-                                    if ( ! isset( $error ) ) {
-                                        $error = "post-condition failed for current upgrade for $rev";
-                                    }
-                                    CRM_Core_Error::fatal( $error );
-                                }
-
-                                // set post-upgrade-message if any
-                                if ( is_callable(array($versionObject, 'setPostUpgradeMessage')) ) {
-                                    $versionObject->setPostUpgradeMessage( $postUpgradeMessage, $currentVer, $latestVer );
-                                }
-                            }
-
-                            $upgrade->setSchemaStructureTables( $rev );
-
-                            if ( is_callable(array($versionObject, $phpFunctionName)) ) {
-                                $versionObject->$phpFunctionName( $rev );
-                            } else {
-                                $upgrade->processSQL( $rev );
-                            }
-                        }
-
-                        // after an successful intermediate upgrade, set the complete version
-                        $upgrade->setVersion( $rev );
+                        $this->doIncrementalUpgradeStep($upgrade, $rev, $postUpgradeMessage, $currentVer, $latestVer);
                     }
                 }
                 $upgrade->setVersion( $latestVer );
@@ -281,6 +232,68 @@ SELECT  count( id ) as statusCount
 
         $content = $template->fetch( 'CRM/common/success.tpl' );
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print, false, true );
+    }
+    
+    /**
+     * Perform an incremental version update
+     *
+     * @param $upgrade CRM_Upgrade_Form
+     * @param $rev string, the target (intermediate) revision e.g '3.2.alpha1'
+     * @param $postUpgradeMessage string, HTML(?)
+     * @param $currentVer string, the original revision
+     * @param $latestVer string, the target (final) revision
+     */
+    static function doIncrementalUpgradeStep($upgrade, $rev, &$postUpgradeMessage, $currentVer, $latestVer) {
+        // as soon as we start doing anything we append ".upgrade" to version.
+        // this also helps detect any partial upgrade issues
+        $upgrade->setVersion( $rev . '.upgrade' );
+
+        $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev );
+
+        // follow old upgrade process for all version
+        // below 3.2.alpha1 
+        if ( version_compare( $rev , '3.2.alpha1' ) < 0 ) {
+            if ( is_callable(array('CRM_Upgrade_Incremental_Legacy', $phpFunctionName)) ) {
+                call_user_func(array('CRM_Upgrade_Incremental_Legacy', $phpFunctionName), $rev);
+            } else {
+                $upgrade->processSQL( $rev );
+            }
+        } else {
+            // new upgrade process from version
+            // 3.2.alpha1 
+            $versionObject = $upgrade->incrementalPhpObject( $rev );
+            
+            // pre-db check for major release.
+            if ( $upgrade->checkVersionRelease( $rev, 'alpha1' ) ) {
+                if ( !(is_callable(array($versionObject, 'verifyPreDBstate'))) ) {
+                    CRM_Core_Error::fatal("verifyPreDBstate method was not found for $rev");
+                }
+                
+                $error = null;
+                if ( !($versionObject->verifyPreDBstate($error)) ) {
+                    if ( ! isset( $error ) ) {
+                        $error = "post-condition failed for current upgrade for $rev";
+                    }
+                    CRM_Core_Error::fatal( $error );
+                }
+
+                // set post-upgrade-message if any
+                if ( is_callable(array($versionObject, 'setPostUpgradeMessage')) ) {
+                    $versionObject->setPostUpgradeMessage( $postUpgradeMessage, $currentVer, $latestVer );
+                }
+            }
+
+            $upgrade->setSchemaStructureTables( $rev );
+
+            if ( is_callable(array($versionObject, $phpFunctionName)) ) {
+                $versionObject->$phpFunctionName( $rev );
+            } else {
+                $upgrade->processSQL( $rev );
+            }
+        }
+
+        // after an successful intermediate upgrade, set the complete version
+        $upgrade->setVersion( $rev );
     }
 
     function setPreUpgradeMessage ( &$preUpgradeMessage, $currentVer, $latestVer ) 
