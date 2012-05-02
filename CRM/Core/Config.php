@@ -678,20 +678,25 @@ OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
      * function to check if running in upgrade mode
      */
     static function isUpgradeMode( $path = null ) {
-        if ( $path && $path == 'civicrm/upgrade' ) {
+        if ( defined('CIVICRM_UPGRADE_ACTIVE') ) {
             return true;
         }
-
-        // note: do not re-initialize config here, since this function is part of
-        // config initialization itself
-        $urlVar = 'q';
-        if ( defined( 'CIVICRM_UF' ) && CIVICRM_UF == 'Joomla' ) {
-            $urlVar = 'task';
+        
+        if ( !$path ) {
+            // note: do not re-initialize config here, since this function is part of
+            // config initialization itself
+            $urlVar = 'q';
+            if ( defined( 'CIVICRM_UF' ) && CIVICRM_UF == 'Joomla' ) {
+                $urlVar = 'task';
+            }
+            
+            $path = CRM_Utils_Array::value( $urlVar, $_GET );
         }
-
-        if ( ( 'civicrm/upgrade' == CRM_Utils_Array::value( $urlVar, $_GET ) ) || defined('CIVICRM_UPGRADE_ACTIVE') ) {
+        
+        if ( $path && preg_match('/^civicrm\/upgrade(\/.*)?$/', $path) ) {
             return true;
         }
+        
         return false;
     }
 

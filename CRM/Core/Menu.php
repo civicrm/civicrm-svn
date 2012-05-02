@@ -588,6 +588,10 @@ UNION (
             $menuPath['access_arguments'][0][] = 'administer CiviCRM';
             $menuPath['access_callback']       = array('CRM_Core_Permission', 'checkMenu');
         }
+        // *FIXME* : hack for 4.1 -> 4.2 upgrades.
+        if (preg_match('/^civicrm\/(upgrade\/)?queue\//', $path)) {
+            CRM_Queue_Menu::alter($path, $menuPath);
+        }
 
         if ( ! empty( $menuPath ) ) {
             $i18n = CRM_Core_I18n::singleton();
