@@ -90,9 +90,6 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
     {
         $this->foreignKeyChecksOff( );
 
-        //  Truncate the tables
-        $this->quickCleanup( array( 'civicrm_option_value', 'civicrm_option_value' ) );
-
         // echo "testCount\n";
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -118,7 +115,9 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
                                    'civicrm_saved_search',
                                    'civicrm_entity_tag',
                                    'civicrm_tag',
-                                   'civicrm_contact'
+                                   'civicrm_contact',
+                                   'civicrm_option_value',
+                                   'civicrm_option_value'
                                    );
         $this->quickCleanup( $tablesToTruncate );
     }
@@ -129,12 +128,6 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
      */
     public function testAll( $fv, $count, $ids, $full )
     {
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__) . '/../../../../../CiviTest/truncate-option.xml') );
-
         // echo "testAll\n";
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -160,7 +153,9 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
                                    'civicrm_saved_search',
                                    'civicrm_entity_tag',
                                    'civicrm_tag',
-                                   'civicrm_contact'
+                                   'civicrm_contact',
+                                   'civicrm_option_value',
+                                   'civicrm_option_value'
                                    );
         $this->quickCleanup( $tablesToTruncate );
 
@@ -172,13 +167,6 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
      */
     public function testContactIDs( $fv, $count, $ids, $full )
     {
-        //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__) . '/../../../../../CiviTest/truncate-option.xml') );
-
-
         // echo "testContactIDs\n";
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -202,19 +190,13 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
                                    'civicrm_saved_search',
                                    'civicrm_entity_tag',
                                    'civicrm_tag',
-                                   'civicrm_contact'
+                                   'civicrm_contact',
+                                   'civicrm_option_value',
+                                   'civicrm_option_value'
                                    );
         $this->quickCleanup( $tablesToTruncate );
     }
 
-
-    /**
-     *  Test something
-     *  @todo write this test
-     */
-    public function SKIPPED_testBuildForms()
-    {
-    }
 
     /**
      *  Test CRM_Contact_Form_Search_Custom_Group::columns()
