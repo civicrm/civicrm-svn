@@ -53,8 +53,8 @@
         </thead>
         <tbody>
         {foreach from=$customField item=row}
-        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {if NOT $row.is_active} disabled{/if}">
-            <td>{$row.label}</td>
+        <tr id="CustomField-{$row.id}" class="crm-entity {cycle values="odd-row,even-row"} {if NOT $row.is_active} disabled{/if}">
+            <td class="crm-editable crmf-label">{$row.label}</td>
             <td>{$row.data_type}</td>
             <td>{$row.html_type}</td>
             <td class="nowrap">{$row.order}</td>
@@ -84,3 +84,6 @@
         {/if}
     {/if}
 {/if}
+
+{include file="CRM/common/crmeditable.tpl"} 
+
