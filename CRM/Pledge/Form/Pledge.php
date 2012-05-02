@@ -332,6 +332,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         
         //pledge fields.
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Pledge_DAO_Pledge' );
+        
         $this->assign('isPending', $this->_isPending );
         
         $js =  array( 'onblur'  => "calculatedPaymentAmount( );",
@@ -361,7 +362,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
 
         $element =& $this->add( 'text', 'frequency_interval', ts('every'), 
-                               $attributes['frequency_interval'], true ); 
+                               $attributes['pledge_frequency_interval'], true ); 
         $this->addRule('frequency_interval', ts('Please enter a number for frequency (e.g. every "3" months).'), 'positiveInteger');
         if ( $this->_id &&
             !$this->_isPending ) {

@@ -506,7 +506,7 @@ GROUP BY  cp.currency
                                                         ));
                 
                 //get the first valid payment id.
-                if ( !$form->paymentId && ($paymentStatusTypes[$values['status_id']] == 'Pending' || 
+                if ( !isset( $form->paymentId ) && ($paymentStatusTypes[$values['status_id']] == 'Pending' || 
                                            $paymentStatusTypes[$values['status_id']] == 'Overdue' ) ) {
                     $form->paymentId = $values['id'];
                 }
@@ -639,8 +639,8 @@ GROUP BY  cp.currency
                                                                       'name' );
         $config  = CRM_Core_Config::singleton();
 
-        $details = 'Total Amount '. CRM_Utils_Money::format( $params['total_pledge_amount'], $params['currency'] ) .' To be paid in '.
-                   $params['installments'].' installments of '. CRM_Utils_Money::format( $params['scheduled_amount'], $params['currency'] )
+        $details = 'Total Amount '. CRM_Utils_Money::format( $params['total_pledge_amount'], CRM_Utils_Array::value( 'currency', $params ) ) .' To be paid in '.
+                   $params['installments'].' installments of '. CRM_Utils_Money::format( $params['scheduled_amount'],  CRM_Utils_Array::value( 'currency', $params )  )
                    .' every '. $params['frequency_interval'].' '.$params['frequency_unit'].'(s)' ;
         
         if ( ! $activity->find( ) ) {

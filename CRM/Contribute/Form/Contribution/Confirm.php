@@ -1120,7 +1120,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $pledgeParams['frequency_interval'     ] = $params['pledge_frequency_interval'];
                 $pledgeParams['installments'           ] = $params['pledge_installments'];
                 $pledgeParams['frequency_unit'         ] = $params['pledge_frequency_unit'];
-                $pledgeParams['frequency_day'          ] = 1;
+                if ($pledgeParams['frequency_unit'] == 'month') {
+                  $pledgeParams['frequency_day'      ] = intval(date("d"));
+                } else {
+                  $pledgeParams['frequency_day'      ] = 1;
+                }
                 $pledgeParams['create_date'            ] = $pledgeParams['start_date'] = $pledgeParams['scheduled_date'] = date( "Ymd" );
                 $pledgeParams['status_id'              ] = $contribution->contribution_status_id;
                 $pledgeParams['max_reminders'          ] = $form->_values['max_reminders'];
