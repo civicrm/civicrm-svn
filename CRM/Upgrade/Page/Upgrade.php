@@ -36,6 +36,8 @@
 
 
 class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
+    const QUEUE_NAME = 'CRM_Upgrade';
+
     function preProcess( ) {
         parent::preProcess( );
     }
@@ -212,16 +214,37 @@ SELECT  count( id ) as statusCount
 
             if ( CRM_Utils_Array::value('upgrade', $_POST) ) {
                 // Persistent message storage across upgrade steps. TODO: Use structured message store
+                // Note: In clustered deployments, this file must be accessible by all web-workers.
                 $postUpgradeMessageFile = CRM_Utils_File::tempnam('civicrm-post-upgrade');
                 file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
+                
+                $queue = CRM_Queue_Service::singleton()->create(array(
+                    'name' => self::QUEUE_NAME,
+                    'type' => 'Memory', // FIXME: Use 'Sql'; setup special bootstrapping
+                    'reset' => TRUE,
+                ));
                 
                 $revisions = $upgrade->getRevisionSequence();
                 foreach ( $revisions as $rev ) {
                     // proceed only if $currentVer < $rev
                     if ( version_compare($currentVer, $rev) < 0 ) {
-                        $this->doIncrementalUpgradeStep($rev, $currentVer, $latestVer, $postUpgradeMessageFile);
+                        $queue->createItem(new CRM_Queue_Task(
+                          array('CRM_Upgrade_Page_Upgrade', 'doIncrementalUpgradeStep'), // callback
+                          array($rev, $currentVer, $latestVer, $postUpgradeMessageFile), // arguments
+                          "Upgrade DB to $rev"
+                        ));
                     }
                 }
+                
+                $queueRunner = new CRM_Queue_Runner(array(
+                    'title' => ts('CiviCRM Upgrade Tasks'),
+                    'queue' => $queue,
+                ));
+                $queueResult = $queueRunner->runAll(); // FIXME allow using web-runner
+                if ($queueResult !== TRUE ) {
+                  throw new Exception('Error running queued tasks: ' . print_r($queueResult, TRUE));
+                }
+                
                 $postUpgradeMessage = file_get_contents($postUpgradeMessageFile); // TODO: Use structured message store
                 $upgrade->setVersion( $latestVer );
                 $template->assign( 'upgraded', true );
@@ -247,7 +270,7 @@ SELECT  count( id ) as statusCount
      * @param $latestVer string, the target (final) revision
      * @param $postUpgradeMessageFile string, path a file which lists the post-upgrade messages
      */
-    static function doIncrementalUpgradeStep($rev, $currentVer, $latestVer, $postUpgradeMessageFile) {
+    static function doIncrementalUpgradeStep(CRM_Queue_TaskContext $ctx, $rev, $currentVer, $latestVer, $postUpgradeMessageFile) {
         $upgrade = new CRM_Upgrade_Form( );
         
         // as soon as we start doing anything we append ".upgrade" to version.
@@ -302,6 +325,8 @@ SELECT  count( id ) as statusCount
 
         // after an successful intermediate upgrade, set the complete version
         $upgrade->setVersion( $rev );
+        
+        return TRUE;
     }
 
     function setPreUpgradeMessage ( &$preUpgradeMessage, $currentVer, $latestVer ) 
