@@ -9,7 +9,6 @@
  *   @copyright Copyright CiviCRM LLC (C) 2009
  *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
  *              GNU Affero General Public License version 3
- *   @version   $Id$
  *   @package CiviCRM
  *
  *   This file is part of CiviCRM
@@ -57,7 +56,15 @@ require_once 'CiviTest/CiviUnitTestCase.php';
  */
 class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
 {
-
+    static $_tablesToTruncate = array( 'civicrm_group_contact',
+                                       'civicrm_group',
+                                       'civicrm_saved_search',
+                                       'civicrm_entity_tag',
+                                       'civicrm_tag',
+                                       'civicrm_contact',
+                                       'civicrm_option_value',
+                                       'civicrm_option_group'
+                                   );
     function get_info( )
     {
         return array(
@@ -90,6 +97,8 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
     {
         $this->foreignKeyChecksOff( );
 
+        $this->quickCleanup( self::$_tablesToTruncate );
+
         // echo "testCount\n";
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -109,17 +118,6 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
         $this->assertEquals( $count, $obj->count( ),
                              'In line ' . __LINE__  );
 
-        // Truncate affected tables
-        $tablesToTruncate = array( 'civicrm_group_contact',
-                                   'civicrm_group',
-                                   'civicrm_saved_search',
-                                   'civicrm_entity_tag',
-                                   'civicrm_tag',
-                                   'civicrm_contact',
-                                   'civicrm_option_value',
-                                   'civicrm_option_value'
-                                   );
-        $this->quickCleanup( $tablesToTruncate );
     }
 
     /**
@@ -128,6 +126,9 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
      */
     public function testAll( $fv, $count, $ids, $full )
     {
+        // Truncate affected tables
+        $this->quickCleanup( self::$_tablesToTruncate );
+
         // echo "testAll\n";
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -147,18 +148,6 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
         asort( $all );
         $this->assertEquals( $full, $all, 'In line ' . __LINE__ );
 
-        // Truncate affected tables
-        $tablesToTruncate = array( 'civicrm_group_contact',
-                                   'civicrm_group',
-                                   'civicrm_saved_search',
-                                   'civicrm_entity_tag',
-                                   'civicrm_tag',
-                                   'civicrm_contact',
-                                   'civicrm_option_value',
-                                   'civicrm_option_value'
-                                   );
-        $this->quickCleanup( $tablesToTruncate );
-
     }
 
     /**
@@ -167,6 +156,9 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
      */
     public function testContactIDs( $fv, $count, $ids, $full )
     {
+        // Truncate affected tables
+        $this->quickCleanup( self::$_tablesToTruncate );
+
         // echo "testContactIDs\n";
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
         $op->execute( $this->_dbconn,
@@ -183,18 +175,6 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
         }
         sort( $contacts, SORT_NUMERIC );
         $this->assertEquals( $ids, $contacts, 'In line ' . __LINE__ );
-
-        // Truncate affected tables
-        $tablesToTruncate = array( 'civicrm_group_contact',
-                                   'civicrm_group',
-                                   'civicrm_saved_search',
-                                   'civicrm_entity_tag',
-                                   'civicrm_tag',
-                                   'civicrm_contact',
-                                   'civicrm_option_value',
-                                   'civicrm_option_value'
-                                   );
-        $this->quickCleanup( $tablesToTruncate );
     }
 
 
