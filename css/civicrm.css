@@ -3355,8 +3355,8 @@ div#crm-toolTip
 }
 
 /* in place edit  */
-  .crm-editable-enabled, .ui-state-hover {background:#f0e9f6!important;}
-  .crm-editable-enabled:hover, .ui-state-active {background:#c0acd0!important;}
+  .crm-editable-enabled, {background:#f0e9f6!important;}
+  .crm-editable-enabled:hover {background:#c0acd0!important;}
 
   .crm-editable-placeholder {
     background: url("../i/icons/jquery-ui-2786C2.png") -66px -114px no-repeat;
