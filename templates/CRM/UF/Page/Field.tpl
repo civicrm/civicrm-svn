@@ -60,7 +60,7 @@
                 <th>{ts}View Only{/ts}</th>	
                 <th>{ts}Reserved{/ts}</th>
                 <th></th>
-		<th class="hiddenElement"></th>
+		            <th class="hiddenElement"></th>
             </tr>
             </thead>
             {foreach from=$ufField item=row}
