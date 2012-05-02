@@ -4,7 +4,7 @@
  *  File for the CRM_Contact_Form_Search_Custom_GroupTest class
  *
  *  (PHP 5)
- *  
+ *
  *   @author Walt Haas <walt@dharmatech.org> (801) 534-1262
  *   @copyright Copyright CiviCRM LLC (C) 2009
  *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
@@ -58,7 +58,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
 {
 
-    function get_info( ) 
+    function get_info( )
     {
         return array(
                      'name'        => 'Contact Custom Search Group',
@@ -66,20 +66,20 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
                      'group'       => 'CiviCRM Custom Search Tests',
                      );
     }
-    
+
     public function dataProvider()
     {
         return new CRM_Contact_Form_Search_Custom_GroupTestDataProvider;
     }
 
-    function setUp( ) 
+    function setUp( )
     {
         parent::setUp();
     }
-    
+
     function tearDown()
     {
-        
+
     }
 
     /**
@@ -87,15 +87,11 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
      *  @dataProvider dataProvider
      */
     public function testCount( $fv, $count, $ids, $full )
-    {        
+    {
         $this->foreignKeyChecksOff( );
 
         //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__) . '/../../../../../CiviTest/truncate-option.xml') );
-
+        $this->quickCleanup( array( 'civicrm_option_value', 'civicrm_option_value' ) );
 
         // echo "testCount\n";
         $op = new PHPUnit_Extensions_Database_Operation_Insert( );
@@ -115,7 +111,7 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
         **/
         $this->assertEquals( $count, $obj->count( ),
                              'In line ' . __LINE__  );
-        
+
         // Truncate affected tables
         $tablesToTruncate = array( 'civicrm_group_contact',
                                    'civicrm_group',
@@ -157,7 +153,7 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
         }
         asort( $all );
         $this->assertEquals( $full, $all, 'In line ' . __LINE__ );
-        
+
         // Truncate affected tables
         $tablesToTruncate = array( 'civicrm_group_contact',
                                    'civicrm_group',
@@ -167,7 +163,7 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
                                    'civicrm_contact'
                                    );
         $this->quickCleanup( $tablesToTruncate );
-        
+
     }
 
     /**
