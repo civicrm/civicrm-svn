@@ -436,6 +436,23 @@ HTACCESS;
         return $basePath . $directory;
     }
 
+    /**
+     * Create a path to a temporary file which can endure for multiple requests
+     *
+     * TODO: Automatic file cleanup using, eg, TTL policy
+     *
+     * @param $prefix string
+     * @return string, path to an openable/writable file
+     * @see tempnam
+     */
+    static function tempnam($prefix = 'tmp-') {
+        //$config = CRM_Core_Config::singleton();
+        //$nonce = md5(uniqid() . $config->dsn . $config->userFrameworkResourceURL);
+        //$fileName = "{$config->configAndLogDir}" . $prefix . $nonce . $suffix;
+        $fileName = tempnam(sys_get_temp_dir(), $prefix);
+        return $fileName;
+    }
+
 }
 
 

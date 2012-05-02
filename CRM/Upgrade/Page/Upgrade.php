@@ -211,13 +211,18 @@ SELECT  count( id ) as statusCount
             }
 
             if ( CRM_Utils_Array::value('upgrade', $_POST) ) {
+                // Persistent message storage across upgrade steps. TODO: Use structured message store
+                $postUpgradeMessageFile = CRM_Utils_File::tempnam('civicrm-post-upgrade');
+                file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
+                
                 $revisions = $upgrade->getRevisionSequence();
                 foreach ( $revisions as $rev ) {
                     // proceed only if $currentVer < $rev
                     if ( version_compare($currentVer, $rev) < 0 ) {
-                        $this->doIncrementalUpgradeStep($upgrade, $rev, $postUpgradeMessage, $currentVer, $latestVer);
+                        $this->doIncrementalUpgradeStep($rev, $currentVer, $latestVer, $postUpgradeMessageFile);
                     }
                 }
+                $postUpgradeMessage = file_get_contents($postUpgradeMessageFile); // TODO: Use structured message store
                 $upgrade->setVersion( $latestVer );
                 $template->assign( 'upgraded', true );
                 
@@ -237,13 +242,14 @@ SELECT  count( id ) as statusCount
     /**
      * Perform an incremental version update
      *
-     * @param $upgrade CRM_Upgrade_Form
      * @param $rev string, the target (intermediate) revision e.g '3.2.alpha1'
-     * @param $postUpgradeMessage string, HTML(?)
      * @param $currentVer string, the original revision
      * @param $latestVer string, the target (final) revision
+     * @param $postUpgradeMessageFile string, path a file which lists the post-upgrade messages
      */
-    static function doIncrementalUpgradeStep($upgrade, $rev, &$postUpgradeMessage, $currentVer, $latestVer) {
+    static function doIncrementalUpgradeStep($rev, $currentVer, $latestVer, $postUpgradeMessageFile) {
+        $upgrade = new CRM_Upgrade_Form( );
+        
         // as soon as we start doing anything we append ".upgrade" to version.
         // this also helps detect any partial upgrade issues
         $upgrade->setVersion( $rev . '.upgrade' );
@@ -279,7 +285,9 @@ SELECT  count( id ) as statusCount
 
                 // set post-upgrade-message if any
                 if ( is_callable(array($versionObject, 'setPostUpgradeMessage')) ) {
+                    $postUpgradeMessage = file_get_contents($postUpgradeMessageFile);
                     $versionObject->setPostUpgradeMessage( $postUpgradeMessage, $currentVer, $latestVer );
+                    file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
                 }
             }
 
