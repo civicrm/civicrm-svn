@@ -46,14 +46,15 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     	      return true;
     	  },
     	  callBack: function(result,settings){
+
     	      if (result.is_error == 1) {
     		  $(settings.msgbox).addClass('msgnok').html(result.error_message);
     		  return false;
     	      }
-    	      return settings.success(result,settings);
+    	      return settings.success.call(this,result,settings);
     	  },
     	  closetxt: "<div class='icon close-icon' title='Close'>[X]</div>",
-    	  ajaxURL: '/civicrm/ajax/rest',
+    	  ajaxURL: "/civicrm/ajax/rest",
     	  msgbox: '#restmsg'
       };
 
@@ -64,7 +65,21 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     	  params ['json'] = 1;
     	  var settings = $.extend({}, defaults, options);
     	  $(settings.msgbox).removeClass('msgok').removeClass('msgnok').html("");
-    	  $.getJSON(settings.ajaxURL,params,function(result){return settings.callBack(result,settings);});
+        $.ajax({
+          url: settings.ajaxURL,
+          dataType: 'json',
+          data: params,
+          context:this,
+          success: function(result) {
+            settings.callBack.call(this,result,settings);
+          }
+        });
+        /*
+    	  $.getJSON.call(this,settings.ajaxURL,params,function(result){
+            console.log(this);
+            console.log("bbb");
+            return settings.callBack.call(self,result,settings);});
+            */
       };
 
     $.fn.crmAutocomplete = function (params,options) {
@@ -130,17 +145,50 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
        });
      }
 
-})(jQuery);
+  $.fn.crmError = function (message,item) {
+    alert (message);
+    console && console.log && console.log (item);
+  }
 
-/* Depreciated as of 3.2. kept for backward compatibility reason. */
-function civiREST (entity,action,params,close) {
-    var options = null;
-    if( close ){
-	    options = {closetxt : close}; 
-    }
-    if ( typeof close == "function"){
-	    options = {success : close}; 
-    }
+  /* you need to init this function first: cj.crmURL ('init', '{crmURL p="civicrm/example" q="placeholder"}');
+  * then you can call it almost like {crmAPI} but on the client side, eg: var url = cj.crmURL ('civicrm/contact/view', {reset:1,cid:42});
+  * or $('a.crmURL').crmURL();
+  */
+  $.extend ({ 'crmURL':
+    function (p, params) {
+      if (p == "init") {
+        $(document).data('civicrm_templateURL',params); // storage and avoid polluting the global namespace
+        return;
+      }
+      var tplURL = $(document).data('civicrm_templateURL');
+      if (!tplURL) {
+        console && console.log && console.log ("you need to init crmURL first");
+        return; // should we alert() or set to drupal clean (/civicrm/bla/bla?param)?
+      }
+      var t= tplURL.replace("civicrm/example",p);
+      if (typeof(params)=='string') {
+        if (t[0]="/")
+          t= t.substring(1);
+        return t.replace("placeholder",params);
+      } else
+        return t.replace("placeholder",$.param(params));
+        
+    }});
   
-    cj.fn.crmAPI(entity,action,params,options);
-}
+    $.fn.crmURL = function (templateURL) { // you don't need to set templateURL each time, if you have init it with cj.crmURL ('init');
+      if (!templateURL && $(document).data('civicrm_templateURL'))
+        templateURL = $(document).data('civicrm_templateURL');
+      return this.each(function() {
+        var $this = $(this);
+        if (this.href) {
+          var frag = $this.attr('href').split ('?');
+          if (frag[1])
+            this.href=$.crmURL (frag[0],frag[1]);
+          else 
+            this.href=$.crmURL (frag[0]);
+        }
+      });      
+    };
+
+})(jQuery);
+//})(cj);

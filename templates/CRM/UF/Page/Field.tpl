@@ -64,15 +64,15 @@
             </tr>
             </thead>
             {foreach from=$ufField item=row}
-            <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-                <td>{$row.label}<br/>({$row.field_type})</td>
+            <tr id="UFField-{$row.id}"class="crm-entity {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+                <td><span class="crmf-label crm-editable">{$row.label}</span><br/>({$row.field_type})</td>
                 {if in_array("Profile",$otherModules) or in_array("Search Profile",$otherModules) }
                 <td>{$row.visibility_display}</td>
-                <td>{if $row.is_searchable   eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-                <td>{if $row.in_selector     eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                <td class="crmf-is_searchable">{if $row.is_searchable   eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                <td class="crmf-in_selector">{if $row.in_selector     eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                 {/if}
                 <td class="nowrap">{$row.order}</td>
-                <td>{if $row.is_required     eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                <td class="crmf-is_required">{if $row.is_required     eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                 <td>{if $row.is_view         eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                 <td>{if $row.is_reserved     eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                 <td>{$row.action|replace:'xx':$row.id}</td>
@@ -100,3 +100,6 @@
     {/if}
 </div>
 {/if}
+
+{include file="CRM/common/crmeditable.tpl"} 
+

@@ -50,12 +50,12 @@
         <th>&nbsp;</th>
         </tr>
         {foreach from=$customOption item=row key=id}
-	<tr id="row_{$id}"class="{cycle values="odd-row,even-row"} {$row.class} crm-custom_option {if NOT $row.is_active} disabled{/if}">
-            <td class="crm-custom_option-label">{$row.label}</td>
-            <td class="crm-custom_option-value">{$row.value}</td>
-            <td class="crm-custom_option-default_value">{$row.default_value}</td>
-            <td class="nowrap crm-custom_option-weight">{$row.weight}</td>
-	        <td id="row_{$id}_status" class="crm-custom_option-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	<tr id="OptionValue-{$id}"class="crm-entity {cycle values="odd-row,even-row"} {$row.class} crm-custom_option {if NOT $row.is_active} disabled{/if}">
+            <td class="crm-custom_option-label crm-editable crmf-label">{$row.label}</td>
+            <td class="crm-custom_option-value crm-editable crmf-value">{$row.value}</td>
+            <td class="crm-custom_option-default_value crmf-value">{$row.default_value}</td>
+            <td class="nowrap crm-custom_option-weight crmf-weight">{$row.weight}</td>
+	        <td id="row_{$id}_status" class="crm-custom_option-is_active crmf-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td>{$row.action|replace:'xx':$id}</td>
         </tr>
         {/foreach}
@@ -77,3 +77,6 @@
         </div>
     {/if}
 {/if}
+
+{include file="CRM/common/crmeditable.tpl"} 
+
