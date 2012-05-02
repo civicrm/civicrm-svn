@@ -9,7 +9,6 @@
  *   @copyright Copyright CiviCRM LLC (C) 2009
  *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
  *              GNU Affero General Public License version 3
- *   @version   $Id$
  *   @package   CiviCRM
  *
  *   This file is part of CiviCRM
@@ -33,6 +32,8 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
+
+require_once 'HTML/QuickForm/Page.php';
 
 /**
  *  Test APIv2 civicrm_activity_* functions
