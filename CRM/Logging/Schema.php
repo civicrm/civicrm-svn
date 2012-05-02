@@ -145,9 +145,15 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
      */
     function fixSchemaDifferences()
     {
-        foreach ($this->schemaDifferences() as $table => $cols) {
-            $this->fixSchemaDifferencesFor($table, $cols);
-        }
+      // this path
+      $config = CRM_Core_Config::singleton( );
+      if ( ! $config->logging ) {
+        return;
+      }
+
+      foreach ($this->schemaDifferences() as $table => $cols) {
+        $this->fixSchemaDifferencesFor($table, $cols);
+      }
     }
 
     /**
