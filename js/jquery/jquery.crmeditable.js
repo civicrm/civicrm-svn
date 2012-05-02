@@ -53,7 +53,8 @@
             $().crmError ("FATAL crm-editable: Couldn't get the field name to modify. You need to set crmf-{field_name}",this);
             return false;
           }
-          params[fieldName]=checked?'1':'0';//seems that the ajax backend gets lost with boolean
+          params['field']=fieldName;
+          params['value']=checked?'1':'0';//seems that the ajax backend gets lost with boolean
 
           if (id) {
              var e=id.match(/(\S*)-(\S*)/);
@@ -211,7 +212,8 @@
              
           }  
 
-          params[fieldName]=value;
+          params['field']=fieldName
+          params['value']=value;
           var self=this;
           $().crmAPI.call(this,entity,'setvalue',params,{
           //cj().crmAPI.call(this,entity,'create',params,{
