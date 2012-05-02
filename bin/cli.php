@@ -25,11 +25,6 @@
  +--------------------------------------------------------------------+
 */
 
-$cli = new civicrm_Cli( );
-$cli->initialize( ) || die(  );
-$cli->callApi( ) || die(  );
-
-
 class civicrm_Cli {
     // required values that must be passed
     // via the command line
@@ -46,11 +41,11 @@ class civicrm_Cli {
     // all other arguments populate the parameters
     // array that is passed to civicrm_api
     var $_params = array( 'version' => 3 );
- 
+
     var $_errors = array();
 
     public function initialize( ) {
-        if( !$this->_parseOptions( ) ) return false; 
+        if( !$this->_parseOptions( ) ) return false;
         if( !$this->_bootstrap( ) ) return false;
         if( !$this->_validateOptions( ) ) return false;
         return true;
@@ -84,7 +79,7 @@ class civicrm_Cli {
       // remove the first argument, which is the name
       // of this script
       array_shift($args);
-      
+
       while(list($k,$arg) = each($args)) {
         // sanitize all user input
         $arg = $this->_sanitize($arg);
@@ -119,7 +114,7 @@ class civicrm_Cli {
         } elseif ($arg == '-u' || $arg == '--user') {
           $this->_user = $value;
         } elseif ($arg == '-p' || $arg == '--password') {
-          $this->_password = $value;          
+          $this->_password = $value;
         } elseif ($arg == '-o' || $arg == '--output') {
           $this->_output = true;
         } elseif ($arg == '-j' || $arg == '--joblog') {
@@ -141,7 +136,7 @@ class civicrm_Cli {
         // SCRIPT_FILENAME needed by CRM_Utils_System::cmsRootPath
         $_SERVER['SCRIPT_FILENAME'] = __FILE__;
         // CRM-8917 - check if script name starts with /, if not - prepend it.
-        if (ord($_SERVER['SCRIPT_NAME']) != 47) $_SERVER['SCRIPT_NAME'] = '/'. $_SERVER['SCRIPT_NAME']; 
+        if (ord($_SERVER['SCRIPT_NAME']) != 47) $_SERVER['SCRIPT_NAME'] = '/'. $_SERVER['SCRIPT_NAME'];
 
         $civicrm_root = dirname( dirname( __FILE__ ) );
         chdir( $civicrm_root );
@@ -165,14 +160,14 @@ class civicrm_Cli {
               return false;
             }
         }
-        
+
         if(!empty($this->_user)) {
           if( !$cms->loadUser( $this->_user ) ) {
             $this->_log( ts("Failed to login as %1", array('1' => $this->_user )));
             return false;
           }
         }
-        
+
         return true;
     }
 
@@ -210,6 +205,16 @@ class civicrm_Cli {
     private function _log( $error ) {
         // fixme, this should call some CRM_Core_Error:: function
         // that properly logs
-        print "$error\n"; 
+        print "$error\n";
     }
 }
+
+function main( ) {
+  $cli = new civicrm_Cli( );
+  $cli->initialize( ) || die(  );
+  $cli->callApi( ) || die(  );
+}
+
+main( );
+
+
