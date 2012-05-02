@@ -77,6 +77,7 @@ packages/jquery/plugins/jquery.mustache.js
 js/rest.js
 js/Common.js
 
+js/jquery/jquery.crmeditable.js
 js/jquery/jquery.crmaccordions.js
 js/jquery/jquery.crmasmselect.js
 js/jquery/jquery.crmtooltip.js

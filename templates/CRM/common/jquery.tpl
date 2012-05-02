@@ -76,6 +76,7 @@
 <script type="text/javascript" src="{$config->resourceBase}js/rest.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 
+<script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmeditable.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmaccordions.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmasmselect.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmtooltip.js"></script>
