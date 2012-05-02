@@ -155,52 +155,49 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
     {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl" context="makeContribution"}
 
     {if $honor_block_is_active}
-	<fieldset class="crm-group honor_block-group">
-		<legend>{$honor_block_title}</legend>
-	    	<div class="crm-section honor_block_text-section">
-	    		{$honor_block_text}
-	    	</div>
-		{if $form.honor_type_id.html}
-		    <div class="crm-section {$form.honor_type_id.name}-section">
-				<div class="content" >
-					{$form.honor_type_id.html}
-					<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('honor_type_id', '{$form.formName}');enableHonorType(); return false;">{ts}clear{/ts}</a>)</span>
-					<div class="description">{ts}Please include the name, and / or email address of the person you are honoring.{/ts}</div>
-				</div>
-		    </div>
-		{/if}
-		<div id="honorType" class="honoree-name-email-section">
-			<div class="crm-section {$form.honor_prefix_id.name}-section">
-			    <div class="content">{$form.honor_prefix_id.html}</div>
-			</div>
-			<div class="crm-section {$form.honor_first_name.name}-section">
-				<div class="label">{$form.honor_first_name.label}</div>
-			    <div class="content">
-			        {$form.honor_first_name.html}
-				</div>
-				<div class="clear"></div>
-			</div>
-			<div class="crm-section {$form.honor_last_name.name}-section">
-			    <div class="label">{$form.honor_last_name.label}</div>
-			    <div class="content">
-			        {$form.honor_last_name.html}
-				</div>
-				<div class="clear"></div>
-			</div>
-			<div id="honorTypeEmail" class="crm-section {$form.honor_email.name}-section">
-				<div class="label">{$form.honor_email.label}</div>
-			    <div class="content">
-				    {$form.honor_email.html}
-				</div>
-				<div class="clear"></div>
-			</div>
-		</div>
-	</fieldset>
+    	<fieldset class="crm-group honor_block-group">
+    		<legend>{$honor_block_title}</legend>
+    	    	<div class="crm-section honor_block_text-section">
+    	    		{$honor_block_text}
+    	    	</div>
+    		{if $form.honor_type_id.html}
+    		    <div class="crm-section {$form.honor_type_id.name}-section">
+    				<div class="content" >
+    					{$form.honor_type_id.html}
+    					<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('honor_type_id', '{$form.formName}');enableHonorType(); return false;">{ts}clear{/ts}</a>)</span>
+    					<div class="description">{ts}Please include the name, and / or email address of the person you are honoring.{/ts}</div>
+    				</div>
+    		    </div>
+    		{/if}
+    		<div id="honorType" class="honoree-name-email-section">
+    			<div class="crm-section {$form.honor_prefix_id.name}-section">
+    			    <div class="content">{$form.honor_prefix_id.html}</div>
+    			</div>
+    			<div class="crm-section {$form.honor_first_name.name}-section">
+    				<div class="label">{$form.honor_first_name.label}</div>
+    			    <div class="content">
+    			        {$form.honor_first_name.html}
+    				</div>
+    				<div class="clear"></div>
+    			</div>
+    			<div class="crm-section {$form.honor_last_name.name}-section">
+    			    <div class="label">{$form.honor_last_name.label}</div>
+    			    <div class="content">
+    			        {$form.honor_last_name.html}
+    				</div>
+    				<div class="clear"></div>
+    			</div>
+    			<div id="honorTypeEmail" class="crm-section {$form.honor_email.name}-section">
+    				<div class="label">{$form.honor_email.label}</div>
+    			    <div class="content">
+    				    {$form.honor_email.html}
+     				  </div>
+    				<div class="clear"></div>
+    			</div>
+    		</div>
+    	</fieldset>
     {/if}
 
-    {if $is_pay_later}
-        <div class="bold pay_later_receipt-section">[x] {$pay_later_receipt}</div>
-    {/if}
     <div class="crm-group custom_pre_profile-group">
     	{include file="CRM/UF/Form/Block.tpl" fields=$customPre}
     </div>
@@ -240,11 +237,29 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
     </fieldset>
     {/if}
 
-    <div class="crm-section payment_processor-section">
-    	 <div class="label">{$form.payment_processor.label}</div>
-         <div class="content">{$form.payment_processor.html}</div>
-         <div class="clear"></div>
-    </div>
+    {if $form.payment_processor.label}
+  	  <fieldset class="crm-group payment_options-group">
+  	    <legend>{ts}Payment Options{/ts}</legend>
+        <div class="crm-section payment_processor-section">
+      	  <div class="label">{$form.payment_processor.label}</div>
+          <div class="content">{$form.payment_processor.html}</div>
+          <div class="clear"></div>
+        </div>
+      </fieldset>
+    {/if}
+
+    {if $is_pay_later}
+  	  <fieldset class="crm-group pay_later-group">
+  	    <legend>{ts}Payment Options{/ts}</legend>
+        <div class="crm-section pay_later_receipt-section">
+          <div class="label">&nbsp;</div>
+          <div class="content">
+  	        [x] {$pay_later_text}
+  	      </div>
+      		<div class="clear"></div>
+      	</div>
+      </fieldset>
+    {/if}
 
     <div id="billing-payment-block"></div>
     {include file="CRM/common/paymentBlock.tpl'}

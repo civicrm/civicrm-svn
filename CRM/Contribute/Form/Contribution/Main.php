@@ -392,7 +392,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->addElement( 'hidden', 'payment_processor', $key );
             if ( $key === 0 ) {
                 $this->assign('is_pay_later', $this->_values['is_pay_later']);
-                $this->assign('pay_later_receipt', $this->_values['pay_later_receipt']);
+                $this->assign('pay_later_text', $this->_values['pay_later_text']);
             }
         }
         //build pledge block.
