@@ -25,7 +25,7 @@
 *}
 {* template for building phone block*}
 <div class="crm-table2div-layout" id="crm-phone-content">
-  <div class="crm-clear"> <!-- start of main --!>
+  <div class="crm-clear"> <!-- start of main -->
      {if $phone}
      <div class="crm-config-option">
       <a id="edit-phone" class="hiddenElement crm-link-action" title="{ts}click to add or edit phone numbers{/ts}">
@@ -49,7 +49,7 @@
         </div>
       {/if}
     {/foreach}
-   </div> <!-- end of main !-->
+   </div> <!-- end of main -->
 </div>
 
 {literal}

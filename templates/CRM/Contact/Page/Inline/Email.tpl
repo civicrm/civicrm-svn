@@ -25,7 +25,7 @@
 *}
 {* template for building email block*}
 <div class="crm-table2div-layout" id="crm-email-content">
-  <div class="crm-clear"> <!-- start of main --!>
+  <div class="crm-clear"> <!-- start of main -->
      {if $email}
      <div class="crm-config-option">
       <a id="edit-email" class="hiddenElement crm-link-action" title="{ts}click to add or edit email addresses{/ts}">
@@ -56,7 +56,7 @@
       </div> <!-- end of content -->
     {/if}
   {/foreach}
-  </div> <!-- end of main !-->
+  </div> <!-- end of main -->
 </div>
 
 {literal}
