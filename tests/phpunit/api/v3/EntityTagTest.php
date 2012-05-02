@@ -44,7 +44,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
     parent::setUp();
     $this->_apiversion = 3;
 
-    $this->quickCleanup( array( 'civicrm_tag' 'civicrm_entity_tag' ) );
+    $this->quickCleanup( array( 'civicrm_tag', 'civicrm_entity_tag' ) );
 
     $this->_individualID = $this->individualCreate(NULL);
     $this->_tag = $this->tagCreate(NULL);
