@@ -115,9 +115,9 @@ class CRM_Queue_Runner {
    * Immediately run all tasks in a queue (until either reaching the end
    * of the queue or encountering an error)
    *
-   * Individual tasks may also throw exceptions -- caller should watch for exceptions
+   * If the runner has an onEndUrl, then this function will not return
    *
-   * @return bool, TRUE if all tasks complete normally; FALSE if processing aborted
+   * @return mixed, TRUE if all tasks complete normally; otherwise, an array describing the failed task
    */
   public function runAll() {
     $taskResult = $this->formatTaskResult(TRUE);
@@ -132,7 +132,7 @@ class CRM_Queue_Runner {
       }
       return TRUE;
     } else {
-      return FALSE;
+      return $taskResult;
     }
   }
 
@@ -246,7 +246,7 @@ class CRM_Queue_Runner {
     $result = array();
     $result['is_error'] = $isOK ? 0 : 1;
     $result['message'] = $message;
-    $result['last_task_title'] = $this->lastTaskTitle;
+    $result['last_task_title'] = isset($this->lastTaskTitle) ? $this->lastTaskTitle : '';
     $result['numberOfItems'] = $this->queue->numberOfItems();
     if ($result['numberOfItems'] <= 0) {
       // nothing to do

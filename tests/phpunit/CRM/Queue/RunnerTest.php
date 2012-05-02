@@ -81,7 +81,8 @@ class CRM_Queue_RunnerTest extends CiviUnitTestCase
     ));
     $this->assertEquals(self::$_recordedValues, array());
     $this->assertEquals(3, $this->queue->numberOfItems());
-    $runner->runAll();
+    $result = $runner->runAll();
+    $this->assertEquals(TRUE, $result);
     $this->assertEquals(self::$_recordedValues, array('a','b','c'));
     $this->assertEquals(0, $this->queue->numberOfItems());
   }
@@ -115,7 +116,8 @@ class CRM_Queue_RunnerTest extends CiviUnitTestCase
     ));
     $this->assertEquals(self::$_recordedValues, array());
     $this->assertEquals(3, $this->queue->numberOfItems());
-    $runner->runAll();
+    $result = $runner->runAll();
+    $this->assertEquals(TRUE, $result); // FIXME useless return
     $this->assertEquals(self::$_recordedValues, array('a','c'));
     $this->assertEquals(0, $this->queue->numberOfItems());
   }
@@ -149,7 +151,8 @@ class CRM_Queue_RunnerTest extends CiviUnitTestCase
     ));
     $this->assertEquals(self::$_recordedValues, array());
     $this->assertEquals(3, $this->queue->numberOfItems());
-    $runner->runAll();
+    $result = $runner->runAll();
+    $this->assertEquals(1, $result['is_error']);
     $this->assertEquals(self::$_recordedValues, array('a')); // nothing from 'c'
     $this->assertEquals(2, $this->queue->numberOfItems()); // 'b' and 'c' remain
   }
@@ -183,7 +186,8 @@ class CRM_Queue_RunnerTest extends CiviUnitTestCase
     ));
     $this->assertEquals(self::$_recordedValues, array());
     $this->assertEquals(3, $this->queue->numberOfItems());
-    $runner->runAll();
+    $result = $runner->runAll();
+    $this->assertEquals(1, $result['is_error']);
     $this->assertEquals(self::$_recordedValues, array('a')); // nothing from 'c'
     $this->assertEquals(2, $this->queue->numberOfItems()); // 'b' and 'c' remain
   }

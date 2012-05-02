@@ -122,7 +122,7 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
     // foreach hits the items in order -- but we short-circuit after the first
     foreach ($this->items as $id => $data) {
       $nowEpoch = CRM_Utils_Time::getTimeRaw();
-      if ($this->releaseTimes[$id] === NULL || $this->releaseTimes[$id] < $nowEpoch) {
+      if (empty($this->releaseTimes[$id]) || $this->releaseTimes[$id] < $nowEpoch) {
         $this->releaseTimes[$id] = $nowEpoch + $leaseTime;
         
         $item = new stdClass();
