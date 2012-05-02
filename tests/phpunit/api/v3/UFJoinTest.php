@@ -46,10 +46,13 @@ class api_v3_UFJoinTest extends CiviUnitTestCase {
   protected function setUp() {
     parent::setUp();
     //  Truncate the tables
-    $op = new PHPUnit_Extensions_Database_Operation_Truncate();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-        dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml'
+    $this->quickCleanup(
+      array(
+        'civicrm_group',
+        'civicrm_contact',
+        'civicrm_uf_group',
+        'civicrm_uf_join',
+        'civicrm_uf_match'
       )
     );
     $this->_apiversion = 3;
@@ -109,10 +112,13 @@ class api_v3_UFJoinTest extends CiviUnitTestCase {
 
   function tearDown() {
     //  Truncate the tables
-    $op = new PHPUnit_Extensions_Database_Operation_Truncate();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-        dirname(__FILE__) . '/../../CiviTest/truncate-ufgroup.xml'
+    $this->quickCleanup(
+      array(
+        'civicrm_group',
+        'civicrm_contact',
+        'civicrm_uf_group',
+        'civicrm_uf_join',
+        'civicrm_uf_match'
       )
     );
   }

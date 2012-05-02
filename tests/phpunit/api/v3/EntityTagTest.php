@@ -38,16 +38,13 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
   protected $_organizationID;
   protected $_tagID;
   protected $_apiversion;
-  protected $_tag; function setUp() {
+  protected $_tag;
+
+  function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
-    //  Truncate the tables
-    $op = new PHPUnit_Extensions_Database_Operation_Truncate();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-        dirname(__FILE__) . '/../../CiviTest/truncate-tag.xml'
-      )
-    );
+
+    $this->quickCleanup( array( 'civicrm_tag' 'civicrm_entity_tag' ) );
 
     $this->_individualID = $this->individualCreate(NULL);
     $this->_tag = $this->tagCreate(NULL);
