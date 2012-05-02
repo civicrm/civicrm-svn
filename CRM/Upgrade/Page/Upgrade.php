@@ -239,6 +239,8 @@ SELECT  count( id ) as statusCount
                 $queueRunner = new CRM_Queue_Runner(array(
                     'title' => ts('CiviCRM Upgrade Tasks'),
                     'queue' => $queue,
+                    'isMinimal' => TRUE,
+                    'pathPrefix' => 'civicrm/upgrade/queue',
                 ));
                 $queueResult = $queueRunner->runAll(); // FIXME allow using web-runner
                 if ($queueResult !== TRUE ) {

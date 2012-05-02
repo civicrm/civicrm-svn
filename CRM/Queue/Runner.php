@@ -53,8 +53,10 @@ class CRM_Queue_Runner {
    */
   var $queue;
   var $errorMode;
+  var $isMinimal;
   var $onEnd;
   var $onEndUrl;
+  var $pathPrefix;
   var $qrid; // queue-runner id; used for persistence
   
   /**
@@ -86,19 +88,22 @@ class CRM_Queue_Runner {
    *   - errorMode: int, ERROR_CONTINUE or ERROR_ABORT
    *   - onEnd: mixed, a callback to update the UI after running; should be both callable and serializable
    *   - onEndUrl: string, the URL to which one redirects
+   *   - pathPrefix: string, prepended to URLs for the web-runner; default: 'civicrm/queue'
    */
   public function __construct($runnerSpec) {
     $this->title = CRM_Utils_Array::value('title', $runnerSpec, ts('Queue Runner'));
     $this->queue = $runnerSpec['queue'];
     $this->errorMode = CRM_Utils_Array::value('errorMode', $runnerSpec, self::ERROR_ABORT);
+    $this->isMinimal =  CRM_Utils_Array::value('isMinimal', $runnerSpec, FALSE);
     $this->onEnd = CRM_Utils_Array::value('onEnd', $runnerSpec, NULL);
-    $this->onEndUrl =CRM_Utils_Array::value('onEndUrl', $runnerSpec, NULL);
+    $this->onEndUrl = CRM_Utils_Array::value('onEndUrl', $runnerSpec, NULL);
+    $this->pathPrefix = CRM_Utils_Array::value('pathPrefix', $runnerSpec, 'civicrm/queue');
     $this->qrid = $this->queue->getName(); // perhaps this value should be randomized?
   }
 
   function __sleep() {
     // exclude taskCtx
-    return array('title', 'queue', 'errorMode', 'onEnd', 'onEndUrl', 'qrid');
+    return array('title', 'queue', 'errorMode', 'isMinimal', 'onEnd', 'onEndUrl', 'pathPrefix', 'qrid');
   }
   
   /**
@@ -106,7 +111,7 @@ class CRM_Queue_Runner {
    */
   public function runAllViaWeb() {
     $_SESSION['queueRunners'][$this->qrid] = serialize($this);
-    $url = CRM_Utils_System::url('civicrm/queue/runner', 'reset=1&qrid=' . urlencode($this->qrid));
+    $url = CRM_Utils_System::url($this->pathPrefix . '/runner', 'reset=1&qrid=' . urlencode($this->qrid));
     CRM_Utils_System::redirect($url);
     // TODO: evaluate items incrementally via AJAX polling, cleanup session, call 
   }

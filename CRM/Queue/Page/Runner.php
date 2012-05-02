@@ -58,12 +58,19 @@ class CRM_Queue_Page_Runner extends CRM_Core_Page {
     CRM_Utils_System::setTitle($runner->title);
     $this->assign('queueRunnerData', array(
       'qrid' => $runner->qrid,
-      'runNextAjax' => CRM_Utils_System::url('civicrm/ajax/queueRunNext'),
-      'skipNextAjax' => CRM_Utils_System::url('civicrm/ajax/queueSkipNext'),
-      'onEndAjax' => CRM_Utils_System::url('civicrm/ajax/queueOnEnd'),
+      'runNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/runNext'),
+      'skipNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/skipNext'),
+      'onEndAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/onEnd'),
       'completed' => 0,
       'numberOfItems' => $runner->queue->numberOfItems(),
     ));
-    parent::run();
+    
+    if ($runner->isMinimal) {
+      $smarty = CRM_Core_Smarty::singleton();
+      $content = $smarty->fetch( 'CRM/Queue/Page/Runner.tpl' );
+      echo CRM_Utils_System::theme( 'page', $content, true, $this->_print, false, true );
+    } else {
+      parent::run();
+    }
   }
 }
