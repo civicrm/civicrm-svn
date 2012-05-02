@@ -704,6 +704,10 @@ div.spacer,
     margin-bottom: 4px;
 }
 
+#crm-container h3.nobackground {
+  background-color: transparent !important;
+}
+
 #crm-container .crm-form-block h3 {background-color: transparent;}
 
 #crm-container .col1 {
