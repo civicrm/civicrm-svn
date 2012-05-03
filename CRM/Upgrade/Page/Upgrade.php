@@ -131,31 +131,9 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                 $postUpgradeMessageFile = CRM_Utils_File::tempnam('civicrm-post-upgrade');
                 file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
                 
-                // Ensure that queue can be created
-                if (!CRM_Queue_BAO_QueueItem::findCreateTable()) {
-                    CRM_Core_Error::fatal( ts('Failed to find or create queueing table') );
-                }
-                $queue = CRM_Queue_Service::singleton()->create(array(
-                    'name' => self::QUEUE_NAME,
-                    'type' => 'Sql',
-                    'reset' => TRUE,
-                ));
-                
-                $revisions = $upgrade->getRevisionSequence();
-                foreach ( $revisions as $rev ) {
-                    // proceed only if $currentVer < $rev
-                    if ( version_compare($currentVer, $rev) < 0 ) {
-                        $queue->createItem(new CRM_Queue_Task(
-                          array('CRM_Upgrade_Page_Upgrade', 'doIncrementalUpgradeStep'), // callback
-                          array($rev, $currentVer, $latestVer, $postUpgradeMessageFile), // arguments
-                          "Upgrade DB to $rev"
-                        ));
-                    }
-                }
-                
                 $queueRunner = new CRM_Queue_Runner(array(
                     'title' => ts('CiviCRM Upgrade Tasks'),
-                    'queue' => $queue,
+                    'queue' => self::buildQueue($currentVer, $latestVer, $postUpgradeMessageFile),
                     'isMinimal' => TRUE,
                     'pathPrefix' => 'civicrm/upgrade/queue',
                 ));
@@ -182,12 +160,48 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     }
     
     /**
+     * Fill the queue with upgrade tasks
+     *
+     * @param $currentVer string, the original revision
+     * @param $latestVer string, the target (final) revision
+     * @param $postUpgradeMessageFile string, path of a modifiable file which lists the post-upgrade messages
+     * @return CRM_Queue
+     */
+    static function buildQueue($currentVer, $latestVer, $postUpgradeMessageFile) {
+        $upgrade = new CRM_Upgrade_Form( );
+    
+        // Ensure that queue can be created
+        if (!CRM_Queue_BAO_QueueItem::findCreateTable()) {
+            CRM_Core_Error::fatal( ts('Failed to find or create queueing table') );
+        }
+        $queue = CRM_Queue_Service::singleton()->create(array(
+            'name' => self::QUEUE_NAME,
+            'type' => 'Sql',
+            'reset' => TRUE,
+        ));
+        
+        $revisions = $upgrade->getRevisionSequence();
+        foreach ( $revisions as $rev ) {
+            // proceed only if $currentVer < $rev
+            if ( version_compare($currentVer, $rev) < 0 ) {
+                $queue->createItem(new CRM_Queue_Task(
+                  array('CRM_Upgrade_Page_Upgrade', 'doIncrementalUpgradeStep'), // callback
+                  array($rev, $currentVer, $latestVer, $postUpgradeMessageFile), // arguments
+                  "Upgrade DB to $rev"
+                ));
+            }
+        }
+        
+        return $queue;
+    }
+    
+    /**
      * Perform an incremental version update
      *
      * @param $rev string, the target (intermediate) revision e.g '3.2.alpha1'
      * @param $currentVer string, the original revision
      * @param $latestVer string, the target (final) revision
-     * @param $postUpgradeMessageFile string, path a file which lists the post-upgrade messages
+     * @param $postUpgradeMessageFile string, path of a modifiable file which lists the post-upgrade messages
      */
     static function doIncrementalUpgradeStep(CRM_Queue_TaskContext $ctx, $rev, $currentVer, $latestVer, $postUpgradeMessageFile) {
         $upgrade = new CRM_Upgrade_Form( );
