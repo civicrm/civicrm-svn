@@ -231,7 +231,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       'thankyou_date',
       'cancel_date'
     );
-
+    
     if ( isset( $params['field'] ) ) {
       foreach ( $params['field'] as $key => $value ) {
         // if contact is not selected we should skip the row
@@ -242,8 +242,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         $value['contact_id'] = CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] );                          
 
         // handle soft credit
-        if ( CRM_Utils_Array::value( 'soft_credit_contact_select_id', $value ) ) {
-          $value['soft_credit_to'] = $value['soft_credit_contact_select_id'];                          
+        if ( CRM_Utils_Array::value( $key, $params['soft_credit_contact_select_id'] ) ) {
+          $value['soft_credit_to'] = $params['soft_credit_contact_select_id'][$key];                          
         }
 
         $value['custom'] = CRM_Core_BAO_CustomField::postProcess( $value,
@@ -280,7 +280,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         unset($value['contribution_note']);
         unset($value['contribution_type']);
         unset($value['contribution_source']);
-
+        
         $value['batch_id'] = $this->_batchId;
         $value['skipRecentView'] = true;
         $contribution = CRM_Contribute_BAO_Contribution::create( $value, CRM_Core_DAO::$_nullArray );
