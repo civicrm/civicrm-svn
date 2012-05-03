@@ -128,18 +128,25 @@ class CRM_Price_Page_Option extends CRM_Core_Page
     function browse( )
     {
         $customOption = array( );
-
+        $isReserved = null;
         CRM_Price_BAO_FieldValue::getValues( $this->_fid, $customOption );
-
+        if( $this->_sid ){
+            $isReserved =  CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'is_reserved' );  
+        }
+        $this->assign( 'isReserved', $isReserved  );
         $config = CRM_Core_Config::singleton( );
         foreach ( $customOption as $id => $values ) {
             $action = array_sum( array_keys( $this->actionLinks( ) ) );
             
             // update enable/disable links depending on price_field properties.
-            if ( $values['is_active'] ) {
-                $action -= CRM_Core_Action::ENABLE;
-            } else {
-                $action -= CRM_Core_Action::DISABLE;
+            if( $isReserved ){
+                $action -= CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE + CRM_Core_Action::DISABLE + CRM_Core_Action::ENABLE;
+            }else{
+                if ( $values['is_active'] ) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
+                }
             }
             if ( CRM_Utils_Array::value('is_default', $customOption[$id] ) ) {
                 $customOption[$id]['is_default'] = '<img src="' . $config->resourceBase . 'i/check.gif" />';

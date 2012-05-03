@@ -280,11 +280,16 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
             $action = array_sum(array_keys($this->actionLinks()));
             
             // update enable/disable links depending on price_set properties.
-            if ($dao->is_active) {
-                $action -= CRM_Core_Action::ENABLE;
-            } else {
-                $action -= CRM_Core_Action::DISABLE;
-            }
+           if ($dao->is_reserved) {
+               $action -= CRM_Core_Action::UPDATE + CRM_Core_Action::DISABLE + CRM_Core_Action::ENABLE + CRM_Core_Action::DELETE + CRM_Core_Action::COPY;
+           }else{
+               if ($dao->is_active) {
+                   $action -= CRM_Core_Action::ENABLE;
+               } else {
+                   $action -= CRM_Core_Action::DISABLE;
+               }
+            
+           }
             
             $priceSet[$dao->id]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
                                                                       array('sid' => $dao->id) );

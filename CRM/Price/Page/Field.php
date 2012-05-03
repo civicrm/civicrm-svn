@@ -123,6 +123,7 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
      */
     function browse()
     {
+        $isReserved = null;
         $priceField = array();
         $priceFieldBAO = new CRM_Price_BAO_Field();
         
@@ -130,7 +131,10 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
         $priceFieldBAO->price_set_id = $this->_sid;
         $priceFieldBAO->orderBy('weight, label');
         $priceFieldBAO->find();
-       
+        if( $this->_sid ){
+            $isReserved =  CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'is_reserved' );
+        }
+        $this->assign( 'isReserved', $isReserved  );
         while ($priceFieldBAO->fetch()) {
             $priceField[$priceFieldBAO->id] = array();
             CRM_Core_DAO::storeValues( $priceFieldBAO, $priceField[$priceFieldBAO->id]);
@@ -147,10 +151,14 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
             
             $action = array_sum(array_keys($this->actionLinks()));
             
-            if ($priceFieldBAO->is_active) {
-                $action -= CRM_Core_Action::ENABLE;
-            } else {
-                $action -= CRM_Core_Action::DISABLE;
+            if( $isReserved ){
+                $action -= CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE + CRM_Core_Action::ENABLE + CRM_Core_Action::DISABLE;
+            }else{
+                if ($priceFieldBAO->is_active) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
+                }
             }
 
             if ($priceFieldBAO->active_on == '0000-00-00 00:00:00') {

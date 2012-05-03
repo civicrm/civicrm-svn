@@ -78,7 +78,7 @@
         </tbody>
         </table>
         {/strip}
-        {if $addMoreFields}
+        {if $addMoreFields && !$isReserved}
         <div class="action-link">
             <a href="{crmURL q="reset=1&action=add&fid=$fid&sid=$sid"}" class="button"><span><div class="icon add-icon"></div> {ts 1=$fieldTitle}New Option for '%1'{/ts}</span></a>
         </div>
