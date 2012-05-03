@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 
 <table>
+  <!-- 
+    NOTE: To facilitate upgrades, manually copy the CREATE TABLE statement
+    from sql/civicrm.mysql to sql/civicrm_queue_item.mysql  
+  -->
   <base>CRM/Queue</base>
   <class>QueueItem</class>
   <name>civicrm_queue_item</name>

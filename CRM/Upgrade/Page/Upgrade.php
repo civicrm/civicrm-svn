@@ -218,9 +218,13 @@ SELECT  count( id ) as statusCount
                 $postUpgradeMessageFile = CRM_Utils_File::tempnam('civicrm-post-upgrade');
                 file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
                 
+                // Ensure that queue can be created
+                if (!CRM_Queue_BAO_QueueItem::findCreateTable()) {
+                    CRM_Core_Error::fatal( ts('Failed to find or create queueing table') );
+                }
                 $queue = CRM_Queue_Service::singleton()->create(array(
                     'name' => self::QUEUE_NAME,
-                    'type' => 'Memory', // FIXME: Use 'Sql'; setup special bootstrapping
+                    'type' => 'Sql',
                     'reset' => TRUE,
                 ));
                 
