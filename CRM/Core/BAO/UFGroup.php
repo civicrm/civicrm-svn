@@ -1671,6 +1671,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else if ($fieldName == 'soft_credit' ) {
           CRM_Contact_Form_NewContact::buildQuickForm( $form, $rowNumber, null, false, 'soft_credit_' );
         } else if ($fieldName == 'premium' ) {
+          list( $products, $options ) = CRM_Contribute_BAO_Premium::getPremiumProductInfo();
+          $sel =& $form->addElement('hierselect', $name, $title);
+          $sel->setOptions(array($products, $options ));
         } else if ($fieldName == 'payment_instrument' ) {
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::paymentInstrument( ), $required );
