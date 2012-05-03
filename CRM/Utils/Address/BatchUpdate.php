@@ -174,7 +174,7 @@ class CRM_Utils_Address_BatchUpdate
 
                 $maxTries = 5; do {
                     if ( $this->throttle ) {
-                        usleep( 50000 );
+                        usleep( 5000000 );
                     }
 
                     eval( $config->geocodeMethod . '::format( $params, true );' );
