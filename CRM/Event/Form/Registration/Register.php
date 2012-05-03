@@ -1353,7 +1353,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
             while ( $participant->fetch( ) ) {
                 if ( array_key_exists ( $participant->status_id, $statusTypes ) ) {
-                    if ( !$isAdditional ) {
+                    if ( !$isAdditional && !$self->_values['event']['allow_same_participant_emails'] ) {
                         $registerUrl = CRM_Utils_System::url( 'civicrm/event/register',
                                                               "reset=1&id={$self->_values['event']['id']}&cid=0" );
                         if ( $self->_pcpId){

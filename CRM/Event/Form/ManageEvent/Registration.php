@@ -277,12 +277,6 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             $this->addDateTime( 'registration_end_date', ts('Registration End Date'), false, array( 'formatType' => 'activityDateTime' ) );
         }
      
-        $this->addElement('checkbox',
-                          'is_multiple_registrations',
-                          ts('Register multiple participants?'),
-                          null,
-                          array('onclick' => "return showHideByValue('is_multiple_registrations', '', 'additional_profile_pre|additional_profile_post', 'table-row', 'radio', false);"));
-
         $params           = array( 'level'        => 'Fuzzy',
                                    'contact_type' => 'Individual' );
         $dedupeRuleFields = CRM_Dedupe_BAO_Rule::dedupeRuleFields( $params );
@@ -290,6 +284,14 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         foreach ( $dedupeRuleFields as $key => $fields ) {
             $ruleFields[$key] = ucwords( str_replace( '_', ' ', $fields ) );
         }
+        
+        $this->addElement('checkbox',
+                          'is_multiple_registrations',
+                          ts('Register multiple participants?'),
+                          null,
+                          array('onclick' => "return (showHideByValue('is_multiple_registrations', '', 'additional_profile_pre|additional_profile_post', 'table-row', 'radio', false) || 
+                                                      showRuleFields( " . json_encode( $ruleFields ) ." ));"));
+        
         $this->addElement( 'checkbox',
                            'allow_same_participant_emails', 
                            ts('Allow multiple registrations from the same email address?'), 
