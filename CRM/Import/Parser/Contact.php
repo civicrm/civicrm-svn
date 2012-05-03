@@ -1764,8 +1764,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
             }
           }
         }
-        if (count($params[$locKeys]) == 0)
+        if (count($params[$locKeys]) == 0) {
           unset($params[$locKeys]);
+        }
       }
     }
   }

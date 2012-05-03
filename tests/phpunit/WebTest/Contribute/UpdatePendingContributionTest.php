@@ -71,10 +71,12 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
         $this->click( 'radio_ts', 'ts_all' );
         $contriIDOff = explode( '&', $this->getAttribute( "xpath=//div[@id='contributionSearch']/table/tbody/tr[1]/td[11]/span/a@href" ) );
         $contriIDOn = explode( '&', $this->getAttribute( "xpath=//div[@id='contributionSearch']/table/tbody/tr[2]/td[11]/span/a@href" ) );
-        if( !empty( $contriIDOff ))
+        if( !empty( $contriIDOff )) {
             $contriIDOff = substr( $contriIDOff[1], (strrpos( $contriIDOff[1], '=' )+1) );
-        if( !empty( $contriIDOn ))
+        }
+        if( !empty( $contriIDOn )) {
             $contriIDOn = substr( $contriIDOn[1], (strrpos( $contriIDOn[1], '=' )+1) );
+        }
         $this->select( 'task', "label=Update Pending Contribution Status" );
         $this->click( "_qf_Search_next_action" );
         $this->waitForPageToLoad('30000');

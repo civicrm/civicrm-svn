@@ -77,8 +77,9 @@ class EntityImporter extends civicrm_cli {
     die ("Invalid file format for ". $this->file . ". It must be a valid csv with separator ',' or ';'\n");
   }
   $undefined = array_diff ($header,$this->columns);
-  if (count ($undefined) == count ($header))
+  if (count ($undefined) == count ($header)) {
     die ("\n The first line must contain the name of the fields, expected (some of) ".implode (", ",$this->columns). "\nbut read: ".implode ( ', ',$header). "\n");
+  }
   if ($undefined){
     echo "\nWARNING unrecognized fields ".  implode ( ', ',$undefined) ."\nPress 'Y' followed by <enter> to continue\n";
     $key=fgetc(STDIN);

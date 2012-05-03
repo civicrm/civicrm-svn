@@ -564,7 +564,9 @@ print $xActs . ' / ' . $iActs . ' / '; */
 
                 $iactwhere[$iactid] = implode(' AND ', $iactwhere[$iactid]);
             }
-            if($iactwhere) $iactwhere = '('.implode(') OR (', $iactwhere).')';
+            if($iactwhere) {
+              $iactwhere = '('.implode(') OR (', $iactwhere).')';
+            }
             if ( $iactwhere ) {
                 $includeAct .= " WHERE   $iactwhere";
             } else {

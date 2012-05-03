@@ -160,20 +160,32 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
                                  'onlyCurrent', 'appendDatesToTitle', 'forceAll', ); 
         foreach ( $cacheKeyParams as $param ) {
             $cacheParam = $$param;
-            if ( !$cacheParam ) $cacheParam = 0;
+            if ( !$cacheParam ) {
+              $cacheParam = 0;
+            }
             $cacheKey .= '_' . $cacheParam;
         }
         
         if ( !isset( $campaigns[$cacheKey] ) ) {
             $where = array( '( camp.title IS NOT NULL )' );
-            if ( $excludeId  ) $where[] = "( camp.id != $excludeId )";
-            if ( $onlyActive ) $where[] = '( camp.is_active = 1 )';
-            if ( $onlyCurrent ) $where[] = '( camp.end_date IS NULL OR camp.end_date >= NOW() )'; 
+            if ( $excludeId  ) {
+              $where[] = "( camp.id != $excludeId )";
+            }
+            if ( $onlyActive ) {
+              $where[] = '( camp.is_active = 1 )';
+            }
+            if ( $onlyCurrent ) {
+              $where[] = '( camp.end_date IS NULL OR camp.end_date >= NOW() )';
+            }
             $whereClause = implode( ' AND ', $where );
-            if ( $includeId ) $whereClause .= " OR ( camp.id = $includeId )"; 
+            if ( $includeId ) {
+              $whereClause .= " OR ( camp.id = $includeId )";
+            }
             
             //lets force all.
-            if ( $forceAll ) $whereClause = '( 1 )'; 
+            if ( $forceAll ) {
+              $whereClause = '( 1 )';
+            }
             
             $query = "
   SELECT  camp.id, 

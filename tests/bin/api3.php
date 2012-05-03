@@ -58,12 +58,14 @@ if (empty($argv[1])) {
   $_SERVER['argv'][1] = "api_v3_AllTests";
   echo ("Running all api v3 tests.\n Tip: you can also limit the tests to one action: php tests/bin/api3.php [Entity] [Action]\n eg. php tests/bin/api3.php Contact\n or  php tests/bin/api3.php Contact Get\n");
 } else {
-  if (strtolower ($argv[1]) === $argv[1])
+  if (strtolower ($argv[1]) === $argv[1]) {
     die ("FATAL: entity name (and action) must be CamelCased.\n Usage: php tests/bin/api3.php Contact #not contact.\n");
+  }
   $className = "api_v3_". $argv[1]. "Test";
   if (!empty($argv[2])) { // action
-    if (strtolower ($argv[2]) === $argv[2])
+    if (strtolower ($argv[2]) === $argv[2]) {
       die ("FATAL: action name must be CamelCased.\n Usage: php tests/bin/api3.php ".$argv[1] ." Get #not get.\n");
+    }
     $_SERVER['argv'][3] = $className;
     $_SERVER['argv'][1] = "--filter";
     $_SERVER['argc']++;
