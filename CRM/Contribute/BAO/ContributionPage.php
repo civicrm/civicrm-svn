@@ -223,7 +223,11 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
       }
     }
 
-    if (CRM_Utils_Array::value( 'is_email_receipt', $values ) || CRM_Utils_Array::value( 'onbehalf_dupe_alert', $values ) || $returnMessageText) {
+    if (
+      CRM_Utils_Array::value( 'is_email_receipt', $values ) ||
+      CRM_Utils_Array::value( 'onbehalf_dupe_alert', $values ) ||
+      $returnMessageText
+    ) {
       $template = CRM_Core_Smarty::singleton();
 
       // get the billing location type
@@ -509,8 +513,12 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
           if (! $groupTitle) {
             $groupTitle = $v ["groupTitle"];
           }
-          // suppress all file fields from display
-          if (CRM_Utils_Array::value( 'data_type', $v, '' ) == 'File' || CRM_Utils_Array::value( 'name', $v, '' ) == 'image_URL') {
+          // suppress all file fields from display and formatting fields
+          if (
+            CRM_Utils_Array::value( 'data_type', $v, '' ) == 'File' ||
+            CRM_Utils_Array::value( 'name', $v, '' ) == 'image_URL' ||
+            CRM_Utils_Array::value( 'field_type', $v ) == 'Formatting'
+          ) {
             unset( $fields [$k] );
           }
 
