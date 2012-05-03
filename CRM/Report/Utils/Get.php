@@ -67,10 +67,6 @@ class CRM_Report_Utils_Get {
     if (!($from || $to)) {
       return FALSE;
     }
-    elseif ($from || $to || $relative) {
-      // unset other criteria
-      self::unsetFilters($defaults);
-    }
 
     if ($from !== NULL) {
       $dateFrom = CRM_Utils_Date::setDateDefaults($from);
@@ -104,10 +100,13 @@ class CRM_Report_Utils_Get {
       case 'neq':
         $value = self::getTypedValue("{$fieldName}_value", $field['type']);
         if ($value !== NULL) {
-          self::unsetFilters($defaults);
           $defaults["{$fieldName}_value"] = $value;
           $defaults["{$fieldName}_op"] = $fieldOP;
         }
+        break;
+      case 'nll' :
+      case 'nnll' :
+        $defaults["{$fieldName}_op"  ] = $fieldOP;
         break;
     }
   }
@@ -125,7 +124,6 @@ class CRM_Report_Utils_Get {
       case 'neq':
         $value = self::getTypedValue("{$fieldName}_value", $field['type']);
         if ($value !== NULL) {
-          self::unsetFilters($defaults);
           $defaults["{$fieldName}_value"] = $value;
           $defaults["{$fieldName}_op"] = $fieldOP;
         }
@@ -138,7 +136,6 @@ class CRM_Report_Utils_Get {
         if ($minValue !== NULL ||
           $maxValue !== NULL
         ) {
-          self::unsetFilters($defaults);
           if ($minValue !== NULL) {
             $defaults["{$fieldName}_min"] = $minValue;
           }
@@ -150,6 +147,7 @@ class CRM_Report_Utils_Get {
         break;
 
       case 'in':
+      case 'notin':
         // send the type as string so that multiple values can also be retrieved from url.
         // for e.g url like - "memtype_in=in&memtype_value=1,2,3"
         $value = self::getTypedValue("{$fieldName}_value", CRM_Utils_Type::T_STRING);
@@ -157,8 +155,6 @@ class CRM_Report_Utils_Get {
           // extra check. Also put a limit of 15 max values.
           $value = NULL;
         }
-        // unset any default filters already applied for example - incase of an instance.
-        self::unsetFilters($defaults);
         if ($value !== NULL) {
           $defaults["{$fieldName}_value"] = explode(",", $value);
           $defaults["{$fieldName}_op"] = $fieldOP;
@@ -184,13 +180,14 @@ class CRM_Report_Utils_Get {
             self::intParam($fieldName, $field, $defaults);
             break;
 
-          case CRM_Utils_Type::T_STRING:
-            self::stringParam($fieldName, $field, $defaults);
-            break;
-
           case CRM_Utils_Type::T_DATE:
           case CRM_Utils_Type::T_DATE | CRM_Utils_Type::T_TIME:
             self::dateParam($fieldName, $field, $defaults);
+            break;
+
+          case CRM_Utils_Type::T_STRING:
+          default:
+            self::stringParam($fieldName, $field, $defaults);
             break;
         }
       }

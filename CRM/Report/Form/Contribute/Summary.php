@@ -128,11 +128,13 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Contribute_PseudoConstant::contributionStatus(),
             'default' => array(1),
+            'type' => CRM_Utils_Type::T_INT,
           ),
           'contribution_type_id' =>
           array('title' => ts('Contribution Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Contribute_PseudoConstant::contributionType(),
+            'type' => CRM_Utils_Type::T_INT,
           ),
           'total_amount' =>
           array('title' => ts('Donation Amount'),
@@ -175,6 +177,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
             'options' => CRM_Core_PseudoConstant::group(),
+            'type' => CRM_Utils_Type::T_INT,
           ),
         ),
       ),

@@ -389,5 +389,82 @@ WHERE  inst.report_id = %1";
     );
     return $result;
   }
+
+  /**
+   * Build a URL query string containing all report filter criteria that are
+   * stipulated in $_GET or in a report Preview, but which haven't yet been
+   * saved in the report instance.
+   *
+   * @param array $defaults The report criteria that aren't coming in as submitted form values, as in CRM_Report_Form::_defaults
+   * @param array $params All effective report criteria, as in CRM_Report_Form::_params
+   * @return string URL query string
+   */
+  static function getPreviewCriteriaQueryParams($defaults = array(), $params = array()) {
+    static $query_string;
+    if (!isset($query_string)) {
+      if (!empty($params)) {
+        $url_params = $op_values = $string_values = $process_params = array();
+
+        // We'll only use $params that are different from what's in $default.
+        foreach ($params as $field_name => $field_value) {
+          if (!array_key_exists($field_name, $defaults) || $defaults[$field_name] != $field_value) {
+            $process_params[$field_name] = $field_value;
+          }
+        }
+        // Criteria stipulated in $_GET will be in $defaults even if they're not
+        // saved, so we can't easily tell if they're saved or not. So just include them.
+        $process_params += $_GET;
+
+        // All $process_params should be passed on if they have an effective value
+        // (in other words, there's no point in propagating blank filters).
+        foreach ($process_params as $field_name => $field_value) {
+          $suffix_position = strrpos($field_name , '_');
+          $suffix = substr($field_name , $suffix_position);
+          $basename = substr($field_name, 0, $suffix_position);
+          if ($suffix == '_min'  || $suffix == '_max' ||
+            $suffix == '_from' || $suffix == '_to' ||
+            $suffix == '_relative') {
+            // For these types, we only keep them if they have a value.
+            if (!empty($field_value)) {
+              $url_params[$field_name] = $field_value;
+            }
+          }
+          elseif ($suffix == '_value') {
+            // These filters can have an effect even without a value
+            // (e.g., values for 'nll' and 'nnll' ops are blank),
+            // so store them temporarily and examine below.
+            $string_values[$basename] = $field_value;
+            $op_values[$basename] = $params["{$basename}_op"];
+          }
+          elseif ($suffix == '_op') {
+            // These filters can have an effect even without a value
+            // (e.g., values for 'nll' and 'nnll' ops are blank),
+            // so store them temporarily and examine below.
+            $op_values[$basename] = $field_value;
+            $string_values[$basename] = $params["{$basename}_value"];
+          }
+        }
+
+        // Check the *_value and *_op criteria and include them if
+        // they'll have an effective value.
+        foreach ($op_values as $basename => $field_value) {
+          if ($field_value == 'nll' || $field_value == 'nnll') {
+           // 'nll' and 'nnll' filters should be included even with empty values.
+           $url_params["{$basename}_op"] = $field_value;
+          }
+          elseif ($string_values[$basename]) {
+           // Other filters are only included if they have a value.
+           $url_params["{$basename}_op"] = $field_value;
+           $url_params["{$basename}_value"] = (is_array($string_values[$basename]) ? implode(',', $string_values[$basename]) : $string_values[$basename]);
+          }
+        }
+        $query_string = http_build_query($url_params);
+      }
+      else {
+        $query_string = '';
+      }
+    }
+    return $query_string;
+  }
 }
 

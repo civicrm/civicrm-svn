@@ -2961,13 +2961,14 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
      * Do AlterDisplay processing on Address Fields
      */
               function alterDisplayAddressFields(&$row, &$rows, &$rowNum, $baseUrl, $urltxt) {
+                $criteriaQueryParams = CRM_Report_Utils_Report::getPreviewCriteriaQueryParams($this->_defaults, $this->_params);
                 $entryFound = FALSE;
                 // handle country
                 if (array_key_exists('civicrm_address_country_id', $row)) {
                   if ($value = $row['civicrm_address_country_id']) {
                     $rows[$rowNum]['civicrm_address_country_id'] = CRM_Core_PseudoConstant::country($value, FALSE);
                     $url = CRM_Report_Utils_Report::getNextUrl($baseUrl,
-                      "reset=1&force=1&" .
+                      "reset=1&force=1&{$criteriaQueryParams}&" .
                       "country_id_op=in&country_id_value={$value}",
                       $this->_absoluteUrl, $this->_id
                     );
@@ -2983,7 +2984,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                   if ($value = $row['civicrm_address_county_id']) {
                     $rows[$rowNum]['civicrm_address_county_id'] = CRM_Core_PseudoConstant::county($value, FALSE);
                     $url = CRM_Report_Utils_Report::getNextUrl($baseUrl,
-                      "reset=1&force=1&" .
+                      "reset=1&force=1&{$criteriaQueryParams}&" .
                       "county_id_op=in&county_id_value={$value}",
                       $this->_absoluteUrl, $this->_id
                     );
@@ -3000,7 +3001,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                     $rows[$rowNum]['civicrm_address_state_province_id'] = CRM_Core_PseudoConstant::stateProvince($value, FALSE);
 
                     $url = CRM_Report_Utils_Report::getNextUrl($baseUrl,
-                      "reset=1&force=1&state_province_id_op=in&state_province_id_value={$value}",
+                      "reset=1&force=1&{$criteriaQueryParams}&state_province_id_op=in&state_province_id_value={$value}",
                       $this->_absoluteUrl, $this->_id
                     );
                     $rows[$rowNum]['civicrm_address_state_province_id_link'] = $url;
