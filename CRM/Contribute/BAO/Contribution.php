@@ -226,18 +226,8 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
         $params['softID'] = $softID;
       }
     }
+
     $transaction = new CRM_Core_Transaction();
-    // delete the soft credit record if no soft credit contact ID AND no PCP is set in the form
-    if (CRM_Utils_Array::value('contribution', $ids) &&
-      (!CRM_Utils_Array::value('soft_credit_to', $params) &&
-        !CRM_Utils_Array::value('pcp_made_through_id', $params)
-      ) &&
-      CRM_Utils_Array::value('softID', $params)
-    ) {
-      $softCredit = new CRM_Contribute_DAO_ContributionSoft();
-      $softCredit->id = $params['softID'];
-      $softCredit->delete();
-    }
 
     // delete the soft credit record if no soft credit contact ID AND no PCP is set in the form
     if (CRM_Utils_Array::value('contribution', $ids) &&
