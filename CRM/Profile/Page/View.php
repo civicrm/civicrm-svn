@@ -38,7 +38,7 @@
  * Main page for viewing contact.
  *
  */
-class CRM_Profile_Page_View extends CRM_Core_Page 
+class CRM_Profile_Page_View extends CRM_Core_Page
 {
     /**
      * The id of the contact
@@ -47,12 +47,12 @@ class CRM_Profile_Page_View extends CRM_Core_Page
      */
     protected $_id;
 
-    /** 
+    /**
      * The group id that we are editing
-     * 
-     * @var int 
-     */ 
-    protected $_gid; 
+     *
+     * @var int
+     */
+    protected $_gid;
 
     /**
      * Heart of the viewing process. The runner gets all the meta data for
@@ -76,27 +76,27 @@ class CRM_Profile_Page_View extends CRM_Core_Page
         $this->assign( 'cid', $this->_id );
 
         $gids = explode( ',', CRM_Utils_Request::retrieve('gid', 'String', CRM_Core_DAO::$_nullObject, false, 0, 'GET') );
-        
+
         $profileIds = array( );
         if ( count( $gids ) > 1 ) {
             if ( !empty( $gids ) ) {
                 foreach( $gids as $pfId  ) {
-                   $profileIds[ ] = CRM_Utils_Type::escape( $pfId, 'Positive' ); 
+                   $profileIds[ ] = CRM_Utils_Type::escape( $pfId, 'Positive' );
                 }
             }
-            
+
             // check if we are rendering mixed profiles
             if ( CRM_Core_BAO_UFGroup::checkForMixProfiles( $profileIds ) ) {
                 CRM_Core_Error::fatal( ts( 'You cannot combine profiles of multiple types.' ) );
-            } 
+            }
 
             $this->_gid = $profileIds[0];
         }
-        
+
         if ( !$this->_gid ) {
            $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
-        } 
-        
+        }
+
         $anyContent = true;
         if ($this->_gid) {
             $page = new CRM_Profile_Page_Dynamic($this->_id, $this->_gid, 'Profile', false, $profileIds );
@@ -107,7 +107,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
                 $anyContent = false;
             }
             $profileGroups[]         = $profileGroup;
-            
+
             $gidString = $this->_gid;
             if ( !empty( $profileIds ) ) {
                 $gidString = implode( ',', $profileIds );
@@ -126,7 +126,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
                                                       "force=1&gid={$gidString}" ) );
             }
         } else {
-            $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('Profile'); 
+            $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('Profile');
 
             $profileGroups = array();
             foreach ($ufGroups as $groupid => $group) {
@@ -143,7 +143,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
                            CRM_Utils_System::url( "civicrm/profile",
                                                   "force=1" ) );
         }
-                
+
         $this->assign( 'groupID', $this->_gid );
 
         $this->assign('profileGroups', $profileGroups);

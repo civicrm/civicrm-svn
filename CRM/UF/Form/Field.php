@@ -132,16 +132,16 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->_fields = CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
         $this->_fields = array_merge( CRM_Activity_BAO_Activity::exportableFields( 'Activity' ), $this->_fields );
 
-        $this->_batchEntryFields = array( 
-          'send_receipt' => array( 
+        $this->_batchEntryFields = array(
+          'send_receipt' => array(
             'name'  => 'send_receipt',
             'title' => ts('Send Receipt')
-          ),                           
-          'soft_credit'  => array( 
+          ),
+          'soft_credit'  => array(
             'name'  => 'soft_credit',
             'title' => ts('Soft Credit')
           ),
-          'premium'      => array( 
+          'premium'      => array(
             'name'  => 'premiun',
             'title' => ts('Premiums')
           ),
@@ -685,17 +685,22 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $ids['uf_field'] = $this->_id;
         }
 
-        $name = $this->_selectFields[$params['field_name'][1]];
+
+        $name  = null;
+        if ( isset( $params['field_name'][1] ) ) {
+          // we dont get a name for a html formatting element
+          $name = $this->_selectFields[$params['field_name'][1]];
+        }
+
+        //Hack for Formatting Field Name
+        if ( $params['field_name'][0] == 'Formatting' ) {
+          $params['field_name'][1] = 'formatting_'.rand(1000,9999);
+        }
 
         // temporary hack to for website
         if ( $params['field_name'][1] == 'url' ) {
             $params['field_name'][1] = 'url-1';
         }
-
-        //Hack for Formatting Field Name
-        if ( $params['field_name'][0] == 'Formatting' ) {
-             $params['field_name'][1] = 'formatting_'.rand(1000,9999);
-	       			         }
 
         //check for duplicate fields
         if ($params["field_name"][0] != "Formatting" && CRM_Core_BAO_UFField::duplicateField( $params, $ids ) ) {
