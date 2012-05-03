@@ -69,62 +69,66 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
 
 {capture assign='reqMark'}<span class="marker" title="{ts}This field is required.{/ts}">*</span>{/capture}
 <div class="crm-block crm-contribution-main-form-block">
-    <div id="intro_text" class="crm-section intro_text-section">
-        {$intro_text}
-    </div>
-{if $islifetime or $ispricelifetime }
-<div id="help">You have a current Lifetime Membership which does not need top be renewed.</div>
-{/if}
+  <div id="intro_text" class="crm-section intro_text-section">
+      {$intro_text}
+  </div>
+  {if $islifetime or $ispricelifetime }
+    <div id="help">You have a current Lifetime Membership which does not need top be renewed.</div>
+  {/if}
 
-       {if !empty($useForMember)}
-        {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
+  {if !empty($useForMember)}
+      {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
 	{else}
     <div id="priceset-div">
-        <fieldset>
-            <legend>{ts}Contribution{/ts}</legend>
-            {include file="CRM/Price/Form/PriceSet.tpl" extends="Contribution"}
-        </fieldset>
+      <fieldset>
+        <legend>{ts}Contribution{/ts}</legend>
+        {include file="CRM/Price/Form/PriceSet.tpl" extends="Contribution"}
+      </fieldset>
     </div>
-    {/if}
-
+  {/if}
 
 	{if $pledgeBlock}
 	    {if $is_pledge_payment}
-	    <div class="crm-section {$form.pledge_amount.name}-section">
-			<div class="label">{$form.pledge_amount.label}&nbsp;<span class="marker">*</span></div>
-			<div class="content">{$form.pledge_amount.html}</div>
-			<div class="clear"></div>
-	    </div>
+  	    <div class="crm-section {$form.pledge_amount.name}-section">
+  			  <div class="label">{$form.pledge_amount.label}&nbsp;<span class="marker">*</span></div>
+  			  <div class="content">{$form.pledge_amount.html}</div>
+  			  <div class="clear"></div>
+  	    </div>
 	    {else}
-	    <div class="crm-section {$form.is_pledge.name}-section">
-			<div class="content">
-				{$form.is_pledge.html}&nbsp;
-				{if $is_pledge_interval}
-					{$form.pledge_frequency_interval.html}&nbsp;
-				{/if}
-				{$form.pledge_frequency_unit.html}<span id="installments_num">&nbsp;{ts}for{/ts}&nbsp;{$form.pledge_installments.html}&nbsp;{ts}installments.{/ts}</span>
-			</div>
-	    </div>
+  	    <div class="crm-section {$form.is_pledge.name}-section">
+  	      <div class="label">&nbsp;</div>
+  			  <div class="content">
+    				{$form.is_pledge.html}&nbsp;
+    				{if $is_pledge_interval}
+    					{$form.pledge_frequency_interval.html}&nbsp;
+    				{/if}
+    				{$form.pledge_frequency_unit.html}<span id="installments_num">&nbsp;{ts}for{/ts}&nbsp;{$form.pledge_installments.html}&nbsp;{ts}installments.{/ts}</span>
+  			  </div>
+  			  <div class="clear"></div>
+  	    </div>
 	    {/if}
 	{/if}
 
 
 	{if $form.is_recur}
-	    <div class="crm-section {$form.is_recur.name}-section">
+	  <div class="crm-section {$form.is_recur.name}-section">
+      <div class="label">&nbsp;</div>
 			<div class="content">
-				<p><strong>{$form.is_recur.html} {ts}every{/ts} &nbsp;{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}&nbsp; {ts}for{/ts} &nbsp; {$form.installments.html} &nbsp;{$form.installments.label}</strong>
-				</p>
+				<p><strong>{$form.is_recur.html} {ts}every{/ts} &nbsp;{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}&nbsp; {ts}for{/ts} &nbsp; {$form.installments.html} &nbsp;{$form.installments.label}</strong></p>
 				<p><span class="description">{ts}Your recurring contribution will be processed automatically for the number of installments you specify. You can leave the number of installments blank if you want to make an open-ended commitment. In either case, you can choose to cancel at any time.{/ts}
         		{if $is_email_receipt}
         		    {ts}You will receive an email receipt for each recurring contribution. The receipts will include a link you can use if you decide to modify or cancel your future contributions.{/ts}
         		{/if}
         		</span></p>
-		    </div>
-	    </div>
+		  </div>
+		  <div class="clear"></div>
+	  </div>
 	{/if}
 	{if $pcpSupporterText}
 	    <div class="crm-section pcpSupporterText-section">
-			<div class="content">{$pcpSupporterText}</div>
+        <div class="label">&nbsp;</div>
+			  <div class="content">{$pcpSupporterText}</div>
+    	  <div class="clear"></div>
 	    </div>
 	{/if}
 	    {assign var=n value=email-$bltID}
@@ -138,10 +142,12 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
 
 	{if $form.is_for_organization}
 		<div class="crm-section {$form.is_for_organization.name}-section">
-	    	<div class="content">
-	    		{$form.is_for_organization.html}&nbsp;{$form.is_for_organization.label}
-	    	</div>
+      <div class="label">&nbsp;</div>
+	    <div class="content">
+	    	{$form.is_for_organization.html}&nbsp;{$form.is_for_organization.label}
 	    </div>
+    	<div class="clear"></div>
+	  </div>
 	{/if}
 
 
