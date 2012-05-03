@@ -35,92 +35,92 @@
  */
 
 
-class CRM_Event_Page_Tab extends CRM_Core_Page 
+class CRM_Event_Page_Tab extends CRM_Core_Page
 {
 
-    public $_permission = null;    
-    public $_contactId  = null;    
-    
+    public $_permission = null;
+    public $_contactId  = null;
+
     /**
      * This function is called when action is browse
-     * 
+     *
      * return null
      * @access public
      */
-    function browse( ) 
+    function browse( )
     {
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_Search', 
-                                                      ts('Events'), 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_Search',
+                                                      ts('Events'),
                                                       $this->_action );
         $controller->setEmbedded( true );
         $controller->reset( );
         $controller->set( 'cid'  , $this->_contactId );
-        $controller->set( 'context', 'participant' ); 
+        $controller->set( 'context', 'participant' );
         $controller->process( );
         $controller->run( );
-        
+
         if ( $this->_contactId ) {
             $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
             $this->assign( 'displayName', $displayName );
         }
     }
-    
-    /** 
+
+    /**
      * This function is called when action is view
-     *  
-     * return null 
-     * @access public 
-     */ 
-    function view( ) 
-    {    
+     *
+     * return null
+     * @access public
+     */
+    function view( )
+    {
         // build associated contributions
         $this->associatedContribution( );
-        
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_ParticipantView',  
-                                                       'View Participant',  
-                                                       $this->_action ); 
-        $controller->setEmbedded( true );  
-        $controller->set( 'id' , $this->_id );  
-        $controller->set( 'cid', $this->_contactId );  
-        
-        return $controller->run( ); 
+
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_ParticipantView',
+                                                       'View Participant',
+                                                       $this->_action );
+        $controller->setEmbedded( true );
+        $controller->set( 'id' , $this->_id );
+        $controller->set( 'cid', $this->_contactId );
+
+        return $controller->run( );
     }
-    
-    /** 
-     * This function is called when action is update or new 
-     *  
-     * return null 
-     * @access public 
-     */ 
-    function edit( ) 
-    { 
-        // set https for offline cc transaction        
+
+    /**
+     * This function is called when action is update or new
+     *
+     * return null
+     * @access public
+     */
+    function edit( )
+    {
+        // set https for offline cc transaction
         $mode = CRM_Utils_Request::retrieve( 'mode', 'String', $this );
         if ( $mode == 'test' || $mode == 'live' ) {
             CRM_Utils_System::redirectToSSL( );
         }
-        
+
         if( $this->_action != CRM_Core_Action::ADD ) {
             // get associated contributions only on edit/delete
             $this->associatedContribution( );
         }
-        
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_Participant', 
-                                                       'Create Participation', 
+
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_Participant',
+                                                       'Create Participation',
                                                        $this->_action );
 
-        $controller->setEmbedded( true ); 
-        $controller->set( 'id' , $this->_id ); 
-        $controller->set( 'cid', $this->_contactId ); 
-        
+        $controller->setEmbedded( true );
+        $controller->set( 'id' , $this->_id );
+        $controller->set( 'cid', $this->_contactId );
+
         return $controller->run( );
     }
-    
+
     function preProcess( ) {
         $context       = CRM_Utils_Request::retrieve('context', 'String', $this );
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
-        
+
         if ( $context == 'standalone' ) {
             $this->_action = CRM_Core_Action::ADD;
         } else {
@@ -129,29 +129,29 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
 
             // check logged in url permission
             CRM_Contact_Page_View::checkUserPermission( $this );
-            
+
             // set page title
             CRM_Contact_Page_View::setTitle( $this->_contactId );
         }
-        
-        $this->assign('action', $this->_action );     
-        
+
+        $this->assign('action', $this->_action );
+
         if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit event participants' ) ) {
             $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit event participants rights
             $this->assign( 'permission', 'view' );
         }
-    }  
-    
+    }
+
     /**
      * This function is the main function that is called when the page loads, it decides the which action has to be taken for the page.
-     * 
+     *
      * return null
      * @access public
      */
-    function run( ) 
+    function run( )
     {
         $this->preProcess( );
-                
+
         // check if we can process credit card registration
         $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false,
                                                                  "billing_mode IN ( 1, 3 )" );
@@ -167,42 +167,42 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
         } else {
             $this->assign( 'accessContribution', false );
         }
-        
+
         $this->setContext( );
 
-        if ( $this->_action & CRM_Core_Action::VIEW ) { 
-            $this->view( ); 
-        } else if ( $this->_action & ( CRM_Core_Action::UPDATE | 
-                                       CRM_Core_Action::ADD | 
+        if ( $this->_action & CRM_Core_Action::VIEW ) {
+            $this->view( );
+        } else if ( $this->_action & ( CRM_Core_Action::UPDATE |
+                                       CRM_Core_Action::ADD |
                                        CRM_Core_Action::DELETE ) ) {
-            $this->edit( ); 
+            $this->edit( );
         } else {
-            $this->browse( ); 
+            $this->browse( );
         }
-        
+
         return parent::run( );
     }
-    
-    function setContext( ) 
-    { 
+
+    function setContext( )
+    {
         $context      = CRM_Utils_Request::retrieve( 'context'     ,
                                                      'String', $this, false, 'search' );
         $compContext  = CRM_Utils_Request::retrieve( 'compContext'     ,
                                                      'String', $this );
-       
+
         $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
 
         //validate the qfKey
         if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) {
             $qfKey = null;
         }
-        
+
         switch ( $context ) {
-            
-        case 'dashboard':           
+
+        case 'dashboard':
             $url = CRM_Utils_System::url( 'civicrm/event', 'reset=1' );
             break;
-            
+
         case 'search':
             $urlParams = 'force=1';
             if ( $qfKey ) {
@@ -216,11 +216,11 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
                 $url = CRM_Utils_System::url( 'civicrm/event/search', $urlParams );
             }
             break;
-            
+
         case 'user':
             $url = CRM_Utils_System::url( 'civicrm/user', 'reset=1' );
             break;
-            
+
         case 'participant':
             $url = CRM_Utils_System::url( 'civicrm/contact/view',
                                           "reset=1&force=1&cid={$this->_contactId}&selectedChild=participant" );
@@ -237,7 +237,7 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
 
         case 'standalone':
             $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
-            break; 
+            break;
 
         case 'fulltext':
             $keyName   = '&qfKey';
@@ -251,40 +251,40 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             }
             if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
             $this->assign( 'searchKey',  $qfKey );
-            $url = CRM_Utils_System::url( $urlString, $urlParams ); 
+            $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
-            
+
         default:
             $cid = null;
             if ( $this->_contactId ) {
                 $cid = '&cid=' . $this->_contactId;
             }
-            $url = CRM_Utils_System::url( 'civicrm/event/search', 
+            $url = CRM_Utils_System::url( 'civicrm/event/search',
                                           'force=1' . $cid );
             break;
         }
-        $session = CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( );
         $session->pushUserContext( $url );
     }
 
-    /** 
+    /**
      * This function is used for the to show the associated
-     * contribution for the participant 
-     * 
-     * return null 
-     * @access public 
+     * contribution for the participant
+     *
+     * return null
+     * @access public
      */
     function associatedContribution( )
     {
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
             $this->assign( 'accessContribution', true );
-            $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );  
-            $controller->setEmbedded( true );                           
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );
+            $controller->setEmbedded( true );
             $controller->set( 'force', 1 );
             $controller->set( 'cid'  , $this->_contactId );
             $controller->set( 'participantId'  , $this->_id );
-            $controller->set( 'context', 'contribution' ); 
-            $controller->process( );  
+            $controller->set( 'context', 'contribution' );
+            $controller->process( );
             $controller->run( );
         } else {
             $this->assign( 'accessContribution', false );
