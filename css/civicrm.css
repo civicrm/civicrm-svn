@@ -3355,8 +3355,8 @@ div#crm-toolTip
 }
 
 /* in place edit  */
-#crm-container .crm-editable-enabled {display:block; border: 2px dashed transparent; white-space: nowrap;}
-#crm-container .crm-editable-enabled:hover {display:block; border: 2px dashed lightgrey;}
+#crm-container .crm-editable-enabled {display:block; padding-left: 2px; border: 2px dashed transparent; white-space: nowrap;}
+#crm-container .crm-editable-enabled:hover {display:block; padding-left: 2px; border: 2px dashed lightgrey;}
 
   .crm-editable-placeholder {
     background: url("../i/icons/jquery-ui-2786C2.png") -66px -114px no-repeat;
@@ -3366,7 +3366,7 @@ div#crm-toolTip
   }
   /*.crm-editable input {min-width:6em;} */
 
-  .crm-editable-saving {background:yellow!important;opacity:0.8;}
+  .crm-editable-saving {background:#FFFFCC!important;opacity:0.8;}
   .crm-editable-error {background:red!important;opacity:0.8;}
   .crm-editable-error input {background:red!important;opacity:0.8;}
   h2.crm-editable-enabled input {min-height:1.4em;}

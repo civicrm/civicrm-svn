@@ -81,13 +81,13 @@
             <tbody>
             {foreach from=$rows item=row}
             {if !$row.is_reserved }
-	        <tr id="row_{$row.id}"class="{$row.class}{if NOT $row.is_active} disabled{/if}">
-                <td>{$row.title}</td>
+  	          <tr id="UFGroup-{$row.id}"class="crm-entity {$row.class}{if NOT $row.is_active} disabled{/if}">
+                <td><span class="crmf-title crm-editable">{$row.title}</span></td>
                 <td>{$row.group_type}</td>
                 <td>{$row.id}</td>
                 <td>{$row.module}</td>
                 <td>{$row.action|replace:'xx':$row.id}</td>
-            </tr>
+              </tr>
             {/if}
             {/foreach}
             </tbody>
@@ -116,13 +116,13 @@
             <tbody>
             {foreach from=$rows item=row}
             {if $row.is_reserved}
-	        <tr id="row_{$row.id}"class="{$row.class}{if NOT $row.is_active} disabled{/if}">
+  	          <tr id="row_{$row.id}"class="{$row.class}{if NOT $row.is_active} disabled{/if}">
                 <td>{$row.title}</td>
                 <td>{$row.group_type}</td>
                 <td>{$row.id}</td>
                 <td>{$row.module}</td>
                 <td>{$row.action|replace:'xx':$row.id}</td>
-            </tr>
+              </tr>
             {/if}
             {/foreach}
             </tbody>
@@ -157,3 +157,4 @@
     {/if}
     {/if}
 {/if}
+{include file="CRM/common/crmeditable.tpl"} 
