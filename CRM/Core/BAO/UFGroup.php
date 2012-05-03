@@ -1673,6 +1673,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else if ($fieldName == 'premium' ) {
           list( $products, $options ) = CRM_Contribute_BAO_Premium::getPremiumProductInfo();
           $sel =& $form->addElement('hierselect', $name, $title);
+          $products = array('0' => ts('- select -')) + $products;
           $sel->setOptions(array($products, $options ));
         } else if ($fieldName == 'payment_instrument' ) {
             $form->add('select', $name, $title,

@@ -192,14 +192,16 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     // get the profile information
     if ( $this->_batchInfo['type_id'] == 1) {
       $this->processContribution( $params );
-    } else {
+    }
+    else {
       $this->processMembership( $params );
     }
 
     // update batch to close status
     $paramValues = array( 
       'id'  => $this->_batchId,
-      'status_id' => 2 );
+      'status_id' => 2
+    );
 
     CRM_Core_BAO_Batch::create( $paramValues ); 
 
@@ -207,7 +209,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch( $this->_batchId );
     CRM_Core_BAO_Cache::deleteGroup( 'batch entry', $cacheKeyString, false );
 
+    // set success status
     CRM_Core_Session::setStatus("Your batch is processed.");
+
+    // redirect to batch listing
     CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/batch', "reset=1" ) );
   }
 
@@ -284,6 +289,21 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         if ( $contribution->id && CRM_Utils_Array::value( 'send_receipt', $value ) ) {
           $value['contribution_id'] = $contribution->id;
           CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
+        }
+
+        //process premiums
+        if ( CRM_Utils_Array::value( 'premium', $value ) ) {
+          if ( $value['premium'][0] > 0 ) {
+            list( $products, $options ) = CRM_Contribute_BAO_Premium::getPremiumProductInfo();
+
+            $premiumParams = array(
+              'product_id'      => $value['premium'][0],
+              'contribution_id' => $contribution->id,
+              'product_option'  => CRM_Utils_Array::value( $value['premium'][1], $options[$value['premium'][0]] ),
+              'quantity'        => 1
+            );
+            CRM_Contribute_BAO_Contribution::addPremium( $premiumParams );
+          }    
         }
       }
     }
