@@ -39,7 +39,7 @@
  * before they will be distributed in proper places (component configurations
  * and core configuration). The name is intentionally stupid so that it will be fixed
  * ASAP.
- * 
+ *
  */
 class CRM_Core_Config_Defaults
 {
@@ -54,7 +54,7 @@ class CRM_Core_Config_Defaults
 
         $this->pluginsDir =
             $civicrm_root . DIRECTORY_SEPARATOR .
-            'CRM'         . DIRECTORY_SEPARATOR . 
+            'CRM'         . DIRECTORY_SEPARATOR .
             'Core'        . DIRECTORY_SEPARATOR .
             'Smarty'      . DIRECTORY_SEPARATOR .
             'plugins'     . DIRECTORY_SEPARATOR ;
@@ -83,11 +83,11 @@ class CRM_Core_Config_Defaults
         // add UI revamp pages
         //$this->revampPages = array( 'CRM/Admin/Form/Setting/Url.tpl', 'CRM/Admin/Form/Preferences/Address.tpl' );
         $this->revampPages = array( );
-        
+
         // IDS enablement
         $this->useIDS = defined( 'CIVICRM_IDS_ENABLE' ) ? (bool) CIVICRM_IDS_ENABLE : true;
-        
-        // 
+
+        //
         $size = trim( ini_get( 'upload_max_filesize' ) );
         if ( $size ) {
             $last = strtolower($size{strlen($size)-1});
@@ -112,12 +112,12 @@ class CRM_Core_Config_Defaults
      * @param boolena $formMode  this funtion is called to set default
      *                           values in an empty db, also called when setting component using GUI
      *                           this variable is set true for GUI
-     *                           mode (eg: Global setting >> Components)    
+     *                           mode (eg: Global setting >> Components)
      *
      * @access public
      * @static
      */
-    public static function setValues(&$defaults, $formMode = false) 
+    public static function setValues(&$defaults, $formMode = false)
     {
         $config = CRM_Core_Config::singleton( );
 
@@ -158,9 +158,9 @@ class CRM_Core_Config_Defaults
                 // or in modules
                 global $civicrm_root;
                 $cmsPath = $config->userSystem->cmsRootPath( );
-                $defaults['userFrameworkResourceURL'] = $baseURL . str_replace( "$cmsPath/", '',  
+                $defaults['userFrameworkResourceURL'] = $baseURL . str_replace( "$cmsPath/", '',
                                                                                 str_replace('\\', '/', $civicrm_root ) );
-                
+
                 if ( strpos( $civicrm_root,
                              DIRECTORY_SEPARATOR . 'sites' .
                              DIRECTORY_SEPARATOR . 'all'   .
@@ -174,7 +174,7 @@ class CRM_Core_Config_Defaults
                         $siteName = substr( $civicrm_root,
                                             $startPos + 7,
                                             $endPos - $startPos - 7 );
-                        
+
                         $civicrmDirName = trim(basename($civicrm_root));
                         $defaults['userFrameworkResourceURL'] = $baseURL . "sites/$siteName/modules/$civicrmDirName/";
                         if ( ! isset( $defaults['imageUploadURL'] ) ) {
@@ -193,7 +193,7 @@ class CRM_Core_Config_Defaults
                 $defaults['imageUploadURL'] = $tempURL . "media/civicrm/persist/contribute/";
             } else if ( $config->userFramework == 'WordPress' ) {
                 //for standalone no need of sites/defaults directory
-                $defaults['imageUploadURL'] = $baseURL . "wp-content/plugins/civicrm/files/civicrm/persist/contribute/";
+                $defaults['imageUploadURL'] = $baseURL . "wp-content/plugins/files/civicrm/persist/contribute/";
             } else {
                 $defaults['imageUploadURL'] = $baseURL . "sites/default/files/civicrm/persist/contribute/";
             }
@@ -208,7 +208,7 @@ class CRM_Core_Config_Defaults
 
         if ( ! isset( $defaults['uploadDir'] ) && is_dir($config->templateCompileDir) ) {
             $uploadDir = $path . "upload/";
-            
+
             CRM_Utils_File::createDir( $uploadDir );
             CRM_Utils_File::restrictAccess($uploadDir);
             $defaults['uploadDir'] = $uploadDir;
@@ -216,20 +216,20 @@ class CRM_Core_Config_Defaults
 
         if ( ! isset( $defaults['customFileUploadDir'] ) && is_dir($config->templateCompileDir) ) {
             $customDir = $path . "custom/";
-            
+
             CRM_Utils_File::createDir( $customDir );
             $defaults['customFileUploadDir'] = $customDir;
         }
 
-        /* FIXME: hack to bypass the step for generating defaults for components, 
-                  while running upgrade, to avoid any serious non-recoverable error 
+        /* FIXME: hack to bypass the step for generating defaults for components,
+                  while running upgrade, to avoid any serious non-recoverable error
                   which might hinder the upgrade process. */
 
         $args = array( );
         if ( isset( $_GET[$config->userFrameworkURLVar] ) ) {
             $args = explode( '/', $_GET[$config->userFrameworkURLVar] );
         }
-        
+
         if ( isset( $defaults['enableComponents'] ) ) {
             foreach( $defaults['enableComponents'] as $key => $name ) {
                 $comp = $config->componentRegistry->get( $name );
