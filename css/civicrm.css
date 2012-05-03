@@ -3355,8 +3355,8 @@ div#crm-toolTip
 }
 
 /* in place edit  */
-  .crm-editable-enabled, {background:#f0e9f6!important;}
-  .crm-editable-enabled:hover {background:#c0acd0!important;}
+#crm-container .crm-editable-enabled {display:block; border: 2px dashed transparent; white-space: nowrap;}
+#crm-container .crm-editable-enabled:hover {display:block; border: 2px dashed lightgrey;}
 
   .crm-editable-placeholder {
     background: url("../i/icons/jquery-ui-2786C2.png") -66px -114px no-repeat;
@@ -3364,7 +3364,7 @@ div#crm-toolTip
     display:block;
     width:12px;
   }
-  /*.crm-editable input {min-width:15em;}*/
+  /*.crm-editable input {min-width:6em;} */
 
   .crm-editable-saving {background:yellow!important;opacity:0.8;}
   .crm-editable-error {background:red!important;opacity:0.8;}
