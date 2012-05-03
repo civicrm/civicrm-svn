@@ -922,7 +922,7 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             $priceSetId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', 'default_membership_type_amount', 'id','name' );
             if($priceSetId)
             $this->_priceSet = $priceSets = current( CRM_Price_BAO_Set::getSetDetail( $priceSetId ) );
-            $editedFieldParams = array( 'price_set_id ' => $priceSetId,
+            $editedFieldParams = array( 'price_set_id' => $priceSetId,
                                         'name'          => $formValues['membership_type_id'][0] );
             $editedResults = array( );
             CRM_Price_BAO_Field::retrieve( $editedFieldParams, $editedResults );

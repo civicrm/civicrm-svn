@@ -1084,10 +1084,7 @@ WHERE  contribution_id = {$this->_id}
             if( $itemId && CRM_Utils_Array::value( 'price_field_id', $lineItems[$itemId] )){
                 $fieldType = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'html_type' );  
             }
-            if( $fieldType == 'Text' )
-                $lineItems[$itemId]['qty'] = (int)$submittedValues['total_amount'];
-            else
-                $lineItems[$itemId]['unit_price'] = $submittedValues['total_amount'];   
+            $lineItems[$itemId]['unit_price'] = $submittedValues['total_amount'];   
             $lineItems[$itemId]['line_total'] = $submittedValues['total_amount'];
             $lineItems[$itemId]['id']         = $itemId;
             $lineItem[$this->_priceSetId] = $lineItems;
