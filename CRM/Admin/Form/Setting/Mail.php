@@ -47,7 +47,7 @@ class CRM_Admin_Form_Setting_Mail extends CRM_Admin_Form_Setting
      * @return None
      * @access public
      */
-    public function buildQuickForm( ) 
+    public function buildQuickForm( )
     {
         CRM_Utils_System::setTitle(ts('Settings - CiviMail'));
         $this->addElement('text','verpSeparator', ts('VERP Separator'));
@@ -56,11 +56,11 @@ class CRM_Admin_Form_Setting_Mail extends CRM_Admin_Form_Setting
         $this->addElement( 'advcheckbox', 'replyTo', ts( 'Enable Custom Reply-To' ) );
         $this->addElement('text','mailerJobsMax', ts('Mailer CRON job limit'));
         $check = true;
-        
+
         // redirect to Administer Section After hitting either Save or Cancel button.
         $session = CRM_Core_Session::singleton( );
         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin', 'reset=1' ) );
-        
+
         parent::buildQuickForm( $check );
     }
 }
