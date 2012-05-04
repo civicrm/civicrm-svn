@@ -631,7 +631,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
 
             // handle register date CRM-4320
             if ( $this->_allowConfirmation ) {
-              CRM_Core_Error::debug( $params ); exit( );
                 $registerDate = $params['participant_register_date'];
             } else if ( CRM_Utils_Array::value( 'participant_register_date', $params ) &&
                         is_array( $params['participant_register_date'] ) &&
