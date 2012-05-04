@@ -341,12 +341,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
 <script type="text/javascript">
 {if $pcp}pcpAnonymous();{/if}
 {literal}
-var is_monetary = {/literal}{$is_monetary}{literal}
-if (! is_monetary ) {
-    if ( document.getElementsByName("is_pay_later")[0] ) {
-	document.getElementsByName("is_pay_later")[0].disabled = true;
-    }
-}
+
 if ( {/literal}"{$form.is_recur}"{literal} ) {
     if ( document.getElementsByName("is_recur")[0].checked == true ) {
 	window.onload = function() {
