@@ -261,3 +261,13 @@ INSERT INTO civicrm_option_value
 -- CRM-10148
 ALTER TABLE civicrm_report_instance ADD is_reserved TINYINT( 4 ) NULL DEFAULT '0' ;
 
+-- CRM-9438
+SELECT @option_group_id_act := MAX(id)     FROM civicrm_option_group WHERE name = 'activity_type';
+SELECT @max_val    := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_act;
+SELECT @max_wt     := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
+SELECT @CompId     := MAX(id)     FROM civicrm_component where name = 'CiviMember';
+INSERT INTO civicrm_option_value
+  (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, is_reserved, component_id)
+VALUES
+  (@option_group_id_act, {localize field='label'}'Change Membership Status'{/localize}, (SELECT @max_val := @max_val+1), 'Change Membership Status', (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Status.'{/localize},  1, 1, @CompId),
+  (@option_group_id_act, {localize field='label'}'Change Membership Type'{/localize},   (SELECT @max_val := @max_val+1), 'Change Membership Type',   (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Type.'{/localize},    1, 1, @CompId);
