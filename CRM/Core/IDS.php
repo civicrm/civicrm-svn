@@ -62,7 +62,7 @@ class CRM_Core_IDS {
     public function check( &$args ) {
 
         // lets bypass a few civicrm urls from this check
-      static $skip = array( 'civicrm/ajax', 'civicrm/admin/setting/updateConfigBackend', 'civicrm/admin/messageTemplates' );
+      static $skip = array( 'civicrm/admin/setting/updateConfigBackend', 'civicrm/admin/messageTemplates' );
       $path = implode( '/', $args );
       if ( in_array( $path, $skip ) ) {
           return;
@@ -141,10 +141,11 @@ class CRM_Core_IDS {
         }
 
         $init    = IDS_Init::init( $configFile );
+
         $ids     = new IDS_Monitor($_REQUEST, $init);
         $result  = $ids->run();
-
         if ( ! $result->isEmpty( ) ) {
+
             $this->react($result);
         }
 
@@ -232,6 +233,19 @@ class CRM_Core_IDS {
         $session = CRM_Core_Session::singleton( );
         $session->reset( 2 );
 
+        $path = implode( '/', $args );
+        if ( $path == in_array ("civicrm/ajax/rest", "civicrm/api/json" )) {
+          require ("api/v3/utils.php");
+          $error =
+            civicrm_api3_create_error( ts( 'There is a validation error with your HTML input. Your activity is a bit suspicious, hence aborting' ),
+              array( 'IP'      => $_SERVER['REMOTE_ADDR'],
+             'error_code' => 'IDS_KICK',
+             'level'   => 'security',
+             'referer' => $_SERVER['HTTP_REFERER'],
+             'reason'  => 'XSS suspected' ) );
+           echo json_encode( $error );
+           CRM_Utils_System::civiExit( );
+        }
         CRM_Core_Error::fatal( ts( 'There is a validation error with your HTML input. Your activity is a bit suspicious, hence aborting' ) );
     }
 }

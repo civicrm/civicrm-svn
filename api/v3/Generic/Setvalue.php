@@ -8,7 +8,7 @@ function civicrm_api3_generic_setValue($apiRequest) {
   civicrm_api3_verify_mandatory($params, NULL, array('id','field','value'));// we can't use _spec, doesn't work with generic
   $id=$params['id'];
   if (!is_numeric ($id))
-    return civicrm_api3_create_error("Param 'id' must be a int (the id for $entity)");
+    return civicrm_api3_create_error(ts( 'Please enter a number' ), array ('error_code'=> 'NaN','field'=>"id"));
 
   $field=CRM_Utils_String::munge($params['field']);
   $value=$params['value'];
@@ -26,10 +26,14 @@ function civicrm_api3_generic_setValue($apiRequest) {
   switch ($def['type']){
     case 1://int
       if (!is_numeric ($value))
-        return civicrm_api3_create_error("Param '$field' must be a number");
+        return civicrm_api3_create_error("Param '$field' must be a number",array('error_code'=>'NaN'));
       break;
     case 2://string
-      $value = substr ($value,0,$def['size']);
+      require_once ("CRM/Utils/Rule.php");
+      if (!CRM_Utils_Rule::xssString( $value ))
+        return civicrm_api3_create_error(ts( 'Illegal characters in input (potential scripting attack)' ), array ('error_code'=> 'XSS'));
+      if ($def['maxlength'])
+        $value = substr ($value,0,$def['maxlength']);
       break;
     case 16://boolean
       $value = (boolean) $value;
