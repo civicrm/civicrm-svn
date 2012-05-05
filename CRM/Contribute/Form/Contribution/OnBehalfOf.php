@@ -146,7 +146,8 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
                     if ( ! array_key_exists( $index, $stateCountryMap ) ) {
                         $stateCountryMap[$index] = array( );
                     }
-                    $stateCountryMap[$index][$prefixName] = 'onbehalf_' . $name;
+                    
+                    $stateCountryMap[$index][$prefixName] = 'onbehalf[' . $name. ']';
                 } else if ( in_array( $prefixName, array( 'organization_name', 'email' ) ) &&
                             !CRM_Utils_Array::value( 'is_required', $field ) ) {
                     $field['is_required'] = 1;
@@ -155,9 +156,12 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf
                 CRM_Core_BAO_UFGroup::buildProfile( $form, $field, null, null, false, true );
             }
         }
-        
+
         if ( !empty($stateCountryMap) ) {
             CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
+            
+            // now fix all state country selectors
+            CRM_Core_BAO_Address::fixAllStateSelects( $form, CRM_Core_DAO::$_nullArray );
         }
 
         $form->assign('onBehalfOfFields', $profileFields);
