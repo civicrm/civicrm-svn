@@ -753,9 +753,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         // subtype is a common field. lets keep it here
         $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
         if ( ! empty($subtypes) ) {
-            $sel = $this->add( 'select', 'contact_sub_type', ts( 'Contact Type' ),
-                               $subtypes, false, array('onchange' => $buildCustomData) );
-            $sel->setMultiple(true);
+          $sel = $this->add( 'select', 'contact_sub_type', ts( 'Contact Type' ), 
+          $subtypes, false,
+          array(
+            'id'       => 'contact_sub_type',
+            'multiple' => 'multiple',
+            'title'    => ts('- subtype -'),
+            'onchange' => $buildCustomData) 
+          );
         }
 
         // build edit blocks ( custom data, demographics, communication preference, notes, tags and groups )

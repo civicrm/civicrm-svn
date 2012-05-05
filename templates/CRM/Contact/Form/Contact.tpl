@@ -233,6 +233,13 @@ function warnSubtypeDataLoss( )
    return true;
 }
 
+cj("select#contact_sub_type").crmasmSelect({
+  addItemTarget: 'bottom',
+  animate: false,
+  highlight: true,
+  respectParents: true
+});
+
 </script>
 {/literal}
 
