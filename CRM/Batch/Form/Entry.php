@@ -397,7 +397,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         if ( CRM_Utils_Array::value( 'custom', $value ) &&
           is_array( $value['custom'] ) ) {
             CRM_Core_BAO_CustomValueTable::store( $value['custom'], 'civicrm_membership', $membership->id );
-          }            
+        }
+
+        // update contact information
+        $this->updateContactInfo( $value );
+
       }
     }
   }
