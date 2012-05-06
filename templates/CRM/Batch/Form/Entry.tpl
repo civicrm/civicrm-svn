@@ -49,7 +49,7 @@
         <td class="compressed"><span class="batch-edit"></span></td>
         {* contact select/create option*}
         <td class="compressed">
-            {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="primary_"}
+            {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="primary_" newContactCallback="updateContactInfo($rowNumber, 'primary_')"}
         </td>
 
         {foreach from=$fields item=field key=fieldName}
@@ -115,40 +115,74 @@
 
        // this means use has entered some data
        if ( errorExists ) {
-           parentRow.find("td:first span").prop('class', 'batch-invalid');
+         parentRow.find("td:first span").prop('class', 'batch-invalid');
        } else if ( inValidRow == 0 && validRow > 0 ) {
-            parentRow.find("td:first span").prop('class', 'batch-valid');
+         parentRow.find("td:first span").prop('class', 'batch-valid');
        } else {
-            parentRow.find("td:first span").prop('class', 'batch-edit');
+         parentRow.find("td:first span").prop('class', 'batch-edit');
        }
    }
     
    function calculateActualTotal() {
-       var total = 0;
-       cj('input[id*="_total_amount"]').each(function(){
-          if ( cj(this).val() ) {
-            total += parseInt(cj(this).val());
-          }
-       });
-       
-       cj('.batch-actual-total').html(formatMoney(total)); 
+     var total = 0;
+     cj('input[id*="_total_amount"]').each(function(){
+      if ( cj(this).val() ) {
+        total += parseInt(cj(this).val());
+      }
+     });
+
+     cj('.batch-actual-total').html(formatMoney(total)); 
    }
 
-//money formatting/localization
-function formatMoney ( amount ) {
-var c = 2;
-var t = '{/literal}{$config->monetaryThousandSeparator}{literal}';
-var d = '{/literal}{$config->monetaryDecimalPoint}{literal}';
+  //money formatting/localization
+  function formatMoney ( amount ) {
+    var c = 2;
+    var t = '{/literal}{$config->monetaryThousandSeparator}{literal}';
+    var d = '{/literal}{$config->monetaryDecimalPoint}{literal}';
 
-var n = amount, 
-    c = isNaN(c = Math.abs(c)) ? 2 : c, 
-    d = d == undefined ? "," : d, 
-    t = t == undefined ? "." : t, s = n < 0 ? "-" : "", 
-    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
-    j = (j = i.length) > 3 ? j % 3 : 0;
-	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-}
+    var n = amount, 
+        c = isNaN(c = Math.abs(c)) ? 2 : c, 
+        d = d == undefined ? "," : d, 
+        t = t == undefined ? "." : t, s = n < 0 ? "-" : "", 
+        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+        j = (j = i.length) > 3 ? j % 3 : 0;
+    
+    return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+  }
 
+  function updateContactInfo( blockNo, prefix ) {
+    var contactHiddenElement = 'input[name="' + prefix + 'contact_select_id[' + blockNo +']"]';
+    var contactId = cj( contactHiddenElement ).val();; 
+    console.log( 'contactId ' + contactId );
+    var returnProperties = '';
+    {/literal}
+    {if $contactFields}
+      {foreach from=$contactFields item=val key=fldName}
+        var fldName = "{$fldName}";
+        {literal}
+          if ( returnProperties ) {
+            returnProperties = returnProperties + ',';
+          }
+          returnProperties = returnProperties + fldName;
+        {/literal}  
+      {/foreach}
+    {/if}
+    {literal}
+   
+    cj().crmAPI ('Contact','get',{
+      'sequential' :'1', 
+      'contact_id': contactId,
+      'return': returnProperties },
+      { success:function (data) {
+        //cj.each(data.values, function(key, value) {
+        var fldValues = data.values[0];
+        cj.each ( fldValues, function( key, value ) {
+          // set the values
+          cj('[name="field['+ blockNo +']['+ key +']"]').val( value );
+        });
+      }
+    });
+  }
 </script>
 {/literal}
 

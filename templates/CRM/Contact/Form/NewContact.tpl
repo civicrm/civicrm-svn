@@ -104,7 +104,7 @@
                    cj('#' + prefix + 'profiles-' + blockNo).val('');
                    {/literal}
                    {if $newContactCallback}
-                         eval({$newContactCallback});
+                      eval("{$newContactCallback}");
                    {/if}
                    {literal}
                  }
@@ -137,6 +137,11 @@
           selectFirst : false, matchContains: true, minChars: 1
       }).result( function(event, data, formatted) {
           cj( contactHiddenElement ).val(data[1]);
+          {/literal}
+          {if $newContactCallback}
+            eval("{$newContactCallback}");
+          {/if}
+          {literal}
       }).focus( );
 
       cj( contactElement ).click( function( ) {

@@ -61,6 +61,12 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
   protected $_profileId;
 
   public $_action;
+
+  /**
+   * Contact fields
+   */
+  protected $_contactFields = array();
+
   /**
    * build all the data structures needed to build the form
    *
@@ -144,15 +150,20 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
     $fileFieldExists = false;
 
+    $contactTypes  = array( 'Contact', 'Individual', 'Household', 'Organization' );
     for ( $rowNumber = 1; $rowNumber<= $this->_batchInfo['item_count']; $rowNumber++  ) {
       CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber, null, true, 'primary_' );
 
       foreach ( $this->_fields as $name => $field ) {
+        if ( in_array( $field['field_type'], $contactTypes ) ) {
+          $this->_contactFields[$field['name']] = 1;
+        }
         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, null, false, false, $rowNumber );
       }
     }
 
     $this->assign( 'fields', $this->_fields );
+    $this->assign( 'contactFields', $this->_contactFields );
 
     // don't set the status message when form is submitted.
     $buttonName = $this->controller->getButtonName('submit');
