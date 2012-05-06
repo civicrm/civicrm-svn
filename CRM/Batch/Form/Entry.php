@@ -63,6 +63,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
   public $_action;
 
   /**
+   * when not to reset sort_name
+   */
+  protected $_preserveDefault = true;
+
+  /**
    * Contact fields
    */
   protected $_contactFields = array();
@@ -149,6 +154,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $this->assign( 'rowCount', $this->_batchInfo['item_count'] + 1 );
 
     $fileFieldExists = false;
+    $preserveDefaultsArray = array( 
+      'first_name', 'last_name', 'middle_name',
+      'organization_name',
+      'household_name');
 
     $contactTypes  = array( 'Contact', 'Individual', 'Household', 'Organization' );
     for ( $rowNumber = 1; $rowNumber<= $this->_batchInfo['item_count']; $rowNumber++  ) {
@@ -159,6 +168,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $this->_contactFields[$field['name']] = 1;
         }
         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, null, false, false, $rowNumber );
+
+        if ( in_array($field['name'], $preserveDefaultsArray ) ) {
+          $this->_preserveDefault = false;
+        }
       }
     }
 
@@ -316,6 +329,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             CRM_Contribute_BAO_Contribution::addPremium( $premiumParams );
           }    
         }
+
+        // update contact information
+        $this->updateContactInfo( $value );
+
       }
     }
   }//end of function
@@ -384,4 +401,23 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       }
     }
   }
+
+  /**
+   * update contact information 
+   *
+   * @param array $value associated array of submitted values
+   *
+   * @access public
+   * @return None
+   */
+  private function updateContactInfo( &$value ) {
+    $value['preserveDBName'] = $this->_preserveDefault;
+
+    //parse street address, CRM-7768
+    CRM_Contact_Form_Task_Batch::parseStreetAddress( $value, $this );
+
+    CRM_Contact_BAO_Contact::createProfileContact( $value, $this->_fields,
+      $value['contact_id'] );
+  }
+
 } 

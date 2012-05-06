@@ -246,7 +246,7 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
             $value['preserveDBName'] = $this->_preserveDefault;
             
             //parse street address, CRM-7768
-            $this->parseStreetAddress( $value );
+            self::parseStreetAddress( $value, $this );
             
             CRM_Contact_BAO_Contact::createProfileContact($value, $this->_fields, $key, null, $ufGroupId );
             if ( $notify ) {
@@ -264,9 +264,9 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
     }//end of function
     
     
-    function parseStreetAddress( &$contactValues ) {
+    function parseStreetAddress( &$contactValues, &$form ) {
         if ( !is_array( $contactValues ) ||
-             !is_array( $this->_fields ) ) {
+             !is_array( $form->_fields ) ) {
             return;
         }
         
@@ -274,7 +274,7 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
         $addressFldKey = 'street_address';
         if ( !isset( $parseAddress ) ) {
             $parseAddress = false;
-            foreach ( $this->_fields as $key => $fld ) {
+            foreach ( $form->_fields as $key => $fld ) {
                 if ( strpos( $key, $addressFldKey ) !== false ) {
                     $parseAddress = CRM_Utils_Array::value('street_address_parsing', 
                                                            CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
