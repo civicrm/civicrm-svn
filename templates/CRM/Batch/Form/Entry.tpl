@@ -153,8 +153,9 @@
   function updateContactInfo( blockNo, prefix ) {
     var contactHiddenElement = 'input[name="' + prefix + 'contact_select_id[' + blockNo +']"]';
     var contactId = cj( contactHiddenElement ).val();; 
-    console.log( 'contactId ' + contactId );
+    
     var returnProperties = '';
+    var profileFields = new Array();
     {/literal}
     {if $contactFields}
       {foreach from=$contactFields item=val key=fldName}
@@ -163,22 +164,23 @@
           if ( returnProperties ) {
             returnProperties = returnProperties + ',';
           }
-          returnProperties = returnProperties + fldName;
+          var fld = fldName.split('-');
+          returnProperties = returnProperties + fld[0];
+          profileFields[fld[0]] = fldName;
         {/literal}  
       {/foreach}
     {/if}
     {literal}
-   
+    
     cj().crmAPI ('Contact','get',{
       'sequential' :'1', 
       'contact_id': contactId,
       'return': returnProperties },
       { success:function (data) {
-        //cj.each(data.values, function(key, value) {
-        var fldValues = data.values[0];
-        cj.each ( fldValues, function( key, value ) {
+        cj.each ( data.values[0], function( key, value ) {
           // set the values
-          cj('[name="field['+ blockNo +']['+ key +']"]').val( value );
+          var actualFldName = profileFields[key];
+          cj('[name="field['+ blockNo +']['+ actualFldName +']"]').val( value );
         });
       }
     });
