@@ -226,7 +226,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
     {
       $this->_setUpPledgeObjects();
       $values = array();
-      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $paymentProcessorID );
+      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, null );
       $msg = $this->IPN->sendMail($this->input, $this->ids,$this->objects, $values);
       $this->assertContains('Contribution Information',$msg['html']);
 
@@ -362,7 +362,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
           'pledgeID' => $this->_pledgeId,
          );
 
-         $this->ids['pledge_payment'][] = $input['id'];
+         $this->ids['pledge_payment'][] = $this->input['id'];
 
     }
 }
