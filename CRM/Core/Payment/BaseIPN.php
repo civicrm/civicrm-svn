@@ -98,7 +98,7 @@ class CRM_Core_Payment_BaseIPN {
  * @input array information from Payment processor
  */
   function loadObjects(&$input, &$ids, &$objects, $required, $paymentProcessorID) {
-    $ids['paymentProcessorID'] = $paymentProcessorID;
+    $ids['paymentProcessor'] = $paymentProcessorID;
     if (is_a($objects['contribution'], 'CRM_Contribute_BAO_Contribution')) {
       $contribution = &$objects['contribution'];
     }

@@ -175,7 +175,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
       function testLoadParticipantObjects( )
       {
       $this->_setUpParticipantObjects();
-      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $paymentProcessorID );
+      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $this->_processorId );
       $this->assertFalse(empty($this->objects['participant']), 'in line ' . __LINE__);
       $this->assertTrue(is_a( $this->objects['participant'],'CRM_Event_BAO_Participant'));
       $this->assertTrue(is_a( $this->objects['contributionType'],'CRM_Contribute_BAO_ContributionType'));
@@ -192,7 +192,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
     function testsendMailParticipant( )
     {
       $this->_setUpParticipantObjects();
-      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $paymentProcessorID );
+      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $this->_processorId );
       $values = array();
       $this->assertFalse(empty($this->objects['event']));
       $msg = $this->IPN->sendMail($this->input, $this->ids,$this->objects, $values);
@@ -206,13 +206,17 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
     function testLoadPledgeObjects( )
       {
       $this->_setUpPledgeObjects();
-      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $paymentProcessorID );
+      $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
       $this->assertFalse(empty($this->objects['pledge_payment'][0]), 'in line ' . __LINE__);
       $this->assertTrue(is_a( $this->objects['contributionType'],'CRM_Contribute_BAO_ContributionType'));
       $this->assertTrue(is_a( $this->objects['contribution'],'CRM_Contribute_BAO_Contribution'));
       $this->assertTrue(is_a( $this->objects['pledge_payment'][0],'CRM_Pledge_BAO_PledgePayment'));
       $this->assertFalse(empty($this->objects['pledge_payment'][0]->id));
-
+      $this->assertEquals($this->_contributionTypeId, $this->objects['contributionType']->id);
+      $this->assertEquals($this->_processorId,$this->objects['paymentProcessor']['id']);
+      $this->assertEquals($this->_contributionId, $this->objects['contribution']->id);
+      $this->assertEquals($this->_contactId, $this->objects['contact']->id);
+      $this->assertEquals($this->_pledgeId, $this->objects['pledge_payment'][0]->pledge_id);
     }
      /**
      * Test the LoadObjects function with a pledge

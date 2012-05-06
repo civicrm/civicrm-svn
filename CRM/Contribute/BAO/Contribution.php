@@ -1890,13 +1890,18 @@ SELECT source_contact_id
     if (empty($this->_component)) {
       $this->_component = strtolower(CRM_Utils_Array::value('component', $input));
     }
-    $paymentProcessorID = CRM_Utils_Array::value('paymentProcessorId', $ids);
+    $paymentProcessorID = CRM_Utils_Array::value('paymentProcessor', $ids);
     $contributionType = new CRM_Contribute_BAO_ContributionType();
     $contributionType->id = $this->contribution_type_id;
     if (!$contributionType->find(TRUE)) {
-      CRM_Core_Error::debug_log_message("Could not find contribution type record: $contributionTypeID");
-      echo "Failure: Could not find contribution type record for $contributionTypeID<p>";
+      CRM_Core_Error::debug_log_message("Could not find contribution type record: " . $this->contribution_type_id );
+      echo "Failure: Could not find contribution type record for <p>" . $this->contribution_type_id;
       return FALSE;
+    }
+    if (isset($ids['contact'])) {
+        $this->_relatedObjects['contact'] = new CRM_Contact_BAO_Contact();
+        $this->_relatedObjects['contact']->id = $ids['contact'];
+        $this->_relatedObjects['contact']->find(true); 
     }
     $this->_relatedObjects['contributionType'] = $contributionType;
     if ($input['component'] == 'contribute') {
