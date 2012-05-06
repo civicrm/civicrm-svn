@@ -1892,7 +1892,7 @@ SELECT source_contact_id
     }
     $paymentProcessorID = CRM_Utils_Array::value('paymentProcessorId', $ids);
     $contributionType = new CRM_Contribute_BAO_ContributionType();
-    $contributionType->id = $contribution->contribution_type_id;
+    $contributionType->id = $this->contribution_type_id;
     if (!$contributionType->find(TRUE)) {
       CRM_Core_Error::debug_log_message("Could not find contribution type record: $contributionTypeID");
       echo "Failure: Could not find contribution type record for $contributionTypeID<p>";
