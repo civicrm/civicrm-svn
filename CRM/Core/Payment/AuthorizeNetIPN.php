@@ -226,7 +226,7 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
       FROM civicrm_contribution_recur cr
 INNER JOIN civicrm_contribution co ON co.contribution_recur_id = cr.id
      WHERE cr.processor_id = '{$input['subscription_id']}' AND 
-           cr.contact_id = {$ids['contact']} AND co.id = {$ids['contribution']}
+           (cr.contact_id = {$ids['contact']} OR co.id = {$ids['contribution']})
      LIMIT 1";
         $ids['contributionRecur'] = CRM_Core_DAO::singleValueQuery( $sql );
         if ( ! $ids['contributionRecur'] ) {
