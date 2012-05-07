@@ -67,77 +67,126 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
      */
     static function &add(&$params, &$ids) 
     {
-        
-        if ( CRM_Utils_Array::value( 'membership', $ids ) ) {
-            CRM_Utils_Hook::pre( 'edit', 'Membership', $ids['membership'], $params );
-        } else {
-            CRM_Utils_Hook::pre( 'create', 'Membership', null, $params ); 
-        }
-        
-        if ( !CRM_Utils_Array::value( 'reminder_date', $params ) ) { 
-            $params['reminder_date'] = 'null';        
-        }
-        
-        if ( !CRM_Utils_Array::value( 'is_override', $params ) ) {
-            $params['is_override'] = 'null';
-        }
-        
-        $membership = new CRM_Member_BAO_Membership();
-        $membership->copyValues($params);
 
-        $membership->id = CRM_Utils_Array::value( 'membership', $ids );
-        
-        $membership->save( );
-        $membership->free( );
-        
-        $session = CRM_Core_Session::singleton();
-        if ( empty( $membership->contact_id ) || empty( $membership->status_id ) ){
-            // this means we are in renewal mode and are just updating the membership
-            // record or this is an API update call and all fields are not present in the update record
-            // however the hooks dont care and want all data CRM-7784
-            $tempMembership = new CRM_Member_DAO_Membership();
-            $tempMembership->id = $membership->id;
-            $tempMembership->find( true );
-            $membership = $tempMembership;
-        }
+      // get activity types for use in activity record creation
+      $activityTypes = CRM_Core_PseudoConstant::activityType( true, false, false, 'name' );
 
-        //get the log start date.
-        //it is set during renewal of membership.        
-        $logStartDate = CRM_Utils_array::value( 'log_start_date', $params );
-        $logStartDate = ( $logStartDate ) ? CRM_Utils_Date::isoToMysql( $logStartDate ) : CRM_Utils_Date::isoToMysql( $membership->start_date );
-        $values = self::getStatusANDTypeValues( $membership->id );
-        
-        $membershipLog = array('membership_id' => $membership->id,
-                               'status_id'     => $membership->status_id,
-                               'start_date'    => $logStartDate,
-                               'end_date'      => CRM_Utils_Date::isoToMysql( $membership->end_date ),
-                               'renewal_reminder_date' => CRM_Utils_Date::isoToMysql( $membership->reminder_date ), 
-                               'modified_date' => date('Ymd'),
-        					   'membership_type_id' => $values[$membership->id]['membership_type_id']
-                               );
-        
-        $session = CRM_Core_Session::singleton();
-        // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
-		if ( $session->get( 'userID' ) ){
-		    $membershipLog['modified_id'] = $session->get( 'userID' );
-		} else if ( ! empty( $ids['userId'] ) ) {
-			$membershipLog['modified_id'] = $ids['userId'];
-		} else {
-		  $membershipLog['modified_id'] = $membership->contact_id;
-		}
+      if ( CRM_Utils_Array::value( 'membership', $ids ) ) {
+          CRM_Utils_Hook::pre( 'edit', 'Membership', $ids['membership'], $params );
+          $oldStatus     = null;
+          $oldType       = null;
+          $membershipObj = new CRM_Member_DAO_Membership();
+          $membershipObj->id = $ids[ 'membership' ];
+          $membershipObj->find();
+          while( $membershipObj->fetch() ) {
+            $oldStatus = $membershipObj->status_id;
+            $oldType   = $membershipObj->membership_type_id;
+          }
+      } else {
+          CRM_Utils_Hook::pre( 'create', 'Membership', null, $params ); 
+      }
+    
+      if ( !CRM_Utils_Array::value( 'reminder_date', $params ) ) { 
+          $params['reminder_date'] = 'null';        
+      }
+    
+      if ( !CRM_Utils_Array::value( 'is_override', $params ) ) {
+          $params['is_override'] = 'null';
+      }
+    
+      $membership = new CRM_Member_BAO_Membership();
+      $membership->copyValues($params);
+      $membership->id = CRM_Utils_Array::value( 'membership', $ids );
+    
+      $membership->save( );
+      $membership->free( );
+    
+      $session = CRM_Core_Session::singleton();
+      if ( empty( $membership->contact_id ) || empty( $membership->status_id ) ){
+          // this means we are in renewal mode and are just updating the membership
+          // record or this is an API update call and all fields are not present in the update record
+          // however the hooks dont care and want all data CRM-7784
+          $tempMembership = new CRM_Member_DAO_Membership();
+          $tempMembership->id = $membership->id;
+          $tempMembership->find( true );
+          $membership = $tempMembership;
+      }
 
-        CRM_Member_BAO_MembershipLog::add($membershipLog, CRM_Core_DAO::$_nullArray);
-        
-        // reset the group contact cache since smart groups might be affected due to this
-        CRM_Contact_BAO_GroupContactCache::remove( );
+      //get the log start date.
+      //it is set during renewal of membership.        
+      $logStartDate = CRM_Utils_array::value( 'log_start_date', $params );
+      $logStartDate = ( $logStartDate ) ? CRM_Utils_Date::isoToMysql( $logStartDate ) : CRM_Utils_Date::isoToMysql( $membership->start_date );
+      $values = self::getStatusANDTypeValues( $membership->id );
+    
+      $membershipLog = array('membership_id' => $membership->id,
+                             'status_id'     => $membership->status_id,
+                             'start_date'    => $logStartDate,
+                             'end_date'      => CRM_Utils_Date::isoToMysql( $membership->end_date ),
+                             'renewal_reminder_date' => CRM_Utils_Date::isoToMysql( $membership->reminder_date ), 
+                             'modified_date' => date('Ymd'),
+      					             'membership_type_id' => $values[$membership->id]['membership_type_id']
+                             );
+    
+      $session = CRM_Core_Session::singleton();
+      // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
+  		if ( $session->get( 'userID' ) ){
+  		    $membershipLog['modified_id'] = $session->get( 'userID' );
+  		} else if ( ! empty( $ids['userId'] ) ) {
+  			$membershipLog['modified_id'] = $ids['userId'];
+  		} else {
+  		  $membershipLog['modified_id'] = $membership->contact_id;
+  		}
 
-        if ( CRM_Utils_Array::value( 'membership', $ids ) ) {
-            CRM_Utils_Hook::post( 'edit', 'Membership', $membership->id, $membership );
-        } else {
-            CRM_Utils_Hook::post( 'create', 'Membership', $membership->id, $membership );
-        }
-        
-        return $membership;
+      CRM_Member_BAO_MembershipLog::add($membershipLog, CRM_Core_DAO::$_nullArray);
+      
+      // reset the group contact cache since smart groups might be affected due to this
+      CRM_Contact_BAO_GroupContactCache::remove( );
+
+      if ( CRM_Utils_Array::value( 'membership', $ids ) ) {
+          if ( $membership->status_id != $oldStatus ){
+              require_once 'CRM/Member/PseudoConstant.php';
+              $allStatus = CRM_Member_PseudoConstant::membershipStatus( );
+              $session       = CRM_Core_Session::singleton();
+              $activityParam = array( 'subject'               => "Status changed from {$allStatus[$oldStatus]} to {$allStatus[$membership->status_id]}",
+                                      'source_contact_id'     => $session->get( 'userID' ),
+                                      'target_contact_id'     => $membership->contact_id,
+                                      'source_record_id'      => $membership->id,
+                                      'activity_type_id'      => array_search( 'Change Membership Status', $activityTypes ),
+                                      'status_id'             => 2,
+                                      'version'               => 3,
+                                      'priority_id'           => 2,
+                                      'activity_date_time'    => date( 'Y-m-d H:i:s' ),
+                                      'is_auto'               => 0,
+                                      'is_current_revision'   => 1,
+                                      'is_deleted'            => 0
+                                      );
+              $activityResult = civicrm_api( 'activity', 'create', $activityParam );
+          }
+          if ( $membership->membership_type_id != $oldType ){
+              $session       = CRM_Core_Session::singleton();
+              require_once 'CRM/Member/PseudoConstant.php';
+              $membershipTypes = CRM_Member_PseudoConstant::membershipType();
+              $activityParam = array( 'subject'              => "Type changed from {$membershipTypes[$oldType]} to {$membershipTypes[$membership->membership_type_id]}",
+                                      'source_contact_id'    => $session->get( 'userID' ),
+                                      'target_contact_id'    => $membership->contact_id,
+                                      'source_record_id'     => $membership->id,
+                                      'activity_type_id'     => array_search( 'Change Membership Type', $activityTypes ),
+                                      'status_id'            => 2,
+                                      'version'              => 3,
+                                      'priority_id'          => 2,
+                                      'activity_date_time'   => date( 'Y-m-d H:i:s' ),
+                                      'is_auto'              => 0,
+                                      'is_current_revision'  => 1,
+                                      'is_deleted'           => 0
+                                      );
+              $activityResult = civicrm_api( 'activity', 'create', $activityParam );
+          }
+          CRM_Utils_Hook::post( 'edit', 'Membership', $membership->id, $membership );
+      } else {
+          CRM_Utils_Hook::post( 'create', 'Membership', $membership->id, $membership );
+      }
+      
+      return $membership;
     }
     
     /**
