@@ -26,7 +26,7 @@
 {* tpl for building Individual related fields *}
 <script type="text/javascript">
 var cid=parseFloat("{$contactId}");//parseInt is octal by default
-var contactIndividual = "{crmURL p='civicrm/ajax/rest' q='fnName=civicrm/contact/search&json=1&contact_type=Individual&return[display_name]&return[sort_name]=1&return[email]=1&rowCount=50' h=0}";
+var contactIndividual = "{crmURL p='civicrm/ajax/rest' q='entity=contact&action=get&json=1&contact_type=Individual&return=display_name,sort_name,email&rowCount=50' h=0}";
 var viewIndividual = "{crmURL p='civicrm/contact/view' q='reset=1&cid=' h=0}";
 var editIndividual = "{crmURL p='civicrm/contact/add' q='reset=1&action=update&cid=' h=0}";
 var checkSimilar =  {$checkSimilar};
@@ -45,26 +45,24 @@ var checkSimilar =  {$checkSimilar};
              if (this.value =='') return;
 	     cj.getJSON(contactIndividual,{sort_name:cj('#last_name').val()},
          function(data){
-           if (data.is_error== 0) {
+           if (data.is_error == 1 || data.count == 0) {
              return;
            }
-           var msg="<tr id='lastname_msg'><td colspan='5'><div class='messages status'><div class='icon inform-icon'></div>";
-           if ( data.length == 1 ) {
+           var msg="<td id='lastname_msg'><div class='messages status'><div class='icon inform-icon'></div>";
+           if ( data.count == 1 ) {
              msg = msg + "{/literal}{ts}There is a contact with a similar last name. If the person you were trying to add is listed below, click on their name to view or edit their record{/ts}{literal}";  
            } else {
              msg = msg + "{/literal}{ts}There are "+ data.length +" contacts with a similar last name({/ts}<a href='#' onclick='cj(\"#lastname_msg\").remove();cj(\"#current_employer\").focus();'>{ts}Click here{/ts}</a> {ts}to Skip and move to next form field). If the person you were trying to add is listed below, click on their name to view or edit their record{/ts}{literal}";
            }
            msg = msg+ '<table class="matching-contacts-actions">';
-           cj.each(data, function(i,contact){
-	   if ( contact.contact_id ) {
-	     if ( !(contact.email) ) {
-	       contact.email = '';
-	     }
-             msg = msg + '<tr><td><a href="'+viewIndividual+contact.contact_id+'" target="_blank">'+ contact.display_name +'</a></td><td>'+contact.email+'</td><td class="action-items"><a class="action-item action-item-first" href="'+viewIndividual+contact.contact_id+'">{/literal}{ts}View{/ts}{literal}</a><a class="action-item" href="'+editIndividual+contact.contact_id+'">{/literal}{ts}Edit{/ts}{literal}</a></td></tr>';
-	   }
+           cj.each(data.values, function(i,contact){
+      	     if ( !(contact.email) ) {
+      	       contact.email = '';
+      	     }
+             msg = msg + '<tr><td><a href="'+viewIndividual+contact.id+'" target="_blank">'+ contact.display_name +'</a></td><td>'+contact.email+'</td><td class="action-items"><a class="action-item action-item-first" href="'+viewIndividual+contact.contact_id+'">{/literal}{ts}View{/ts}{literal}</a><a class="action-item" href="'+editIndividual+contact.contact_id+'">{/literal}{ts}Edit{/ts}{literal}</a></td></tr>';
            });
            msg = msg+ '</table>';
-           cj('#last_name').parent().parent().after(msg+'</div><td></tr>');
+           cj('#last_name').parent().after(msg+'</div></td>');
            cj('#lastname_msg a').click(function(){global_formNavigate =true; return true;});// No confirmation dialog on click
          });
 	    });
