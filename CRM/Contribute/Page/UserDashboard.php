@@ -92,13 +92,34 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
             //@todo calling api functions directly is not supported
             _civicrm_api3_object_to_array( $recur, $values );
 
-            $values['cancelSubscriptionUrl'] =        $paymentObject->subscriptionURL( $recur->id, 'recur' );
-            $values['updateSubscriptionBillingUrl'] = $paymentObject->subscriptionURL( $recur->id, 'recur', 'billing' );
-            $values['updateSubscriptionUrl'] = $paymentObject->subscriptionURL( $recur->id, 'recur', 'update' );
             $values['recur_status']          = $recurStatus[$values['contribution_status_id']];
             $recurRow[$values['id']]         = $values;
+            
+            $action = array_sum( array_keys( CRM_Contribute_Page_Tab::recurLinks( ) ) );
+            
+            $paymentProcessorObj =
+                CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $recur->id, 'recur', 'obj' );
+            $cancelSubscriptionSupported = false;
+            if ( $paymentProcessorObj->isSupported( 'cancelSubscription' ) ) {
+                $cancelSubscriptionSupported = true;
+            }
+            
+            $details = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails( $recur->id, 'recur' );
+            $hideUpdate = $details->membership_id & $details->auto_renew;
+            
+            if ( $hideUpdate ) {
+                $action -= CRM_Core_Action::UPDATE;
+            }
+            
+            $recurRow[$values['id']]['action'] = CRM_Core_Action::formLink( CRM_Contribute_Page_Tab::recurLinks( $cancelSubscriptionSupported ), 
+                                                                            $action,
+                                                                            array( 'cid'  => $this->_contactId,
+                                                                                   'crid' => $values['id'],
+                                                                                   'cxt'  => 'contribution')
+                                                                            );
+            
             $recurIDs[]                      = $values['id'];
-
+            
             //reset $paymentObject for checking other paymenet processor
             //recurring url 
             $paymentObject = null;
@@ -113,7 +134,6 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
         }
 
         $this->assign('recurRows',$recurRow);
-
         if ( ! empty( $recurRow ) ) {
             $this->assign('recur', true); 
         } else {
