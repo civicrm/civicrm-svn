@@ -62,7 +62,7 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
 
     $this->applyFilter('__ALL__', 'trim');
     $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch');
-    $this->add('text', 'title', ts('Title'), $attributes['name'], true );
+    $this->add('text', 'title', ts('Batch Name'), $attributes['name'], true );
     
     $type = $this->add('select', 'type_id', ts('Type'), CRM_Core_PseudoConstant::getBatchType() ); 
     
@@ -112,7 +112,12 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
 
     if ( $this->_id ) {
       $params['id'] = $this->_id;
+    } else {
+      $session = CRM_Core_Session::singleton();
+      $params['created_id'  ] = $session->get('userID');
+      $params['created_date'] = CRM_Utils_Date::processDate( date("Y-m-d his") );
     }
+
     $batch = CRM_Core_BAO_Batch::create( $params ); 
 
     // redirect to batch entry page.

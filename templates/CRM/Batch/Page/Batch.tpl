@@ -35,11 +35,12 @@
     <table id="options" class="display">
       <thead>
           <tr>
-              <th>{ts}Title{/ts}</th>
+              <th>{ts}Batch Name{/ts}</th>
               <th>{ts}Type{/ts}</th>
               <th>{ts}Item Count{/ts}</th>
               <th>{ts}Total Amount{/ts}</th>
               <th>{ts}Status{/ts}</th>
+              <th>{ts}Created By{/ts}</th>
               <th></th>
           </tr>
       </thead>
@@ -50,6 +51,7 @@
               <td class="crm-item_count">{$row.item_count}</td>	
               <td class="crm-total">{$row.total|crmMoney}</td>	
               <td class="crm-status_id">{$row.status}</td>	
+              <td class="crm-created_by">{$created_by.$row.id}</td>	
               <td>{if $row.status_id eq 1}{$row.action|replace:'xx':$row.id}{/if}</td>
          </tr>
       {/foreach}
