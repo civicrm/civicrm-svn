@@ -180,6 +180,10 @@
         cj.each ( data.values[0], function( key, value ) {
           // set the values
           var actualFldName = profileFields[key];
+          if ( key == 'country' || key == 'state_province' ) {
+            idFldName = key + '_id';
+            value = data.values[0][idFldName];
+          }
           cj('[name="field['+ blockNo +']['+ actualFldName +']"]').val( value );
         });
       }
