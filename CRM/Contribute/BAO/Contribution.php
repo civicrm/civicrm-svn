@@ -1957,8 +1957,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
           $payment = new CRM_Pledge_BAO_PledgePayment();
           $payment->id = $paymentID;
           if (!$payment->find(TRUE)) {
-            CRM_Core_Error::debug_log_message("Could not find pledge payment record: $pledge_paymentID");
-            echo "Failure: Could not find pledge payment record: $pledge_paymentID<p>";
+            CRM_Core_Error::debug_log_message("Could not find pledge payment record: " . $ids['pledge_payment']);
+            echo "Failure: Could not find pledge payment record: " . $ids['pledge_payment'];
             return FALSE;
           }
           $this->_relatedObjects['pledge_payment'][] = $payment;
@@ -1969,8 +1969,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         $recur = new CRM_Contribute_BAO_ContributionRecur();
         $recur->id = $ids['contributionRecur'];
         if (!$recur->find(TRUE)) {
-          CRM_Core_Error::debug_log_message("Could not find recur record: $contributionRecurID");
-          echo "Failure: Could not find recur record: $contributionRecurID<p>";
+          CRM_Core_Error::debug_log_message("Could not find recur record: " . $ids['contributionRecur']);
+          echo "Failure: Could not find recur record: " . $ids['contributionRecur'];
           return FALSE;
         }
         $this->_relatedObjects['contributionRecur'] = &$recur;
@@ -1995,8 +1995,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
           $loadObjectSuccess = TRUE;
           if ($required) {
             $loadObjectSuccess = FALSE;
-            CRM_Core_Error::debug_log_message("Could not find contribution page for contribution record: $contributionID");
-            echo "Failure: Could not find contribution page for contribution record: $contributionID<p>";
+            CRM_Core_Error::debug_log_message("Could not find contribution page for contribution record: " . $this->id);
+            echo "Failure: Could not find contribution page for contribution record: " . $this->id . "</p>";
           }
           return $loadObjectSuccess;
         }
@@ -2022,8 +2022,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       if ($ids['participant'] &&
         !$participant->find(TRUE)
       ) {
-        CRM_Core_Error::debug_log_message("Could not find participant: $participantID");
-        echo "Failure: Could not find participant: $participantID<p>";
+        CRM_Core_Error::debug_log_message("Could not find participant: " . $ids['participant']);
+        echo "Failure: Could not find participant: " . $ids['participant'] . "<p>";
         return FALSE;
       }
       $participant->register_date = CRM_Utils_Date::isoToMysql($participant->register_date);
@@ -2045,8 +2045,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     }
     elseif ($required) {
       $loadObjectSuccess = FALSE;
-      CRM_Core_Error::debug_log_message("Could not find payment processor for contribution record: $contributionID");
-      echo "Failure: Could not find payment processor for contribution record: $contributionID<p>";
+      CRM_Core_Error::debug_log_message("Could not find payment processor for contribution record: " . $this->id);
+      echo "Failure: Could not find payment processor for contribution record: " . $this->id;
     }
 
     return $loadObjectSuccess;
@@ -2270,14 +2270,13 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     $template->assign('displayName', $this->_relatedObjects['contact']->display_name);
     // CRM_Core_Error::debug('tpl',$template);
     //assign honor infomation to receiptmessage
-    if ($honorID = CRM_Core_DAO::getFieldValue(
-        'CRM_Contribute_DAO_Contribution',
+    $honorID = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution',
         $this->id,
         'honor_contact_id'
-      )
-    ) {
-      $honorDefault = array();
-      $honorIds = array();
+     );
+    if(!empty($honorID)){
+    	
+      $honorDefault = $honorIds = array();
       $honorIds['contribution'] = $this->id;
       $idParams = array('id' => $honorID, 'contact_id' => $honorID);
       CRM_Contact_BAO_Contact::retrieve($idParams, $honorDefault, $honorIds);
