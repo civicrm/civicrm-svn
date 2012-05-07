@@ -187,7 +187,13 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
                 CRM_Core_Error::displaySessionError( $updateSubscription ); 
                 $status = ts('Could not update the Recurring contribution details');
             } else if ( $updateSubscription ) {
-                $status  = ts( 'Recurring contribution details has been updated for the subscription.' );
+                
+                $status    = ts( 'Details for your recurring contribution of %1, every %2 %3(s) has been updated for %4 installments.',
+                                 array( 1 => CRM_Utils_Money::format( $params['amount'], $this->_subscriptionDetails->currency ), 
+                                        2 => $this->_subscriptionDetails->frequency_interval,
+                                        3 => $this->_subscriptionDetails->frequency_unit,
+                                        4 => $params['installments'] ) );
+                //$status  = ts( 'Recurring contribution details has been updated for the subscription.' );
                 $contactID = $this->_subscriptionDetails->contact_id;
                 
                 if ( $this->_subscriptionDetails->amount != $params['amount'] ) {
