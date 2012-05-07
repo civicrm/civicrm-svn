@@ -439,6 +439,12 @@ function drush_civicrm_upgrade_db_validate() {
 }
 
 function drush_civicrm_upgrade_db() {
+  if (class_exists('CRM_Upgrade_Headless')) {
+    // Note: CRM_Upgrade_Headless introdued in 4.2 -- at the same time as class auto-loading
+    $upgradeHeadless = new CRM_Upgrade_Headless();
+    $result = $upgradeHeadless->run(); // FIXME Exception handling?
+    drush_print("Upgrade outputs: " . "\"".$result['message']."\"");
+  } else {
     require_once 'CRM/Core/Smarty.php';
     $template = CRM_Core_Smarty::singleton( );
 
@@ -455,6 +461,7 @@ function drush_civicrm_upgrade_db() {
     $result = $template->get_template_vars('message'); // capture the required message.
     ob_end_clean();
     drush_print("Upgrade outputs: " . "\"$result\"");
+  }
 }
 
 function drush_civicrm_update_cfg_validate() {
