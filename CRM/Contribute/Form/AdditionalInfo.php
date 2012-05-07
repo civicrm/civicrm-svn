@@ -335,7 +335,8 @@ class CRM_Contribute_Form_AdditionalInfo
                 $params['product_name'] = $productDAO->name;
                 $params['product_sku']  = $productDAO->sku;
                      
-                if ( CRM_Utils_Array::value( $params['product_name'][0],
+                if ( !CRM_Utils_Array::value( 'product_option', $params ) &&
+                  CRM_Utils_Array::value( $params['product_name'][0],
                                              $form->_options ) ) {
                     $params['product_option'] = 
                         $form->_options[$params['product_name'][0]][$params['product_name'][1]];
@@ -430,8 +431,10 @@ class CRM_Contribute_Form_AdditionalInfo
         if ( CRM_Utils_Array::value( 'currency', $params ) ) {
           $this->assign( 'currency', $params['currency']);
         }
-        
-        $this->assign( 'receive_date',  CRM_Utils_Date::processDate( $params['receive_date'] ) );
+
+        if ( CRM_Utils_Array::value( 'receive_date', $params ) ) { 
+          $this->assign( 'receive_date',  CRM_Utils_Date::processDate( $params['receive_date'] ) );
+        }
 
         list ($sendReceipt, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
             array(

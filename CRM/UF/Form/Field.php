@@ -141,8 +141,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             'name'  => 'soft_credit',
             'title' => ts('Soft Credit')
           ),
-          'premium'      => array(
-            'name'  => 'premiun',
+          'product_name' => array(
+            'name'  => 'product_name',
             'title' => ts('Premiums')
           ),
           'contribution_note' => array(

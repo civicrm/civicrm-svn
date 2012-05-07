@@ -1671,7 +1671,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
           $form->addElement( 'checkbox', $name, $title );
         } else if ($fieldName == 'soft_credit' ) {
           CRM_Contact_Form_NewContact::buildQuickForm( $form, $rowNumber, null, false, 'soft_credit_' );
-        } else if ($fieldName == 'premium' ) {
+        } else if ($fieldName == 'product_name' ) {
           list( $products, $options ) = CRM_Contribute_BAO_Premium::getPremiumProductInfo();
           $sel =& $form->addElement('hierselect', $name, $title);
           $products = array('0' => ts('- select -')) + $products;

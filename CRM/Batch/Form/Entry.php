@@ -61,6 +61,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
   protected $_profileId;
 
   public $_action;
+  public $_mode;
 
   /**
    * when not to reset sort_name
@@ -265,6 +266,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $value['contact_id'] = CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] );                          
 
+        // update contact information
+        $this->updateContactInfo( $value );
+
         // handle soft credit
         if ( CRM_Utils_Array::value( $key, $params['soft_credit_contact_select_id'] ) ) {
           $value['soft_credit_to'] = $params['soft_credit_contact_select_id'][$key];                          
@@ -309,29 +313,39 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         $value['skipRecentView'] = true;
         $contribution = CRM_Contribute_BAO_Contribution::create( $value, CRM_Core_DAO::$_nullArray );
 
-        //send receipt mail.
-        if ( $contribution->id && CRM_Utils_Array::value( 'send_receipt', $value ) ) {
-          $value['contribution_id'] = $contribution->id;
-          CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
-        }
-
         //process premiums
-        if ( CRM_Utils_Array::value( 'premium', $value ) ) {
-          if ( $value['premium'][0] > 0 ) {
+        if ( CRM_Utils_Array::value( 'product_name', $value ) ) {
+          if ( $value['product_name'][0] > 0 ) {
             list( $products, $options ) = CRM_Contribute_BAO_Premium::getPremiumProductInfo();
+            
+            $value['hidden_Premium'] = 1;
+            $value['product_option'] = CRM_Utils_Array::value( 
+              $value['product_name'][1], 
+              $options[$value['product_name'][0]] );
+
 
             $premiumParams = array(
-              'product_id'      => $value['premium'][0],
+              'product_id'      => $value['product_name'][0],
               'contribution_id' => $contribution->id,
-              'product_option'  => CRM_Utils_Array::value( $value['premium'][1], $options[$value['premium'][0]] ),
+              'product_option'  => $value['product_option'],
               'quantity'        => 1
             );
             CRM_Contribute_BAO_Contribution::addPremium( $premiumParams );
           }    
-        }
+        } // end of premium
 
-        // update contact information
-        $this->updateContactInfo( $value );
+        //send receipt mail.
+        if ( $contribution->id && 
+          CRM_Utils_Array::value( 'send_receipt', $value ) ) {
+          
+          // add the domain email id
+          $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail();
+          $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
+          
+          $value['from_email_address'] = $domainEmail; 
+          $value['contribution_id'] = $contribution->id;
+          CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
+        }
 
       }
     }
@@ -355,7 +369,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         }
 
         $value['contact_id'] = CRM_Utils_Array::value( $key, $params['primary_contact_select_id'] );                          
- 
+
+        // update contact information
+        $this->updateContactInfo( $value );
+
         if ( CRM_Utils_Array::value( 'membership_source', $value ) ) {
           $value['source'] = $value['membership_source'];
         }
@@ -398,9 +415,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           is_array( $value['custom'] ) ) {
             CRM_Core_BAO_CustomValueTable::store( $value['custom'], 'civicrm_membership', $membership->id );
         }
-
-        // update contact information
-        $this->updateContactInfo( $value );
 
       }
     }
