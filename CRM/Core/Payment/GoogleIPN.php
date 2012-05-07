@@ -240,7 +240,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $serial  = $dataRoot['serial-number'];
         $orderNo = $dataRoot['google-order-number']['VALUE'];
 
-        $contribution = new CRM_Contribute_DAO_Contribution( );
+        $contribution = new CRM_Contribute_BAO_Contribution( );
         $contribution->invoice_id = $orderNo;
 
         if ( ! $contribution->find( true ) ) {
@@ -301,7 +301,11 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $input['trxn_id']    = $ids['contributionRecur'] ? $serial : $dataRoot['google-order-number']['VALUE'];
         $input['is_test']    = $contribution->is_test;
 
-        $this->completeTransaction( $input, $ids, $objects, $transaction );
+        $recur = null;
+        if ( $ids['contributionRecur'] ) {
+            $recur = $objects['contributionRecur'];
+        }
+        $this->completeTransaction( $input, $ids, $objects, $transaction, $recur );
 
         $this->completeRecur( $input, $ids, $objects );
     }
@@ -310,6 +314,11 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         if ( $ids['contributionRecur'] ) {
             $recur =& $objects['contributionRecur'];
             $contributionCount = CRM_Core_DAO::singleValueQuery( "SELECT count(*) FROM civicrm_contribution WHERE contribution_recur_id = {$ids['contributionRecur']}" );
+            $autoRenewMembership = false;
+            if ( $recur->id && 
+                 isset( $ids['membership'] ) && $ids['membership'] ) {
+                $autoRenewMembership = true;
+            }
             if ( $recur->installments && ( $contributionCount >= $recur->installments ) ) {
                 $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
@@ -322,14 +331,14 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
                 $recur->trnx_id                = $dataRoot['google-order-number']['VALUE'];
                 $recur->save( );
 
-                $autoRenewMembership = false;
-                if ( $recur->id && 
-                     isset( $ids['membership'] ) && $ids['membership'] ) {
-                    $autoRenewMembership = true;
-                }
-                
                 //send recurring Notification email for user
-                CRM_Contribute_BAO_ContributionPage::recurringNofify( CRM_Core_Payment::RECURRING_PAYMENT_END, 
+                CRM_Contribute_BAO_ContributionPage::recurringNotify( CRM_Core_Payment::RECURRING_PAYMENT_END, 
+                                                                      $ids['contact'], 
+                                                                      $ids['contributionPage'], 
+                                                                      $recur,
+                                                                      $autoRenewMembership );
+            } else if ( $contributionCount == 1 ) {
+                CRM_Contribute_BAO_ContributionPage::recurringNotify( CRM_Core_Payment::RECURRING_PAYMENT_START, 
                                                                       $ids['contact'], 
                                                                       $ids['contributionPage'], 
                                                                       $recur,
@@ -480,7 +489,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $serial      = $data[$root]['serial-number'];
         
         // a dummy object to call get context and a parent function inside it.
-        $ipn = new CRM_Core_Payment_GoogleIPN( $mode, $dummyProcessor );
+        $ipn = new CRM_Core_Payment_GoogleIPN( 'live', $dummyProcessor );
         list( $mode, $module, $paymentProcessorID ) = $ipn->getContext($privateData, $orderNo, $root, $response, $serial);
         $mode = $mode ? 'test' : 'live';
 

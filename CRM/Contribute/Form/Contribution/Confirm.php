@@ -1243,11 +1243,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $recurParams = array( );
         $config = CRM_Core_Config::singleton( );
         $recurParams['contact_id']           = $contactID;
-        $recurParams['amount']               = $params['amount'];
-        $recurParams['frequency_unit']       = $params['frequency_unit'];
-        $recurParams['frequency_interval']   = $params['frequency_interval'];
-        $recurParams['installments']         = $params['installments'];
-        $recurParams['contribution_type_id'] = $params['contribution_type_id'];
+        $recurParams['amount']               = CRM_Utils_Array::value( 'amount', $params );
+        $recurParams['frequency_unit']       = CRM_Utils_Array::value( 'frequency_unit', $params );
+        $recurParams['frequency_interval']   = CRM_Utils_Array::value( 'frequency_interval', $params );
+        $recurParams['installments']         = CRM_Utils_Array::value( 'installments', $params );
+        $recurParams['contribution_type_id'] = CRM_Utils_Array::value( 'contribution_type_id', $params );
         
         $recurParams['is_test'] = 0;
         if ( ( $form->_action & CRM_Core_Action::PREVIEW ) || 
@@ -1256,20 +1256,18 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         
         $recurParams['start_date'] = $recurParams['create_date'] = $recurParams['modified_date'] = date( 'YmdHis' );
-        if( CRM_Utils_Array::value( 'receive_date',$params ) ){
+        if( CRM_Utils_Array::value( 'receive_date', $params ) ){
             $recurParams['start_date'] = $params['receive_date'];
         }
-        $recurParams['invoice_id'] = $params['invoiceID'];
+        $recurParams['invoice_id'] = CRM_Utils_Array::value( 'invoiceID', $params );
         $recurParams['contribution_status_id'] = 2;
-        $recurParams['payment_processor_id']   = $params['payment_processor_id'];
-        $recurParams['is_email_receipt']   = $params['is_email_receipt'];  
+        $recurParams['payment_processor_id'] = CRM_Utils_Array::value( 'payment_processor_id', $params );
+        $recurParams['is_email_receipt'] = CRM_Utils_Array::value( 'is_email_receipt', $params );  
         // we need to add a unique trxn_id to avoid a unique key error
         // in paypal IPN we reset this when paypal sends us the real trxn id, CRM-2991
         $recurParams['trxn_id'] = CRM_Utils_Array::value( 'trxn_id', $params, $params['invoiceID'] );
         
-        $ids = array( ); 
-        
-        $recurring = CRM_Contribute_BAO_ContributionRecur::add( $recurParams, $ids );
+        $recurring = CRM_Contribute_BAO_ContributionRecur::add( $recurParams );
         if ( is_a( $recurring, 'CRM_Core_Error' ) ) {
             CRM_Core_Error::displaySessionError( $result );
             $urlString = 'civicrm/contribute/transact';

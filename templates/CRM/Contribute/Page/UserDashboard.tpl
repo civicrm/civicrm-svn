@@ -103,6 +103,7 @@
                     <th>{ts}Installments{/ts}</th> 
                     <th>{ts}Created{/ts}</th> 
                     <th></th>   
+                    <th></th>   
                 </tr>
                 {foreach from=$recurRows item=row key=id}
                     <tr class="{cycle values="odd-row,even-row"}">
@@ -113,6 +114,16 @@
                         <td>{$recurRows.$id.create_date|crmDate}</td>
                         {if $recurRows.$id.cancelSubscriptionUrl && ($recurRows.$id.contribution_status_id eq 5 || $recurRows.$id.contribution_status_id eq 2 ) }
                             <td><a href="{$recurRows.$id.cancelSubscriptionUrl}">{ts}Change Recurring Contribution{/ts}</a></td>
+                        {else}
+                            <td></td>
+                        {/if}
+                        {if $recurRows.$id.updateSubscriptionBillingUrl && ($recurRows.$id.contribution_status_id eq 5 || $recurRows.$id.contribution_status_id eq 2 ) }
+                            <td><a href="{$recurRows.$id.updateSubscriptionBillingUrl}">{ts}Change Billing Details{/ts}</a></td>
+                        {else}
+                            <td></td>
+                        {/if}
+			{if $recurRows.$id.updateSubscriptionUrl && ($recurRows.$id.contribution_status_id eq 5 || $recurRows.$id.contribution_status_id eq 2 ) }
+                            <td><a href="{$recurRows.$id.updateSubscriptionUrl}">{ts}Change Details{/ts}</a></td>
                         {else}
                             <td></td>
                         {/if}

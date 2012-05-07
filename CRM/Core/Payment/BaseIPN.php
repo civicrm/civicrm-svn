@@ -127,8 +127,8 @@ class CRM_Core_Payment_BaseIPN {
     $contribution->contribution_status_id = array_search('Failed', $contributionStatus);
     $contribution->save();
 
-        if( $objects['contributionRecur']->id )
-            $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
+    //if( $objects['contributionRecur']->id )
+    //$this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
 
     foreach ($memberships as $membership) {
       if ($membership) {
@@ -386,8 +386,8 @@ LIMIT 1;";
     }
 
     $contribution->save();
-        if( $objects['contributionRecur']->id )
-            $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
+    //if( $objects['contributionRecur']->id )
+    //$this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
 
     // next create the transaction record
     $paymentProcessor = '';
@@ -659,7 +659,7 @@ LIMIT 1;";
 
         //Get the first contribution id with recur id
         if( $recurId ){
-            $contriID = CRM_Core_DAO::getFieldValue( 'CRM_Contibution_DAO_Contibution', $recurId, 'id', 'contribution_recur_id' );
+            $contriID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution', $recurId, 'id', 'contribution_recur_id' );
             $lineItems = CRM_Price_BAO_LineItem::getLineItems( $contriID, 'contribution' );
             if ( !empty( $lineItems ) ) {
                 foreach( $lineItems as $key => $value ) {

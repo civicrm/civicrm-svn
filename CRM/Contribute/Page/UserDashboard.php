@@ -92,7 +92,9 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
             //@todo calling api functions directly is not supported
             _civicrm_api3_object_to_array( $recur, $values );
 
-            $values['cancelSubscriptionUrl'] = $paymentObject->cancelSubscriptionURL( );
+            $values['cancelSubscriptionUrl'] =        $paymentObject->subscriptionURL( $recur->id, 'recur' );
+            $values['updateSubscriptionBillingUrl'] = $paymentObject->subscriptionURL( $recur->id, 'recur', 'billing' );
+            $values['updateSubscriptionUrl'] = $paymentObject->subscriptionURL( $recur->id, 'recur', 'update' );
             $values['recur_status']          = $recurStatus[$values['contribution_status_id']];
             $recurRow[$values['id']]         = $values;
             $recurIDs[]                      = $values['id'];
@@ -109,6 +111,7 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
                                                                       "reset=1&force=1&recur=$key" );
             }
         }
+
         $this->assign('recurRows',$recurRow);
 
         if ( ! empty( $recurRow ) ) {

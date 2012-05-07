@@ -256,7 +256,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor
     static function getProcessorForEntity( $entityID, $component = 'contribute', $type = 'id' ) 
     {
         $result = null;
-        if ( ! in_array( $component, array('membership', 'contribute') ) ) {
+        if ( ! in_array( $component, array('membership', 'contribute', 'recur') ) ) {
             return $result;
         }
         //FIXME:
@@ -276,6 +276,11 @@ INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
  LEFT JOIN civicrm_contribution_recur cr  ON ( con.contribution_recur_id = cr.id )
  LEFT JOIN civicrm_contribution_page  cp  ON ( con.contribution_page_id  = cp.id )
      WHERE con.id = %1";
+        } else if ( $component == 'recur' ) {
+            $sql = " 
+    SELECT cr.payment_processor_id as ppID1, NULL as ppID2, cr.is_test 
+      FROM civicrm_contribution_recur cr
+     WHERE cr.id = %1";
         }
         
         //we are interesting in single record.

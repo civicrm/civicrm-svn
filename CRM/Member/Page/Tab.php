@@ -411,11 +411,13 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
        
         
         if ( $isCancelSupported ) {
+            $cancelMessage = ts('WARNING: If you cancel the recurring contribution associated with this membership, the membership will no longer be renewed automatically. However, the current membership status will not be affected.');
             self::$_links['all'][CRM_Core_Action::DISABLE] = array( 
                                                                    'name' => ts('Cancel Subscription'),
                                                                    'url'  => 'civicrm/contribute/unsubscribe',
                                                                    'qs'   => 'reset=1&cid=%%cid%%&mid=%%id%%&context=membership&selectedChild=member',
-                                                                   'title'=> ts('Cancel Auto Renew Subscription')
+                                                                   'title'=> ts('Cancel Auto Renew Subscription'),
+                                                                   'extra' => 'onclick = "if (confirm(\'' . $cancelMessage . '\') ) return true; else return false;"',
                                                                     );
         } else if ( isset( self::$_links['all'][CRM_Core_Action::DISABLE] ) ) {
             unset( self::$_links['all'][CRM_Core_Action::DISABLE] );

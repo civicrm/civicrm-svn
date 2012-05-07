@@ -200,8 +200,12 @@ class CRM_Admin_Page_AJAX
                 break;
 
             case 'CRM_Contribute_BAO_ContributionRecur':
-                $status = ts('Are you sure you want to cancel this recurring contribution?');
+                $recurDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails( $recordID );
+                $status = ts('Are you sure you want to mark this recurring contribution as cancelled?');
                 $status .= '<br /><br /><strong>' . ts('WARNING - This action sets the CiviCRM recurring contribution status to Cancelled, but does NOT send a cancellation request to the payment processor. You will need to ensure that this recurring payment (subscription) is cancelled by the payment processor.') . '</strong>';
+                if ( $recurDetails->membership_id ) {
+                    $status .= '<br /><br /><strong>' . ts('This recurring contribution is linked to an auto-renew membership. If you cancel it, the associated membership will no longer renew automatically. However, the current membership status will not be affected.') . '</strong>';
+                }
 
                 break;
     

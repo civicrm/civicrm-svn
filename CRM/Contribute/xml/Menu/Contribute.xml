@@ -149,6 +149,11 @@
      <weight>1</weight>
   </item>
   <item>
+     <path>civicrm/contact/view/contributionrecur</path>
+     <title>Recurring Contributions</title>
+     <page_callback>CRM_Contribute_Page_ContributionRecur</page_callback>
+  </item>
+  <item>
      <path>civicrm/contact/view/contribution/additionalinfo</path>
      <title>Additional Info</title>
      <page_callback>CRM_Contribute_Form_AdditionalInfo</page_callback>
@@ -196,6 +201,7 @@
   </item>
   <item>
      <path>civicrm/contribute/unsubscribe</path>
+     <title>Cancel Subscription</title>
      <page_callback>CRM_Contribute_Form_CancelSubscription</page_callback>
      <access_arguments>make online contributions</access_arguments>
   </item>  
@@ -204,4 +210,16 @@
      <page_callback>CRM_Contribute_Form_Contribution_OnBehalfOf</page_callback>
      <access_arguments>make online contributions</access_arguments>
   </item>
+  <item>
+     <path>civicrm/contribute/updatebilling</path>
+     <title>Update Subscription Billing Details</title>
+     <page_callback>CRM_Contribute_Form_UpdateBilling</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/contribute/update</path>
+     <title>Update Subscription</title>
+     <page_callback>CRM_Contribute_Form_UpdateSubscription</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+   </item>
 </menu>

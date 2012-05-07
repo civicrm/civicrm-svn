@@ -226,7 +226,7 @@ class CRM_Contribute_BAO_Contribution_Utils
             }
             $form->_params['receive_date'] = $now;
             $form->set( 'params', $form->_params );
-            $form->assign( 'trxn_id', $result['trxn_id'] );
+            $form->assign( 'trxn_id', CRM_Utils_Array::value( 'trxn_id', $result ) );
             $form->assign( 'receive_date',
                            CRM_Utils_Date::mysqlToIso( $form->_params['receive_date']) );
         

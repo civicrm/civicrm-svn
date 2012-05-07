@@ -565,27 +565,19 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         }
     }
 
-    function cancelSubscriptionURL( $entityID = null, $entity = null ) {
-        if ( $entityID && $entity == 'membership' ) {
-            $contactID = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $entityID, "contact_id" );
-            $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
-
-            return CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', 
-                                          "reset=1&mid={$entityID}&cs={$checksumValue}", true, null, false, false );
-        }
-
+    function accountLoginURL( ) {
         return ( $this->_mode == 'test' ) ?
             'https://test.authorize.net' : 'https://authorize.net';
     }
 
-    function cancelSubscription( ) {
+    function cancelSubscription( &$message = '', $params = array() ) {
         $template = CRM_Core_Smarty::singleton( );
 
         $template->assign( 'subscriptionType', 'cancel' );
 
         $template->assign( 'apiLogin', $this->_getParam( 'apiLogin' ) );
         $template->assign( 'paymentKey', $this->_getParam( 'paymentKey' ) );
-        $template->assign( 'subscriptionId', $this->_getParam( 'subscriptionId' ) );
+        $template->assign( 'subscriptionId', CRM_Utils_Array::value('subscriptionId', $params) );
 
         $arbXML = $template->fetch( 'CRM/Contribute/Form/Contribution/AuthorizeNetARB.tpl' );
 
@@ -611,12 +603,110 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         curl_close( $submit );
 
         $responseFields = $this->_ParseArbReturn( $response );
+        $message = "{$responseFields['code']}: {$responseFields['text']}";
 
         if ( $responseFields['resultCode'] == 'Error' ) {
             return self::error( $responseFields['code'], $responseFields['text'] );
         }
-
-        // carry on cancelation procedure
         return true;
+    }
+
+    function updateSubscriptionBillingInfo( &$message = '', $params = array() ) {
+        $template = CRM_Core_Smarty::singleton( );
+        $template->assign( 'subscriptionType', 'updateBilling' );
+
+        $template->assign( 'apiLogin',       $this->_getParam( 'apiLogin' ) );
+        $template->assign( 'paymentKey',     $this->_getParam( 'paymentKey' ) );
+        $template->assign( 'subscriptionId', $params['subscriptionId'] );
+
+        $template->assign( 'cardNumber', $params['credit_card_number'] );
+        $exp_month = str_pad( $params['month'], 2, '0', STR_PAD_LEFT );
+        $exp_year  = $params['year'];
+        $template->assign( 'expirationDate', $exp_year . '-' . $exp_month );
+
+        $template->assign( 'billingFirstName', $params['first_name'] );
+        $template->assign( 'billingLastName',  $params['last_name'] );
+        $template->assign( 'billingAddress',   $params['street_address'] );
+        $template->assign( 'billingCity',      $params['city'] );
+        $template->assign( 'billingState',     $params['state_province'] );
+        $template->assign( 'billingZip',       $params['postal_code'] );
+        $template->assign( 'billingCountry',   $params['country'] );
+
+        $arbXML = $template->fetch( 'CRM/Contribute/Form/Contribution/AuthorizeNetARB.tpl' );
+
+        // submit to authorize.net
+        $submit = curl_init( $this->_paymentProcessor['url_recur'] );
+        if ( !$submit ) {
+            return self::error(9002, 'Could not initiate connection to payment gateway');
+        }
+
+        curl_setopt($submit, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($submit, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+        curl_setopt($submit, CURLOPT_HEADER, 1);
+        curl_setopt($submit, CURLOPT_POSTFIELDS, $arbXML);
+        curl_setopt($submit, CURLOPT_POST, 1);
+        curl_setopt($submit, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL'));
+        
+        $response = curl_exec($submit);
+
+        if ( !$response ) {
+            return self::error( curl_errno($submit), curl_error($submit) );
+        }
+
+        curl_close( $submit );
+
+        $responseFields = $this->_ParseArbReturn( $response );
+        $message = "{$responseFields['code']}: {$responseFields['text']}";
+
+        if ( $responseFields['resultCode'] == 'Error' ) {
+            return self::error( $responseFields['code'], $responseFields['text'] );
+        }
+        return true;
+    }
+
+
+    function changeSubscriptionAmount ( &$message = '', $params = array() ) {
+        $template = CRM_Core_Smarty::singleton( );
+        
+        $template->assign( 'subscriptionType', 'update' );
+
+        $template->assign( 'apiLogin', $this->_getParam( 'apiLogin' ) );
+        $template->assign( 'paymentKey', $this->_getParam( 'paymentKey' ) );
+
+        $template->assign( 'subscriptionId', $params['subscriptionId'] );
+        $template->assign( 'totalOccurrences', $params['installments'] );
+        $template->assign( 'amount', $params['amount'] );
+
+        $arbXML = $template->fetch( 'CRM/Contribute/Form/Contribution/AuthorizeNetARB.tpl' );
+
+        // submit to authorize.net
+        $submit = curl_init( $this->_paymentProcessor['url_recur'] );
+        if ( !$submit ) {
+            return self::error(9002, 'Could not initiate connection to payment gateway');
+        }
+
+        curl_setopt($submit, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($submit, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+        curl_setopt($submit, CURLOPT_HEADER, 1);
+        curl_setopt($submit, CURLOPT_POSTFIELDS, $arbXML);
+        curl_setopt($submit, CURLOPT_POST, 1);
+        curl_setopt($submit, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL'));
+        
+        $response = curl_exec($submit);
+
+        if ( !$response ) {
+            return self::error( curl_errno($submit), curl_error($submit) );
+        }
+
+        curl_close( $submit );
+
+        $responseFields = $this->_ParseArbReturn( $response );
+        $message = "{$responseFields['code']}: {$responseFields['text']}";
+
+        if ( $responseFields['resultCode'] == 'Error' ) {
+            return self::error( $responseFields['code'], $responseFields['text'] );
+        }
+        return true;
+        
     }
 }         

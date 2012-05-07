@@ -2038,7 +2038,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     $loadObjectSuccess = TRUE;
     if ($paymentProcessorID) {
       $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($paymentProcessorID,
-        $contribution->is_test ? 'test' : 'live'
+        $this->is_test ? 'test' : 'live'
       );
       $ids['paymentProcessor'] = $paymentProcessorID;
       $this->_relatedObjects['paymentProcessor'] = &$paymentProcessor;
@@ -2074,10 +2074,11 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     if (empty($this->_component)) {
       $this->_component = CRM_Utils_Array::value('component', $input);
     }
+    
     //not really sure what params might be passed in but lets merge em into values
     $values = array_merge($this->_gatherMessageValues($input, $values), $values);
     $template = CRM_Core_Smarty::singleton();
-    $this->_assignMessageVariablesToTemplate($values, $input, $template);
+    $this->_assignMessageVariablesToTemplate($values, $input, $template, $recur);
     //what does recur 'mean here - to do with payment processor return functionality but
     // what is the importance
     if ($recur && !empty($this->_relatedObjects['paymentProcessor'])) {
@@ -2085,8 +2086,26 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         $this->is_test ? 'test' : 'live',
         $this->_relatedObjects['paymentProcessor']
       );
-      $url = $paymentObject->cancelSubscriptionURL();
+
+      $entityID = $entity = null;
+      if ( isset( $ids['contribution'] ) ) {
+          $entity   = 'contribution';
+          $entityID = $ids['contribution'];
+      }
+      if ( isset( $ids['membership'] ) && $ids['membership'] ) {
+          $entity   = 'membership';
+          $entityID = $ids['membership'];
+      }
+
+      $url = $paymentObject->subscriptionURL( $entityID, $entity );
       $template->assign('cancelSubscriptionUrl', $url);
+      
+      $url = $paymentObject->subscriptionURL( $entityID, $entity, 'billing' );
+      $template->assign('updateSubscriptionBillingUrl', $url);
+
+      $url = $paymentObject->subscriptionURL( $entityID, $entity, 'update' );
+      $template->assign('updateSubscriptionUrl', $url);
+      
       if ($this->_relatedObjects['paymentProcessor']['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM) {
         //direct mode showing billing block, so use directIPN for temporary
         $template->assign('contributeMode', 'directIPN');
@@ -2113,12 +2132,12 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         );
         $address = CRM_Core_BAO_Address::getValues($entityBlock);
         $template->assign('onBehalfAddress', $address[$entityBlock['location_type_id']]['display']);
+        
       }
       $isTest = FALSE;
       if ($this->is_test) {
         $isTest = TRUE;
       }
-      // CRM_Core_Error::debug('val',$values);
       if (!empty($this->_relatedObjects['membership'])) {
         foreach ($this->_relatedObjects['membership'] as $membership) {
           if ($membership->id) {
@@ -2144,13 +2163,15 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             $template->assign('is_separate_payment', 0);
 
             if ($recur && $paymentObject) {
-              $url = $paymentObject->cancelSubscriptionURL($membership->id, 'membership');
-              $template->assign('cancelSubscriptionUrl', $url);
+                $url = $paymentObject->subscriptionURL($membership->id, 'membership');
+                $template->assign('cancelSubscriptionUrl', $url);
+                $url = $paymentObject->subscriptionURL($membership->id, 'membership', 'billing');
+                $template->assign('updateSubscriptionBillingUrl', $url);
+                $url = $paymentObject->subscriptionURL( $entityID, $entity, 'update' );
+                $template->assign('updateSubscriptionUrl', $url);
             }
 
-            $result = CRM_Contribute_BAO_ContributionPage::sendMail($ids['contact'], $values,
-              $isTest, TRUE
-            );
+            $result = CRM_Contribute_BAO_ContributionPage::sendMail($ids['contact'], $values, $isTest, $returnMessageText);
 
 
             return $result;
@@ -2160,7 +2181,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         }
       }
       else {
-        return CRM_Contribute_BAO_ContributionPage::sendMail($ids['contact'], $values, $isTest, TRUE);
+        return CRM_Contribute_BAO_ContributionPage::sendMail($ids['contact'], $values, $isTest, $returnMessageText);
       }
     }
   }
@@ -2264,11 +2285,10 @@ WHERE  contribution_id = %1 AND membership_id != %2";
    * Apply variables for message to smarty template - this function is part of analysing what is in the huge
    * function & breaking it down into manageable chunks. Eventually it will be refactored into something else
    */
-  function _assignMessageVariablesToTemplate(&$values, $input, &$template) {
+  function _assignMessageVariablesToTemplate(&$values, $input, &$template, $recur = false) {
     $template->assign('first_name', $this->_relatedObjects['contact']->first_name);
     $template->assign('last_name', $this->_relatedObjects['contact']->last_name);
     $template->assign('displayName', $this->_relatedObjects['contact']->display_name);
-    // CRM_Core_Error::debug('tpl',$template);
     //assign honor infomation to receiptmessage
     $honorID = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution',
         $this->id,
@@ -2355,7 +2375,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       )
     );
     $template->assign('is_monetary', 1);
-    $template->assign('is_recur', $recur);
+    $template->assign('is_recur', (bool) $recur);
     $template->assign('currency', $this->currency);
     $template->assign('address', CRM_Utils_Address::format($input));
     if ($this->_component == 'event') {
@@ -2434,5 +2454,60 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     }
     return $template;
   }
-}
 
+  /**
+   * Function to check whether payment processor supports 
+   * cancellation of contribution subscription
+   *
+   * @param int $contributionId contribution id
+   * 
+   * @return boolean
+   * @access public
+   * @static
+   */
+  static function isCancelSubscriptionSupported( $contributionId, $isNotCancelled = true ) 
+  {
+      $cacheKeyString  = "$contributionId";
+      $cacheKeyString .= $isNotCancelled ? '_1' : '_0';
+      
+      static $supportsCancel = array( );
+      
+      if ( !array_key_exists( $cacheKeyString, $supportsCancel ) ) {
+          $supportsCancel[$cacheKeyString] = false;
+          $isCancelled = false;
+          
+          if ( $isNotCancelled ) {
+              $isCancelled = self::isSubscriptionCancelled( $contributionId );
+          }
+          
+          $paymentObject = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $contributionId, 'contribute', 'obj' );
+          if ( ! empty($paymentObject) ) {
+              $supportsCancel[$cacheKeyString] = $paymentObject->isSupported('cancelSubscription') && !$isCancelled;
+          }
+      }
+      return $supportsCancel[$cacheKeyString];
+  }
+  
+  /**
+   * Function to check whether subscription is already cancelled  
+   *
+   * @param int $contributionId contribution id
+   * 
+   * @return string $status contribution status 
+   * @access public
+   * @static
+   */
+  static function isSubscriptionCancelled ( $contributionId ) {
+      $sql = "
+   SELECT cr.contribution_status_id 
+     FROM civicrm_contribution_recur cr
+LEFT JOIN civicrm_contribution con ON ( cr.id = con.contribution_recur_id )
+    WHERE con.id = %1 LIMIT 1";
+      $params = array( 1 => array( $contributionId, 'Integer' ) );
+      $statusId = CRM_Core_DAO::singleValueQuery( $sql, $params );
+      $status   = CRM_Contribute_PseudoConstant::contributionStatus( $statusId );
+      if ( $status == 'Cancelled' ) return true;
+      return false;
+  }
+  
+}

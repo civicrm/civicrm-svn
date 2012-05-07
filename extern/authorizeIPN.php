@@ -37,11 +37,8 @@
 session_start( );
 
 require_once '../civicrm.config.php';
-require_once 'CRM/Core/Config.php';
-
 $config = CRM_Core_Config::singleton();
 
-require_once 'CRM/Core/Payment/AuthorizeNetIPN.php';
 $authorizeNetIPN = new CRM_Core_Payment_AuthorizeNetIPN( );
 $authorizeNetIPN->main( );
 

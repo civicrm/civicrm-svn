@@ -20,7 +20,7 @@ CREATE TABLE zipcodes (
   KEY zip (zip),
   KEY latitude (latitude),
   KEY longitude (longitude)
-) TYPE=MyISAM;
+) ENGINE=MYISAM;
 
 --
 -- Dumping data for table `zipcodes`

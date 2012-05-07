@@ -1108,7 +1108,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                        $addCurrency = true,
                        $currencyName = 'currency',
                        $defaultCurrency = null,
-		       $freezeCurrency = false ) {
+                       $freezeCurrency = false ) {
         $element = $this->add( 'text', $name, $label, $attributes, $required );
         $this->addRule( $name, ts('Please enter a valid amount.'), 'money');
 

@@ -32,6 +32,47 @@
   </merchantAuthentication>
   <subscriptionId>{$subscriptionId}</subscriptionId>
 </ARBCancelSubscriptionRequest>
+{elseif $subscriptionType eq 'updateBilling'}
+<?xml version="1.0" encoding="utf-8"?>
+<ARBUpdateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
+  <merchantAuthentication>
+    <name>{$apiLogin}</name>
+    <transactionKey>{$paymentKey}</transactionKey>
+  </merchantAuthentication>
+  <subscriptionId>{$subscriptionId}</subscriptionId>
+  <subscription>
+    <payment>
+      <creditCard>
+        <cardNumber>{$cardNumber}</cardNumber>
+        <expirationDate>{$expirationDate}</expirationDate>
+      </creditCard>
+    </payment>
+    <billTo>
+      <firstName>{$billingFirstName}</firstName>
+      <lastName>{$billingLastName}</lastName>
+      <address>{$billingAddress}</address>
+      <city>{$billingCity}</city>
+      <state>{$billingState}</state>
+      <zip>{$billingZip}</zip>
+      <country>{$billingCountry}</country>
+    </billTo>
+  </subscription>
+</ARBUpdateSubscriptionRequest>
+{elseif $subscriptionType eq 'update'}
+<?xml version="1.0" encoding="utf-8"?>
+<ARBUpdateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
+  <merchantAuthentication>
+    <name>{$apiLogin}</name>
+    <transactionKey>{$paymentKey}</transactionKey>
+  </merchantAuthentication>
+<subscriptionId>{$subscriptionId}</subscriptionId>
+  <subscription>
+    <paymentSchedule>
+    <totalOccurrences>{$totalOccurrences}</totalOccurrences>
+    </paymentSchedule>
+    <amount>{$amount}</amount>
+   </subscription>
+</ARBUpdateSubscriptionRequest>
 {else}
 <?xml version="1.0" encoding="utf-8"?>
 <ARBCreateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">

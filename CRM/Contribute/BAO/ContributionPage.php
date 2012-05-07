@@ -313,7 +313,6 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
       // address required during receipt processing (pdf and email receipt)
       if ($displayAddress = CRM_Utils_Array::value( 'address', $values )) {
         $tplParams ['address'] = $displayAddress;
-        $tplParams ['contributeMode'] = null;
       }
 
       // CRM-6976
@@ -480,6 +479,22 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         'toName' => $displayName,
         'toEmail' => $email
       );
+
+      if ( $recur->id ) {
+          // in some cases its just recurringNotify() thats called for the first time and these urls don't get set.
+          // like in PaypalPro, & therefore we set it here additionally.
+          $template = CRM_Core_Smarty::singleton();
+          $paymentProcessor =
+              CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $recur->id, 'recur', 'obj' );
+          $url = $paymentProcessor->subscriptionURL( $recur->id, 'recur' );
+          $template->assign('cancelSubscriptionUrl', $url);
+          
+          $url = $paymentProcessor->subscriptionURL( $recur->id, 'recur', 'billing' );
+          $template->assign('updateSubscriptionBillingUrl', $url);
+
+          $url = $paymentProcessor->subscriptionURL( $recur->id, 'recur', 'update' );
+          $template->assign('updateSubscriptionUrl', $url);
+      }
 
       list ( $sent, $subject, $message, $html ) = CRM_Core_BAO_MessageTemplates::sendTemplate( $templatesParams );
 

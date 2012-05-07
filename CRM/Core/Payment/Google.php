@@ -369,57 +369,22 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
         return $e;
     }
 
-    /**
-     * Set a field to the specified value.  Value must be a scalar (int,
-     * float, string, or boolean)
-     *
-     * @param string $field
-     * @param mixed $value
-     * @return bool false if value is not a scalar, true if successful
-     */ 
-    function _setParam( $field, $value ) {
-        if ( ! is_scalar($value) ) {
-            return false;
-        } else {
-            $this->_params[$field] = $value;
-        }
-    }
-
-    /**
-     * Get the value of a field if set
-     *
-     * @param string $field the field
-     * @return mixed value of the field, or empty string if the field is
-     * not set
-     */
-    function _getParam( $field ) {
-        return CRM_Utils_Array::value( $field, $this->_params, '' );
-    }
-
-    function cancelSubscriptionURL( $entityID = null, $entity = null ) 
-    {
-        if ( $entityID && $entity == 'membership' ) {
-            $contactID = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $entityID, "contact_id" );
-            $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
-
-            return CRM_Utils_System::url( 'civicrm/contribute/unsubscribe', 
-                                          "reset=1&mid={$entityID}&cs={$checksumValue}", true, null, false, false );
-        }
-
+    function accountLoginURL( ) {
         return ( $this->_mode == 'test' ) ?
-            'https://sandbox.google.com/checkout/' : 'https://checkout.google.com/';
+            'https://sandbox.google.com/checkout/sell' : 'https://checkout.google.com/';
     }
 
-    function cancelSubscription( ) 
+    function cancelSubscription( &$message = '', $params = array() ) 
     {
-        $orderNo = $this->_getParam( 'subscriptionId' );
+        $orderNo = CRM_Utils_Array::value('subscriptionId', $params);
 
         $merchant_id  = $this->_paymentProcessor['user_name'];
         $merchant_key = $this->_paymentProcessor['password'];
         $server_type  = ( $this->_mode == 'test' ) ? 'sandbox' : '';
         
         $googleRequest = new GoogleRequest( $merchant_id, $merchant_key, $server_type );
-        $result = $googleRequest->SendCancelItems($orderNo, array(), 'Cancelled by admin', '');
+        $result  = $googleRequest->SendCancelItems($orderNo, array(), 'Cancelled by admin', '');
+        $message = "{$result[0]}: {$result[1]}";
 
         if ( $result[0] != 200 ) {
             return self::error($result[0], $result[1]);

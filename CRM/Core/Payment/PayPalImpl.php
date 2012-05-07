@@ -343,8 +343,8 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         }
 
         /* Success */
-        $params['trxn_id']        = $result['transactionid'];
-        $params['gross_amount'  ] = $result['amt'];        
+        $params['trxn_id'] = CRM_Utils_Array::value( 'transactionid', $result );
+        $params['gross_amount'] = CRM_Utils_Array::value( 'amt', $result );
         return $params;
     }
 
@@ -388,6 +388,80 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
             return null;
         }
     }
+
+    function cancelSubscription( &$message = '', $params = array() ) {
+        if ( $this->_paymentProcessor['payment_processor_type'] == 'PayPal' ) {
+            $args = array( );
+            $this->initialize( $args, 'ManageRecurringPaymentsProfileStatus' );
+
+            $args['PROFILEID'] = CRM_Utils_Array::value('subscriptionId', $params);
+            $args['ACTION']    = 'Cancel';
+            $args['NOTE']      = CRM_Utils_Array::value('reason', $params);
+
+            $result  = $this->invokeAPI( $args );
+            if ( is_a( $result, 'CRM_Core_Error' ) ) {  
+                return $result;  
+            }
+            $message = "{$result['ack']}: profileid={$result['profileid']}";
+            return true;
+        }
+        return false;
+    }
+
+    function updateSubscriptionBillingInfo( &$message = '', $params = array() ) {
+        if ( $this->_paymentProcessor['payment_processor_type'] == 'PayPal' ) {
+            $config = CRM_Core_Config::singleton( );
+            $args   = array( );
+            $this->initialize( $args, 'UpdateRecurringPaymentsProfile' );
+
+            $args['PROFILEID']      = $params['subscriptionId'];
+            $args['AMT']            = $params['amount'];
+            $args['CURRENCYCODE']   = $config->defaultCurrency;
+            $args['CREDITCARDTYPE'] = $params['credit_card_type'];
+            $args['ACCT']        = $params['credit_card_number'];
+            $args['EXPDATE']     = sprintf( '%02d', $params['month'] ) . $params['year'];
+            $args['CVV2']        = $params['cvv2'];
+
+            $args['FIRSTNAME']   = $params['first_name'];
+            $args['LASTNAME']    = $params['last_name'];
+            $args['STREET']      = $params['street_address'];
+            $args['CITY']        = $params['city'];
+            $args['STATE']       = $params['state_province'];
+            $args['COUNTRYCODE'] = $params['postal_code'];
+            $args['ZIP']         = $params['country'];
+
+            $result  = $this->invokeAPI( $args );
+            if ( is_a( $result, 'CRM_Core_Error' ) ) {  
+                return $result;  
+            }
+            $message = "{$result['ack']}: profileid={$result['profileid']}";
+            return true;
+        }
+        return false;
+    }
+
+    function changeSubscriptionAmount( &$message = '', $params = array() ) {
+        if ( $this->_paymentProcessor['payment_processor_type'] == 'PayPal' ) {
+            $config = CRM_Core_Config::singleton( );
+            $args   = array( );
+            $this->initialize( $args, 'UpdateRecurringPaymentsProfile' );
+
+            $args['PROFILEID']        = $params['subscriptionId'];
+            $args['AMT']              = $params['amount'];
+            $args['CURRENCYCODE']     = $config->defaultCurrency;
+            $args['BILLINGFREQUENCY'] = $params['installments'];
+
+            $result  = $this->invokeAPI( $args );
+            CRM_Core_Error::debug_var( '$result', $result );
+            if ( is_a( $result, 'CRM_Core_Error' ) ) {
+                return $result;
+            }
+            $message = "{$result['ack']}: profileid={$result['profileid']}";
+            return true;
+        }
+        return false;
+    }
+
 
     function doTransferCheckout( &$params, $component = 'contribute' ) {
         $config = CRM_Core_Config::singleton( );

@@ -168,16 +168,6 @@ abstract class CRM_Core_Payment {
      */
     abstract function checkConfig( );
 
-    /**
-     * This function returns the URL used to cancel recurring subscriptions
-     *
-     * @return string the url of the payment processor cancel page
-     * @public
-     */
-    function cancelSubscriptionURL( ) {
-        return null;
-    }
-
     static function paypalRedirect( &$paymentProcessor ) {
         if ( ! $paymentProcessor ) {
             return false;
@@ -297,16 +287,67 @@ abstract class CRM_Core_Payment {
     }
 
     /**
-     * Function to check whether the method is present for the payment processor  
+     * Function to check whether a method is present ( & supported ) by the payment processor object.
      *
-     * @param  object $paymentObject Object of the payment processor.
-     * @return boolean
-     * @public
+     * @param  string $method method to check for.
+     * @return boolean                                                                                                                                                
+     * @public                                                                                                                                                        
      */
-    static function isCancelSupported( &$paymentObject ) 
+    function isSupported( $method = 'cancelSubscription' )
     {
-        return method_exists( CRM_Utils_System::getClassName( $paymentObject ), 'cancelSubscription' );
+        return method_exists( CRM_Utils_System::getClassName( $this ), $method );
     }
-    
+
+    function subscriptionURL( $entityID = null, $entity = null, $action = 'cancel' ) {
+        if ( $action == 'cancel' ) {
+            $url = 'civicrm/contribute/unsubscribe';
+        } else if ( $action == 'billing' ) {
+            $url = 'civicrm/contribute/updatebilling';
+        } else if ( $action == 'update' ) {
+            $url = 'civicrm/contribute/update';
+        }
+        $session = CRM_Core_Session::singleton( );
+        $userId  = $session->get( 'userID' );
+        $checksumValue = "";
+
+        if ( $entityID && $entity == 'membership' ) {
+            if ( !$userId ) {
+                $contactID     = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_Membership", $entityID, "contact_id" );
+                $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
+                $checksumValue = "&cs={$checksumValue}";
+            }
+            return CRM_Utils_System::url( $url, "reset=1&mid={$entityID}{$checksumValue}", true, null, false, false );
+        }
+
+        if ( $entityID && $entity == 'contribution' ) {
+            if ( !$userId ) {
+                $contactID = CRM_Core_DAO::getFieldValue( "CRM_Contribute_DAO_Contribution", $entityID, "contact_id" );
+                $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
+                $checksumValue = "&cs={$checksumValue}";
+            }
+            return CRM_Utils_System::url( $url, "reset=1&coid={$entityID}{$checksumValue}", true, null, false, false );
+        }
+
+        if ( $entityID && $entity == 'recur' ) {
+            if ( !$userId ) {
+                $sql = " 
+    SELECT con.contact_id
+      FROM civicrm_contribution_recur rec
+INNER JOIN civicrm_contribution con ON ( con.contribution_recur_id = rec.id )
+     WHERE rec.id = %1
+  GROUP BY rec.id";
+                $contactID = CRM_Core_DAO::singleValueQuery( $sql, array(1 => array($entityID, 'Integer')) );
+                $checksumValue = CRM_Contact_BAO_Contact_Utils::generateChecksum( $contactID, null, 'inf' );
+                $checksumValue = "&cs={$checksumValue}";
+            }
+            return CRM_Utils_System::url( $url, "reset=1&crid={$entityID}{$checksumValue}", true, null, false, false );
+        }
+
+        if ( $this->isSupported('accountLoginURL') ) {
+            return $this->accountLoginURL();
+        }
+        return $this->_paymentProcessor['url_recur'];
+    }
+
 }
 

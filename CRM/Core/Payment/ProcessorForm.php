@@ -61,7 +61,7 @@ class CRM_Core_Payment_ProcessorForm
              CRM_Utils_Array::value( 'is_recur', $form->_values ) ) {                                                                                                                                   
             $form->_paymentObject =&
                 CRM_Core_Payment::singleton( $mode,  $form->_paymentProcessor, $form );
-            $form->_values['cancelSubscriptionUrl'] = $form->_paymentObject->cancelSubscriptionURL( );                                                                                                  
+            $form->_values['cancelSubscriptionUrl'] = $form->_paymentObject->subscriptionURL( );                                                                                                  
         }  
         
         //checks after setting $form->_paymentProcessor

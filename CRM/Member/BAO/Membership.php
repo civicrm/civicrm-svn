@@ -2063,7 +2063,7 @@ FROM   civicrm_membership_type
 
             $paymentObject = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $mid, 'membership', 'obj' );
             if ( ! empty($paymentObject) ) {
-                $supportsCancel[$cacheKeyString] = CRM_Core_Payment::isCancelSupported( $paymentObject ) && !$isCancelled;
+                $supportsCancel[$cacheKeyString] = $paymentObject->isSupported('cancelSubscription') && !$isCancelled;
             }
         }
         return $supportsCancel[$cacheKeyString];

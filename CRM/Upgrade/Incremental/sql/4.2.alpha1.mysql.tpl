@@ -271,3 +271,43 @@ INSERT INTO civicrm_option_value
 VALUES
   (@option_group_id_act, {localize field='label'}'Change Membership Status'{/localize}, (SELECT @max_val := @max_val+1), 'Change Membership Status', (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Status.'{/localize},  1, 1, @CompId),
   (@option_group_id_act, {localize field='label'}'Change Membership Type'{/localize},   (SELECT @max_val := @max_val+1), 'Change Membership Type',   (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Type.'{/localize},    1, 1, @CompId);
+
+-- CRM-10084
+INSERT INTO 
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+VALUES
+(@option_group_id_act, '{ts escape="sql"}Cancel Recurring Contribution{/ts}',      35, 'Cancel Recurring Contribution', NULL,0, 0, 35, '', 0, 1, 1, NULL, NULL);
+
+SELECT @msg_tpl_workflow_contribution := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_contribution';
+SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_contribution;
+
+SELECT @msg_tpl_workflow_membership := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_membership';
+SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_membership;
+
+INSERT INTO civicrm_option_value
+  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
+VALUES
+  (@msg_tpl_workflow_contribution, 'contribution_recurring_cancelled', {localize}'{ts escape="sql"}Contributions - Recurring Cancellation Notification{/ts}'{/localize}, @weight, @weight),
+  (@msg_tpl_workflow_contribution, 'contribution_recurring_edit',      {localize}'{ts escape="sql"}Contributions - Recurring Updates{/ts}'{/localize}, @weight+1, @weight+1);
+
+INSERT INTO civicrm_option_value
+  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
+VALUES
+  (@msg_tpl_workflow_membership, 'membership_autorenew_cancelled', {localize}'{ts escape="sql"}Memberships - Auto-renew Cancellation Notification{/ts}'{/localize}, @weight, @weight);
+
+-- CRM-10090
+INSERT INTO 
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+VALUES
+(@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution Billing Details{/ts}', 36, 'Update Recurring Contribution Billing Details', NULL,0, 0, 36, '', 0, 1, 1, NULL, NULL),
+(@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution{/ts}',                 37, 'Update Recurring Contribution',                 NULL,0, 0, 37, '', 0, 1, 1, NULL, NULL);
+
+INSERT INTO civicrm_option_value
+  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
+VALUES
+  (@msg_tpl_workflow_contribution, 'contribution_recurring_billing', {localize}'{ts escape="sql"}Contributions - Recurring Billing Updates{/ts}'{/localize}, @weight, @weight);
+
+INSERT INTO civicrm_option_value
+  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
+VALUES
+  (@msg_tpl_workflow_membership, 'membership_autorenew_billing', {localize}'{ts escape="sql"}Memberships - Auto-renew Billing Updates{/ts}'{/localize}, @weight, @weight);

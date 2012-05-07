@@ -1802,8 +1802,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         if ( ! $componentId ) {
             //get the contact details
             list($contactDetails, $options) = CRM_Contact_BAO_Contact::getHierContactDetails( $contactId, $fields );
-            $details = $contactDetails[$contactId];
-
+            $details = CRM_Utils_Array::value($contactId, $contactDetails );
             $multipleFields = array( 'website' => 'url' );
 
             //start of code to set the default values

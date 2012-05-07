@@ -90,27 +90,47 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
 
     /**
      * This method returns the links that are given for recur search row.
-     * currently the links added for each row are
-     *
+     * currently the links added for each row are:
+     * - View
+     * - Edit
      * - Cancel
      *
      * @return array
      * @access public
      *
      */
-    static function &recurLinks()
+    static function &recurLinks( $cancelSubscriptionSupported = false )
     {
-      if (!(self::$_recurLinks)) {
-        self::$_recurLinks = array(
-          CRM_Core_Action::DISABLE => array(
-            'name'  => ts('Cancel'),
-            'title' => ts('Cancel'),
-            'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Contribute_BAO_ContributionRecur' . '\',\'' . 'enable-disable' . '\' );"',
-            'ref'   => 'disable-action'
-          ),
-        );
+        if (!(self::$_links)) {
+            self::$_links = array(
+                                  CRM_Core_Action::VIEW => array(
+                                                                 'name'  => ts('View'),
+                                                                 'title' => ts('View Recurring Payment'),
+                                                                 'url'   => 'civicrm/contact/view/contributionrecur',
+                                                                 'qs'    => 'reset=1&id=%%crid%%&cid=%%cid%%'
+                                                                 ),
+                                  CRM_Core_Action::UPDATE => array(
+                                                                   'name'  => ts('Edit'),
+                                                                   'title' => ts('Edit Recurring Payment'),
+                                                                   'url'   => 'civicrm/contact/view/contributionrecur',
+                                                                   'qs'    => 'reset=1&action=update&crid=%%crid%%&cid=%%cid%%'
+                                                                   ),
+                                  CRM_Core_Action::DISABLE => array(
+                                                                    'name'  => ts('Cancel'),
+                                                                    'title' => ts('Cancel'),
+                                                                    'extra' => 'onclick = "enableDisable( %%crid%%,\''. 'CRM_Contribute_BAO_ContributionRecur' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                    'ref'   => 'disable-action'
+                                                                    ),
+                                 );
         }
-        return self::$_recurLinks;
+
+        if ( $cancelSubscriptionSupported ) {
+            unset(self::$_links[CRM_Core_Action::DISABLE]['extra'], self::$_links[CRM_Core_Action::DISABLE]['ref']);
+            self::$_links[CRM_Core_Action::DISABLE]['url'] = "civicrm/contribute/unsubscribe";
+            self::$_links[CRM_Core_Action::DISABLE]['qs'] = "reset=1&crid=%%crid%%";
+        }
+
+        return self::$_links;
     } // end function
 
 
@@ -135,35 +155,43 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
         $controller->setEmbedded( true );
         $controller->reset( );
         $controller->set( 'cid'  , $this->_contactId );
-        $controller->set( 'id' , $this->_id );
-        $controller->set( 'context', 'contribution' );
+        $controller->set( 'crid' , $this->_crid ); 
+        $controller->set( 'context', 'contribution' ); 
         $controller->process( );
         $controller->run( );
 
         // add recurring block
-        $action = array_sum(array_keys($this->recurLinks( )));
-        $params = array( );
-        $params =  CRM_Contribute_BAO_ContributionRecur::getRecurContributions ( $this->_contactId );
-        if ( ! empty($params) ) {
+        $action = array_sum( array_keys( $this->recurLinks( ) ) );
+        $params = CRM_Contribute_BAO_ContributionRecur::getRecurContributions( $this->_contactId );
 
+        if ( ! empty( $params ) ) {
             foreach( $params as $ids => $recur ) {
-
+                $action = array_sum(array_keys($this->recurLinks( )));
                 // TODO: Currently cancel action only only changes status in DB. Should invoke cancelSubscription method for given payment processor
-                $processorType = NULL;
+                $cancelSubscriptionSupported = false;
                 if ( !empty($recur['payment_processor_id'] ) ) {
-                    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $recur['payment_processor_id'], 'live');
-                    $processorType = $paymentProcessor['payment_processor_type'];
+                    $paymentProcessorObj = 
+                        CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $ids, 'recur', 'obj' );
+                    if ( $paymentProcessorObj->isSupported( 'cancelSubscription' ) )
+                        $cancelSubscriptionSupported = true;
                 }
 
                 // no action allowed if it's not active
                 $params[$ids]['is_active'] = ($recur['contribution_status_id'] != 3);
-
+                
                 if ( $params[$ids]['is_active'] ) {
-                    $params[$ids]['action'] = CRM_Core_Action::formLink(self::recurLinks( ), $action,
-                                                                        array('cid'              => $this->_contactId,
-                                                                              'id'               => $ids,
-                                                                              'cxt'              => 'contribution')
-                                                                       );
+                    $details = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails( $params[$ids]['id'], 'recur' );
+                    $hideUpdate = $details->membership_id & $details->auto_renew;
+                    
+                    if ( $hideUpdate ) {
+                        $action -= CRM_Core_Action::UPDATE;
+                    }
+                    
+                    $params[$ids]['action'] = CRM_Core_Action::formLink( self::recurLinks( $cancelSubscriptionSupported ), $action,
+                                                                         array( 'cid' => $this->_contactId,
+                                                                                'crid'  => $ids,
+                                                                                'cxt' => 'contribution')
+                                                                         );
                 }
             }
             // assign vars to templates
