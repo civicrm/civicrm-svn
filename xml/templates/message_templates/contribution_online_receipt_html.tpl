@@ -140,7 +140,7 @@
        <tr>
        </tr>
         <td {$labelStyle}>
-         {ts 1=$updateSubscriptionUrl}You can update  details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
+         {ts 1=$updateSubscriptionUrl}You can update details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>
       {/if}

@@ -193,7 +193,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
                                         2 => $this->_subscriptionDetails->frequency_interval,
                                         3 => $this->_subscriptionDetails->frequency_unit,
                                         4 => $params['installments'] ) );
-                //$status  = ts( 'Recurring contribution details has been updated for the subscription.' );
+                
                 $contactID = $this->_subscriptionDetails->contact_id;
                 
                 if ( $this->_subscriptionDetails->amount != $params['amount'] ) {
