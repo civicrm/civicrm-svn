@@ -2212,8 +2212,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         $this->contact_id
       );
       // if this is onbehalf of contribution then set related contact
-      if ($relatedContactId = CRM_Utils_Array::value('individual_id', $relatedContact)) {
-        $values['related_contact'] = $ids['related_contact'] = $relatedContactId;
+      if (CRM_Utils_Array::value('individual_id', $relatedContact)) {
+        $values['related_contact'] = $ids['related_contact'] = $relatedContact['individual_id'];
       }
     }
     else {
