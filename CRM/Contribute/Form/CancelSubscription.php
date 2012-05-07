@@ -220,7 +220,7 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
                     $tplParams['membershipType']    = 
                         CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', $tplParams['membership_type_id'] );
                     $status = ts( 'The automatic renewal of your %1 membership has been cancelled as requested. This does not affect the status of your membership - you will receive a separate notification when your membership is up for renewal.', array( 1 => $tplParams['membershipType'] ) );
-                } else if ( $this->_coid ) {
+                } else {
                     $tplParams['recur_frequency_interval'] = $this->_subscriptionDetails->frequency_interval;
                     $tplParams['recur_frequency_unit']     = $this->_subscriptionDetails->frequency_unit;
                     $tplParams['amount']                   = $this->_subscriptionDetails->amount;
@@ -258,9 +258,14 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
                           'toEmail'   => $this->_donorEmail,
                           );
                 list ( $sent ) = CRM_Core_BAO_MessageTemplates::sendTemplate( $sendTemplateParams );
+            } else {
+                if ( $params['send_cancel_request'] == 1 )
+                    $status = ts( 'Recurring contribution was cancelled successfully by the processor, but could not be marked as cancelled in the database.' );
+                else 
+                    $status = ts( 'Recurring contribution could not be cancelled in the database.' );
             }
         } else {
-            $status = ts( 'Auto renew could not be cancelled.' );
+            $status = ts( 'The recurring contribution could not be cancelled.' );
         }
         
         if ( $status ) {

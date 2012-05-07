@@ -285,7 +285,11 @@ INNER JOIN civicrm_contribution       con ON ( con.contribution_recur_id = rec.i
                 $baseIPN = new CRM_Core_Payment_BaseIPN( );
                 return $baseIPN->cancelled( $objects, $transaction );
             }
-    
+        } else {
+            // if already cancelled, return true
+            $recur->whereAdd( );
+            $recur->whereAdd ("contribution_status_id = $canceledId");
+            if ( $recur->find(true) ) return true;
         }
 
         return false;
