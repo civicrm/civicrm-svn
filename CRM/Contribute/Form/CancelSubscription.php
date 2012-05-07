@@ -46,6 +46,8 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
 
     protected $_userContext = null;
     
+    protected $_mode = null;
+
     protected $_mid  = null;
 
     protected $_coid = null;
@@ -210,8 +212,6 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
             if ( $cancelStatus ) {
                 $tplParams = array( );
                 if ( $this->_mid ) {
-                    $status = ts( 'The auto-renewal option for your membership has been successfully cancelled. Your membership has not been cancelled. However you will need to arrange payment for renewal when your membership expires.' );
-             
                     $inputParams = array( 'id' => $this->_mid );
                     CRM_Member_BAO_Membership::getValues( $inputParams, $tplParams );
                     $tplParams   = $tplParams[$this->_mid];
@@ -219,17 +219,16 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
                         CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipStatus', $tplParams['status_id'] );
                     $tplParams['membershipType']    = 
                         CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', $tplParams['membership_type_id'] );
+                    $status = ts( 'The automatic renewal of your %1 membership has been cancelled as requested. This does not affect the status of your membership - you will receive a separate notification when your membership is up for renewal.', array( 1 => $tplParams['membershipType'] ) );
                 } else if ( $this->_coid ) {
-                    $inputParams  = array( 'id' => $this->_subscriptionDetails->recur_id );
-                    $recurDetails = array( );
-                    CRM_Core_DAO::commonRetrieve('CRM_Contribute_DAO_ContributionRecur', $inputParams, $recurDetails );
-                    $tplParams['recur_frequency_interval'] = $recurDetails['frequency_interval'];
-                    $tplParams['recur_frequency_unit'] = $recurDetails['frequency_unit'];
-                    $tplParams['amount'] = $recurDetails['amount'];
+                    $tplParams['recur_frequency_interval'] = $this->_subscriptionDetails->frequency_interval;
+                    $tplParams['recur_frequency_unit']     = $this->_subscriptionDetails->frequency_unit;
+                    $tplParams['amount']                   = $this->_subscriptionDetails->amount;
                     $tplParams['contact'] = array( 'display_name' => $this->_donorDisplayName );
-
                     $status = ts( 'The recurring contribution of %1, every %2 %3 has been cancelled.', 
-                                  array( 1 => $recurDetails['amount'], 2 => $recurDetails['frequency_interval'], 3 => $recurDetails['frequency_unit'] ) );
+                                  array( 1 => $this->_subscriptionDetails->amount, 
+                                         2 => $this->_subscriptionDetails->frequency_interval, 
+                                         3 => $this->_subscriptionDetails->amount ) );
                 }
 
                 if ( $this->_subscriptionDetails->contribution_page_id ) {

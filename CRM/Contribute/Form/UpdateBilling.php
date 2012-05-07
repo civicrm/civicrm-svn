@@ -248,7 +248,6 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form
         if ( is_a( $updateSubscription, 'CRM_Core_Error' ) ) {
             CRM_Core_Error::displaySessionError( $updateSubscription );
         } else if ( $updateSubscription ) {
-            $status  = ts( 'Recurring contribution billing details has been updated for the subscription.' );
             $ctype   = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_subscriptionDetails->contact_id, 'contact_type');
             $contact =& CRM_Contact_BAO_Contact::createProfileContact( $params,
                                                                        $fields,
@@ -256,6 +255,76 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form
                                                                        null,
                                                                        null,
                                                                        $ctype );
+
+            // build tpl params
+            if ( $this->_subscriptionDetails->membership_id ) {
+                $inputParams = array( 'id' => $this->_subscriptionDetails->membership_id );
+                CRM_Member_BAO_Membership::getValues( $inputParams, $tplParams );
+                $tplParams   = $tplParams[$this->_subscriptionDetails->membership_id];
+                $tplParams['membership_status'] = 
+                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipStatus', $tplParams['status_id'] );
+                $tplParams['membershipType']    = 
+                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', $tplParams['membership_type_id'] );
+                $status = ts( 'Billing details for your automatically renewed %1 membership have been updated.', 
+                              array( 1 => $tplParams['membershipType'] ) );
+            } else {
+                $status    = ts( 'Billing details for your recurring contribution of %1, every %2 %3 has been updated.', 
+                                 array( 1 => $this->_subscriptionDetails->amount, 
+                                        2 => $this->_subscriptionDetails->frequency_interval, 
+                                        3 => $this->_subscriptionDetails->frequency_unit ) );
+                $tplParams = array( 'recur_frequency_interval' => $this->_subscriptionDetails->frequency_interval,
+                                    'recur_frequency_unit'     => $this->_subscriptionDetails->frequency_unit,
+                                    'amount'                   => $this->_subscriptionDetails->amount,);
+            }
+    
+            // format new address for display
+            $addressParts  = array( "street_address","city","postal_code","state_province","country" );
+            foreach ($addressParts as $part) {
+                $addressParts[$part] = CRM_Utils_Array::value( $part, $processorParams );
+            }
+            $tplParams['address'] = CRM_Utils_Address::format($addressParts);
+
+            // format old address to store in activity details
+            $this->_defaults["state_province-{$this->_bltID}"] = 
+                CRM_Core_PseudoConstant::stateProvince($this->_defaults["state_province-{$this->_bltID}"], FALSE);
+            $this->_defaults["country-{$this->_bltID}"] = 
+                CRM_Core_PseudoConstant::country($this->_defaults["country-{$this->_bltID}"], FALSE);
+            $addressParts  = array( "street_address","city","postal_code","state_province","country" );
+            foreach ($addressParts as $part) {
+                $key = "{$part}-{$this->_bltID}";
+                $addressParts[$part] = CRM_Utils_Array::value( $key, $this->_defaults );
+            }
+            $this->_defaults['address'] = CRM_Utils_Address::format($addressParts);
+
+            // format new billing name
+            $name = $processorParams['first_name'];
+            if ( CRM_Utils_Array::value( 'middle_name', $processorParams ) ) {
+                $name .= " {$processorParams['middle_name']}";
+            }
+            $name .= ' ' . $processorParams['last_name'];
+            $name = trim( $name );
+            $tplParams['billingName'] = $name;
+
+            // format old billing name
+            $name = $this->_defaults['first_name'];
+            if ( CRM_Utils_Array::value( 'middle_name', $this->_defaults ) ) {
+                $name .= " {$this->_defaults['middle_name']}";
+            }
+            $name .= ' ' . $this->_defaults['last_name'];
+            $name = trim( $name );
+            $this->_defaults['billingName'] = $name;
+
+            $message .= "
+<br/><br/>New Billing Name and Address
+<br/>==============================
+<br/>{$tplParams['billingName']}
+<br/>{$tplParams['address']}
+
+<br/><br/>Previous Billing Name and Address
+<br/>==================================
+<br/>{$this->_defaults['address']}
+<br/>{$this->_defaults['billingName']}";
+
             $activityParams = 
                 array( 'source_contact_id' => $this->_subscriptionDetails->contact_id,
                        'activity_type_id'  => CRM_Core_OptionGroup::getValue( 'activity_type',
@@ -290,36 +359,7 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form
                 $receiptFrom  = "$domainValues[0] <$domainValues[1]>";
             }
             list($donorDisplayName, $donorEmail) = CRM_Contact_BAO_Contact::getContactDetails( $this->_subscriptionDetails->contact_id );
-
-            if ( $this->_subscriptionDetails->membership_id ) {
-                $inputParams = array( 'id' => $this->_subscriptionDetails->membership_id );
-                CRM_Member_BAO_Membership::getValues( $inputParams, $tplParams );
-                $tplParams   = $tplParams[$this->_subscriptionDetails->membership_id];
-                $tplParams['membership_status'] = 
-                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipStatus', $tplParams['status_id'] );
-                $tplParams['membershipType']    = 
-                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', $tplParams['membership_type_id'] );
-            } else {
-                $tplParams = array( 'recur_frequency_interval' => $this->_subscriptionDetails->frequency_interval,
-                                    'recur_frequency_unit'     => $this->_subscriptionDetails->frequency_unit,
-                                    'amount'                   => $this->_subscriptionDetails->amount,);
-            }
             $tplParams['contact'] = array( 'display_name' => $donorDisplayName );
-    
-            // assign the address formatted up for display
-            $addressParts  = array( "street_address","city","postal_code","state_province","country" );
-            foreach ($addressParts as $part) {
-                $addressParts[$part] = CRM_Utils_Array::value( $part, $processorParams );
-            }
-            $tplParams['address'] = CRM_Utils_Address::format($addressParts);
-
-            $name = $processorParams['first_name'];
-            if ( CRM_Utils_Array::value( 'middle_name', $processorParams ) ) {
-                $name .= " {$processorParams['middle_name']}";
-            }
-            $name .= ' ' . $processorParams['last_name'];
-            $name = trim( $name );
-            $tplParams['billingName'] = $name;
 
             $date = CRM_Utils_Date::format( $processorParams['credit_card_exp_date'] );
             $tplParams['credit_card_exp_date'] = CRM_Utils_Date::mysqlToIso( $date );
@@ -340,7 +380,7 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form
                       );
             list ( $sent ) = CRM_Core_BAO_MessageTemplates::sendTemplate( $sendTemplateParams );
         } else {
-            $status = ts( 'Auto renew could not be cancelled.' );
+            $status = ts( 'There was some problem updating the billing details.' );
         }
         
         if ( $status ) {
