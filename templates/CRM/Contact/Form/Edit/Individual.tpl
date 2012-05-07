@@ -48,7 +48,7 @@ var checkSimilar =  {$checkSimilar};
            if (data.is_error == 1 || data.count == 0) {
              return;
            }
-           var msg="<td id='lastname_msg'><div class='messages status'><div class='icon inform-icon'></div>";
+           var msg="<div id='lastname_msg' class='messages status'><div class='icon inform-icon'></div>";
            if ( data.count == 1 ) {
              msg = msg + "{/literal}{ts}There is a contact with a similar last name. If the person you were trying to add is listed below, click on their name to view or edit their record{/ts}{literal}";  
            } else {
@@ -62,7 +62,7 @@ var checkSimilar =  {$checkSimilar};
              msg = msg + '<tr><td><a href="'+viewIndividual+contact.id+'" target="_blank">'+ contact.display_name +'</a></td><td>'+contact.email+'</td><td class="action-items"><a class="action-item action-item-first" href="'+viewIndividual+contact.contact_id+'">{/literal}{ts}View{/ts}{literal}</a><a class="action-item" href="'+editIndividual+contact.contact_id+'">{/literal}{ts}Edit{/ts}{literal}</a></td></tr>';
            });
            msg = msg+ '</table>';
-           cj('#last_name').parent().after(msg+'</div></td>');
+           cj('#last_name').closest('table').after(msg+'</div>');
            cj('#lastname_msg a').click(function(){global_formNavigate =true; return true;});// No confirmation dialog on click
          });
 	    });
