@@ -23,6 +23,10 @@ function civicrm_api3_generic_setValue($apiRequest) {
   }
    
   $def=$fields[$field];
+print_r($def);
+  if (array_key_exists ('required',$def) && empty($value)) {
+    return civicrm_api3_create_error(ts("This can't be empty, please provide a value"),array ("error_code"=>"required","field"=>$field));
+  }
   switch ($def['type']){
     case 1://int
       if (!is_numeric ($value))
@@ -32,7 +36,7 @@ function civicrm_api3_generic_setValue($apiRequest) {
       require_once ("CRM/Utils/Rule.php");
       if (!CRM_Utils_Rule::xssString( $value ))
         return civicrm_api3_create_error(ts( 'Illegal characters in input (potential scripting attack)' ), array ('error_code'=> 'XSS'));
-      if ($def['maxlength'])
+      if (array_key_exists('maxlength',$def))
         $value = substr ($value,0,$def['maxlength']);
       break;
     case 16://boolean

@@ -50,7 +50,7 @@
           var id= $(this).closest('.crm-entity').attr('id');
           var fieldName=this.className.match(/crmf-(\S*)/)[1];
           if (!fieldName) {
-            $().crmError ("FATAL crm-editable: Couldn't get the field name to modify. You need to set crmf-{field_name}",this);
+            $().crmNotification ("FATAL crm-editable: Couldn't get the field name to modify. You need to set crmf-{field_name}",'notification',this);
             return false;
           }
           params['field']=fieldName;
@@ -58,10 +58,12 @@
 
           if (id) {
              var e=id.match(/(\S*)-(\S*)/);
+             if (!entity) 
+               $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
              entity=e[1];
              params.id=e[2];
           } else {
-            $().crmError ("FATAL crm-editable: Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",this);
+            $().crmNotification ("FATAL crm-editable: Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
             return false;
           }
           //$().crmAPI.call(this,entity,'create',params,{ create is still too buggy & perf
@@ -85,17 +87,15 @@
              return editableSettings.success.call (this,data);
           }
         },
+        error: function(entity,field,value,data) {
+          $().crmNotification ("error saving:"+data.error_message,'error',data);
+          $(this).removeClass ('crm-editable-saving').addClass('crm-editable-error');
+        },
         success: function(entity,field,value,data) {
           var $i=$(this);
           $i.removeClass ('crm-editable-saving');
           $i.html(value);
         },
-        error: function(entity,field,value,data) {
-          var $i=$(this);
-          $().crmError ("error saving:"+data.error_message,data);
-          $i.removeClass ('crm-editable-saving');
-          $i.addClass ('crm-editable-error');
-        }
       }
 
       var editableSettings = $.extend({}, defaults, options);
@@ -123,6 +123,8 @@
             var id= $i.closest('.crm-entity').attr('id');
             if (id) {
               var e=id.match(/(\S*)-(\S*)/);
+               if (!entity) 
+                 $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
               formSettings.entity=e[1];
               formSettings.id=e[2];
             } 
@@ -174,7 +176,7 @@
         //$i.editable(function(value,editableSettings) {
           parent=$i.parent('.crm-entity');
           if (!parent) {
-            $().crmError ("crm-editable: you need to define one parent element that has a class .crm-entity",this);
+            $().crmNotification ("crm-editable: you need to define one parent element that has a class .crm-entity",'notification',this);
             return;
           }
 
@@ -187,12 +189,14 @@
              var id= cj(this).closest('.crm-entity').attr('id');
              if (id) {
                var e=id.match(/(\S*)-(\S*)/);
+               if (!entity) 
+                 $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
                entity=e[1];
                params.id=e[2];
              }
           }
           if (!params.id) {
-            cj().crmError ("FATAL crm-editable: Couldn't get the id of the entity "+entity,this);
+            cj().crmNotification ("FATAL crm-editable: Couldn't get the id of the entity "+entity,'notification',this);
             return false;
           }
 
@@ -206,7 +210,7 @@
           } else {
             fieldName=this.className.match(/crmf-(\S*)/)[1];
             if (!fieldName) {
-              cj().crmError ("FATAL crm-editable: Couldn't get the field name to modify. You need to set crmf-{field_name} or data-field='{field_name}' ",this);
+              cj().crmNotification ("FATAL crm-editable: Couldn't get the field name to modify. You need to set crmf-{field_name} or data-field='{field_name}' ",'notification',this);
               return false;
             }
              

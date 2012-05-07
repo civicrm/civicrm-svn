@@ -45,12 +45,19 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     	      $("#closerestmsg").click(function(){$(settings.msgbox).fadeOut("slow");return false;});
     	      return true;
     	  },
-    	  callBack: function(result,settings){
-
-    	      if (result.is_error == 1) {
-    		  $(settings.msgbox).addClass('msgnok').html(result.error_message);
+    	  error: function(result,settings){
+          if ($(settings.msgbox).length>0)  {
+      		  $(settings.msgbox).addClass('msgnok').html(result.error_message);
+          } else {
+            alert (result.error_message);
+          }
     		  return false;
-    	      }
+        },
+    	  callBack: function(result,settings){
+    	    if (result.is_error == 1) {
+    	      return settings.error.call(this,result,settings);
+    		    return false;
+    	    }
     	      return settings.success.call(this,result,settings);
     	  },
     	  closetxt: "<div class='icon close-icon' title='Close'>[X]</div>",
@@ -145,9 +152,14 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
        });
      }
 
-  $.fn.crmError = function (message,item) {
-    alert (message);
-    console && console.log && console.log (item);
+  $.fn.crmNotification = function (message,type,item) {
+    item = typeof item !== 'undefined' ? item : null;
+    type = typeof type !== 'undefined' ? type : 'error';
+    if (typeof $.noty == "function") 
+      $.noty({"text":message,"layout":"top","type":type,"animateOpen":{"height":"toggle"},"animateClose":{"height":"toggle"},"speed":500,"timeout":false,"closeButton":true,"closeOnSelfClick":true,"closeOnSelfOver":true,"modal":false});
+    else
+      alert (message);
+    item && console && console.log && console.log (item);
   }
 
   /* you need to init this function first: cj.crmURL ('init', '{crmURL p="civicrm/example" q="placeholder"}');
