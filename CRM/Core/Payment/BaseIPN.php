@@ -128,7 +128,7 @@ class CRM_Core_Payment_BaseIPN {
     $contribution->save();
 
     if( $objects['contributionRecur']->id )
-    $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
+    /* $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id ); */
 
     foreach ($memberships as $membership) {
       if ($membership) {
@@ -387,7 +387,7 @@ LIMIT 1;";
 
     $contribution->save();
     if( $objects['contributionRecur']->id )
-    $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
+    /* $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id ); */
 
     // next create the transaction record
     $paymentProcessor = '';
