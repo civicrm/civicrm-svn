@@ -88,7 +88,7 @@ class api_v3_AddressTest extends CiviUnitTestCase {
   }
 
   /*
-     * is_primary shoule be set as a default. ie. create the address, unset the params & recreate. 
+     * is_primary shoule be set as a default. ie. create the address, unset the params & recreate.
      * is_primary should be 0 before & after the update. ie - having no other address
      * is_primary is invalid
      */
@@ -235,7 +235,7 @@ class api_v3_AddressTest extends CiviUnitTestCase {
     $this->customFieldDelete($ids['custom_field_id']);
     $this->customGroupDelete($ids['custom_group_id']);
   }
-  
+
   public function testCreateAddressPrimaryHandlingChangeToPrimary() {
     $params = $this->_params;
     unset($params['is_primary']);
@@ -248,7 +248,7 @@ class api_v3_AddressTest extends CiviUnitTestCase {
       'id' => $address1['id'],
      ));
     $this->assertEquals(1, $check );
-    
+
   }
     public function testCreateAddressPrimaryHandlingChangeExisting() {
      $address1 = civicrm_api('address', 'create', $this->_params);
@@ -262,6 +262,6 @@ class api_v3_AddressTest extends CiviUnitTestCase {
      ));
     $this->assertEquals(1, $check );
   }
-  
+
 }
 

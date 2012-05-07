@@ -1573,7 +1573,42 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       )
     );
   }
+
+  function testContactProximity( ) {
+      // first create a contact with a SF location with a specific
+      // geocode
+      $contactID = $this->organizationCreate();
+
+      // now create the address
+      $params = array( 'street_address' => '123 Main Street',
+                       'city' => 'San Francisco',
+                       'is_primary' => 1,
+                       'country_id' => 1228,
+                       'state_province_id' => 1004,
+                       'geo_code_1' => '37.79',
+                       'geo_code_2' => '-122.40',
+                       'location_type_id' => 1,
+                       'contact_id' => $contactID,
+                       'version' => 3 );
+
+      $result = civicrm_api('address', 'create', $params );
+      $this->assertAPISuccess($result, 'In line ' . __LINE__);
+      $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
+
+      // now do a proximity search with a close enough geocode and hope to match
+      // that specific contact only!
+      $proxParams = array( 'latitude'  => 37.7,
+                           'longitude' => -122.3,
+                           'unit'      => 'mile',
+                           'distance'  => 10,
+                           'version'   => 3 );
+      $result = civicrm_api('contact', 'proximity', $proxParams );
+      $this->assertAPISuccess($result, 'In line ' . __LINE__);
+      $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
+  }
+
 }
+
 // class api_v3_ContactTest
 
 // -- set Emacs parameters --
