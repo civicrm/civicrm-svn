@@ -2010,8 +2010,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       if ($ids['event'] &&
         !$event->find(TRUE)
       ) {
-        CRM_Core_Error::debug_log_message("Could not find event: $eventID");
-        echo "Failure: Could not find event: $eventID<p>";
+        CRM_Core_Error::debug_log_message("Could not find event: " . $ids['event']);
+        echo "Failure: Could not find event: ".  $ids['event'] . "<p>";
         return FALSE;
       }
 
