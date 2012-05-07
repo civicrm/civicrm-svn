@@ -65,7 +65,7 @@ function civicrm_conf_init() {
         } else if ( strpos( $currentDir, $moduleDir ) !== false ) {
             $confdir = $currentDir . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..';
         } else if ( strpos( $currentDir, 'plugins' . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'civicrm' ) !== false ) {
-             //if its wordpress 
+             //if its wordpress
             $confdir = $currentDir . DIRECTORY_SEPARATOR . '..';
         } else {
             $confdir = $currentDir . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'sites';
@@ -78,12 +78,9 @@ function civicrm_conf_init() {
 
     if ( ! file_exists( $confdir ) && ! $skipConfigError ) {
         echo "Could not find valid configuration dir, best guess: $confdir<br/><br/>\n";
-        echo "If this is a standalone installation (i.e. not a Drupal or ";
-        echo "Joomla module) and you'd like to re-initialize it, ";
-        echo "<a href=\"../install/index.php?mode=standalone\">click here</a>.\n";
         exit( );
     }
-            
+
     $phpSelf  = array_key_exists( 'PHP_SELF' , $_SERVER ) ? $_SERVER['PHP_SELF' ] : '';
     $httpHost = array_key_exists( 'HTTP_HOST', $_SERVER ) ? $_SERVER['HTTP_HOST'] : '';
 
