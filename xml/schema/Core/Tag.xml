@@ -21,6 +21,7 @@
   <field>
        <name>name</name>
        <type>varchar</type>
+       <required>true</required>
        <length>64</length>
        <comment>Name of Tag.</comment>
        <add>1.1</add>

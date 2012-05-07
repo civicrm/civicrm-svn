@@ -45,6 +45,7 @@
        <type>varchar</type>
        <length>64</length>
        <localizable>true</localizable>
+      <required>true</required>
        <comment>Form title.</comment>
        <add>1.1</add>
   </field>

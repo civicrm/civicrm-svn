@@ -58,7 +58,7 @@
 
           if (id) {
              var e=id.match(/(\S*)-(\S*)/);
-             if (!entity) 
+             if (!e) 
                $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
              entity=e[1];
              params.id=e[2];
@@ -123,7 +123,7 @@
             var id= $i.closest('.crm-entity').attr('id');
             if (id) {
               var e=id.match(/(\S*)-(\S*)/);
-               if (!entity) 
+               if (!e) 
                  $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
               formSettings.entity=e[1];
               formSettings.id=e[2];
@@ -189,7 +189,7 @@
              var id= cj(this).closest('.crm-entity').attr('id');
              if (id) {
                var e=id.match(/(\S*)-(\S*)/);
-               if (!entity) 
+               if (!e) 
                  $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
                entity=e[1];
                params.id=e[2];
