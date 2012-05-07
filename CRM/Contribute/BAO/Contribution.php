@@ -2380,7 +2380,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       $primaryEmail = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Email', $this->_relatedObjects['participant']->contact_id, 'email', 'contact_id');
       $primaryAmount[] = array('label' => $this->_relatedObjects['participant']->fee_level . ' - ' . $primaryEmail, 'amount' => $this->_relatedObjects['participant']->fee_amount);
       //build an array of cId/pId of participants
-      $additionalIDs = CRM_Event_BAO_Event::buildCustomProfile($this->_relatedObjects['participant']->id, NULL, $ids['contact'], $isTest, TRUE);
+      $additionalIDs = CRM_Event_BAO_Event::buildCustomProfile($this->_relatedObjects['participant']->id, NULL, $this->_relatedObjects['contact']->id, $isTest, TRUE);
       unset($additionalIDs[$this->_relatedObjects['participant']->id]);
       //send receipt to additional participant if exists
       if (count($additionalIDs)) {
