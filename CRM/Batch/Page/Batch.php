@@ -145,6 +145,7 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
     // find all objects
     $object->find();
     $permission = array();
+    $creatorIds = array();
     while ($object->fetch()) {
       $action = array_sum(array_keys($links));
       $values[$object->id] = array( );
@@ -159,9 +160,25 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
         $action -= CRM_Core_Action::DELETE;
       }
 
+      if ( !in_array( $object->created_id, $creatorIds ) ) {
+        $creatorIds[] = $object->created_id;
+      }
+
       // populate action links
       $this->action( $object, $action, $values[$object->id], $links, $permission );
     }
+
+    // get sort name of the creators
+    if ( !empty( $creatorIds ) ) {
+      $query = "SELECT id, sort_name from civicrm_contact where id IN ( ". implode(',', $creatorIds).")";
+      $dao = CRM_Core_DAO::executeQuery( $query );
+      $creatorNames = array();
+      while( $dao->fetch() ) {
+        $creatorNames[$dao->id] = $dao->sort_name;
+      }
+      $this->assign( 'creatorNames', $creatorNames );
+    }
+
     $this->assign( 'rows', $values );
   }
 
