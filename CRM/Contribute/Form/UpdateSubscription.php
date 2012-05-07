@@ -172,82 +172,91 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
     public function postProcess( )
     {
         // store the submitted values in an array
-        $processorParams = $params = $this->exportValues();
-
+        $params = $this->exportValues();
+        
         // if this is an update of an existing recurring contribution, pass the ID
         $params['id'] = $this->_subscriptionDetails->recur_id;
-                
-        // save the changes
-        CRM_Contribute_BAO_ContributionRecur::add( $params );
-
-        $params['subscriptionId'] = $this->_subscriptionDetails->subscription_id;
-        $updateSubscription = $this->_paymentProcessorObj->changeSubscriptionAmount( $message, $params );
-
-        if ( is_a( $updateSubscription, 'CRM_Core_Error' ) ) {
-            CRM_Core_Error::displaySessionError( $updateSubscription ); 
-        } else if ( $updateSubscription ) {
-            $status  = ts( 'Recurring contribution details has been updated for the subscription.' );
-            $contactID = $this->_subscriptionDetails->contact_id;
-            
-            $activityParams =
-                array( 'source_contact_id' => $contactID, 
-                       'activity_type_id'  => CRM_Core_OptionGroup::getValue( 'activity_type',
-                                                                              'Update Recurring Contribution',
-                                                                              'name' ),
-                       'subject'            => ts('Recurring Contribution Updated'),
-                       'details'            => $message,
-                       'activity_date_time' => date('Ymd'),
-                       'status_id'          => CRM_Core_OptionGroup::getValue( 'activity_status',
-                                                                               'Completed',
-                                                                               'name' ),
-                   );
-            $session = CRM_Core_Session::singleton();
-            $cid     = $session->get('userID');
-            if ( $cid ) {
-                $activityParams['source_contact_id']   = $cid;
-                $activityParams['target_contact_id'][] = $activityParams['source_contact_id'];
-            }
-            CRM_Activity_BAO_Activity::create( $activityParams );
-            
-            if ( CRM_Utils_Array::value( 'is_notify', $params ) ) {
-                $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
-                $receiptFrom  = "$domainValues[0] <$domainValues[1]>";
-                
-                list($donorDisplayName, $donorEmail) = CRM_Contact_BAO_Contact::getContactDetails( $contactID );
-                $tplParams = array( 'recur_frequency_interval' => $this->_subscriptionDetails->frequency_interval,
-                                    'recur_frequency_unit'     => $this->_subscriptionDetails->frequency_unit,
-                                    'amount'                   => CRM_Utils_Money::format( $params['amount'] ),
-                                    'installments'             => $params['installments'] );
-                
-                $tplParams['contact'] = array( 'display_name' => $donorDisplayName );
-                
-                $receiptFrom = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
-                                                            $this->_subscriptionDetails->contribution_page_id, 'receipt_from_email' );
-                
-                $tplParams['receipt_from_email'] = $receiptFrom; 
-                $sendTemplateParams =
-                    array(
-                          'groupName' => 'msg_tpl_workflow_contribution',
-                          'valueName' => 'contribution_recurring_edit',
-                          'contactId' => $contactID,
-                          'tplParams' => $tplParams,
-                          // 'isTest'    => $this->_subscriptionDetails->is_test,
-                          'PDFFilename' => 'receipt.pdf',
-                          'from'      => $receiptFrom,
-                          'toName'    => $donorDisplayName,
-                          'toEmail'   => $donorEmail,
-                          );
-                list ( $sent ) = CRM_Core_BAO_MessageTemplates::sendTemplate( $sendTemplateParams );
-            }                                                                                                      
-            //   CRM_Core_Session::setStatus( ts('Your recurring contribution has been saved.') );
-        }
         
-        if ( $status ) {
-            $session = CRM_Core_Session::singleton( );
-            if ( $session->get( 'userID' ) ) {
-                CRM_Core_Session::setStatus( $status );
-            } else {
-                CRM_Utils_System::setUFMessage( $status );
+        // save the changes
+        $result = CRM_Contribute_BAO_ContributionRecur::add( $params );
+        if ( !is_a( $result, 'CRM_Core_Error' ) ) {
+            $params['subscriptionId'] = $this->_subscriptionDetails->subscription_id;
+            $updateSubscription = $this->_paymentProcessorObj->changeSubscriptionAmount( $message, $params );
+            
+            if ( is_a( $updateSubscription, 'CRM_Core_Error' ) ) {
+                CRM_Core_Error::displaySessionError( $updateSubscription ); 
+            } else if ( $updateSubscription ) {
+                $status  = ts( 'Recurring contribution details has been updated for the subscription.' );
+                $contactID = $this->_subscriptionDetails->contact_id;
+                
+                $activityParams =
+                    array( 'source_contact_id' => $contactID, 
+                           'activity_type_id'  => CRM_Core_OptionGroup::getValue( 'activity_type',
+                                                                                  'Update Recurring Contribution',
+                                                                                  'name' ),
+                           'subject'            => ts('Recurring Contribution Updated'),
+                           'details'            => $message,
+                           'activity_date_time' => date('Ymd'),
+                           'status_id'          => CRM_Core_OptionGroup::getValue( 'activity_status',
+                                                                                   'Completed',
+                                                                                   'name' ),
+                           );
+                $session = CRM_Core_Session::singleton();
+                $cid     = $session->get('userID');
+                if ( $cid ) {
+                    $activityParams['source_contact_id']   = $cid;
+                    $activityParams['target_contact_id'][] = $activityParams['source_contact_id'];
+                }
+                CRM_Activity_BAO_Activity::create( $activityParams );
+                
+                if ( CRM_Utils_Array::value( 'is_notify', $params ) ) {
+                    // send notification
+                    if ( $this->_subscriptionDetails->contribution_page_id ) {
+                        CRM_Core_DAO::commonRetrieveAll( 'CRM_Contribute_DAO_ContributionPage', 'id',
+                                                         $this->_subscriptionDetails->contribution_page_id, $value, array( 'title',
+                                                                                                                           'receipt_from_name',
+                                                                                                                           'receipt_from_email',
+                                                                                                                           ) );
+                        $receiptFrom  = '"' . CRM_Utils_Array::value( 'receipt_from_name', $value[$this->_subscriptionDetails->contribution_page_id] ) .
+                            '" <' . $value [$this->_subscriptionDetails->contribution_page_id] ['receipt_from_email'] . '>';
+                    } else {
+                        $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
+                        $receiptFrom  = "$domainValues[0] <$domainValues[1]>";
+                    }
+
+                    list($donorDisplayName, $donorEmail) = CRM_Contact_BAO_Contact::getContactDetails( $contactID );
+                    
+                    $tplParams = array( 'recur_frequency_interval' => $this->_subscriptionDetails->frequency_interval,
+                                        'recur_frequency_unit'     => $this->_subscriptionDetails->frequency_unit,
+                                        'amount'                   => CRM_Utils_Money::format( $params['amount'] ),
+                                        'installments'             => $params['installments'] );
+                    
+                    $tplParams['contact'] = array( 'display_name' => $donorDisplayName );
+                    $tplParams['receipt_from_email'] = $receiptFrom; 
+                    
+                    $sendTemplateParams =
+                        array(
+                              'groupName' => 'msg_tpl_workflow_contribution',
+                              'valueName' => 'contribution_recurring_edit',
+                              'contactId' => $contactID,
+                              'tplParams' => $tplParams,
+                              // 'isTest'    => $this->_subscriptionDetails->is_test,
+                              'PDFFilename' => 'receipt.pdf',
+                              'from'      => $receiptFrom,
+                              'toName'    => $donorDisplayName,
+                              'toEmail'   => $donorEmail,
+                              );
+                    list ( $sent ) = CRM_Core_BAO_MessageTemplates::sendTemplate( $sendTemplateParams );
+                }                                                                                                      
+            }
+            
+            if ( $status ) {
+                $session = CRM_Core_Session::singleton( );
+                if ( $session->get( 'userID' ) ) {
+                    CRM_Core_Session::setStatus( $status );
+                } else {
+                    CRM_Utils_System::setUFMessage( $status );
+                }
             }
         }
         
