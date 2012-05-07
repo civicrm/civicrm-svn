@@ -266,16 +266,23 @@ class InstallRequirements {
                                             "Can't find the a MySQL server on '$databaseConfig[server]'",
                                             $databaseConfig['server']));
             if($this->requireMysqlConnection($databaseConfig['server'],
-                                             $databaseConfig['username'],
-                                             $databaseConfig['password'],
-                    array("MySQL $dbName Configuration",
-                          "Are the access credentials correct",
-                          "That username/password doesn't work"))) {
-                @$this->requireMySQLVersion("5.1",
-                                            array("MySQL $dbName Configuration",
-                                                  "MySQL version at least 5.1",
-                                                  "MySQL version 5.1 or higher is required, you only have ",
-                                                  "MySQL " . mysql_get_server_info()));
+                $databaseConfig['username'],
+                $databaseConfig['password'],
+                array("MySQL $dbName Configuration",
+                  "Are the access credentials correct",
+                  "That username/password doesn't work"))) {
+              @$this->requireMySQLVersion("5.1",
+                array("MySQL $dbName Configuration",
+                  "MySQL version at least 5.1",
+                  "MySQL version 5.1 or higher is required, you only have ",
+                  "MySQL " . mysql_get_server_info()));
+              $this->requireMySQLAutoIncrementIncrementOne($databaseConfig['server'],
+                $databaseConfig['username'],
+                $databaseConfig['password'],
+                array(
+                  "MySQL $dbName Configuration",
+                  "Is auto_increment_increment set to 1",
+                  "An auto_increment_increment value greater than 1 is not currently supported. Please see issue CRM-7923 for further details and potential workaround." ) );
             }
             $onlyRequire = ( $dbName == 'Drupal' ) ? true : false;
             $this->requireDatabaseOrCreatePermissions(
@@ -723,7 +730,30 @@ class InstallRequirements {
 
         $result = mysql_query('DROP TEMPORARY TABLE civicrm_install_temp_table_test');
         return;
+    }
 
+    function requireMySQLAutoIncrementIncrementOne($server, $username, $password, $testDetails) {
+        $this->testing($testDetails);
+        $conn = @mysql_connect($server, $username, $password);
+        if (!$conn) {
+            $testDetails[2] = 'Could not connect to the database server.';
+            $this->error($testDetails);
+            return;
+        }
+
+        $result = mysql_query( "SHOW variables like 'auto_increment_increment'", $conn );
+        if (!$result) {
+            $testDetails[2] = 'Could not query database server variables.';
+            $this->error($testDetails);
+            return;
+        } else {
+            $values = mysql_fetch_row( $result );
+            if ( $values[1] == 1 ) {
+                $testDetails[3] = 'MySQL server auto_increment_increment is 1';
+            } else {
+                $this->error($testDetails);
+            }
+        }
     }
 
     function requireDatabaseOrCreatePermissions($server,
