@@ -67,129 +67,130 @@ class CRM_Core_Page_AJAX_Location
 
 
         if ( $relContact ) {
-            $elements = array( "phone_1_phone" =>
-                               $location['phone'][1]['phone'],
-                               "email_1_email" =>
-                               $location['email'][1]['email']
-                               );
+          $elements = array( "phone_1_phone" =>
+                      $location['phone'][1]['phone'],
+                      "email_1_email" =>
+                      $location['email'][1]['email']
+          );
 
-            if ( array_key_exists( 'street_address', $addressSequence) ) {
-                $elements["address_1_street_address"] = $location['address'][1]['street_address'];
-            }
-            if ( array_key_exists( 'supplemental_address_1', $addressSequence) ) {
-                $elements['address_1_supplemental_address_1'] =
-                    $location['address'][1]['supplemental_address_1'];
-            }
-            if ( array_key_exists( 'supplemental_address_2', $addressSequence) ) {
-                $elements['address_1_supplemental_address_2'] =
-                    $location['address'][1]['supplemental_address_2'];
-            }
-            if ( array_key_exists( 'city', $addressSequence) ) {
-                $elements['address_1_city'] = $location['address'][1]['city'];
-            }
-            if ( array_key_exists( 'postal_code', $addressSequence) ) {
-                $elements['address_1_postal_code'] =
-                    $location['address'][1]['postal_code'];
-                $elements['address_1_postal_code_suffix'] =
-                    $location['address'][1]['postal_code_suffix'];
-            }
-            if ( array_key_exists( 'country', $addressSequence) ) {
-                $elements['address_1_country_id'] =
-                    $location['address'][1]['country_id'];
-            }
-            if ( array_key_exists( 'state_province', $addressSequence) ) {
-                $elements['address_1_state_province_id'] =
-                    $location['address'][1]['state_province_id'];
-            }
+          if ( array_key_exists( 'street_address', $addressSequence) ) {
+            $elements["address_1_street_address"] = $location['address'][1]['street_address'];
+          }
+          if ( array_key_exists( 'supplemental_address_1', $addressSequence) ) {
+            $elements['address_1_supplemental_address_1'] =
+              $location['address'][1]['supplemental_address_1'];
+          }
+          if ( array_key_exists( 'supplemental_address_2', $addressSequence) ) {
+            $elements['address_1_supplemental_address_2'] =
+              $location['address'][1]['supplemental_address_2'];
+          }
+          if ( array_key_exists( 'city', $addressSequence) ) {
+            $elements['address_1_city'] = $location['address'][1]['city'];
+          }
+          if ( array_key_exists( 'postal_code', $addressSequence) ) {
+            $elements['address_1_postal_code'] =
+              $location['address'][1]['postal_code'];
+            $elements['address_1_postal_code_suffix'] =
+              $location['address'][1]['postal_code_suffix'];
+          }
+          if ( array_key_exists( 'country', $addressSequence) ) {
+            $elements['address_1_country_id'] =
+              $location['address'][1]['country_id'];
+          }
+          if ( array_key_exists( 'state_province', $addressSequence) ) {
+            $elements['address_1_state_province_id'] =
+              $location['address'][1]['state_province_id'];
+          }
         } else {
-            $profileFields = CRM_Core_BAO_UFGroup::getFields( $ufId, false, CRM_Core_Action::VIEW, null, null, false,
-                                                              null, false, null, CRM_Core_Permission::CREATE, null );
-            $website       = CRM_Core_BAO_Website::getValues( $entityBlock, $values );
+          $profileFields = CRM_Core_BAO_UFGroup::getFields( $ufId, false, CRM_Core_Action::VIEW, null, null, false,
+                           null, false, null, CRM_Core_Permission::CREATE, null );
+          $website       = CRM_Core_BAO_Website::getValues( $entityBlock, $values );
 
-            foreach ( $location as $fld => $values ) {
-                if ( is_array( $values ) && !empty( $values ) ) {
-                    $locType = $values[1]['location_type_id'];
-                    if ( $fld == 'email' ) {
-                        $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+          foreach ( $location as $fld => $values ) {
+            if ( is_array( $values ) && !empty( $values ) ) {
+              $locType = $values[1]['location_type_id'];
+              if ( $fld == 'email' ) {
+                $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+                                                          'value' => $location[$fld][1][$fld] );
+                unset( $profileFields["{$fld}-{$locType}"] );
+              } else if ( $fld == 'phone' ) {
+                $phoneTypeId = $values[1]['phone_type_id'];
+                $elements["onbehalf_{$fld}-{$locType}-{$phoneTypeId}"] = array( 'type'  => 'Text',
                                                                          'value' => $location[$fld][1][$fld] );
-                        unset( $profileFields["{$fld}-{$locType}"] );
-                    } else if ( $fld == 'phone' ) {
-                        $phoneTypeId = $values[1]['phone_type_id'];
-                        $elements["onbehalf_{$fld}-{$locType}-{$phoneTypeId}"] = array( 'type'  => 'Text',
-                                                                                        'value' => $location[$fld][1][$fld] );
-                        unset( $profileFields["{$fld}-{$locType}-{$phoneTypeId}"] );
-                    } else if ( $fld == 'im' ) {
-                        $providerId = $values[1]['provider_id'];
-                        $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
-                                                                         'value' => $location[$fld][1][$fld] );
-                        $elements["onbehalf_{$fld}-{$locType}provider_id"] =
-                            array( 'type'  => 'Select',
-                                   'value' => $location[$fld][1]['provider_id'] );
-                        unset( $profileFields["{$fld}-{$locType}-{$providerId}"] );
-                    }
-                }
+                unset( $profileFields["{$fld}-{$locType}-{$phoneTypeId}"] );
+              } else if ( $fld == 'im' ) {
+                $providerId = $values[1]['provider_id'];
+                $elements["onbehalf_{$fld}-{$locType}"] = array( 'type'  => 'Text',
+                                                          'value' => $location[$fld][1][$fld] );
+                $elements["onbehalf_{$fld}-{$locType}provider_id"] =
+                  array( 'type'  => 'Select',
+                    'value' => $location[$fld][1]['provider_id'] );
+                unset( $profileFields["{$fld}-{$locType}-{$providerId}"] );
+              }
             }
+          }
 
-            if ( !empty( $website ) ) {
-                foreach ( $website as $key => $val ) {
-                    $websiteTypeId = $values[1]['website_type_id'];
-                    $elements["onbehalf_url-1"] = array( 'type'  => 'Text',
-                                                         'value' => $website[1]['url'] );
-                    $elements["onbehalf_url-1-website_type_id"] =
-                        array( 'type'  => 'Select',
-                               'value' => $website[1]['website_type_id'] );
-                    unset( $profileFields["url-1"] );
-                }
+          if ( !empty( $website ) ) {
+            foreach ( $website as $key => $val ) {
+              $websiteTypeId = $values[1]['website_type_id'];
+              $elements["onbehalf_url-1"] = array( 'type'  => 'Text',
+                                            'value' => $website[1]['url'] );
+              $elements["onbehalf_url-1-website_type_id"] =
+                array( 'type'  => 'Select',
+                  'value' => $website[1]['website_type_id'] );
+              unset( $profileFields["url-1"] );
             }
+          }
 
-            $locTypeId = $location['address'][1]['location_type_id'];
-            $addressFields = array( 'street_address',
-                                    'supplemental_address_1',
-                                    'supplemental_address_2',
-                                    'city',
-                                    'postal_code',
-                                    'country',
-                                    'state_province' );
+          $locTypeId = $location['address'][1]['location_type_id'];
+          $addressFields = array( 'street_address',
+                           'supplemental_address_1',
+                           'supplemental_address_2',
+                           'city',
+                           'postal_code',
+                           'country',
+                           'state_province' );
 
-            foreach ( $addressFields as $field ) {
-                if ( array_key_exists( $field, $addressSequence ) ) {
-                    $addField = $field;
-                    if ( in_array( $field, array( 'state_province', 'country' ) ) ) {
-                        $addField = "{$field}_id";
-                    }
-                    $elements["onbehalf_{$field}-{$locTypeId}"] = array( 'type'  => 'Text',
-                                                                         'value' => $location['address'][1][$addField] );
-                    unset( $profileFields["{$field}-{$locTypeId}"] );
-                }
+          foreach ( $addressFields as $field ) {
+            if ( array_key_exists( $field, $addressSequence ) ) {
+              $addField = $field;
+              if ( in_array( $field, array( 'state_province', 'country' ) ) ) {
+                $addField = "{$field}_id";
+              }
+              $elements["onbehalf_{$field}-{$locTypeId}"] = array( 'type'  => 'Text',
+                                                            'value' => $location['address'][1][$addField] );
+              unset( $profileFields["{$field}-{$locTypeId}"] );
             }
+          }
 
-            //set custom field defaults
-            $defaults = array( );
-            CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $defaults, true, null, null, true );
+          //set custom field defaults
+          $defaults = array( );
+          CRM_Core_BAO_UFGroup::setProfileDefaults( $cid, $profileFields, $defaults, true, null, null, true );
 
-            if ( !empty( $defaults ) ) {
-                foreach ( $profileFields as $key => $val ) {
+          if ( !empty( $defaults ) ) {
+            foreach ( $profileFields as $key => $val ) {
 
-                    if ( array_key_exists( $key, $defaults ) ) {
-                        if ( $val['html_type'] == 'Radio' ) {
-                            $elements["onbehalf[{$key}]"]['type'] = $val['html_type'];
+              if ( array_key_exists( $key, $defaults ) ) {
+                $htmlType = CRM_Utils_Array::value( 'html_type', $val );
+                        if ( $htmlType == 'Radio' ) {
+                            $elements["onbehalf[{$key}]"]['type'] = $htmlType;
                             $elements["onbehalf[{$key}]"]['value'] = $defaults[$key];
-                        } else if ( $val['html_type'] == 'CheckBox' ) {
+                        } else if ( $htmlType == 'CheckBox' ) {
                             foreach ( $defaults[$key] as $k => $v ) {
-                                $elements["onbehalf[{$key}][{$k}]"]['type'] = $val['html_type'];
+                                $elements["onbehalf[{$key}][{$k}]"]['type'] = $htmlType;
                                 $elements["onbehalf[{$key}][{$k}]"]['value'] = $v;
                             }
-                        } else if ( $val['html_type'] == 'Multi-Select' ) {
+                        } else if ( $htmlType == 'Multi-Select' ) {
                             foreach ( $defaults[$key] as $k => $v ) {
-                                $elements["onbehalf_{$key}"]['type'] = $val['html_type'];
+                                $elements["onbehalf_{$key}"]['type'] = $htmlType;
                                 $elements["onbehalf_{$key}"]['value'][$k] = $v;
                             }
-                        } else if ( $val['html_type'] == 'Autocomplete-Select' ) {
-                            $elements["onbehalf_{$key}"]['type']  = $val['html_type'];
+                        } else if ( $htmlType == 'Autocomplete-Select' ) {
+                            $elements["onbehalf_{$key}"]['type']  = $htmlType;
                             $elements["onbehalf_{$key}"]['value'] = $defaults[$key];
                             $elements["onbehalf_{$key}"]['id'] = $defaults["{$key}_id"];
                         } else {
-                            $elements["onbehalf_{$key}"]['type'] = $val['html_type'];
+                            $elements["onbehalf_{$key}"]['type'] = $htmlType;
                             $elements["onbehalf_{$key}"]['value'] = $defaults[$key];
                         }
                     } else {
