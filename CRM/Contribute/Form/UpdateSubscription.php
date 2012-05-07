@@ -182,13 +182,19 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
         if ( !is_a( $result, 'CRM_Core_Error' ) ) {
             $params['subscriptionId'] = $this->_subscriptionDetails->subscription_id;
             $updateSubscription = $this->_paymentProcessorObj->changeSubscriptionAmount( $message, $params );
-            
+
             if ( is_a( $updateSubscription, 'CRM_Core_Error' ) ) {
                 CRM_Core_Error::displaySessionError( $updateSubscription ); 
             } else if ( $updateSubscription ) {
                 $status  = ts( 'Recurring contribution details has been updated for the subscription.' );
                 $contactID = $this->_subscriptionDetails->contact_id;
                 
+                $keys = array ('amount', 'installments');
+                foreach( $keys as $key ) {
+                    if ( $this->_subscriptionDetails->$key != $params[$key] ) {
+                        $message .= "<br /> Recurring contribution $key has been updated from {$this->_subscriptionDetails->$key} to {$params[$key]} for this subscription. ";
+                    }
+                }
                 $activityParams =
                     array( 'source_contact_id' => $contactID, 
                            'activity_type_id'  => CRM_Core_OptionGroup::getValue( 'activity_type',
@@ -203,6 +209,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
                            );
                 $session = CRM_Core_Session::singleton();
                 $cid     = $session->get('userID');
+                
                 if ( $cid ) {
                     $activityParams['source_contact_id']   = $cid;
                     $activityParams['target_contact_id'][] = $activityParams['source_contact_id'];
