@@ -3289,6 +3289,10 @@ div#crm-toolTip
   background-image:url("../packages/jquery/jquery-ui-1.8.16/css/smoothness/images/ui-icons_222222_256x240.png");
 }
 
+#crm-container #Entry ul#errorList {
+  display: none;
+}
+
 /* Responsive layout changes */
 
 #crm-container .contact_basic_information-section.narrowform table.form-layout-compressed,
