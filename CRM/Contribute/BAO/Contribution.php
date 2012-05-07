@@ -308,14 +308,15 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
         $csParams['id'] = $params['softID'];
       }
 
-      $csParams['pcp_display_in_roll'] = $params['pcp_display_in_roll'] ? 1 : 0;
-      foreach (array('pcp_roll_nickname', 'pcp_personal_note') as $val) {
-        $csParams[$val] = $params[$val];
-      }
       $csParams['contribution_id'] = $contribution->id;
       // If pcp_made_through_id set, we define soft_credit_to contact based on selected PCP,
       // else use passed soft_credit_to
       if (CRM_Utils_Array::value('pcp_made_through_id', $params)) {
+        $csParams['pcp_display_in_roll'] = $params['pcp_display_in_roll'] ? 1 : 0;
+        foreach (array('pcp_roll_nickname', 'pcp_personal_note') as $val) {
+          $csParams[$val] = $params[$val];
+        }
+        
         $csParams['pcp_id'] = CRM_Utils_Array::value('pcp_made_through_id', $params);
         $csParams['contact_id'] = CRM_Core_DAO::getFieldValue('CRM_PCP_DAO_PCP',
           $csParams['pcp_id'], 'contact_id'
