@@ -127,8 +127,8 @@ class CRM_Core_Payment_BaseIPN {
     $contribution->contribution_status_id = array_search('Failed', $contributionStatus);
     $contribution->save();
 
-    //if( $objects['contributionRecur']->id )
-    //$this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
+    if( $objects['contributionRecur']->id )
+    $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
 
     foreach ($memberships as $membership) {
       if ($membership) {
@@ -386,8 +386,8 @@ LIMIT 1;";
     }
 
     $contribution->save();
-    //if( $objects['contributionRecur']->id )
-    //$this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
+    if( $objects['contributionRecur']->id )
+    $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id );
 
     // next create the transaction record
     $paymentProcessor = '';

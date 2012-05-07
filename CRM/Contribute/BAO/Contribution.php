@@ -2310,11 +2310,11 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       $template->assign('honor_first_name', CRM_Utils_Array::value('first_name', $honorDefault));
       $template->assign('honor_last_name', CRM_Utils_Array::value('last_name', $honorDefault));
       $template->assign('honor_email', CRM_Utils_Array::value('email', $honorDefault['email'][1]));
-      $template->assign('honor_type', $honorType[$contribution->honor_type_id]);
+      $template->assign('honor_type', $honorType[$this->honor_type_id]);
     }
 
     $dao = new CRM_Contribute_DAO_ContributionProduct();
-    $dao->contribution_id = $contribution->id;
+    $dao->contribution_id = $this->id;
     if ($dao->find(TRUE)) {
       $premiumId = $dao->product_id;
       $template->assign('option', $dao->product_option);
@@ -2338,7 +2338,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       }
       //PCP Info
       $softDAO = new CRM_Contribute_DAO_ContributionSoft();
-      $softDAO->contribution_id = $contribution->id;
+      $softDAO->contribution_id = $this->id;
       if ($softDAO->find(TRUE)) {
         $template->assign('pcpBlock', TRUE);
         $template->assign('pcp_display_in_roll', $softDAO->pcp_display_in_roll);
@@ -2365,7 +2365,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
 
     $template->assign('trxn_id', $this->trxn_id);
     $template->assign('receive_date',
-      CRM_Utils_Date::mysqlToIso($contribution->receive_date)
+      CRM_Utils_Date::mysqlToIso($this->receive_date)
     );
     $template->assign('contributeMode', 'notify');
     $template->assign('action', $this->is_test ? 1024 : 1);
@@ -2444,9 +2444,9 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       $template->assign('isPrimary', 1);
       $template->assign('amount', $primaryAmount);
       $template->assign('register_date', CRM_Utils_Date::isoToMysql($this->_relatedObjects['participant']->register_date));
-      if ($contribution->payment_instrument_id) {
+      if ($this->payment_instrument_id) {
         $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
-        $template->assign('paidBy', $paymentInstrument[$contribution->payment_instrument_id]);
+        $template->assign('paidBy', $paymentInstrument[$this->payment_instrument_id]);
       }
       // carry paylater, since we did not created billing,
       // so need to pull email from primary location, CRM-4395

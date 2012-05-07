@@ -427,7 +427,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
    * @access public
    * @static
    */
-  static function recurringNofify($type, $contactID, $pageID, $recur, $autoRenewMembership = false) {
+  static function recurringNotify($type, $contactID, $pageID, $recur, $autoRenewMembership = false) {
     $value = array();
     if ($pageID) {
       CRM_Core_DAO::commonRetrieveAll( 'CRM_Contribute_DAO_ContributionPage', 'id', $pageID, $value, array(
