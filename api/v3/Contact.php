@@ -836,7 +836,7 @@ function civicrm_api3_contact_proximity( $params ) {
     ! CRM_Utils_Rule::numeric( $longitude ) ||
     ! CRM_Utils_Rule::numeric( $distance )
   ) {
-    return civicrm_api3_create_error( ts( 'Latitude, Longitude and Distance should exist and be numeric' ) );
+    throw new Exception( ts( 'Latitude, Longitude and Distance should exist and be numeric' ) );
   }
 
   if ( $unit == "mile" ) {
