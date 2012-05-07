@@ -61,7 +61,7 @@ class CRM_Contact_BAO_ProximityQuery {
 
         if ( ! $_initialized ) {
             $_initialized =true;
-            
+
             self::$_earthFlattening       = 1.0 / 298.257223563;
             self::$_earthRadiusSemiMajor = 6378137.0;
             self::$_earthRadiusSemiMinor = self::$_earthRadiusSemiMajor * ( 1.0 - self::$_earthFlattening );
@@ -77,7 +77,7 @@ class CRM_Contact_BAO_ProximityQuery {
 
     /*
     /**
-     * Estimate the Earth's radius at a given latitude. 
+     * Estimate the Earth's radius at a given latitude.
      * Default to an approximate average radius for the United States.
      */
     static function earthRadius( $latitude ) {
@@ -100,8 +100,8 @@ class CRM_Contact_BAO_ProximityQuery {
         $cosLat  = cos( $lat  );
         $sinLong = sin( $long );
         $sinLat  = sin( $lat  );
-        
-        $radius = self::$_earthRadiusSemiMajor / 
+
+        $radius = self::$_earthRadiusSemiMajor /
             sqrt( 1 - self::$_earthEccentricitySQ * $sinLat * $sinLat);
 
         $x = ( $radius + $height ) * $cosLat * $cosLong;
@@ -130,7 +130,7 @@ class CRM_Contact_BAO_ProximityQuery {
         $latDst  = deg2rad( $latitudeDst  );
 
         $radius = self::earthRadius( ( $latitudeSrc + $latitudeDst ) / 2 );
-        
+
         $cosAngle = cos( $latSrc ) * cos( $latDst ) *
             ( cos( $longSrc ) * cos( $longDst ) + sin( $longSrc ) * sin( $longDst ) ) +
             sin( $latSrc ) * sin( $latDst );
@@ -153,7 +153,7 @@ class CRM_Contact_BAO_ProximityQuery {
         if ( $minLong < -pi( ) ) {
             $minLong = $minLong + pi( ) * 2;
         }
-        
+
         if ( $maxLong > pi( ) ) {
             $maxLong = $maxLong - pi( ) * 2;
         }
@@ -202,7 +202,7 @@ class CRM_Contact_BAO_ProximityQuery {
      * to a query that includes the location table
      *
      * @param $longitude
-     * @param $latitude 
+     * @param $latitude
      */
     static function earthDistanceSQL( $longitude, $latitude ) {
         $long   = deg2rad( $longitude );
@@ -213,7 +213,7 @@ class CRM_Contact_BAO_ProximityQuery {
         $cosLat  = cos( $lat  );
         $sinLong = sin( $long );
         $sinLat  = sin( $lat  );
-        
+
         return "
 IFNULL( ACOS( $cosLat * COS( RADIANS( $latitude ) ) *
               ( $cosLong * COS( RADIANS( $longitude ) ) +
@@ -250,7 +250,7 @@ $earthDistanceSQL  <= $distance
 
     static function process( &$query, &$values ) {
         list( $name, $op, $distance, $grouping, $wildcard ) = $values;
-             
+
         // also get values array for all address related info
         $proximityVars = array( 'street_address'    => 1,
                                 'city'              => 1,
@@ -294,7 +294,7 @@ $earthDistanceSQL  <= $distance
         if ( empty( $config->geocodeMethod ) ) {
             CRM_Core_Error::fatal( ts( 'Proximity searching requires you to set a valid geocoding provider' ) );
         }
-        
+
         require_once( str_replace('_', DIRECTORY_SEPARATOR, $config->geocodeMethod ) . '.php' );
         eval( $config->geocodeMethod . '::format( $proximityAddress );' );
         if ( ! is_numeric( CRM_Utils_Array::value('geo_code_1', $proximityAddress) ) ||
