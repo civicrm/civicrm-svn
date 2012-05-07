@@ -225,9 +225,9 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
                 }
             } else {
                 if ( isset( $query ) ) {
-                    return $script .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
+                    return $base .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
                 } else {
-                    return $script .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
+                    return $base .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
                 }
             }
         } else {
