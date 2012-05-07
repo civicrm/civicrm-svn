@@ -152,7 +152,12 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
        });
      }
 
+  //display a message or (message=false) clear the notification
   $.fn.crmNotification = function (message,type,item) {
+    if (message === false && typeof $.noty == "function") {
+      $.noty.closeAll();
+      return;
+    }
     item = typeof item !== 'undefined' ? item : null;
     type = typeof type !== 'undefined' ? type : 'error';
     if (typeof $.noty == "function") 

@@ -88,12 +88,13 @@
           }
         },
         error: function(entity,field,value,data) {
-          $().crmNotification ("error saving:"+data.error_message,'error',data);
+          $().crmNotification (data.error_message,'error',data);
           $(this).removeClass ('crm-editable-saving').addClass('crm-editable-error');
         },
         success: function(entity,field,value,data) {
           var $i=$(this);
-          $i.removeClass ('crm-editable-saving');
+          $().crmNotification (false);
+          $i.removeClass ('crm-editable-saving').removeClass ('crm-editable-error');
           $i.html(value);
         },
       }
