@@ -19,11 +19,10 @@ function civicrm_api3_generic_setValue($apiRequest) {
   $fields=$fields['values'];
   
   if (!array_key_exists ($field,$fields)) {
-    return civicrm_api3_create_error("Param 'field' ($field) is invalid. must be an existing field",array ("fields"=>array_keys($fields)));
+    return civicrm_api3_create_error("Param 'field' ($field) is invalid. must be an existing field",array ("error_code"=>"invalid_field" , "fields"=>array_keys($fields)));
   }
    
   $def=$fields[$field];
-print_r($def);
   if (array_key_exists ('required',$def) && empty($value)) {
     return civicrm_api3_create_error(ts("This can't be empty, please provide a value"),array ("error_code"=>"required","field"=>$field));
   }
@@ -44,7 +43,7 @@ print_r($def);
       break;
     case 4://date
     default:
-      return civicrm_api3_create_error("Param '$field' is of a type not managed yet. Join the API team and help us implement it");
+      return civicrm_api3_create_error("Param '$field' is of a type not managed yet. Join the API team and help us implement it",array ('error_code' => 'NOT_IMPLEMENTED'));
   }
 
   if (CRM_Core_DAO::setFieldValue(_civicrm_api3_get_DAO($entity),$id,$field,$value)) {
