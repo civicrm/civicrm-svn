@@ -240,7 +240,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $softCredit->id = $params['softID'];
       $softCredit->delete();
     }
-   
+
     $contribution = self::add($params, $ids);
 
     if (is_a($contribution, 'CRM_Core_Error')) {
@@ -743,7 +743,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
    * For now we only allow custom contribution fields to be in
    * profile
    *
-   * @param boolean $addExtraFields true if special fields needs to be added 
+   * @param boolean $addExtraFields true if special fields needs to be added
    *
    * @return return the list of contribution fields
    * @static
@@ -753,7 +753,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
     $contributionFields = CRM_Contribute_DAO_Contribution::export();
     $contributionFields = array_merge($contributionFields, CRM_Core_OptionValue::getFields($mode = 'contribute'));
 
-    if ( $addExtraFields ) { 
+    if ( $addExtraFields ) {
       $contributionFields = array_merge( $contributionFields, self::getSpecialContributionFields() );
     }
 
@@ -777,10 +777,10 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
   * Function to add extra fields specific to contribtion
   *
   * @static
-  */ 
+  */
   static function getSpecialContributionFields( ) {
     $extraFields = array(
-      'honor_contact_name' => array( 
+      'honor_contact_name' => array(
         'name' => 'honor_contact_name',
         'title'=> 'Honor Contact Name',
         'headerPattern' => '/^honor_contact_name$/i',
@@ -1414,7 +1414,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
       $componentDetails['contact_id'] = $contactId;
       $componentDetails['component'] = $componentName;
 
-      if ($componentName = 'event') {
+      if ($componentName == 'event') {
         $componentDetails['participant'] = $componentId;
       }
       else {
@@ -1902,7 +1902,7 @@ SELECT source_contact_id
     if (isset($ids['contact'])) {
         $this->_relatedObjects['contact'] = new CRM_Contact_BAO_Contact();
         $this->_relatedObjects['contact']->id = $ids['contact'];
-        $this->_relatedObjects['contact']->find(true); 
+        $this->_relatedObjects['contact']->find(true);
     }
     $this->_relatedObjects['contributionType'] = $contributionType;
     if ($input['component'] == 'contribute') {
@@ -2296,7 +2296,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         'honor_contact_id'
      );
     if(!empty($honorID)){
-    	
+
       $honorDefault = $honorIds = array();
       $honorIds['contribution'] = $this->id;
       $idParams = array('id' => $honorID, 'contact_id' => $honorID);
