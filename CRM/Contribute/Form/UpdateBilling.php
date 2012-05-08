@@ -268,7 +268,7 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form
                 $status = ts( 'Billing details for your automatically renewed %1 membership have been updated.', 
                               array( 1 => $tplParams['membershipType'] ) );
             } else {
-                $status    = ts( 'Billing details for your recurring contribution of %1, every %2 %3 has been updated.', 
+                $status    = ts( 'Billing details for the recurring contribution of %1, every %2 %3 have been updated.', 
                                  array( 1 => $this->_subscriptionDetails->amount, 
                                         2 => $this->_subscriptionDetails->frequency_interval, 
                                         3 => $this->_subscriptionDetails->frequency_unit ) );
@@ -322,8 +322,8 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form
 
 <br/><br/>Previous Billing Name and Address
 <br/>==================================
-<br/>{$this->_defaults['address']}
-<br/>{$this->_defaults['billingName']}";
+<br/>{$this->_defaults['billingName']}
+<br/>{$this->_defaults['address']}";
 
             $activityParams = 
                 array( 'source_contact_id' => $this->_subscriptionDetails->contact_id,
