@@ -89,6 +89,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
     $this->quickCleanup(
       array(
         'civicrm_group',
+        'civicrm_group_nesting',
         'civicrm_contact',
         'civicrm_uf_group',
         'civicrm_uf_join',
