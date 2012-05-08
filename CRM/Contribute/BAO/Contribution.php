@@ -1895,9 +1895,7 @@ SELECT source_contact_id
     $contributionType = new CRM_Contribute_BAO_ContributionType();
     $contributionType->id = $this->contribution_type_id;
     if (!$contributionType->find(TRUE)) {
-      CRM_Core_Error::debug_log_message("Could not find contribution type record: " . $this->contribution_type_id );
-      echo "Failure: Could not find contribution type record for <p>" . $this->contribution_type_id;
-      return FALSE;
+      throw new Exception ("Could not find contribution type record: " . $this->contribution_type_id );
     }
     if (isset($ids['contact'])) {
         $this->_relatedObjects['contact'] = new CRM_Contact_BAO_Contact();
@@ -1935,9 +1933,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
               $membership = new CRM_Member_BAO_Membership();
               $membership->id = $id;
               if (!$membership->find(TRUE)) {
-                CRM_Core_Error::debug_log_message("Could not find membership record: $id");
-                echo "Failure: Could not find membership record: $id<p>";
-                return FALSE;
+                throw new Exception ("Could not find membership record: $id");
               }
               $membership->join_date = CRM_Utils_Date::isoToMysql($membership->join_date);
               $membership->start_date = CRM_Utils_Date::isoToMysql($membership->start_date);
@@ -1958,9 +1954,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
           $payment = new CRM_Pledge_BAO_PledgePayment();
           $payment->id = $paymentID;
           if (!$payment->find(TRUE)) {
-            CRM_Core_Error::debug_log_message("Could not find pledge payment record: " . $ids['pledge_payment']);
-            echo "Failure: Could not find pledge payment record: " . $ids['pledge_payment'];
-            return FALSE;
+            throw new Exception ("Could not find pledge payment record: " . $ids['pledge_payment']);
           }
           $this->_relatedObjects['pledge_payment'][] = $payment;
         }
@@ -1970,9 +1964,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         $recur = new CRM_Contribute_BAO_ContributionRecur();
         $recur->id = $ids['contributionRecur'];
         if (!$recur->find(TRUE)) {
-          CRM_Core_Error::debug_log_message("Could not find recur record: " . $ids['contributionRecur']);
-          echo "Failure: Could not find recur record: " . $ids['contributionRecur'];
-          return FALSE;
+          throw new Exception ("Could not find recur record: " . $ids['contributionRecur']);
         }
         $this->_relatedObjects['contributionRecur'] = &$recur;
         //get payment processor id from recur object.
@@ -1995,10 +1987,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         ) {
           $loadObjectSuccess = TRUE;
           if ($required) {
-            $loadObjectSuccess = FALSE;
-            CRM_Core_Error::debug_log_message("Could not find contribution page for contribution record: " . $this->id);
-            echo "Failure: Could not find contribution page for contribution record: " . $this->id . "</p>";
-          }
+            throw new Exception ("Could not find contribution page for contribution record: " . $this->id);
+         }
           return $loadObjectSuccess;
         }
       }
@@ -2011,9 +2001,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       if ($ids['event'] &&
         !$event->find(TRUE)
       ) {
-        CRM_Core_Error::debug_log_message("Could not find event: " . $ids['event']);
-        echo "Failure: Could not find event: ".  $ids['event'] . "<p>";
-        return FALSE;
+        throw new Exception ("Could not find event: " . $ids['event']);
       }
 
       $this->_relatedObjects['event'] = &$event;
@@ -2023,9 +2011,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
       if ($ids['participant'] &&
         !$participant->find(TRUE)
       ) {
-        CRM_Core_Error::debug_log_message("Could not find participant: " . $ids['participant']);
-        echo "Failure: Could not find participant: " . $ids['participant'] . "<p>";
-        return FALSE;
+        throw new Exception ("Could not find participant: " . $ids['participant']);
       }
       $participant->register_date = CRM_Utils_Date::isoToMysql($participant->register_date);
 
@@ -2046,8 +2032,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     }
     elseif ($required) {
       $loadObjectSuccess = FALSE;
-      CRM_Core_Error::debug_log_message("Could not find payment processor for contribution record: " . $this->id);
-      echo "Failure: Could not find payment processor for contribution record: " . $this->id;
+      throw new Exception ("Could not find payment processor for contribution record: " . $this->id);
     }
 
     return $loadObjectSuccess;

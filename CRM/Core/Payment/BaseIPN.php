@@ -97,8 +97,17 @@ class CRM_Core_Payment_BaseIPN {
  *
  * @input array information from Payment processor
  */
-  function loadObjects(&$input, &$ids, &$objects, $required, $paymentProcessorID) {
-    $ids['paymentProcessor'] = $paymentProcessorID;
+  function loadObjects(&$input, &$ids, &$objects, $required, $paymentProcessorID,$error_handling = null) {
+    if(empty($error_handling)){
+    	// default options are that we log an error & echo it out
+    	// note that we should refactor this error handling into error code @ some point
+    	// but for now setting up enough separation so we can do unit tests
+    	$error_handling = array(
+    	  'log_error' => 1,
+    	  'echo_error' => 1,
+    	);
+    }
+  	$ids['paymentProcessor'] = $paymentProcessorID;
     if (is_a($objects['contribution'], 'CRM_Contribute_BAO_Contribution')) {
       $contribution = &$objects['contribution'];
     }
@@ -109,7 +118,22 @@ class CRM_Core_Payment_BaseIPN {
       $contribution->find(TRUE);
       $objects['contribution'] = &$contribution;
     }
-    $success = $contribution->loadRelatedObjects($input, $ids, $required);
+    try{
+      $success = $contribution->loadRelatedObjects($input, $ids, $required);
+    }catch (Exception $e){
+      if(CRM_Utils_Array::value('log_error', $error_handling)){
+      	CRM_Core_Error::debug_log_message($e->getMessage());
+      }
+      if(CRM_Utils_Array::value('echo_error', $error_handling)){
+      	echo($e->getMessage());
+      }
+      if(CRM_Utils_Array::value('return_error', $error_handling)){
+      	return array(
+      	  'is_error' => 1, 
+      	  'error_message' => ($e->getMessage())
+      	);
+      }
+    }
     $objects = array_merge($objects, $contribution->_relatedObjects);
     return $success;
   }
