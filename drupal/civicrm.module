@@ -287,12 +287,20 @@ function civicrm_initialize() {
     //fixme - after 3.4 is discontinued remove 3.4 support
     //As this file may be shared between 3.4 & 4.1 releases use the BAO_Preferences::value legacy function if it exists
     // in future only CRM_Core_BAO_Setting::getItem will be required
-    if ((method_exists('CRM_Core_BAO_Preferences', 'value') 
-       && CRM_Core_BAO_Preferences::value('editor_id') == 4)
-      || (CRM_Utils_Array::value(1,$args) != 'upgrade' AND method_exists('CRM_Core_BAO_Setting', 'getItem') && CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-          // drupal wysiwyg
-          'editor_id'
-        ) == 4)
+    if ($config->isUpgradeMode()) {
+      // skip
+    } elseif (
+         (
+           method_exists('CRM_Core_BAO_Preferences','value')
+           &&
+           CRM_Core_BAO_Preferences::value( 'editor_id' ) == 4 //drupal wysiwyg 
+         )
+         ||
+         (
+           method_exists('CRM_Core_BAO_Setting','getItem') 
+           &&
+           CRM_Core_BAO_Setting::getItem( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'editor_id' ) == 4  //drupal wysiwyg 
+         )
     ) {
       //we have to ensure that wysiwyg is loaded since
       $formats = filter_formats();
