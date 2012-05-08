@@ -39,11 +39,6 @@
          {ts 1=$updateSubscriptionBillingUrl}You can update billing details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>
-       <tr>
-        <td {$labelStyle}>
-         {ts 1=$updateSubscriptionUrl}You can update details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
-        </td>
-       </tr>
      {else}
 
      <p>{ts}Thanks for your recurring contribution sign-up.{/ts}</p>
@@ -58,6 +53,11 @@
       <tr>
         <td {$labelStyle}>
          {ts 1=$updateSubscriptionBillingUrl}You can update billing details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
+        </td>
+       </tr>
+       <tr>
+        <td {$labelStyle}>
+	 {ts 1=$updateSubscriptionUrl}You can update details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>
      {/if}
