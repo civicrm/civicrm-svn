@@ -142,6 +142,8 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
             
         case 'Membership Signup' :
         case 'Membership Renewal' :
+        case 'Change Membership Status' :
+        case 'Change Membership Type' :
             $url      = 'civicrm/contact/view/membership';
             $qsView   = "action=view&reset=1&id={$sourceRecordId}&cid=%%cid%%&context=%%cxt%%{$extraParams}";
             break;
