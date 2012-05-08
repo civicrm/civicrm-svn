@@ -29,16 +29,20 @@
 <script type="text/javascript">
 function modifyLinkAttributes( recordID, op, recordBAO, reloadPage, rowId ) {
 
+    var selector = '#' + rowId + '_' + recordID;
+    if (cj(selector).length ==0) 
+      selector = '#' + rowId + '-' + recordID;
+
     //we changed record from enable to disable
     if ( op == 'enable-disable' ) {
-        var fieldID     = '#' + rowId + '_' + recordID + " a." + "disable-action";
+        var fieldID     = selector + " a." + "disable-action";
         var operation   = "disable-enable";
         var htmlContent = {/literal}'{ts escape="js"}Enable{/ts}'{literal};
         var newClass    = 'action-item enable-action';
         var newTitle    = {/literal}'{ts escape="js"}Enable{/ts}'{literal};
         var newText     = {/literal}' {ts escape="js"}No{/ts} '{literal};
     } else if ( op == 'disable-enable' ) {
-        var fieldID     = '#' + rowId + '_' + recordID + " a." + "enable-action";
+        var fieldID     = selector + " a." + "enable-action";
         var operation   = "enable-disable";
         var htmlContent = {/literal}'{ts escape="js"}Disable{/ts}'{literal};
         var newClass    = 'action-item disable-action';
@@ -82,6 +86,13 @@ function removeLinkAttributes( recordID, op, rowId ) {
 
 function modifySelectorRow( recordID, op, rowId ) {
     var elementID =  '#' + rowId + '_' + recordID;
+    if (cj(elementID).length ==0 ) { // trying the new syntax {EntityName}-{ID}
+      elementID =  '#' + rowId + '-' + recordID;
+    }
+    if (cj(elementID).length ==0 ) {
+      alert ("can't find "+elementID);return;
+      document.location.reload( );//force update if can't find the row
+    }
     if ( op == "disable-enable" ) {
         cj( elementID ).removeClass("disabled");
     } else if ( op == "enable-disable" )  {
