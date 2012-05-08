@@ -195,14 +195,14 @@ class CRM_Upgrade_ThreeZero_ThreeZero extends CRM_Upgrade_Form {
         
         //CRM-4575
         //check whether {contact.name} is set in mailing labels
-        $mailingFormat    = CRM_Core_BAO_Preferences::value( 'mailing_format' );
+        $mailingFormat    = self::getPreference( 'mailing_format' );
         $addNewAddressee = true;
         
         if ( strpos($mailingFormat,'{contact.contact_name}') === false ) {
             $addNewAddressee = false;
         } else {
             //else compare individual name format with default individual addressee.
-            $individualNameFormat = CRM_Core_BAO_Preferences::value( 'individual_name_format' );
+            $individualNameFormat = self::getPreference( 'individual_name_format' );
             
             $defaultAddressee = CRM_Core_OptionGroup::values( 'addressee', false, false, false, 
                                                               " AND v.filter = 1 AND v.is_default =  1", 'label' );
@@ -262,5 +262,18 @@ class CRM_Upgrade_ThreeZero_ThreeZero extends CRM_Upgrade_Form {
         //set status message for default greetings 
         $template = CRM_Core_Smarty::singleton( );
         $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
+    }
+    
+    /**
+     * Load a preference
+     *
+     * This is replaces the defunct CRM_Core_BAO_Preferences::value()
+     */
+    static function getPreference($name) {
+        $sql = "SELECT $name FROM civicrm_preferences WHERE domain_id = %1 AND is_domain = 1 AND contact_id IS NULL";
+        $params = array(
+          1 => array(CRM_Core_Config::domainID(), 'Integer'),
+        );
+        return CRM_Core_DAO::singleValueQuery($sql, $params);
     }
 }

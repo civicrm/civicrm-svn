@@ -111,16 +111,21 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
 
         // fix for CRM-5162
         // we need to encrypt all smtpPasswords if present
-        $mailingDomain = new CRM_Core_DAO_Preferences();
-        $mailingDomain->find( );
+        $sql = 'SELECT id, mailing_backend FROM civicrm_preferences';
+        $mailingDomain = CRM_Core_DAO::executeQuery($sql);
         while ( $mailingDomain->fetch( ) ) {
             if ( $mailingDomain->mailing_backend ) {
                 $values = unserialize( $mailingDomain->mailing_backend );
                 
                 if ( isset( $values['smtpPassword'] ) ) {
                     $values['smtpPassword'] = CRM_Utils_Crypt::encrypt( $values['smtpPassword'] );
-                    $mailingDomain->mailing_backend = serialize( $values );
-                    $mailingDomain->save( );
+                    
+                    $updateSql = 'UPDATE civicrm_preferences SET mailing_backend = %1 WHERE id = %2';
+                    $updateParams = array(
+                        1 => array(serialize($values), 'String'),
+                        2 => array($mailingDomain->id, 'Integer'),
+                    );
+                    CRM_Core_DAO::executeQuery($updateSql, $updateParams);
                 }
             }
         }
