@@ -318,6 +318,8 @@ function _civicrm_create_files_dirs( $civicrmInstallerHelper, $modPath ) {
     $crmPath ="$modPath/civicrm";
     civicrm_setup("$drupalRoot/$siteRoot/files");
     @drush_op('chmod',"$drupalRoot/$siteRoot/files/civicrm", 0777);
+
+    return TRUE;
 }
 
 // generates civicrm.settings.php file
