@@ -227,12 +227,12 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
       $this->_setUpPledgeObjects();
       $values = array();
       $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, null );
-      $msg = $this->IPN->sendMail($this->input, $this->ids,$this->objects, $values);
+      $msg = $this->IPN->sendMail($this->input, $this->ids,$this->objects, $values,FALSE, TRUE);
       $this->assertContains('Contribution Information',$msg['html']);
 
     }
      /**
-     * Test that an error is returned if required set & no processor ID
+     * Test that an error is returned if required set & no contribution page
      *
      */
     function testRequiredWithoutProcessorID( )
@@ -249,6 +249,39 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
       $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, TRUE, null, array('log_error' => 1) );
       $this->assertFalse(is_array($result)); 
     }
+    
+     /**
+     * 
+     * Test that an error is not if required set & no processor ID
+     */
+    function testRequiredWithContributionPage( )
+    {
+      $this->_setUpContributionObjects(true);
+
+      $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, TRUE, null, array('return_error' => 1) );
+      $this->assertFalse(is_array($result),$result['error_message'] );
+      
+    }
+    
+     /**
+     * Test that an error is returned if required set & contribution page exists
+     *
+     */
+    function testRequiredWithContributionPageError( )
+    {
+      $this->_setUpContributionObjects();
+      $values = array();
+      $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, TRUE, null, array('return_error' => 1) );
+      $this->assertArrayHasKey('error_message', $result);
+      $this->assertEquals('Could not find contribution page for contribution record: 1',$result['error_message']);
+      // error is only returned if $required set to True
+      $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, FALSE, null, array('return_error' => 1) );
+      $this->assertFalse(is_array($result));
+      //check that error is not returned if error checking not set
+      $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, TRUE, null, array('log_error' => 1) );
+      $this->assertFalse(is_array($result)); 
+    } 
+    
     /*
      * Test calls main functions in sequence per 'main' - I had hoped to test the functions more
      * fully but the calls to the POST happen in more than one function 
@@ -325,7 +358,33 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
             }
     }
     
-         */
+    /*
+     * Prepare for contribution Test - involving only contribution objects
+     */
+   function _setUpContributionObjects($contributionPage = false){
+   	
+
+    	$contribution = new CRM_Contribute_BAO_Contribution();
+        $contribution->id = $this->_contributionId;
+        $contribution->find(true);
+        if(!empty($contributionPage)){
+     	  $dao = new CRM_Core_DAO();
+          $contribution_page = $dao->createTestObject('CRM_Contribute_DAO_ContributionPage');
+          $contribution->contribution_page_id = $contribution_page->id;
+          $contribution->save;
+        }
+
+        $this->objects['contribution'] = $contribution;
+        $this->input = array(
+          'component' => 'contribute',
+          'contribution_page_id' => $contribution_page->id,
+          'total_amount' => 110.00,
+          'invoiceID'  => "c8acb91e080ad7777a2adc119c192885",
+          'contactID' => $this->_contactId,
+          'contributionID' => $this->objects['contribution']->id,
+         );
+    }
+    
     /*
      * Prepare for membership test
      */
