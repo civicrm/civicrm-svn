@@ -90,10 +90,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       // get the profile id associted with this batch type
       $this->_profileId = CRM_Core_BAO_Batch::getProfileId( $this->_batchInfo['type_id'] );
     }
-
-    // redirect to batch entry page.
-    $session = CRM_Core_Session::singleton( );
-    $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/batch', "reset=1" ));
   }
 
   /**
@@ -185,6 +181,15 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     if ( $suppressFields && $buttonName != '_qf_Entry_next' ) {
       CRM_Core_Session::setStatus( "FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update and have been excluded." );
     }
+  }
+
+  /**
+   * Override default cancel action
+   */  
+  function cancelAction() {
+    // redirect to batch listing
+    CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/batch', 'reset=1' ) );
+    CRM_Utils_System::civiExit( );    
   }
 
   /**

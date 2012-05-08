@@ -87,7 +87,7 @@
 
         //calculate the actual total for the batch
         calculateActualTotal();
-        cj('input[id*="_total_amount"]').change(function(){
+        cj('input[id*="_total_amount"]').keyup(function(){
             calculateActualTotal();    
         });
    });
@@ -127,7 +127,7 @@
      var total = 0;
      cj('input[id*="_total_amount"]').each(function(){
       if ( cj(this).val() ) {
-        total += parseInt(cj(this).val());
+        total += parseFloat(cj(this).val());
       }
      });
 
