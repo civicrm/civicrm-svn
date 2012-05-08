@@ -147,34 +147,33 @@ function civicrm_drush_command() {
               array('--query' => 'Query part of url. Refer CiviCRM wiki doc for more details.'),
               'aliases' => array('cvr'),
               );
-    $items['civicrm-sql-conf'] =
-        array('description' => 'Print CiviCRM database connection details.',
-              );
-    $items['civicrm-sql-connect'] =
-        array('description' => 'A string for connecting to the CiviCRM DB.',
-              );
-    $items['civicrm-sql-dump'] =
-        array('description' => 'Exports the CiviCRM DB as SQL using mysqldump.',
-              'examples'    =>
-              array('drush civicrm-sql-dump --result-file=../CiviCRM.sql' =>
-                    'Save SQL dump to the directory above Drupal root.',
-                    ),
-              'options'     =>
-              array('--result-file' => 'Save to a file.'),
-              );
-    $items['civicrm-sql-query'] =
-        array('description' => 'Execute a query against the CiviCRM database.',
-              'examples'    =>
-              array('drush civicrm-sql-query "SELECT * FROM civicrm_contact WHERE id=1"' =>
-                    'Browse user record',
-                    ),
-              'arguments'   =>
-              array('query' => 'A SQL query. Mandatory.',
-                    ),
-              );
-    $items['civicrm-sql-cli'] =
-        array('description' => "Open a SQL command-line interface using CiviCRM's credentials.",
-              );
+    $items['civicrm-sql-conf'] = array(
+      'description' => 'Print CiviCRM database connection details.',
+    );
+    $items['civicrm-sql-connect'] = array(
+      'description' => 'A string for connecting to the CiviCRM DB.',
+    );
+    $items['civicrm-sql-dump'] = array(
+      'description' => 'Exports the CiviCRM DB as SQL using mysqldump.',
+      'examples'    => array(
+        'drush civicrm-sql-dump --result-file=../CiviCRM.sql' => 'Save SQL dump to the directory above Drupal root.',
+      ),
+      'options'     => array(
+        '--result-file' => 'Save to a file.',
+      ),
+    );
+    $items['civicrm-sql-query'] = array(
+      'description' => 'Execute a query against the CiviCRM database.',
+      'examples'    => array(
+        'drush civicrm-sql-query "SELECT * FROM civicrm_contact WHERE id=1"' => 'Browse user record',
+      ),
+      'arguments'   => array(
+        'query' => 'A SQL query. Mandatory.',
+      ),
+    );
+    $items['civicrm-sql-cli'] = array(
+      'description' => "Open a SQL command-line interface using CiviCRM's credentials.",
+    );
     $items['civicrm-process-mail-queue'] =
         array('description' => "Process pending CiviMail mailing jobs.",
               'examples'    =>
@@ -387,17 +386,17 @@ function _civicrm_generate_settings_file( $dbuser, $dbpass, $dbhost, $dbname, $m
  *   A string with the help text for your command.
  */
 function civicrm_drush_help($section) {
-    switch ($section) {
+  switch ($section) {
     case 'drush:civicrm-upgrade-db':
-        return dt("Run civicrm/upgrade?reset=1 just as a web browser would.");
+      return dt("Run civicrm/upgrade?reset=1 just as a web browser would.");
     case 'drush:civicrm-update-cfg':
-        return dt("Update config_backend to correct config settings, especially when the CiviCRM site has been cloned / migrated.");
+      return dt("Update config_backend to correct config settings, especially when the CiviCRM site has been cloned / migrated.");
     case 'drush:civicrm-upgrade':
-        return dt("Take backups, replace CiviCRM codebase with new specified tarfile and upgrade database by executing the CiviCRM upgrade process - civicrm/upgrade?reset=1. Use civicrm-restore to revert to previous state in case anything goes wrong.");
+      return dt("Take backups, replace CiviCRM codebase with new specified tarfile and upgrade database by executing the CiviCRM upgrade process - civicrm/upgrade?reset=1. Use civicrm-restore to revert to previous state in case anything goes wrong.");
     case 'drush:civicrm-restore':
-        return dt("Restore CiviCRM codebase and database back from the specified backup directory.");
+      return dt("Restore CiviCRM codebase and database back from the specified backup directory.");
     case 'drush:civicrm-rest':
-        return dt("Rest interface for accessing CiviCRM APIs. It can return xml or json formatted data.");
+      return dt("Rest interface for accessing CiviCRM APIs. It can return xml or json formatted data.");
     case 'drush:civicrm-sql-conf':
       return dt('Show civicrm database connection details.');
     case 'drush:civicrm-sql-connect':
@@ -408,7 +407,7 @@ function civicrm_drush_help($section) {
       return dt('Prints the whole CiviCRM database to STDOUT or save to a file.');
     case 'drush:civicrm-sql-query':
       return dt("Usage: drush [options] civicrm-sql-query <query>...\n<query> is a SQL statement, which can alternatively be passed via STDIN. Any additional arguments are passed to the mysql command directly.");
-    }
+  }
 }
 
 function drush_civicrm_upgrade_db_validate() {
