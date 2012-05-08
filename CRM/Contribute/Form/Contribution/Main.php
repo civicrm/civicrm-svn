@@ -39,10 +39,10 @@ require_once 'CRM/Core/Payment.php';
 require_once 'CRM/Contribute/Form/Contribution/OnBehalfOf.php';
 
 /**
- * This class generates form components for processing a ontribution 
- * 
+ * This class generates form components for processing a ontribution
+ *
  */
-class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_ContributionBase 
+class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_ContributionBase
 {
     /**
      *Define default MembershipType Id
@@ -58,16 +58,16 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     protected $_defaults;
 
     public $_membershipTypeValues;
-    
+
     public $_useForMember;
-        
-    /** 
-     * Function to set variables up before form is built 
-     *                                                           
-     * @return void 
-     * @access public 
-     */ 
-    public function preProcess()  
+
+    /**
+     * Function to set variables up before form is built
+     *
+     * @return void
+     * @access public
+     */
+    public function preProcess()
     {
         parent::preProcess( );
 
@@ -97,7 +97,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( $mainDisplay ) {
             $this->assign( 'mainDisplay', $mainDisplay );
         }
-        
+
         $this->_onbehalf = false;
         if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
             $urlParams = "&id={$this->_id}&qfKey={$this->controller->_key}";
@@ -112,14 +112,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
             }
         }
-        
-        if ( CRM_Utils_Array::value( 'id', $this->_pcpInfo )  && 
+
+        if ( CRM_Utils_Array::value( 'id', $this->_pcpInfo )  &&
              CRM_Utils_Array::value( 'intro_text', $this->_pcpInfo ) ) {
             $this->assign( 'intro_text' , $this->_pcpInfo['intro_text'] );
         } else if ( CRM_Utils_Array::value( 'intro_text', $this->_values ) ) {
             $this->assign( 'intro_text' , $this->_values['intro_text'] );
         }
-        
+
         $qParams = "reset=1&amp;id={$this->_id}";
         if ( $pcpId = CRM_Utils_Array::value( 'pcp_id', $this->_pcpInfo ) ) {
             $qParams .= "&amp;pcpId={$pcpId}";
@@ -138,9 +138,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $preProfile = CRM_Core_BAO_UFGroup::profileGroups( $preID );
                 foreach ( array( 'Individual', 'Organization', 'Household' ) as $contactType ) {
                     if ( in_array( $contactType, $preProfile ) &&
-                         ( in_array( 'Membership', $preProfile ) || 
+                         ( in_array( 'Membership', $preProfile ) ||
                            in_array( 'Contribution', $preProfile ) ) ) {
-                        CRM_Core_Error::fatal( $msg );   
+                        CRM_Core_Error::fatal( $msg );
                     }
                 }
             }
@@ -158,21 +158,21 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
     }
 
-    function setDefaultValues( ) 
+    function setDefaultValues( )
     {
         // process defaults only once
         if ( ! empty( $this->_defaults ) ) {
             // return $this->_defaults;
         }
-        
+
         if ( $this->_onbehalf ) {
             return;
         }
-        
+
         // check if the user is registered and we have a contact ID
         $session = CRM_Core_Session::singleton( );
         $contactID = $this->_userID;
-        
+
         if ( $contactID ) {
             $options = array( );
             $fields = array( );
@@ -180,11 +180,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $removeCustomFieldTypes = array ('Contribution', 'Membership');
             require_once 'CRM/Contribute/BAO/Contribution.php';
             $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields();
-            
+
             // remove component related fields
             foreach ( $this->_fields as $name => $dontCare ) {
                 //don't set custom data Used for Contribution (CRM-1344)
-                if ( substr( $name, 0, 7 ) == 'custom_' ) {  
+                if ( substr( $name, 0, 7 ) == 'custom_' ) {
                     $id = substr( $name, 7 );
                     if ( ! CRM_Core_BAO_CustomGroup::checkCustomField( $id, $removeCustomFieldTypes )) {
                         continue;
@@ -208,7 +208,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
             require_once 'CRM/Core/BAO/UFGroup.php';
             CRM_Core_BAO_UFGroup::setProfileDefaults( $contactID, $fields, $this->_defaults );
-            
+
             // use primary email address if billing email address is empty
             if ( empty( $this->_defaults["email-{$this->_bltID}"] ) &&
                  ! empty( $this->_defaults['email-Primary'] ) ) {
@@ -219,16 +219,16 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 if ( ! empty( $this->_defaults[$name] ) ) {
                     $this->_defaults['billing_' . $name] = $this->_defaults[$name];
                 }
-            }  
-        } 
-        
+            }
+        }
+
         //set custom field defaults set by admin if value is not set
         if ( ! empty( $this->_fields ) ) {
             //load default campaign from page.
             if ( array_key_exists( 'contribution_campaign_id', $this->_fields ) ) {
                 $this->_defaults['contribution_campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
             }
-            
+
             //set custom field defaults
             require_once 'CRM/Core/BAO/CustomField.php';
             foreach ( $this->_fields as $name => $field ) {
@@ -245,7 +245,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         require_once 'CRM/Member/BAO/Membership.php';
         if ( $this->_membershipBlock ) {
             $this->_defaults['selectMembership'] = $defaultMemType =
-                $this->_defaultMemTypeId ? $this->_defaultMemTypeId : 
+                $this->_defaultMemTypeId ? $this->_defaultMemTypeId :
                 CRM_Utils_Array::value( 'membership_type_default', $this->_membershipBlock );
         }
 
@@ -277,7 +277,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $returnProperties = array( 'status_id' );
             CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'pledge_id', $this->_values['pledge_id'],
                                              $statuses, $returnProperties );
-            
+
             require_once 'CRM/Contribute/PseudoConstant.php';
             $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
             $duePayment = false;
@@ -291,7 +291,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         } else if ( CRM_Utils_Array::value( 'pledge_block_id', $this->_values ) ) {
             //set default to one time contribution.
-            $this->_defaults['is_pledge'] = 0;  
+            $this->_defaults['is_pledge'] = 0;
         }
 
         // to process Custom data that are appended to URL
@@ -303,10 +303,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         $config = CRM_Core_Config::singleton( );
         // set default country from config if no country set
-        if ( !CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $this->_defaults ) ) { 
+        if ( !CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $this->_defaults ) ) {
             $this->_defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
         }
-        
+
         // now fix all state country selectors
         require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::fixAllStateSelects( $this, $this->_defaults );
@@ -338,24 +338,24 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                             }
                         }
                     }
-                    
+
                 }
             } else {
                 CRM_Price_BAO_Set::setDefaultPriceSet($this, $this->_defaults);
             }
         }
-        
+
         return $this->_defaults;
     }
-    
+
     /**
      * Function to build the form
      *
      * @return None
      * @access public
      */
-    public function buildQuickForm( ) 
-    {  
+    public function buildQuickForm( )
+    {
         $config = CRM_Core_Config::singleton( );
         if ( $this->_values['is_for_organization'] == 2 ) {
             $this->assign( 'onBehalfRequired', true );
@@ -365,12 +365,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->assign( 'onbehalf', true );
             return CRM_Contribute_Form_Contribution_OnBehalfOf::buildQuickForm( $this );
         }
-                
+
         $this->applyFilter('__ALL__', 'trim');
         $this->add( 'text', "email-{$this->_bltID}",
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
         $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
-                
+
         //build pledge block.
         $this->_useForMember = 0;
         //don't build membership block when pledge_id is passed
@@ -381,7 +381,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 if ( $this->_action & CRM_Core_Action::PREVIEW ) {
                     $isTest = 1;
                 }
-                
+
                 if ( $this->_priceSetId &&
                      (CRM_Core_Component::getComponentID( 'CiviMember' ) == CRM_Utils_Array::value('extends', $this->_priceSet) ) ) {
                     $this->_useForMember = 1;
@@ -389,15 +389,15 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 }
 
                 require_once 'CRM/Member/BAO/Membership.php';
-                $this->_separateMembershipPayment = 
-                    CRM_Member_BAO_Membership::buildMembershipBlock( $this , 
-                                                                     $this->_id , 
-                                                                     true, null, false, 
+                $this->_separateMembershipPayment =
+                    CRM_Member_BAO_Membership::buildMembershipBlock( $this ,
+                                                                     $this->_id ,
+                                                                     true, null, false,
                                                                      $isTest, $this->_membershipContactID );
             }
             $this->set( 'separateMembershipPayment', $this->_separateMembershipPayment );
         }
-        
+
         $this->assign('useForMember', $this->_useForMember);
 
         // If we configured price set for contribution page
@@ -409,10 +409,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->set( 'priceSetId', $this->_priceSetId );
             require_once 'CRM/Price/BAO/Set.php';
             CRM_Price_BAO_Set::buildPriceSet( $this );
-        } else if ( CRM_Utils_Array::value( 'amount_block_is_active', $this->_values ) 
+        } else if ( CRM_Utils_Array::value( 'amount_block_is_active', $this->_values )
                     && ! CRM_Utils_Array::value( 'pledge_id', $this->_values ) ) {
             $this->buildAmount( $this->_separateMembershipPayment );
-            
+
             if ( $this->_values['is_monetary'] &&
                  $this->_values['is_recur']    &&
                  $this->_paymentProcessor['is_recur'] ) {
@@ -427,21 +427,21 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( $this->_values['is_for_organization'] ) {
             $this->buildOnBehalfOrganization( );
         }
-        
+
         //we allow premium for pledge during pledge creation only.
         if ( ! CRM_Utils_Array::value( 'pledge_id', $this->_values ) ) {
             require_once 'CRM/Contribute/BAO/Premium.php';
             CRM_Contribute_BAO_Premium::buildPremiumBlock( $this , $this->_id ,true );
         }
-        
+
         if ( $this->_values['honor_block_is_active'] ) {
             $this->buildHonorBlock( );
         }
-        
+
         //don't build pledge block when mid is passed
-        if ( ! $this->_mid ) {  
+        if ( ! $this->_mid ) {
             $config = CRM_Core_Config::singleton( );
-            if ( in_array('CiviPledge', $config->enableComponents ) 
+            if ( in_array('CiviPledge', $config->enableComponents )
                 && CRM_Utils_Array::value( 'pledge_block_id', $this->_values ) ) {
                 require_once 'CRM/Pledge/BAO/PledgeBlock.php';
                 CRM_Pledge_BAO_PledgeBlock::buildPledgeBlock( $this );
@@ -461,7 +461,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         }
 
-        //to create an cms user 
+        //to create an cms user
         if ( ! $this->_userID ) {
             $createCMSUser = false;
 
@@ -506,22 +506,22 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $elements[] =& $this->createElement('radio', null, '', ts( 'List my contribution anonymously'), 1, $extraOption );
             $this->addGroup( $elements, 'pcp_is_anonymous', null, '&nbsp;&nbsp;&nbsp;' );
             $this->_defaults['pcp_is_anonymous'] = 0;
-            
+
             $this->add( 'text', 'pcp_roll_nickname', ts('Name'), array( 'maxlength' => 30 ) );
             $this->add( 'textarea', 'pcp_personal_note', ts( 'Personal Note' ), array( 'style' => 'height: 3em; width: 40em;' ) );
         }
-        
+
         if ( !( $this->_paymentProcessor['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON &&
                 !$this->_values['is_pay_later'] ) ) {
-            $this->addButtons(array( 
+            $this->addButtons(array(
                                     array ( 'type'      => 'upload',
-                                            'name'      => ts('Confirm Contribution'), 
-                                            'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
-                                            'isDefault' => true   ), 
-                                    ) 
+                                            'name'      => ts('Confirm Contribution'),
+                                            'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                            'isDefault' => true   ),
+                                    )
                               );
         }
-        
+
         $this->addFormRule( array( 'CRM_Contribute_Form_Contribution_Main', 'formRule' ), $this );
     }
 
@@ -531,14 +531,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      * @return void
      * @access private
      */
-    function buildAmount( $separateMembershipPayment = false ) 
+    function buildAmount( $separateMembershipPayment = false )
     {
         $elements = array( );
         if ( ! empty( $this->_values['amount'] ) ) {
             // first build the radio boxes
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::buildAmount( 'contribution', $this, $this->_values['amount'] );
-            
+
             require_once 'CRM/Utils/Money.php';
             foreach ( $this->_values['amount'] as $amount ) {
                 $elements[] =& $this->createElement('radio', null, '',
@@ -550,7 +550,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
         if ( $separateMembershipPayment ) {
             $elements[''] = $this->createElement('radio',null,null,ts('No thank you'),'no_thanks', array('onclick'=>'clearAmountOther();') );
-            $this->assign('is_separate_payment', true); 
+            $this->assign('is_separate_payment', true);
         }
 
         if ( isset( $this->_values['default_amount_id'] ) ) {
@@ -587,7 +587,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     $title = ts('Additional Contribution');
                 }
                 $this->addGroup( $elements, 'amount', $title, '<br />' );
-            
+
                 if ( ! $separateMembershipPayment ) {
                     $this->addRule( 'amount', ts('%1 is a required field.', array(1 => ts('Amount'))), 'required' );
                 }
@@ -595,14 +595,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->assign( 'is_allow_other_amount', false );
         }
     }
-    
 
-    /**  
+
+    /**
      * Function to add the honor block
-     *  
-     * @return None  
-     * @access public  
-     */ 
+     *
+     * @return None
+     * @access public
+     */
     function buildHonorBlock(  ) {
         $this->assign('honor_block_is_active',true);
         $this->set('honor_block_is_active',true);
@@ -614,20 +614,20 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $extraOption = array('onclick' =>"enableHonorType();");
         // radio button for Honor Type
         $honorOptions = array( );
-        $honor = CRM_Core_PseudoConstant::honor( ); 
+        $honor = CRM_Core_PseudoConstant::honor( );
         foreach ($honor as $key => $var) {
             $honorTypes[$key] = HTML_QuickForm::createElement('radio', null, null, $var, $key, $extraOption );
         }
         $this->addGroup($honorTypes, 'honor_type_id', null);
-        
+
         // prefix
         $this->addElement('select', 'honor_prefix_id', ts('Prefix'), array('' => ts('- prefix -')) + CRM_Core_PseudoConstant::individualPrefix());
         // first_name
         $this->addElement('text', 'honor_first_name', ts('First Name'), $attributes['first_name'] );
-        
+
         //last_name
         $this->addElement('text', 'honor_last_name', ts('Last Name'), $attributes['last_name'] );
-        
+
         //email
         $this->addElement('text', 'honor_email', ts('Email Address'));
         $this->addRule( 'honor_email', ts('Honoree Email is not valid.'), 'email' );
@@ -638,17 +638,17 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      *
      * @access public
      */
-    function buildOnBehalfOrganization( ) 
+    function buildOnBehalfOrganization( )
     {
         if ( $this->_membershipContactID ) {
             require_once 'CRM/Core/BAO/Location.php';
             $entityBlock = array( 'contact_id' => $this->_membershipContactID );
             CRM_Core_BAO_Location::getValues( $entityBlock, $this->_defaults );
         }
-        
+
         if ( $this->_values['is_for_organization'] != 2 ) {
-            $this->addElement( 'checkbox', 'is_for_organization', 
-                               $this->_values['for_organization'], 
+            $this->addElement( 'checkbox', 'is_for_organization',
+                               $this->_values['for_organization'],
                                null, array( 'onclick' => "showOnBehalf( );" ) );
         } else {
             $this->assign( 'onBehalfRequired', true );
@@ -664,25 +664,25 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      *
      * @access public
      */
-    function buildPayLater( ) 
+    function buildPayLater( )
     {
 
         $attributes = null;
         $this->assign( 'hidePaymentInformation', false );
-                   
-        if ( !in_array( $this->_paymentProcessor['billing_mode'], array( 2, 4 ) ) && 
+
+        if ( !in_array( $this->_paymentProcessor['billing_mode'], array( 2, 4 ) ) &&
              $this->_values['is_monetary'] && is_array( $this->_paymentProcessor ) ) {
             $attributes = array('onclick' => "return showHideByValue('is_pay_later','','payment_information',
                                                      'block','radio',true);");
-            
+
             $this->assign( 'hidePaymentInformation', true );
         }
         //hide the paypal exress button and show continue button
         if ( $this->_paymentProcessor['payment_processor_type'] == 'PayPal_Express' ) {
             $attributes = array('onclick' => "showHidePayPalExpressOption();" );
         }
-        
-        $element = $this->addElement( 'checkbox', 'is_pay_later', 
+
+        $element = $this->addElement( 'checkbox', 'is_pay_later',
                                       $this->_values['pay_later_text'], null, $attributes );
         //if payment processor is not available then freeze
         //the paylater checkbox with default checked.
@@ -691,7 +691,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
     }
 
-    /** 
+    /**
      * build elements to collect information for recurring contributions
      *
      * @access public
@@ -704,27 +704,27 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       	$elements[] =& $form->createElement('radio', null, '', ts( 'I want to contribute this amount'), 1, $extraOption );
         $form->addGroup( $elements, 'is_recur', null, '<br />' );
         $form->_defaults['is_recur'] = 0;
-        $className = get_class( $form ); 
-        
+        $className = get_class( $form );
+
         if ( CRM_Utils_Array::value( 'is_recur_interval', $form->_values ) ||
              $className == 'CRM_Contribute_Form_Contribution' ) {
             $form->add( 'text', 'frequency_interval', ts( 'Every' ),
                         $attributes['frequency_interval'] );
-            $form->addRule( 'frequency_interval', 
+            $form->addRule( 'frequency_interval',
                             ts( 'Frequency must be a whole number (EXAMPLE: Every 3 months).' ), 'integer' );
         } else {
             // make sure frequency_interval is submitted as 1 if given
             // no choice to user.
             $form->add( 'hidden', 'frequency_interval', 1 );
         }
-        
+
         $frUnits = CRM_Utils_Array::value( 'recur_frequency_unit', $form->_values );
-        if ( empty( $frUnits ) && 
+        if ( empty( $frUnits ) &&
              $className == 'CRM_Contribute_Form_Contribution' ) {
             $frUnits = implode( CRM_Core_DAO::VALUE_SEPARATOR,
                                 CRM_Core_OptionGroup::values(  'recur_frequency_units' ) );
         }
-        
+
         $units    = array( );
         $unitVals = explode( CRM_Core_DAO::VALUE_SEPARATOR, $frUnits );
         $frequencyUnits = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
@@ -739,45 +739,45 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         $frequencyUnit =& $form->add( 'select', 'frequency_unit', null, $units );
-        
+
         // FIXME: Ideally we should freeze select box if there is only
         // one option but looks there is some problem /w QF freeze.
         //if ( count( $units ) == 1 ) {
         //$frequencyUnit->freeze( );
         //}
-        
+
         $form->add( 'text', 'installments', ts( 'installments' ),
                     $attributes['installments'] );
         $form->addRule( 'installments', ts( 'Number of installments must be a whole number.' ), 'integer' );
     }
-  
-   
-    /** 
-     * global form rule 
-     * 
-     * @param array $fields  the input form values 
-     * @param array $files   the uploaded files if any 
-     * @param array $options additional user data 
-     * 
-     * @return true if no errors, else array of errors 
-     * @access public 
-     * @static 
-     */ 
-    static function formRule( $fields, $files, $self ) 
-    { 
+
+
+    /**
+     * global form rule
+     *
+     * @param array $fields  the input form values
+     * @param array $files   the uploaded files if any
+     * @param array $options additional user data
+     *
+     * @return true if no errors, else array of errors
+     * @access public
+     * @static
+     */
+    static function formRule( $fields, $files, $self )
+    {
         $errors = array( );
         $amount = self::computeAmount( $fields, $self );
 
-        if ( ( CRM_Utils_Array::value( 'selectMembership', $fields ) && 
-              $fields['selectMembership'] != 'no_thanks') || 
-             ( CRM_Utils_Array::value( 'priceSetId', $fields ) && 
+        if ( ( CRM_Utils_Array::value( 'selectMembership', $fields ) &&
+              $fields['selectMembership'] != 'no_thanks') ||
+             ( CRM_Utils_Array::value( 'priceSetId', $fields ) &&
               $self->_useForMember ) ) {
             $lifeMember = CRM_Member_BAO_Membership::getAllContactMembership( $self->_userID , false, true );
-            
+
             require_once 'CRM/Member/BAO/MembershipType.php';
             $membershipOrgDetails = CRM_Member_BAO_MembershipType::getMembershipTypeOrganization( );
-            
-            $unallowedOrgs = array( ); 
+
+            $unallowedOrgs = array( );
             foreach ( array_keys($lifeMember ) as $memTypeId ) {
                 $unallowedOrgs[] = $membershipOrgDetails[$memTypeId];
             }
@@ -788,12 +788,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $priceField = new CRM_Price_DAO_Field( );
             $priceField->price_set_id = $fields['priceSetId'];
             $priceField->find( );
-            
+
             $check = array( );
-            
+
             while ( $priceField->fetch( ) ) {
                 if ( ! empty( $fields["price_{$priceField->id}"] ) ) {
-                    $check[] = $priceField->id; 
+                    $check[] = $priceField->id;
                 }
             }
 
@@ -819,19 +819,19 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                 }
                             }
                         } else if ( ! $value['is_enter_qty'] ) {
-                            // The check for {!$value['is_enter_qty']} is done since, quantity fields allow entering 
+                            // The check for {!$value['is_enter_qty']} is done since, quantity fields allow entering
                             // quantity. And the quantity can't be conisdered as civicrm_price_field_value.id, CRM-9577
                             $priceFieldIDS[] = $fields['price_'.$priceId];
                         }
-                        
+
                         if ( CRM_Utils_Array::value( 'options', $value ) ) {
                             foreach ( $value['options'] as $val ) {
                                 if ( CRM_Utils_Array::value( 'membership_type_id', $val ) ) {
                                     $priceFieldMemTypes[] = $val['membership_type_id'];
-                                    
+
                                 }
                             }
-                        }     
+                        }
                     }
                 }
 
@@ -847,7 +847,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
                 if( !empty($priceFieldIDS) ) {
                     $ids = implode (',', $priceFieldIDS);
-                    
+
                     $priceFieldIDS['id'] = $fields['priceSetId'];
                     $self->set( 'memberPriceFieldIDS', $priceFieldIDS );
                     $count = CRM_Price_BAO_Set::getMembershipCount($ids);
@@ -863,7 +863,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 }
             }
 
-            CRM_Price_BAO_Set::processAmount( $self->_values['fee'], 
+            CRM_Price_BAO_Set::processAmount( $self->_values['fee'],
                                               $fields, $lineItem );
             if ($fields['amount'] < 0) {
                 $errors['_qf_default'] = ts( 'Contribution can not be less than zero. Please select the options accordingly' );
@@ -880,7 +880,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $productDAO->id = $fields['selectProduct'];
             $productDAO->find(true);
             $min_amount = $productDAO->min_contribution;
-            
+
             if ( $amount < $min_amount ) {
                 $errors['selectProduct'] = ts('The premium you have selected requires a minimum contribution of %1', array(1 => CRM_Utils_Money::format($min_amount)));
             }
@@ -896,31 +896,32 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         }
 
-        if ( isset( $fields['is_recur'] ) && $fields['is_recur'] ) {
+        if ( CRM_Utils_Array::value( 'is_recur', $fields ) ) {
             if ( $fields['frequency_interval'] <= 0 ) {
-                $errors['frequency_interval'] = ts('Please enter a number for how often you want to make this recurring contribution (EXAMPLE: Every 3 months).'); 
+                $errors['frequency_interval'] = ts('Please enter a number for how often you want to make this recurring contribution (EXAMPLE: Every 3 months).');
             }
             if ( $fields['frequency_unit'] == '0' ) {
-                $errors['frequency_unit'] = ts('Please select a period (e.g. months, years ...) for how often you want to make this recurring contribution (EXAMPLE: Every 3 MONTHS).'); 
+                $errors['frequency_unit'] = ts('Please select a period (e.g. months, years ...) for how often you want to make this recurring contribution (EXAMPLE: Every 3 MONTHS).');
             }
         }
 
-        if ( CRM_Utils_Array::value( 'is_recur', $fields ) && $fields['is_pay_later'] ) {
+        if ( CRM_Utils_Array::value( 'is_recur' , $fields ) &&
+             CRM_Utils_Array::value( 'is_pay_later', $fields ) ) {
             $errors['is_pay_later'] = ' ';
-            $errors['_qf_default'] = ts('You cannot set up a recurring contribution if you are not paying online by credit card.'); 
+            $errors['_qf_default'] = ts('You cannot set up a recurring contribution if you are not paying online by credit card.');
         }
 
-        if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) && 
+        if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) &&
              !property_exists( $self, 'organizationName' ) ) {
 
             if ( !CRM_Utils_Array::value( 'organization_name', $fields['onbehalf'] ) ) {
                 if ( CRM_Utils_Array::value( 'org_option',$fields ) && !$fields['onbehalfof_id'] ) {
                     $errors['organization_id'] = ts('Please select an organization or enter a new one.');
                 } else if ( !CRM_Utils_Array::value( 'org_option',$fields ) ) {
-                    $errors['onbehalf']['organization_name'] = ts('Please enter the organization name.'); 
+                    $errors['onbehalf']['organization_name'] = ts('Please enter the organization name.');
                 }
             }
-            
+
             foreach ( $fields['onbehalf'] as $key => $value ) {
                 if ( strstr( $key, 'email' ) ) {
                     $emailLocType = explode( '-', $key );
@@ -931,7 +932,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
         }
 
-        if ( CRM_Utils_Array::value('selectMembership', $fields) && 
+        if ( CRM_Utils_Array::value('selectMembership', $fields) &&
              $fields['selectMembership'] != 'no_thanks') {
             require_once 'CRM/Member/BAO/Membership.php';
             require_once 'CRM/Member/BAO/MembershipType.php';
@@ -959,7 +960,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $amount = $memTypeDetails['minimum_fee'];
             }
         }
-        
+
         if ( $self->_values['is_monetary'] ) {
             //validate other amount.
             $checkOtherAmount = false;
@@ -976,7 +977,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     $min = CRM_Utils_Array::value( 'min_amount', $self->_values );
                     $max = CRM_Utils_Array::value('max_amount',  $self->_values );
                     if ( $min && $otherAmountVal < $min ) {
-                        $errors['amount_other'] = ts( 'Contribution amount must be at least %1', 
+                        $errors['amount_other'] = ts( 'Contribution amount must be at least %1',
                                                       array ( 1 => $min ) );
                     }
                     if ( $max && $otherAmountVal > $max ) {
@@ -986,14 +987,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 }
             }
         }
-        
+
         // validate PCP fields - if not anonymous, we need a nick name value
         if ( $self->_pcpId && CRM_Utils_Array::value('pcp_display_in_roll',$fields) &&
              ( CRM_Utils_Array::value('pcp_is_anonymous',$fields) == 0 ) &&
                CRM_Utils_Array::value('pcp_roll_nickname',$fields) == '') {
              $errors['pcp_roll_nickname'] = ts( 'Please enter a name to include in the Honor Roll, or select \'contribute anonymously\'.');
         }
-        
+
         // return if this is express mode
         $config = CRM_Core_Config::singleton( );
         if ( $self->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_BUTTON ) {
@@ -1003,7 +1004,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 return $errors;
             }
         }
-        
+
         //validate the pledge fields.
         if ( CRM_Utils_Array::value( 'pledge_block_id', $self->_values ) ) {
             //validation for pledge payment.
@@ -1011,37 +1012,37 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 if ( empty( $fields['pledge_amount'] ) ) {
                     $errors['pledge_amount'] = ts( 'At least one payment option needs to be checked.' );
                 }
-            } else if ( CRM_Utils_Array::value( 'is_pledge', $fields ) ) { 
+            } else if ( CRM_Utils_Array::value( 'is_pledge', $fields ) ) {
                 if ( CRM_Utils_Rule::positiveInteger( CRM_Utils_Array::value( 'pledge_installments', $fields ) ) == false ) {
                     $errors['pledge_installments'] = ts('Please enter a valid pledge installment.');
                 } else {
                     if ( CRM_Utils_Array::value( 'pledge_installments', $fields ) == null) {
-                        $errors['pledge_installments'] = ts( 'Pledge Installments is required field.' ); 
+                        $errors['pledge_installments'] = ts( 'Pledge Installments is required field.' );
                     } else if (  CRM_Utils_array::value( 'pledge_installments', $fields ) == 1 ) {
                         $errors['pledge_installments'] = ts('Pledges consist of multiple scheduled payments. Select one-time contribution if you want to make your gift in a single payment.');
                     } else if (  CRM_Utils_array::value( 'pledge_installments', $fields ) == 0 ) {
                         $errors['pledge_installments'] = ts('Pledge Installments field must be > 1.');
                     }
                 }
-                
+
                 //validation for Pledge Frequency Interval.
                 if ( CRM_Utils_Rule::positiveInteger( CRM_Utils_Array::value( 'pledge_frequency_interval', $fields ) ) == false ) {
                     $errors['pledge_frequency_interval'] = ts('Please enter a valid Pledge Frequency Interval.');
                 } else {
                     if ( CRM_Utils_Array::value( 'pledge_frequency_interval', $fields ) == null) {
-                        $errors['pledge_frequency_interval'] = ts( 'Pledge Frequency Interval. is required field.' ); 
+                        $errors['pledge_frequency_interval'] = ts( 'Pledge Frequency Interval. is required field.' );
                     } else if ( CRM_Utils_array::value( 'pledge_frequency_interval', $fields ) == 0 )  {
                         $errors['pledge_frequency_interval'] = ts( 'Pledge frequency interval field must be > 0' );
                     }
                 }
             }
         }
-        
+
         // also return if paylater mode
         if ( CRM_Utils_Array::value( 'is_pay_later', $fields ) ) {
             return empty( $errors ) ? true : $errors;
         }
-        
+
         // if the user has chosen a free membership or the amount is less than zero
         // i.e. we skip calling the payment processor and hence dont need credit card
         // info
@@ -1063,7 +1064,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                  ! CRM_Utils_Rule::creditCardNumber( $fields['credit_card_number'], $fields['credit_card_type'] ) ) {
                 $errors['credit_card_number'] = ts( 'Please enter a valid Credit Card Number' );
             }
-            
+
             if ( CRM_Utils_Array::value( 'cvv2', $fields ) &&
                  ! CRM_Utils_Rule::cvv( $fields['cvv2'], $fields['credit_card_type'] ) ) {
                 $errors['cvv2'] =  ts( 'Please enter a valid Credit Card Verification Number' );
@@ -1072,18 +1073,18 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         require_once 'CRM/Contact/BAO/Contact.php';
         foreach ( CRM_Contact_BAO_Contact::$_greetingTypes as $greeting ) {
             if( $greetingType = CRM_Utils_Array::value($greeting, $fields) ) {
-                $customizedValue = CRM_Core_OptionGroup::getValue( $greeting, 'Customized', 'name' ); 
+                $customizedValue = CRM_Core_OptionGroup::getValue( $greeting, 'Customized', 'name' );
                 if( $customizedValue == $greetingType && empty($fielse[$greeting.'_custom']) ) {
-                    $errors[$greeting.'_custom'] = ts( 'Custom %1 is a required field if %1 is of type Customized.', 
+                    $errors[$greeting.'_custom'] = ts( 'Custom %1 is a required field if %1 is of type Customized.',
                                                        array( 1 => ucwords(str_replace('_'," ", $greeting) ) ) );
                 }
             }
         }
-        
+
         return empty( $errors ) ? true : $errors;
     }
 
-    public function computeAmount( &$params, &$form ) 
+    public function computeAmount( &$params, &$form )
     {
         $amount = null;
 
@@ -1091,7 +1092,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( isset( $params['amount_other'] ) ) {
             $params['amount_other'] = CRM_Utils_Rule::cleanMoney( $params['amount_other'] );
         }
-        
+
         if ( CRM_Utils_Array::value('amount',$params) == 'amount_other_radio' ||
              CRM_Utils_Array::value( 'amount_other', $params )  ) {
             $amount = $params['amount_other'];
@@ -1099,15 +1100,15 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $amount = 0;
             foreach ( $params['pledge_amount'] as $paymentId => $dontCare ) {
                 $amount += CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_PledgePayment', $paymentId, 'scheduled_amount' );
-            } 
+            }
         } else {
             if ( CRM_Utils_Array::value( 'amount', $form->_values ) ) {
                 $amountID = CRM_Utils_Array::value( 'amount', $params );
-                
+
                 if ( $amountID ) {
                     $params['amount_level'] =
                         CRM_Utils_Array::value( 'label', $form->_values['amount'][$amountID] );
-                    $amount = 
+                    $amount =
                         CRM_Utils_Array::value( 'value', $form->_values['amount'][$amountID] );
                 }
             }
@@ -1121,25 +1122,25 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      * @access public
      * @return None
      */
-    public function postProcess() 
-    {   
+    public function postProcess()
+    {
         $config = CRM_Core_Config::singleton( );
-    
+
         // we first reset the confirm page so it accepts new values
         $this->controller->resetPage( 'Confirm' );
 
-        // get the submitted form values. 
+        // get the submitted form values.
         $params = $this->controller->exportValues( $this->_name );
 
         //carry campaign from profile.
         if ( array_key_exists( 'contribution_campaign_id', $params ) ) {
             $params['campaign_id'] = $params['contribution_campaign_id'];
         }
-        
+
         if ( CRM_Utils_Array::value( 'onbehalfof_id', $params ) ) {
             $params['organization_id'] = $params['onbehalfof_id'];
         }
-        
+
         $params['currencyID'] = $config->defaultCurrency;
 
         $params['amount'] = self::computeAmount( $params, $this );
@@ -1158,7 +1159,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         if ( ! isset( $params['amount_other'] ) ) {
-            $this->set( 'amount_level',  CRM_Utils_Array::value( 'amount_level', $params ) ); 
+            $this->set( 'amount_level',  CRM_Utils_Array::value( 'amount_level', $params ) );
         }
 
         if ( $priceSetId = CRM_Utils_Array::value( 'priceSetId', $params ) ) {
@@ -1167,54 +1168,54 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             CRM_Price_BAO_Set::processAmount( $this->_values['fee'], $params, $lineItem[$priceSetId] );
             $this->set( 'lineItem', $lineItem );
         }
-        $this->set( 'amount', $params['amount'] ); 
-        
+        $this->set( 'amount', $params['amount'] );
+
         // generate and set an invoiceID for this transaction
         $invoiceID = md5(uniqid(rand(), true));
         $this->set( 'invoiceID', $invoiceID );
 
-        // required only if is_monetary and valid postive amount 
+        // required only if is_monetary and valid postive amount
         if ( $this->_values['is_monetary'] &&
              is_array( $this->_paymentProcessor ) &&
              ( (float ) $params['amount'] > 0.0 || $memFee > 0.0 ) ) {
-            
+
             // default mode is direct
-            $this->set( 'contributeMode', 'direct' ); 
-            
+            $this->set( 'contributeMode', 'direct' );
+
             if ( $this->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_BUTTON ) {
-                //get the button name  
-                $buttonName = $this->controller->getButtonName( );  
-                if ( in_array( $buttonName, 
-                               array( $this->_expressButtonName, $this->_expressButtonName. '_x', $this->_expressButtonName. '_y' ) ) && 
-                     ! isset( $params['is_pay_later'] )) { 
-                    $this->set( 'contributeMode', 'express' ); 
-                    
-                    $donateURL = CRM_Utils_System::url( 'civicrm/contribute', '_qf_Contribute_display=1' ); 
-                    $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Main_display=1&qfKey={$params['qfKey']}", true, null, false ); 
-                    $params['returnURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Confirm_display=1&rfp=1&qfKey={$params['qfKey']}", true, null, false ); 
+                //get the button name
+                $buttonName = $this->controller->getButtonName( );
+                if ( in_array( $buttonName,
+                               array( $this->_expressButtonName, $this->_expressButtonName. '_x', $this->_expressButtonName. '_y' ) ) &&
+                     ! isset( $params['is_pay_later'] )) {
+                    $this->set( 'contributeMode', 'express' );
+
+                    $donateURL = CRM_Utils_System::url( 'civicrm/contribute', '_qf_Contribute_display=1' );
+                    $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Main_display=1&qfKey={$params['qfKey']}", true, null, false );
+                    $params['returnURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Confirm_display=1&rfp=1&qfKey={$params['qfKey']}", true, null, false );
                     $params['invoiceID' ] = $invoiceID;
 
                     //default action is Sale
                     $params['payment_action'] = 'Sale';
-                    
-                    $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this ); 
-                    $token = $payment->setExpressCheckout( $params ); 
-                    if ( is_a( $token, 'CRM_Core_Error' ) ) { 
-                        CRM_Core_Error::displaySessionError( $token ); 
+
+                    $payment = CRM_Core_Payment::singleton( $this->_mode, $this->_paymentProcessor, $this );
+                    $token = $payment->setExpressCheckout( $params );
+                    if ( is_a( $token, 'CRM_Core_Error' ) ) {
+                        CRM_Core_Error::displaySessionError( $token );
                         CRM_Utils_System::redirect( $params['cancelURL' ] );
-                    } 
-                    
-                    $this->set( 'token', $token ); 
-                    
-                    $paymentURL = $this->_paymentProcessor['url_site'] . "/cgi-bin/webscr?cmd=_express-checkout&token=$token"; 
-                    CRM_Utils_System::redirect( $paymentURL ); 
+                    }
+
+                    $this->set( 'token', $token );
+
+                    $paymentURL = $this->_paymentProcessor['url_site'] . "/cgi-bin/webscr?cmd=_express-checkout&token=$token";
+                    CRM_Utils_System::redirect( $paymentURL );
                 }
             } else if ( $this->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_NOTIFY ) {
                 $this->set( 'contributeMode', 'notify' );
             }
-        }      
+        }
     }
-    
+
 }
 
 
