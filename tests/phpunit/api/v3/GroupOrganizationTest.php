@@ -160,9 +160,9 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase {
       'group_id' => $this->_groupID,
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('group_organization', 'create', $params);
+    $result = civicrm_api('group_organization', 'create', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertEquals($result['is_error'], 0);
+    $this->assertAPISuccess($result, "in line " .__LINE__);
   }
 
   /**
@@ -241,7 +241,7 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase {
     );
     $result = &civicrm_api('group_organization', 'delete', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
+    $this->assertAPISuccess($result, "in line " .__LINE__);
   }
 
   /**
