@@ -1897,7 +1897,7 @@ SELECT source_contact_id
     if (!$contributionType->find(TRUE)) {
       throw new Exception ("Could not find contribution type record: " . $this->contribution_type_id );
     }
-    if (isset($ids['contact'])) {
+    if (!empty($ids['contact'])) {
         $this->_relatedObjects['contact'] = new CRM_Contact_BAO_Contact();
         $this->_relatedObjects['contact']->id = $ids['contact'];
         $this->_relatedObjects['contact']->find(true);
@@ -1908,7 +1908,7 @@ SELECT source_contact_id
       // retrieve the other optional objects first so
       // stuff down the line can use this info and do things
       // CRM-6056
-      if (isset($ids['membership'])) {
+      if (!empty($ids['membership'])) {
         if (is_numeric($ids['membership'])) {
           // see if there are any other memberships to be considered for same contribution.
           $query = "
@@ -1947,20 +1947,22 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         }
       }
 
-      if (isset($ids['pledge_payment'])) {
+      if (!empty($ids['pledge_payment'])) {
 
-        $this->_relatedObjects['pledge_payment'] = array();
         foreach ($ids['pledge_payment'] as $key => $paymentID) {
+          if(empty($paymentID)){
+          	continue;
+          }
           $payment = new CRM_Pledge_BAO_PledgePayment();
           $payment->id = $paymentID;
           if (!$payment->find(TRUE)) {
-            throw new Exception ("Could not find pledge payment record: " . $ids['pledge_payment']);
+            throw new Exception ("Could not find pledge payment record: " . $paymentID);
           }
           $this->_relatedObjects['pledge_payment'][] = $payment;
         }
       }
 
-      if (isset($ids['contributionRecur'])) {
+      if (!empty($ids['contributionRecur'])) {
         $recur = new CRM_Contribute_BAO_ContributionRecur();
         $recur->id = $ids['contributionRecur'];
         if (!$recur->find(TRUE)) {

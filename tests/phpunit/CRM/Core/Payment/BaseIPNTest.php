@@ -218,6 +218,35 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
       $this->assertEquals($this->_contactId, $this->objects['contact']->id);
       $this->assertEquals($this->_pledgeId, $this->objects['pledge_payment'][0]->pledge_id);
     }
+    
+     /*
+     * Test that loadObjects works with participant values
+     */
+    function testLoadPledgeObjectsInvalidPledgeID( ){
+      $this->_setUpPledgeObjects();
+      $this->ids['pledge_payment'][0] = 0;
+      $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, TRUE, null, array('return_error' => 1) );
+      $this->assertArrayHasKey('error_message', $result);
+      $this->assertArrayNotHasKey('pledge_payment', $this->objects);
+      $this->assertEquals('Could not find payment processor for contribution record: 1',$result['error_message']);
+      $this->ids['pledge_payment'][0] = null;
+      $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, TRUE, null, array('return_error' => 1) );
+      $this->assertArrayHasKey('error_message', $result);
+      $this->assertArrayNotHasKey('pledge_payment', $this->objects);
+      $this->assertEquals('Could not find payment processor for contribution record: 1',$result['error_message']);
+      $this->ids['pledge_payment'][0] = '';
+      $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, TRUE, null, array('return_error' => 1) );
+      $this->assertArrayHasKey('error_message', $result);
+      $this->assertArrayNotHasKey('pledge_payment', $this->objects);
+      $this->assertEquals('Could not find payment processor for contribution record: 1',$result['error_message']);
+           
+      
+      $this->ids['pledge_payment'][0] = 999;    
+      $result = $this->IPN->loadObjects( $this->input, $this->ids, $this->objects, TRUE, $this->_processorId, array('return_error' => 1) );
+      $this->assertArrayHasKey('error_message', $result);
+      $this->assertEquals('Could not find pledge payment record: 999',$result['error_message']);
+      
+    }
      /**
      * Test the LoadObjects function with a pledge
      *
@@ -515,7 +544,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase
           'pledgeID' => $this->_pledgeId,
          );
 
-         $this->ids['pledge_payment'][] = $this->input['id'];
+         $this->ids['pledge_payment'][] = $pledgePayment['id'];
 
     }
 }
