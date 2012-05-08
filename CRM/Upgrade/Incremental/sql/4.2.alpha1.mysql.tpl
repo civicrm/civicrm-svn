@@ -31,6 +31,7 @@ ALTER TABLE `civicrm_prevnext_cache` ADD COLUMN is_selected tinyint(4) DEFAULT '
 -- add civicrm_batch table changes
 -- add batch type and batch status option groups
 -- add default profile for contribution and membership batch entry
+-- add navigation menu entries ( 2 menus )
 
 -- CRM-9686
 INSERT INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUES(1097, "LP", "La Paz");
