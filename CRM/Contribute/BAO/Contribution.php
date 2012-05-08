@@ -1979,12 +1979,8 @@ WHERE  contribution_id = %1 AND membership_id != %2";
             'payment_processor'
           );
         }
-
         //fail to load payment processor id.
-        if (!$paymentProcessorID &&
-          !$this->contribution_page_id &&
-          !CRM_Utils_Array::value('pledge_payment', $ids)
-        ) {
+        elseif (!CRM_Utils_Array::value('pledge_payment', $ids)) {
           $loadObjectSuccess = TRUE;
           if ($required) {
             throw new Exception ("Could not find contribution page for contribution record: " . $this->id);
