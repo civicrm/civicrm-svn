@@ -104,7 +104,7 @@ Class CRM_Core_Form_Date
 
                            'previous_before.year'    => ts('Prior to Previous Year'),
                            'previous_before.quarter' => ts('Prior to Previous Quarter'),
-                           'previous_before.month'   => ts('Prior to Previuos Month'),
+                           'previous_before.month'   => ts('Prior to Previous Month'),
                            'previous_before.week'    => ts('Prior to Previous Week'),
                            'previous_before.day'     => ts('Prior to Previous Day'),
                            
