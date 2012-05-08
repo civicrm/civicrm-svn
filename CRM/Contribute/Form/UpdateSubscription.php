@@ -144,7 +144,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
         
         $this->add('text', 'installments' , ts('Number of Installments') , array('size' => 20), true);
         
-        $this->addElement('checkbox', 'is_notify', ts( 'Send Notification to Contributor' ) , null);
+        $this->addElement('checkbox', 'is_notify', ts( 'Notify Contributor?' ) , null);
         
         $type = 'submit';
         if ( $this->_crid ) {
