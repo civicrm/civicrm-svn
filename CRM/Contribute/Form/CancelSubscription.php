@@ -153,12 +153,17 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
             $this->addGroup( $searchRange, 'send_cancel_request', ts('Send cancellation request to %1 ?', array(1 => $this->_paymentProcessorObj->_processorName)));
         }
         if ( $this->_donorEmail ) {
-            $this->add('checkbox', 'is_notify', ts('Send Notification ?'));
+            $this->add('checkbox', 'is_notify', ts('Notify Contributor?'));
         }
-
+        if ( $this->_mid ) {
+          $cancelButton = ts('Cancel Automatic Membership Renewal');
+        } else {
+          $cancelButton = ts('Cancel Recurring Contribution');
+        }
+        
         $this->addButtons(array( 
                                 array ( 'type'      => 'next', 
-                                        'name'      => ts('Cancel Subscription'), 
+                                        'name'      => $cancelButton, 
                                         'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
                                         'isDefault' => true   ), 
                                 array ( 'type'      => 'cancel', 
@@ -228,7 +233,7 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
                     $status = ts( 'The recurring contribution of %1, every %2 %3 has been cancelled.', 
                                   array( 1 => $this->_subscriptionDetails->amount, 
                                          2 => $this->_subscriptionDetails->frequency_interval, 
-                                         3 => $this->_subscriptionDetails->amount ) );
+                                         3 => $this->_subscriptionDetails->frequency_unit ) );
                 }
 
                 if ( $this->_subscriptionDetails->contribution_page_id ) {

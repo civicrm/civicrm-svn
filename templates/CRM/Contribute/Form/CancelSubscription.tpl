@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $mode eq 'auto_renew'}
-  <h3>{ts}Cancel Auto-renewal Option for {$membershipType} Membership{/ts}</h3>
+  <h3>{ts}Cancel Automatic Renewal Option for {$membershipType} Membership{/ts}</h3>
 {else}
   <h3>{ts}Cancel Recurring Contribution{/ts}</h3>
 {/if}
