@@ -235,7 +235,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     CRM_Core_BAO_Cache::deleteGroup( 'batch entry', $cacheKeyString, false );
 
     // set success status
-    CRM_Core_Session::setStatus("Your batch is processed.");
+    CRM_Core_Session::setStatus("Your batch has been processed.");
 
     // redirect to batch listing
     CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/batch', "reset=1" ) );
