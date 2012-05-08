@@ -66,7 +66,7 @@ if ( $installType == 'drupal' ) {
         'civicrm' . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR .
         'install' . DIRECTORY_SEPARATOR;
-    
+
     $installURLPath = WP_PLUGIN_URL . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR .
         'civicrm' . DIRECTORY_SEPARATOR .
@@ -81,7 +81,7 @@ $docLink = CRM_Utils_System::docURL2( 'Installation and Upgrades', false, 'Insta
 if ( $installType == 'drupal' ) {
     //lets check only /modules/.
     $pattern = '/' . preg_quote( CIVICRM_DIRECTORY_SEPARATOR . 'modules', CIVICRM_DIRECTORY_SEPARATOR ) . '/';
-    
+
     if ( ! preg_match( $pattern,
                        str_replace( "\\","/",$_SERVER['SCRIPT_FILENAME'] ) ) ) {
         $errorTitle = "Oops! Please Correct Your Install Location";
@@ -134,7 +134,7 @@ if (isset($_REQUEST['seedLanguage']) and isset($langs[$_REQUEST['seedLanguage']]
 
 global $cmsPath;
 if ( $installType == 'drupal' ) {
-    //CRM-6840 -don't force to install in sites/all/modules/ 
+    //CRM-6840 -don't force to install in sites/all/modules/
     require_once "$crmPath/CRM/Utils/System/Drupal.php";
     $cmsPath = CRM_Utils_System_Drupal::cmsRootPath( );
 
@@ -253,8 +253,8 @@ class InstallRequirements {
      * Just check that the database configuration is okay
      */
     function checkdatabase($databaseConfig, $dbName) {
-        if ($this->requireFunction('mysql_connect', 
-                                   array("PHP Configuration", 
+        if ($this->requireFunction('mysql_connect',
+                                   array("PHP Configuration",
                                          "MySQL support",
                                          "MySQL support not included in PHP."))) {
             $this->requireMySQLServer($databaseConfig['server'],
@@ -352,8 +352,8 @@ class InstallRequirements {
             $siteDir = getSiteDir( $cmsPath, $_SERVER['SCRIPT_FILENAME'] );
 
             // make sure that we can write to sites/default and files/
-            $writableDirectories = array( $cmsPath . CIVICRM_DIRECTORY_SEPARATOR . 
-                                          'sites'  . CIVICRM_DIRECTORY_SEPARATOR . 
+            $writableDirectories = array( $cmsPath . CIVICRM_DIRECTORY_SEPARATOR .
+                                          'sites'  . CIVICRM_DIRECTORY_SEPARATOR .
                                           $siteDir . CIVICRM_DIRECTORY_SEPARATOR .
                                           'files',
                                           $cmsPath . CIVICRM_DIRECTORY_SEPARATOR .
@@ -369,10 +369,10 @@ class InstallRequirements {
                 array("File permissions", "Is the $dir folder writeable?", null ),
                 true );
         }
-        
+
         //check for Config.IDS.ini, file may exist in re-install
         $configIDSiniDir  = array( $cmsPath ,'sites', $siteDir, 'files', 'civicrm', 'upload' ,'Config.IDS.ini' );
- 
+
         if ( is_array( $configIDSiniDir ) && !empty( $configIDSiniDir ) ) {
             $configIDSiniFile = implode( CIVICRM_DIRECTORY_SEPARATOR, $configIDSiniDir );
             if ( file_exists( $configIDSiniFile ) ) {
@@ -380,13 +380,13 @@ class InstallRequirements {
             }
         }
 
-        // Check for rewriting        
+        // Check for rewriting
         if (isset($_SERVER['SERVER_SOFTWARE'])) {
             $webserver = strip_tags(trim($_SERVER['SERVER_SOFTWARE']));
         } elseif (isset($_SERVER['SERVER_SIGNATURE']))  {
             $webserver = strip_tags(trim($_SERVER['SERVER_SIGNATURE']));
         }
-                 
+
         if ($webserver == '') {
             $webserver = "I can't tell what webserver you are running";
         }
@@ -403,15 +403,15 @@ class InstallRequirements {
                                array("PHP Configuration", "JSON support", "JSON support not included in PHP."));
 
         // Check for xcache_isset and emit warning if exists
-        $this->checkXCache(array("PHP Configuration", 
+        $this->checkXCache(array("PHP Configuration",
                                  "XCache compatibility",
                                  "XCache is installed and there are known compatibility issues between XCache and CiviCRM. Consider using an alternative PHP caching mechanism or disable PHP caching altogether.") );
-        
+
          // Check memory allocation
-         $this->requireMemory(32*1024*1024, 
-                              64*1024*1024, 
-                              array("PHP Configuration", 
-                                    "Memory allocated (PHP config option 'memory_limit')", 
+         $this->requireMemory(32*1024*1024,
+                              64*1024*1024,
+                              array("PHP Configuration",
+                                    "Memory allocated (PHP config option 'memory_limit')",
                                     "CiviCRM needs a minimum of 32M allocated to PHP, but recommends 64M.",
                                     ini_get("memory_limit")));
 
@@ -715,7 +715,6 @@ class InstallRequirements {
 
         $result = mysql_query('DROP TEMPORARY TABLE civicrm_install_temp_table_test');
         return;
-        
     }
 
     function requireDatabaseOrCreatePermissions($server,
@@ -854,10 +853,10 @@ class Installer extends InstallRequirements {
             $output = null;
             if ( $installType == 'drupal' &&
                  version_compare(VERSION, '7.0-rc1') >= 0) {
-                 
+
                 // clean output
                 @ob_clean();
-     
+
                 $output .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
                 $output .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
                 $output .= '<head>';
@@ -875,18 +874,18 @@ class Installer extends InstallRequirements {
                 $drupalPermissionsURL = "{$drupalURL}index.php?q=admin/people/permissions";
                 $drupalURL .=  "index.php?q=civicrm/admin/configtask&reset=1";
                 $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
-                
+
                 $output .= "<li>Drupal user permissions have been automatically set - giving anonymous and authenticated users access to public CiviCRM forms and features. We recommend that you <a target='_blank' href={$drupalPermissionsURL}>review these permissions</a> to ensure that they are appropriate for your requirements (<a target='_blank' href='http://wiki.civicrm.org/confluence/display/CRMDOC/Default+Permissions+and+Roles'>learn more...</a>)</li>
                       <li>Use the <a target='_blank' href=\"$drupalURL\">Configuration Checklist</a> to review and configure settings for your new site</li>
                       <li> Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href='$registerSiteURL' target='_blank'>fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check Keep in Touch to receive technical updates (a low volume  mailing list).</li>
                       <li>We have integrated KCFinder with CKEditor and TinyMCE, which enables user to upload images. Note that all the images uploaded using KCFinder will be public.</li>";
-                                
+
                 // automatically enable CiviCRM module once it is installed successfully.
                 // so we need to Bootstrap Drupal, so that we can call drupal hooks.
                 global $cmsPath, $crmPath;
 
                 // relative / abosolute paths are not working for drupal, hence using chdir()
-                chdir( $cmsPath ); 
+                chdir( $cmsPath );
 
                 include_once "./includes/bootstrap.inc";
                 include_once "./includes/unicode.inc";
@@ -899,7 +898,7 @@ class Installer extends InstallRequirements {
                 // Force the current user to anonymous.
                 $original_user   = $GLOBALS['user'];
                 $GLOBALS['user'] = drupal_anonymous_user();
-                
+
                 // explicitly setting error reporting, since we cannot handle drupal related notices
                 error_reporting(1);
 
@@ -911,7 +910,7 @@ class Installer extends InstallRequirements {
 
                 // clear block and page cache, to make sure civicrm link is present in navigation block
                 cache_clear_all();
-                
+
                 //add basic drupal permissions
                 civicrm_install_set_drupal_perms();
 
@@ -927,7 +926,7 @@ class Installer extends InstallRequirements {
             } elseif ( $installType == 'drupal' && version_compare(VERSION, '6.0')  >= 0 ) {
                 // clean output
                 @ob_clean();
- 
+
                 $output .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
                 $output .= '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">';
                 $output .= '<head>';
@@ -945,21 +944,21 @@ class Installer extends InstallRequirements {
                 $drupalPermissionsURL = "{$drupalURL}index.php?q=admin/user/permissions";
                 $drupalURL .= "index.php?q=civicrm/admin/configtask&reset=1";
                 $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
-                
+
                 $output .= "<li>Drupal user permissions have been automatically set - giving anonymous and authenticated users access to public CiviCRM forms and features. We recommend that you <a target='_blank' href={$drupalPermissionsURL}>review these permissions</a> to ensure that they are appropriate for your requirements (<a target='_blank' href='http://wiki.civicrm.org/confluence/display/CRMDOC/Default+Permissions+and+Roles'>learn more...</a>)</li>
                       <li>Use the <a target='_blank' href=\"$drupalURL\">Configuration Checklist</a> to review and configure settings for your new site</li>
                       <li> Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href='$registerSiteURL' target='_blank'>fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check Keep in Touch to receive technical updates (a low volume  mailing list).</li>
                       <li>We have integrated KCFinder with CKEditor and TinyMCE, which enables user to upload images. Note that all the images uploaded using KCFinder will be public.</li>";
-                
+
                 // explicitly setting error reporting, since we cannot handle drupal related notices
                 error_reporting(1);
-                
+
                 // automatically enable CiviCRM module once it is installed successfully.
                 // so we need to Bootstrap Drupal, so that we can call drupal hooks.
                 global $cmsPath, $crmPath;
 
                 // relative / abosolute paths are not working for drupal, hence using chdir()
-                chdir( $cmsPath ); 
+                chdir( $cmsPath );
 
                 include_once "./includes/bootstrap.inc";
                 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
@@ -972,7 +971,7 @@ class Installer extends InstallRequirements {
 
                 // clear block and page cache, to make sure civicrm link is present in navigation block
                 cache_clear_all();
-                
+
                 //add basic drupal permissions
                 db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile create, profile edit, profile view, register for events, view event info\') WHERE rid IN (1, 2)' );
 
@@ -985,11 +984,11 @@ class Installer extends InstallRequirements {
                 if (!function_exists('ts')) {
                     $docLinkConfig = "<a href=\"{$docLinkConfig}\">here</a>";
                 }
-            
+
                 $cmsURL     = civicrm_cms_base( );
                 $cmsURL .= "wp-admin/admin.php?page=CiviCRM&q=civicrm/admin/configtask&reset=1";
                 $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
-                
+
                 echo "<li>Use the <a target='_blank' href=\"$cmsURL\">Configuration Checklist</a> to review and configure settings for your new site</li>
                     <li> Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href='$registerSiteURL' target='_blank'>fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check Keep in Touch to receive technical updates (a low volume  mailing list).</li>
                     <li>We have integrated KCFinder with CKEditor and TinyMCE, which enables user to upload images. Note that all the images uploaded using KCFinder will be public.</li>";
@@ -1025,31 +1024,31 @@ function civicrm_install_set_drupal_perms() {
         // CRM-9042
         $allPerms = array_keys(module_invoke_all('permission'));
         foreach ( array_diff($perms, $allPerms) as $perm) {
-            watchdog('civicrm', 
+            watchdog('civicrm',
                      'Cannot grant the %perm permission because it does not yet exist.',
                      array('%perm' => $perm), WATCHDOG_ERROR);
         }
         $perms = array_intersect($perms, $allPerms);
         user_role_grant_permissions( DRUPAL_AUTHENTICATED_RID, $perms );
-        user_role_grant_permissions( DRUPAL_ANONYMOUS_RID    , $perms );    
+        user_role_grant_permissions( DRUPAL_ANONYMOUS_RID    , $perms );
     }
 }
 
 function getSiteDir( $cmsPath, $str ) {
     static $siteDir = '';
-    
+
     if ( $siteDir ) {
         return $siteDir;
     }
-    
+
     $sites   = CIVICRM_DIRECTORY_SEPARATOR . 'sites'   . CIVICRM_DIRECTORY_SEPARATOR;
     $modules = CIVICRM_DIRECTORY_SEPARATOR . 'modules' . CIVICRM_DIRECTORY_SEPARATOR;
-    preg_match( "/" . preg_quote($sites, CIVICRM_DIRECTORY_SEPARATOR) . 
-                "([\-a-zA-Z0-9_.]+)" . 
+    preg_match( "/" . preg_quote($sites, CIVICRM_DIRECTORY_SEPARATOR) .
+                "([\-a-zA-Z0-9_.]+)" .
                 preg_quote($modules, CIVICRM_DIRECTORY_SEPARATOR) . "/",
                 $_SERVER['SCRIPT_FILENAME'], $matches );
     $siteDir = isset($matches[1]) ? $matches[1] : 'default';
-    
+
     if ( strtolower( $siteDir ) == 'all' ) {
         // For this case - use drupal's way of finding out multi-site directory
         $uri    = explode(CIVICRM_DIRECTORY_SEPARATOR, $_SERVER['SCRIPT_FILENAME']);
@@ -1057,7 +1056,7 @@ function getSiteDir( $cmsPath, $str ) {
         for ($i = count($uri) - 1; $i > 0; $i--) {
             for ($j = count($server); $j > 0; $j--) {
                 $dir = implode('.', array_slice($server, -$j)) . implode('.', array_slice($uri, 0, $i));
-                if (file_exists($cmsPath  . CIVICRM_DIRECTORY_SEPARATOR . 
+                if (file_exists($cmsPath  . CIVICRM_DIRECTORY_SEPARATOR .
                                 'sites'   . CIVICRM_DIRECTORY_SEPARATOR . $dir)) {
                     $siteDir = $dir;
                     return $siteDir;
