@@ -34,20 +34,20 @@
  *
  */
 
-class CRM_Core_OptionGroup 
+class CRM_Core_OptionGroup
 {
     static $_values = array( );
 
     /*
-     * $_domainIDGroups array maintains the list of option groups for whom 
+     * $_domainIDGroups array maintains the list of option groups for whom
      * domainID is to be considered.
      *
      */
-    static $_domainIDGroups = array( 'from_email_address', 
+    static $_domainIDGroups = array( 'from_email_address',
                                      'grant_type' );
 
     static function &valuesCommon( $dao, $flip = false, $grouping = false,
-                                   $localize = false, $valueColumnName = 'label' ) 
+                                   $localize = false, $valueColumnName = 'label' )
     {
         self::$_values = array( );
 
@@ -75,7 +75,7 @@ class CRM_Core_OptionGroup
 
     static function &values( $name, $flip = false, $grouping = false,
                              $localize = false, $condition = null,
-                             $valueColumnName = 'label', $onlyActive = true ) 
+                             $valueColumnName = 'label', $onlyActive = true )
     {
         static $_cache = array( );
 
@@ -90,7 +90,7 @@ class CRM_Core_OptionGroup
         if ( $var ) {
             return $var;
         }
-        
+
         $query = "
 SELECT  v.{$valueColumnName} as {$valueColumnName} ,v.value as value, v.grouping as grouping
 FROM   civicrm_option_value v,
@@ -98,7 +98,7 @@ FROM   civicrm_option_value v,
 WHERE  v.option_group_id = g.id
   AND  g.name            = %1
   AND  g.is_active       = 1 ";
-        
+
         if ( $onlyActive ) {
             $query .= " AND  v.is_active = 1 ";
         }
@@ -108,13 +108,13 @@ WHERE  v.option_group_id = g.id
 
         if ( $condition ) {
             $query .= $condition;
-        } 
-        
+        }
+
         $query .= "  ORDER BY v.weight";
 
         $p = array( 1 => array( $name, 'String' ) );
         $dao = CRM_Core_DAO::executeQuery( $query, $p );
-        
+
         $var = self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
 
         // call option value hook
@@ -126,7 +126,7 @@ WHERE  v.option_group_id = g.id
         return $var;
     }
 
-    static function &valuesByID( $id, $flip = false, $grouping = false, $localize = false, $valueColumnName = 'label' ) 
+    static function &valuesByID( $id, $flip = false, $grouping = false, $localize = false, $valueColumnName = 'label' )
     {
         $cacheKey = "CRM_OG_ID_{$id}_{$flip}_{$grouping}_{$localize}_{$valueColumnName}";
 
@@ -135,7 +135,7 @@ WHERE  v.option_group_id = g.id
         if ( $var ) {
             return $var;
         }
-        
+
 
         $query = "
 SELECT  v.{$valueColumnName} as {$valueColumnName} ,v.value as value, v.grouping as grouping
@@ -143,50 +143,50 @@ FROM   civicrm_option_value v,
        civicrm_option_group g
 WHERE  v.option_group_id = g.id
   AND  g.id              = %1
-  AND  v.is_active       = 1 
-  AND  g.is_active       = 1 
-  ORDER BY v.weight, v.label; 
+  AND  v.is_active       = 1
+  AND  g.is_active       = 1
+  ORDER BY v.weight, v.label;
 ";
         $p = array( 1 => array( $id, 'Integer' ) );
         $dao = CRM_Core_DAO::executeQuery( $query, $p );
-           
+
         $var = self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
         $cache->set( $cacheKey, $var );
 
         return $var;
     }
-    
+
     /**
      * Function to lookup titles OR ids for a set of option_value populated fields. The retrieved value
-     * is assigned a new fieldname by id or id's by title  
+     * is assigned a new fieldname by id or id's by title
      * (each within a specificied option_group)
      *
      * @param  array   $params   Reference array of values submitted by the form. Based on
      *                           $flip, creates new elements in $params for each field in
      *                           the $names array.
      *                           If $flip = false, adds     root field name     => title
-     *                           If $flip = true, adds      actual field name   => id                                                                     
-     * 
+     *                           If $flip = true, adds      actual field name   => id
+     *
      * @param  array   $names    Reference array of fieldnames we want transformed.
      *                           Array key = 'postName' (field name submitted by form in $params).
      *                           Array value = array('newName' => $newName, 'groupName' => $groupName).
-     *                           
+     *
      *
      * @param  boolean $flip
      *
-     * @return void     
-     * 
+     * @return void
+     *
      * @access public
      * @static
      */
-    static function lookupValues( &$params, &$names, $flip = false ) 
+    static function lookupValues( &$params, &$names, $flip = false )
     {
         foreach ($names as $postName => $value) {
             // See if $params field is in $names array (i.e. is a value that we need to lookup)
             if ( $postalName = CRM_Utils_Array::value( $postName, $params )  ) {
                 $postValues = array( );
                 // params[$postName] may be a Ctrl+A separated value list
-                if ( is_string ( $postalName ) && 
+                if ( is_string ( $postalName ) &&
                      strpos( $postalName, CRM_Core_DAO::VALUE_SEPARATOR ) == false ) {
                     // eliminate the ^A frm the beginning and end if present
                     if ( substr( $postalName, 0, 1 ) == CRM_Core_DAO::VALUE_SEPARATOR ) {
@@ -211,7 +211,7 @@ WHERE  v.option_group_id = g.id
                         $lookupBy = 'v.value = %1';
                         $select   = "v.label";
                     }
-                    
+
                     $p[2] = array( $value['groupName'], 'String' );
                     $query = "
                         SELECT $select
@@ -229,7 +229,7 @@ WHERE  v.option_group_id = g.id
         }
     }
 
-    static function getLabel( $groupName, $value, $onlyActiveValue = true ) 
+    static function getLabel( $groupName, $value, $onlyActiveValue = true )
     {
         if ( empty( $groupName ) ||
              empty( $value ) ) {
@@ -238,11 +238,11 @@ WHERE  v.option_group_id = g.id
 
         $query = "
 SELECT  v.label as label ,v.value as value
-FROM   civicrm_option_value v, 
-       civicrm_option_group g 
-WHERE  v.option_group_id = g.id 
-  AND  g.name            = %1 
-  AND  g.is_active       = 1  
+FROM   civicrm_option_value v,
+       civicrm_option_group g
+WHERE  v.option_group_id = g.id
+  AND  g.name            = %1
+  AND  g.is_active       = 1
   AND  v.value           = %2
 ";
         if ( $onlyActiveValue ) {
@@ -261,7 +261,7 @@ WHERE  v.option_group_id = g.id
                               $label,
                               $labelField = 'label',
                               $labelType  = 'String',
-                              $valueField = 'value' ) 
+                              $valueField = 'value' )
     {
         if ( empty( $label ) ) {
             return null;
@@ -269,12 +269,12 @@ WHERE  v.option_group_id = g.id
 
         $query = "
 SELECT  v.label as label ,v.{$valueField} as value
-FROM   civicrm_option_value v, 
-       civicrm_option_group g 
-WHERE  v.option_group_id = g.id 
-  AND  g.name            = %1 
-  AND  v.is_active       = 1  
-  AND  g.is_active       = 1  
+FROM   civicrm_option_value v,
+       civicrm_option_group g
+WHERE  v.option_group_id = g.id
+  AND  g.name            = %1
+  AND  v.is_active       = 1
+  AND  g.is_active       = 1
   AND  v.$labelField     = %2
 ";
 
@@ -306,13 +306,13 @@ WHERE  v.option_group_id = g.id
      *                          bool   'is_active'   (optional) - should this element be rendered
      * @param int    $defaultID (reference) - the option value ID of the default element (if set) is returned else 'null'
      * @param string $groupLabel            - the optional label of the option group else set to group name
-     * 
+     *
      * @access public
      * @static
      * @return int   the option group ID
      *
      */
-    static function createAssoc( $groupName, &$values, &$defaultID, $groupTitle = null ) 
+    static function createAssoc( $groupName, &$values, &$defaultID, $groupTitle = null )
     {
         self::deleteAssoc( $groupName );
         if ( ! empty( $values ) ) {
@@ -322,7 +322,7 @@ WHERE  v.option_group_id = g.id
             $group->is_reserved = 1;
             $group->is_active   = 1;
             $group->save( );
-            
+
             foreach ( $values as $v ) {
                 $value = new CRM_Core_DAO_OptionValue( );
                 $value->option_group_id = $group->id;
@@ -334,19 +334,19 @@ WHERE  v.option_group_id = g.id
                 $value->is_default      = CRM_Utils_Array::value( 'is_default',  $v );
                 $value->is_active       = CRM_Utils_Array::value( 'is_active',   $v );
                 $value->save( );
-                
+
                 if ( $value->is_default ) {
                     $defaultID = $value->id;
                 }
             }
         } else {
-            return $defaultID = 'null';   
+            return $defaultID = 'null';
         }
-        
+
         return $group->id;
     }
-    
-    static function getAssoc( $groupName, &$values, $flip = false, $field = 'name' ) 
+
+    static function getAssoc( $groupName, &$values, $flip = false, $field = 'name' )
     {
         $query = "
 SELECT v.id as amount_id, v.value, v.label, v.name, v.description, v.weight
@@ -367,9 +367,9 @@ ORDER BY v.weight
                 $values[$field] = array( );
             }
         }
-        $index  = 1; 
-         
-        while ( $dao->fetch( ) ) { 
+        $index  = 1;
+
+        while ( $dao->fetch( ) ) {
             if ( $flip ) {
                 $value = array( );
                 foreach ( $fields as $field ) {
@@ -380,13 +380,13 @@ ORDER BY v.weight
                 foreach ( $fields as $field ) {
                     $values[$field][$index] = $dao->$field;
                 }
-                $index++; 
+                $index++;
             }
-        } 
+        }
     }
 
-    static function deleteAssoc( $groupName , $operator = "=" ) 
-    {        
+    static function deleteAssoc( $groupName , $operator = "=" )
+    {
         $query = "
 DELETE g, v
   FROM civicrm_option_group g,
@@ -399,7 +399,7 @@ DELETE g, v
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
     }
 
-    static function optionLabel( $groupName, $value ) 
+    static function optionLabel( $groupName, $value )
     {
         $query = "
 SELECT v.label
@@ -414,16 +414,16 @@ SELECT v.label
 
     }
 
-    static function getRowValues( $groupName, $fieldValue, $field = 'name', 
-                                  $fieldType  = 'String', $active = true ) 
+    static function getRowValues( $groupName, $fieldValue, $field = 'name',
+                                  $fieldType  = 'String', $active = true )
     {
         $query = "
-SELECT v.id, v.label, v.value, v.name, v.weight, v.description 
-FROM   civicrm_option_value v, 
-       civicrm_option_group g 
-WHERE  v.option_group_id = g.id 
+SELECT v.id, v.label, v.value, v.name, v.weight, v.description
+FROM   civicrm_option_value v,
+       civicrm_option_group g
+WHERE  v.option_group_id = g.id
   AND  g.name            = %1
-  AND  g.is_active       = 1  
+  AND  g.is_active       = 1
   AND  v.$field          = %2
 ";
 
