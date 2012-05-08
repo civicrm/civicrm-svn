@@ -144,7 +144,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
         
         $this->add('text', 'installments' , ts('Number of Installments') , array('size' => 20), true);
         
-        $this->addElement('checkbox', 'is_notify', ts( 'Send Notification' ) , null);
+        $this->addElement('checkbox', 'is_notify', ts( 'Send Notification to Contributor' ) , null);
         
         $type = 'submit';
         if ( $this->_crid ) {
@@ -188,7 +188,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
                 $status = ts('Could not update the Recurring contribution details');
             } else if ( $updateSubscription ) {
                 
-                $status    = ts( 'Details for your recurring contribution of %1, every %2 %3(s) has been updated for %4 installments.',
+                $status    = ts( 'Recurring contribution has been updated to: %1, every %2 %3(s) for %4 installments.',
                                  array( 1 => CRM_Utils_Money::format( $params['amount'], $this->_subscriptionDetails->currency ), 
                                         2 => $this->_subscriptionDetails->frequency_interval,
                                         3 => $this->_subscriptionDetails->frequency_unit,
