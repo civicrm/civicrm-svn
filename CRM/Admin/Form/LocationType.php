@@ -37,7 +37,7 @@
 
 /**
  * This class generates form components for Location Type
- * 
+ *
  */
 class CRM_Admin_Form_LocationType extends CRM_Admin_Form
 {
@@ -47,15 +47,15 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form
      * @return None
      * @access public
      */
-    public function buildQuickForm( ) 
+    public function buildQuickForm( )
     {
-       
+
         parent::buildQuickForm( );
-       
-        if ($this->_action & CRM_Core_Action::DELETE ) { 
+
+        if ($this->_action & CRM_Core_Action::DELETE ) {
             return;
         }
-        
+
         $this->applyFilter('__ALL__', 'trim');
         $this->add('text',
                    'name',
@@ -69,7 +69,7 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form
         $this->addRule( 'name',
                         ts( 'Name can only consist of alpha-numeric characters' ),
                         'variable' );
-        
+
         $this->add('text', 'display_name', ts('Display Name'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_LocationType', 'display_name' ) );
         $this->add('text', 'vcard_name', ts('vCard Name'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_LocationType', 'vcard_name' ) );
 
@@ -77,13 +77,13 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form
 
         $this->add('checkbox', 'is_active', ts('Enabled?'));
         $this->add('checkbox', 'is_default', ts('Default?'));
-        if ($this->_action == CRM_Core_Action::UPDATE && CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', $this->_id, 'is_reserved' )) { 
+        if ($this->_action == CRM_Core_Action::UPDATE && CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', $this->_id, 'is_reserved' )) {
             $this->freeze(array('name', 'description', 'is_active' ));
         }
-       
+
     }
 
-       
+
     /**
      * Function to process the form
      *
@@ -103,7 +103,7 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form
         $params = $this->exportValues();
         $params['is_active'] =  CRM_Utils_Array::value( 'is_active', $params, false );
         $params['is_default'] =  CRM_Utils_Array::value( 'is_default', $params, false );
-            
+
         // action is taken depending upon the mode
         $locationType               = new CRM_Core_DAO_LocationType( );
         $locationType->name         = $params['name'];
@@ -112,18 +112,18 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form
         $locationType->description  = $params['description'];
         $locationType->is_active    = $params['is_active'];
         $locationType->is_default   = $params['is_default'];
-            
+
         if ($params['is_default']) {
             $query = "UPDATE civicrm_location_type SET is_default = 0";
             CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
         }
-            
+
         if ($this->_action & CRM_Core_Action::UPDATE ) {
             $locationType->id = $this->_id;
         }
-            
+
         $locationType->save( );
-        
+
         CRM_Core_Session::setStatus( ts('The location type \'%1\' has been saved.',
                                         array( 1 => $locationType->name )) );
     } //end of function
