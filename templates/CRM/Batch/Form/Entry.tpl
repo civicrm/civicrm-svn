@@ -209,11 +209,78 @@
             idFldName = key + '_id';
             value = data.values[0][idFldName];
           }
-          cj('[name="field['+ blockNo +']['+ actualFldName +']"]').val( value );
+          setFieldValue( actualFldName, value, blockNo )
         });
       }
     });
   }
+
+/**
+ * This function is use to setdefault elements via ajax 
+ *
+ * @param fname string field name
+ * @return void
+ */
+function setFieldValue( fname, fieldValue, blockNo ) {
+    var elementId = cj('[name="field['+ blockNo +']['+ fname +']"]');
+
+    //check if it is date element
+    var isDateElement     = elementId.attr('format');
+    
+    // check if it is wysiwyg element
+    var editor = elementId.attr('editor');
+
+    //get the element type
+    var elementType       = elementId.attr('type'); 
+    
+    // set the value for all the elements, elements needs to be handled are
+    // select, checkbox, radio, date fields, text, textarea, multi-select
+    // wysiwyg editor, advanced multi-select ( to do )
+    if ( elementType == 'radio' ) {
+        elementId.filter("[value=" + fieldValue + "]").prop("checked",true);
+    } else if ( elementType == 'checkbox' ) {
+        // handle checkbox
+    } else if ( editor ) {
+      switch ( editor ) {
+        case 'ckeditor':
+          var elemtId = elementId.attr('id');
+          oEditor = CKEDITOR.instances[elemtId];
+          oEditor.setData( htmlContent );
+          break;
+        case 'tinymce':
+          var elemtId = element.attr('id');
+          tinyMCE.get( elemtId ).setContent( htmlContent ); 
+          break;
+        case 'joomlaeditor':
+          // TO DO
+        case 'drupalwysiwyg':
+          // TO DO
+        default:
+          elementId.val( fieldValue );
+      }
+    } else {
+      elementId.val( fieldValue );
+    }
+
+    // since we use different display field for date we also need to set it.
+    // also check for date time field and set the value correctly
+    if ( isDateElement && fieldValue ) {
+     var dateValues = fieldValue.split(' ');
+     
+     var actualDateElement =  cj('#field_'+ blockNo +'_' + fname );
+     var date_format = actualDateElement.attr('format');
+     var altDateFormat = 'yy-mm-dd';
+
+     var displayDateValue = cj.datepicker.parseDate( altDateFormat, dateValues[0] );
+
+     // format date according to display field
+     var displayDateValue = cj.datepicker.formatDate( date_format, displayDateValue );
+     
+     cj('#field_'+ blockNo +'_' + fname + '_display').val( displayDateValue );
+     cj('#field_'+ blockNo +'_' + fname + '_time').val(dateValues[1].substr(0,5));
+    }
+}
+
 </script>
 {/literal}
 
