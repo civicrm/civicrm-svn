@@ -3297,6 +3297,11 @@ div#crm-toolTip
   border: 1px solid #7A7A60 !important;
   margin-top: 10px !important;
 }
+
+#crm-container tr.crm-batch-header td {
+  white-space: nowrap;
+}
+
 /* Responsive layout changes */
 
 #crm-container .contact_basic_information-section.narrowform table.form-layout-compressed,

@@ -43,14 +43,13 @@
 <br/>
 <table class="crm-copy-fields">
     <thead>
-        <tr class="columnheader">
-            <td>&nbsp;</td>
-            <td>{ts}Contact{/ts}</td>
+      <tr class="crm-batch-header">
+        <td>&nbsp;</td>
+        <td>{ts}Contact{/ts}</td>
         {foreach from=$fields item=field key=fieldName}
-            <!--td>{$field.title}</td-->
-            <td><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td> 
+          <td><img src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td> 
         {/foreach}
-        </tr>
+      </tr>
     </thead>
     {section name='i' start=1 loop=$rowCount} 
     {assign var='rowNumber' value=$smarty.section.i.index} 
@@ -110,6 +109,9 @@
             cj('.crm-batch-receipt_date-'+ rowID ).show();
           }
         });
+
+        // line breaks between radio buttons
+        cj('<br />').insertBefore('input.form-radio');
 
         //set the focus on first element
         cj('#primary_contact_1').focus();

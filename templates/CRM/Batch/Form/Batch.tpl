@@ -60,7 +60,7 @@
       </tr>
       <tr  class="crm-batch-form-block-total">
            <td class="label">{$form.total.label}</td>
-           <td>{$form.total.html}</td>
+           <td>{$form.total.html|crmReplace:class:eight}</td>
       </tr>
   </table>
 {/if}

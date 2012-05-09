@@ -1220,7 +1220,7 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'syntax error in from address'),
     (@bounceTypeID, 'unknown smtp code');
 
--- add sample profile
+-- add sample and reserved profiles
 
 INSERT INTO civicrm_uf_group
     (id, name,                 group_type,           title,                                      is_cms_user, is_reserved, help_post) VALUES
@@ -1275,18 +1275,18 @@ INSERT INTO civicrm_uf_field
        (16, 5,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Email Address{/ts}',         		'Contact',     NULL,  NULL),
        (17, 6,           'household_name',        1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Household Name{/ts}',        		'Household',   NULL,  NULL),
        (18, 6,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Email Address{/ts}',         		'Contact',     NULL,  NULL),
-	   (19 	,7 		    ,'phone' 				 ,1  	      ,0 			,1 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Phone{/ts}' 					,'Contact' 	  ,NULL,  1 ),
-	   (20 	,7 		    ,'phone' 				 ,1  	      ,0 			,2 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Mobile{/ts}' 					,'Contact' 	  ,NULL, 2 ),
-	   (21, 7, 			 'street_address', 		  1, 		   0, 			3, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Address{/ts}',		'Contact', 	   NULL,  NULL),
-	   (22, 7, 			 'city',				  1, 		   0, 			4, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}City{/ts}',  						'Contact', 	   NULL,  NULL),
-	   (23, 7, 			 'state_province', 		  1, 		   0, 			5, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}State{/ts}',  						'Contact', 	   NULL,  NULL),
-	   (24, 7, 			 'postal_code', 		  1, 		   0, 			6, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Postal Code{/ts}',  				'Contact', 	   NULL,  NULL),
-	   (25, 7, 			 'email', 				  1, 		   0, 			7, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Email{/ts}',  				'Contact', 	   NULL,  NULL),
-	   (26, 7, 			 'group', 				  1, 		   0, 			8, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Groups{/ts}',  					'Contact', 	   NULL,  NULL),
-	   (27, 7, 			 'tag', 				  1, 		   0, 			9, 	  	'User and User Admin Only',  0, 	      0, 		     NULL, 			   '{ts escape="sql"}Tags{/ts}', 						'Contact', 	   NULL,  NULL),
-	   (28  ,7  	    ,'gender'  				 ,1  	      ,0  			,10  	,'User and User Admin Only' ,0  		 ,0  			,NULL,  			 '{ts escape="sql"}Gender{/ts}'  						,'Individual' ,NULL,  NULL),
-	   (29 	,7 		    ,'birth_date' 			 ,1  	      ,0 			,11 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL, 			  '{ts escape="sql"}Date of Birth{/ts}' 			    ,'Individual' ,NULL,  NULL),
-	   (30,  8,           'street_address',        1,           1,           1,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}Street Address (Home){/ts}', 		'Contact',     NULL,  NULL),
+	     (19, 7,           'phone' 				 ,1  	      ,0 			,1 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Phone{/ts}' 					,'Contact' 	  ,NULL,  1 ),
+	     (20, 7,           'phone' 				 ,1  	      ,0 			,2 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Mobile{/ts}' 					,'Contact' 	  ,NULL, 2 ),
+	     (21, 7, 			     'street_address', 		  1, 		   0, 			3, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Address{/ts}',		'Contact', 	   NULL,  NULL),
+	     (22, 7, 			     'city',				  1, 		   0, 			4, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}City{/ts}',  						'Contact', 	   NULL,  NULL),
+	     (23, 7, 			     'state_province', 		  1, 		   0, 			5, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}State{/ts}',  						'Contact', 	   NULL,  NULL),
+	     (24, 7, 			     'postal_code', 		  1, 		   0, 			6, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Postal Code{/ts}',  				'Contact', 	   NULL,  NULL),
+	     (25, 7, 			     'email', 				  1, 		   0, 			7, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Email{/ts}',  				'Contact', 	   NULL,  NULL),
+	     (26, 7, 			     'group', 				  1, 		   0, 			8, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Groups{/ts}',  					'Contact', 	   NULL,  NULL),
+	     (27, 7, 			     'tag', 				  1, 		   0, 			9, 	  	'User and User Admin Only',  0, 	      0, 		     NULL, 			   '{ts escape="sql"}Tags{/ts}', 						'Contact', 	   NULL,  NULL),
+	     (28, 7,            'gender'  				 ,1  	      ,0  			,10  	,'User and User Admin Only' ,0  		 ,0  			,NULL,  			 '{ts escape="sql"}Gender{/ts}'  						,'Individual' ,NULL,  NULL),
+	     (29, 7,            'birth_date' 			 ,1  	      ,0 			,11 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL, 			  '{ts escape="sql"}Date of Birth{/ts}' 			    ,'Individual' ,NULL,  NULL),
+	     (30,  8,           'street_address',        1,           1,           1,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}Street Address (Home){/ts}', 		'Contact',     NULL,  NULL),
        (31,  8,           'city',                  1,           1,           2,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}City (Home){/ts}',           		'Contact',     NULL,  NULL),
        (32,  8,           'postal_code',           0,           0,           3,      'User and User Admin Only',  0,           0,             1,                '{ts escape="sql"}Postal Code (Home){/ts}',    		'Contact',     NULL,  NULL),
        (33,  8,           'country',               0,           0,           4,      'User and User Admin Only', 0,           1,             1,                '{ts escape="sql"}Country (Home){/ts}',        		'Contact',     NULL,  NULL),
@@ -1300,7 +1300,7 @@ INSERT INTO civicrm_uf_field
        (41,  9,           'country',               1,           0,           7,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Country{/ts}',                        'Contact',    NULL,   NULL),
        (42,  9,           'state_province',        1,           0,           8,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}State / Province{/ts}',               'Contact',    NULL,   NULL),
        (43, 10,     'contribution_type',           1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Contribution', NULL, NULL ),
-       (44, 10,     'total_amount',                1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Total Amount{/ts}', 'Contribution', NULL, NULL ),
+       (44, 10,     'total_amount',                1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Amount{/ts}', 'Contribution', NULL, NULL ),
        (45, 10,     'contribution_status_id',      1, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Contribution', NULL, NULL ),
        (46, 10,     'contribution_source',         0, 0, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Contribution', NULL, NULL ),
        (47, 10,     'receive_date',                0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Receive Date{/ts}', 'Contribution', NULL, NULL ),
