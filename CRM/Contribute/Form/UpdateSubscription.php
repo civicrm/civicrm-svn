@@ -213,7 +213,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
                                                                                   'name' ),
                            'subject'            => ts('Recurring Contribution Updated'),
                            'details'            => $message,
-                           'activity_date_time' => date('Ymd'),
+                           'activity_date_time' => date('YmdHis'),
                            'status_id'          => CRM_Core_OptionGroup::getValue( 'activity_status',
                                                                                    'Completed',
                                                                                    'name' ),
@@ -222,8 +222,8 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
                 $cid     = $session->get('userID');
                 
                 if ( $cid ) {
-                    $activityParams['source_contact_id']   = $cid;
                     $activityParams['target_contact_id'][] = $activityParams['source_contact_id'];
+                    $activityParams['source_contact_id']   = $cid;
                 }
                 CRM_Activity_BAO_Activity::create( $activityParams );
                 

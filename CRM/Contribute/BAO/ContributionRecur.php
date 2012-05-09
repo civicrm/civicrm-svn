@@ -248,13 +248,18 @@ SELECT r.payment_processor_id
 
             // create activity record
             $sql = " 
-    SELECT con.id as contributionId, con.contact_id
+    SELECT con.contact_id, rec.amount, rec.frequency_interval, rec.frequency_unit
       FROM civicrm_contribution_recur rec
 INNER JOIN civicrm_contribution       con ON ( con.contribution_recur_id = rec.id )
      WHERE rec.id = %1
   GROUP BY rec.id";
             $dao = CRM_Core_DAO::executeQuery( $sql, array(1 => array($recurId, 'Integer')) );
             if ( $dao->fetch( ) ) { 
+                $details  = CRM_Utils_Array::value( 'details', $activityParams );
+                $details .= '
+<br/>' . ts( 'The recurring contribution of %1, every %2 %3 has been cancelled.', array( 1 => $dao->amount, 
+                                                                                    2 => $dao->frequency_interval, 
+                                                                                    3 => $dao->frequency_unit ) );
                 $activityParams = 
                     array( 'source_contact_id' => $dao->contact_id,
                            'source_record_id'  => CRM_Utils_Array::value( 'source_record_id',  $activityParams ),
@@ -262,8 +267,8 @@ INNER JOIN civicrm_contribution       con ON ( con.contribution_recur_id = rec.i
                                                                                   'Cancel Recurring Contribution',
                                                                                   'name' ),
                            'subject'            => CRM_Utils_Array::value( 'subject', $activityParams, ts('Recurring contribution cancelled') ),
-                           'details'            => CRM_Utils_Array::value( 'details', $activityParams ),
-                           'activity_date_time' => date('Ymd'),
+                           'details'            => $details,
+                           'activity_date_time' => date('YmdHis'),
                            'status_id'          => CRM_Core_OptionGroup::getValue( 'activity_status', 
                                                                                    'Completed', 
                                                                                    'name' ),
@@ -271,8 +276,8 @@ INNER JOIN civicrm_contribution       con ON ( con.contribution_recur_id = rec.i
                 $session = CRM_Core_Session::singleton();
                 $cid     = $session->get('userID');
                 if ( $cid ) { 
-                    $activityParams['source_contact_id']   = $cid;
                     $activityParams['target_contact_id'][] = $activityParams['source_contact_id'];
+                    $activityParams['source_contact_id']   = $cid;
                 }
                 CRM_Activity_BAO_Activity::create( $activityParams );
             }
