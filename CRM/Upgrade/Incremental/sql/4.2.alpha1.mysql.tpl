@@ -118,11 +118,12 @@ SELECT @fromEmailAddressesID := MAX(id) FROM civicrm_navigation where name = 'Fr
 UPDATE civicrm_navigation SET has_separator = 1 WHERE parent_id = @mailingsID AND name = 'From Email Addresses';
 
 SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'activity_type';
+SELECT @max_wt              := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
 
 INSERT INTO
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
-   (@option_group_id_act, '{ts escape="sql"}BULK SMS{/ts}', 34, 'BULK SMS', NULL, 1, NULL, 34, '{ts escape="sql"}BULK SMS{/ts}', 0, 1, 1, NULL, NULL);
+   (@option_group_id_act, '{ts escape="sql"}BULK SMS{/ts}', @max_wt, 'BULK SMS', NULL, 1, NULL, @max_wt, '{ts escape="sql"}BULK SMS{/ts}', 0, 1, 1, NULL, NULL);
 
 ALTER TABLE `civicrm_mailing_recipients` ADD `phone_id` int(10) unsigned DEFAULT NULL;
 
@@ -269,14 +270,14 @@ SELECT @CompId     := MAX(id)     FROM civicrm_component where name = 'CiviMembe
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, is_reserved, component_id)
 VALUES
-  (@option_group_id_act, {localize field='label'}'Change Membership Status'{/localize}, (SELECT @max_val := @max_val+1), 'Change Membership Status', (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Status.'{/localize},  1, 1, @CompId),
-  (@option_group_id_act, {localize field='label'}'Change Membership Type'{/localize},   (SELECT @max_val := @max_val+1), 'Change Membership Type',   (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Type.'{/localize},    1, 1, @CompId);
+  (@option_group_id_act, {localize field='label'}'Change Membership Status'{/localize}, (SELECT @max_val := @max_val+1), 'Change Membership Status', (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Status.'{/localize}, 1, 1, @CompId),
+  (@option_group_id_act, {localize field='label'}'Change Membership Type'{/localize}, (SELECT @max_val := @max_val+1), 'Change Membership Type', (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Type.'{/localize}, 1, 1, @CompId);
 
 -- CRM-10084
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES
-(@option_group_id_act, '{ts escape="sql"}Cancel Recurring Contribution{/ts}',      35, 'Cancel Recurring Contribution', NULL,0, 0, 35, '', 0, 1, 1, NULL, NULL);
+   (@option_group_id_act, '{ts escape="sql"}Cancel Recurring Contribution{/ts}', (SELECT @max_val := @max_val+1), 'Cancel Recurring Contribution', NULL,0, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
 
 SELECT @msg_tpl_workflow_contribution := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_contribution';
 SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_contribution;
@@ -299,8 +300,8 @@ VALUES
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES
-(@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution Billing Details{/ts}', 36, 'Update Recurring Contribution Billing Details', NULL,0, 0, 36, '', 0, 1, 1, NULL, NULL),
-(@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution{/ts}',                 37, 'Update Recurring Contribution',                 NULL,0, 0, 37, '', 0, 1, 1, NULL, NULL);
+(@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution Billing Details{/ts}', (SELECT @max_val := @max_val+1), 'Update Recurring Contribution Billing Details', NULL,0, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL),
+(@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution{/ts}', (SELECT @max_val := @max_val+1), 'Update Recurring Contribution', NULL,0, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
 
 INSERT INTO civicrm_option_value
   (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
