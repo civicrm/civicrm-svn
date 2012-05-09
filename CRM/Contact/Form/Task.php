@@ -41,6 +41,7 @@
  */
 class CRM_Contact_Form_Task extends CRM_Core_Form
 {
+    protected $_pager = null;
     /**
      * the task being performed
      *
@@ -222,6 +223,24 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
             }  
         }
         
+        $params      = array( );
+        $form->pager( $params );
+        list( $offset, $rowCount ) = $form->_pager->getOffsetAndRowCount( );
+        $form->assign("rowCount",$rowCount);
+         $query = "
+SELECT *
+FROM civicrm_prevnext_cache
+WHERE cacheKey LIKE %1 AND is_selected=1
+LIMIT $offset, $rowCount";
+         $params1[1] = array("%{$cacheKey}%", 'String');
+         $dao = CRM_Core_DAO::executeQuery( $query, $params1 );
+ 
+         while($dao->fetch())
+             {
+                 $val[] = $dao->data;
+             }
+        $form->assign("value",$val);
+        
         if ( ! empty( $form->_contactIds ) ) {
             $form->_componentClause =
                 ' contact_a.id IN ( ' .
@@ -230,6 +249,30 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
             
             $form->_componentIds = $form->_contactIds;
         }
+    }
+  function pager( $params )
+     {
+        $params['status']       = ts('Contacts');
+        $params['csvString']    = null;
+        $params['buttonTop']    = 'PagerTopButton';
+        $params['buttonBottom'] = 'PagerBottomButton';
+        $params['rowCount']     = $this->get( CRM_Utils_Pager::PAGE_ROWCOUNT );
+        if ( ! $params['rowCount'] ) {
+            $params['rowCount'] = CRM_Utils_Pager::ROWCOUNT;
+        }
+
+        $query = "
+SELECT count(id)
+  FROM civicrm_prevnext_cache
+ WHERE cacheKey LIKE %1 AND is_selected=1";
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
+        $cacheKey = "civicrm search {$qfKey}";
+        $params1[1] = array("%{$cacheKey}%", 'String');
+         
+        $paramsTotal = CRM_Core_DAO::singleValueQuery( $query, $params1 );
+        $params['total'] = $paramsTotal;    
+        $this->_pager = new CRM_Utils_Pager( $params );
+        $this->assign_by_ref( 'pager', $this->_pager );
     }
 
     /**
