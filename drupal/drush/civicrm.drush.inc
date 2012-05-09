@@ -350,13 +350,14 @@ function _civicrm_generate_settings_file( $dbuser, $dbpass, $dbhost, $dbname, $m
     }
 
     $baseUrl = !$baseUrl ? ($GLOBALS['base_url']) : ($protocol . '://' . $baseUrl);
-
+    $cms = (drush_drupal_major_version() == 6 ? 'Drupal6' : 'Drupal');
     $db_spec = _drush_sql_get_db_spec();
+
     $params  = array(
                      'crmRoot'   => $crmPath,
                      'templateCompileDir' => "$drupalRoot/$siteRoot/files/civicrm/templates_c",
                      'frontEnd'  => 0,
-                     'cms'       => 'Drupal',
+                     'cms'       => $cms,
                      'baseURL'   => $baseUrl,
                      'dbUser'    => $dbuser,
                      'dbPass'    => $dbpass,
