@@ -286,10 +286,17 @@ function setFieldValue( fname, fieldValue, blockNo ) {
      var date_format = actualDateElement.attr('format');
      var altDateFormat = 'yy-mm-dd';
 
-     var displayDateValue = cj.datepicker.parseDate( altDateFormat, dateValues[0] );
+     var actualDateValue = cj.datepicker.parseDate( altDateFormat, dateValues[0] );
 
      // format date according to display field
-     var displayDateValue = cj.datepicker.formatDate( date_format, displayDateValue );
+     var hiddenDateValue  = cj.datepicker.formatDate( 'mm/dd/yy', actualDateValue );
+     
+     actualDateElement.val( hiddenDateValue );
+     
+     var displayDateValue = actualDateElement.val();
+     if ( date_format != 'mm/dd/yy' ) {
+       displayDateValue  = cj.datepicker.formatDate( date_format, actualDateValue );
+     }
      
      cj('#field_'+ blockNo +'_' + fname + '_display').val( displayDateValue );
      cj('#field_'+ blockNo +'_' + fname + '_time').val(dateValues[1].substr(0,5));
