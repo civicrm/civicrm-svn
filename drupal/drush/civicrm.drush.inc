@@ -452,7 +452,7 @@ function drush_civicrm_upgrade_db_validate() {
 
 function drush_civicrm_upgrade_db() {
   if (class_exists('CRM_Upgrade_Headless')) {
-    // Note: CRM_Upgrade_Headless introdued in 4.2 -- at the same time as class auto-loading
+    // Note: CRM_Upgrade_Headless introduced in 4.2 -- at the same time as class auto-loading
     $upgradeHeadless = new CRM_Upgrade_Headless();
     $result = $upgradeHeadless->run(); // FIXME Exception handling?
     drush_print("Upgrade outputs: " . "\"".$result['message']."\"");
