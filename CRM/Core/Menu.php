@@ -527,7 +527,7 @@ class CRM_Core_Menu
         $queryString = implode( ', ', $elements );
         $domainID    = CRM_Core_Config::domainID( );
         $domainWhereClause = " AND domain_id = $domainID ";
-        if ( $path == 'civicrm/upgrade' &&
+        if ( $config->isUpgradeMode() &&
              ! CRM_Core_DAO::checkFieldExists( 'civicrm_menu', 'domain_id' ) ) {
             //domain_id wouldn't be available for earlier version of
             //3.0 and therefore can't be used as part of query for
