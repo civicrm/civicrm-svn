@@ -85,6 +85,11 @@
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.dashboard.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/dashboard.css");</style>
 
+
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.noty.js"></script>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/jquery.noty.css");</style>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/noty_theme_default.css");</style>
+
 {* CRM-6819: localize datepicker *}
 {if $l10nURL}
   <script type="text/javascript" src="{$l10nURL}"></script>
