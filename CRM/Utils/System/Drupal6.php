@@ -717,4 +717,30 @@ SELECT name, mail
         
         return $url;
     }
+    
+    /**
+     * Find any users/roles/security-principals with the given permission
+     * and replace it with one or more permissions.
+     *
+     * @param $oldPerm string
+     * @param $newPerms array, strings
+     * @return void
+     */
+    function replacePermission($oldPerm, $newPerms) {
+        $roles = user_roles(false, $oldPerm);
+        foreach ($roles as $rid => $roleName) {
+            $permList = db_result(db_query('SELECT perm FROM {permission} WHERE rid = %d', $rid));
+            $perms = drupal_map_assoc(explode(', ', $permList));
+            unset($perms[$oldPerm]);
+            $perms = $perms + drupal_map_assoc($newPerms);
+            $permList = implode(', ', $perms);
+            db_query('UPDATE {permission} SET perm = "%s" WHERE rid = %d', $permList, $rid);
+/*        
+        if ( ! empty( $roles ) ) {
+            $rids = implode(',', array_keys($roles));
+            db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', edit all events\') WHERE rid IN (' . implode(',', array_keys($roles)) . ')' );
+            db_query( "UPDATE {permission} SET perm = REPLACE( perm, '%s', '%s' ) WHERE rid IN ($rids)", 
+                $oldPerm, implode(', ', $newPerms) );*/
+        }
+    }
 }

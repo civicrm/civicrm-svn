@@ -46,18 +46,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
         $config = CRM_Core_Config::singleton( );
         if ( $config->userSystem->is_drupal ) {
             
-            // CRM-7896
-            $roles = user_roles(false, 'access CiviCase');
-            if ( !empty($roles) ) {
-                $changePermissions = array( 'access CiviCase'                 => false,
-                                           'access my cases and activities'  => true,
-                                           'access all cases and activities' => true,
-                                           'administer CiviCase'             => true
-                                           );
-                foreach( array_keys($roles) as $rid ) {
-                    user_role_change_permissions($rid, $changePermissions);
-                }
-            }
+            $config->userSystem->replacePermission('access CiviCase', array('access my cases and activities', 'access all cases and activities', 'administer CiviCase'));
             
             //insert core acls.
             $casePermissions = array( 'delete in CiviCase',

@@ -783,4 +783,22 @@ AND    u.status = 1
         
         return $url;
     }    
+    
+    /**
+     * Find any users/roles/security-principals with the given permission
+     * and replace it with one or more permissions.
+     *
+     * @param $oldPerm string
+     * @param $newPerms array, strings
+     * @return void
+     */
+    function replacePermission($oldPerm, $newPerms) {
+        $roles = user_roles(false, $oldPerm);
+        if ( !empty($roles) ) {
+            foreach( array_keys($roles) as $rid ) {
+                user_role_revoke_permissions($rid, array($oldPerm));
+                user_role_grant_permissions($rid, $newPerms);
+            }
+        }
+    }
 }

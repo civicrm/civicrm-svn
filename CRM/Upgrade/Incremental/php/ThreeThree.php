@@ -327,15 +327,10 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
                 
         //CRM-7172
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
-
-            // CRM-7896
-            $roles = user_roles(false, 'access CiviMail');
-            if ( !empty($roles) ) {
-                foreach( array_keys($roles) as $rid ) {
-                    user_role_grant_permissions($rid, array('create mailings', 'approve mailings', 'schedule mailings'));
-                }
+            $config = CRM_Core_Config::singleton( );
+            if ( is_callable(array($config->userSystem, 'replacePermission')) ) {
+                $config->userSystem->replacePermission('access CiviMail', array('access CiviMail', 'create mailings', 'approve mailings', 'schedule mailings'));
             }
-            
         }
 
         $upgrade = new CRM_Upgrade_Form( );

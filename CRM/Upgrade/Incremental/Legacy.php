@@ -473,14 +473,8 @@ SELECT  count( id ) as statusCount
         // upgrade all roles who have 'access CiviEvent' permission, to also have 
         // newly added permission 'edit_all_events', CRM-5472
         $config = CRM_Core_Config::singleton( );
-        if ( $config->userSystem->is_drupal ) {
-            $roles = user_roles(false, 'access CiviEvent');
-            if ( !empty($roles) ) {
-                // CRM-7896
-                foreach( array_keys($roles) as $rid ) {
-                    user_role_grant_permissions($rid, array( 'edit all events' ));
-                }
-            }
+        if ( is_callable(array($config->userSystem, 'replacePermission')) ) {
+            $config->userSystem->replacePermission('access CiviEvent', array('access CiviEvent', 'edit all events'));
         }
 
         //make sure 'Deceased' membership status present in db,CRM-5636
