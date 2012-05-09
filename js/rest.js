@@ -154,16 +154,19 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
 
   //display a message or (message=false) clear the notification
   $.fn.crmNotification = function (message,type,item) {
-    if (message === false && typeof $.noty == "function") {
-      $.noty.closeAll();
+    if (message === false) {
+      if (typeof $.noty == "function") {
+        $.noty.closeAll();
+      }
       return;
     }
     item = typeof item !== 'undefined' ? item : null;
     type = typeof type !== 'undefined' ? type : 'error';
     if (typeof $.noty == "function") 
       $.noty({"text":message,"layout":"top","type":type,"animateOpen":{"height":"toggle"},"animateClose":{"height":"toggle"},"speed":500,"timeout":false,"closeButton":true,"closeOnSelfClick":true,"closeOnSelfOver":true,"modal":false});
-    else
+    else {
       alert (message);
+    }
     item && console && console.log && console.log (item);
   }
 
