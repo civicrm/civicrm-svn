@@ -62,29 +62,6 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
    * @return array (reference) of action links
    */
   function &links() {            
-    if ( !( self::$_links ) ) {
-      self::$_links = array(
-        CRM_Core_Action::COPY  => array(
-          'name'  => ts('Enter records'),
-          'url'   => 'civicrm/batch/entry',
-          'qs'    => 'id=%%id%%&reset=1',
-          'title' => ts('Batch Entry') 
-        ),
-        CRM_Core_Action::UPDATE  => array(
-          'name'  => ts('Edit'),
-          'url'   => 'civicrm/batch',
-          'qs'    => 'action=update&id=%%id%%&reset=1',
-          'title' => ts('Edit Batch') 
-        ),
-        CRM_Core_Action::DELETE  => array(
-          'name'  => ts('Delete'),
-          'url'   => 'civicrm/batch',
-          'qs'    => 'action=delete&id=%%id%%',
-          'title' => ts('Delete Batch') 
-        )
-      );
-    }
-    return self::$_links;
   }
 
   /**
@@ -124,62 +101,22 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
    * @access public
    */
   function browse( ) {
-    $n = func_num_args();
-    $action = ($n > 0) ? func_get_arg(0) : null;
-    $links =& $this->links();
-    if ($action == null) {
-      if ( ! empty( $links ) ) {
-        $action = array_sum(array_keys($links));
-      }
-    }
+    $this->search();
+  }
 
-    eval( '$object = new ' . $this->getBAOName( ) . '( );' );
-
-    $values = array();
-
-    $object->orderBy ( 'title asc' );
-
-    $batchTypes    = CRM_Core_PseudoConstant::getBatchType();
-    $batchStatuses = CRM_Core_PseudoConstant::getBatchStatus();        
-
-    // find all objects
-    $object->find();
-    $permission = array();
-    $creatorIds = array();
-    while ($object->fetch()) {
-      $action = array_sum(array_keys($links));
-      $values[$object->id] = array( );
-      CRM_Core_DAO::storeValues( $object, $values[$object->id]);
-      
-      $values[$object->id]['status'] = $batchStatuses[$object->status_id];
-      $values[$object->id]['type'  ] = $batchTypes[$object->type_id];
-
-      // if batch is closed don't allow delete and update action
-      if ( $object->status_id == 2 ){
-        $action -= CRM_Core_Action::UPDATE;
-        $action -= CRM_Core_Action::DELETE;
+  function search( ) {
+    if ( $this->_action &
+      ( CRM_Core_Action::ADD    |
+      CRM_Core_Action::UPDATE |
+      CRM_Core_Action::DELETE ) ) {
+        return;
       }
 
-      if ( !in_array( $object->created_id, $creatorIds ) ) {
-        $creatorIds[] = $object->created_id;
-      }
-
-      // populate action links
-      $this->action( $object, $action, $values[$object->id], $links, $permission );
-    }
-
-    // get sort name of the creators
-    if ( !empty( $creatorIds ) ) {
-      $query = "SELECT id, sort_name from civicrm_contact where id IN ( ". implode(',', $creatorIds).")";
-      $dao = CRM_Core_DAO::executeQuery( $query );
-      $creatorNames = array();
-      while( $dao->fetch() ) {
-        $creatorNames[$dao->id] = $dao->sort_name;
-      }
-      $this->assign( 'creatorNames', $creatorNames );
-    }
-
-    $this->assign( 'rows', $values );
+    $form = new CRM_Core_Controller_Simple( 'CRM_Batch_Form_Search', ts( 'Search Batches' ), CRM_Core_Action::ADD );
+    $form->setEmbedded( true );
+    $form->setParent( $this );
+    $form->process( );
+    $form->run( );
   }
 
 }

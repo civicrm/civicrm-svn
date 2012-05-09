@@ -161,4 +161,166 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
   static function getCacheKeyForBatch( $batchId ) {
     return "batch-entry-{$batchId}";
   }
+
+  /**
+   * This function is a wrapper for ajax batch selector
+   *
+   * @param  array   $params associated array for params record id.
+   *
+   * @return array   $batchList associated array of batch list
+   * @access public
+   */
+  public function getBatchListSelector( &$params ) {
+    // format the params
+    $params['offset']   = ( $params['page'] - 1) * $params['rp'] ;
+    $params['rowCount'] = $params['rp'];
+    $params['sort']     = CRM_Utils_Array::value( 'sortBy', $params );
+
+    // get batches 
+    $batches = CRM_Core_BAO_Batch::getBatchList( $params );
+
+    // add total
+    $params['total'] = CRM_Core_BAO_Batch::getBatchCount( $params );
+
+    // format params and add links
+    $batchList = array( );
+
+    if ( !empty( $batches ) ) {
+      foreach ( $batches as $id => $value ) {
+        $batchList[$id]['batch_name']    = $value['title'];
+        $batchList[$id]['batch_type']    = $value['batch_type'];
+        $batchList[$id]['item_count']    = $value['item_count'];
+        $batchList[$id]['total_amount']  = $value['total'];
+        $batchList[$id]['status']        = $value['batch_status'];
+        $batchList[$id]['created_by']    = $value['created_by'];
+        $batchList[$id]['links']         = $value['action'];
+      }
+      return $batchList;
+    }
+  }
+
+  /**
+   * This function to get list of batches 
+   *
+   * @param  array   $params associated array for params
+   * @access public
+   */
+  static function getBatchList( &$params ) {
+    $config = CRM_Core_Config::singleton( );
+
+    $whereClause = self::whereClause( $params, false );
+
+    if ( !empty( $params['rowCount'] ) &&
+      $params['rowCount'] > 0 ) {
+        $limit = " LIMIT {$params['offset']}, {$params['rowCount']} ";
+      }
+
+    $orderBy = ' ORDER BY batch.title asc';
+    if ( CRM_Utils_Array::value( 'sort', $params ) ) {
+      $orderBy = ' ORDER BY ' . CRM_Utils_Array::value( 'sort', $params );
+    }
+
+    $query = "
+      SELECT batch.*, c.sort_name created_by 
+      FROM  civicrm_batch batch 
+      INNER JOIN civicrm_contact c ON batch.created_id = c.id
+    WHERE {$whereClause}
+    {$orderBy}
+    {$limit}";
+
+    $object = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Core_DAO_Batch' );
+
+    $links = self::links( );
+
+    $batchTypes  = CRM_Core_PseudoConstant::getBatchType();
+    $batchStatus = CRM_Core_PseudoConstant::getBatchStatus();
+
+    $values = array( );
+    $creatorIds = array();
+    while ( $object->fetch( ) ) {
+      $newLinks = $links;
+      $values[$object->id] = array( );
+      CRM_Core_DAO::storeValues( $object, $values[$object->id]);
+      $action = array_sum(array_keys($newLinks));
+
+      if ( $values[$object->id]['status_id'] == 2 ) {
+        $action -= CRM_Core_Action::DELETE;
+        $action -= CRM_Core_Action::UPDATE;
+      }
+
+      $values[$object->id]['batch_type']   = $batchTypes[$values[$object->id]['type_id']];
+      $values[$object->id]['batch_status'] = $batchStatus[$values[$object->id]['status_id']];
+      $values[$object->id]['created_by']   = $object->created_by;
+
+      $values[$object->id]['action'] = CRM_Core_Action::formLink( 
+        $newLinks,
+        $action,
+        array( 'id' => $object->id ));
+    }
+
+    return $values;
+  }
+
+  static function getBatchCount( &$params ) {
+    $whereClause = self::whereClause( $params, false );
+    $query = " SELECT COUNT(*) FROM civicrm_batch batch WHERE {$whereClause}";
+    return CRM_Core_DAO::singleValueQuery( $query, $params );
+  }
+
+  function whereClause( &$params, $sortBy = true, $excludeHidden = true ) {
+    $values =  array( );
+    $clauses = array( );
+
+    $title   = CRM_Utils_Array::value( 'title', $params );
+    if ( $title ) {
+      $clauses[] = "batch.title LIKE %1";
+      if ( strpos( $title, '%' ) !== false ) {
+        $params[1] = array( $title, 'String', false );
+      } else {
+        $params[1] = array( $title, 'String', true );
+      }
+    }
+
+    $status = CRM_Utils_Array::value( 'status', $params );
+    if ( $status ) {
+      $clauses[] = 'batch.status_id = %3';
+      $params[3] = array( $status, 'Integer' );
+    }
+
+    if ( empty( $clauses ) ) {
+      return '1';
+    }
+    return implode( ' AND ', $clauses );
+  }
+
+  /**
+   * Function to define action links
+   *
+   * @return array $links array of action links
+   * @access public
+   */
+  function links () {
+    $links = array(
+      CRM_Core_Action::COPY  => array(
+        'name'  => ts('Enter records'),
+        'url'   => 'civicrm/batch/entry',
+        'qs'    => 'id=%%id%%&reset=1',
+        'title' => ts('Batch Entry') 
+      ),
+      CRM_Core_Action::UPDATE  => array(
+        'name'  => ts('Edit'),
+        'url'   => 'civicrm/batch',
+        'qs'    => 'action=update&id=%%id%%&reset=1',
+        'title' => ts('Edit Batch') 
+      ),
+      CRM_Core_Action::DELETE  => array(
+        'name'  => ts('Delete'),
+        'url'   => 'civicrm/batch',
+        'qs'    => 'action=delete&id=%%id%%',
+        'title' => ts('Delete Batch') 
+      )
+    );
+
+    return $links;
+  }
 }

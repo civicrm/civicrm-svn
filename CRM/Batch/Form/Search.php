@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
  +--------------------------------------------------------------------+
@@ -22,9 +23,41 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{if $action eq 8 or $action eq 2}
-  {include file="CRM/Batch/Form/Batch.tpl"}
-{else}
-  {include file="CRM/Batch/Form/Search.tpl"}
-{/if}
+ */
+
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2011
+ * $Id$
+ *
+ */
+
+class CRM_Batch_Form_Search extends CRM_Core_Form {
+
+  function setDefaultValues( ) {
+    $defaults = array( );
+    $defaults['batch_status'] = 1;
+    return $defaults;
+  }
+
+  public function buildQuickForm( ) {
+    $this->add( 'text', 'title', ts( 'Find' ),
+      CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Batch', 'title' ) );
+
+    $this->add('select', 'batch_status', ts('Status'), 
+    array('' => ts('- all -')) + CRM_Core_PseudoConstant::getBatchStatus() ); 
+
+    $this->addButtons(
+      array( 
+        array (
+          'type'      => 'refresh', 
+          'name'      => ts('Search'), 
+          'isDefault' => true ), 
+      )); 
+
+    parent::buildQuickForm( );
+    $this->assign( 'suppressForm', true ); 
+  }
+
+}
