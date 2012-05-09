@@ -563,7 +563,7 @@ WHERE   cas.entity_value = $id AND
 
         while ( $actionSchedule->fetch( ) ) {
             $extraSelect = $extraJoin = $extraWhere = '';
-
+            
             if ( $actionSchedule->record_activity ) {
                 $activityTypeID   = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                     'Reminder Sent', 'name' );
@@ -592,8 +592,8 @@ INNER JOIN civicrm_option_value ov ON ev.event_type_id = ov.value AND ov.option_
 
             if ( $mapping->entity == 'civicrm_membership' ) {
                 $tokenEntity = 'membership';
-                $tokenFields = array( 'fee', 'membership_id', 'join_date', 'start_date', 'end_date', 'status', 'type' );
-                $extraSelect = ", mt.minimum_fee as fee, e.id as membership_id , e.join_date, e.start_date, e.end_date, ms.name as status, mt.name as type";
+                $tokenFields = array( 'fee', 'id', 'join_date', 'start_date', 'end_date', 'status', 'type' );
+                $extraSelect = ", mt.minimum_fee as fee, e.id as id , e.join_date, e.start_date, e.end_date, ms.name as status, mt.name as type";
                 $extraJoin   = "                                                                                                                                                 INNER JOIN civicrm_membership_type mt ON e.membership_type_id = mt.id
  INNER JOIN civicrm_membership_status ms ON e.status_id = ms.id";
             }
@@ -611,6 +611,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
 
             while ( $dao->fetch() ) {
                 $entityTokenParams = array();
+           
                 foreach ( $tokenFields as $field ) {
                     $entityTokenParams["{$tokenEntity}." . $field] = $dao->$field;
                 }
@@ -655,8 +656,10 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                     $activity = CRM_Activity_BAO_Activity::create( $activityParams );
                 }
             }
+
             $dao->free();
         }
+
     }
 
     static function buildRecipientContacts( $mappingID, $now ) {
@@ -752,8 +755,14 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
                     $where[]  = "e.status_id IN ({$status})";
                 }
 
+                // build where clause
+                if ( !empty($value) ) {
+                    $where[]  = "e.membership_type_id IN ({$value})";
+                }
+
                 $dateField = str_replace('membership_', 'e.', $actionSchedule->start_action_date);
             }
+
 
             if ( $actionSchedule->group_id ) {
                 $join[]  = "INNER JOIN civicrm_group_contact grp ON {$contactField} = grp.contact_id AND grp.status = 'Added'";
@@ -776,13 +785,19 @@ reminder.action_schedule_id = %1";
             $where[] = "c.is_deleted = 0";
 
             if ( $actionSchedule->start_action_date ) {
+                $startDateClause = array( );
+                $op       =  ( $actionSchedule->start_action_condition == 'before' ? "<=" : ">=" );
                 $operator =  ( $actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD" ) ;
-                $op       =  ( $actionSchedule->start_action_condition == 'before' ? "<=" : ">=" ) ;
                 $date = $operator .
                     "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
                 $startDateClause[] = "'{$now}' >= {$date}";
+                        
+                if ( $mapping->entity == 'civicrm_participant' ) {
+                         $startDateClause[] = $operator. "({$now}, INTERVAL 1 DAY ) {$op} r.start_date";
+                } else {
+                         $startDateClause[] = $operator. "({$now}, INTERVAL 1 DAY ) {$op} " . $dateField;
+                }
 
-                $startDateClause[] = $operator. "({$now}, INTERVAL 1 DAY ) {$op} r.start_date";
                 $startDate= implode( ' AND ', $startDateClause );
             } else if ( $actionSchedule->absolute_date ) {
                 $startDate = "DATEDIFF(DATE('{$now}'),'{$actionSchedule->absolute_date}') = 0";
