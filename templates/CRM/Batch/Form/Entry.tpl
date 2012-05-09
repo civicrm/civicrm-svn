@@ -223,23 +223,38 @@
  */
 function setFieldValue( fname, fieldValue, blockNo ) {
     var elementId = cj('[name="field['+ blockNo +']['+ fname +']"]');
+    
+    if ( elementId.length == 0 ) {
+      elementId =  cj('input[type=checkbox][name^="field['+ blockNo +']['+ fname +']"][type!=hidden]');
+    }
+   
+    // if element not found than return
+    if ( elementId.length == 0 ) {
+      return;
+    }
 
     //check if it is date element
-    var isDateElement     = elementId.attr('format');
+    var isDateElement = elementId.attr('format');
     
     // check if it is wysiwyg element
     var editor = elementId.attr('editor');
 
     //get the element type
-    var elementType       = elementId.attr('type'); 
+    var elementType = elementId.attr('type'); 
     
     // set the value for all the elements, elements needs to be handled are
     // select, checkbox, radio, date fields, text, textarea, multi-select
     // wysiwyg editor, advanced multi-select ( to do )
-    if ( elementType == 'radio' ) {
-        elementId.filter("[value=" + fieldValue + "]").prop("checked",true);
+    if ( elementType == 'radio' && fieldValue ) {
+      elementId.filter("[value=" + fieldValue + "]").prop("checked",true);
     } else if ( elementType == 'checkbox' ) {
-        // handle checkbox
+      // handle checkbox
+      elementId.removeProp('checked');
+      if ( fieldValue ) {
+        cj.each( fieldValue, function( key, value ) {
+          cj('input[name="field['+ blockNo +']['+ fname +']['+ value +']"]').prop('checked', true); 
+        });
+      }
     } else if ( editor ) {
       switch ( editor ) {
         case 'ckeditor':
