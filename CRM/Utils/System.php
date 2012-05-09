@@ -1120,13 +1120,34 @@ class CRM_Utils_System {
     }
 
     /**
-     * Reset the memory cache, typically memcached
+     * Reset the various system caches and some important
+     * static variables
      */
     static function flushCache( $daoName = null ) {
         // flush out all cache entries so we can reload new data
         // a bit aggressive, but livable for now
         $cache = CRM_Utils_Cache::singleton( );
         $cache->flush( );
+
+        // also reset the various static memory caches
+
+        // reset the memory or array cache
+        CRM_Core_BAO_Cache::deleteGroup( 'contact fields', null, false );
+
+        // reset ACL cache
+        CRM_ACL_BAO_Cache::resetCache( );
+
+        // reset various static arrays used here
+        CRM_Contact_BAO_Contact::$_importableFields
+          = CRM_Contact_BAO_Contact::$_exportableFields
+          = CRM_Contribute_BAO_Contribution::$_importableFields
+          = CRM_Contribute_BAO_Contribution::$_exportableFields
+          = CRM_Pledge_BAO_Pledge::$_exportableFields
+          = CRM_Contribute_BAO_Query::$_contributionFields
+          = CRM_Core_BAO_CustomField::$_importFields
+          = CRM_Core_DAO::$_dbColumnValueCache
+          = null;
+
     }
 
     /**

@@ -296,6 +296,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     // enable backtrace to get meaningful errors
     $config->backtrace = 1;
 
+    // reset all the caches
+    CRM_Utils_System::flushCache( );
+
     // clear permissions stub to not check permissions
     require_once 'CRM/Core/Permission/UnitTests.php';
     CRM_Core_Permission_UnitTests::$permissions = NULL;

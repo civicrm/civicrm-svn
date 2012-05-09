@@ -101,7 +101,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         $dao->created_date = date( 'Ymdhis' );
 
         $dao->save( );
-        
+
         $dao->free( );
     }
 
@@ -118,7 +118,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
      */
     static function deleteGroup( $group = null, $path = null, $clearAll = true ) {
         $dao = new CRM_Core_DAO_Cache( );
-        
+
         if ( ! empty( $group ) ) {
             $dao->group_name = $group;
         }
@@ -126,7 +126,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         if ( ! empty( $path ) ) {
             $dao->path = $path;
         }
- 
+
         $dao->delete( );
 
         if ( $clearAll ) {
@@ -250,8 +250,8 @@ AND         created_date < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays day
             $query = "
 SELECT TABLE_NAME as tableName
 FROM   INFORMATION_SCHEMA.TABLES
-WHERE  TABLE_SCHEMA = %1 
-AND    ( TABLE_NAME LIKE 'civicrm_task_action_temp_%' 
+WHERE  TABLE_SCHEMA = %1
+AND    ( TABLE_NAME LIKE 'civicrm_task_action_temp_%'
  OR      TABLE_NAME LIKE 'civicrm_export_temp_%'
  OR      TABLE_NAME LIKE 'civicrm_import_job_%' )
 AND    CREATE_TIME < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays day )
@@ -271,5 +271,5 @@ AND    CREATE_TIME < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays day )
 
         }
     }
-                                         
+
 }

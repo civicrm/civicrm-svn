@@ -48,6 +48,8 @@ class CRM_Core_DAO extends DB_DataObject
   static $_nullObject = null;
   static $_nullArray  = array( );
 
+  static $_dbColumnValueCache = null;
+
   const
     NOT_NULL        =   1,
     IS_NULL         =   2,
@@ -728,30 +730,34 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static function getFieldValue( $daoName, $searchValue, $returnColumn = 'name', $searchColumn = 'id' )
-  {
+  static function getFieldValue( $daoName, $searchValue, $returnColumn = 'name', $searchColumn = 'id' ) {
     if ( empty( $searchValue ) ) {
       // adding this year since developers forget to check for an id
       // and hence we get the first value in the db
       CRM_Core_Error::fatal( );
-      return null;
     }
 
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    eval( '$object   = new ' . $daoName . '( );' );
-    $object->$searchColumn =  $searchValue;
-    $object->selectAdd( );
-    if ( $returnColumn == 'id' ) {
-      $object->selectAdd( 'id' );
-    } else {
-      $object->selectAdd( "id, $returnColumn" );
+    $cacheKey = "{$daoName}:{$searchValue}:{$returnColumn}:{$searchColumn}";
+    if ( self::$_dbColumnValueCache === null ) {
+      self::$_dbColumnValueCache = array( );
     }
-    $result = null;
-    if ( $object->find( true ) ) {
-      $result = $object->$returnColumn;
+
+    if ( ! array_key_exists( $cacheKey, self::$_dbColumnValueCache ) ) {
+      require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+      eval( '$object   = new ' . $daoName . '( );' );
+      $object->$searchColumn =  $searchValue;
+      $object->selectAdd( );
+      $object->selectAdd( $returnColumn );
+
+      $result = null;
+      if ( $object->find( true ) ) {
+        $result = $object->$returnColumn;
+      }
+      $object->free( );
+
+      self::$_dbColumnValueCache[$cacheKey] = $result;
     }
-    $object->free( );
-    return $result;
+    return self::$_dbColumnValueCache[$cacheKey];
   }
 
   /**
@@ -1220,20 +1226,20 @@ SELECT contact_id
   //createOnly: only create in database, do not store or return the objects (useful for perf testing)
   //ONLY USE FOR TESTING
   static function createTestObject($daoName, $params = array(), $numObjects = 1, $createOnly = false) {
-    
+
     static $counter = 0;
-    
+
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    
+
     for($i = 0; $i < $numObjects; ++ $i) {
-      
+
       ++ $counter;
       eval('$object   = new ' . $daoName . '( );');
-      
+
       $fields = & $object->fields();
       foreach ($fields as $name => $value) {
         $dbName = $value['name'];
-        
+
         $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
         $required = CRM_Utils_Array::value('required', $value);
         if (CRM_Utils_Array::value($dbName, $params) && ! is_array($params[$dbName])) {
@@ -1245,12 +1251,12 @@ SELECT contact_id
             if (! $required && $dbName != 'contact_id') {// if it's contact id we should create even if not required
               continue;
             }
-            
+
             //if it is required we need to generate the dependency object first
             $depObject = CRM_Core_DAO::createTestObject($FKClassName, CRM_Utils_Array::value($dbName, $params, 1));
             $object->$dbName = $depObject->id;
             unset($depObject);
-            
+
             continue;
           }
           $constant = CRM_Utils_Array::value('pseudoconstant', $value);
@@ -1266,7 +1272,7 @@ SELECT contact_id
             continue;
           }
           switch ($value['type']) {
-            
+
             case CRM_Utils_Type::T_INT:
             case CRM_Utils_Type::T_FLOAT:
             case CRM_Utils_Type::T_MONEY:
@@ -1287,22 +1293,22 @@ SELECT contact_id
             case CRM_Utils_Type::T_TIMESTAMP:
               $object->$dbName = '19700101';
               break;
-            
+
             case CRM_Utils_Type::T_TIME:
               CRM_Core_Error::fatal('T_TIME shouldnt be used.');
             //$object->$dbName='000000';
             //break;
-            
+
 
             case CRM_Utils_Type::T_CCNUM:
               $object->$dbName = '4111 1111 1111 1111';
               break;
-            
+
 
             case CRM_Utils_Type::T_URL:
               $object->$dbName = 'http://www.civicrm.org';
               break;
-            
+
 
             case CRM_Utils_Type::T_STRING:
             case CRM_Utils_Type::T_BLOB:
@@ -1335,13 +1341,13 @@ SELECT contact_id
         }
       }
       $object->save();
-      
+
       if (! $createOnly)
         $objects[$i] = $object;
       else
         unset($object);
     }
-    
+
     if ($createOnly)
       return;
     else if ($numObjects == 1)
@@ -1349,7 +1355,7 @@ SELECT contact_id
     else
       return $objects;
   }
-  
+
   //deletes the this object plus any dependent objects that are associated with it
   //ONLY USE FOR TESTING
 
@@ -1561,4 +1567,6 @@ SELECT contact_id
             }
         }
     }
+
+
 }
