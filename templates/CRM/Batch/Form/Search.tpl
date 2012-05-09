@@ -27,6 +27,10 @@
   {ts}Current batches{/ts}
 </div>
 
+<div class="crm-submit-buttons">
+    <a accesskey="N" href="{crmURL p='civicrm/batch/add' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Batch{/ts}</span></a><br/>
+</div>
+
 <div class="crm-block crm-form-block crm-batch-search-form-block">
 <h3>{ts}Find Batches{/ts}</h3>
 <table class="form-layout">
