@@ -134,12 +134,21 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       }
     }
 
+    $this->addFormRule( array( 'CRM_Batch_Form_Entry', 'formRule' ), $this );
+
     //should we restrict number of fields for batch entry
     //$this->_fields  = array_slice($this->_fields, 0, $this->_maxFields);
 
+    // add the force save button
+    $forceSave = $this->getButtonName( 'upload', 'force' );
+    
+    $this->addElement('submit',
+      $forceSave,
+      ts( 'Ignore & Process the Batch' ) );
+
     $this->addButtons( array(
       array ( 
-        'type'      => 'submit',
+        'type'      => 'upload',
         'name'      => ts('Validate & Process the Batch'),
         'isDefault' => true   ),
       array ( 
@@ -181,6 +190,38 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     if ( $suppressFields && $buttonName != '_qf_Entry_next' ) {
       CRM_Core_Session::setStatus( "FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update and have been excluded." );
     }
+  }
+
+  /**
+   * form validations
+   *
+   * @param array $params     posted values of the form
+   * @param array $files     list of errors to be posted back to the form
+   *
+   * @return array list of errors to be posted back to the form
+   * @static
+   * @access public
+   */
+  static function formRule( $params, $files, $self ) {
+    $errors = array();
+    
+    if ( CRM_Utils_Array::value( '_qf_Entry_upload_force', $params ) ) {
+      return true;
+    } 
+     
+    $batchTotal = 0;
+    foreach ( $params['field'] as $key => $value ) {
+      $batchTotal += $value['total_amount'];
+    }
+    
+    if ( $batchTotal != $self->_batchInfo['total'] ) {
+      $self->assign('batchAmountMismatch', true );
+      $errors['_qf_defaults'] = ts('Batch total and entered amount mismatch.');
+      return $errors;
+    }
+    
+    $self->assign('batchAmountMismatch', false );
+    return true;
   }
 
   /**

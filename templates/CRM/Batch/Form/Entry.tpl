@@ -27,6 +27,16 @@
 <div id="help">
     {ts}Batch entry form{/ts}
 </div>
+{if $batchAmountMismatch}
+  <div class="status message">
+    {ts}Batch total amount and entered amount mismatch.{/ts}&nbsp;&nbsp;
+    <span class="crm-button crm-button_qf_Entry_upload_force-save">
+      {$form._qf_Entry_upload_force.html}
+    </span>
+    <br/>
+  </div>
+  <div class="clear"></div>
+{/if}
 <div class="form-item batch-totals">
     <div class="label">{ts}Expected total amount{/ts}: <span class="batch-expected-total">{$batchTotal|crmMoney}</span></div>
     <div class="label">{ts}Actual total amount{/ts}: {$config->defaultCurrencySymbol} <span class="batch-actual-total"></span></div>
@@ -55,7 +65,7 @@
         {foreach from=$fields item=field key=fieldName}
         {assign var=n value=$field.name}
         {if ( $fields.$n.data_type eq 'Date') or ( in_array( $n, array( 'thankyou_date', 'cancel_date', 'receipt_date', 'receive_date', 'join_date', 'membership_start_date', 'membership_end_date' ) ) ) }
-            <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$rowNumber batchUpdate=1}</td>
+            <td class="compressed"><span class="crm-batch-{$n}-{$rowNumber}">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$rowNumber batchUpdate=1}</span></td>
         {elseif $n eq 'soft_credit'}
             <td class="compressed">{include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="soft_credit_"}
             </td>
@@ -90,6 +100,21 @@
         cj('input[id*="_total_amount"]').keyup(function(){
             calculateActualTotal();    
         });
+
+        // hide the receipt date if send receipt is checked
+        cj( 'input[id*="][send_receipt]"]').change( function() {
+          var rowID = cj(this).closest('tr').attr('entity_id');
+          var element = 'field_' + rowID + '_receipt_date';
+          if ( cj(this).prop('checked') ) {
+            cj('.crm-batch-receipt_date-'+ rowID ).hide();
+          } else {
+            cj('.crm-batch-receipt_date-'+ rowID ).show();
+          }
+        });
+
+        //set the focus on first element
+        cj('#primary_contact_1').focus();
+
    });
 
    function validateRow( ) {
