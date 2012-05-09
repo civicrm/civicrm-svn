@@ -449,13 +449,15 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         FROM  civicrm_contribution {$this->_aliases['civicrm_contribution']} 
               INNER JOIN civicrm_contact  {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
                       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0 
-             INNER JOIN civicrm_membership {$this->_aliases['civicrm_membership']} 
-                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_membership']}.contact_id  AND {$this->_aliases['civicrm_membership']}.is_test = 0
+              INNER JOIN civicrm_membership_payment {$this->_aliases['civicrm_membership_payment']}
+ ON {$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_membership_payment']}.contribution_id
+
+              INNER JOIN civicrm_membership {$this->_aliases['civicrm_membership']}
+ ON {$this->_aliases['civicrm_membership_payment']}.membership_id = {$this->_aliases['civicrm_membership']}.id AND {$this->_aliases['civicrm_membership']}.is_test = 0 
               LEFT  JOIN civicrm_membership_status {$this->_aliases['civicrm_membership_status']}
                           ON {$this->_aliases['civicrm_membership_status']}.id = 
                              {$this->_aliases['civicrm_membership']}.status_id 
-             INNER JOIN civicrm_membership_payment {$this->_aliases['civicrm_membership_payment']}
-                      ON {$this->_aliases['civicrm_membership']}.id = {$this->_aliases['civicrm_membership_payment']}.membership_id AND {$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_membership_payment']}.contribution_id";
+";
 
       //for premium products
       $this->_from .= "
