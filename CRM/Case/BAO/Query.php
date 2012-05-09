@@ -245,14 +245,31 @@ class CRM_Case_BAO_Query
       list( $name, $op, $value, $grouping, $wildcard ) = $values;
       switch( $name ) {
 
+        case 'case_status':
         case 'case_status_id':
           $statuses  = CRM_Case_PseudoConstant::caseStatus( );
+          $names = array( );
+          if ( is_array( $value ) ) {
+            foreach ($value as $k => $v) {
+              if ($v) {
+                $val[$k] = $k;
+                $names[] = $caseStatus[$k];
+              }
+            }
+          } else if ( is_numeric($value) ) {
+            $val = $value;
+            $names[]     = $value;
+          } else if ( $caseStatusId = CRM_Utils_Array::key($value, $statuses ) ){
+            $val = $caseStatusId;
+            $names[]          = $caseStatusId[$caseStatusId];
+          }
 
-          $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_case.status_id", $op, $value, 'Int' );
-
-          $value = $statuses[$value];
-          $query->_qill[$grouping ][] = ts( 'Case Status %2 %1', array( 1 => $value, 2 => $op) );
-          $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
+          if ( $val ) {
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_case.status_id", $op,$val , 'Int' );
+            $value = $statuses[$val];
+            $query->_qill[$grouping ][] = ts( 'Case Status %2 %1', array( 1 => $value, 2 => $op) );
+            $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
+          }
           return;
 
         case 'case_type_id':
@@ -485,7 +502,7 @@ class CRM_Case_BAO_Query
           $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact'] = 1;
           $query->_tables['civicrm_case_tag'] = $query->_whereTables['civicrm_case_tag'] = 1;
           return;
-     }
+      }
     }
 
     static function from( $name, $mode, $side )
