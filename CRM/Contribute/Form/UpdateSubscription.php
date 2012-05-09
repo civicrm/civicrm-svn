@@ -110,7 +110,9 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
         
         $this->assign( 'paymentProcessor', $this->_paymentProcessor );
         
-        $this->_contactID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+        if ( $this->_subscriptionDetails->contact_id ) {
+            list( $this->_donorDisplayName, $this->_donorEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_subscriptionDetails->contact_id );
+        }
     }
     
     /**
@@ -143,8 +145,10 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
                          'currency', null, true );
         
         $this->add('text', 'installments' , ts('Number of Installments') , array('size' => 20), true);
-        
-        $this->addElement('checkbox', 'is_notify', ts( 'Notify Contributor?' ) , null);
+
+        if ( $this->_donorEmail ) {
+            $this->add('checkbox', 'is_notify', ts('Notify Contributor?'));
+        }
         
         $type = 'submit';
         if ( $this->_crid ) {
