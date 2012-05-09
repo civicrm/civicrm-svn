@@ -99,7 +99,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
      * @access public
      *
      */
-    static function &recurLinks( $cancelSubscriptionSupported = false )
+    static function &recurLinks( $recurID = false )
     {
         if (!(self::$_links)) {
             self::$_links = array(
@@ -124,10 +124,21 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                                  );
         }
 
-        if ( $cancelSubscriptionSupported ) {
-            unset(self::$_links[CRM_Core_Action::DISABLE]['extra'], self::$_links[CRM_Core_Action::DISABLE]['ref']);
-            self::$_links[CRM_Core_Action::DISABLE]['url'] = "civicrm/contribute/unsubscribe";
-            self::$_links[CRM_Core_Action::DISABLE]['qs'] = "reset=1&crid=%%crid%%";
+        if ( $recurID ) {
+            $paymentProcessorObj =
+                CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $recurID, 'recur', 'obj' );
+            if ( $paymentProcessorObj->isSupported( 'cancelSubscription' ) ) {
+                unset(self::$_links[CRM_Core_Action::DISABLE]['extra'], self::$_links[CRM_Core_Action::DISABLE]['ref']);
+                self::$_links[CRM_Core_Action::DISABLE]['url'] = "civicrm/contribute/unsubscribe";
+                self::$_links[CRM_Core_Action::DISABLE]['qs'] = "reset=1&crid=%%crid%%";
+            }
+            if ( $paymentProcessorObj->isSupported( 'updateSubscriptionBillingInfo' ) ) {
+                self::$_links[CRM_Core_Action::RENEW] = array( 'name'  => ts('Change Billing Details'),
+                                                               'title' => ts('Change Billing Details'),
+                                                               'url'   => 'civicrm/contribute/updatebilling',
+                                                               'qs'    => 'reset=1&crid=%%crid%%'
+                                                               );
+            }
         }
 
         return self::$_links;
@@ -166,16 +177,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
 
         if ( ! empty( $params ) ) {
             foreach( $params as $ids => $recur ) {
-                $action = array_sum(array_keys($this->recurLinks( )));
-                // TODO: Currently cancel action only only changes status in DB. Should invoke cancelSubscription method for given payment processor
-                $cancelSubscriptionSupported = false;
-                if ( !empty($recur['payment_processor_id'] ) ) {
-                    $paymentProcessorObj = 
-                        CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $ids, 'recur', 'obj' );
-                    if ( $paymentProcessorObj->isSupported( 'cancelSubscription' ) )
-                        $cancelSubscriptionSupported = true;
-                }
-
+                $action = array_sum(array_keys($this->recurLinks( $ids )));
                 // no action allowed if it's not active
                 $params[$ids]['is_active'] = ($recur['contribution_status_id'] != 3);
                 
@@ -187,7 +189,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                         $action -= CRM_Core_Action::UPDATE;
                     }
                     
-                    $params[$ids]['action'] = CRM_Core_Action::formLink( self::recurLinks( $cancelSubscriptionSupported ), $action,
+                    $params[$ids]['action'] = CRM_Core_Action::formLink( self::recurLinks( $ids ), $action,
                                                                          array( 'cid' => $this->_contactId,
                                                                                 'crid'  => $ids,
                                                                                 'cxt' => 'contribution')
@@ -198,8 +200,6 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             $this->assign('action', $this->_action);
             $this->assign('recurRows', $params);
             $this->assign('recur', true);
-
-
         }
 
         //add honor block

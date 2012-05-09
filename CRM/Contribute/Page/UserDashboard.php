@@ -95,14 +95,7 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
             $values['recur_status']          = $recurStatus[$values['contribution_status_id']];
             $recurRow[$values['id']]         = $values;
             
-            $action = array_sum( array_keys( CRM_Contribute_Page_Tab::recurLinks( ) ) );
-            
-            $paymentProcessorObj =
-                CRM_Core_BAO_PaymentProcessor::getProcessorForEntity( $recur->id, 'recur', 'obj' );
-            $cancelSubscriptionSupported = false;
-            if ( $paymentProcessorObj->isSupported( 'cancelSubscription' ) ) {
-                $cancelSubscriptionSupported = true;
-            }
+            $action = array_sum( array_keys( CRM_Contribute_Page_Tab::recurLinks( $recur->id ) ) );
             
             $details = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails( $recur->id, 'recur' );
             $hideUpdate = $details->membership_id & $details->auto_renew;
@@ -111,7 +104,7 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
                 $action -= CRM_Core_Action::UPDATE;
             }
             
-            $recurRow[$values['id']]['action'] = CRM_Core_Action::formLink( CRM_Contribute_Page_Tab::recurLinks( $cancelSubscriptionSupported ), 
+            $recurRow[$values['id']]['action'] = CRM_Core_Action::formLink( CRM_Contribute_Page_Tab::recurLinks( $recur->id ), 
                                                                             $action,
                                                                             array( 'cid'  => $this->_contactId,
                                                                                    'crid' => $values['id'],

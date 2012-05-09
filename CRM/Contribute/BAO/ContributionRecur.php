@@ -246,20 +246,22 @@ SELECT r.payment_processor_id
             $recur->cancel_date            = date( 'YmdHis' );
             $recur->save( );
 
-            // create activity record
-            $sql = " 
-    SELECT con.contact_id, rec.amount, rec.frequency_interval, rec.frequency_unit
-      FROM civicrm_contribution_recur rec
-INNER JOIN civicrm_contribution       con ON ( con.contribution_recur_id = rec.id )
-     WHERE rec.id = %1
-  GROUP BY rec.id";
-            $dao = CRM_Core_DAO::executeQuery( $sql, array(1 => array($recurId, 'Integer')) );
-            if ( $dao->fetch( ) ) { 
+            $dao = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails( $recurId );
+            if ( $dao->recur_id ) { 
                 $details  = CRM_Utils_Array::value( 'details', $activityParams );
-                $details .= '
+                if ( $dao->auto_renew && $dao->membership_id ) {
+                    // its auto-renewal membership mode
+                    $membershipTypes  = CRM_Member_PseudoConstant::membershipType( );
+                    $membershipType   = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_Membership', $dao->membership_id, 'membership_type_id' );
+                    $membershipType   = CRM_Utils_Array::value( $membershipType, $membershipTypes );
+                    $details .= '
+<br/>' . ts( 'Automatic renewal of %1 membership cancelled.', array( 1 => $membershipType ) );
+                } else {
+                    $details .= '
 <br/>' . ts( 'The recurring contribution of %1, every %2 %3 has been cancelled.', array( 1 => $dao->amount, 
-                                                                                    2 => $dao->frequency_interval, 
-                                                                                    3 => $dao->frequency_unit ) );
+                                                                                         2 => $dao->frequency_interval, 
+                                                                                         3 => $dao->frequency_unit ) );
+                }
                 $activityParams = 
                     array( 'source_contact_id' => $dao->contact_id,
                            'source_record_id'  => CRM_Utils_Array::value( 'source_record_id',  $activityParams ),
