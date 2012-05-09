@@ -3293,6 +3293,10 @@ div#crm-toolTip
   display: none;
 }
 
+#crm-container table.batch-totals {
+  border: 1px solid #7A7A60 !important;
+  margin-top: 10px !important;
+}
 /* Responsive layout changes */
 
 #crm-container .contact_basic_information-section.narrowform table.form-layout-compressed,

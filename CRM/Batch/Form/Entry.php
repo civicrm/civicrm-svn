@@ -144,7 +144,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     
     $this->addElement('submit',
       $forceSave,
-      ts( 'Ignore & Process the Batch' ) );
+      ts( 'Ignore Mismatch & Process the Batch?' ) );
 
     $this->addButtons( array(
       array ( 
@@ -216,7 +216,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     
     if ( $batchTotal != $self->_batchInfo['total'] ) {
       $self->assign('batchAmountMismatch', true );
-      $errors['_qf_defaults'] = ts('Batch total and entered amount mismatch.');
+      $errors['_qf_defaults'] = ts('Total for amounts entered below does not match the expected batch total.');
       return $errors;
     }
     

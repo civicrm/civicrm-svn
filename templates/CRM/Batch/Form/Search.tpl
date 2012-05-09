@@ -23,36 +23,28 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="help">
-  {ts}Current batches{/ts}
+<div class="crm-block crm-form-block crm-batch-search-form-block">
+  <h3>{ts}Find Batches{/ts}</h3>
+  <table class="form-layout-compressed">
+    <tr>
+      <td>
+        {$form.title.html}<br />
+        <span class="description font-italic">
+          {ts}Complete OR partial batch name.{/ts}
+        </span>
+      </td>
+      <td>
+        &nbsp;&nbsp;&nbsp;{$form.batch_status.label}&nbsp;{$form.batch_status.html}
+      </td>
+    </tr>
+    <tr>
+      <td>{$form.buttons.html}</td><td></td>
+    </tr>
+  </table>
 </div>
-
 <div class="crm-submit-buttons">
     <a accesskey="N" href="{crmURL p='civicrm/batch/add' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Batch{/ts}</span></a><br/>
 </div>
-
-<div class="crm-block crm-form-block crm-batch-search-form-block">
-<h3>{ts}Find Batches{/ts}</h3>
-<table class="form-layout">
-  <tr>
-    <td>
-      {$form.title.label}<br />
-      {$form.title.html}<br />
-      <span class="description font-italic">
-      {ts}Complete OR partial batch name.{/ts}
-      </span>
-    </td>
-    <td>
-      {$form.batch_status.label}<br />
-      {$form.batch_status.html}
-    </td>
-  </tr>
-  <tr>
-    <td>{$form.buttons.html}</td><td></td>
-  </tr>
-</table>
-</div>
-<br/>
 <table id="crm-batch-selector">
   <thead>
     <tr>
@@ -80,7 +72,7 @@ function buildBatchSelector( filterSearch ) {
         crmBatchSelector.fnDestroy();
         var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
     } else {
-        var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Batch have been created for this site.{/ts}</div>'{literal};
+        var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Batches have been created for this site.{/ts}</div>'{literal};
     }
     
     var columns = '';
@@ -93,8 +85,8 @@ function buildBatchSelector( filterSearch ) {
         "aoColumns"  : [
                         {sClass:'crm-batch-name'},
                         {sClass:'crm-batch-type'},
-                        {sClass:'crm-batch-item_count'},
-                        {sClass:'crm-batch-total_amount'},
+                        {sClass:'crm-batch-item_count right'},
+                        {sClass:'crm-batch-total_amount right'},
                         {sClass:'crm-batch-status'},
                         {sClass:'crm-batch-created_by'},
                         {sClass:'crm-batch-links', bSortable:false}
