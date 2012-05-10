@@ -99,7 +99,13 @@ class CRM_UF_Form_Field extends CRM_Core_Form
     /**
      * Batch entry fields
      */
-    protected $_batchEntryFields;
+    protected $_contriBatchEntryFields;
+
+    /**
+     * Batch entry fields
+     */
+    protected $_memberBatchEntryFields;
+
 
     /**
      * Function to set variables up before form is built
@@ -132,7 +138,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->_fields = CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
         $this->_fields = array_merge( CRM_Activity_BAO_Activity::exportableFields( 'Activity' ), $this->_fields );
 
-        $this->_batchEntryFields = array(
+        $this->_contriBatchEntryFields = array(
           'send_receipt' => array(
             'name'  => 'send_receipt',
             'title' => ts('Send Receipt')
@@ -151,6 +157,21 @@ class CRM_UF_Form_Field extends CRM_Core_Form
           )
         );
 
+        $this->_memberBatchEntryFields = array(
+          'send_receipt' => array(
+            'name'  => 'send_receipt',
+            'title' => ts('Send Receipt')
+          ),
+          'soft_credit'  => array(
+            'name'  => 'soft_credit',
+            'title' => ts('Soft Credit')
+          ),
+          'product_name' => array(
+            'name'  => 'product_name',
+            'title' => ts('Premiums')
+          )
+        );
+
         //unset campaign related fields.
         if ( isset( $this->_fields['activity_campaign_id'] ) ) {
             $this->_fields['activity_campaign_id']['title'] = ts( 'Campaign' );
@@ -160,8 +181,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         }
 
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
-            $this->_fields = array_merge ( CRM_Contribute_BAO_Contribution::getContributionFields( false ), $this->_fields );
-            $this->_fields = array_merge ( $this->_batchEntryFields, $this->_fields );
+          $this->_fields = array_merge ( CRM_Contribute_BAO_Contribution::getContributionFields( false ), $this->_fields );
+          $this->_fields = array_merge ( $this->_contriBatchEntryFields, $this->_fields );
         }
 
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
@@ -361,7 +382,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 unset( $contribFields['is_test'] );
                 unset( $contribFields['is_pay_later'] );
                 unset( $contribFields['contribution_id'] );
-                $fields['Contribution'] =& array_merge( $contribFields, $this->_batchEntryFields );
+                if ( $this->_gid && CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' ) == 'contribution_batch_entry'  ) {
+                  $fields['Contribution'] =& array_merge( $contribFields, $this->_contriBatchEntryFields );
+                } else {
+                  $fields['Contribution'] =& $contribFields;
+                }
             }
         }
 
@@ -398,7 +423,12 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             unset( $membershipFields['is_override'] );
             unset( $membershipFields['status_id'] );
             unset( $membershipFields['member_is_pay_later'] );
-            $fields['Membership'] =& array_merge( $membershipFields, $this->_batchEntryFields );
+            
+            if ( $this->_gid && CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' ) == 'membership_batch_entry'  ) {
+              $fields['Membership'] =& array_merge( $membershipFields, $this->_memberBatchEntryFields );
+            } else {
+              $fields['Membership'] =& $membershipFields; 
+            }
         }
 
         $activityFields = CRM_Activity_BAO_Activity::getProfileFields( );
