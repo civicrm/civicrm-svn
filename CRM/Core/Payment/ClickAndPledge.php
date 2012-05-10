@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  * Copyright (C) 2008
@@ -17,7 +17,7 @@
 class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
     const
         CHARSET  = 'iso-8859-1';
-    
+
     protected $_mode = null;
 
     /**
@@ -28,14 +28,14 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
      * @static
      */
     static private $_singleton = null;
-    
-    /** 
-     * Constructor 
-     * 
+
+    /**
+     * Constructor
+     *
      * @param string $mode the mode of operation: live or test
      *
-     * @return void 
-     */ 
+     * @return void
+     */
     function __construct( $mode, &$paymentProcessor ) {
         $this->_mode             = $mode;
         $this->_paymentProcessor = $paymentProcessor;
@@ -50,15 +50,15 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
         }
     }
 
-    /** 
-     * singleton function used to manage this object 
-     * 
+    /**
+     * singleton function used to manage this object
+     *
      * @param string $mode the mode of operation: live or test
      *
-     * @return object 
-     * @static 
-     * 
-     */ 
+     * @return object
+     * @static
+     *
+     */
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
         if (self::$_singleton[$processorName] === null ) {
@@ -66,7 +66,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
         }
         return self::$_singleton[$processorName];
     }
-    
+
     /**
      * This function collects all the information from a web/api form and invokes
      * the relevant payment processor specific functions to perform the transaction
@@ -104,8 +104,8 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
 
         $result = $this->invokeAPI( $args );
 
-        if ( is_a( $result, 'CRM_Core_Error' ) ) {  
-            return $result;  
+        if ( is_a( $result, 'CRM_Core_Error' ) ) {
+            return $result;
         }
 
         /* Success */
@@ -114,12 +114,12 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
         return $params;
     }
 
-    /** 
-     * This function checks to see if we have the right config values 
-     * 
-     * @return string the error message if any 
-     * @public 
-     */ 
+    /**
+     * This function checks to see if we have the right config values
+     *
+     * @return string the error message if any
+     * @public
+     */
     function checkConfig( ) {
         $error = array( );
         if ( $this->_paymentProcessor['payment_processor_type'] == 'ClickAndPledge') {
@@ -127,7 +127,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
                 $error[] = ts( 'User ID is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.' );
             }
         }
-    
+
         if ( ! empty( $error ) ) {
             return implode( '<p>', $error );
         } else {
@@ -141,9 +141,9 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
         if ( $component != 'contribute' && $component != 'event' ) {
             CRM_Core_Error::fatal( ts( 'Component is invalid' ) );
         }
-        
-        $notifyURL = 
-            $config->userFrameworkResourceURL . 
+
+        $notifyURL =
+            $config->userFrameworkResourceURL .
             "extern/ipn.php?reset=1&contactID={$params['contactID']}" .
             "&contributionID={$params['contributionID']}" .
             "&module={$component}";
@@ -180,7 +180,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
             $fixUrl = CRM_Utils_System::url("civicrm/admin/setting/url", '&reset=1');
             CRM_Core_Error::fatal( ts( 'Sending a relative URL to Click And Pledge is erroneous. Please make your resource URL (in <a href="%1">Administer CiviCRM &raquo; System Settings &raquo; Resource URLs</a> ) complete.', array( 1 => $fixUrl ) ) );
         }
-        
+
         $ClickAndPledgeParams = array( 'WID' => $this->_paymentProcessor['user_name'],
                                        'R'   => $returnURL,
                                        'D'   => $deductAmount,
@@ -190,7 +190,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
                                        'C'   => '1',
                                        'I'   => $params['invoiceID']
                                        );
-        
+
         // add name and address if available, CRM-3130
         $otherVars = array( 'first_name'     => 'first_name',
                             'last_name'      => 'last_name',
@@ -198,7 +198,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
                             'city'           => 'city',
                             'state_province' => 'state',
                             'postal_code'    => 'zip',
-                            'email'          => 'email' 
+                            'email'          => 'email'
                             );
 
         foreach ( array_keys( $params ) as $p ) {
@@ -225,7 +225,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
             } else {
                 CRM_Core_Error::fatal( ts( 'Recurring contribution, but no database id' ) );
             }
-            
+
             $ClickAndPledgeParams = array( 'WID' => $this->_paymentProcessor['user_name'],
                                            'R'   => $returnURL,
                                            'B'   => $this->_paymentProcessor['signature'],
@@ -242,7 +242,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
 
         // Allow further manipulation of the arguments via custom hooks ..
         CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $ClickAndPledgeParams );
-        
+
         $uri = '';
         foreach ( $ClickAndPledgeParams as $key => $value ) {
             if ( $value === null ) {
@@ -262,7 +262,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
         $url = $this->_paymentProcessor['url_site'];
         $sub = empty( $params['is_recur'] ) ? 'xclick' : 'subscriptions';
          $clickandpledgeURL = "{$url}?$uri";
-		
+
         CRM_Utils_System::redirect( $clickandpledgeURL );
     }
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Copyright (C) 2007
  * Licensed to CiviCRM under the Academic Free License version 3.0.
@@ -7,55 +7,55 @@
  *
  */
 
-/** 
- * 
- * @package CRM 
+/**
+ *
+ * @package CRM
  * @author Michael Morris and Gene Chi @ Phase2 Technology <mmorris@phase2technology.com>
- * $Id$ 
- * 
+ * $Id$
+ *
  */
 
 
-class CRM_Core_Payment_PayJunction extends CRM_Core_Payment 
-{ 
+class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
+{
    const
       CHARSET  = 'UFT-8'; # (not used, implicit in the API, might need to convert?)
-         
-   /** 
-    * We only need one instance of this object. So we use the singleton 
-    * pattern and cache the instance in this variable 
-    * 
-    * @var object 
-    * @static 
-    */ 
-   static private $_singleton = null; 
 
-   /** 
-    * Constructor 
+   /**
+    * We only need one instance of this object. So we use the singleton
+    * pattern and cache the instance in this variable
+    *
+    * @var object
+    * @static
+    */
+   static private $_singleton = null;
+
+   /**
+    * Constructor
     *
     * @param string $mode the mode of operation: live or test
-    * 
-    * @return void 
-    */ 
-   function __construct( $mode , &$paymentProcessor ) 
+    *
+    * @return void
+    */
+   function __construct( $mode , &$paymentProcessor )
    {
        //require PayJunction API library
        require_once 'PayJunction/pjClasses.php';
-       
+
        $this->_mode             = $mode;
        $this->_paymentProcessor = $paymentProcessor;
        $this->_processorName    = ts('PayJunction');
    }
 
-   /** 
-     * singleton function used to manage this object 
-     * 
+   /**
+     * singleton function used to manage this object
+     *
      * @param string $mode the mode of operation: live or test
      *
-     * @return object 
-     * @static 
-     * 
-     */ 
+     * @return object
+     * @static
+     *
+     */
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
         if (self::$_singleton[$processorName] === null ) {
@@ -65,10 +65,10 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
     }
 
    /*
-    * This function sends request and receives response from 
+    * This function sends request and receives response from
     * PayJunction payment process
     */
-   function doDirectPayment( &$params ) 
+   function doDirectPayment( &$params )
    {
       $logon    = $this->_paymentProcessor['user_name'];
       $password = $this->_paymentProcessor['password'];
@@ -91,7 +91,7 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
                        "country"     => $params['country']
                       );
       $pjpgCustInfo->setBilling($billing);
-      
+
       // create pjpgTransaction object
       $my_orderid    = $params['invoiceID'];
 
@@ -110,19 +110,19 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
       CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $txnArray );
 
       $pjpgTxn = new pjpgTransaction($txnArray);
-  
+
       // set customer info (level 3 data) for the transaction
       $pjpgTxn->setCustInfo($pjpgCustInfo);
 
-      
+
       // empty installments convert to 999 because PayJunction do not allow open end donation
       if ($params['installments'] == "") {
           $params['installments'] = "999";
       }
 
       // create recurring object
-      if ($params['is_recur'] == true && $params['installments'] > 1) {       
-          // schedule start date as today 
+      if ($params['is_recur'] == true && $params['installments'] > 1) {
+          // schedule start date as today
           $params['dc_schedule_start'] = date("Y-m-d"); // format: YYYY-MM-DD
 
           // Recur Variables
@@ -130,11 +130,11 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
           $recurUnit          = $params['frequency_unit'];
           $recurInterval      = $params['frequency_interval'];
           $dc_schedule_start  = $params['dc_schedule_start'];
-          
+
           $startDate  = date("Y/m/d",$next); // next payment in moneris required format
-          
+
           $numRecurs  = $params['installments'];
-          
+
           $recurArray = array( 'dc_schedule_create' => $dc_schedule_create,
                                'recur_unit'         => $recurUnit, // (day | week | month)
                                'start_date'         => $startDate, //yyyy/mm/dd
@@ -144,13 +144,13 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
                                'dc_schedule_start'  => $dc_schedule_start,
                                'amount'             => sprintf('%01.2f',$params['amount'])
                                );
-          
+
           $pjpgRecur = new pjpgRecur($recurArray);
-        
+
           $pjpgTxn->setRecur($pjpgRecur);
-      } 
-      
-      // create a pjpgRequest object passing the transaction object 
+      }
+
+      // create a pjpgRequest object passing the transaction object
       $pjpgRequest  = new pjpgRequest($pjpgTxn);
 
       $pjpgHttpPost = new pjpgHttpsPost($pjpgRequest);
@@ -181,18 +181,18 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
    /*
     * This function checks the PayJunction response code
     */
-   function isError( &$response) 
+   function isError( &$response)
    {
        $responseCode = $response['dc_response_code'];
-       
+
        if ($responseCode=="00" || $responseCode=="85") {
            return false;
        } else {
            return true;
        }
    }
-   
-   
+
+
    function &checkResult( &$response ) { // ignore for now, more elaborate error handling later.
        return $response;
    }
@@ -204,16 +204,16 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
     * @return mixed value of the field, or empty string if the field is
     * not set
     */
-   function _getParam ( $field ) 
+   function _getParam ( $field )
    {
-       if ( isset( $this->_params[$field] ) ) {                                                                  
-           return $this->_params[$field];                                                                        
-       } else {                                                                                                    
-           return '';                                                                                            
-       }                                                                                                         
+       if ( isset( $this->_params[$field] ) ) {
+           return $this->_params[$field];
+       } else {
+           return '';
+       }
    }
-   
-   function &error( $error = null ) 
+
+   function &error( $error = null )
    {
        $e = CRM_Core_Error::singleton( );
        if ( $error ) {
@@ -225,8 +225,8 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
        }
        return $e;
    }
-   
-   
+
+
    /**
     * Set a field to the specified value.  Value must be a scalar (int,
     * float, string, or boolean)
@@ -235,7 +235,7 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
     * @param mixed $value
     * @return bool false if value is not a scalar, true if successful
     */
-   function _setParam ( $field, $value ) 
+   function _setParam ( $field, $value )
    {
        if ( ! is_scalar($value) ) {
            return false;
@@ -243,33 +243,33 @@ class CRM_Core_Payment_PayJunction extends CRM_Core_Payment
            $this->_params[$field] = $value;
        }
    }
-   
+
    /**
-    * This function checks to see if we have the right config values 
+    * This function checks to see if we have the right config values
     *
     * @return string the error message if any
     * @public
     */
-   function checkConfig( ) 
+   function checkConfig( )
    {
        $error = array();
        if ( empty( $this->_paymentProcessor['user_name'] ) ) {
            $error[] = ts( 'Username is not set for this payment processor' );
        }
-       
+
        if ( empty( $this->_paymentProcessor['password'] ) ) {
            $error[] = ts( 'Password is not set for this payment processor' );
        }
-       
+
        if ( empty( $this->_paymentProcessor['url_site'] ) ) {
            $error[] = ts( 'Site URL is not set for this payment processor' );
        }
-       
+
        if ( ! empty( $error ) ) {
            return implode( '<p>', $error );
        } else {
            return null;
        }
    }
-   
+
 } // end class CRM_Core_Payment_PayJunction

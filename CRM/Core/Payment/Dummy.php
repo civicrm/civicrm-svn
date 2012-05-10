@@ -37,7 +37,7 @@ class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
      * @static
      */
     static private $_singleton = null;
-    
+
     /**
      * Constructor
      *
@@ -51,15 +51,15 @@ class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
         $this->_processorName    = ts('Dummy Processor');
     }
 
-    /** 
-     * singleton function used to manage this object 
-     * 
+    /**
+     * singleton function used to manage this object
+     *
      * @param string $mode the mode of operation: live or test
      *
-     * @return object 
-     * @static 
-     * 
-     */ 
+     * @return object
+     * @static
+     *
+     */
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
         if ( CRM_Utils_Array::value( $processorName, self::$_singleton ) === null ) {
@@ -81,7 +81,7 @@ class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
         // the back-end's canonical set of parameters.  But if a processor
         // does this, it needs to invoke this hook after it has done translation,
         // but before it actually starts talking to its proprietary back-end.
-        
+
         $cookedParams = $params; // no translation in Dummy processor
         CRM_Utils_Hook::alterPaymentProcessorParams( $this,
                                                      $params,
@@ -119,7 +119,7 @@ class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
     }
 
     /**
-     * This function checks to see if we have the right config values 
+     * This function checks to see if we have the right config values
      *
      * @return string the error message if any
      * @public
@@ -128,4 +128,4 @@ class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
         return null;
     }
 
-}         
+}

@@ -56,15 +56,15 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
         $this->_processorName    = ts('Elavon');
     }
 
-    /** 
-     * singleton function used to manage this object 
-     * 
+    /**
+     * singleton function used to manage this object
+     *
      * @param string $mode the mode of operation: live or test
      *
-     * @return object 
-     * @static 
-     * 
-     */ 
+     * @return object
+     * @static
+     *
+     */
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
         if (self::$_singleton[$processorName] === null ) {
@@ -80,11 +80,11 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
      *  Comment out irrelevant fields
      **********************************************************/
     function mapProcessorFieldstoParams($params)
-    {	
+    {
         /**********************************************************
          * compile array
          * Payment Processor field name fields from $params array
-         **********************************************************/	
+         **********************************************************/
         $requestFields['ssl_first_name']	     = $params['billing_first_name'];//credit card name
         //$requestFields['ssl_middle_name']	     = $params['billing_middle_name'];//credit card name
         $requestFields['ssl_last_name']		     = $params['billing_last_name'];//credit card name
@@ -120,7 +120,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
          ************************************************************************************/
         return $requestFields;
     }
-	
+
 
     /**********************************************************
      * This function sends request and receives response from
@@ -213,7 +213,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
 
             return self::errorExit( $errorNum, "Curl error - ".$errorDesc." your key is located at ".$key." the url is ".$host." xml is ".$requestxml." processor response = ". $processorResponse );
         }
- 		
+
         /**********************************************************
          * If null data returned - tell 'em and bail out
          *
@@ -224,13 +224,13 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
             curl_close( $ch);
             return self::errorExit( 9006, "Error: Connection to payment gateway failed - no data returned.");
         }
- 		
+
         /**********************************************************
          // If gateway returned no data - tell 'em and bail out
          **********************************************************/
         if ( empty($responseData) ) {
             curl_close( $ch);
-            return self::errorExit( 9007, "Error: No data returned from payment gateway.");		
+            return self::errorExit( 9007, "Error: No data returned from payment gateway.");
         }
 
         /**********************************************************
@@ -249,7 +249,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
          **********************************************************/
 
         if ( $processorResponse['errorCode'] ) {
-            return self::errorExit( 9010, "Error: [" .$processorResponse['errorCode'] . " ". $processorResponse['errorName']. " ". $processorResponse['errorMessage']."] - from payment processor");	
+            return self::errorExit( 9010, "Error: [" .$processorResponse['errorCode'] . " ". $processorResponse['errorName']. " ". $processorResponse['errorMessage']."] - from payment processor");
 
         }
         if ( $processorResponse['ssl_result_message'] =="APPROVED") {
@@ -267,7 +267,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
         }
 
         if ( $processorResponse['ssl_result_message'] != "APPROVAL" ) {   // transaction failed, print the reason
-            return self::errorExit( 9009, "Error: [" .$processorResponse['ssl_result_message'] . " ". $processorResponse['ssl_result']."] - from payment processor");	
+            return self::errorExit( 9009, "Error: [" .$processorResponse['ssl_result_message'] . " ". $processorResponse['ssl_result']."] - from payment processor");
         } else {
             /*
              * Success !
@@ -377,7 +377,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment
 
         $xml = '<txn>';
         foreach ($requestFields as $key => $value) {
-            $xml .= '<' . $key . '>' . self::tidyStringforXML($value,$xmlFieldLength[$key ]) . '</' . $key . '>';		
+            $xml .= '<' . $key . '>' . self::tidyStringforXML($value,$xmlFieldLength[$key ]) . '</' . $key . '>';
 
             //  $xml .= '<' . $key . '>' . rawurlencode($value) . '</' . $key . '>';
         }

@@ -43,7 +43,7 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
 
     function main( $component = 'contribute' )
     {
-        
+
         //we only get invoice num as a key player from payment gateway response.
         //for ARB we get x_subscription_id and x_subscription_paynum
         $x_subscription_id = self::retrieve( 'x_subscription_id', 'String' );
@@ -53,20 +53,20 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
 
             $ids = $objects = array( );
             $input['component'] = $component;
-            
+
             // load post vars in $input
             $this->getInput( $input, $ids );
-            
+
             // load post ids in $ids
             $this->getIDs( $ids, $input );
-            
+
             $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessorType',
                                                                'AuthNet', 'id', 'name' );
-            
+
             if ( ! $this->validateData( $input, $ids, $objects, true, $paymentProcessorID ) ) {
                 return false;
             }
-            
+
             if ( $component == 'contribute' && $ids['contributionRecur'] ) {
                 // check if first contribution is completed, else complete first contribution
                 $first = true;
@@ -77,11 +77,11 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             }
         }
     }
-    
-    function recur( &$input, &$ids, &$objects, $first ) 
+
+    function recur( &$input, &$ids, &$objects, $first )
     {
         $recur =& $objects['contributionRecur'];
-        
+
         // do a subscription check
         if ( $recur->processor_id != $input['subscription_id'] ) {
             CRM_Core_Error::debug_log_message( "Unrecognized subscription." );
@@ -89,8 +89,8 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             return false;
         }
 
-        // At this point $object has first contribution loaded. 
-        // Lets do a check to make sure this payment has the amount same as that of first contribution. 
+        // At this point $object has first contribution loaded.
+        // Lets do a check to make sure this payment has the amount same as that of first contribution.
         if ( $objects['contribution']->total_amount != $input['amount'] ) {
             CRM_Core_Error::debug_log_message( "Subscription amount mismatch." );
             echo "Failure: Subscription amount mismatch<p>";
@@ -98,7 +98,7 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
         }
 
         $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
-        
+
         $transaction = new CRM_Core_Transaction( );
 
         $now = date( 'YmdHis' );
@@ -129,8 +129,8 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
         $objects['contribution']->invoice_id   = md5( uniqid( rand( ), true ) );
         $objects['contribution']->total_amount = $input['amount'];
         $objects['contribution']->trxn_id      = $input['trxn_id'];
-        
-        // since we have processor loaded for sure at this point, 
+
+        // since we have processor loaded for sure at this point,
         // check and validate gateway MD5 response if present
         $this->checkMD5 ( $ids, $input );
 
@@ -142,9 +142,9 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
                 $recur->trxn_id       = $recur->processor_id;
                 $sendNotification          = true;
                 $subscriptionPaymentStatus = CRM_Core_Payment::RECURRING_PAYMENT_START;
-            }             
+            }
             $statusName = 'In Progress';
-            if ( ( $recur->installments > 0 ) && 
+            if ( ( $recur->installments > 0 ) &&
                  ( $input['subscription_paynum'] >= $recur->installments ) ) {
                 // this is the last payment
                 $statusName      = 'Completed';
@@ -169,7 +169,7 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             // CRM-9036
             return true;
         }
-        
+
         // check if contribution is already completed, if so we ignore this ipn
         if ( $objects['contribution']->contribution_status_id == 1 ) {
             $transaction->commit( );
@@ -182,15 +182,15 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
 
         if ( $sendNotification ) {
             $autoRenewMembership = false;
-            if ( $recur->id && 
+            if ( $recur->id &&
                  isset( $ids['membership'] ) && $ids['membership'] ) {
                 $autoRenewMembership = true;
             }
-            
+
             //send recurring Notification email for user
-            CRM_Contribute_BAO_ContributionPage::recurringNotify( $subscriptionPaymentStatus, 
-                                                                  $ids['contact'], 
-                                                                  $ids['contributionPage'], 
+            CRM_Contribute_BAO_ContributionPage::recurringNotify( $subscriptionPaymentStatus,
+                                                                  $ids['contact'],
+                                                                  $ids['contributionPage'],
                                                                   $recur,
                                                                   $autoRenewMembership );
         }
@@ -230,17 +230,17 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
             $input[$civiName] = self::retrieve( $resName, 'String', false );
         }
     }
-    
+
     function getIDs( &$ids, &$input ) {
         $ids['contact']       = self::retrieve( 'x_cust_id'    , 'Integer'  );
         $ids['contribution']  = self::retrieve( 'x_invoice_num', 'Integer'  );
 
         // joining with contribution table for extra checks
         $sql = "
-    SELECT cr.id 
+    SELECT cr.id
       FROM civicrm_contribution_recur cr
 INNER JOIN civicrm_contribution co ON co.contribution_recur_id = cr.id
-     WHERE cr.processor_id = '{$input['subscription_id']}' AND 
+     WHERE cr.processor_id = '{$input['subscription_id']}' AND
            (cr.contact_id = {$ids['contact']} OR co.id = {$ids['contribution']})
      LIMIT 1";
         $ids['contributionRecur'] = CRM_Core_DAO::singleValueQuery( $sql );
@@ -251,18 +251,18 @@ INNER JOIN civicrm_contribution co ON co.contribution_recur_id = cr.id
         }
 
         // get page id based on contribution id
-        $ids['contributionPage'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution', 
-                                                                $ids['contribution'], 
+        $ids['contributionPage'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
+                                                                $ids['contribution'],
                                                                 'contribution_page_id' );
 
         if ( $input['component'] == 'event' ) {
             // FIXME: figure out fields for event
         } else {
             // get the optional ids
-            
+
             // Get membershipId. Join with membership payment table for additional checks
             $sql = "
-    SELECT m.id 
+    SELECT m.id
       FROM civicrm_membership m
 INNER JOIN civicrm_membership_payment mp ON m.id = mp.membership_id AND mp.contribution_id = {$ids['contribution']}
      WHERE m.contribution_recur_id = {$ids['contributionRecur']}
@@ -275,7 +275,7 @@ INNER JOIN civicrm_membership_payment mp ON m.id = mp.membership_id AND mp.contr
         }
     }
 
-    static function retrieve( $name, $type, $abort = true, $default = null, $location = 'POST' ) 
+    static function retrieve( $name, $type, $abort = true, $default = null, $location = 'POST' )
     {
         static $store = null;
         $value = CRM_Utils_Request::retrieve( $name, $type, $store,

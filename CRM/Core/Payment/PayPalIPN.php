@@ -43,7 +43,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         parent::__construct( );
     }
 
-    static function retrieve( $name, $type, $location = 'POST', $abort = true ) 
+    static function retrieve( $name, $type, $location = 'POST', $abort = true )
     {
         static $store = null;
         $value = CRM_Utils_Request::retrieve( $name, $type, $store,
@@ -56,7 +56,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         return $value;
     }
 
-    function recur( &$input, &$ids, &$objects, $first ) 
+    function recur( &$input, &$ids, &$objects, $first )
     {
         if ( ! isset( $input['txnType'] ) ) {
             CRM_Core_Error::debug_log_message( "Could not find txn_type in input request" );
@@ -72,7 +72,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         }
 
         $recur =& $objects['contributionRecur'];
-        
+
         // make sure the invoice ids match
         // make sure the invoice is valid and matches what we have in the contribution record
         if ( $recur->invoice_id != $input['invoice'] ) {
@@ -111,7 +111,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
             $sendNotification              = true;
             $subscriptionPaymentStatus     = CRM_Core_Payment::RECURRING_PAYMENT_START;
             break;
-            
+
         case 'subscr_eot':
             if ( $recur->contribution_status_id != 3 ) {
                 $recur->contribution_status_id = 1;
@@ -154,17 +154,17 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         $recur->save( );
 
         if ( $sendNotification ) {
-            
+
             $autoRenewMembership = false;
-            if ( $recur->id && 
+            if ( $recur->id &&
                  isset( $ids['membership'] ) && $ids['membership'] ) {
                 $autoRenewMembership = true;
             }
-            
+
             //send recurring Notification email for user
-            CRM_Contribute_BAO_ContributionPage::recurringNotify( $subscriptionPaymentStatus, 
-                                                                  $ids['contact'], 
-                                                                  $ids['contributionPage'], 
+            CRM_Contribute_BAO_ContributionPage::recurringNotify( $subscriptionPaymentStatus,
+                                                                  $ids['contact'],
+                                                                  $ids['contributionPage'],
                                                                   $recur,
                                                                   $autoRenewMembership );
         }
@@ -188,13 +188,13 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
             $objects['contribution'] =& $contribution;
         }
 
-        $this->single( $input, $ids, $objects, 
+        $this->single( $input, $ids, $objects,
                        true, $first );
     }
 
     function single( &$input, &$ids, &$objects,
                      $recur = false,
-                     $first = false ) 
+                     $first = false )
     {
         $contribution =& $objects['contribution'];
 
@@ -251,19 +251,19 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         $this->completeTransaction( $input, $ids, $objects, $transaction, $recur );
     }
 
-    function main( $component = 'contribute' ) 
+    function main( $component = 'contribute' )
     {
         // CRM_Core_Error::debug_var( 'GET' , $_GET , true, true );
         // CRM_Core_Error::debug_var( 'POST', $_POST, true, true );
 
-        
+
         $objects = $ids = $input = array( );
         $input['component'] = $component;
 
         // get the contribution and contact ids from the GET params
         $ids['contact']           = self::retrieve( 'contactID'         , 'Integer', 'GET' , true  );
         $ids['contribution']      = self::retrieve( 'contributionID'    , 'Integer', 'GET' , true  );
-        
+
         $this->getInput( $input, $ids );
 
         if ( $component == 'event' ) {
@@ -280,7 +280,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
 
         $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessorType',
                                                            'PayPal_Standard', 'id', 'name' );
-        
+
         if ( ! $this->validateData( $input, $ids, $objects, true, $paymentProcessorID ) ) {
             return false;
         }
@@ -330,7 +330,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         $input['fee_amount'] = self::retrieve( 'mc_fee'       , 'Money'  , 'POST', false );
         $input['net_amount'] = self::retrieve( 'settle_amount', 'Money'  , 'POST', false );
         $input['trxn_id']    = self::retrieve( 'txn_id'       , 'String' , 'POST', false );
-        
+
     }
 }
 

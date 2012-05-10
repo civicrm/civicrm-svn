@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -129,7 +127,7 @@ class CRM_Core_Payment_BaseIPN {
       }
       if(CRM_Utils_Array::value('return_error', $error_handling)){
       	return array(
-      	  'is_error' => 1, 
+      	  'is_error' => 1,
       	  'error_message' => ($e->getMessage())
       	);
       }

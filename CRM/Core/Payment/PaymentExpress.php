@@ -1,4 +1,5 @@
 <?php
+
 /*
   +--------------------------------------------------------------------+
   | CiviCRM version 4.1                                                |
@@ -31,7 +32,7 @@
  * Grateful acknowledgements go to Donald Lobo for invaluable assistance
  * in creating this payment processor module
  */
- 
+
 
 
 class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
@@ -64,15 +65,15 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
         $this->_processorName    = ts('DPS Payment Express');
     }
 
-    /** 
-     * singleton function used to manage this object 
-     * 
+    /**
+     * singleton function used to manage this object
+     *
      * @param string $mode the mode of operation: live or test
      *
-     * @return object 
-     * @static 
-     * 
-     */ 
+     * @return object
+     * @static
+     *
+     */
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
         if (self::$_singleton[$processorName] === null ) {
@@ -80,7 +81,7 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
         }
         return self::$_singleton[$processorName];
     }
-    
+
     function checkConfig( ) {
         $config = CRM_Core_Config::singleton( );
 
@@ -89,11 +90,11 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
         if ( empty( $this->_paymentProcessor['user_name'] ) ) {
             $error[] = ts( 'UserID is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.' );
         }
-        
+
         if ( empty( $this->_paymentProcessor['password'] ) ) {
             $error[] = ts( 'pxAccess / pxPay Key is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.' );
         }
-        
+
         if ( ! empty( $error ) ) {
             return implode( '<p>', $error );
         } else {
@@ -102,50 +103,50 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
     }
 
     function setExpressCheckOut( &$params ) {
-        CRM_Core_Error::fatal( ts( 'This function is not implemented' ) ); 
+        CRM_Core_Error::fatal( ts( 'This function is not implemented' ) );
     }
     function getExpressCheckoutDetails( $token ) {
-        CRM_Core_Error::fatal( ts( 'This function is not implemented' ) ); 
+        CRM_Core_Error::fatal( ts( 'This function is not implemented' ) );
     }
     function doExpressCheckout( &$params ) {
-        CRM_Core_Error::fatal( ts( 'This function is not implemented' ) ); 
+        CRM_Core_Error::fatal( ts( 'This function is not implemented' ) );
     }
 
     function doDirectPayment( &$params ) {
         CRM_Core_Error::fatal( ts( 'This function is not implemented' ) );
     }
 
-    /**  
+    /**
      * Main transaction function
-     *  
+     *
      * @param array $params  name value pair of contribution data
-     *  
-     * @return void  
-     * @access public 
-     *  
-     */   
-    function doTransferCheckout( &$params, $component ) 
+     *
+     * @return void
+     * @access public
+     *
+     */
+    function doTransferCheckout( &$params, $component )
     {
         $component = strtolower( $component );
         $config    = CRM_Core_Config::singleton( );
         if ( $component != 'contribute' && $component != 'event' ) {
             CRM_Core_Error::fatal( ts( 'Component is invalid' ) );
         }
-        
+
         $url = $config->userFrameworkResourceURL."extern/pxIPN.php";
-		
+
         if ( $component == 'event') {
             $cancelURL = CRM_Utils_System::url( 'civicrm/event/register',
-                                                "_qf_Confirm_display=true&qfKey={$params['qfKey']}", 
+                                                "_qf_Confirm_display=true&qfKey={$params['qfKey']}",
                                                 false, null, false );
         } else if ( $component == 'contribute' ) {
             $cancelURL = CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                "_qf_Confirm_display=true&qfKey={$params['qfKey']}", 
+                                                "_qf_Confirm_display=true&qfKey={$params['qfKey']}",
                                                 false, null, false );
-        }		
-        
-        
-        /*  
+        }
+
+
+        /*
          * Build the private data string to pass to DPS, which they will give back to us with the
          *
          * transaction result.  We are building this as a comma-separated list so as to avoid long URLs.
@@ -153,9 +154,9 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
          * Parameters passed: a=contactID, b=contributionID,c=contributionTypeID,d=invoiceID,e=membershipID,f=participantID,g=eventID
          */
         $privateData = "a={$params['contactID']},b={$params['contributionID']},c={$params['contributionTypeID']},d={$params['invoiceID']}";
-        $merchantRef = substr($params['contactID'] . "-" . $params['contributionID'] . " " . substr($params['description'] ,27,20),0,24);// we need to be careful the total string isn't too long 
+        $merchantRef = substr($params['contactID'] . "-" . $params['contributionID'] . " " . substr($params['description'] ,27,20),0,24);// we need to be careful the total string isn't too long
         if ( $component == 'event') {
-            $privateData .= ",f={$params['participantID']},g={$params['eventID']}";           
+            $privateData .= ",f={$params['participantID']},g={$params['eventID']}";
         } elseif ( $component == 'contribute' ) {
             $membershipID = CRM_Utils_Array::value( 'membershipID', $params );
             if ( $membershipID ) {
@@ -178,13 +179,13 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
         // Allow further manipulation of params via custom hooks
         CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $dpsParams );
 
-        /*  
+        /*
          *  determine whether method is pxaccess or pxpay by whether signature (mac key) is defined
          */
 
         if ( empty($this->_paymentProcessor['signature']) ) {
             /*
-             * Processor is pxpay 
+             * Processor is pxpay
              *
              * This contains the XML/Curl functions we'll need to generate the XML request
              */
@@ -197,7 +198,7 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
             // Get the special validated URL back from DPS by sending them the XML we've generated
             $curl    = _initCURL($generateRequest,$this->_paymentProcessor['url_site']);
             $success = false;
-        
+
             if ( $response = curl_exec($curl) ) {
                 curl_close($curl);
                 $valid = _xmlAttribute($response, 'valid');
@@ -212,7 +213,7 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
             } else {
                 // calling DPS failed
                 CRM_Core_Error::fatal( ts( 'Unable to establish connection to the payment gateway.' ) );
-            }		     
+            }
         } else {
             $processortype   = "pxaccess";
             require_once('PaymentExpress/pxaccess.inc.php');
@@ -220,14 +221,14 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
             $PxAccess_Userid = $this->_paymentProcessor['user_name'];   // User ID
             $PxAccess_Key    = $this->_paymentProcessor['password'];    // Your DES Key from DPS
             $Mac_Key	     = $this->_paymentProcessor['signature'];   // Your MAC key from DPS
-            
+
             $pxaccess = new PxAccess($PxAccess_Url, $PxAccess_Userid, $PxAccess_Key,$Mac_Key);
             $request  = new PxPayRequest();
             $request->setAmountInput($dpsParams['AmountInput']);
-            $request->setTxnData1($dpsParams['TxnData1']); 
-            $request->setTxnData2($dpsParams['TxnData2']); 
-            $request->setTxnData3($dpsParams['TxnData3']);	
-            $request->setTxnType($dpsParams['TxnType']); 
+            $request->setTxnData1($dpsParams['TxnData1']);
+            $request->setTxnData2($dpsParams['TxnData2']);
+            $request->setTxnData3($dpsParams['TxnData3']);
+            $request->setTxnType($dpsParams['TxnType']);
             $request->setInputCurrency($dpsParams['InputCurrency']);
             $request->setMerchantReference($dpsParams['MerchantReference']);
             $request->setUrlFail($dpsParams['UrlFail']);

@@ -1,5 +1,5 @@
-<?php 
- 
+<?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -26,20 +26,20 @@
  +--------------------------------------------------------------------+
 */
 
-/** 
- * 
- * @package CRM 
+/**
+ *
+ * @package CRM
  * @author Alan Dixon
- * @copyright CiviCRM LLC (c) 2004-2011 
- * $Id$ 
- * 
- */ 
+ * @copyright CiviCRM LLC (c) 2004-2011
+ * $Id$
+ *
+ */
 
 
-class CRM_Core_Payment_Moneris extends CRM_Core_Payment { 
+class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
     const
         CHARSET  = 'UFT-8'; # (not used, implicit in the API, might need to convert?)
-         
+
     /**
      * We only need one instance of this object. So we use the singleton
      * pattern and cache the instance in this variable
@@ -48,14 +48,14 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
      * @static
      */
     static private $_singleton = null;
-    
-    /** 
-     * Constructor 
+
+    /**
+     * Constructor
      *
      * @param string $mode the mode of operation: live or test
-     * 
-     * @return void 
-     */ 
+     *
+     * @return void
+     */
     function __construct( $mode, &$paymentProcessor ) {
         $this->_mode             = $mode;
         $this->_paymentProcessor = $paymentProcessor;
@@ -76,15 +76,15 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
         }
     }
 
-    /** 
-     * singleton function used to manage this object 
-     * 
+    /**
+     * singleton function used to manage this object
+     *
      * @param string $mode the mode of operation: live or test
      *
-     * @return object 
-     * @static 
-     * 
-     */ 
+     * @return object
+     * @static
+     *
+     */
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
         if (self::$_singleton[$processorName] === null ) {
@@ -113,7 +113,7 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
         //call set methods of the mpgCustinfo object
         $mpgCustInfo->setEmail($params['email']);
         //get text representations of province/country to send to moneris for billing info
-        
+
         $billing = array( 'first_name'  => $params['first_name'],
                           'last_name'   => $params['last_name'],
                           'address'     => $params['street_address'],
@@ -134,13 +134,13 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
                          'crypt_type' => '7',
                          'cust_id'    => $params['contactID']
                          );
-        
+
         // Allow further manipulation of params via custom hooks
         CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $txnArray );
 
         //create a transaction object passing the hash created above
         $mpgTxn = new mpgTransaction($txnArray);
-  
+
         //use the setCustInfo method of mpgTransaction object to
         //set the customer info (level 3 data) for this transaction
         $mpgTxn->setCustInfo($mpgCustInfo);
@@ -154,8 +154,8 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
             switch($recurUnit) {
             case 'day': $next  += $recurInterval * $day; break;
             case 'week': $next += $recurInterval * $day * 7; break;
-            case 'month': 
-                $date         = getdate(); 
+            case 'month':
+                $date         = getdate();
                 $date['mon'] += $recurInterval;
                 while ($date['mon'] > 12) {
                     $date['mon']  -= 12;
@@ -164,12 +164,12 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
                 $next = mktime($date['hours'],$date['minutes'],$date['seconds'],$date['mon'],$date['mday'],$date['year']);
                 break;
             case 'year':
-                $date          = getdate(); 
+                $date          = getdate();
                 $date['year'] += 1;
                 $next          = mktime($date['hours'],$date['minutes'],$date['seconds'],$date['mon'],$date['mday'],$date['year']);
                 break;
             default: die('Unexpected error!');
-            } 
+            }
             $startDate = date("Y/m/d",$next); // next payment in moneris required format
             $numRecurs = $params['installments'] - 1;
             //$startNow = 'true'; -- setting start now to false will mean the main transaction doesn't happen!
@@ -185,17 +185,17 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
             $mpgRecur = new mpgRecur($recurArray);
             // set the Recur Object to mpgRecur
             $mpgTxn->setRecur($mpgRecur);
-        } 
-        //create a mpgRequest object passing the transaction object 
+        }
+        //create a mpgRequest object passing the transaction object
         $mpgRequest = new mpgRequest($mpgTxn);
-        
-        // create mpgHttpsPost object which does an https post ## 
-        // [extra parameter added to library by AD] 
+
+        // create mpgHttpsPost object which does an https post ##
+        // [extra parameter added to library by AD]
         $isProduction = ($this->_profile['mode'] == 'live');
         $mpgHttpPost  = new mpgHttpsPost($this->_profile['storeid'],$this->_profile['apitoken'],$mpgRequest,$isProduction);
         // get an mpgResponse object
         $mpgResponse  = $mpgHttpPost->getMpgResponse();
-        $params['trxn_result_code'] = $mpgResponse->getResponseCode(); 
+        $params['trxn_result_code'] = $mpgResponse->getResponseCode();
         if ( self::isError( $mpgResponse ) ) {
             if ($params['trxn_result_code']) {
                 return self::error( $mpgResponse );
@@ -208,13 +208,13 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
         if ( is_a( $result, 'CRM_Core_Error' ) ) {
             return $result;
         }
-        
+
         /* Success */
-        $params['trxn_result_code'] = (integer) $mpgResponse->getResponseCode();  
+        $params['trxn_result_code'] = (integer) $mpgResponse->getResponseCode();
         // todo: above assignment seems to be ignored, not getting stored in the civicrm_financial_trxn table
         $params['trxn_id']          = $mpgResponse->getTxnNumber();
         $params['gross_amount'  ]   = $mpgResponse->getTransAmount();
-        return $params;        
+        return $params;
     }
 
     function isError( &$response) {
@@ -228,12 +228,12 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
 
     function &checkResult( &$response ) { // ignore for now, more elaborate error handling later.
         return $response;
-        
+
         $errors = $response->getErrors( );
         if ( empty( $errors ) ) {
             return $result;
         }
-        
+
         $e = CRM_Core_Error::singleton( );
         if ( is_a( $errors, 'ErrorType' ) ) {
             $e->push( $errors->getErrorCode( ),
@@ -248,7 +248,7 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
         }
         return $e;
     }
-    
+
     function &error( $error = null ) {
         $e = CRM_Core_Error::singleton( );
         if ( is_object($error) ) {
@@ -264,24 +264,24 @@ class CRM_Core_Payment_Moneris extends CRM_Core_Payment {
         }
         return $e;
     }
-    
-    /** 
-     * This function checks to see if we have the right config values 
-     * 
-     * @return string the error message if any 
-     * @public 
-     */ 
+
+    /**
+     * This function checks to see if we have the right config values
+     *
+     * @return string the error message if any
+     * @public
+     */
     function checkConfig( ) {
         $error = array( );
-        
+
         if ( empty( $this->_paymentProcessor['signature'] ) ) {
             $error[] = ts( 'Store ID is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.' );
         }
-        
+
         if ( empty( $this->_paymentProcessor['password'] ) ) {
             $error[] = ts( 'Password is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.' );
         }
-        
+
         if ( ! empty( $error ) ) {
             return implode( '<p>', $error );
         } else {
