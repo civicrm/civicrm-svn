@@ -241,7 +241,7 @@ function setFieldValue( fname, fieldValue, blockNo ) {
     if ( elementId.length == 0 ) {
       elementId =  cj('input[type=checkbox][name^="field['+ blockNo +']['+ fname +']"][type!=hidden]');
     }
-   
+ 
     // if element not found than return
     if ( elementId.length == 0 ) {
       return;
@@ -259,8 +259,12 @@ function setFieldValue( fname, fieldValue, blockNo ) {
     // set the value for all the elements, elements needs to be handled are
     // select, checkbox, radio, date fields, text, textarea, multi-select
     // wysiwyg editor, advanced multi-select ( to do )
-    if ( elementType == 'radio' && fieldValue ) {
-      elementId.filter("[value=" + fieldValue + "]").prop("checked",true);
+    if ( elementType == 'radio' ) {
+      if ( fieldValue ) {
+        elementId.filter("[value=" + fieldValue + "]").prop("checked",true);
+      } else {
+        elementId.removeProp('checked');
+      }
     } else if ( elementType == 'checkbox' ) {
       // handle checkbox
       elementId.removeProp('checked');
