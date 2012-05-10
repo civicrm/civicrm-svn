@@ -3317,7 +3317,7 @@ div#crm-toolTip
 #crm-container .crm-grid-cell {
   display: table-cell;
   border-right: 1px solid #EFEFEF;
-  padding: 4px;
+  padding: 2px;
   vertical-align: top;
 }
 
