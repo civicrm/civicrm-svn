@@ -114,7 +114,8 @@ function buildBatchSelector( filterSearch ) {
                         }                                                       
                     },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
-            aoData.push( {name:'status', value: '1' });
+            var status = {/literal}{$status}{literal};
+            aoData.push( {name:'status', value: status });
             if ( filterSearch ) {
                 var batchStatus = '';
                 if ( cj('.crm-batch-search-form-block #batch_status\\[1\\]').prop('checked') ) {

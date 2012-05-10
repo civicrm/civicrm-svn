@@ -215,7 +215,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         $limit = " LIMIT {$params['offset']}, {$params['rowCount']} ";
       }
 
-    $orderBy = ' ORDER BY batch.title asc';
+    $orderBy = ' ORDER BY batch.id desc';
     if ( CRM_Utils_Array::value( 'sort', $params ) ) {
       $orderBy = ' ORDER BY ' . CRM_Utils_Array::value( 'sort', $params );
     }

@@ -37,7 +37,10 @@ class CRM_Batch_Form_Search extends CRM_Core_Form {
 
   function setDefaultValues( ) {
     $defaults = array( );
-    $defaults['batch_status'] = 1;
+    
+    $status = CRM_Utils_Request::retrieve( 'status', 'Positive', CRM_Core_DAO::$_nullObject, false, 1 );
+    
+    $defaults['batch_status'] = $status;
     return $defaults;
   }
 

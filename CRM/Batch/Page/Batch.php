@@ -101,6 +101,8 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
    * @access public
    */
   function browse( ) {
+    $status = CRM_Utils_Request::retrieve( 'status', 'Positive', CRM_Core_DAO::$_nullObject, false, 1 );
+    $this->assign( 'status', $status ); 
     $this->search();
   }
 

@@ -195,8 +195,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
   /**
    * form validations
    *
-   * @param array $params     posted values of the form
-   * @param array $files     list of errors to be posted back to the form
+   * @param array $params   posted values of the form
+   * @param array $files    list of errors to be posted back to the form
+   * @param array $self     form object
    *
    * @return array list of errors to be posted back to the form
    * @static
@@ -283,9 +284,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
     // set success status
     CRM_Core_Session::setStatus("Your batch has been processed.");
-
-    // redirect to batch listing
-    CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/batch', "reset=1" ) );
+ 
+    CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/batch', 'reset=1&status=2' ) );
   }
 
   /**
