@@ -3302,7 +3302,9 @@ div#crm-toolTip
 #crm-container .crm-grid-table {
   display: table;
   border-collapse:collapse;
-  border: 1px solid #EFEFEF;
+  border: 1px solid #7A7A60;
+  background-color: #FFFFFF;
+  margin: 10px 0px 10px !important;
 }
 
 #crm-container .crm-grid-row,
