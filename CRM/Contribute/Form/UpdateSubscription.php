@@ -113,6 +113,9 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
         if ( $this->_subscriptionDetails->contact_id ) {
             list( $this->_donorDisplayName, $this->_donorEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_subscriptionDetails->contact_id );
         }
+
+        // handle context redirection
+        CRM_Contribute_BAO_ContributionRecur::setSubscriptionContext();
     }
     
     /**
@@ -262,7 +265,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form
                               'valueName' => 'contribution_recurring_edit',
                               'contactId' => $contactID,
                               'tplParams' => $tplParams,
-                              // 'isTest'    => $this->_subscriptionDetails->is_test,
+                              'isTest'    => $this->_subscriptionDetails->is_test,
                               'PDFFilename' => 'receipt.pdf',
                               'from'      => $receiptFrom,
                               'toName'    => $donorDisplayName,
