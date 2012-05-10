@@ -386,7 +386,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
             case 'BETWEEN':
             case 'NOT BETWEEN':
               if (empty($criteria[0]) || empty($criteria[1])) {
-                error();
+                throw new exception("invalid criteria for $operator");
               }
               $dao->whereAdd(sprintf('%s BETWEEN "%s" AND "%s"', $field, DAO::escapeString($criteria[0]), DAO::escapeString($criteria[1])));
               break;
@@ -396,7 +396,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
             case 'IN':
             case 'NOT IN':
               if (empty($criteria)) {
-                error();
+                throw new exception("invalid criteria for $operator");
               }
               $escapedCriteria = array_map(array('CRM_Core_DAO', 'escapeString'), $criteria);
               $dao->whereAdd(sprintf('%s %s ("%s")', $field, $operator, implode('", "', $escapedCriteria)));
@@ -412,7 +412,11 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
       }
     }
     else {
+     if($unique){
+       $dao->$allfields[$field]['name'] = $params[$field];
+     }else{
       $dao->$field = $params[$field];
+     }
     }
   }
   if (!empty($params['return']) && is_array($params['return'])) {
@@ -1175,6 +1179,8 @@ function _civicrm_api3_getrequired($apiRequest) {
 /*
  * Fill params array with alternate (alias) values where a field has an alias and that is filled & the main field isn't
  * If multiple aliases the last takes precedence
+ * 
+ * Function also swaps unique fields for non-unique fields & vice versa.
  */
 function _civicrm_api3_swap_out_aliases(&$apiRequest) {
   if (strtolower($apiRequest['action'] == 'getfields')) {
