@@ -217,7 +217,7 @@
      <access_arguments>make online contributions</access_arguments>
   </item>
   <item>
-     <path>civicrm/contribute/update</path>
+     <path>civicrm/contact/view/contributionrecur</path>
      <title>Update Subscription</title>
      <page_callback>CRM_Contribute_Form_UpdateSubscription</page_callback>
      <access_arguments>make online contributions</access_arguments>
