@@ -41,39 +41,36 @@
     <tr><td class="label">{ts}Total amount entered{/ts}</td><td class="right">{$config->defaultCurrencySymbol} <span class="batch-actual-total"></span></td></tr>
 </table>
 <br/>
-<table class="crm-copy-fields">
-    <thead>
-      <tr class="crm-batch-header">
-        <td>&nbsp;</td>
-        <td>{ts}Contact{/ts}</td>
+<div class="crm-copy-fields crm-grid-table">
+      <div class="crm-grid-header">
+        <div class="crm-grid-cell">&nbsp;</div>
+        <div class="crm-grid-cell">{ts}Contact{/ts}</div>
         {foreach from=$fields item=field key=fieldName}
-          <td><img src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td> 
+          <div class="crm-grid-cell"><img src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</div>
         {/foreach}
-      </tr>
-    </thead>
+      </div>
     {section name='i' start=1 loop=$rowCount} 
     {assign var='rowNumber' value=$smarty.section.i.index} 
-    <tr class="{cycle values="odd-row,even-row"} selector-rows" entity_id="{$rowNumber}">
-        <td class="compressed"><span class="batch-edit"></span></td>
+    <div class="{cycle values="odd-row,even-row"} selector-rows crm-grid-row" entity_id="{$rowNumber}">
+        <div class="compressed crm-grid-cell"><span class="batch-edit"></span></div>
         {* contact select/create option*}
-        <td class="compressed">
+        <div class="compressed crm-grid-cell">
             {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="primary_" newContactCallback="updateContactInfo($rowNumber, 'primary_')"}
-        </td>
+        </div>
 
         {foreach from=$fields item=field key=fieldName}
         {assign var=n value=$field.name}
         {if ( $fields.$n.data_type eq 'Date') or ( in_array( $n, array( 'thankyou_date', 'cancel_date', 'receipt_date', 'receive_date', 'join_date', 'membership_start_date', 'membership_end_date' ) ) ) }
-            <td class="compressed"><span class="crm-batch-{$n}-{$rowNumber}">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$rowNumber batchUpdate=1}</span></td>
+            <div class="compressed crm-grid-cell"><span class="crm-batch-{$n}-{$rowNumber}">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$rowNumber batchUpdate=1}</span></div>
         {elseif $n eq 'soft_credit'}
-            <td class="compressed">{include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="soft_credit_"}
-            </td>
+            <div class="compressed crm-grid-cell">{include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="soft_credit_"}</div>
         {else}
-            <td class="compressed">{$form.field.$rowNumber.$n.html}</td> 
+            <div class="compressed crm-grid-cell">{$form.field.$rowNumber.$n.html}</div> 
         {/if}
         {/foreach}
-    </tr>
+    </div>
     {/section}
-</table>
+</div>
 <div class="crm-submit-buttons">{if $fields}{$form._qf_Batch_refresh.html}{/if} &nbsp; {$form.buttons.html}</div>
 </div>
 {literal}

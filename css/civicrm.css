@@ -3298,9 +3298,29 @@ div#crm-toolTip
   margin-top: 10px !important;
 }
 
-#crm-container tr.crm-batch-header td {
+/* grid div as table */
+#crm-container .crm-grid-table {
+  display: table;
+  border-collapse:collapse;
+  border: 1px solid #EFEFEF;
+}
+
+#crm-container .crm-grid-row,
+#crm-container .crm-grid-header {
+  display: table-row;
+}
+
+#crm-container .crm-grid-header {
   white-space: nowrap;
 }
+
+#crm-container .crm-grid-cell {
+  display: table-cell;
+  border-right: 1px solid #EFEFEF;
+  padding: 4px;
+  vertical-align: top;
+}
+
 
 /* Responsive layout changes */
 
