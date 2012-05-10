@@ -103,66 +103,44 @@ function _civicrm_api3_event_create_spec(&$params) {
  *
  */
 function civicrm_api3_event_get($params) {
-// @fixme all this should be removed & replaced with std functions (e.g. see basic get) the set filter handles offset & stuff
-// BUT just need to work through with testing as some anomolies like the use of 'return.is_full' & max_results'
-  $inputParams = array();
-  $returnProperties = array();
-  $returnCustomProperties = array();
-  $otherVars = array('sort', 'offset', 'rowCount', 'isCurrent');
-
-  $sort = array_key_exists('return.sort', $params) ? $params['return.sort'] : FALSE;
-  // don't check if empty, more meaningful error for API user instead of silent defaults
-  $offset    = array_key_exists('return.offset', $params) ? $params['return.offset'] : 0;
-  $rowCount  = array_key_exists('return.max_results', $params) ? $params['return.max_results'] : 25;
-  $isFull    = array_key_exists('return.is_full', $params) ? $params['return.is_full'] : 0;
-
-  foreach ($params as $n => $v) {
-    if (substr($n, 0, 6) == 'return') {
-      if (substr($n, 0, 14) == 'return.custom_') {
-        //take custom return properties separate
-        $returnCustomProperties[] = substr($n, 7);
-      }
-      elseif (!in_array(substr($n, 7), array('sort', 'offset', 'max_results', 'isCurrent', 'is_full'))) {
-        $returnProperties[] = substr($n, 7);
-      }
-    }
-    elseif (in_array($n, $otherVars)) {
-      $$n = $v;
-    }
-    else {
-      $inputParams[$n] = $v;
-    }
+ 
+  //legacy support for $params['return.sort']
+  if(CRM_Utils_Array::value('return.sort', $params)){
+  	$params['options']['sort'] = $params['return.sort'];
+  	unset($params['return.sort']);
   }
-
-  if (!empty($returnProperties)) {
-    $returnProperties[] = 'id';
-    $returnProperties[] = 'event_type_id';
+  
+  //legacy support for $params['return.sort']
+  if(CRM_Utils_Array::value('return.offset', $params)){
+  	$params['options']['offset'] = $params['return.offset'];
+  	unset($params['return.offset']);
   }
-
+  
+  //legacy support for $params['return.max_results']
+  if(CRM_Utils_Array::value('return.max_results', $params)){
+  	$params['options']['limit'] = $params['return.max_results'];
+  	unset($params['return.max_results']);
+  }
+  
   require_once 'CRM/Core/BAO/CustomGroup.php';
 
   $eventDAO = new CRM_Event_BAO_Event();
   _civicrm_api3_dao_set_filter($eventDAO, $params, true);
-
-
-  $event = array();
-  if (!empty($returnProperties)) {
-    $eventDAO->selectAdd();
-    $eventDAO->selectAdd(implode(',', $returnProperties));
-  }
-
   $eventDAO->whereAdd('( is_template IS NULL ) OR ( is_template = 0 )');
 
   if (CRM_Utils_Array::value('isCurrent', $params)) {
     $eventDAO->whereAdd('(start_date >= CURDATE() || end_date >= CURDATE())');
   }
-  $eventDAO->orderBy($sort);
-  $eventDAO->limit((int)$offset, (int)$rowCount);
+
+ // @todo should replace all this with _civicrm_api3_dao_to_array($bao, $params, FALSE, $entity) - but we still have 
+ // the return.is_full to deal with.
+ // NB the std dao_to_array function should only return custom if required.
+  $event = array();
   $eventDAO->find();
   while ($eventDAO->fetch()) {
     $event[$eventDAO->id] = array();
     CRM_Core_DAO::storeValues($eventDAO, $event[$eventDAO->id]);
-    if ($isFull) {
+    if (CRM_Utils_Array::value('return.is_full', $params)) {
       _civicrm_api3_event_getisfull($event, $eventDAO->id);
     }
     _civicrm_api3_custom_data_get($event[$eventDAO->id], 'Event', $eventDAO->id, NULL, $eventDAO->event_type_id);
