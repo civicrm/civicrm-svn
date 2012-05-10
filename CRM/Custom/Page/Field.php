@@ -96,14 +96,14 @@ class CRM_Custom_Page_Field extends CRM_Core_Page
                                                                           ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
-                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_CustomField' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_CustomField' . '\',\'' . 'enable-disable' . '\',0,\'CustomField\' );"',
                                                                           'ref'   => 'disable-action',
                                                                           'title' => ts('Disable Custom Field'),
                                                                           
                                                                           ),
                                         CRM_Core_Action::ENABLE  => array(
                                                                           'name'  => ts('Enable'),
-                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_CustomField' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_CustomField' . '\',\'' . 'disable-enable' . '\',0,\'CustomField\'  );"',
                                                                           'ref'   => 'enable-action',
                                                                           'title' => ts('Enable Custom Field'),
                                                                           ),

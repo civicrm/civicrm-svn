@@ -90,7 +90,6 @@ function modifySelectorRow( recordID, op, rowId ) {
       elementID =  '#' + rowId + '-' + recordID;
     }
     if (cj(elementID).length ==0 ) {
-      alert ("can't find "+elementID);return;
       document.location.reload( );//force update if can't find the row
     }
     if ( op == "disable-enable" ) {
