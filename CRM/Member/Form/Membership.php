@@ -47,6 +47,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
 
     public $_mode;
 
+    public $_contributeMode = 'direct';
+
     protected $_recurMembershipTypes;
 
     protected $_memTypeSelected;
@@ -1187,12 +1189,18 @@ WHERE   id IN ( '. implode( ' , ', array_keys( $membershipType ) ) .' )';
             if ( CRM_Utils_Array::value( 'is_recur', $paymentParams ) ) {
                 $allStatus = CRM_Member_PseudoConstant::membershipStatus( );
 
+                $contributionType = new CRM_Contribute_DAO_ContributionType( );
+                $contributionType->id = $params['contribution_type_id'];
+                if ( ! $contributionType->find( true ) ) {
+                    CRM_Core_Error::fatal( 'Could not find a system table' );
+                }
+
                 $contribution
                     = CRM_Contribute_Form_Contribution_Confirm::processContribution( $this,
                                                                                      $this->_params,
                                                                                      $result,
                                                                                      $contactID,
-                                                                                     $params['contribution_type_id'],
+                                                                                     $contributionType,
                                                                                      false,
                                                                                      true,
                                                                                      false );
