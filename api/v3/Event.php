@@ -103,7 +103,8 @@ function _civicrm_api3_event_create_spec(&$params) {
  *
  */
 function civicrm_api3_event_get($params) {
-
+// @fixme all this should be removed & replaced with std functions (e.g. see basic get) the set filter handles offset & stuff
+// BUT just need to work through with testing as some anomolies like the use of 'return.is_full' & max_results'
   $inputParams = array();
   $returnProperties = array();
   $returnCustomProperties = array();
@@ -113,7 +114,6 @@ function civicrm_api3_event_get($params) {
   // don't check if empty, more meaningful error for API user instead of silent defaults
   $offset    = array_key_exists('return.offset', $params) ? $params['return.offset'] : 0;
   $rowCount  = array_key_exists('return.max_results', $params) ? $params['return.max_results'] : 25;
-  $isCurrent = array_key_exists('isCurrent', $params) ? $params['isCurrent'] : 0;
   $isFull    = array_key_exists('return.is_full', $params) ? $params['return.is_full'] : 0;
 
   foreach ($params as $n => $v) {
@@ -140,9 +140,9 @@ function civicrm_api3_event_get($params) {
   }
 
   require_once 'CRM/Core/BAO/CustomGroup.php';
-  require_once 'CRM/Event/BAO/Event.php';
+
   $eventDAO = new CRM_Event_BAO_Event();
-  _civicrm_api3_dao_set_filter($eventDAO, $inputParams);
+  _civicrm_api3_dao_set_filter($eventDAO, $params, true);
 
 
   $event = array();
@@ -153,7 +153,7 @@ function civicrm_api3_event_get($params) {
 
   $eventDAO->whereAdd('( is_template IS NULL ) OR ( is_template = 0 )');
 
-  if ($isCurrent) {
+  if (CRM_Utils_Array::value('isCurrent', $params)) {
     $eventDAO->whereAdd('(start_date >= CURDATE() || end_date >= CURDATE())');
   }
   $eventDAO->orderBy($sort);
