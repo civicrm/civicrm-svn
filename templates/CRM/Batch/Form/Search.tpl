@@ -68,13 +68,16 @@ cj( function() {
     });
 });
 function buildBatchSelector( filterSearch ) {
-    if ( filterSearch ) {
-        crmBatchSelector.fnDestroy();
-        var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
-    } else {
-        var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Batches have been created for this site.{/ts}</div>'{literal};
-    }
-    
+  var status = {/literal}{$status}{literal};
+  if ( filterSearch ) {
+    crmBatchSelector.fnDestroy();
+    var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
+  } else if ( status == 1 ) {
+    var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">You do not have any Open batches.{/ts}</div>'{literal};
+  } else {
+    var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Batches have been created for this site.{/ts}</div>'{literal};
+  }
+
     var columns = '';
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/batchlist" h=0 q="snippet=4"}'{literal};
 
@@ -114,7 +117,6 @@ function buildBatchSelector( filterSearch ) {
                         }                                                       
                     },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
-            var status = {/literal}{$status}{literal};
             aoData.push( {name:'status', value: status });
             if ( filterSearch ) {
                 var batchStatus = '';
