@@ -270,8 +270,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
     // update batch to close status
     $paramValues = array( 
-      'id'  => $this->_batchId,
-      'status_id' => 2
+      'id'        => $this->_batchId,
+      'status_id' => 2, // close status
+      'total'     => $params['actualBatchTotal']   
     );
 
     CRM_Core_BAO_Batch::create( $paramValues ); 
@@ -302,7 +303,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       'thankyou_date',
       'cancel_date'
     );
-    
+
+    $params['actualBatchTotal'] = 0;
     if ( isset( $params['field'] ) ) {
       foreach ( $params['field'] as $key => $value ) {
         // if contact is not selected we should skip the row
@@ -351,6 +353,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $value['note'] = $value['contribution_note'];
         }
 
+        $params['actualBatchTotal'] += $value['total_amount'];
+
         unset($value['contribution_note']);
         unset($value['contribution_type']);
         unset($value['contribution_source']);
@@ -392,7 +396,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $value['contribution_id'] = $contribution->id;
           CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
         }
-
       }
     }
   }//end of function

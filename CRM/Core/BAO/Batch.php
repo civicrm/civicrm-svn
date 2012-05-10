@@ -244,8 +244,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       $action = array_sum(array_keys($newLinks));
 
       if ( $values[$object->id]['status_id'] == 2 ) {
-        $action -= CRM_Core_Action::DELETE;
-        $action -= CRM_Core_Action::UPDATE;
+        $newLinks = array();
       }
 
       $values[$object->id]['batch_type']   = $batchTypes[$values[$object->id]['type_id']];
