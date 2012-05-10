@@ -909,7 +909,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         if ( $online && $form->get( 'honor_block_is_active' ) ) {
             $honorCId = $form->createHonorContact( );
         }
-        $recurringContributionID = self::processRecurringContribution( $form, $params, $contactID, $online );
+        $recurringContributionID = self::processRecurringContribution( $form, $params, $contactID, $contributionType, $online );
 
         if ( ! $online && isset($params['honor_contact_id'] ) ) {
             $honorCId = $params['honor_contact_id'];
@@ -1230,7 +1230,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
      * Create the recurring contribution record
      *
      */
-    function processRecurringContribution( &$form, &$params, $contactID, $online = true ) {
+    function processRecurringContribution( &$form, &$params, $contactID, $contributionType, $online = true ) {
         // return if this page is not set for recurring
         // or the user has not chosen the recurring option
 
@@ -1266,6 +1266,19 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         // we need to add a unique trxn_id to avoid a unique key error
         // in paypal IPN we reset this when paypal sends us the real trxn id, CRM-2991
         $recurParams['trxn_id'] = CRM_Utils_Array::value( 'trxn_id', $params, $params['invoiceID'] );
+        $recurParams['contribution_type_id'] = $contributionType->id;
+
+        if ( ! $online || $form->_values['is_monetary'] ) {
+            $recurParams['payment_instrument_id'] = 1;
+        }
+
+        $campaignId = CRM_Utils_Array::value( 'campaign_id', $params );
+        if ( $online ) {
+            if ( !array_key_exists( 'campaign_id', $params ) ) {
+                $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_values );
+            }
+        }
+        $recurParams['campaign_id'] = $campaignId;
 
         $recurring = CRM_Contribute_BAO_ContributionRecur::add( $recurParams );
         if ( is_a( $recurring, 'CRM_Core_Error' ) ) {
