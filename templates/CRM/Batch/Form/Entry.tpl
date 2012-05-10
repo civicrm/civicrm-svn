@@ -139,7 +139,7 @@
        var validRow   = 0;
        var inValidRow = 0;
        var errorExists = false;
-       parentRow.find('td .required').each(function(){
+       parentRow.find('div .required').each(function(){
          if ( !cj(this).val( ) ) {
             inValidRow++;
          } else if ( cj(this).hasClass('error') && !cj(this).hasClass('valid') ) {
@@ -148,14 +148,14 @@
             validRow++;
          }
        });
-
+       console.log( parentRow );
        // this means use has entered some data
        if ( errorExists ) {
-         parentRow.find("td:first span").prop('class', 'batch-invalid');
+         parentRow.find("div:first span").prop('class', 'batch-invalid');
        } else if ( inValidRow == 0 && validRow > 0 ) {
-         parentRow.find("td:first span").prop('class', 'batch-valid');
+         parentRow.find("div:first span").prop('class', 'batch-valid');
        } else {
-         parentRow.find("td:first span").prop('class', 'batch-edit');
+         parentRow.find("div:first span").prop('class', 'batch-edit');
        }
    }
     
