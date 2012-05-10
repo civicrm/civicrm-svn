@@ -41,7 +41,7 @@
     <tr><td class="label">{ts}Total amount entered{/ts}</td><td class="right">{$config->defaultCurrencySymbol} <span class="batch-actual-total"></span></td></tr>
 </table>
 
-<div class="crm-copy-fields crm-grid-table">
+<div class="crm-copy-fields crm-grid-table" id="crm-batch-entry-table">
       <div class="crm-grid-header">
         <div class="crm-grid-cell">&nbsp;</div>
         <div class="crm-grid-cell">{ts}Contact{/ts}</div>

@@ -3304,7 +3304,11 @@ div#crm-toolTip
   border-collapse:collapse;
   border: 1px solid #7A7A60;
   background-color: #FFFFFF;
-  margin: 10px 0px 10px !important;
+  margin: 10px 3px 10px !important;
+}
+
+#crm-container #crm-batch-entry-table {
+  border-right: 2px solid #7A7A60 !important;
 }
 
 #crm-container .crm-grid-row,
@@ -3322,7 +3326,6 @@ div#crm-toolTip
   padding: 2px;
   vertical-align: top;
 }
-
 
 /* Responsive layout changes */
 
