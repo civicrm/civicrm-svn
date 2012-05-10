@@ -45,50 +45,50 @@ require_once 'CRM/Core/PseudoConstant.php';
 class CRM_Contact_Form_Edit_Individual {
     /**
      * This function provides the HTML form elements that are specific to the Individual Contact Type
-     * 
+     *
      * @access public
-     * @return None 
+     * @return None
      */
     public function buildQuickForm( &$form, $action = null )
     {
         $form->applyFilter('__ALL__','trim');
-        
+
         //prefix
         $prefix = CRM_Core_PseudoConstant::individualPrefix( );
         if ( !empty( $prefix ) ) {
             $form->addElement('select', 'prefix_id', ts('Prefix'), array('' => '') + $prefix );
         }
-        
+
         $attributes = CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact');
-        
+
         // first_name
         $form->addElement('text', 'first_name', ts('First Name'), $attributes['first_name'] );
-        
+
         //middle_name
         $form->addElement('text', 'middle_name', ts('Middle Name'), $attributes['middle_name'] );
-        
+
         // last_name
         $form->addElement('text', 'last_name', ts('Last Name'), $attributes['last_name'] );
-        
+
         // suffix
         $suffix = CRM_Core_PseudoConstant::individualSuffix( );
         if ( $suffix ) {
             $form->addElement('select', 'suffix_id', ts('Suffix'), array('' => '') + $suffix );
         }
-        
+
         // nick_name
         $form->addElement('text', 'nick_name', ts('Nick Name'),
                           CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'nick_name') );
-      
+
         // job title
         // override the size for UI to look better
         $attributes['job_title']['size'] = 30;
         $form->addElement('text', 'job_title', ts('Job title'), $attributes['job_title'], 'size="30"');
-                
+
         //Current Employer Element
         $employerDataURL =  CRM_Utils_System::url( 'civicrm/ajax/rest', 'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&employee_id='.$this->_contactId, false, null, false );
         $form->assign('employerDataURL',$employerDataURL );
-        
+
         $form->addElement('text', 'current_employer', ts('Current Employer'), '' );
         $form->addElement('hidden', 'current_employer_id', '', array( 'id' => 'current_employer_id') );
         $form->addElement('text', 'contact_source', ts('Source'));
@@ -98,16 +98,19 @@ class CRM_Contact_Form_Edit_Individual {
                                                        'contact_ajax_check_similar',
                                                        null,
                                                        true );
+        if ( $checkSimilar == null ) {
+          $checkSimilar = 0;
+        }
         $form->assign('checkSimilar',$checkSimilar );
- 
+
 
         //External Identifier Element
-        $form->add('text', 'external_identifier', ts('External Id'), 
+        $form->add('text', 'external_identifier', ts('External Id'),
                    CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'external_identifier'), false);
 
         $form->addRule( 'external_identifier',
-                        ts('External ID already exists in Database.'), 
-                        'objectExists', 
+                        ts('External ID already exists in Database.'),
+                        'objectExists',
                         array( 'CRM_Contact_DAO_Contact', $form->_contactId, 'external_identifier' ) );
         $config = CRM_Core_Config::singleton();
         CRM_Core_ShowHideBlocks::links($form, 'demographics', '' , '');
@@ -124,20 +127,20 @@ class CRM_Contact_Form_Edit_Individual {
      * @access public
      * @static
      */
-    static function formRule( $fields, $files, $contactID = null ) 
+    static function formRule( $fields, $files, $contactID = null )
     {
         $errors = array( );
         $primaryID = CRM_Contact_Form_Contact::formRule( $fields, $errors, $contactID );
-        
+
         // make sure that firstName and lastName or a primary OpenID is set
-        if ( !$primaryID && ( !CRM_Utils_Array::value( 'first_name', $fields ) ||  
+        if ( !$primaryID && ( !CRM_Utils_Array::value( 'first_name', $fields ) ||
                               !CRM_Utils_Array::value( 'last_name' , $fields ) ) ) {
-            $errors['_qf_default'] = ts('First Name and Last Name OR an email OR an OpenID in the Primary Location should be set.'); 
+            $errors['_qf_default'] = ts('First Name and Last Name OR an email OR an OpenID in the Primary Location should be set.');
         }
-        
+
         //check for duplicate - dedupe rules
         CRM_Contact_Form_Contact::checkDuplicateContacts( $fields, $errors, $contactID, 'Individual' );
-        
-        return empty($errors) ? true : $errors; 
+
+        return empty($errors) ? true : $errors;
     }
 }
