@@ -96,15 +96,12 @@
             calculateActualTotal();    
         });
 
+        // hide all dates if send receipt is checked
+        hideSendReceipt();
+
         // hide the receipt date if send receipt is checked
         cj( 'input[id*="][send_receipt]"]').change( function() {
-          var rowID = cj(this).closest('tr').attr('entity_id');
-          var element = 'field_' + rowID + '_receipt_date';
-          if ( cj(this).prop('checked') ) {
-            cj('.crm-batch-receipt_date-'+ rowID ).hide();
-          } else {
-            cj('.crm-batch-receipt_date-'+ rowID ).show();
-          }
+          showHideReceipt( cj(this) );
         });
 
         // line breaks between radio buttons
@@ -114,6 +111,22 @@
         cj('#primary_contact_1').focus();
 
    });
+
+   function hideSendReceipt() {
+     cj( 'input[id*="][send_receipt]"]').each( function() {
+       showHideReceipt( cj(this) );
+     });
+   }
+   
+   function showHideReceipt( elem ) {
+     var rowID = elem.closest('div.crm-grid-row').attr('entity_id');
+     var element = 'field_' + rowID + '_receipt_date';
+     if ( elem.prop('checked') ) {
+       cj('.crm-batch-receipt_date-'+ rowID ).hide();
+     } else {
+       cj('.crm-batch-receipt_date-'+ rowID ).show();
+     }
+   }
 
    function validateRow( ) {
       cj('.selector-rows').each(function(){
