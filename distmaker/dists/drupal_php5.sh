@@ -11,7 +11,7 @@ if [ ! -f $CFFILE ] ; then
 	echo "NO DISTMAKER.CONF FILE!"
 	exit 1
 else
-	. $CFFILE	
+	. $CFFILE
 fi
 
 RSYNCOPTIONS="-avC --exclude=svn --include=core"
@@ -43,13 +43,13 @@ if [ ! -d $TRG/sql ] ; then
 	mkdir $TRG/sql
 fi
 
-for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz; do 
+for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz $SRC/sql/case_sample*.mysql; do
 	cp $F $TRG/sql
 done
 
 # copy docs
 cp $SRC/agpl-3.0.txt $TRG
-cp $SRC/gpl.txt $TRG 
+cp $SRC/gpl.txt $TRG
 cp $SRC/README.txt $TRG
 cp $SRC/Sponsors.txt $TRG
 cp $SRC/agpl-3.0.exception.txt $TRG

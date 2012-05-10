@@ -16,7 +16,7 @@
 # DM_RSYNC=/usr/bin/rsync                       <- rsync binary
 # DM_VERSION=trunk.r1234                        <- what the version number should be
 # DM_ZIP=/usr/bin/zip                           <- zip binary
-# 
+#
 #
 # ========================================================
 # DO NOT MODIFY BELOW
@@ -28,8 +28,9 @@ P=`dirname $0`
 # Current dir
 ORIGPWD=`pwd`
 
-# Set no actions by default 
+# Set no actions by default
 D5PACK=0
+D56PACK=0
 J5PACK=0
 WP5PACK=0
 
@@ -39,7 +40,7 @@ display_usage()
 	echo
 	echo "Usage: "
 	echo "  distmaker.sh OPTION"
-	echo 
+	echo
 	echo "Options available:"
 	echo "  all  - generate all available tarballs"
 	echo "  d5   - generate Drupal7 PHP5 module"
@@ -104,7 +105,7 @@ case $1 in
 	echo; echo "Generating Joomla PHP5 module"; echo;
 	J5PACK=1
 	;;
-	
+
 	# WORDPRESS PHP5
 	wp5)
 	echo; echo "Generating Wordpress PHP5 module"; echo;
@@ -123,7 +124,7 @@ case $1 in
 	# USAGE
 	*)
 	display_usage
-	exit 0	
+	exit 0
 	;;
 
 esac
