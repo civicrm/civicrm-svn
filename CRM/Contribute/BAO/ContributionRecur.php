@@ -402,6 +402,46 @@ INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
         else 
             return CRM_Core_DAO::$_nullObject;
     }
+
+    static function setSubscriptionContext( ) {
+        // handle context redirection for subscription url
+        $session = CRM_Core_Session::singleton( ); 
+        if ( $session->get( 'userID' ) ) {
+            $url     = false;
+            $cid     = CRM_Utils_Request::retrieve( 'cid',     'Integer', $this, false );
+            $mid     = CRM_Utils_Request::retrieve( 'mid',     'Integer', $this, false );
+            $qfkey   = CRM_Utils_Request::retrieve( 'key',     'String', $this, false );
+            $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false );
+            if ( $cid ) {
+                switch ($context) {
+                case 'contribution':
+                    $url = CRM_Utils_System::url( 'civicrm/contact/view', 
+                                                  "reset=1&selectedChild=contribute&cid={$cid}" );
+                    break;
+                case 'membership':
+                    $url = CRM_Utils_System::url( 'civicrm/contact/view', 
+                                                  "reset=1&selectedChild=member&cid={$cid}" );
+                    break;
+                case 'dashboard':
+                    $url = CRM_Utils_System::url( 'civicrm/user', "reset=1&id={$cid}" );
+                    break;
+                }
+            }
+            if ( $mid ) {
+                switch ($context) {
+                case 'dashboard':
+                    $url = CRM_Utils_System::url( 'civicrm/member', "force=1&context={$context}&key={$qfkey}" );
+                    break;
+                case 'search':
+                    $url = CRM_Utils_System::url( 'civicrm/member/search', "force=1&context={$context}&key={$qfkey}" );
+                    break;
+                }
+            }
+            if ( $url ) {
+                $session->pushUserContext( $url );
+            }
+        }
+    }
 }
 
 

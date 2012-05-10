@@ -99,7 +99,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
      * @access public
      *
      */
-    static function &recurLinks( $recurID = false )
+    static function &recurLinks( $recurID = false, $context = 'contribution' )
     {
         if (!(self::$_links)) {
             self::$_links = array(
@@ -107,13 +107,13 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                                                                  'name'  => ts('View'),
                                                                  'title' => ts('View Recurring Payment'),
                                                                  'url'   => 'civicrm/contact/view/contributionrecur',
-                                                                 'qs'    => 'reset=1&id=%%crid%%&cid=%%cid%%'
+                                                                 'qs'    => "reset=1&id=%%crid%%&cid=%%cid%%&context={$context}"
                                                                  ),
                                   CRM_Core_Action::UPDATE => array(
                                                                    'name'  => ts('Edit'),
                                                                    'title' => ts('Edit Recurring Payment'),
                                                                    'url'   => 'civicrm/contact/view/contributionrecur',
-                                                                   'qs'    => 'reset=1&action=update&crid=%%crid%%&cid=%%cid%%'
+                                                                   'qs'    => "reset=1&action=update&crid=%%crid%%&cid=%%cid%%&context={$context}"
                                                                    ),
                                   CRM_Core_Action::DISABLE => array(
                                                                     'name'  => ts('Cancel'),
@@ -130,13 +130,13 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             if ( $paymentProcessorObj->isSupported( 'cancelSubscription' ) ) {
                 unset(self::$_links[CRM_Core_Action::DISABLE]['extra'], self::$_links[CRM_Core_Action::DISABLE]['ref']);
                 self::$_links[CRM_Core_Action::DISABLE]['url'] = "civicrm/contribute/unsubscribe";
-                self::$_links[CRM_Core_Action::DISABLE]['qs'] = "reset=1&crid=%%crid%%";
+                self::$_links[CRM_Core_Action::DISABLE]['qs'] = "reset=1&crid=%%crid%%&cid=%%cid%%&context={$context}";
             }
             if ( $paymentProcessorObj->isSupported( 'updateSubscriptionBillingInfo' ) ) {
                 self::$_links[CRM_Core_Action::RENEW] = array( 'name'  => ts('Change Billing Details'),
                                                                'title' => ts('Change Billing Details'),
                                                                'url'   => 'civicrm/contribute/updatebilling',
-                                                               'qs'    => 'reset=1&crid=%%crid%%'
+                                                               'qs'    => "reset=1&crid=%%crid%%&cid=%%cid%%&context={$context}"
                                                                );
             }
         }

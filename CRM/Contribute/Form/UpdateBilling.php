@@ -109,6 +109,9 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form
         if ( ! $this->_bltID ) {
             CRM_Core_Error::fatal( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
         }
+
+        // handle context redirection
+        CRM_Contribute_BAO_ContributionRecur::setSubscriptionContext();
     }
 
     function setDefaultValues( )

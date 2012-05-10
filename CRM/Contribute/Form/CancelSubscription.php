@@ -106,29 +106,9 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form
             }
         } 
 
-        // context redirection
-        $cid     = CRM_Utils_Request::retrieve( 'cid', 'Integer', $this, false );
-        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false );
-        $selectedChild = CRM_Utils_Request::retrieve( 'selectedChild', 'String', $this, false );
-        if ( !$context ) {
-            $context = CRM_Utils_Request::retrieve( 'compContext', 'String', $this, false );
-        }
-        $qfkey = CRM_Utils_Request::retrieve( 'key', 'String', $this, false );
-        if ( $cid ) {
-            $this->_userContext = CRM_Utils_System::url( 'civicrm/contact/view', 
-                                                         "reset=1&force=1&selectedChild={$selectedChild}&cid={$cid}" );
-        } else if ( $this->_mid ) {
-            $this->_userContext = CRM_Utils_System::url( 'civicrm/member/search', 
-                                                         "force=1&context={$context}&key={$qfkey}" );
-            if ( $context == 'dashboard' ) {
-                $this->_userContext = CRM_Utils_System::url( 'civicrm/member', 
-                                                             "force=1&context={$context}&key={$qfkey}" );
-            }
-        }
-        $session = CRM_Core_Session::singleton( ); 
-        if ( $session->get( 'userID' ) ) {
-            $session->pushUserContext( $this->_userContext );
-        }
+        // handle context redirection
+        CRM_Contribute_BAO_ContributionRecur::setSubscriptionContext();
+
         CRM_Utils_System::setTitle( $this->_mid ? ts('Cancel Auto-renewal') : ts('Cancel Recurring Contribution') );
         $this->assign( 'mode', $this->_mode );
 
