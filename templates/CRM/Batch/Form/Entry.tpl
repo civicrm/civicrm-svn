@@ -64,6 +64,8 @@
             <div class="compressed crm-grid-cell"><span class="crm-batch-{$n}-{$rowNumber}">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$rowNumber batchUpdate=1}</span></div>
         {elseif $n eq 'soft_credit'}
             <div class="compressed crm-grid-cell">{include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="soft_credit_"}</div>
+        {elseif in_array( $fields.$n.html_type, array('Radio', 'CheckBox'))}
+            <div class="compressed crm-grid-cell">&nbsp;{$form.field.$rowNumber.$n.html}</div> 
         {else}
             <div class="compressed crm-grid-cell">{$form.field.$rowNumber.$n.html}</div> 
         {/if}
@@ -104,8 +106,9 @@
           showHideReceipt( cj(this) );
         });
 
-        // line breaks between radio buttons
-        cj('<br />').insertBefore('input.form-radio');
+        // line breaks between radio buttons and checkboxes
+        cj('input.form-radio').next().after('<br />');
+        cj('input.form-checkbox').next().after('<br />');
 
         //set the focus on first element
         cj('#primary_contact_1').focus();
@@ -148,7 +151,7 @@
             validRow++;
          }
        });
-       console.log( parentRow );
+       
        // this means use has entered some data
        if ( errorExists ) {
          parentRow.find("div:first span").prop('class', 'batch-invalid');
