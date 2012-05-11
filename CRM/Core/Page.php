@@ -45,7 +45,7 @@
  *
  */
 class CRM_Core_Page {
-    
+
     /**
      * The name of the page (auto generated from class name)
      *
@@ -88,7 +88,7 @@ class CRM_Core_Page {
      * @access protected
      */
     protected $_print = false;
-    
+
     /**
      * cache the smarty template for efficiency reasons
      *
@@ -198,7 +198,7 @@ class CRM_Core_Page {
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print );
         return;
     }
-    
+
     /**
      * Store the variable with the value in the form scope
      *
@@ -254,7 +254,7 @@ class CRM_Core_Page {
         self::$_template->assign_by_ref($var, $value);
     }
 
-    
+
     /**
      * function to destroy all the session state of this page.
      *
@@ -289,7 +289,7 @@ class CRM_Core_Page {
     }
 
     /**
-     * setter for embedded 
+     * setter for embedded
      *
      * @param boolean $embedded
      *
@@ -301,7 +301,7 @@ class CRM_Core_Page {
     }
 
     /**
-     * getter for embedded 
+     * getter for embedded
      *
      * @return boolean return the embedded value
      * @access public
@@ -311,7 +311,7 @@ class CRM_Core_Page {
     }
 
     /**
-     * setter for print 
+     * setter for print
      *
      * @param boolean $print
      *
@@ -323,7 +323,7 @@ class CRM_Core_Page {
     }
 
     /**
-     * getter for print 
+     * getter for print
      *
      * @return boolean return the print value
      * @access public
