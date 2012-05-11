@@ -313,6 +313,18 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                                                                 'contribution_id', 
                                                                 'membership_id' );
         }
+
+        // make entry in batch entity batch table
+        if (CRM_Utils_Array::value('batch_id', $params)) {
+          $entityParams = array(
+            'batch_id' => $params['batch_id'],
+            'entity_table' => 'civicrm_membership',
+            'entity_id' => $membership->id,
+          );
+
+          CRM_Core_BAO_Batch::addBatchEntity($entityParams);
+        }
+
         //record contribution for this membership
         if ( CRM_Utils_Array::value( 'contribution_status_id', $params ) && !CRM_Utils_Array::value( 'relate_contribution_id', $params) ) {
             $contributionParams = array( );
@@ -330,7 +342,10 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             }
             
             $contribution = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
-            
+
+            // store contribution id
+            $params['contribution_id'] = $contribution->id;
+
             if ( CRM_Utils_Array::value('processPriceSet', $params) &&
                  !empty($params['lineItems']) ) {
                 CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $params['lineItems'] );   
@@ -436,7 +451,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                                    $recentOther
                                    );
         }
-        
+
         return $membership;
     }
     

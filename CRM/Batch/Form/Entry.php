@@ -260,6 +260,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
    */
   public function postProcess() {
     $params = $this->controller->exportValues( $this->_name );
+
+    $params['actualBatchTotal'] = 0;
     
     // get the profile information
     if ( $this->_batchInfo['type_id'] == 1) {
@@ -304,7 +306,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       'cancel_date'
     );
 
-    $params['actualBatchTotal'] = 0;
     if ( isset( $params['field'] ) ) {
       foreach ( $params['field'] as $key => $value ) {
         // if contact is not selected we should skip the row
@@ -409,6 +410,13 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
    * @return None
    */
   private function processMembership( &$params ) {
+    $dates = array( 
+      'join_date',
+      'membership_start_date',
+      'membership_end_date',
+      'receive_date'
+    );
+ 
     if ( isset( $params['field'] ) ) {
       $customFields = array( );
       foreach ( $params['field'] as $key => $value ) {               
@@ -421,6 +429,12 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         // update contact information
         $this->updateContactInfo( $value );
+
+        foreach ( $dates as $val ) {
+          if ( isset( $value[$val] ) ) {
+            $value[$val] = CRM_Utils_Date::processDate( $value[$val] );
+          }
+        }
 
         if ( CRM_Utils_Array::value( 'membership_source', $value ) ) {
           $value['source'] = $value['membership_source'];
@@ -457,11 +471,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           'Membership',
           $membershipTypeId );
 
-        // start of contribution related section
-        if ( CRM_Utils_Array::value( 'receive_date', $value ) ) {
-          $value['receive_date'] = CRM_Utils_Date::processDate( $value['receive_date'] );
-        }
-
         if ( CRM_Utils_Array::value('contribution_type', $value) ) {
           $value['contribution_type_id'] = $value['contribution_type'];
         }
@@ -480,6 +489,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         unset($value['contribution_type']);
         unset($value['payment_instrument']);
 
+        $value['batch_id'] = $this->_batchId;
         $value['skipRecentView'] = true;
 
         // end of contribution related section
@@ -492,7 +502,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             CRM_Core_BAO_CustomValueTable::store( $value['custom'], 'civicrm_membership', $membership->id );
         }
 
-        /*
         //process premiums
         if ( CRM_Utils_Array::value( 'product_name', $value ) ) {
           if ( $value['product_name'][0] > 0 ) {
@@ -505,15 +514,13 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
             $premiumParams = array(
               'product_id'      => $value['product_name'][0],
-              'contribution_id' => $contribution->id,
+              'contribution_id' => $value['contribution_id'],
               'product_option'  => $value['product_option'],
               'quantity'        => 1
             );
             CRM_Contribute_BAO_Contribution::addPremium( $premiumParams );
           }    
         } // end of premium
-         */
-
       }
     }
   }
