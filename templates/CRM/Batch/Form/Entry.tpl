@@ -84,28 +84,28 @@
 </div>
 {literal}
 <script type="text/javascript">
-    cj(function(){
-        cj('.selector-rows').change(function(){
-            var options = {
-                'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}       
-            };
+   cj(function(){
+      cj('.selector-rows').change(function(){
+          var options = {
+              'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}       
+          };
 
-            cj("#Entry").ajaxSubmit(options);
-            
-            // validate rows
-            checkColumns( cj(this) );
-        });
-        
-        // validate rows
-        validateRow( );
+          cj("#Entry").ajaxSubmit(options);
+          
+          // validate rows
+          checkColumns( cj(this) );
+      });
+      
+      // validate rows
+      validateRow( );
 
-        //calculate the actual total for the batch
-        calculateActualTotal();
-        cj('input[id*="_total_amount"]').keyup(function(){
-            calculateActualTotal();    
-        });
+      //calculate the actual total for the batch
+      calculateActualTotal();
+      cj('input[id*="_total_amount"]').keyup(function(){
+          calculateActualTotal();    
+      });
 
-        {/literal}{if $batchType eq 1 }{literal}
+      {/literal}{if $batchType eq 1 }{literal}
         // hide all dates if send receipt is checked
         hideSendReceipt();
 
@@ -114,21 +114,31 @@
           showHideReceipt( cj(this) );
         });
 
-        {/literal}{else}{literal}
+      {/literal}{else}{literal}
         cj('select[id^="member_option_"]').each( function() {
           if ( cj(this).val() == 1 ) {
             cj(this).attr('disabled', true);
           }
         });
+       
+        // set payment info accord to membership type
+        cj( 'select[id*="_membership_type"]').change( function() {
+            var rowID = cj(this).closest('div.crm-grid-row').attr('entity_id');
+            var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
+    
+            cj.post( dataUrl, {mtype: cj(this).val()}, function( data ) {
+              cj('#field_' + rowID + '_contribution_type').val( data.contribution_type_id );            
+              cj('#field_' + rowID + '_total_amount').val( data.total_amount );
+            }, 'json');    
+        });
+      {/literal}{/if}{literal}
 
-        {/literal}{/if}{literal}
+      // line breaks between radio buttons and checkboxes
+      cj('input.form-radio').next().after('<br />');
+      cj('input.form-checkbox').next().after('<br />');
 
-        // line breaks between radio buttons and checkboxes
-        cj('input.form-radio').next().after('<br />');
-        cj('input.form-checkbox').next().after('<br />');
-
-        //set the focus on first element
-        cj('#primary_contact_1').focus();
+      //set the focus on first element
+      cj('#primary_contact_1').focus();
 
    });
 
