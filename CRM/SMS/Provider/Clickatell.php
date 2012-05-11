@@ -231,6 +231,12 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
             // sendmsg with delivery acknowledgment and callback request:
             $postData .= "&callback=3&deliv_ack=1";
 
+            $isTest = 0;
+            if ( array_key_exists( 'is_test', $this->_providerInfo['api_params'] ) && 
+                 $this->_providerInfo['api_params']['is_test'] == 1 ) {
+                $isTest = 1;
+            }            
+
             /**
              * Check if we are using a queue when sending as each account
              * with Clickatell is assigned three queues namely 1, 2 and 3.
@@ -288,7 +294,11 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
                 }
             }
             
-            $response = $this->curl($url, $postData);
+            if ( $isTest == 1 ) {
+                $response = array( 'data' => 'ID:' . rand() );
+            } else {
+                $response = $this->curl($url, $postData);
+            }
             if (PEAR::isError($response)) {
                 return $response;
             }
