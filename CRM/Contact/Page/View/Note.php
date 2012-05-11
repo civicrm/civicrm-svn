@@ -39,7 +39,7 @@
  * Main page for viewing Notes.
  *
  */
-class CRM_Contact_Page_View_Note extends CRM_Core_Page 
+class CRM_Contact_Page_View_Note extends CRM_Core_Page
 {
     /**
      * The action links for notes that we need to display for the browse screen
@@ -73,7 +73,7 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
             $values['privacy'] = CRM_Core_OptionGroup::optionLabel( 'note_privacy', $values['privacy'] );
             $this->assign( 'note', $values );
         }
-       
+
         $comments = CRM_Core_BAO_Note::getNoteTree( $values['id'], 1 );
         if ( ! empty( $comments ) ) {
             $this->assign( 'comments', $comments );
@@ -93,20 +93,20 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
         $note->entity_id    = $this->_contactId;
 
         $note->orderBy( 'modified_date desc' );
-        
-        //CRM-4418, handling edit and delete separately. 
+
+        //CRM-4418, handling edit and delete separately.
         $permissions = array( $this->_permission );
         if ( $this->_permission == CRM_Core_Permission::EDIT ) {
-            //previously delete was subset of edit 
+            //previously delete was subset of edit
             //so for consistency lets grant delete also.
             $permissions[] = CRM_Core_Permission::DELETE;
         }
         $mask  = CRM_Core_Action::mask( $permissions );
-        
+
         $values =  array( );
         $links  = self::links( );
         $action = array_sum( array_keys( $links ) ) & $mask;
-        
+
         $note->find( );
         while ( $note->fetch( ) ) {
             if ( ! CRM_Core_BAO_Note::getNotePrivacyHidden( $note ) ) {
@@ -128,14 +128,14 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
         $this->assign( 'notes', $values );
 
         $commentLinks = self::commentLinks( );
-        
+
         $action = array_sum( array_keys( $commentLinks ) ) & $mask;
-        
+
         $commentAction = CRM_Core_Action::formLink( $commentLinks,
                                                     $action,
                                                     array( 'id'  => $note->id,
                                                            'pid' => $note->entity_id,
-                                                           'cid' => $note->entity_id ) 
+                                                           'cid' => $note->entity_id )
                                                     );
         $this->assign( 'commentAction', $commentAction );
 
@@ -143,7 +143,7 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
 
     /**
      * This function is called when action is update or new
-     * 
+     *
      * return null
      * @access public
      */
@@ -176,7 +176,7 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
     function preProcess( )
     {
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
-        
+
         if ( $this->_id && CRM_Core_BAO_Note::getNotePrivacyHidden( $this->_id ) ) {
             CRM_Core_Error::statusBounce( ts( 'You do not have access to this note.' ) );
         }
@@ -186,13 +186,13 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
 
         // check logged in url permission
         CRM_Contact_Page_View::checkUserPermission( $this );
-        
+
         // set page title
         CRM_Contact_Page_View::setTitle( $this->_contactId );
-        
+
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false, 'browse' );
         $this->assign( 'action', $this->_action );
-    }    
+    }
 
     /**
      * This function is the main function that is called when the page loads,
@@ -287,7 +287,7 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
                                                                             'url'   => 'civicrm/contact/view/note',
                                                                             'qs'    => 'action=view&reset=1&cid=%%cid%%&id={id}&selectedChild=note',
                                                                             'title' => ts('View Comment')
-                                                                            ),       
+                                                                            ),
                                           CRM_Core_Action::UPDATE  => array(
                                                                             'name'  => ts('Edit'),
                                                                             'url'   => 'civicrm/contact/view/note',
@@ -302,7 +302,7 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
                                                                             'title' => ts('Delete Comment')
                                                                             ),
                                           );
-         
+
         }
         return self::$_commentLinks;
     }
