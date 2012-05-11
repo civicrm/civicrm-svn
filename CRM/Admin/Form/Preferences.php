@@ -37,7 +37,7 @@
 
 /**
  * This class generates form components for Location Type
- * 
+ *
  */
 class CRM_Admin_Form_Preferences extends CRM_Core_Form
 {
@@ -100,7 +100,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
 
         foreach ( $this->_varNames as $groupName => $settings ) {
             foreach ( $settings as $settingName => $settingDetails ) {
-                $defaults[$settingName] = 
+                $defaults[$settingName] =
                     isset( $this->_config->$settingName ) ?
                     $this->_config->$settingName :
                     CRM_Utils_Array::value ( 'default', $settingDetails, null );
@@ -137,11 +137,11 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
      * @return None
      * @access public
      */
-    public function buildQuickForm( ) 
+    public function buildQuickForm( )
     {
         parent::buildQuickForm( );
 
-        
+
         if ( ! empty( $this->_varNames ) ) {
             foreach ( $this->_varNames as $groupName => $groupValues ) {
                 $formName = CRM_Utils_String::titleToVar( $groupName );
@@ -185,7 +185,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                         break;
                     }
                 }
-                
+
                 $fields = CRM_Utils_Array::crmArraySortByField($fields, 'weight');
                 $this->assign( 'fields', $fields);
             }
@@ -203,7 +203,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
         if ($this->_action == CRM_Core_Action::VIEW ) {
             $this->freeze( );
         }
-       
+
     }
 
 
@@ -213,7 +213,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
      * @access public
      * @return None
      */
-    public function postProcess() 
+    public function postProcess()
     {
         $config = CRM_Core_Config::singleton();
         if ( $this->_action == CRM_Core_Action::VIEW ) {
@@ -221,7 +221,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
         }
 
         $this->_params = $this->controller->exportValues( $this->_name );
-        
+
         $this->postProcessCommon( );
     }//end of function
 
@@ -232,7 +232,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
      * @access public
      * @return None
      */
-    public function postProcessCommon() 
+    public function postProcessCommon()
     {
         foreach ( $this->_varNames as $groupName => $groupValues ) {
             foreach ( $groupValues as $settingName => $fieldValue ) {
@@ -240,7 +240,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form
                 case 'checkboxes':
                     if ( CRM_Utils_Array::value( $settingName, $this->_params ) &&
                          is_array( $this->_params[$settingName] ) ) {
-                        $this->_config->$settingName = 
+                        $this->_config->$settingName =
                             CRM_Core_DAO::VALUE_SEPARATOR .
                             implode( CRM_Core_DAO::VALUE_SEPARATOR,
                                      array_keys( $this->_params[$settingName] ) ) .
