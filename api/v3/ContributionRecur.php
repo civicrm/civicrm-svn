@@ -35,20 +35,19 @@
 
 require_once 'CRM/Contribute/BAO/ContributionRecur.php';
 
-
 /**
  * Create or update a contribution_recur
  *
  * @param array $params  Associative array of property
  *                       name/value pairs to insert in new 'contribution_recur'
  * @example ContributionRecurCreate.php Std Create example
+ *
  * @return array api result array
  * {@getfields contribution_recur_create}
  * @access public
  */
-function civicrm_api3_contribution_recur_create( $params )
-{
-    return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+function civicrm_api3_contribution_recur_create($params) {
+  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 /*
  * Adjust Metadata for Create action
@@ -56,9 +55,10 @@ function civicrm_api3_contribution_recur_create( $params )
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_contribution_recur_create_spec(&$params){
+function _civicrm_api3_contribution_recur_create_spec(&$params) {
   $params['contact_id']['api.required'] = 1;
 }
+
 /**
  * Returns array of contribution_recurs  matching a set of one or more group properties
  *
@@ -70,9 +70,8 @@ function _civicrm_api3_contribution_recur_create_spec(&$params){
  * {@getfields contribution_recur_get}
  * @access public
  */
-function civicrm_api3_contribution_recur_get( $params )
-{
-    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+function civicrm_api3_contribution_recur_get($params) {
+  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
 /**
@@ -89,7 +88,7 @@ function civicrm_api3_contribution_recur_get( $params )
  * {@getfields contribution_recur_delete}
  * @access public
  */
-function civicrm_api3_contribution_recur_delete( $params )
-{
-    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+function civicrm_api3_contribution_recur_delete($params) {
+  return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
+

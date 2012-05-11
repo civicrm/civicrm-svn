@@ -62,20 +62,25 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     //get all interviewers.
     $allSurveyInterviewers = CRM_Campaign_BAO_Survey::getInterviewers();
 
-    $this->_columns = array('civicrm_activity_assignment' =>
-      array('dao' => 'CRM_Activity_DAO_ActivityAssignment',
+    $this->_columns = array(
+      'civicrm_activity_assignment' =>
+      array(
+        'dao' => 'CRM_Activity_DAO_ActivityAssignment',
         'fields' => array('assignee_contact_id' => array('title' => ts('Interviewer Name'))),
-        'filters' => array('assignee_contact_id' => array('name' => 'assignee_contact_id',
+        'filters' => array(
+          'assignee_contact_id' => array('name' => 'assignee_contact_id',
             'title' => ts('Interviewer Name'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' =>
             CRM_Report_Form::OP_SELECT,
-            'options' => array('' => ts('- any interviewer -')) + $allSurveyInterviewers,
+            'options' => array(
+              '' => ts('- any interviewer -')) + $allSurveyInterviewers,
           )),
         'grouping' => 'survey-interviewer-fields',
       ),
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' => array('id' => array('title' => ts('Contact ID'),
             'no_display' => TRUE,
             'required' => TRUE,
@@ -94,38 +99,48 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
           )),
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
-        'fields' => array('phone' => array('name' => 'phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
+        'fields' => array(
+          'phone' => array('name' => 'phone',
             'title' => ts('Phone'),
           )),
         'grouping' => 'location-fields',
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
-        'fields' => array('street_number' => array('name' => 'street_number',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
+        'fields' => array(
+          'street_number' => array('name' => 'street_number',
             'title' => ts('Street Number'),
             'type' => 1,
           ),
-          'street_name' => array('name' => 'street_name',
+          'street_name' => array(
+            'name' => 'street_name',
             'title' => ts('Street Name'),
             'type' => 1,
           ),
-          'street_unit' => array('name' => 'street_unit',
+          'street_unit' => array(
+            'name' => 'street_unit',
             'title' => ts('Street Unit'),
             'type' => 1,
           ),
-          'postal_code' => array('name' => 'postal_code',
+          'postal_code' => array(
+            'name' => 'postal_code',
             'title' => ts('Postal Code'),
             'type' => 1,
           ),
-          'city' => array('name' => 'city',
+          'city' => array(
+            'name' => 'city',
             'title' => ts('City'),
             'type' => 1,
           ),
-          'state_province_id' => array('name' => 'state_province_id',
+          'state_province_id' => array(
+            'name' => 'state_province_id',
             'title' => ts('State/Province'),
           ),
-          'country_id' => array('name' => 'country_id',
+          'country_id' => array(
+            'name' => 'country_id',
             'title' => ts('Country'),
           ),
         ),
@@ -145,14 +160,16 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             'operator' => 'like',
             'name' => 'city',
           ),
-          'state_province_id' => array('name' => 'state_province_id',
+          'state_province_id' => array(
+            'name' => 'state_province_id',
             'title' => ts('State/Province'),
             'operatorType' =>
             CRM_Report_Form::OP_MULTISELECT,
             'options' =>
             CRM_Core_PseudoConstant::stateProvince(),
           ),
-          'country_id' => array('name' => 'country_id',
+          'country_id' => array(
+            'name' => 'country_id',
             'title' => ts('Country'),
             'operatorType' =>
             CRM_Report_Form::OP_MULTISELECT,
@@ -169,16 +186,20 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         'grouping' => 'location-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
-        'fields' => array('email' => array('name' => 'email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
+        'fields' => array(
+          'email' => array('name' => 'email',
             'title' => ts('Email'),
           )),
         'grouping' => 'location-fields',
       ),
       'civicrm_activity' =>
-      array('dao' => 'CRM_Activity_DAO_Activity',
+      array(
+        'dao' => 'CRM_Activity_DAO_Activity',
         'alias' => 'survey_activity',
-        'fields' => array('survey_id' => array('name' => 'source_record_id',
+        'fields' => array(
+          'survey_id' => array('name' => 'source_record_id',
             'title' => ts('Survey'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' =>
@@ -186,22 +207,26 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             'options' =>
             CRM_Campaign_BAO_Survey::getSurveys(),
           ),
-          'survey_response' => array('name' => 'survey_response',
+          'survey_response' => array(
+            'name' => 'survey_response',
             'title' => ts('Survey Responses'),
           ),
-          'result' => array('name' => 'result',
+          'result' => array(
+            'name' => 'result',
             'required' => TRUE,
             'title' => ts('Survey Result'),
           ),
         ),
-        'filters' => array('survey_id' => array('name' => 'source_record_id',
+        'filters' => array(
+          'survey_id' => array('name' => 'source_record_id',
             'title' => ts('Survey'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' =>
             CRM_Campaign_BAO_Survey::getSurveys(),
           ),
-          'status_id' => array('name' => 'status_id',
+          'status_id' => array(
+            'name' => 'status_id',
             'title' => ts('Respondent Status'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_SELECT,
@@ -338,7 +363,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
       foreach ($this->_columns as $tableName => $table) {
         if (array_key_exists('group_bys', $table)) {
           foreach ($table['group_bys'] as $fieldName => $field) {
-            if (!in_array($fieldName, array('street_name', 'street_number')) &&
+            if (!in_array($fieldName, array(
+              'street_name', 'street_number')) &&
               CRM_Utils_Array::value($fieldName, $this->_params['group_bys'])
             ) {
               $this->_groupBy[] = $field['dbAlias'];
@@ -419,7 +445,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     //call local post process for only print and pdf.
     //we do need special formatted o/p only when we do have grouping
     $groupBys = CRM_Utils_Array::value('group_bys', $this->_params, array());
-    if (in_array($this->_outputMode, array('print', 'pdf'))) {
+    if (in_array($this->_outputMode, array(
+      'print', 'pdf'))) {
 
       //prepare grouping if data.
       $outPut = array();
@@ -512,7 +539,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
           $fldId = substr($name, 7);
           $fieldIds[$fldId] = $fldId;
           $title = CRM_Utils_Array::value('label', $field, $field['title']);
-          $surveyResponseFields[$name] = array('id' => $fldId,
+          $surveyResponseFields[$name] = array(
+            'id' => $fldId,
             'title' => $title,
             'name' => "{$tableName}_{$name}",
           );
@@ -741,7 +769,8 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
 
     $responseFields = array();
     $fieldValueMap  = array();
-    $properties     = array('id',
+    $properties     = array(
+      'id',
       'data_type',
       'html_type',
       'column_name',
@@ -757,7 +786,8 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
       if ($responseField->option_group_id) {
         //show value for print and pdf.
         $value = $responseField->label;
-        if (in_array($this->_outputMode, array('print', 'pdf'))) {
+        if (in_array($this->_outputMode, array(
+          'print', 'pdf'))) {
           $value = $responseField->value;
         }
         $fieldValueMap[$responseField->option_group_id][$responseField->value] = $value;
@@ -859,7 +889,8 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
 
 
       $title = $responseFields[$fieldName]['title'];
-      if (in_array($this->_outputMode, array('print', 'pdf'))) {
+      if (in_array($this->_outputMode, array(
+        'print', 'pdf'))) {
         $title = 'Q' . $fildCnt++;
       }
 
@@ -867,7 +898,8 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
       if ($response->time_format) {
         $fldType = CRM_Utils_Type::T_TIMESTAMP;
       }
-      $field = array('name' => $response->column_name,
+      $field = array(
+        'name' => $response->column_name,
         'type' => $fldType,
         'title' => $title,
         'label' => $responseFields[$fieldName]['title'],

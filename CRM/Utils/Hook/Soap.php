@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  +--------------------------------------------------------------------+
@@ -33,13 +33,13 @@
  * $Id: $
  *
  */
- 
-
 class CRM_Utils_Hook_Soap extends CRM_Utils_Hook {
-   function invoke( $numParams,
-                    &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-                    $fnSuffix ) {
-       // suppress all hok calls during soap
-       return;
-   }
+  function invoke($numParams,
+    &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+    $fnSuffix
+  ) {
+    // suppress all hok calls during soap
+    return;
+  }
 }
+

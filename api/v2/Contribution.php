@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -282,7 +283,8 @@ function &civicrm_contribution_format_create(&$params) {
  * @access private
  */
 function _civicrm_contribute_check_params(&$params) {
-  static $required = array('contact_id' => NULL,
+  static $required = array(
+    'contact_id' => NULL,
     'total_amount' => NULL,
     'contribution_type_id' => 'contribution_type',
   );

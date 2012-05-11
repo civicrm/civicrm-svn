@@ -1,7 +1,6 @@
 <?php
 // $Id$
 
-
 /**
  * Get information about fields for a given api request. Getfields information
  * is used for documentation, validation, default setting
@@ -11,6 +10,7 @@
  * for get requests & just field name for create. This is because some get functions
  * access multiple objects e.g. contact api accesses is_deleted from the activity
  * table & from the contact table
+ *
  * @param array $apiRequest api request as an array. Keys are
  *  - entity: string
  *  - action: string
@@ -21,20 +21,21 @@
  */
 function civicrm_api3_generic_getfields($apiRequest) {
   static $results = array();
-  if ((CRM_Utils_Array::value('cache_clear',$apiRequest['params']))){
+  if ((CRM_Utils_Array::value('cache_clear', $apiRequest['params']))) {
     $results = array();
   }
-  $entity = _civicrm_api_get_camel_name($apiRequest['entity']);
+  $entity       = _civicrm_api_get_camel_name($apiRequest['entity']);
   $lcase_entity = _civicrm_api_get_entity_name_from_camel($entity);
-  $subentity = CRM_Utils_Array::value('contact_type', $apiRequest['params']);
-  $action = strtolower(CRM_Utils_Array::value('action',$apiRequest['params']));
-  if($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount' ){
+  $subentity    = CRM_Utils_Array::value('contact_type', $apiRequest['params']);
+  $action       = strtolower(CRM_Utils_Array::value('action', $apiRequest['params']));
+  if ($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount') {
     $action = 'get';
   }
   if (empty($action)) {
-    if (CRM_Utils_Array::value($entity .$subentity, $results) &&
-      CRM_Utils_Array::value('values', $results['entity'])) {
-      return $results[$entity .$subentity];
+    if (CRM_Utils_Array::value($entity . $subentity, $results) &&
+      CRM_Utils_Array::value('values', $results['entity'])
+    ) {
+      return $results[$entity . $subentity];
     }
     else {
       $values = _civicrm_api_get_fields($entity);
@@ -44,18 +45,20 @@ function civicrm_api3_generic_getfields($apiRequest) {
       return $results[$entity];
     }
   }
-  $unique = TRUE; //determines whether to use unique field names - seem comment block above
-  if(isset($results[$entity . $subentity]) && CRM_Utils_Array::value($action, $results[$entity])) {
+  // determines whether to use unique field names - seem comment block above
+  $unique = TRUE;
+  if (isset($results[$entity . $subentity]) && CRM_Utils_Array::value($action, $results[$entity])) {
     return $results[$entity . $subentity][$action];
   }
   // defaults based on data model and API policy
   switch ($action) {
     case 'getfields':
       $values = _civicrm_api_get_fields($entity, $apiRequest['params']);
-      $results[$entity][$action] =  civicrm_api3_create_success($values,
+      $results[$entity][$action] = civicrm_api3_create_success($values,
         $apiRequest['params'], $entity, 'getfields'
       );
       return $results[$entity][$action];
+
     case 'create':
     case 'update':
     case 'replace':
@@ -65,12 +68,13 @@ function civicrm_api3_generic_getfields($apiRequest) {
       if (empty($metadata['id']) && !empty($metadata[$apiRequest['entity'] . '_id'])) {
         $metadata['id'] = $metadata[$lcase_entity . '_id'];
         $metadata['id']['api.aliases'] = array($lcase_entity . '_id');
-        unset($metadata[$lcase_entity  . '_id']);
+        unset($metadata[$lcase_entity . '_id']);
       }
       break;
 
     case 'delete':
-      $metadata = array('id' => array('title' => 'Unique Identifier',
+      $metadata = array(
+        'id' => array('title' => 'Unique Identifier',
           'api.required' => 1,
           'api.aliases' => array($lcase_entity . '_id'),
         ));
@@ -90,16 +94,16 @@ function civicrm_api3_generic_getfields($apiRequest) {
   }
 
   foreach ($metadata as $fieldname => $field) {
-    if(array_key_exists('pseudoconstant', $field)){
-      $options = civicrm_api('constant', 'get', array('version' =>3, 'name' => $field['pseudoconstant']));
-      if(is_array(CRM_Utils_Array::value('values',$options))){
+    if (array_key_exists('pseudoconstant', $field)) {
+      $options = civicrm_api('constant', 'get', array('version' => 3, 'name' => $field['pseudoconstant']));
+      if (is_array(CRM_Utils_Array::value('values', $options))) {
 
         $metadata[$fieldname]['options'] = $options['values'];
       }
     }
-     if(array_key_exists('enumValues', $field)){
-       $metadata[$fieldname]['options'] = explode(',',$field['enumValues']);
-     }
+    if (array_key_exists('enumValues', $field)) {
+      $metadata[$fieldname]['options'] = explode(',', $field['enumValues']);
+    }
   }
   $results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
   return $results[$entity][$action];
@@ -107,7 +111,9 @@ function civicrm_api3_generic_getfields($apiRequest) {
 
 /**
  * API return function to reformat results as count
+ *
  * @param array $apiRequest api request as an array. Keys are
+ *
  * @return integer count of results
  */
 function civicrm_api3_generic_getcount($apiRequest) {
@@ -117,7 +123,9 @@ function civicrm_api3_generic_getcount($apiRequest) {
 
 /**
  * API return function to reformat results as single result
+ *
  * @param array $apiRequest api request as an array. Keys are
+ *
  * @return integer count of results
  */
 function civicrm_api3_generic_getsingle($apiRequest) {
@@ -138,7 +146,9 @@ function civicrm_api3_generic_getsingle($apiRequest) {
 
 /**
  * API return function to reformat results as single value
+ *
  * @param array $apiRequest api request as an array. Keys are
+ *
  * @return integer count of results
  */
 function civicrm_api3_generic_getvalue($apiRequest) {
@@ -163,9 +173,12 @@ function civicrm_api3_generic_getvalue($apiRequest) {
 
   return civicrm_api3_create_error("missing param return=field you want to read the value of", array('error_type' => 'mandatory_missing', 'missing_param' => 'return'));
 }
+
 /**
  * API wrapper for replace function
+ *
  * @param array $apiRequest api request as an array. Keys are
+ *
  * @return integer count of results
  */
 function civicrm_api3_generic_replace($apiRequest) {

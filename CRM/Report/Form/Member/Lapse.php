@@ -41,19 +41,24 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
   protected $_emailField = FALSE;
   protected $_phoneField = FALSE;
   protected $_charts = array('' => 'Tabular');
-  protected $_customGroupExtends = array('Membership'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Membership'); function __construct() {
     // UI for selecting columns to appear in the report list
     // array conatining the columns, group_bys and filters build and provided to Form
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Member Name'),
             'no_repeat' => TRUE,
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
           'first_name' =>
@@ -61,7 +66,8 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
           'last_name' =>
@@ -69,18 +75,22 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_membership_type' =>
-      array('dao' => 'CRM_Member_DAO_MembershipType',
+      array(
+        'dao' => 'CRM_Member_DAO_MembershipType',
         'grouping' => 'member-fields',
         'filters' =>
-        array('tid' =>
-          array('name' => 'id',
+        array(
+          'tid' =>
+          array(
+            'name' => 'id',
             'title' => ts('Membership Types'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Member_PseudoConstant::membershipType(),
@@ -88,11 +98,14 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
         ),
       ),
       'civicrm_membership' =>
-      array('dao' => 'CRM_Member_DAO_Membership',
+      array(
+        'dao' => 'CRM_Member_DAO_Membership',
         'grouping' => 'member-fields',
         'fields' =>
-        array('membership_type_id' =>
-          array('title' => 'Membership Type',
+        array(
+          'membership_type_id' =>
+          array(
+            'title' => 'Membership Type',
             'required' => TRUE,
             'type' => CRM_Utils_Type::T_STRING,
           ),
@@ -103,14 +116,17 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('membership_end_date' =>
-          array('title' => 'Lapsed Memberships',
+        array(
+          'membership_end_date' =>
+          array(
+            'title' => 'Lapsed Memberships',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
         ),
       ),
       'civicrm_membership_status' =>
-      array('dao' => 'CRM_Member_DAO_MembershipStatus',
+      array(
+        'dao' => 'CRM_Member_DAO_MembershipStatus',
         'alias' => 'mem_status',
         'fields' =>
         array(
@@ -121,9 +137,11 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
         'grouping' => 'member-fields',
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'fields' =>
-        array('street_address' => NULL,
+        array(
+          'street_address' => NULL,
           'city' => NULL,
           'postal_code' => NULL,
           'state_province_id' =>
@@ -137,24 +155,29 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'alias' => 'phone',
         'fields' =>
         array('phone' => NULL),
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
         array('email' => NULL),
         'grouping' => 'contact-fields',
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_GroupContact',
+      array(
+        'dao' => 'CRM_Contact_DAO_GroupContact',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,

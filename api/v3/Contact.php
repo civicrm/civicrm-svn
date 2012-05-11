@@ -71,10 +71,11 @@ function civicrm_api3_contact_create($params) {
     if (($email = CRM_Utils_Array::value('email', $params)) && !is_array($params['email'])) {
       require_once 'CRM/Core/BAO/LocationType.php';
       $defLocType = CRM_Core_BAO_LocationType::getDefault();
-      $params['email'] = array(1 => array('email' => $email,
-                                  'is_primary' => 1,
-                                  'location_type_id' => ($defLocType->id) ? $defLocType->id : 1,
-                         ),
+      $params['email'] = array(
+        1 => array('email' => $email,
+          'is_primary' => 1,
+          'location_type_id' => ($defLocType->id) ? $defLocType->id : 1,
+        ),
       );
     }
   }
@@ -83,8 +84,8 @@ function civicrm_api3_contact_create($params) {
     require_once 'CRM/Core/PseudoConstant.php';
     $websiteTypes = CRM_Core_PseudoConstant::websiteType();
     $params['website'] = array(1 => array('website_type_id' => key($websiteTypes),
-                                  'url' => $homeUrl,
-                         ),
+        'url' => $homeUrl,
+      ),
     );
   }
 
@@ -214,12 +215,12 @@ function civicrm_api3_contact_get($params) {
   require_once 'CRM/Contact/BAO/Query.php';
   $newParams = CRM_Contact_BAO_Query::convertFormValues($inputParams);
   list($contacts, $options) = CRM_Contact_BAO_Query::apiQuery($newParams,
-                              $returnProperties,
-                              NULL,
-                              $sort,
-                              $offset,
-                              $rowCount,
-                              $smartGroupCache
+    $returnProperties,
+    NULL,
+    $sort,
+    $offset,
+    $rowCount,
+    $smartGroupCache
   );
   // CRM-7929 Quick fix by colemanw
   // TODO: Figure out what function is responsible for prepending 'individual_' to these keys
@@ -429,7 +430,8 @@ function _civicrm_api3_contact_update($params, $contactID = NULL) {
  */
 function _civicrm_api3_greeting_format_params($params) {
   $greetingParams = array('', '_id', '_custom');
-  foreach (array('email', 'postal', 'addressee') as $key) {
+  foreach (array(
+    'email', 'postal', 'addressee') as $key) {
     $greeting = '_greeting';
     if ($key == 'addressee') {
       $greeting = '';
@@ -452,7 +454,6 @@ function _civicrm_api3_greeting_format_params($params) {
     if (!$formatParams) {
 
       continue;
-
     }
 
     // format params
@@ -463,8 +464,9 @@ function _civicrm_api3_greeting_format_params($params) {
     }
 
     $nullValue = FALSE;
-    $filter = array('contact_type' => $params['contact_type'],
-              'greeting_type' => "{$key}{$greeting}",
+    $filter = array(
+      'contact_type' => $params['contact_type'],
+      'greeting_type' => "{$key}{$greeting}",
     );
 
     $greetings      = CRM_Core_PseudoConstant::greeting($filter);
@@ -518,8 +520,8 @@ function _civicrm_api3_greeting_format_params($params) {
     }
 
     $customValue = $params['contact_id'] ? CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
-                   $params['contact_id'],
-                   "{$key}{$greeting}_custom"
+      $params['contact_id'],
+      "{$key}{$greeting}_custom"
     ) : FALSE;
 
     if (array_key_exists("{$key}{$greeting}_id", $params) && empty($params["{$key}{$greeting}_id"])) {
@@ -567,9 +569,9 @@ function civicrm_api3_contact_quicksearch($params) {
   // get the autocomplete options from settings
   require_once 'CRM/Core/BAO/Setting.php';
   $acpref = explode(CRM_Core_DAO::VALUE_SEPARATOR,
-            CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-              'contact_autocomplete_options'
-            )
+    CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+      'contact_autocomplete_options'
+    )
   );
 
   // get the option values for contact autocomplete
@@ -596,8 +598,8 @@ function civicrm_api3_contact_quicksearch($params) {
       case 'phone':
       case 'email':
         $actualSelectElements[] = $select[] = ($value == 'address') ? $selectText : $value;
-      $from[$value] = "LEFT JOIN civicrm_{$value} {$suffix} ON ( cc.id = {$suffix}.contact_id AND {$suffix}.is_primary = 1 ) ";
-      break;
+        $from[$value] = "LEFT JOIN civicrm_{$value} {$suffix} ON ( cc.id = {$suffix}.contact_id AND {$suffix}.is_primary = 1 ) ";
+        break;
 
       case 'country':
       case 'state_province':
@@ -647,8 +649,8 @@ function civicrm_api3_contact_quicksearch($params) {
     $currEmpDetails = array();
     if (CRM_Utils_Array::value('employee_id', $params)) {
       if ($currentEmployer = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
-                             CRM_Utils_Array::value('employee_id', $params),
-                             'employer_id'
+          CRM_Utils_Array::value('employee_id', $params),
+          'employer_id'
         )) {
         if ($config->includeWildCardInName) {
           $strSearch = "%$name%";
@@ -661,8 +663,9 @@ function civicrm_api3_contact_quicksearch($params) {
         $dao = CRM_Core_DAO::executeQuery("SELECT cc.id as id, CONCAT_WS( ' :: ', {$actualSelectElements} ) as data, sort_name
                     FROM civicrm_contact cc {$from} WHERE cc.contact_type = \"Organization\" AND cc.id = {$currentEmployer} AND cc.sort_name LIKE '$strSearch'");
         if ($dao->fetch()) {
-          $currEmpDetails = array('id' => $dao->id,
-                            'data' => $dao->data,
+          $currEmpDetails = array(
+            'id' => $dao->id,
+            'data' => $dao->data,
           );
         }
       }
@@ -767,13 +770,14 @@ LIMIT    0, {$limit}
   if (empty($contactList)) {
     if (CRM_Utils_Array::value('org', $params)) {
       if ($listCurrentEmployer && !empty($currEmpDetails)) {
-        $contactList = array('data' => $currEmpDetails['data'],
-                       'id' => $currEmpDetails['id'],
+        $contactList = array(
+          'data' => $currEmpDetails['data'],
+          'id' => $currEmpDetails['id'],
         );
       }
       else {
         $contactList = array('data' => CRM_Utils_Array::value('s', $params),
-                       'id' => CRM_Utils_Array::value('s', $params),
+          'id' => CRM_Utils_Array::value('s', $params),
         );
       }
     }
@@ -805,8 +809,8 @@ function civicrm_api3_contact_merge($params) {
 
   require_once 'CRM/Dedupe/Merger.php';
   $dupePairs = array(array('srcID' => CRM_Utils_Array::value('main_id', $params),
-                 'dstID' => CRM_Utils_Array::value('other_id', $params),
-               ));
+      'dstID' => CRM_Utils_Array::value('other_id', $params),
+    ));
   $result = CRM_Dedupe_Merger::merge($dupePairs, array(), $mode, $autoFlip);
 
   if ($result['is_error'] == 0) {
@@ -817,31 +821,32 @@ function civicrm_api3_contact_merge($params) {
   }
 }
 
-function _civicrm_api3_contact_proximity_spec (&$params) {
-  $params['latitude']['api.required'] =1;
-  $params['longitude']['api.required'] =1;
+function _civicrm_api3_contact_proximity_spec(&$params) {
+  $params['latitude']['api.required'] = 1;
+  $params['longitude']['api.required'] = 1;
   $params['unit']['api.default'] = 'meter';
 }
 
-function civicrm_api3_contact_proximity( $params ) {
-  $latitude  = CRM_Utils_Array::value( 'latitude' , $params );
-  $longitude = CRM_Utils_Array::value( 'longitude', $params );
-  $distance  = CRM_Utils_Array::value( 'distance' , $params );
+function civicrm_api3_contact_proximity($params) {
+  $latitude  = CRM_Utils_Array::value('latitude', $params);
+  $longitude = CRM_Utils_Array::value('longitude', $params);
+  $distance  = CRM_Utils_Array::value('distance', $params);
 
-  $unit      = CRM_Utils_Array::value( 'unit', $params );
+  $unit = CRM_Utils_Array::value('unit', $params);
 
   // check and ensure that lat/long and distance are floats
   if (
-    ! CRM_Utils_Rule::numeric( $latitude  ) ||
-    ! CRM_Utils_Rule::numeric( $longitude ) ||
-    ! CRM_Utils_Rule::numeric( $distance )
+    !CRM_Utils_Rule::numeric($latitude) ||
+    !CRM_Utils_Rule::numeric($longitude) ||
+    !CRM_Utils_Rule::numeric($distance)
   ) {
-    throw new Exception( ts( 'Latitude, Longitude and Distance should exist and be numeric' ) );
+    throw new Exception(ts('Latitude, Longitude and Distance should exist and be numeric'));
   }
 
-  if ( $unit == "mile" ) {
+  if ($unit == "mile") {
     $conversionFactor = 1609.344;
-  } else {
+  }
+  else {
     $conversionFactor = 1000;
   }
   //Distance in meters
@@ -850,7 +855,7 @@ function civicrm_api3_contact_proximity( $params ) {
   require_once 'CRM/Contact/BAO/ProximityQuery.php';
   $whereClause = CRM_Contact_BAO_ProximityQuery::where($latitude, $longitude, $distance);
 
-  $query =  "
+  $query = "
 SELECT    civicrm_contact.id as contact_id,
           civicrm_contact.display_name as display_name
 FROM      civicrm_contact
@@ -858,12 +863,12 @@ LEFT JOIN civicrm_address ON civicrm_contact.id = civicrm_address.contact_id
 WHERE     $whereClause
 ";
 
-  $dao = CRM_Core_DAO::executeQuery( $query );
-  $contacts = array ();
-  while ( $dao->fetch( ) ) {
+  $dao = CRM_Core_DAO::executeQuery($query);
+  $contacts = array();
+  while ($dao->fetch()) {
     $contacts[] = $dao->toArray();
   }
 
-  return civicrm_api3_create_success ( $contacts, $params, 'contact','get_by_location',$dao);
-
+  return civicrm_api3_create_success($contacts, $params, 'contact', 'get_by_location', $dao);
 }
+

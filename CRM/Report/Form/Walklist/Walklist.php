@@ -43,11 +43,15 @@ class CRM_Report_Form_Walklist_Walklist extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_customGroupExtends = array('Contact', 'Individual', 'Household', 'Organization'); function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+  protected $_customGroupExtends = array(
+    'Contact', 'Individual', 'Household', 'Organization'); function __construct() {
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('id' =>
+        array(
+          'id' =>
           array('title' => ts('Contact ID'),
             'no_display' => TRUE,
             'required' => TRUE,
@@ -59,7 +63,8 @@ class CRM_Report_Form_Walklist_Walklist extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'operator' => 'like',
           ),
@@ -71,7 +76,8 @@ class CRM_Report_Form_Walklist_Walklist extends CRM_Report_Form {
           )),
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'fields' =>
         array(
           'street_number' => array('title' => ts('Street Number'),
@@ -100,13 +106,15 @@ class CRM_Report_Form_Walklist_Walklist extends CRM_Report_Form {
         'grouping' => 'location-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
         array('email' => array('default' => TRUE)),
         'grouping' => 'location-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
         array('phone' => NULL),
         'grouping' => 'location-fields',

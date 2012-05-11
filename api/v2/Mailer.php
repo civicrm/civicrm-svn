@@ -199,6 +199,7 @@ function civicrm_mailer_event_subscribe($params) {
   if ($subscribe !== NULL) {
     /* Ask the contact for confirmation */
 
+
     $subscribe->send_confirm_request($email);
 
     $values = array();

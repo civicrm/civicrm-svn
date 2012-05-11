@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function group_contact_get_example() {
-  $params = array(
-    'contact_id' => 1,
-    'version' => 3,
-  );
+function group_contact_get_example(){
+$params = array( 
+  'contact_id' => 1,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('group_contact', 'get', $params);
+  $result = civicrm_api( 'group_contact','get',$params );
 
   return $result;
 }
@@ -21,27 +20,27 @@ function group_contact_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function group_contact_get_expectedresult() {
+function group_contact_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'id' => '1',
-        'group_id' => '1',
-        'title' => 'New Test Group Created',
-        'visibility' => 'Public Pages',
-        'is_hidden' => 0,
-        'in_date' => '2011-10-31 16:55:02',
-        'in_method' => 'API',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'group_id' => '1',
+          'title' => 'New Test Group Created',
+          'visibility' => 'Public Pages',
+          'is_hidden' => 0,
+          'in_date' => '2012-05-11 22:58:04',
+          'in_method' => 'API',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -60,4 +59,3 @@ function group_contact_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

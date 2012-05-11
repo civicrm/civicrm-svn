@@ -26,48 +26,50 @@
 */
 
 /**
- * A PHP cron script to mail the result set of specified report to the  
- * recipients mentioned for that report  
+ * A PHP cron script to mail the result set of specified report to the
+ * recipients mentioned for that report
  */
-class CiviReportMail { 
+class CiviReportMail {
+  function __construct() {
+    $this->initialize();
 
-    function __construct( ) {
-        $this->initialize( );
+    CRM_Utils_System::authenticateScript(TRUE);
 
-        CRM_Utils_System::authenticateScript(true);
-        
-        //log the execution of script
-        CRM_Core_Error::debug_log_message( 'CiviReportMail.php' );
+    //log the execution of script
+    CRM_Core_Error::debug_log_message('CiviReportMail.php');
+  }
+
+  function initialize() {
+    require_once '../civicrm.config.php';
+    require_once 'CRM/Core/Config.php';
+
+    $config = CRM_Core_Config::singleton();
+  }
+
+  function run() {
+    require_once 'CRM/Core/Lock.php';
+    $lock = new CRM_Core_Lock('CiviReportMail');
+
+    if ($lock->isAcquired()) {
+      // try to unset any time limits
+      if (!ini_get('safe_mode')) {
+        set_time_limit(0);
+      }
+
+      // if there are named sets of settings, use them - otherwise use the default (null)
+      require_once 'CRM/Report/Utils/Report.php';
+      $result = CRM_Report_Utils_Report::processReport();
+      echo $result['messages'];
+    }
+    else {
+      throw new Exception('Could not acquire lock, another CiviReportMail process is running');
     }
 
-    function initialize( ) {
-        require_once '../civicrm.config.php';
-        require_once 'CRM/Core/Config.php';
-
-        $config = CRM_Core_Config::singleton();
-    }
-
-    function run( ) {
-        require_once 'CRM/Core/Lock.php';
-        $lock = new CRM_Core_Lock('CiviReportMail');
-        
-        if ($lock->isAcquired()) {
-            // try to unset any time limits
-            if (!ini_get('safe_mode')) set_time_limit(0);
-        
-            // if there are named sets of settings, use them - otherwise use the default (null)
-            require_once 'CRM/Report/Utils/Report.php';
-            $result = CRM_Report_Utils_Report::processReport( );
-            echo $result['messages'];
-         } else {
-            throw new Exception('Could not acquire lock, another CiviReportMail process is running');
-         }
-        
-        $lock->release();
-    }
-
+    $lock->release();
+  }
 }
 
 session_start();
 $obj = new CiviReportMail;
-$obj->run( );
+$obj->run();
+

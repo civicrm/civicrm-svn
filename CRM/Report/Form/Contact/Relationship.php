@@ -39,26 +39,31 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
   protected $_summary = NULL;
   protected $_emailField_a = FALSE;
   protected $_emailField_b = FALSE;
-  protected $_customGroupExtends = array('Relationship'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Relationship'); function __construct() {
 
     $contact_type = CRM_Contact_BAO_ContactType::getSelectElements(FALSE, TRUE, '_');
 
     $this->_columns = array(
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name_a' =>
+        array(
+          'sort_name_a' =>
           array('title' => ts('Contact A'),
             'name' => 'sort_name',
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name_a' =>
+        array(
+          'sort_name_a' =>
           array('title' => ts('Contact A'),
             'name' => 'sort_name',
             'operator' => 'like',
@@ -68,21 +73,25 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         'grouping' => 'conact_a_fields',
       ),
       'civicrm_contact_b' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'alias' => 'contact_b',
         'fields' =>
-        array('sort_name_b' =>
+        array(
+          'sort_name_b' =>
           array('title' => ts('Contact B'),
             'name' => 'sort_name',
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name_b' =>
+        array(
+          'sort_name_b' =>
           array('title' => ts('Contact B'),
             'name' => 'sort_name',
             'operator' => 'like',
@@ -92,9 +101,11 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         'grouping' => 'conact_b_fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email_a' =>
+        array(
+          'email_a' =>
           array('title' => ts('Email of Contact A'),
             'name' => 'email',
           ),
@@ -102,10 +113,12 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         'grouping' => 'conact_a_fields',
       ),
       'civicrm_email_b' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'alias' => 'email_b',
         'fields' =>
-        array('email_b' =>
+        array(
+          'email_b' =>
           array('title' => ts('Email of Contact B'),
             'name' => 'email',
           ),
@@ -113,9 +126,11 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         'grouping' => 'conact_b_fields',
       ),
       'civicrm_relationship_type' =>
-      array('dao' => 'CRM_Contact_DAO_RelationshipType',
+      array(
+        'dao' => 'CRM_Contact_DAO_RelationshipType',
         'fields' =>
-        array('label_a_b' =>
+        array(
+          'label_a_b' =>
           array('title' => ts('Relationship A-B '),
             'default' => TRUE,
           ),
@@ -125,7 +140,8 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('contact_type_a' =>
+        array(
+          'contact_type_a' =>
           array('title' => ts('Contact Type  A'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => $contact_type,
@@ -141,9 +157,11 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         'grouping' => 'relation-fields',
       ),
       'civicrm_relationship' =>
-      array('dao' => 'CRM_Contact_DAO_Relationship',
+      array(
+        'dao' => 'CRM_Contact_DAO_Relationship',
         'fields' =>
-        array('start_date' =>
+        array(
+          'start_date' =>
           array('title' => ts('Relationship Start Date'),
           ),
           'end_date' =>
@@ -154,11 +172,13 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('is_active' =>
+        array(
+          'is_active' =>
           array('title' => ts('Relationship Status'),
             'operatorType' => CRM_Report_Form::OP_SELECT,
             'options' =>
-            array('' => '- Any -',
+            array(
+              '' => '- Any -',
               1 => 'Active',
               0 => 'Inactive',
             ),
@@ -168,7 +188,8 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
           array('title' => ts('Relationship'),
             'operatorType' => CRM_Report_Form::OP_SELECT,
             'options' =>
-            array('' => '- any relationship type -') +
+            array(
+              '' => '- any relationship type -') +
             CRM_Contact_BAO_Relationship::getContactRelationshipType(NULL, 'null', NULL, NULL, TRUE),
             'type' => CRM_Utils_Type::T_INT,
           ),
@@ -176,9 +197,11 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         'grouping' => 'relation-fields',
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'filters' =>
-        array('country_id' =>
+        array(
+          'country_id' =>
           array('title' => ts('Country'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_PseudoConstant::country(),
@@ -192,11 +215,14 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_Group',
+      array(
+        'dao' => 'CRM_Contact_DAO_Group',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -424,7 +450,8 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
     }
     //for displaying relationship status
     if (!$isStatusFilter && $relStatus) {
-      $statistics['filters'][] = array('title' => 'Relationship Status',
+      $statistics['filters'][] = array(
+        'title' => 'Relationship Status',
         'value' => $relStatus,
       );
     }

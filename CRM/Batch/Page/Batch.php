@@ -33,19 +33,18 @@
  *
  */
 
-
 /**
- * Page for displaying list of current batches 
+ * Page for displaying list of current batches
  */
-class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic 
-{
+class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic {
+
   /**
    * The action links that we need to display for the browse screen
    *
    * @var array
    * @static
    */
-  static $_links = null;
+  static $_links = NULL;
 
   /**
    * Get BAO Name
@@ -61,8 +60,7 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
    *
    * @return array (reference) of action links
    */
-  function &links() {            
-  }
+  function &links() {}
 
   /**
    * Get name of edit form
@@ -87,9 +85,8 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
    *
    * @return string user context.
    */
-  function userContext($mode = null) 
-  {
-    return  CRM_Utils_System::currentPath( );
+  function userContext($mode = NULL) {
+    return CRM_Utils_System::currentPath();
   }
 
   /**
@@ -100,25 +97,27 @@ class CRM_Batch_Page_Batch extends CRM_Core_Page_Basic
    * @return void
    * @access public
    */
-  function browse( ) {
-    $status = CRM_Utils_Request::retrieve( 'status', 'Positive', CRM_Core_DAO::$_nullObject, false, 1 );
-    $this->assign( 'status', $status ); 
+  function browse() {
+    $status = CRM_Utils_Request::retrieve('status', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, 1);
+    $this->assign('status', $status);
     $this->search();
   }
 
-  function search( ) {
-    if ( $this->_action &
-      ( CRM_Core_Action::ADD    |
-      CRM_Core_Action::UPDATE |
-      CRM_Core_Action::DELETE ) ) {
-        return;
-      }
+  function search() {
+    if ($this->_action &
+      (CRM_Core_Action::ADD |
+        CRM_Core_Action::UPDATE |
+        CRM_Core_Action::DELETE
+      )
+    ) {
+      return;
+    }
 
-    $form = new CRM_Core_Controller_Simple( 'CRM_Batch_Form_Search', ts( 'Search Batches' ), CRM_Core_Action::ADD );
-    $form->setEmbedded( true );
-    $form->setParent( $this );
-    $form->process( );
-    $form->run( );
+    $form = new CRM_Core_Controller_Simple('CRM_Batch_Form_Search', ts('Search Batches'), CRM_Core_Action::ADD);
+    $form->setEmbedded(TRUE);
+    $form->setParent($this);
+    $form->process();
+    $form->run();
   }
-
 }
+

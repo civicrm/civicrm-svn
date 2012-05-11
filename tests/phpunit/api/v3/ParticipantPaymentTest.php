@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'api/v3/Participant.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v3/ParticipantPayment.php';
@@ -51,7 +52,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
   function setUp() {
     $this->_apiversion = 3;
     parent::setUp();
-    $tablesToTruncate = array('civicrm_contribution', 'civicrm_contribution_type',
+    $tablesToTruncate = array(
+      'civicrm_contribution', 'civicrm_contribution_type',
       'civicrm_contact',
     );
     $this->quickCleanup($tablesToTruncate);
@@ -103,7 +105,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
    */
   function testPaymentCreateMissingContributionId() {
     //Without Payment EntityID
-    $params = array('participant_id' => $this->_participantID,
+    $params = array(
+      'participant_id' => $this->_participantID,
       'version' => $this->_apiversion,
     );
 
@@ -121,7 +124,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $contributionID = $this->contributionCreate($this->_contactID, $this->_contributionTypeId);
 
     //Create Participant Payment record With Values
-    $params = array('participant_id' => $this->_participantID,
+    $params = array(
+      'participant_id' => $this->_participantID,
       'contribution_id' => $contributionID,
       'version' => $this->_apiversion,
     );
@@ -163,7 +167,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
    */
   function testPaymentUpdateMissingParticipantId() {
     //WithoutParticipantId
-    $params = array('contribution_id' => '3',
+    $params = array(
+      'contribution_id' => '3',
       'version' => $this->_apiversion,
     );
 
@@ -175,7 +180,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
    * check with missing contribution_id
    */
   function testPaymentUpdateMissingContributionId() {
-    $params = array('participant_id' => $this->_participantID,
+    $params = array(
+      'participant_id' => $this->_participantID,
       'version' => $this->_apiversion,
     );
     $participantPayment = &civicrm_api('participant_payment', 'create', $params);
@@ -191,7 +197,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $contributionID = $this->contributionCreate($this->_contactID, $this->_contributionTypeId);
 
     $this->_participantPaymentID = $this->participantPaymentCreate($this->_participantID, $contributionID);
-    $params = array('id' => $this->_participantPaymentID,
+    $params = array(
+      'id' => $this->_participantPaymentID,
       'participant_id' => $this->_participantID,
       'contribution_id' => $contributionID,
       'version' => $this->_apiversion,
@@ -202,7 +209,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $this->assertEquals($participantPayment['id'], $this->_participantPaymentID);
     $this->assertTrue(array_key_exists('id', $participantPayment));
 
-    $params = array('id' => $this->_participantPaymentID,
+    $params = array(
+      'id' => $this->_participantPaymentID,
       'version' => $this->_apiversion,
     );
     $deletePayment = &civicrm_api('participant_payment', 'delete', $params);
@@ -234,7 +242,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
    * check with wrong id
    */
   function testPaymentDeleteWithWrongID() {
-    $params = array('id' => 0,
+    $params = array(
+      'id' => 0,
       'version' => $this->_apiversion,
     );
     $deletePayment = &civicrm_api('participant_payment', 'delete', $params);
@@ -252,7 +261,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
 
     $this->_participantPaymentID = $this->participantPaymentCreate($this->_participantID, $contributionID);
 
-    $params = array('id' => $this->_participantPaymentID,
+    $params = array(
+      'id' => $this->_participantPaymentID,
       'version' => $this->_apiversion,
     );
 

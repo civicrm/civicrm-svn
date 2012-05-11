@@ -9,7 +9,8 @@ class api_v3_CampaignTest extends CiviUnitTestCase {
   protected $id;
   public $DBResetRequired = FALSE; function setUp() {
     $this->_apiversion = 3;
-    $this->params = array('version' => 3,
+    $this->params = array(
+      'version' => 3,
       'title' => "campaign title",
       'description' => "Call people, ask for money",
       'created_date' => 'first sat of July 2008',
@@ -46,7 +47,8 @@ class api_v3_CampaignTest extends CiviUnitTestCase {
     $this->documentMe($delete, $result, __FUNCTION__, __FILE__);
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
 
-    $checkDeleted = civicrm_api('campaign', 'get', array('version' => 3,
+    $checkDeleted = civicrm_api('campaign', 'get', array(
+      'version' => 3,
       ));
     $this->assertEquals(0, $checkDeleted['count'], 'In line ' . __LINE__);
   }

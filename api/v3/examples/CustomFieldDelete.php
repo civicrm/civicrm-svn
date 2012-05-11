@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function custom_field_delete_example() {
-  $params = array(
-    'version' => 3,
-    'id' => 1,
-  );
+function custom_field_delete_example(){
+$params = array( 
+  'version' => 3,
+  'id' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('custom_field', 'delete', $params);
+  $result = civicrm_api( 'custom_field','delete',$params );
 
   return $result;
 }
@@ -21,16 +20,16 @@ function custom_field_delete_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function custom_field_delete_expectedresult() {
+function custom_field_delete_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'values' => 1,
-  );
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'values' => 1,
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -49,4 +48,3 @@ function custom_field_delete_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

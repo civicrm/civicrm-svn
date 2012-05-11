@@ -1,20 +1,19 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function group_nesting_create_example() {
-  $params = array(
-    'parent_group_id' => 1,
-    'child_group_id' => 3,
-    'version' => 3,
-  );
+function group_nesting_create_example(){
+$params = array( 
+  'parent_group_id' => 1,
+  'child_group_id' => 3,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('group_nesting', 'create', $params);
+  $result = civicrm_api( 'group_nesting','create',$params );
 
   return $result;
 }
@@ -22,19 +21,19 @@ function group_nesting_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function group_nesting_create_expectedresult() {
+function group_nesting_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 'is_error',
-    'values' => array(
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 'is_error',
+  'values' => array( 
       'is_error' => 0,
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -53,4 +52,3 @@ function group_nesting_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

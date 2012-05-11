@@ -25,6 +25,7 @@
   +--------------------------------------------------------------------+
  */
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -40,8 +41,7 @@ class CRM_Contact_BAO_GroupTest extends CiviUnitTestCase {
    *
    * @access protected
    */
-  protected function setUp()
-  {
+  protected function setUp() {
     parent::setUp();
   }
 
@@ -51,50 +51,47 @@ class CRM_Contact_BAO_GroupTest extends CiviUnitTestCase {
    *
    * @access protected
    */
-  protected function tearDown()
-  {
-  }
+  protected function tearDown() {}
 
   /**
    * test case for add( )
    */
-  function testAddSimple( )
-  {
+  function testAddSimple() {
 
-    $checkParams = $params =
-      array(
-        'title'       => 'Group Uno',
-        'description' => 'Group One',
-        'visibility'  => 'User and User Admin Only',
-        'is_active'   => 1
-      );
+    $checkParams = $params = array(
+      'title' => 'Group Uno',
+      'description' => 'Group One',
+      'visibility' => 'User and User Admin Only',
+      'is_active' => 1,
+    );
 
-    $group = CRM_Contact_BAO_Group::create( $params );
+    $group = CRM_Contact_BAO_Group::create($params);
 
     $this->assertDBCompareValues(
       'CRM_Contact_DAO_Group',
-      array( 'id' => $group->id ),
-      $checkParams );
+      array('id' => $group->id),
+      $checkParams
+    );
   }
 
-  function testAddSmart( ) {
+  function testAddSmart() {
 
-    $checkParams = $params =
-      array(
-        'title'       => 'Group Dos',
-        'description' => 'Group Two',
-        'visibility'  => 'User and User Admin Only',
-        'is_active'   => 1,
-        'formValues'  => array( 'sort_name' => 'Adams' ),
-      );
+    $checkParams = $params = array(
+      'title' => 'Group Dos',
+      'description' => 'Group Two',
+      'visibility' => 'User and User Admin Only',
+      'is_active' => 1,
+      'formValues' => array('sort_name' => 'Adams'),
+    );
 
-    $group = CRM_Contact_BAO_Group::createSmartGroup( $params );
+    $group = CRM_Contact_BAO_Group::createSmartGroup($params);
 
-    unset( $checkParams['formValues'] );
+    unset($checkParams['formValues']);
     $this->assertDBCompareValues(
       'CRM_Contact_DAO_Group',
-      array( 'id' => $group->id ),
+      array('id' => $group->id),
       $checkParams
     );
   }
 }
+

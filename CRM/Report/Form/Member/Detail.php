@@ -46,17 +46,21 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
 
   protected $_customGroupExtends = array('Membership');
   protected $_customGroupGroupBy = FALSE; function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'required' => TRUE,
             'default' => TRUE,
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
           'first_name' =>
@@ -64,7 +68,8 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
           'last_name' =>
@@ -72,12 +77,14 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'operator' => 'like',
           ),
@@ -87,10 +94,12 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_membership' =>
-      array('dao' => 'CRM_Member_DAO_Membership',
+      array(
+        'dao' => 'CRM_Member_DAO_Membership',
         'fields' =>
         array(
-          'membership_type_id' => array('title' => 'Membership Type',
+          'membership_type_id' => array(
+            'title' => 'Membership Type',
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
@@ -117,7 +126,8 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_INT,
           ),
           'tid' =>
-          array('name' => 'membership_type_id',
+          array(
+            'name' => 'membership_type_id',
             'title' => ts('Membership Types'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -127,15 +137,18 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
         'grouping' => 'member-fields',
       ),
       'civicrm_membership_status' =>
-      array('dao' => 'CRM_Member_DAO_MembershipStatus',
+      array(
+        'dao' => 'CRM_Member_DAO_MembershipStatus',
         'alias' => 'mem_status',
         'fields' =>
         array('name' => array('title' => ts('Status'),
             'default' => TRUE,
           ),
         ),
-        'filters' => array('sid' =>
-          array('name' => 'id',
+        'filters' => array(
+          'sid' =>
+          array(
+            'name' => 'id',
             'title' => ts('Status'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -145,9 +158,11 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
         'grouping' => 'member-fields',
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'fields' =>
-        array('street_address' => NULL,
+        array(
+          'street_address' => NULL,
           'city' => NULL,
           'postal_code' => NULL,
           'state_province_id' =>
@@ -160,13 +175,15 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
         array('email' => NULL),
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
         array('phone' => NULL),
         'grouping' => 'contact-fields',

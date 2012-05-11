@@ -22,7 +22,8 @@ function group_contact__expectedresult() {
     'is_error' => '0',
     'version' => '3',
     'count' => '4',
-    'values' => array('is_error' => '0', 'not_removed' => '0', 'removed' => '1', 'total_count' => '1',
+    'values' => array(
+      'is_error' => '0', 'not_removed' => '0', 'removed' => '1', 'total_count' => '1',
     ),
   );
 

@@ -35,8 +35,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $apiRequest['extra'] = $extra;
     // look up function, file, is_generic
     $apiRequest += _civicrm_api_resolve($apiRequest);
-    if(strtolower($action) == 'create' || strtolower($action) == 'delete'){
-      $apiRequest['is_transactional'] =1;
+    if (strtolower($action) == 'create' || strtolower($action) == 'delete') {
+      $apiRequest['is_transactional'] = 1;
       $tx = new CRM_Core_Transaction();
     }
     $errorFnName = ($apiRequest['version'] == 2) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
@@ -86,7 +86,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     if (function_exists('xdebug_time_index')
       && CRM_Utils_Array::value('debug', $apiRequest['params'])
-      && is_array($result)// result would not be an array for getvalue
+      // result would not be an array for getvalue
+      && is_array($result)
     ) {
       $result['xdebug']['peakMemory'] = xdebug_peak_memory_usage();
       $result['xdebug']['memory'] = xdebug_memory_usage();
@@ -95,7 +96,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
 
     return $result;
   }
-  catch(PEAR_Exception $e) {
+  catch(PEAR_Exception$e) {
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
       return 0;
     }
@@ -106,12 +107,12 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     else {
       $err['tip'] = "add debug=1 to your API call to have more info about the error";
     }
-    if(CRM_Utils_Array::value('is_transactional',$apiRequest)){
+    if (CRM_Utils_Array::value('is_transactional', $apiRequest)) {
       $tx->rollback();
     }
     return $err;
   }
-  catch(Exception $e) {
+  catch(Exception$e) {
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
       return 0;
     }
@@ -119,7 +120,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
       $err['trace'] = $e->getTraceAsString();
     }
-    if(CRM_Utils_Array::value('is_transactional',$apiRequest)){
+    if (CRM_Utils_Array::value('is_transactional', $apiRequest)) {
       $tx->rollback();
     }
     return $err;
@@ -244,7 +245,8 @@ function civicrm_api_get_function_name($entity, $action, $version = NULL) {
  * @param $desired_version : array or integer
  *   One chance to set the version number.
  *   After that, this version number will be used for the remaining request.
- *   This can either be a number, or an array(.., 'version' => $version, ..).
+ *   This can either be a number, or an array(
+   .., 'version' => $version, ..).
  *   This allows to directly pass the $params array.
  */
 function civicrm_get_api_version($desired_version = NULL) {
@@ -409,8 +411,8 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
             $subParams = array_merge($subParams, $entityparams);
             _civicrm_api_replace_variables($subAPI[1], $subaction, $subParams, $result['values'][$idIndex], $separator);
             $result['values'][$result['id']][$field][] = civicrm_api($subEntity, $subaction, $subParams);
-            if($result['is_error'] ===1 ){
-              throw new Exception ($subEntity .' ' . $subaction .  'call failed with' .$result['error_message']);
+            if ($result['is_error'] === 1) {
+              throw new Exception($subEntity . ' ' . $subaction . 'call failed with' . $result['error_message']);
             }
           }
         }
@@ -419,8 +421,8 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
           $subParams = array_merge($subParams, $newparams);
           _civicrm_api_replace_variables($subAPI[1], $subaction, $subParams, $result['values'][$idIndex], $separator);
           $result['values'][$idIndex][$field] = civicrm_api($subEntity, $subaction, $subParams);
-          if($result['is_error'] ===1 ){
-            throw new Exception ($subEntity .' ' . $subaction .  'call failed with' .$result['error_message']);
+          if ($result['is_error'] === 1) {
+            throw new Exception($subEntity . ' ' . $subaction . 'call failed with' . $result['error_message']);
           }
         }
       }

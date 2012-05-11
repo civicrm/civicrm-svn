@@ -64,7 +64,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
    * @var array
    * @static
    */
-  static $_properties = array('contact_id', 'contact_type', 'contact_sub_type',
+  static $_properties = array(
+    'contact_id', 'contact_type', 'contact_sub_type',
     'sort_name', 'street_address',
     'city', 'state_province', 'postal_code', 'country',
     'geo_code_1', 'geo_code_2', 'is_deceased',
@@ -381,7 +382,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 $locationTypeName = $locationTypes[$lType];
               }
 
-              if (in_array($fieldName, array('phone', 'im', 'email'))) {
+              if (in_array($fieldName, array(
+                'phone', 'im', 'email'))) {
                 if ($type) {
                   $name = "`$locationTypeName-$fieldName-$type`";
                 }
@@ -398,7 +400,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
               $name = 'contact_id';
             }
 
-            self::$_columnHeaders[] = array('name' => $field['title'],
+            self::$_columnHeaders[] = array(
+              'name' => $field['title'],
               'sort' => $name,
               'direction' => $direction,
             );
@@ -540,7 +543,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             }
 
             $locationTypeName = str_replace(' ', '_', $locationTypeName);
-            if (in_array($fieldName, array('phone', 'im', 'email'))) {
+            if (in_array($fieldName, array(
+              'phone', 'im', 'email'))) {
               if ($type) {
                 $names[] = "{$locationTypeName}-{$fieldName}-{$type}";
               }
@@ -650,7 +654,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             $row[$property] = $result->$property . " ({$providerName})";
           }
         }
-        elseif (in_array($property, array('addressee', 'email_greeting', 'postal_greeting'))) {
+        elseif (in_array($property, array(
+          'addressee', 'email_greeting', 'postal_greeting'))) {
           $greeting = $property . '_display';
           $row[$property] = $result->$greeting;
         }
@@ -692,7 +697,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         ) {
           $contactID = $result->contact_id;
           if ($contactID) {
-            $gcParams = array('contact_id' => $contactID,
+            $gcParams = array(
+              'contact_id' => $contactID,
               'group_id' => $groupID,
             );
 
@@ -943,7 +949,8 @@ SELECT 'civicrm_contact', contact_a.id, contact_a.id, '$cacheKey', contact_a.dis
    * Given the current formValues, gets the query in local
    * language
    *
-   * @param  array(reference)   $formValues   submitted formValues
+   * @param  array(
+     reference)   $formValues   submitted formValues
    *
    * @return array              $qill         which contains an array of strings
    * @access public

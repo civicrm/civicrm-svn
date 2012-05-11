@@ -1,7 +1,6 @@
 <?php
 // $Id$
 
-
 /**
 
  This class allows to consume the API, either from within a module that knows civicrm already:
@@ -25,7 +24,8 @@
 
  so to get the individual contacts
 
- if ($api->Contact->Get(array('contact_type'=>'Individual','return'=>'sort_name,current_employer')) {
+ if ($api->Contact->Get(array(
+   'contact_type'=>'Individual','return'=>'sort_name,current_employer')) {
  // each key of the result array is an attribute of the api
  echo "\n contacts found " . $api->count;
  foreach ($api->values as $c) {
@@ -38,7 +38,8 @@
 
  or to create an event
 
- if ($api->Event->Create(array('title'=>'Test','event_type_id' => 1,'is_public' => 1,'start_date' => 19430429))) {
+ if ($api->Event->Create(array(
+   'title'=>'Test','event_type_id' => 1,'is_public' => 1,'start_date' => 19430429))) {
  echo "created event id:". $api->id;
  } else {
  echo $api->errorMsg();
@@ -121,7 +122,8 @@ class civicrm_api3 {
     echo "Calling static method '$name' " . implode(', ', $arguments) . "\n";
   }
 
-  function remoteCall($entity, $action, $params = array()) {
+  function remoteCall($entity, $action, $params = array(
+    )) {
     $fields = "key={$this->key}&api_key={$this->api_key}";
     $query = $this->uri . "&entity=$entity&action=$action";
     foreach ($params as $k => $v) {
@@ -147,16 +149,18 @@ class civicrm_api3 {
     }
   }
 
-  function call($entity, $action = 'Get', $params = array()) {
+  function call($entity, $action = 'Get', $params = array(
+    )) {
     if (is_int($params)) {
       $params = array('id' => $params);
     }
-    elseif (is_string($params)) {  $params = json_decode($params);}
+    elseif (is_string($params)) {
+      $params = json_decode($params);
+    }
 
     if (!isset($params['version'])) {
 
       $params['version'] = 3;
-
     }
     if (!isset($params['sequential'])) {
       $params['sequential'] = 1;
@@ -207,6 +211,7 @@ class civicrm_api3 {
    */
 
 
+
   public function attr($name, $value = NULL) {
     if ($value === NULL) {
       if (property_exists($this->lastResult, $name)) {
@@ -233,6 +238,7 @@ class civicrm_api3 {
  */
 
 
+
   public function __get($name) {
     //TODO, test if valid entity
     if (strtolower($name) !== $name) {
@@ -244,7 +250,6 @@ class civicrm_api3 {
     if ($name === 'result') {
 
       return $this->lastResult;
-
     }
     if ($name === 'values') {
       return $this->lastResult->values;
@@ -253,7 +258,6 @@ class civicrm_api3 {
     if (property_exists($this->lastResult, $name)) {
 
       return $this->lastResult->$name;
-
     }
 
     $this->currentEntity = $name;

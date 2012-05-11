@@ -1,5 +1,4 @@
 <?php
-
 /*
   +--------------------------------------------------------------------+
   | CiviCRM version 4.1                                                |
@@ -39,39 +38,30 @@ require_once 'PEAR.php';
 require_once 'DB/DataObject.php';
 
 require_once 'CRM/Core/I18n.php';
+class CRM_Core_DAO extends DB_DataObject {
 
-class CRM_Core_DAO extends DB_DataObject
-{
   /**
    * a null object so we can pass it as reference if / when needed
    */
-  static $_nullObject = null;
-  static $_nullArray  = array( );
+  static $_nullObject = NULL;
+  static $_nullArray = array();
 
-  static $_dbColumnValueCache = null;
-
-  const
-    NOT_NULL        =   1,
-    IS_NULL         =   2,
-
-    DB_DAO_NOTNULL  = 128,
-
-    VALUE_SEPARATOR = "",
-
-    BULK_INSERT_COUNT      = 200,
-
-    BULK_INSERT_HIGH_COUNT = 200,
-
-    // special value for mail bulk inserts to avoid
-    // potential duplication, assuming a smaller number reduces number of queries
-    // by some factor, so some tradeoff. CRM-8678
-    BULK_MAIL_INSERT_COUNT = 10;
+  static $_dbColumnValueCache = NULL;
+  CONST NOT_NULL = 1, IS_NULL = 2, 
+  DB_DAO_NOTNULL = 128, 
+  VALUE_SEPARATOR = "", 
+  BULK_INSERT_COUNT = 200, 
+  BULK_INSERT_HIGH_COUNT = 200, 
+  // special value for mail bulk inserts to avoid
+  // potential duplication, assuming a smaller number reduces number of queries
+  // by some factor, so some tradeoff. CRM-8678
+  BULK_MAIL_INSERT_COUNT = 10;
 
   /**
    * the factory class for this application
    * @var object
    */
-  static $_factory = null;
+  static $_factory = NULL;
 
   /**
    * Class constructor
@@ -79,18 +69,17 @@ class CRM_Core_DAO extends DB_DataObject
    * @return object
    * @access public
    */
-  function __construct()
-  {
-    $this->initialize( );
+  function __construct() {
+    $this->initialize();
     $this->__table = $this->getTableName();
   }
 
   /**
    * empty definition for virtual function
    */
-  static function getTableName( )
-  {
-    return null;
+  static
+  function getTableName() {
+    return NULL;
   }
 
   /**
@@ -102,12 +91,12 @@ class CRM_Core_DAO extends DB_DataObject
    * @access private
    * @static
    */
-  static function init( $dsn )
-  {
-    $options =& PEAR::getStaticProperty('DB_DataObject', 'options');
+  static
+  function init($dsn) {
+    $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
     $options['database'] = $dsn;
-    if ( defined( 'CIVICRM_DAO_DEBUG' ) ) {
-      self::DebugLevel( CIVICRM_DAO_DEBUG );
+    if (defined('CIVICRM_DAO_DEBUG')) {
+      self::DebugLevel(CIVICRM_DAO_DEBUG);
     }
   }
 
@@ -120,27 +109,27 @@ class CRM_Core_DAO extends DB_DataObject
    * @access public
    *
    */
-  function reset()
-  {
+  function reset() {
 
-    foreach( array_keys( $this->table() ) as $field ) {
+    foreach (array_keys($this->table()) as $field) {
       unset($this->$field);
     }
 
     /**
      * reset the various DB_DAO structures manually
      */
-    $this->_query = array( );
-    $this->whereAdd ( );
-    $this->selectAdd( );
-    $this->joinAdd  ( );
+    $this->_query = array();
+    $this->whereAdd();
+    $this->selectAdd();
+    $this->joinAdd();
   }
 
-  static function getLocaleTableName( $tableName ) {
+  static
+  function getLocaleTableName($tableName) {
     global $dbLocale;
-    if ( $dbLocale ) {
+    if ($dbLocale) {
       $tables = CRM_Core_I18n_Schema::schemaStructureTables();
-      if ( in_array($tableName, $tables) ) {
+      if (in_array($tableName, $tables)) {
         return $tableName . $dbLocale;
       }
     }
@@ -152,10 +141,10 @@ class CRM_Core_DAO extends DB_DataObject
    *
    * @param string $query        the SQL query for execution
    * @param bool   $i18nRewrite  whether to rewrite the query
+   *
    * @return object              the current DAO object after the query execution
    */
-  function query($query, $i18nRewrite = true)
-  {
+  function query($query, $i18nRewrite = TRUE) {
     // rewrite queries that should use $dbLocale-based views for multi-language installs
     global $dbLocale;
     if ($i18nRewrite and $dbLocale) {
@@ -174,9 +163,9 @@ class CRM_Core_DAO extends DB_DataObject
    * @access public
    * @static
    */
-  static function setFactory(&$factory)
-  {
-    self::$_factory =& $factory;
+  static
+  function setFactory(&$factory) {
+    self::$_factory = &$factory;
   }
 
   /**
@@ -185,9 +174,8 @@ class CRM_Core_DAO extends DB_DataObject
    * @return void
    * @access public
    */
-  function factory($table = '')
-  {
-    if ( ! isset( self::$_factory ) ) {
+  function factory($table = '') {
+    if (!isset(self::$_factory)) {
       return parent::factory($table);
     }
 
@@ -201,20 +189,19 @@ class CRM_Core_DAO extends DB_DataObject
    * @return void
    * @access protected
    */
-  function initialize()
-  {
+  function initialize() {
     $links = $this->links();
-    if ( empty( $links ) ) {
+    if (empty($links)) {
       return;
     }
 
     $this->_connect();
 
-    if ( !isset($GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database]) ) {
+    if (!isset($GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database])) {
       $GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database] = array();
     }
 
-    if ( ! array_key_exists( $this->__table, $GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database] ) ) {
+    if (!array_key_exists($this->__table, $GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database])) {
       $GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database][$this->__table] = $links;
     }
   }
@@ -223,12 +210,12 @@ class CRM_Core_DAO extends DB_DataObject
    * Defines the default key as 'id'.
    *
    * @access protected
+   *
    * @return array
    */
-  function keys()
-  {
+  function keys() {
     static $keys;
-    if ( !isset ($keys) ) {
+    if (!isset($keys)) {
       $keys = array('id');
     }
     return $keys;
@@ -239,13 +226,13 @@ class CRM_Core_DAO extends DB_DataObject
    * 'id' is autoincrementing by default.
    *
    * @access protected
+   *
    * @return array
    */
-  function sequenceKey()
-  {
+  function sequenceKey() {
     static $sequenceKeys;
-    if ( !isset ($sequenceKeys) ) {
-      $sequenceKeys = array('id', true);
+    if (!isset($sequenceKeys)) {
+      $sequenceKeys = array('id', TRUE);
     }
     return $sequenceKeys;
   }
@@ -254,35 +241,33 @@ class CRM_Core_DAO extends DB_DataObject
    * returns list of FK relationships
    *
    * @access public
+   *
    * @return array
    */
-  function links( )
-  {
-    return null;
+  function links() {
+    return NULL;
   }
-
 
   /**
    * returns all the column names of this table
    *
    * @access public
+   *
    * @return array
    */
-  function &fields( )
-    {
-      $result = null;
-      return $result;
-    }
+  function &fields() {
+    $result = NULL;
+    return $result;
+  }
 
-  function table()
-  {
-    $fields =& $this->fields();
+  function table() {
+    $fields = &$this->fields();
 
     $table = array();
     if ($fields) {
-      foreach ( $fields as $name => $value ) {
+      foreach ($fields as $name => $value) {
         $table[$value['name']] = $value['type'];
-        if ( CRM_Utils_Array::value( 'required', $value ) ) {
+        if (CRM_Utils_Array::value('required', $value)) {
           $table[$value['name']] += self::DB_DAO_NOTNULL;
         }
       }
@@ -294,44 +279,43 @@ class CRM_Core_DAO extends DB_DataObject
     return $table;
   }
 
-  function save( )
-  {
+  function save() {
     if (!empty($this->id)) {
       $this->update();
-    } else {
+    }
+    else {
       $this->insert();
     }
-    $this->free( );
+    $this->free();
 
-    CRM_Utils_Hook::postSave( $this );
+    CRM_Utils_Hook::postSave($this);
 
     return $this;
   }
 
-  function log( $created = false )
-  {
-    static $cid = null;
+  function log($created = FALSE) {
+    static $cid = NULL;
 
-    if ( ! $this->getLog( ) ) {
+    if (!$this->getLog()) {
       return;
     }
 
-    if ( ! $cid ) {
-      $session = CRM_Core_Session::singleton( );
-      $cid = $session->get( 'userID' );
+    if (!$cid) {
+      $session = CRM_Core_Session::singleton();
+      $cid = $session->get('userID');
     }
 
     // return is we dont have handle to FK
-    if ( ! $cid ) {
+    if (!$cid) {
       return;
     }
 
-    $dao = new CRM_Core_DAO_Log( );
-    $dao->entity_table  = $this->getTableName( );
+    $dao                = new CRM_Core_DAO_Log();
+    $dao->entity_table  = $this->getTableName();
     $dao->entity_id     = $this->id;
     $dao->modified_id   = $cid;
-    $dao->modified_date = date( "YmdHis" );
-    $dao->insert( );
+    $dao->modified_date = date("YmdHis");
+    $dao->insert();
   }
 
   /**
@@ -343,29 +327,31 @@ class CRM_Core_DAO extends DB_DataObject
    * @return boolean      did we copy all null values into the object
    * @access public
    */
-  function copyValues( &$params )
-  {
-    $fields =& $this->fields( );
-    $allNull = true;
-    foreach ( $fields as $name => $value ) {
+  function copyValues(&$params) {
+    $fields = &$this->fields();
+    $allNull = TRUE;
+    foreach ($fields as $name => $value) {
       $dbName = $value['name'];
-      if ( array_key_exists( $dbName, $params ) ) {
+      if (array_key_exists($dbName, $params)) {
         $pValue = $params[$dbName];
-        $exists = true;
-      } else if ( array_key_exists( $name, $params ) ) {
+        $exists = TRUE;
+      }
+      elseif (array_key_exists($name, $params)) {
         $pValue = $params[$name];
-        $exists = true;
-      } else {
-        $exists = false;
+        $exists = TRUE;
+      }
+      else {
+        $exists = FALSE;
       }
 
       // if there is no value then make the variable NULL
-      if ( $exists ) {
-        if ( $pValue === '' ) {
+      if ($exists) {
+        if ($pValue === '') {
           $this->$dbName = 'null';
-        } else {
+        }
+        else {
           $this->$dbName = $pValue;
-          $allNull = false;
+          $allNull = FALSE;
         }
       }
     }
@@ -384,14 +370,14 @@ class CRM_Core_DAO extends DB_DataObject
    * @access public
    * @static
    */
-  static function storeValues( &$object, &$values )
-  {
-    $fields =& $object->fields( );
-    foreach ( $fields as $name => $value ) {
+  static
+  function storeValues(&$object, &$values) {
+    $fields = &$object->fields();
+    foreach ($fields as $name => $value) {
       $dbName = $value['name'];
-      if ( isset( $object->$dbName ) && $object->$dbName !== 'null' ) {
+      if (isset($object->$dbName) && $object->$dbName !== 'null') {
         $values[$dbName] = $object->$dbName;
-        if ( $name != $dbName ) {
+        if ($name != $dbName) {
           $values[$name] = $object->$dbName;
         }
       }
@@ -407,43 +393,45 @@ class CRM_Core_DAO extends DB_DataObject
    * @access public
    * @static
    */
-  static function makeAttribute( $field )
-  {
-    if ( $field ) {
-      if ( CRM_Utils_Array::value('type',$field) == CRM_Utils_Type::T_STRING ) {
-        $maxLength  = CRM_Utils_Array::value( 'maxlength', $field );
-        $size       = CRM_Utils_Array::value( 'size'     , $field );
-        if ( $maxLength || $size ) {
-          $attributes = array( );
-          if ( $maxLength ) {
+  static
+  function makeAttribute($field) {
+    if ($field) {
+      if (CRM_Utils_Array::value('type', $field) == CRM_Utils_Type::T_STRING) {
+        $maxLength = CRM_Utils_Array::value('maxlength', $field);
+        $size = CRM_Utils_Array::value('size', $field);
+        if ($maxLength || $size) {
+          $attributes = array();
+          if ($maxLength) {
             $attributes['maxlength'] = $maxLength;
           }
-          if ( $size ) {
+          if ($size) {
             $attributes['size'] = $size;
           }
           return $attributes;
         }
-      } else if ( CRM_Utils_Array::value('type',$field) == CRM_Utils_Type::T_TEXT ) {
-        $rows = CRM_Utils_Array::value( 'rows', $field );
-        if ( ! isset( $rows ) ) {
+      }
+      elseif (CRM_Utils_Array::value('type', $field) == CRM_Utils_Type::T_TEXT) {
+        $rows = CRM_Utils_Array::value('rows', $field);
+        if (!isset($rows)) {
           $rows = 2;
         }
-        $cols = CRM_Utils_Array::value( 'cols', $field );
-        if ( ! isset( $cols ) ) {
+        $cols = CRM_Utils_Array::value('cols', $field);
+        if (!isset($cols)) {
           $cols = 80;
         }
 
-        $attributes = array( );
+        $attributes         = array();
         $attributes['rows'] = $rows;
         $attributes['cols'] = $cols;
         return $attributes;
-      } else if ( CRM_Utils_Array::value('type',$field) == CRM_Utils_Type::T_INT || CRM_Utils_Array::value('type',$field) == CRM_Utils_Type::T_FLOAT || CRM_Utils_Array::value('type',$field) == CRM_Utils_Type::T_MONEY ) {
-        $attributes['size']      = 6;
+      }
+      elseif (CRM_Utils_Array::value('type', $field) == CRM_Utils_Type::T_INT || CRM_Utils_Array::value('type', $field) == CRM_Utils_Type::T_FLOAT || CRM_Utils_Array::value('type', $field) == CRM_Utils_Type::T_MONEY) {
+        $attributes['size'] = 6;
         $attributes['maxlength'] = 14;
         return $attributes;
       }
     }
-    return null;
+    return NULL;
   }
 
   /**
@@ -458,32 +446,33 @@ class CRM_Core_DAO extends DB_DataObject
    * @access public
    * @static
    */
-  static function getAttribute( $class, $fieldName = null)
-  {
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php');
+  static
+  function getAttribute($class, $fieldName = NULL) {
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php');
     eval('$object = new ' . $class . '( );');
-    $fields =& $object->fields( );
-    if ( $fieldName != null ) {
-      $field = CRM_Utils_Array::value( $fieldName, $fields );
-      return self::makeAttribute( $field );
-    } else {
-      $attributes = array( );
+    $fields = &$object->fields();
+    if ($fieldName != NULL) {
+      $field = CRM_Utils_Array::value($fieldName, $fields);
+      return self::makeAttribute($field);
+    }
+    else {
+      $attributes = array();
       foreach ($fields as $name => $field) {
-        $attribute = self::makeAttribute( $field );
-        if ( $attribute ) {
+        $attribute = self::makeAttribute($field);
+        if ($attribute) {
           $attributes[$name] = $attribute;
         }
       }
-      if ( !empty($attributes)) {
+      if (!empty($attributes)) {
         return $attributes;
       }
     }
-    return null;
+    return NULL;
   }
 
-  static function transaction( $type )
-  {
-    CRM_Core_Error::fatal( 'This function is obsolete, please use CRM_Core_Transaction' );
+  static
+  function transaction($type) {
+    CRM_Core_Error::fatal('This function is obsolete, please use CRM_Core_Transaction');
   }
 
   /**
@@ -499,18 +488,19 @@ class CRM_Core_DAO extends DB_DataObject
    * @access public
    * @static
    */
-  static function objectExists( $value, $daoName, $daoID, $fieldName = 'name' )
-  {
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    eval( '$object = new ' . $daoName . '( );' );
+  static
+  function objectExists($value, $daoName, $daoID, $fieldName = 'name') {
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+    eval('$object = new ' . $daoName . '( );');
     $object->$fieldName = $value;
 
-    $config  = CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton();
 
-    if ( $object->find( true ) ) {
-      return ( $daoID && $object->id == $daoID ) ? true : false;
-    } else {
-      return true;
+    if ($object->find(TRUE)) {
+      return ($daoID && $object->id == $daoID) ? TRUE : FALSE;
+    }
+    else {
+      return TRUE;
     }
   }
 
@@ -524,17 +514,16 @@ class CRM_Core_DAO extends DB_DataObject
    * @return boolean true if exists, else false
    * @static
    */
-  function checkFieldExists($tableName, $columnName, $i18nRewrite = true)
-  {
+  function checkFieldExists($tableName, $columnName, $i18nRewrite = TRUE) {
     $query = "
 SHOW COLUMNS
 FROM $tableName
 LIKE %1
 ";
-    $params = array( 1 => array( $columnName, 'String' ) );
-    $dao = CRM_Core_DAO::executeQuery($query, $params, true, null, false, $i18nRewrite);
-    $result = $dao->fetch( ) ? true : false;
-    $dao->free( );
+    $params = array(1 => array($columnName, 'String'));
+    $dao    = CRM_Core_DAO::executeQuery($query, $params, TRUE, NULL, FALSE, $i18nRewrite);
+    $result = $dao->fetch() ? TRUE : FALSE;
+    $dao->free();
     return $result;
   }
 
@@ -548,48 +537,50 @@ LIKE %1
    * @return array
    * @static
    */
-  function getStorageValues( $tableName = null, $maxTablesToCheck = 10, $fieldName = 'Engine' )
-  {
-    $values = array( );
-    $query   = "SHOW TABLE STATUS LIKE %1";
+  function getStorageValues($tableName = NULL, $maxTablesToCheck = 10, $fieldName = 'Engine') {
+    $values = array();
+    $query = "SHOW TABLE STATUS LIKE %1";
 
-    $params = array( );
+    $params = array();
 
-    if ( isset($tableName) ) {
-      $params = array( 1 => array( $tableName, 'String' ) );
-    } else {
-      $params = array( 1 => array( 'civicrm_%', 'String' ) );
+    if (isset($tableName)) {
+      $params = array(1 => array($tableName, 'String'));
+    }
+    else {
+      $params = array(1 => array('civicrm_%', 'String'));
     }
 
-    $dao = CRM_Core_DAO::executeQuery( $query, $params );
+    $dao = CRM_Core_DAO::executeQuery($query, $params);
 
     $count = 0;
-    while ( $dao->fetch( ) ) {
-      if ( isset( $values[$dao->$fieldName] ) ||
+    while ($dao->fetch()) {
+      if (isset($values[$dao->$fieldName]) ||
         // ignore import and other temp tables
-        strpos( $dao->Name, 'civicrm_import_job_' ) !== false ||
-        strpos( $dao->Name, '_temp' ) !== false ) {
+        strpos($dao->Name, 'civicrm_import_job_') !== FALSE ||
+        strpos($dao->Name, '_temp') !== FALSE
+      ) {
         continue;
       }
       $values[$dao->$fieldName] = 1;
       $count++;
-      if ( $maxTablesToCheck &&
-        $count >= $maxTablesToCheck ) {
+      if ($maxTablesToCheck &&
+        $count >= $maxTablesToCheck
+      ) {
         break;
       }
     }
-    $dao->free( );
+    $dao->free();
     return $values;
   }
 
-  static function isDBMyISAM( $maxTablesToCheck = 10 )
-  {
+  static
+  function isDBMyISAM($maxTablesToCheck = 10) {
     // show error if any of the tables, use 'MyISAM' storage engine.
-    $engines = self::getStorageValues( null, $maxTablesToCheck );
-    if ( array_key_exists('MyISAM', $engines) ) {
-      return true;
+    $engines = self::getStorageValues(NULL, $maxTablesToCheck);
+    if (array_key_exists('MyISAM', $engines)) {
+      return TRUE;
     }
-    return false;
+    return FALSE;
   }
 
   /**
@@ -601,23 +592,22 @@ LIKE %1
    * @return boolean true if constraint exists, false otherwise
    * @static
    */
-  function checkConstraintExists( $tableName, $constraint )
-  {
+  function checkConstraintExists($tableName, $constraint) {
     static $show = array();
 
-    if ( ! array_key_exists( $tableName, $show ) ) {
+    if (!array_key_exists($tableName, $show)) {
       $query = "SHOW CREATE TABLE $tableName";
-      $dao   = CRM_Core_DAO::executeQuery( $query );
+      $dao = CRM_Core_DAO::executeQuery($query);
 
-      if ( ! $dao->fetch( ) ) {
-        CRM_Core_Error::fatal( );
+      if (!$dao->fetch()) {
+        CRM_Core_Error::fatal();
       }
 
-      $dao->free( );
+      $dao->free();
       $show[$tableName] = $dao->Create_Table;
     }
 
-    return preg_match("/\b$constraint\b/i", $show[$tableName]) ? true : false;
+    return preg_match("/\b$constraint\b/i", $show[$tableName]) ? TRUE : FALSE;
   }
 
   /**
@@ -630,23 +620,22 @@ LIKE %1
    * @return boolean true if in format, false otherwise
    * @static
    */
-  function checkFKConstraintInFormat( $tableName, $columnName )
-  {
+  function checkFKConstraintInFormat($tableName, $columnName) {
     static $show = array();
 
-    if ( ! array_key_exists( $tableName, $show ) ) {
+    if (!array_key_exists($tableName, $show)) {
       $query = "SHOW CREATE TABLE $tableName";
-      $dao   = CRM_Core_DAO::executeQuery( $query );
+      $dao = CRM_Core_DAO::executeQuery($query);
 
-      if ( ! $dao->fetch( ) ) {
-        CRM_Core_Error::fatal( );
+      if (!$dao->fetch()) {
+        CRM_Core_Error::fatal();
       }
 
-      $dao->free( );
+      $dao->free();
       $show[$tableName] = $dao->Create_Table;
     }
 
-    return preg_match('/CONSTRAINT [`\']?' . "FK_{$tableName}_{$columnName}" . '/i', $show[$tableName]) ? true : false;
+    return preg_match('/CONSTRAINT [`\']?' . "FK_{$tableName}_{$columnName}" . '/i', $show[$tableName]) ? TRUE : FALSE;
   }
 
   /**
@@ -659,11 +648,10 @@ LIKE %1
    * @return boolean true if the value is always $columnValue, false otherwise
    * @static
    */
-  function checkFieldHasAlwaysValue($tableName, $columnName, $columnValue)
-  {
+  function checkFieldHasAlwaysValue($tableName, $columnName, $columnValue) {
     $query  = "SELECT * FROM $tableName WHERE $columnName != '$columnValue'";
-    $dao    = CRM_Core_DAO::executeQuery( $query );
-    $result = $dao->fetch() ? false : true;
+    $dao    = CRM_Core_DAO::executeQuery($query);
+    $result = $dao->fetch() ? FALSE : TRUE;
     $dao->free();
     return $result;
   }
@@ -677,11 +665,10 @@ LIKE %1
    * @return boolean true if if the value is always NULL, false otherwise
    * @static
    */
-  function checkFieldIsAlwaysNull($tableName, $columnName)
-  {
+  function checkFieldIsAlwaysNull($tableName, $columnName) {
     $query  = "SELECT * FROM $tableName WHERE $columnName IS NOT NULL";
-    $dao    = CRM_Core_DAO::executeQuery( $query );
-    $result = $dao->fetch() ? false : true;
+    $dao    = CRM_Core_DAO::executeQuery($query);
+    $result = $dao->fetch() ? FALSE : TRUE;
     $dao->free();
     return $result;
   }
@@ -694,28 +681,26 @@ LIKE %1
    * @return boolean true if exists, else false
    * @static
    */
-  function checkTableExists( $tableName )
-  {
+  function checkTableExists($tableName) {
     $query = "
 SHOW TABLES
 LIKE %1
 ";
-    $params = array( 1 => array( $tableName , 'String' ) );
+    $params = array(1 => array($tableName, 'String'));
 
-    $dao = CRM_Core_DAO::executeQuery( $query, $params );
-    $result = $dao->fetch( ) ? true : false;
-    $dao->free( );
+    $dao = CRM_Core_DAO::executeQuery($query, $params);
+    $result = $dao->fetch() ? TRUE : FALSE;
+    $dao->free();
     return $result;
   }
 
-  function checkVersion( $version )
-  {
+  function checkVersion($version) {
     $query = "
 SELECT version
 FROM   civicrm_domain
 ";
-    $dbVersion = CRM_Core_DAO::singleValueQuery( $query );
-    return trim( $version ) == trim( $dbVersion ) ? true : false;
+    $dbVersion = CRM_Core_DAO::singleValueQuery($query);
+    return trim($version) == trim($dbVersion) ? TRUE : FALSE;
   }
 
   /**
@@ -730,30 +715,31 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static function getFieldValue( $daoName, $searchValue, $returnColumn = 'name', $searchColumn = 'id' ) {
-    if ( empty( $searchValue ) ) {
+  static
+  function getFieldValue($daoName, $searchValue, $returnColumn = 'name', $searchColumn = 'id') {
+    if (empty($searchValue)) {
       // adding this year since developers forget to check for an id
       // and hence we get the first value in the db
-      CRM_Core_Error::fatal( );
+      CRM_Core_Error::fatal();
     }
 
     $cacheKey = "{$daoName}:{$searchValue}:{$returnColumn}:{$searchColumn}";
-    if ( self::$_dbColumnValueCache === null ) {
-      self::$_dbColumnValueCache = array( );
+    if (self::$_dbColumnValueCache === NULL) {
+      self::$_dbColumnValueCache = array();
     }
 
-    if ( ! array_key_exists( $cacheKey, self::$_dbColumnValueCache ) ) {
-      require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-      eval( '$object   = new ' . $daoName . '( );' );
-      $object->$searchColumn =  $searchValue;
-      $object->selectAdd( );
-      $object->selectAdd( $returnColumn );
+    if (!array_key_exists($cacheKey, self::$_dbColumnValueCache)) {
+      require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+      eval('$object   = new ' . $daoName . '( );');
+      $object->$searchColumn = $searchValue;
+      $object->selectAdd();
+      $object->selectAdd($returnColumn);
 
-      $result = null;
-      if ( $object->find( true ) ) {
+      $result = NULL;
+      if ($object->find(TRUE)) {
         $result = $object->$returnColumn;
       }
-      $object->free( );
+      $object->free();
 
       self::$_dbColumnValueCache[$cacheKey] = $result;
     }
@@ -773,21 +759,21 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static function setFieldValue( $daoName, $searchValue, $setColumn, $setValue, $searchColumn = 'id' )
-  {
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    eval( '$object = new ' . $daoName . '( );' );
-    $object->selectAdd( );
-    $object->selectAdd( "$searchColumn, $setColumn" );
+  static
+  function setFieldValue($daoName, $searchValue, $setColumn, $setValue, $searchColumn = 'id') {
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+    eval('$object = new ' . $daoName . '( );');
+    $object->selectAdd();
+    $object->selectAdd("$searchColumn, $setColumn");
     $object->$searchColumn = $searchValue;
-    $result = false;
-    if ( $object->find( true ) ) {
+    $result = FALSE;
+    if ($object->find(TRUE)) {
       $object->$setColumn = $setValue;
-      if ( $object->save( ) ) {
-        $result = true;
+      if ($object->save()) {
+        $result = TRUE;
       }
     }
-    $object->free( );
+    $object->free();
     return $result;
   }
 
@@ -801,19 +787,19 @@ FROM   civicrm_domain
    * @access public
    * @static
    */
-  static function getSortString($sort, $default = null)
-  {
+  static
+  function getSortString($sort, $default = NULL) {
     // check if sort is of type CRM_Utils_Sort
-    if ( is_a( $sort, 'CRM_Utils_Sort' ) ) {
+    if (is_a($sort, 'CRM_Utils_Sort')) {
       return $sort->orderBy();
     }
 
     // is it an array specified as $field => $sortDirection ?
-    if ( $sort ) {
-      foreach ( $sort as $k => $v ) {
+    if ($sort) {
+      foreach ($sort as $k => $v) {
         $sortString .= "$k $v,";
       }
-      return rtrim( $sortString, ',' );
+      return rtrim($sortString, ',');
     }
     return $default;
   }
@@ -834,23 +820,23 @@ FROM   civicrm_domain
    * @access public
    * @static
    */
-  static function commonRetrieve($daoName, &$params, &$defaults, $returnProperities = null )
-  {
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    eval( '$object = new ' . $daoName . '( );' );
+  static
+  function commonRetrieve($daoName, &$params, &$defaults, $returnProperities = NULL) {
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+    eval('$object = new ' . $daoName . '( );');
     $object->copyValues($params);
 
     // return only specific fields if returnproperties are sent
-    if ( !empty( $returnProperities ) ) {
-      $object->selectAdd( );
-      $object->selectAdd( implode( ',' , $returnProperities ) );
+    if (!empty($returnProperities)) {
+      $object->selectAdd();
+      $object->selectAdd(implode(',', $returnProperities));
     }
 
-    if ( $object->find( true ) ) {
-      self::storeValues( $object, $defaults);
+    if ($object->find(TRUE)) {
+      self::storeValues($object, $defaults);
       return $object;
     }
-    return null;
+    return NULL;
   }
 
   /**
@@ -863,14 +849,14 @@ FROM   civicrm_domain
    * @access public
    * @static
    */
-  static function deleteEntityContact( $daoName, $contactId )
-  {
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    eval( '$object = new ' . $daoName . '( );' );
+  static
+  function deleteEntityContact($daoName, $contactId) {
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+    eval('$object = new ' . $daoName . '( );');
 
     $object->entity_table = 'civicrm_contact';
-    $object->entity_id   = $contactId;
-    $object->delete( );
+    $object->entity_id = $contactId;
+    $object->delete();
   }
 
   /**
@@ -882,43 +868,46 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static function &executeQuery( $query,
-    $params = array( ),
-    $abort = true,
-    $daoName = null,
-    $freeDAO = false,
-    $i18nRewrite = true,
-    $trapException = false )
-  {
-    $queryStr = self::composeQuery( $query, $params, $abort );
+  static
+  function &executeQuery($query,
+    $params        = array(),
+    $abort         = TRUE,
+    $daoName       = NULL,
+    $freeDAO       = FALSE,
+    $i18nRewrite   = TRUE,
+    $trapException = FALSE
+  ) {
+    $queryStr = self::composeQuery($query, $params, $abort);
     //CRM_Core_Error::debug( 'q', $queryStr );
 
-    if ( ! $daoName ) {
-      $dao = new CRM_Core_DAO( );
-    } else {
-      require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-      eval( '$dao   = new ' . $daoName . '( );' );
+    if (!$daoName) {
+      $dao = new CRM_Core_DAO();
+    }
+    else {
+      require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+      eval('$dao   = new ' . $daoName . '( );');
     }
 
-    if ( $trapException ) {
+    if ($trapException) {
       CRM_Core_Error::ignoreException();
     }
 
-    $result = $dao->query( $queryStr, $i18nRewrite );
+    $result = $dao->query($queryStr, $i18nRewrite);
 
-    if ( $trapException ) {
+    if ($trapException) {
       CRM_Core_Error::setCallback();
     }
 
-    if ( is_a( $result, 'DB_Error' ) ) {
+    if (is_a($result, 'DB_Error')) {
       return $result;
     }
 
-    if ( $freeDAO ||
-      preg_match( '/^(insert|update|delete|create|drop|replace)/i', $queryStr ) ) {
+    if ($freeDAO ||
+      preg_match('/^(insert|update|delete|create|drop|replace)/i', $queryStr)
+    ) {
       // we typically do this for insert/update/delete stataments OR if explicitly asked to
       // free the dao
-      $dao->free( );
+      $dao->free();
     }
     return $dao;
   }
@@ -932,97 +921,104 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static function &singleValueQuery( $query,
-    $params = array( ),
-    $abort = true,
-    $i18nRewrite = true )
-  {
-    $queryStr = self::composeQuery( $query, $params, $abort );
+  static
+  function &singleValueQuery($query,
+    $params      = array(),
+    $abort       = TRUE,
+    $i18nRewrite = TRUE
+  ) {
+    $queryStr = self::composeQuery($query, $params, $abort);
 
-    static $_dao = null;
+    static $_dao = NULL;
 
-    if ( ! $_dao ) {
-      $_dao = new CRM_Core_DAO( );
+    if (!$_dao) {
+      $_dao = new CRM_Core_DAO();
     }
 
-    $_dao->query( $queryStr, $i18nRewrite );
+    $_dao->query($queryStr, $i18nRewrite);
 
     $result = $_dao->getDatabaseResult();
-    $ret    = null;
-    if ( $result ) {
+    $ret = NULL;
+    if ($result) {
       $row = $result->fetchRow();
-      if ( $row ) {
+      if ($row) {
         $ret = $row[0];
       }
     }
-    $_dao->free( );
+    $_dao->free();
     return $ret;
   }
 
-  static function composeQuery( $query, &$params, $abort )
-  {
+  static
+  function composeQuery($query, &$params, $abort) {
 
-    $tr = array( );
-    foreach ( $params as $key => $item ) {
-      if ( is_numeric( $key ) ) {
-        if ( CRM_Utils_Type::validate( $item[0], $item[1] ) !== null ) {
-          $item[0] = self::escapeString( $item[0] );
-          if ( $item[1] == 'String' ||
+    $tr = array();
+    foreach ($params as $key => $item) {
+      if (is_numeric($key)) {
+        if (CRM_Utils_Type::validate($item[0], $item[1]) !== NULL) {
+          $item[0] = self::escapeString($item[0]);
+          if ($item[1] == 'String' ||
             $item[1] == 'Memo' ||
-            $item[1] == 'Link'   ) {
-            if ( isset( $item[2] ) &&
-              $item[2] ) {
+            $item[1] == 'Link'
+          ) {
+            if (isset($item[2]) &&
+              $item[2]
+            ) {
               $item[0] = "'%{$item[0]}%'";
-            } else {
+            }
+            else {
               $item[0] = "'{$item[0]}'";
             }
           }
 
-          if ( ( $item[1] == 'Date' || $item[1] == 'Timestamp' ) &&
-            strlen( $item[0] ) == 0 ) {
+          if (($item[1] == 'Date' || $item[1] == 'Timestamp') &&
+            strlen($item[0]) == 0
+          ) {
             $item[0] = 'null';
           }
 
           $tr['%' . $key] = $item[0];
-        } else if ( $abort ) {
-          CRM_Core_Error::fatal( "{$item[0]} is not of type {$item[1]}" );
+        }
+        elseif ($abort) {
+          CRM_Core_Error::fatal("{$item[0]} is not of type {$item[1]}");
         }
       }
     }
-    return strtr( $query, $tr );
+    return strtr($query, $tr);
   }
 
-  static function freeResult( $ids = null )
-  {
+  static
+  function freeResult($ids = NULL) {
     global $_DB_DATAOBJECT;
 
     /***
-        $q = array( );
-        foreach ( array_keys( $_DB_DATAOBJECT['RESULTS'] ) as $id ) {
-        $q[] = $_DB_DATAOBJECT['RESULTS'][$id]->query;
-        }
-        CRM_Core_Error::debug( 'k', $q );
-        return;
-    ***/
+     $q = array( );
+     foreach ( array_keys( $_DB_DATAOBJECT['RESULTS'] ) as $id ) {
+     $q[] = $_DB_DATAOBJECT['RESULTS'][$id]->query;
+     }
+     CRM_Core_Error::debug( 'k', $q );
+     return;
+     ***/
 
-    if ( ! $ids ) {
-      if ( ! $_DB_DATAOBJECT ||
-        ! isset( $_DB_DATAOBJECT['RESULTS'] ) ) {
+    if (!$ids) {
+      if (!$_DB_DATAOBJECT ||
+        !isset($_DB_DATAOBJECT['RESULTS'])
+      ) {
         return;
       }
-      $ids = array_keys( $_DB_DATAOBJECT['RESULTS'] );
+      $ids = array_keys($_DB_DATAOBJECT['RESULTS']);
     }
 
-    foreach ( $ids as $id ) {
-      if ( isset( $_DB_DATAOBJECT['RESULTS'][$id] ) ) {
-        if ( is_resource( $_DB_DATAOBJECT['RESULTS'][$id]->result ) ) {
-          mysql_free_result( $_DB_DATAOBJECT['RESULTS'][$id]->result );
+    foreach ($ids as $id) {
+      if (isset($_DB_DATAOBJECT['RESULTS'][$id])) {
+        if (is_resource($_DB_DATAOBJECT['RESULTS'][$id]->result)) {
+          mysql_free_result($_DB_DATAOBJECT['RESULTS'][$id]->result);
         }
-        unset( $_DB_DATAOBJECT['RESULTS'][$id] );
+        unset($_DB_DATAOBJECT['RESULTS'][$id]);
       }
 
-      if ( isset( $_DB_DATAOBJECT['RESULTFIELDS'][$id] ) ) {
-        unset( $_DB_DATAOBJECT['RESULTFIELDS'][$id] );
+      if (isset($_DB_DATAOBJECT['RESULTFIELDS'][$id])) {
+        unset($_DB_DATAOBJECT['RESULTFIELDS'][$id]);
       }
     }
   }
@@ -1044,76 +1040,78 @@ FROM   civicrm_domain
    * @return (reference )                   the newly created copy of the object
    * @access public
    */
-  static function &copyGeneric( $daoName, $criteria , $newData = null, $fieldsFix = null, $blockCopyOfDependencies = null )
-  {
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    eval( '$object   = new ' . $daoName . '( );' );
-    if ( ! $newData ) {
-      $object->id =  $criteria['id'];
-    } else {
-      foreach( $criteria as $key => $value ) {
+  static
+  function &copyGeneric($daoName, $criteria, $newData = NULL, $fieldsFix = NULL, $blockCopyOfDependencies = NULL) {
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+    eval('$object   = new ' . $daoName . '( );');
+    if (!$newData) {
+      $object->id = $criteria['id'];
+    }
+    else {
+      foreach ($criteria as $key => $value) {
         $object->$key = $value;
       }
     }
 
-    $object->find( );
-    while ( $object->fetch( ) ) {
+    $object->find();
+    while ($object->fetch()) {
 
       // all the objects except with $blockCopyOfDependencies set
       // be copied - addresses #CRM-1962
 
-      if ( $blockCopyOfDependencies && $object->$blockCopyOfDependencies ) {
+      if ($blockCopyOfDependencies && $object->$blockCopyOfDependencies) {
         break;
       }
 
-      eval( '$newObject   = new ' . $daoName . '( );' );
+      eval('$newObject   = new ' . $daoName . '( );');
 
-      $fields =& $object->fields( );
-      if ( ! is_array( $fieldsFix ) ) {
-        $fieldsToPrefix  = array( );
-        $fieldsToSuffix  = array( );
-        $fieldsToReplace = array( );
+      $fields = &$object->fields();
+      if (!is_array($fieldsFix)) {
+        $fieldsToPrefix  = array();
+        $fieldsToSuffix  = array();
+        $fieldsToReplace = array();
       }
-      if ( CRM_Utils_Array::value( 'prefix', $fieldsFix ) ) {
+      if (CRM_Utils_Array::value('prefix', $fieldsFix)) {
         $fieldsToPrefix = $fieldsFix['prefix'];
       }
-      if ( CRM_Utils_Array::value( 'suffix', $fieldsFix ) ) {
+      if (CRM_Utils_Array::value('suffix', $fieldsFix)) {
         $fieldsToSuffix = $fieldsFix['suffix'];
       }
-      if ( CRM_Utils_Array::value( 'replace', $fieldsFix ) ) {
+      if (CRM_Utils_Array::value('replace', $fieldsFix)) {
         $fieldsToReplace = $fieldsFix['replace'];
       }
 
-      foreach ( $fields as $name => $value ) {
-        if ( $name == 'id' || $value['name'] == 'id' ) {
+      foreach ($fields as $name => $value) {
+        if ($name == 'id' || $value['name'] == 'id') {
           // copy everything but the id!
           continue;
         }
 
         $dbName = $value['name'];
         $newObject->$dbName = $object->$dbName;
-        if ( isset( $fieldsToPrefix[$dbName] ) ) {
+        if (isset($fieldsToPrefix[$dbName])) {
           $newObject->$dbName = $fieldsToPrefix[$dbName] . $newObject->$dbName;
         }
-        if ( isset( $fieldsToSuffix[$dbName] ) ) {
+        if (isset($fieldsToSuffix[$dbName])) {
           $newObject->$dbName .= $fieldsToSuffix[$dbName];
         }
-        if ( isset( $fieldsToReplace[$dbName] ) ) {
+        if (isset($fieldsToReplace[$dbName])) {
           $newObject->$dbName = $fieldsToReplace[$dbName];
         }
 
-        if ( substr($name , -5)  == '_date' ||
-          substr($name , -10) == '_date_time' ) {
+        if (substr($name, -5) == '_date' ||
+          substr($name, -10) == '_date_time'
+        ) {
           $newObject->$dbName = CRM_Utils_Date::isoToMysql($newObject->$dbName);
         }
 
-        if ( $newData ) {
-          foreach( $newData as $k => $v ) {
+        if ($newData) {
+          foreach ($newData as $k => $v) {
             $newObject->$k = $v;
           }
         }
       }
-      $newObject->save( );
+      $newObject->save();
     }
     return $newObject;
   }
@@ -1122,23 +1120,22 @@ FROM   civicrm_domain
    * Given the component id, compute the contact id
    * since its used for things like send email
    */
-  public function &getContactIDsFromComponent( &$componentIDs, $tableName )
-  {
-    $contactIDs = array( );
+  public function &getContactIDsFromComponent(&$componentIDs, $tableName) {
+    $contactIDs = array();
 
-    if ( empty( $componentIDs ) ) {
+    if (empty($componentIDs)) {
       return $contactIDs;
     }
 
-    $IDs = implode( ',', $componentIDs );
+    $IDs = implode(',', $componentIDs);
     $query = "
 SELECT contact_id
   FROM $tableName
  WHERE id IN ( $IDs )
 ";
 
-    $dao = CRM_Core_DAO::executeQuery( $query );
-    while ( $dao->fetch( ) ) {
+    $dao = CRM_Core_DAO::executeQuery($query);
+    while ($dao->fetch()) {
       $contactIDs[] = $dao->contact_id;
     }
     return $contactIDs;
@@ -1160,95 +1157,103 @@ SELECT contact_id
    * @access public
    * @static
    */
-  static function commonRetrieveAll($daoName, $fieldIdName ='id', $fieldId, &$details, $returnProperities = null )
-  {
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    eval( '$object = new ' . $daoName . '( );' );
+  static
+  function commonRetrieveAll($daoName, $fieldIdName = 'id', $fieldId, &$details, $returnProperities = NULL) {
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+    eval('$object = new ' . $daoName . '( );');
     $object->$fieldIdName = $fieldId;
 
     // return only specific fields if returnproperties are sent
-    if ( !empty( $returnProperities ) ) {
-      $object->selectAdd( );
-      $object->selectAdd( 'id' );
-      $object->selectAdd( implode( ',' , $returnProperities ) );
+    if (!empty($returnProperities)) {
+      $object->selectAdd();
+      $object->selectAdd('id');
+      $object->selectAdd(implode(',', $returnProperities));
     }
 
-    $object->find( );
-    while ( $object->fetch( ) ) {
-      $defaults = array( );
-      self::storeValues( $object, $defaults );
+    $object->find();
+    while ($object->fetch()) {
+      $defaults = array();
+      self::storeValues($object, $defaults);
       $details[$object->id] = $defaults;
     }
 
     return $details;
   }
 
-  static function dropAllTables( ) {
+  static
+  function dropAllTables() {
 
     // first drop all the custom tables we've created
-    CRM_Core_BAO_CustomGroup::dropAllTables( );
+    CRM_Core_BAO_CustomGroup::dropAllTables();
 
     // drop all multilingual views
     CRM_Core_I18n_Schema::dropAllViews();
 
-    CRM_Utils_File::sourceSQLFile( CIVICRM_DSN,
-      dirname( __FILE__ ) . DIRECTORY_SEPARATOR .
-      '..'                . DIRECTORY_SEPARATOR .
-      '..'                . DIRECTORY_SEPARATOR .
-      'sql'               . DIRECTORY_SEPARATOR .
-      'civicrm_drop.mysql' );
+    CRM_Utils_File::sourceSQLFile(CIVICRM_DSN,
+      dirname(__FILE__) . DIRECTORY_SEPARATOR .
+      '..' . DIRECTORY_SEPARATOR .
+      '..' . DIRECTORY_SEPARATOR .
+      'sql' . DIRECTORY_SEPARATOR .
+      'civicrm_drop.mysql'
+    );
   }
 
-  static function escapeString( $string ) {
-    static $_dao = null;
+  static
+  function escapeString($string) {
+    static $_dao = NULL;
 
-    if ( ! $_dao ) {
-      $_dao = new CRM_Core_DAO( );
+    if (!$_dao) {
+      $_dao = new CRM_Core_DAO();
     }
 
-    return $_dao->escape( $string );
+    return $_dao->escape($string);
   }
 
-  static function escapeWildCardString( $string ) {
+  static
+  function escapeWildCardString($string) {
     // CRM-9155
     // ensure we escape the single characters % and _ which are mysql wild
     // card characters and could come in via sortByCharacter
     // note that mysql does not escape these characters
-    if ( $string && in_array( $string,
-        array( '%', '_', '%%', '_%' ) ) ) {
+    if ($string && in_array($string,
+        array('%', '_', '%%', '_%')
+      )) {
       return '\\' . $string;
     }
 
-    return self::escapeString( $string );
+    return self::escapeString($string);
   }
 
   //Creates a test object, including any required objects it needs via recursion
   //createOnly: only create in database, do not store or return the objects (useful for perf testing)
   //ONLY USE FOR TESTING
-  static function createTestObject($daoName, $params = array(), $numObjects = 1, $createOnly = false) {
+  static
+  function createTestObject($daoName, $params = array(
+    ), $numObjects = 1, $createOnly = FALSE) {
 
     static $counter = 0;
 
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
 
-    for($i = 0; $i < $numObjects; ++ $i) {
+    for ($i = 0; $i < $numObjects; ++$i) {
 
-      ++ $counter;
+      ++$counter;
       eval('$object   = new ' . $daoName . '( );');
 
-      $fields = & $object->fields();
+      $fields = &$object->fields();
       foreach ($fields as $name => $value) {
         $dbName = $value['name'];
 
         $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
         $required = CRM_Utils_Array::value('required', $value);
-        if (CRM_Utils_Array::value($dbName, $params) && ! is_array($params[$dbName])) {
+        if (CRM_Utils_Array::value($dbName, $params) && !is_array($params[$dbName])) {
           $object->$dbName = $params[$dbName];
         }
         elseif ($dbName != 'id') {
-          if ($FKClassName != null) {
+          if ($FKClassName != NULL) {
             //skip the FK if it is not required
-            if (! $required && $dbName != 'contact_id') {// if it's contact id we should create even if not required
+            // if it's contact id we should create even if not required
+            if (!$required && $dbName != 'contact_id') {
               continue;
             }
 
@@ -1266,29 +1271,31 @@ SELECT contact_id
             continue;
           }
           $enum = CRM_Utils_Array::value('enumValues', $value);
-          if(!empty($enum)){
-            $options = explode(',',$enum);
+          if (!empty($enum)) {
+            $options = explode(',', $enum);
             $object->$dbName = $options[0];
             continue;
           }
           switch ($value['type']) {
-
             case CRM_Utils_Type::T_INT:
             case CRM_Utils_Type::T_FLOAT:
             case CRM_Utils_Type::T_MONEY:
               $object->$dbName = $counter;
               break;
+
             case CRM_Utils_Type::T_BOOL:
             case CRM_Utils_Type::T_BOOLEAN:
-              if (isset($value['default'])){
-                  $object->$dbName = $value['default'];
+              if (isset($value['default'])) {
+                $object->$dbName = $value['default'];
               }
-              elseif($value['name'] == 'is_deleted' || $value['name'] == 'is_test'){
+              elseif ($value['name'] == 'is_deleted' || $value['name'] == 'is_test') {
                 $object->$dbName = 0;
-              }else{
+              }
+              else {
                 $object->$dbName = 1;
               }
               break;
+
             case CRM_Utils_Type::T_DATE:
             case CRM_Utils_Type::T_TIMESTAMP:
               $object->$dbName = '19700101';
@@ -1296,19 +1303,15 @@ SELECT contact_id
 
             case CRM_Utils_Type::T_TIME:
               CRM_Core_Error::fatal('T_TIME shouldnt be used.');
-            //$object->$dbName='000000';
-            //break;
-
-
+              //$object->$dbName='000000';
+              //break;
             case CRM_Utils_Type::T_CCNUM:
               $object->$dbName = '4111 1111 1111 1111';
               break;
 
-
             case CRM_Utils_Type::T_URL:
               $object->$dbName = 'http://www.civicrm.org';
               break;
-
 
             case CRM_Utils_Type::T_STRING:
             case CRM_Utils_Type::T_BLOB:
@@ -1318,8 +1321,9 @@ SELECT contact_id
             case CRM_Utils_Type::T_EMAIL:
             default:
               if (isset($value['enumValues'])) {
-                if (isset($value['default']))
+                if (isset($value['default'])) {
                   $object->$dbName = $value['default'];
+                }
                 else {
                   if (is_array($value['enumValues'])) {
                     $object->$dbName = $value['enumValues'][0];
@@ -1342,43 +1346,47 @@ SELECT contact_id
       }
       $object->save();
 
-      if (! $createOnly)
+      if (!$createOnly) {
+
         $objects[$i] = $object;
-      else
-        unset($object);
+
+      }
+      else unset($object);
     }
 
-    if ($createOnly)
+    if ($createOnly) {
+
       return;
-    else if ($numObjects == 1)
-      return $objects[0];
-    else
-      return $objects;
+
+    }
+    elseif ($numObjects == 1) {  return $objects[0];}
+    else return $objects;
   }
 
   //deletes the this object plus any dependent objects that are associated with it
   //ONLY USE FOR TESTING
 
-  static function deleteTestObjects($daoName, $params=array()) {
+  static
+  function deleteTestObjects($daoName, $params = array(
+    )) {
 
-    require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-    eval( '$object   = new ' . $daoName . '( );' );
-    $object->id = CRM_Utils_Array::value( 'id', $params );
+    require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+    eval('$object   = new ' . $daoName . '( );');
+    $object->id = CRM_Utils_Array::value('id', $params);
 
-    if ( $object->find( true ) ) {
+    if ($object->find(TRUE)) {
 
-      $fields =& $object->fields( );
-      foreach ( $fields as $name => $value ) {
+      $fields = &$object->fields();
+      foreach ($fields as $name => $value) {
 
         $dbName = $value['name'];
 
-        $FKClassName = CRM_Utils_Array::value( 'FKClassName', $value );
+        $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
 
-        if ($FKClassName!=null && $object->$dbName ) {
+        if ($FKClassName != NULL && $object->$dbName) {
 
           //if it is required we need to generate the dependency object first
-          CRM_Core_DAO::deleteTestObjects( $FKClassName, array( 'id' => $object->$dbName ));
-
+          CRM_Core_DAO::deleteTestObjects($FKClassName, array('id' => $object->$dbName));
         }
       }
     }
@@ -1386,187 +1394,196 @@ SELECT contact_id
     $object->delete();
   }
 
-  static function createTempTableName( $prefix = 'civicrm', $addRandomString = true, $string = null ) {
+  static
+  function createTempTableName($prefix = 'civicrm', $addRandomString = TRUE, $string = NULL) {
     $tableName = $prefix . "_temp";
 
-    if ( $addRandomString ) {
-      if ( $string ) {
+    if ($addRandomString) {
+      if ($string) {
         $tableName .= "_" . $string;
-      } else {
-        $tableName .= "_" . md5( uniqid( '', true ) );
+      }
+      else {
+        $tableName .= "_" . md5(uniqid('', TRUE));
       }
     }
     return $tableName;
   }
 
-  static function checkTriggerViewPermission( $view = true, $trigger = true ) {
+  static
+  function checkTriggerViewPermission($view = TRUE, $trigger = TRUE) {
     // test for create view and trigger permissions and if allowed, add the option to go multilingual
     // and logging
     CRM_Core_Error::ignoreException();
-    $dao = new CRM_Core_DAO( );
-    if ( $view ) {
+    $dao = new CRM_Core_DAO();
+    if ($view) {
       $dao->query('CREATE OR REPLACE VIEW civicrm_domain_view AS SELECT * FROM civicrm_domain');
-      if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+      if (PEAR::getStaticProperty('DB_DataObject', 'lastError')) {
         CRM_Core_Error::setCallback();
-        return false;
+        return FALSE;
       }
     }
 
-    if ( $trigger) {
+    if ($trigger) {
       $dao->query('CREATE TRIGGER civicrm_domain_trigger BEFORE INSERT ON civicrm_domain FOR EACH ROW BEGIN END');
 
-      if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+      if (PEAR::getStaticProperty('DB_DataObject', 'lastError')) {
         CRM_Core_Error::setCallback();
-        if ( $view ) {
+        if ($view) {
           $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
         }
-        return false;
+        return FALSE;
       }
 
       $dao->query('DROP TRIGGER IF EXISTS civicrm_domain_trigger');
-      if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+      if (PEAR::getStaticProperty('DB_DataObject', 'lastError')) {
         CRM_Core_Error::setCallback();
-        if ( $view ) {
+        if ($view) {
           $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
         }
-        return false;
+        return FALSE;
       }
     }
 
-    if ( $view ) {
+    if ($view) {
       $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');
-      if ( PEAR::getStaticProperty('DB_DataObject','lastError') ) {
+      if (PEAR::getStaticProperty('DB_DataObject', 'lastError')) {
         CRM_Core_Error::setCallback();
-        return false;
+        return FALSE;
       }
     }
     CRM_Core_Error::setCallback();
 
-    return true;
+    return TRUE;
   }
 
-  static function debugPrint( $message = null, $printDAO = true ) {
-    CRM_Utils_System::xMemory( "{$message}: " );
+  static
+  function debugPrint($message = NULL, $printDAO = TRUE) {
+    CRM_Utils_System::xMemory("{$message}: ");
 
-    if ( $printDAO ) {
+    if ($printDAO) {
       global $_DB_DATAOBJECT;
-      $q = array( );
-      foreach ( array_keys( $_DB_DATAOBJECT['RESULTS'] ) as $id ) {
+      $q = array();
+      foreach (array_keys($_DB_DATAOBJECT['RESULTS']) as $id) {
         $q[] = $_DB_DATAOBJECT['RESULTS'][$id]->query;
       }
-      CRM_Core_Error::debug( '_DB_DATAOBJECT', $q );
+      CRM_Core_Error::debug('_DB_DATAOBJECT', $q);
     }
   }
 
   // CRM-9716
-  static function triggerRebuild( $tableName = null ) {
-    $info = array( );
+  static
+  function triggerRebuild($tableName = NULL) {
+    $info = array();
 
     $logging = new CRM_Logging_Schema;
-    $logging->triggerInfo( $info, $tableName );
+    $logging->triggerInfo($info, $tableName);
 
-    CRM_Core_I18n_Schema::triggerInfo( $info, $tableName );
+    CRM_Core_I18n_Schema::triggerInfo($info, $tableName);
 
-    CRM_Utils_Hook::triggerInfo( $info, $tableName );
+    CRM_Utils_Hook::triggerInfo($info, $tableName);
 
-    self::createTriggers( $info );
-
+    self::createTriggers($info);
   }
 
-    static function createTriggers( &$info ) {
-        // Validate info array, should probably raise errors?
-        if ( is_array( $info ) == false ) {
-            return;
-        }
-
-        $triggers = array( );
-
-        // now enumerate the tables and the events and collect the same set in a different format
-        foreach ( $info as $value ) {
-
-            // clean the incoming data, skip malformed entries
-            // TODO: malformed entries should raise errors or get logged.
-            if ( isset($value['table']) == false ||
-                 isset($value['event']) == false ||
-                 isset($value['when'] ) == false ||
-                 isset($value['sql']  ) == false ) {
-                continue;
-            }
-
-            if ( is_string($value['table']) == true ) {
-                $tables = array($value['table']);
-            } else {
-                $tables = $value['table'];
-            }
-
-            if ( is_string($value['event']) == true ) {
-                $events = array( strtolower($value['event']) );
-            } else {
-                $events = array_map( 'strtolower', $value['event'] );
-            }
-
-            $whenName = strtolower($value['when']);
-
-            foreach ( $tables as $tableName ) {
-                if ( ! isset( $triggers[$tableName] ) ) {
-                    $triggers[$tableName] = array( );
-                }
-
-                foreach ( $events as $eventName) {
-                    $template_params = array( '{tableName}', '{eventName}' );
-                    $template_values = array( $tableName   , $eventName    );
-
-                    $sql       = str_replace($template_params,
-                                             $template_values,
-                                             $value['sql'] );
-                    $variables = str_replace($template_params,
-                                             $template_values,
-                                             CRM_Utils_Array::value( 'variables', $value ) );
-
-                    if ( ! isset( $triggers[$tableName][$eventName] ) ) {
-                        $triggers[$tableName][$eventName] = array( );
-                    }
-
-                    if ( ! isset( $triggers[$tableName][$eventName][$whenName] ) ) {
-                        // We're leaving out cursors, conditions, and handlers for now
-                        // they are kind of dangerous in this context anyway
-                        // better off putting them in stored procedures
-                        $triggers[$tableName][$eventName][$whenName] = array(
-                                                                             'variables' => array( ),
-                                                                             'sql' => array( )
-                                                                             );
-                    }
-
-                    if ( $variables ) {
-                        $triggers[$tableName][$eventName][$whenName]['variables'][] = $variables;
-                    }
-
-                    $triggers[$tableName][$eventName][$whenName]['sql'][] = $sql;
-                }
-            }
-        }
-
-        // now spit out the sql
-        foreach ( $triggers as $tableName => $tables ) {
-            foreach ( $tables as $eventName => $events ) {
-                foreach ( $events as $whenName => $parts ) {
-                    $varString = implode( "\n", $parts['variables'] );
-                    $sqlString = implode( "\n", $parts['sql'] );
-                    $triggerName = "{$tableName}_{$whenName}_{$eventName}";
-                    $triggerSQL =
-                        "CREATE TRIGGER $triggerName $whenName $eventName ON $tableName FOR EACH ROW BEGIN $varString $sqlString END";
-
-                    CRM_Core_DAO::executeQuery( "DROP TRIGGER IF EXISTS $triggerName" );
-                    CRM_Core_DAO::executeQuery( $triggerSQL,
-                                                array( ),
-                                                true,
-                                                null,
-                                                false,
-                                                false );
-                }
-            }
-        }
+  static
+  function createTriggers(&$info) {
+    // Validate info array, should probably raise errors?
+    if (is_array($info) == FALSE) {
+      return;
     }
 
+    $triggers = array();
 
+    // now enumerate the tables and the events and collect the same set in a different format
+    foreach ($info as $value) {
+
+      // clean the incoming data, skip malformed entries
+      // TODO: malformed entries should raise errors or get logged.
+      if (isset($value['table']) == FALSE ||
+        isset($value['event']) == FALSE ||
+        isset($value['when']) == FALSE ||
+        isset($value['sql']) == FALSE
+      ) {
+        continue;
+      }
+
+      if (is_string($value['table']) == TRUE) {
+        $tables = array($value['table']);
+      }
+      else {
+        $tables = $value['table'];
+      }
+
+      if (is_string($value['event']) == TRUE) {
+        $events = array(strtolower($value['event']));
+      }
+      else {
+        $events = array_map('strtolower', $value['event']);
+      }
+
+      $whenName = strtolower($value['when']);
+
+      foreach ($tables as $tableName) {
+        if (!isset($triggers[$tableName])) {
+          $triggers[$tableName] = array();
+        }
+
+        foreach ($events as $eventName) {
+          $template_params = array('{tableName}', '{eventName}');
+          $template_values = array($tableName, $eventName);
+
+          $sql = str_replace($template_params,
+            $template_values,
+            $value['sql']
+          );
+          $variables = str_replace($template_params,
+            $template_values,
+            CRM_Utils_Array::value('variables', $value)
+          );
+
+          if (!isset($triggers[$tableName][$eventName])) {
+            $triggers[$tableName][$eventName] = array();
+          }
+
+          if (!isset($triggers[$tableName][$eventName][$whenName])) {
+            // We're leaving out cursors, conditions, and handlers for now
+            // they are kind of dangerous in this context anyway
+            // better off putting them in stored procedures
+            $triggers[$tableName][$eventName][$whenName] = array(
+              'variables' => array(),
+              'sql' => array(),
+            );
+          }
+
+          if ($variables) {
+            $triggers[$tableName][$eventName][$whenName]['variables'][] = $variables;
+          }
+
+          $triggers[$tableName][$eventName][$whenName]['sql'][] = $sql;
+        }
+      }
+    }
+
+    // now spit out the sql
+    foreach ($triggers as $tableName => $tables) {
+      foreach ($tables as $eventName => $events) {
+        foreach ($events as $whenName => $parts) {
+          $varString   = implode("\n", $parts['variables']);
+          $sqlString   = implode("\n", $parts['sql']);
+          $triggerName = "{$tableName}_{$whenName}_{$eventName}";
+          $triggerSQL  = "CREATE TRIGGER $triggerName $whenName $eventName ON $tableName FOR EACH ROW BEGIN $varString $sqlString END";
+
+          CRM_Core_DAO::executeQuery("DROP TRIGGER IF EXISTS $triggerName");
+          CRM_Core_DAO::executeQuery($triggerSQL,
+            array(),
+            TRUE,
+            NULL,
+            FALSE,
+            FALSE
+          );
+        }
+      }
+    }
+  }
 }
+

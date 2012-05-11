@@ -44,7 +44,8 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
       'fields' =>
       array(
         'id' =>
-        array('name' => 'id',
+        array(
+          'name' => 'id',
           'title' => ts('Contact ID'),
           'required' => TRUE,
           'no_display' => TRUE,
@@ -68,7 +69,8 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         ),
       ),
       'order_bys' =>
-      array('sort_name' =>
+      array(
+        'sort_name' =>
         array('title' => ts('Contact Name'),
           'default' => TRUE,
           'default_order' => 'ASC',
@@ -82,7 +84,8 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
       'fields' =>
       array(
         'mailing_name' =>
-        array('name' => 'name',
+        array(
+          'name' => 'name',
           'title' => ts('Mailing'),
           'default' => TRUE,
         ),
@@ -99,8 +102,10 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
         ),
       ),
       'order_bys' =>
-      array('mailing_name' =>
-        array('name' => 'name',
+      array(
+        'mailing_name' =>
+        array(
+          'name' => 'name',
           'title' => ts('Mailing'),
         ),
       ),
@@ -131,7 +136,8 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
           'title' => ts('Delivery Status'),
           'operatorType' => CRM_Report_Form::OP_SELECT,
           'type' => CRM_Utils_Type::T_STRING,
-          'options' => array('' => 'Any',
+          'options' => array(
+            '' => 'Any',
             'successful' => 'Successful',
             'bounced' => 'Bounced',
           ),
@@ -277,7 +283,8 @@ class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
           if (CRM_Utils_Array::value('required', $field) ||
             CRM_Utils_Array::value($fieldName, $this->_params['fields'])
           ) {
-            if (in_array($fieldName, array('unsubscribe_id', 'optout_id', 'forward_id', 'reply_id'))) {
+            if (in_array($fieldName, array(
+              'unsubscribe_id', 'optout_id', 'forward_id', 'reply_id'))) {
               $select[] = "IF({$field['dbAlias']} IS NULL, 'No', 'Yes') as {$tableName}_{$fieldName}";
               $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
               $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display'] = CRM_Utils_Array::value('no_display', $field);

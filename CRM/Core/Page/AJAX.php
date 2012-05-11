@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -34,36 +33,37 @@
  *
  */
 
-
 /**
  * This is base class for all ajax calls
  */
 class CRM_Core_Page_AJAX {
 
-    /**
-     * function to call generic ajax forms
-     *
-     * @static
-     * @access public
-     */ 
-    static function run() {
-        $className =  CRM_Utils_Type::escape( $_REQUEST['class_name'], 'String' );
-        $type = '';
-        if ( CRM_Utils_Array::value( 'type', $_POST ) ) {
-          $type = CRM_Utils_Type::escape( $_POST['type'], 'String' );
-        }
-
-        if ( !$className ) {
-            CRM_Core_Error::fatal( ts('Invalid className: %1', array( 1 => $className )) );
-        }    
-
-        if ( !$type ) {
-          $wrapper = new CRM_Utils_Wrapper( );
-          $wrapper->run( $className );
-        } 
-        else {
-          eval("{$className}::run();");
-        }
-        CRM_Utils_System::civiExit( );    
+  /**
+   * function to call generic ajax forms
+   *
+   * @static
+   * @access public
+   */
+  static
+  function run() {
+    $className = CRM_Utils_Type::escape($_REQUEST['class_name'], 'String');
+    $type = '';
+    if (CRM_Utils_Array::value('type', $_POST)) {
+      $type = CRM_Utils_Type::escape($_POST['type'], 'String');
     }
+
+    if (!$className) {
+      CRM_Core_Error::fatal(ts('Invalid className: %1', array(1 => $className)));
+    }
+
+    if (!$type) {
+      $wrapper = new CRM_Utils_Wrapper();
+      $wrapper->run($className);
+    }
+    else {
+      eval("{$className}::run();");
+    }
+    CRM_Utils_System::civiExit();
+  }
 }
+

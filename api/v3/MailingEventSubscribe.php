@@ -65,6 +65,7 @@ function civicrm_api3_mailing_event_subscribe_create($params) {
   if ($subscribe !== NULL) {
     /* Ask the contact for confirmation */
 
+
     $subscribe->send_confirm_request($email);
 
     $values = array();
@@ -75,7 +76,8 @@ function civicrm_api3_mailing_event_subscribe_create($params) {
 
     return civicrm_api3_create_success($values);
   }
-  return civicrm_api3_create_error('Subscription failed');}
+  return civicrm_api3_create_error('Subscription failed');
+}
 /*
  * Adjust Metadata for Create action
  * 
@@ -86,3 +88,4 @@ function _civicrm_api3_mailing_event_subscribe_create_spec(&$params) {
   $params['email']['api.required'] = 1;
   $params['group_id']['api.required'] = 1;
 }
+

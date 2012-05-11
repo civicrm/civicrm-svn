@@ -38,20 +38,24 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
   function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Supporter'),
             'required' => TRUE,
             'default' => TRUE,
           ),
           'id' =>
-          array('required' => TRUE,
+          array(
+            'required' => TRUE,
             'no_display' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Supporter Name'),
             'type' => CRM_Utils_Type::T_STRING,
             'operator' => 'like',
@@ -64,16 +68,19 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
         'grouping' => 'pcp-fields',
       ),
       'civicrm_contribution_page' =>
-      array('dao' => 'CRM_Contribute_DAO_ContributionPage',
+      array(
+        'dao' => 'CRM_Contribute_DAO_ContributionPage',
         'fields' =>
-        array('page_title' =>
+        array(
+          'page_title' =>
           array('title' => ts('Contribution Page Title'),
             'name' => 'title',
             'default' => TRUE,
           ),
         ),
         'filters' =>
-        array('page_title' =>
+        array(
+          'page_title' =>
           array('title' => ts('Contribution Page Title'),
             'name' => 'title',
             'type' => CRM_Utils_Type::T_STRING,
@@ -82,9 +89,11 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
         'grouping' => 'pcp-fields',
       ),
       'civicrm_pcp' =>
-      array('dao' => 'CRM_PCP_DAO_PCP',
+      array(
+        'dao' => 'CRM_PCP_DAO_PCP',
         'fields' =>
-        array('title' =>
+        array(
+          'title' =>
           array('title' => ts('Pesonal Campaign Title'),
             'default' => TRUE,
           ),
@@ -95,7 +104,8 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('title' =>
+        array(
+          'title' =>
           array('title' => ts('Personal Campaign Title'),
             'type' => CRM_Utils_Type::T_STRING,
           ),
@@ -103,9 +113,11 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
         'grouping' => 'pcp-fields',
       ),
       'civicrm_contribution_soft' =>
-      array('dao' => 'CRM_Contribute_DAO_ContributionSoft',
+      array(
+        'dao' => 'CRM_Contribute_DAO_ContributionSoft',
         'fields' =>
-        array('amount_1' =>
+        array(
+          'amount_1' =>
           array('title' => ts('Committed Amount'),
             'name' => 'amount',
             'type' => CRM_Utils_Type::T_MONEY,
@@ -132,7 +144,8 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('amount_2' =>
+        array(
+          'amount_2' =>
           array('title' => ts('Amount Received'),
             'type' => CRM_Utils_Type::T_MONEY,
             'dbAlias' => 'SUM(IF( contribution_civireport.contribution_status_id > 1, 0, contribution_soft_civireport.amount))',
@@ -141,11 +154,13 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
         'grouping' => 'pcp-fields',
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
         array(
           'contribution_id' =>
-          array('name' => 'id',
+          array(
+            'name' => 'id',
             'no_display' => TRUE,
             'required' => TRUE,
           ),

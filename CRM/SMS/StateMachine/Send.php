@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -34,31 +33,30 @@
  *
  */
 
-
 /**
  * State machine for managing different states of the Import process.
  *
  */
 class CRM_SMS_StateMachine_Send extends CRM_Core_StateMachine {
 
-    /**
-     * class constructor
-     *
-     * @param object  CRM_SMS_Controller
-     * @param int     $action
-     *
-     * @return object CRM_SMS_StateMachine
-     */
-    function __construct( $controller, $action = CRM_Core_Action::NONE ) {
-        parent::__construct( $controller, $action );
-        
-        $this->_pages = array(
-                              'CRM_SMS_Form_Group'   => null,
-                              'CRM_SMS_Form_Upload'  => null,
-                              'CRM_SMS_Form_Schedule' => null
-                              );
+  /**
+   * class constructor
+   *
+   * @param object  CRM_SMS_Controller
+   * @param int     $action
+   *
+   * @return object CRM_SMS_StateMachine
+   */
+  function __construct($controller, $action = CRM_Core_Action::NONE) {
+    parent::__construct($controller, $action);
 
-        $this->addSequentialPages( $this->_pages, $action );
-    }
+    $this->_pages = array(
+      'CRM_SMS_Form_Group' => NULL,
+      'CRM_SMS_Form_Upload' => NULL,
+      'CRM_SMS_Form_Schedule' => NULL,
+    );
 
+    $this->addSequentialPages($this->_pages, $action);
+  }
 }
+

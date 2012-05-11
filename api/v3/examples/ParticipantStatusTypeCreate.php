@@ -1,23 +1,22 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function participant_status_type_create_example() {
-  $params = array(
-    'version' => 3,
-    'name' => 'test status',
-    'label' => 'I\'matest',
-    'class ' => 'Positive',
-    'is_reserved' => 0,
-    'is_active' => 1,
-    'is_counted' => 1,
-    'visibility_id' => 1,
-    'weight' => 10,
-  );
+function participant_status_type_create_example(){
+$params = array( 
+  'version' => 3,
+  'name' => 'test status',
+  'label' => 'I'm a test',
+  'class' => 'Positive',
+  'is_reserved' => 0,
+  'is_active' => 1,
+  'is_counted' => 1,
+  'visibility_id' => 1,
+  'weight' => 10,
+);
 
   require_once 'api/api.php';
   $result = civicrm_api( 'participant_status_type','create',$params );
@@ -34,23 +33,23 @@ function participant_status_type_create_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 13,
+  'id' => 14,
   'values' => array( 
-    '13' => array(
-      'id' => 13,
-      'name' => 'teststatus',
-      'label' => 'I\'m a test',
-      'class' => 'Positive',
-      'is_reserved' => 0,
-      'is_active' => 1,
-      'is_counted' => 1,
-      'weight' => 10,
-      'visibility_id' => 1,
+      '14' => array( 
+          'id' => 14,
+          'name' => 'test status',
+          'label' => 'I'm a test',
+          'class' => 'Positive',
+          'is_reserved' => 0,
+          'is_active' => 1,
+          'is_counted' => 1,
+          'weight' => 10,
+          'visibility_id' => 1,
+        ),
     ),
-  ),
 );
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -69,4 +68,3 @@ function participant_status_type_create_expectedresult(){
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

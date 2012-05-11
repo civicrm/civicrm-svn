@@ -44,7 +44,8 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
 
   protected $_customGroupExtends = array('Contact', 'Individual', 'Household', 'Organization');
 
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   ); function __construct() {
@@ -77,7 +78,8 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
         ),
       ),
       'order_bys' =>
-      array('sort_name' =>
+      array(
+        'sort_name' =>
         array('title' => ts('Contact Name'), 'default' => TRUE, 'default_order' => 'ASC'),
       ),
       'grouping' => 'contact-fields',
@@ -109,8 +111,10 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
         ),
       ),
       'order_bys' =>
-      array('mailing_name' =>
-        array('name' => 'name',
+      array(
+        'mailing_name' =>
+        array(
+          'name' => 'name',
           'title' => ts('Mailing'),
         ),
       ),
@@ -127,7 +131,8 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
         ),
       ),
       'order_bys' =>
-      array('email' =>
+      array(
+        'email' =>
         array('title' => ts('Email'), 'default_order' => 'ASC'),
       ),
       'grouping' => 'contact-fields',

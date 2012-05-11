@@ -1,22 +1,21 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function phone_delete_example() {
-  $params = array(
-    'contact_id' => 1,
-    'location_type_id' => 7,
-    'phone' => '021 512 755',
-    'is_primary' => 1,
-    'version' => 3,
-  );
+function phone_delete_example(){
+$params = array( 
+  'contact_id' => 1,
+  'location_type_id' => 7,
+  'phone' => '021 512 755',
+  'is_primary' => 1,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('phone', 'delete', $params);
+  $result = civicrm_api( 'phone','delete',$params );
 
   return $result;
 }
@@ -24,16 +23,16 @@ function phone_delete_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function phone_delete_expectedresult() {
+function phone_delete_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'values' => '3',
-  );
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'values' => '1',
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -52,4 +51,3 @@ function phone_delete_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

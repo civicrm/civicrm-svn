@@ -1,20 +1,19 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function participant_payment_create_example() {
-  $params = array(
-    'participant_id' => 10,
-    'contribution_id' => 1,
-    'version' => 3,
-  );
+function participant_payment_create_example(){
+$params = array( 
+  'participant_id' => 10,
+  'contribution_id' => 1,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('participant_payment', 'create', $params);
+  $result = civicrm_api( 'participant_payment','create',$params );
 
   return $result;
 }
@@ -22,23 +21,23 @@ function participant_payment_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function participant_payment_create_expectedresult() {
+function participant_payment_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'id' => 1,
-        'participant_id' => 10,
-        'contribution_id' => 1,
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => 1,
+          'participant_id' => 10,
+          'contribution_id' => 1,
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -57,4 +56,3 @@ function participant_payment_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

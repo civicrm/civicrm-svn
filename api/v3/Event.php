@@ -103,38 +103,38 @@ function _civicrm_api3_event_create_spec(&$params) {
  *
  */
 function civicrm_api3_event_get($params) {
- 
+
   //legacy support for $params['return.sort']
-  if(CRM_Utils_Array::value('return.sort', $params)){
-  	$params['options']['sort'] = $params['return.sort'];
-  	unset($params['return.sort']);
+  if (CRM_Utils_Array::value('return.sort', $params)) {
+    $params['options']['sort'] = $params['return.sort'];
+    unset($params['return.sort']);
   }
-  
+
   //legacy support for $params['return.sort']
-  if(CRM_Utils_Array::value('return.offset', $params)){
-  	$params['options']['offset'] = $params['return.offset'];
-  	unset($params['return.offset']);
+  if (CRM_Utils_Array::value('return.offset', $params)) {
+    $params['options']['offset'] = $params['return.offset'];
+    unset($params['return.offset']);
   }
-  
+
   //legacy support for $params['return.max_results']
-  if(CRM_Utils_Array::value('return.max_results', $params)){
-  	$params['options']['limit'] = $params['return.max_results'];
-  	unset($params['return.max_results']);
+  if (CRM_Utils_Array::value('return.max_results', $params)) {
+    $params['options']['limit'] = $params['return.max_results'];
+    unset($params['return.max_results']);
   }
-  
+
   require_once 'CRM/Core/BAO/CustomGroup.php';
 
   $eventDAO = new CRM_Event_BAO_Event();
-  _civicrm_api3_dao_set_filter($eventDAO, $params, true);
+  _civicrm_api3_dao_set_filter($eventDAO, $params, TRUE);
   $eventDAO->whereAdd('( is_template IS NULL ) OR ( is_template = 0 )');
 
   if (CRM_Utils_Array::value('isCurrent', $params)) {
     $eventDAO->whereAdd('(start_date >= CURDATE() || end_date >= CURDATE())');
   }
 
- // @todo should replace all this with _civicrm_api3_dao_to_array($bao, $params, FALSE, $entity) - but we still have 
- // the return.is_full to deal with.
- // NB the std dao_to_array function should only return custom if required.
+  // @todo should replace all this with _civicrm_api3_dao_to_array($bao, $params, FALSE, $entity) - but we still have
+  // the return.is_full to deal with.
+  // NB the std dao_to_array function should only return custom if required.
   $event = array();
   $eventDAO->find();
   while ($eventDAO->fetch()) {

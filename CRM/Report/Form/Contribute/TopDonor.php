@@ -38,15 +38,20 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   ); function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('id' =>
-          array('no_display' => TRUE,
+        array(
+          'id' =>
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
           'display_name' =>
@@ -57,9 +62,11 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         ),
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
-        array('total_amount' =>
+        array(
+          'total_amount' =>
           array('title' => ts('Amount Statistics'),
             'required' => TRUE,
             'statistics' =>
@@ -70,8 +77,10 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('receive_date' =>
-          array('default' => 'this.year',
+        array(
+          'receive_date' =>
+          array(
+            'default' => 'this.year',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
           'total_range' =>
@@ -80,7 +89,8 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
             'default_op' => 'eq',
           ),
           'contribution_type_id' =>
-          array('name' => 'contribution_type_id',
+          array(
+            'name' => 'contribution_type_id',
             'title' => ts('Contribution Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Contribute_PseudoConstant::contributionType(),
@@ -94,11 +104,14 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
         ),
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_GroupContact',
+      array(
+        'dao' => 'CRM_Contact_DAO_GroupContact',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -176,7 +189,8 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
     $op = CRM_Utils_Array::value('total_range_op', $fields);
     $val = CRM_Utils_Array::value('total_range_value', $fields);
 
-    if (!in_array($op, array('eq', 'lte'))) {
+    if (!in_array($op, array(
+      'eq', 'lte'))) {
       $errors['total_range_op'] = ts("Please select 'Is equal to' OR 'Is Less than or equal to' operator");
     }
 

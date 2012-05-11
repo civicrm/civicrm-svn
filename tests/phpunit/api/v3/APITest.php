@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/api.php';
 
@@ -70,7 +71,8 @@ class api_v3_APITest extends CiviUnitTestCase {
     $result['api.tag.create']['values']['0']['display'] = 'batman';
     $result['api.tag.create.api.tag.create']['values']['0']['display'] = 'krypton';
     $result['api.tag.create']['values']['0']['api_tag_get'] = 'darth vader';
-    $params = array('activity_type_id' => '$value.testfield',
+    $params = array(
+      'activity_type_id' => '$value.testfield',
       'tag_id' => '$value.api.tag.create.id',
       'tag1_id' => '$value.api.entity.create.0.id',
       'tag3_id' => '$value.api.tag.create.2.id',
@@ -101,13 +103,15 @@ class api_v3_APITest extends CiviUnitTestCase {
   }
 
   function testAPIWrapperCamelCaseFunction() {
-    $result = civicrm_api('OptionGroup', 'Get', array('version' => 3,
+    $result = civicrm_api('OptionGroup', 'Get', array(
+      'version' => 3,
       ));
     $this->assertEquals(0, $result['is_error']);
   }
 
   function testAPIWrapperLcaseFunction() {
-    $result = civicrm_api('OptionGroup', 'get', array('version' => 3,
+    $result = civicrm_api('OptionGroup', 'get', array(
+      'version' => 3,
       ));
     $this->assertEquals(0, $result['is_error']);
   }

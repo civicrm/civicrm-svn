@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.4                                                |
@@ -34,106 +33,99 @@
  *
  */
 
-
-
 /**
  * This class provides the functionality to create PDF letter for a group of
- * contacts or a single contact. 
+ * contacts or a single contact.
  */
 class CRM_Contribute_Form_Task_PDFLetter extends CRM_Contribute_Form_Task {
-    /**
-     * all the existing templates in the system
-     *
-     * @var array
-     */
-    public $_templates = null;
-	
-    public $_single    = null;
-	
-    public $_cid       = null;
 
-	
-    /**
-     * build all the data structures needed to build the form
-     *
-     * @return void
-     * @access public
-     */
-    
-    function preProcess( ) {
-     
-        $this->skipOnHold = $this->skipDeceased = false;
-        CRM_Contact_Form_Task_PDFLetterCommon::preProcess( $this );
+  /**
+   * all the existing templates in the system
+   *
+   * @var array
+   */
+  public $_templates = NULL;
 
-        // store case id if present
-        $this->_caseId = CRM_Utils_Request::retrieve( 'caseid', 'Positive', $this, false );
+  public $_single = NULL;
 
-        // retrieve contact ID if this is 'single' mode
-        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false );
-        
-        $this->_activityId = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
-        
-        if ( $cid ) {
-            CRM_Contact_Form_Task_PDFLetterCommon::preProcessSingle( $this, $cid );
-            $this->_single = true;
-            $this->_cid = $cid;
-        } else {
-            parent::preProcess( );
-        }
-        $this->assign( 'single', $this->_single );
+  public $_cid = NULL;
 
+  /**
+   * build all the data structures needed to build the form
+   *
+   * @return void
+   * @access public
+   */ function preProcess() {
+
+    $this->skipOnHold = $this->skipDeceased = FALSE;
+    CRM_Contact_Form_Task_PDFLetterCommon::preProcess($this);
+
+    // store case id if present
+    $this->_caseId = CRM_Utils_Request::retrieve('caseid', 'Positive', $this, FALSE);
+
+    // retrieve contact ID if this is 'single' mode
+    $cid = CRM_Utils_Request::retrieve('cid', 'Positive', $this, FALSE);
+
+    $this->_activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this, FALSE);
+
+    if ($cid) {
+      CRM_Contact_Form_Task_PDFLetterCommon::preProcessSingle($this, $cid);
+      $this->_single = TRUE;
+      $this->_cid = $cid;
     }
-    function setDefaultValues( ) 
-    {
-        $defaults = array();
-        if ( isset( $this->_activityId ) ) {
-            $params = array( 'id' => $this->_activityId );
-            CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
-            $defaults['html_message'] = $defaults['details'];
-        }
-        $defaults = $defaults + CRM_Contact_Form_Task_PDFLetterCommon::setDefaultValues( );
-        return $defaults;        
+    else {
+      parent::preProcess();
     }
-    
-    /**
-     * Build the form
-     *
-     * @access public
-     * @return void
-     */
-    public function buildQuickForm()
-    {
-        //enable form element
-        $this->assign( 'suppressForm', false );
+    $this->assign('single', $this->_single);
+  }
 
-        // use contact form as a base
-        CRM_Contact_Form_Task_PDFLetterCommon::buildQuickForm( $this );
-
-        // specific need for contributions
-        $this->add( 'static', 'more_options_header', NULL, ts('More options') );
-        $this->add( 'checkbox', 'receipt_update', ts('Update receipt date for those contributions'), false ) ;
-        $this->add( 'checkbox', 'thankyou_update', ts('Update thank you date for those contributions'), false );
-        //$this->add( 'checkbox', 'group_recurring_contribution', ts('Group recurring contribution (1 letter by recurring contribution for the choosen period)'), false );
-
-        $options = array( ts('Contact'), ts('Recurring') );
-        $this->addRadio( 'is_group_by', ts('Grouping contributions in one letter based on'), $options, array(), "<br/>", false);
- 
+  function setDefaultValues() {
+    $defaults = array();
+    if (isset($this->_activityId)) {
+      $params = array('id' => $this->_activityId);
+      CRM_Activity_BAO_Activity::retrieve($params, $defaults);
+      $defaults['html_message'] = $defaults['details'];
     }
+    $defaults = $defaults + CRM_Contact_Form_Task_PDFLetterCommon::setDefaultValues();
+    return $defaults;
+  }
 
+  /**
+   * Build the form
+   *
+   * @access public
+   *
+   * @return void
+   */
+  public function buildQuickForm() {
+    //enable form element
+    $this->assign('suppressForm', FALSE);
 
-    /**
-     * process the form after the input has been submitted and validated
-     *
-     * @access public
-     * @return None
-     */
-    public function postProcess() {
-        // TODO: rewrite using contribution token and one letter by contribution
-	$this->setContactIDs();
+    // use contact form as a base
+    CRM_Contact_Form_Task_PDFLetterCommon::buildQuickForm($this);
 
-        CRM_Contribute_Form_Task_PDFLetterCommon::postProcess( $this );
-    }
+    // specific need for contributions
+    $this->add('static', 'more_options_header', NULL, ts('More options'));
+    $this->add('checkbox', 'receipt_update', ts('Update receipt date for those contributions'), FALSE);
+    $this->add('checkbox', 'thankyou_update', ts('Update thank you date for those contributions'), FALSE);
+    //$this->add( 'checkbox', 'group_recurring_contribution', ts('Group recurring contribution (1 letter by recurring contribution for the choosen period)'), false );
 
+    $options = array(ts('Contact'), ts('Recurring'));
+    $this->addRadio('is_group_by', ts('Grouping contributions in one letter based on'), $options, array(), "<br/>", FALSE);
+  }
+
+  /**
+   * process the form after the input has been submitted and validated
+   *
+   * @access public
+   *
+   * @return None
+   */
+  public function postProcess() {
+    // TODO: rewrite using contribution token and one letter by contribution
+    $this->setContactIDs();
+
+    CRM_Contribute_Form_Task_PDFLetterCommon::postProcess($this);
+  }
 }
-
 

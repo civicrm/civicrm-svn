@@ -42,6 +42,7 @@ function civicrm_api3_option_group_create($params) {
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_option_group_create_spec(&$params){
-  $params['name']['api.unique'] = 1; 
+function _civicrm_api3_option_group_create_spec(&$params) {
+  $params['name']['api.unique'] = 1;
 }
+

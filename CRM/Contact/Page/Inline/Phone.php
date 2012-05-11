@@ -34,10 +34,11 @@
  */
 
 /**
- * Dummy page for details of PHone 
+ * Dummy page for details of PHone
  *
  */
 class CRM_Contact_Page_Inline_Phone {
+
   /**
    * Run the page.
    *
@@ -48,27 +49,27 @@ class CRM_Contact_Page_Inline_Phone {
    *
    */
   function run() {
-    // get the emails for this contact      
-    $contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', CRM_Core_DAO::$_nullObject, true, null, $_REQUEST );
- 
+    // get the emails for this contact
+    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
+
     $locationTypes = CRM_Core_PseudoConstant::locationDisplayName();
     $phoneTypes = CRM_Core_PseudoConstant::phoneType();
-    
-    $entityBlock = array( 'contact_id' => $contactId );
-    $phones = CRM_Core_BAO_Phone::getValues( $entityBlock );
-    if ( !empty( $phones ) ) {
-      foreach( $phones as $key => &$value ) {
+
+    $entityBlock = array('contact_id' => $contactId);
+    $phones = CRM_Core_BAO_Phone::getValues($entityBlock);
+    if (!empty($phones)) {
+      foreach ($phones as $key => & $value) {
         $value['location_type'] = $locationTypes[$value['location_type_id']];
-        $value['phone_type']    = $phoneTypes[$value['phone_type_id']];
-      }  
+        $value['phone_type'] = $phoneTypes[$value['phone_type_id']];
+      }
     }
-    
-    $template = CRM_Core_Smarty::singleton( );
-    $template->assign( 'contactId', $contactId );
-    $template->assign( 'phone', $phones );
+
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign('contactId', $contactId);
+    $template->assign('phone', $phones);
 
     echo $content = $template->fetch('CRM/Contact/Page/Inline/Phone.tpl');
-    CRM_Utils_System::civiExit( ); 
+    CRM_Utils_System::civiExit();
   }
 }
 

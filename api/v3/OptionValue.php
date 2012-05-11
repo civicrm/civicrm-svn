@@ -54,6 +54,7 @@ function civicrm_api3_option_value_create($params) {
     /* CONVERT(value, DECIMAL) is used to convert varchar
        field 'value' to decimal->integer                    */
 
+
     $params['value'] = (int) CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue',
       $fieldValues,
       'CONVERT(value, DECIMAL)'
@@ -100,6 +101,4 @@ function _civicrm_api3_option_value_create_spec(&$params) {
 function civicrm_api3_option_value_delete($params) {
   return CRM_Core_BAO_OptionValue::del((int) $params["id"]) ? civicrm_api3_create_success() : civicrm_api3_create_error('Could not delete OptionValue ' . $id);
 }
-
-
 

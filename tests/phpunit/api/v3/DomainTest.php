@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v3/Domain.php';
 
@@ -43,6 +44,7 @@ class api_v3_DomainTest extends CiviUnitTestCase {
        where cleanDB() is called. */
 
 
+
   public $DBResetRequired = FALSE;
 
   protected $_apiversion;
@@ -52,9 +54,8 @@ class api_v3_DomainTest extends CiviUnitTestCase {
    *  Constructor
    *
    *  Initialize configuration
-   */
-  function __construct() {
-      parent::__construct();
+   */ function __construct() {
+    parent::__construct();
   }
 
   /**
@@ -66,7 +67,8 @@ class api_v3_DomainTest extends CiviUnitTestCase {
   protected function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
-    $this->params = array('name' => 'A-team domain',
+    $this->params = array(
+      'name' => 'A-team domain',
       'description' => 'domain of chaos',
       'version' => 3,
       'domain_version' => '3.4.1',
@@ -143,6 +145,7 @@ class api_v3_DomainTest extends CiviUnitTestCase {
   /*
     * This test checks for a memory leak observed when doing 2 gets on current domain
     */
+
 
 
   public function testGetCurrentDomainTwice() {

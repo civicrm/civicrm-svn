@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -26,7 +25,6 @@
  +--------------------------------------------------------------------+
 */
 
-
 /**
  * A queue implementation which stores items in the CiviCRM SQL database
  */
@@ -36,12 +34,13 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
    * @var array(queueItemId => queueItemData)
    */
   var $items;
-  
+
   /**
-   * @var array(queueItemId => releaseTime), expressed in seconds since epoch
+   * @var array(
+     queueItemId => releaseTime), expressed in seconds since epoch
    */
   var $releaseTimes;
-  
+
   var $nextQueueItemId = 1;
 
   /**
@@ -66,7 +65,7 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
     $this->items = array();
     $this->releaseTimes = array();
   }
-  
+
   /**
    * Perform any loading or pre-fetch for an existing queue.
    */
@@ -74,7 +73,7 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
     // $this->createQueue();
     throw new Exception('Unsupported: CRM_Queue_Queue_Memory::loadQueue');
   }
-  
+
   /**
    * Release any resources claimed by the queue (memory, DB rows, etc)
    */
@@ -82,7 +81,7 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
     $this->items = NULL;
     $this->releaseTimes = NULL;
   }
-  
+
   /**
    * Check if the queue exists
    *
@@ -91,18 +90,20 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
   function existsQueue() {
     return is_array($this->items);
   }
-  
+
   /**
    * Add a new item to the queue
    *
    * @param $data serializable PHP object or array
+   *
    * @return bool, TRUE on success
    */
   function createItem($data) {
     $id = $this->nextQueueItemId++;
-    $this->items[$id] = serialize($data); // force copy, no unintendedsharing effects from pointers
+    // force copy, no unintendedsharing effects from pointers
+    $this->items[$id] = serialize($data);
   }
-  
+
   /**
    * Determine number of items remaining in the queue
    *
@@ -111,11 +112,12 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
   function numberOfItems() {
     return count($this->items);
   }
-  
+
   /**
    * Get and remove the next item
    *
    * @param $leaseTime seconds
+   *
    * @return object with key 'data' that matches the inputted data
    */
   function claimItem($leaseTime = 3600) {
@@ -124,22 +126,26 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
       $nowEpoch = CRM_Utils_Time::getTimeRaw();
       if (empty($this->releaseTimes[$id]) || $this->releaseTimes[$id] < $nowEpoch) {
         $this->releaseTimes[$id] = $nowEpoch + $leaseTime;
-        
-        $item = new stdClass();
-        $item->id = $id;
+
+        $item       = new stdClass();
+        $item->id   = $id;
         $item->data = unserialize($data);
         return $item;
-      } else {
-        return FALSE; // item in queue is reserved
+      }
+      else {
+        // item in queue is reserved
+        return FALSE;
       }
     }
-    return FALSE; // nothing in queue
+    // nothing in queue
+    return FALSE;
   }
-  
+
   /**
    * Get the next item
    *
    * @param $leaseTime seconds
+   *
    * @return object with key 'data' that matches the inputted data
    */
   function stealItem($leaseTime = 3600) {
@@ -147,15 +153,16 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
     foreach ($this->items as $id => $data) {
       $nowEpoch = CRM_Utils_Time::getTimeRaw();
       $this->releaseTimes[$id] = $nowEpoch + $leaseTime;
-        
-      $item = new stdClass();
-      $item->id = $id;
+
+      $item       = new stdClass();
+      $item->id   = $id;
       $item->data = unserialize($data);
       return $item;
     }
-    return FALSE; // nothing in queue
+    // nothing in queue
+    return FALSE;
   }
-  
+
   /**
    * Remove an item from the queue
    *
@@ -165,14 +172,16 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
     unset($this->items[$item->id]);
     unset($this->releaseTimes[$item->id]);
   }
-  
+
   /**
    * Return an item that could not be processed
    *
    * @param $dao object The item returned by claimItem
+   *
    * @return bool
    */
   function releaseItem($item) {
     unset($this->releaseTimes[$item->id]);
   }
 }
+

@@ -112,7 +112,8 @@ function civicrm_api3_constant_get($params) {
 function _civicrm_api3_constant_get_spec(&$params) {
 
   $params = (array
-    ('name' => array('api.required' => 1,
+    ('name' => array(
+      'api.required' => 1,
         'options' =>
         'activityStatus',
         'activityType',

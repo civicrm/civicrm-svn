@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -29,7 +28,7 @@
 /**
  * CiviCRM's Smarty looped value change plugin
  *
- * Checks for change in value of given key 
+ * Checks for change in value of given key
  *
  * @package CRM
  * @author Allen Shaw <allen@nswebsolutions.com>
@@ -37,56 +36,54 @@
  * $Id$
  */
 
-/** 
+/**
  * Smarty function for checking change in a property's value, for example
  * when looping through an array.
  *
- * 
+ *
  * Smarty param:  string $key     unique identifier for this property (REQUIRED)
  * Smarty param:  mixed  $value   the current value of the property
  * Smarty param:  string $assign  name of template variable to which to assign result
- * 
+ *
  *
  * @param array $params   template call's parameters
  * @param object $smarty  the Smarty object
  *
  * @return NULL
  */
-function smarty_function_isValueChange($params, &$smarty)
-{
-    static $values = array();
+function smarty_function_isValueChange($params, &$smarty) {
+  static $values = array();
 
-    if ( empty( $params['key'] ) ) {
-        $smarty->trigger_error("Missing required parameter, 'key', in isValueChange plugin.");
-        return;
-    }
+  if (empty($params['key'])) {
+    $smarty->trigger_error("Missing required parameter, 'key', in isValueChange plugin.");
+    return;
+  }
 
-    $is_changed = FALSE;
+  $is_changed = FALSE;
 
-    if ( ! array_key_exists( $params['key'], $values ) || $params['value'] != $values[$params['key']] ) {
+  if (!array_key_exists($params['key'], $values) || $params['value'] != $values[$params['key']]) {
     // if we have a new value
 
-        $is_changed = TRUE;
+    $is_changed = TRUE;
 
-        $values[$params['key']] = $params['value'];
+    $values[$params['key']] = $params['value'];
 
-        // clear values on all properties added below/after this property
-        $clear = FALSE;
-        foreach ( $values as $k => $dontcare ){
-            if ( $clear ) {
-                unset( $values[$k] );
-            } elseif ( $params['key'] == $k ) {
-                $clear = TRUE;
-            }
-        }
-
+    // clear values on all properties added below/after this property
+    $clear = FALSE;
+    foreach ($values as $k => $dontcare) {
+      if ($clear) {
+        unset($values[$k]);
+      }
+      elseif ($params['key'] == $k) {
+        $clear = TRUE;
+      }
     }
-        
-    if ($params['assign']) {
-        $smarty->assign($params['assign'], $is_changed);
-    }
-    
-    return;
+  }
+
+  if ($params['assign']) {
+    $smarty->assign($params['assign'], $is_changed);
+  }
+
+  return;
 }
-
 

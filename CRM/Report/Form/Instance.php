@@ -122,7 +122,8 @@ class CRM_Report_Form_Instance {
           'grouprole',
           ts('ACL Group/Role'),
           $user_roles,
-          array('size' => 5,
+          array(
+            'size' => 5,
             'style' => 'width:240px',
             'class' => 'advmultiselect',
           )
@@ -136,11 +137,13 @@ class CRM_Report_Form_Instance {
     $form->add('select', 'parent_id', ts('Parent Menu'), array('' => ts('-- select --')) + $parentMenu);
 
     $form->addButtons(array(
-        array('type' => 'submit',
+        array(
+          'type' => 'submit',
           'name' => ts('Save Report'),
           'isDefault' => TRUE,
         ),
-        array('type' => 'cancel',
+        array(
+          'type' => 'cancel',
           'name' => ts('Cancel'),
         ),
       )
@@ -265,7 +268,8 @@ class CRM_Report_Form_Instance {
     // add to dashboard
     $dashletParams = array();
     if (CRM_Utils_Array::value('addToDashboard', $params)) {
-      $dashletParams = array('label' => $params['title'],
+      $dashletParams = array(
+        'label' => $params['title'],
         'is_active' => 1,
       );
 
@@ -289,7 +293,8 @@ class CRM_Report_Form_Instance {
     }
 
     // unset all the params that we use
-    $fields = array('title', 'to_emails', 'cc_emails', 'header', 'footer',
+    $fields = array(
+      'title', 'to_emails', 'cc_emails', 'header', 'footer',
       'qfKey', '_qf_default', 'report_header', 'report_footer', 'grouprole',
     );
     foreach ($fields as $field) {

@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'api/v3/EntityTag.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_EntityTagTest extends CiviUnitTestCase {
@@ -38,13 +39,11 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
   protected $_organizationID;
   protected $_tagID;
   protected $_apiversion;
-  protected $_tag;
-
-  function setUp() {
+  protected $_tag; function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
 
-    $this->quickCleanup( array( 'civicrm_tag', 'civicrm_entity_tag' ) );
+    $this->quickCleanup(array('civicrm_tag', 'civicrm_entity_tag'));
 
     $this->_individualID = $this->individualCreate(NULL);
     $this->_tag = $this->tagCreate(NULL);
@@ -63,7 +62,8 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
   }
 
   function testAddWithoutTagID() {
-    $params = array('contact_id' => $this->_individualID,
+    $params = array(
+      'contact_id' => $this->_individualID,
       'version' => $this->_apiversion,
     );
     $individualEntity = civicrm_api('entity_tag', 'create', $params);
@@ -72,7 +72,8 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
   }
 
   function testAddWithoutContactID() {
-    $params = array('tag_id' => $this->_tagID,
+    $params = array(
+      'tag_id' => $this->_tagID,
       'version' => $this->_apiversion,
     );
     $individualEntity = civicrm_api('entity_tag', 'create', $params);
@@ -166,7 +167,8 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
     $this->assertEquals($individualEntity['is_error'], 0);
     $this->assertEquals($individualEntity['added'], 1);
 
-    $paramsEntity = array('contact_id' => $contactId,
+    $paramsEntity = array(
+      'contact_id' => $contactId,
       'version' => $this->_apiversion,
     );
     $entity = &civicrm_api('entity_tag', 'get', $paramsEntity);
@@ -328,7 +330,8 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
 
   ///////////////// civicrm_entity_tag_common methods
   function testCommonAddEmptyParams() {
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
     );
     $individualEntity = _civicrm_api3_entity_tag_common($params, 'add');
     $this->assertEquals($individualEntity['is_error'], 1);
@@ -336,7 +339,8 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
   }
 
   function testCommonAddWithoutTagID() {
-    $params = array('contact_id' => $this->_individualID,
+    $params = array(
+      'contact_id' => $this->_individualID,
       'version' => $this->_apiversion,
     );
     $individualEntity = _civicrm_api3_entity_tag_common($params, 'add');
@@ -345,7 +349,8 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
   }
 
   function testCommonAddWithoutContactID() {
-    $params = array('tag_id' => $this->_tagID,
+    $params = array(
+      'tag_id' => $this->_tagID,
       'version' => $this->_apiversion,
     );
     $individualEntity = _civicrm_api3_entity_tag_common($params, 'add');

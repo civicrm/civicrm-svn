@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function contribution_delete_example() {
-  $params = array(
-    'id' => 8,
-    'version' => 3,
-  );
+function contribution_delete_example(){
+$params = array( 
+  'id' => 13,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('contribution', 'delete', $params);
+  $result = civicrm_api( 'contribution','delete',$params );
 
   return $result;
 }
@@ -21,19 +20,19 @@ function contribution_delete_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function contribution_delete_expectedresult() {
+function contribution_delete_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 8,
-    'values' => array(
-      '8' => 1,
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 13,
+  'values' => array( 
+      '13' => 1,
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -52,4 +51,3 @@ function contribution_delete_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

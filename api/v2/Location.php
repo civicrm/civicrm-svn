@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -137,7 +138,8 @@ function civicrm_location_update($params) {
   }
   else {
     $locTypeIds = array();
-    foreach (array('email', 'phone', 'im', 'address', 'openid') as $name) {
+    foreach (array(
+      'email', 'phone', 'im', 'address', 'openid') as $name) {
       if (isset($params[$name]) && is_array($params[$name])) {
         foreach ($params[$name] as $count => & $values) {
           $locName = CRM_Utils_Array::value('location_type', $values);
@@ -289,7 +291,8 @@ function _civicrm_location_add(&$params, $locationTypeId = NULL) {
   }
 
   // Get all existing location blocks.
-  $blockParams = array('contact_id' => $params['contact_id'],
+  $blockParams = array(
+    'contact_id' => $params['contact_id'],
     'entity_id' => $params['contact_id'],
   );
 
@@ -301,7 +304,8 @@ function _civicrm_location_add(&$params, $locationTypeId = NULL) {
 
   // copy params value in contact array.
   $primary = $billing = array();
-  foreach (array('email', 'phone', 'im', 'openid') as $name) {
+  foreach (array(
+    'email', 'phone', 'im', 'openid') as $name) {
     if (CRM_Utils_Array::value($name, $params)) {
       if (!isset($contact[$name]) ||
         !is_array($contact[$name])
@@ -354,7 +358,8 @@ function _civicrm_location_add(&$params, $locationTypeId = NULL) {
     }
 
     // format state and country.
-    foreach (array('state_province', 'country') as $field) {
+    foreach (array(
+      'state_province', 'country') as $field) {
       $fName = ($field == 'state_province') ? 'stateProvinceAbbreviation' : 'countryIsoCode';
       if (CRM_Utils_Array::value($field, $contact['address'][$addressCount]) &&
         is_numeric($contact['address'][$addressCount][$field])
@@ -369,7 +374,8 @@ function _civicrm_location_add(&$params, $locationTypeId = NULL) {
   }
 
   //handle primary and billing reset.
-  foreach (array('email', 'phone', 'im', 'address', 'openid') as $name) {
+  foreach (array(
+    'email', 'phone', 'im', 'address', 'openid') as $name) {
     if (!array_key_exists($name, $contact) || CRM_Utils_System::isNull($contact[$name])) {
       continue;
     }
@@ -454,7 +460,8 @@ function _civicrm_location_update($params, $locations) {
   $primary = $billing = array();
 
   // copy params value in contact array.
-  foreach (array('email', 'phone', 'im', 'openid') as $name) {
+  foreach (array(
+    'email', 'phone', 'im', 'openid') as $name) {
     if (CRM_Utils_Array::value($name, $params) && is_array($params[$name])) {
       $blockCount = 0;
       $contact[$name] = array();
@@ -491,7 +498,8 @@ function _civicrm_location_update($params, $locations) {
     }
 
     // format state and country.
-    foreach (array('state_province', 'country') as $field) {
+    foreach (array(
+      'state_province', 'country') as $field) {
       $fName = ($field == 'state_province') ? 'stateProvinceAbbreviation' : 'countryIsoCode';
       if (CRM_Utils_Array::value($field, $contact['address'][$addressCount]) &&
         is_numeric($contact['address'][$addressCount][$field])
@@ -506,7 +514,8 @@ function _civicrm_location_update($params, $locations) {
   }
 
   //handle primary and billing reset.
-  foreach (array('email', 'phone', 'im', 'address', 'openid') as $name) {
+  foreach (array(
+    'email', 'phone', 'im', 'address', 'openid') as $name) {
     if (!array_key_exists($name, $contact) || CRM_Utils_System::isNull($contact[$name])) {
       continue;
     }
@@ -599,12 +608,15 @@ function _civicrm_location_delete(&$contact) {
 /**
  *
  * @param <type> $contact
- * @param <type> $locationTypes = array( 'Home', 'Work' ) else empty.
+ * @param <type> $locationTypes = array(
+    'Home', 'Work' ) else empty.
  *
  * @return <type>
  */
-function &_civicrm_location_get($contact, $locationTypes = array()) {
-  $params = array('contact_id' => $contact['contact_id'],
+function &_civicrm_location_get($contact, $locationTypes = array(
+  )) {
+  $params = array(
+    'contact_id' => $contact['contact_id'],
     'entity_id' => $contact['contact_id'],
   );
 
@@ -620,7 +632,8 @@ function &_civicrm_location_get($contact, $locationTypes = array()) {
         continue;
       }
       if ($locTypeId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_LocationType', $locName, 'id', 'name')) {
-        foreach (array('email', 'im', 'phone', 'address', 'openid') as $name) {
+        foreach (array(
+          'email', 'im', 'phone', 'address', 'openid') as $name) {
           if (!array_key_exists($name, $locations) || !is_array($locations[$name])) {
             continue;
           }
@@ -751,7 +764,8 @@ function _civicrm_location_get_v3_to_v2(&$locations) {
     }
   }
 
-  foreach (array('email', 'phone', 'im', 'address', 'openid') as $field) {
+  foreach (array(
+    'email', 'phone', 'im', 'address', 'openid') as $field) {
     if (array_key_exists($field, $locations))unset($locations[$field]);
   }
   $locations = $locValues;
@@ -811,7 +825,8 @@ function _civicrm_format_params_v2_to_v3(&$params, $locationTypeId = NULL) {
       }
       else {
         //need to get ids.
-        if (in_array($name, array('im', 'phone'))) {
+        if (in_array($name, array(
+          'im', 'phone'))) {
           require_once 'CRM/Core/PseudoConstant.php';
           if ($name == 'im') {
             CRM_Utils_Array::lookupValue($params,
@@ -849,7 +864,8 @@ function _civicrm_format_params_v2_to_v3(&$params, $locationTypeId = NULL) {
 
   //get the address fields.
   $addressCount = 1;
-  $ids = array('county', 'country_id', 'country',
+  $ids = array(
+    'county', 'country_id', 'country',
     'state_province_id', 'state_province',
     'supplemental_address_1', 'supplemental_address_2',
     'StateProvince.name', 'city', 'street_address',
@@ -870,7 +886,8 @@ function _civicrm_format_params_v2_to_v3(&$params, $locationTypeId = NULL) {
   }
 
   // format state and country.
-  foreach (array('state_province', 'country') as $field) {
+  foreach (array(
+    'state_province', 'country') as $field) {
     $fName = ($field == 'state_province') ? 'stateProvinceAbbreviation' : 'countryIsoCode';
     if (CRM_Utils_Array::value('address', $params) &&
       CRM_Utils_Array::value($field, $params['address'][$addressCount]) &&
@@ -902,7 +919,8 @@ function _civicrm_format_params_v2_to_v3(&$params, $locationTypeId = NULL) {
   }
 
   // handle primary and billing reset.
-  foreach (array('email', 'phone', 'im', 'address', 'openid') as $name) {
+  foreach (array(
+    'email', 'phone', 'im', 'address', 'openid') as $name) {
     if (!array_key_exists($name, $params) || CRM_Utils_System::isNull($params[$name])) {
       continue;
     }
@@ -950,7 +968,8 @@ function _civicrm_format_params_v2_to_v3(&$params, $locationTypeId = NULL) {
   }
 
   // finally unset location_type and location type id.
-  foreach (array('location_type', 'location_type_id') as $f) {
+  foreach (array(
+    'location_type', 'location_type_id') as $f) {
     if (isset($params[$f]))unset($params[$f]);
   }
 

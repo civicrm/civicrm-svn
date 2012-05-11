@@ -87,6 +87,7 @@ function civicrm_api3_mailing_event_bounce($params) {
 /**
  * Handle a confirm event
  * @deprecated
+ *
  * @param array $params
  *
  * @return array

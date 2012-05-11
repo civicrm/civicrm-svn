@@ -1,20 +1,19 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function tag_create_example() {
-  $params = array(
-    'name' => 'New Tag3',
-    'description' => 'This is description for New Tag 02',
-    'version' => 3,
-  );
+function tag_create_example(){
+$params = array( 
+  'name' => 'New Tag3',
+  'description' => 'This is description for New Tag 02',
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('tag', 'create', $params);
+  $result = civicrm_api( 'tag','create',$params );
 
   return $result;
 }
@@ -22,30 +21,30 @@ function tag_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function tag_create_expectedresult() {
+function tag_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 8,
-    'values' => array(
-      '8' => array(
-        'id' => 8,
-        'name' => 'New Tag3',
-        'description' => 'This is description for New Tag 02',
-        'parent_id' => '',
-        'is_selectable' => '',
-        'is_reserved' => '',
-        'is_tagset' => '',
-        'used_for' => 'civicrm_contact',
-        'created_id' => '',
-        'created_date' => '20111031165700',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 8,
+  'values' => array( 
+      '8' => array( 
+          'id' => 8,
+          'name' => 'New Tag3',
+          'description' => 'This is description for New Tag 02',
+          'parent_id' => '',
+          'is_selectable' => '',
+          'is_reserved' => '',
+          'is_tagset' => '',
+          'used_for' => 'civicrm_contact',
+          'created_id' => '',
+          'created_date' => '20120511225729',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -64,4 +63,3 @@ function tag_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

@@ -1,21 +1,20 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function website_get_example() {
-  $params = array(
-    'version' => 3,
-    'contact_id' => 1,
-    'url' => 'website.com',
-    'website_type_id' => 1,
-  );
+function website_get_example(){
+$params = array( 
+  'version' => 3,
+  'contact_id' => 1,
+  'url' => 'website.com',
+  'website_type_id' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('website', 'get', $params);
+  $result = civicrm_api( 'website','get',$params );
 
   return $result;
 }
@@ -23,24 +22,24 @@ function website_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function website_get_expectedresult() {
+function website_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 2,
-    'values' => array(
-      '2' => array(
-        'id' => '2',
-        'contact_id' => '1',
-        'url' => 'website.com',
-        'website_type_id' => '1',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 2,
+  'values' => array( 
+      '2' => array( 
+          'id' => '2',
+          'contact_id' => '1',
+          'url' => 'website.com',
+          'website_type_id' => '1',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -59,4 +58,3 @@ function website_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

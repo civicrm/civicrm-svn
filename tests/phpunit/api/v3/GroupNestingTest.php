@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v3/GroupNesting.php';
 
@@ -93,7 +94,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
         'civicrm_contact',
         'civicrm_uf_group',
         'civicrm_uf_join',
-        'civicrm_uf_match'
+        'civicrm_uf_match',
       )
     );
   }
@@ -104,7 +105,8 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
    * Test civicrm_group_nesting_get.
    */
   public function testGet() {
-    $params = array('parent_group_id' => 1,
+    $params = array(
+      'parent_group_id' => 1,
       'child_group_id' => 2,
       'version' => $this->_apiversion,
     );
@@ -112,7 +114,8 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
     $result = &civicrm_api('group_nesting', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     // expected data loaded in setUp
-    $expected = array(1 => array('id' => 1,
+    $expected = array(
+      1 => array('id' => 1,
         'child_group_id' => 2,
         'parent_group_id' => 1,
       ));
@@ -125,18 +128,21 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
    * param (child_group_id).
    */
   public function testGetWithChildGroupId() {
-    $params = array('child_group_id' => 4,
+    $params = array(
+      'child_group_id' => 4,
       'version' => $this->_apiversion,
     );
 
     $result = &civicrm_api('group_nesting', 'get', $params);
 
     // expected data loaded in setUp
-    $expected = array(3 => array('id' => 3,
+    $expected = array(
+      3 => array('id' => 3,
         'child_group_id' => 4,
         'parent_group_id' => 1,
       ),
-      4 => array('id' => 4,
+      4 => array(
+        'id' => 4,
         'child_group_id' => 4,
         'parent_group_id' => 2,
       ),
@@ -150,22 +156,26 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
    * param (parent_group_id).
    */
   public function testGetWithParentGroupId() {
-    $params = array('parent_group_id' => 1,
+    $params = array(
+      'parent_group_id' => 1,
       'version' => _apiversion,
     );
 
     $result = &civicrm_api('group_nesting', 'get', $params);
 
     // expected data loaded in setUp
-    $expected = array(1 => array('id' => 1,
+    $expected = array(
+      1 => array('id' => 1,
         'child_group_id' => 2,
         'parent_group_id' => 1,
       ),
-      2 => array('id' => 2,
+      2 => array(
+        'id' => 2,
         'child_group_id' => 3,
         'parent_group_id' => 1,
       ),
-      3 => array('id' => 3,
+      3 => array(
+        'id' => 3,
         'child_group_id' => 4,
         'parent_group_id' => 1,
       ),
@@ -180,7 +190,8 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
    */
   public function testGetEmptyResults() {
     // no such record in the db
-    $params = array('parent_group_id' => 1,
+    $params = array(
+      'parent_group_id' => 1,
       'child_group_id' => 700,
     );
 
@@ -223,7 +234,8 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
    */
   public function testCreate() {
     // groups id=1 and id=2 loaded in setUp
-    $params = array('parent_group_id' => 1,
+    $params = array(
+      'parent_group_id' => 1,
       'child_group_id' => 3,
       'version' => $this->_apiversion,
     );
@@ -272,7 +284,8 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
    */
   public function testDelete() {
     // groups id=1 and id=2 loaded in setUp
-    $getparams = array('parent_group_id' => 1,
+    $getparams = array(
+      'parent_group_id' => 1,
       'child_group_id' => 2,
       'version' => $this->_apiversion,
     );

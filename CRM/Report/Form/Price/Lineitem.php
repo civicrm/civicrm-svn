@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.0                                                |
@@ -33,31 +32,25 @@
  * $Id$
  *
  */
-
 class CRM_Report_Form_Price_Lineitem extends CRM_Report_Form_Extended {
-  protected $_addressField = false;
+  protected $_addressField = FALSE;
 
-  protected $_emailField = false;
+  protected $_emailField = FALSE;
 
-  protected $_summary = null;
+  protected $_summary = NULL;
 
   protected $_customGroupExtends = array(
-    'Contribution'
+    'Contribution',
   );
 
   protected $_baseTable = 'civicrm_line_item';
 
-  protected $_aclTable = 'civicrm_contact';
-
-  function __construct($child = 0) {
-    if (empty( $child )) {
+  protected $_aclTable = 'civicrm_contact'; function __construct($child = 0) {
+    if (empty($child)) {
       // hack because we are currently using this as base for other report
       // plan is to move functions into Form.php instead & won't be required
-      $this->_columns = $this->getContactColumns() +
-
+      $this->_columns = $this->getContactColumns() + 
       $this->getLineItemColumns() + $this->getPriceFieldValueColumns() + $this->getPriceFieldColumns() + $this->getParticipantColumns() + $this->getEventColumns() + $this->getContributionColumns();
-
-
     }
     parent::__construct();
   }
@@ -80,13 +73,12 @@ class CRM_Report_Form_Price_Lineitem extends CRM_Report_Form_Extended {
       'participant_from_lineItem',
       'contribution_from_lineItem',
       'contact_from_contribution',
-      'event_from_participant'
+      'event_from_participant',
     );
-
   }
+
   function groupBy() {
     parent::groupBy();
-
   }
 
   function orderBy() {
@@ -94,7 +86,7 @@ class CRM_Report_Form_Price_Lineitem extends CRM_Report_Form_Extended {
   }
 
   function statistics(&$rows) {
-    return parent::statistics( $rows );
+    return parent::statistics($rows);
   }
 
   function postProcess() {
@@ -102,7 +94,7 @@ class CRM_Report_Form_Price_Lineitem extends CRM_Report_Form_Extended {
   }
 
   function alterDisplay(&$rows) {
-    parent::alterDisplay( $rows );
-
+    parent::alterDisplay($rows);
   }
 }
+

@@ -29,7 +29,8 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
    *  Test limit param
    */
   function testGetOptionValueLimit() {
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
     );
     $result = &civicrm_api('option_value', 'getcount', $params);
     $this->assertGreaterThan(1, $result, "Check more than one exists In line " . __LINE__);
@@ -43,11 +44,13 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
    */
   function testGetOptionValueOffSet() {
 
-    $result = civicrm_api('option_value', 'getcount', array('option_group_id' => 1,
+    $result = civicrm_api('option_value', 'getcount', array(
+      'option_group_id' => 1,
         'value' => '1',
         'version' => $this->_apiversion,
       ));
-    $result2 = civicrm_api('option_value', 'getcount', array('option_group_id' => 1,
+    $result2 = civicrm_api('option_value', 'getcount', array(
+      'option_group_id' => 1,
         'value' => '1',
         'version' => $this->_apiversion,
         'options' => array('offset' => 1),
@@ -61,15 +64,19 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
   function testGetSingleValueOptionValueSort() {
     $description = "demonstrates use of Sort param (available in many api functions). Also, getsingle";
     $subfile     = 'SortOption';
-    $result      = civicrm_api('option_value', 'getsingle', array('option_group_id' => 1,
+    $result      = civicrm_api('option_value', 'getsingle', array(
+      'option_group_id' => 1,
         'version' => $this->_apiversion,
-        'options' => array('sort' => 'label ASC',
+        'options' => array(
+          'sort' => 'label ASC',
           'limit' => 1,
         ),
       ));
-    $params = array('option_group_id' => 1,
+    $params = array(
+      'option_group_id' => 1,
       'version' => $this->_apiversion,
-      'options' => array('sort' => 'label DESC',
+      'options' => array(
+        'sort' => 'label DESC',
         'limit' => 1,
       ),
     );
@@ -86,7 +93,8 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
     $page1 = civicrm_api('option_value', 'get', array('options' => array('limit' => $pageSize),
         'version' => $this->_apiversion,
       ));
-    $page2 = civicrm_api('option_value', 'get', array('options' => array('limit' => $pageSize,
+    $page2 = civicrm_api('option_value', 'get', array(
+      'options' => array('limit' => $pageSize,
           // if you use it for pagination, option.offset=pageSize*pageNumber
           'offset' => $pageSize - 1,
         ),
@@ -111,6 +119,7 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
   /*
      * test that using option_group_name returns more than 1 & less than all
      */
+
 
 
   public function testGetOptionGroupByName() {

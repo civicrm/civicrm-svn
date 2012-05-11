@@ -1,20 +1,19 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function phone_get_example() {
-  $params = array(
-    'contact_id' => '',
-    'phone' => '',
-    'version' => 3,
-  );
+function phone_get_example(){
+$params = array( 
+  'contact_id' => '',
+  'phone' => '',
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('phone', 'get', $params);
+  $result = civicrm_api( 'phone','get',$params );
 
   return $result;
 }
@@ -22,33 +21,26 @@ function phone_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function phone_get_expectedresult() {
+function phone_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 2,
-    'values' => array(
-      '1' => array(
-        'id' => '1',
-        'location_type_id' => '1',
-        'is_primary' => 0,
-        'is_billing' => 0,
-        'phone' => '204 222-1001',
-        'phone_type_id' => '1',
-      ),
-      '4' => array(
-        'id' => '4',
-        'contact_id' => '1',
-        'location_type_id' => '11',
-        'is_primary' => '1',
-        'is_billing' => 0,
-        'phone' => '021 512 755',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'contact_id' => '1',
+          'location_type_id' => '11',
+          'is_primary' => '1',
+          'is_billing' => 0,
+          'phone' => '021 512 755',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -67,4 +59,3 @@ function phone_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

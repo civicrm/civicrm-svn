@@ -38,7 +38,8 @@ class api_v3_GroupTest extends CiviUnitTestCase {
       'description' => 'New Test Group Created',
       'is_active' => 1,
       'visibility' => 'Public Pages',
-      'group_type' => array('1' => 1,
+      'group_type' => array(
+        '1' => 1,
         '2' => 1,
       ),
     );

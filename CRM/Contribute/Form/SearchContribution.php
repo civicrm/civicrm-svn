@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,56 +32,54 @@
  * $Id$
  *
  */
+class CRM_Contribute_Form_SearchContribution extends CRM_Core_Form {
 
+  /**
+   * Build the form
+   *
+   * @access public
+   *
+   * @return void
+   */
+  public function buildQuickForm() {
+    $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'title');
+    $attributes['style'] = 'width: 90%';
 
-class CRM_Contribute_Form_SearchContribution extends CRM_Core_Form 
-{
+    $this->add('text', 'title', ts('Find'), $attributes);
 
-    /**
-     * Build the form
-     *
-     * @access public
-     * @return void
-     */
-    public function buildQuickForm( ) 
-    {
-        $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'title');
-        $attributes['style'] = 'width: 90%';
-        
-        $this->add( 'text', 'title', ts( 'Find' ), $attributes );
-        
-        $contribution_type = CRM_Contribute_PseudoConstant::contributionType( );
-        foreach($contribution_type as $contributionId => $contributionName) {
-            $this->addElement('checkbox', "contribution_type_id[$contributionId]", 'Contribution Type', $contributionName);
-        }
-        
-        CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch( $this );
-        
-        $this->addButtons(array( 
-                                array ('type'      => 'refresh', 
-                                       'name'      => ts('Search'), 
-                                       'isDefault' => true ), 
-                                ) ); 
+    $contribution_type = CRM_Contribute_PseudoConstant::contributionType();
+    foreach ($contribution_type as $contributionId => $contributionName) {
+      $this->addElement('checkbox', "contribution_type_id[$contributionId]", 'Contribution Type', $contributionName);
     }
 
+    CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch($this);
 
-    function postProcess( ) 
-    {
-        $params = $this->controller->exportValues( $this->_name );
-        $parent = $this->controller->getParent( );
-        $parent->set( 'searchResult', 1 );
-        if ( ! empty( $params ) ) {
-            $fields = array( 'title', 'contribution_type_id', 'campaign_id' );
-            foreach ( $fields as $field ) {
-                if ( isset( $params[$field] ) &&
-                     ! CRM_Utils_System::isNull( $params[$field] ) ) {
-                    $parent->set( $field, $params[$field] );
-                } else {
-                    $parent->set( $field, null );
-                }
-            }
+    $this->addButtons(array(
+        array(
+          'type' => 'refresh',
+          'name' => ts('Search'),
+          'isDefault' => TRUE,
+        ),
+      ));
+  }
+
+  function postProcess() {
+    $params = $this->controller->exportValues($this->_name);
+    $parent = $this->controller->getParent();
+    $parent->set('searchResult', 1);
+    if (!empty($params)) {
+      $fields = array('title', 'contribution_type_id', 'campaign_id');
+      foreach ($fields as $field) {
+        if (isset($params[$field]) &&
+          !CRM_Utils_System::isNull($params[$field])
+        ) {
+          $parent->set($field, $params[$field]);
         }
+        else {
+          $parent->set($field, NULL);
+        }
+      }
     }
+  }
 }
-
 

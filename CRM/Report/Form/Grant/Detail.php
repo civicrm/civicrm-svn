@@ -38,24 +38,29 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
 
   protected $_addressField = FALSE;
 
-  protected $_customGroupExtends = array('Grant'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Grant'); function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'operator' => 'like',
           ),
@@ -71,9 +76,11 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
         ),
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'filters' =>
-        array('country_id' =>
+        array(
+          'country_id' =>
           array('title' => ts('Country'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_PseudoConstant::country(),
@@ -86,7 +93,8 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
         ),
       ),
       'civicrm_grant' =>
-      array('dao' => 'CRM_Grant_DAO_Grant',
+      array(
+        'dao' => 'CRM_Grant_DAO_Grant',
         'fields' =>
         array(
           'grant_type_id' =>
@@ -146,7 +154,8 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('grant_type' =>
+        array(
+          'grant_type' =>
           array(
             'name' => 'grant_type_id',
             'title' => ts('Grant Type'),

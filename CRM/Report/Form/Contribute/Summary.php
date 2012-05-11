@@ -37,7 +37,8 @@
 class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
   protected $_addressField = FALSE;
 
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   );
@@ -45,28 +46,33 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
   protected $_customGroupGroupBy = TRUE; function __construct() {
     $config = CRM_Core_Config::singleton();
     $campaignEnabled = in_array("CiviCampaign", $config->enableComponents);
-    if ( $campaignEnabled ) {
+    if ($campaignEnabled) {
       $getCampaigns = CRM_Campaign_BAO_Campaign::getPermissionedCampaigns(NULL, NULL, TRUE, FALSE, TRUE);
       $this->activeCampaigns = $getCampaigns['campaigns'];
       asort($this->activeCampaigns);
     }
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'no_repeat' => TRUE,
           ),
           'postal_greeting_display' =>
           array('title' => ts('Postal Greeting')),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
         'group_bys' =>
-        array('id' =>
+        array(
+          'id' =>
           array('title' => ts('Contact ID')),
           'sort_name' =>
           array('title' => ts('Contact Name'),
@@ -74,9 +80,11 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
             'no_repeat' => TRUE,
           ),
@@ -84,9 +92,11 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
-        array('phone' =>
+        array(
+          'phone' =>
           array('title' => ts('Phone'),
             'no_repeat' => TRUE,
           ),
@@ -94,20 +104,25 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_contribution_type' =>
-      array('dao' => 'CRM_Contribute_DAO_ContributionType',
+      array(
+        'dao' => 'CRM_Contribute_DAO_ContributionType',
         'fields' =>
-        array('contribution_type' => NULL,
+        array(
+          'contribution_type' => NULL,
         ),
         'grouping' => 'contri-fields',
         'group_bys' =>
-        array('contribution_type' => NULL,
+        array(
+          'contribution_type' => NULL,
         ),
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         //'bao'           => 'CRM_Contribute_BAO_Contribution',
         'fields' =>
-        array('contribution_source' => NULL,
+        array(
+          'contribution_source' => NULL,
           'total_amount' =>
           array('title' => ts('Amount Statistics'),
             'default' => TRUE,
@@ -121,7 +136,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         ),
         'grouping' => 'contri-fields',
         'filters' =>
-        array('receive_date' =>
+        array(
+          'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
           'contribution_status_id' =>
           array('title' => ts('Donation Status'),
@@ -159,20 +175,25 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
           ),
         ),
         'group_bys' =>
-          array('receive_date' =>
-            array('frequency' => TRUE,
-              'default' => TRUE,
-              'chart' => TRUE,
-            ),
+        array(
+          'receive_date' =>
+          array(
+            'frequency' => TRUE,
+            'default' => TRUE,
+            'chart' => TRUE,
+          ),
           'contribution_source' => NULL,
         ),
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_GroupContact',
+      array(
+        'dao' => 'CRM_Contact_DAO_GroupContact',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -184,8 +205,9 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
     ) + $this->addAddressFields();
 
     $this->_tagFilter = TRUE;
-    if ( $campaignEnabled && !empty($this->activeCampaigns) ) {
-      $this->_columns['civicrm_contribution']['fields']['campaign_id'] = array('title' => 'Campaign',
+    if ($campaignEnabled && !empty($this->activeCampaigns)) {
+      $this->_columns['civicrm_contribution']['fields']['campaign_id'] = array(
+        'title' => 'Campaign',
         'default' => 'false',
       );
       $this->_columns['civicrm_contribution']['filters']['campaign_id'] = array('title' => ts('Campaign'),
@@ -193,7 +215,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         'options' => $this->activeCampaigns,
       );
       $this->_columns['civicrm_contribution']['grouping']['campaign_id'] = 'contri-fields';
-      $this->_columns['civicrm_contribution']['group_bys']['campaign_id'] = array( 'title' => ts('Campaign') );
+      $this->_columns['civicrm_contribution']['group_bys']['campaign_id'] = array('title' => ts('Campaign'));
     }
     parent::__construct();
   }
@@ -346,7 +368,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
       }
     }
     if (!CRM_Utils_Array::value('total_amount', $fields['fields'])) {
-      foreach (array('total_count_value', 'total_sum_value', 'total_avg_value') as $val) {
+      foreach (array(
+        'total_count_value', 'total_sum_value', 'total_avg_value') as $val) {
         if (CRM_Utils_Array::value($val, $fields)) {
           $errors[$val] = ts("Please select the Amount Statistics");
         }
@@ -442,14 +465,17 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
       $dao = CRM_Core_DAO::executeQuery($sql);
 
       if ($dao->fetch()) {
-        $statistics['counts']['amount'] = array('value' => $dao->amount,
+        $statistics['counts']['amount'] = array(
+          'value' => $dao->amount,
           'title' => 'Total Amount',
           'type' => CRM_Utils_Type::T_MONEY,
         );
-        $statistics['counts']['count '] = array('value' => $dao->count,
+        $statistics['counts']['count '] = array(
+          'value' => $dao->count,
           'title' => 'Total Donations',
         );
-        $statistics['counts']['avg   '] = array('value' => $dao->avg,
+        $statistics['counts']['avg   '] = array(
+          'value' => $dao->avg,
           'title' => 'Average',
           'type' => CRM_Utils_Type::T_MONEY,
         );

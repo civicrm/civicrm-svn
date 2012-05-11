@@ -9,7 +9,8 @@ class api_v3_ParticipantStatusTypeTest extends CiviUnitTestCase {
   protected $id;
   public $DBResetRequired = FALSE; function setUp() {
     $this->_apiversion = 3;
-    $this->params = array('version' => 3,
+    $this->params = array(
+      'version' => 3,
       'name' => 'test status',
       'label' => "I'm a test",
       'class' => 'Positive',
@@ -49,7 +50,8 @@ class api_v3_ParticipantStatusTypeTest extends CiviUnitTestCase {
     $this->documentMe($this->params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $getCheck = civicrm_api('ParticipantStatusType', 'GET', array('version' => 3, 'id' => $ParticipantStatusType['id']));
-    $checkDeleted = civicrm_api('ParticipantStatusType', 'Get', array('version' => 3,
+    $checkDeleted = civicrm_api('ParticipantStatusType', 'Get', array(
+      'version' => 3,
       ));
     $this->assertEquals($entity['count'] - 1, $checkDeleted['count'], 'In line ' . __LINE__);
   }

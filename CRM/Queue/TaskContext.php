@@ -40,3 +40,4 @@ class CRM_Queue_TaskContext {
    */
   var $log;
 }
+

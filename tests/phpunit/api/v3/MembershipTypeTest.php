@@ -29,13 +29,15 @@
 
 
 
+
 require_once 'api/v3/MembershipType.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   protected $_contactID;
   protected $_contributionTypeID;
   protected $_apiversion; function get_info() {
-    return array('name' => 'MembershipType Create',
+    return array(
+      'name' => 'MembershipType Create',
       'description' => 'Test all Membership Type Create API methods.',
       'group' => 'CiviCRM API Tests',
     );
@@ -69,7 +71,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testGetWithoutId() {
-    $params = array('name' => '60+ Membership',
+    $params = array(
+      'name' => '60+ Membership',
       'description' => 'people above 60 are given health instructions',
       'contribution_type_id' => 1,
       'minimum_fee' => '200',
@@ -87,7 +90,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   function testGet() {
     $id = $this->membershipTypeCreate($this->_contactID, 1);
 
-    $params = array('id' => $id,
+    $params = array(
+      'id' => $id,
       'version' => $this->_apiversion,
     );
     $membershiptype = &civicrm_api('membership_type', 'get', $params);
@@ -121,7 +125,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testCreateWithoutMemberOfContactId() {
-    $params = array('name' => '60+ Membership',
+    $params = array(
+      'name' => '60+ Membership',
       'description' => 'people above 60 are given health instructions',
       'contribution_type_id' => 1,
       'domain_id' => '1',
@@ -139,7 +144,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testCreateWithoutContributionTypeId() {
-    $params = array('name' => '70+ Membership',
+    $params = array(
+      'name' => '70+ Membership',
       'description' => 'people above 70 are given health instructions',
       'member_of_contact_id' => $this->_contactID,
       'domain_id' => '1',
@@ -158,7 +164,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testCreateWithoutDurationUnit() {
-    $params = array('name' => '80+ Membership',
+    $params = array(
+      'name' => '80+ Membership',
       'description' => 'people above 80 are given health instructions',
       'member_of_contact_id' => $this->_contactID,
       'contribution_type_id' => 1,
@@ -177,7 +184,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testCreateWithoutDurationInterval() {
-    $params = array('name' => '70+ Membership',
+    $params = array(
+      'name' => '70+ Membership',
       'description' => 'people above 70 are given health instructions',
       'member_of_contact_id' => $this->_contactID,
       'domain_id' => '1',
@@ -195,7 +203,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testCreateWithoutNameandDomainIDandDurationUnit() {
-    $params = array('description' => 'people above 50 are given health instructions',
+    $params = array(
+      'description' => 'people above 50 are given health instructions',
       'member_of_contact_id' => $this->_contactID,
       'contribution_type_id' => 1,
       'minimum_fee' => '200',
@@ -213,7 +222,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testCreateWithoutName() {
-    $params = array('description' => 'people above 50 are given health instructions',
+    $params = array(
+      'description' => 'people above 50 are given health instructions',
       'member_of_contact_id' => $this->_contactID,
       'contribution_type_id' => 1,
       'domain_id' => '1',
@@ -231,7 +241,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testCreate() {
-    $params = array('name' => '40+ Membership',
+    $params = array(
+      'name' => '40+ Membership',
       'description' => 'people above 40 are given health instructions',
       'member_of_contact_id' => $this->_contactID,
       'contribution_type_id' => 1,
@@ -270,7 +281,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testUpdateWithoutId() {
-    $params = array('name' => '60+ Membership',
+    $params = array(
+      'name' => '60+ Membership',
       'description' => 'people above 60 are given health instructions',
       'member_of_contact_id' => $this->_contactID,
       'contribution_type_id' => 1,
@@ -299,7 +311,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
     // create a new contact to update this membership type to
     $newMembOrgID = $this->organizationCreate($newMembOrgParams);
 
-    $params = array('id' => $id,
+    $params = array(
+      'id' => $id,
       'name' => 'Updated General',
       'member_of_contact_id' => $newMembOrgID,
       'duration_unit' => 'month',
@@ -338,7 +351,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   }
 
   function testDeleteNotExists() {
-    $params = array('id' => 'doesNotExist',
+    $params = array(
+      'id' => 'doesNotExist',
       'version' => $this->_apiversion,
     );
     $membershiptype = civicrm_api('membership_type', 'delete', $params);
@@ -349,7 +363,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   function testDelete() {
     $orgID            = $this->organizationCreate(NULL);
     $membershipTypeID = $this->membershipTypeCreate($orgID, 1);
-    $params           = array('id' => $membershipTypeID,
+    $params           = array(
+      'id' => $membershipTypeID,
       'version' => $this->_apiversion,
     );
 

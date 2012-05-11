@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -110,7 +111,8 @@ function civicrm_contact_update(&$params, $create_new = FALSE) {
     if (($email = CRM_Utils_Array::value('email', $params)) && !is_array($params['email'])) {
       require_once 'CRM/Core/BAO/LocationType.php';
       $defLocType = CRM_Core_BAO_LocationType::getDefault();
-      $params['email'] = array(1 => array('email' => $email,
+      $params['email'] = array(
+        1 => array('email' => $email,
           'is_primary' => 1,
           'location_type_id' => ($defLocType->id) ? $defLocType->id : 1,
         ),
@@ -127,7 +129,8 @@ function civicrm_contact_update(&$params, $create_new = FALSE) {
     );
   }
   // FIXME: Some legacy support cruft, should get rid of this in 3.1
-  $change = array('individual_prefix' => 'prefix',
+  $change = array(
+    'individual_prefix' => 'prefix',
     'prefix' => 'prefix_id',
     'individual_suffix' => 'suffix',
     'suffix' => 'suffix_id',
@@ -235,7 +238,8 @@ function &civicrm_contact_add(&$params) {
  */
 function _civicrm_greeting_format_params(&$params) {
   $greetingParams = array('', '_id', '_custom');
-  foreach (array('email', 'postal', 'addressee') as $key) {
+  foreach (array(
+    'email', 'postal', 'addressee') as $key) {
     $greeting = '_greeting';
     if ($key == 'addressee') {
       $greeting = '';
@@ -258,7 +262,6 @@ function _civicrm_greeting_format_params(&$params) {
     if (!$formatParams) {
 
       continue;
-
     }
 
     // format params
@@ -269,7 +272,8 @@ function _civicrm_greeting_format_params(&$params) {
     }
 
     $nullValue = FALSE;
-    $filter = array('contact_type' => $params['contact_type'],
+    $filter = array(
+      'contact_type' => $params['contact_type'],
       'greeting_type' => "{$key}{$greeting}",
     );
 
@@ -834,6 +838,7 @@ function civicrm_contact_check_custom_params($params, $csType = NULL) {
   foreach ($params as $key => $value) {
     if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
       /* check if it's a valid custom field id */
+
 
       if (!array_key_exists($customFieldID, $customFields)) {
 

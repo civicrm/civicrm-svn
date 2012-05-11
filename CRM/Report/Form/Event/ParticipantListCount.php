@@ -38,55 +38,67 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_customGroupExtends = array('Participant'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Participant'); function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Name'),
             'default' => TRUE,
             'no_repeat' => TRUE,
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
-        'filters' => array('sort_name' =>
+        'filters' => array(
+          'sort_name' =>
           array('title' => ts('Participant Name'),
             'operator' => 'like',
           ),
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
-        'fields' => array('email' =>
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
+        'fields' => array(
+          'email' =>
           array('title' => ts('Email'),
             'no_repeat' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
         'filters' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Participant E-mail'),
             'operator' => 'like',
           ),
         ),
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'fields' =>
-        array('street_address' => NULL,
+        array(
+          'street_address' => NULL,
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_participant' =>
-      array('dao' => 'CRM_Event_DAO_Participant',
+      array(
+        'dao' => 'CRM_Event_DAO_Participant',
         'fields' =>
-        array('participant_id' =>
+        array(
+          'participant_id' =>
           array('title' => ts('Participant ID'),
             'default' => TRUE,
           ),
@@ -108,20 +120,24 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
         ),
         'grouping' => 'event-fields',
         'filters' =>
-        array('event_id' =>
-          array('name' => 'event_id',
+        array(
+          'event_id' =>
+          array(
+            'name' => 'event_id',
             'title' => ts('Event'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::event(NULL, NULL, "is_template IS NULL OR is_template = 0"),
           ),
           'sid' =>
-          array('name' => 'status_id',
+          array(
+            'name' => 'status_id',
             'title' => ts('Participant Status'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::participantStatus(NULL, NULL, 'label'),
           ),
           'rid' =>
-          array('name' => 'role_id',
+          array(
+            'name' => 'role_id',
             'title' => ts('Participant Role'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::participantRole(),
@@ -131,15 +147,18 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
           ),
         ),
         'group_bys' =>
-        array('event_id' =>
+        array(
+          'event_id' =>
           array('title' => ts('Event'),
           ),
         ),
       ),
       'civicrm_event' =>
-      array('dao' => 'CRM_Event_DAO_Event',
+      array(
+        'dao' => 'CRM_Event_DAO_Event',
         'fields' =>
-        array('event_type_id' =>
+        array(
+          'event_type_id' =>
           array('title' => ts('Event Type'),
           ),
           'start_date' =>
@@ -150,33 +169,40 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
           ),
         ),
         'grouping' => 'event-fields',
-        'filters' => array('eid' =>
-          array('name' => 'event_type_id',
+        'filters' => array(
+          'eid' =>
+          array(
+            'name' => 'event_type_id',
             'title' => ts('Event Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_OptionGroup::values('event_type'),
           ),
           'event_start_date' =>
-          array('name' => 'start_date',
+          array(
+            'name' => 'start_date',
             'title' => ts('Event Start Date'),
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
           'event_end_date' =>
-          array('name' => 'end_date',
+          array(
+            'name' => 'end_date',
             'title' => ts('Event End Date'),
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
         ),
         'group_bys' =>
-        array('event_type_id' =>
+        array(
+          'event_type_id' =>
           array('title' => ts('Event Type '),
           ),
         ),
       ),
       'civicrm_line_item' =>
-      array('dao' => 'CRM_Price_DAO_LineItem',
+      array(
+        'dao' => 'CRM_Price_DAO_LineItem',
         'fields' =>
-        array('line_total' =>
+        array(
+          'line_total' =>
           array('title' => ts('Income'),
             'default' => TRUE,
             'statistics' =>
@@ -203,7 +229,8 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
       'blank_column_end' =>
       array('title' => ts('Blank column at the End'),
         'type' => 'select',
-        'options' => array('' => '-select-',
+        'options' => array(
+          '' => '-select-',
           1 => ts('One'),
           2 => ts('Two'),
           3 => ts('Three'),
@@ -232,15 +259,18 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
       if ($dao->count && $dao->amount) {
         $avg = $dao->amount / $dao->count;
       }
-      $statistics['counts']['count'] = array('value' => $dao->count,
+      $statistics['counts']['count'] = array(
+        'value' => $dao->count,
         'title' => 'Total Participants',
         'type' => CRM_Utils_Type::T_INT,
       );
-      $statistics['counts']['amount'] = array('value' => $dao->amount,
+      $statistics['counts']['amount'] = array(
+        'value' => $dao->amount,
         'title' => 'Total Income',
         'type' => CRM_Utils_Type::T_MONEY,
       );
-      $statistics['counts']['avg	  '] = array('value' => $avg,
+      $statistics['counts']['avg	  '] = array(
+        'value' => $avg,
         'title' => 'Average',
         'type' => CRM_Utils_Type::T_MONEY,
       );

@@ -29,22 +29,23 @@
  * A task is an item that can be enqueued and later exectued
  */
 class CRM_Queue_Task {
+
   /** Task was performed successfully */
-  const TASK_SUCCESS = 1;
-  
+  CONST TASK_SUCCESS = 1;
+
   /** Task failed and should not be retried */
-  const TASK_FAIL = 2;
+  CONST TASK_FAIL = 2;
 
   /**
    * @var mixed, serializable
    */
   var $callback;
-  
+
   /**
    * @var array, serializable
    */
   var $arguments;
-  
+
   /**
    * @var string, NULL-able
    */
@@ -57,27 +58,30 @@ class CRM_Queue_Task {
    * @param $title string, a printable string which describes this task
    */
   function __construct($callback, $arguments, $title = NULL) {
-    $this->callback = $callback;
+    $this->callback  = $callback;
     $this->arguments = $arguments;
-    $this->title = $title;
+    $this->title     = $title;
   }
-  
+
   /**
    * Perform the task
    *
    * @param $taskContext array with keys:
    *  - log: object 'Log'
+   *
    * @return bool, TRUE if task completes successfully
    */
   function run($taskCtx) {
     $args = $this->arguments;
     array_unshift($args, $taskCtx);
-        
+
     if (is_callable($this->callback)) {
       $result = call_user_func_array($this->callback, $args);
       return $result;
-    } else {
+    }
+    else {
       throw new Exception('Failed to call callback: ' . print_r($this->callback));
     }
   }
 }
+

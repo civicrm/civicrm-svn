@@ -65,7 +65,8 @@ function civicrm_api3_phone_create($params) {
 function _civicrm_api3_phone_create_spec(&$params) {
   $params['contact_id']['api.required'] = 1;
   $params['phone']['api.required'] = 1;
-  $params['is_primary']['api.default'] =0;// hopefully change to use handleprimary
+  // hopefully change to use handleprimary
+  $params['is_primary']['api.default'] = 0;
 }
 
 /**

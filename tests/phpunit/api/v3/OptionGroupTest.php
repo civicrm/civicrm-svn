@@ -10,17 +10,18 @@ class api_v3_OptionGroupTest extends CiviUnitTestCase {
   }
 
   function tearDown() {}
- /*
+  /*
   * Good to test option group as a representative on the Camel Case
   */
+
   public function testGetOptionGroupGetFields() {
-    $result = civicrm_api('option_group', 'getfields', array( 'version' => 3));
+    $result = civicrm_api('option_group', 'getfields', array('version' => 3));
     $this->assertFalse(empty($result['values']), 'In line ' . __LINE__);
   }
   public function testGetOptionGroupGetFieldsCreateAction() {
-    $result = civicrm_api('option_group', 'getfields', array( 'action' => 'create', 'version' => 3));
+    $result = civicrm_api('option_group', 'getfields', array('action' => 'create', 'version' => 3));
     $this->assertFalse(empty($result['values']), 'In line ' . __LINE__);
-    $this->assertEquals($result['values']['name']['api.unique'],1);
+    $this->assertEquals($result['values']['name']['api.unique'], 1);
   }
 
   public function testGetOptionGroupByID() {
@@ -63,6 +64,7 @@ class api_v3_OptionGroupTest extends CiviUnitTestCase {
   /*
    * Test the error message when a failure is due to a key duplication issue
    */
+
   public function testGetOptionCreateFailOnDuplicate() {
     $params = array(
       'version' => $this->_apiversion,
@@ -75,17 +77,19 @@ class api_v3_OptionGroupTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result1);
     $result = civicrm_api('OptionGroup', 'create', $params);
     civicrm_api('OptionGroup', 'delete', array('version' => 3, 'id' => $result1['id']));
-    $this->assertEquals("Field: `name` must be unique. An conflicting entity already exists - id: " .$result1['id'], $result['error_message']);
-   }
+    $this->assertEquals("Field: `name` must be unique. An conflicting entity already exists - id: " . $result1['id'], $result['error_message']);
+  }
 
   /*
    * Test that transaction is completely rolled back on fail.
    * Also check error returned
    */
+
   public function testGetOptionCreateFailRollback() {
     $countFirst = civicrm_api('OptionGroup', 'getcount', array(
-      'version' => 3,
-      'options' => array('limit' => 5000))
+        'version' => 3,
+        'options' => array('limit' => 5000),
+      )
     );
     $params = array(
       'version' => $this->_apiversion,
@@ -98,18 +102,19 @@ class api_v3_OptionGroupTest extends CiviUnitTestCase {
         'value' => 35,
         'domain_id' => 999,
         'is_active' => '0',
-        'debug' =>0,
-        ));
+        'debug' => 0,
+      ),
+    );
     $result = civicrm_api('OptionGroup', 'create', $params);
     $this->assertEquals(1, $result['is_error'], 'Error should be passed up to top level In line ' . __LINE__);
     $countAfter = civicrm_api('OptionGroup', 'getcount', array(
-      'version' => 3,
-      'options' => array('limit' => 5000))
+        'version' => 3,
+        'options' => array('limit' => 5000),
+      )
     );
     $this->assertEquals($countFirst, $countAfter,
       'Count of option groups should not have changed due to rollback triggered by option value In line ' . __LINE__
     );
-
   }
 }
 

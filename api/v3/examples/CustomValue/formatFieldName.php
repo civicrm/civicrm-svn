@@ -1,21 +1,20 @@
 <?php
-// $Id$
 
 
 
 /*
  utilises field names
  */
-function custom_value_get_example() {
-  $params = array(
-    'id' => 2,
-    'version' => 3,
-    'entity_id' => 2,
-    'format.field_names' => 1,
-  );
+function custom_value_get_example(){
+$params = array( 
+  'id' => 2,
+  'version' => 3,
+  'entity_id' => 2,
+  'format.field_names' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('custom_value', 'get', $params);
+  $result = civicrm_api( 'custom_value','get',$params );
 
   return $result;
 }
@@ -23,44 +22,44 @@ function custom_value_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function custom_value_get_expectedresult() {
+function custom_value_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 4,
-    'values' => array(
-      'mySingleField' => array(
-        'entity_id' => 2,
-        'latest' => 'value 1',
-        'id' => 'mySingleField',
-        '0' => 'value 1',
-      ),
-      'Cust_Field' => array(
-        'entity_id' => 2,
-        'latest' => 'coffee',
-        'id' => 'Cust_Field',
-        '1' => '',
-        '2' => 'coffee',
-      ),
-      'field_2' => array(
-        'entity_id' => 2,
-        'latest' => 'value 4',
-        'id' => 'field_2',
-        '1' => '',
-        '2' => 'value 4',
-      ),
-      'field_3' => array(
-        'entity_id' => 2,
-        'latest' => '',
-        'id' => 'field_3',
-        '1' => 'vegemite',
-        '2' => '',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 4,
+  'values' => array( 
+      'mySingleField' => array( 
+          'entity_id' => 2,
+          'latest' => 'value 1',
+          'id' => 'mySingleField',
+          '0' => 'value 1',
+        ),
+      'Cust_Field' => array( 
+          'entity_id' => 2,
+          'latest' => 'coffee',
+          'id' => 'Cust_Field',
+          '1' => '',
+          '2' => 'coffee',
+        ),
+      'field_2' => array( 
+          'entity_id' => 2,
+          'latest' => 'value 4',
+          'id' => 'field_2',
+          '1' => '',
+          '2' => 'value 4',
+        ),
+      'field_3' => array( 
+          'entity_id' => 2,
+          'latest' => '',
+          'id' => 'field_3',
+          '1' => 'vegemite',
+          '2' => '',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -79,4 +78,3 @@ function custom_value_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

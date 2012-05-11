@@ -43,7 +43,6 @@
  */
 class CRM_Queue_ErrorPolicy {
   var $active;
-  
   function __construct($level = NULL) {
     register_shutdown_function(array($this, 'onShutdown'));
     if ($level === NULL) {
@@ -51,38 +50,42 @@ class CRM_Queue_ErrorPolicy {
     }
     $this->level = $level;
   }
-  
+
   function activate() {
     $this->active = TRUE;
     $this->backup = array();
-    foreach (array('display_errors', 'html_errors', 'xmlrpc_errors') as $key) {
+    foreach (array(
+      'display_errors', 'html_errors', 'xmlrpc_errors') as $key) {
       $this->backup[$key] = ini_get($key);
       ini_set($key, 0);
     }
     set_error_handler(array($this, 'onError'), $this->level);
-    CRM_Core_Error::setRaiseException(); // FIXME make this temporary/reversible
+    // FIXME make this temporary/reversible
+    CRM_Core_Error::setRaiseException();
   }
-  
+
   function deactivate() {
     // FIXME: undo CRM_Core_Error::setRaiseException()
     restore_error_handler();
-    foreach (array('display_errors', 'html_errors', 'xmlrpc_errors') as $key) {
+    foreach (array(
+      'display_errors', 'html_errors', 'xmlrpc_errors') as $key) {
       ini_set($key, $this->backup[$key]);
     }
     $this->active = FALSE;
   }
-  
+
   function call($callable) {
     $this->activate();
     try {
       $result = $callable();
-    } catch (Exception $e) {
+    }
+    catch(Exception$e) {
       $this->reportException($e);
     }
     $this->deactivate();
     return $result;
   }
-  
+
   /**
    * Receive (semi) recoverable error notices
    *
@@ -102,13 +105,15 @@ class CRM_Queue_ErrorPolicy {
    * @see error_get_last
    */
   function onShutdown() {
-    if (!$this->active) return;
+    if (!$this->active) {
+      return;
+    }
     $error = error_get_last();
     if (is_array($error) && ($error['type'] & $this->level)) {
       $this->reportError($error);
     }
   }
-  
+
   /**
    * Print a fatal error
    *
@@ -128,7 +133,7 @@ class CRM_Queue_ErrorPolicy {
     echo json_encode($response);
     // civiExit() is unnecessary -- we're only called as part of abend
   }
-  
+
   /**
    * Print an unhandled exception
    *
@@ -139,23 +144,25 @@ class CRM_Queue_ErrorPolicy {
       'is_error' => 1,
       'is_continue' => 0,
     );
-    
+
     $config = CRM_Core_Config::singleton();
     if ($config->backtrace) {
       $response['message'] = $e->getMessage() . "\n" . $e->getTraceAsString();
-    } else {
+    }
+    else {
       $response['message'] = $e->getMessage();
     }
-    
+
     global $activeQueueRunner;
     if (is_object($activeQueueRunner)) {
       $response['last_task_title'] = $activeQueueRunner->lastTaskTitle;
     }
     echo json_encode($response);
-    
+
     // unconditionally log backtrace
     $response['message'] = $e->getMessage() . "\n" . $e->getTraceAsString();
     CRM_Core_Error::debug_var('CRM_Queue_ErrorPolicy_reportException', $response);
     CRM_Utils_System::civiExit();
   }
 }
+

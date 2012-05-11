@@ -41,22 +41,28 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_customGroupExtends = array('Membership'); function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+  protected $_customGroupExtends = array(
+    'Membership'); function __construct() {
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'operator' => 'like',
           ),
@@ -68,9 +74,11 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_membership' =>
-      array('dao' => 'CRM_Member_DAO_Membership',
+      array(
+        'dao' => 'CRM_Member_DAO_Membership',
         'fields' =>
-        array('id' =>
+        array(
+          'id' =>
           array('title' => ts('Membership #'),
             'no_display' => TRUE,
             'required' => TRUE,
@@ -78,7 +86,8 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         ),
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
         array(
           'receive_date' => array('default' => TRUE),
@@ -110,7 +119,8 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('receive_date' =>
+        array(
+          'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
           'contribution_type_id' =>
           array('title' => ts('Contribution Type'),
@@ -204,11 +214,13 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
     $dao = CRM_Core_DAO::executeQuery($sql);
 
     if ($dao->fetch()) {
-      $statistics['counts']['amount'] = array('value' => $dao->amount,
+      $statistics['counts']['amount'] = array(
+        'value' => $dao->amount,
         'title' => 'Total Amount',
         'type' => CRM_Utils_Type::T_MONEY,
       );
-      $statistics['counts']['avg'] = array('value' => $dao->avg,
+      $statistics['counts']['avg'] = array(
+        'value' => $dao->avg,
         'title' => 'Average',
         'type' => CRM_Utils_Type::T_MONEY,
       );

@@ -41,29 +41,8 @@
  *
  */
 class CRM_Contact_Task {
-  CONST 
-    GROUP_CONTACTS        =     1,
-    REMOVE_CONTACTS       =     2,
-    TAG_CONTACTS          =     3,
-    REMOVE_TAGS           =     4,
-    EXPORT_CONTACTS       =     5,
-    EMAIL_CONTACTS        =     6,
-    SMS_CONTACTS          =     7,
-    DELETE_CONTACTS       =     8,
-    HOUSEHOLD_CONTACTS    =     9,
-    ORGANIZATION_CONTACTS =    10,
-    RECORD_CONTACTS       =    11,
-    MAP_CONTACTS          =    12,
-    SAVE_SEARCH           =    13,
-    SAVE_SEARCH_UPDATE    =    14,
-    PRINT_CONTACTS        =    15,
-    LABEL_CONTACTS        =    16,
-    BATCH_UPDATE          =    17,
-    ADD_EVENT             =    18,
-    PRINT_FOR_CONTACTS    =    19,
-    EMAIL_UNHOLD          =    22,
-    RESTORE               =    23,
-    DELETE_PERMANENTLY    =    24;
+  CONST GROUP_CONTACTS = 1, REMOVE_CONTACTS = 2, TAG_CONTACTS = 3, REMOVE_TAGS = 4, EXPORT_CONTACTS = 5, EMAIL_CONTACTS = 6, SMS_CONTACTS = 7, DELETE_CONTACTS = 8, HOUSEHOLD_CONTACTS = 9, ORGANIZATION_CONTACTS = 10, RECORD_CONTACTS = 11, MAP_CONTACTS = 12, SAVE_SEARCH = 13, SAVE_SEARCH_UPDATE = 14, PRINT_CONTACTS = 15, LABEL_CONTACTS = 16, BATCH_UPDATE = 17, ADD_EVENT = 18, PRINT_FOR_CONTACTS = 19, EMAIL_UNHOLD = 22, RESTORE = 23, DELETE_PERMANENTLY = 24;
+
   /**
    * the task array
    *
@@ -97,7 +76,8 @@ class CRM_Contact_Task {
           'class' => 'CRM_Contact_Form_Task_RemoveFromTag',
         ),
         5 => array('title' => ts('Export Contacts'),
-          'class' => array('CRM_Export_Form_Select',
+          'class' => array(
+            'CRM_Export_Form_Select',
             'CRM_Export_Form_Map',
           ),
           'result' => FALSE,
@@ -134,7 +114,8 @@ class CRM_Contact_Task {
           'result' => TRUE,
         ),
         17 => array('title' => ts('Batch Update via Profile'),
-          'class' => array('CRM_Contact_Form_Task_PickProfile',
+          'class' => array(
+            'CRM_Contact_Form_Task_PickProfile',
             'CRM_Contact_Form_Task_Batch',
           ),
           'result' => TRUE,
@@ -160,7 +141,8 @@ class CRM_Contact_Task {
 
       if (CRM_Contact_BAO_ContactType::isActive('Household')) {
         $label = CRM_Contact_BAO_ContactType::getLabel('Household');
-        self::$_tasks[9] = array('title' => ts('Add Contacts to %1',
+        self::$_tasks[9] = array(
+          'title' => ts('Add Contacts to %1',
             array(1 => $label)
           ),
           'class' => 'CRM_Contact_Form_Task_AddToHousehold',
@@ -169,7 +151,8 @@ class CRM_Contact_Task {
 
       if (CRM_Contact_BAO_ContactType::isActive('Organization')) {
         $label = CRM_Contact_BAO_ContactType::getLabel('Organization');
-        self::$_tasks[10] = array('title' => ts('Add Contacts to %1',
+        self::$_tasks[10] = array(
+          'title' => ts('Add Contacts to %1',
             array(1 => $label)
           ),
           'class' => 'CRM_Contact_Form_Task_AddToOrganization',
@@ -213,7 +196,8 @@ class CRM_Contact_Task {
 
       if (CRM_Core_Permission::access('CiviMail')) {
         self::$_tasks[20] = array('title' => ts('Schedule/Send a Mass Mailing'),
-          'class' => array('CRM_Mailing_Form_Group',
+          'class' => array(
+            'CRM_Mailing_Form_Group',
             'CRM_Mailing_Form_Settings',
             'CRM_Mailing_Form_Upload',
             'CRM_Mailing_Form_Test',
@@ -226,7 +210,8 @@ class CRM_Contact_Task {
         CRM_Core_Permission::check('create mailings')
       ) {
         self::$_tasks[20] = array('title' => ts('Create a Mass Mailing'),
-          'class' => array('CRM_Mailing_Form_Group',
+          'class' => array(
+            'CRM_Mailing_Form_Group',
             'CRM_Mailing_Form_Settings',
             'CRM_Mailing_Form_Upload',
             'CRM_Mailing_Form_Test',

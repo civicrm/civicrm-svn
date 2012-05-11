@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -246,7 +247,8 @@ function _civicrm_activity_get($activityId, $returnCustom = FALSE) {
 
     //also return custom data if needed.
     if ($returnCustom && !empty($activity)) {
-      $customdata = civicrm_activity_custom_get(array('activity_id' => $activityId,
+      $customdata = civicrm_activity_custom_get(array(
+        'activity_id' => $activityId,
           'activity_type_id' => $activity['activity_type_id'],
         ));
       $activity = array_merge($activity, $customdata);
@@ -292,7 +294,8 @@ function _civicrm_activity_check_params(&$params, $addMode = FALSE) {
       }
     }
     elseif (!is_numeric($value)) {
-      return civicrm_create_error(ts('Invalid %1 Contact Id', array(1 => ucfirst(
+      return civicrm_create_error(ts('Invalid %1 Contact Id', array(
+        1 => ucfirst(
               $key
             ))));
     }
@@ -418,7 +421,8 @@ SELECT  count(*)
 /**
  * Convert an email file to an activity
  */
-function civicrm_activity_processemail($file, $activityTypeID, $result = array()) {
+function civicrm_activity_processemail($file, $activityTypeID, $result = array(
+  )) {
   // do not parse if result array already passed (towards EmailProcessor..)
   if (empty($result)) {
     // might want to check that email is ok here

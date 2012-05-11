@@ -90,7 +90,7 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase {
     );
     $activitycreate = civicrm_api('activity_type', 'create', $params);
     $activityID = $activitycreate['id'];
-    $this->assertAPISuccess($activitycreate, "in line ". __LINE__);
+    $this->assertAPISuccess($activitycreate, "in line " . __LINE__);
     $this->assertArrayHasKey('id', $activitycreate);
     $this->assertArrayHasKey('option_group_id', $activitycreate['values'][$activitycreate['id']]);
   }
@@ -106,7 +106,8 @@ class api_v3_ActivityTypeTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
     $activitycreate = civicrm_api('activity_type', 'create', $params);
-    $params = array('activity_type_id' => $activitycreate['id'],
+    $params = array(
+      'activity_type_id' => $activitycreate['id'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('activity_type', 'delete', $params);

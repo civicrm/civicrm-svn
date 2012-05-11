@@ -1,26 +1,25 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function grant_create_example() {
-  $params = array(
-    'version' => 3,
-    'contact_id' => 1,
-    'application_received_date' => 'now',
-    'decision_date' => 'next Monday',
-    'amount_total' => '500',
-    'status_id' => 1,
-    'rationale' => 'Just Because',
-    'currency' => 'USD',
-    'grant_type_id' => 1,
-  );
+function grant_create_example(){
+$params = array( 
+  'version' => 3,
+  'contact_id' => 1,
+  'application_received_date' => 'now',
+  'decision_date' => 'next Monday',
+  'amount_total' => '500',
+  'status_id' => 1,
+  'rationale' => 'Just Because',
+  'currency' => 'USD',
+  'grant_type_id' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('grant', 'create', $params);
+  $result = civicrm_api( 'grant','create',$params );
 
   return $result;
 }
@@ -28,34 +27,34 @@ function grant_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function grant_create_expectedresult() {
+function grant_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'id' => 1,
-        'contact_id' => 1,
-        'application_received_date' => '20120210105414',
-        'decision_date' => '20120213000000',
-        'money_transfer_date' => '',
-        'grant_due_date' => '',
-        'grant_report_received' => '',
-        'grant_type_id' => 1,
-        'amount_total' => '500',
-        'amount_requested' => '',
-        'amount_granted' => '',
-        'currency' => 'USD',
-        'rationale' => 'Just Because',
-        'status_id' => 1,
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => 1,
+          'contact_id' => 1,
+          'application_received_date' => '20120511230316',
+          'decision_date' => '20120514000000',
+          'money_transfer_date' => '',
+          'grant_due_date' => '',
+          'grant_report_received' => '',
+          'grant_type_id' => 1,
+          'amount_total' => '500',
+          'amount_requested' => '',
+          'amount_granted' => '',
+          'currency' => 'USD',
+          'rationale' => 'Just Because',
+          'status_id' => 1,
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -74,4 +73,3 @@ function grant_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

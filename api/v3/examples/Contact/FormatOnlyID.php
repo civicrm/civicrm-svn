@@ -1,22 +1,21 @@
 <?php
-// $Id$
 
 
 
 /*
- This demonstrates use of the 'format.id_only' param. 
+ This demonstrates use of the 'format.id_only' param.
     /* This param causes the id of the only entity to be returned as an integer.
     /* it will be ignored if there is not exactly 1 result
  */
-function contact_get_example() {
-  $params = array(
-    'version' => 3,
-    'id' => 17,
-    'format.only_id' => 1,
-  );
+function contact_get_example(){
+$params = array( 
+  'version' => 3,
+  'id' => 17,
+  'format.only_id' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('contact', 'get', $params);
+  $result = civicrm_api( 'contact','get',$params );
 
   return $result;
 }
@@ -24,11 +23,11 @@ function contact_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function contact_get_expectedresult() {
+function contact_get_expectedresult(){
 
   $expectedResult = 17;
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -47,4 +46,3 @@ function contact_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

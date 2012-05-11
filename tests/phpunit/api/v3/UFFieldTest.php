@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -53,7 +54,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
         'civicrm_contact',
         'civicrm_uf_group',
         'civicrm_uf_join',
-        'civicrm_uf_match'
+        'civicrm_uf_match',
       )
     );
 
@@ -132,7 +133,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
         'civicrm_contact',
         'civicrm_uf_group',
         'civicrm_uf_join',
-        'civicrm_uf_match'
+        'civicrm_uf_match',
       )
     );
   }
@@ -198,7 +199,8 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     $ufField = civicrm_api('uf_field', 'create', $params);
     $this->assertEquals($ufField['is_error'], 0, 'in line' . __LINE__);
     $this->_ufFieldId = $ufField['id'];
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
       'field_id' => $ufField['id'],
     );
     $result = civicrm_api('uf_field', 'delete', $params);

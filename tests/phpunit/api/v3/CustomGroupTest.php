@@ -27,7 +27,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
   function setUp() {
     $this->_apiversion = 3;
     $this->_entity     = 'CustomGroup';
-    $this->_params     = array('title' => 'Test_Group_1',
+    $this->_params     = array(
+      'title' => 'Test_Group_1',
       'name' => 'test_group_1',
       'extends' => 'Individual',
       'weight' => 4,
@@ -53,7 +54,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with empty array
    */
   function testCustomGroupCreateNoParam() {
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
     );
     $customGroup = civicrm_api('custom_group', 'create', $params);
     $this->assertEquals($customGroup['is_error'], 1, 'In line ' . __LINE__);
@@ -66,7 +68,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with empty array
    */
   function testCustomGroupCreateNoExtends() {
-    $params = array('domain_id' => 1,
+    $params = array(
+      'domain_id' => 1,
       'title' => 'Test_Group_1',
       'name' => 'test_group_1',
       'weight' => 4,
@@ -87,7 +90,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with empty array
    */
   function testCustomGroupCreateInvalidExtends() {
-    $params = array('domain_id' => 1,
+    $params = array(
+      'domain_id' => 1,
       'title' => 'Test_Group_1',
       'name' => 'test_group_1',
       'weight' => 4,
@@ -109,7 +113,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with a string instead of array for extends
    */
   function testCustomGroupCreateExtendsString() {
-    $params = array('domain_id' => 1,
+    $params = array(
+      'domain_id' => 1,
       'title' => 'Test_Group_1',
       'name' => 'test_group_1',
       'weight' => 4,
@@ -130,7 +135,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with create fields
    */
   function testCustomGroupCreateWithFields() {
-    $params = array('title' => 'Test_Group_1',
+    $params = array(
+      'title' => 'Test_Group_1',
       'name' => 'test_group_1',
       'extends' => array('Individual'),
       'weight' => 4,
@@ -160,7 +166,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with valid array
    */
   function testCustomGroupCreate() {
-    $params = array('title' => 'Test_Group_1',
+    $params = array(
+      'title' => 'Test_Group_1',
       'name' => 'test_group_1',
       'extends' => array('Individual'),
       'weight' => 4,
@@ -183,7 +190,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with extends array length greater than 1
    */
   function testCustomGroupExtendsMultipleCreate() {
-    $params = array('title' => 'Test_Group_1',
+    $params = array(
+      'title' => 'Test_Group_1',
       'name' => 'test_group_1',
       'extends' => array('Individual', 'Household'),
       'weight' => 4,
@@ -204,7 +212,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with style missing from params array
    */
   function testCustomGroupCreateNoStyle() {
-    $params = array('title' => 'Test_Group_1',
+    $params = array(
+      'title' => 'Test_Group_1',
       'name' => 'test_group_1',
       'extends' => array('Individual'),
       'weight' => 4,
@@ -253,7 +262,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check for household without weight
    */
   function testCustomGroupCreateHouseholdNoWeight() {
-    $params = array('title' => 'Test_Group_3',
+    $params = array(
+      'title' => 'Test_Group_3',
       'name' => 'test_group_3',
       'extends' => array('Household'),
       'collapse_display' => 1,
@@ -275,7 +285,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check for Contribution Donation
    */
   function testCustomGroupCreateContributionDonation() {
-    $params = array('title' => 'Test_Group_6',
+    $params = array(
+      'title' => 'Test_Group_6',
       'name' => 'test_group_6',
       'extends' => array('Contribution', array(1)),
       'weight' => 6,
@@ -297,7 +308,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check with valid array
    */
   function testCustomGroupCreateGroup() {
-    $params = array('domain_id' => 1,
+    $params = array(
+      'domain_id' => 1,
       'title' => 'Test_Group_8',
       'name' => 'test_group_8',
       'extends' => array('Group'),
@@ -344,7 +356,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    * check without GroupID
    */
   function testCustomGroupDeleteWithoutGroupID() {
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
     );
     $customGroup = civicrm_api('custom_group', 'delete', $params);
     $this->assertEquals($customGroup['is_error'], 1, 'In line ' . __LINE__);
@@ -366,7 +379,8 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
    */
   function testCustomGroupDelete() {
     $customGroup = $this->customGroupCreate('Individual', 'test_group');
-    $params = array('id' => $customGroup['id'],
+    $params = array(
+      'id' => $customGroup['id'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('custom_group', 'delete', $params);
@@ -376,6 +390,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
   /*
      * main success get function
      */
+
 
 
   public function testGetCustomGroupSuccess() {

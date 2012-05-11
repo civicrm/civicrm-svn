@@ -28,12 +28,14 @@
 */
 
 
+
 /*
  * These functions have been deprecated out of API v3 Utils folder as they are not part of the
  * API. Calling API functions directly is not supported & these functions are not called by any
  * part of the API so are not really part of the api
  *
  */
+
 
 
 require_once 'api/v3/utils.php';
@@ -188,7 +190,8 @@ function _civicrm_api3_deprecated_participant_formatted_param($params, &$values,
     // status_id and source. So, if $values contains
     // participant_register_date, participant_status_id or participant_source,
     // convert it to register_date, status_id or source
-    $changes = array('participant_register_date' => 'register_date',
+    $changes = array(
+      'participant_register_date' => 'register_date',
       'participant_source' => 'source',
       'participant_status_id' => 'status_id',
       'participant_role_id' => 'role_id',
@@ -767,7 +770,9 @@ function _civicrm_api3_deprecated_add_formatted_param(&$values, &$params) {
      */
 
 
+
   /* Cache the various object fields */
+
 
   static $fields = NULL;
 
@@ -782,6 +787,7 @@ function _civicrm_api3_deprecated_add_formatted_param(&$values, &$params) {
 
   if (isset($values['contact_type'])) {
     /* we're an individual/household/org property */
+
 
 
     $fields[$values['contact_type']] = CRM_Contact_DAO_Contact::fields();
@@ -921,6 +927,7 @@ function _civicrm_api3_deprecated_add_formatted_param(&$values, &$params) {
   if (isset($values['note'])) {
     /* add a note field */
 
+
     if (!isset($params['note'])) {
       $params['note'] = array();
     }
@@ -946,6 +953,7 @@ function _civicrm_api3_deprecated_add_formatted_param(&$values, &$params) {
 
   /* Check for custom field values */
 
+
   if (!CRM_Utils_Array::value('custom', $fields)) {
     $fields['custom'] = &CRM_Core_BAO_CustomField::getFields(CRM_Utils_Array::value('contact_type', $values),
       FALSE, FALSE, NULL, NULL, FALSE, FALSE, FALSE
@@ -955,6 +963,7 @@ function _civicrm_api3_deprecated_add_formatted_param(&$values, &$params) {
   foreach ($values as $key => $value) {
     if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
       /* check if it's a valid custom field id */
+
 
       if (!array_key_exists($customFieldID, $fields['custom'])) {
         return civicrm_api3_create_error('Invalid custom field ID');
@@ -981,7 +990,8 @@ function _civicrm_api3_deprecated_add_formatted_location_blocks(&$values, &$para
     $fields = array();
   }
 
-  foreach (array('Phone', 'Email', 'IM', 'OpenID') as $block) {
+  foreach (array(
+    'Phone', 'Email', 'IM', 'OpenID') as $block) {
     $name = strtolower($block);
     if (!array_key_exists($name, $values)) {
       continue;
@@ -1038,7 +1048,8 @@ function _civicrm_api3_deprecated_add_formatted_location_blocks(&$values, &$para
   }
   _civicrm_api3_store_values($fields['Address'], $values, $params['address'][$addressCnt]);
 
-  $addressFields = array('county', 'country', 'state_province',
+  $addressFields = array(
+    'county', 'country', 'state_province',
     'supplemental_address_1', 'supplemental_address_2',
     'StateProvince.name',
   );
@@ -1055,7 +1066,6 @@ function _civicrm_api3_deprecated_add_formatted_location_blocks(&$values, &$para
   if ($addressCnt == 1) {
 
     $params['address'][$addressCnt]['is_primary'] = TRUE;
-
   }
 
   return TRUE;
@@ -1116,6 +1126,7 @@ function _civicrm_api3_deprecated_duplicate_formatted_contact($params) {
 function _civicrm_api3_deprecated_validate_formatted_contact(&$params) {
   /* Look for offending email addresses */
 
+
   if (array_key_exists('email', $params)) {
     foreach ($params['email'] as $count => $values) {
       if (!is_array($values)) {
@@ -1136,6 +1147,7 @@ function _civicrm_api3_deprecated_validate_formatted_contact(&$params) {
   }
 
   /* Validate custom data fields */
+
 
   if (array_key_exists('custom', $params) && is_array($params['custom'])) {
     foreach ($params['custom'] as $key => $custom) {
@@ -1263,7 +1275,8 @@ function _civicrm_api3_deprecated_membership_format_params($params, &$values, $c
     // membership_end_date and membership_source. So, if $values contains
     // membership_start_date, membership_end_date  or membership_source,
     // convert it to start_date, end_date or source
-    $changes = array('membership_start_date' => 'start_date',
+    $changes = array(
+      'membership_start_date' => 'start_date',
       'membership_end_date' => 'end_date',
       'membership_source' => 'source',
     );
@@ -1345,7 +1358,8 @@ function _civicrm_api3_deprecated_participant_check_params($params, $checkDuplic
       );
 
       return civicrm_api3_create_error($error->pop(),
-        array('contactID' => $params['contact_id'],
+        array(
+          'contactID' => $params['contact_id'],
           'participantID' => $participantID,
         )
       );
@@ -1381,6 +1395,7 @@ function _civicrm_api3_deprecated_contact_check_custom_params($params, $csType =
   foreach ($params as $key => $value) {
     if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
       /* check if it's a valid custom field id */
+
 
       if (!array_key_exists($customFieldID, $customFields)) {
 

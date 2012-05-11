@@ -1,21 +1,20 @@
 <?php
-// $Id$
 
 
 
 /*
- This demonstrates use of the 'format.is_success' param. 
+ This demonstrates use of the 'format.is_success' param.
     This param causes only the success or otherwise of the function to be returned as BOOLEAN
  */
-function contact_create_example() {
-  $params = array(
-    'version' => 3,
-    'id' => 500,
-    'format.is_success' => 1,
-  );
+function contact_create_example(){
+$params = array( 
+  'version' => 3,
+  'id' => 500,
+  'format.is_success' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('contact', 'create', $params);
+  $result = civicrm_api( 'contact','create',$params );
 
   return $result;
 }
@@ -23,11 +22,11 @@ function contact_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function contact_create_expectedresult() {
+function contact_create_expectedresult(){
 
   $expectedResult = 0;
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -46,4 +45,3 @@ function contact_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

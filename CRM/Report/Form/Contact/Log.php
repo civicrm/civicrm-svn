@@ -41,20 +41,25 @@ class CRM_Report_Form_Contact_Log extends CRM_Report_Form {
     $this->activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, TRUE);
     asort($this->activityTypes);
 
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Modified By'),
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Modified By'),
             'type' => CRM_Utils_Type::T_STRING,
           ),
@@ -62,20 +67,24 @@ class CRM_Report_Form_Contact_Log extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_contact_touched' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name_touched' =>
+        array(
+          'sort_name_touched' =>
           array('title' => ts('Touched Contact'),
             'name' => 'sort_name',
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name_touched' =>
+        array(
+          'sort_name_touched' =>
           array('title' => ts('Touched Contact'),
             'name' => 'sort_name',
             'type' => CRM_Utils_Type::T_STRING,
@@ -84,7 +93,8 @@ class CRM_Report_Form_Contact_Log extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_activity' =>
-      array('dao' => 'CRM_Activity_DAO_Activity',
+      array(
+        'dao' => 'CRM_Activity_DAO_Activity',
         'fields' =>
         array('id' => array('title' => ts('Activity ID'),
             'no_display' => TRUE,
@@ -96,15 +106,18 @@ class CRM_Report_Form_Contact_Log extends CRM_Report_Form {
           'activity_type_id' => array('title' => ts('Activity Type'),
             'required' => TRUE,
           ),
-          'source_contact_id' => array('no_display' => TRUE,
+          'source_contact_id' => array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
       ),
       'civicrm_log' =>
-      array('dao' => 'CRM_Core_DAO_Log',
+      array(
+        'dao' => 'CRM_Core_DAO_Log',
         'fields' =>
-        array('modified_date' =>
+        array(
+          'modified_date' =>
           array('title' => ts('Modified Date'),
             'required' => TRUE,
           ),
@@ -113,7 +126,8 @@ class CRM_Report_Form_Contact_Log extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('modified_date' =>
+        array(
+          'modified_date' =>
           array('title' => ts('Modified Date'),
             'operatorType' => CRM_Report_Form::OP_DATE,
             'type' => CRM_Utils_Type::T_DATE,

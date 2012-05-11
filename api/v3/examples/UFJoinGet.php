@@ -1,21 +1,20 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function uf_join_get_example() {
-  $params = array(
-    'entity_table' => 'civicrm_contribution_page',
-    'entity_id' => 1,
-    'version' => 3,
-    'sequential' => 1,
-  );
+function uf_join_get_example(){
+$params = array( 
+  'entity_table' => 'civicrm_contribution_page',
+  'entity_id' => 1,
+  'version' => 3,
+  'sequential' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('uf_join', 'get', $params);
+  $result = civicrm_api( 'uf_join','get',$params );
 
   return $result;
 }
@@ -23,27 +22,27 @@ function uf_join_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function uf_join_get_expectedresult() {
+function uf_join_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '0' => array(
-        'id' => '1',
-        'is_active' => '1',
-        'module' => 'CiviContribute',
-        'entity_table' => 'civicrm_contribution_page',
-        'entity_id' => '1',
-        'weight' => '1',
-        'uf_group_id' => '11',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '0' => array( 
+          'id' => '1',
+          'is_active' => '1',
+          'module' => 'CiviContribute',
+          'entity_table' => 'civicrm_contribution_page',
+          'entity_id' => '1',
+          'weight' => '1',
+          'uf_group_id' => '11',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -62,4 +61,3 @@ function uf_join_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

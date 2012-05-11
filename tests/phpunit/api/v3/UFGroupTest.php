@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -55,7 +56,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase {
         'civicrm_contact',
         'civicrm_uf_group',
         'civicrm_uf_join',
-        'civicrm_uf_match'
+        'civicrm_uf_match',
       )
     );
 
@@ -145,7 +146,7 @@ class api_v3_UFGroupTest extends CiviUnitTestCase {
         'civicrm_contact',
         'civicrm_uf_group',
         'civicrm_uf_join',
-        'civicrm_uf_match'
+        'civicrm_uf_match',
       )
     );
   }

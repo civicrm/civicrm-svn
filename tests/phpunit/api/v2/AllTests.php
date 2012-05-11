@@ -1,10 +1,11 @@
-<?php  // vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
+<?php
+// vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
 
 /**
  *  File for the api_v2_AllTests class
  *
  *  (PHP 5)
- *  
+ *
  *   @author Walt Haas <walt@dharmatech.org> (801) 534-1262
  *   @copyright Copyright CiviCRM LLC (C) 2009
  *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
@@ -39,30 +40,28 @@ require_once 'CiviTest/CiviTestSuite.php';
  *
  *  @package   CiviCRM
  */
-class api_v2_AllTests extends CiviTestSuite
-{
-    private static $instance = null;
+class api_v2_AllTests extends CiviTestSuite {
+  private static $instance = NULL;
 
-    /**
-     *
-     */
-    private static function getInstance()
-    {
-        if ( is_null( self::$instance ) ) {
-            self::$instance = new self;
-        }
-        return self::$instance;
+  /**
+   *
+   */
+  private static function getInstance() {
+    if (is_null(self::$instance)) {
+      self::$instance = new self;
     }
+    return self::$instance;
+  }
 
-    /**
-     *  Build test suite dynamically
-     */
-    public static function suite()
-    {
-        $inst = self::getInstance( );
-        return $inst->implSuite( __FILE__ );
-    } 
-} // class api_v2_AllTests
+  /**
+   *  Build test suite dynamically
+   */
+  public static function suite() {
+    $inst = self::getInstance();
+    return $inst->implSuite(__FILE__);
+  }
+}
+// class api_v2_AllTests
 
 // -- set Emacs parameters --
 // Local variables:
@@ -72,3 +71,4 @@ class api_v2_AllTests extends CiviTestSuite
 // c-hanging-comment-ender-p: nil
 // indent-tabs-mode: nil
 // End:
+

@@ -36,17 +36,21 @@
  */
 class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
   function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'grouping' => 'contact-fields',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'no_repeat' => TRUE,
             'default' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
@@ -61,16 +65,19 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
           ),
         ),
         'group_bys' =>
-        array('id' =>
+        array(
+          'id' =>
           array('title' => ts('Contact'),
             'default' => TRUE,
           ),
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
             'no_repeat' => TRUE,
           ),
@@ -78,9 +85,11 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
-        array('phone' =>
+        array(
+          'phone' =>
           array('title' => ts('Phone'),
             'no_repeat' => TRUE,
           ),
@@ -88,16 +97,19 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'grouping' => 'contact-fields',
         'fields' =>
-        array('country_id' =>
+        array(
+          'country_id' =>
           array('title' => ts('Country')),
           'state_province_id' =>
           array('title' => ts('State/Province')),
         ),
         'group_bys' =>
-        array('country_id' =>
+        array(
+          'country_id' =>
           array('title' => ts('Country')),
           'state_province_id' =>
           array('title' => ts('State/Province'),
@@ -105,22 +117,28 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         ),
       ),
       'civicrm_contribution_type' =>
-      array('dao' => 'CRM_Contribute_DAO_ContributionType',
+      array(
+        'dao' => 'CRM_Contribute_DAO_ContributionType',
         'fields' =>
-        array('contribution_type' => NULL,
+        array(
+          'contribution_type' => NULL,
         ),
         'grouping' => 'contri-fields',
         'group_bys' =>
-        array('contribution_type' =>
+        array(
+          'contribution_type' =>
           array('name' => 'id'),
         ),
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
-        array('contribution_source' => NULL,
+        array(
+          'contribution_source' => NULL,
           'total_amount1' =>
-          array('name' => 'total_amount',
+          array(
+            'name' => 'total_amount',
             'alias' => 'contribution1',
             'title' => ts('Range One Stat'),
             'type' => CRM_Utils_Type::T_MONEY,
@@ -131,7 +149,8 @@ contribution_civireport1.total_amount_count as contribution1_total_amount_count,
 contribution_civireport1.total_amount_sum as contribution1_total_amount_sum',
           ),
           'total_amount2' =>
-          array('name' => 'total_amount',
+          array(
+            'name' => 'total_amount',
             'alias' => 'contribution2',
             'title' => ts('Range Two Stat'),
             'type' => CRM_Utils_Type::T_MONEY,
@@ -187,11 +206,14 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
         array('contribution_source' => NULL),
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_GroupContact',
+      array(
+        'dao' => 'CRM_Contact_DAO_GroupContact',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -227,23 +249,33 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
 
     /*         if ( array_key_exists('country_id', $this->_params['group_bys']) ) { */
 
+
     /*             $this->_columns['civicrm_contribution']['fields']['total_amount1']['clause'] = ' */
+
 
     /* SUM(contribution1_total_amount_count) as contribution1_total_amount_count, */
 
+
     /* SUM(contribution1_total_amount_sum)   as contribution1_total_amount_sum'; */
+
 
     /*             $this->_columns['civicrm_contribution']['fields']['total_amount2']['clause'] = ' */
 
+
     /* SUM(contribution2_total_amount_count) as contribution2_total_amount_count, */
+
 
     /* SUM(contribution2_total_amount_sum)   as contribution2_total_amount_sum'; */
 
+
     /*             $this->_columns['civicrm_contribution']['fields']['total_amount1']['clause'] = ''; */
+
 
     /*             $this->_columns['civicrm_contribution']['fields']['total_amount2']['clause'] = ''; */
 
+
     /*         } */
+
 
 
     foreach ($this->_columns as $tableName => $table) {
@@ -301,7 +333,9 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
       // Set default sort order
       /*             if(count($this->_params['group_bys']) == 1 && !empty($this->_params['group_bys']['id'])) { */
 
+
       /*               $this->_groupBy .= ' ORDER BY contact_civireport.sort_name'; */
+
 
       /*             } */
     }
@@ -414,7 +448,8 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
 
     $errors = $checkDate = $errorCount = array();
 
-    $rules = array('id' => array('sort_name', 'email', 'phone',
+    $rules = array(
+      'id' => array('sort_name', 'email', 'phone',
         'state_province_id', 'country_id',
       ),
       'country_id' => array('country_id'),
@@ -422,7 +457,8 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
       'contribution_source' => array('contribution_source'),
       'contribution_type' => array('contribution_type'),
     );
-    $idMapping = array('id' => 'Contact',
+    $idMapping = array(
+      'id' => 'Contact',
       'country_id' => 'Country',
       'state_province_id' => 'State/Province',
       'contribution_source' => 'Contribution Source',
@@ -646,7 +682,8 @@ total_amount_count int
         $rows[$uid]['contribution2_total_amount_sum'] = $row['contribution2_total_amount_sum'] . " ({$row['contribution2_total_amount_count']})";
       }
     }
-    $this->_columnHeaders['change'] = array('title' => '% Change',
+    $this->_columnHeaders['change'] = array(
+      'title' => '% Change',
       'type' => CRM_Utils_Type::T_INT,
     );
 

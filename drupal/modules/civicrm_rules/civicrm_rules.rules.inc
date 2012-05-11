@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -42,55 +41,57 @@ require_once 'civicrm_rules.participant-eval.inc';
 /**
  * Implements hook_rules_file_info() on behalf of the user module.
  */
-function civicrm_rules_rules_file_info( ) {
-    return array( 'civicrm_rules.contact-eval', 
-                  'civicrm_rules.mailing-eval', 
-                  'civicrm_rules.event-eval', 
-                  'civicrm_rules.participant-eval' );
+function civicrm_rules_rules_file_info() {
+  return array(
+    'civicrm_rules.contact-eval',
+    'civicrm_rules.mailing-eval',
+    'civicrm_rules.event-eval',
+    'civicrm_rules.participant-eval',
+  );
 }
 
 /**
  * Implementation of hook_rules_event_info().
  */
-function civicrm_rules_rules_event_info( ) {
-    require_once 'civicrm_rules_event.inc';
-    return civicrm_rules_get_event( );
+function civicrm_rules_rules_event_info() {
+  require_once 'civicrm_rules_event.inc';
+  return civicrm_rules_get_event();
 }
 
 function civicrm_rules_rules_condition_info() {
-    require_once 'civicrm_rules_condition.inc';
-    return civicrm_rules_get_condition( );
+  require_once 'civicrm_rules_condition.inc';
+  return civicrm_rules_get_condition();
 }
 
 /**
  * CiviCRM integration access callback.
  */
-function civicrm_rules_rules_integration_access( $type, $name ) {
-    if ($type == 'event' || $type == 'condition') {
-        return entity_access( 'access', 'civicrm' );
-    }
+function civicrm_rules_rules_integration_access($type, $name) {
+  if ($type == 'event' || $type == 'condition') {
+    return entity_access('access', 'civicrm');
+  }
 }
 
 /**
  * CiviCRM integration admin access callback.
  */
-function civicrm_rules_rules_admin_access( ) {
-    return user_access( 'administer civicrm' );
+function civicrm_rules_rules_admin_access() {
+  return user_access('administer civicrm');
 }
 
 /**
  * Implementation of hook_rules_action_info().
  */
-function civicrm_rules_rules_action_info( ) {
-    require_once 'civicrm_rules_action.inc';
-    return civicrm_rules_get_action( );
+function civicrm_rules_rules_action_info() {
+  require_once 'civicrm_rules_action.inc';
+  return civicrm_rules_get_action();
 }
 
 /**
  * Implementation of hook_rules_data_type_info().
  */
 function civicrm_rules_rules_data_info() {
-    require_once 'civicrm_rules_entity.inc';
-    return civicrm_rules_get_entity( );
+  require_once 'civicrm_rules_entity.inc';
+  return civicrm_rules_get_entity();
 }
 

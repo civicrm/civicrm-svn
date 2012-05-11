@@ -34,8 +34,7 @@
  * $Id$
  *
  */
-
-  interface CRM_Report_Interface {
+interface CRM_Report_Interface {
 
   /**
    * The constructor gets the submitted form values

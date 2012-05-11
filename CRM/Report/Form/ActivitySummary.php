@@ -40,10 +40,13 @@ class CRM_Report_Form_ActivitySummary extends CRM_Report_Form {
   protected $_phoneField = FALSE; function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('id' =>
-          array('required' => TRUE,
+        array(
+          'id' =>
+          array(
+            'required' => TRUE,
             'no_display' => TRUE,
           ),
           'sort_name' =>
@@ -53,62 +56,76 @@ class CRM_Report_Form_ActivitySummary extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
           ),
         ),
         'group_bys' =>
-        array('sort_name' =>
-          array('name' => 'id',
+        array(
+          'sort_name' =>
+          array(
+            'name' => 'id',
             'title' => ts('Contact'),
             'default' => TRUE,
           ),
         ),
         'order_bys' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name')),
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
-          array('title' => 'Email',
+        array(
+          'email' =>
+          array(
+            'title' => 'Email',
             'default' => TRUE,
           ),
         ),
         'order_bys' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email')),
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('phone' =>
+        array(
+          'phone' =>
           array('title' => 'Phone'),
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_activity' =>
-      array('dao' => 'CRM_Activity_DAO_Activity',
+      array(
+        'dao' => 'CRM_Activity_DAO_Activity',
         'fields' =>
-        array('activity_type_id' =>
+        array(
+          'activity_type_id' =>
           array('title' => ts('Activity Type'),
             'default' => TRUE,
             'type' => CRM_Utils_Type::T_STRING,
           ),
           'duration' =>
-          array('title' => 'Duration',
+          array(
+            'title' => 'Duration',
             'statistics' =>
             array(
               'sum' => ts('Total Duration'),
             ),
           ),
           'id' =>
-          array('title' => 'Total Activities',
+          array(
+            'title' => 'Total Activities',
             'required' => TRUE,
             'statistics' =>
             array(
@@ -117,7 +134,8 @@ class CRM_Report_Form_ActivitySummary extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('activity_date_time' =>
+        array(
+          'activity_date_time' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
           'activity_type_id' =>
           array('title' => ts('Activity Type'),
@@ -147,7 +165,8 @@ class CRM_Report_Form_ActivitySummary extends CRM_Report_Form {
           ),
         ),
         'order_bys' =>
-        array('activity_date_time' =>
+        array(
+          'activity_date_time' =>
           array('title' => ts('Activity Date')),
           'activity_type_id' =>
           array('title' => ts('Activity Type')),

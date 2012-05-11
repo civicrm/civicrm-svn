@@ -1,21 +1,20 @@
 <?php
-// $Id$
 
 
 
 /*
  Create a campaign - Note use of relative dates here http://www.php.net/manual/en/datetime.formats.relative.php
  */
-function campaign_create_example() {
-  $params = array(
-    'version' => 3,
-    'title' => 'campaign title',
-    'description' => 'Call people, ask for money',
-    'created_date' => 'first sat of July 2008',
-  );
+function campaign_create_example(){
+$params = array( 
+  'version' => 3,
+  'title' => 'campaign title',
+  'description' => 'Call people, ask for money',
+  'created_date' => 'first sat of July 2008',
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('campaign', 'create', $params);
+  $result = civicrm_api( 'campaign','create',$params );
 
   return $result;
 }
@@ -23,37 +22,37 @@ function campaign_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function campaign_create_expectedresult() {
+function campaign_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'id' => 1,
-        'name' => 'campaign_title',
-        'title' => 'campaign title',
-        'description' => 'Call people, ask for money',
-        'start_date' => '',
-        'end_date' => '',
-        'campaign_type_id' => '',
-        'status_id' => '',
-        'external_identifier' => '',
-        'parent_id' => '',
-        'is_active' => '',
-        'created_id' => '',
-        'created_date' => '20080705000000',
-        'last_modified_id' => '',
-        'last_modified_date' => '',
-        'goal_general' => '',
-        'goal_revenue' => '',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => 1,
+          'name' => 'campaign_title',
+          'title' => 'campaign title',
+          'description' => 'Call people, ask for money',
+          'start_date' => '',
+          'end_date' => '',
+          'campaign_type_id' => '',
+          'status_id' => '',
+          'external_identifier' => '',
+          'parent_id' => '',
+          'is_active' => '',
+          'created_id' => '',
+          'created_date' => '20080705000000',
+          'last_modified_id' => '',
+          'last_modified_date' => '',
+          'goal_general' => '',
+          'goal_revenue' => '',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -72,4 +71,3 @@ function campaign_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

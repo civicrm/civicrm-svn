@@ -46,7 +46,7 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
 
     $config = CRM_Core_Config::singleton();
     $campaignEnabled = in_array("CiviCampaign", $config->enableComponents);
-    if ( $campaignEnabled ) {
+    if ($campaignEnabled) {
       $getCampaigns = CRM_Campaign_BAO_Campaign::getPermissionedCampaigns(NULL, NULL, TRUE, FALSE, TRUE);
       $this->activeCampaigns = $getCampaigns['campaigns'];
       asort($this->activeCampaigns);
@@ -54,7 +54,8 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
 
     $this->_columns = array(
       'civicrm_contact_household' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
         array(
           'household_name' =>
@@ -62,7 +63,8 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
@@ -74,7 +76,8 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
         'grouping' => 'household-fields',
       ),
       'civicrm_relationship' =>
-      array('dao' => 'CRM_Contact_DAO_Relationship',
+      array(
+        'dao' => 'CRM_Contact_DAO_Relationship',
         'fields' =>
         array(
           'relationship_type_id' =>
@@ -82,7 +85,8 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('relationship_type_id' =>
+        array(
+          'relationship_type_id' =>
           array(
             'title' => ts('Relationship Type'),
             'type' => CRM_Utils_Type::T_INT,
@@ -94,21 +98,25 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
         'grouping' => 'household-fields',
       ),
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
         array('total_amount' => array('title' => ts('Amount'),
             'required' => TRUE,
@@ -117,7 +125,8 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
             'no_display' => TRUE,
             'required' => TRUE,
           ),
-          'contribution_status_id' => array('title' => 'Contribution Status',
+          'contribution_status_id' => array(
+            'title' => 'Contribution Status',
             'default' => TRUE,
           ),
           'trxn_id' => NULL,
@@ -125,7 +134,8 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
           'receipt_date' => NULL,
         ),
         'filters' =>
-        array('receive_date' =>
+        array(
+          'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
           'total_amount' =>
           array('title' => ts('Amount Between')),
@@ -139,9 +149,11 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
         'grouping' => 'contri-fields',
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'fields' =>
-        array('street_address' => NULL,
+        array(
+          'street_address' => NULL,
           'city' => NULL,
           'postal_code' => NULL,
           'state_province_id' =>
@@ -154,15 +166,17 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
         array('email' => NULL),
         'grouping' => 'contact-fields',
       ),
     );
 
-    if ( $campaignEnabled && !empty($this->activeCampaigns) ) {
-      $this->_columns['civicrm_contribution']['fields']['campaign_id'] = array('title' => 'Campaign',
+    if ($campaignEnabled && !empty($this->activeCampaigns)) {
+      $this->_columns['civicrm_contribution']['fields']['campaign_id'] = array(
+        'title' => 'Campaign',
         'default' => 'false',
       );
       $this->_columns['civicrm_contribution']['filters']['campaign_id'] = array('title' => ts('Campaign'),
@@ -475,7 +489,8 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
 
       // Contribution amount links to view contribution
       if (($value = CRM_Utils_Array::value('civicrm_contribution_total_amount', $row)) &&
-        CRM_Core_Permission::check('access CiviContribute') ) {
+        CRM_Core_Permission::check('access CiviContribute')
+      ) {
         $url = CRM_Utils_System::url("civicrm/contact/view/contribution",
           "reset=1&id=" . $row['civicrm_contribution_id'] . "&cid=" . $row['civicrm_contact_id'] . "&action=view&context=contribution&selectedChild=contribute",
           $this->_absoluteUrl

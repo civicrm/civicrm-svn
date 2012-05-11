@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -159,9 +160,11 @@ function civicrm_relationship_update($params) {
         * (CRM-6905) the relationship is retrieved with a direct query
         */
 
+
     civicrm_verify_mandatory($params, 'CRM_Contact_DAO_Relationship', array('relationship_id'));
 
-    $names = array('id', 'contact_id_a', 'contact_id_b',
+    $names = array(
+      'id', 'contact_id_a', 'contact_id_b',
       'relationship_type_id', 'start_date', 'end_date', 'is_active',
       'description', 'is_permission_a_b', 'is_permission_b_a', 'case_id',
     );
@@ -414,7 +417,8 @@ function _civicrm_relationship_format_params(&$params, &$values) {
  * @access private
  */
 function _civicrm_relationship_check_params(&$params) {
-  static $required = array('contact_id_a' => NULL,
+  static $required = array(
+    'contact_id_a' => NULL,
     'contact_id_b' => NULL,
     'relationship_type_id' => 'relationship_type',
   );

@@ -29,16 +29,16 @@
  * @ingroup civicrm_field_handlers
  */
 class civicrm_handler_field_money extends views_handler_field {
-
-  function construct( ) {
-      if ( ! civicrm_initialize( ) ) {
-          return;
-      }
-      require_once 'CRM/Utils/Money.php';
+  function construct() {
+    if (!civicrm_initialize()) {
+      return;
+    }
+    require_once 'CRM/Utils/Money.php';
   }
 
   function render($values) {
-      return CRM_Utils_Money::format( $values->{$this->field_alias} );
-  } 
+    return CRM_Utils_Money::format($values->{$this->field_alias});
+  }
 }
-?>
+
+

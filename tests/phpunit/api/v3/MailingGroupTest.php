@@ -82,7 +82,8 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase {
    * Test civicrm_mailing_group_event_subscribe with given contact ID.
    */
   public function testMailerGroupSubscribeGivenContactId() {
-    $params = array('first_name' => 'Test',
+    $params = array(
+      'first_name' => 'Test',
       'last_name' => 'Test',
       'email' => $this->_email,
       'contact_type' => 'Individual',
@@ -140,7 +141,7 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase {
       'time_stamp' => '20101212121212',
     );
 
-    $result = &civicrm_api('mailing_event_unsubscribe','create', $params);
+    $result = &civicrm_api('mailing_event_unsubscribe', 'create', $params);
     $this->assertEquals($result['is_error'], 1, 'In line ' . __LINE__);
     $this->assertEquals($result['error_message'], 'Domain Queue event could not be found', 'In line ' . __LINE__);
   }
@@ -175,7 +176,8 @@ class api_v3_MailingGroupTest extends CiviUnitTestCase {
    * Test civicrm_mailing_group_event_subscribe and civicrm_mailing_event_confirm functions - success expected.
    */
   public function testMailerProcess() {
-    $params = array('first_name' => 'Test',
+    $params = array(
+      'first_name' => 'Test',
       'last_name' => 'Test',
       'email' => $this->_email,
       'contact_type' => 'Individual',

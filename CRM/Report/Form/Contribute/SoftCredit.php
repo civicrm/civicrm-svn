@@ -40,14 +40,18 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
   protected $_emailFieldCredit = FALSE;
   protected $_phoneField = FALSE;
   protected $_phoneFieldCredit = FALSE;
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   ); function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('display_name_creditor' =>
+        array(
+          'display_name_creditor' =>
           array('title' => ts('Soft Credit Name'),
             'name' => 'sort_name',
             'alias' => 'contact_civireport',
@@ -78,9 +82,11 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email_creditor' =>
+        array(
+          'email_creditor' =>
           array('title' => ts('Soft Credit Email'),
             'name' => 'email',
             'alias' => 'emailcredit',
@@ -96,9 +102,11 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
-        array('phone_creditor' =>
+        array(
+          'phone_creditor' =>
           array('title' => ts('Soft Credit Phone'),
             'name' => 'phone',
             'alias' => 'pcredit',
@@ -114,13 +122,17 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_contribution_type' =>
-      array('dao' => 'CRM_Contribute_DAO_ContributionType',
+      array(
+        'dao' => 'CRM_Contribute_DAO_ContributionType',
         'fields' =>
-        array('contribution_type' => NULL,
+        array(
+          'contribution_type' => NULL,
         ),
         'filters' =>
-        array('id' =>
-          array('name' => 'id',
+        array(
+          'id' =>
+          array(
+            'name' => 'id',
             'title' => ts('Contribution Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Contribute_PseudoConstant::contributionType(),
@@ -129,9 +141,11 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         'grouping' => 'softcredit-fields',
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
-        array('contribution_source' => NULL,
+        array(
+          'contribution_source' => NULL,
           'total_amount' =>
           array('title' => ts('Amount Statistics'),
             'default' => TRUE,
@@ -144,7 +158,8 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         ),
         'grouping' => 'softcredit-fields',
         'filters' =>
-        array('receive_date' =>
+        array(
+          'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
           'contribution_status_id' =>
           array('title' => ts('Donation Status'),
@@ -158,26 +173,32 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         ),
       ),
       'civicrm_contribution_soft' =>
-      array('dao' => 'CRM_Contribute_DAO_ContributionSoft',
+      array(
+        'dao' => 'CRM_Contribute_DAO_ContributionSoft',
         'fields' =>
-        array('contribution_id' =>
+        array(
+          'contribution_id' =>
           array('title' => ts('Contribution ID'),
             'no_display' => TRUE,
             'default' => TRUE,
           ),
           'id' =>
-          array('default' => TRUE,
+          array(
+            'default' => TRUE,
             'no_display' => TRUE,
           ),
         ),
         'grouping' => 'softcredit-fields',
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_GroupContact',
+      array(
+        'dao' => 'CRM_Contact_DAO_GroupContact',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Soft Credit Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -362,14 +383,17 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
     $dao = CRM_Core_DAO::executeQuery($sql);
 
     if ($dao->fetch()) {
-      $statistics['counts']['amount'] = array('value' => $dao->amount,
+      $statistics['counts']['amount'] = array(
+        'value' => $dao->amount,
         'title' => 'Total Amount',
         'type' => CRM_Utils_Type::T_MONEY,
       );
-      $statistics['counts']['count '] = array('value' => $dao->count,
+      $statistics['counts']['count '] = array(
+        'value' => $dao->count,
         'title' => 'Total Donations',
       );
-      $statistics['counts']['avg   '] = array('value' => $dao->avg,
+      $statistics['counts']['avg   '] = array(
+        'value' => $dao->avg,
         'title' => 'Average',
         'type' => CRM_Utils_Type::T_MONEY,
       );

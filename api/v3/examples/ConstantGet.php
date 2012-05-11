@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function constant_get_example() {
-  $params = array(
-    'name' => 'locationType',
-    'version' => 3,
-  );
+function constant_get_example(){
+$params = array( 
+  'name' => 'locationType',
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('constant', 'get', $params);
+  $result = civicrm_api( 'constant','get',$params );
 
   return $result;
 }
@@ -21,21 +20,22 @@ function constant_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function constant_get_expectedresult() {
+function constant_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 4,
-    'values' => array(
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 5,
+  'values' => array( 
       '5' => 'Billing',
       '1' => 'Home',
       '3' => 'Main',
+      '4' => 'Other',
       '2' => 'Work',
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -54,4 +54,3 @@ function constant_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

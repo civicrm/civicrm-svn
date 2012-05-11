@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -52,7 +53,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
         'civicrm_contact',
         'civicrm_uf_group',
         'civicrm_uf_join',
-        'civicrm_uf_match'
+        'civicrm_uf_match',
       )
     );
     $op = new PHPUnit_Extensions_Database_Operation_Insert;
@@ -70,7 +71,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
         'civicrm_contact',
         'civicrm_uf_group',
         'civicrm_uf_join',
-        'civicrm_uf_match'
+        'civicrm_uf_match',
       )
     );
   }
@@ -79,7 +80,8 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
    * fetch contact id by uf id
    */
   public function testGetUFMatchID() {
-    $params = array('uf_id' => 42,
+    $params = array(
+      'uf_id' => 42,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('uf_match', 'get', $params);
@@ -97,7 +99,8 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
    * fetch uf id by contact id
    */
   public function testGetUFID() {
-    $params = array('contact_id' => 69,
+    $params = array(
+      'contact_id' => 69,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('uf_match', 'get', $params);

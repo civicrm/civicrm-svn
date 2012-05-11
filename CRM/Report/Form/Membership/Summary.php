@@ -38,27 +38,33 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   ); function __construct() {
     // UI for selecting columns to appear in the report list
     // array conatining the columns, group_bys and filters build and provided to Form
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Member Name'),
             'no_repeat' => TRUE,
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'group_bys' =>
-        array('id' =>
+        array(
+          'id' =>
           array('title' => ts('Contact ID')),
           'display_name' =>
           array('title' => ts('Contact Name'),
@@ -67,11 +73,14 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_membership_type' =>
-      array('dao' => 'CRM_Member_DAO_MembershipType',
+      array(
+        'dao' => 'CRM_Member_DAO_MembershipType',
         'grouping' => 'member-fields',
         'filters' =>
-        array('gid' =>
-          array('name' => 'id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'id',
             'title' => ts('Membership Types'),
             'type' => CRM_Utils_Type::T_INT + CRM_Utils_Type::T_ENUM,
             'options' => CRM_Member_PseudoConstant::membershipType(),
@@ -79,11 +88,14 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
         ),
       ),
       'civicrm_membership' =>
-      array('dao' => 'CRM_Member_DAO_Membership',
+      array(
+        'dao' => 'CRM_Member_DAO_Membership',
         'grouping' => 'member-fields',
         'fields' =>
-        array('membership_type_id' =>
-          array('title' => 'Membership Type',
+        array(
+          'membership_type_id' =>
+          array(
+            'title' => 'Membership Type',
             'required' => TRUE,
           ),
           'join_date' => NULL,
@@ -93,18 +105,22 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
           ),
         ),
         'group_bys' =>
-        array('membership_type_id' =>
+        array(
+          'membership_type_id' =>
           array('title' => ts('Membership Type')),
         ),
         'filters' =>
-        array('join_date' =>
+        array(
+          'join_date' =>
           array('type' => CRM_Utils_Type::T_DATE),
         ),
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'fields' =>
-        array('street_address' => NULL,
+        array(
+          'street_address' => NULL,
           'city' => NULL,
           'postal_code' => NULL,
           'state_province_id' =>
@@ -118,15 +134,18 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
         array('email' => NULL),
         'grouping' => 'contact-fields',
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'filters' =>
-        array('total_amount' =>
+        array(
+          'total_amount' =>
           array('title' => ts('Contribution Amount'),
           ),
         ),
@@ -328,7 +347,8 @@ LEFT  JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
     $this->assign('statistics', $this->statistics($rows));
 
     if (CRM_Utils_Array::value('charts', $this->_params)) {
-      foreach (array('receive_date', $this->_interval, 'value') as $ignore) {
+      foreach (array(
+        'receive_date', $this->_interval, 'value') as $ignore) {
         unset($graphRows[$ignore][$count - 1]);
       }
 

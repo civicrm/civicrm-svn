@@ -107,13 +107,11 @@ function civicrm_relationship_type_create($params) {
   if (!isset($params['label_a_b'])) {
 
     $params['label_a_b'] = $params['name_a_b'];
-
   }
 
   if (!isset($params['label_b_a'])) {
 
     $params['label_b_a'] = $params['name_b_a'];
-
   }
 
   require_once 'CRM/Utils/Rule.php';

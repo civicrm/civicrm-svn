@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,15 +32,13 @@
  * $Id$
  *
  */
-
-
 class CRM_Mailing_Config extends CRM_Core_Component_Config {
 
-    /**
-     * What should be the verp separator we use
-     *
-     * @var char
-     */
+  /**
+   * What should be the verp separator we use
+   *
+   * @var char
+   */
   public $verpSeparator = '.';
 
   /**
@@ -49,7 +46,7 @@ class CRM_Mailing_Config extends CRM_Core_Component_Config {
    *
    * @var int
    */
-  public $mailerPeriod    = 180;
+  public $mailerPeriod = 180;
 
   /**
    * TODO
@@ -85,7 +82,6 @@ class CRM_Mailing_Config extends CRM_Core_Component_Config {
    *
    * @var int
    */
-  public  $mailThrottleTime = 0;
+  public $mailThrottleTime = 0;
 }
-
 

@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function option_group_get_example() {
-  $params = array(
-    'name' => 'preferred_communication_method',
-    'version' => 3,
-  );
+function option_group_get_example(){
+$params = array( 
+  'name' => 'preferred_communication_method',
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('option_group', 'get', $params);
+  $result = civicrm_api( 'option_group','get',$params );
 
   return $result;
 }
@@ -21,25 +20,25 @@ function option_group_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function option_group_get_expectedresult() {
+function option_group_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'id' => '1',
-        'name' => 'preferred_communication_method',
-        'title' => 'Preferred Communication Method',
-        'is_reserved' => '1',
-        'is_active' => '1',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'name' => 'preferred_communication_method',
+          'title' => 'Preferred Communication Method',
+          'is_reserved' => '1',
+          'is_active' => '1',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -58,4 +57,3 @@ function option_group_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

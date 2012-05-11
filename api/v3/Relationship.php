@@ -89,7 +89,8 @@ function civicrm_api3_relationship_create($params) {
   }
   CRM_Contact_BAO_Relationship::relatedMemberships($params['contact_id_a'], $values, $ids, $action);
   $relationID = $relationshipBAO[4][0];
-  return civicrm_api3_create_success(array($relationID => array('id' => $relationID,
+  return civicrm_api3_create_success(array(
+    $relationID => array('id' => $relationID,
         'moreIDs' => implode(',', $relationshipBAO[4]),
       )));
 }

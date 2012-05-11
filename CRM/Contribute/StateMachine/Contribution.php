@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -34,33 +33,30 @@
  *
  */
 
-
 /**
  * State machine for managing different states of the Import process.
  *
  */
 class CRM_Contribute_StateMachine_Contribution extends CRM_Core_StateMachine {
 
-    /**
-     * class constructor
-     *
-     * @param object  CRM_Import_Controller
-     * @param int     $action
-     *
-     * @return object CRM_Import_StateMachine
-     */
-    function __construct( $controller, $action = CRM_Core_Action::NONE ) {
-        parent::__construct( $controller, $action );
-        
-        $this->_pages = array(
-                              'CRM_Contribute_Form_Contribution_Main' => null,
-                              'CRM_Contribute_Form_Contribution_Confirm' => null,
-                              'CRM_Contribute_Form_Contribution_ThankYou' => null,
-                              );
-        
-        $this->addSequentialPages( $this->_pages, $action );
-    }
+  /**
+   * class constructor
+   *
+   * @param object  CRM_Import_Controller
+   * @param int     $action
+   *
+   * @return object CRM_Import_StateMachine
+   */
+  function __construct($controller, $action = CRM_Core_Action::NONE) {
+    parent::__construct($controller, $action);
 
+    $this->_pages = array(
+      'CRM_Contribute_Form_Contribution_Main' => NULL,
+      'CRM_Contribute_Form_Contribution_Confirm' => NULL,
+      'CRM_Contribute_Form_Contribution_ThankYou' => NULL,
+    );
+
+    $this->addSequentialPages($this->_pages, $action);
+  }
 }
-
 

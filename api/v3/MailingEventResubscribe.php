@@ -51,15 +51,15 @@
 function civicrm_api3_mailing_event_resubscribe_create($params) {
 
   $groups = CRM_Mailing_Event_BAO_Resubscribe::resub_to_mailing(
-    $params['job_id'], 
+    $params['job_id'],
     $params['event_queue_id'],
     $params['hash']
   );
 
   if (count($groups)) {
     CRM_Mailing_Event_BAO_Resubscribe::send_resub_response(
-      $params['event_queue_id'], 
-      $groups, FALSE, 
+      $params['event_queue_id'],
+      $groups, FALSE,
       $params['job_id']
     );
     return civicrm_api3_create_success($params);
@@ -77,3 +77,4 @@ function _civicrm_api3_mailing_event_resubscribe_create_spec(&$params) {
   $params['job_id']['api.required'] = 1;
   $params['hash']['api.required'] = 1;
 }
+

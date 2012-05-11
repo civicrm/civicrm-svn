@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -34,21 +33,15 @@
  *
  */
 
-
 /**
  * Page for displaying list of categories for Settings
  */
 class CRM_Admin_Page_Setting extends CRM_Core_Page {
+  function run() {
+    CRM_Core_Error::fatal('This page is deprecated. If you have followed a link or have been redirected here, please change link or redirect to Admin Console (/civicrm/admin?reset=1)');
+    CRM_Utils_System::setTitle(ts("Global Settings"));
 
-    function run() {
-        CRM_Core_Error::fatal( 'This page is deprecated. If you have followed a link or have been redirected here, please change link or redirect to Admin Console (/civicrm/admin?reset=1)' );
-        CRM_Utils_System::setTitle(ts("Global Settings"));
-        
-        return parent::run();
-    }   
+    return parent::run();
+  }
 }
-
-
-
-
 

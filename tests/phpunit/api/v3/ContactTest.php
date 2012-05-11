@@ -47,14 +47,13 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   protected $_entity;
   protected $_params;
   protected $_contributionTypeId;
-  
+
   /**
    *  Constructor
    *
    *  Initialize configuration
-   */
-  function __construct() {
-      parent::__construct();
+   */ function __construct() {
+    parent::__construct();
   }
 
   /**
@@ -79,7 +78,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
   function tearDown() {
     // truncate a few tables
-    $tablesToTruncate = array('civicrm_contact',
+    $tablesToTruncate = array(
+      'civicrm_contact',
       'civicrm_email',
       'civicrm_contribution',
       'civicrm_website',
@@ -350,7 +350,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $c1 = civicrm_api($this->_entity, 'create', $this->_params);
     $this->assertAPISuccess($c1, 'in line ' . __LINE__);
     $c2 = civicrm_api($this->_entity, 'create', array('version' => 3, 'first_name' => 'bb', 'last_name' => 'ccc', 'contact_type' => 'Individual'));
-    $result = civicrm_api($this->_entity, 'get', array('version' => 3,
+    $result = civicrm_api($this->_entity, 'get', array(
+      'version' => 3,
         'sort' => 'first_name ASC',
         'return.first_name' => 1,
         'sequential' => 1,
@@ -359,7 +360,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
 
     $this->assertEquals('abc1', $result['values'][0]['first_name']);
-    $result = civicrm_api($this->_entity, 'get', array('version' => 3,
+    $result = civicrm_api($this->_entity, 'get', array(
+      'version' => 3,
         'sort' => 'first_name DESC',
         'return.first_name' => 1,
         'sequential' => 1,
@@ -373,44 +375,54 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   /*
    * Test variants on deleted behaviour
    */
-    function testGetDeleted() {
-      $params = $this->_params;
-      $contact1 = civicrm_api('contact', 'create', $params);
-      $params['is_deleted'] = 1;
-      $params['last_name'] = 'bcd';
-      $contact2 = civicrm_api('contact', 'create', $params);
-      $countActive = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'active'));
-      $countAll = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'all'));
-      $countTrash = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'trash'));
-      $countDefault = civicrm_api('contact', 'getcount', array('version' => 3,));
-      $countDeleted = civicrm_api('contact', 'getcount', array('version' => 3,'contact_is_deleted' => 1,));
-      $countNotDeleted = civicrm_api('contact', 'getcount', array('version' => 3,'contact_is_deleted' => 0,));
-      civicrm_api('contact','delete',array('version' => 3, 'id' => $contact1['id']));
-      civicrm_api('contact','delete',array('version' => 3, 'id' => $contact2['id']));
-      $this->assertEquals(1, $countNotDeleted, 'contact_is_deleted => 0 is respected in line ' . __LINE__);
-      $this->assertEquals(1, $countActive, 'in line ' . __LINE__);
-      $this->assertEquals(1, $countTrash, 'in line ' . __LINE__);
-      $this->assertEquals(2, $countAll, 'in line ' . __LINE__);
-      $this->assertEquals(1, $countDeleted, 'in line ' . __LINE__);
-      $this->assertEquals(1, $countDefault, 'Only active by default in line ' . __LINE__);
-    }
+  function testGetDeleted() {
+    $params = $this->_params;
+    $contact1 = civicrm_api('contact', 'create', $params);
+    $params['is_deleted'] = 1;
+    $params['last_name'] = 'bcd';
+    $contact2 = civicrm_api('contact', 'create', $params);
+    $countActive = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'active'));
+    $countAll = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'all'));
+    $countTrash = civicrm_api('contact', 'getcount', array('version' => 3, 'showAll' => 'trash'));
+    $countDefault = civicrm_api('contact', 'getcount', array(
+      'version' => 3,
+      ));
+    $countDeleted = civicrm_api('contact', 'getcount', array(
+      'version' => 3, 'contact_is_deleted' => 1,
+      ));
+    $countNotDeleted = civicrm_api('contact', 'getcount', array(
+      'version' => 3, 'contact_is_deleted' => 0,
+      ));
+    civicrm_api('contact', 'delete', array('version' => 3, 'id' => $contact1['id']));
+    civicrm_api('contact', 'delete', array('version' => 3, 'id' => $contact2['id']));
+    $this->assertEquals(1, $countNotDeleted, 'contact_is_deleted => 0 is respected in line ' . __LINE__);
+    $this->assertEquals(1, $countActive, 'in line ' . __LINE__);
+    $this->assertEquals(1, $countTrash, 'in line ' . __LINE__);
+    $this->assertEquals(2, $countAll, 'in line ' . __LINE__);
+    $this->assertEquals(1, $countDeleted, 'in line ' . __LINE__);
+    $this->assertEquals(1, $countDefault, 'Only active by default in line ' . __LINE__);
+  }
   /*
      * Test that sort works - new syntax
      */
   function testGetSortNewSYntax() {
     $c1     = civicrm_api($this->_entity, 'create', $this->_params);
     $c2     = civicrm_api($this->_entity, 'create', array('version' => 3, 'first_name' => 'bb', 'last_name' => 'ccc', 'contact_type' => 'Individual'));
-    $result = civicrm_api($this->_entity, 'getvalue', array('version' => 3,
+    $result = civicrm_api($this->_entity, 'getvalue', array(
+      'version' => 3,
         'return' => 'first_name',
-        'options' => array('limit' => 1,
+        'options' => array(
+          'limit' => 1,
           'sort' => 'first_name',
         ),
       ));
     $this->assertEquals('abc1', $result, 'in line' . __LINE__);
 
-    $result = civicrm_api($this->_entity, 'getvalue', array('version' => 3,
+    $result = civicrm_api($this->_entity, 'getvalue', array(
+      'version' => 3,
         'return' => 'first_name',
-        'options' => array('limit' => 1,
+        'options' => array(
+          'limit' => 1,
           'sort' => 'first_name DESC',
         ),
       ));
@@ -485,7 +497,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
     $contact = &civicrm_api('contact', 'create', $params);
     // testing as integer
-    $params = array('filter.group_id' => $groupId,
+    $params = array(
+      'filter.group_id' => $groupId,
       'version' => $this->_apiversion,
       'contact_type' => 'Individual',
     );
@@ -493,21 +506,24 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
     $this->assertEquals(1, $result['count']);
     // group 26 doesn't exist, but we can still search contacts in it.
-    $params = array('filter.group_id' => 26,
+    $params = array(
+      'filter.group_id' => 26,
       'version' => $this->_apiversion,
       'contact_type' => 'Individual',
     );
     $result = civicrm_api('contact', 'get', $params);
     $this->assertEquals(0, $result['count'], " in line " . __LINE__);
     // testing as string
-    $params = array('filter.group_id' => "$groupId,26",
+    $params = array(
+      'filter.group_id' => "$groupId,26",
       'version' => $this->_apiversion,
       'contact_type' => 'Individual',
     );
     $result = civicrm_api('contact', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
     $this->assertEquals(1, $result['count']);
-    $params = array('filter.group_id' => "26,27",
+    $params = array(
+      'filter.group_id' => "26,27",
       'version' => $this->_apiversion,
       'contact_type' => 'Individual',
     );
@@ -738,7 +754,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       )
     );
 
-    $params = array('first_name' => 'Test',
+    $params = array(
+      'first_name' => 'Test',
       'last_name' => 'Contact',
       'email' => 'TestContact@example.com',
       'contact_type' => 'Individual',
@@ -768,7 +785,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       )
     );
 
-    $params = array('first_name' => 'Test',
+    $params = array(
+      'first_name' => 'Test',
       'last_name' => 'Contact',
       'email' => 'TestContact@example.com',
       'contact_type' => 'Individual',
@@ -855,7 +873,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
     $result = civicrm_api('Contact', 'Update', $params);
 
-    $expected = array('is_error' => 0,
+    $expected = array(
+      'is_error' => 0,
       'id' => 24,
     );
 
@@ -896,7 +915,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
     $result = civicrm_api('Contact', 'Update', $params);
 
-    $expected = array('is_error' => 0,
+    $expected = array(
+      'is_error' => 0,
       'contact_id' => 25,
     );
 
@@ -931,7 +951,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
 
 
-    $params = array('id' => 23,
+    $params = array(
+      'id' => 23,
       'first_name' => 'abcd',
       'last_name' => 'wxyz',
       'version' => $this->_apiversion,
@@ -946,7 +967,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    *  Test civicrm_contact_delete() with no contact ID
    */
   function testContactDeleteNoID() {
-    $params = array('foo' => 'bar',
+    $params = array(
+      'foo' => 'bar',
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('contact', 'delete', $params);
@@ -975,7 +997,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
         dirname(__FILE__) . '/dataset/contact_17.xml'
       )
     );
-    $params = array('id' => 17,
+    $params = array(
+      'id' => 17,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('contact', 'delete', $params);
@@ -995,7 +1018,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
         dirname(__FILE__) . '/dataset/contact_17.xml'
       )
     );
-    $params = array('contact_id' => 17,
+    $params = array(
+      'contact_id' => 17,
       'return_first_name' => TRUE,
       'sort' => 'first_name',
       'version' => $this->_apiversion,
@@ -1017,7 +1041,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
         dirname(__FILE__) . '/dataset/contact_17.xml'
       )
     );
-    $params = array('contact_id' => 17,
+    $params = array(
+      'contact_id' => 17,
       'sort' => 'first_name',
       'version' => $this->_apiversion,
     );
@@ -1101,7 +1126,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       )
     );
 
-    $params = array('first_name' => 'Fred',
+    $params = array(
+      'first_name' => 'Fred',
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('contact', 'get', $params);
@@ -1121,7 +1147,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       )
     );
 
-    $params = array('first_name' => 'Test',
+    $params = array(
+      'first_name' => 'Test',
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('contact', 'get', $params);
@@ -1180,7 +1207,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     );
     $this->assertEquals(1, $contact['id'], "In line " . __LINE__);
 
-    $params = array('email' => 'man2@yahoo.com',
+    $params = array(
+      'email' => 'man2@yahoo.com',
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('contact', 'get', $params);
@@ -1244,9 +1272,11 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
 
     $result = civicrm_api('Contact', 'create', $params);
-    $params = array('id' => $result['id'], 'version' => 3,
+    $params = array(
+      'id' => $result['id'], 'version' => 3,
       'api.website.get' => array(),
-      'api.Contribution.get' => array('total_amount' => '120.00',
+      'api.Contribution.get' => array(
+        'total_amount' => '120.00',
       ), 'api.CustomValue.get' => 1,
       'api.Note.get' => 1,
     );
@@ -1310,7 +1340,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $result = civicrm_api('Contact', 'create', $params);
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $this->assertAPISuccess($result['values'][$result['id']]['api.contribution.create'], 'in line ' . __LINE__);
-    $params = array('id' => $result['id'], 'version' => 3,
+    $params = array(
+      'id' => $result['id'], 'version' => 3,
       'api.website.getValue' => array('return' => 'url'),
       'api.Contribution.getCount' => array(),
       'api.CustomValue.get' => 1,
@@ -1326,7 +1357,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->assertEquals("http://civicrm.org", $result['values'][$result['id']]['api.website.getValue'], "In line " . __LINE__);
     // delete the contact
 
-    $params = array('id' => $result['id'], 'version' => 3,
+    $params = array(
+      'id' => $result['id'], 'version' => 3,
       'api_Contribution_get' => array(),
       'sequential' => 1,
       'format.smarty' => 'api/v3/exampleLetter.tpl',
@@ -1396,10 +1428,12 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
 
     $result = civicrm_api('Contact', 'create', $params);
-    $result = civicrm_api('Contact', 'create', array('contact_type' => 'Individual', 'id' => $result['id'], 'version' => 3, 'custom_' . $moreids['custom_field_id'][0] => "value 3", 'custom_' . $ids['custom_field_id'] => "value 4",
+    $result = civicrm_api('Contact', 'create', array(
+      'contact_type' => 'Individual', 'id' => $result['id'], 'version' => 3, 'custom_' . $moreids['custom_field_id'][0] => "value 3", 'custom_' . $ids['custom_field_id'] => "value 4",
       ));
 
-    $params = array('id' => $result['id'], 'version' => 3,
+    $params = array(
+      'id' => $result['id'], 'version' => 3,
       'api.website.getValue' => array('return' => 'url'),
       'api.Contribution.getCount' => array(),
       'api.CustomValue.get' => 1,
@@ -1424,7 +1458,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $description = "/*this demonstrates the usage of chained api functions.  Specifically it has one 'parent function' &
     2 child functions - one receives values from the parent (Contact) and the other child (Tag). ";
     $subfile = "APIChainedArrayValuesFromSiblingFunction";
-    $params = array('version' => 3, 'display_name' => 'batman', 'contact_type' => 'Individual',
+    $params = array(
+      'version' => 3, 'display_name' => 'batman', 'contact_type' => 'Individual',
       'api.tag.create' => array('name' => '$value.id', 'description' => '$value.display_name', 'format.only_id' => 1),
       'api.entity_tag.create' => array('tag_id' => '$value.api.tag.create'),
     );
@@ -1433,7 +1468,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->assertEquals(0, $result['is_error']);
     $this->assertEquals(0, $result['values'][$result['id']]['api.entity_tag.create']['is_error']);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
-    $tablesToTruncate = array('civicrm_contact',
+    $tablesToTruncate = array(
+      'civicrm_contact',
       'civicrm_activity',
       'civicrm_entity_tag',
       'civicrm_tag',
@@ -1531,7 +1567,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   }
 
   function testContactCreationPermissions() {
-    $params = array('contact_type' => 'Individual', 'first_name' => 'Foo',
+    $params = array(
+      'contact_type' => 'Individual', 'first_name' => 'Foo',
       'last_name' => 'Bear',
       'check_permissions' => TRUE,
       'version' => $this->_apiversion,
@@ -1574,39 +1611,42 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     );
   }
 
-  function testContactProximity( ) {
-      // first create a contact with a SF location with a specific
-      // geocode
-      $contactID = $this->organizationCreate();
+  function testContactProximity() {
+    // first create a contact with a SF location with a specific
+    // geocode
+    $contactID = $this->organizationCreate();
 
-      // now create the address
-      $params = array( 'street_address' => '123 Main Street',
-                       'city' => 'San Francisco',
-                       'is_primary' => 1,
-                       'country_id' => 1228,
-                       'state_province_id' => 1004,
-                       'geo_code_1' => '37.79',
-                       'geo_code_2' => '-122.40',
-                       'location_type_id' => 1,
-                       'contact_id' => $contactID,
-                       'version' => 3 );
+    // now create the address
+    $params = array(
+      'street_address' => '123 Main Street',
+      'city' => 'San Francisco',
+      'is_primary' => 1,
+      'country_id' => 1228,
+      'state_province_id' => 1004,
+      'geo_code_1' => '37.79',
+      'geo_code_2' => '-122.40',
+      'location_type_id' => 1,
+      'contact_id' => $contactID,
+      'version' => 3,
+    );
 
-      $result = civicrm_api('address', 'create', $params );
-      $this->assertAPISuccess($result, 'In line ' . __LINE__);
-      $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
+    $result = civicrm_api('address', 'create', $params);
+    $this->assertAPISuccess($result, 'In line ' . __LINE__);
+    $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
 
-      // now do a proximity search with a close enough geocode and hope to match
-      // that specific contact only!
-      $proxParams = array( 'latitude'  => 37.7,
-                           'longitude' => -122.3,
-                           'unit'      => 'mile',
-                           'distance'  => 10,
-                           'version'   => 3 );
-      $result = civicrm_api('contact', 'proximity', $proxParams );
-      $this->assertAPISuccess($result, 'In line ' . __LINE__);
-      $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
+    // now do a proximity search with a close enough geocode and hope to match
+    // that specific contact only!
+    $proxParams = array(
+      'latitude' => 37.7,
+      'longitude' => -122.3,
+      'unit' => 'mile',
+      'distance' => 10,
+      'version' => 3,
+    );
+    $result = civicrm_api('contact', 'proximity', $proxParams);
+    $this->assertAPISuccess($result, 'In line ' . __LINE__);
+    $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
   }
-
 }
 
 // class api_v3_ContactTest

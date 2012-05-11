@@ -44,7 +44,8 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
   protected $_customGroupExtends = array();
 
 
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'bar_3dChart' => 'Bar Chart',
   ); function __construct() {
     $this->_columns = array();
@@ -429,7 +430,8 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
     $criterias = self::getChartCriteria();
     $isError = TRUE;
     foreach ($fields['fields'] as $fld => $isActive) {
-      if (in_array($fld, array('delivered_count', 'bounce_count', 'open_count', 'click_count', 'unsubscribe_count', 'accepted_rate', 'bounce_rate', 'open_rate', 'CTR', 'CTO'))) {
+      if (in_array($fld, array(
+        'delivered_count', 'bounce_count', 'open_count', 'click_count', 'unsubscribe_count', 'accepted_rate', 'bounce_rate', 'open_rate', 'CTR', 'CTO'))) {
         $isError = FALSE;
       }
     }

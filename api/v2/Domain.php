@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -58,7 +59,8 @@ function civicrm_domain_get() {
   );
   require_once 'CRM/Core/BAO/Location.php';
   $values['location'] = CRM_Core_BAO_Location::getValues($params, TRUE);
-  $address_array = array('street_address', 'supplemental_address_1', 'supplemental_address_2',
+  $address_array = array(
+    'street_address', 'supplemental_address_1', 'supplemental_address_2',
     'city', 'state_province_id', 'postal_code', 'country_id', 'geo_code_1', 'geo_code_2',
   );
   require_once 'CRM/Core/OptionGroup.php';

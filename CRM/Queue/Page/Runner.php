@@ -25,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CRM/Core/Page.php';
 
 /**
@@ -48,29 +49,31 @@ class CRM_Queue_Page_Runner extends CRM_Core_Page {
    * POST Param 'qrid': string, usually the name of the queue
    */
   function run() {
-    $qrid = CRM_Utils_Request::retrieve('qrid', 'String', $this, true);
+    $qrid = CRM_Utils_Request::retrieve('qrid', 'String', $this, TRUE);
     $runner = CRM_Queue_Runner::instance($qrid);
     // dpm(array( 'action' => 'CRM_Queue_Page_Runner::run()', 'session' => $_SESSION, 'runner' => $runner, 'qrid' => $qrid ));
     if (!is_object($runner)) {
       CRM_Core_Error::fatal('Queue runner must be configured before execution.');
     }
-    
+
     CRM_Utils_System::setTitle($runner->title);
     $this->assign('queueRunnerData', array(
-      'qrid' => $runner->qrid,
-      'runNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/runNext'),
-      'skipNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/skipNext'),
-      'onEndAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/onEnd'),
-      'completed' => 0,
-      'numberOfItems' => $runner->queue->numberOfItems(),
-    ));
-    
+        'qrid' => $runner->qrid,
+        'runNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/runNext'),
+        'skipNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/skipNext'),
+        'onEndAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/onEnd'),
+        'completed' => 0,
+        'numberOfItems' => $runner->queue->numberOfItems(),
+      ));
+
     if ($runner->isMinimal) {
       $smarty = CRM_Core_Smarty::singleton();
-      $content = $smarty->fetch( 'CRM/Queue/Page/Runner.tpl' );
-      echo CRM_Utils_System::theme( 'page', $content, true, $this->_print, false, true );
-    } else {
+      $content = $smarty->fetch('CRM/Queue/Page/Runner.tpl');
+      echo CRM_Utils_System::theme('page', $content, TRUE, $this->_print, FALSE, TRUE);
+    }
+    else {
       parent::run();
     }
   }
 }
+

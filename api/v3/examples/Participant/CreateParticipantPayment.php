@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 
 
@@ -7,30 +6,30 @@
  single function to create contact w partipation & contribution. Note that in the
       case of 'contribution' the 'create' is implied (api.contribution.create)
  */
-function participant_create_example() {
-  $params = array(
-    'contact_type' => 'Individual',
-    'display_name' => 'dlobo',
-    'version' => 3,
-    'api.participant' => array(
-      'event_id' => 35,
+function participant_create_example(){
+$params = array( 
+  'contact_type' => 'Individual',
+  'display_name' => 'dlobo',
+  'version' => 3,
+  'api.participant' => array( 
+      'event_id' => 38,
       'status_id' => 1,
       'role_id' => 1,
       'format.only_id' => 1,
     ),
-    'api.contribution.create' => array(
+  'api.contribution.create' => array( 
       'contribution_type_id' => 11,
       'total_amount' => 100,
       'format.only_id' => 1,
     ),
-    'api.participant_payment.create' => array(
+  'api.participant_payment.create' => array( 
       'contribution_id' => '$value.api.contribution.create',
       'participant_id' => '$value.api.participant',
     ),
-  );
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('participant', 'create', $params);
+  $result = civicrm_api( 'participant','create',$params );
 
   return $result;
 }
@@ -38,79 +37,79 @@ function participant_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function participant_create_expectedresult() {
+function participant_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 5,
-    'values' => array(
-      '5' => array(
-        'id' => 5,
-        'contact_type' => 'Individual',
-        'contact_sub_type' => 'null',
-        'do_not_email' => '',
-        'do_not_phone' => '',
-        'do_not_mail' => '',
-        'do_not_sms' => '',
-        'do_not_trade' => '',
-        'is_opt_out' => '',
-        'legal_identifier' => '',
-        'external_identifier' => '',
-        'sort_name' => '',
-        'display_name' => 'dlobo',
-        'nick_name' => '',
-        'legal_name' => '',
-        'image_URL' => '',
-        'preferred_communication_method' => '',
-        'preferred_language' => 'en_US',
-        'preferred_mail_format' => '',
-        'api_key' => '',
-        'first_name' => '',
-        'middle_name' => '',
-        'last_name' => '',
-        'prefix_id' => '',
-        'suffix_id' => '',
-        'email_greeting_id' => '',
-        'email_greeting_custom' => '',
-        'email_greeting_display' => '',
-        'postal_greeting_id' => '',
-        'postal_greeting_custom' => '',
-        'postal_greeting_display' => '',
-        'addressee_id' => '',
-        'addressee_custom' => '',
-        'addressee_display' => '',
-        'job_title' => '',
-        'gender_id' => '',
-        'birth_date' => '',
-        'is_deceased' => '',
-        'deceased_date' => '',
-        'household_name' => '',
-        'primary_contact_id' => '',
-        'organization_name' => '',
-        'sic_code' => '',
-        'user_unique_id' => '',
-        'api.participant' => 110,
-        'api.contribution.create' => 1,
-        'api.participant_payment.create' => array(
-          'is_error' => 0,
-          'version' => 3,
-          'count' => 1,
-          'id' => 1,
-          'values' => array(
-            '0' => array(
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 5,
+  'values' => array( 
+      '5' => array( 
+          'id' => 5,
+          'contact_type' => 'Individual',
+          'contact_sub_type' => 'null',
+          'do_not_email' => '',
+          'do_not_phone' => '',
+          'do_not_mail' => '',
+          'do_not_sms' => '',
+          'do_not_trade' => '',
+          'is_opt_out' => '',
+          'legal_identifier' => '',
+          'external_identifier' => '',
+          'sort_name' => '',
+          'display_name' => 'dlobo',
+          'nick_name' => '',
+          'legal_name' => '',
+          'image_URL' => '',
+          'preferred_communication_method' => '',
+          'preferred_language' => 'en_US',
+          'preferred_mail_format' => '',
+          'api_key' => '',
+          'first_name' => '',
+          'middle_name' => '',
+          'last_name' => '',
+          'prefix_id' => '',
+          'suffix_id' => '',
+          'email_greeting_id' => '1',
+          'email_greeting_custom' => '',
+          'email_greeting_display' => '',
+          'postal_greeting_id' => '1',
+          'postal_greeting_custom' => '',
+          'postal_greeting_display' => '',
+          'addressee_id' => '1',
+          'addressee_custom' => '',
+          'addressee_display' => '',
+          'job_title' => '',
+          'gender_id' => '',
+          'birth_date' => '',
+          'is_deceased' => '',
+          'deceased_date' => '',
+          'household_name' => '',
+          'primary_contact_id' => '',
+          'organization_name' => '',
+          'sic_code' => '',
+          'user_unique_id' => '',
+          'api.participant' => 122,
+          'api.contribution.create' => 1,
+          'api.participant_payment.create' => array( 
+              'is_error' => 0,
+              'version' => 3,
+              'count' => 1,
               'id' => 1,
-              'participant_id' => 110,
-              'contribution_id' => 1,
+              'values' => array( 
+                  '0' => array( 
+                      'id' => 1,
+                      'participant_id' => 122,
+                      'contribution_id' => 1,
+                    ),
+                ),
             ),
-          ),
         ),
-      ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -129,4 +128,3 @@ function participant_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

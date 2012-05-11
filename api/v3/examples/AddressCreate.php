@@ -1,27 +1,26 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function address_create_example() {
-  $params = array(
-    'contact_id' => 1,
-    'location_type_id' => 6,
-    'street_name' => 'Ambachtstraat',
-    'street_number' => '23',
-    'street_address' => 'Ambachtstraat 23',
-    'postal_code' => '6971 BN',
-    'country_id' => '1152',
-    'city' => 'Brummen',
-    'is_primary' => 1,
-    'version' => 3,
-  );
+function address_create_example(){
+$params = array( 
+  'contact_id' => 1,
+  'location_type_id' => 6,
+  'street_name' => 'Ambachtstraat',
+  'street_number' => '23',
+  'street_address' => 'Ambachtstraat 23',
+  'postal_code' => '6971 BN',
+  'country_id' => '1152',
+  'city' => 'Brummen',
+  'is_primary' => 1,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('address', 'create', $params);
+  $result = civicrm_api( 'address','create',$params );
 
   return $result;
 }
@@ -29,31 +28,31 @@ function address_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function address_create_expectedresult() {
+function address_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 2,
-    'values' => array(
-      '2' => array(
-        'id' => '2',
-        'contact_id' => '1',
-        'location_type_id' => '6',
-        'is_primary' => '1',
-        'is_billing' => 0,
-        'street_address' => 'Ambachtstraat 23',
-        'street_number' => '23',
-        'street_name' => 'Ambachtstraat',
-        'city' => 'Brummen',
-        'postal_code' => '6971 BN',
-        'country_id' => '1152',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 2,
+  'values' => array( 
+      '2' => array( 
+          'id' => '2',
+          'contact_id' => '1',
+          'location_type_id' => '6',
+          'is_primary' => '1',
+          'is_billing' => 0,
+          'street_address' => 'Ambachtstraat 23',
+          'street_number' => '23',
+          'street_name' => 'Ambachtstraat',
+          'city' => 'Brummen',
+          'postal_code' => '6971 BN',
+          'country_id' => '1152',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -72,4 +71,3 @@ function address_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

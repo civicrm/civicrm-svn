@@ -72,7 +72,8 @@ class CRM_Core_Payment_BaseIPN {
   function createContact(&$input, &$ids, &$objects) {
     $params    = array();
     $billingID = $ids['billing'];
-    $lookup    = array('first_name',
+    $lookup    = array(
+      'first_name',
       'last_name',
       "street_address-{$billingID}",
       "city-{$billingID}",
@@ -95,17 +96,17 @@ class CRM_Core_Payment_BaseIPN {
  *
  * @input array information from Payment processor
  */
-  function loadObjects(&$input, &$ids, &$objects, $required, $paymentProcessorID,$error_handling = null) {
-    if(empty($error_handling)){
-    	// default options are that we log an error & echo it out
-    	// note that we should refactor this error handling into error code @ some point
-    	// but for now setting up enough separation so we can do unit tests
-    	$error_handling = array(
-    	  'log_error' => 1,
-    	  'echo_error' => 1,
-    	);
+  function loadObjects(&$input, &$ids, &$objects, $required, $paymentProcessorID, $error_handling = NULL) {
+    if (empty($error_handling)) {
+      // default options are that we log an error & echo it out
+      // note that we should refactor this error handling into error code @ some point
+      // but for now setting up enough separation so we can do unit tests
+      $error_handling = array(
+        'log_error' => 1,
+        'echo_error' => 1,
+      );
     }
-  	$ids['paymentProcessor'] = $paymentProcessorID;
+    $ids['paymentProcessor'] = $paymentProcessorID;
     if (is_a($objects['contribution'], 'CRM_Contribute_BAO_Contribution')) {
       $contribution = &$objects['contribution'];
     }
@@ -116,20 +117,21 @@ class CRM_Core_Payment_BaseIPN {
       $contribution->find(TRUE);
       $objects['contribution'] = &$contribution;
     }
-    try{
+    try {
       $success = $contribution->loadRelatedObjects($input, $ids, $required);
-    }catch (Exception $e){
-      if(CRM_Utils_Array::value('log_error', $error_handling)){
-      	CRM_Core_Error::debug_log_message($e->getMessage());
+    }
+    catch(Exception$e) {
+      if (CRM_Utils_Array::value('log_error', $error_handling)) {
+        CRM_Core_Error::debug_log_message($e->getMessage());
       }
-      if(CRM_Utils_Array::value('echo_error', $error_handling)){
-      	echo($e->getMessage());
+      if (CRM_Utils_Array::value('echo_error', $error_handling)) {
+        echo ($e->getMessage());
       }
-      if(CRM_Utils_Array::value('return_error', $error_handling)){
-      	return array(
-      	  'is_error' => 1,
-      	  'error_message' => ($e->getMessage())
-      	);
+      if (CRM_Utils_Array::value('return_error', $error_handling)) {
+        return array(
+          'is_error' => 1,
+          'error_message' => ($e->getMessage()),
+        );
       }
     }
     $objects = array_merge($objects, $contribution->_relatedObjects);
@@ -149,8 +151,8 @@ class CRM_Core_Payment_BaseIPN {
     $contribution->contribution_status_id = array_search('Failed', $contributionStatus);
     $contribution->save();
 
-    if( $objects['contributionRecur']->id )
     /* $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id ); */
+    if ($objects['contributionRecur']->id)
 
     foreach ($memberships as $membership) {
       if ($membership) {
@@ -292,6 +294,7 @@ LIMIT 1;";
                              * when Contribution mode is notify and membership is for renewal )
                              */
 
+
               CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew($currentMembership, $changeToday);
 
               $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType($membership->id,
@@ -363,7 +366,8 @@ LIMIT 1;";
       $locationParams = array('entity_id' => $objects['event']->id, 'entity_table' => 'civicrm_event');
       $values['location'] = CRM_Core_BAO_Location::getValues($locationParams);
 
-      $ufJoinParams = array('entity_table' => 'civicrm_event',
+      $ufJoinParams = array(
+        'entity_table' => 'civicrm_event',
         'entity_id' => $ids['event'],
         'weight' => 1,
       );
@@ -408,8 +412,8 @@ LIMIT 1;";
     }
 
     $contribution->save();
-    if( $objects['contributionRecur']->id )
     /* $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id ); */
+    if ($objects['contributionRecur']->id)
 
     // next create the transaction record
     $paymentProcessor = '';
@@ -511,108 +515,111 @@ LIMIT 1;";
     return $returnMessageText = $contribution->composeMessageArray($input, $ids, $values, $recur, $returnMessageText);
   }
 
-    function updateContributionStatus( &$params )
-    {
-        // get minimum required values.
-        $statusId       = CRM_Utils_Array::value( 'contribution_status_id', $params );
-        $componentId    = CRM_Utils_Array::value( 'component_id',           $params );
-        $componentName  = CRM_Utils_Array::value( 'componentName',          $params );
-        $contributionId = CRM_Utils_Array::value( 'contribution_id',        $params );
+  function updateContributionStatus(&$params) {
+    // get minimum required values.
+    $statusId       = CRM_Utils_Array::value('contribution_status_id', $params);
+    $componentId    = CRM_Utils_Array::value('component_id', $params);
+    $componentName  = CRM_Utils_Array::value('componentName', $params);
+    $contributionId = CRM_Utils_Array::value('contribution_id', $params);
 
-        if ( !$contributionId || !$componentId || !$componentName || !$statusId ) {
-            return;
-        }
-
-        $input = $ids = $objects = array( );
-
-        //get the required ids.
-        $ids['contribution'] = $contributionId;
-
-        if ( !$ids['contact'] = CRM_Utils_Array::value( 'contact_id', $params ) ) {
-            $ids['contact']   = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
-                                                             $contributionId,
-                                                             'contact_id' );
-        }
-
-        if ( $componentName == 'Event' ) {
-            $name = 'event';
-            $ids['participant'] = $componentId;
-
-            if ( !$ids['event'] = CRM_Utils_Array::value( 'event_id', $params ) ) {
-                $ids['event']   = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant',
-                                                               $componentId,
-                                                               'event_id' );
-            }
-        }
-
-        if ( $componentName == 'Membership' ) {
-            $name = 'contribute';
-            $ids['membership'] = $componentId;
-        }
-        $ids['contributionPage']  = null;
-        $ids['contributionRecur'] = null;
-        $input['component']       = $name;
-
-
-        $baseIPN     = new CRM_Core_Payment_BaseIPN( );
-        $transaction = new CRM_Core_Transaction( );
-
-        // reset template values.
-        $template = CRM_Core_Smarty::singleton( );
-        $template->clearTemplateVars( );
-
-        if ( !$baseIPN->validateData( $input, $ids, $objects, false ) ) {
-            CRM_Core_Error::fatal( );
-        }
-
-        $contribution =& $objects['contribution'];
-
-        $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
-
-        if ( $statusId == array_search( 'Cancelled', $contributionStatuses ) ) {
-            $baseIPN->cancelled( $objects, $transaction );
-            $transaction->commit( );
-            return $statusId;
-        } else if ( $statusId == array_search( 'Failed', $contributionStatuses ) ) {
-            $baseIPN->failed( $objects, $transaction );
-            $transaction->commit( );
-            return $statusId;
-        }
-
-        // status is not pending
-        if ( $contribution->contribution_status_id != array_search( 'Pending', $contributionStatuses ) ) {
-            $transaction->commit( );
-            return;
-        }
-
-        //set values for ipn code.
-        foreach ( array( 'fee_amount', 'check_number', 'payment_instrument_id' ) as $field ) {
-            if ( !$input[$field] = CRM_Utils_Array::value( $field, $params ) ) {
-                $input[$field]   = $contribution->$field;
-            }
-        }
-        if ( !$input['trxn_id'] = CRM_Utils_Array::value( 'trxn_id', $params ) ) {
-            $input['trxn_id']   = $contribution->invoice_id;
-        }
-        if ( !$input['amount'] = CRM_Utils_Array::value( 'total_amount', $params ) ) {
-            $input['amount']   = $contribution->total_amount;
-        }
-        $input['is_test']    = $contribution->is_test;
-        $input['net_amount'] = $contribution->net_amount;
-        if ( CRM_Utils_Array::value( 'fee_amount', $input ) && CRM_Utils_Array::value( 'amount', $input ) ) {
-            $input['net_amount'] = $input['amount'] - $input['fee_amount'];
-        }
-
-        //complete the contribution.
-        $baseIPN->completeTransaction( $input, $ids, $objects, $transaction, false );
-
-        // reset template values before processing next transactions
-        $template->clearTemplateVars( );
-
-        return $statusId;
+    if (!$contributionId || !$componentId || !$componentName || !$statusId) {
+      return;
     }
 
-    /*
+    $input = $ids = $objects = array();
+
+    //get the required ids.
+    $ids['contribution'] = $contributionId;
+
+    if (!$ids['contact'] = CRM_Utils_Array::value('contact_id', $params)) {
+      $ids['contact'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution',
+        $contributionId,
+        'contact_id'
+      );
+    }
+
+    if ($componentName == 'Event') {
+      $name = 'event';
+      $ids['participant'] = $componentId;
+
+      if (!$ids['event'] = CRM_Utils_Array::value('event_id', $params)) {
+        $ids['event'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Participant',
+          $componentId,
+          'event_id'
+        );
+      }
+    }
+
+    if ($componentName == 'Membership') {
+      $name = 'contribute';
+      $ids['membership'] = $componentId;
+    }
+    $ids['contributionPage'] = NULL;
+    $ids['contributionRecur'] = NULL;
+    $input['component'] = $name;
+
+
+    $baseIPN = new CRM_Core_Payment_BaseIPN();
+    $transaction = new CRM_Core_Transaction();
+
+    // reset template values.
+    $template = CRM_Core_Smarty::singleton();
+    $template->clearTemplateVars();
+
+    if (!$baseIPN->validateData($input, $ids, $objects, FALSE)) {
+      CRM_Core_Error::fatal();
+    }
+
+    $contribution = &$objects['contribution'];
+
+    $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+
+    if ($statusId == array_search('Cancelled', $contributionStatuses)) {
+      $baseIPN->cancelled($objects, $transaction);
+      $transaction->commit();
+      return $statusId;
+    }
+    elseif ($statusId == array_search('Failed', $contributionStatuses)) {
+      $baseIPN->failed($objects, $transaction);
+      $transaction->commit();
+      return $statusId;
+    }
+
+    // status is not pending
+    if ($contribution->contribution_status_id != array_search('Pending', $contributionStatuses)) {
+      $transaction->commit();
+      return;
+    }
+
+    //set values for ipn code.
+    foreach (array(
+      'fee_amount', 'check_number', 'payment_instrument_id') as $field) {
+      if (!$input[$field] = CRM_Utils_Array::value($field, $params)) {
+        $input[$field] = $contribution->$field;
+      }
+    }
+    if (!$input['trxn_id'] = CRM_Utils_Array::value('trxn_id', $params)) {
+      $input['trxn_id'] = $contribution->invoice_id;
+    }
+    if (!$input['amount'] = CRM_Utils_Array::value('total_amount', $params)) {
+      $input['amount'] = $contribution->total_amount;
+    }
+    $input['is_test'] = $contribution->is_test;
+    $input['net_amount'] = $contribution->net_amount;
+    if (CRM_Utils_Array::value('fee_amount', $input) && CRM_Utils_Array::value('amount', $input)) {
+      $input['net_amount'] = $input['amount'] - $input['fee_amount'];
+    }
+
+    //complete the contribution.
+    $baseIPN->completeTransaction($input, $ids, $objects, $transaction, FALSE);
+
+    // reset template values before processing next transactions
+    $template->clearTemplateVars();
+
+    return $statusId;
+  }
+
+  /*
      * Update pledge associated with a recurring contribution
      *
      * If the contribution has a pledge_payment record pledge, then update the pledge_payment record & pledge based on that linkage.
@@ -625,74 +632,80 @@ LIMIT 1;";
      * The pledge payment record should already exist & will need to be updated with the new contribution ID.
      * If not the contribution will also need to be linked to the pledge
      */
-    function updateRecurLinkedPledge( &$contribution ) {
-        $returnProperties = array( 'id', 'pledge_id' );
-        $paymentDetails = array();
-        $paymentIDs = array( );
+  function updateRecurLinkedPledge(&$contribution) {
+    $returnProperties = array('id', 'pledge_id');
+    $paymentDetails   = array();
+    $paymentIDs       = array();
 
-        if ( CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $contribution->id,
-                                              $paymentDetails, $returnProperties )) {
-           foreach ( $paymentDetails as $key => $value ) {
-               $paymentIDs[] = $value['id'];
-               $pledgeId     = $value['pledge_id'];
-           }
-        } else {
-            //payment is not already linked - if it is linked with a pledge we need to create a link.
-            // return if it is not recurring contribution
-            if ( !$contribution->contribution_recur_id ) {
-                return;
-            }
+    if (CRM_Core_DAO::commonRetrieveAll('CRM_Pledge_DAO_PledgePayment', 'contribution_id', $contribution->id,
+        $paymentDetails, $returnProperties
+      )) {
+      foreach ($paymentDetails as $key => $value) {
+        $paymentIDs[] = $value['id'];
+        $pledgeId = $value['pledge_id'];
+      }
+    }
+    else {
+      //payment is not already linked - if it is linked with a pledge we need to create a link.
+      // return if it is not recurring contribution
+      if (!$contribution->contribution_recur_id) {
+        return;
+      }
 
-            $relatedContributions = new CRM_Contribute_DAO_Contribution( );
-            $relatedContributions->contribution_recur_id = $contribution->contribution_recur_id ;
-            $relatedContributions->find(  ) ;
+      $relatedContributions = new CRM_Contribute_DAO_Contribution();
+      $relatedContributions->contribution_recur_id = $contribution->contribution_recur_id;
+      $relatedContributions->find();
 
-            while ( $relatedContributions->fetch() ) {
-                CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_PledgePayment', 'contribution_id', $relatedContributions->id,
-                                              $paymentDetails, $returnProperties ) ;
-            }
+      while ($relatedContributions->fetch()) {
+        CRM_Core_DAO::commonRetrieveAll('CRM_Pledge_DAO_PledgePayment', 'contribution_id', $relatedContributions->id,
+          $paymentDetails, $returnProperties
+        );
+      }
 
-            if ( empty($paymentDetails) ) {
-                return; // payment is not linked with a pledge and neither are any other contributions on this
-            }
+      if (empty($paymentDetails)) {
+        // payment is not linked with a pledge and neither are any other contributions on this
+        return;
+      }
 
-            foreach ( $paymentDetails as $key => $value ) {
-                $pledgeId     = $value['pledge_id'];
-            }
+      foreach ($paymentDetails as $key => $value) {
+        $pledgeId = $value['pledge_id'];
+      }
 
-            // we have a pledge now we need to get the oldest unpaid payment
-            $paymentDetails = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment( $pledgeId );
-            $paymentDetails['contribution_id'] = $contribution->id;
-            $paymentDetails['status_id']       = $contribution->contribution_status_id;
-            $paymentDetails['actual_amount']   = $contribution->total_amount;
+      // we have a pledge now we need to get the oldest unpaid payment
+      $paymentDetails = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment($pledgeId);
+      $paymentDetails['contribution_id'] = $contribution->id;
+      $paymentDetails['status_id'] = $contribution->contribution_status_id;
+      $paymentDetails['actual_amount'] = $contribution->total_amount;
 
-            // put contribution against it
-            $payment = CRM_Pledge_BAO_PledgePayment::add($paymentDetails);
-            $paymentIDs[] = $payment->id;
-        }
-
-        // update pledge and corresponding payment statuses
-        CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus( $pledgeId, $paymentIDs, $contribution->contribution_status_id,
-                                                                 null, $contribution->total_amount );
+      // put contribution against it
+      $payment = CRM_Pledge_BAO_PledgePayment::add($paymentDetails);
+      $paymentIDs[] = $payment->id;
     }
 
-    function addrecurLineItems( $recurId, $contributionId ){
-        $lineSets = $lineItems = array();
+    // update pledge and corresponding payment statuses
+    CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus($pledgeId, $paymentIDs, $contribution->contribution_status_id,
+      NULL, $contribution->total_amount
+    );
+  }
 
-        //Get the first contribution id with recur id
-        if( $recurId ){
-            $contriID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution', $recurId, 'id', 'contribution_recur_id' );
-            $lineItems = CRM_Price_BAO_LineItem::getLineItems( $contriID, 'contribution' );
-            if ( !empty( $lineItems ) ) {
-                foreach( $lineItems as $key => $value ) {
-                    $pricesetID     = new CRM_Price_DAO_Field();
-                    $pricesetID->id = $value['price_field_id'];
-                    $pricesetID->find( true );
-                    $lineSets[$pricesetID->price_set_id][] = $value;
-                }
-            }
+  function addrecurLineItems($recurId, $contributionId) {
+    $lineSets = $lineItems = array();
 
-            CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contributionId, $lineSets );
+    //Get the first contribution id with recur id
+    if ($recurId) {
+      $contriID = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution', $recurId, 'id', 'contribution_recur_id');
+      $lineItems = CRM_Price_BAO_LineItem::getLineItems($contriID, 'contribution');
+      if (!empty($lineItems)) {
+        foreach ($lineItems as $key => $value) {
+          $pricesetID = new CRM_Price_DAO_Field();
+          $pricesetID->id = $value['price_field_id'];
+          $pricesetID->find(TRUE);
+          $lineSets[$pricesetID->price_set_id][] = $value;
         }
+      }
+
+      CRM_Contribute_Form_AdditionalInfo::processPriceSet($contributionId, $lineSets);
     }
+  }
 }
+

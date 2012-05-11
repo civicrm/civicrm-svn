@@ -41,10 +41,13 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
   protected $_emailField = FALSE;
 
   protected $_phoneField = FALSE; function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
@@ -58,12 +61,14 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
             'default' => FALSE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name')),
           'contact_type' =>
           array('title' => ts('Contact Type'),
@@ -83,9 +88,11 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
             'no_repeat' => TRUE,
           ),
@@ -93,10 +100,12 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'grouping' => 'contact-fields',
         'fields' =>
-        array('street_address' =>
+        array(
+          'street_address' =>
           array('default' => FALSE),
           'city' =>
           array('default' => TRUE),
@@ -111,7 +120,8 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
         ),
         /*
                           'filters'   =>             
-                          array( 'country_id' => 
+                          array(
+                             'country_id' => 
                                  array( 'title'   => ts( 'Country' ),
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                         'options' => CRM_Core_PseudoConstant::country( ),
@@ -124,13 +134,15 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
 */
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
         array('phone' => NULL),
         'grouping' => 'contact-fields',
       ),
       'civicrm_activity' =>
-      array('dao' => 'CRM_Activity_DAO_Activity',
+      array(
+        'dao' => 'CRM_Activity_DAO_Activity',
         'fields' =>
         array('id' => array('title' => ts('Activity ID'),
             'no_display' => TRUE,
@@ -139,7 +151,8 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
         ),
       ),
       'civicrm_case' =>
-      array('dao' => 'CRM_Case_DAO_Case',
+      array(
+        'dao' => 'CRM_Case_DAO_Case',
         'fields' =>
         array('id' => array('title' => ts('Case ID'),
             'required' => TRUE,
@@ -152,7 +165,8 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('case_id_filter' => array('name' => 'id',
+        array(
+          'case_id_filter' => array('name' => 'id',
             'title' => ts('Cases?'),
             'operatorType' => CRM_Report_Form::OP_SELECT,
             'options' => array(1 => ts('Exclude non-case'), 2 => ts('Exclude cases'), 3 => ts('Include Both')),
@@ -167,11 +181,14 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
         ),
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_Group',
+      array(
+        'dao' => 'CRM_Contact_DAO_Group',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -196,7 +213,8 @@ where (cg.extends='Contact' OR cg.extends='Individual' OR cg.extends_entity_colu
       }
       elseif ($curTable != $crmDAO->table_name) {
         // dummy DAO
-        $this->_columns[$curTable] = array('dao' => 'CRM_Contact_DAO_Contact',
+        $this->_columns[$curTable] = array(
+          'dao' => 'CRM_Contact_DAO_Contact',
           'fields' => $curFields,
           'ext' => $curExt,
         );
@@ -209,7 +227,8 @@ where (cg.extends='Contact' OR cg.extends='Individual' OR cg.extends_entity_colu
     }
     if (!empty($curFields)) {
       // dummy DAO
-      $this->_columns[$curTable] = array('dao' => 'CRM_Contact_DAO_Contact',
+      $this->_columns[$curTable] = array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' => $curFields,
         'ext' => $curExt,
       );

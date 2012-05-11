@@ -24,7 +24,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-
 class CRM_Queue_Page_AJAX {
 
   /**
@@ -32,71 +31,77 @@ class CRM_Queue_Page_AJAX {
    *
    * @return array(is_error => bool, is_continue => bool, numberOfItems => int, message => string)
    */
-  static function runNext() {
+  static
+  function runNext() {
     $errorPolicy = new CRM_Queue_ErrorPolicy();
-    $errorPolicy->call(function() {
-      global $activeQueueRunner;
-      $qrid = CRM_Utils_Request::retrieve('qrid', 'String', CRM_Core_DAO::$_nullObject, true, null, 'POST');
-      $activeQueueRunner = CRM_Queue_Runner::instance($qrid);
-      if (!is_object($activeQueueRunner)) {
-        throw new Exception('Queue runner must be configured before execution.');
+    $errorPolicy->call(
+    function () {
+        global $activeQueueRunner;
+        $qrid = CRM_Utils_Request::retrieve('qrid', 'String', CRM_Core_DAO::$_nullObject, TRUE, NULL, 'POST');
+        $activeQueueRunner = CRM_Queue_Runner::instance($qrid);
+        if (!is_object($activeQueueRunner)) {
+          throw new Exception('Queue runner must be configured before execution.');
       }
-
-      $result = $activeQueueRunner->runNext(TRUE);
-      if ($result['is_error']) {
-        CRM_Core_Error::debug_var('CRM_Queue_Page_AJAX_runNext_result', $result);
+        $result = $activeQueueRunner->runNext(TRUE);
+        if ($result['is_error']) {
+          CRM_Core_Error::debug_var('CRM_Queue_Page_AJAX_runNext_result', $result);
       }
-      echo json_encode($result);
-      CRM_Utils_System::civiExit();
-    });
+        echo json_encode($result);
+        CRM_Utils_System::civiExit();
+    }
+    );
   }
-  
+
   /**
    * Run the next task and return status information
    *
    * @return array(is_error => bool, is_continue => bool, numberOfItems => int, message => string)
    */
-  static function skipNext() {
+  static
+  function skipNext() {
     $errorPolicy = new CRM_Queue_ErrorPolicy();
-    $errorPolicy->call(function() {
-      global $activeQueueRunner;
-      $qrid = CRM_Utils_Request::retrieve('qrid', 'String', CRM_Core_DAO::$_nullObject, true, null, 'POST');
-      $activeQueueRunner = CRM_Queue_Runner::instance($qrid);
-      if (!is_object($activeQueueRunner)) {
-        throw new Exception('Queue runner must be configured before execution.');
+    $errorPolicy->call(
+    function () {
+        global $activeQueueRunner;
+        $qrid = CRM_Utils_Request::retrieve('qrid', 'String', CRM_Core_DAO::$_nullObject, TRUE, NULL, 'POST');
+        $activeQueueRunner = CRM_Queue_Runner::instance($qrid);
+        if (!is_object($activeQueueRunner)) {
+          throw new Exception('Queue runner must be configured before execution.');
       }
-
-      $result = $activeQueueRunner->skipNext(TRUE);
-      if ($result['is_error']) {
-        CRM_Core_Error::debug_var('CRM_Queue_Page_AJAX_skipNext_result', $result);
+        $result = $activeQueueRunner->skipNext(TRUE);
+        if ($result['is_error']) {
+          CRM_Core_Error::debug_var('CRM_Queue_Page_AJAX_skipNext_result', $result);
       }
-      echo json_encode($result);
-      CRM_Utils_System::civiExit();
-    });
+        echo json_encode($result);
+        CRM_Utils_System::civiExit();
+    }
+    );
   }
-  
+
   /**
    * Run the next task and return status information
    *
    * @return array(is_error => bool, is_continue => bool, numberOfItems => int, message => string)
    */
-  static function onEnd() {
+  static
+  function onEnd() {
     $errorPolicy = new CRM_Queue_ErrorPolicy();
-    $errorPolicy->call(function() {
-      global $activeQueueRunner;
-      $qrid = CRM_Utils_Request::retrieve('qrid', 'String', CRM_Core_DAO::$_nullObject, true, null, 'POST');
-      $activeQueueRunner = CRM_Queue_Runner::instance($qrid);
-      if (!is_object($activeQueueRunner)) {
-        throw new Exception('Queue runner must be configured before execution. - onEnd');
+    $errorPolicy->call(
+    function () {
+        global $activeQueueRunner;
+        $qrid = CRM_Utils_Request::retrieve('qrid', 'String', CRM_Core_DAO::$_nullObject, TRUE, NULL, 'POST');
+        $activeQueueRunner = CRM_Queue_Runner::instance($qrid);
+        if (!is_object($activeQueueRunner)) {
+          throw new Exception('Queue runner must be configured before execution. - onEnd');
       }
-
-      $result = $activeQueueRunner->handleEnd(FALSE);
-      if ($result['is_error']) {
-        CRM_Core_Error::debug_var('CRM_Queue_Page_AJAX_runNext_result', $result);
+        $result = $activeQueueRunner->handleEnd(FALSE);
+        if ($result['is_error']) {
+          CRM_Core_Error::debug_var('CRM_Queue_Page_AJAX_runNext_result', $result);
       }
-      echo json_encode($result);
-      CRM_Utils_System::civiExit();
-    });
+        echo json_encode($result);
+        CRM_Utils_System::civiExit();
+    }
+    );
   }
-  
 }
+

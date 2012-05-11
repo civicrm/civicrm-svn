@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -98,7 +99,8 @@ function &_civicrm_activities_get($contactID, $type = 'all') {
   if (is_array($activities) && !empty($activities)) {
     require_once 'api/v2/Activity.php';
     foreach ($activities as $activityId => $values) {
-      $customParams = array('activity_id' => $activityId,
+      $customParams = array(
+        'activity_id' => $activityId,
         'activity_type_id' => CRM_Utils_Array::value('activity_type_id', $values),
       );
 

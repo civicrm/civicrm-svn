@@ -38,21 +38,25 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   );
 
   protected $_add2groupSupported = FALSE;
 
-  protected $_customGroupExtends = array('Event'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Event'); function __construct() {
 
     $this->_columns = array(
       'civicrm_event' =>
-      array('dao' => 'CRM_Event_DAO_Event',
+      array(
+        'dao' => 'CRM_Event_DAO_Event',
         'fields' =>
         array(
-          'id' => array('no_display' => TRUE,
+          'id' => array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
           'title' => array('title' => ts('Event Title'),
@@ -75,15 +79,18 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::event(NULL, NULL, "is_template IS NULL OR is_template = 0"),
           ),
-          'event_type_id' => array('name' => 'event_type_id',
+          'event_type_id' => array(
+            'name' => 'event_type_id',
             'title' => ts('Event Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_OptionGroup::values('event_type'),
           ),
-          'event_start_date' => array('title' => 'Event Start Date',
+          'event_start_date' => array(
+            'title' => 'Event Start Date',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
-          'event_end_date' => array('title' => 'Event End Date',
+          'event_end_date' => array(
+            'title' => 'Event End Date',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
         ),
@@ -248,13 +255,16 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
     //make column header for participant status No-show/Cancelled/Pending
     $type2_header = implode('/', $statusType2);
 
-    $this->_columnHeaders['statusType1'] = array('title' => $type1_header,
+    $this->_columnHeaders['statusType1'] = array(
+      'title' => $type1_header,
       'type' => CRM_Utils_Type::T_INT,
     );
-    $this->_columnHeaders['statusType2'] = array('title' => $type2_header,
+    $this->_columnHeaders['statusType2'] = array(
+      'title' => $type2_header,
       'type' => CRM_Utils_Type::T_INT,
     );
-    $this->_columnHeaders['totalAmount'] = array('title' => 'Total Income',
+    $this->_columnHeaders['totalAmount'] = array(
+      'title' => 'Total Income',
       'type' => CRM_Utils_Type::T_MONEY,
     );
   }
@@ -323,7 +333,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
 
       if ((!empty($rows)) && $countEvent != 1) {
         $config = CRM_Core_Config::Singleton();
-        $chartInfo = array('legend' => 'Event Summary',
+        $chartInfo = array(
+          'legend' => 'Event Summary',
           'xname' => 'Event',
           'yname' => "Total Amount ({$config->defaultCurrency})",
         );

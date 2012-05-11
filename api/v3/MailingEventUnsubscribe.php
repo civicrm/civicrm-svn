@@ -53,17 +53,15 @@ function civicrm_api3_mailing_event_unsubscribe_create($params) {
   $job   = $params['job_id'];
   $queue = $params['event_queue_id'];
   $hash  = $params['hash'];
-  if(empty($params['org_unsubscribe'])){
+  if (empty($params['org_unsubscribe'])) {
     $groups = CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_mailing($job, $queue, $hash);
     if (count($groups)) {
       CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue, $groups, FALSE, $job);
       return civicrm_api3_create_success($params);
     }
-    if(!groups){
-      
-    }
-    
-  }else{
+    if (!groups) {}
+  }
+  else {
     $unsubs = CRM_Mailing_Event_BAO_Unsubscribe::unsub_from_domain($job, $queue, $hash);
     if (!$unsubs) {
       return civicrm_api3_create_error('Domain Queue event could not be found');
@@ -71,7 +69,6 @@ function civicrm_api3_mailing_event_unsubscribe_create($params) {
 
     CRM_Mailing_Event_BAO_Unsubscribe::send_unsub_response($queue, NULL, TRUE, $job);
     return civicrm_api3_create_success($params);
-
   }
 
 
@@ -88,3 +85,4 @@ function _civicrm_api3_mailing_event_unsubscribe_create_spec(&$params) {
   $params['hash']['api.required'] = 1;
   $params['event_queue_id']['api.required'] = 1;
 }
+

@@ -38,7 +38,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_customGroupExtends = array('Participant'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Participant'); function __construct() {
 
     static $_events;
     if (!isset($_events['all'])) {
@@ -47,16 +48,19 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
 
     $this->_columns = array(
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name_linked' =>
+        array(
+          'sort_name_linked' =>
           array('title' => ts('Participant Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
             'dbAlias' => 'sort_name',
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
           'employer_id' =>
@@ -65,36 +69,43 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         ),
         'grouping' => 'contact-fields',
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Participant Name'),
             'operator' => 'like',
           ),
         ),
         'order_bys' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Last Name, First Name'), 'default' => '1', 'default_weight' => '0', 'default_order' => 'ASC'),
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
             'no_repeat' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
         'filters' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Participant E-mail'),
             'operator' => 'like',
           ),
         ),
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'fields' =>
-        array('street_address' => NULL,
+        array(
+          'street_address' => NULL,
           'city' => NULL,
           'postal_code' => NULL,
           'state_province_id' =>
@@ -107,14 +118,17 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_participant' =>
-      array('dao' => 'CRM_Event_DAO_Participant',
+      array(
+        'dao' => 'CRM_Event_DAO_Participant',
         'fields' =>
         array('participant_id' => array('title' => 'Participant ID'),
-          'participant_record' => array('name' => 'id',
+          'participant_record' => array(
+            'name' => 'id',
             'no_display' => TRUE,
             'required' => TRUE,
           ),
-          'event_id' => array('default' => TRUE,
+          'event_id' => array(
+            'default' => TRUE,
             'type' => CRM_Utils_Type::T_STRING,
           ),
           'status_id' => array('title' => ts('Status'),
@@ -129,32 +143,38 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         ),
         'grouping' => 'event-fields',
         'filters' =>
-        array('event_id' => array('name' => 'event_id',
+        array(
+          'event_id' => array('name' => 'event_id',
             'title' => ts('Event'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => $_events['all'],
           ),
-          'sid' => array('name' => 'status_id',
+          'sid' => array(
+            'name' => 'status_id',
             'title' => ts('Participant Status'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::participantStatus(NULL, NULL, 'label'),
           ),
-          'rid' => array('name' => 'role_id',
+          'rid' => array(
+            'name' => 'role_id',
             'title' => ts('Participant Role'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::participantRole(),
           ),
-          'participant_register_date' => array('title' => ' Registration Date',
+          'participant_register_date' => array(
+            'title' => ' Registration Date',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
         ),
         'order_bys' =>
-        array('event_id' =>
+        array(
+          'event_id' =>
           array('title' => ts('Event'), 'default_weight' => '1', 'default_order' => 'ASC'),
         ),
       ),
       'civicrm_event' =>
-      array('dao' => 'CRM_Event_DAO_Event',
+      array(
+        'dao' => 'CRM_Event_DAO_Event',
         'fields' =>
         array(
           'event_type_id' => array('title' => ts('Event Type')),
@@ -162,14 +182,16 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         'grouping' => 'event-fields',
         'filters' =>
         array(
-          'eid' => array('name' => 'event_type_id',
+          'eid' => array(
+            'name' => 'event_type_id',
             'title' => ts('Event Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_OptionGroup::values('event_type'),
           ),
         ),
         'order_bys' =>
-        array('event_type_id' =>
+        array(
+          'event_type_id' =>
           array('title' => ts('Event Type'), 'default_weight' => '2', 'default_order' => 'ASC'),
         ),
       ),
@@ -179,7 +201,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
       ),
       'blank_column_end' => array('title' => ts('Blank column at the End'),
         'type' => 'select',
-        'options' => array('' => '-select-',
+        'options' => array(
+          '' => '-select-',
           1 => ts('One'),
           2 => ts('Two'),
           3 => ts('Three'),

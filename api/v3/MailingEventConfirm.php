@@ -72,3 +72,4 @@ function _civicrm_api3_mailing_event_confirm_create_spec(&$params) {
   $params['subscribe_id']['api.required'] = 1;
   $params['hash']['api.required'] = 1;
 }
+

@@ -30,6 +30,7 @@
 
 
 
+
 require_once 'api/v3/Membership.php';
 require_once 'api/v3/MembershipStatus.php';
 require_once 'api/v3/MembershipType.php';
@@ -94,7 +95,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
    *  Test civicrm_membership_status_get. Success expected.
    */
   function testGet() {
-    $params = array('name' => 'test status',
+    $params = array(
+      'name' => 'test status',
       'version' => $this->_apiversion,
     );
     $result = &civicrm_api('membership_status', 'get', $params);
@@ -106,7 +108,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
    *  Test civicrm_membership_status_get. Success expected.
    */
   function testGetLimit() {
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
     );
     $result = &civicrm_api('membership_status', 'getcount', $params);
     $this->assertGreaterThan(1, $result, "Check more than one exists In line " . __LINE__);
@@ -143,7 +146,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
   }
 
   function testCreate() {
-    $params = array('name' => 'test membership status',
+    $params = array(
+      'name' => 'test membership status',
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('membership_status', 'create', $params);
@@ -182,7 +186,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $start_date->modify("-5 months");
         $end_date->modify("+7 months");
 
-        $params = array( 'contact_id'         => $this->_contactID, 
+        $params = array(
+           'contact_id'         => $this->_contactID, 
                          'membership_type_id' => $this->_membershipTypeID,
                          'membership_status_id' => $this->_membershipStatusID,
                          'join_date'   => $join_date->format('Y-m-d'),
@@ -200,6 +205,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
         $this->membershipDelete( $membershipID );
     }
 */
+
 
 
   ///////////////// civicrm_membership_status_delete methods
@@ -223,7 +229,8 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
 
   function testDelete() {
     $membershipID = $this->membershipStatusCreate();
-    $params = array('id' => $membershipID,
+    $params = array(
+      'id' => $membershipID,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('membership_status', 'delete', $params);
@@ -255,13 +262,15 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     $result = civicrm_api('membership', 'create', $params);
     $membershipID = $result['id'];
 
-    $params = array('id' => $membershipStatusID,
+    $params = array(
+      'id' => $membershipStatusID,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('membership_status', 'delete', $params);
     $this->assertEquals($result['is_error'], 1, 'In line ' . __LINE__);
 
-    civicrm_api('Membership', 'Delete', array('id' => $membershipID,
+    civicrm_api('Membership', 'Delete', array(
+      'id' => $membershipID,
         'version' => $this->_apiversion,
       ));
 

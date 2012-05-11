@@ -1,7 +1,6 @@
 <?php
 // $Id$
 
-
 /**
  * Update only cherry-picked fields within an entity -- leave other fields alone.
  * To do this, perform a 'get' action to load the existing values, then merge in the updates

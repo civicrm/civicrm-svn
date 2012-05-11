@@ -33,11 +33,11 @@
  *
  */
 
-
 /**
  * This class build form elements for select exitsing or create new contact widget
  */
 class CRM_Contact_Form_NewContact {
+
   /**
    * Function used to build form element for new contact or select contact widget
    *
@@ -47,12 +47,14 @@ class CRM_Contact_Form_NewContact {
    * @param array    $extrProfiles extra profiles that should be included besides reserved
    *
    * @access public
+   *
    * @return void
    */
-  static function buildQuickForm(&$form, $blockNo = 1, $extraProfiles = null, $required = false,  $prefix = '') {
+  static
+  function buildQuickForm(&$form, $blockNo = 1, $extraProfiles = NULL, $required = FALSE, $prefix = '') {
     // call to build contact autocomplete
     $attributes = array(
-      'width' => '200px'
+      'width' => '200px',
     );
 
     $form->add('text', "{$prefix}contact[{$blockNo}]", ts('Select Contact'), $attributes, $required);
@@ -62,13 +64,14 @@ class CRM_Contact_Form_NewContact {
       // build select for new contact
       $contactProfiles = CRM_Core_BAO_UFGroup::getReservedProfiles('Contact', $extraProfiles);
       $form->add('select', "{$prefix}profiles[{$blockNo}]", ts('Create New Contact'), array(
-        '' => ts('- create new contact -')
-      ) + $contactProfiles, false, array(
-        'onChange' => "if (this.value) newContact{$prefix}{$blockNo}( this.value, {$blockNo}, '{$prefix}' );"
-      ));
+          '' => ts('- create new contact -'),
+        ) + $contactProfiles, FALSE, array(
+          'onChange' => "if (this.value) {  newContact{$prefix}{$blockNo}( this.value, {$blockNo}, '{$prefix}' );}",
+        ));
     }
 
-    $form->assign( 'blockNo', $blockNo );
-    $form->assign( 'prefix', $prefix );
+    $form->assign('blockNo', $blockNo);
+    $form->assign('prefix', $prefix);
   }
 }
+

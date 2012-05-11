@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,14 +32,10 @@
  * $Id$
  *
  */
-
-
-class CRM_Mailing_Page_Optout extends CRM_Mailing_Page_Common
-{
-    function run() {
-        $this->_type = 'optout';
-        return parent::run();
-    }
+class CRM_Mailing_Page_Optout extends CRM_Mailing_Page_Common {
+  function run() {
+    $this->_type = 'optout';
+    return parent::run();
+  }
 }
-
 

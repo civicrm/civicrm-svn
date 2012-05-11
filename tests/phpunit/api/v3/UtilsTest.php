@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Core/Permission.php';
 require_once 'CRM/Core/Permission/UnitTests.php';
@@ -116,7 +117,8 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
      */
   function testVerifyMandatory() {
     _civicrm_api3_initialize(TRUE);
-    $params = array('entity_table' => 'civicrm_contact',
+    $params = array(
+      'entity_table' => 'civicrm_contact',
       'note' => '',
       'contact_id' => $this->_contactID,
       'modified_date' => '2011-01-31',
@@ -139,7 +141,8 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
      */
   function testVerifyOneMandatory() {
     _civicrm_api3_initialize(TRUE);
-    $params = array('entity_table' => 'civicrm_contact',
+    $params = array(
+      'entity_table' => 'civicrm_contact',
       'note' => '',
       'contact_id' => $this->_contactID,
       'modified_date' => '2011-01-31',
@@ -224,7 +227,8 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 
   function test_civicrm_api3_validate_fields_event() {
 
-    $params = array('registration_start_date' => 20080601,
+    $params = array(
+      'registration_start_date' => 20080601,
       'registration_end_date' => '2008-10-15', 'start_date' => '2010-12-20', 'end_date' => '',
     );
     _civicrm_api3_validate_fields('event', 'create', $params);
@@ -235,7 +239,8 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
   }
 
   function test_civicrm_api3_validate_fields_exception() {
-    $params = array('join_date' => 'abc',
+    $params = array(
+      'join_date' => 'abc',
     );
     try {
       _civicrm_api3_validate_fields('Membership', 'get', $params);

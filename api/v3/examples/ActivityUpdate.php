@@ -1,25 +1,24 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function activity_update_example() {
-  $params = array(
-    'id' => 1,
-    'source_contact_id' => 17,
-    'subject' => 'Make-it-Happen Meeting',
-    'status_id' => 1,
-    'activity_name' => 'Test activity type',
-    'activity_date_time' => '20111031',
-    'custom_1' => 'Updated my test data',
-    'version' => 3,
-  );
+function activity_update_example(){
+$params = array( 
+  'id' => 1,
+  'source_contact_id' => 17,
+  'subject' => 'Make-it-Happen Meeting',
+  'status_id' => 1,
+  'activity_name' => 'Test activity type',
+  'activity_date_time' => '20120511',
+  'custom_1' => 'Updated my test data',
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('activity', 'update', $params);
+  $result = civicrm_api( 'activity','update',$params );
 
   return $result;
 }
@@ -27,45 +26,45 @@ function activity_update_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function activity_update_expectedresult() {
+function activity_update_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'id' => 1,
-        'source_contact_id' => 17,
-        'source_record_id' => '',
-        'activity_type_id' => 1,
-        'subject' => 'Make-it-Happen Meeting',
-        'activity_date_time' => '20111031000000',
-        'duration' => '',
-        'location' => '',
-        'phone_id' => '',
-        'phone_number' => '',
-        'details' => '',
-        'status_id' => 1,
-        'priority_id' => '',
-        'parent_id' => '',
-        'is_test' => '',
-        'medium_id' => '',
-        'is_auto' => '',
-        'relationship_id' => '',
-        'is_current_revision' => '',
-        'original_id' => '',
-        'result' => '',
-        'is_deleted' => '',
-        'campaign_id' => '',
-        'engagement_level' => '',
-        'weight' => '',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => 1,
+          'source_contact_id' => 17,
+          'source_record_id' => '',
+          'activity_type_id' => 40,
+          'subject' => 'Make-it-Happen Meeting',
+          'activity_date_time' => '20120511000000',
+          'duration' => '',
+          'location' => '',
+          'phone_id' => '',
+          'phone_number' => '',
+          'details' => '',
+          'status_id' => 1,
+          'priority_id' => '',
+          'parent_id' => '',
+          'is_test' => '',
+          'medium_id' => '',
+          'is_auto' => '',
+          'relationship_id' => '',
+          'is_current_revision' => '',
+          'original_id' => '',
+          'result' => '',
+          'is_deleted' => '',
+          'campaign_id' => '',
+          'engagement_level' => '',
+          'weight' => '',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -84,4 +83,3 @@ function activity_update_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

@@ -42,23 +42,29 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
 
   protected $_phoneField = FALSE;
 
-  protected $_customGroupExtends = array('Contact', 'Individual', 'Household', 'Organization'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Contact', 'Individual', 'Household', 'Organization'); function __construct() {
     $this->_autoIncludeIndexedFieldsAsOrderBys = 1;
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name')),
           'source' =>
           array('title' => ts('Contact Source'),
@@ -71,31 +77,38 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
         ),
         'grouping' => 'contact-fields',
         'order_bys' =>
-        array('sort_name' =>
-          array('title' => ts('Last Name, First Name'), 'default' => '1', 'default_weight' => '0', 'default_order' => 'ASC',
+        array(
+          'sort_name' =>
+          array(
+            'title' => ts('Last Name, First Name'), 'default' => '1', 'default_weight' => '0', 'default_order' => 'ASC',
           ),
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
             'no_repeat' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
         'order_bys' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
           ),
         ),
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'grouping' => 'contact-fields',
         'fields' =>
-        array('street_address' =>
+        array(
+          'street_address' =>
           array('default' => TRUE),
           'city' =>
           array('default' => TRUE),
@@ -105,7 +118,8 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('country_id' =>
+        array(
+          'country_id' =>
           array('title' => ts('Country'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_PseudoConstant::country(),
@@ -123,29 +137,36 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
         ),
       ),
       'civicrm_country' =>
-      array('dao' => 'CRM_Core_DAO_Country',
+      array(
+        'dao' => 'CRM_Core_DAO_Country',
         'fields' =>
-        array('name' =>
+        array(
+          'name' =>
           array('title' => 'Country', 'default' => TRUE),
         ),
         'order_bys' =>
-        array('name' =>
+        array(
+          'name' =>
           array('title' => 'Country'),
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
         array('phone' => NULL),
         'grouping' => 'contact-fields',
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_Group',
+      array(
+        'dao' => 'CRM_Contact_DAO_Group',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,

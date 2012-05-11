@@ -1,21 +1,20 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function campaign_get_example() {
-  $params = array(
-    'version' => 3,
-    'title' => 'campaign title',
-    'description' => 'Call people, ask for money',
-    'created_date' => 'first sat of July 2008',
-  );
+function campaign_get_example(){
+$params = array( 
+  'version' => 3,
+  'title' => 'campaign title',
+  'description' => 'Call people, ask for money',
+  'created_date' => 'first sat of July 2008',
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('campaign', 'get', $params);
+  $result = civicrm_api( 'campaign','get',$params );
 
   return $result;
 }
@@ -23,26 +22,26 @@ function campaign_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function campaign_get_expectedresult() {
+function campaign_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 2,
-    'values' => array(
-      '2' => array(
-        'id' => '2',
-        'name' => 'campaign_title',
-        'title' => 'campaign title',
-        'description' => 'Call people, ask for money',
-        'is_active' => '1',
-        'created_date' => '2008-07-05 00:00:00',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 2,
+  'values' => array( 
+      '2' => array( 
+          'id' => '2',
+          'name' => 'campaign_title',
+          'title' => 'campaign title',
+          'description' => 'Call people, ask for money',
+          'is_active' => '1',
+          'created_date' => '2008-07-05 00:00:00',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -61,4 +60,3 @@ function campaign_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

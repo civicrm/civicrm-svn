@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -79,7 +80,8 @@ function civicrm_membership_contact_create(&$params) {
 
   //for edit membership id should be present
   if (CRM_Utils_Array::value('id', $params)) {
-    $ids = array('membership' => $params['id'],
+    $ids = array(
+      'membership' => $params['id'],
       'userId' => $params['contact_id'],
     );
     $action = CRM_Core_Action::UPDATE;
@@ -332,7 +334,8 @@ function _civicrm_membership_format_params(&$params, &$values, $create = FALSE) 
     // membership_end_date and membership_source. So, if $values contains
     // membership_start_date, membership_end_date  or membership_source,
     // convert it to start_date, end_date or source
-    $changes = array('membership_start_date' => 'start_date',
+    $changes = array(
+      'membership_start_date' => 'start_date',
       'membership_end_date' => 'end_date',
       'membership_source' => 'source',
     );

@@ -44,7 +44,8 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
 
   protected $_customGroupExtends = array('Contribution');
 
-  protected $_referenceYear = array('this_year' => '',
+  protected $_referenceYear = array(
+    'this_year' => '',
     'other_year' => '',
   );
   protected $_yearStatisticsFrom = '';
@@ -74,24 +75,29 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
       }
     }
 
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'default' => TRUE,
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'default' => TRUE,
             'required' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name')),
           'id' =>
           array('title' => ts('Contact ID'),
@@ -100,9 +106,11 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
             'no_repeat' => TRUE,
           ),
@@ -110,19 +118,24 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
-        array('phone' =>
+        array(
+          'phone' =>
           array('title' => ts('Phone'),
             'no_repeat' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
       ),
-    ) + $this->addAddressFields(FALSE, FALSE, FALSE, array()) + array('civicrm_relationship' =>
-      array('dao' => 'CRM_Contact_DAO_Relationship',
+    ) + $this->addAddressFields(FALSE, FALSE, FALSE, array(
+      )) + array('civicrm_relationship' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Relationship',
         'fields' =>
-        array('relationship_type_id' =>
+        array(
+          'relationship_type_id' =>
           array('title' => ts('Relationship Type'),
             'default' => TRUE,
           ),
@@ -132,7 +145,8 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
           array('no_display' => TRUE),
         ),
         'filters' =>
-        array('relationship_type_id' =>
+        array(
+          'relationship_type_id' =>
           array('title' => ts('Relationship Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => $relationTypeOp,
@@ -140,10 +154,13 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
           ),
         ),
       ),
-    ) + array('civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+    ) + array(
+      'civicrm_contribution' =>
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
-        array('total_amount' =>
+        array(
+          'total_amount' =>
           array('title' => ts('Amount Statistics'),
             'default' => TRUE,
             'required' => TRUE,
@@ -152,14 +169,16 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
             array('sum' => ts('Aggregate Amount')),
           ),
           'receive_date' =>
-          array('required' => TRUE,
+          array(
+            'required' => TRUE,
             'default' => TRUE,
             'no_display' => TRUE,
           ),
         ),
         'grouping' => 'contri-fields',
         'filters' =>
-        array('this_year' =>
+        array(
+          'this_year' =>
           array(
             'title' => ts('This Year'),
             'operatorType' => CRM_Report_Form::OP_SELECT,
@@ -197,12 +216,16 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
           ),
         ),
       ),
-    ) + array('civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_GroupContact',
+    ) + array(
+      'civicrm_group' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_GroupContact',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,

@@ -32,35 +32,37 @@
  * $Id$
  *
  */
-
 class CRM_Batch_Form_Search extends CRM_Core_Form {
+  function setDefaultValues() {
+    $defaults = array();
 
-  function setDefaultValues( ) {
-    $defaults = array( );
-    
-    $status = CRM_Utils_Request::retrieve( 'status', 'Positive', CRM_Core_DAO::$_nullObject, false, 1 );
-    
+    $status = CRM_Utils_Request::retrieve('status', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, 1);
+
     $defaults['batch_status'] = $status;
     return $defaults;
   }
 
-  public function buildQuickForm( ) {
-    $this->add( 'text', 'title', ts( 'Find' ),
-      CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Batch', 'title' ) );
+  public function buildQuickForm() {
+    $this->add('text', 'title', ts('Find'),
+      CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'title')
+    );
 
-    $this->add('select', 'batch_status', ts('Status'), 
-    array('' => ts('- all -')) + CRM_Core_PseudoConstant::getBatchStatus() ); 
+    $this->add('select', 'batch_status', ts('Status'),
+      array('' => ts('- all -')) + CRM_Core_PseudoConstant::getBatchStatus()
+    );
 
     $this->addButtons(
-      array( 
-        array (
-          'type'      => 'refresh', 
-          'name'      => ts('Search'), 
-          'isDefault' => true ), 
-      )); 
+      array(
+        array(
+          'type' => 'refresh',
+          'name' => ts('Search'),
+          'isDefault' => TRUE,
+        ),
+      )
+    );
 
-    parent::buildQuickForm( );
-    $this->assign( 'suppressForm', true ); 
+    parent::buildQuickForm();
+    $this->assign('suppressForm', TRUE);
   }
-
 }
+

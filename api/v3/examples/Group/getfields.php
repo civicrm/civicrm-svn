@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  demonstrate use of getfields to interogate api
  */
-function group_getfields_example() {
-  $params = array(
-    'version' => 3,
-    'action' => 'create',
-  );
+function group_getfields_example(){
+$params = array( 
+  'version' => 3,
+  'action' => 'create',
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('group', 'getfields', $params);
+  $result = civicrm_api( 'group','getfields',$params );
 
   return $result;
 }
@@ -21,67 +20,117 @@ function group_getfields_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function group_getfields_expectedresult() {
+function group_getfields_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 9,
-    'id' => array(
-      'name' => 'id',
-      'type' => 1,
-      'required' => TRUE,
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 17,
+  'values' => array( 
+      'id' => array( 
+          'name' => 'id',
+          'type' => 1,
+          'required' => true,
+        ),
+      'name' => array( 
+          'name' => 'name',
+          'type' => 2,
+          'title' => 'Name',
+          'maxlength' => 64,
+          'size' => 30,
+        ),
+      'title' => array( 
+          'name' => 'title',
+          'type' => 2,
+          'title' => 'Title',
+          'maxlength' => 64,
+          'size' => 30,
+          'api.required' => 1,
+        ),
+      'description' => array( 
+          'name' => 'description',
+          'type' => 32,
+          'title' => 'Description',
+          'rows' => 2,
+          'cols' => 60,
+        ),
+      'source' => array( 
+          'name' => 'source',
+          'type' => 2,
+          'title' => 'Source',
+          'maxlength' => 64,
+          'size' => 30,
+        ),
+      'saved_search_id' => array( 
+          'name' => 'saved_search_id',
+          'type' => 1,
+          'FKClassName' => 'CRM_Contact_DAO_SavedSearch',
+        ),
+      'is_active' => array( 
+          'name' => 'is_active',
+          'type' => 16,
+          'api.default' => 1,
+        ),
+      'visibility' => array( 
+          'name' => 'visibility',
+          'type' => 2,
+          'title' => 'Visibility',
+          'default' => 'User and User Admin Only',
+          'enumValues' => 'User and User Admin Only,Public Pages',
+          'options' => array( 
+              '0' => 'User and User Admin Only',
+              '1' => 'Public Pages',
+            ),
+        ),
+      'where_clause' => array( 
+          'name' => 'where_clause',
+          'type' => 32,
+          'title' => 'Where Clause',
+        ),
+      'select_tables' => array( 
+          'name' => 'select_tables',
+          'type' => 32,
+          'title' => 'Select Tables',
+        ),
+      'where_tables' => array( 
+          'name' => 'where_tables',
+          'type' => 32,
+          'title' => 'Where Tables',
+        ),
+      'group_type' => array( 
+          'name' => 'group_type',
+          'type' => 2,
+          'title' => 'Group Type',
+          'maxlength' => 128,
+          'size' => 45,
+        ),
+      'cache_date' => array( 
+          'name' => 'cache_date',
+          'type' => 12,
+          'title' => 'Cache Date',
+        ),
+      'parents' => array( 
+          'name' => 'parents',
+          'type' => 32,
+          'title' => 'Parents',
+        ),
+      'children' => array( 
+          'name' => 'children',
+          'type' => 32,
+          'title' => 'Children',
+        ),
+      'is_hidden' => array( 
+          'name' => 'is_hidden',
+          'type' => 16,
+        ),
+      'is_reserved' => array( 
+          'name' => 'is_reserved',
+          'type' => 16,
+        ),
     ),
-    'values' => array(
-      'id' => array(
-        'name' => 'id',
-        'type' => 1,
-        'required' => TRUE,
-      ),
-      'mailing_id' => array(
-        'name' => 'mailing_id',
-        'type' => 1,
-        'required' => TRUE,
-        'FKClassName' => 'CRM_Mailing_DAO_Mailing',
-      ),
-      'group_type' => array(
-        'name' => 'group_type',
-        'type' => 2,
-        'title' => 'Group Type',
-        'enumValues' => 'Include, Exclude, Base',
-      ),
-      'entity_table' => array(
-        'name' => 'entity_table',
-        'type' => 2,
-        'title' => 'Entity Table',
-        'required' => TRUE,
-        'maxlength' => 64,
-        'size' => 30,
-      ),
-      'entity_id' => array(
-        'name' => 'entity_id',
-        'type' => 1,
-        'required' => TRUE,
-      ),
-      'search_id' => array(
-        'name' => 'search_id',
-        'type' => 1,
-      ),
-      'search_args' => array(
-        'name' => 'search_args',
-        'type' => 32,
-        'title' => 'Search Args',
-      ),
-      'is_active' => array(
-        'api.default' => 1,
-      ),
-      'title' => array(
-        'api.required' => 1,
-      ),
-    ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -100,4 +149,3 @@ function group_getfields_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

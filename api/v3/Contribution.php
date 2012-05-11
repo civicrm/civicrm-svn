@@ -91,12 +91,14 @@ function civicrm_api3_contribution_create($params) {
 function _civicrm_api3_contribution_create_spec(&$params) {
   $params['contact_id']['api.required'] = 1;
   $params['total_amount']['api.required'] = 1;
-  $params['note'] = array('name' => 'note',
+  $params['note'] = array(
+    'name' => 'note',
     'title' => 'note',
     'type' => 2,
     'description' => 'Associated Note in the notes table',
   );
-  $params['soft_credit_to'] = array('name' => 'soft_credit_to',
+  $params['soft_credit_to'] = array(
+    'name' => 'soft_credit_to',
     'title' => 'Soft Credit contact ID',
     'type' => 1,
     'description' => 'ID of Contact to be Soft credited to',
@@ -294,9 +296,10 @@ function civicrm_api3_contribution_transact($params) {
   }
 
   // allow people to omit some values for convenience
-    // 'payment_processor_id' => NULL /* we could retrieve the default processor here, but only if it's missing to avoid an extra lookup */
+  // 'payment_processor_id' => NULL /* we could retrieve the default processor here, but only if it's missing to avoid an extra lookup */
   $defaults = array(
-    'payment_processor_mode' => 'live');
+    'payment_processor_mode' => 'live',
+  );
   $params = array_merge($defaults, $params);
 
   // clean up / adjust some values which

@@ -44,7 +44,8 @@ require_once 'CRM/Case/PseudoConstant.php';
 /**
  * Open a new case, add client and manager roles, and add standard timeline
  *
- * @param  array( //REQUIRED:
+ * @param  array(
+    //REQUIRED:
  * 'case_type_id'     => int OR
  * 'case_type' => str (provide one or the other)
  * 'contact_id'       => int // case client
@@ -75,8 +76,9 @@ function civicrm_api3_case_create($params) {
   $tx = new CRM_Core_Transaction();
 
   // ongoing
-  if (!CRM_Utils_Array::value('status_id', $params))
-  $params['status_id'] = 1;
+  if (!CRM_Utils_Array::value('status_id', $params)) {
+    $params['status_id'] = 1;
+  }
   if (!array_key_exists('creator_id', $params)) {
     $session = CRM_Core_Session::singleton();
     $params['creator_id'] = $session->get('userID');
@@ -130,7 +132,8 @@ function civicrm_api3_case_create($params) {
  *
  * Please provide one (and only one) of the four get/search parameters:
  *
- * @param array( 'case_id'    => if set, will get all available info about a case, including contacts and activities
+ * @param array(
+    'case_id'    => if set, will get all available info about a case, including contacts and activities
  *
  * // if no case_id provided, this function will use one of the following search parameters:
  * 'client_id'   => finds all cases with a specific client
@@ -198,7 +201,6 @@ function civicrm_api3_case_get($params) {
     if (empty($ids)) {
 
       return civicrm_api3_create_success(array());
-
     }
 
     $cases = array();
@@ -267,7 +269,8 @@ function civicrm_api3_case_activity_create($params) {
 /**
  * Update a specified case.
  *
- * @param  array( //REQUIRED:
+ * @param  array(
+    //REQUIRED:
  * 'case_id'          => int
  *
  * //OPTIONAL
@@ -347,7 +350,8 @@ function _api_case_update($params) {
 /**
  * Delete a specified case.
  *
- * @param  array( //REQUIRED:
+ * @param  array(
+    //REQUIRED:
  * 'case_id'           => int
  *
  * //OPTIONAL
@@ -370,7 +374,6 @@ function civicrm_api3_case_delete($params) {
   if ($errors) {
 
     return $errors;
-
   }
 
   if (CRM_Case_BAO_Case::deleteCase($params['case_id'], $params['move_to_trash'])) {
@@ -384,7 +387,9 @@ function civicrm_api3_case_delete($params) {
 /***********************************/
 /*                                 */
 
+
 /*     INTERNAL FUNCTIONS          */
+
 
 /*                                 */
 
@@ -471,20 +476,18 @@ function _civicrm_api3_case_check_params($params, $mode = NULL) {
       if (!$params['case_type_id'] && !$params['case_type']) {
 
         return civicrm_api3_create_error('Missing input parameters. Must provide case_type or case_type_id.');
-
       }
 
-    $required = array('contact_id' => 'num', 'subject' => 'str');
+      $required = array('contact_id' => 'num', 'subject' => 'str');
 
-    if (!CRM_Utils_Array::value('case_type', $params)) {
+      if (!CRM_Utils_Array::value('case_type', $params)) {
 
-      $required['case_type_id'] = 'num';
-
-    }
-    if (!CRM_Utils_Array::value('case_type_id', $params)) {
-      $required['case_type'] = 'str';
-    }
-    break;
+        $required['case_type_id'] = 'num';
+      }
+      if (!CRM_Utils_Array::value('case_type_id', $params)) {
+        $required['case_type'] = 'str';
+      }
+      break;
 
     case 'update':
     case 'delete':
@@ -500,19 +503,16 @@ function _civicrm_api3_case_check_params($params, $mode = NULL) {
     if (!$params[$req]) {
 
       return civicrm_api3_create_error('Missing required parameter: %1.', array(1 => $req));
-
     }
 
     if ($type == 'num' && !is_numeric($params[$req])) {
 
       return civicrm_api3_create_error('Invalid parameter: %1. Must provide a numeric value.', array(1 => $req));
-
     }
 
     if ($type == 'str' && !is_string($params[$req])) {
 
       return civicrm_api3_create_error('Invalid parameter: %1. Must provide a string.', array(1 => $req));
-
     }
   }
 

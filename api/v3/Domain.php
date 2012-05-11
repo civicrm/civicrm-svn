@@ -71,7 +71,8 @@ function civicrm_api3_domain_get($params) {
     require_once 'CRM/Core/BAO/Location.php';
     $values['location'] = CRM_Core_BAO_Location::getValues($locparams, TRUE);
 
-    $address_array = array('street_address', 'supplemental_address_1', 'supplemental_address_2',
+    $address_array = array(
+      'street_address', 'supplemental_address_1', 'supplemental_address_2',
       'city', 'state_province_id', 'postal_code', 'country_id',
       'geo_code_1', 'geo_code_2',
     );

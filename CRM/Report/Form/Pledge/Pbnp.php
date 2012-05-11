@@ -35,31 +35,39 @@
  *
  */
 class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   );
 
-  protected $_customGroupExtends = array('Pledge'); function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+  protected $_customGroupExtends = array(
+    'Pledge'); function __construct() {
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Constituent Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_pledge' =>
-      array('dao' => 'CRM_Pledge_DAO_Pledge',
+      array(
+        'dao' => 'CRM_Pledge_DAO_Pledge',
         'fields' =>
-        array('pledge_create_date' =>
+        array(
+          'pledge_create_date' =>
           array('title' => ts('Pledge Made'),
             'required' => TRUE,
           ),
@@ -77,8 +85,10 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('pledge_create_date' =>
-          array('title' => 'Pledge Made',
+        array(
+          'pledge_create_date' =>
+          array(
+            'title' => 'Pledge Made',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
           'contribution_type_id' =>
@@ -90,9 +100,11 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
         'grouping' => 'pledge-fields',
       ),
       'civicrm_pledge_payment' =>
-      array('dao' => 'CRM_Pledge_DAO_PledgePayment',
+      array(
+        'dao' => 'CRM_Pledge_DAO_PledgePayment',
         'fields' =>
-        array('scheduled_date' =>
+        array(
+          'scheduled_date' =>
           array('title' => ts('Next Payment Due'),
             'type' => CRM_Utils_Type::T_DATE,
             'required' => TRUE,
@@ -101,9 +113,11 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
         'grouping' => 'pledge-fields',
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'fields' =>
-        array('street_address' => NULL,
+        array(
+          'street_address' => NULL,
           'city' => NULL,
           'postal_code' => NULL,
           'state_province_id' =>
@@ -117,17 +131,21 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
         array('email' => NULL),
         'grouping' => 'contact-fields',
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_Group',
+      array(
+        'dao' => 'CRM_Contact_DAO_Group',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'group' => TRUE,
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -178,7 +196,8 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
 
     $allStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     $pendingStatus = array_search('Pending', $allStatus);
-    foreach (array('Pending', 'In Progress', 'Overdue') as $statusKey) {
+    foreach (array(
+      'Pending', 'In Progress', 'Overdue') as $statusKey) {
       if ($key = CRM_Utils_Array::key($statusKey, $allStatus)) {
         $unpaidStatus[] = $key;
       }

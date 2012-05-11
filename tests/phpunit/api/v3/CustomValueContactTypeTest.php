@@ -47,7 +47,8 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
 
     $this->IndiStudentField = $this->customFieldCreate($this->CustomGroupIndiStudent['id'], "Custom Field" . substr(sha1(rand()), 0, 7));
 
-    $params = array('first_name' => 'Mathev',
+    $params = array(
+      'first_name' => 'Mathev',
       'last_name' => 'Adison',
       'contact_type' => 'Individual',
       'version' => $this->_apiversion,
@@ -55,7 +56,8 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
 
     $this->individual = $this->individualCreate($params);
 
-    $params = array('first_name' => 'Steve',
+    $params = array(
+      'first_name' => 'Steve',
       'last_name' => 'Tosun',
       'contact_type' => 'Individual',
       'contact_sub_type' => 'Student',
@@ -63,7 +65,8 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
     );
     $this->individualStudent = $this->individualCreate($params);
 
-    $params = array('first_name' => 'Mark',
+    $params = array(
+      'first_name' => 'Mark',
       'last_name' => 'Dawson',
       'contact_type' => 'Individual',
       'contact_sub_type' => 'Parent',
@@ -71,13 +74,15 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
     );
     $this->individualParent = $this->individualCreate($params);
 
-    $params = array('organization_name' => 'Wellspring',
+    $params = array(
+      'organization_name' => 'Wellspring',
       'contact_type' => 'Organization',
       'version' => $this->_apiversion,
     );
     $this->organization = $this->organizationCreate($params);
 
-    $params = array('organization_name' => 'SubUrban',
+    $params = array(
+      'organization_name' => 'SubUrban',
       'contact_type' => 'Organization',
       'contact_sub_type' => 'Sponsor',
       'version' => $this->_apiversion,
@@ -130,7 +135,8 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
    */
   function testAddCustomDataEmptyToIndividual() {
 
-    $params = array('version' => 3,
+    $params = array(
+      'version' => 3,
     );
     $contact = &civicrm_api('contact', 'create', $params);
     $this->assertEquals($contact['is_error'], 1);

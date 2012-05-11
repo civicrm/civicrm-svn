@@ -6,6 +6,7 @@
  */
 
 
+
 /*
  demonstrates use of smarty as output
  */

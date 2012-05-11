@@ -42,23 +42,28 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
   protected $_customGroupGroupBy = TRUE;
   protected $_addressField = FALSE;
   protected $_emailField = FALSE; function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'no_repeat' => TRUE,
           ),
           'postal_greeting_display' =>
           array('title' => ts('Postal Greeting')),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'grouping' => 'contact-fields',
         'group_bys' =>
-        array('id' =>
+        array(
+          'id' =>
           array('title' => ts('Contact ID')),
           'sort_name' =>
           array('title' => ts('Contact Name'),
@@ -66,20 +71,26 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
-          array('no_repeat' => TRUE,
+        array(
+          'email' =>
+          array(
+            'no_repeat' => TRUE,
             'title' => ts('email'),
           ),
         ),
         'grouping' => 'contact-fields',
       ),
       'civicrm_pledge' =>
-      array('dao' => 'CRM_Pledge_DAO_Pledge',
+      array(
+        'dao' => 'CRM_Pledge_DAO_Pledge',
         'fields' =>
-        array('id' =>
-          array('no_display' => TRUE,
+        array(
+          'id' =>
+          array(
+            'no_display' => TRUE,
             'required' => FALSE,
           ),
           'amount' =>
@@ -119,7 +130,8 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
         'filters' =>
         array(
           'pledge_create_date' =>
-          array('title' => 'Pledge Made Date',
+          array(
+            'title' => 'Pledge Made Date',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
           'pledge_amount' =>
@@ -127,7 +139,8 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_INT,
           ),
           'sid' =>
-          array('name' => 'status_id',
+          array(
+            'name' => 'status_id',
             'title' => ts('Pledge Status'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_OptionGroup::values('contribution_status'),
@@ -136,7 +149,8 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
         'group_bys' =>
         array(
           'pledge_create_date' =>
-          array('frequency' => TRUE,
+          array(
+            'frequency' => TRUE,
             'default' => TRUE,
             'chart' => TRUE,
           ),
@@ -149,11 +163,14 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
         ),
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_Group',
+      array(
+        'dao' => 'CRM_Contact_DAO_Group',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts(' Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -264,14 +281,17 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
       $dao = CRM_Core_DAO::executeQuery($sql);
 
       if ($dao->fetch()) {
-        $statistics['count']['amount'] = array('value' => $dao->amount,
+        $statistics['count']['amount'] = array(
+          'value' => $dao->amount,
           'title' => 'Total Pledged',
           'type' => CRM_Utils_Type::T_MONEY,
         );
-        $statistics['count']['count '] = array('value' => $dao->count,
+        $statistics['count']['count '] = array(
+          'value' => $dao->count,
           'title' => 'Total No Pledges',
         );
-        $statistics['count']['avg   '] = array('value' => $dao->avg,
+        $statistics['count']['avg   '] = array(
+          'value' => $dao->avg,
           'title' => 'Average',
           'type' => CRM_Utils_Type::T_MONEY,
         );

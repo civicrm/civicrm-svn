@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -25,14 +24,11 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-
-
-
 class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
 
-  protected function setUp()
-  {
+  protected function setUp() {
     parent::setUp();
   }
 
@@ -40,17 +36,17 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     // This is the path where our testing install resides.
     // The rest of URL is defined in CiviSeleniumTestCase base class, in
     // class attributes.
-    $this->open( $this->sboxPath );
+    $this->open($this->sboxPath);
 
     // Log in as admin first to verify permissions for CiviGrant
-    $this->webtestLogin( true );
+    $this->webtestLogin(TRUE);
 
     // Enable CiviGrant module if necessary
     $this->open($this->sboxPath . 'civicrm/admin/setting/component?reset=1');
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_Component_next-bottom');
     $enabledComponents = $this->getSelectOptions('enableComponents-t');
-    if (! in_array( 'CiviGrant', $enabledComponents ) ) {
+    if (!in_array('CiviGrant', $enabledComponents)) {
       $this->addSelection('enableComponents-f', 'label=CiviGrant');
       $this->click("//option[@value='CiviGrant']");
       $this->click('add');
@@ -61,8 +57,8 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     }
 
     // let's give full CiviGrant permissions to demo user (registered user).
-    $permission = array('edit-2-access-civigrant','edit-2-edit-grants','edit-2-delete-in-civigrant');
-    $this->changePermissions( $permission );
+    $permission = array('edit-2-access-civigrant', 'edit-2-edit-grants', 'edit-2-delete-in-civigrant');
+    $this->changePermissions($permission);
 
     // Create unique identifier for names
     $rand = substr(sha1(rand()), 0, 7);
@@ -72,7 +68,7 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->click("css=#grant_type > div.action-link > #new > span");
     $this->waitForPageToLoad("30000");
-    $grantType = 'GrantType'.$rand;
+    $grantType = 'GrantType' . $rand;
     $this->type("id=label", $grantType);
     $this->click("id=_qf_Options_next-top");
     $this->waitForPageToLoad("30000");
@@ -83,7 +79,7 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->click("css=#newCustomDataGroup > span");
     $this->waitForElementPresent('_qf_Group_next-bottom');
-    $grantFieldSet = 'Fieldset'.$rand;
+    $grantFieldSet = 'Fieldset' . $rand;
     $this->type("id=title", $grantFieldSet);
     $this->select("id=extends[0]", "label=Grants");
     $this->addSelection("id=extends[1]", "label=$grantType");
@@ -93,7 +89,7 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("Your custom field set '$grantFieldSet' has been added."));
 
     // Add field to fieldset
-    $grantField = 'GrantField'.$rand;
+    $grantField = 'GrantField' . $rand;
     $this->type("id=label", $grantField);
     $this->select("id=data_type[0]", "label=Money");
     $this->click("id=_qf_Field_next-bottom");
@@ -105,8 +101,8 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Grant_upload-bottom');
     $this->select("id=profiles_1", "label=New Individual");
     $this->waitForElementPresent('_qf_Edit_next');
-    $firstName = 'First'.$rand;
-    $lastName = 'Last'.$rand;
+    $firstName = 'First' . $rand;
+    $lastName = 'Last' . $rand;
     $this->type("id=first_name", $firstName);
     $this->type("id=last_name", $lastName);
     $this->click("id=_qf_Edit_next");
@@ -126,12 +122,13 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_GrantView_cancel-bottom');
 
     // verify tabular data for grant view
-    $this->webtestVerifyTabularData( array(
-        'Name'                   => "$firstName $lastName",
-        'Grant Status'           => 'Granted',
-        'Grant Type'             => $grantType,
-        $grantField              => "$ 99.99"
+    $this->webtestVerifyTabularData(array(
+        'Name' => "$firstName $lastName",
+        'Grant Status' => 'Granted',
+        'Grant Type' => $grantType,
+        $grantField => "$ 99.99",
       )
     );
   }
 }
+

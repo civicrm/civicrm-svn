@@ -1,20 +1,19 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function custom_value_create_example() {
-  $params = array(
-    'custom_1' => 'customString',
-    'version' => 3,
-    'entity_id' => 1,
-  );
+function custom_value_create_example(){
+$params = array( 
+  'custom_1' => 'customString',
+  'version' => 3,
+  'entity_id' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('custom_value', 'create', $params);
+  $result = civicrm_api( 'custom_value','create',$params );
 
   return $result;
 }
@@ -22,16 +21,16 @@ function custom_value_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function custom_value_create_expectedresult() {
+function custom_value_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'values' => TRUE,
-  );
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'values' => true,
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -50,4 +49,3 @@ function custom_value_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

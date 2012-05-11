@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function membership_delete_example() {
-  $params = array(
-    'id' => 1,
-    'version' => 3,
-  );
+function membership_delete_example(){
+$params = array( 
+  'id' => 1,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('membership', 'delete', $params);
+  $result = civicrm_api( 'membership','delete',$params );
 
   return $result;
 }
@@ -21,14 +20,16 @@ function membership_delete_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function membership_delete_expectedresult() {
+function membership_delete_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 1,
-    'error_message' => 'DB Error: syntax error',
-  );
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'values' => 1,
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -47,4 +48,3 @@ function membership_delete_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

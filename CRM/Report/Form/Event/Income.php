@@ -43,9 +43,11 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
 
     $this->_columns = array(
       'civicrm_event' =>
-      array('dao' => 'CRM_Event_DAO_Event',
+      array(
+        'dao' => 'CRM_Event_DAO_Event',
         'filters' =>
-        array('id' =>
+        array(
+          'id' =>
           array('title' => ts('Event Title'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'type' => CRM_Utils_Type::T_INT,
@@ -273,7 +275,8 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
   }
 
   function setPager() {
-    $params = array('total' => $this->_rowsFound,
+    $params = array(
+      'total' => $this->_rowsFound,
       'rowCount' => self::ROW_COUNT_LIMIT,
       'status' => ts('Records %%StatusMessage%%'),
       'buttonBottom' => 'PagerBottomButton',

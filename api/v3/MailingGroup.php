@@ -54,12 +54,13 @@ require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
 /**
  * Handle an unsubscribe event
  * @deprecated
+ *
  * @param array $params
  *
  * @return array
  */
 function civicrm_api3_mailing_group_event_unsubscribe($params) {
- return civicrm_api('mailing_event_unsubscribe', 'create', $params);
+  return civicrm_api('mailing_event_unsubscribe', 'create', $params);
 }
 
 /**
@@ -77,18 +78,19 @@ function civicrm_api3_mailing_group_event_domain_unsubscribe($params) {
 /**
  * Handle a resubscription event
  * @deprecated
+ *
  * @param array $params
  *
  * @return array
  */
 function civicrm_api3_mailing_group_event_resubscribe($params) {
   return civicrm_api('mailing_event_resubscribe', 'create', $params);
-
 }
 
 /**
  * Handle a subscription event
  * @deprecated
+ *
  * @param array $params
  *
  * @return array

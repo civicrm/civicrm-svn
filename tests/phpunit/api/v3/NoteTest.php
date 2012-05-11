@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'api/v3/Note.php';
 require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
 
@@ -76,7 +77,8 @@ class api_v3_NoteTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
-    $tablesToTruncate = array('civicrm_note', 'civicrm_contact',
+    $tablesToTruncate = array(
+      'civicrm_note', 'civicrm_contact',
     );
     $this->quickCleanup($tablesToTruncate);
   }
@@ -110,7 +112,8 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    * Error expected
    */
   function testGetWithoutEntityId() {
-    $params = array('entity_table' => 'civicrm_contact',
+    $params = array(
+      'entity_table' => 'civicrm_contact',
       'version' => 3,
     );
     $note = &civicrm_api('note', 'get', $params);
@@ -193,7 +196,8 @@ class api_v3_NoteTest extends CiviUnitTestCase {
 
     $this->assertArrayHasKey('id', $result, 'in line ' . __LINE__);
     $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
-    $note = array('id' => $result['id'],
+    $note = array(
+      'id' => $result['id'],
       'version' => $this->_apiversion,
     );
     $this->noteDelete($note);
@@ -217,7 +221,8 @@ class api_v3_NoteTest extends CiviUnitTestCase {
     $this->assertArrayHasKey('id', $result, 'in line ' . __LINE__);
 
     //CleanUP
-    $note = array('id' => $result['id'],
+    $note = array(
+      'id' => $result['id'],
       'version' => $this->_apiversion,
     );
     $this->noteDelete($note);
@@ -231,7 +236,8 @@ class api_v3_NoteTest extends CiviUnitTestCase {
     $apiResult = civicrm_api('note', 'create', $this->_params);
     $this->assertAPISuccess($apiResult);
     $this->assertEquals(date('Y-m-d'), date('Y-m-d', strtotime($apiResult['values'][$apiResult['id']]['modified_date'])));
-    $this->noteDelete(array('id' => $apiResult['id'],
+    $this->noteDelete(array(
+      'id' => $apiResult['id'],
         'version' => $this->_apiversion,
       ));
   }
@@ -329,7 +335,8 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    * Error expected
    */
   function testDeleteWithWrongID() {
-    $params = array('id' => 0,
+    $params = array(
+      'id' => 0,
       'version' => $this->_apiversion,
     );
     $deleteNote = &civicrm_api('note', 'delete', $params);
@@ -343,7 +350,8 @@ class api_v3_NoteTest extends CiviUnitTestCase {
   function testDelete() {
     $additionalNote = $this->noteCreate($this->_contactID);
 
-    $params = array('id' => $additionalNote['id'],
+    $params = array(
+      'id' => $additionalNote['id'],
       'version' => $this->_apiversion,
     );
 

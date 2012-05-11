@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'api/v3/GroupContact.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_GroupContactTest extends CiviUnitTestCase {
@@ -56,7 +57,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
     $this->_contactId = $this->individualCreate(NULL);
 
     $this->_groupId1 = $this->groupCreate(NULL);
-    $params = array('contact_id' => $this->_contactId,
+    $params = array(
+      'contact_id' => $this->_contactId,
       'group_id' => $this->_groupId1,
       'version' => $this->_apiversion,
     );
@@ -74,18 +76,21 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
     );
 
     $this->_groupId2 = $this->groupCreate($group, 3);
-    $params = array('contact_id.1' => $this->_contactId,
+    $params = array(
+      'contact_id.1' => $this->_contactId,
       'group_id' => $this->_groupId2,
       'version' => $this->_apiversion,
     );
     //@todo uncomment me when I work
     //civicrm_group_contact_create( $params );
 
-    $this->_group = array($this->_groupId1 => array('title' => 'New Test Group Created',
+    $this->_group = array(
+      $this->_groupId1 => array('title' => 'New Test Group Created',
         'visibility' => 'Public Pages',
         'in_method' => 'API',
       ),
-      $this->_groupId2 => array('title' => 'New Test Group2 Created',
+      $this->_groupId2 => array(
+        'title' => 'New Test Group2 Created',
         'visibility' => 'User and User Admin Only',
         'in_method' => 'API',
       ),
@@ -93,7 +98,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
-    $tablesToTruncate = array('civicrm_contact',
+    $tablesToTruncate = array(
+      'civicrm_contact',
       'civicrm_group',
     );
     $this->quickCleanup($tablesToTruncate);
@@ -101,7 +107,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
 
   ///////////////// civicrm_group_contact_get methods
   function testGet() {
-    $params = array('contact_id' => $this->_contactId,
+    $params = array(
+      'contact_id' => $this->_contactId,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('group_contact', 'get', $params);
@@ -116,7 +123,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
   function testGetGroupID() {
     $description = "Get all from group and display contacts";
     $subfile     = "GetWithGroupID";
-    $params      = array('group_id' => $this->_groupId1,
+    $params      = array(
+      'group_id' => $this->_groupId1,
       'version' => $this->_apiversion,
       'api.contact.get' => 1,
     );
@@ -150,7 +158,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
   }
 
   function testCreateWithoutGroupIdParams() {
-    $params = array('contact_id' => $this->_contactId,
+    $params = array(
+      'contact_id' => $this->_contactId,
       'version' => $this->_apiversion,
     );
 
@@ -161,7 +170,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
   }
 
   function testCreateWithoutContactIdParams() {
-    $params = array('group_id' => $this->_groupId1,
+    $params = array(
+      'group_id' => $this->_groupId1,
       'version' => $this->_apiversion,
     );
     $groups = civicrm_api('group_contact', 'create', $params);
@@ -171,7 +181,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
   }
 
   function testCreate() {
-    $cont = array('first_name' => 'Amiteshwar',
+    $cont = array(
+      'first_name' => 'Amiteshwar',
       'middle_name' => 'L.',
       'last_name' => 'Prasad',
       'prefix_id' => 3,
@@ -199,7 +210,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
 
   ///////////////// civicrm_group_contact_remove methods
   function testDelete() {
-    $params = array('contact_id' => $this->_contactId,
+    $params = array(
+      'contact_id' => $this->_contactId,
       'group_id' => 1,
       'version' => $this->_apiversion,
     );

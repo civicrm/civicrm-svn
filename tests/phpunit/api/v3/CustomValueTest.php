@@ -11,7 +11,8 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
     parent::setUp();
     $this->_apiversion = 3;
     $this->individual  = $this->individualCreate();
-    $this->params      = array('version' => $this->_apiversion,
+    $this->params      = array(
+      'version' => $this->_apiversion,
       'entity_id' => $this->individual,
     );
     $this->ids['single'] = $this->entityCustomGroupWithSingleFieldCreate('mySingleField', 'Contacts');
@@ -33,7 +34,8 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
 
   public function testCreateCustomValue() {
 
-    $params = array('custom_' . $this->ids['single']['custom_field_id'] => 'customString') + $this->params;
+    $params = array(
+      'custom_' . $this->ids['single']['custom_field_id'] => 'customString') + $this->params;
     $result = civicrm_api('custom_value', 'create', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
@@ -63,7 +65,8 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, __LINE__);
     $contact_id = $result['id'];
     $result = civicrm_api('Contact', 'create',
-      array('contact_type' => 'Individual',
+      array(
+        'contact_type' => 'Individual',
         'id' => $contact_id,
         'version' => 3,
         'custom_' . $this->ids['multi']['custom_field_id'][0] => "value 3",
@@ -72,7 +75,8 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
       )
     );
 
-    $params = array('id' => $result['id'], 'version' => 3,
+    $params = array(
+      'id' => $result['id'], 'version' => 3,
       'entity_id' => $result['id'],
     );
 
@@ -110,7 +114,8 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
    public function testGetCustomValueChainDelete () {
         $description = "demonstrates get + delete in the same call";
         $subfile     = 'ChainedGetDelete';
-        $params      = array('version' =>3,
+        $params      = array(
+          'version' =>3,
                         'title'   => "survey title",
                         'api.survey.delete' => 1);
         $result = civicrm_api('survey','create',$this->params);   

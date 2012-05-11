@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,94 +24,93 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CiviTest/CiviSeleniumTestCase.php';
 
+require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Contact_TaskActionSendSMS extends CiviSeleniumTestCase {
 
-  protected function setUp()
-  {
-      parent::setUp();
+  protected function setUp() {
+    parent::setUp();
   }
 
-  function testSMSToContacts( )
-  {
-      $this->open( $this->sboxPath );
-      $this->webtestLogin( );
+  function testSMSToContacts() {
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
 
-      // ADD a New Group
-      $this->open($this->sboxPath . "civicrm/group/add?reset=1");
-      $this->waitForElementPresent("_qf_Edit_upload");
+    // ADD a New Group
+    $this->open($this->sboxPath . "civicrm/group/add?reset=1");
+    $this->waitForElementPresent("_qf_Edit_upload");
 
-      $smsGroupName = 'group_'.substr(sha1(rand()), 0, 7);
+    $smsGroupName = 'group_' . substr(sha1(rand()), 0, 7);
 
-      $this->type("title", $smsGroupName);
-      $this->type("description", "New sms group for Webtest");
-      $this->select("visibility", "value=Public Pages");
-      
-      $this->click("_qf_Edit_upload");
-      $this->waitForPageToLoad("30000");
+    $this->type("title", $smsGroupName);
+    $this->type("description", "New sms group for Webtest");
+    $this->select("visibility", "value=Public Pages");
 
-      // ADD contact1
-      $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
-      $this->waitForPageToLoad( "30000" );
-      $firstName = substr(sha1(rand()), 0, 7);
-      $this->type( 'first_name', $firstName );
-        
-      $lastName = substr(sha1(rand()), 0, 7);
-      $this->type( 'last_name', $lastName );
+    $this->click("_qf_Edit_upload");
+    $this->waitForPageToLoad("30000");
 
-      $this->waitForElementPresent( 'phone_1_phone' );
-      $this->type( 'phone_1_phone', "911234567890" );
+    // ADD contact1
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    $this->waitForPageToLoad("30000");
+    $firstName = substr(sha1(rand()), 0, 7);
+    $this->type('first_name', $firstName);
 
-      $this->select( 'phone_1_phone_type_id', 'label=Mobile' );
+    $lastName = substr(sha1(rand()), 0, 7);
+    $this->type('last_name', $lastName);
 
-      $this->click("_qf_Contact_upload_view");
-      $this->waitForPageToLoad("30000");
-      $this->assertTrue( $this->isTextPresent( "Your Individual contact record has been saved." ) );
+    $this->waitForElementPresent('phone_1_phone');
+    $this->type('phone_1_phone', "911234567890");
 
-      $this->click( 'css=li#tab_group a' );
-      $this->waitForElementPresent( '_qf_GroupContact_next' );
-      $this->select( 'group_id', "label=$smsGroupName" );
-      $this->click( '_qf_GroupContact_next' );
-      $this->waitForPageToLoad("30000");
-      $this->assertTrue( $this->isTextPresent( "Contact has been added to the selected group " ) );
+    $this->select('phone_1_phone_type_id', 'label=Mobile');
 
-      // ADD contact2
-      $this->open( $this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual" );
-      $this->waitForPageToLoad( "30000" );
-      $firstName = substr(sha1(rand()), 0, 7);
-      $this->type( 'first_name', $firstName );
-        
-      $lastName = substr(sha1(rand()), 0, 7);
-      $this->type( 'last_name', $lastName );
+    $this->click("_qf_Contact_upload_view");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
 
-      $this->waitForElementPresent( 'phone_1_phone' );
-      $this->type( 'phone_1_phone', "911234567891" );
+    $this->click('css=li#tab_group a');
+    $this->waitForElementPresent('_qf_GroupContact_next');
+    $this->select('group_id', "label=$smsGroupName");
+    $this->click('_qf_GroupContact_next');
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
 
-      $this->select( 'phone_1_phone_type_id', 'label=Mobile' );
+    // ADD contact2
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    $this->waitForPageToLoad("30000");
+    $firstName = substr(sha1(rand()), 0, 7);
+    $this->type('first_name', $firstName);
 
-      $this->click("_qf_Contact_upload_view");
-      $this->waitForPageToLoad("30000");
-      $this->assertTrue( $this->isTextPresent( "Your Individual contact record has been saved." ) );
+    $lastName = substr(sha1(rand()), 0, 7);
+    $this->type('last_name', $lastName);
 
-      $this->click( 'css=li#tab_group a' );
-      $this->waitForElementPresent( '_qf_GroupContact_next' );
-      $this->select( 'group_id', "label=$smsGroupName" );
-      $this->click( '_qf_GroupContact_next' );
-      $this->waitForPageToLoad("30000");
-      $this->assertTrue( $this->isTextPresent( "Contact has been added to the selected group " ) );
+    $this->waitForElementPresent('phone_1_phone');
+    $this->type('phone_1_phone', "911234567891");
 
-      // Use class names for menu items since li array can change based on which components are enabled
-      $this->click("css=ul#civicrm-menu li.crm-Search");
-      $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
+    $this->select('phone_1_phone_type_id', 'label=Mobile');
 
-      $this->waitForPageToLoad("30000");
-      $this->waitForElementPresent("email");
+    $this->click("_qf_Contact_upload_view");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
 
-      $this->select("crmasmSelect1", "label=$smsGroupName");
+    $this->click('css=li#tab_group a');
+    $this->waitForElementPresent('_qf_GroupContact_next');
+    $this->select('group_id', "label=$smsGroupName");
+    $this->click('_qf_GroupContact_next');
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
 
-	  $this->click("_qf_Advanced_refresh");
-      $this->waitForPageToLoad("30000");
+    // Use class names for menu items since li array can change based on which components are enabled
+    $this->click("css=ul#civicrm-menu li.crm-Search");
+    $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
+
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("email");
+
+    $this->select("crmasmSelect1", "label=$smsGroupName");
+
+    $this->click("_qf_Advanced_refresh");
+    $this->waitForPageToLoad("30000");
   }
 }
-?>
+
+

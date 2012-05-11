@@ -37,24 +37,28 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   );
 
   protected $_add2groupSupported = FALSE;
 
-  protected $_customGroupExtends = array('Event'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Event'); function __construct() {
 
     $this->_columns = array(
       'civicrm_event' =>
-      array('dao' => 'CRM_Event_DAO_Event',
+      array(
+        'dao' => 'CRM_Event_DAO_Event',
         'fields' =>
         array(
           'title' => array('title' => ts('Event'),
             'required' => TRUE,
           ),
-          'id' => array('no_display' => TRUE,
+          'id' => array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
           'event_type_id' => array('title' => ts('Event Type'),
@@ -74,7 +78,8 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::event(NULL, NULL, "is_template IS NULL OR is_template = 0"),
           ),
-          'event_type_id' => array('name' => 'event_type_id',
+          'event_type_id' => array(
+            'name' => 'event_type_id',
             'title' => ts('Event Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_OptionGroup::values('event_type'),
@@ -88,7 +93,8 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
         ),
       ),
       'civicrm_line_item' =>
-      array('dao' => 'CRM_Price_DAO_LineItem',
+      array(
+        'dao' => 'CRM_Price_DAO_LineItem',
         'fields' =>
         array(
           'participant_count' => array(
@@ -110,14 +116,17 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
         ),
       ),
       'civicrm_participant' =>
-      array('dao' => 'CRM_Event_DAO_Participant',
+      array(
+        'dao' => 'CRM_Event_DAO_Participant',
         'filters' =>
-        array('sid' => array('name' => 'status_id',
+        array(
+          'sid' => array('name' => 'status_id',
             'title' => ts('Participant Status'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::participantStatus(),
           ),
-          'rid' => array('name' => 'role_id',
+          'rid' => array(
+            'name' => 'role_id',
             'title' => ts('Participant Role'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Event_PseudoConstant::participantRole(),
@@ -249,15 +258,18 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
       if ($dao->count && $dao->amount) {
         $avg = $dao->amount / $dao->count;
       }
-      $statistics['counts']['count'] = array('value' => $dao->count,
+      $statistics['counts']['count'] = array(
+        'value' => $dao->count,
         'title' => 'Total Participants',
         'type' => CRM_Utils_Type::T_INT,
       );
-      $statistics['counts']['amount'] = array('value' => $dao->amount,
+      $statistics['counts']['amount'] = array(
+        'value' => $dao->amount,
         'title' => 'Total Income',
         'type' => CRM_Utils_Type::T_MONEY,
       );
-      $statistics['counts']['avg   '] = array('value' => $avg,
+      $statistics['counts']['avg   '] = array(
+        'value' => $avg,
         'title' => 'Average',
         'type' => CRM_Utils_Type::T_MONEY,
       );
@@ -338,7 +350,8 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
       }
 
       if ((!empty($rows)) && $countEvent != 1) {
-        $chartInfo = array('legend' => 'Participants Summary',
+        $chartInfo = array(
+          'legend' => 'Participants Summary',
           'xname' => 'Event',
           'yname' => 'Total Participants',
         );

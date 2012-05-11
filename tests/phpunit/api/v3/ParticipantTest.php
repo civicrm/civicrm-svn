@@ -31,6 +31,7 @@
 
 
 
+
 require_once 'api/v3/DeprecatedUtils.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_ParticipantTest extends CiviUnitTestCase {
@@ -554,7 +555,8 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
    * check with Invalid ContactId
    */
   function testUpdateWithWrongContactId() {
-    $participantId = $this->participantCreate(array('contactID' => $this->_individualId,
+    $participantId = $this->participantCreate(array(
+      'contactID' => $this->_individualId,
         'eventID' => $this->_eventID,
       ), $this->_apiversion);
     $params = array(

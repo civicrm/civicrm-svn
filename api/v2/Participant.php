@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -349,7 +350,8 @@ function civicrm_participant_check_params(&$params, $checkDuplicate = FALSE) {
       );
 
       return civicrm_create_error($error->pop(),
-        array('contactID' => $params['contact_id'],
+        array(
+          'contactID' => $params['contact_id'],
           'participantID' => $participantID,
         )
       );

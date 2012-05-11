@@ -54,7 +54,8 @@ require_once 'CRM/Core/BAO/CustomGroup.php';
 
 /**
  * Use this API to create a new group.  The 'extends' value accepts an array or a comma separated string.
- * e.g array('Individual','Contact') or 'Individual,Contact'
+ * e.g array(
+   'Individual','Contact') or 'Individual,Contact'
  * See the CRM Data Model for custom_group property definitions
  * $params['class_name'] is a required field, class being extended.
  *
@@ -82,7 +83,8 @@ function civicrm_api3_custom_group_create($params) {
   _civicrm_api3_object_to_array($customGroup, $values[$customGroup->id]);
 
   if (CRM_Utils_Array::value('html_type', $params)) {
-    $fparams = array('custom_group_id' => $customGroup->id,
+    $fparams = array(
+      'custom_group_id' => $customGroup->id,
       'version' => $params['version'],
       // should put something cleverer here but this will do for now
       'label' => 'api created field',

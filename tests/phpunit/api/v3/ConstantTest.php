@@ -72,7 +72,8 @@ class api_v3_ConstantTest extends CiviUnitTestCase {
    *  Test civicrm_constant_get( ) for unknown constant
    */
   public function testUnknownConstant() {
-    $result = civicrm_api('constant', 'get', array('name' => 'thisTypeDoesNotExist',
+    $result = civicrm_api('constant', 'get', array(
+      'name' => 'thisTypeDoesNotExist',
         'version' => $this->_apiversion,
       ));
     $this->assertEquals(1, $result['is_error'], "In line " . __LINE__);
@@ -83,7 +84,8 @@ class api_v3_ConstantTest extends CiviUnitTestCase {
    */
   public function testActivityStatus() {
 
-    $result = civicrm_api('constant', 'get', array('name' => 'activityStatus',
+    $result = civicrm_api('constant', 'get', array(
+      'name' => 'activityStatus',
         'version' => $this->_apiversion,
       ));
 
@@ -104,7 +106,8 @@ class api_v3_ConstantTest extends CiviUnitTestCase {
 
     $parameters = array(TRUE, FALSE, TRUE);
 
-    $result = civicrm_api('constant', 'get', array('name' => 'activityType',
+    $result = civicrm_api('constant', 'get', array(
+      'name' => 'activityType',
         'version' => $this->_apiversion,
       ));
     $this->assertTrue($result['count'] > 2, "In line " . __LINE__);
@@ -123,7 +126,8 @@ class api_v3_ConstantTest extends CiviUnitTestCase {
 
 
 
-    $params = array('name' => 'locationType',
+    $params = array(
+      'name' => 'locationType',
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('constant', 'get', $params);
@@ -143,7 +147,8 @@ class api_v3_ConstantTest extends CiviUnitTestCase {
    */
   public function testPhoneType() {
     $parameters = array(TRUE, FALSE, TRUE);
-    $result = civicrm_api('constant', 'get', array('name' => 'phoneType',
+    $result = civicrm_api('constant', 'get', array(
+      'name' => 'phoneType',
         'version' => $this->_apiversion,
       ));
 
@@ -167,7 +172,8 @@ class api_v3_ConstantTest extends CiviUnitTestCase {
 
     $parameters = array(TRUE, FALSE, TRUE);
 
-    $result = civicrm_api('constant', 'get', array('name' => 'mailProtocol',
+    $result = civicrm_api('constant', 'get', array(
+      'name' => 'mailProtocol',
         'version' => $this->_apiversion,
       ));
 

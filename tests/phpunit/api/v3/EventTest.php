@@ -27,6 +27,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_EventTest extends CiviUnitTestCase {
   protected $_params;
@@ -45,63 +46,63 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $this->_entity     = 'event';
     $this->_params     = array(
       array(
-      'title' => 'Annual CiviCRM meet',
-      'summary' => 'If you have any CiviCRM realted issues or want to track where CiviCRM is heading, Sign up now',
-      'description' => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
-      'event_type_id' => 1,
-      'is_public' => 1,
-      'start_date' => 20081021,
-      'end_date' => 20081023,
-      'is_online_registration' => 1,
-      'registration_start_date' => 20080601,
-      'registration_end_date' => '2008-10-15',
-      'max_participants' => 100,
-      'event_full_text' => 'Sorry! We are already full',
-      'is_monetory' => 0,
-      'is_active' => 1,
-      'is_show_location' => 0,
-      'version' => $this->_apiversion,
+        'title' => 'Annual CiviCRM meet',
+        'summary' => 'If you have any CiviCRM realted issues or want to track where CiviCRM is heading, Sign up now',
+        'description' => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
+        'event_type_id' => 1,
+        'is_public' => 1,
+        'start_date' => 20081021,
+        'end_date' => 20081023,
+        'is_online_registration' => 1,
+        'registration_start_date' => 20080601,
+        'registration_end_date' => '2008-10-15',
+        'max_participants' => 100,
+        'event_full_text' => 'Sorry! We are already full',
+        'is_monetory' => 0,
+        'is_active' => 1,
+        'is_show_location' => 0,
+        'version' => $this->_apiversion,
       ),
       array(
-      'title' => 'Annual CiviCRM meet 2',
-      'summary' => 'If you have any CiviCRM realted issues or want to track where CiviCRM is heading, Sign up now',
-      'description' => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
-      'event_type_id' => 1,
-      'is_public' => 1,
-      'start_date' => 20101021,
-      'end_date' => 20101023,
-      'is_online_registration' => 1,
-      'registration_start_date' => 20100601,
-      'registration_end_date' => '2010-10-15',
-      'max_participants' => 100,
-      'event_full_text' => 'Sorry! We are already full',
-      'is_monetory' => 0,
-      'is_active' => 1,
-      'is_show_location' => 0,
-      'version' => $this->_apiversion,
-      )
+        'title' => 'Annual CiviCRM meet 2',
+        'summary' => 'If you have any CiviCRM realted issues or want to track where CiviCRM is heading, Sign up now',
+        'description' => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
+        'event_type_id' => 1,
+        'is_public' => 1,
+        'start_date' => 20101021,
+        'end_date' => 20101023,
+        'is_online_registration' => 1,
+        'registration_start_date' => 20100601,
+        'registration_end_date' => '2010-10-15',
+        'max_participants' => 100,
+        'event_full_text' => 'Sorry! We are already full',
+        'is_monetory' => 0,
+        'is_active' => 1,
+        'is_show_location' => 0,
+        'version' => $this->_apiversion,
+      ),
     );
 
     $params = array(
       array(
-      'title' => 'Annual CiviCRM meet',
-      'event_type_id' => 1,
-      'start_date' => 20081021,
-      'version' => $this->_apiversion,
+        'title' => 'Annual CiviCRM meet',
+        'event_type_id' => 1,
+        'start_date' => 20081021,
+        'version' => $this->_apiversion,
       ),
       array(
-      'title' => 'Annual CiviCRM meet 2',
-      'event_type_id' => 1,
-      'start_date' => 20101021,
-      'version' => $this->_apiversion,
-      )
+        'title' => 'Annual CiviCRM meet 2',
+        'event_type_id' => 1,
+        'start_date' => 20101021,
+        'version' => $this->_apiversion,
+      ),
     );
 
     $this->events = array();
     $this->eventIds = array();
     foreach ($params as $event) {
-      $result = civicrm_api('Event', 'Create', $event);
-      $this->_events[] = $result;
+      $result            = civicrm_api('Event', 'Create', $event);
+      $this->_events[]   = $result;
       $this->_eventIds[] = $result['id'];
     }
   }
@@ -118,7 +119,9 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $this->eventDelete($this->_event['id']);
     */
 
-    $tablesToTruncate = array('civicrm_participant',
+
+    $tablesToTruncate = array(
+      'civicrm_participant',
       'civicrm_event',
     );
     $this->quickCleanup($tablesToTruncate, TRUE);
@@ -140,7 +143,8 @@ class api_v3_EventTest extends CiviUnitTestCase {
   }
 
   function testGetEventById() {
-    $params = array('id' => $this->_events[1]['id'],
+    $params = array(
+      'id' => $this->_events[1]['id'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('event', 'get', $params);
@@ -148,7 +152,8 @@ class api_v3_EventTest extends CiviUnitTestCase {
   }
 
   function testGetEventByEventTitle() {
-    $params = array('title' => 'Annual CiviCRM meet',
+    $params = array(
+      'title' => 'Annual CiviCRM meet',
       'version' => $this->_apiversion,
     );
 
@@ -159,7 +164,8 @@ class api_v3_EventTest extends CiviUnitTestCase {
   }
 
   function testGetEventByWrongTitle() {
-    $params = array('title' => 'No event with that title',
+    $params = array(
+      'title' => 'No event with that title',
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('Event', 'Get', $params);
@@ -170,6 +176,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
    * Getting the id back of an event.
    * Does not work yet, bug in API
    */
+
   /*
   function testGetIdOfEventByEventTitle() {
     $params = array(
@@ -181,6 +188,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $result = civicrm_api('Event', 'Get', $params);
   }
   */
+
 
   /*
      * Test 'is.Current' option. Existing event is 'old' so only current should be returned
@@ -213,13 +221,15 @@ class api_v3_EventTest extends CiviUnitTestCase {
      */
   function testGetSingleReturnIsFull() {
     $contactID = $this->individualCreate();
-    $params = array('id' => $this->_eventIds[0],
+    $params = array(
+      'id' => $this->_eventIds[0],
       'version' => $this->_apiversion,
       'max_participants' => 1,
     );
     $result = civicrm_api('Event', 'Create', $params);
 
-    $getEventParams = array('id' => $this->_eventIds[0],
+    $getEventParams = array(
+      'id' => $this->_eventIds[0],
       'version' => $this->_apiversion,
       'return.is_full' => 1,
     );
@@ -336,7 +346,8 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $result = civicrm_api('event', 'create', $this->_params[1]);
 
     $this->assertEquals($result['is_error'], 0);
-    $params = array('id' => $result['id'], 'version' => 3, 'max_participants' => 150,
+    $params = array(
+      'id' => $result['id'], 'version' => 3, 'max_participants' => 150,
     );
     civicrm_api('Event', 'Create', $params);
     $updated = civicrm_api('Event', 'Get', $params);
@@ -362,7 +373,8 @@ class api_v3_EventTest extends CiviUnitTestCase {
   }
 
   function testDelete() {
-    $params = array('id' => $this->_eventIds[0],
+    $params = array(
+      'id' => $this->_eventIds[0],
       'version' => $this->_apiversion,
     );
     $result = &civicrm_api('Event', 'Delete', $params);
@@ -373,7 +385,8 @@ class api_v3_EventTest extends CiviUnitTestCase {
      * check event_id still supported for delete
      */
   function testDeleteWithEventId() {
-    $params = array('event_id' => $this->_eventIds[0],
+    $params = array(
+      'event_id' => $this->_eventIds[0],
       'version' => $this->_apiversion,
     );
     $result = &civicrm_api('Event', 'Delete', $params);
@@ -421,7 +434,8 @@ class api_v3_EventTest extends CiviUnitTestCase {
   function testSearchEmptyParams() {
     $event = civicrm_api('event', 'create', $this->_params[1]);
 
-    $getparams = array('version' => $this->_apiversion,
+    $getparams = array(
+      'version' => $this->_apiversion,
       'sequential' => 1,
     );
     $result = &civicrm_api('event', 'get', $getparams);
@@ -478,7 +492,8 @@ class api_v3_EventTest extends CiviUnitTestCase {
 
   function testEventCreationPermissions() {
     require_once 'CRM/Core/Permission/UnitTests.php';
-    $params = array('event_type_id' => 1, 'start_date' => '2010-10-03', 'title' => 'le cake is a tie', 'check_permissions' => TRUE,
+    $params = array(
+      'event_type_id' => 1, 'start_date' => '2010-10-03', 'title' => 'le cake is a tie', 'check_permissions' => TRUE,
       'version' => $this->_apiversion,
     );
 

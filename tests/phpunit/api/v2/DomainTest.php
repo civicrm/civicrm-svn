@@ -25,6 +25,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v2/Domain.php';
 
@@ -33,102 +34,96 @@ require_once 'api/v2/Domain.php';
  *
  *  @package   CiviCRM
  */
-class api_v2_DomainTest extends CiviUnitTestCase
-{
+class api_v2_DomainTest extends CiviUnitTestCase {
 
-    /* This test case doesn't require DB reset - apart from 
+  /* This test case doesn't require DB reset - apart from 
        where cleanDB() is called. */
-    public $DBResetRequired = false;
 
+  public $DBResetRequired = FALSE;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     *
-     * @access protected
-     */
-    protected function setUp()
-    {
-        parent::setUp();
+  /**
+   * Sets up the fixture, for example, opens a network connection.
+   * This method is called before a test is executed.
+   *
+   * @access protected
+   */
+  protected function setUp() {
+    parent::setUp();
+  }
 
+  /**
+   * Tears down the fixture, for example, closes a network connection.
+   * This method is called after a test is executed.
+   *
+   * @access protected
+   */
+  protected function tearDown() {}
+
+  ///////////////// civicrm_domain_get methods
+
+  /**
+   * Test civicrm_domain_get. Takes no params.
+   * Testing mainly for format.
+   */
+  public function testGet() {
+    $this->cleanDB();
+
+    $result = civicrm_domain_get();
+
+    $this->assertType('array', $result, 'In line' . __LINE__);
+
+    foreach ($result as $domain) {
+      $this->assertEquals('info@FIXME.ORG', $domain['from_email'], 'In line' . __LINE__);
+      $this->assertEquals('FIXME', $domain['from_name'], 'In line' . __LINE__);
+
+      // checking other important parts of domain information
+      // test will fail if backward incompatible changes happen
+      $this->assertArrayHasKey('id', $domain, 'In line' . __LINE__);
+      $this->assertArrayHasKey('domain_name', $domain, 'In line' . __LINE__);
+      $this->assertArrayHasKey('domain_email', $domain, 'In line' . __LINE__);
+      $this->assertArrayHasKey('domain_phone', $domain, 'In line' . __LINE__);
+      $this->assertArrayHasKey('domain_address', $domain, 'In line' . __LINE__);
     }
+  }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     *
-     * @access protected
-     */
-    protected function tearDown()
-    {
-    }
+  ///////////////// civicrm_domain_create methods
 
-///////////////// civicrm_domain_get methods
+  /**
+   * Test civicrm_domain_create.
+   */
+  public function testCreate() {
+    $params = array(
+      'name' => 'New Domain',
+      'description' => 'Description of a new domain',
+    );
 
-    /**
-     * Test civicrm_domain_get. Takes no params.
-     * Testing mainly for format.
-     */
-    public function testGet()
-    {
-        $this->cleanDB();
+    $result = &civicrm_domain_create($params);
+    $this->assertType('array', $result);
+    $this->assertDBState('CRM_Core_DAO_Domain', $result['id'], $params);
+  }
 
-        $result = civicrm_domain_get();
+  /**
+   * Test civicrm_domain_create with empty params.
+   * Error expected.
+   */
+  public function testCreateWithEmptyParams() {
+    $params = array();
+    $result = &civicrm_domain_create($params);
+    $this->assertEquals($result['is_error'], 1,
+      "In line " . __LINE__
+    );
+  }
 
-        $this->assertType( 'array', $result, 'In line' . __LINE__ );
-
-        foreach( $result as $domain ) {
-            $this->assertEquals( 'info@FIXME.ORG', $domain['from_email'], 'In line' . __LINE__ );
-            $this->assertEquals( 'FIXME', $domain['from_name'], 'In line' . __LINE__);
-            
-            // checking other important parts of domain information
-            // test will fail if backward incompatible changes happen
-            $this->assertArrayHasKey( 'id', $domain, 'In line' . __LINE__ );
-            $this->assertArrayHasKey( 'domain_name', $domain, 'In line' . __LINE__ );
-            $this->assertArrayHasKey( 'domain_email', $domain, 'In line' . __LINE__ );
-            $this->assertArrayHasKey( 'domain_phone', $domain, 'In line' . __LINE__ );
-            $this->assertArrayHasKey( 'domain_address', $domain, 'In line' . __LINE__ ); 
-        }
-    }
-        
-///////////////// civicrm_domain_create methods
-
-    /**
-     * Test civicrm_domain_create.
-     */
-    public function testCreate()
-    {
-        $params = array( 'name' => 'New Domain', 
-                         'description' => 'Description of a new domain'
-                          );
-
-        $result =& civicrm_domain_create($params);
-        $this->assertType( 'array', $result );
-        $this->assertDBState( 'CRM_Core_DAO_Domain', $result['id'], $params );
-    }    
-
-    /**
-     * Test civicrm_domain_create with empty params.
-     * Error expected.
-     */
-    public function testCreateWithEmptyParams()
-    {
-        $params = array( );
-        $result =& civicrm_domain_create($params);
-        $this->assertEquals( $result['is_error'], 1,
-                             "In line " . __LINE__ );
-    }
-    
-    /**
-     * Test civicrm_domain_create with wrong parameter type.
-     */
-    public function testCreateWithWrongParams()
-    {
-        $params = 1;
-        $result =& civicrm_domain_create($params);
-        $this->assertEquals( $result['is_error'], 1,
-                             "In line " . __LINE__ );
-    }    
-    
+  /**
+   * Test civicrm_domain_create with wrong parameter type.
+   */
+  public function testCreateWithWrongParams() {
+    $params = 1;
+    $result = &civicrm_domain_create($params);
+    $this->assertEquals($result['is_error'], 1,
+      "In line " . __LINE__
+    );
+  }
 }
-?>
+
+

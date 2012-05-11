@@ -28,6 +28,7 @@
 */
 
 
+
 /*
 *DRAFT CODE WRITTEN BY EILEEN still dev version (pre-ALPHA)
 *Starting point was Contribute API & some portions are still just that with 
@@ -278,7 +279,8 @@ function &civicrm_pledge_payment_format_create(&$params) {
  * @access private
  */
 function _civicrm_pledgepayment_check_params(&$params) {
-  static $required = array('pledge_id',
+  static $required = array(
+    'pledge_id',
   );
 
   // cannot create a pledge with empty params

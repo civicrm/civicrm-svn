@@ -1,25 +1,27 @@
 <?php
-// $Id$
 
 
 
 /*
  Get with Contact Ref Custom Field
  */
-function activity_create_example() {
-  $params = array(
-    'source_contact_id' => 17,
-    'activity_type_id' => 1,
-    'subject' => 'test activity type id',
-    'activity_date_time' => '2011-06-02 14:36:13',
-    'status_id' => 2,
-    'priority_id' => 1,
-    'version' => 3,
-    'custom_2' => '17',
-  );
+function activity_create_example(){
+$params = array( 
+  'source_contact_id' => 17,
+  'activity_type_id' => 40,
+  'subject' => 'test activity type id',
+  'activity_date_time' => '2011-06-02 14:36:13',
+  'status_id' => 2,
+  'priority_id' => 1,
+  'duration' => 120,
+  'location' => 'Pensulvania',
+  'details' => 'a test activity',
+  'version' => 3,
+  'custom_2' => '17',
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('activity', 'create', $params);
+  $result = civicrm_api( 'activity','create',$params );
 
   return $result;
 }
@@ -27,35 +29,38 @@ function activity_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function activity_create_expectedresult() {
+function activity_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'id' => '1',
-        'source_contact_id' => '17',
-        'activity_type_id' => '1',
-        'subject' => 'test activity type id',
-        'activity_date_time' => '2011-06-02 14:36:13',
-        'status_id' => '2',
-        'priority_id' => '1',
-        'is_test' => 0,
-        'is_auto' => 0,
-        'is_current_revision' => '1',
-        'is_deleted' => 0,
-        'custom_2_id' => '17',
-        'custom_2_1_id' => '17',
-        'custom_2' => 'Contact, Test',
-        'custom_2_1' => 'Contact, Test',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'source_contact_id' => '17',
+          'activity_type_id' => '40',
+          'subject' => 'test activity type id',
+          'activity_date_time' => '2011-06-02 14:36:13',
+          'duration' => '120',
+          'location' => 'Pensulvania',
+          'details' => 'a test activity',
+          'status_id' => '2',
+          'priority_id' => '1',
+          'is_test' => 0,
+          'is_auto' => 0,
+          'is_current_revision' => '1',
+          'is_deleted' => 0,
+          'custom_2_id' => '17',
+          'custom_2_1_id' => '17',
+          'custom_2' => 'Contact, Test',
+          'custom_2_1' => 'Contact, Test',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -74,4 +79,3 @@ function activity_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

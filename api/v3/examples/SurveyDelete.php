@@ -1,22 +1,21 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function survey_delete_example() {
-  $params = array(
-    'version' => 3,
-    'title' => 'survey title',
-    'activity_type_id' => '30',
-    'max_number_of_contacts' => 12,
-    'instructions' => 'Call people, ask for money',
-  );
+function survey_delete_example(){
+$params = array( 
+  'version' => 3,
+  'title' => 'survey title',
+  'activity_type_id' => '30',
+  'max_number_of_contacts' => 12,
+  'instructions' => 'Call people, ask for money',
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('survey', 'delete', $params);
+  $result = civicrm_api( 'survey','delete',$params );
 
   return $result;
 }
@@ -24,16 +23,16 @@ function survey_delete_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function survey_delete_expectedresult() {
+function survey_delete_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'values' => TRUE,
-  );
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'values' => true,
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -52,4 +51,3 @@ function survey_delete_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

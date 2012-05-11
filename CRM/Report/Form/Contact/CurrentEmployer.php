@@ -38,33 +38,40 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_customGroupExtends = array('Contact', 'Individual'); function __construct() {
+  protected $_customGroupExtends = array(
+    'Contact', 'Individual'); function __construct() {
 
     $this->_columns = array(
       'civicrm_employer' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('organization_name' =>
+        array(
+          'organization_name' =>
           array('title' => ts('Employer Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('organization_name' =>
+        array(
+          'organization_name' =>
           array('title' => ts('Employer Name'),
             'operatorType' => CRM_Report_Form::OP_STRING,
           ),
         ),
       ),
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Employee Name'),
             'required' => TRUE,
           ),
@@ -76,12 +83,14 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
           array('title' => ts('Gender'),
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Employee Name')),
           'id' =>
           array('no_display' => TRUE),
@@ -89,15 +98,18 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_relationship' =>
-      array('dao' => 'CRM_Contact_DAO_Relationship',
+      array(
+        'dao' => 'CRM_Contact_DAO_Relationship',
         'fields' =>
-        array('start_date' =>
+        array(
+          'start_date' =>
           array('title' => ts('Employee Since'),
             'default' => TRUE,
           ),
         ),
         'filters' =>
-        array('start_date' =>
+        array(
+          'start_date' =>
           array('title' => ts('Employee Since'),
             'operatorType' => CRM_Report_Form::OP_DATE,
             'type' => CRM_Utils_Type::T_DATE,
@@ -105,20 +117,24 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'grouping' => 'contact-fields',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
             'default' => TRUE,
           ),
         ),
       ),
       'civicrm_address' =>
-      array('dao' => 'CRM_Core_DAO_Address',
+      array(
+        'dao' => 'CRM_Core_DAO_Address',
         'grouping' => 'contact-fields',
         'fields' =>
-        array('street_address' => NULL,
+        array(
+          'street_address' => NULL,
           'city' => NULL,
           'postal_code' => NULL,
           'state_province_id' =>
@@ -129,7 +145,8 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('country_id' =>
+        array(
+          'country_id' =>
           array('title' => ts('Country'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_PseudoConstant::country(NULL, FALSE),
@@ -142,11 +159,14 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
         ),
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_Group',
+      array(
+        'dao' => 'CRM_Contact_DAO_Group',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'group' => TRUE,
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,

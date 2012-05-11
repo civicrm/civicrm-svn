@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,7 +32,6 @@
  * $Id$
  *
  */
-
 class CRM_Utils_Cache_Memcache {
 
   /**
@@ -84,45 +82,43 @@ class CRM_Utils_Cache_Memcache {
    * @param string  $prefix    the prefix prepended to a cache key
    *
    * @return void
-   */
-  function __construct( $host      = 'localhost',
-    $port      = 11211,
-    $timeout   = 3600,
-    $prefix    = '' ) {
+   */ function __construct($host = 'localhost',
+    $port    = 11211,
+    $timeout = 3600,
+    $prefix  = ''
+  ) {
     $this->_host    = $host;
     $this->_port    = $port;
     $this->_timeout = $timeout;
     $this->_prefix  = $prefix;
 
-    $this->_cache = new Memcache( );
+    $this->_cache = new Memcache();
 
-    if ( ! $this->_cache->connect( $this->_host, $this->_port ) ) {
+    if (!$this->_cache->connect($this->_host, $this->_port)) {
       // dont use fatal here since we can go in an infinite loop
       echo 'Could not connect to Memcached server';
-      CRM_Utils_System::civiExit( );
+      CRM_Utils_System::civiExit();
     }
   }
 
-  function set( $key, &$value ) {
-    if ( ! $this->_cache->set( $this->_prefix . $key, $value, false, $this->_timeout ) ) {
-      return false;
+  function set($key, &$value) {
+    if (!$this->_cache->set($this->_prefix . $key, $value, FALSE, $this->_timeout)) {
+      return FALSE;
     }
-    return true;
+    return TRUE;
   }
 
-  function &get( $key ) {
-    $result = $this->_cache->get( $this->_prefix . $key );
+  function &get($key) {
+    $result = $this->_cache->get($this->_prefix . $key);
     return $result;
   }
 
-  function delete( $key ) {
-    return $this->_cache->delete( $this->_prefix . $key );
+  function delete($key) {
+    return $this->_cache->delete($this->_prefix . $key);
   }
 
-  function flush( ) {
-    return $this->_cache->flush( );
+  function flush() {
+    return $this->_cache->flush();
   }
-
 }
-
 

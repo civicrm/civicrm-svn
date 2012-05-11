@@ -39,32 +39,33 @@ class CRM_Upgrade_Headless {
    */
   function run() {
     // lets get around the time limit issue if possible for upgrades
-    if ( ! ini_get( 'safe_mode' ) ) {
-      set_time_limit( 0 );
+    if (!ini_get('safe_mode')) {
+      set_time_limit(0);
     }
-    
-    $upgrade = new CRM_Upgrade_Form( );
-    list ($currentVer, $latestVer) = $upgrade->getUpgradeVersions();
-    
+
+    $upgrade = new CRM_Upgrade_Form();
+    list($currentVer, $latestVer) = $upgrade->getUpgradeVersions();
+
     if ($error = $upgrade->checkUpgradeableVersion($currentVer, $latestVer)) {
-        throw new Exception($error);
+      throw new Exception($error);
     }
 
     $postUpgradeMessageFile = CRM_Utils_File::tempnam('civicrm-post-upgrade');
     $queueRunner = new CRM_Queue_Runner(array(
-      'title' => ts('CiviCRM Upgrade Tasks'),
-      'queue' => CRM_Upgrade_Form::buildQueue($currentVer, $latestVer, $postUpgradeMessageFile),
-    ));
+        'title' => ts('CiviCRM Upgrade Tasks'),
+        'queue' => CRM_Upgrade_Form::buildQueue($currentVer, $latestVer, $postUpgradeMessageFile),
+      ));
     $queueResult = $queueRunner->runAll();
-    if ($queueResult !== TRUE ) {
-        throw new Exception('Error running queued tasks: ' . print_r($queueResult, TRUE));
+    if ($queueResult !== TRUE) {
+      throw new Exception('Error running queued tasks: ' . print_r($queueResult, TRUE));
     }
-    
+
     CRM_Upgrade_Form::doFinish();
-    
+
     return array(
       'latestVer' => $latestVer,
       'message' => file_get_contents($postUpgradeMessageFile),
     );
   }
 }
+

@@ -28,7 +28,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
-    $tablesToTruncate = array('civicrm_custom_group', 'civicrm_custom_field',
+    $tablesToTruncate = array(
+      'civicrm_custom_group', 'civicrm_custom_field',
     );
     // true tells quickCleanup to drop any tables that might have been created in the test
     $this->quickCleanup($tablesToTruncate, TRUE);
@@ -50,7 +51,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
    */
   function testCustomFieldCreateWithoutLabel() {
     $customGroup = $this->customGroupCreate('Individual', 'text_test_group', 3);
-    $params = array('custom_group_id' => $customGroup['id'],
+    $params = array(
+      'custom_group_id' => $customGroup['id'],
       'name' => 'test_textfield2',
       'html_type' => 'Text',
       'data_type' => 'String',
@@ -72,7 +74,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
    */
   function testCustomFieldCreateWithEdit() {
     $customGroup = $this->customGroupCreate('Individual', 'text_test_group', 3);
-    $params = array('custom_group_id' => $customGroup['id'],
+    $params = array(
+      'custom_group_id' => $customGroup['id'],
       'name' => 'test_textfield2',
       'label' => 'Name1',
       'html_type' => 'Text',
@@ -97,7 +100,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
    * check without groupId
    */
   function testCustomFieldCreateWithoutGroupID() {
-    $fieldParams = array('name' => 'test_textfield1',
+    $fieldParams = array(
+      'name' => 'test_textfield1',
       'label' => 'Name',
       'html_type' => 'Text',
       'data_type' => 'String',
@@ -155,11 +159,13 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
 */
 
 
+
     return $params;
   }
 
   function _buildBasicParams($gid, $htype, $dtype) {
-    return array('custom_group_id' => $gid,
+    return array(
+      'custom_group_id' => $gid,
       'label' => $dtype . $htype,
       'html_type' => $htype,
       'data_type' => $dtype,
@@ -191,19 +197,22 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
   function testCustomFieldCreateWithOptionValues() {
     $customGroup = $this->customGroupCreate('Contact', 'select_test_group', 3);
 
-    $option_values = array(array('weight' => 1,
+    $option_values = array(
+      array('weight' => 1,
         'label' => 'Label1',
         'value' => 1,
         'is_active' => 1,
       ),
-      array('weight' => 2,
+      array(
+        'weight' => 2,
         'label' => 'Label2',
         'value' => 2,
         'is_active' => 1,
       ),
     );
 
-    $params = array('custom_group_id' => $customGroup['id'],
+    $params = array(
+      'custom_group_id' => $customGroup['id'],
       'label' => 'Country',
       'html_type' => 'Select',
       'data_type' => 'String',
@@ -251,7 +260,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
     $customField = $this->customFieldCreate($customGroup['id'], 'test_name');
     $this->assertNotNull($customField['id'], 'in line ' . __LINE__);
 
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
       'id' => $customField['id'],
     );
     $result = civicrm_api('custom_field', 'delete', $params);
@@ -267,7 +277,8 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
     $customGroup = $this->customGroupCreate('Contact', 'ABC');
     $customOptionValueFields = $this->customFieldOptionValueCreate($customGroup, 'fieldABC');
     $customOptionValueFields['version'] = $this->_apiversion;
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
       'id' => $customOptionValueFields,
     );
 

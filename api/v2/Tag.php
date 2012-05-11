@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -111,7 +112,9 @@ function civicrm_tag_delete(&$params) {
     return CRM_Core_BAO_Tag::del($tagID) ? civicrm_create_success() : civicrm_create_error(ts('Could not delete tag'));
   }
   catch(Exception$e) {
-    if (CRM_Core_Error::$modeException)throw$e;
+    if (CRM_Core_Error::$modeException) {
+      throw $e;
+    }
     return civicrm_create_error($e->getMessage());
   }
 }
@@ -139,7 +142,8 @@ function civicrm_tag_get($params) {
     return civicrm_create_error('Required parameters missing.');
   }
 
-  $properties = array('id', 'name', 'description', 'parent_id', 'is_selectable', 'is_hidden',
+  $properties = array(
+    'id', 'name', 'description', 'parent_id', 'is_selectable', 'is_hidden',
     'is_reserved', 'used_for',
   );
   foreach ($properties as $name) {

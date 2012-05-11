@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,34 +34,36 @@
  */
 
 /**
-* Implement the post hook and fire the corresponding rules event
-*/
-function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
-  if ( ! module_exists( 'rules' ) ) {
+ * Implement the post hook and fire the corresponding rules event
+ */
+function civicrm_rules_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  if (!module_exists('rules')) {
     return;
   }
 
-  if ( in_array( $objectName,
-      array( 'Individual', 'Household', 'Organization' ) ) ) {
+  if (in_array($objectName,
+      array('Individual', 'Household', 'Organization')
+    )) {
     $objectName = 'Contact';
   }
 
   // process only contacts for now
-  $validObjects = variable_get('civicrm_rules_post_entities', array( ));
+  $validObjects = variable_get('civicrm_rules_post_entities', array());
 
-  $eventObject = strtolower( $objectName );
-  if ( !in_array($eventObject, $validObjects ) &&
-    !in_array($eventObject, array('contact')) ) {
+  $eventObject = strtolower($objectName);
+  if (!in_array($eventObject, $validObjects) &&
+    !in_array($eventObject, array('contact'))
+  ) {
     return;
   }
 
-  if($eventObject != 'contact'){
+  if ($eventObject != 'contact') {
     // without the civicrm prefix too much chance of another drupal module being enabled
     $eventObject = 'civicrm_' . $eventObject;
   }
 
-  $eventName = null;
-  switch ( $op ) {
+  $eventName = NULL;
+  switch ($op) {
     case 'create':
     case 'edit':
     case 'delete':
@@ -73,29 +74,29 @@ function civicrm_rules_civicrm_post( $op, $objectName, $objectId, &$objectRef ) 
       break;
   }
 
-  if ( $eventName ) {
-    rules_invoke_event( $eventName, $objectRef );
+  if ($eventName) {
+    rules_invoke_event($eventName, $objectRef);
   }
 }
 
 /**
  * Implement civicrm pageRun hook and fire the corresponding rules event
  */
-function civicrm_rules_civicrm_pageRun( &$page ) {
-  if ( ! module_exists( 'rules' ) ) {
+function civicrm_rules_civicrm_pageRun(&$page) {
+  if (!module_exists('rules')) {
     return;
   }
 
   // process only contacts for now
-  $validObjects = array( 	'CRM_Contact_Page_View_Summary' );
+  $validObjects = array('CRM_Contact_Page_View_Summary');
 
-  $className = get_class( $page );
-  if ( !in_array( $className , $validObjects ) ) {
+  $className = get_class($page);
+  if (!in_array($className, $validObjects)) {
     return;
   }
 
-  $eventName = null;
-  switch ( $className ) {
+  $eventName = NULL;
+  switch ($className) {
     case 'CRM_Contact_Page_View_Summary':
       $eventName = 'contact_view';
       break;
@@ -104,8 +105,8 @@ function civicrm_rules_civicrm_pageRun( &$page ) {
       break;
   }
 
-  if ( $eventName ) {
-    rules_invoke_event( $eventName, $page );
+  if ($eventName) {
+    rules_invoke_event($eventName, $page);
   }
 }
 
@@ -113,40 +114,43 @@ function civicrm_rules_civicrm_pageRun( &$page ) {
  * Implement the postProcess hook and fire the corresponding rules event
  * We'll do this for specific forms only (for now)
  */
-function civicrm_rules_civicrm_postProcess( $formName, &$form ) {
+function civicrm_rules_civicrm_postProcess($formName, &$form) {
   require_once 'CRM/Mailing/Info.php';
-  if ( CRM_Mailing_Info::workflowEnabled( ) ) {
-    $eventName = $eventParams  = null;
+  if (CRM_Mailing_Info::workflowEnabled()) {
+    $eventName = $eventParams = NULL;
 
-    switch ( $formName ) {
+    switch ($formName) {
       case 'CRM_Mailing_Form_Group':
-        if (  $form->get( 'continue' ) == true ) {
+        if ($form->get('continue') == TRUE) {
           $eventName = 'mailing_edit';
-          $mailingId = $form->get( 'mid' );
-        } else {
+          $mailingId = $form->get('mid');
+        }
+        else {
           $query = "
 SELECT max(id)
 FROM   civicrm_mailing
 ";
-          $mailingId = CRM_Core_DAO::singleValueQuery( $query );
+          $mailingId = CRM_Core_DAO::singleValueQuery($query);
           $eventName = 'mailing_create';
         }
         break;
 
       case 'CRM_Mailing_Form_Schedule':
-        if ( $form->get( 'mid' ) ) {
-          $mailingId = $form->get( 'mid' );
-        } else {
+        if ($form->get('mid')) {
+          $mailingId = $form->get('mid');
+        }
+        else {
           $mailingId = $form->_mailingID;
         }
         $eventName = 'mailing_scheduled';
         break;
 
       case 'CRM_Mailing_Form_Approve':
-        if ( $form->_mailingID ) {
+        if ($form->_mailingID) {
           $mailingId = $form->_mailingID;
-        } else {
-          $mailingId = $form->get( 'mid' );
+        }
+        else {
+          $mailingId = $form->get('mid');
         }
         $eventName = 'mailing_approved';
         break;
@@ -158,27 +162,26 @@ FROM   civicrm_mailing
 
       case 'CRM_Mailing_Form_Test':
         $eventName = 'mailing_inform';
-        $mailingId = $form->get( 'mailing_id' ) ? $form->get( 'mailing_id' ) : $form->get( 'mid' );
+        $mailingId = $form->get('mailing_id') ? $form->get('mailing_id') : $form->get('mid');
         break;
 
       default:
         break;
     }
 
-    if ( $eventName ) {
+    if ($eventName) {
       require_once 'CRM/Mailing/DAO/Mailing.php';
-      $eventParams = new CRM_Mailing_DAO_Mailing( );
+      $eventParams = new CRM_Mailing_DAO_Mailing();
       $eventParams->id = $mailingId;
-      $eventParams->find( true );
-      rules_invoke_event( $eventName, $eventParams );
+      $eventParams->find(TRUE);
+      rules_invoke_event($eventName, $eventParams);
     }
   }
 }
 /*
  * Implementation of hook_perm().
  */
-function civicrm_rules_perm()
-{
+function civicrm_rules_perm() {
   return array('access civicrm rules settings');
 }
 
@@ -190,9 +193,9 @@ function civicrm_rules_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('civicrm_rules_admin_settings'),
     'access arguments' => array('access civicrm rules settings'),
-    'file'	=> 'civicrm_rules_admin_form.inc',
+    'file' => 'civicrm_rules_admin_form.inc',
     'type' => MENU_NORMAL_ITEM,
   );
   return $items;
-
 }
+

@@ -36,18 +36,17 @@
  */
 class CRM_ACL_API {
 
-    /**
-     * The various type of permissions
-     *
-     * @var int
-     */
-    const EDIT   = 1;
-    const VIEW   = 2;
-    const DELETE = 3;
-    const CREATE = 4;
-    const SEARCH = 5;
-    const ALL    = 6;
-
+  /**
+   * The various type of permissions
+   *
+   * @var int
+   */
+  CONST EDIT = 1;
+  CONST VIEW = 2;
+  CONST DELETE = 3;
+  CONST CREATE = 4;
+  CONST SEARCH = 5;
+  CONST ALL = 6;
 
   /**
    * given a permission string, check for access requirements
@@ -127,7 +126,8 @@ class CRM_ACL_API {
     }
 
     return implode(' AND ',
-      array(CRM_ACL_BAO_ACL::whereClause($type,
+      array(
+        CRM_ACL_BAO_ACL::whereClause($type,
           $tables,
           $whereTables,
           $contactID
@@ -148,7 +148,7 @@ class CRM_ACL_API {
    */
   public static function group(
     $type,
-    $contactID = NULL,
+    $contactID      = NULL,
     $tableName      = 'civicrm_saved_search',
     $allGroups      = NULL,
     $includedGroups = NULL
@@ -178,18 +178,18 @@ class CRM_ACL_API {
   public static function groupPermission(
     $type,
     $groupID,
-    $contactID = NULL,
+    $contactID      = NULL,
     $tableName      = 'civicrm_saved_search',
     $allGroups      = NULL,
     $includedGroups = NULL
   ) {
     static $cache = array();
 
-    if ( ! $contactID ) {
+    if (!$contactID) {
       $session = CRM_Core_Session::singleton();
       $contactID = NULL;
-      if ($session->get( 'userID' )) {
-        $contactID = $session->get( 'userID' );
+      if ($session->get('userID')) {
+        $contactID = $session->get('userID');
       }
     }
 

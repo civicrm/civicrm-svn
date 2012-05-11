@@ -139,7 +139,8 @@ WHERE  inst.report_id = %1";
   }
 
   static
-  function mailReport($fileContent, $instanceID = NULL, $outputMode = 'html', $attachments = array()) {
+  function mailReport($fileContent, $instanceID = NULL, $outputMode = 'html', $attachments = array(
+    )) {
     if (!$instanceID) {
       return FALSE;
     }
@@ -366,7 +367,8 @@ WHERE  inst.report_id = %1";
       }
 
       $wrapper = new CRM_Utils_Wrapper();
-      $arguments['urlToSession'] = array(array('urlVar' => 'instanceId',
+      $arguments['urlToSession'] = array(
+        array('urlVar' => 'instanceId',
           'type' => 'Positive',
           'sessionVar' => 'instanceId',
           'default' => 'null',
@@ -397,9 +399,12 @@ WHERE  inst.report_id = %1";
    *
    * @param array $defaults The report criteria that aren't coming in as submitted form values, as in CRM_Report_Form::_defaults
    * @param array $params All effective report criteria, as in CRM_Report_Form::_params
+   *
    * @return string URL query string
    */
-  static function getPreviewCriteriaQueryParams($defaults = array(), $params = array()) {
+  static
+  function getPreviewCriteriaQueryParams($defaults = array(
+    ), $params = array()) {
     static $query_string;
     if (!isset($query_string)) {
       if (!empty($params)) {
@@ -418,12 +423,13 @@ WHERE  inst.report_id = %1";
         // All $process_params should be passed on if they have an effective value
         // (in other words, there's no point in propagating blank filters).
         foreach ($process_params as $field_name => $field_value) {
-          $suffix_position = strrpos($field_name , '_');
-          $suffix = substr($field_name , $suffix_position);
-          $basename = substr($field_name, 0, $suffix_position);
-          if ($suffix == '_min'  || $suffix == '_max' ||
+          $suffix_position = strrpos($field_name, '_');
+          $suffix          = substr($field_name, $suffix_position);
+          $basename        = substr($field_name, 0, $suffix_position);
+          if ($suffix == '_min' || $suffix == '_max' ||
             $suffix == '_from' || $suffix == '_to' ||
-            $suffix == '_relative') {
+            $suffix == '_relative'
+          ) {
             // For these types, we only keep them if they have a value.
             if (!empty($field_value)) {
               $url_params[$field_name] = $field_value;
@@ -449,13 +455,13 @@ WHERE  inst.report_id = %1";
         // they'll have an effective value.
         foreach ($op_values as $basename => $field_value) {
           if ($field_value == 'nll' || $field_value == 'nnll') {
-           // 'nll' and 'nnll' filters should be included even with empty values.
-           $url_params["{$basename}_op"] = $field_value;
+            // 'nll' and 'nnll' filters should be included even with empty values.
+            $url_params["{$basename}_op"] = $field_value;
           }
           elseif ($string_values[$basename]) {
-           // Other filters are only included if they have a value.
-           $url_params["{$basename}_op"] = $field_value;
-           $url_params["{$basename}_value"] = (is_array($string_values[$basename]) ? implode(',', $string_values[$basename]) : $string_values[$basename]);
+            // Other filters are only included if they have a value.
+            $url_params["{$basename}_op"] = $field_value;
+            $url_params["{$basename}_value"] = (is_array($string_values[$basename]) ? implode(',', $string_values[$basename]) : $string_values[$basename]);
           }
         }
         $query_string = http_build_query($url_params);

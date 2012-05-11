@@ -57,7 +57,7 @@ require_once 'CRM/Utils/Rule.php';
  *
  */
 function civicrm_api3_pledge_create($params) {
-  _civicrm_api3_pledge_format_params($params,  TRUE);
+  _civicrm_api3_pledge_format_params($params, TRUE);
   $values = $params;
   //format the custom fields
   _civicrm_api3_custom_format_params($params, $values, 'Pledge');
@@ -132,7 +132,7 @@ function civicrm_api3_pledge_get($params) {
     $params['pledge_id'] = $params['id'];
     unset($params['id']);
   }
-  $options = _civicrm_api3_get_options_from_params($params, true);
+  $options = _civicrm_api3_get_options_from_params($params, TRUE);
   require_once 'CRM/Pledge/BAO/Query.php';
   require_once 'CRM/Contact/BAO/Query.php';
   if (empty($options['return'])) {
@@ -170,7 +170,7 @@ function _civicrm_api3_pledge_get_defaults() {
 }
 
 /**
- * Legacy function - I removed a bunch of stuff no longer required from here but it still needs 
+ * Legacy function - I removed a bunch of stuff no longer required from here but it still needs
  * more culling
  * take the input parameter list as specified in the data model and
  * convert it into the same format that we use in QF and BAO object
@@ -183,9 +183,9 @@ function _civicrm_api3_pledge_get_defaults() {
  * @return array|CRM_Error
  * @access public
  */
-function _civicrm_api3_pledge_format_params( &$values, $create = FALSE) {
+function _civicrm_api3_pledge_format_params(&$values, $create = FALSE) {
 
-// probably most of the below can be removed.... just needs a little more review
+  // probably most of the below can be removed.... just needs a little more review
   if (array_key_exists('original_installment_amount', $values)) {
     $values['installment_amount'] = $values['original_installment_amount'];
     //it seems it will only create correctly with BOTH installment amount AND pledge_installment_amount set

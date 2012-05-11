@@ -70,7 +70,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     // state where tests could run afterwards without re-loading.
     $this->caseStatusGroup = civicrm_api('option_group', 'get', array('version' => API_LATEST_VERSION, 'name' => 'case_status', 'format.only_id' => 1));
     $this->caseTypeGroup = civicrm_api('option_group', 'get', array('version' => API_LATEST_VERSION, 'name' => 'case_type', 'format.only_id' => 1));
-    $caseTypes = civicrm_api('option_value', 'Create', array('version' => API_LATEST_VERSION,
+    $caseTypes = civicrm_api('option_value', 'Create', array(
+      'version' => API_LATEST_VERSION,
         'option_group_id' => $this->caseTypeGroup,
         'name' => 'housing_support',
         'label' => "Housing Support",
@@ -80,7 +81,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
 
     $this->case_activity_type_value = $caseTypes['values'][0]['value'];
     $this->optionValues[] = $caseTypes['id'];
-    $optionValues = array('Medical evaluation' => 'Medical evaluation',
+    $optionValues = array(
+      'Medical evaluation' => 'Medical evaluation',
       'Mental health evaluation' => "Mental health evaluation",
       'Secure temporary housing' => 'Secure temporary housing',
       'Long-term housing plan' => 'Long-term housing plan',
@@ -88,7 +90,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
       'Income and benefits stabilization' => 'Income and benefits stabilization',
     );
     foreach ($optionValues as $name => $label) {
-      $activityTypes = civicrm_api('option_value', 'Create', array('version' => API_LATEST_VERSION,
+      $activityTypes = civicrm_api('option_value', 'Create', array(
+        'version' => API_LATEST_VERSION,
           'option_group_id' => 2,
           'name' => $name,
           'label' => $label,
@@ -97,7 +100,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
       // store for cleanup
       $this->optionValues[] = $activityTypes['id'];
     }
-    $tablesToTruncate = array('civicrm_activity',
+    $tablesToTruncate = array(
+      'civicrm_activity',
       'civicrm_contact',
       'civicrm_custom_group',
       'civicrm_custom_field',
@@ -112,7 +116,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
 
     $this->quickCleanup($tablesToTruncate);
 
-    $activityTypes = civicrm_api('option_value', 'get', array('version' => API_LATEST_VERSION, 'option_group_id' => 2,
+    $activityTypes = civicrm_api('option_value', 'get', array(
+      'version' => API_LATEST_VERSION, 'option_group_id' => 2,
         'name' => 'Follow Up',
         'label' => 'Follow Up',
         'sequential' => 1,
@@ -237,7 +242,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     foreach ($this->optionValues as $id) {
       civicrm_api('option_value', 'delete', array('version' => API_LATEST_VERSION, 'id' => $id));
     }
-    $tablesToTruncate = array('civicrm_contact',
+    $tablesToTruncate = array(
+      'civicrm_contact',
       'civicrm_activity',
       'civicrm_case',
       'civicrm_case_contact',
@@ -302,7 +308,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     $params = $this->_params;
     $result = civicrm_api('case', 'create', $params);
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
-    $params = array('case_id' => 1,
+    $params = array(
+      'case_id' => 1,
       // follow up
       'activity_type_id' => $this->followup_activity_type_value,
       'subject' => 'Test followup',
@@ -342,7 +349,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     // Need to create the case and activity before we can update it
     $this->testCaseActivityCreate();
 
-    $params = array('activity_id' => $this->_caseActivityId,
+    $params = array(
+      'activity_id' => $this->_caseActivityId,
       'case_id' => 1,
       'activity_type_id' => 14,
       'source_contact_id' => $this->_loggedInUser,
@@ -367,7 +375,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     );
 
     // Check revision is as expected
-    $revParams = array('activity_id' => $this->_caseActivityId,
+    $revParams = array(
+      'activity_id' => $this->_caseActivityId,
       'version' => $this->_apiversion,
     );
     $revActivity = &civicrm_api('activity', 'get', $revParams);
@@ -393,7 +402,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     $custom_ids = $this->entityCustomGroupWithSingleFieldCreate(__FUNCTION__, 'ActivityTest.php');
 
     // create activity
-    $params = array('case_id' => 1,
+    $params = array(
+      'case_id' => 1,
       // follow up
       'activity_type_id' => 14,
       'subject' => 'Test followup',
@@ -411,7 +421,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     $aid = $result['values'][$result['id']]['id'];
 
     // Update activity
-    $params = array('activity_id' => $aid,
+    $params = array(
+      'activity_id' => $aid,
       'case_id' => 1,
       'activity_type_id' => 14,
       'source_contact_id' => $this->_loggedInUser,
@@ -425,7 +436,8 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     );
 
     // Retrieve revision and check custom fields got copied
-    $revParams = array('activity_id' => $aid + 1,
+    $revParams = array(
+      'activity_id' => $aid + 1,
       'version' => $this->_apiversion,
       'return.custom_' . $custom_ids['custom_field_id'] => 1,
     );

@@ -10,7 +10,8 @@ class api_v3_ContributionRecurTest extends CiviUnitTestCase {
   public $DBResetRequired = FALSE; function setUp() {
     parent::setUp();
     $this->ids['contact'][0] = $this->individualCreate();
-    $this->params = array('version' => 3,
+    $this->params = array(
+      'version' => 3,
       'contact_id' => $this->ids['contact'][0],
       'installments' => '12',
       'frequency_interval' => '1',
@@ -63,7 +64,8 @@ class api_v3_ContributionRecurTest extends CiviUnitTestCase {
     $result = civicrm_api($this->_entity, 'delete', array('version' => 3, 'id' => $result['id']));
     $this->documentMe(array('version' => 3, 'id' => $result['id']), $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
-    $checkDeleted = civicrm_api($this->_entity, 'get', array('version' => 3,
+    $checkDeleted = civicrm_api($this->_entity, 'get', array(
+      'version' => 3,
       ));
     $this->assertEquals(0, $checkDeleted['count'], 'In line ' . __LINE__);
   }

@@ -51,7 +51,8 @@ function _civicrm_initialize($useException = FALSE) {
   }
 }
 
-function civicrm_verify_mandatory(&$params, $daoName = NULL, $keys = array()) {
+function civicrm_verify_mandatory(&$params, $daoName = NULL, $keys = array(
+  )) {
   if (!is_array($params)) {
     throw new Exception('Input parameters is not an array');
   }
@@ -61,7 +62,9 @@ function civicrm_verify_mandatory(&$params, $daoName = NULL, $keys = array()) {
   }
 
   foreach ($keys as $key) {
-    if (!array_key_exists($key, $params))throw new Exception("Mandatory param missing: " . $key);
+    if (!array_key_exists($key, $params)) {
+      throw new Exception("Mandatory param missing: " . $key);
+    }
   }
 }
 
@@ -83,13 +86,13 @@ function &civicrm_create_error($msg, $data = NULL) {
  * @return <type>
  */
 function civicrm_create_success($result = 1) {
-    
-        $values = array( );
-        
-        $values['is_error'] = 0;
-        $values['result'  ] = $result;
 
-    
+  $values = array();
+
+  $values['is_error'] = 0;
+  $values['result'] = $result;
+
+
   return CRM_Core_Error::createAPISuccess($values);
 }
 
@@ -190,7 +193,9 @@ function _civicrm_add_formatted_param(&$values, &$params) {
      */
 
 
+
   /* Cache the various object fields */
+
 
   static $fields = NULL;
 
@@ -205,6 +210,7 @@ function _civicrm_add_formatted_param(&$values, &$params) {
 
   if (isset($values['contact_type'])) {
     /* we're an individual/household/org property */
+
 
 
     $fields[$values['contact_type']] = CRM_Contact_DAO_Contact::fields();
@@ -344,6 +350,7 @@ function _civicrm_add_formatted_param(&$values, &$params) {
   if (isset($values['note'])) {
     /* add a note field */
 
+
     if (!isset($params['note'])) {
       $params['note'] = array();
     }
@@ -369,6 +376,7 @@ function _civicrm_add_formatted_param(&$values, &$params) {
 
   /* Check for custom field values */
 
+
   if (!CRM_Utils_Array::value('custom', $fields)) {
     $fields['custom'] = CRM_Core_BAO_CustomField::getFields(CRM_Utils_Array::value('contact_type', $values));
   }
@@ -376,6 +384,7 @@ function _civicrm_add_formatted_param(&$values, &$params) {
   foreach ($values as $key => $value) {
     if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
       /* check if it's a valid custom field id */
+
 
       if (!array_key_exists($customFieldID, $fields['custom'])) {
         return civicrm_create_error('Invalid custom field ID');
@@ -402,7 +411,8 @@ function _civicrm_add_formatted_location_blocks(&$values, &$params) {
     $fields = array();
   }
 
-  foreach (array('Phone', 'Email', 'IM', 'OpenID') as $block) {
+  foreach (array(
+    'Phone', 'Email', 'IM', 'OpenID') as $block) {
     $name = strtolower($block);
     if (!array_key_exists($name, $values)) {
       continue;
@@ -459,7 +469,8 @@ function _civicrm_add_formatted_location_blocks(&$values, &$params) {
   }
   _civicrm_store_values($fields['Address'], $values, $params['address'][$addressCnt]);
 
-  $addressFields = array('county', 'country', 'state_province',
+  $addressFields = array(
+    'county', 'country', 'state_province',
     'supplemental_address_1', 'supplemental_address_2',
     'StateProvince.name',
   );
@@ -478,6 +489,7 @@ function _civicrm_add_formatted_location_blocks(&$values, &$params) {
     if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
       /* check if it's a valid custom field id */
 
+
       if (array_key_exists($customFieldID, $fields['address_custom'])) {
         $type = $fields['address_custom'][$customFieldID]['html_type'];
         _civicrm_add_custom_formatted_param($customFieldID, $key, $value, $params['address'][$addressCnt], $type);
@@ -491,7 +503,6 @@ function _civicrm_add_formatted_location_blocks(&$values, &$params) {
   if ($addressCnt == 1) {
 
     $params['address'][$addressCnt]['is_primary'] = TRUE;
-
   }
 
   return TRUE;
@@ -607,6 +618,7 @@ function _civicrm_duplicate_formatted_contact(&$params,
 function _civicrm_validate_formatted_contact(&$params) {
   /* Look for offending email addresses */
 
+
   if (array_key_exists('email', $params)) {
     foreach ($params['email'] as $count => $values) {
       if (!is_array($values)) {
@@ -627,6 +639,7 @@ function _civicrm_validate_formatted_contact(&$params) {
   }
 
   /* Validate custom data fields */
+
 
   if (array_key_exists('custom', $params) && is_array($params['custom'])) {
     foreach ($params['custom'] as $key => $custom) {
@@ -843,7 +856,8 @@ function _civicrm_participant_formatted_param(&$params, &$values, $create = FALS
     // status_id and source. So, if $values contains
     // participant_register_date, participant_status_id or participant_source,
     // convert it to register_date, status_id or source
-    $changes = array('participant_register_date' => 'register_date',
+    $changes = array(
+      'participant_register_date' => 'register_date',
       'participant_source' => 'source',
       'participant_status_id' => 'status_id',
       'participant_role_id' => 'role_id',
@@ -1289,7 +1303,8 @@ function _civicrm_membership_formatted_param(&$params, &$values, $create = FALSE
     // membership_end_date and membership_source. So, if $values contains
     // membership_start_date, membership_end_date  or membership_source,
     // convert it to start_date, end_date or source
-    $changes = array('membership_start_date' => 'start_date',
+    $changes = array(
+      'membership_start_date' => 'start_date',
       'membership_end_date' => 'end_date',
       'membership_source' => 'source',
     );

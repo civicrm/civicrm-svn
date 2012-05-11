@@ -1,20 +1,19 @@
 <?php
-// $Id$
 
 
 
 /*
  /*this demonstrates setting a custom field through the API 
  */
-function contact_get_example() {
-  $params = array(
-    'return' => 'custom_3',
-    'version' => 3,
-    'id' => 1,
-  );
+function contact_get_example(){
+$params = array( 
+  'return' => 'custom_3',
+  'version' => 3,
+  'id' => 1,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('contact', 'get', $params);
+  $result = civicrm_api( 'contact','get',$params );
 
   return $result;
 }
@@ -22,24 +21,24 @@ function contact_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function contact_get_expectedresult() {
+function contact_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'contact_id' => '1',
-        'civicrm_value_testgetwithcustomreturnsyntax_3_id' => '1',
-        'custom_3' => 'custom string',
-        'id' => '1',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'contact_id' => '1',
+          'civicrm_value_testgetwithcustomreturnsyntax_3_id' => '1',
+          'custom_3' => 'custom string',
+          'id' => '1',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -58,4 +57,3 @@ function contact_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

@@ -73,7 +73,8 @@ function civicrm_api3_activity_create($params) {
     // an update does not require any mandatory parameters
     civicrm_api3_verify_mandatory($params,
       NULL,
-      array('source_contact_id',
+      array(
+        'source_contact_id',
         array('activity_name', 'activity_type_id', 'activity_label'),
       )
     );
@@ -189,25 +190,28 @@ function civicrm_api3_activity_create($params) {
  */
 function _civicrm_api3_activity_create_spec(&$params) {
   $params['subject']['api.required'] = 1;
-  
+
   //default for source_contact_id = currently logged in user
   $params['source_contact_id']['api.default'] = 'user_contact_id';
-  
-  $params['assignee_contact_id'] = array('name' => 'assignee_id',
+
+  $params['assignee_contact_id'] = array(
+    'name' => 'assignee_id',
     'title' => 'assigned to',
     'type' => 1,
     'FKClassName' => 'CRM_Activity_DAO_ActivityAssignment',
   );
-  $params['target_contact_id'] = array('name' => 'target_id',
+  $params['target_contact_id'] = array(
+    'name' => 'target_id',
     'title' => 'Activity Target',
     'type' => 1,
     'FKClassName' => 'CRM_Activity_DAO_ActivityTarget',
   );
-  $params['activity_status_id'] = array('name' => 'status_id',
+  $params['activity_status_id'] = array(
+    'name' => 'status_id',
     'title' => 'Status Id',
     'type' => 1,
   );
-    $params['priority_id']['pseudoconstant'] = 'priority';
+  $params['priority_id']['pseudoconstant'] = 'priority';
 }
 
 /**
@@ -297,7 +301,8 @@ function civicrm_api3_activity_delete($params) {
 function _civicrm_api3_activity_check_params(&$params) {
 
   $contactIDFields = array_intersect_key($params,
-    array('source_contact_id' => 1,
+    array(
+      'source_contact_id' => 1,
       'assignee_contact_id' => 1,
       'target_contact_id' => 1,
     )
@@ -377,6 +382,7 @@ SELECT  count(*)
   /*
      * @todo unique name for status_id is activity status id - status id won't be supported in v4
      */
+
 
   if (!empty($params['status_id'])) {
     $params['activity_status_id'] = $params['status_id'];

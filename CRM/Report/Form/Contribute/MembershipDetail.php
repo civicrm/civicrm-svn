@@ -44,46 +44,50 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
-  protected $_customGroupExtends = array('Contribution','Membership');
-
- function __construct() {
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+  protected $_customGroupExtends = array(
+    'Contribution', 'Membership'); function __construct() {
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Donor Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
           'first_name' =>
           array('title' => ts('First Name'),
-                'no_repeat' => TRUE,
+            'no_repeat' => TRUE,
           ),
           'last_name' =>
           array('title' => ts('Last Name'),
-                'no_repeat' => TRUE,
+            'no_repeat' => TRUE,
           ),
           'contact_type' =>
           array('title' => ts('Contact Type'),
-                'no_repeat' => TRUE,
+            'no_repeat' => TRUE,
           ),
           'do_not_email' =>
           array('title' => ts('Do Not Email'),
-                'no_repeat' => TRUE,
+            'no_repeat' => TRUE,
           ),
-          'is_opt_out'   =>
+          'is_opt_out' =>
           array('title' => ts('No Bulk Email(Is Opt Out)'),
-                'no_repeat' => TRUE,
+            'no_repeat' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
             'csv_display' => TRUE,
-            'title' => ts('Contact ID')
+            'title' => ts('Contact ID'),
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Donor Name'),
             'operator' => 'like',
           ),
@@ -95,9 +99,11 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Donor Email'),
             'default' => TRUE,
             'no_repeat' => TRUE,
@@ -106,9 +112,11 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'fields' =>
-        array('phone' =>
+        array(
+          'phone' =>
           array('title' => ts('Donor Phone'),
             'default' => TRUE,
             'no_repeat' => TRUE,
@@ -117,9 +125,11 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         'grouping' => 'contact-fields',
       ),
       'civicrm_contact_honor' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name_honor' =>
+        array(
+          'sort_name_honor' =>
           array('title' => ts('Honoree Name'),
             'name' => 'sort_name',
             'alias' => 'contacthonor',
@@ -127,7 +137,8 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
             'no_repeat' => TRUE,
           ),
           'id_honor' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'title' => ts('Honoree ID'),
             'name' => 'id',
             'alias' => 'contacthonor',
@@ -136,9 +147,11 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         ),
       ),
       'civicrm_email_honor' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'fields' =>
-        array('email_honor' =>
+        array(
+          'email_honor' =>
           array('title' => ts('Honoree Email'),
             'name' => 'email',
             'alias' => 'emailhonor',
@@ -148,53 +161,55 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         ),
         'grouping' => 'contact-fields',
       ),
-     'civicrm_membership_payment' =>  
-     array('dao' => 'CRM_Member_DAO_MembershipPayment',
-       'fields' =>
-       array(
-       'contribution_id' => 
+      'civicrm_membership_payment' =>
+      array(
+        'dao' => 'CRM_Member_DAO_MembershipPayment',
+        'fields' =>
+        array(
+          'contribution_id' =>
           array(
             'name' => 'contribution_id',
             'no_display' => TRUE,
-            'required' => TRUE
-         ),
-       'membership_id' =>
-           array(
+            'required' => TRUE,
+          ),
+          'membership_id' =>
+          array(
             'name' => 'membership_id',
             'no_display' => TRUE,
             'required' => TRUE,
             'csv_display' => TRUE,
-            'title' => ts('Membership ID')
-           )
-       )
-     ),
+            'title' => ts('Membership ID'),
+          ),
+        ),
+      ),
       'first_donation' => array(
-      'dao' => 'CRM_Contribute_DAO_Contribution',
-      'fields' =>
-         array(
-           'first_donation_date' => array(
-              'title' => ts('First Donation Date'),
-              'base_field' => 'receive_date',
-              'no_repeat' => TRUE
-             ),
-           'first_donation_amount' => array(
-           'title' => ts('First Donation Amount'),
-           'base_field' => 'total_amount',
-           'no_repeat' => TRUE
-           )
-         )
-       ),                      
+        'dao' => 'CRM_Contribute_DAO_Contribution',
+        'fields' =>
+        array(
+          'first_donation_date' => array(
+            'title' => ts('First Donation Date'),
+            'base_field' => 'receive_date',
+            'no_repeat' => TRUE,
+          ),
+          'first_donation_amount' => array(
+            'title' => ts('First Donation Amount'),
+            'base_field' => 'total_amount',
+            'no_repeat' => TRUE,
+          ),
+        ),
+      ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
-        'fields' => 
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
+        'fields' =>
         array(
           'contribution_id' => array(
             'name' => 'id',
             'no_display' => TRUE,
             'required' => TRUE,
             'csv_display' => TRUE,
-            'title' => ts('Contribution ID')
-         ),
+            'title' => ts('Contribution ID'),
+          ),
           'contribution_type_id' => array('title' => ts('Contribution Type'),
             'default' => TRUE,
           ),
@@ -210,7 +225,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
           ),
           'contribution_source' => array(
             'name' => 'source',
-            'title' => ts('Contribution Source')
+            'title' => ts('Contribution Source'),
           ),
           'trxn_id' => NULL,
           'receive_date' => array('default' => TRUE),
@@ -227,7 +242,8 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('receive_date' =>
+        array(
+          'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
           'contribution_type_id' =>
           array('title' => ts('Contribution Type'),
@@ -250,37 +266,42 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         ),
         'grouping' => 'contri-fields',
       ),
-     'civicrm_contribution_product' =>
-      array('dao' => 'CRM_Contribute_DAO_ContributionProduct',
-        'fields' => 
+      'civicrm_contribution_product' =>
+      array(
+        'dao' => 'CRM_Contribute_DAO_ContributionProduct',
+        'fields' =>
         array(
-         'product_id' => array(
+          'product_id' => array(
             'no_display' => TRUE,
           ),
-         'contribution_id' => array(
+          'contribution_id' => array(
             'no_display' => TRUE,
           ),
-       ),
+        ),
       ),
       'civicrm_product' =>
-      array('dao' => 'CRM_Contribute_DAO_Product',
-        'fields' => 
+      array(
+        'dao' => 'CRM_Contribute_DAO_Product',
+        'fields' =>
         array(
-         'product_name' => array(
-                'name' => 'name',
-                'title' => ts('Product Name'),
+          'product_name' => array(
+            'name' => 'name',
+            'title' => ts('Product Name'),
           ),
-         'options' => array(
-               'title' => ts('Product Options'),
-         ),
-       ),
+          'options' => array(
+            'title' => ts('Product Options'),
+          ),
+        ),
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_GroupContact',
+      array(
+        'dao' => 'CRM_Contact_DAO_GroupContact',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -289,23 +310,27 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         ),
       ),
       'civicrm_contribution_ordinality' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'alias' => 'cordinality',
         'filters' =>
-        array('ordinality' =>
+        array(
+          'ordinality' =>
           array('title' => ts('Contribution Ordinality'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => array(0 => 'First by Contributor',
+            'options' => array(
+              0 => 'First by Contributor',
               1 => 'Second or Later by Contributor',
             ),
           ),
         ),
       ),
       'civicrm_membership' =>
-      array('dao' => 'CRM_Member_DAO_Membership',
+      array(
+        'dao' => 'CRM_Member_DAO_Membership',
         'fields' =>
         array(
-              'membership_type_id' => array('title' => ts('Membership Type'),
+          'membership_type_id' => array('title' => ts('Membership Type'),
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
@@ -332,7 +357,8 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_INT,
           ),
           'tid' =>
-          array('name' => 'membership_type_id',
+          array(
+            'name' => 'membership_type_id',
             'title' => ts('Membership Types'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -342,19 +368,22 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         'grouping' => 'member-fields',
       ),
       'civicrm_membership_status' =>
-      array('dao' => 'CRM_Member_DAO_MembershipStatus',
+      array(
+        'dao' => 'CRM_Member_DAO_MembershipStatus',
         'alias' => 'mem_status',
         'fields' =>
         array(
-            'membership_status_name' => 
-             array(
-                'name' => 'name',
-                'title' => ts('Membership Status'),
-                'default' => TRUE
-            ),
+          'membership_status_name' =>
+          array(
+            'name' => 'name',
+            'title' => ts('Membership Status'),
+            'default' => TRUE,
+          ),
         ),
-        'filters' => array('sid' =>
-          array('name' => 'id',
+        'filters' => array(
+          'sid' =>
+          array(
+            'name' => 'id',
             'title' => ts('Membership Status'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -363,7 +392,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         ),
         'grouping' => 'member-fields',
       ),
-   ) + $this->addAddressFields(FALSE);
+    ) + $this->addAddressFields(FALSE);
 
     $this->_tagFilter = TRUE;
     parent::__construct();
@@ -372,10 +401,10 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
   function preProcess() {
     parent::preProcess();
   }
-  
+
   function select() {
     $select = array();
-        
+
     $this->_columnHeaders = array();
     foreach ($this->_columns as $tableName => $table) {
       if (array_key_exists('fields', $table)) {
@@ -401,8 +430,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
             if (CRM_Utils_Array::value('statistics', $field)) {
               foreach ($field['statistics'] as $stat => $label) {
                 switch (strtolower($stat)) {
-
-                case 'sum':
+                  case 'sum':
                     $select[] = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}_{$stat}";
                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type'] = $field['type'];
@@ -423,11 +451,12 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
                     break;
                 }
               }
-            } elseif ( $fieldName == 'first_donation_date' || $fieldName == 'first_donation_amount' ) {
-                $baseField = CRM_Utils_Array::value('base_field', $field);
-                $select[] = "{$this->_aliases['civicrm_contribution']}.{$baseField} as {$tableName}_{$fieldName}";
-                $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field);
-                $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
+            }
+            elseif ($fieldName == 'first_donation_date' || $fieldName == 'first_donation_amount') {
+              $baseField = CRM_Utils_Array::value('base_field', $field);
+              $select[] = "{$this->_aliases['civicrm_contribution']}.{$baseField} as {$tableName}_{$fieldName}";
+              $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field);
+              $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
             }
             else {
               $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
@@ -445,7 +474,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
 
   function from() {
 
-      $this->_from = "
+    $this->_from = "
         FROM  civicrm_contribution {$this->_aliases['civicrm_contribution']} 
               INNER JOIN civicrm_contact  {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
                       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0 
@@ -459,8 +488,8 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
                              {$this->_aliases['civicrm_membership']}.status_id 
 ";
 
-      //for premium products
-      $this->_from .= "
+    //for premium products
+    $this->_from .= "
                LEFT JOIN  civicrm_contribution_product {$this->_aliases['civicrm_contribution_product']} 
                       ON ({$this->_aliases['civicrm_contribution_product']}.contribution_id = {$this->_aliases['civicrm_contribution']}.id)
                LEFT JOIN  civicrm_product {$this->_aliases['civicrm_product']} ON ({$this->_aliases['civicrm_product']}.id = {$this->_aliases['civicrm_contribution_product']}.product_id)
@@ -527,11 +556,13 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
     $dao = CRM_Core_DAO::executeQuery($sql);
 
     if ($dao->fetch()) {
-      $statistics['counts']['amount'] = array('value' => $dao->amount,
+      $statistics['counts']['amount'] = array(
+        'value' => $dao->amount,
         'title' => 'Total Amount',
         'type' => CRM_Utils_Type::T_MONEY,
       );
-      $statistics['counts']['avg'] = array('value' => $dao->avg,
+      $statistics['counts']['avg'] = array(
+        'value' => $dao->avg,
         'title' => 'Average',
         'type' => CRM_Utils_Type::T_MONEY,
       );
@@ -548,33 +579,33 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
 
   function alterDisplay(&$rows) {
     // custom code to alter rows
-    $checkList          = array();
-   
+    $checkList = array();
+
     $entryFound         = FALSE;
     $contributionTypes  = CRM_Contribute_PseudoConstant::contributionType();
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus();
     $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
     $honorTypes         = CRM_Core_OptionGroup::values('honor_type', FALSE, FALSE, FALSE, NULL, 'label');
 
-    //altering the csv display adding additional fields    
-    if( $this->_outputMode == 'csv' ) {
-        foreach ($this->_columns as $tableName => $table) {
-            if (array_key_exists('fields', $table)) {
-                foreach ($table['fields'] as $fieldName => $field) {
-                    if(CRM_Utils_Array::value('csv_display', $field) && CRM_Utils_Array::value('no_display', $field)) {
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field);
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
-                    }
-                }
+    //altering the csv display adding additional fields
+    if ($this->_outputMode == 'csv') {
+      foreach ($this->_columns as $tableName => $table) {
+        if (array_key_exists('fields', $table)) {
+          foreach ($table['fields'] as $fieldName => $field) {
+            if (CRM_Utils_Array::value('csv_display', $field) && CRM_Utils_Array::value('no_display', $field)) {
+              $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field);
+              $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
             }
+          }
         }
+      }
     }
-    
+
     foreach ($rows as $rowNum => $row) {
-        if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
+      if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
         $repeatFound = FALSE;
         $display_flag = NULL;
-         if (array_key_exists('civicrm_contact_id', $row)) {
+        if (array_key_exists('civicrm_contact_id', $row)) {
           if ($cid = $row['civicrm_contact_id']) {
             if ($rowNum == 0) {
               $prev_cid = $cid;
@@ -601,7 +632,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
           }
         }
       }
-      
+
       if (array_key_exists('civicrm_membership_membership_type_id', $row)) {
         if ($value = $row['civicrm_membership_membership_type_id']) {
           $rows[$rowNum]['civicrm_membership_membership_type_id'] = CRM_Member_PseudoConstant::membershipType($value, FALSE);
@@ -689,3 +720,4 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
     }
   }
 }
+

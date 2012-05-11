@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'api/v3/Tag.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_TagTest extends CiviUnitTestCase {
@@ -78,7 +79,8 @@ class api_v3_TagTest extends CiviUnitTestCase {
     $tag = $this->tagCreate(NULL);
     $this->assertEquals(0, $tag['is_error'], 'In line ' . __LINE__);
 
-    $params = array('id' => $tag['id'],
+    $params = array(
+      'id' => $tag['id'],
       'name' => $tag['values'][$tag['id']]['name'],
       'version' => $this->_apiversion,
     );
@@ -98,7 +100,8 @@ class api_v3_TagTest extends CiviUnitTestCase {
     $tag         = $this->tagCreate(NULL);
     $this->assertEquals(0, $tag['is_error'], 'In line ' . __LINE__);
 
-    $params = array('id' => $tag['id'],
+    $params = array(
+      'id' => $tag['id'],
       'name' => $tag['values'][$tag['id']]['name'],
       'version' => $this->_apiversion,
       'return' => array('name'),
@@ -136,7 +139,8 @@ class api_v3_TagTest extends CiviUnitTestCase {
    * Test civicrm_tag_create
    */
   function testCreatePasstagInParams() {
-    $params = array('tag' => 10,
+    $params = array(
+      'tag' => 10,
       'name' => 'New Tag23',
       'description' => 'This is description for New Tag 02',
       'version' => $this->_apiversion,
@@ -149,7 +153,8 @@ class api_v3_TagTest extends CiviUnitTestCase {
    * Test civicrm_tag_create - success expected.
    */
   function testCreate() {
-    $params = array('name' => 'New Tag3',
+    $params = array(
+      'name' => 'New Tag3',
       'description' => 'This is description for New Tag 02',
       'version' => $this->_apiversion,
     );
@@ -167,7 +172,8 @@ class api_v3_TagTest extends CiviUnitTestCase {
    * and not over-written by default on update
    */
   function testCreateContributionTag() {
-    $params = array('name' => 'New Tag4',
+    $params = array(
+      'name' => 'New Tag4',
       'description' => 'This is description for New Cont tag',
       'version' => $this->_apiversion,
       'used_for' => 'civicrm_contribution',
@@ -232,7 +238,8 @@ class api_v3_TagTest extends CiviUnitTestCase {
    */
   function testTagDeleteOldSyntax() {
     $tagID = $this->tagCreate(NULL);
-    $params = array('tag_id' => $tagID['id'],
+    $params = array(
+      'tag_id' => $tagID['id'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('tag', 'delete', $params);
@@ -244,7 +251,8 @@ class api_v3_TagTest extends CiviUnitTestCase {
    */
   function testTagDeleteCorrectSyntax() {
     $tagID = $this->tagCreate(NULL);
-    $params = array('id' => $tagID['id'],
+    $params = array(
+      'id' => $tagID['id'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('tag', 'delete', $params);

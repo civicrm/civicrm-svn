@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -44,7 +43,7 @@
  * @return string JSON
  * @access public
  */
-function smarty_modifier_json($data)
-{
-    return json_encode($data);
+function smarty_modifier_json($data) {
+  return json_encode($data);
 }
+

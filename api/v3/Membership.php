@@ -129,7 +129,8 @@ function civicrm_api3_membership_create($params) {
 
   //for edit membership id should be present
   if (CRM_Utils_Array::value('id', $params)) {
-    $ids = array('membership' => $params['id'],
+    $ids = array(
+      'membership' => $params['id'],
       'userId' => $params['contact_id'],
     );
     $action = CRM_Core_Action::UPDATE;

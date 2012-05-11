@@ -77,12 +77,14 @@ class CRM_Report_Form_Register extends CRM_Core_Form {
   public function buildQuickForm() {
     if ($this->_action & CRM_Core_Action::DELETE) {
       $this->addButtons(array(
-          array('type' => 'next',
+          array(
+            'type' => 'next',
             'name' => ts('Delete'),
             'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
             'isDefault' => TRUE,
           ),
-          array('type' => 'cancel',
+          array(
+            'type' => 'cancel',
             'name' => ts('Cancel'),
           ),
         )
@@ -110,12 +112,14 @@ class CRM_Report_Form_Register extends CRM_Core_Form {
     $this->add('select', 'component_id', ts('Component'), array('' => ts('Contact')) + $components);
 
     $this->addButtons(array(
-        array('type' => 'upload',
+        array(
+          'type' => 'upload',
           'name' => ts('Save'),
           'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
           'isDefault' => TRUE,
         ),
-        array('type' => 'cancel',
+        array(
+          'type' => 'cancel',
           'name' => ts('Cancel'),
         ),
       )

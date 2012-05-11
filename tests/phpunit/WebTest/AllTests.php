@@ -25,7 +25,6 @@
  +--------------------------------------------------------------------+
 */
 
-
 /**
  *  Include parent class definition
  */
@@ -36,27 +35,25 @@ require_once 'CiviTest/CiviTestSuite.php';
  *
  *  @package   CiviCRM
  */
-class WebTest_AllTests extends CiviTestSuite
-{
-    private static $instance = null;
+class WebTest_AllTests extends CiviTestSuite {
+  private static $instance = NULL;
 
-    /**
-     *
-     */
-    private static function getInstance()
-    {
-        if ( is_null( self::$instance ) ) {
-            self::$instance = new self;
-        }
-        return self::$instance;
+  /**
+   *
+   */
+  private static function getInstance() {
+    if (is_null(self::$instance)) {
+      self::$instance = new self;
     }
+    return self::$instance;
+  }
 
-    /**
-     *  Build test suite dynamically
-     */
-    public static function suite()
-    {
-        $inst = self::getInstance( );
-        return $inst->implSuite( __FILE__ );
-    } 
+  /**
+   *  Build test suite dynamically
+   */
+  public static function suite() {
+    $inst = self::getInstance();
+    return $inst->implSuite(__FILE__);
+  }
 }
+

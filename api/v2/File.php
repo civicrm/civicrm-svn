@@ -219,7 +219,8 @@ function civicrm_entity_file_create(&$fileID, &$entityID, $entity_table = 'civic
     return civicrm_create_error('Required parameters missing');
   }
 
-  $params = array('entity_id' => $entityID,
+  $params = array(
+    'entity_id' => $entityID,
     'file_id' => $fileID,
     'entity_table' => $entity_table,
   );

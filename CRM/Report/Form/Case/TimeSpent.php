@@ -43,7 +43,8 @@ class CRM_Report_Form_Case_TimeSpent extends CRM_Report_Form {
 
     $this->_columns = array(
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
         array(
           'id' =>
@@ -58,7 +59,8 @@ class CRM_Report_Form_Case_TimeSpent extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Contact Name'),
             'operator' => 'like',
             'type' => CRM_Report_Form::OP_STRING,
@@ -66,9 +68,11 @@ class CRM_Report_Form_Case_TimeSpent extends CRM_Report_Form {
         ),
       ),
       'civicrm_activity' =>
-      array('dao' => 'CRM_Activity_DAO_Activity',
+      array(
+        'dao' => 'CRM_Activity_DAO_Activity',
         'fields' =>
-        array('source_contact_id' =>
+        array(
+          'source_contact_id' =>
           array('title' => ts('Contact ID'),
             'default' => TRUE,
             'no_display' => TRUE,
@@ -102,10 +106,12 @@ class CRM_Report_Form_Case_TimeSpent extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('activity_date_time' =>
-            //'default'      => 'this.month',
+        array(
+          'activity_date_time' =>
+          //'default'      => 'this.month',
           array(
-            'operatorType' => CRM_Report_Form::OP_DATE),
+            'operatorType' => CRM_Report_Form::OP_DATE,
+          ),
           'subject' =>
           array('title' => ts('Activity Subject'),
             'operator' => 'like',
@@ -122,14 +128,16 @@ class CRM_Report_Form_Case_TimeSpent extends CRM_Report_Form {
           ),
         ),
         'group_bys' =>
-        array('source_contact_id' =>
+        array(
+          'source_contact_id' =>
           array('title' => ts('Totals Only'),
             'default' => TRUE,
           ),
         ),
       ),
       'civicrm_case_activity' =>
-      array('dao' => 'CRM_Case_DAO_CaseActivity',
+      array(
+        'dao' => 'CRM_Case_DAO_CaseActivity',
         'fields' =>
         array(
           'case_id' =>
@@ -138,8 +146,10 @@ class CRM_Report_Form_Case_TimeSpent extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('case_id_filter' =>
-          array('name' => 'case_id',
+        array(
+          'case_id_filter' =>
+          array(
+            'name' => 'case_id',
             'title' => ts('Cases?'),
             'operatorType' => CRM_Report_Form::OP_SELECT,
             'options' => array(1 => ts('Exclude non-case'), 2 => ts('Exclude cases'), 3 => ts('Include Both')),

@@ -27,14 +27,14 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
 
   function tearDown() {
     $this->quickCleanup(array(
-      'civicrm_uf_field',
-      'civicrm_uf_join',
-      'civicrm_uf_group',
-      'civicrm_custom_field',
-      'civicrm_custom_group',
-      'civicrm_contact',
-      'civicrm_phone',
-    ));
+        'civicrm_uf_field',
+        'civicrm_uf_join',
+        'civicrm_uf_group',
+        'civicrm_custom_field',
+        'civicrm_custom_group',
+        'civicrm_contact',
+        'civicrm_phone',
+      ));
   }
 
   ////////////// test civicrm_api3_profile_get //////////////////
@@ -43,7 +43,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
    * check Without ProfileId
    */
   function testProfileGetWithoutProfileId() {
-    $params = array('contact_id' => 1,
+    $params = array(
+      'contact_id' => 1,
       'version' => 3,
     );
     $result = &civicrm_api('profile', 'get', $params);
@@ -55,7 +56,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
    * check with no invalid profile Id
    */
   function testProfileGetInvalidProfileId() {
-    $params = array('contact_id' => 1,
+    $params = array(
+      'contact_id' => 1,
       'profile_id' => 1000,
       'version' => 3,
     );
@@ -70,7 +72,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     $pofileFieldValues = $this->_createIndividualContact();
     $expected          = current($pofileFieldValues);
     $contactId         = key($pofileFieldValues);
-    $params            = array('profile_id' => 25,
+    $params            = array(
+      'profile_id' => 25,
       'contact_id' => $contactId,
       'version' => 3,
     );
@@ -126,7 +129,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
 
     $sourceContactId = $this->householdCreate();
 
-    $activityparams = array('source_contact_id' => $sourceContactId,
+    $activityparams = array(
+      'source_contact_id' => $sourceContactId,
       'activity_type_id' => '2',
       'subject' => 'Test activity',
       'activity_date_time' => '20110316',
@@ -190,7 +194,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
    * check Without ProfileId
    */
   function testProfileSetWithoutProfileId() {
-    $params = array('contact_id' => 1,
+    $params = array(
+      'contact_id' => 1,
       'version' => 3,
     );
     $result = &civicrm_api('profile', 'set', $params);
@@ -202,7 +207,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
    * check with no invalid profile Id
    */
   function testProfileSetInvalidProfileId() {
-    $params = array('contact_id' => 1,
+    $params = array(
+      'contact_id' => 1,
       'profile_id' => 1000,
       'version' => 3,
     );
@@ -218,7 +224,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     current($pofileFieldValues);
     $contactId = key($pofileFieldValues);
 
-    $updateParams = array('first_name' => 'abc2',
+    $updateParams = array(
+      'first_name' => 'abc2',
       'last_name' => 'xyz2',
       'phone-1-1' => '022 321 826',
       'country-1' => '1013',
@@ -245,7 +252,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     current($pofileFieldValues);
     $contactId = key($pofileFieldValues);
 
-    $updateParams = array('first_name' => 'abc2',
+    $updateParams = array(
+      'first_name' => 'abc2',
       'last_name' => 'xyz2',
       'email-Primary' => 'abc2.xyz2@gmail.com',
       'phone-1-1' => '022 321 826',
@@ -254,10 +262,10 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     );
 
     $params = array_merge(array(
-      'profile_id' => 25,
-      'contact_id' => $contactId,
-      'version' => 3
-    ), $updateParams);
+        'profile_id' => 25,
+        'contact_id' => $contactId,
+        'version' => 3,
+      ), $updateParams);
 
     $result = civicrm_api('profile', 'set', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
@@ -265,7 +273,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     $this->assertEquals(0, $result['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $result)
     );
 
-    $getParams = array('profile_id' => 25,
+    $getParams = array(
+      'profile_id' => 25,
       'contact_id' => $contactId,
       'version' => 3,
     );
@@ -320,7 +329,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
 
     $sourceContactId = $this->householdCreate();
 
-    $activityparams = array('source_contact_id' => $sourceContactId,
+    $activityparams = array(
+      'source_contact_id' => $sourceContactId,
       'activity_type_id' => '2',
       'subject' => 'Test activity',
       'activity_date_time' => '20110316',
@@ -356,7 +366,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
   function testContactActivitySetSuccess() {
     list($params, $expected) = $this->_createContactWithActivity();
 
-    $updateParams = array('first_name' => 'abc2',
+    $updateParams = array(
+      'first_name' => 'abc2',
       'last_name' => 'xyz2',
       'email-Primary' => 'abc2.xyz2@yahoo.com',
       'activity_subject' => 'Test Meeting',
@@ -376,7 +387,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       );
     }
 
-    $this->quickCleanup(array('civicrm_uf_field',
+    $this->quickCleanup(array(
+      'civicrm_uf_field',
         'civicrm_uf_join',
         'civicrm_uf_group',
         'civicrm_custom_field',
@@ -393,7 +405,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
    * check Without ProfileId
    */
   function testProfileApplyWithoutProfileId() {
-    $params = array('contact_id' => 1,
+    $params = array(
+      'contact_id' => 1,
       'version' => 3,
     );
     $result = &civicrm_api('profile', 'apply', $params);
@@ -405,7 +418,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
    * check with no invalid profile Id
    */
   function testProfileApplyInvalidProfileId() {
-    $params = array('contact_id' => 1,
+    $params = array(
+      'contact_id' => 1,
       'profile_id' => 1000,
       'version' => 3,
     );
@@ -421,7 +435,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     current($pofileFieldValues);
     $contactId = key($pofileFieldValues);
 
-    $params = array('profile_id' => 25,
+    $params = array(
+      'profile_id' => 25,
       'contact_id' => $contactId,
       'version' => 3,
       'first_name' => 'abc2',
@@ -439,22 +454,26 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     );
 
     // Expected field values
-    $expected['contact'] = array('contact_id' => $contactId,
+    $expected['contact'] = array(
+      'contact_id' => $contactId,
       'contact_type' => 'Individual',
       'first_name' => 'abc2',
       'last_name' => 'xyz2',
     );
-    $expected['email'] = array('location_type_id' => 1,
+    $expected['email'] = array(
+      'location_type_id' => 1,
       'is_primary' => 1,
       'email' => 'abc2.xyz2@gmail.com',
     );
 
-    $expected['phone'] = array('location_type_id' => 1,
+    $expected['phone'] = array(
+      'location_type_id' => 1,
       'is_primary' => 1,
       'phone_type_id' => 1,
       'phone' => '022 321 826',
     );
-    $expected['address'] = array('location_type_id' => 1,
+    $expected['address'] = array(
+      'location_type_id' => 1,
       'is_primary' => 1,
       'country_id' => 1013,
       'state_province_id' => 1000,
@@ -465,7 +484,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       );
     }
 
-    foreach (array('email', 'phone', 'address') as $fieldType) {
+    foreach (array(
+      'email', 'phone', 'address') as $fieldType) {
       $typeValues = array_pop($result['values'][$fieldType]);
       foreach ($expected[$fieldType] as $field => $value) {
         $this->assertEquals($value, CRM_Utils_Array::value($field, $typeValues), "In line " . __LINE__ . " error message: " . "missing/mismatching value for {$field} ({$fieldType})"
@@ -484,7 +504,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'contact_type' => 'Individual',
       'email' => 'abc1.xyz1@yahoo.com',
       'version' => '3',
-      'api.address.create' => array('location_type_id' => 1,
+      'api.address.create' => array(
+        'location_type_id' => 1,
         'is_primary' => 1,
         'name' => 'Saint Helier St',
         'county' => 'Marin',
@@ -493,7 +514,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
         'supplemental_address_1' => 'Hallmark Ct',
         'supplemental_address_2' => 'Jersey Village',
       ),
-      'api.phone.create' => array('location_type_id' => '1',
+      'api.phone.create' => array(
+        'location_type_id' => '1',
         'phone' => '021 512 755',
         'phone_type_id' => '1',
         'is_primary' => '1',
@@ -529,7 +551,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
 
 
     // expected result of above created profile with contact Id $contactId
-    $profileData[$contactId] = array('first_name' => 'abc1',
+    $profileData[$contactId] = array(
+      'first_name' => 'abc1',
       'last_name' => 'xyz1',
       'email-Primary' => 'abc1.xyz1@yahoo.com',
       'phone-1-1' => '021 512 755',
@@ -558,7 +581,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'contact_type' => 'Individual',
       'email' => 'abc1.xyz1@yahoo.com',
       'version' => '3',
-      'api.address.create' => array('location_type_id' => 1,
+      'api.address.create' => array(
+        'location_type_id' => 1,
         'is_primary' => 1,
         'name' => 'Saint Helier St',
         'county' => 'Marin',
@@ -579,7 +603,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     $this->assertEquals(0, $contact['values'][$contactId]['api.address.create']['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $contact['values'][$contactId]['api.address.create'])
     );
 
-    $activityParams = array('source_contact_id' => $sourceContactId,
+    $activityParams = array(
+      'source_contact_id' => $sourceContactId,
       'assignee_contact_id' => $contactId,
       'activity_type_id' => '1',
       'subject' => 'Make-it-Happen Meeting',
@@ -598,14 +623,16 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     $activityValues = array_pop($activity['values']);
 
     // valid parameters for above profile
-    $profileParams = array('profile_id' => 26,
+    $profileParams = array(
+      'profile_id' => 26,
       'contact_id' => $contactId,
       'activity_id' => $activityValues['id'],
       'version' => 3,
     );
 
     // expected result of above created profile
-    $expected = array('first_name' => 'abc1',
+    $expected = array(
+      'first_name' => 'abc1',
       'last_name' => 'xyz1',
       'email-Primary' => 'abc1.xyz1@yahoo.com',
       'activity_subject' => 'Make-it-Happen Meeting',

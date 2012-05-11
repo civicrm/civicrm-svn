@@ -9,6 +9,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
   /* This test case doesn't require DB reset */
 
 
+
   public $DBResetRequired = FALSE;
 
   /* they are two types of missing APIs:
@@ -63,7 +64,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
   }
 
   public static function toBeSkipped_get($sequential = FALSE) {
-    $entitiesWithoutGet = array('Mailing', 'MailingEventSubscribe' ,'MailingEventConfirm', 'MailingEventResubscribe', 'MailingEventUnsubscribe', 'MailingGroup', 'Location', 'DeprecatedUtils');
+    $entitiesWithoutGet = array('Mailing', 'MailingEventSubscribe', 'MailingEventConfirm', 'MailingEventResubscribe', 'MailingEventUnsubscribe', 'MailingGroup', 'Location', 'DeprecatedUtils');
     if ($sequential === TRUE) {
       return $entitiesWithoutGet;
     }
@@ -98,9 +99,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     }
     return $entities;
   }
- /*
+  /*
   * At this stage exclude the ones that don't pass & add them as we can troubleshoot them
   */
+
   public static function toBeSkipped_updatesingle($sequential = FALSE) {
     $entitiesWithout = array(
       'Mailing',
@@ -157,7 +159,6 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'ParticipantPayment',
       'Pledge',
       'PledgePayment',
-
     );
     if ($sequential === TRUE) {
       return $entitiesWithout;
@@ -165,12 +166,11 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $entities = array();
     foreach ($entitiesWithout as $e) {
       $entities[] = array(
-        $e
+        $e,
       );
     }
     return $entities;
   }
-
 
   /** testing the _get **/
 
@@ -339,9 +339,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals("Input variable `params` is not an array", $result['error_message']);
   }
+
   /**
    * @dataProvider entities_updatesingle
-   * 
+   *
    * limitations include the problem with avoiding loops when creating test objects -
    * hence FKs only set by createTestObject when required. e.g parent_id on campaign is not being followed through
    * Currency - only seems to support US
@@ -352,7 +353,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $this->assertNotEmpty($baoString, $entityName);
     $this->assertNotEmpty($entityName, $entityName);
     $fields = civicrm_api($entityName, 'getfields', array(
-        'version' => 3
+        'version' => 3,
       )
     );
 
@@ -361,20 +362,23 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $baoObj = new CRM_Core_DAO();
     $baoObj->createTestObject($baoString, array('currency' => 'USD'), 2, 0);
     $getentities = civicrm_api($entityName, 'get', array(
-      'version' => 3,
-      'sequential' => 1,
-      'return' => $return,
-      'options' => array('sort' => 'id DESC',
-                         'limit' => 2,),
-    ));
-    $entity = $getentities['values'][0]; // lets use first rather than assume only one exists
+        'version' => 3,
+        'sequential' => 1,
+        'return' => $return,
+        'options' => array(
+          'sort' => 'id DESC',
+          'limit' => 2,
+        ),
+      ));
+    // lets use first rather than assume only one exists
+    $entity = $getentities['values'][0];
     $entity2 = $getentities['values'][1];
     foreach ($fields as $field => $specs) {
       $fieldName = $field;
-      if(!empty($specs['uniquename'])){
-        $fieldName = $specs['uniquename']; 
+      if (!empty($specs['uniquename'])) {
+        $fieldName = $specs['uniquename'];
       }
-      if($field == 'currency' || $field == 'id'){
+      if ($field == 'currency' || $field == 'id') {
         continue;
       }
       switch ($specs['type']) {
@@ -383,9 +387,11 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
           $entity[$fieldName] = '2012-05-20';
           break;
         //case CRM_Utils_Type::T_DATETIME:
+
         case 12:
           $entity[$fieldName] = '2012-05-20 03:05:20';
           break;
+
         case CRM_Utils_Type::T_STRING:
         case CRM_Utils_Type::T_BLOB:
         case CRM_Utils_Type::T_MEDIUMBLOB:
@@ -394,36 +400,43 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         case CRM_Utils_Type::T_EMAIL:
           $entity[$fieldName] = 'New String';
           break;
+
         case CRM_Utils_Type::T_INT:
-          $entity[$fieldName] = 111;// probably created with a 1
-          if(CRM_Utils_Array::value('FKClassName',$specs)){
-            $entity[$fieldName] = empty($entity2[$field])?CRM_Utils_Array::value($specs['uniqueName'],$entity2):$entity2[$field];
+          // probably created with a 1
+          $entity[$fieldName] = 111;
+          if (CRM_Utils_Array::value('FKClassName', $specs)) {
+            $entity[$fieldName] = empty($entity2[$field]) ? CRM_Utils_Array::value($specs['uniqueName'], $entity2) : $entity2[$field];
             //todo - there isn't always something set here - & our checking on unset values is limited
-            if(empty($entity[$field])){
+            if (empty($entity[$field])) {
               unset($entity[$field]);
             }
           }
           break;
+
         case CRM_Utils_Type::T_BOOL:
         case CRM_Utils_Type::T_BOOLEAN:
-          $entity[$fieldName] = 0;// probably created with a 1
+          // probably created with a 1
+          $entity[$fieldName] = 0;
           break;
+
         case CRM_Utils_Type::T_FLOAT:
         case CRM_Utils_Type::T_MONEY:
           $entity[$field] = 222;
           break;
+
         case CRM_Utils_Type::T_URL:
           $entity[$field] = 'warm.beer.com';
       }
       $constant = CRM_Utils_Array::value('pseudoconstant', $specs);
-      if (!empty($constant)){
+      if (!empty($constant)) {
         $constantOptions = array_reverse(array_keys(CRM_Core_PseudoConstant::getConstant($constant)));
         $entity[$field] = $constantOptions[0];
       }
       $enum = CRM_Utils_Array::value('enumValues', $specs);
-      if(!empty($enum)){
-        $options = array_reverse(explode(',',$enum));// reverse so we 'change' value
-        $entity[$fieldName]  = $options[0];
+      if (!empty($enum)) {
+        // reverse so we 'change' value
+        $options = array_reverse(explode(',', $enum));
+        $entity[$fieldName] = $options[0];
       }
       $updateParams = array(
         'version' => 3,
@@ -433,25 +446,24 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
 
       $update = civicrm_api($entityName, 'create', $updateParams);
 
-      $this->assertAPISuccess($update, print_r($updateParams, true ) . 'in line ' . __LINE__);
+      $this->assertAPISuccess($update, print_r($updateParams, TRUE) . 'in line ' . __LINE__);
       $checkParams = array(
         'id' => $entity['id'],
         'version' => 3,
         'sequential' => 1,
         'return' => $return,
-        'options' => array('sort' => 'id DESC',
-                           'limit' => 2,),
+        'options' => array(
+          'sort' => 'id DESC',
+          'limit' => 2,
+        ),
       );
 
-      $checkEntity = civicrm_api($entityName, 'getsingle',$checkParams );
+      $checkEntity = civicrm_api($entityName, 'getsingle', $checkParams);
       $this->assertEquals($entity, $checkEntity, "changing field $fieldName");
-      
     }
     $baoObj->deleteTestObjects($baoString);
     $baoObj->free();
   }
-
-
 
   /** testing the _getFields **/
 

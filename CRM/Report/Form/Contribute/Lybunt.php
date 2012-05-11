@@ -37,7 +37,8 @@
 class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
 
 
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   );
@@ -53,47 +54,57 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
       $date['minYear']++;
     }
 
-    $this->_columns = array('civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_contact' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'grouping' => 'contact-field',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Donor Name'),
             'default' => TRUE,
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Donor Name'),
             'operator' => 'like',
           ),
         ),
       ),
       'civicrm_email' =>
-      array('dao' => 'CRM_Core_DAO_Email',
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
         'grouping' => 'contact-field',
         'fields' =>
-        array('email' =>
+        array(
+          'email' =>
           array('title' => ts('Email'),
             'default' => TRUE,
           ),
         ),
       ),
       'civicrm_phone' =>
-      array('dao' => 'CRM_Core_DAO_Phone',
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
         'grouping' => 'contact-field',
         'fields' =>
-        array('phone' =>
+        array(
+          'phone' =>
           array('title' => ts('Phone No'),
             'default' => TRUE,
           ),
         ),
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
-        array('contact_id' =>
+        array(
+          'contact_id' =>
           array('title' => ts('contactId'),
             'no_display' => TRUE,
             'required' => TRUE,
@@ -113,8 +124,10 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('yid' =>
-          array('name' => 'receive_date',
+        array(
+          'yid' =>
+          array(
+            'name' => 'receive_date',
             'title' => ts('This Year'),
             'operatorType' => CRM_Report_Form::OP_SELECT,
             'options' => $optionYear,
@@ -134,11 +147,14 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
         ),
       ),
       'civicrm_group' =>
-      array('dao' => 'CRM_Contact_DAO_GroupContact',
+      array(
+        'dao' => 'CRM_Contact_DAO_GroupContact',
         'alias' => 'cgroup',
         'filters' =>
-        array('gid' =>
-          array('name' => 'group_id',
+        array(
+          'gid' =>
+          array(
+            'name' => 'group_id',
             'title' => ts('Group'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'group' => TRUE,
@@ -284,7 +300,8 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
       $sql = "{$select} {$this->_from} {$this->_where}";
       $dao = CRM_Core_DAO::executeQuery($sql);
       if ($dao->fetch()) {
-        $statistics['counts']['amount'] = array('value' => $dao->amount,
+        $statistics['counts']['amount'] = array(
+          'value' => $dao->amount,
           'title' => 'Total LifeTime',
           'type' => CRM_Utils_Type::T_MONEY,
         );

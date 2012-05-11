@@ -1,5 +1,4 @@
 <?php
-
 /*
   +--------------------------------------------------------------------+
   | CiviCRM version 4.1                                                |
@@ -34,11 +33,11 @@
  *
  */
 
-
 /**
  * Class that uses google geocoder
  */
 class CRM_Utils_Geocode_Google {
+
   /**
    * server to retrieve the lat/long
    *
@@ -65,91 +64,96 @@ class CRM_Utils_Geocode_Google {
    * @return boolean true if we modified the address, false otherwise
    * @static
    */
-  static function format( &$values, $stateName = false ) {
+  static function format(&$values, $stateName = FALSE) {
     // we need a valid country, else we ignore
-    if ( ! CRM_Utils_Array::value( 'country'        , $values  ) ) {
-      return false;
+    if (!CRM_Utils_Array::value('country', $values)) {
+      return FALSE;
     }
 
-    $config = CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton();
 
     $add = '';
 
-    if (  CRM_Utils_Array::value( 'street_address', $values ) ) {
-      $add  = urlencode( str_replace('', '+', $values['street_address']) );
+    if (CRM_Utils_Array::value('street_address', $values)) {
+      $add = urlencode(str_replace('', '+', $values['street_address']));
       $add .= ',+';
     }
 
-    $city = CRM_Utils_Array::value( 'city', $values );
-    if ( $city ) {
-      $add .= '+' . urlencode( str_replace('', '+', $city ) );
+    $city = CRM_Utils_Array::value('city', $values);
+    if ($city) {
+      $add .= '+' . urlencode(str_replace('', '+', $city));
       $add .= ',+';
     }
 
-    if (  CRM_Utils_Array::value( 'state_province', $values ) ) {
-      if ( CRM_Utils_Array::value( 'state_province_id', $values ) ) {
-        $stateProvince = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_StateProvince', $values['state_province_id'] );
-      } else {
-        if ( ! $stateName ) {
-          $stateProvince = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_StateProvince',
-                           $values['state_province'],
-                           'name',
-                           'abbreviation' );
-        } else {
+    if (CRM_Utils_Array::value('state_province', $values)) {
+      if (CRM_Utils_Array::value('state_province_id', $values)) {
+        $stateProvince = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_StateProvince', $values['state_province_id']);
+      }
+      else {
+        if (!$stateName) {
+          $stateProvince = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_StateProvince',
+            $values['state_province'],
+            'name',
+            'abbreviation'
+          );
+        }
+        else {
           $stateProvince = $values['state_province'];
         }
       }
 
       // dont add state twice if replicated in city (happens in NZ and other countries, CRM-2632)
-      if ( $stateProvince != $city ) {
-        $add .= '+' . urlencode( str_replace('', '+', $stateProvince) );
+      if ($stateProvince != $city) {
+        $add .= '+' . urlencode(str_replace('', '+', $stateProvince));
         $add .= ',+';
       }
     }
 
-    if (  CRM_Utils_Array::value( 'postal_code', $values ) ) {
-      $add .= '+' .urlencode( str_replace('', '+', $values['postal_code']) );
+    if (CRM_Utils_Array::value('postal_code', $values)) {
+      $add .= '+' . urlencode(str_replace('', '+', $values['postal_code']));
       $add .= ',+';
     }
 
-    if (  CRM_Utils_Array::value( 'country', $values ) ) {
-      $add .= '+' . urlencode( str_replace('', '+', $values['country']) );
+    if (CRM_Utils_Array::value('country', $values)) {
+      $add .= '+' . urlencode(str_replace('', '+', $values['country']));
     }
 
     $query = 'http://' . self::$_server . self::$_uri . $add;
 
     require_once 'HTTP/Request.php';
-    $request = new HTTP_Request( $query );
-    $request->sendRequest( );
-    $string = $request->getResponseBody( );
+    $request = new HTTP_Request($query);
+    $request->sendRequest();
+    $string = $request->getResponseBody();
 
-    libxml_use_internal_errors( true );
-    $xml = @simplexml_load_string( $string );
-    if ( $xml === false ) {
+    libxml_use_internal_errors(TRUE);
+    $xml = @simplexml_load_string($string);
+    if ($xml === FALSE) {
       // account blocked maybe?
-      CRM_Core_Error::debug_var( 'Geocoding failed.  Message from Google:', $string );
-      return false;
+      CRM_Core_Error::debug_var('Geocoding failed.  Message from Google:', $string);
+      return FALSE;
     }
 
-    if ( isset($xml->status) ) {
-      if ( $xml->status == 'OK' &&
+    if (isset($xml->status)) {
+      if ($xml->status == 'OK' &&
         is_a($xml->result->geometry->location,
-             'SimpleXMLElement') ) {
+          'SimpleXMLElement'
+        )
+      ) {
         $ret = $xml->result->geometry->location->children();
-        if ( $ret->lat && $ret->lng ) {
+        if ($ret->lat && $ret->lng) {
           $values['geo_code_1'] = (float)$ret->lat;
           $values['geo_code_2'] = (float)$ret->lng;
-          return true;
+          return TRUE;
         }
       }
-      else if ($xml->status == 'OVER_QUERY_LIMIT') {
+      elseif ($xml->status == 'OVER_QUERY_LIMIT') {
         CRM_Core_Error::fatal('Geocoding failed. Message from Google: ', $xml->status);
       }
     }
 
     // reset the geo code values if we did not get any good values
     $values['geo_code_1'] = $values['geo_code_2'] = 'null';
-    return false;
+    return FALSE;
   }
 }
 

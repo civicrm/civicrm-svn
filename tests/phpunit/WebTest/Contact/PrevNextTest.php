@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,119 +24,120 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
- 
 class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
 
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-    
-    function testPrevNext( )
-    {
-        // This is the path where our testing install resides. 
-        // The rest of URL is defined in CiviSeleniumTestCase base class, in
-        // class attributes.
-        $this->open( $this->sboxPath );
-        
-        // Logging in. Remember to wait for page to load. In most cases,
-        // you can rely on 30000 as the value that allows your test to pass, however,
-        // sometimes your test might fail because of this. In such cases, it's better to pick one element
-        // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-        // page contents loaded and you can continue your test execution.
-        $this->webtestLogin( );
-        
+  protected function setUp() {
+    parent::setUp();
+  }
 
-        /* add new group */
-        $this->open($this->sboxPath . "civicrm/group/add?&reset=1");
-        $this->waitForElementPresent("_qf_Edit_upload");
+  function testPrevNext() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
 
-        $groupName = 'group_'.substr(sha1(rand()), 0, 7);
-        $this->type("title", $groupName);
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
 
-        // fill description
-        $this->type("description", "Adding new group.");
-        
-        // check Access Control
-        $this->click("group_type[1]");
-        
-        // Clicking save.
-        $this->click("_qf_Edit_upload");
-        $this->waitForPageToLoad("30000");
 
-        /* add contacts */
-        // Individual 1
-        $contact1 = substr(sha1(rand()), 0, 7);
-        $this->webtestAddContact( $contact1, "AAA", "{$contact1}@example.com" );
+    /* add new group */
 
-        // Add Individual 1 to group
-        $this->click( 'css=li#tab_group a' );
-        $this->waitForElementPresent( '_qf_GroupContact_next' );
-        $this->select( 'group_id', "label={$groupName}" );
-        $this->click( '_qf_GroupContact_next' );
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "Contact has been added to the selected group " ) );
+    $this->open($this->sboxPath . "civicrm/group/add?&reset=1");
+    $this->waitForElementPresent("_qf_Edit_upload");
 
-        // Individual 2
-        $contact2 = substr(sha1(rand()), 0, 7);
-        $this->webtestAddContact( $contact2, "BBB", "{$contact2}@example.com" );
-        
-        // Add Individual 2 to group
-        $this->click( 'css=li#tab_group a' );
-        $this->waitForElementPresent( '_qf_GroupContact_next' );
-        $this->select( 'group_id', "label={$groupName}" );
-        $this->click( '_qf_GroupContact_next' );
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "Contact has been added to the selected group " ) );
-        
-        // Individual 3
-        $contact3 = substr(sha1(rand()), 0, 7);
-        $this->webtestAddContact( $contact3, "CCC", "{$contact3}@example.com" );
-        
-        // Add Individual 3 to group
-        $this->click( 'css=li#tab_group a' );
-        $this->waitForElementPresent( '_qf_GroupContact_next' );
-        $this->select( 'group_id', "label={$groupName}" );
-        $this->click( '_qf_GroupContact_next' );
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "Contact has been added to the selected group " ) );
+    $groupName = 'group_' . substr(sha1(rand()), 0, 7);
+    $this->type("title", $groupName);
 
-        // Search contacts
-        $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
-        $this->waitForElementPresent("_qf_Basic_refresh");
+    // fill description
+    $this->type("description", "Adding new group.");
 
-        $this->select('group', "label={$groupName}");
-        $this->click("_qf_Basic_refresh");
-        $this->waitForPageToLoad("60000");
-        $this->assertTrue( $this->isTextPresent( "3 Contacts" ) );
+    // check Access Control
+    $this->click("group_type[1]");
 
-        $this->click( "xpath=//div[@class='crm-search-results']//table/tbody/tr[1]/td[3]/a" );  
-        $this->waitForPageToLoad("30000");
- 
-        $this->assertTrue( $this->isTextPresent( "{$contact1} AAA" ) );
-        $this->assertTrue( $this->isTextPresent( "Next" ) );
+    // Clicking save.
+    $this->click("_qf_Edit_upload");
+    $this->waitForPageToLoad("30000");
 
-        $this->click( "xpath=//ul[@id='actions']/li[@class='crm-next-action']/a" );  
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "{$contact2} BBB" ) );
-        $this->assertTrue( $this->isTextPresent( "Next" ) );
-        $this->assertTrue( $this->isTextPresent( "Previous" ) );
+    /* add contacts */
 
-        $this->click( "xpath=//ul[@id='actions']/li[@class='crm-next-action']/a" );  
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "{$contact3} CCC" ) );
-        $this->assertTrue( $this->isTextPresent( "Previous" ) );
+    // Individual 1
+    $contact1 = substr(sha1(rand()), 0, 7);
+    $this->webtestAddContact($contact1, "AAA", "{$contact1}@example.com");
 
-        $this->click( "xpath=//ul[@id='actions']/li[@class='crm-previous-action']/a" );  
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "{$contact2} BBB" ) );
-        $this->assertTrue( $this->isTextPresent( "Next" ) );
-        $this->assertTrue( $this->isTextPresent( "Previous" ) );
+    // Add Individual 1 to group
+    $this->click('css=li#tab_group a');
+    $this->waitForElementPresent('_qf_GroupContact_next');
+    $this->select('group_id', "label={$groupName}");
+    $this->click('_qf_GroupContact_next');
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
 
-        $this->click( "xpath=//ul[@id='actions']/li[@class='crm-previous-action']/a" );  
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue( $this->isTextPresent( "{$contact1} AAA" ) );
-        $this->assertTrue( $this->isTextPresent( "Next" ) );     
-    }
+    // Individual 2
+    $contact2 = substr(sha1(rand()), 0, 7);
+    $this->webtestAddContact($contact2, "BBB", "{$contact2}@example.com");
+
+    // Add Individual 2 to group
+    $this->click('css=li#tab_group a');
+    $this->waitForElementPresent('_qf_GroupContact_next');
+    $this->select('group_id', "label={$groupName}");
+    $this->click('_qf_GroupContact_next');
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
+
+    // Individual 3
+    $contact3 = substr(sha1(rand()), 0, 7);
+    $this->webtestAddContact($contact3, "CCC", "{$contact3}@example.com");
+
+    // Add Individual 3 to group
+    $this->click('css=li#tab_group a');
+    $this->waitForElementPresent('_qf_GroupContact_next');
+    $this->select('group_id', "label={$groupName}");
+    $this->click('_qf_GroupContact_next');
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
+
+    // Search contacts
+    $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
+    $this->waitForElementPresent("_qf_Basic_refresh");
+
+    $this->select('group', "label={$groupName}");
+    $this->click("_qf_Basic_refresh");
+    $this->waitForPageToLoad("60000");
+    $this->assertTrue($this->isTextPresent("3 Contacts"));
+
+    $this->click("xpath=//div[@class='crm-search-results']//table/tbody/tr[1]/td[3]/a");
+    $this->waitForPageToLoad("30000");
+
+    $this->assertTrue($this->isTextPresent("{$contact1} AAA"));
+    $this->assertTrue($this->isTextPresent("Next"));
+
+    $this->click("xpath=//ul[@id='actions']/li[@class='crm-next-action']/a");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("{$contact2} BBB"));
+    $this->assertTrue($this->isTextPresent("Next"));
+    $this->assertTrue($this->isTextPresent("Previous"));
+
+    $this->click("xpath=//ul[@id='actions']/li[@class='crm-next-action']/a");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("{$contact3} CCC"));
+    $this->assertTrue($this->isTextPresent("Previous"));
+
+    $this->click("xpath=//ul[@id='actions']/li[@class='crm-previous-action']/a");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("{$contact2} BBB"));
+    $this->assertTrue($this->isTextPresent("Next"));
+    $this->assertTrue($this->isTextPresent("Previous"));
+
+    $this->click("xpath=//ul[@id='actions']/li[@class='crm-previous-action']/a");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("{$contact1} AAA"));
+    $this->assertTrue($this->isTextPresent("Next"));
+  }
 }
+

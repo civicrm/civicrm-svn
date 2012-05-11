@@ -47,40 +47,54 @@ class CRM_Report_Form_Case_Summary extends CRM_Report_Form {
 
     $this->deleted_labels = array('' => ts('- select -'), 0 => ts('No'), 1 => ts('Yes'));
 
-    $this->_columns = array('civicrm_c2' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+    $this->_columns = array(
+      'civicrm_c2' =>
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('client_name' =>
-          array('name' => 'sort_name',
+        array(
+          'client_name' =>
+          array(
+            'name' => 'sort_name',
             'title' => ts('Client'),
             'required' => TRUE,
           ),
           'id' =>
-          array('no_display' => TRUE,
+          array(
+            'no_display' => TRUE,
             'required' => TRUE,
           ),
         ),
       ),
       'civicrm_case' =>
-      array('dao' => 'CRM_Case_DAO_Case',
+      array(
+        'dao' => 'CRM_Case_DAO_Case',
         'fields' =>
-        array('id' =>
+        array(
+          'id' =>
           array('title' => ts('Case ID'),
             'required' => TRUE,
           ),
-          'subject' => array('title' => ts('Case Subject'), 'default' => TRUE,
+          'subject' => array(
+            'title' => ts('Case Subject'), 'default' => TRUE,
           ),
-          'status_id' => array('title' => ts('Status'), 'default' => TRUE,
+          'status_id' => array(
+            'title' => ts('Status'), 'default' => TRUE,
           ),
-          'case_type_id' => array('title' => ts('Case Type'), 'default' => TRUE,
+          'case_type_id' => array(
+            'title' => ts('Case Type'), 'default' => TRUE,
           ),
-          'start_date' => array('title' => ts('Start Date'), 'default' => TRUE,
+          'start_date' => array(
+            'title' => ts('Start Date'), 'default' => TRUE,
           ),
-          'end_date' => array('title' => ts('End Date'), 'default' => TRUE,
+          'end_date' => array(
+            'title' => ts('End Date'), 'default' => TRUE,
           ),
-          'duration' => array('title' => ts('Duration (Days)'), 'default' => FALSE,
+          'duration' => array(
+            'title' => ts('Duration (Days)'), 'default' => FALSE,
           ),
-          'is_deleted' => array('title' => ts('Deleted?'), 'default' => FALSE, 'type' => CRM_Utils_Type::T_INT,
+          'is_deleted' => array(
+            'title' => ts('Deleted?'), 'default' => FALSE, 'type' => CRM_Utils_Type::T_INT,
           ),
         ),
         'filters' =>
@@ -109,9 +123,11 @@ class CRM_Report_Form_Case_Summary extends CRM_Report_Form {
         ),
       ),
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('sort_name' =>
+        array(
+          'sort_name' =>
           array('title' => ts('Staff Member'),
             'default' => TRUE,
           ),
@@ -122,7 +138,8 @@ class CRM_Report_Form_Case_Summary extends CRM_Report_Form {
         ),
       ),
       'civicrm_relationship' =>
-      array('dao' => 'CRM_Contact_DAO_Relationship',
+      array(
+        'dao' => 'CRM_Contact_DAO_Relationship',
         'filters' =>
         array('relationship_type_id' => array('title' => ts('Staff Relationship'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -131,15 +148,19 @@ class CRM_Report_Form_Case_Summary extends CRM_Report_Form {
         ),
       ),
       'civicrm_relationship_type' =>
-      array('dao' => 'CRM_Contact_DAO_RelationshipType',
+      array(
+        'dao' => 'CRM_Contact_DAO_RelationshipType',
         'fields' =>
-        array('label_b_a' =>
-          array('title' => ts('Relationship'), 'default' => TRUE,
+        array(
+          'label_b_a' =>
+          array(
+            'title' => ts('Relationship'), 'default' => TRUE,
           ),
         ),
       ),
       'civicrm_case_contact' =>
-      array('dao' => 'CRM_Case_DAO_CaseContact',
+      array(
+        'dao' => 'CRM_Case_DAO_CaseContact',
       ),
     );
 

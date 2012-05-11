@@ -113,7 +113,7 @@ function civicrm_api3_group_get($params) {
   $groups = array();
   foreach ($groupObjects as $group) {
     _civicrm_api3_object_to_array($group, $groups[$group->id]);
-    _civicrm_api3_custom_data_get( $groups[$group->id], 'Group', $group->id);
+    _civicrm_api3_custom_data_get($groups[$group->id], 'Group', $group->id);
   }
 
 

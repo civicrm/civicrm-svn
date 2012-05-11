@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -91,7 +92,8 @@ require_once 'api/v2/utils.php';
  *    <li>wysiwygEditor</li>
  *  </ul>
  */
-function civicrm_constant_get($name, $params = array()) {
+function civicrm_constant_get($name, $params = array(
+  )) {
   require_once 'CRM/Core/PseudoConstant.php';
   $className = 'CRM_Core_PseudoConstant';
   $callable = "$className::$name";

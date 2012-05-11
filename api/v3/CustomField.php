@@ -53,11 +53,11 @@ require_once 'CRM/Core/BAO/CustomField.php';
  */
 
 /**
- * Create a 'custom field' within a custom field group. 
+ * Create a 'custom field' within a custom field group.
  * We also empty the static var in the getfields
  * function after deletion so that the field is available for us (getfields manages date conversion
  * among other things
- * 
+ *
  * @param $params array  Associative array of property name/value pairs to create new custom field.
  *
  * @return Newly API success object
@@ -196,7 +196,8 @@ function _civicrm_api3_custom_field_validate_fields($params, $fields, $checkForD
  *
  * @return Array  Validation errors
  */
-function _civicrm_api3_custom_field_validate_field($fieldName, $value, $fieldDetails, &$errors = array()) {
+function _civicrm_api3_custom_field_validate_field($fieldName, $value, $fieldDetails, &$errors = array(
+  )) {
   if (!$value) {
     return $errors;
   }
@@ -282,7 +283,8 @@ SELECT count(*)
       break;
   }
 
-  if (in_array($htmlType, array('Select', 'Multi-Select', 'CheckBox', 'Radio', 'AdvMulti-Select')) &&
+  if (in_array($htmlType, array(
+    'Select', 'Multi-Select', 'CheckBox', 'Radio', 'AdvMulti-Select')) &&
     !isset($errors[$fieldName])
   ) {
     require_once 'CRM/Core/OptionGroup.php';

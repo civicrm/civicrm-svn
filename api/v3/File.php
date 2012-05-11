@@ -199,6 +199,7 @@ function civicrm_api3_entity_file_create($params) {
 /**
  * Returns all files assigned to a single entity instance.
  * @deprecated - doesn't have a valid signature (& probably doesn't work)
+ *
  * @param object $entityID         id of the supported entity.
  * @param string $entity_table
  *

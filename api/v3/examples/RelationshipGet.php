@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function relationship_get_example() {
-  $params = array(
-    'version' => 3,
-    'id' => 5,
-  );
+function relationship_get_example(){
+$params = array( 
+  'version' => 3,
+  'id' => 6,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('relationship', 'get', $params);
+  $result = civicrm_api( 'relationship','get',$params );
 
   return $result;
 }
@@ -21,30 +20,30 @@ function relationship_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function relationship_get_expectedresult() {
+function relationship_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 5,
-    'values' => array(
-      '5' => array(
-        'id' => '5',
-        'contact_id_a' => '1',
-        'contact_id_b' => '2',
-        'relationship_type_id' => '19',
-        'start_date' => '2008-12-20',
-        'is_active' => '1',
-        'is_permission_a_b' => 0,
-        'is_permission_b_a' => 0,
-        'custom_1' => 'custom string',
-        'custom_1_1' => 'custom string',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 6,
+  'values' => array( 
+      '6' => array( 
+          'id' => '6',
+          'contact_id_a' => '1',
+          'contact_id_b' => '2',
+          'relationship_type_id' => '20',
+          'start_date' => '2008-12-20',
+          'is_active' => '1',
+          'is_permission_a_b' => 0,
+          'is_permission_b_a' => 0,
+          'custom_1' => 'custom string',
+          'custom_1_1' => 'custom string',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -63,4 +62,3 @@ function relationship_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

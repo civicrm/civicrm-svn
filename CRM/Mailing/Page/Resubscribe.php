@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -26,7 +25,6 @@
  +--------------------------------------------------------------------+
 */
 
-
 /**
  *
  * @package CRM
@@ -34,13 +32,10 @@
  * $Id$
  *
  */
-
-
-class CRM_Mailing_Page_Resubscribe extends CRM_Mailing_Page_Common
-{
-    function run() {
-        $this->_type = 'resubscribe';
-        return parent::run( );
-    }
+class CRM_Mailing_Page_Resubscribe extends CRM_Mailing_Page_Common {
+  function run() {
+    $this->_type = 'resubscribe';
+    return parent::run();
+  }
 }
 

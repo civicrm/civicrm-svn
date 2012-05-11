@@ -1,19 +1,18 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function activity_type_delete_example() {
-  $params = array(
-    'activity_type_id' => 659,
-    'version' => 3,
-  );
+function activity_type_delete_example(){
+$params = array( 
+  'activity_type_id' => 682,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('activity_type', 'delete', $params);
+  $result = civicrm_api( 'activity_type','delete',$params );
 
   return $result;
 }
@@ -21,14 +20,15 @@ function activity_type_delete_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function activity_type_delete_expectedresult() {
+function activity_type_delete_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 1,
-    'error_message' => 'Mandatory key(s) missing from params array: id',
-  );
+  $expectedResult = array( 
+  'is_error' => 1,
+  'error_message' => 'DB_DataObject Error: delete: No condition specifed for query',
+  'tip' => 'add debug=1 to your API call to have more info about the error',
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -47,4 +47,3 @@ function activity_type_delete_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

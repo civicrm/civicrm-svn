@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'api/v3/Relationship.php';
 require_once 'api/v3/RelationshipType.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
@@ -59,7 +60,8 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase {
 
   function tearDown() {
 
-    $tablesToTruncate = array('civicrm_contact',
+    $tablesToTruncate = array(
+      'civicrm_contact',
       'civicrm_relationship_type',
     );
     $this->quickCleanup($tablesToTruncate);
@@ -200,7 +202,8 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase {
   function testRelationshipTypeDelete() {
     $rel = $this->_relationshipTypeCreate();
     // create sample relationship type.
-    $params = array('id' => $rel,
+    $params = array(
+      'id' => $rel,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('relationship_type', 'delete', $params);
@@ -312,7 +315,8 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
     $second = civicrm_api('RelationshipType', 'Create', $secondRelTypeParams);
-    $results = civicrm_api('relationship_type', 'get', array('version' => $this->_apiversion,
+    $results = civicrm_api('relationship_type', 'get', array(
+      'version' => $this->_apiversion,
       ));
 
     $this->assertEquals(2, $results['count']);
@@ -357,7 +361,8 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase {
     );
     $second = civicrm_api('RelationshipType', 'Create', $secondRelTypeParams);
 
-    $params = array('name_a_b' => 'Relation 32 for create',
+    $params = array(
+      'name_a_b' => 'Relation 32 for create',
       'name_b_a' => 'Relation 33 for create',
       'description' => 'Testing relationship type second',
       'version' => $this->_apiversion,

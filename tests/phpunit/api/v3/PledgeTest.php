@@ -29,6 +29,7 @@
 
 
 
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_PledgeTest extends CiviUnitTestCase {
 
@@ -41,8 +42,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   protected $_params;
   protected $_entity;
   protected $scheduled_date;
-  public $DBResetRequired = True;
-  function setUp() {
+  public $DBResetRequired = True; function setUp() {
     $this->_apiversion = 3;
     parent::setUp();
     $this->quickCleanup(array('civicrm_pledge', 'civicrm_pledge_payment'));
@@ -111,7 +111,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
 
 
     $this->_pledge = &civicrm_api('pledge', 'create', $this->_params);
-    $params = array('pledge_id' => $this->_pledge['id'],
+    $params = array(
+      'pledge_id' => $this->_pledge['id'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('pledge', 'get', $params);
@@ -127,7 +128,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $this->assertEquals(date('Y-m-d', strtotime($this->scheduled_date)) . ' 00:00:00', $pledge['pledge_next_pay_date'], 'in line' . __LINE__);
     $this->assertEquals($pledge['pledge_next_pay_amount'], 20.00, 'in line' . __LINE__);
 
-    $params2 = array('pledge_id' => $this->_pledge['id'],
+    $params2 = array(
+      'pledge_id' => $this->_pledge['id'],
       'version' => $this->_apiversion,
     );
     $pledge = civicrm_api('pledge', 'delete', $params2);
@@ -138,7 +140,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   function testGetPledgewithReturn() {
 
     $this->_pledge = civicrm_api('pledge', 'create', $this->_params);
-    $params = array('pledge_id' => $this->_pledge['id'],
+    $params = array(
+      'pledge_id' => $this->_pledge['id'],
       'version' => $this->_apiversion,
       'return.pledge_contribution_type' => 1,
     );
@@ -151,7 +154,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   function testPledgeGetReturnFilters() {
     $oldPledge = civicrm_api('pledge', 'create', $this->_params);
 
-    $overdueParams = array('scheduled_date' => 'first saturday of march last year',
+    $overdueParams = array(
+      'scheduled_date' => 'first saturday of march last year',
       'start_date' => 'first saturday of march last year',
     );
     $oldPledge = civicrm_api('pledge', 'create', array_merge($this->_params, $overdueParams));
@@ -170,15 +174,18 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
    * create 2 pledges - see if we can get by status id
    */
   function testGetOverduePledge() {
-    $overdueParams = array('scheduled_date' => 'first saturday of march last year',
+    $overdueParams = array(
+      'scheduled_date' => 'first saturday of march last year',
       'start_date' => 'first saturday of march last year',
     );
     $this->_pledge = civicrm_api('pledge', 'create', array_merge($this->_params, $overdueParams));
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
       'pledge_status_id' => '6',
     );
     $result = civicrm_api('pledge', 'get', $params);
-    $emptyResult = civicrm_api('pledge', 'get', array('version' => $this->_apiversion,
+    $emptyResult = civicrm_api('pledge', 'get', array(
+      'version' => $this->_apiversion,
         'pledge_status_id' => '1',
       ));
     $pledge = $result['values'][$this->_pledge['id']];
@@ -193,21 +200,25 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
    */
   function testSortParamPledge() {
     $pledge1 = civicrm_api('pledge', 'create', $this->_params);
-    $overdueParams = array('scheduled_date' => 'first saturday of march last year',
+    $overdueParams = array(
+      'scheduled_date' => 'first saturday of march last year',
       'start_date' => 'first saturday of march last year',
       'create_date' => 'first saturday of march last year',
     );
     $pledge2 = civicrm_api('pledge', 'create', array_merge($this->_params, $overdueParams));
-    $params = array('version' => $this->_apiversion,
+    $params = array(
+      'version' => $this->_apiversion,
       'rowCount' => 1,
     );
     $result = civicrm_api('pledge', 'get', $params);
 
-    $resultSortedAsc = civicrm_api('pledge', 'get', array('version' => $this->_apiversion,
+    $resultSortedAsc = civicrm_api('pledge', 'get', array(
+      'version' => $this->_apiversion,
         'rowCount' => 1,
         'sort' => 'start_date ASC',
       ));
-    $resultSortedDesc = civicrm_api('pledge', 'get', array('version' => $this->_apiversion,
+    $resultSortedDesc = civicrm_api('pledge', 'get', array(
+      'version' => $this->_apiversion,
         'rowCount' => 1,
         'sort' => 'start_date DESC',
       ));
@@ -249,7 +260,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
      * Test that pledge with weekly schedule calculates dates correctly
      */
   function testCreatePledgeWeeklySchedule() {
-    $params = array('scheduled_date' => '20110510',
+    $params = array(
+      'scheduled_date' => '20110510',
       'frequency_unit' => 'week',
       'frequency_day' => 3,
       'frequency_interval' => 2,
@@ -275,7 +287,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
      *
      */
   function testCreatePledgeSinglePayment() {
-    $params = array('scheduled_date' => '20110510',
+    $params = array(
+      'scheduled_date' => '20110510',
       'frequency_unit' => 'week',
       'frequency_day' => 3,
       'frequency_interval' => 2,
@@ -338,7 +351,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     unset($params['status_id']);
     unset($params['pledge_status_id']);
     $result = &civicrm_api('pledge', 'create', $params);
-    $this->assertAPISuccess( $result, "in line " . __LINE__);
+    $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertEquals(2, $result['values'][0]['status_id'], "in line " . __LINE__);
     $pledgeID = array('pledge_id' => $result['id'], 'version' => 3);
     $pledge = &civicrm_api('pledge', 'delete', $pledgeID);
@@ -410,7 +423,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   }
 
   function testDeleteWrongParamPledge() {
-    $params = array('pledge_source' => 'SSF',
+    $params = array(
+      'pledge_source' => 'SSF',
       'version' => $this->_apiversion,
     );
     $pledge = &civicrm_api('pledge', 'delete', $params);
@@ -424,7 +438,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   function testDeletePledge() {
 
     $pledgeID = $this->pledgeCreate($this->_individualId);
-    $params = array('pledge_id' => $pledgeID,
+    $params = array(
+      'pledge_id' => $pledgeID,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('pledge', 'delete', $params);
@@ -438,7 +453,8 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   function testDeletePledgeUseID() {
 
     $pledgeID = $this->pledgeCreate($this->_individualId);
-    $params = array('id' => $pledgeID,
+    $params = array(
+      'id' => $pledgeID,
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('pledge', 'delete', $params);

@@ -1,24 +1,23 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function note_get_example() {
-  $params = array(
-    'entity_table' => 'civicrm_contact',
-    'entity_id' => 1,
-    'note' => 'Hello!!! m testing Note',
-    'contact_id' => 1,
-    'modified_date' => '2011-01-31',
-    'subject' => 'Test Note',
-    'version' => 3,
-  );
+function note_get_example(){
+$params = array( 
+  'entity_table' => 'civicrm_contact',
+  'entity_id' => 1,
+  'note' => 'Hello!!! m testing Note',
+  'contact_id' => 1,
+  'modified_date' => '2011-01-31',
+  'subject' => 'Test Note',
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('note', 'get', $params);
+  $result = civicrm_api( 'note','get',$params );
 
   return $result;
 }
@@ -26,28 +25,28 @@ function note_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function note_get_expectedresult() {
+function note_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 1,
-    'values' => array(
-      '1' => array(
-        'id' => '1',
-        'entity_table' => 'civicrm_contact',
-        'entity_id' => '1',
-        'note' => 'hello I am testing Note',
-        'contact_id' => '1',
-        'modified_date' => '2011-10-31',
-        'subject' => 'Test Note',
-        'privacy' => 0,
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'entity_table' => 'civicrm_contact',
+          'entity_id' => '1',
+          'note' => 'hello I am testing Note',
+          'contact_id' => '1',
+          'modified_date' => '2012-05-11',
+          'subject' => 'Test Note',
+          'privacy' => 0,
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -66,4 +65,3 @@ function note_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

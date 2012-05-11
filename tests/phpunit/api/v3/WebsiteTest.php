@@ -13,7 +13,8 @@ class api_v3_WebsiteTest extends CiviUnitTestCase {
     $this->_entity     = 'website';
     $this->_apiversion = 3;
     $this->_contactID  = $this->organizationCreate();
-    $this->params      = array('version' => 3,
+    $this->params      = array(
+      'version' => 3,
       'contact_id' => $this->_contactID,
       'url' => 'website.com',
       'website_type_id' => 1,
@@ -47,7 +48,8 @@ class api_v3_WebsiteTest extends CiviUnitTestCase {
     $result = civicrm_api($this->_entity, 'delete', array('version' => 3, 'id' => $entity['id']));
     $this->documentMe($this->params, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
-    $checkDeleted = civicrm_api($this->_entity, 'get', array('version' => 3,
+    $checkDeleted = civicrm_api($this->_entity, 'get', array(
+      'version' => 3,
       ));
     $this->assertEquals(0, $checkDeleted['count'], 'In line ' . __LINE__);
   }

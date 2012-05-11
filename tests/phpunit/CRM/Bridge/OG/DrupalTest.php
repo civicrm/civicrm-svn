@@ -1,10 +1,11 @@
-<?php  // vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
+<?php
+// vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
 
 /**
  *  File for the CRM_Contact_Form_Search_Custom_GroupTest class
  *
  *  (PHP 5)
- *  
+ *
  *   @copyright Copyright CiviCRM LLC (C) 2009
  *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
  *              GNU Affero General Public License version 3
@@ -32,43 +33,48 @@
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/api.php';
+
 /**
  *  Test contact custom search functions
  *
  *  @package CiviCRM
  */
-class CRM_Bridge_OG_DrupalTest extends CiviUnitTestCase
-{
+class CRM_Bridge_OG_DrupalTest extends CiviUnitTestCase {
   /*
    * Test that one (ane only one) role (option value) is deleted by the updateCiviACLRole function
    */
-  function testACLRoleDeleteFunctionality(){
+  function testACLRoleDeleteFunctionality() {
     $optionGroup = civicrm_api('OptionGroup', 'Get', array(
-    																	'version' => 3, 
-    																	'name' => 'acl_role',
-                                      'api.OptionValue.Create' => 
-                                        array(
-                                           array('label' => 'OG', 
-                                           			 'value' => 5, 
-                                                 'description' => 'OG Sync Group ACL :1967:'),
-                                           array('label' => 'OG2', 
-                                           			 'value' => 6, 
-                                                 'description' => 'OG Sync Group ACL :1969:'),
-                                           )));
-    $getOptionGroupParams = array('version' => 3, 'option_group_id' => $optionGroup['id'] );
-    $originalCount = civicrm_api('OptionValue','GetCount',$getOptionGroupParams);
+        'version' => 3,
+        'name' => 'acl_role',
+        'api.OptionValue.Create' =>
+        array(
+          array(
+            'label' => 'OG',
+            'value' => 5,
+            'description' => 'OG Sync Group ACL :1967:',
+          ),
+          array(
+            'label' => 'OG2',
+            'value' => 6,
+            'description' => 'OG Sync Group ACL :1969:',
+          ),
+        ),
+      ));
+    $getOptionGroupParams = array('version' => 3, 'option_group_id' => $optionGroup['id']);
+    $originalCount = civicrm_api('OptionValue', 'GetCount', $getOptionGroupParams);
     $params = array('source' => 'OG Sync Group ACL :1969:');
-    
+
     // this is the function we are testing
-    CRM_Bridge_OG_Drupal::updateCiviACLRole( $params, 'delete');
-    $newCount = civicrm_api('OptionValue','GetCount',$getOptionGroupParams);
-    
+    CRM_Bridge_OG_Drupal::updateCiviACLRole($params, 'delete');
+    $newCount = civicrm_api('OptionValue', 'GetCount', $getOptionGroupParams);
+
     //one option value (role) should have been deleted
     $this->assertEquals(1, $originalCount - $newCount);
-    
+
     //clean up
     civicrm_api('OptionValue', 'Get', array('version' => 3, 'label' => 'OG', 'api.option_value.delete'));
     civicrm_api('OptionValue', 'Get', array('version' => 3, 'label' => 'OG2', 'api.option_value.delete'));
   }
-  
 }
+

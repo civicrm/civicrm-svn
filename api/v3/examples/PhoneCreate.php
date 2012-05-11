@@ -1,22 +1,21 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function phone_create_example() {
-  $params = array(
-    'contact_id' => 1,
-    'location_type_id' => 6,
-    'phone' => '021 512 755',
-    'is_primary' => 1,
-    'version' => 3,
-  );
+function phone_create_example(){
+$params = array( 
+  'contact_id' => 1,
+  'location_type_id' => 6,
+  'phone' => '021 512 755',
+  'is_primary' => 1,
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('phone', 'create', $params);
+  $result = civicrm_api( 'phone','create',$params );
 
   return $result;
 }
@@ -24,24 +23,29 @@ function phone_create_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function phone_create_expectedresult() {
+function phone_create_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 1,
-    'id' => 2,
-    'values' => array(
-      '2' => array(
-        'id' => 2,
-        'contact_id' => 1,
-        'is_primary' => 1,
-        'phone' => '021 512 755',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => 1,
+          'contact_id' => 1,
+          'location_type_id' => 6,
+          'is_primary' => 1,
+          'is_billing' => '',
+          'mobile_provider_id' => '',
+          'phone' => '021 512 755',
+          'phone_ext' => '',
+          'phone_type_id' => '',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -60,4 +64,3 @@ function phone_create_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

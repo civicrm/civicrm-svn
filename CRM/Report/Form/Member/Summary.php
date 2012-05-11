@@ -38,7 +38,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
 
   protected $_summary = NULL;
   protected $_interval = NULL;
-  protected $_charts = array('' => 'Tabular',
+  protected $_charts = array(
+    '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   );
@@ -51,28 +52,34 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
 
     $this->_columns = array(
       'civicrm_membership' =>
-      array('dao' => 'CRM_Member_DAO_MembershipType',
+      array(
+        'dao' => 'CRM_Member_DAO_MembershipType',
         'grouping' => 'member-fields',
         'fields' =>
-        array('membership_type_id' =>
-          array('title' => 'Membership Type',
+        array(
+          'membership_type_id' =>
+          array(
+            'title' => 'Membership Type',
             'required' => TRUE,
           ),
         ),
         'filters' =>
-        array('join_date' =>
+        array(
+          'join_date' =>
           array('title' => ts('Member Since'),
             'type' => CRM_Utils_Type::T_DATE,
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
           'membership_start_date' =>
-          array('name' => 'start_date',
+          array(
+            'name' => 'start_date',
             'title' => ts('Membership Start Date'),
             'type' => CRM_Utils_Type::T_DATE,
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
           'membership_end_date' =>
-          array('name' => 'end_date',
+          array(
+            'name' => 'end_date',
             'title' => ts('Membership End Date'),
             'type' => CRM_Utils_Type::T_DATE,
             'operatorType' => CRM_Report_Form::OP_DATE,
@@ -89,7 +96,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
           ),
         ),
         'group_bys' =>
-        array('join_date' =>
+        array(
+          'join_date' =>
           array('title' => ts('Member Since'),
             'default' => TRUE,
             'frequency' => TRUE,
@@ -97,24 +105,30 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
             'type' => 12,
           ),
           'membership_type_id' =>
-          array('title' => 'Membership Type',
+          array(
+            'title' => 'Membership Type',
             'default' => TRUE,
             'chart' => TRUE,
           ),
         ),
       ),
       'civicrm_contact' =>
-      array('dao' => 'CRM_Contact_DAO_Contact',
+      array(
+        'dao' => 'CRM_Contact_DAO_Contact',
         'fields' =>
-        array('contact_id' =>
-          array('no_display' => TRUE,
+        array(
+          'contact_id' =>
+          array(
+            'no_display' => TRUE,
           ),
         ),
       ),
       'civicrm_contribution' =>
-      array('dao' => 'CRM_Contribute_DAO_Contribution',
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
         'fields' =>
-        array('total_amount' =>
+        array(
+          'total_amount' =>
           array('title' => ts('Amount Statistics'),
             'required' => TRUE,
             'statistics' =>
@@ -125,7 +139,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
           ),
         ),
         'filters' =>
-        array('contribution_status_id' =>
+        array(
+          'contribution_status_id' =>
           array('title' => ts('Contribution Status'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Contribute_PseudoConstant::contributionStatus(),
@@ -378,17 +393,21 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
     $dao = CRM_Core_DAO::executeQuery($sql);
 
     if ($dao->fetch()) {
-      $statistics['counts']['amount'] = array('value' => $dao->amount,
+      $statistics['counts']['amount'] = array(
+        'value' => $dao->amount,
         'title' => 'Total Amount',
         'type' => CRM_Utils_Type::T_MONEY,
       );
-      $statistics['counts']['count '] = array('value' => $dao->count,
+      $statistics['counts']['count '] = array(
+        'value' => $dao->count,
         'title' => 'Total Donations',
       );
-      $statistics['counts']['memberCount'] = array('value' => $dao->memberCount,
+      $statistics['counts']['memberCount'] = array(
+        'value' => $dao->memberCount,
         'title' => 'Total Members',
       );
-      $statistics['counts']['avg   '] = array('value' => $dao->avg,
+      $statistics['counts']['avg   '] = array(
+        'value' => $dao->avg,
         'title' => 'Average',
         'type' => CRM_Utils_Type::T_MONEY,
       );
@@ -465,7 +484,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
       // build chart.
       if ($isMembershipType) {
         $graphRows['value'] = $display;
-        $chartInfo = array('legend' => 'Membership Summary',
+        $chartInfo = array(
+          'legend' => 'Membership Summary',
           'xname' => 'Member Since / Member Type',
           'yname' => 'Fees',
         );

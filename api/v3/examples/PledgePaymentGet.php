@@ -1,18 +1,17 @@
 <?php
-// $Id$
 
 
 
 /*
  
  */
-function pledge_payment_get_example() {
-  $params = array(
-    'version' => 3,
-  );
+function pledge_payment_get_example(){
+$params = array( 
+  'version' => 3,
+);
 
   require_once 'api/api.php';
-  $result = civicrm_api('pledge_payment', 'get', $params);
+  $result = civicrm_api( 'pledge_payment','get',$params );
 
   return $result;
 }
@@ -20,62 +19,62 @@ function pledge_payment_get_example() {
 /*
  * Function returns array of result expected from previous function
  */
-function pledge_payment_get_expectedresult() {
+function pledge_payment_get_expectedresult(){
 
-  $expectedResult = array(
-    'is_error' => 0,
-    'version' => 3,
-    'count' => 5,
-    'values' => array(
-      '1' => array(
-        'id' => '1',
-        'pledge_id' => '1',
-        'scheduled_amount' => '20.00',
-        'currency' => 'USD',
-        'scheduled_date' => '2011-10-31 00:00:00',
-        'reminder_count' => 0,
-        'status_id' => '2',
-      ),
-      '2' => array(
-        'id' => '2',
-        'pledge_id' => '1',
-        'scheduled_amount' => '20.00',
-        'currency' => 'USD',
-        'scheduled_date' => '2016-10-31 00:00:00',
-        'reminder_count' => 0,
-        'status_id' => '2',
-      ),
-      '3' => array(
-        'id' => '3',
-        'pledge_id' => '1',
-        'scheduled_amount' => '20.00',
-        'currency' => 'USD',
-        'scheduled_date' => '2021-10-31 00:00:00',
-        'reminder_count' => 0,
-        'status_id' => '2',
-      ),
-      '4' => array(
-        'id' => '4',
-        'pledge_id' => '1',
-        'scheduled_amount' => '20.00',
-        'currency' => 'USD',
-        'scheduled_date' => '2026-10-31 00:00:00',
-        'reminder_count' => 0,
-        'status_id' => '2',
-      ),
-      '5' => array(
-        'id' => '5',
-        'pledge_id' => '1',
-        'scheduled_amount' => '20.00',
-        'currency' => 'USD',
-        'scheduled_date' => '2031-10-31 00:00:00',
-        'reminder_count' => 0,
-        'status_id' => '2',
-      ),
+  $expectedResult = array( 
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 5,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2012-05-11 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+      '2' => array( 
+          'id' => '2',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2017-05-11 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+      '3' => array( 
+          'id' => '3',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2022-05-11 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+      '4' => array( 
+          'id' => '4',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2027-05-11 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
+      '5' => array( 
+          'id' => '5',
+          'pledge_id' => '1',
+          'scheduled_amount' => '20.00',
+          'currency' => 'USD',
+          'scheduled_date' => '2032-05-11 00:00:00',
+          'reminder_count' => 0,
+          'status_id' => '2',
+        ),
     ),
-  );
+);
 
-  return $expectedResult;
+  return $expectedResult  ;
 }
 
 
@@ -94,4 +93,3 @@ function pledge_payment_get_expectedresult() {
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */
-

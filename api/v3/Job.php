@@ -414,7 +414,6 @@ function civicrm_api3_job_process_batch_merge($params) {
   }
 }
 
-
 /**
  * Runs handlePaymentCron method in the specified payment processor
  *
@@ -425,7 +424,7 @@ function civicrm_api3_job_process_batch_merge($params) {
  *
  * @access public
  */
-function civicrm_api3_job_run_payment_cron( $params ) {
+function civicrm_api3_job_run_payment_cron($params) {
 
   require_once 'CRM/Core/Payment.php';
 
@@ -435,7 +434,7 @@ function civicrm_api3_job_run_payment_cron( $params ) {
     array_merge(
       $params,
       array(
-        'caller' => 'api'
+        'caller' => 'api',
       )
     )
   );
@@ -446,8 +445,9 @@ function civicrm_api3_job_run_payment_cron( $params ) {
     array_merge(
       $params,
       array(
-        'mode' => 'test'
+        'mode' => 'test',
       )
     )
   );
 }
+

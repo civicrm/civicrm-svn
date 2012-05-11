@@ -123,7 +123,8 @@ class CRM_Utils_Recent {
     }
 
     array_unshift(self::$_recent,
-      array('title' => $title,
+      array(
+        'title' => $title,
         'url' => $url,
         'id' => $id,
         'type' => $type,
