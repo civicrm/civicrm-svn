@@ -45,6 +45,9 @@
       <div class="crm-grid-header">
         <div class="crm-grid-cell">&nbsp;</div>
         <div class="crm-grid-cell">{ts}Contact{/ts}</div>
+        {if $batchType eq 2 }
+          <div class="crm-grid-cell">&nbsp;</div>
+        {/if}
         {foreach from=$fields item=field key=fieldName}
           <div class="crm-grid-cell"><img src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</div>
         {/foreach}
@@ -58,6 +61,10 @@
             {include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="primary_" newContactCallback="updateContactInfo($rowNumber, 'primary_')"}
         </div>
 
+        {if $batchType eq 2 }
+          {$form.member_option.$rowNumber.html}
+        {/if} 
+        
         {foreach from=$fields item=field key=fieldName}
         {assign var=n value=$field.name}
         {if ( $fields.$n.data_type eq 'Date') or ( in_array( $n, array( 'thankyou_date', 'cancel_date', 'receipt_date', 'receive_date', 'join_date', 'membership_start_date', 'membership_end_date' ) ) ) }
@@ -98,6 +105,7 @@
             calculateActualTotal();    
         });
 
+        {/literal}{if $batchType eq 1 }{literal}
         // hide all dates if send receipt is checked
         hideSendReceipt();
 
@@ -105,6 +113,13 @@
         cj( 'input[id*="][send_receipt]"]').change( function() {
           showHideReceipt( cj(this) );
         });
+
+        {/literal}{else}{literal}
+        cj('select[id^="member_option_"]').each( function() {
+          cj(this).attr('disabled', true);
+        });
+
+        {/literal}{/if}{literal}
 
         // line breaks between radio buttons and checkboxes
         cj('input.form-radio').next().after('<br />');

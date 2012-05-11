@@ -87,6 +87,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       CRM_Core_BAO_Batch::retrieve( $params, $this->_batchInfo );
 
       $this->assign( 'batchTotal', $this->_batchInfo['total'] );
+      $this->assign( 'batchType',  $this->_batchInfo['type_id'] );
+      
       // get the profile id associted with this batch type
       $this->_profileId = CRM_Core_BAO_Batch::getProfileId( $this->_batchInfo['type_id'] );
     }
@@ -168,6 +170,15 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $contactTypes  = array( 'Contact', 'Individual', 'Household', 'Organization' );
     for ( $rowNumber = 1; $rowNumber<= $this->_batchInfo['item_count']; $rowNumber++  ) {
       CRM_Contact_Form_NewContact::buildQuickForm( $this, $rowNumber, null, true, 'primary_' );
+
+      // special field specific to membership batch udpate
+      if ( $this->_batchInfo['type_id'] == 2 ) {
+        $options = array(
+          1 => ts('Add Membership'),
+          2 => ts('Renew Membership')
+        );
+        $this->add('select', "member_option[$rowNumber]", '', $options );
+      }
 
       foreach ( $this->_fields as $name => $field ) {
         if ( in_array( $field['field_type'], $contactTypes ) ) {
@@ -386,17 +397,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         } // end of premium
 
         //send receipt mail.
-        if ( $contribution->id && 
-          CRM_Utils_Array::value( 'send_receipt', $value ) ) {
-          
-          // add the domain email id
-          $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail();
-          $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
-          
-          $value['from_email_address'] = $domainEmail; 
-          $value['contribution_id'] = $contribution->id;
-          CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
-        }
+//        if ( $contribution->id && 
+//          CRM_Utils_Array::value( 'send_receipt', $value ) ) {
+//          
+//          // add the domain email id
+//          $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail();
+//          $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
+//          
+//          $value['from_email_address'] = $domainEmail; 
+//          $value['contribution_id'] = $contribution->id;
+//          CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
+//        }
       }
     }
   }//end of function
