@@ -53,7 +53,8 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
       CRM_Utils_Hook::pre('create', 'Email', null, $params);
       $isEdit = false;
     }
-    if (is_integer(CRM_Utils_Array::value('is_primary', $params)) || empty($params['id'])) { // if id is set & is_primary isn't we can assume no change
+    if ( is_integer(CRM_Utils_Array::value('is_primary', $params)) ||
+      empty($params['id'])) { // if id is set & is_primary isn't we can assume no change
       CRM_Core_BAO_Block::handlePrimary($params, get_class());
     }
     $email =  CRM_Core_BAO_Email::add($params);
@@ -130,15 +131,17 @@ WHERE  contact_id = {$params['contact_id']}
     }
 
     $query = "
-SELECT email, civicrm_location_type.name as locationType, civicrm_email.is_primary as is_primary, civicrm_email.on_hold as on_hold,
-civicrm_email.id as email_id, civicrm_email.location_type_id as locationTypeId
+SELECT    email,
+          civicrm_location_type.name as locationType,
+          civicrm_email.is_primary as is_primary,
+          civicrm_email.on_hold as on_hold,
+          civicrm_email.id as email_id,
+          civicrm_email.location_type_id as locationTypeId
 FROM      civicrm_contact
 LEFT JOIN civicrm_email ON ( civicrm_email.contact_id = civicrm_contact.id )
 LEFT JOIN civicrm_location_type ON ( civicrm_email.location_type_id = civicrm_location_type.id )
-WHERE
-  civicrm_contact.id = %1
-ORDER BY
-  civicrm_email.is_primary DESC, email_id ASC ";
+WHERE     civicrm_contact.id = %1
+ORDER BY  civicrm_email.is_primary DESC, email_id ASC ";
     $params = array(
       1 => array(
         $id,
@@ -160,7 +163,7 @@ ORDER BY
       );
 
       if ($updateBlankLocInfo) {
-        $emails[$count ++] = $values;
+        $emails[$count++] = $values;
       }
       else {
         $emails[$dao->email_id] = $values;
@@ -230,22 +233,32 @@ ORDER BY e.is_primary DESC, email_id ASC ";
   static function holdEmail(&$email) {
     //check for update mode
     if ($email->id) {
-      //get hold date
-      $holdDate = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Email', $email->id, 'hold_date');
-
-      //get reset date
-      $resetDate = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Email', $email->id, 'reset_date');
-
-      //set hold date only if it is not set and e
-      if (($email->on_hold != 'null') && ! $holdDate && $email->on_hold) {
-        $email->hold_date = date('YmdHis');
-        $email->reset_date = '';
-      }
-      else if ($holdDate && ($email->on_hold == 'null') && ! $resetDate) {
-        //set reset date only if it is not set and if hold date is set
-        $email->on_hold = false;
-        $email->hold_date = '';
-        $email->reset_date = date('YmdHis');
+      $params = array( 1 => array( $email->id, 'Integer' ) );
+      if ( $email->on_hold && $email->on_hold != 'null' ) {
+        $sql = "
+SELECT id
+FROM   civicrm_email
+WHERE  id = %1
+AND    hold_date IS NULL
+";
+        if ( CRM_Core_DAO::singleValueQuery( $sql, $params ) ) {
+          $email->hold_date  = date('YmdHis');
+          $email->reset_date = 'null';
+        }
+      } else if ($email->on_hold == 'null') {
+        $sql = "
+SELECT id
+FROM   civicrm_email
+WHERE  id = %1
+AND    hold_date IS NOT NULL
+AND    reset_date IS NULL
+";
+        if ( CRM_Core_DAO::singleValueQuery( $sql, $params ) ) {
+          //set reset date only if it is not set and if hold date is set
+          $email->on_hold = false;
+          $email->hold_date = 'null';
+          $email->reset_date = date('YmdHis');
+        }
       }
     }
     else {
