@@ -116,7 +116,9 @@
 
         {/literal}{else}{literal}
         cj('select[id^="member_option_"]').each( function() {
-          cj(this).attr('disabled', true);
+          if ( cj(this).val() == 1 ) {
+            cj(this).attr('disabled', true);
+          }
         });
 
         {/literal}{/if}{literal}
@@ -242,6 +244,24 @@
         });
       }
     });
+
+    // for membership batch entry based on contact we need to enable / disable 
+    // add membership select
+    {/literal}{if $batchType eq 2}{literal}
+    cj().crmAPI ('Membership','get',{ 
+      'sequential' :'1',
+      'contact_id': contactId,
+      },
+      { success:function (data){
+        if ( data.count > 0 ) {
+          cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
+          cj('select[id="field_' + blockNo + '_membership_type"]').val( data.values[0].membership_type_id );
+          setDateFieldValue( 'join_date', data.values[0].join_date, blockNo )
+        }
+      }
+    });
+    {/literal}{/if}{literal}
+
   }
 
 /**
@@ -313,27 +333,35 @@ function setFieldValue( fname, fieldValue, blockNo ) {
     // since we use different display field for date we also need to set it.
     // also check for date time field and set the value correctly
     if ( isDateElement && fieldValue ) {
-     var dateValues = fieldValue.split(' ');
-     
-     var actualDateElement =  cj('#field_'+ blockNo +'_' + fname );
-     var date_format = actualDateElement.attr('format');
-     var altDateFormat = 'yy-mm-dd';
-
-     var actualDateValue = cj.datepicker.parseDate( altDateFormat, dateValues[0] );
-
-     // format date according to display field
-     var hiddenDateValue  = cj.datepicker.formatDate( 'mm/dd/yy', actualDateValue );
-     
-     actualDateElement.val( hiddenDateValue );
-     
-     var displayDateValue = actualDateElement.val();
-     if ( date_format != 'mm/dd/yy' ) {
-       displayDateValue  = cj.datepicker.formatDate( date_format, actualDateValue );
-     }
-     
-     cj('#field_'+ blockNo +'_' + fname + '_display').val( displayDateValue );
-     cj('#field_'+ blockNo +'_' + fname + '_time').val(dateValues[1].substr(0,5));
+      setDateFieldValue( fname, fieldValue, blockNo )
     }
+}
+
+function setDateFieldValue( fname, fieldValue, blockNo ) {
+   var dateValues = fieldValue.split(' ');
+   
+   var actualDateElement =  cj('#field_'+ blockNo +'_' + fname );
+   var date_format = actualDateElement.attr('format');
+   var altDateFormat = 'yy-mm-dd';
+
+   var actualDateValue = cj.datepicker.parseDate( altDateFormat, dateValues[0] );
+
+   // format date according to display field
+   var hiddenDateValue  = cj.datepicker.formatDate( 'mm/dd/yy', actualDateValue );
+   
+   actualDateElement.val( hiddenDateValue );
+   
+   var displayDateValue = actualDateElement.val();
+   if ( date_format != 'mm/dd/yy' ) {
+     displayDateValue  = cj.datepicker.formatDate( date_format, actualDateValue );
+   }
+   
+   cj('#field_'+ blockNo +'_' + fname + '_display').val( displayDateValue );
+   
+   // need to fix time formatting
+   if ( dateValues[1] ) {
+    cj('#field_'+ blockNo +'_' + fname + '_time').val(dateValues[1].substr(0,5));
+   }
 }
 
 </script>
