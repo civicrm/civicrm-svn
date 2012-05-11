@@ -169,6 +169,26 @@ class CRM_UF_Form_Field extends CRM_Core_Form
           'product_name' => array(
             'name'  => 'product_name',
             'title' => ts('Premiums')
+          ),
+          'contribution_type'  => array(
+            'name'  => 'contribution_type',
+            'title' => ts('Contribution Type')
+          ),
+          'total_amount'  => array(
+            'name'  => 'total_amount',
+            'title' => ts('Total Amount')
+          ),
+          'receive_date'  => array(
+            'name'  => 'receive_date',
+            'title' => ts('Receive Date')
+          ),
+          'payment_instrument'  => array(
+            'name'  => 'payment_instrument',
+            'title' => ts('Payment Instrument')
+          ),
+          'contribution_status_id'  => array(
+            'name'  => 'contribution_status_id',
+            'title' => ts('Contribution Status')
           )
         );
 

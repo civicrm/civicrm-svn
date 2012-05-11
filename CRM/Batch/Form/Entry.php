@@ -457,13 +457,62 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           'Membership',
           $membershipTypeId );
 
-        $membership = CRM_Member_BAO_Membership::add( $value, CRM_Core_DAO::$_nullArray );
+        // start of contribution related section
+        if ( CRM_Utils_Array::value( 'receive_date', $value ) ) {
+          $value['receive_date'] = CRM_Utils_Date::processDate( $value['receive_date'] );
+        }
+
+        if ( CRM_Utils_Array::value('contribution_type', $value) ) {
+          $value['contribution_type_id'] = $value['contribution_type'];
+        }
+
+        if ( CRM_Utils_Array::value( 'payment_instrument', $value ) ) {
+          $value['payment_instrument_id'] = $value['payment_instrument'];
+        }
+
+        // handle soft credit
+        if ( CRM_Utils_Array::value( $key, $params['soft_credit_contact_select_id'] ) ) {
+          $value['soft_credit_to'] = $params['soft_credit_contact_select_id'][$key];                          
+        }
+        
+        $params['actualBatchTotal'] += $value['total_amount'];
+
+        unset($value['contribution_type']);
+        unset($value['payment_instrument']);
+
+        $value['skipRecentView'] = true;
+
+        // end of contribution related section
+
+        $membership = CRM_Member_BAO_Membership::create( $value, CRM_Core_DAO::$_nullArray );
 
         // add custom field values           
         if ( CRM_Utils_Array::value( 'custom', $value ) &&
           is_array( $value['custom'] ) ) {
             CRM_Core_BAO_CustomValueTable::store( $value['custom'], 'civicrm_membership', $membership->id );
         }
+
+        /*
+        //process premiums
+        if ( CRM_Utils_Array::value( 'product_name', $value ) ) {
+          if ( $value['product_name'][0] > 0 ) {
+            list( $products, $options ) = CRM_Contribute_BAO_Premium::getPremiumProductInfo();
+            
+            $value['hidden_Premium'] = 1;
+            $value['product_option'] = CRM_Utils_Array::value( 
+              $value['product_name'][1], 
+              $options[$value['product_name'][0]] );
+
+            $premiumParams = array(
+              'product_id'      => $value['product_name'][0],
+              'contribution_id' => $contribution->id,
+              'product_option'  => $value['product_option'],
+              'quantity'        => 1
+            );
+            CRM_Contribute_BAO_Contribution::addPremium( $premiumParams );
+          }    
+        } // end of premium
+         */
 
       }
     }

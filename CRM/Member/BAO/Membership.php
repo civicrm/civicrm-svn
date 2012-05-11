@@ -320,6 +320,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $contributionParams['currency'  ] = $config->defaultCurrency;
             $contributionParams['receipt_date'] = ( CRM_Utils_Array::value('receipt_date', $params ) ) ? $params['receipt_date'] : 'null';
             $contributionParams['source']       = CRM_Utils_Array::value( 'contribution_source', $params );
+            $contributionParams['soft_credit_to'] = CRM_Utils_Array::value( 'soft_credit_to', $params );
             $contributionParams['non_deductible_amount'] = 'null';
             $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'contribution_type_id', 
                                          'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test', 
