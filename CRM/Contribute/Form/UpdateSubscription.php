@@ -98,10 +98,11 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
 
     if (!$this->_paymentProcessorObj->isSupported('changeSubscriptionAmount')) {
       $message = "<span class='font-red'>" . ts('WARNING: Updates made using this form will change the recurring contribution information stored in your CiviCRM database, but will NOT be sent to the payment processor. You must enter the same changes using the payment processor web site.',
-        array(1 => $this->_paymentProcessorObj->_processorName)
-      ) . '</span>';
-      CRM_Core_Session::setStatus($message);
+        array( 1 => $this->_paymentProcessorObj->_processorName ) ) . '</span>';
+    } else {
+      $message = ts( 'Changes to the recurring amount and / or the number of installments will be automatically sent to the payment processor. You can not change the contribution frequency. An email will be sent to the contributor if Notify Contributor is checked.' );
     }
+    CRM_Core_Session::setStatus($message);
 
     $this->assign('paymentProcessor', $this->_paymentProcessor);
 
