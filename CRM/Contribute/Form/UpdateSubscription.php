@@ -97,14 +97,15 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
     }
 
     if (!$this->_paymentProcessorObj->isSupported('changeSubscriptionAmount')) {
-      $message = "<span class='font-red'>" . ts('WARNING: Updates made using this form will change the recurring contribution information stored in your CiviCRM database, but will NOT be sent to the payment processor. You must enter the same changes using the payment processor web site.',
+      $userAlert = "<span class='font-red'>" . ts('WARNING: Updates made using this form will change the recurring contribution information stored in your CiviCRM database, but will NOT be sent to the payment processor. You must enter the same changes using the payment processor web site.',
         array( 1 => $this->_paymentProcessorObj->_processorName ) ) . '</span>';
-    } else {
-      $message = ts( 'Changes to the recurring amount and / or the number of installments will be automatically sent to the payment processor. You can not change the contribution frequency. An email will be sent to the contributor if Notify Contributor is checked.' );
+      CRM_Core_Session::setStatus($userAlert);
     }
-    CRM_Core_Session::setStatus($message);
-
+    
+    $this->assign('isChangeSupported', $this->_paymentProcessorObj->isSupported('changeSubscriptionAmount'));
     $this->assign('paymentProcessor', $this->_paymentProcessor);
+    $this->assign('frequency_unit', $this->_subscriptionDetails->frequency_unit);
+    $this->assign('frequency_interval', $this->_subscriptionDetails->frequency_interval);
 
     if ($this->_subscriptionDetails->contact_id) {
       list($this->_donorDisplayName, $this->_donorEmail) = CRM_Contact_BAO_Contact::getContactDetails($this->_subscriptionDetails->contact_id);
