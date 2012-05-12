@@ -83,6 +83,3 @@ js/jquery/jquery.crmasmselect.js
 js/jquery/jquery.crmtooltip.js
 js/jquery/jquery.crmrowhighlighter.js
 
-packages/jquery/plugins/jquery.noty.js
-packages/jquery/css/jquery.noty.css
-packages/jquery/css/noty_theme_default.css
