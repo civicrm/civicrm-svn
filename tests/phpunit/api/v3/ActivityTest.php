@@ -34,9 +34,7 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/Activity.php';
-require_once 'CRM/Core/BAO/CustomGroup.php';
-require_once 'Utils.php';
+
 
 /**
  *  Test APIv3 civicrm_activity_* functions
@@ -534,11 +532,9 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
    */
   function testActivityCreateCustom() {
     $ids = $this->entityCustomGroupWithSingleFieldCreate(__FUNCTION__, __FILE__);
-
     $params = $this->_params;
     $params['custom_' . $ids['custom_field_id']] = "custom string";
     $result = civicrm_api($this->_entity, 'create', $params);
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
     $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
     $result = civicrm_api($this->_entity, 'get', array('return.custom_' . $ids['custom_field_id'] => 1, 'version' => 3, 'id' => $result['id']));
     $this->assertEquals("custom string", $result['values'][$result['id']]['custom_' . $ids['custom_field_id']], ' in line ' . __LINE__);
@@ -658,7 +654,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
   function testActivityGetGoodID1() {
     //  Insert rows in civicrm_activity creating activities 4 and
     //  13
-    $decription = "Function demonstrates getting asignee_contact_id & using it to get the contact";
+    $description = "Function demonstrates getting asignee_contact_id & using it to get the contact";
     $subfile    = 'ReturnAssigneeContact';
     $activity   = &civicrm_api('activity', 'create', $this->_params);
 
@@ -1267,7 +1263,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
  */
   function testchainedActivityGet() {
 
-    civicrm_api('Contact', 'Create', array(
+   $activity = civicrm_api('Contact', 'Create', array(
       'version' => $this->_apiversion,
         'display_name' => "bob brown",
         'contact_type' => 'Individual',
@@ -1282,7 +1278,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
       ));
     $result = civicrm_api('Activity', 'Get', array(
         'version' => 3,
-        'id' => $activityID,
+        'id' => $activity['id'],
         'return.assignee_contact_id' => 1,
         'api.contact.get' => array('api.pledge.get' => 1),
       ));
