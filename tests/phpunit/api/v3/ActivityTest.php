@@ -44,8 +44,8 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_ActivityTest extends CiviUnitTestCase {
   protected $_params;
   protected $_params2;
-  protected $_entity;
-  protected $_apiversion;
+  protected $_entity = 'activity';
+  protected $_apiversion = 3;
   protected $test_activity_type_value;
 
   /**
@@ -55,8 +55,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
    *  and redirect stdin to a temporary file
    */
   public function setUp() {
-    $this->_apiversion = 3;
-    $this->_entity = 'activity';
     //  Connect to the database
     parent::setUp();
     $tablesToTruncate = array(
@@ -124,6 +122,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $tablesToTruncate = array(
       'civicrm_contact',
       'civicrm_activity',
+      'civicrm_activity_target',
+      'civicrm_activity_assignment',
     );
     $this->quickCleanup($tablesToTruncate, TRUE);
     civicrm_api('option_value', 'delete', array('version' => 3, 'id' => $this->test_activity_type_id));
@@ -717,6 +717,45 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
   /*
      * test that get functioning does filtering
      */
+  function testGetStatusID() {
+    $params = array(
+      'source_contact_id' => 17,
+      'subject' => 'Make-it-Happen Meeting',
+      'activity_date_time' => '20110316',
+      'duration' => 120,
+      'location' => 'Pensulvania',
+      'details' => 'a test activity',
+      'status_id' => 1,
+      'activity_name' => 'Test activity type',
+      'version' => $this->_apiversion,
+      'priority_id' => 1,
+    );
+    civicrm_api('Activity', 'Create', $params);
+    $result = civicrm_api('Activity', 'Get', array(
+      'version' => 3, 
+      'activity_status_id' => '1'));
+    $this->assertEquals(1, $result['count'], 'one activity of status 1 should exist');
+
+    $result = civicrm_api('Activity', 'Get', array(
+      'version' => 3, 
+      'status_id' => '1'));
+    $this->assertEquals(1, $result['count'], 'status_id should also work');
+    
+    $result = civicrm_api('Activity', 'Get', array(
+      'version' => 3, 
+      'activity_status_id' => '2'));
+    $this->assertEquals(0, $result['count'], 'No activities of status 1 should exist');
+     $result = civicrm_api('Activity', 'Get', array(
+      'version' => 3, 
+      'status_id' => '2'));
+    $this->assertEquals(0, $result['count'], 'No activities of status 1 should exist');
+ 
+    
+ }
+  
+  /*
+     * test that get functioning does filtering
+     */
   function testGetFilterMaxDate() {
     $params = array(
       'source_contact_id' => 17,
@@ -1092,11 +1131,15 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $result = civicrm_api('activity', 'create', $params);
     $activityId = $result['id'];
     $this->assertAPISuccess($result);
-    $result = civicrm_api($this->_entity, 'get', array('return.assignee_contact_id' => 1, 'return.target_contact_id' => 1, 'version' => 3, 'id' => $result['id']));
-
+    $getParams = array(
+      'return.assignee_contact_id' => 1,
+      'return.target_contact_id' => 1, 
+      'version' => 3, 
+      'id' => $activityId,
+    );
+    $result = civicrm_api($this->_entity, 'get',$getParams );
     $assignee = $result['values'][$result['id']]['assignee_contact_id'];
     $target = $result['values'][$result['id']]['target_contact_id'];
-
     $this->assertEquals(2, count($assignee), ' in line ' . __LINE__);
     $this->assertEquals(1, count($target), ' in line ' . __LINE__);
     $this->assertEquals(TRUE, in_array($contact1, $assignee), ' in line ' . __LINE__);
