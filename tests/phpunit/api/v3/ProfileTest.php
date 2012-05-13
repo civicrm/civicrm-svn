@@ -12,7 +12,8 @@ require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
  *  @package   CiviCRM
  */
 class api_v3_ProfileTest extends CiviUnitTestCase {
-  protected $_apiversion; function get_info() {
+  protected $_apiversion; 
+  function get_info() {
     return array(
       'name' => 'Profile Test',
       'description' => 'Test all profile API methods.',
