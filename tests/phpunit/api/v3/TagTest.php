@@ -27,10 +27,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
-require_once 'api/v3/Tag.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_TagTest extends CiviUnitTestCase {
   protected $_apiversion; function setUp() {
@@ -227,8 +223,7 @@ class api_v3_TagTest extends CiviUnitTestCase {
    * Test civicrm_tag_delete with wrong tag id type.
    */
   function testDeleteWrongParams() {
-    $params = array('tag_id' => 'incorrect value');
-    $result = civicrm_api('tag', 'delete', $tag);
+    $result = civicrm_api('tag', 'delete', 'tyttyd');
     $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals('Input variable `params` is not an array', $result['error_message'], 'In line ' . __LINE__);
   }
