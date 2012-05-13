@@ -142,22 +142,22 @@ class api_v3_AddressTest extends CiviUnitTestCase {
    * Test civicrm_address_get - success expected.
    */
   public function testGetAddress() {
-    $result = civicrm_api('address', 'create', $this->_params);
-    $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
+    $address = civicrm_api('address', 'create', $this->_params);
+    $this->assertAPISuccess($address, 'In line ' . __LINE__);
 
     $params = array(
-      'contact_id' => $address['id'],
+      'contact_id' => $address['contact_id'],
       'address' => $address['values'][$address['id']]['address'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('Address', 'Get', ($params));
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     civicrm_api('Address', 'delete', array('version' => 3, 'id' => $result['id']));
-    $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
-    $this->assertEquals($address['values'][$address['id']]['location_type_id'], $result['values'][$tag['id']]['location_type_id'], 'In line ' . __LINE__);
-    $this->assertEquals($address['values'][$address['id']]['address_type_id'], $result['values'][$tag['id']]['address_type_id'], 'In line ' . __LINE__);
-    $this->assertEquals($address['values'][$address['id']]['is_primary'], $result['values'][$tag['id']]['is_primary'], 'In line ' . __LINE__);
-    $this->assertEquals($address['values'][$address['id']]['address'], $result['values'][$tag['id']]['address'], 'In line ' . __LINE__);
+    $this->assertAPISuccess($result, 'In line ' . __LINE__);
+    $this->assertEquals($address['values'][$address['id']]['location_type_id'], $result['values'][$address['id']]['location_type_id'], 'In line ' . __LINE__);
+    $this->assertEquals($address['values'][$address['id']]['address_type_id'], $result['values'][$address['id']]['address_type_id'], 'In line ' . __LINE__);
+    $this->assertEquals($address['values'][$address['id']]['is_primary'], $result['values'][$address['id']]['is_primary'], 'In line ' . __LINE__);
+    $this->assertEquals($address['values'][$address['id']]['address'], $result['values'][$address['id']]['address'], 'In line ' . __LINE__);
   }
 
   /**
