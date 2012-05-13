@@ -143,8 +143,6 @@ function civicrm_api3_contact_create($params) {
   }
 
   return civicrm_api3_create_success($values, $params, 'Contact', 'create');
-
-  return civicrm_api3_contact_update($params, $create_new);
 }
 
 /*
@@ -355,7 +353,7 @@ function _civicrm_api3_contact_check_params(&$params, $dupeCheck = TRUE) {
       $dedupeParams['check_permission'] = $params['check_permission'];
     }
 
-    $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Strict', array(), $dedupeRuleGroupID));
+    $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Strict', array()));
 
     if ($ids != NULL) {
       throw new Exception("Found matching contacts: $ids");
