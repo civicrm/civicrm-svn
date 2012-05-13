@@ -77,7 +77,9 @@ function civicrm_api3_pledge_create($params) {
  */
 function civicrm_api3_pledge_delete($params) {
   if (CRM_Pledge_BAO_Pledge::deletePledge($params['id'])) {
-    return civicrm_api3_create_success(array($pledgeID => $params['id']), $params, 'pledge', 'delete');
+    return civicrm_api3_create_success(array(
+      'id' => $params['id']
+    ), $params, 'pledge', 'delete');
   }
   else {
     return civicrm_api3_create_error('Could not delete pledge');
