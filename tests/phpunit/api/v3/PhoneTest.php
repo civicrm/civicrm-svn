@@ -131,8 +131,8 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
    * Test civicrm_address_get - success expected.
    */
   public function testGet() {
-    $result = civicrm_api('phone', 'create', $this->_params);
-    $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
+    $phone = civicrm_api('phone', 'create', $this->_params);
+    $this->assertAPISuccess($phone, 'In line ' . __LINE__);
 
     $params = array(
       'contact_id' => $phone['id'],
@@ -142,10 +142,10 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
     $result = civicrm_api('Phone', 'Get', ($params));
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
-    $this->assertEquals($phone['values'][$phone['id']]['location_type_id'], $result['values'][$tag['id']]['location_type_id'], 'In line ' . __LINE__);
-    $this->assertEquals($phone['values'][$phone['id']]['phone_type_id'], $result['values'][$tag['id']]['phone_type_id'], 'In line ' . __LINE__);
-    $this->assertEquals($phone['values'][$phone['id']]['is_primary'], $result['values'][$tag['id']]['is_primary'], 'In line ' . __LINE__);
-    $this->assertEquals($phone['values'][$phone['id']]['phone'], $result['values'][$tag['id']]['phone'], 'In line ' . __LINE__);
+    $this->assertEquals($phone['values'][$phone['id']]['location_type_id'], $result['values'][$phone['id']]['location_type_id'], 'In line ' . __LINE__);
+    $this->assertEquals($phone['values'][$phone['id']]['phone_type_id'], $result['values'][$phone['id']]['phone_type_id'], 'In line ' . __LINE__);
+    $this->assertEquals($phone['values'][$phone['id']]['is_primary'], $result['values'][$phone['id']]['is_primary'], 'In line ' . __LINE__);
+    $this->assertEquals($phone['values'][$phone['id']]['phone'], $result['values'][$phone['id']]['phone'], 'In line ' . __LINE__);
   }
 
   ///////////////// civicrm_phone_create methods
@@ -176,7 +176,7 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
     $check = civicrm_api('phone', 'getcount', array(
         'version' => 3,
         'is_primary' => 1,
-        'id' => $phone['id'],
+        'id' => $phone1['id'],
       ));
     $this->assertEquals(1, $check);
   }
