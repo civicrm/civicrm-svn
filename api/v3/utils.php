@@ -1274,7 +1274,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
       $session = &CRM_Core_Session::singleton();
       $params[$fieldname] = $session->get('userID');
     }
-    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo)) {
+    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
       $constant = $fieldInfo['options'];
       if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
         throw new Exception("$fieldname is not valid");
@@ -1307,7 +1307,7 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
       }
     }
 
-    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo)) {
+    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
       $constant = $fieldInfo['options'];
       $enum = CRM_Utils_Array::value('enumValues', $fieldInfo);
       if (empty($constant) && !empty($enum)) {
