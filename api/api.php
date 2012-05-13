@@ -480,7 +480,7 @@ function _civicrm_api_replace_variables($entity, $action, &$params, &$parentResu
  */
 function _civicrm_api_get_entity_name_from_camel($entity) {
   if ($entity == strtolower($entity)) {
-    $entity = $entity;
+    return $entity;
   }
   else {
     $entity = ltrim(strtolower(str_replace('U_F',
@@ -490,6 +490,18 @@ function _civicrm_api_get_entity_name_from_camel($entity) {
         )), '_');
   }
   return $entity;
+}
+/*
+ * Having a DAO object find the entity name
+ * @param object $bao DAO being passed in
+ */
+function _civicrm_api_get_entity_name_from_dao($bao){ 
+  $daoName = str_replace("BAO", "DAO", get_class($bao));
+  $dao = array();
+  require ('CRM/Core/DAO/.listAll.php');
+  $daos = array_flip($dao);
+  return _civicrm_api_get_entity_name_from_camel($daos[$daoName]);
+  	
 }
 
 /*
