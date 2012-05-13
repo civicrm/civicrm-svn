@@ -53,9 +53,17 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
     $excludeTypes = array('Organization', 'Household', 'Participant', 'Activity');
 
     $excludeProfiles = CRM_Core_BAO_UFGroup::getProfiles($excludeTypes);
-
+    
     foreach ($excludeProfiles as $key => $value) {
-      if (in_array($value, $profiles)) {
+      if (array_key_exists( $key, $profiles)) {
+        unset($profiles[$key]);
+      }
+    }
+
+    // exclude batch profiles
+    $batchProfiles = CRM_Core_BAO_UFGroup::getBatchProfiles();
+    foreach ($batchProfiles as $key => $value) {
+      if (array_key_exists($key, $profiles)) {
         unset($profiles[$key]);
       }
     }

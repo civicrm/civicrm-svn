@@ -3245,5 +3245,24 @@ SELECT  group_id
     }
     return FALSE;
   }
+  
+  /**
+   * get profiles used for batch entry
+   *
+   * @return array profileIds profile ids
+   * @static
+   */
+  static function getBatchProfiles() {
+    $query = "SELECT id 
+      FROM civicrm_uf_group 
+      WHERE name IN ('contribution_batch_entry', 'membership_batch_entry')";
+    $dao = CRM_Core_DAO::executeQuery( $query );
+    $profileIds = array();
+    while( $dao->fetch() ) {
+      $profileIds[$dao->id] = $dao->id;
+    }
+    return $profileIds;
+  }
+
 }
 
