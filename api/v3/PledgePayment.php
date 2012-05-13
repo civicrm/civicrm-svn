@@ -106,7 +106,7 @@ function _civicrm_api3_pledge_payment_create_spec(&$params) {
 function civicrm_api3_pledge_payment_delete($params) {
 
   if (CRM_Pledge_BAO_PledgePayment::del($params['id'])) {
-    return civicrm_api3_create_success(array('id' => $id), $params);
+    return civicrm_api3_create_success(array('id' => $params['id']), $params,'pledge_payment','delete');
   }
   else {
     return civicrm_api3_create_error('Could not delete payment');
