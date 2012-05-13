@@ -152,11 +152,12 @@ class api_v3_EventTest extends CiviUnitTestCase {
   }
 
   function testGetEventByEventTitle() {
+
     $params = array(
-      'title' => 'Annual CiviCRM meet',
+      'event_title' => 'Annual CiviCRM meet',
       'version' => $this->_apiversion,
     );
-
+    
     $result = civicrm_api('event', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals(1, $result['count']);
@@ -171,7 +172,37 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $result = civicrm_api('Event', 'Get', $params);
     $this->assertEquals(0, $result['count']);
   }
+  function testGetEventByIdSort() {
+  	$params = array(
+      'return.sort' => 'id ASC',
+      'return.max_results' => 1,
+      'version' => $this->_apiversion,
+    );
+    $result = civicrm_api('Event', 'Get', $params);
+    $this->assertEquals(1, $result['id'], ' in line ' . __LINE__);
+    $params = array(
+      'options' => array(
+        'sort' => 'id DESC',
+        'limit' => 1,
+      ),
+      'version' => $this->_apiversion,
+    );
 
+    $result = civicrm_api('Event', 'Get', $params);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
+    $this->assertEquals(2, $result['id'], ' in line ' . __LINE__);
+    $params = array(
+      'options' => array(
+        'sort' => 'id ASC',
+        'limit' => 1,
+      ),
+      'version' => $this->_apiversion,
+    );
+    $result = civicrm_api('Event', 'Get', $params);
+    $this->assertEquals(1, $result['id'], ' in line ' . __LINE__);
+
+   
+  }
   /*
    * Getting the id back of an event.
    * Does not work yet, bug in API
@@ -522,7 +553,12 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $result      = civicrm_api('event', 'getfields', $params);
     $this->assertEquals(1, $result['values']['title']['api.required'], 'in line ' . __LINE__);
   }
-
+  function testgetfieldsGet() {
+    $description = "demonstrate use of getfields to interogate api";
+    $params      = array('version' => 3, 'action' => 'get');
+    $result      = civicrm_api('event', 'getfields', $params);
+    $this->assertEquals('title', $result['values']['event_title']['name'], 'in line ' . __LINE__);
+  }
   function testgetfieldsDelete() {
     $description = "demonstrate use of getfields to interogate api";
     $params      = array('version' => 3, 'action' => 'delete');
