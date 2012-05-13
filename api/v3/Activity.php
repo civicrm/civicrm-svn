@@ -59,23 +59,12 @@ function civicrm_api3_activity_create($params) {
     $params['id'] = $params['activity_id'];
   }
 
-  if (CRM_Utils_Array::value('id', $params) &&
-    !CRM_Utils_Array::value('source_contact_id', $params)
-  ) {
-    $oldActivityParams = array('id' => $params['id']);
-    CRM_Activity_BAO_Activity::retrieve($oldActivityParams, $oldActivityValues);
-    if ($oldActivityValues['source_contact_id']) {
-      $params['source_contact_id'] = $oldActivityValues['source_contact_id'];
-    }
-  }
-
   if (!CRM_Utils_Array::value('id', $params)) {
     // an update does not require any mandatory parameters
-    civicrm_api3_verify_mandatory($params,
+    civicrm_api3_verify_one_mandatory($params,
       NULL,
       array(
-        'source_contact_id',
-        array('activity_name', 'activity_type_id', 'activity_label'),
+        'activity_name', 'activity_type_id', 'activity_label',
       )
     );
   }
@@ -330,7 +319,7 @@ SELECT  count(*)
   FROM  civicrm_contact
  WHERE  id IN (' . implode(', ', $contactIds) . ' )';
     if (count($contactIds) != CRM_Core_DAO::singleValueQuery($sql)) {
-      return civicrm_api3_create_error('Invalid ' . ucfirst($key) . ' Contact Id');
+      return civicrm_api3_create_error('Invalid ' .  ' Contact Id');
     }
   }
 
