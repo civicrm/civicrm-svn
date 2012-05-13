@@ -269,7 +269,10 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $params = array_merge($this->_params, $params);
     $pledge = civicrm_api('Pledge', 'Create', $params);
     //ensure that correct number of payments created & last payment has the right date
-    $payments = civicrm_api('PledgePayment', 'Get', array('version' => 3, 'pledge_id' => $result['id'], 'sequential' => 1));
+    $payments = civicrm_api('PledgePayment', 'Get', array(
+      'version' => 3, 
+      'pledge_id' => $pledge['id'], 
+      'sequential' => 1));
     $this->assertEquals($payments['is_error'], 0, 'In line ' . __LINE__);
     $this->assertEquals($payments['count'], 5, 'In line ' . __LINE__);
     require_once 'CRM/Utils/Date.php';
@@ -299,7 +302,11 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     unset($params['pledge_status_id']);
     $pledge = civicrm_api('Pledge', 'Create', $params);
     //ensure that correct number of payments created & last payment has the right date
-    $payments = civicrm_api('PledgePayment', 'Get', array('version' => 3, 'pledge_id' => $result['id'], 'sequential' => 1));
+    $payments = civicrm_api('PledgePayment', 'Get', array(
+      'version' => 3, 
+      'pledge_id' => $pledge['id'], 
+      'sequential' => 1
+    ));
     $this->assertEquals($payments['is_error'], 0, 'In line ' . __LINE__);
     $this->assertEquals(1, $payments['count'], 'In line ' . __LINE__);
     $this->assertEquals(2, $payments['values'][0]['status_id'], 'In line ' . __LINE__);
