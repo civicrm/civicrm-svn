@@ -1087,8 +1087,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
       "Error message: " . CRM_Utils_Array::value('error_message', $result)
     );
 
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-
     $result = civicrm_api($this->_entity, 'get', array('return.custom_' . $ids['custom_field_id'] => 1, 'version' => 3, 'id' => $result['id']));
     $this->assertEquals("Updated my test data", $result['values'][$result['id']]['custom_' . $ids['custom_field_id']], ' in line ' . __LINE__);
   }
