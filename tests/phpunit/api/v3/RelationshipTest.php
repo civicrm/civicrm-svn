@@ -27,14 +27,7 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
-
-require_once 'api/v3/Relationship.php';
-require_once 'api/v3/CustomGroup.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once ('api/api.php');
 
 /**
  * Class contains api test cases for "civicrm_relationship"
@@ -776,8 +769,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'id' => $relationship['id'],
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('relationship', 'delete', $params);
-    $this->relationshipTypeDelete($relTypeID);
+    $result = civicrm_api('relationship', 'delete', $params);
+    $this->relationshipTypeDelete($this->_relTypeID);
   }
 
   /**
@@ -809,8 +802,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'id' => $relationship['result']['id'],
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('relationship', 'delete', $params);
-    $this->relationshipTypeDelete($relTypeID);
+    $result = civicrm_api('relationship', 'delete', $params);
+    $this->relationshipTypeDelete($this->_relTypeID);
   }
 }
 

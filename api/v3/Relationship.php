@@ -38,9 +38,6 @@
  *
  */
 
-require_once 'CRM/Contact/BAO/Relationship.php';
-require_once 'CRM/Contact/BAO/RelationshipType.php';
-
 /**
  * Add or update a relationship
  *
@@ -59,7 +56,6 @@ function civicrm_api3_relationship_create($params) {
   // check entities exist
   $orig_values = _civicrm_api3_relationship_check_params($params);
   $values = array();
-  require_once 'CRM/Contact/BAO/Relationship.php';
   _civicrm_api3_relationship_format_params($params, $values);
   $ids = array();
   require_once 'CRM/Core/Action.php';
@@ -111,10 +107,10 @@ function _civicrm_api3_relationship_create_spec(&$params) {
  *
  * @param  array $params
  *
- * @return boolean  true if success, else false
+ * @return array API Result Array
+ * {@getfields relationship_delete}
  * @example RelationshipDelete.php Delete Example
  *
- * {@getfields relationship_delete}
  * @static void
  * @access public
  */
@@ -241,7 +237,6 @@ function _civicrm_api3_relationship_format_params($params, &$values) {
 
         // execute for both relationship_type and relationship_type_id
         $relation = $relationTypes[$params['relationship_type_id']];
-        require_once 'CRM/Contact/BAO/Contact.php';
         if ($relation['contact_type_a'] &&
           $relation['contact_type_a'] != CRM_Contact_BAO_Contact::getContactType($params['contact_id_a'])
         ) {
@@ -274,7 +269,6 @@ function _civicrm_api3_relationship_check_params(&$params) {
 
   // check params for validity of Relationship id
   if (CRM_Utils_Array::value('id', $params)) {
-    require_once 'CRM/Contact/BAO/Relationship.php';
     $relation = new CRM_Contact_BAO_Relationship();
     $relation->id = $params['id'];
     if (!$relation->find(TRUE)) {
