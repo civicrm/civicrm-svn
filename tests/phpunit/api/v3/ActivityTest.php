@@ -429,8 +429,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     );
 
     $this->assertEquals($result['values'][$result['id']]['source_contact_id'], 17, 'in line ' . __LINE__);
-
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $result = &civicrm_api('activity', 'get', array('id' => $result['id'], 'version' => $this->_apiversion));
     $this->assertEquals($result['values'][$result['id']]['source_contact_id'], 17, 'in line ' . __LINE__);
 
