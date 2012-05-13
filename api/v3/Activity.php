@@ -55,9 +55,6 @@ require_once 'CRM/Core/DAO/OptionGroup.php';
  *
  */
 function civicrm_api3_activity_create($params) {
-  if (CRM_Utils_Array::value('activity_id', $params)) {
-    $params['id'] = $params['activity_id'];
-  }
 
   if (!CRM_Utils_Array::value('id', $params)) {
     // an update does not require any mandatory parameters
@@ -217,7 +214,6 @@ function _civicrm_api3_activity_create_spec(&$params) {
  * {@example ActivityGet.php 0}
  */
 function civicrm_api3_activity_get($params) {
-
   if (!empty($params['contact_id'])) {
     $activities = CRM_Activity_BAO_Activity::getContactActivity($params['contact_id']);
     //BAO function doesn't actually return a contact ID - hack api for now & add to test so when api re-write happens it won't get missed
@@ -367,15 +363,6 @@ SELECT  count(*)
     return civicrm_api3_create_error('Invalid Activity Type ID');
   }
 
-
-  /*
-     * @todo unique name for status_id is activity status id - status id won't be supported in v4
-     */
-
-
-  if (!empty($params['status_id'])) {
-    $params['activity_status_id'] = $params['status_id'];
-  }
   // check for activity status is passed in
   if (isset($params['activity_status_id'])) {
     require_once "CRM/Core/PseudoConstant.php";
