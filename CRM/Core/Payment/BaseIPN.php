@@ -54,8 +54,8 @@ class CRM_Core_Payment_BaseIPN {
     $contribution = new CRM_Contribute_DAO_Contribution();
     $contribution->id = $ids['contribution'];
     if (!$contribution->find(TRUE)) {
-      CRM_Core_Error::debug_log_message("Could not find contribution record: $contributionID");
-      echo "Failure: Could not find contribution record for $contributionID<p>";
+      CRM_Core_Error::debug_log_message("Could not find contribution record: ". $contribution->id);
+      echo "Failure: Could not find contribution record for {$contribution->id}<p>";
       return FALSE;
     }
     $contribution->receive_date = CRM_Utils_Date::isoToMysql($contribution->receive_date);
@@ -140,10 +140,14 @@ class CRM_Core_Payment_BaseIPN {
 
   function failed(&$objects, &$transaction) {
     $contribution = &$objects['contribution'];
-    $memberships = &$objects['membership'];
-    if (is_numeric($memberships)) {
-      $memberships = array($objects['membership']);
-    }
+    $memberships = array();
+    if(CRM_Utils_Array::value('membership', $objects)){
+      $memberships = &$objects['membership'];
+      if (is_numeric($memberships)) {
+        $memberships = array($objects['membership']);
+      }
+    }  
+
     $participant = &$objects['participant'];
 
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
