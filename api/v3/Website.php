@@ -49,6 +49,7 @@ require_once 'CRM/Core/BAO/Website.php';
  *
  * @return array of newly created website property values.
  * @access public
+ * @todo convert to using basic create - BAO function non-std
  */
 function civicrm_api3_website_create($params) {
   $websiteBAO = CRM_Core_BAO_Website::add($params);
@@ -76,12 +77,12 @@ function _civicrm_api3_website_create_spec(&$params) {
  * Deletes an existing Website
  *
  * @param  array  $params
- * @example WebsiteDelete.php Std Delete Example
- * {@example WebsiteDelete.php 0}
  * {@getfields website_delete}
- *
- * @return boolean | error  true if successfull, error otherwise
+ * @example WebsiteDelete.php Std Delete Example
+ * 
+ * @return array API result Array
  * @access public
+ * @todo convert to using Basic delete - BAO function non standard
  */
 function civicrm_api3_website_delete($params) {
   $websiteID = CRM_Utils_Array::value('id', $params);
@@ -114,25 +115,6 @@ function civicrm_api3_website_delete($params) {
  * @access public
  */
 function civicrm_api3_website_get($params) {
-  $websiteBAO = new CRM_Core_BAO_Website();
-  $fields = array_keys($websiteBAO->fields());
-
-  foreach ($fields as $name) {
-    if (array_key_exists($name, $params)) {
-      $websiteBAO->$name = $params[$name];
-    }
-  }
-
-  if ($websiteBAO->find()) {
-    $websites = array();
-    while ($websiteBAO->fetch()) {
-      CRM_Core_DAO::storeValues($websiteBAO, $website);
-      $websites[$websiteBAO->id] = $website;
-    }
-    return civicrm_api3_create_success($websites, $params, $websiteBAO);
-  }
-  else {
-    return civicrm_api3_create_success(array(), $params, 'website', 'get', $websiteBAO);
-  }
+  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 

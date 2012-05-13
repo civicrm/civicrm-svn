@@ -8,9 +8,7 @@
 function website_delete_example(){
 $params = array( 
   'version' => 3,
-  'contact_id' => 1,
-  'url' => 'website.com',
-  'website_type_id' => 1,
+  'id' => 1,
 );
 
   require_once 'api/api.php';

@@ -13,7 +13,7 @@ class api_v3_WebsiteTest extends CiviUnitTestCase {
     $this->_entity     = 'website';
     $this->_apiversion = 3;
     $this->_contactID  = $this->organizationCreate();
-    $this->params      = array(
+    $this->params  = array(
       'version' => 3,
       'contact_id' => $this->_contactID,
       'url' => 'website.com',
@@ -21,7 +21,12 @@ class api_v3_WebsiteTest extends CiviUnitTestCase {
     );
   }
 
-  function tearDown() {}
+  function tearDown() {
+    $this->quickCleanup(array(
+      'civicrm_website',
+      'civicrm_contact'
+    ));
+  }
 
   public function testCreateWebsite() {
     $result = civicrm_api($this->_entity, 'create', $this->params);
@@ -44,9 +49,10 @@ class api_v3_WebsiteTest extends CiviUnitTestCase {
 
   public function testDeleteWebsite() {
     $result = civicrm_api($this->_entity, 'create', $this->params);
-    $entity = civicrm_api($this->_entity, 'get', $this->params);
-    $result = civicrm_api($this->_entity, 'delete', array('version' => 3, 'id' => $entity['id']));
-    $this->documentMe($this->params, $result, __FUNCTION__, __FILE__);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+    $deleteParams = array('version' => 3, 'id' => $result['id']);
+    $result = civicrm_api($this->_entity, 'delete', $deleteParams);
+    $this->documentMe($deleteParams, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
     $checkDeleted = civicrm_api($this->_entity, 'get', array(
       'version' => 3,
