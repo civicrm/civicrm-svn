@@ -554,9 +554,14 @@ function _civicrm_api3_apply_options_to_dao(&$params, &$dao, $defaults = array(
  * build fields array. This is the array of fields as it relates to the given DAO
  * returns unique fields as keys by default but if set but can return by DB fields
  */
-function _civicrm_api3_build_fields_array(&$dao, $unique = TRUE) {
-  $fields = $dao->fields();
+function _civicrm_api3_build_fields_array(&$bao, $unique = TRUE) {
+  $fields = $bao->fields();
   if ($unique) {
+  	if(!CRM_Utils_Array::value('id', $fields)){
+     $entity = _civicrm_api_get_entity_name_from_dao($bao);
+     $fields['id'] = $fields[$entity . '_id'];
+     unset($fields[$entity . '_id']);
+  	}
     return $fields;
   }
 
@@ -771,7 +776,7 @@ function _civicrm_api3_api_check_permission($entity, $action, &$params, $throw =
  */
 function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE, $entity = "") {
   $bao = new $bao_name();
-  _civicrm_api3_dao_set_filter($bao, $params, FALSE);
+  _civicrm_api3_dao_set_filter($bao, $params, TRUE);
   if ($returnAsSuccess) {
     return civicrm_api3_create_success(_civicrm_api3_dao_to_array($bao, $params, FALSE, $entity), $params, $bao);
   }
