@@ -27,33 +27,56 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
-
-require_once 'api/v3/MembershipPayment.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/MembershipType.php';
-require_once 'api/v3/MembershipStatus.php';
-require_once 'CRM/Member/BAO/MembershipType.php';
-require_once 'CRM/Member/BAO/Membership.php';
+
 class api_v3_MembershipPaymentTest extends CiviUnitTestCase {
-  protected $_apiversion; function setUp() {
+  protected $_apiversion = 3; 
+  protected $_contactID;
+  protected $_contributionTypeID;
+  protected $_membershipTypeID;
+  protected $_membershipStatusID;
+  protected $_contribution = array();
+  function setUp() {
     parent::setUp();
-    $this->_apiversion = 3;
+
     $this->_contactID = $this->organizationCreate(NULL);
     $this->_contributionTypeID = $this->contributionTypeCreate();
-    $this->_membershipTypeID = $this->membershipTypeCreate($this->_contactID);
+    $this->_membershipTypeID = $this->membershipTypeCreate($this->_contactID,$this->_contributionTypeID);
     $this->_membershipStatusID = $this->membershipStatusCreate('test status');
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, TRUE, 'name');
+        $params = array(
+      'contact_id' => $this->_contactID,
+      'currency' => 'USD',
+      'contribution_type_id' => $this->_contributionTypeID,
+      'contribution_status_id' => 1,
+      'contribution_page_id' => NULL,
+      'payment_instrument_id' => 1,
+      'source' => 'STUDENT',
+      'receive_date' => '20080522000000',
+      'receipt_date' => '20080522000000',
+      'id' => NULL,
+      'total_amount' => 200.00,
+      'trxn_id' => '22ereerwww322323',
+      'invoice_id' => '22ed39c9e9ee6ef6031621ce0eafe6da70',
+      'thankyou_date' => '20080522',
+      'version' => 3,
+    );
+    $this->_contribution = civicrm_api('contribution','create', $params);
   }
 
   function tearDown() {
+    $this->quickCleanup(
+      array(
+        'civicrm_contact',
+        'civicrm_contribution',
+        'civicrm_membership',
+        'civicrm_membership_payment',
+        'civicrm_membership_status',
+        'civicrm_membership_type',
+
+      )
+    );
     $this->contributionTypeDelete();
-    $params = array('id' => $this->_membershipTypeID);
-    $this->membershipTypeDelete($params);
-    $this->membershipStatusDelete($this->_membershipStatusID);
-    civicrm_api('contact', 'delete', array('version' => API_LATEST_VERSION, 'id' => $this->_contactID));
   }
 
   ///////////////// civicrm_membership_payment_create methods
@@ -74,25 +97,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase {
     $contactId = $this->individualCreate(NULL);
 
 
-    $params = array(
-      'contact_id' => $contactId,
-      'currency' => 'USD',
-      'contribution_type_id' => $this->_contributionTypeID,
-      'contribution_status_id' => 1,
-      'contribution_page_id' => NULL,
-      'payment_instrument_id' => 1,
-      'source' => 'STUDENT',
-      'receive_date' => '20080522000000',
-      'receipt_date' => '20080522000000',
-      'id' => NULL,
-      'total_amount' => 200.00,
-      'trxn_id' => '22ereerwww322323',
-      'invoice_id' => '22ed39c9e9ee6ef6031621ce0eafe6da70',
-      'thankyou_date' => '20080522',
-    );
 
-    require_once 'CRM/Contribute/BAO/Contribution.php';
-    $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
     $params = array(
       'contact_id' => $contactId,
       'membership_type_id' => $this->_membershipTypeID,
@@ -109,16 +114,15 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase {
     $this->assertAPISuccess($membership, "membership created in line " . __LINE__);
 
     $params = array(
-      'contribution_id' => $contribution->id,
+      'contribution_id' => $this->_contribution['id'],
       'membership_id' => $membership['id'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('membership_payment', 'create', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals($result['values'][$result['id']]['membership_id'], $membership['id'], 'Check Membership Id in line ' . __LINE__);
-    $this->assertEquals($result['values'][$result['id']]['contribution_id'], $contribution->id, 'Check Contribution Id in line ' . __LINE__);
-    $this->contributionDelete($contribution->id);
-    $this->membershipDelete($membership['id']);
+    $this->assertEquals($result['values'][$result['id']]['contribution_id'], $this->_contribution['id'], 'Check Contribution Id in line ' . __LINE__);
+
   }
 
 
@@ -149,20 +153,6 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase {
     $contactId = $this->individualCreate(NULL);
     $params = array(
       'contact_id' => $contactId,
-      'currency' => 'USD',
-      'contribution_type_id' => $this->_contributionTypeID,
-      'contribution_status_id' => 1,
-      'contribution_page_id' => NULL,
-      'payment_instrument_id' => 1,
-      'id' => NULL,
-      'total_amount' => 200.00,
-      'version' => $this->_apiversion,
-    );
-
-    require_once 'CRM/Contribute/BAO/Contribution.php';
-    $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
-    $params = array(
-      'contact_id' => $contactId,
       'membership_type_id' => $this->_membershipTypeID,
       'source' => 'Payment',
       'is_override' => 1,
@@ -173,19 +163,17 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase {
     $membership = CRM_Member_BAO_Membership::create($params, $ids);
 
     $params = array(
-      'contribution_id' => $contribution->id,
+      'contribution_id' => $this->_contribution['id'],
       'membership_id' => $membership->id,
       'version' => $this->_apiversion,
     );
-    $Create = civicrm_api('membership_payment', 'create', $params);
+    civicrm_api('membership_payment', 'create', $params);
 
     $result = civicrm_api('membership_payment', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals($result['values'][$result['id']]['membership_id'], $membership->id, 'Check Membership Id');
-    $this->assertEquals($result['values'][$result['id']]['contribution_id'], $contribution->id, 'Check Contribution Id');
+    $this->assertEquals($result['values'][$result['id']]['contribution_id'], $this->_contribution['id'], 'Check Contribution Id');
 
-    $this->contributionDelete($contribution->id);
-    $this->membershipDelete($membership->id);
   }
 }
 
