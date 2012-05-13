@@ -55,13 +55,12 @@ function modifyLinkAttributes( recordID, op, recordBAO, reloadPage, rowId ) {
 
     //change title
     cj( fieldID ).attr( 'title', newTitle );
-
     //need to update js - change op from js to new allow operation. 
     //set updated js
     var newAction = 'enableDisable( ' + recordID    + ',"'  + 
                                         recordBAO   + '","' + 
-                                        operation   + '","' + 
-                                        reloadPage  + '","' + 
+                                        operation   + '",' + 
+                                        reloadPage  + ',"' + 
                                         rowId       + '"'   + ' );';
     cj( fieldID ).attr("onClick", newAction );
     
