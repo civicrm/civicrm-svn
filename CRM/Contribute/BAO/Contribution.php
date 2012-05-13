@@ -1923,11 +1923,18 @@ SELECT source_contact_id
    * In the first instance we are just moving functionality from BASEIpn -
    * see http://issues.civicrm.org/jira/browse/CRM-9996
    *
+   * @param array $input Input as delivered from Payment Processor
+   * @param array $ids Ids as Loaded by Payment Processor
+   * @param boolean $required Is Payment processor / contribution page required
+   * @param boolean $loadAll - load all related objects - even where id not passed in? (allows API to call this)
    * Note that the unit test for the BaseIPN class tests this function
    */
-  function loadRelatedObjects(&$input, &$ids, $required = FALSE) {
+  function loadRelatedObjects(&$input, &$ids, $required = FALSE, $loadAll = false) {
     if (empty($this->_component)) {
       $this->_component = strtolower(CRM_Utils_Array::value('component', $input));
+    }
+    if($loadAll){
+      $ids = array_merge($this->getComponentDetails($this->id),$ids);
     }
     $paymentProcessorID = CRM_Utils_Array::value('paymentProcessor', $ids);
     $contributionType = new CRM_Contribute_BAO_ContributionType();

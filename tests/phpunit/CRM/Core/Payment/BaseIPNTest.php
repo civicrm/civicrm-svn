@@ -70,7 +70,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $paymentProcessorParams['payment_processor_type'] = 'AuthorizeNet';
     $paymentProcessorParams['domain_id'] = 1;
     $paymentProcessorParams['is_active'] = 1;
-    $paymentProcessorParams['is_test'] = 0;
+    $paymentProcessorParams['is_test'] = 1;
     $processorEntity = $this->paymentProcessor->create($paymentProcessorParams);
 
     $this->_processorId = $processorEntity->id;
@@ -94,6 +94,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
 
     $contribution = new CRM_Contribute_BAO_Contribution();
     $contribution->id = $this->_contributionId;
+    $contribution->find(true);
     $this->objects['contribution'] = $contribution;
   }
 
@@ -131,7 +132,25 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $this->assertFalse(empty($this->objects['contributionRecur']), __LINE__);
     $this->assertFalse(empty($this->objects['paymentProcessor']), __LINE__);
   }
-
+  /**
+   * Test the LoadObjects function with recurring membership data
+   *
+   */
+  function testLoadMembershipObjectsLoadAll() {
+    $this->_setUpMembershipObjects();
+    $this->_setUpRecurringContribution();
+    unset($this->ids['membership']);
+    $contribution = new CRM_Contribute_BAO_Contribution();
+    $contribution->id = $this->_contributionId;
+    $contribution->find(true);
+    $contribution->loadRelatedObjects($this->input, $this->ids,  FALSE, true);
+    $this->assertFalse(empty($contribution->_relatedObjects['membership']), 'in line ' . __LINE__);
+    $this->assertArrayHasKey(0, $contribution->_relatedObjects['membership'], 'in line ' . __LINE__);
+    $this->assertTrue(is_a($contribution->_relatedObjects['membership'][0], 'CRM_Member_BAO_Membership'));
+    $this->assertTrue(is_a($contribution->_relatedObjects['contributionType'], 'CRM_Contribute_BAO_ContributionType'));
+    $this->assertFalse(empty($contribution->_relatedObjects['contributionRecur']), __LINE__);
+    $this->assertFalse(empty($contribution->_relatedObjects['paymentProcessor']), __LINE__);
+  }
   /**
    * Test the LoadObjects function with recurring membership data
    *
