@@ -68,7 +68,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
 
       '#default_value' => !empty($this->options['link_to_civicrm_event']),
     );
-    
+
     $form['custom_link'] = array(
        '#type' => 'textfield',
        '#title' => t('Custom Link to a Drupal Node'),
@@ -85,16 +85,16 @@ class civicrm_handler_field_event_link extends views_handler_field {
    * Data should be made XSS safe prior to calling this function.
    */
   function render_link($data, $values) {
-    
+
     $link_choice = $this->options['link_to_civicrm_event'];
-    
+
     if ($link_choice == 'custom') {
        $custom_link = $this->options['custom_link'];
      }
 
 
     switch ($link_choice) {
-      
+
     // LINKING TO EVENT PAGE (PUBLICLY ACCESSIBLE)
       case 'page':
            if (user_access('view event info') && $data !== NULL && $data !== '') {
@@ -106,6 +106,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
     // LINKING TO EVENT REGISTRATION PAGE
       case 'registration':
            if (user_access('register for events') && $data !== NULL && $data !== '') {
+	     require_once 'CRM/Core/Config.php';
                 $config = CRM_Core_Config::singleton();
                 if ($config->enable_cart)
                 {
@@ -135,13 +136,13 @@ class civicrm_handler_field_event_link extends views_handler_field {
                                             'civicrm/event/search',
                                             "reset=1&force=1&event={$values->{$this->aliases['id']}}" );
            }
-           
+
     // CUSTOM NODE LINKAGE, GOOD FOR LINKING TO OTHER VIEWS WITH AN ARGUMENT
       case 'custom':
            if ($custom_link !== NULL && $custom_link !== '' && $data !== NULL && $data !== '') {
            return l($data, $custom_link . "{$values->{$this->aliases['id']}}", array('html' => TRUE));
            }
-    
+
     // IF THE OTHER CASES AREN'T IN PLAY, THEN JUST PRINT THE DATA
       default:
               return $data;
