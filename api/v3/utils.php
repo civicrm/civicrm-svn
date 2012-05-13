@@ -393,7 +393,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
               if (empty($criteria[0]) || empty($criteria[1])) {
                 throw new exception("invalid criteria for $operator");
               }
-              $dao->whereAdd(sprintf('%s BETWEEN "%s" AND "%s"', $field, DAO::escapeString($criteria[0]), DAO::escapeString($criteria[1])));
+              $dao->whereAdd(sprintf('%s BETWEEN "%s" AND "%s"', $field, CRM_Core_DAO::escapeString($criteria[0]), CRM_Core_DAO::escapeString($criteria[1])));
               break;
 
             // n-ary operators
