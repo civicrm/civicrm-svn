@@ -45,7 +45,7 @@ function event_getsingle_expectedresult(){
   'is_multiple_registrations' => 0,
   'allow_same_participant_emails' => 0,
   'is_template' => 0,
-  'created_date' => '2012-05-11 22:55:11',
+  'created_date' => '2012-05-13 12:17:16',
   'is_share' => '1',
   'available_places' => 0,
   'is_full' => 1,

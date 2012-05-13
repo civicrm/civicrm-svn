@@ -37,7 +37,7 @@ function survey_get_expectedresult(){
           'max_number_of_contacts' => '12',
           'is_active' => '1',
           'is_default' => 0,
-          'created_date' => '2012-05-11 23:07:54',
+          'created_date' => '2012-05-13 12:22:49',
           'api.survey.delete' => array( 
               'is_error' => 0,
               'version' => 3,

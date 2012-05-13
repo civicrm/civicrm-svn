@@ -3,7 +3,7 @@
 
 
 /*
- 
+ Function demonstrates getting asignee_contact_id & using it to get the contact
  */
 function activity_get_example(){
 $params = array( 

@@ -3,7 +3,7 @@
 
 
 /*
- 
+ Demonstrates use of 'filter' active_only' param
  */
 function membership_get_example(){
 $params = array( 
