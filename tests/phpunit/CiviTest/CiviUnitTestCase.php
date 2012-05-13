@@ -254,7 +254,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       exit;
     }
 
-    unset($query, $query1, $query2);
+    unset($query, $query2, $query3);
   }
 
   public static function setUpBeforeClass() {
@@ -280,9 +280,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     // "initialize" CiviCRM to avoid problems when running single tests
     // FIXME: look at it closer in second stage
-    if (isset($config)) {
-      unset($config);
-    }
 
     // initialize the object once db is loaded
     require_once 'CRM/Core/Config.php';
