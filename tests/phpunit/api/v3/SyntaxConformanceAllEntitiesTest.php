@@ -129,7 +129,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'OptionGroup',
       'Membership',
       'MembershipType',
-      'ParticipantStatusType',
+      
       'MembershipStatus',
       'Group',
       'GroupOrganization',
@@ -148,7 +148,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'ContactType',
       'MailingEventResubscribe',
       'UFGroup',
-      'Survey',
+
       'Activity',
       'Address',
       'Email',
