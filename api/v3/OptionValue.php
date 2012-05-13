@@ -99,6 +99,6 @@ function _civicrm_api3_option_value_create_spec(&$params) {
  * @access public
  */
 function civicrm_api3_option_value_delete($params) {
-  return CRM_Core_BAO_OptionValue::del((int) $params["id"]) ? civicrm_api3_create_success() : civicrm_api3_create_error('Could not delete OptionValue ' . $id);
+  return CRM_Core_BAO_OptionValue::del((int) $params['id']) ? civicrm_api3_create_success() : civicrm_api3_create_error('Could not delete OptionValue ' . $params['id']);
 }
 
