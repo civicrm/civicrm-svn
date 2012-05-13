@@ -38,7 +38,6 @@
  *
  */
 
-require_once 'CRM/Contact/BAO/GroupContact.php';
 
 /**
  * This API will give list of the groups for particular contact
@@ -153,10 +152,12 @@ function civicrm_api3_group_contact_pending($params) {
 
 /**
  *
- * @param <type> $params
- * @param <type> $op
+ * @param array $params
+ * @param string $op
  *
- * @return <type>
+ * @return Array
+ * @todo behaviour is highly non-standard - need to figure out how to make this 'behave' 
+ * & at the very least return IDs & details of the groups created / changed
  */
 function _civicrm_api3_group_contact_common($params, $op = 'Added') {
 
@@ -180,38 +181,43 @@ function _civicrm_api3_group_contact_common($params, $op = 'Added') {
   }
 
   $method = CRM_Utils_Array::value('method', $params, 'API');
-  if ($op == 'Added') {
-    $status = CRM_Utils_Array::value('status', $params, 'Added');
-  }
-  elseif ($op == 'Pending') {
-    $status = CRM_Utils_Array::value('status', $params, 'Pending');
-  }
-  else {
-    $status = CRM_Utils_Array::value('status', $params, 'Removed');
-  }
+  $status = CRM_Utils_Array::value('status', $params, $op);
   $tracking = CRM_Utils_Array::value('tracking', $params);
+  
 
-  require_once 'CRM/Contact/BAO/GroupContact.php';
-  $values = array();
   if ($op == 'Added' || $op == 'Pending') {
-    $values['total_count'] = $values['added'] = $values['not_added'] = 0;
+    $extraReturnValues= array(
+      'total_count' => 0,
+      'added' => 0,
+      'not_added' => 0
+    );
     foreach ($groupIDs as $groupID) {
-      list($tc, $a, $na) = CRM_Contact_BAO_GroupContact::addContactsToGroup($contactIDs, $groupID, $method, $status, $tracking);
-      $values['total_count'] += $tc;
-      $values['added'] += $a;
-      $values['not_added'] += $na;
+      list($tc, $a, $na) = CRM_Contact_BAO_GroupContact::addContactsToGroup($contactIDs,
+        $groupID,
+        $method,
+        $status,
+        $tracking
+      );
+      $extraReturnValues['total_count'] += $tc;
+      $extraReturnValues['added'] += $a;
+      $extraReturnValues['not_added'] += $na;
     }
   }
   else {
-    $values['total_count'] = $values['removed'] = $values['not_removed'] = 0;
+    $extraReturnValues= array(
+      'total_count' => 0,
+      'removed' => 0,
+      'not_removed' => 0
+    );
     foreach ($groupIDs as $groupID) {
       list($tc, $r, $nr) = CRM_Contact_BAO_GroupContact::removeContactsFromGroup($contactIDs, $groupID, $method, $status, $tracking);
-      $values['total_count'] += $tc;
-      $values['removed'] += $r;
-      $values['not_removed'] += $nr;
+      $extraReturnValues['total_count'] += $tc;
+      $extraReturnValues['removed'] += $r;
+      $extraReturnValues['not_removed'] += $nr;
     }
   }
-  return civicrm_api3_create_success($values);
+  $dao = null;// can't pass this by reference
+  return civicrm_api3_create_success(1,$params,'group_contact','create',$dao,$extraReturnValues);
 }
 /*
  * @deprecated - this should be part of create but need to know we aren't missing something
@@ -222,8 +228,6 @@ function civicrm_api3_group_contact_update_status($params) {
 
   $method = CRM_Utils_Array::value('method', $params, 'API');
   $tracking = CRM_Utils_Array::value('tracking', $params);
-
-  require_once 'CRM/Contact/BAO/GroupContact.php';
 
   CRM_Contact_BAO_GroupContact::updateGroupMembershipStatus($params['contact_id'], $params['group_id'], $method, $tracking);
 
