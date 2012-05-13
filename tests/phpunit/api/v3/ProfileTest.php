@@ -23,6 +23,9 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
   function setUp() {
     $this->_apiversion = 3;
     parent::setUp();
+    $config = CRM_Core_Config::singleton();
+    $config->countryLimit[1] = 1013;
+    $config->stateLimit[1] = 1013;
   }
 
   function tearDown() {
@@ -34,6 +37,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
         'civicrm_custom_group',
         'civicrm_contact',
         'civicrm_phone',
+        'civicrm_address',
       ));
   }
 
@@ -223,7 +227,6 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     $pofileFieldValues = $this->_createIndividualContact();
     current($pofileFieldValues);
     $contactId = key($pofileFieldValues);
-
     $updateParams = array(
       'first_name' => 'abc2',
       'last_name' => 'xyz2',
