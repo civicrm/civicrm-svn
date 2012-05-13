@@ -213,7 +213,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
     // check that only 5 exist & we got an error setting the 6th
     $result = civicrm_api('PledgePayment', 'Get', array(
       'version' => 3,
-        $pledge_id => $this->_pledgeID,
+        'pledge_id' => $this->_pledgeID,
       ));
 
     $this->assertEquals(5, $result['count']);
@@ -226,7 +226,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
     $this->assertEquals(0, $resultcreatenew['is_error'], "in line " . __LINE__);
     $result = civicrm_api('PledgePayment', 'Get', array(
       'version' => 3,
-        $pledge_id => $this->_pledgeID,
+        'pledge_id' => $this->_pledgeID,
       ));
 
     $this->assertEquals(6, $result['count']);
