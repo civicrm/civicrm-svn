@@ -583,11 +583,11 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
         $this->assign('bank_account_number', $this->_params['bank_account_number']);
       }
       else {
-        $date = CRM_Utils_Date::format($this->_params['credit_card_exp_date']);
+        $date = CRM_Utils_Date::format(CRM_Utils_array::value('credit_card_exp_date', $this->_params));
         $date = CRM_Utils_Date::mysqlToIso($date);
         $this->assign('credit_card_exp_date', $date);
         $this->assign('credit_card_number',
-          CRM_Utils_System::mungeCreditCard($this->_params['credit_card_number'])
+                      CRM_Utils_System::mungeCreditCard(CRM_Utils_array::value('credit_card_number', $this->_params))
         );
       }
     }
