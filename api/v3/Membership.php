@@ -61,6 +61,7 @@ require_once "CRM/Member/PseudoConstant.php";
 function civicrm_api3_membership_delete($params) {
 
   // membershipID should be numeric
+  // this check should be done @ wrapper level
   if (!is_numeric($params['id'])) {
     return civicrm_api3_create_error('Input parameter should be numeric');
   }
@@ -96,8 +97,10 @@ function _civicrm_api3_membership_delete_spec(&$params) {
  * @access public
  */
 function civicrm_api3_membership_create($params) {
+// @todo shouldn't be required - should be handling by api.aliases & api.required in _spec
   civicrm_api3_verify_one_mandatory($params, NULL, array('membership_type_id', 'membership_type'));
   // check params for membership id during update
+  
   if (CRM_Utils_Array::value('id', $params) && !isset($params['skipStatusCal'])) {
     //don't calculate dates on exisiting membership - expect API use to pass them in
     // or leave unchanged
@@ -186,7 +189,8 @@ function civicrm_api3_membership_get($params) {
     $activeOnly = CRM_Utils_Array::value('is_current', $params['filters'], FALSE);
   }
   $activeOnly = CRM_Utils_Array::value('active_only', $params, $activeOnly);
-
+  //@todo replace this by handling in API layer - we should have enough info to do this
+  // between pseudoconstant & fk - see comments in format_params
   $membershipTypeId = CRM_Utils_Array::value('membership_type_id', $params);
   if (!$membershipTypeId) {
     $membershipType = CRM_Utils_Array::value('membership_type', $params);
@@ -295,6 +299,9 @@ function _civicrm_api3_membership_format_params($params, &$values, $create = FAL
 
     switch ($key) {
       case 'membership_type_id':
+      	// @todo we can remove this because it will fail on an FK constraint
+      	// after it fails the 'create_error action will do some investigation
+      	// & return a useful message
         if (!CRM_Utils_Array::value($value, CRM_Member_PseudoConstant::membershipType())) {
           return civicrm_api3_create_error('Invalid Membership Type Id');
         }
@@ -302,6 +309,11 @@ function _civicrm_api3_membership_format_params($params, &$values, $create = FAL
         break;
 
       case 'membership_type':
+      	// @todo we still need to adequately figure out how to handle this @ the API layer.
+      	// it is an FK & a pseudoconstant - we should probably alias it onto membership_type_id & 
+      	// then in the validate_integer function do an if(!is_integer && $fieldInfo['pseudoconstant) look 
+      	// up pseudoconstant & flip it over. By the time it hits api it will be a valid membership_type & handling @
+      	// api layer not required
         $membershipTypeId = CRM_Utils_Array::key(ucfirst($value),
           CRM_Member_PseudoConstant::membershipType()
         );
@@ -319,6 +331,8 @@ function _civicrm_api3_membership_format_params($params, &$values, $create = FAL
         break;
 
       case 'status_id':
+      	// @todo we can remove this because it will fail on an FK constraint
+      	// after it fails the 'create_error action will do some investigation
         if (!CRM_Utils_Array::value($value, CRM_Member_PseudoConstant::membershipStatus())) {
           return civicrm_api3_create_error('Invalid Membership Status Id');
         }
