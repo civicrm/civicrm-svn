@@ -103,7 +103,7 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
     if (!CRM_Core_Permission::check('edit contributions')) {
       $userChecksum = CRM_Utils_Request::retrieve('cs', 'String', $this, FALSE);
       if (!CRM_Contact_BAO_Contact_Utils::validChecksum($this->_subscriptionDetails->contact_id, $userChecksum)) {
-        CRM_Core_Error::fatal(ts('You do not have permission to cancel subscription.'));
+        CRM_Core_Error::fatal(ts('You do not have permission to cancel this recurring contribution.'));
       }
     }
 
@@ -184,7 +184,7 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
     $cancelSubscription = TRUE;
     $params             = $this->controller->exportValues($this->_name);
 
-    if ($params['send_cancel_request'] == 1) {
+    if (CRM_Utils_Array::value('send_cancel_request', $params) == 1) {
       $cancelParams = array('subscriptionId' => $this->_subscriptionDetails->subscription_id);
       $cancelSubscription = $this->_paymentProcessorObj->cancelSubscription($message, $cancelParams);
     }
