@@ -460,10 +460,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
    * @return None
    */
   private function processMembership(&$params) {
+    $dateTypes = array(
+      'join_date' => 'joinDate',
+      'membership_start_date' => 'startDate',
+      'membership_end_date' => 'endDate'
+    );
+    
     $dates = array(
       'join_date',
-      'membership_start_date',
-      'membership_end_date'
+      'start_date',
+      'end_date',
+      'reminder_date'
     );
 
     if (isset($params['field'])) {
@@ -479,9 +486,28 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         // update contact information
         $this->updateContactInfo($value);
 
-        foreach ($dates as $val) {
-          if (isset($value[$val])) {
-            $value[$val] = CRM_Utils_Date::processDate($value[$val]);
+        if (CRM_Utils_Array::value('membership_type', $value)) {
+          $membershipTypeId = $value['membership_type_id'] = $value['membership_type'];
+        }
+
+        foreach ($dateTypes as $dateField => $dateVariable) {
+          $$dateVariable = CRM_Utils_Date::processDate($value[$dateField]);
+        }
+
+        $calcDates = array();
+        $calcDates[$membershipTypeId] = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membershipTypeId,
+          $joinDate, $startDate, $endDate
+        );
+
+        foreach ($calcDates as $memType => $calcDate) {
+          foreach ($dates as $d) {
+            //first give priority to form values then calDates.
+            $date = CRM_Utils_Array::value($d, $value);
+            if (!$date) {
+              $date = CRM_Utils_Array::value($d, $calcDate);
+            }
+
+            $value[$d] = CRM_Utils_Date::processDate($date);
           }
         }
 
@@ -489,22 +515,16 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $value['source'] = $value['membership_source'];
         }
 
-        if (CRM_Utils_Array::value('membership_type', $value)) {
-          $membershipTypeId = $value['membership_type_id'] = $value['membership_type'];
-        }
-
         unset($value['membership_source']);
         unset($value['membership_type']);
 
         //Get the membership status
-        $value['status_id'] = (CRM_Utils_Array::value('membership_status', $value)) ? $value['membership_status'] : CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $key, 'status_id');
-        unset($value['membership_status']);
+        if ( CRM_Utils_Array::value('membership_status', $value) ) {
+          $value['status_id'] = $value['membership_status'];
+          unset($value['membership_status']);
+        }
 
         if (empty($customFields)) {
-          if (!CRM_Utils_Array::value('membership_type_id', $value)) {
-            $membershipTypeId = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $key, 'membership_type_id');
-          }
-
           // membership type custom data
           $customFields = CRM_Core_BAO_CustomField::getFields('Membership', FALSE, FALSE, $membershipTypeId);
 
@@ -550,16 +570,16 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         // end of contribution related section
 
-        if ( CRM_Utils_Array::value( $key, $params['member_option'] ) == 1 ) {
-          $membership = CRM_Member_BAO_Membership::create($value, CRM_Core_DAO::$_nullArray);
-        } 
-        else {
+        if ( CRM_Utils_Array::value( $key, $params['member_option'] ) == 2 ) {
           $membership = CRM_Member_BAO_Membership::renewMembership( 
             $value['contact_id'],
             $value['membership_type_id'],
             FALSE, $this, NULL, NULL,
             $value['custom']
           );
+        } 
+        else {
+          $membership = CRM_Member_BAO_Membership::create($value, CRM_Core_DAO::$_nullArray);
         }
 
         // add custom field values
