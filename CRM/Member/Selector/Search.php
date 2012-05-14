@@ -251,7 +251,7 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
 
     if ($isCancelSupported) {
       self::$_links['all'][CRM_Core_Action::DISABLE] = array(
-        'name' => ts('Cancel Subscription'),
+        'name' => ts('Cancel Auto-renewal'),
         'url' => 'civicrm/contribute/unsubscribe',
         'qs' => 'reset=1&mid=%%id%%&context=%%cxt%%' . $extraParams,
         'title' => 'Cancel Auto Renew Subscription',
@@ -410,8 +410,11 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
         );
       }
 
+      //does membership have auto renew CRM-7137.
       $autoRenew = FALSE;
-      if (isset($result->membership_recur_id) && $result->membership_recur_id) {
+      if (isset($result->membership_recur_id) && $result->membership_recur_id &&
+          !CRM_Member_BAO_Membership::isSubscriptionCancelled($row['membership_id'])
+      ) {
         $autoRenew = TRUE;
       }
       $row['auto_renew'] = $autoRenew;
