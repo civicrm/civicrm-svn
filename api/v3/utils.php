@@ -85,7 +85,7 @@ function civicrm_api3_verify_mandatory($params, $daoName = NULL, $keys = array(
   ), $verifyDAO = TRUE) {
   // moving this to civicrm_api - remove the check for array pending testing
   if (!is_array($params)) {
-    throw new Exception('Input variable `params` is not an array');
+    throw new Exception('Input variable `params` is not an array', 2000);
   }
 
   if ($daoName != NULL && $verifyDAO && !CRM_Utils_Array::value('id', $params)) {
@@ -155,7 +155,7 @@ function civicrm_api3_create_error($msg, $data = array(
       try {
         _civicrm_api3_validate_fields($dao['entity'], $dao['action'], $dao['params'], True);
       }
-      catch(Exception$e) {
+      catch(Exception $e) {
         $msg = $e->getMessage();
       }
     }

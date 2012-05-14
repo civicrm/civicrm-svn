@@ -221,7 +221,20 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
     $this->assertContains("Mandatory key(s) missing from params array", $result['error_message']);
   }
+  /**
+   * @dataProvider entities_get
+   */
+  public function testEmptyParam_getString($Entity) {
 
+    if (in_array($Entity, $this->toBeImplemented['get'])) {
+      // $this->markTestIncomplete("civicrm_api3_{$Entity}_get to be implemented");
+      return;
+    }
+    $result = civicrm_api($Entity, 'Get', 'string');
+    $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
+    $this->assertEquals(2000, $result['error_code']);
+    $this->assertEquals('Input variable `params` is not an array', $result['error_message']);
+  }
   /**
    * @dataProvider entities_get
    * @Xdepends testEmptyParam_get // no need to test the simple if the empty doesn't work/is skipped. doesn't seem to work
