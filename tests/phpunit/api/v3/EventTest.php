@@ -502,6 +502,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $events = array();
     while ($maxEvents > 0) {
       $params = array(
+        'version' => $this->_apiversion,
         'title' => 'Test Event' . $maxEvents,
         'event_type_id' => 2,
         'start_date' => 20081021,
@@ -511,14 +512,16 @@ class api_v3_EventTest extends CiviUnitTestCase {
       $maxEvents--;
     }
     $params = array(
+      'version' => $this->_apiversion,
       'event_type_id' => 2,
       'return.id' => 1,
       'return.title' => 1,
       'return.offset' => 2,
       'return.max_results' => 2,
     );
-    $result = &civicrm_api('event', 'get', $params);
-    $this->assertEquals(count($result), 2, 'In line ' . __LINE__);
+    $result = civicrm_api('event', 'get', $params);
+    $this->assertAPISuccess($result);
+    $this->assertEquals(2, $result['count'], ' 2 results returned In line ' . __LINE__);
   }
 
   function testEventCreationPermissions() {
