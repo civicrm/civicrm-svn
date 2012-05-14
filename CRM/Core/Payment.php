@@ -309,7 +309,7 @@ abstract class CRM_Core_Payment {
       $url = 'civicrm/contribute/updatebilling';
     }
     elseif ($action == 'update') {
-      $url = 'civicrm/contact/view/contributionrecur';
+      $url = 'civicrm/contribute/updaterecur';
     }
     $session       = CRM_Core_Session::singleton();
     $userId        = $session->get('userID');
