@@ -27,7 +27,10 @@
 <script type="text/javascript">
 
 function buildPaymentBlock( type ) {
-	if ( type == 0 ) { 
+    if ( type == 0 ) { 
+     if (cj("#billing-payment-block").length) {
+           cj("#billing-payment-block").html('');
+	 }
         return;
     } 
 	 

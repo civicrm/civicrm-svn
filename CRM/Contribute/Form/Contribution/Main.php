@@ -1196,10 +1196,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
     // get the submitted form values.
     $params = $this->controller->exportValues($this->_name);
-    if ($this->_values['is_pay_later'] &&
+    if (($this->_values['is_pay_later'] &&
       empty($this->_paymentProcessor) &&
-      !array_key_exists('hidden_processor', $params)
-    ) {
+         !array_key_exists('hidden_processor', $params)) ||
+        CRM_Utils_Array::value('payment_processor', $params) == 0) {
       $params['is_pay_later'] = 1;
     }
     else {
