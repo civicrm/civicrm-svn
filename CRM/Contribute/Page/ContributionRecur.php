@@ -71,30 +71,6 @@ class CRM_Contribute_Page_ContributionRecur extends CRM_Core_Page {
     }
   }
 
-  /**
-   * This function is called when action is update
-   *
-   * return null
-   * @access public
-   */
-  function edit() {
-    $controller = new CRM_Core_Controller_Simple('CRM_Contribute_Form_UpdateSubscription',
-      'Create Contribution', $this->_action
-    );
-
-    // set the userContext stack
-    $session = CRM_Core_Session::singleton();
-    $url = CRM_Utils_System::url('civicrm/contact/view',
-      'reset=1&selectedChild=contribute&cid=' . $this->_contactId
-    );
-    $session->pushUserContext($url);
-
-    $controller->set('id', $this->_id);
-    $controller->set('cid', $this->_contactId);
-
-    return $controller->run();
-  }
-
   function preProcess() {
     $context          = CRM_Utils_Request::retrieve('context', 'String', $this);
     $this->_action    = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE, 'view');
@@ -129,9 +105,6 @@ class CRM_Contribute_Page_ContributionRecur extends CRM_Core_Page {
 
     if ($this->_action & CRM_Core_Action::VIEW) {
       $this->view();
-    }
-    elseif ($this->_action & CRM_Core_Action::UPDATE) {
-      $this->edit();
     }
 
     return parent::run();

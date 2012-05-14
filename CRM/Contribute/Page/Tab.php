@@ -108,7 +108,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page {
         CRM_Core_Action::UPDATE => array(
           'name' => ts('Edit'),
           'title' => ts('Edit Recurring Payment'),
-          'url' => 'civicrm/contact/view/contributionrecur',
+          'url' => 'civicrm/contribute/updaterecur',
           'qs' => "reset=1&action=update&crid=%%crid%%&cid=%%cid%%&context={$context}",
         ),
         CRM_Core_Action::DISABLE => array(
