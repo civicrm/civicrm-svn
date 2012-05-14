@@ -192,7 +192,7 @@ define( 'CIVICRM_DOMAIN_ID'      , 1 );
 
 /**
  * Settings to enable external caching using a Memcache server.  This is an
- * advanced features, and you should read and understand the documentation
+ * advanced feature, and you should read and understand the documentation
  * before you turn it on. We cannot store these settings in the DB since the
  * config could potentially also be cached and we need to avoid an infinite
  * recursion scenario.
@@ -202,9 +202,13 @@ define( 'CIVICRM_DOMAIN_ID'      , 1 );
 
 /**
  * If you have a memcache server configured and want CiviCRM to make use of it,
- * set the following to 1.  You should only set this once you have your memcache
+ * set the following constant.  You should only set this once you have your memcache
  * server up and working, because CiviCRM will not start up if your server is
  * unavailable on the host and port that you specify.
+ *
+ * To use the php extension memcache use a value of 1 or 'memcache'
+ * To use the php extension memcached use a value of 'memcached'
+ *
  */
 define( 'CIVICRM_USE_MEMCACHE', 0 );
 
