@@ -161,12 +161,22 @@ WHERE  cacheKey = %1
 
     $main = array();
     while ($dao->fetch()) {
-      $main[] = unserialize($dao->data);
+        if( CRM_Core_BAO_PrevNextCache::is_serialized($dao->data)){
+            $main[] = unserialize($dao->data);
+        }
+        else
+            {
+                $main[] = $dao->data;
+            }
     }
-
+    
     return $main;
   }
-
+  
+  public static function is_serialized($string) {
+      return (@unserialize($string) !== false);
+  }
+  
   function setItem($values) {
     $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data ) VALUES \n";
     $query = $insert . implode(",\n ", $values);

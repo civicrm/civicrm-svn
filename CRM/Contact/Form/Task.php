@@ -228,23 +228,36 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
       }
     }
 
-    $params = array();
-    $form->pager($params);
-    list($offset, $rowCount) = $form->_pager->getOffsetAndRowCount();
-    $form->assign("rowCount", $rowCount);
-    $query = "
+    if(CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_all')
+        {
+            $params = array();
+            $form->pager($params);
+            list($offset, $rowCount) = $form->_pager->getOffsetAndRowCount();
+            $form->assign("rowCount", $rowCount);
+            $result1 = CRM_Core_BAO_PrevNextCache::retrieve($cacheKey,null,null,$offset,$rowCount);
+            $form->assign("value", $result1);
+        }
+    elseif(CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_sel'){
+        $params = array();
+        $form->pager($params);
+        list($offset, $rowCount) = $form->_pager->getOffsetAndRowCount();
+        $result1 = CRM_Core_BAO_PrevNextCache::retrieve($cacheKey,null,null,$offset,$rowCount);
+        $form->assign("rowCount", $rowCount);
+        $query = "
 SELECT *
 FROM civicrm_prevnext_cache
 WHERE cacheKey LIKE %1 AND is_selected=1
 LIMIT $offset, $rowCount";
-    $params1[1] = array("%{$cacheKey}%", 'String');
-    $dao = CRM_Core_DAO::executeQuery($query, $params1);
-
-    while ($dao->fetch()) {
-      $val[] = $dao->data;
+        $params1[1] = array("%{$cacheKey}%", 'String');
+        $dao = CRM_Core_DAO::executeQuery($query, $params1);
+        
+        while ($dao->fetch()) {
+            $val[] = $dao->data;
+        }
+        $form->assign("value", $val);
     }
-    $form->assign("value", $val);
-
+    
+    
     if (!empty($form->_contactIds)) {
       $form->_componentClause = ' contact_a.id IN ( ' . implode(',', $form->_contactIds) . ' ) ';
       $form->assign('totalSelectedContacts', count($form->_contactIds));
