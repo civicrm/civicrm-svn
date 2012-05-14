@@ -351,12 +351,12 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         );
 
         if (CRM_Utils_Array::value('send_receipt', $value)) {
-          $value['receipt_date'] = date("Y-m-d");
+          $value['receipt_date'] = date('Y-m-d His');
         }
 
         foreach ($dates as $val) {
           if (isset($value[$val])) {
-            $value[$val] = CRM_Utils_Date::processDate($value[$val]);
+            $value[$val] = CRM_Utils_Date::processDate($value[$val], $value[$val . '_time'], TRUE );
           }
         }
 
@@ -439,8 +439,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $dates = array(
       'join_date',
       'membership_start_date',
-      'membership_end_date',
-      'receive_date',
+      'membership_end_date'
     );
 
     if (isset($params['field'])) {
@@ -511,6 +510,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         // handle soft credit
         if (CRM_Utils_Array::value($key, $params['soft_credit_contact_select_id'])) {
           $value['soft_credit_to'] = $params['soft_credit_contact_select_id'][$key];
+        }
+
+        if ( CRM_Utils_Array::value('receive_date', $value) ) {
+          $value['receive_date'] = CRM_Utils_Date::processDate( $value['receive_date'], $value['receive_date'] . '_time' , TRUE );
         }
 
         $params['actualBatchTotal'] += $value['total_amount'];
