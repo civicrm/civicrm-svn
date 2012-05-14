@@ -60,6 +60,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
   protected $_profileId;
 
   public $_action;
+  
   public $_mode;
 
   /**
@@ -77,9 +78,12 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     $this->_batchId = CRM_Utils_Request::retrieve('id', 'Positive', $this, TRUE);
 
+    $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE, 'browse');
+    
     if (empty($this->_batchInfo)) {
       $params = array('id' => $this->_batchId);
       CRM_Core_BAO_Batch::retrieve($params, $this->_batchInfo);
@@ -219,8 +223,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($params, $files, $self) {
+  static function formRule($params, $files, $self) {
     $errors = array();
 
     if (CRM_Utils_Array::value('_qf_Entry_upload_force', $params)) {
@@ -263,10 +266,31 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       return;
     }
 
-    // get the existing batch values from cache table
-    $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch($this->_batchId);
-    $defaults = CRM_Core_BAO_Cache::getItem('batch entry', $cacheKeyString);
+    // for add mode set smart defaults
+    if ( $this->_action & CRM_Core_Action::ADD ) {
+      list( $currentDate, $currentTime ) = CRM_Utils_Date::setDateDefaults( NULL, 'activityDateTime' );
 
+      //get all status
+      $allStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+      $completeStatus = array_search( 'Completed', $allStatus );  
+      $specialFields = array( 
+        'join_date' => $currentDate,
+        'receive_date' => $currentDate,
+        'receive_date_time' => $currentTime,
+        'contribution_status_id' => $completeStatus 
+      );
+
+      for ($rowNumber = 1; $rowNumber <= $this->_batchInfo['item_count']; $rowNumber++) {
+        foreach ($specialFields as $key => $value ) {
+          $defaults['field'][$rowNumber][$key] = $value;  
+        }
+      } 
+    }
+    else {
+      // get the existing batch values from cache table
+      $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch($this->_batchId);
+      $defaults = CRM_Core_BAO_Cache::getItem('batch entry', $cacheKeyString);
+    }
     return $defaults;
   }
 

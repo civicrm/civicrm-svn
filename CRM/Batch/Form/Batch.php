@@ -125,7 +125,7 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
 
     // redirect to batch entry page.
     $session = CRM_Core_Session::singleton();
-    $session->replaceUserContext(CRM_Utils_System::url('civicrm/batch/entry', "id={$batch->id}&reset=1"));
+    $session->replaceUserContext(CRM_Utils_System::url('civicrm/batch/entry', "id={$batch->id}&reset=1&action=add"));
   }
   //end of function
 }
