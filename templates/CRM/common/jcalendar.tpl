@@ -28,21 +28,21 @@
     {assign var='elementId'   value=$form.field.$elementIndex.$elementName.id}
     {assign var="tElement" value=$elementName|cat:"_time"}
     {assign var="timeElement" value=field_`$elementIndex`_`$elementName`_time}
-    {$form.field.$elementIndex.$elementName.html|crmReplace:class:hiddenElement}
+    {$form.field.$elementIndex.$elementName.html}
 {elseif $elementIndex}
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
-    {$form.$elementName.$elementIndex.html|crmReplace:class:hiddenElement}
+    {$form.$elementName.$elementIndex.html}
 {elseif $blockId and $blockSection}
     {assign var='elementId'   value=$form.$blockSection.$blockId.$elementName.id}
     {assign var="tElement" value=`$elementName`_time}
-    {$form.$blockSection.$blockId.$elementName.html|crmReplace:class:hiddenElement}
+    {$form.$blockSection.$blockId.$elementName.html}
     {assign var="timeElement" value=`$blockSection`_`$blockId`_`$elementName`_time}
     &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.label}&nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.html|crmReplace:class:six}
 {else}
     {assign var='elementId'   value=$form.$elementName.id}
     {assign var="timeElement" value=$elementName|cat:'_time'}
-    {$form.$elementName.html|crmReplace:class:hiddenElement}
+    {$form.$elementName.html}
 {/if}
 
 {assign var='displayDate' value=$elementId|cat:"_display"}
@@ -75,6 +75,7 @@
       {/if}
       var currentYear = new Date().getFullYear();
       var alt_field   = '#{$elementId}';
+      cj( alt_field ).hide();
       var date_format = cj( alt_field ).attr('format');
       
       var altDateFormat = 'mm/dd/yy';
