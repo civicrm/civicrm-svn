@@ -183,7 +183,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
 
     $expected = array(
       'Contribution Type' => 'Donation',
-      'Contribution Amount' => '100.00',
+      'Total Amount' => '100.00',
       'Contribution Status' => 'Pending',
       'Paid By' => 'Check',
       'Check Number' => 'check #1041',
