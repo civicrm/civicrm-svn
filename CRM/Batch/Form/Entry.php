@@ -434,17 +434,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         // end of premium
 
         //send receipt mail.
-        //        if ( $contribution->id &&
-        //          CRM_Utils_Array::value( 'send_receipt', $value ) ) {
-        //
-        //          // add the domain email id
-        //          $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail();
-        //          $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
-        //
-        //          $value['from_email_address'] = $domainEmail;
-        //          $value['contribution_id'] = $contribution->id;
-        //          CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
-        //        }
+        if ( $contribution->id &&
+          CRM_Utils_Array::value( 'send_receipt', $value ) ) {
+
+            // add the domain email id
+            $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail();
+            $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
+
+            $value['from_email_address'] = $domainEmail;
+            $value['contribution_id'] = $contribution->id;
+            CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $value );
+        }
       }
     }
   }
@@ -550,7 +550,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         // end of contribution related section
 
-        $membership = CRM_Member_BAO_Membership::create($value, CRM_Core_DAO::$_nullArray);
+        if ( CRM_Utils_Array::value( $key, $params['member_option'] ) == 1 ) {
+          $membership = CRM_Member_BAO_Membership::create($value, CRM_Core_DAO::$_nullArray);
+        } 
+        else {
+          $membership = CRM_Member_BAO_Membership::renewMembership( 
+            $value['contact_id'],
+            $value['membership_type_id'],
+            FALSE, $this, NULL, NULL,
+            $value['custom']
+          );
+        }
 
         // add custom field values
         if (CRM_Utils_Array::value('custom', $value) &&
