@@ -99,7 +99,7 @@ class WebTest_Contact_TaskActionSendSMS extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
 
-    // Use class names for menu items since li array can change based on which components are enabled
+    // Do an advanced search
     $this->click("css=ul#civicrm-menu li.crm-Search");
     $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
 
@@ -110,6 +110,22 @@ class WebTest_Contact_TaskActionSendSMS extends CiviSeleniumTestCase {
 
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad("30000");
+
+    $this->waitForElementPresent('CIVICRM_QFID_ts_all_12');
+    $this->click('CIVICRM_QFID_ts_all_12');
+
+    // Perform a task action
+    $this->select("task", "label=Send SMS to Contacts");
+    $this->click("Go");
+    $this->waitForPageToLoad("30000");
+
+    $this->waitForElementPresent('activity_subject');
+    $this->type('activity_subject', "Send SMS to Contacts of {$smsGroupName}");
+    $this->type('text_message', "Test SMS to Contacts of {$smsGroupName}");
+    $this->click("_qf_SMS_upload-bottom");
+    $this->waitForPageToLoad("30000");
+
+    $this->assertTrue($this->isTextPresent('Your message has been sent.'), "Test SMS could not be sent!");
   }
 }
 

@@ -175,7 +175,12 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
 
     $postData = "user=" . $this->_providerInfo['username'] . "&password=" . $this->_providerInfo['password'] . "&api_id=" . $this->_providerInfo['api_params']['api_id'];
 
-    $response = $this->curl($url, $postData);
+    if (array_key_exists('is_test', $this->_providerInfo['api_params']) &&
+        $this->_providerInfo['api_params']['is_test'] == 1 ) {
+        $response = array('data' => 'OK:' . rand());
+    } else {
+        $response = $this->curl($url, $postData);
+    }
     if (PEAR::isError($response)) {
       return $response;
     }
