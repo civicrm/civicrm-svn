@@ -1930,11 +1930,19 @@ SELECT source_contact_id
    * Note that the unit test for the BaseIPN class tests this function
    */
   function loadRelatedObjects(&$input, &$ids, $required = FALSE, $loadAll = false) {
-    if (empty($this->_component)) {
-      $this->_component = strtolower(CRM_Utils_Array::value('component', $input));
-    }
     if($loadAll){
       $ids = array_merge($this->getComponentDetails($this->id),$ids);
+      if(empty($ids['contact']) && isset($this->contact_id)){
+        $ids['contact'] = $this->contact_id;
+      }
+    }
+    if (empty($this->_component)) {
+      if (! empty($ids['event'])) {
+        $this->_component = 'event';
+      }
+      else {
+        $this->_component = strtolower(CRM_Utils_Array::value('component', $input, 'contribute'));
+      }
     }
     $paymentProcessorID = CRM_Utils_Array::value('paymentProcessor', $ids);
     $contributionType = new CRM_Contribute_BAO_ContributionType();
@@ -2358,13 +2366,12 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     }
     // add the new contribution values
     if (strtolower($this->_component) == 'contribute') {
-      $template->assign('title', $values['title']);
-      if (CRM_Utils_Array::value('total_amount', $input)) {
-        $template->assign('amount', $input['total_amount']);
+      $template->assign('title', CRM_Utils_Array::value('title',$values));
+      $amount = CRM_Utils_Array::value('total_amount', $input,(CRM_Utils_Array::value('amount', $input)),null);
+      if(empty($amount) && isset($this->total_amount)){
+        $amount = $this->total_amount;
       }
-      else {
-        $template->assign('amount', $input['amount']);
-      }
+      $template->assign('amount', $amount);
       //PCP Info
       $softDAO = new CRM_Contribute_DAO_ContributionSoft();
       $softDAO->contribution_id = $this->id;
