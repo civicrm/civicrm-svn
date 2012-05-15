@@ -186,40 +186,41 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
 
     // if this is an update of an existing recurring contribution, pass the ID
     $params['id'] = $this->_subscriptionDetails->recur_id;
-
-    // save the changes
-    $result = CRM_Contribute_BAO_ContributionRecur::add($params);
-    if (!is_a($result, 'CRM_Core_Error')) {
-      $params['subscriptionId'] = $this->_subscriptionDetails->subscription_id;
-      $updateSubscription = $this->_paymentProcessorObj->changeSubscriptionAmount($message, $params);
-
-      if (is_a($updateSubscription, 'CRM_Core_Error')) {
+    $message = '';
+    
+    $params['subscriptionId'] = $this->_subscriptionDetails->subscription_id;
+    $updateSubscription = true;
+    if ($this->_paymentProcessorObj->isSupported('changeSubscriptionAmount')) {
+        $updateSubscription = $this->_paymentProcessorObj->changeSubscriptionAmount($message, $params);
+    }
+    if (is_a($updateSubscription, 'CRM_Core_Error')) {
         CRM_Core_Error::displaySessionError($updateSubscription);
         $status = ts('Could not update the Recurring contribution details');
-      }
-      elseif ($updateSubscription) {
-
+    }
+    elseif ($updateSubscription) {
+        // save the changes                                                                                                                                                                  
+        $result = CRM_Contribute_BAO_ContributionRecur::add($params);
         $status = ts('Recurring contribution has been updated to: %1, every %2 %3(s) for %4 installments.',
-          array(1 => CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency),
-            2 => $this->_subscriptionDetails->frequency_interval,
-            3 => $this->_subscriptionDetails->frequency_unit,
-            4 => $params['installments'],
-          )
-        );
-
+                     array(1 => CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency),
+                           2 => $this->_subscriptionDetails->frequency_interval,
+                           3 => $this->_subscriptionDetails->frequency_unit,
+                           4 => $params['installments'],
+                           )
+                     );
+        
         $contactID = $this->_subscriptionDetails->contact_id;
-
+        
         if ($this->_subscriptionDetails->amount != $params['amount']) {
-          $message .= "<br /> Recurring contribution amount has been updated from " . CRM_Utils_Money::format($this->_subscriptionDetails->amount, $this->_subscriptionDetails->currency) . ' to ' . CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency) . 'for this subscription. ';
+            $message .= "<br /> Recurring contribution amount has been updated from " . CRM_Utils_Money::format($this->_subscriptionDetails->amount, $this->_subscriptionDetails->currency) . ' to ' . CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency) . 'for this subscription. ';
         }
-
+        
         if ($this->_subscriptionDetails->installments != $params['installments']) {
-          $message .= "<br /> Recurring contribution installments have been updated from {$this->_subscriptionDetails->installments} to {$params['installments']} for this subscription. ";
+            $message .= "<br /> Recurring contribution installments have been updated from {$this->_subscriptionDetails->installments} to {$params['installments']} for this subscription. ";
         }
-
+        
         $activityParams = array(
-          'source_contact_id' => $contactID,
-          'activity_type_id' => CRM_Core_OptionGroup::getValue('activity_type',
+            'source_contact_id' => $contactID,
+            'activity_type_id' => CRM_Core_OptionGroup::getValue('activity_type',
             'Update Recurring Contribution',
             'name'
           ),
@@ -233,7 +234,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
         );
         $session = CRM_Core_Session::singleton();
         $cid = $session->get('userID');
-
+        
         if ($cid) {
           $activityParams['target_contact_id'][] = $activityParams['source_contact_id'];
           $activityParams['source_contact_id'] = $cid;
@@ -293,7 +294,6 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
           CRM_Utils_System::setUFMessage($status);
         }
       }
-    }
   }
   //end of function
 }
