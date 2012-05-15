@@ -1101,7 +1101,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     // also return if paylater mode
-    if (CRM_Utils_Array::value('is_pay_later', $fields)) {
+    if (CRM_Utils_Array::value('is_pay_later', $fields) || 
+        CRM_Utils_Array::value('payment_processor', $fields) == 0) {
       return empty($errors) ? TRUE : $errors;
     }
 
