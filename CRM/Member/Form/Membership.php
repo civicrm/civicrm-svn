@@ -196,7 +196,11 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
       );
     }
     $this->assign('onlinePendingContributionId', $this->_onlinePendingContributionId);
-
+    //CRM-10223 - allow contribution to be recorded against different contact
+    $this->addElement('checkbox', 'contribution_contact', ts('Record payment from different contact?'));
+    $this->add( 'select', 'honor_type_id', ts('Membership payment is : '),
+                        array( '' => ts( '-') ) + CRM_Core_PseudoConstant::honor() );
+    CRM_Contact_Form_NewContact::buildQuickForm($this,1, null, false,'contribution_');
     $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail();
 
     parent::preProcess();
@@ -1126,14 +1130,20 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     if (CRM_Utils_Array::value('record_contribution', $formValues)) {
       $recordContribution = array(
-        'total_amount', 'contribution_type_id', 'payment_instrument_id',
+        'total_amount', 'honor_type_id','contribution_type_id', 'payment_instrument_id',
         'trxn_id', 'contribution_status_id', 'check_number', 'campaign_id', 'receive_date',
       );
 
       foreach ($recordContribution as $f) {
         $params[$f] = CRM_Utils_Array::value($f, $formValues);
       }
-
+      //CRM-10223 - allow contribution to be recorded against different contact
+      if(CRM_Utils_Array::value('contribution_contact_select_id', $this->_params)){
+        $params['contribution_contact_id'] = $this->_params['contribution_contact_select_id'][1];
+        if(CRM_Utils_Array::value('honor_type_id',$params)){
+          $params['honor_contact_id'] = $params['contact_id'];
+        }
+      }
       if (!$this->_onlinePendingContributionId) {
         $params['contribution_source'] = ts('%1 Membership: Offline signup (by %2)',
           array(1 => $membershipType, 2 => $userName)
