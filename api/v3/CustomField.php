@@ -148,43 +148,6 @@ function civicrm_api3_custom_field_get($params) {
  *                                     in params
  * @return Array  Validation errors
  */
-function _civicrm_api3_custom_field_validate_fields($params, $fields, $checkForDisallowed = FALSE, $checkForRequired = FALSE) {
-  $checkFields = $errors = $disallowedFields = $requiredFields = array();
-  foreach ($params as $fieldName => $value) {
-    if (substr($fieldName, 0, 6) === 'custom') {
-      $customFieldID = CRM_Core_BAO_CustomField::getKeyID($fieldName);
-      if ($customFieldID) {
-        $checkFields[$customFieldID] = $fieldName;
-        if (!in_array($customFieldID, array_keys($fields))) {
-          $disallowedFields[$customFieldID] = $fieldName;
-        }
-        elseif (CRM_Utils_Array::value('is_required', $fields[$customFieldID])) {
-          $requiredFields[$customFieldID] = $fieldName;
-        }
-      }
-    }
-  }
-
-  if (empty($checkFields)) {
-    return $errors;
-  }
-
-  if ($checkForDisallowed && !empty($disallowedFields)) {
-    $errors[] = "Can't use custom field(s) : " . implode(', ', $disallowedFields);
-    return $errors;
-  }
-
-  if ($checkForRequired && !empty($missingRequired)) {
-    $errors[] = 'Missing required field(s) : ' . implode(', ', $missingRequired);
-    return $errors;
-  }
-
-  foreach ($checkFields as $fieldId => $fieldName) {
-    _civicrm_api3_custom_field_validate_field($fieldName, $params[$fieldName], $fields[$fieldId], $errors);
-  }
-
-  return $errors;
-}
 
 /*
  * Helper function to validate custom field value
