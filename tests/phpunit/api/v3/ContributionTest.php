@@ -27,13 +27,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
-
-
-
-require_once 'api/v3/Contribution.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_ContributionTest extends CiviUnitTestCase {
 
@@ -648,7 +641,26 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->contributionDelete($contribution1['id']);
     $this->contributionDelete($contribution2['id']);
   }
+  ///////////////  _civicrm_contribute_format_params for $create
+  function testSendMail() {
+    if(!defined(CIVICRM_MAIL_LOG)){
+      define( 'CIVICRM_MAIL_LOG', CIVICRM_TEMPLATE_COMPILEDIR . '/mail.log' );
+    }
+    $this->assertFalse(is_numeric(CIVICRM_MAIL_LOG) ,'we need to be able to log email to check receipt');
+    file_put_contents(CIVICRM_MAIL_LOG,'');
+    $contribution = civicrm_api('contribution','create',$this->_params);
+    $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
+      'version' => $this->_apiversion,
+      'id' => $contribution['id']) );
+    $this->assertAPISuccess($apiResult);
+    $mail = file_get_contents(CIVICRM_MAIL_LOG);
+    $this->assertNotEmpty(strstr($mail,'$ 100.00'));
+    $this->assertEmpty(strstr($mail,'Event'));
+    $this->assertNotEmpty(strstr($mail,'Contribution Information'));
+    $this->assertNotEmpty(strstr($mail,'Please print this confirmation for your records'));
 
+       
+  }
   ///////////////  _civicrm_contribute_format_params for $create
   function testFormatParams() {
     require_once 'CRM/Contribute/DAO/Contribution.php';

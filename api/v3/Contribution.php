@@ -346,4 +346,38 @@ function civicrm_api3_contribution_transact($params) {
   $contribution = civicrm_api('contribution', 'create', $params);
   return $contribution['values'];
 }
+/**
+ * Send a contribution confirmation (receipt or invoice)
+ * The appropriate online template will be used (the existence of related objects
+ * (e.g. memberships ) will affect this selection
+ * @param array $params input parameters
+ * {@getfields Contribution_sendconfirmation}
+ * @return array  Api result array
+ * @static void
+ * @access public
+ * 
+ */
+function civicrm_api3_contribution_sendconfirmation($params) {
+  $contribution = new CRM_Contribute_BAO_Contribution();
+  $contribution->id = $params['id'];
+  if (! $contribution->find(true)) {
+    throw new Exception('Contribution does not exist');
+  }
+  $input = $ids = $cvalues = array();
+  $contribution->loadRelatedObjects($input, $ids, FALSE, true);
+  $contribution->composeMessageArray($input, $ids, $cvalues, false, false);
+}
 
+/*
+ * Adjust Metadata for Create action
+ *
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_contribution_sendconfirmation_spec(&$params) {
+  $params['id'] = array(
+    'api.required' => 1,
+    'title' => 'Contribution ID'
+  );
+
+}
