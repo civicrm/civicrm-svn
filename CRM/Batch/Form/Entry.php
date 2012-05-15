@@ -351,6 +351,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       'cancel_date',
     );
 
+    $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
+    $this->_priceSet = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
+    $fieldID = key($this->_priceSet['fields']);
+
     if (isset($params['field'])) {
       foreach ($params['field'] as $key => $value) {
         // if contact is not selected we should skip the row
@@ -409,6 +413,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         $value['batch_id'] = $this->_batchId;
         $value['skipRecentView'] = TRUE;
         $contribution = CRM_Contribute_BAO_Contribution::create($value, CRM_Core_DAO::$_nullArray);
+
+        // make entry in line item for contribution
+        $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] =  $value['total_amount'];
+        $value['price_'.$fieldID] = 1;
+
+        $lineItem = array();
+        CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
+          $value, $lineItem[$priceSetId]
+        );
+
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $lineItem);
 
         //process premiums
         if (CRM_Utils_Array::value('product_name', $value)) {
