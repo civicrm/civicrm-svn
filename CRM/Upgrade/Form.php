@@ -437,13 +437,32 @@ SET    version = '$version'
     foreach ($revisions as $rev) {
       // proceed only if $currentVer < $rev
       if (version_compare($currentVer, $rev) < 0) {
-        $queue->createItem(new CRM_Queue_Task(
-            // callback
-            array('CRM_Upgrade_Form', 'doIncrementalUpgradeStep'),
-            // arguments
-            array($rev, $currentVer, $latestVer, $postUpgradeMessageFile),
-            "Upgrade DB to $rev"
-          ));
+        $beginTask = new CRM_Queue_Task(
+          // callback
+          array('CRM_Upgrade_Form', 'doIncrementalUpgradeStart'),
+          // arguments
+          array($rev),
+          "Begin Upgrade to $rev"
+        );
+        $queue->createItem($beginTask);
+
+        $task = new CRM_Queue_Task(
+          // callback
+          array('CRM_Upgrade_Form', 'doIncrementalUpgradeStep'),
+          // arguments
+          array($rev, $currentVer, $latestVer, $postUpgradeMessageFile),
+          "Upgrade DB to $rev"
+        );
+        $queue->createItem($task);
+        
+        $task = new CRM_Queue_Task(
+          // callback
+          array('CRM_Upgrade_Form', 'doIncrementalUpgradeFinish'),
+          // arguments
+          array($rev),
+          "Finish Upgrade DB to $rev"
+        );
+        $queue->createItem($task);
       }
     }
 
@@ -458,13 +477,27 @@ SET    version = '$version'
    * @param $latestVer string, the target (final) revision
    * @param $postUpgradeMessageFile string, path of a modifiable file which lists the post-upgrade messages
    */
-  static
-  function doIncrementalUpgradeStep(CRM_Queue_TaskContext$ctx, $rev, $currentVer, $latestVer, $postUpgradeMessageFile) {
+  static function doIncrementalUpgradeStart(CRM_Queue_TaskContext $ctx, $rev) {
     $upgrade = new CRM_Upgrade_Form();
 
     // as soon as we start doing anything we append ".upgrade" to version.
     // this also helps detect any partial upgrade issues
     $upgrade->setVersion($rev . '.upgrade');
+    
+    return TRUE;
+  }
+
+  /**
+   * Perform an incremental version update
+   *
+   * @param $rev string, the target (intermediate) revision e.g '3.2.alpha1'
+   * @param $currentVer string, the original revision
+   * @param $latestVer string, the target (final) revision
+   * @param $postUpgradeMessageFile string, path of a modifiable file which lists the post-upgrade messages
+   */
+  static
+  function doIncrementalUpgradeStep(CRM_Queue_TaskContext$ctx, $rev, $currentVer, $latestVer, $postUpgradeMessageFile) {
+    $upgrade = new CRM_Upgrade_Form();
 
     $phpFunctionName = 'upgrade_' . str_replace('.', '_', $rev);
 
@@ -524,11 +557,22 @@ SET    version = '$version'
       }
     }
 
-    // after an successful intermediate upgrade, set the complete version
+    return TRUE;
+  }
+  
+  
+  /**
+   * Perform an incremental version update
+   *
+   * @param $rev string, the target (intermediate) revision e.g '3.2.alpha1'
+   * @param $currentVer string, the original revision
+   * @param $latestVer string, the target (final) revision
+   * @param $postUpgradeMessageFile string, path of a modifiable file which lists the post-upgrade messages
+   */
+  static function doIncrementalUpgradeFinish(CRM_Queue_TaskContext $ctx, $rev) {
+    $upgrade = new CRM_Upgrade_Form();
     $upgrade->setVersion($rev);
-    
     CRM_Utils_System::flushCache();
-
     return TRUE;
   }
 
