@@ -28,10 +28,86 @@ ALTER TABLE `civicrm_custom_group` CHANGE `extends_entity_column_value` `extends
 ALTER TABLE `civicrm_prevnext_cache` ADD COLUMN is_selected tinyint(4) DEFAULT '0';
 
 -- CRM-9834
--- add civicrm_batch table changes
--- add batch type and batch status option groups
--- add default profile for contribution and membership batch entry
--- add navigation menu entries ( 2 menus )
+-- civicrm_batch table changes
+ALTER TABLE `civicrm_batch` ADD UNIQUE KEY `UI_name` ( name );
+ALTER TABLE `civicrm_batch` CHANGE `label` `title` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Friendly Name.';
+
+ALTER TABLE `civicrm_batch` ADD `saved_search_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Saved Search ID';
+ALTER TABLE `civicrm_batch` ADD `status_id` int(10) unsigned NOT NULL COMMENT 'fk to Batch Status options in civicrm_option_values';
+ALTER TABLE `civicrm_batch` ADD `type_id` int(10) unsigned NOT NULL COMMENT 'fk to Batch Type options in civicrm_option_values';
+ALTER TABLE `civicrm_batch` ADD `mode_id` int(10) unsigned DEFAULT NULL COMMENT 'fk to Batch mode options in civicrm_option_values';
+ALTER TABLE `civicrm_batch` ADD `total` decimal(20,2) DEFAULT NULL COMMENT 'Total amount for this batch.';
+ALTER TABLE `civicrm_batch` ADD `item_count` int(10) unsigned NOT NULL COMMENT 'Number of items in a batch.';
+
+ALTER TABLE `civicrm_batch` ADD CONSTRAINT `FK_civicrm_batch_saved_search_id` FOREIGN KEY (`saved_search_id`) REFERENCES `civicrm_saved_search` (`id`) ON DELETE SET NULL;
+ 
+--batch type and batch status option groups
+INSERT INTO
+   `civicrm_option_group` (`name`, {localize field='title'}title{/localize}, `is_reserved`, `is_active`)
+VALUES
+  ('batch_type'          , '{ts escape="sql"}Batch Type{/ts}'                         , 1, 1),
+  ('batch_status'        , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1);
+
+SELECT @option_group_id_batch_type     := max(id) from civicrm_option_group where name = 'batch_type';
+SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';
+
+INSERT INTO
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`)
+VALUES
+   (@option_group_id_batch_type, '{ts escape="sql"}Contribution{/ts}', 1, 'Contribution', NULL, 0, 0, 1),
+   (@option_group_id_batch_type, '{ts escape="sql"}Membership{/ts}', 2, 'Membership', NULL, 0, 0, 2),
+   (@option_group_id_batch_status, '{ts escape="sql"}Open{/ts}', 1, 'Open', NULL, 0, 0, 1),
+   (@option_group_id_batch_status, '{ts escape="sql"}Closed{/ts}', 2, 'Closed', NULL, 0, 0, 2);
+
+--default profile for contribution and membership batch entry
+INSERT INTO civicrm_uf_group
+    ( name, group_type, {localize field='title'}title{/localize}, is_cms_user, is_reserved, help_post)
+ VALUES
+    ( 'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Batch Entry{/ts}' , 0, 1, NULL),
+    ( 'membership_batch_entry',   'Membership',   '{ts escape="sql"}Membership Batch Entry{/ts}' ,   0, 1, NULL);
+
+SELECT @uf_group_contribution_batch_entry     := max(id) FROM civicrm_uf_group WHERE name = 'contribution_batch_entry';
+SELECT @uf_group_membership_batch_entry       := max(id) FROM civicrm_uf_group WHERE name = 'membership_batch_entry';
+
+INSERT INTO civicrm_uf_join
+   (is_active, module, entity_table, entity_id, weight, uf_group_id)
+VALUES
+   (1, 'Profile', NULL, NULL, 9, @uf_group_contribution_batch_entry),
+   (1, 'Profile', NULL, NULL, 9, @uf_group_membership_batch_entry);
+
+INSERT INTO civicrm_uf_field
+       ( uf_group_id, field_name,              is_required, is_reserved, weight, visibility,                  in_selector, is_searchable, location_type_id, {localize field='label'}label{/localize},  field_type )
+VALUES
+       ( @uf_group_contribution_batch_entry,     'contribution_type',           1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Contribution'),
+       ( @uf_group_contribution_batch_entry,     'total_amount',                1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Amount{/ts}', 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'contribution_status_id',      1, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'receive_date',                1, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Received{/ts}', 'Contribution'),
+       ( @uf_group_contribution_batch_entry,     'contribution_source',         0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'payment_instrument',          0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Instrument{/ts}', 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'check_number',                0, 0, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Check Number{/ts}', 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'send_receipt',                0, 0, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Send Receipt{/ts}', 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'invoice_id',                  0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Invoice ID{/ts}', 'Contribution' ),
+       ( @uf_group_membership_batch_entry,     'membership_type',             1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'join_date',                   1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Member Since{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'membership_start_date',       0, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Start Date{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'membership_end_date',         0, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}End Date{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'membership_source',           0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'send_receipt',                0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Send Receipt{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'contribution_type',           1, 1, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Contribution Type{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'total_amount',                1, 1, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Amount{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'receive_date',                1, 1, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Received{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'payment_instrument',          0, 0, 10, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Instrument{/ts}', 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'contribution_status_id',      1, 1, 11, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Status{/ts}', 'Membership' );
+
+--navigation menu entries
+SELECT @navContributionsID := MAX(id) FROM civicrm_navigation where name = 'Contributions';
+SELECT @navMembershipsID := MAX(id) FROM civicrm_navigation where name = 'Memberships';
+	     
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES     
+    ( {$domainID}, 'civicrm/batch&reset=1', '{ts escape="sql" skip="true"}Batches{/ts}', 'Batches', 'access CiviContribute,access CiviMember', '', @navContributionsID, '1', NULL, 4 ),
+    ( {$domainID}, 'civicrm/batch&reset=1', '{ts escape="sql" skip="true"}Batches{/ts}', 'Batches', 'access CiviMember,acess CiviContribute',  '', @navMembershipsID, '1', NULL, 4 );
 
 -- CRM-9686
 INSERT INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUES(1097, "LP", "La Paz");
