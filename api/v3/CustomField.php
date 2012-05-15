@@ -158,9 +158,13 @@ function civicrm_api3_custom_field_get($params) {
  * @params Array  $errors       Collect validation  errors
  *
  * @return Array  Validation errors
+ * @todo remove this function - not in use but need to review functionality before
+ * removing as it might be useful in wrapper layer
  */
 function _civicrm_api3_custom_field_validate_field($fieldName, $value, $fieldDetails, &$errors = array(
   )) {
+    return;
+    //see comment block
   if (!$value) {
     return $errors;
   }
