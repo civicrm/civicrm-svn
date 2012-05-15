@@ -499,17 +499,6 @@ SET    version = '$version'
           CRM_Core_Error::fatal($error);
         }
 
-        // set post-upgrade-message if any
-        if (is_callable(array(
-          $versionObject, 'setPostUpgradeMessage'))) {
-          $postUpgradeMessage = file_get_contents($postUpgradeMessageFile);
-          $versionObject->setPostUpgradeMessage($postUpgradeMessage, $rev);
-          file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
-        } else {
-          $postUpgradeMessage = file_get_contents($postUpgradeMessageFile);
-          CRM_Upgrade_Incremental_Legacy::setPostUpgradeMessage($postUpgradeMessage, $rev);
-          file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
-        }
       }
 
       $upgrade->setSchemaStructureTables($rev);
@@ -520,6 +509,18 @@ SET    version = '$version'
       }
       else {
         $upgrade->processSQL($rev);
+      }
+      
+      // set post-upgrade-message if any
+      if (is_callable(array(
+        $versionObject, 'setPostUpgradeMessage'))) {
+        $postUpgradeMessage = file_get_contents($postUpgradeMessageFile);
+        $versionObject->setPostUpgradeMessage($postUpgradeMessage, $rev);
+        file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
+      } else {
+        $postUpgradeMessage = file_get_contents($postUpgradeMessageFile);
+        CRM_Upgrade_Incremental_Legacy::setPostUpgradeMessage($postUpgradeMessage, $rev);
+        file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
       }
     }
 
