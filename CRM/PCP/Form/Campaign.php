@@ -108,7 +108,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
      */
     public function buildQuickForm( )
     {
-        $this->add('text', 'title', ts('Title'), null, true );
+        $this->add('text', 'pcp_title', ts('Title'), null, true );
         $this->add('textarea', 'pcp_intro_text', ts('Welcome'), null, true );
         $this->add('text', 'goal_amount', ts('Your Goal'), null, true );
         $this->addRule( 'goal_amount', ts('Goal Amount should be a numeric value'), 'money' );
@@ -128,7 +128,6 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
         }
 
         $attrib = Array ('rows' => 8, 'cols' => 60 );
-//        $this->addWysiwyg( 'page_text', ts('Your Message'), $attrib );
         $this->add('textarea', 'page_text', ts('Your Message'), null, false );
 
         $maxAttachments = 1;
@@ -190,7 +189,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
      */
     public function postProcess( )
     {
-        $params  = $this->controller->exportValues( );
+        $params  = $this->controller->exportValues( $this->_name );
         $checkBoxes = array( 'is_thermometer', 'is_honor_roll', 'is_active' );
 
         foreach( $checkBoxes as $key ) {
@@ -203,11 +202,20 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form
         if( ! $contactID ) {
             $contactID = $this->get('contactID');
         }
+        $params['title'] = $params['pcp_title'];
         $params['intro_text'] = $params['pcp_intro_text'];
         $params['contact_id'] = $contactID;
         $params['page_id'] = $this->get('component_page_id') ? $this->get('component_page_id') : $this->_contriPageId;
         $params['page_type'] = $this->_component;
 
+        // since we are allowing html input from the user
+        // we also need to purify it, so lets clean it up
+        $htmlFields = array( 'intro_text', 'page_text', 'title' );
+        foreach ( $htmlFields as $field ) {
+          if ( ! empty($params[$field]) ) {
+            $params[$field] = CRM_Utils_String::purifyHTML($params[$field]);
+          }
+        }
 
         $entity_table = CRM_PCP_BAO_PCP::getPcpEntityTable( $params['page_type'] );
 

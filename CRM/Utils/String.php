@@ -44,7 +44,7 @@ require_once 'HTML/QuickForm/Rule/Email.php';
  */
 
 class CRM_Utils_String {
-  
+
     const
         COMMA          = ","   ,
         SEMICOLON      = ";"   ,
@@ -58,7 +58,7 @@ class CRM_Utils_String {
     /**
      * Convert a display name into a potential variable
      * name that we could use in forms/code
-     * 
+     *
      * @param  name    Name of the string
      * @return string  An equivalent variable name
      *
@@ -68,7 +68,7 @@ class CRM_Utils_String {
      */
     static function titleToVar( $title, $maxLength = 31 ) {
         $variable = self::munge( $title, '_', $maxLength );
-      
+
         require_once "CRM/Utils/Rule.php";
         if ( CRM_Utils_Rule::title( $variable, $maxLength ) ) {
             return $variable;
@@ -104,14 +104,14 @@ class CRM_Utils_String {
     }
 
 
-    /* 
+    /*
      * Takes a variable name and munges it randomly into another variable name
-     *  
+     *
      * @param  string $name    Initial Variable Name
      * @param int     $len  length of valid variables
      *
      * @return string  Randomized Variable Name
-     * @access public 
+     * @access public
      * @static
      */
     static function rename( $name, $len = 4 ) {
@@ -135,16 +135,16 @@ class CRM_Utils_String {
         if( !is_array( $string ) ) {
             $names = explode( $char, $string );
         }
-        if( !empty( $names ) )  return array_pop( $names ); 
+        if( !empty( $names ) )  return array_pop( $names );
     }
-    
+
     /**
      * appends a name to a string and seperated by delimiter.
      * does the right thing for an empty string
      *
      * @param string $str   the string to be appended to
      * @param string $delim the delimiter to use
-     * @param mixed  $name  the string (or array of strings) to append 
+     * @param mixed  $name  the string (or array of strings) to append
      *
      * @return void
      * @access public
@@ -190,7 +190,7 @@ class CRM_Utils_String {
             $str = preg_replace( '/\s+/', '', $str ); // eliminate all white space from the string
             /* FIXME:  This is a pretty brutal hack to make utf8 and 8859-1 work.
              */
-        
+
             /* match low- or high-ascii characters */
             if ( preg_match( '/[\x00-\x20]|[\x7F-\xFF]/', $str ) )  {
             // || // low ascii characters
@@ -204,15 +204,15 @@ class CRM_Utils_String {
             }
             return true;
         } else {
-            $order = array( 'ASCII' ); 
+            $order = array( 'ASCII' );
             if ($utf8) {
                 $order[] = 'UTF-8';
             }
-            $enc = mb_detect_encoding($str, $order, true); 
+            $enc = mb_detect_encoding($str, $order, true);
             return ($enc == 'ASCII' || $enc == 'UTF-8');
         }
     }
-    
+
     /**
      * determine the string replacements for redaction
      * on the basis of the regular expressions
@@ -220,7 +220,7 @@ class CRM_Utils_String {
      * @param string $str        input string
      * @param array  $regexRules regular expression to be matched w/ replacements
      *
-     * @return array $match      array of strings w/ corresponding redacted outputs 
+     * @return array $match      array of strings w/ corresponding redacted outputs
      * @access public
      * @static
      */
@@ -233,14 +233,14 @@ class CRM_Utils_String {
                 if ( !empty( $matches[0] ) ) {
                     if ( empty( $totalMatches ) ) {
                         $totalMatches = $matches[0];
-                    } else { 
+                    } else {
                         $totalMatches = array_merge( $totalMatches, $matches[0] );
                     }
                      $match = array_flip( $totalMatches );
                 }
             }
-        } 
-        
+        }
+
         if ( !empty( $match ) ) {
             foreach ( $match as $matchKey => &$dontCare ) {
                 foreach ( $regexRules as $pattern => $replacement ) {
@@ -254,7 +254,7 @@ class CRM_Utils_String {
         }
         return CRM_Core_DAO::$_nullArray;
     }
-    
+
     static function redaction( $str, $stringRules ) {
         //redact the strings
         if (!empty($stringRules)){
@@ -262,11 +262,11 @@ class CRM_Utils_String {
                 $str = str_ireplace($match, $replace, $str);
             }
         }
-        
+
         //return the redacted output
         return $str;
     }
-    
+
     /**
      * Determine if a string is composed only of utf8 characters
      *
@@ -278,17 +278,17 @@ class CRM_Utils_String {
     static function isUtf8( $str ) {
         if( ! function_exists( mb_detect_encoding ) ) {
             $str = preg_replace( '/\s+/', '', $str ); // eliminate all white space from the string
-        
+
             /* pattern stolen from the php.net function documentation for
              * utf8decode();
              * comment by JF Sebastian, 30-Mar-2005
              */
             return  preg_match( '/^([\x00-\x7f]|[\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xec][\x80-\xbf]{2}|\xed[\x80-\x9f][\x80-\xbf]|[\xee-\xef][\x80-\xbf]{2}|f0[\x90-\xbf][\x80-\xbf]{2}|[\xf1-\xf3][\x80-\xbf]{3}|\xf4[\x80-\x8f][\x80-\xbf]{2})*$/' , $str );
-            // || 
+            // ||
             // iconv('ISO-8859-1', 'UTF-8', $str);
         } else {
-            $enc = mb_detect_encoding($str, array('UTF-8'), true); 
-            return ($enc !== false);         
+            $enc = mb_detect_encoding($str, array('UTF-8'), true);
+            return ($enc !== false);
         }
     }
     /**
@@ -308,7 +308,7 @@ class CRM_Utils_String {
         $url1Str = parse_url( $url1 );
         $url2Str = parse_url( $url2 );
 
-        if ( $url1Str['path'] == $url2Str['path'] && 
+        if ( $url1Str['path'] == $url2Str['path'] &&
              self::extractURLVarValue( CRM_Utils_Array::value( 'query', $url1Str) ) == self::extractURLVarValue(  CRM_Utils_Array::value( 'query', $url2Str) ) ) {
             return true;
         }
@@ -375,7 +375,7 @@ class CRM_Utils_String {
             return '1';
         } else if ( preg_match('/^(n(o)?|f(alse)?|0)$/i', $str) ) {
             return '0';
-        } else {            
+        } else {
             return false;
         }
     }
@@ -403,15 +403,15 @@ class CRM_Utils_String {
         // strip out quotes
         $name = str_replace('"', '', $name);
         $name = str_replace('\'', '', $name);
-        
+
         // check for comma in name
         if ( strpos( $name, ',' ) !== false ) {
-            
+
             // name has a comma - assume lname, fname [mname]
             $names = explode( ',', $name );
             if ( count( $names ) > 1) {
                 $params['last_name'] = trim( $names[0] );
-                
+
                 // check for space delim
                 $fnames = explode( ' ', trim( $names[1] ) );
                 if ( count( $fnames ) > 1 ) {
@@ -424,7 +424,7 @@ class CRM_Utils_String {
                 $params['first_name'] = trim( $names[0] );
             }
         } else {
-            
+
             // name has no comma - assume fname [mname] fname
             $names = explode( ' ', $name );
             if ( count( $names ) == 1 ) {
@@ -483,7 +483,7 @@ class CRM_Utils_String {
         }
     }
 
-    /** 
+    /**
      * strip leading, trailing, double spaces from string
      * used for postal/greeting/addressee
      * @param string  $string input string to be cleaned
@@ -492,25 +492,25 @@ class CRM_Utils_String {
      * @access public
      * @static
      */
-	static function stripSpaces( $string ) 
+	static function stripSpaces( $string )
 	{
         if ( empty($string) ) {
             return $string;
         }
-        
+
         $pat = array( 0 => "/^\s+/",
-                      1 =>  "/\s{2,}/", 
+                      1 =>  "/\s{2,}/",
                       2 => "/\s+\$/" );
-        
+
         $rep = array( 0 => "",
                       1 => " ",
                       2 => "" );
-        
+
         return preg_replace( $pat, $rep, $string );
 	}
 
     /**
-     * This function is used to clean the URL 'path' variable that we use 
+     * This function is used to clean the URL 'path' variable that we use
      * to construct CiviCRM urls by removing characters from the path variable
      *
      * @param string $string  the input string to be sanitized
@@ -530,7 +530,7 @@ class CRM_Utils_String {
         if ( empty( $string ) ) {
             return $string;
         }
-        
+
         if ( $_searchChars == null ) {
             $_searchChars = array( '&', ';', ',', '=', '$',
                                    '"', "'", '\\',
@@ -538,8 +538,8 @@ class CRM_Utils_String {
                                    ' ', "\r", "\r\n", "\n", "\t" );
             $_replaceChar = '_';
         }
-                                   
-        
+
+
         if ( $search == null ) {
             $search = $_searchChars;
         }
@@ -550,5 +550,35 @@ class CRM_Utils_String {
 
         return str_replace( $search, $replace, $string );
     }
+
+
+  /**
+   * Use HTMLPurifier to clean up a text string and remove any potential
+   * xss attacks. This is primarily used in public facing pages which
+   * accept html as the input string
+   *
+   * @param string $string the input string
+   *
+   * @return string the cleaned up string
+   * @public
+   * @static
+   */
+  static function purifyHTML($string) {
+    static $_filter = null;
+    if ( ! $_filter ) {
+      require_once 'packages/IDS/vendors/htmlpurifier/HTMLPurifier.auto.php';
+
+      $config = HTMLPurifier_Config::createDefault();
+      $config->set('Core.Encoding', 'UTF-8');
+
+      // Disable the cache entirely
+      $config->set('Cache.DefinitionImpl', null);
+
+      $_filter = new HTMLPurifier();
+    }
+
+    return $_filter->purify($string);
+  }
+
 }
 

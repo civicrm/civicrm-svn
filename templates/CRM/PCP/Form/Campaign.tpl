@@ -30,8 +30,8 @@
 <div class="crm-block crm-contribution-campaign-form-block">
 <table class="form-layout-compressed" width="100%">
 	<tr class="crm-contribution-form-block-title">
-		<td class="label">{$form.title.label}</td>
-		<td>{$form.title.html|crmReplace:class:big}</td>
+		<td class="label">{$form.pcp_title.label}</td>
+		<td>{$form.pcp_title.html|crmReplace:class:big}</td>
 	</tr>
 	<tr class="crm-contribution-form-block-intro_text">
 		<td class="label">{$form.pcp_intro_text.label}</td>
