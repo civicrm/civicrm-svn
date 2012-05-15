@@ -103,7 +103,7 @@ class CRM_Utils_Cache_Memcached {
   }
 
   function set($key, &$value) {
-    $key = preg_replace('/\s+|\W+/', '_', $this->_prefix . $key);
+    $key = $this->getKey($key);
     if (!$this->_cache->set($key, $value, $this->_timeout)) {
       CRM_Core_Error::debug( 'Result Code: ', $this->_cache->getResultMessage());
       CRM_Core_Error::fatal("memcached set failed, wondering why?, $key", $value );
@@ -113,14 +113,22 @@ class CRM_Utils_Cache_Memcached {
   }
 
   function &get($key) {
-    $key = preg_replace('/\s+|\W+/', '_', $this->_prefix . $key);
+    $key = $this->getKey($key);
     $result = $this->_cache->get($key);
     return $result;
   }
 
   function delete($key) {
-    $key = preg_replace('/\s+|\W+/', '_', $this->_prefix . $key);
+    $key = $this->getKey($key);
     return $this->_cache->delete($key);
+  }
+
+  function getKey($key) {
+    $key = preg_replace('/\s+|\W+/', '_', $this->_prefix . $key);
+    if ( strlen($key) > 62 ) {
+      $key = substr($key,0,30) . "_" . md5($key);
+    }
+    return $key;
   }
 
   function flush() {
