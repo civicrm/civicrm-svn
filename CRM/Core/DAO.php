@@ -47,11 +47,11 @@ class CRM_Core_DAO extends DB_DataObject {
   static $_nullArray = array();
 
   static $_dbColumnValueCache = NULL;
-  CONST NOT_NULL = 1, IS_NULL = 2, 
-  DB_DAO_NOTNULL = 128, 
-  VALUE_SEPARATOR = "", 
-  BULK_INSERT_COUNT = 200, 
-  BULK_INSERT_HIGH_COUNT = 200, 
+  CONST NOT_NULL = 1, IS_NULL = 2,
+  DB_DAO_NOTNULL = 128,
+  VALUE_SEPARATOR = "",
+  BULK_INSERT_COUNT = 200,
+  BULK_INSERT_HIGH_COUNT = 200,
   // special value for mail bulk inserts to avoid
   // potential duplication, assuming a smaller number reduces number of queries
   // by some factor, so some tradeoff. CRM-8678
@@ -706,17 +706,17 @@ FROM   civicrm_domain
   /**
    * Given a DAO name, a column name and a column value, find the record and GET the value of another column in that record
    *
-   * @param string $daoName       Name of the DAO (Example: CRM_Contact_DAO_Contact to retrieve value from a contact)
-   * @param int    $searchValue   Value of the column you want to search by
-   * @param string $returnColumn  Name of the column you want to GET the value of
-   * @param string $searchColumn  Name of the column you want to search by
+   * @param string  $daoName       Name of the DAO (Example: CRM_Contact_DAO_Contact to retrieve value from a contact)
+   * @param int     $searchValue   Value of the column you want to search by
+   * @param string  $returnColumn  Name of the column you want to GET the value of
+   * @param string  $searchColumn  Name of the column you want to search by
+   * @param boolean $force         Skip use of the cache
    *
    * @return string|null          Value of $returnColumn in the retrieved record
    * @static
    * @access public
    */
-  static
-  function getFieldValue($daoName, $searchValue, $returnColumn = 'name', $searchColumn = 'id') {
+  static function getFieldValue($daoName, $searchValue, $returnColumn = 'name', $searchColumn = 'id', $force = false) {
     if (empty($searchValue)) {
       // adding this year since developers forget to check for an id
       // and hence we get the first value in the db
@@ -728,7 +728,7 @@ FROM   civicrm_domain
       self::$_dbColumnValueCache = array();
     }
 
-    if (!array_key_exists($cacheKey, self::$_dbColumnValueCache)) {
+    if (!array_key_exists($cacheKey, self::$_dbColumnValueCache) || $force) {
       require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
       eval('$object   = new ' . $daoName . '( );');
       $object->$searchColumn = $searchValue;

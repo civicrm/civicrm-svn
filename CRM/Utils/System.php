@@ -1223,8 +1223,7 @@ class CRM_Utils_System {
    * Reset the various system caches and some important
    * static variables
    */
-  static
-  function flushCache($daoName = NULL) {
+  static function flushCache( ) {
     // flush out all cache entries so we can reload new data
     // a bit aggressive, but livable for now
     $cache = CRM_Utils_Cache::singleton();
