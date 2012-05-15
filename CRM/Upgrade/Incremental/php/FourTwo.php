@@ -51,10 +51,8 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   }
 
   function upgrade_4_2_alpha1($rev) {
-
-    $upgrade = new CRM_Upgrade_Form();
-    $upgrade->processSQL($rev);
-
+    
+    //upgrade code to create priceset for contribution pages and events
     $daoName = array('civicrm_contribution_page' => array('CRM_Contribute_BAO_ContributionPage', CRM_Core_Component::getComponentID('CiviContribute')),
       'civicrm_event' => array('CRM_Event_BAO_Event', CRM_Core_Component::getComponentID('CiviEvent')),
     );
@@ -112,7 +110,7 @@ WHERE `name` LIKE '%.amount.%' ";
         $fieldParams['option_amount'][1] = 1;
         $priceField = CRM_Price_BAO_Field::create($fieldParams);
       }
-
+    }
       $upgrade = new CRM_Upgrade_Form();
       $upgrade->processSQL($rev);
 
@@ -120,6 +118,7 @@ WHERE `name` LIKE '%.amount.%' ";
       // CRM-9716
       CRM_Core_DAO::triggerRebuild();
 
+      // create lineitems for contribution done for membership
       $sql = " SELECT cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
 FROM `civicrm_contribution` cc
 LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
@@ -204,8 +203,7 @@ GROUP BY cc.id ";
         }
         CRM_Price_BAO_LineItem::create($lineParams);
       }
-
-
+      //create entry in lineitems for participants
       $sql = " SELECT cc.id, cc.total_amount, cpse.price_set_id, cp.fee_level, cpf.id as price_field_id,cpfv.id as price_field_value_id
 FROM `civicrm_contribution` cc
 LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
@@ -220,7 +218,7 @@ GROUP BY cc.id;";
       $result = CRM_Core_DAO::executeQuery($sql);
       while ($result->fetch()) {
         $lineParams = array(
-          'entity_table' => 'civicrm_event',
+          'entity_table' => 'civicrm_participant',
           'entity_id' => $result->id,
           'price_field_id' => $result->price_field_id,
           'label' => $result->fee_level,
@@ -269,6 +267,5 @@ GROUP BY cc.id;";
         CRM_Core_DAO::executeQuery($sql);
       }
     }
-  }
 }
 

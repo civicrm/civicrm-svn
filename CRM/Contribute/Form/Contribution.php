@@ -1134,14 +1134,12 @@ WHERE  contribution_id = {$this->_id}
     $lineItem = array();
     $priceSetId = NULL;
     if (!($priceSetId = CRM_Utils_Array::value('price_set_id', $submittedValues)) && !$this->_id) {
-        $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
-        $this->_priceSet = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
-        $fieldID = key($this->_priceSet['fields']);
-        if ( array_key_exists( 'html_type', $this->_priceSet['fields'][$fieldID] ) && $this->_priceSet['fields'][$fieldID]['html_type'] == 'Text' ) {
-            $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] =  $submittedValues['total_amount'];
-            $submittedValues['price_'.$fieldID] = 1;
-        }
+      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
+      $this->_priceSet = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
+      $fieldID = key($this->_priceSet['fields']);
+      $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] = $submittedValues['total_amount'];
     }
+  }
 
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
