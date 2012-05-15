@@ -1,5 +1,4 @@
 <?php
-// vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
 
 /**
  *  File for the CRM_Contact_Form_Search_Custom_GroupTestDataProvider class
@@ -53,14 +52,14 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
     array('fv' => array('excludeGroups' => array('3')),
       'id' => array(
         '9', '10', '11', '12', '13', '14',
-        '15', '16',
+        '15', '16', '25', '26', '29'
       ),
     ),
     //  Include static group 3
     array('fv' => array('includeGroups' => array('3')),
       'id' => array(
         '17', '18', '19', '20', '21',
-        '22', '23', '24',
+        '22', '23', '24', '27', '28',
       ),
     ),
     //  Include static group 5
@@ -74,31 +73,35 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
     array('fv' => array('includeGroups' => array('3', '5')),
       'id' => array(
         '13', '14', '15', '16', '17', '18',
-        '19', '20', '21', '22', '23', '24',
+        '19', '20', '21', '22', '23', '24', 
+        '27', '28',
       ),
     ),
     //  Include static group 3, exclude static group 5
     array('fv' => array('includeGroups' => array('3'),
         'excludeGroups' => array('5'),
       ),
-      'id' => array('17', '18', '19', '20'),
+      'id' => array('17', '18', '19', '20', '27', '28'),
     ),
     //  Exclude tag 7
     array('fv' => array('excludeTags' => array('7')),
-      'id' => array('9', '10', '13', '14', '17', '18', '21', '22'),
+      'id' => array(
+        '9', '10', '13', '14', '17', '18', 
+        '21', '22', '25', '27', '29',
+      ),
     ),
     //  Include tag 7
     array('fv' => array('includeTags' => array('7')),
       'id' => array(
-        '11', '12', '15', '16',
-        '19', '20', '23', '24',
+        '11', '12', '15', '16', '19',
+        '20', '23', '24', '26', '28',
       ),
     ),
     //  Include tag 9
     array('fv' => array('includeTags' => array('9')),
       'id' => array(
-        '10', '12', '14', '16',
-        '18', '20', '22', '24',
+        '10', '12', '14', '16', '18',
+        '20', '22', '24',
       ),
     ),
     //  Include tags 7 and 9
@@ -106,53 +109,70 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
       'id' => array(
         '10', '11', '12', '14', '15', '16',
         '18', '19', '20', '22', '23', '24',
+        '26', '28',
       ),
     ),
     //  Include tag 7, exclude tag 9
     array('fv' => array('includeTags' => array('7'),
         'excludeTags' => array('9'),
       ),
-      'id' => array('11', '15', '19', '23'),
+      'id' => array('11', '15', '19', '23', '26', '28'),
     ),
-    //  Include static group 3, include tag 7
-    array('fv' => array('includeGroups' => array('3'),
+    //  Include static group 3, include tag 7 (either)
+    array(
+      'fv' => array(
+        'includeGroups' => array('3'),
         'includeTags' => array('7'),
+        'andOr' => 0,
       ),
       'id' => array(
-        '11', '12', '15', '16', '17', '18', '19',
-        '20', '21', '22', '23', '24',
+        '11', '12', '15', '16', '17', '18', 
+        '19', '20', '21', '22', '23', '24',
+        '26', '27', '28',
       ),
+    ),
+    //  Include static group 3, include tag 7 (both)
+    array(
+      'fv' => array(
+        'includeGroups' => array('3'),
+        'includeTags' => array('7'),
+        'andOr' => 1,
+      ),
+      'id' => array('19', '20', '23', '24', '28'),
     ),
     //  Include static group 3, exclude tag 7
     array('fv' => array('includeGroups' => array('3'),
         'excludeTags' => array('7'),
       ),
-      'id' => array('9', '10', '13', '14', '17', '18', '19', '20', '21', '22', '23', '24'),
+      'id' => array('17', '18', '21', '22', '27'),
     ),
     //  Include tag 9, exclude static group 5
     array('fv' => array('includeTags' => array('9'),
         'excludeGroups' => array('5'),
       ),
-      'id' => array('9', '10', '11', '12', '14', '16', '17', '18', '19', '20', '22', '24'),
+      'id' => array('10','12','18','20'),
     ),
     //  Exclude tag 9, exclude static group 5
     array('fv' => array('excludeTags' => array('9'),
         'excludeGroups' => array('5'),
       ),
-      'id' => array('9', '10', '11', '12', '13', '15', '17', '18', '19', '20', '21', '23'),
+      'id' => array(
+        '9', '11', '17', '19', '25', 
+        '26', '27', '28', '29'
+      ),
     ),
     //  Include smart group 6
     array('fv' => array('includeGroups' => array('6')),
       'id' => array(
         '9', '10', '11', '12', '13', '14',
-        '15', '16',
+        '15', '16', '25', '26', '29'
       ),
     ),
     //  Include smart group 4
     array('fv' => array('includeGroups' => array('4')),
       'id' => array(
         '17', '18', '19', '20', '21',
-        '22', '23', '24',
+        '22', '23', '24', '27', '28',
       ),
     ),
     //  Include smart group 4 and static group 5
@@ -160,7 +180,53 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
       'id' => array(
         '13', '14', '15', '16', '17', '18',
         '19', '20', '21', '22', '23', '24',
+        '27', '28',
       ),
+    ),
+    //  Include activities with subject like "sailing"
+    array(
+      'fv' => array('activity_include' => '[["subject like sailing"]]'),
+      'id' => array('25', '26'),
+    ),
+    //  Exclude activities with subject like "conference"
+    array(
+      'fv' => array('activity_exclude' => '[["subject like conference"]]'),
+      'id' => array(
+        '9', '10', '11', '12', '13', '14',
+        '15', '16', '17', '18', '19', '20',
+        '21', '22', '23', '24', '25',
+      ),
+    ),
+    //  Include activities with subject like "conference" and date after 5/1/2012
+    array(
+      'fv' => array('activity_include' => '[["subject like conference","activity_date_time >= 05/01/2012"]]'),
+      'id' => array('28', '29'),
+    ),
+    //  Include activities with status of scheduled and date before 7/31/2012
+    array(
+      'fv' => array('activity_include' => '[["activity_status_id = 1","activity_date_time <= 07/31/2012"]]'),
+      'id' => array('27'),
+    ),
+    //  Include activities with status of scheduled and tag 7 (either)
+    array(
+      'fv' => array(
+        'activity_include' => '[["activity_status_id = 1"]]',
+        'includeTags' => array('7'),
+        'andOr' => 0,
+      ),
+      'id' => array(
+        '11', '12', '15', '16', '19', '20',
+        '23', '24', '26', '27', '28', '29',
+      ),
+    ),
+    //  Include activities with status of scheduled and tag 7 (both)
+    array(
+      'fv' => array(
+        'activity_include' => '[["activity_status_id = 1"]]',
+        'includeTags' => array('7'),
+        'andOr' => 1,
+      ),
+      'id' => array('28'),
     ),
   );
 
@@ -198,14 +264,5 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
     return isset($this->dataset[$this->i]);
   }
 }
-// class CRM_Contact_Form_Search_Custom_GroupTestDataProvider
 
-// -- set Emacs parameters --
-// Local variables:
-// mode: php;
-// tab-width: 4
-// c-basic-offset: 4
-// c-hanging-comment-ender-p: nil
-// indent-tabs-mode: nil
-// End:
 

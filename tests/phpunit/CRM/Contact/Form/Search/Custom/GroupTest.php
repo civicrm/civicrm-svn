@@ -65,6 +65,8 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase {
     'civicrm_contact',
     'civicrm_option_value',
     'civicrm_option_group',
+    'civicrm_activity',
+    'civicrm_activity_target',
   );
   function get_info() {
     return array(
@@ -135,6 +137,7 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase {
     $sql = $obj->all();
     $this->assertTrue(is_string($sql), 'In line ' . __LINE__);
     $dao = CRM_Core_DAO::executeQuery($sql);
+    $all = array();
     while ($dao->fetch()) {
       $all[] = array(
         'contact_id' => $dao->contact_id,

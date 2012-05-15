@@ -501,7 +501,7 @@ print $xActs . ' / ' . $iActs . ' / '; */
       CRM_Core_DAO::executeQuery($sql);
 
       //used only when exclude tag is selected
-      if ($this->_activity_exclude) {
+      if ($this->_activity_exclude && is_array($this->_activity_exclude)) {
         $xactwhere = array();
         foreach ($this->_activity_exclude as $xactid => $xactitem) {
           foreach ($xactitem as $crit) {
@@ -562,24 +562,26 @@ print $xActs . ' / ' . $iActs . ' / '; */
         }
       }
       $iactwhere = array();
-      foreach ($this->_activity_include as $iactid => $iactitem) {
-        foreach ($iactitem as $crit) {
-          if (substr($crit, 0, 19) == 'activity_type_id = ') {
-            $iactwhere[$iactid][] = 'activity_type_id = ' . intval(substr($crit, 19));
+      if (is_array($this->_activity_include)) {
+        foreach ($this->_activity_include as $iactid => $iactitem) {
+          foreach ($iactitem as $crit) {
+            if (substr($crit, 0, 19) == 'activity_type_id = ') {
+              $iactwhere[$iactid][] = 'activity_type_id = ' . intval(substr($crit, 19));
+            }
+            elseif (substr($crit, 0, 21) == 'activity_status_id = ') {
+              $iactwhere[$iactid][] = 'status_id = ' . intval(substr($crit, 21));
+            }
+            elseif (in_array(substr($crit, 0, 22), array(
+              'activity_date_time >= ', 'activity_date_time <= '))) {
+              $iactwhere[$iactid][] = substr($crit, 0, 22) . '"' . strftime('%F', strtotime(substr($crit, 22))) . '"';
+            }
+            elseif (substr($crit, 0, 13) == 'subject like ') {
+              $iactwhere[$iactid][] = 'subject like "%' . mysql_real_escape_string(substr($crit, 13)) . '%"';
+            }
           }
-          elseif (substr($crit, 0, 21) == 'activity_status_id = ') {
-            $iactwhere[$iactid][] = 'status_id = ' . intval(substr($crit, 21));
-          }
-          elseif (in_array(substr($crit, 0, 22), array(
-            'activity_date_time >= ', 'activity_date_time <= '))) {
-            $iactwhere[$iactid][] = substr($crit, 0, 22) . strftime('%F', strtotime(substr($crit, 22)));
-          }
-          elseif (substr($crit, 0, 13) == 'subject like ') {
-            $iactwhere[$iactid][] = 'subject like "%' . mysql_real_escape_string(substr($crit, 13)) . '%"';
-          }
-        }
 
-        $iactwhere[$iactid] = implode(' AND ', $iactwhere[$iactid]);
+          $iactwhere[$iactid] = implode(' AND ', $iactwhere[$iactid]);
+        }
       }
       if ($iactwhere) {
         $iactwhere = '(' . implode(') OR (', $iactwhere) . ')';
