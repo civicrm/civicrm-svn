@@ -57,7 +57,7 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
     $params = $this->pcpBlockParams();
     $pcpBlock = CRM_PCP_BAO_PCP::add($params, TRUE);
 
-    $this->assertType('CRM_PCP_DAO_PCPBlock', $pcpBlock, 'Check for created object');
+    $this->assertInstanceOf('CRM_PCP_DAO_PCPBlock', $pcpBlock, 'Check for created object');
     $this->assertEquals($params['entity_table'], $pcpBlock->entity_table, 'Check for entity table.');
     $this->assertEquals($params['entity_id'], $pcpBlock->entity_id, 'Check for entity id.');
     $this->assertEquals($params['supporter_profile_id'], $pcpBlock->supporter_profile_id, 'Check for profile id .');
@@ -77,7 +77,7 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
 
     $pcp = CRM_PCP_BAO_PCP::add($params, FALSE);
 
-    $this->assertType('CRM_PCP_DAO_PCP', $pcp, 'Check for created object');
+    $this->assertInstanceOf('CRM_PCP_DAO_PCP', $pcp, 'Check for created object');
     $this->assertEquals($params['contact_id'], $pcp->contact_id, 'Check for entity table.');
     $this->assertEquals($params['status_id'], $pcp->status_id, 'Check for status.');
     $this->assertEquals($params['title'], $pcp->title, 'Check for title.');
@@ -101,7 +101,7 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
 
     $pcp = CRM_PCP_BAO_PCP::add($params, FALSE);
 
-    $this->assertType('CRM_PCP_DAO_PCP', $pcp, 'Check for created object');
+    $this->assertInstanceOf('CRM_PCP_DAO_PCP', $pcp, 'Check for created object');
     $this->assertEquals($params['contact_id'], $pcp->contact_id, 'Check for entity table.');
     $this->assertEquals(0, $pcp->status_id, 'Check for zero status when no status_id passed.');
     $this->assertEquals($params['title'], $pcp->title, 'Check for title.');

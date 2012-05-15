@@ -1,6 +1,4 @@
 <?php
-// vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
-
 /**
  *  File for the CiviUnitTestCase class
  *
@@ -422,7 +420,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (empty($searchValue)) {
       $this->fail("empty value passed to assertDBNotNull");
     }
-    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn);
+    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, true);
     $this->assertNotNull($value, $message);
 
     return $value;
@@ -430,13 +428,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
   // Request a record from the DB by seachColumn+searchValue. Success if returnColumn value is NULL.
   function assertDBNull($daoName, $searchValue, $returnColumn, $searchColumn, $message) {
-    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn);
+    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, true);
     $this->assertNull($value, $message);
   }
 
   // Request a record from the DB by id. Success if row not found.
   function assertDBRowNotExist($daoName, $id, $message) {
-    $value = CRM_Core_DAO::getFieldValue($daoName, $id, 'id', 'id');
+    $value = CRM_Core_DAO::getFieldValue($daoName, $id, 'id', 'id', true);
     $this->assertNull($value, $message);
   }
 
@@ -444,7 +442,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   function assertDBCompareValue($daoName, $searchValue, $returnColumn, $searchColumn,
     $expectedValue, $message
   ) {
-    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn);
+    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, true);
     $this->assertEquals($value, $expectedValue, $message);
   }
 
@@ -2031,13 +2029,3 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
 function CiviUnitTestCase_fatalErrorHandler($message) {
   throw new Exception("{$message['message']}: {$message['code']}");
 }
-
-// -- set Emacs parameters --
-// Local variables:
-// mode: php;
-// tab-width: 4
-// c-basic-offset: 4
-// c-hanging-comment-ender-p: nil
-// indent-tabs-mode: nil
-// End:
-
