@@ -21,8 +21,9 @@
 function civicrm_api($entity, $action, $params, $extra = NULL) {
   try {
     require_once ('api/v3/utils.php');
+    require_once 'api/Exception.php';
     if (!is_array($params)) {
-      throw new Exception('Input variable `params` is not an array',2000);
+      throw new api_Exception('Input variable `params` is not an array',2000);
     }
     _civicrm_api3_initialize(TRUE);
     require_once 'CRM/Utils/String.php';
@@ -100,7 +101,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
       return 0;
     }
-    $data = array('error_code' => $e->getCode());
+    $data = array();
     $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest);
     if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
       $err['trace'] = $e->getTraceSafe();
@@ -113,11 +114,25 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     return $err;
   }
+  catch (api_Exception $e){
+    if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
+      return 0;
+    }
+    $data = $e->getExtraParams();
+    $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest, $e->getCode());
+    if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
+      $err['trace'] = $e->getTraceAsString();
+    }
+    if (CRM_Utils_Array::value('is_transactional', $apiRequest)) {
+      $tx->rollback();
+    }
+    return $err;
+  }
   catch(Exception $e) {
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
       return 0;
     }
-    $data = array('error_code' => $e->getCode());
+    $data = array();
     $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest, $e->getCode());
     if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
       $err['trace'] = $e->getTraceAsString();

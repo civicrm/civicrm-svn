@@ -83,10 +83,6 @@ function civicrm_api3_verify_one_mandatory($params, $daoName = NULL, $keyoptions
  */
 function civicrm_api3_verify_mandatory($params, $daoName = NULL, $keys = array(
   ), $verifyDAO = TRUE) {
-  // moving this to civicrm_api - remove the check for array pending testing
-  if (!is_array($params)) {
-    throw new Exception('Input variable `params` is not an array', 2000);
-  }
 
   if ($daoName != NULL && $verifyDAO && !CRM_Utils_Array::value('id', $params)) {
     if (!is_array($unmatched = _civicrm_api3_check_required_fields($params, $daoName, TRUE))) {
@@ -1277,7 +1273,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
     if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
       $constant = $fieldInfo['options'];
       if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
-        throw new Exception("$fieldname is not valid");
+        throw new api_Exception("$fieldname is not valid", 2001, array('error_field' => $fieldname));
       }
       elseif (!is_numeric($params[$fieldname])) {
         $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
