@@ -84,14 +84,17 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
    * Add a new item to the queue
    *
    * @param $data serializable PHP object or array
+   * @param $options queue-dependent options; for example, if this is a
+   *   priority-queue, then $options might specify the item's priority
    *
    * @return bool, TRUE on success
    */
-  function createItem($data) {
+  function createItem($data, $options = array()) {
     $dao              = new CRM_Queue_DAO_QueueItem();
     $dao->queue_name  = $this->getName();
     $dao->submit_time = CRM_Utils_Time::getTime('YmdHis');
     $dao->data        = serialize($data);
+    $dao->weight      = CRM_Utils_Array::value('weight', $options, 0);
     $dao->save();
   }
 
@@ -122,7 +125,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
       SELECT id, queue_name, submit_time, release_time, data
       FROM civicrm_queue_item
       WHERE queue_name = %1
-      ORDER BY id asc
+      ORDER BY weight ASC, id ASC
       LIMIT 1
     ";
     $params = array(
@@ -171,7 +174,7 @@ class CRM_Queue_Queue_Sql extends CRM_Queue_Queue {
       SELECT id, queue_name, submit_time, release_time, data
       FROM civicrm_queue_item
       WHERE queue_name = %1
-      ORDER BY id asc
+      ORDER BY weight ASC, id ASC
       LIMIT 1
     ";
     $params = array(

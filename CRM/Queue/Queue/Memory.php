@@ -95,10 +95,12 @@ class CRM_Queue_Queue_Memory extends CRM_Queue_Queue {
    * Add a new item to the queue
    *
    * @param $data serializable PHP object or array
+   * @param $options queue-dependent options; for example, if this is a
+   *   priority-queue, then $options might specify the item's priority
    *
    * @return bool, TRUE on success
    */
-  function createItem($data) {
+  function createItem($data, $options = array()) {
     $id = $this->nextQueueItemId++;
     // force copy, no unintendedsharing effects from pointers
     $this->items[$id] = serialize($data);

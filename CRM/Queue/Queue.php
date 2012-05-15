@@ -90,10 +90,12 @@ abstract class CRM_Queue_Queue {
    * Add a new item to the queue
    *
    * @param $data serializable PHP object or array
+   * @param $options queue-dependent options; for example, if this is a
+   *   priority-queue, then $options might specify the item's priority
    *
    * @return bool, TRUE on success
    */
-  abstract function createItem($data);
+  abstract function createItem($data, $options = array());
 
   /**
    * Determine number of items remaining in the queue
