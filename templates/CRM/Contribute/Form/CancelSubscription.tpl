@@ -31,12 +31,17 @@
 <div class="crm-block crm-form-block crm-auto-renew-membership-cancellation">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <div class="messages status">
-   <div class="icon inform-icon"></div>       
-   {if $mode eq 'auto_renew'}
+  <div class="icon inform-icon"></div>       
+  {if $mode eq 'auto_renew'}
       {ts}Click the button below if you want to cancel the auto-renewal option for your {$membershipType} membership? This will not cancel your membership. However you will need to arrange payment for renewal when your membership expires.{/ts}  
-   {else}
+  {else}
       {ts}Click the button below if you want to cancel the recurring contribution? This will set the CiviCRM recurring contribution status to Cancelled.{/ts}  
-   {/if}
+	{/if}
+	{if !$cancelSupported}
+		<div class="status-warning">
+			{ts}Automatic cancellation is not supported for this payment processor. You or the contributor will need to manually cancel this recurring contribution using the payment processor website.{/ts}
+		</div>
+	{/if}
 </div>
 <table class="form-layout">
    <tr>
