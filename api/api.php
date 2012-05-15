@@ -284,15 +284,6 @@ function civicrm_api_include($entity, $rest_interface = FALSE, $version = NULL) 
   $version    = civicrm_get_api_version($version);
   $camel_name = _civicrm_api_get_camel_name($entity, $version);
   $file       = 'api/v' . $version . '/' . $camel_name . '.php';
-  if ($rest_interface) {
-    $apiPath = substr($_SERVER['SCRIPT_FILENAME'], 0, -15);
-    // check to ensure file exists, else die
-    if (!file_exists($apiPath . $apiFile)) {
-      return self::error('Unknown function invocation.');
-    }
-    $file = $apiPath . $file;
-  }
-
   if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . $file)) {
     require_once $file;
   }
