@@ -632,49 +632,49 @@ WHERE  id = %1";
     case 'CheckBox':
       $params['amount_priceset_level_checkbox'] = $optionIds = array();
       foreach ($params["price_{$id}"] as $optionId => $option) {
-      $optionIds[] = $optionId;
-      $optionLabel = $field['options'][$optionId]['label'];
-      $params['amount_priceset_level_checkbox']["{$field['options'][$optionId]['id']}"] = $optionLabel;
-      if (isset($checkboxLevel)) {
-      $checkboxLevel = array_unique(array_merge(
-          $checkboxLevel,
-          array_keys($params['amount_priceset_level_checkbox'])
-        )
-      );
+        $optionIds[] = $optionId;
+        $optionLabel = $field['options'][$optionId]['label'];
+        $params['amount_priceset_level_checkbox']["{$field['options'][$optionId]['id']}"] = $optionLabel;
+        if (isset($checkboxLevel)) {
+          $checkboxLevel = array_unique(array_merge(
+            $checkboxLevel,
+            array_keys($params['amount_priceset_level_checkbox'])
+          )
+        );
+        }
+        else {
+          $checkboxLevel = array_keys($params['amount_priceset_level_checkbox']);
+        }
+      }
+      CRM_Price_BAO_LineItem::format($id, $params, $field, $lineItem);
+      foreach ($optionIds as $optionId) {
+        $totalPrice += $lineItem[$optionId]['line_total'];
+      }
+      break;
+      }
     }
-    else {
-    $checkboxLevel = array_keys($params['amount_priceset_level_checkbox']);
+
+    $amount_level = array();
+    $totalParticipant = 0;
+    if (is_array($lineItem)) {
+      foreach ($lineItem as $values) {
+        $totalParticipant += $values['participant_count'];
+        if ($values['html_type'] == 'Text') {
+          $amount_level[] = $values['label'] . ' - ' . $values['qty'];
+          continue;
+        }
+        $amount_level[] = $values['label'];
+      }
+    }
+
+    $displayParticipantCount = '';
+    if ($totalParticipant > 0) {
+      $displayParticipantCount = ' Participant Count -' . $totalParticipant;
+    }
+
+    $params['amount_level'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $amount_level) . $displayParticipantCount . CRM_Core_DAO::VALUE_SEPARATOR;
+    $params['amount'] = $totalPrice;
   }
-}
-CRM_Price_BAO_LineItem::format($id, $params, $field, $lineItem);
-foreach ($optionIds as $optionId) {
-$totalPrice += $lineItem[$optionId]['line_total'];
-}
-break;
-}
-}
-
-$amount_level = array();
-$totalParticipant = 0;
-if (is_array($lineItem)) {
-foreach ($lineItem as $values) {
-$totalParticipant += $values['participant_count'];
-if ($values['html_type'] == 'Text') {
-$amount_level[] = $values['label'] . ' - ' . $values['qty'];
-continue;
-}
-$amount_level[] = $values['label'];
-}
-}
-
-$displayParticipantCount = '';
-if ($totalParticipant > 0) {
-$displayParticipantCount = ' Participant Count -' . $totalParticipant;
-}
-
-$params['amount_level'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $amount_level) . $displayParticipantCount . CRM_Core_DAO::VALUE_SEPARATOR;
-$params['amount'] = $totalPrice;
-}
 
 /**
  * Function to build the price set form.
