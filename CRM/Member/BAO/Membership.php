@@ -347,12 +347,16 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       $recordContribution = array(
         'contact_id', 'total_amount', 'receive_date', 'contribution_type_id',
         'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test',
+        'honor_contact_id', 'honor_type_id',
         'contribution_status_id', 'check_number', 'campaign_id', 'is_pay_later',
       );
       foreach ($recordContribution as $f) {
         $contributionParams[$f] = CRM_Utils_Array::value($f, $params);
       }
-
+      if(CRM_Utils_Array::value('contribution_contact_id', $params)){
+        // deal with possibility of a different person paying for contribution
+        $contributionParams['contact_id'] = $params['contribution_contact_id'];
+      }
       $contribution = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
 
       // store contribution id
