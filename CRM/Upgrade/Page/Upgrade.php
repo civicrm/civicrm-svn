@@ -139,7 +139,6 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     // end of hack
 
     $postUpgradeMessage = ts('CiviCRM upgrade was successful.');
-    CRM_Upgrade_Incremental_Legacy::setPostUpgradeMessage($postUpgradeMessage, $currentVer, $latestVer);
 
     // Persistent message storage across upgrade steps. TODO: Use structured message store
     // Note: In clustered deployments, this file must be accessible by all web-workers.

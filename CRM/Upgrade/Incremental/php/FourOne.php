@@ -45,8 +45,15 @@ class CRM_Upgrade_Incremental_php_FourOne {
     return TRUE;
   }
 
-  function setPostUpgradeMessage(&$postUpgradeMessage, $currentVer, $latestVer) {
-    if (version_compare($currentVer, '4.1.0') < 0) {
+  /**
+   * Compute any messages which should be displayed after upgrade
+   *
+   * @param $postUpgradeMessage string, alterable
+   * @param $rev string, an intermediate version; note that setPostUpgradeMessage is called repeatedly with different $revs
+   * @return void
+   */
+  function setPostUpgradeMessage(&$postUpgradeMessage, $rev) {
+    if ($rev == '4.1.alpha1') {
       $postUpgradeMessage .= '<br />' . ts('WARNING! CiviCRM 4.1 introduces an improved way of handling cron jobs. However the new method is NOT backwards compatible. <strong>Please notify your system administrator that all CiviCRM related cron jobs will cease to work, and will need to be re-configured (this includes sending CiviMail mailings, updating membership statuses, etc.).</strong> Refer to the <a href="%1">online documentation</a> for detailed instructions.', array(1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC41/Managing+Scheduled+Jobs'));
       $postUpgradeMessage .= '<br />' . ts('The CiviCRM Administration menu structure has been re-organized during this upgrade to make it easier to find things and reduce the number of keystrokes. If you have customized this portion of the navigation menu - you should take a few minutes to review the changes. You may need to reimplement or move your customizations.');
 

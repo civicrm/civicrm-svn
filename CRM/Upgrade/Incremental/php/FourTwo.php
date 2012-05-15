@@ -37,8 +37,15 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     return TRUE;
   }
 
-  function setPostUpgradeMessage(&$postUpgradeMessage, $currentVer, $latestVer) {
-    if (version_compare($currentVer, '4.2.0') < 0) {
+  /**
+   * Compute any messages which should be displayed after upgrade
+   *
+   * @param $postUpgradeMessage string, alterable
+   * @param $rev string, an intermediate version; note that setPostUpgradeMessage is called repeatedly with different $revs
+   * @return void
+   */
+  function setPostUpgradeMessage(&$postUpgradeMessage, $rev) {
+    if ($rev == '4.2.alpha1') {
       $postUpgradeMessage .= '<br />' . ts('Default versions of the following System Workflow Message Templates have been modified to handle new functionality: <ul><li>Events - Registration Confirmation and Receipt (on-line)</li><li>Pledges - Acknowledgement</li><li>Pledges - Payment Reminder</li></ul>. If you have modified these templates, please review the new default versions and implement updates as needed to your copies (Administer > Communications > Message Templates > System Workflow Messages).');
     }
   }

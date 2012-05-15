@@ -167,13 +167,15 @@ SELECT  id
    * Compute any messages which should be displayed after upgrade
    *
    * @param $postUpgradeMessage string, alterable
+   * @param $rev string, an intermediate version; note that setPostUpgradeMessage is called repeatedly with different $revs
+   * @return void
    */
   static
-  function setPostUpgradeMessage(&$postUpgradeMessage, $currentVer, $latestVer) {
-    if ($latestVer == '3.2.alpha1') {
+  function setPostUpgradeMessage(&$postUpgradeMessage, $rev) {
+    if ($rev == '3.2.alpha1') {
       $postUpgradeMessage .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
     }
-    if ($latestVer == '3.2.beta3' && (version_compare($currentVer, '3.1.alpha1') >= 0)) {
+    if ($rev == '3.2.beta3') {
       $subTypes = CRM_Contact_BAO_ContactType::subTypes();
 
       if (is_array($subTypes) && !empty($subTypes)) {
@@ -204,7 +206,7 @@ SELECT  id
         }
       }
     }
-    if ($latestVer == '3.2.beta4') {
+    if ($rev == '3.2.beta4') {
       $statuses = array('New', 'Current', 'Grace', 'Expired', 'Pending', 'Cancelled', 'Deceased');
       $sql = "
 SELECT  count( id ) as statusCount 
@@ -215,7 +217,7 @@ SELECT  count( id ) as statusCount
         $postUpgradeMessage .= '<br />' . ts("One or more Membership Status Rules was disabled during the upgrade because it did not match a recognized status name. if custom membership status rules were added to this site - review the disabled statuses and re-enable any that are still needed (Administer > CiviMember > Membership Status Rules).");
       }
     }
-    if ($latestVer == '3.4.alpha1') {
+    if ($rev == '3.4.alpha1') {
       $renamedBinScripts = array(
         'ParticipantProcessor.php',
         'RespondentProcessor.php',

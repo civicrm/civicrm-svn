@@ -503,7 +503,11 @@ SET    version = '$version'
         if (is_callable(array(
           $versionObject, 'setPostUpgradeMessage'))) {
           $postUpgradeMessage = file_get_contents($postUpgradeMessageFile);
-          $versionObject->setPostUpgradeMessage($postUpgradeMessage, $currentVer, $latestVer);
+          $versionObject->setPostUpgradeMessage($postUpgradeMessage, $rev);
+          file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
+        } else {
+          $postUpgradeMessage = file_get_contents($postUpgradeMessageFile);
+          CRM_Upgrade_Incremental_Legacy::setPostUpgradeMessage($postUpgradeMessage, $rev);
           file_put_contents($postUpgradeMessageFile, $postUpgradeMessage);
         }
       }
