@@ -336,6 +336,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $result = &civicrm_api('activity', 'create', $params);
     $this->assertEquals($result['is_error'], 1, "In line " . __LINE__);
     $this->assertEquals('priority_id is not valid', $result['error_message']);
+    $this->assertEquals(2001,$result['error_code']);
+    $this->assertEquals('priority_id',$result['error_field']);
   }
 
   function testActivityCreateWithValidStringPriority() {
