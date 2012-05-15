@@ -557,7 +557,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         }
 
         if ( CRM_Utils_Array::value('receive_date', $value) ) {
-          $value['receive_date'] = CRM_Utils_Date::processDate( $value['receive_date'], $value['receive_date'] . '_time' , TRUE );
+          $value['receive_date'] = CRM_Utils_Date::processDate( $value['receive_date'], $value['receive_date_time'] , TRUE );
         }
 
         $params['actualBatchTotal'] += $value['total_amount'];
