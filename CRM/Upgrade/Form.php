@@ -521,6 +521,8 @@ SET    version = '$version'
 
     // after an successful intermediate upgrade, set the complete version
     $upgrade->setVersion($rev);
+    
+    CRM_Utils_System::flushCache();
 
     return TRUE;
   }
