@@ -97,10 +97,17 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page {
       $this->_showHide->addShow("id_{$group}_show");
       $this->_showHide->addHide("id_{$group}");
       $v = CRM_Core_ShowHideBlocks::links($this, $group, '', '', FALSE);
-      $adminPanel[$group] = $values[$group];
-      $adminPanel[$group]['show'] = $v['show'];
-      $adminPanel[$group]['hide'] = $v['hide'];
-      $adminPanel[$group]['title'] = $title;
+      if (isset($values[$group])) {
+        $adminPanel[$group] = $values[$group];
+        $adminPanel[$group]['show'] = $v['show'];
+        $adminPanel[$group]['hide'] = $v['hide'];
+        $adminPanel[$group]['title'] = $title;
+      } else {
+        $adminPanel[$group] = array();
+        $adminPanel[$group]['show'] = '';
+        $adminPanel[$group]['hide'] = '';
+        $adminPanel[$group]['title'] = $title;
+      }
     }
     $versionCheck = CRM_Utils_VersionCheck::singleton();
     $this->assign('newVersion', $versionCheck->newerVersion());

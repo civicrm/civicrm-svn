@@ -1,6 +1,4 @@
 <?php
-// vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
-
 /**
  *  Provide data to the CRM_Mailing_BAO_QueryTest class
  *
@@ -20,19 +18,26 @@ class CRM_Mailing_BAO_QueryTestDataProvider implements Iterator {
    *  database in dataset.xml
    */
   private $dataset = array(
+    array(
+      'fv' => array('mailing_name' => 'First%', 'mailing_delivery_status'
+        => 'Y'),
+      'id' => array(105),
+    ),
+  );
+  private $dataset1 = array(
     array('fv' => array('mailing_name' => 'First%', 'mailing_open_status' => 'Y'),
       'id' => array(109, 110, 111, 112),
     ),
     array('fv' => array('mailing_name' => 'First%', 'mailing_open_status' => 'N'),
       'id' => array(102, 103, 104, 105, 108),
     ),
-        /*bounce*/
+    /*bounce*/
     array(
       'fv' => array('mailing_name' => 'First%', 'mailing_delivery_status'
         => 'Y'),
       'id' => array(105),
     ),
-        /*bounce*/
+    /*bounce*/
     array(
       'fv' => array('mailing_name' => 'First%', 'mailing_delivery_status'
         => 'N'),
@@ -50,13 +55,13 @@ class CRM_Mailing_BAO_QueryTestDataProvider implements Iterator {
     array('fv' => array('mailing_name' => 'First%', 'mailing_click_status' => 'N'),
       'id' => array(102, 103, 105, 109, 110),
     ),
-        /*bounce*/
+    /*bounce*/
     array(
       'fv' => array('mailing_name' => 'Second%', 'mailing_delivery_status'
         => 'Y'),
       'id' => array(),
     ),
-        /*bounce*/
+    /*bounce*/
     array(
       'fv' => array('mailing_name' => 'Second%', 'mailing_delivery_status'
         => 'N'),
@@ -83,9 +88,6 @@ class CRM_Mailing_BAO_QueryTestDataProvider implements Iterator {
     array('fv' => array('mailing_date_low' => '2011-05-26', 'mailing_open_status' => 'N'),
       'id' => array(103, 104, 108, 109, 110, 111, 112),
     ),
-    //              array( 'fv' => array( ),
-    //                     'id' => array( ),
-    //                     ),
   );
 
   public function _construct() {
@@ -122,14 +124,3 @@ class CRM_Mailing_BAO_QueryTestDataProvider implements Iterator {
     return isset($this->dataset[$this->i]);
   }
 }
-// class CRM_Mailing_BAO_QueryTestDataProvider
-
-// -- set Emacs parameters --
-// Local variables:
-// mode: php;
-// tab-width: 4
-// c-basic-offset: 4
-// c-hanging-comment-ender-p: nil
-// indent-tabs-mode: nil
-// End:
-

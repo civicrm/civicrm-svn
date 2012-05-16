@@ -150,6 +150,19 @@ class CRM_Mailing_BAO_Query {
         $query->_tables['civicrm_mailing'] = $query->_whereTables['civicrm_mailing'] = 1;
         return;
 
+      case 'mailing_name':
+        $value = strtolower( addslashes( $value ) );
+        if ( $wildcard ) {
+          $value = "%$value%";
+          $op    = 'LIKE';
+        }
+        $query->_where[$grouping][] = "LOWER(civicrm_mailing.name) $op '$value'";
+        $query->_qill[$grouping][]  = "Mailing Name $op \"$value\"";
+        $query->_tables['civicrm_mailing_event_queue'] = $query->_whereTables['civicrm_mailing_event_queue'] = 1;
+        $query->_tables['civicrm_mailing_job'] = $query->_whereTables['civicrm_mailing_job'] = 1;
+        $query->_tables['civicrm_mailing'] = $query->_whereTables['civicrm_mailing'] = 1;
+        return;
+
       case 'mailing_date':
       case 'mailing_date_low':
       case 'mailing_date_high':
