@@ -45,8 +45,13 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form {
 
     //when user come from search context.
     $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext($this->get('context'));
+    if(CRM_Contact_Form_Search::isSearchContext($this->get('context'))){
+      $params = array();
+      $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($params,$val);
+      $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($val[1],$val[2]);
+      $this->assign("value", $result);
+    }
   }
-
   /**
    * This function sets the default values for the form.
    * the default values are retrieved from the database

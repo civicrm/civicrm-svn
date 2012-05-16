@@ -374,5 +374,50 @@ WHERE cacheKey LIKE %1 " . $actionGet . $entity_whereClause;
       return $contactIds;
     }
   }
+
+  static function getSelectedContacts($offset,$rowCount){
+     $qfKey = CRM_Utils_Request::retrieve('qfKey', 'String', $this);
+     $cacheKey = "civicrm search {$qfKey}";
+      $query = "
+SELECT *
+FROM civicrm_prevnext_cache
+WHERE cacheKey LIKE %1 AND is_selected=1 
+LIMIT $offset, $rowCount";
+      $params1[1] = array("%{$cacheKey}%", 'String');
+      $dao = CRM_Core_DAO::executeQuery($query, $params1);
+      while ($dao->fetch()) {
+        $val[] = $dao->data;
+      }
+      return $val;
+  }
+
+
+  function buildSelectedContactPager($params,&$val){
+    $params['status'] = ts('Contacts');
+    $params['csvString'] = NULL;
+    $params['buttonTop'] = 'PagerTopButton';
+    $params['buttonBottom'] = 'PagerBottomButton';
+    $params['rowCount'] = $this->get(CRM_Utils_Pager::PAGE_ROWCOUNT);
+    
+    if (!$params['rowCount']) {
+      $params['rowCount'] = CRM_Utils_Pager::ROWCOUNT;
+    }
+  
+    $qfKey = CRM_Utils_Request::retrieve('qfKey','String', $this);
+    $cacheKey = "civicrm search {$qfKey}";
+    
+    $query = "
+SELECT count(id)
+FROM civicrm_prevnext_cache
+WHERE cacheKey LIKE %1 AND is_selected=1";
+    $params1[1] = array("%{$cacheKey}%", 'String');
+
+    $paramsTotal     = CRM_Core_DAO::singleValueQuery($query, $params1);
+    $params['total'] = $paramsTotal;
+    $this->_pager    = new CRM_Utils_Pager($params);
+    $this->assign_by_ref('pager', $this->_pager);
+    list($offset, $rowCount) = $this->_pager->getOffsetAndRowCount();
+    $val = array($params,$offset,$rowCount);
+  }
 }
 

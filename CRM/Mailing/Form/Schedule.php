@@ -54,7 +54,12 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form {
 
     //when user come from search context.
     $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext($this->get('context'));
-
+    if(CRM_Contact_Form_Search::isSearchContext($this->get('context'))){
+    $params = array();
+    $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($params,$val);
+    $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($val[1],$val[2]);
+    $this->assign("value", $result);
+    }
     $this->_mailingID = $this->get('mailing_id');
     $this->_scheduleFormOnly = FALSE;
     if (!$this->_mailingID) {
@@ -62,7 +67,6 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form {
       $this->_scheduleFormOnly = TRUE;
     }
   }
-
   /**
    * This function sets the default values for the form.
    *
@@ -78,7 +82,7 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form {
     else {
       $count = $this->get('count');
     }
-    $this->assign('count', $count);
+     $this->assign('count', $count);
     $defaults['now'] = 1;
     return $defaults;
   }
