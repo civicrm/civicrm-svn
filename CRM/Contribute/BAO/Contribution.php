@@ -549,10 +549,17 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
           'data_type' => CRM_Utils_Type::T_INT,
         ));
 
-      $campaign = array('contribution_campaign' => array('title' => ts('Campaign Title')));
+      $extraFields = array(
+        'contribution_campaign' => array(
+          'title' => ts('Campaign Title')
+        ),
+        'contribution_batch' => array(
+          'title' => ts('Batch Name')
+        )
+      );
 
       $fields = array_merge($impFields, $typeField, $contributionStatus, $optionField, $expFieldProduct,
-        $expFieldsContrib, $contributionNote, $contributionRecurId, $campaign,
+        $expFieldsContrib, $contributionNote, $contributionRecurId, $extraFields,
         CRM_Core_BAO_CustomField::getFieldsForImport('Contribution')
       );
 
