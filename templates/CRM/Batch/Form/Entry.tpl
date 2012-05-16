@@ -266,7 +266,7 @@
       { success:function (data){
         if ( data.count > 0 ) {
           cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
-          cj('select[id="field_' + blockNo + '_membership_type"]').val( data.values[0].membership_type_id );
+          cj('select[id="field_' + blockNo + '_membership_type"]').val( data.values[0].membership_type_id ).change();
           setDateFieldValue( 'join_date', data.values[0].join_date, blockNo )
         }
       }
