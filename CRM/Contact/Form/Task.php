@@ -38,7 +38,6 @@
  *
  */
 class CRM_Contact_Form_Task extends CRM_Core_Form {
-  protected $_pager = NULL;
 
   /**
    * the task being performed
@@ -231,17 +230,14 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
     if(CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_all')
         {
             $params = array();
-            $form->pager($params);
-            list($offset, $rowCount) = $form->_pager->getOffsetAndRowCount();
-            $form->assign("rowCount", $rowCount);
-            $result1 = CRM_Core_BAO_PrevNextCache::retrieve($cacheKey,null,null,$offset,$rowCount);
+            $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($form,$params);
+            $result1 = CRM_Core_BAO_PrevNextCache::retrieve($cacheKey,null,null,$value['offset'],$value['rowCount1']);
             $form->assign("value", $result1);
         }
     elseif(CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_sel'){
         $params = array();
-        $form->pager($params);
-        list($offset, $rowCount) = $form->_pager->getOffsetAndRowCount();
-        $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($offset,$rowCount);
+        $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($form,$params);
+        $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($value['offset'],$value['rowCount1']);
         $form->assign("value", $result);
     }
     
@@ -253,31 +249,6 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
       $form->_componentIds = $form->_contactIds;
     }
   }
-
-  function pager($params) {
-    $params['status'] = ts('Contacts');
-    $params['csvString'] = NULL;
-    $params['buttonTop'] = 'PagerTopButton';
-    $params['buttonBottom'] = 'PagerBottomButton';
-    $params['rowCount'] = $this->get(CRM_Utils_Pager::PAGE_ROWCOUNT);
-    if (!$params['rowCount']) {
-      $params['rowCount'] = CRM_Utils_Pager::ROWCOUNT;
-    }
-
-    $query = "
-SELECT count(id)
-  FROM civicrm_prevnext_cache
- WHERE cacheKey LIKE %1 AND is_selected=1";
-    $qfKey      = CRM_Utils_Request::retrieve('qfKey', 'String', $form);
-    $cacheKey   = "civicrm search {$qfKey}";
-    $params1[1] = array("%{$cacheKey}%", 'String');
-
-    $paramsTotal     = CRM_Core_DAO::singleValueQuery($query, $params1);
-    $params['total'] = $paramsTotal;
-    $this->_pager    = new CRM_Utils_Pager($params);
-    $this->assign_by_ref('pager', $this->_pager);
-  }
-
   /**
    * This function sets the default values for the form. Relationship that in edit/view action
    * the default values are retrieved from the database

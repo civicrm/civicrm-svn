@@ -48,8 +48,8 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form {
     $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext($this->get('context'));
     if(CRM_Contact_Form_Search::isSearchContext($this->get('context'))){
     $params = array();
-    $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($params,$val);
-    $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($val[1],$val[2]);
+    $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($this,$params);
+    $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($value['offset'],$value['rowCount1']);
     $this->assign("value", $result);
     }
   }

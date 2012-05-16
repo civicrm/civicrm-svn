@@ -55,10 +55,10 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form {
     //when user come from search context.
     $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext($this->get('context'));
     if(CRM_Contact_Form_Search::isSearchContext($this->get('context'))){
-    $params = array();
-    $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($params,$val);
-    $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($val[1],$val[2]);
-    $this->assign("value", $result);
+      $params = array();
+      $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($this,$params);
+      $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($value['offset'],$value['rowCount1']);
+      $this->assign("value", $result);
     }
     $this->_mailingID = $this->get('mailing_id');
     $this->_scheduleFormOnly = FALSE;
