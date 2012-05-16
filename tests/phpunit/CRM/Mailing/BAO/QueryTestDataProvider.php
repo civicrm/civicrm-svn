@@ -17,13 +17,6 @@ class CRM_Mailing_BAO_QueryTestDataProvider implements Iterator {
    *  IDs should be selected when the form values are applied to the
    *  database in dataset.xml
    */
-  private $dataset1 = array(
-    array(
-      'fv' => array('mailing_name' => 'First%', 'mailing_delivery_status'
-        => 'Y'),
-      'id' => array(105),
-    ),
-  );
   private $dataset = array(
     array('fv' => array('mailing_name' => 'First%', 'mailing_open_status' => 'Y'),
       'id' => array(109, 110, 111, 112),
@@ -34,13 +27,13 @@ class CRM_Mailing_BAO_QueryTestDataProvider implements Iterator {
     /*bounce*/
     array(
       'fv' => array('mailing_name' => 'First%', 'mailing_delivery_status'
-        => 'Y'),
+        => 'N'),
       'id' => array(105),
     ),
     /*bounce*/
     array(
       'fv' => array('mailing_name' => 'First%', 'mailing_delivery_status'
-        => 'N'),
+        => 'Y'),
       'id' => array(102, 103, 104, 108, 109, 110, 111, 112),
     ),
     array('fv' => array('mailing_name' => 'First%', 'mailing_reply_status' => 'Y'),
@@ -58,13 +51,13 @@ class CRM_Mailing_BAO_QueryTestDataProvider implements Iterator {
     /*bounce*/
     array(
       'fv' => array('mailing_name' => 'Second%', 'mailing_delivery_status'
-        => 'Y'),
+        => 'N'),
       'id' => array(),
     ),
     /*bounce*/
     array(
       'fv' => array('mailing_name' => 'Second%', 'mailing_delivery_status'
-        => 'N'),
+        => 'Y'),
       'id' => array(102, 103, 104, 108, 109, 110, 111, 112),
     ),
     array('fv' => array('mailing_name' => 'Second%', 'mailing_reply_status' => 'Y'),
