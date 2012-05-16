@@ -123,14 +123,12 @@
         });
        
         // set payment info accord to membership type
-        cj( 'select[id*="_membership_type"]').change( function() {
-            var rowID = cj(this).closest('div.crm-grid-row').attr('entity_id');
-            var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
-    
-            cj.post( dataUrl, {mtype: cj(this).val()}, function( data ) {
-              cj('#field_' + rowID + '_contribution_type').val( data.contribution_type_id );            
-              cj('#field_' + rowID + '_total_amount').val( data.total_amount ).change();
-            }, 'json');    
+        cj( 'select[id*="][membership_type][0]"]').change( function() {
+          setPaymentBlock( cj(this), null ); 
+        });
+
+        cj( 'select[id*="][membership_type][1]"]').change( function() {
+          setPaymentBlock( cj(this), cj(this).val() ); 
         });
       {/literal}{/if}{literal}
 
@@ -142,7 +140,21 @@
       cj('#primary_contact_1').focus();
 
    });
+    
+   function setPaymentBlock( form, memType ) {
+     var rowID = form.closest('div.crm-grid-row').attr('entity_id');
+     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
+      
+     if ( !memType ) {
+      memType = cj( 'select[id="field['+ rowID+'][membership_type][1]"]').val();
+     }
 
+     cj.post( dataUrl, {mtype: memType}, function( data ) {
+         cj('#field_' + rowID + '_contribution_type').val( data.contribution_type_id );            
+         cj('#field_' + rowID + '_total_amount').val( data.total_amount ).change();
+     }, 'json');     
+   }
+   
    function hideSendReceipt() {
      cj( 'input[id*="][send_receipt]"]').each( function() {
        showHideReceipt( cj(this) );
@@ -266,7 +278,7 @@
       { success:function (data){
         if ( data.count > 0 ) {
           cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
-          cj('select[id="field_' + blockNo + '_membership_type"]').val( data.values[0].membership_type_id ).change();
+          cj('select[id="field[' + blockNo + '][membership_type][1]"]').val( data.values[0].membership_type_id ).change();
           setDateFieldValue( 'join_date', data.values[0].join_date, blockNo )
         }
       }

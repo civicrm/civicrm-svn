@@ -1650,10 +1650,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       $form->addDate($name, $title, $required, array('formatType' => 'custom'));
     }
     elseif ($field['name'] == 'membership_type') {
-      $form->add('select', $name, $title,
-        array(
-          '' => ts('- select -')) + CRM_Member_PseudoConstant::membershipType(), $required
-      );
+      list($orgInfo, $types) = CRM_Member_BAO_MembershipType::getMembershipTypeInfo();
+      $sel = &$form->addElement('hierselect', $name, $title);
+      $sel->setOptions(array($orgInfo, $types));
     }
     elseif ($field['name'] == 'membership_status') {
       $form->add('select', $name, $title,

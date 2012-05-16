@@ -508,9 +508,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         // update contact information
         $this->updateContactInfo($value);
 
-        if (CRM_Utils_Array::value('membership_type', $value)) {
-          $membershipTypeId = $value['membership_type_id'] = $value['membership_type'];
-        }
+        $membershipTypeId = $value['membership_type_id'] = $value['membership_type'][1];
 
         foreach ($dateTypes as $dateField => $dateVariable) {
           $$dateVariable = CRM_Utils_Date::processDate($value[$dateField]);
@@ -538,7 +536,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         }
 
         unset($value['membership_source']);
-        unset($value['membership_type']);
 
         //Get the membership status
         if ( CRM_Utils_Array::value('membership_status', $value) ) {
@@ -594,7 +591,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $editedFieldParams = array(
           'price_set_id' => $priceSetId,
-          'name' => 1 // FIX ME 
+          'name' => $value['membership_type'][0] 
         );
 
         $editedResults = array();
@@ -629,6 +626,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         // end of contribution related section
 
+        unset($value['membership_type']);
+        
         if ( CRM_Utils_Array::value( $key, $params['member_option'] ) == 2 ) {
           $membership = CRM_Member_BAO_Membership::renewMembership( 
             $value['contact_id'],

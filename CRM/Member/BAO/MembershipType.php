@@ -39,6 +39,8 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
    */
   static $_defaultMembershipType = NULL;
 
+  static $_membershipTypeInfo = array();
+  
   /**
    * class constructor
    */
@@ -643,5 +645,32 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
     }
     return $allmembershipTypes;
   }
+
+  /**
+   * Funtion to retrieve organization and associated membership
+   * types 
+   *
+   * @return array arrays of organization and membership types
+   * 
+   * @static
+   * @access public
+   */
+  static function getMembershipTypeInfo() {
+    if (!self::$_membershipTypeInfo) {
+      $orgs = $types = array();
+
+      $query = 'SELECT memType.id, memType.name, memType.member_of_contact_id, c.sort_name
+        FROM civicrm_membership_type memType INNER JOIN civicrm_contact c ON c.id = memType.member_of_contact_id ';
+      $dao = CRM_Core_DAO::executeQuery( $query );
+      while ($dao->fetch()) {
+        $orgs[$dao->member_of_contact_id] = $dao->sort_name;
+        $types[$dao->member_of_contact_id][$dao->id] = $dao->name;  
+      }
+
+      self::$_membershipTypeInfo = array($orgs, $types);
+    }
+    return self::$_membershipTypeInfo;
+  }
+
 }
 
