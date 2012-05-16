@@ -60,7 +60,6 @@ class CRM_Mailing_BAO_QueryTest extends CiviUnitTestCase {
       $contacts[] = $dao->contact_id;
     }
 
-    exit( );
     sort($contacts, SORT_NUMERIC);
 
     $this->assertEquals($ids, $contacts, 'In line ' . __LINE__);
