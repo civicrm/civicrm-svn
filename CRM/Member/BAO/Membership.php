@@ -324,17 +324,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       );
     }
 
-    // make entry in batch entity batch table
-    if (CRM_Utils_Array::value('batch_id', $params)) {
-      $entityParams = array(
-        'batch_id' => $params['batch_id'],
-        'entity_table' => 'civicrm_membership',
-        'entity_id' => $membership->id,
-      );
-
-      CRM_Core_BAO_Batch::addBatchEntity($entityParams);
-    }
-
     //record contribution for this membership
     if (CRM_Utils_Array::value('contribution_status_id', $params) && !CRM_Utils_Array::value('relate_contribution_id', $params)) {
       $contributionParams = array();
@@ -353,7 +342,13 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       foreach ($recordContribution as $f) {
         $contributionParams[$f] = CRM_Utils_Array::value($f, $params);
       }
-      if(CRM_Utils_Array::value('contribution_contact_id', $params)){
+      
+      // make entry in batch entity batch table
+      if (CRM_Utils_Array::value('batch_id', $params)) {
+        $contributionParams['batch_id'] = $params['batch_id'];
+      }
+
+      if ( CRM_Utils_Array::value('contribution_contact_id', $params) ) {
         // deal with possibility of a different person paying for contribution
         $contributionParams['contact_id'] = $params['contribution_contact_id'];
       }
