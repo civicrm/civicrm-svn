@@ -91,6 +91,12 @@ class CRM_Contribute_BAO_Query {
       $query->_tables['contribution_note'] = 1;
     }
 
+    if (CRM_Utils_Array::value('contribution_batch', $query->_returnProperties)) {
+      $query->_select['contribution_note'] = "civicrm_batch.title as contribution_batch";
+      $query->_element['contribution_batch'] = 1;
+      $query->_tables['contribution_batch'] = 1;
+    }
+
     // get contribution_status
     if (CRM_Utils_Array::value('contribution_status_id', $query->_returnProperties)) {
       $query->_select['contribution_status_id'] = "contribution_status.value as contribution_status_id";
@@ -498,6 +504,13 @@ class CRM_Contribute_BAO_Query {
         CRM_Campaign_BAO_Query::componentSearchClause($campParams, $query);
         return;
 
+      case 'contribution_batch_id':
+        $batches = CRM_Core_BAO_Batch::getBatches();
+        $query->_where[$grouping][] = " civicrm_entity_batch.batch_id $op $value";
+        $query->_qill[$grouping][] = ts('Batch Name %1 %2', array(1 => $op, 2 => $batches[$value]));
+        $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = $query->_whereTables['contribution_batch'] = 1;
+        return;
+
       default:
         //all other elements are handle in this case
         $fldName    = substr($name, 13);
@@ -609,8 +622,6 @@ class CRM_Contribute_BAO_Query {
         $from .= " $side  JOIN civicrm_participant ON civicrm_participant_payment.participant_id = civicrm_participant.id ";
         break;
 
-      // LCD 716
-
       case 'civicrm_contribution_soft':
         $from = " $side JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id = civicrm_contribution.id";
         break;
@@ -626,7 +637,12 @@ class CRM_Contribute_BAO_Query {
       case 'civicrm_contribution_soft_phone':
         $from .= " $side JOIN civicrm_phone as soft_phone ON (civicrm_contact_d.id = soft_phone.contact_id )";
         break;
-      // LCD 716 END
+      
+      case 'contribution_batch':
+        $from .= " $side JOIN civicrm_entity_batch ON ( civicrm_entity_batch.entity_table = 'civicrm_contribution' AND
+          civicrm_contribution.id = civicrm_entity_batch.entity_id )";
+        $from .= " $side JOIN civicrm_batch ON civicrm_entity_batch.batch_id = civicrm_batch.id";
+        break;
     }
     return $from;
   }
@@ -674,7 +690,8 @@ class CRM_Contribute_BAO_Query {
         'contribution_recur_id' => 1,
         'amount_level' => 1,
         'contribution_note' => 1,
-        'contribution_campaign_id' => 1,
+        'contribution_batch' => 1,
+        'contribution_campaign_id' => 1
       );
 
       if ($includeCustomFields) {
