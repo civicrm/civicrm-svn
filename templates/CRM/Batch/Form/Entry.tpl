@@ -101,7 +101,8 @@
 
       //calculate the actual total for the batch
       calculateActualTotal();
-      cj('input[id*="_total_amount"]').keyup(function(){
+
+      cj('input[id*="_total_amount"]').bind('keyup change', function(){
           calculateActualTotal();    
       });
 
@@ -128,7 +129,7 @@
     
             cj.post( dataUrl, {mtype: cj(this).val()}, function( data ) {
               cj('#field_' + rowID + '_contribution_type').val( data.contribution_type_id );            
-              cj('#field_' + rowID + '_total_amount').val( data.total_amount );
+              cj('#field_' + rowID + '_total_amount').val( data.total_amount ).change();
             }, 'json');    
         });
       {/literal}{/if}{literal}

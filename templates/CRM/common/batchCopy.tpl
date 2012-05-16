@@ -124,11 +124,11 @@ function copyFieldValues( fname ) {
             case 'drupalwysiwyg':
                  // TO DO
             default:
-                elementId.val( firstElementValue );
+                elementId.val( firstElementValue ).change();
 
         }
     } else {
-        elementId.val( firstElementValue );
+        elementId.val( firstElementValue ).change();
     }
 
     // since we use different display field for date we also need to set it.
