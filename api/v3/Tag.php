@@ -64,7 +64,7 @@ function civicrm_api3_tag_create($params) {
   }
   $tagBAO = CRM_Core_BAO_Tag::add($params, $ids);
 
-  if (is_a($tagBAO, 'CRM_Core_Error')) {
+  if (is_a($tagBAO, 'CRM_Core_Error') ||is_null($tagBAO)) {
     return civicrm_api3_create_error("Tag is not created");
   }
   else {
