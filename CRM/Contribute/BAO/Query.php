@@ -802,6 +802,15 @@ class CRM_Contribute_BAO_Query {
 
     CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch($form, 'contribution_campaign_id');
 
+    // add batch select
+    $batches = CRM_Core_BAO_Batch::getBatches();
+    
+    if ( !empty( $batches ) ) {
+      $form->add('select', 'contribution_batch_id',
+        ts('Batch Name'),
+        array( '' => ts('- select -')) + $batches );
+    }
+
     $form->assign('validCiviContribute', TRUE);
   }
 

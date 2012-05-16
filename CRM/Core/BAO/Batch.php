@@ -337,5 +337,24 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
 
     return $links;
   }
+
+  /**
+   * function to get batch list
+   *
+   * @return array array of batches
+   */
+  static function getBatches() {
+    $query = 'SELECT id, title
+      FROM civicrm_batch
+      WHERE type_id IN (1,2)';
+    
+    $batches = array();
+    $dao = CRM_Core_DAO::executeQuery( $query );
+    while ( $dao->fetch( ) ) {
+      $batches[$dao->id] = $dao->title;
+    }
+    return $batches;
+  }
+
 }
 

@@ -78,6 +78,10 @@
 <tr>
 	<td><label>{ts}Currency{/ts}</label> <br />
 	{$form.contribution_currency_type.html}</td>
+  {if $form.contribution_batch_id.html }
+	  <td>{$form.contribution_batch_id.label} <br />
+	  {$form.contribution_batch_id.html}</td>
+  {/if}
 </tr>
 
 {* campaign in contribution search *}
