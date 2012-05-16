@@ -90,7 +90,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
 
     $this->assertTrue($this->isTextPresent("Payment Method"));
     $xpath = "xpath=//label[text() = '{$proProcessorName}']/preceding-sibling::input[1]";
-    $this->check($xpath);
+    $this->click($xpath);
 
     $this->waitForElementPresent("credit_card_type");
 
@@ -117,9 +117,10 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
 
     $this->click("_qf_Confirm_next-bottom");
     $this->waitForPageToLoad('30000');
-
+    
     //login to check contribution
     $this->open($this->sboxPath);
+    
   }
 
   function testOnlineMultpiplePaymentProcessorWithPayLater() {
@@ -165,7 +166,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
 
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
     $lastName = 'An' . substr(sha1(rand()), 0, 7);
-
+    
     $this->type("email-5", $firstName . "@example.com");
 
     $this->type("first_name", $firstName);
@@ -183,20 +184,47 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     $this->assertTrue($this->isTextPresent("Payment Method"));
     $payLaterText = "Pay later label $hash";
     $xpath = "xpath=//label[text() = '{$payLaterText}']/preceding-sibling::input[1]";
-    $this->check($xpath);
+    $this->click($xpath);
+
+    $this->click("_qf_Main_upload-bottom");
     $this->waitForPageToLoad('30000');
 
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
+    
+    $payLaterInstructionsText = "Pay later instructions $hash";
     $this->assertTrue($this->isTextPresent($payLaterInstructionsText));
 
     $this->click("_qf_Confirm_next-bottom");
     $this->waitForPageToLoad('30000');
 
-    $payLaterInstructionsText = "Pay later instructions $hash";
     $this->assertTrue($this->isTextPresent($payLaterInstructionsText));
 
     //login to check contribution
-    $this->open($this->sboxPath);
+    $this->open($this->sboxPath . 'civicrm/contribute/search?reset=1');
+
+    $this->waitForElementPresent('contribution_date_low');
+
+    $this->type('sort_name', "$firstName $lastName");
+    $this->check('contribution_test');
+    $this->click('_qf_Search_refresh');
+
+    $this->waitForPageToLoad('30000');
+
+    $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
+    //View Contribution Record
+    $expected = array(
+      2 => 'Donation',
+      6 => 'Pending : Pay Later',
+      1 => "{$firstName} {$lastName}",
+    );
+
+    foreach ($expected as $value => $label) {
+      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label));
+    }
+    $this->click('_qf_ContributionView_cancel-bottom');
   }
 }
 
