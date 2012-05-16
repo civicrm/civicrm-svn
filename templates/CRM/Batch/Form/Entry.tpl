@@ -130,6 +130,8 @@
         cj( 'select[id*="][membership_type][1]"]').change( function() {
           setPaymentBlock( cj(this), cj(this).val() ); 
         });
+
+        showHideOrgSelect( );
       {/literal}{/if}{literal}
 
       // line breaks between radio buttons and checkboxes
@@ -140,7 +142,13 @@
       cj('#primary_contact_1').focus();
 
    });
-    
+   
+   function showHideOrgSelect() {
+     if ( cj('select[id="field[1][membership_type][0]"] option').size() < 2 ) {
+       cj( 'select[id*="][membership_type][0]"]').hide();
+     }
+   }
+
    function setPaymentBlock( form, memType ) {
      var rowID = form.closest('div.crm-grid-row').attr('entity_id');
      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
