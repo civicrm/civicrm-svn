@@ -703,7 +703,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   }
 
   function membershipStatusCreate($name = 'test member status') {
-
     $params['name'] = $name;
     $params['start_event'] = 'start_date';
     $params['end_event'] = 'end_date';
@@ -715,12 +714,16 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     require_once 'CRM/Member/PseudoConstant.php';
     CRM_Member_PseudoConstant::flush('membershipStatus');
     if (CRM_Utils_Array::value('is_error', $result)) {
-      throw new Exception('Could not create membership status' . $result['error_message']);
+      throw new Exception("Could not create membership status: $name, Error message: " . $result['error_message']);
+      exit( );
     }
     return $result['id'];
   }
 
   function membershipStatusDelete($membershipStatusID) {
+    if ( ! $membershipStatusID ) {
+      return;
+    }
     $result = civicrm_api('MembershipStatus', 'Delete', array('id' => $membershipStatusID, 'version' => 3));
     if (CRM_Utils_Array::value('is_error', $result)) {
       throw new Exception('Could not delete membership status' . $result['error_message']);

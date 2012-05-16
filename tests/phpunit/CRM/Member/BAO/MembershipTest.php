@@ -62,7 +62,8 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
 
     $this->_contactID = $this->organizationCreate();
     $this->_membershipTypeID = $this->membershipTypeCreate($this->_contactID);
-    $this->_membershipStatusID = $this->membershipStatusCreate('test status');
+    // add a random number to avoid silly conflicts with old data
+    $this->_membershipStatusID = $this->membershipStatusCreate('test status' . rand(1, 1000));
   }
 
   /**
@@ -71,7 +72,11 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
    *
    */
   function tearDown() {
-    $this->quickCleanup( array( 'civicrm_membership_type', 'civicrm_membership_status', 'civicrm_contact' ) );
+    $this->membershipTypeDelete( array( 'id' => $this->_membershipTypeID ) );
+    $this->membershipStatusDelete( $this->_membershipStatusID );
+    Contact::delete( $this->_contactID );
+
+    $this->_contactID = $this->_membershipStatusID = $this->_membershipTypeID = null;
   }
 
   function testCreate() {
@@ -416,18 +421,6 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
     Contact::delete($contactId);
   }
 
-
-  /*
-     * Function check the status of the membership before adding membership for a contact
-     *
-     */
-  function teststatusAvilability() {
-
-    $contactId = Contact::createIndividual();
-
-    CRM_Member_BAO_Membership::statusAvilability($contactId);
-    Contact::delete($contactId);
-  }
 
   /*
      * Function take sort name of contact during

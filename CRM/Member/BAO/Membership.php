@@ -342,7 +342,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       foreach ($recordContribution as $f) {
         $contributionParams[$f] = CRM_Utils_Array::value($f, $params);
       }
-      
+
       // make entry in batch entity batch table
       if (CRM_Utils_Array::value('batch_id', $params)) {
         $contributionParams['batch_id'] = $params['batch_id'];
@@ -1117,7 +1117,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
   function getMembershipStarts($membershipTypeId, $startDate, $endDate, $isTest = 0, $isOwner = 0) {
     $query = "SELECT count(civicrm_membership.id) as member_count
   FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id )
-WHERE  membership_type_id = %1 AND start_date >= '$startDate' AND start_date <= '$endDate' 
+WHERE  membership_type_id = %1 AND start_date >= '$startDate' AND start_date <= '$endDate'
 AND civicrm_membership_status.is_current_member = 1
 AND civicrm_membership.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
 AND is_test = %2";
@@ -1161,7 +1161,7 @@ AND is_test = %2";
     );
     $query = "SELECT  count(civicrm_membership.id ) as member_count
 FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id  )
-WHERE  civicrm_membership.membership_type_id = %1 
+WHERE  civicrm_membership.membership_type_id = %1
 AND civicrm_membership.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
 AND civicrm_membership.is_test = %2";
     if (!$date) {
@@ -2264,7 +2264,7 @@ FROM   civicrm_membership_type
   static
   function isSubscriptionCancelled($mid) {
     $sql = "
-   SELECT cr.contribution_status_id 
+   SELECT cr.contribution_status_id
      FROM civicrm_contribution_recur cr
 LEFT JOIN civicrm_membership mem ON ( cr.id = mem.contribution_recur_id )
     WHERE mem.id = %1 LIMIT 1";
@@ -2307,8 +2307,8 @@ LEFT JOIN civicrm_membership mem ON ( cr.id = mem.contribution_recur_id )
 INNER JOIN  civicrm_membership_status status ON ( membership.status_id = status.id AND status.is_current_member = 1 )
 INNER JOIN  civicrm_contact contact ON ( membership.contact_id = contact.id AND contact.is_deleted = 0 )
      WHERE  membership.membership_type_id = %1
-       AND  membership.join_date >= '$startDate'  AND membership.join_date <= '$endDate' 
-       AND  membership.start_date >= '$startDate' AND membership.start_date <= '$endDate' 
+       AND  membership.join_date >= '$startDate'  AND membership.join_date <= '$endDate'
+       AND  membership.start_date >= '$startDate' AND membership.start_date <= '$endDate'
        AND  {$testClause}";
 
     $params = array(1 => array($membershipTypeId, 'Integer'));
@@ -2343,12 +2343,12 @@ INNER JOIN  civicrm_contact contact ON ( membership.contact_id = contact.id AND 
 
     $query = "
     SELECT  count(membership.id) as member_count
-      FROM  civicrm_membership membership 
+      FROM  civicrm_membership membership
 INNER JOIN  civicrm_membership_status status ON ( membership.status_id = status.id AND status.is_current_member = 1 )
-INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND contact.is_deleted = 0 ) 
+INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND contact.is_deleted = 0 )
      WHERE  membership.membership_type_id = %1
        AND  membership.join_date < '$startDate'
-       AND  membership.start_date >= '$startDate' AND membership.start_date <= '$endDate' 
+       AND  membership.start_date >= '$startDate' AND membership.start_date <= '$endDate'
        AND  {$testClause}";
 
     $params = array(1 => array($membershipTypeId, 'Integer'));
@@ -2404,11 +2404,11 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
   }
 
   /*
-     * The function checks and updates the status of all membership records for a given domain using the 
+     * The function checks and updates the status of all membership records for a given domain using the
      * calc_membership_status and update_contact_membership APIs.
      *
-     * IMPORTANT: 
-     * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.  
+     * IMPORTANT:
+     * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.
      * Verify that this value has been properly set from Administer > Configure > Domain Information
      * If you want to use some other FROM email address, modify line 125 and set your valid email address.
      *
@@ -2731,14 +2731,14 @@ Message: {$msgTpl[$memType->renewal_msg_id]['details']}
     //membership type has reminder day set.
 
     $query = '
-    UPDATE  civicrm_membership membership 
-INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id ) 
+    UPDATE  civicrm_membership membership
+INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id )
 INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_type_id )
-       SET  membership.reminder_date = DATE_SUB( membership.end_date, INTERVAL type.renewal_reminder_day + 1 DAY ) 
-     WHERE  membership.reminder_date IS NULL 
+       SET  membership.reminder_date = DATE_SUB( membership.end_date, INTERVAL type.renewal_reminder_day + 1 DAY )
+     WHERE  membership.reminder_date IS NULL
        AND  contact.is_deleted = 0
        AND  ( contact.is_deceased IS NULL OR contact.is_deceased = 0 )
-       AND  type.renewal_reminder_day IS NOT NULL 
+       AND  type.renewal_reminder_day IS NOT NULL
        AND  membership.status_id IN ( ' . implode(' , ', $statusIds) . ' )';
 
     CRM_Core_DAO::executeQuery($query);
