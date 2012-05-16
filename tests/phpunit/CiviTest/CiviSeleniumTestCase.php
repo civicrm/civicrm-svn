@@ -1229,6 +1229,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     return CiviDBAssert::assertAttributesEquals($expectedValues, $actualValues);
   }
 
+  function assertType($expected, $actual, $message = '') {
+    return $this->assertInternalType($expected, $actual, $message);
+  }
+
   function changeAdminLinks() {
     $version = 7;
     if ($version == 7) {

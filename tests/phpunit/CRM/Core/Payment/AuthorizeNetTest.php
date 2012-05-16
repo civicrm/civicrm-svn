@@ -51,6 +51,10 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
 
     $this->processor = new CRM_Core_Payment_AuthorizeNet('Contribute', $paymentProcessor);
     $this->_contributionTypeId = $this->contributionTypeCreate();
+
+    // for some strange unknown reason, in batch mode this value gets set to null
+    // so crude hack here to avoid an exception and hence an error
+    $GLOBALS['_PEAR_ERRORSTACK_OVERRIDE_CALLBACK'] = array( );
   }
 
   function tearDown() {
