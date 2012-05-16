@@ -536,10 +536,10 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
   function &error($errorCode = NULL, $errorMessage = NULL) {
     $e = CRM_Core_Error::singleton();
     if ($errorCode) {
-      $e->push($errorCode, 0, NULL, $errorMessage);
+      $e->push($errorCode, 0, array( ), $errorMessage);
     }
     else {
-      $e->push(9001, 0, NULL, 'Unknown System Error.');
+      $e->push(9001, 0, array( ), 'Unknown System Error.');
     }
     return $e;
   }

@@ -31,6 +31,7 @@ require_once 'CiviTest/Contact.php';
 require_once 'CiviTest/Custom.php';
 require_once 'CiviTest/ContributionPage.php';
 require_once 'CiviTest/Membership.php';
+
 class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
   function get_info() {
     return array(
@@ -70,9 +71,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
    *
    */
   function tearDown() {
-    $this->membershipTypeDelete(array('id' => $this->_membershipTypeID));
-    $this->membershipStatusDelete($this->_membershipStatusID);
-    Contact::delete($this->_contactID);
+    $this->quickCleanup( array( 'civicrm_membership_type', 'civicrm_membership_status', 'civicrm_contact' ) );
   }
 
   function testCreate() {
@@ -324,7 +323,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
 
 
   /*
-     * Function to get the contribution 
+     * Function to get the contribution
      * page id from the membership record
      */
   function testgetContributionPageId() {
@@ -353,7 +352,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
     Contact::delete($contactId);
   }
   /*
-     * Function to get membership joins/renewals 
+     * Function to get membership joins/renewals
      * for a specified membership
      * type.
      *
@@ -431,7 +430,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
   }
 
   /*
-     * Function take sort name of contact during 
+     * Function take sort name of contact during
      * batch update member via profile
      *
      */

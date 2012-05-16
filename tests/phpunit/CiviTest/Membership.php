@@ -1,11 +1,8 @@
 <?php
 require_once 'Contact.php';
-require_once 'CRM/Member/BAO/Membership.php';
-require_once 'CRM/Member/BAO/MembershipType.php';
-require_once 'CRM/Member/DAO/MembershipBlock.php';
 class Membership extends PHPUnit_Framework_Testcase {
   /*
-     *Helper function to create membership type 
+     *Helper function to create membership type
      *
      */
   function createMembershipType() {
@@ -39,7 +36,7 @@ class Membership extends PHPUnit_Framework_Testcase {
   }
 
   /*
-     *Helper function to create membership block for contribution page 
+     *Helper function to create membership block for contribution page
      *
      */
   function createMembershipBlock($membershipType, $contributionPageId) {

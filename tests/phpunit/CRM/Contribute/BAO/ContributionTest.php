@@ -290,7 +290,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $contact = CRM_Contact_BAO_Contact::add($params);
 
     //Now check $contact is object of contact DAO..
-    $this->assertType('CRM_Contact_DAO_Contact', $contact, 'Check for created object');
+    $this->assertInstanceOf('CRM_Contact_DAO_Contact', $contact, 'Check for created object');
 
     $contactId = $contact->id;
 
