@@ -1316,6 +1316,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     $config = CRM_Core_Config::singleton();
     $recurParams['contact_id'] = $contactID;
     $recurParams['amount'] = CRM_Utils_Array::value('amount', $params);
+    $recurParams['auto_renew'] = CRM_Utils_Array::value('auto_renew', $params);
     $recurParams['frequency_unit'] = CRM_Utils_Array::value('frequency_unit', $params);
     $recurParams['frequency_interval'] = CRM_Utils_Array::value('frequency_interval', $params);
     $recurParams['installments'] = CRM_Utils_Array::value('installments', $params);
