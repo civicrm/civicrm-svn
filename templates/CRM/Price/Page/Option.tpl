@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $action eq 1 or $action eq 2 or $action eq 4 or $action eq 8  and !$usedBy}
+{if ($action eq 1 or $action eq 2 or $action eq 4 or $action eq 8  and !$usedBy) and !$isReserved}
     {include file="CRM/Price/Form/Option.tpl"}
 {/if}
 

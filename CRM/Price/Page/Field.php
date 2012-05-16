@@ -60,6 +60,14 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
   private static $_actionLinks;
 
   /**
+   * The price set is reserved or not
+   *
+   * @var boolean
+   * @access protected
+   */
+  protected $_isSetReserved = false;
+
+  /**
    * Get the action links for this page.
    *
    * @param null
@@ -116,7 +124,6 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
    * @access public
    */
   function browse() {
-    $isReserved    = NULL;
     $priceField    = array();
     $priceFieldBAO = new CRM_Price_BAO_Field();
 
@@ -124,10 +131,7 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
     $priceFieldBAO->price_set_id = $this->_sid;
     $priceFieldBAO->orderBy('weight, label');
     $priceFieldBAO->find();
-    if ($this->_sid) {
-      $isReserved = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'is_reserved');
-    }
-    $this->assign('isReserved', $isReserved);
+    
     while ($priceFieldBAO->fetch()) {
       $priceField[$priceFieldBAO->id] = array();
       CRM_Core_DAO::storeValues($priceFieldBAO, $priceField[$priceFieldBAO->id]);
@@ -144,7 +148,7 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
 
       $action = array_sum(array_keys($this->actionLinks()));
 
-      if ($isReserved) {
+      if ($this->_isSetReserved) {
         $action -= CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE + CRM_Core_Action::ENABLE + CRM_Core_Action::DISABLE;
       }
       else {
@@ -236,8 +240,10 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
 
     if ($this->_sid) {
       $usedBy = CRM_Price_BAO_Set::getUsedBy($this->_sid);
-
       $this->assign('usedBy', $usedBy);
+      $this->_isSetReserved= CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'is_reserved');
+      $this->assign('isReserved', $this->_isSetReserved);
+      
       CRM_Price_BAO_Set::checkPermission($this->_sid);
       $comps = array(
         'Event' => 'civicrm_event',
@@ -252,7 +258,7 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
       $this->assign('contexts', $priceSetContexts);
     }
 
-    if ($action & (CRM_Core_Action::DELETE)) {
+    if ($action & (CRM_Core_Action::DELETE) && !$this->_isSetReserved) {
       if (empty($usedBy)) {
         // prompt to delete
         $session = CRM_Core_Session::singleton();
@@ -284,7 +290,7 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
     $this->assign('action', $action);
 
     // what action to take ?
-    if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
+    if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD) && !$this->_isSetReserved) {
       // no browse for edit/update/view
       $this->edit($action);
     }

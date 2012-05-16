@@ -241,13 +241,15 @@ INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VA
 -- CRM-9714
 ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`;
 
-ALTER TABLE `civicrm_price_set` ADD `is_quick_config` TINYINT( 4 ) NOT NULL DEFAULT '0' COMMENT 'Is set if information from the Regular Fees section is being stored as price set' AFTER `contribution_type_id`;
 
+ALTER TABLE `civicrm_price_set` ADD `is_quick_config` TINYINT( 4 ) NOT NULL DEFAULT '0' COMMENT 'Is set if information from the Regular Fees section is being stored as price set' AFTER `contribution_type_id`,
+ADD `is_reserved` tinyint(4) DEFAULT '0' COMMENT 'Is this a predefined system price set  (i.e. it can not be deleted, edited)?';
 
 -- CRM-9714 create a default price set for contribution and membership
-INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`)
-VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1'),
- ( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1');
+SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';  
+INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `is_reserved`, `contribution_type_id`)
+VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', '1', null),
+ ( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', '1', @contribution_type_id);
 
 SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_contribution_amount' AND extends = 2 AND is_quick_config = 1 ;
 

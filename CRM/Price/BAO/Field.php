@@ -270,7 +270,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         $priceVal  = implode($seperator, array($customOption[$optionKey][$valueFieldName], $count, $max_value));
 
         $extra = array();
-        if ($qf->_quickConfig) {
+        if (property_exists($qf,'_quickConfig') && $qf->_quickConfig) {
           $qf->assign('priceset', $elementName);
           $extra = array('onclick' => 'useAmountOther();');
         }
@@ -320,19 +320,13 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           }
           $count     = CRM_Utils_Array::value('count', $opt, '');
           $max_value = CRM_Utils_Array::value('max_value', $opt, '');
-          $priceVal  = implode($seperator, array($opt[$valueFieldName], $count, $max_value));
-          if (property_exists($qf, '_quickConfig') && $qf->_quickConfig) {
-            $extra = array('price' => json_encode(array($elementName, $priceVal)),
-              'data-amount' => $opt[$valueFieldName],
-              'data-currency' => $currencyName,
-              'onclick' => 'clearAmountOther();',
-            );
-          }
-          else {
-            $extra = array('price' => json_encode(array($elementName, $priceVal)),
-              'data-amount' => $opt[$valueFieldName],
-              'data-currency' => $currencyName,
-            );
+          $priceVal  = implode($seperator, array($opt[$valueFieldName], $count, $max_value));   
+          $extra = array('price' => json_encode(array($elementName, $priceVal)),
+                         'data-amount' => $opt[$valueFieldName],
+                         'data-currency' => $currencyName,
+                         );
+          if (property_exists($qf, '_quickConfig') && $qf->_quickConfig && $field->name == 'contribution_amount') {
+            $extra += array('onclick' => 'clearAmountOther();');
           }
           $choice[$opId] = $qf->createElement('radio', NULL, '', $opt['label'], $opt['id'], $extra);
 

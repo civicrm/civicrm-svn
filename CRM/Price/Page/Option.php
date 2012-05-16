@@ -60,6 +60,14 @@ class CRM_Price_Page_Option extends CRM_Core_Page {
   protected $_sid;
 
   /**
+   * The price set is reserved or not
+   *
+   * @var boolean
+   * @access protected
+   */
+  protected $_isSetReserved = false;
+  
+  /**
    * The action links that we need to display for the browse screen
    *
    * @var array
@@ -122,18 +130,13 @@ class CRM_Price_Page_Option extends CRM_Core_Page {
    */
   function browse() {
     $customOption = array();
-    $isReserved = NULL;
     CRM_Price_BAO_FieldValue::getValues($this->_fid, $customOption);
-    if ($this->_sid) {
-      $isReserved = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'is_reserved');
-    }
-    $this->assign('isReserved', $isReserved);
     $config = CRM_Core_Config::singleton();
     foreach ($customOption as $id => $values) {
       $action = array_sum(array_keys($this->actionLinks()));
 
       // update enable/disable links depending on price_field properties.
-      if ($isReserved) {
+      if ($this->_isSetReserved) {
         $action -= CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE + CRM_Core_Action::DISABLE + CRM_Core_Action::ENABLE;
       }
       else {
@@ -252,6 +255,8 @@ class CRM_Price_Page_Option extends CRM_Core_Page {
 
     if ($this->_sid) {
       CRM_Price_BAO_Set::checkPermission($this->_sid);
+      $this->_isSetReserved= CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'is_reserved');
+      $this->assign('isReserved', $this->_isSetReserved);
     }
     //as url contain $sid so append breadcrumb dynamically.
     $breadcrumb = array(array('title' => ts('Price Fields'),
@@ -288,7 +293,7 @@ class CRM_Price_Page_Option extends CRM_Core_Page {
     // what action to take ?
     if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD |
         CRM_Core_Action::VIEW | CRM_Core_Action::DELETE
-      )) {
+      ) && !$this->_isSetReserved) {
       // no browse for edit/update/view
       $this->edit($action);
     }

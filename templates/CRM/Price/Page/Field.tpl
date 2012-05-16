@@ -23,14 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $action eq 1 or $action eq 2 or $action eq 4}
+{if ($action eq 1 or $action eq 2 or $action eq 4) and !$isReserved}
     {include file="CRM/Price/Form/Field.tpl"}
-{elseif $action eq 8 and !$usedBy}
+{elseif $action eq 8 and !$usedBy and !$isReserved}
     {include file="CRM/Price/Form/DeleteField.tpl"}
 {elseif $action eq 1024 }
     {include file="CRM/Price/Form/Preview.tpl"}
 {else}
-
  {if $usedBy}
     <div class='spacer'></div>
     <div id="price_set_used_by" class="messages status">

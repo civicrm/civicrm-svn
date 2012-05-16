@@ -1379,9 +1379,9 @@ VALUES
 -- CRM-9714
 
 SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';
-INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `contribution_type_id` )
-VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', NULL),
-( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @contribution_type_id);
+INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `contribution_type_id`, `is_reserved` )
+VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', NULL,1),
+( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @contribution_type_id,1);
 
 SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_contribution_amount' AND extends = 2 AND is_quick_config = 1 ;
 
