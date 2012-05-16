@@ -200,7 +200,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         $batchList[$id]['batch_name'] = $value['title'];
         $batchList[$id]['batch_type'] = $value['batch_type'];
         $batchList[$id]['item_count'] = $value['item_count'];
-        $batchList[$id]['total_amount'] = $value['total'];
+        $batchList[$id]['total_amount'] = CRM_Utils_Money::format($value['total']);
         $batchList[$id]['status'] = $value['batch_status'];
         $batchList[$id]['created_by'] = $value['created_by'];
         $batchList[$id]['links'] = $value['action'];
