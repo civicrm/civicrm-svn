@@ -33,6 +33,8 @@
  *
  */
 class CRM_Upgrade_Incremental_php_FourTwo {
+  const BATCH_SIZE = 5000;
+
   function verifyPreDBstate(&$errors) {
     return TRUE;
   }
@@ -53,10 +55,16 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   function upgrade_4_2_alpha1($rev) {
     // Some steps take a long time, so we break them up into separate
     // tasks and enqueue them separately.
-    $this->addTask('Upgrade DB to 4.2.alpha1: Price Sets', 'task_4_2_alpha1_createPriceSets');
-    $this->addTask('Upgrade DB to 4.2.alpha1: SQL', 'task_4_2_alpha1_runSql', $rev);
-    $this->addTask('Upgrade DB to 4.2.alpha1: Contributions', 'task_4_2_alpha1_convertContributions');
-    $this->addTask('Upgrade DB to 4.2.alpha1: Event Profile', 'task_4_2_alpha1_eventProfile');
+    $this->addTask(ts('Upgrade DB to 4.2.alpha1: Price Sets'), 'task_4_2_alpha1_createPriceSets');
+    $this->addTask(ts('Upgrade DB to 4.2.alpha1: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
+    $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');
+    for ($startId = $minContributionId; $startId <= $maxContributionId; $startId += self::BATCH_SIZE) {
+      $endId = $startId + self::BATCH_SIZE - 1;
+      $title = ts('Upgrade DB to 4.2.alpha1: Contributions (%1 => %2)', array(1 => $startId, 2 => $endId));
+      $this->addTask($title, 'task_4_2_alpha1_convertContributions', $startId, $endId);
+    }
+    $this->addTask(ts('Upgrade DB to 4.2.alpha1: Event Profile'), 'task_4_2_alpha1_eventProfile');
   }
 
   /**
@@ -144,8 +152,14 @@ WHERE `name` LIKE '%.amount.%' ";
 
   /**
    * (Queue Task Callback)
+   *
+   * Find any contribution records and create corresponding line-item
+   * records.
+   *
+   * @param $startId int, the first/lowest contribution ID to convert
+   * @param $endId int, the last/highest contribution ID to convert
    */
-  static function task_4_2_alpha1_convertContributions(CRM_Queue_TaskContext $ctx) {
+  static function task_4_2_alpha1_convertContributions(CRM_Queue_TaskContext $ctx, $startId, $endId) {
 
       // create lineitems for contribution done for membership
       $sql = " SELECT cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
@@ -154,9 +168,14 @@ LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'c
 LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
 LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
 LEFT JOIN civicrm_price_set_entity cpse on cpse.entity_table = 'civicrm_contribution_page' and cpse.entity_id = cc.contribution_page_id
-WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NOT NULL AND cpp.contribution_id IS NULL
+WHERE (cc.id BETWEEN %1 AND %2)
+AND cli.entity_id IS NULL AND cc.contribution_page_id IS NOT NULL AND cpp.contribution_id IS NULL
 GROUP BY cc.id ";
-      $result = CRM_Core_DAO::executeQuery($sql);
+      $sqlParams = array(
+        1 => array($startId, 'Integer'),
+        2 => array($endId, 'Integer'),
+      );
+      $result = CRM_Core_DAO::executeQuery($sql, $sqlParams);
 
       while ($result->fetch()) {
         $sql = " SELECT cpf.id, cpfv.id as price_field_value_id, cpfv.label, cpfv.amount, cpfv.count FROM civicrm_price_field cpf LEFT JOIN civicrm_price_field_value cpfv ON cpf.id = cpfv.price_field_id WHERE cpf.price_set_id = %1 ";
@@ -242,9 +261,15 @@ LEFT JOIN civicrm_participant cp ON cp.id = cpp.participant_id
 LEFT JOIN civicrm_price_set_entity cpse ON cp.event_id = cpse.entity_id and cpse.entity_table = 'civicrm_event'
 LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpse.price_set_id
 LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id AND cpfv.label = cp.fee_level
-WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NOT NULL 
+WHERE (cc.id BETWEEN %1 AND %2)
+AND cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NOT NULL 
 GROUP BY cc.id;";
-      $result = CRM_Core_DAO::executeQuery($sql);
+
+      $sqlParams = array(
+        1 => array($startId, 'Integer'),
+        2 => array($endId, 'Integer'),
+      );
+      $result = CRM_Core_DAO::executeQuery($sql, $sqlParams);
       while ($result->fetch()) {
         $lineParams = array(
           'entity_table' => 'civicrm_participant',
