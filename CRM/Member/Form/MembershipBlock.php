@@ -367,6 +367,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
           $fieldParams['option_amount'][$rowCount] = $membetype['minimum_fee'];
           $fieldParams['option_weight'][$rowCount] = $membetype['weight'];
           $fieldParams['option_description'][$rowCount] = $membetype['description'];
+          $fieldParams['default_option'] = $params['membership_type_default'];
 
           $fieldParams['membership_type_id'][$rowCount] = $memType;
           // [$rowCount] = $membetype[''];

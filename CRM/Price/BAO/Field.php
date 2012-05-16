@@ -246,7 +246,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
       $label = (CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount' && !CRM_Utils_Array::value('is_allow_other_amount', $otherAmount)) ? 'Additional Contribution' : $field->label;
     }
 
-
+    if ($field->name == 'contribution_amount') {
+        $qf->_contributionAmount = 1;
+    }
+    
     if (isset($qf->_online) && $qf->_online) {
       $useRequired = FALSE;
     }
@@ -271,9 +274,13 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           $qf->assign('priceset', $elementName);
           $extra = array('onclick' => 'useAmountOther();');
         }
-        //check for label.
-        if (CRM_Utils_Array::value('label', $fieldOptions[$optionKey])) {
-          $label = $fieldOptions[$optionKey]['label'];
+       
+        // if seperate membership payment is used with quick config priceset then change the other amount label
+        if (CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $qf->_quickConfig && $field->name == 'other_amount' && !property_exists($qf,'_contributionAmount')) {
+            $label = 'Additional Contribution';
+            $useRequired = 0;
+        } elseif (CRM_Utils_Array::value('label', $fieldOptions[$optionKey])) {      //check for label.
+            $label = $fieldOptions[$optionKey]['label'];
         }
 
         if ($field->is_display_amounts) {
@@ -346,18 +353,12 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if (!$field->is_required) {
           // add "none" option
           if (CRM_Utils_Array::value('is_allow_other_amount', $otherAmount) && $field->name == 'contribution_amount') {
-
             $none = 'Other Amount';
-          }
-          elseif (!CRM_Utils_Array::value('is_required', $qf->_membershipBlock) && $field->name == 'membership_amount') {
-
+          } elseif (!CRM_Utils_Array::value('is_required', $qf->_membershipBlock) && $field->name == 'membership_amount') {
             $none = 'No thank you';
-          }
-          else {
+          } else {
             $none = '-none-';
           }
-
-
 
           $choice[] = $qf->createElement('radio', NULL, '', $none, '0',
             array('price' => json_encode(array($elementName, "0")))
