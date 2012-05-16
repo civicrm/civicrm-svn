@@ -28,8 +28,8 @@
     {ts}Click Validate & Process below when you've entered all items for the batch. You can also Save & Continue Later at any time. Go to Administer > Customize Display & Screens > Profiles > Reserved Profiles > to add, remove or change the order of columns.{/ts}
 </div>
 {if $batchAmountMismatch}
-  <div class="status message">
-    {ts}Total for amounts entered below does not match the expected batch total.{/ts}
+  <div class="status message status-warning">
+    <div class="icon alert-icon"></div> {ts}Total for amounts entered below does not match the expected batch total.{/ts}
   </div>
   <div class="crm-button crm-button_qf_Entry_upload_force-save">
     {$form._qf_Entry_upload_force.html}
