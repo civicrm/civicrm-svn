@@ -47,6 +47,8 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase {
 
   function setUp() {
     parent::setUp();
+
+    $this->quickCleanup( array( 'civicrm_contact', 'civicrm_address', 'civicrm_loc_block', 'civicrm_email', 'civicrm_phone', 'civicrm_im' ) );
   }
 
   /**

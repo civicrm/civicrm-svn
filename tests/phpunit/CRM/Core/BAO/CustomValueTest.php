@@ -64,7 +64,7 @@ class CRM_Core_BAO_CustomValueTest extends CiviUnitTestCase {
         $this->assertEquals($valid, '2008-06-24', 'Checking type ' . $type . ' for returned CustomField Type.');
       }
       else {
-        $this->assertEquals($valid, 'true', 'Checking type ' . $type . ' for returned CustomField Type.');
+        $this->assertEquals($valid, true, 'Checking type ' . $type . ' for returned CustomField Type.');
       }
     }
   }

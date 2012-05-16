@@ -70,10 +70,16 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase {
       'entityID' => $contactID,
       'custom_' . $fieldID => $badDate,
     );
-    $result = CRM_Core_BAO_CustomValueTable::setValues($params);
 
-    // Check that the error flag is set AND that custom date value has not been modified
-    $this->assertEquals($result['is_error'], 1, 'Verify that is_error = 1 when bad date is passed.');
+    $message = null;
+    try {
+      $result = CRM_Core_BAO_CustomValueTable::setValues($params);
+    } catch ( Exception $e ) {
+      $message = $e->getMessage();
+    }
+
+    // Check that an exception has been thrown
+    $this->assertNotNull( $message, 'Verify than an exception is thrown when bad date is passed' );
 
     $params = array(
       'entityID' => $contactID,
@@ -153,8 +159,8 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase {
     $values = CRM_Core_BAO_CustomValueTable::getValues($params);
 
     $this->assertEquals($values['is_error'], 0, 'Verify that is_error = 0 (success).');
-    $this->assertEquals($values['custom_2_1'], $yesNo,
-      'Verify that the date value is stored for contact ' . $contactID
+    $this->assertEquals($values["custom_{$fieldID}_1"], $yesNo,
+      'Verify that the boolean value is stored for contact ' . $contactID
     );
 
 
@@ -164,10 +170,16 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase {
       'entityID' => $contactID,
       'custom_' . $fieldID => $badYesNo,
     );
-    $result = CRM_Core_BAO_CustomValueTable::setValues($params);
 
-    // Check that the error flag is set AND that custom date value has not been modified
-    $this->assertEquals($result['is_error'], $yesNo, 'Verify that is_error = 1 when bad boolen value is passed.');
+    $message = null;
+    try {
+      $result = CRM_Core_BAO_CustomValueTable::setValues($params);
+    } catch (Exception $e) {
+      $message = $e->getMessage();
+    }
+
+    // Check that an exception has been thrown
+    $this->assertNotNull( $message, 'Verify than an exception is thrown when bad boolean is passed' );
 
     $params = array(
       'entityID' => $contactID,
@@ -175,7 +187,7 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase {
     );
     $values = CRM_Core_BAO_CustomValueTable::getValues($params);
 
-    $this->assertEquals($values['custom_2_1'], $yesNo,
+    $this->assertEquals($values["custom_{$fieldID}_1"], $yesNo,
       'Verify that the date value has NOT been updated for contact ' . $contactID
     );
 

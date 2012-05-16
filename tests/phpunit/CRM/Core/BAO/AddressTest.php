@@ -39,6 +39,8 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase {
 
   function setUp() {
     parent::setUp();
+
+    $this->quickCleanup(array('civicrm_contact', 'civicrm_address'));
   }
 
   /**
@@ -264,7 +266,6 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase {
 
     $params['contact_id'] = $contactId;
 
-
     $fixAddress = TRUE;
 
     CRM_Core_BAO_Address::create($params, $fixAddress, $entity = NULL);
@@ -277,7 +278,7 @@ class CRM_Core_BAO_AddressTest extends CiviUnitTestCase {
     $address = CRM_Core_BAO_Address::getValues($entityBlock);
     $this->assertEquals($address[1]['id'], $addressId);
     $this->assertEquals($address[1]['contact_id'], $contactId);
-    $this->assertEquals($address[1]['street_address'], '120 Terminal Road');
+    $this->assertEquals($address[1]['street_address'], 'Oberoi Garden');
     Contact::delete($contactId);
   }
 
