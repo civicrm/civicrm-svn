@@ -17,14 +17,14 @@ class CRM_Mailing_BAO_QueryTestDataProvider implements Iterator {
    *  IDs should be selected when the form values are applied to the
    *  database in dataset.xml
    */
-  private $dataset = array(
+  private $dataset1 = array(
     array(
       'fv' => array('mailing_name' => 'First%', 'mailing_delivery_status'
         => 'Y'),
       'id' => array(105),
     ),
   );
-  private $dataset1 = array(
+  private $dataset = array(
     array('fv' => array('mailing_name' => 'First%', 'mailing_open_status' => 'Y'),
       'id' => array(109, 110, 111, 112),
     ),
