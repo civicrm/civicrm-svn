@@ -1138,6 +1138,7 @@ WHERE  contribution_id = {$this->_id}
       $this->_priceSet = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
       $fieldID = key($this->_priceSet['fields']);
       $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] = $submittedValues['total_amount'];
+      $submittedValues['price_'.$fieldID] = 1;
     }
 
     if ($priceSetId) {

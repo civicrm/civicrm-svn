@@ -163,7 +163,7 @@ VALUES ('member_signup_and_renewal', 'Member Signup and Renewal', 1, 3, @contrib
 
 SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 and name = 'member_signup_and_renewal';
 
-INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`, `is_enter_qty`, `weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`, `visibility_id`) VALUES ( @priceSetId, 'membership_amount', 'Membership Amount', 'Radio', 0, 1, 1, 1, 1, 0, 1);
+INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`, `is_enter_qty`, `weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`, `visibility_id`) VALUES ( @priceSetId, 'membership_amount', 'Membership Amount', 'Radio', 0, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id`) VALUES ('civicrm_contribution_page', 2, @priceSetId);
 
@@ -176,8 +176,8 @@ SELECT @membershipIdS := max(id) FROM `civicrm_membership_type` WHERE name= 'Stu
 INSERT INTO 
        `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `membership_type_id`,  `is_active`, `is_default`) 
 VALUES
-    (@priceFieldID,'General','General','100.00',1, @membershipIdG ,1,0),
-    (@priceFieldID,'Student','Student','50.00',1, @membershipIdS , 1, 0);
+    (@priceFieldID,'General','General','100.00', 1, @membershipIdG, 1, 1),
+    (@priceFieldID,'Student','Student','50.00', 1, @membershipIdS , 1, 0);
 
 SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 AND `name` = 'pledge_for_civicrm';
 
