@@ -51,8 +51,20 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   }
 
   function upgrade_4_2_alpha1($rev) {
-    
-    //upgrade code to create priceset for contribution pages and events
+    // Some steps take a long time, so we break them up into separate
+    // tasks and enqueue them separately.
+    $this->addTask('Upgrade DB to 4.2.alpha1: Price Sets', 'task_4_2_alpha1_createPriceSets');
+    $this->addTask('Upgrade DB to 4.2.alpha1: SQL', 'task_4_2_alpha1_runSql', $rev);
+    $this->addTask('Upgrade DB to 4.2.alpha1: Contributions', 'task_4_2_alpha1_convertContributions');
+    $this->addTask('Upgrade DB to 4.2.alpha1: Event Profile', 'task_4_2_alpha1_eventProfile');
+  }
+
+  /**
+   * (Queue Task Callback)
+   *
+   * Upgrade code to create priceset for contribution pages and events
+   */
+  static function task_4_2_alpha1_createPriceSets(CRM_Queue_TaskContext $ctx) {
     $daoName = array('civicrm_contribution_page' => array('CRM_Contribute_BAO_ContributionPage', CRM_Core_Component::getComponentID('CiviContribute')),
       'civicrm_event' => array('CRM_Event_BAO_Event', CRM_Core_Component::getComponentID('CiviEvent')),
     );
@@ -69,9 +81,10 @@ WHERE `name` LIKE '%.amount.%' ";
       if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name')) {
         $setParams['name'] = $pageTitle;
       }
-      elseif (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle . '_' . $this->_id, 'id', 'name')) {
-        $setParams['name'] = $pageTitle . '_' . $this->_id;
-      }
+      //FIXME: "_id" does not appear to be setup in either static or instance context
+      //elseif (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle . '_' . $this->_id, 'id', 'name')) {
+      //  $setParams['name'] = $pageTitle . '_' . $this->_id;
+      //}
       else {
         $setParams['name'] = $pageTitle . '_' . rand(1, 99);
       }
@@ -111,12 +124,28 @@ WHERE `name` LIKE '%.amount.%' ";
         $priceField = CRM_Price_BAO_Field::create($fieldParams);
       }
     }
+
+    return TRUE;
+  }
+
+  /**
+   * (Queue Task Callback)
+   */
+  static function task_4_2_alpha1_runSql(CRM_Queue_TaskContext $ctx, $rev) {
       $upgrade = new CRM_Upgrade_Form();
       $upgrade->processSQL($rev);
 
       // now rebuild all the triggers
       // CRM-9716
       CRM_Core_DAO::triggerRebuild();
+
+      return TRUE;
+  }
+
+  /**
+   * (Queue Task Callback)
+   */
+  static function task_4_2_alpha1_convertContributions(CRM_Queue_TaskContext $ctx) {
 
       // create lineitems for contribution done for membership
       $sql = " SELECT cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
@@ -230,8 +259,16 @@ GROUP BY cc.id;";
         );
         CRM_Price_BAO_LineItem::create($lineParams);
       }
+      
+      return TRUE;
+  }
 
-      // Create an event registration profile with a single email field CRM-9587
+  /**
+   * (Queue Task Callback)
+   *
+   * Create an event registration profile with a single email field CRM-9587
+   */
+  static function task_4_2_alpha1_eventProfile(CRM_Queue_TaskContext $ctx) {
       $profileTitle = ts('Your Registration Info');
       $sql = "INSERT INTO `civicrm_uf_group` (`is_active`, `group_type`, `title`, `help_pre`, `help_post`, `limit_listings_group_id`, `post_URL`, `add_to_group_id`, `add_captcha`, `is_map`, `is_edit_link`, `is_uf_link`, `is_update_dupe`, `cancel_URL`, `is_cms_user`, `notify`, `is_reserved`, `name`, `created_id`, `created_date`, `is_proximity_search`)
               VALUES (1, 'Individual, Contact', '{$profileTitle}', NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, 'event_registration', NULL, NULL, 0);";
@@ -266,6 +303,32 @@ GROUP BY cc.id;";
                     VALUES (1, 'CiviEvent_Additional', 'civicrm_event', {$events->id}, {$nextAdditionalWeight}, {$eventRegistrationId});";
         CRM_Core_DAO::executeQuery($sql);
       }
-    }
+      
+    return TRUE;
+  }
+
+  /**
+   * Syntatic sugar for adding a task which (a) is in this class and (b) has
+   * a high priority.
+   *
+   * After passing the $funcName, you can also pass parameters that will go to
+   * the function. Note that all params must be serializable.
+   */
+  protected function addTask($title, $funcName) {
+    $queue = CRM_Queue_Service::singleton()->load(array(
+      'type' => 'Sql',
+      'name' => CRM_Upgrade_Form::QUEUE_NAME,
+    ));
+    
+    $args = func_get_args();
+    $title = array_shift($args);
+    $funcName = array_shift($args);
+    $task = new CRM_Queue_Task(
+      array(get_class($this), $funcName),
+      $args,
+      $title
+    );
+    $queue->createItem($task, array('weight' => -1));
+  }
 }
 
