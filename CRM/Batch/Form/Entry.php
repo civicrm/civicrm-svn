@@ -351,6 +351,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       'cancel_date',
     );
 
+    // get the price set associated with offline contribution record.
     $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
     $this->_priceSet = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
     $fieldID = key($this->_priceSet['fields']);
@@ -488,6 +489,12 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       'reminder_date'
     );
 
+    // get the price set associated with offline memebership
+    $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
+    $this->_priceSet = $priceSets = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
+
+    $fieldID = key($this->_priceSet['fields']);
+
     if (isset($params['field'])) {
       $customFields = array();
       foreach ($params['field'] as $key => $value) {
@@ -582,6 +589,43 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $value['batch_id'] = $this->_batchId;
         $value['skipRecentView'] = TRUE;
+
+        // make entry in line item for contribution
+
+        $editedFieldParams = array(
+          'price_set_id' => $priceSetId,
+          'name' => 1 // FIX ME 
+        );
+
+        $editedResults = array();
+        CRM_Price_BAO_Field::retrieve($editedFieldParams, $editedResults);
+        
+        if (!empty($editedResults)) {
+          unset($this->_priceSet['fields']);
+          $this->_priceSet['fields'][$editedResults['id']] = $priceSets['fields'][$editedResults['id']];
+          unset($this->_priceSet['fields'][$editedResults['id']]['options']);
+          $fid = $editedResults['id'];
+          $editedFieldParams = array(
+            'price_field_id' => $editedResults['id'],
+            'membership_type_id' => $value['membership_type_id']
+          );
+
+          $editedResults = array();
+          CRM_Price_BAO_FieldValue::retrieve($editedFieldParams, $editedResults);
+          $this->_priceSet['fields'][$fid]['options'][$editedResults['id']] = $priceSets['fields'][$fid]['options'][$editedResults['id']];
+          if (CRM_Utils_Array::value('total_amount', $value)) {
+            $this->_priceSet['fields'][$fid]['options'][$editedResults['id']]['amount'] = $value['total_amount'];
+          }
+        }
+
+        $value['price_' . $fieldID] = $editedResults['id'];
+
+        CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
+          $value, $lineItem[$priceSetId]
+        );
+
+        $value['lineItems'] = $lineItem;
+        $value['processPriceSet'] = TRUE;
 
         // end of contribution related section
 
