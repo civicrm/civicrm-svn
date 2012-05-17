@@ -409,9 +409,9 @@ LIMIT $offset, $rowCount";
     $query = "
 SELECT count(id)
 FROM civicrm_prevnext_cache
-WHERE cacheKey LIKE %1 AND is_selected=1";
+WHERE cacheKey LIKE %1 AND is_selected=1 AND cacheKey NOT LIKE %2";
     $params1[1] = array("%{$cacheKey}%", 'String');
-    
+    $params1[2] = array("%{$cacheKey}_alphabet%", 'String');
     $paramsTotal     = CRM_Core_DAO::singleValueQuery($query, $params1);
     $params['total'] = $paramsTotal;
     $obj->_pager    = new CRM_Utils_Pager($params);
