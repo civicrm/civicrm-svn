@@ -150,10 +150,10 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     //View Contribution Record
     $verifyData = array(
       'From' => $firstName1 . ' ' . $lastName1,
-      'Contribution Amount' => '$ 100.00',
+      'Total Amount' => '$ 0.00',
     );
     foreach ($verifyData as $label => $value) {
-      $this->verifyText("xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td",
+      $this->verifyText("xpath=//form[@id='ContributionView']/div[2]/table/tbody/tr/td[text()='{$label}']/following-sibling::td",
         preg_quote($value)
       );
     }
