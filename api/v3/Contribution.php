@@ -150,12 +150,7 @@ function _civicrm_api3_contribution_delete_spec(&$params) {
  */
 function civicrm_api3_contribution_get($params) {
 
-  if (CRM_Utils_Array::value('id', $params)) {
-    //api supports 'id' but BAO supports 'contribution_id. Change it here
-    $params['contribution_id'] = CRM_Utils_Array::value('contribution_id', $params, $params['id']);
-    unset($params['id']);
-  }
-  $options          = _civicrm_api3_get_options_from_params($params, TRUE);
+  $options          = _civicrm_api3_get_options_from_params($params, TRUE,'Contribution','get');
   $sort             = CRM_Utils_Array::value('sort', $options, NULL);
   $offset           = CRM_Utils_Array::value('offset', $options);
   $rowCount         = CRM_Utils_Array::value('limit', $options);
@@ -181,7 +176,7 @@ function civicrm_api3_contribution_get($params) {
     $sql .= " ORDER BY $sort ";
   }
   $sql .= " LIMIT $offset, $rowCount ";
-  $dao = &CRM_Core_DAO::executeQuery($sql);
+  $dao = CRM_Core_DAO::executeQuery($sql);
 
   $contribution = array();
   while ($dao->fetch()) {
