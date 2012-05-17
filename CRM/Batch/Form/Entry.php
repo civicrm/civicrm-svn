@@ -637,6 +637,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         // end of contribution related section
 
         unset($value['membership_type']);
+        unset($value['membership_start_date']);
+        unset($value['membership_end_date']);
         
         if ( CRM_Utils_Array::value( $key, $params['member_option'] ) == 2 ) {
           $membership = CRM_Member_BAO_Membership::renewMembership( 
@@ -648,13 +650,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         } 
         else {
           $membership = CRM_Member_BAO_Membership::create($value, CRM_Core_DAO::$_nullArray);
-        }
-
-        // add custom field values
-        if (CRM_Utils_Array::value('custom', $value) &&
-          is_array($value['custom'])
-        ) {
-          CRM_Core_BAO_CustomValueTable::store($value['custom'], 'civicrm_membership', $membership->id);
         }
 
         //process premiums
