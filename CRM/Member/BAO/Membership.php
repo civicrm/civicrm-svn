@@ -326,58 +326,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
 
     //record contribution for this membership
     if (CRM_Utils_Array::value('contribution_status_id', $params) && !CRM_Utils_Array::value('relate_contribution_id', $params)) {
-      $contributionParams = array();
-      $config = CRM_Core_Config::singleton();
-      $contributionParams['currency'] = $config->defaultCurrency;
-      $contributionParams['receipt_date'] = (CRM_Utils_Array::value('receipt_date', $params)) ? $params['receipt_date'] : 'null';
-      $contributionParams['source'] = CRM_Utils_Array::value('contribution_source', $params);
-      $contributionParams['soft_credit_to'] = CRM_Utils_Array::value('soft_credit_to', $params);
-      $contributionParams['non_deductible_amount'] = 'null';
-      $recordContribution = array(
-        'contact_id', 'total_amount', 'receive_date', 'contribution_type_id',
-        'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test',
-        'honor_contact_id', 'honor_type_id',
-        'contribution_status_id', 'check_number', 'campaign_id', 'is_pay_later',
-      );
-      foreach ($recordContribution as $f) {
-        $contributionParams[$f] = CRM_Utils_Array::value($f, $params);
-      }
-
-      // make entry in batch entity batch table
-      if (CRM_Utils_Array::value('batch_id', $params)) {
-        $contributionParams['batch_id'] = $params['batch_id'];
-      }
-
-      if ( CRM_Utils_Array::value('contribution_contact_id', $params) ) {
-        // deal with possibility of a different person paying for contribution
-        $contributionParams['contact_id'] = $params['contribution_contact_id'];
-      }
-      $contribution = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
-
-      // store contribution id
-      $params['contribution_id'] = $contribution->id;
-
-      if (CRM_Utils_Array::value('processPriceSet', $params) &&
-        !empty($params['lineItems'])
-      ) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $params['lineItems']);
-      }
-
-      //insert payment record for this membership
-      if (!CRM_Utils_Array::value('contribution', $ids) ||
-        CRM_Utils_Array::value('is_recur', $params)
-      ) {
-        $mpDAO = new CRM_Member_DAO_MembershipPayment();
-        $mpDAO->membership_id = $membership->id;
-        $mpDAO->contribution_id = $contribution->id;
-        if (CRM_Utils_Array::value('is_recur', $params)) {
-          $mpDAO->find();
-        }
-
-        CRM_Utils_Hook::pre('create', 'MembershipPayment', NULL, $mpDAO);
-        $mpDAO->save();
-        CRM_Utils_Hook::post('create', 'MembershipPayment', $mpDAO->id, $mpDAO);
-      }
+      self::recordMembershipContribution( $params, $ids, $membership->id );
     }
 
     if (CRM_Utils_Array::value('relate_contribution_id', $params)) {
@@ -2747,6 +2696,72 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       'is_error' => 0,
       'messages' => 'Membership(s) reminder date updated. (Done)',
     );
+  }
+
+  /**
+   * Functon to records contribution record associated with membership
+   * 
+   * @param array  $params array of submitted params
+   * @param array  $ids    array of ids
+   * @param object $membershipId  membership id
+   *
+   * @return void
+   * @static
+   */
+  static function recordMembershipContribution( &$params, &$ids, $membershipId ) {
+    $contributionParams = array();
+    $config = CRM_Core_Config::singleton();
+    $contributionParams['currency'] = $config->defaultCurrency;
+    $contributionParams['receipt_date'] = (CRM_Utils_Array::value('receipt_date', $params)) ? $params['receipt_date'] : 'null';
+    $contributionParams['source'] = CRM_Utils_Array::value('contribution_source', $params);
+    $contributionParams['soft_credit_to'] = CRM_Utils_Array::value('soft_credit_to', $params);
+    $contributionParams['non_deductible_amount'] = 'null';
+    $recordContribution = array(
+      'contact_id', 'total_amount', 'receive_date', 'contribution_type_id',
+      'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test',
+      'honor_contact_id', 'honor_type_id',
+      'contribution_status_id', 'check_number', 'campaign_id', 'is_pay_later',
+    );
+    foreach ($recordContribution as $f) {
+      $contributionParams[$f] = CRM_Utils_Array::value($f, $params);
+    }
+
+    // make entry in batch entity batch table
+    if (CRM_Utils_Array::value('batch_id', $params)) {
+      $contributionParams['batch_id'] = $params['batch_id'];
+    }
+
+    if ( CRM_Utils_Array::value('contribution_contact_id', $params) ) {
+      // deal with possibility of a different person paying for contribution
+      $contributionParams['contact_id'] = $params['contribution_contact_id'];
+    }
+    
+    $contribution = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
+
+    // store contribution id
+    $params['contribution_id'] = $contribution->id;
+
+    if (CRM_Utils_Array::value('processPriceSet', $params) &&
+      !empty($params['lineItems'])
+    ) {
+      CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $params['lineItems']);
+    }
+    
+    //insert payment record for this membership
+    if (!CRM_Utils_Array::value('contribution', $ids) ||
+      CRM_Utils_Array::value('is_recur', $params)
+    ) {
+      $mpDAO = new CRM_Member_DAO_MembershipPayment();
+      $mpDAO->membership_id = $membershipId;
+      $mpDAO->contribution_id = $contribution->id;
+      if (CRM_Utils_Array::value('is_recur', $params)) {
+        $mpDAO->find();
+      }
+
+      CRM_Utils_Hook::pre('create', 'MembershipPayment', NULL, $mpDAO);
+      $mpDAO->save();
+      CRM_Utils_Hook::post('create', 'MembershipPayment', $mpDAO->id, $mpDAO);
+    }
   }
 }
 

@@ -597,7 +597,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         $value['skipRecentView'] = TRUE;
 
         // make entry in line item for contribution
-
+        
         $editedFieldParams = array(
           'price_set_id' => $priceSetId,
           'name' => $value['membership_type'][0] 
@@ -622,18 +622,18 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           if (CRM_Utils_Array::value('total_amount', $value)) {
             $this->_priceSet['fields'][$fid]['options'][$editedResults['id']]['amount'] = $value['total_amount'];
           }
+
+          $fieldID = key($this->_priceSet['fields']);
+          $value['price_' . $fieldID] = $editedResults['id'];
+
+          $lineItem = array(); 
+          CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
+            $value, $lineItem[$priceSetId]
+          );
+
+          $value['lineItems'] = $lineItem;
+          $value['processPriceSet'] = TRUE;
         }
-
-        $fieldID = key($this->_priceSet['fields']);
-        $value['price_' . $fieldID] = $editedResults['id'];
-
-        CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
-          $value, $lineItem[$priceSetId]
-        );
-
-        $value['lineItems'] = $lineItem;
-        $value['processPriceSet'] = TRUE;
-
         // end of contribution related section
 
         unset($value['membership_type']);
@@ -647,6 +647,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             FALSE, $this, NULL, NULL,
             $value['custom']
           );
+
+          // make contribution entry
+          CRM_Member_BAO_Membership::recordMembershipContribution( $value, CRM_Core_DAO::$_nullArray, $membership->id );
         } 
         else {
           $membership = CRM_Member_BAO_Membership::create($value, CRM_Core_DAO::$_nullArray);
