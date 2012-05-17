@@ -125,7 +125,7 @@ function civicrm_api3_event_get($params) {
   require_once 'CRM/Core/BAO/CustomGroup.php';
 
   $eventDAO = new CRM_Event_BAO_Event();
-  _civicrm_api3_dao_set_filter($eventDAO, $params, TRUE);
+  _civicrm_api3_dao_set_filter($eventDAO, $params, TRUE, 'Event');
   $eventDAO->whereAdd('( is_template IS NULL ) OR ( is_template = 0 )');
 
   if (CRM_Utils_Array::value('isCurrent', $params)) {

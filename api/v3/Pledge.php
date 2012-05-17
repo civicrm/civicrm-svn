@@ -41,8 +41,6 @@
 /**
  * Include utility functions
  */
-require_once 'CRM/Pledge/BAO/Pledge.php';
-require_once 'CRM/Utils/Rule.php';
 
 /**
  * Creates or updates an Activity. See the example for usage
@@ -129,12 +127,7 @@ function _civicrm_api3_pledge_create_spec(&$params) {
  */
 function civicrm_api3_pledge_get($params) {
 
-  if (!empty($params['id'])) {
-    //if you pass in 'id' it will be treated by the query as contact_id
-    $params['pledge_id'] = $params['id'];
-    unset($params['id']);
-  }
-  $options = _civicrm_api3_get_options_from_params($params, TRUE);
+  $options = _civicrm_api3_get_options_from_params($params, TRUE, 'pledge','get');
   require_once 'CRM/Pledge/BAO/Query.php';
   require_once 'CRM/Contact/BAO/Query.php';
   if (empty($options['return'])) {
@@ -144,13 +137,11 @@ function civicrm_api3_pledge_get($params) {
     $options['return']['pledge_id'] = 1;
   }
   $newParams = CRM_Contact_BAO_Query::convertFormValues($options['input_params']);
-
   $query = new CRM_Contact_BAO_Query($newParams, $options['return'], NULL,
     FALSE, FALSE, CRM_Contact_BAO_Query::MODE_PLEDGE
   );
   list($select, $from, $where) = $query->query();
   $sql = "$select $from $where";
-
   if (!empty($options['sort'])) {
     $sql .= " ORDER BY " . $options['sort'];
   }

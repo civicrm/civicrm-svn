@@ -340,7 +340,7 @@ function _civicrm_api3_store_values(&$fields, &$params, &$values) {
 /*
  * Function transfers the filters being passed into the DAO onto the params object
  */
-function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
+function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   $entity = substr($dao->__table, 8);
 
   $allfields = _civicrm_api3_build_fields_array($dao, $unique);
@@ -350,7 +350,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
     $dao->id = $params[$entity . "_id"];
   }
   //apply options like sort
-  _civicrm_api3_apply_options_to_dao($params, $dao);
+  _civicrm_api3_apply_options_to_dao($params, $dao, $entity);
 
   //accept filters like filter.activity_date_time_high
   // std is now 'filters' => ..
@@ -428,13 +428,21 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
   }
   if (!empty($params['return']) && is_array($params['return'])) {
     $dao->selectAdd();
-    if($unique){
-      $allfields = _civicrm_api3_build_fields_array($dao, FALSE);
-    }
-    foreach ($params['return'] as $returnValue) {
-      if (in_array($returnValue, array_keys($allfields))) {
+    $allfields =  _civicrm_api3_get_unique_name_array($dao);
+    $returnMatched = array_intersect($params['return'], $allfields);
+    $returnUniqueMatched = array_intersect(
+      array_diff(// not already matched on the field names
+        $params['return'],
+        $returnMatched),
+        array_flip($allfields)// but a match for the field keys
+    );
+   
+    foreach ($returnMatched as $returnValue) {
         $dao->selectAdd($returnValue);
-      }
+    }
+    foreach ($returnUniqueMatched as $uniqueVal){
+      $dao->selectAdd($allfields[$uniqueVal]);
+     
     }
     $dao->selectAdd('id');
   }
@@ -461,9 +469,11 @@ function _civicrm_api3_apply_filters_to_dao($filterField, $filterValue, &$dao) {
  * Get sort, limit etc options from the params - supporting old & new formats.
  * get returnproperties for legacy
  * @param array $params params array as passed into civicrm_api
+ * @param bool $queryObject - is this supporting a queryobject api (e.g contact) - if so we support more options 
+ * for legacy report & return a unique fields array
  * @return array $options options extracted from params
  */
-function _civicrm_api3_get_options_from_params(&$params, $legacy = 0, $entity = '', $action = '') {
+function _civicrm_api3_get_options_from_params(&$params, $queryObject = false, $entity = '', $action = '') {
   $sort = CRM_Utils_Array::value('sort', $params, 0);
   $sort = CRM_Utils_Array::value('option.sort', $params, $sort);
   $sort = CRM_Utils_Array::value('option_sort', $params, $sort);
@@ -495,6 +505,18 @@ function _civicrm_api3_get_options_from_params(&$params, $legacy = 0, $entity = 
       $returnProperties[key($returnProperties)] = 1;
     }
   }
+  if($entity && $action =='get' ){
+    if(CRM_Utils_Array::value('id',$returnProperties)){
+      $returnProperties[$entity . '_id'] = 1;
+      unset($returnProperties['id']);
+    }
+    switch (trim(strtolower($sort))){
+    case 'id':
+    case 'id desc': 
+    case 'id asc':
+      $sort = str_replace('id', $entity . '_id',$sort);
+    }
+  }
 
 
   $options = array(
@@ -503,34 +525,30 @@ function _civicrm_api3_get_options_from_params(&$params, $legacy = 0, $entity = 
     'limit' => $limit,
     'return' => !empty($returnProperties) ? $returnProperties : NULL,
   );
-  if (!$legacy) {
+  if (!$queryObject) {
     return $options;
   }
   //here comes the legacy support for $returnProperties, $inputParams e.g for contat_get
+  // if the queryobject is being used this should be used
   $inputParams = array();
   $legacyreturnProperties = array();
   $otherVars = array(
-    'sort', 'offset', 'rowCount', 'options',
+    'sort', 'offset', 'rowCount', 'options','return',
   );
   foreach ($params as $n => $v) {
     if (substr($n, 0, 7) == 'return.') {
       $legacyreturnProperties[substr($n, 7)] = $v;
     }
+    elseif($n == 'id'){
+      $inputParams[$entity. '_id'] = $v;
+    }
     elseif (in_array($n, $otherVars)) {}
-    else {
+    else{
       $inputParams[$n] = $v;
     }
   }
   $options['return'] = array_merge($returnProperties, $legacyreturnProperties);
   $options['input_params'] = $inputParams;
-  if ($entity && strtolower($action) == 'get') {
-    $fields = _civicrm_api3_build_fields_array(_civicrm_api3_load_DAO($entity), 1);
-    foreach ($options['return'] as $return => $dontcare) {
-      if (in_array('$return', $fields) && CRM_Utils_Array::value($fields[$return]['uniquename'])) {
-        $options['return'][$fields[$return]['uniquename']] = 1;;
-      }
-    }
-  }
   return $options;
 }
 /*
@@ -538,10 +556,9 @@ function _civicrm_api3_get_options_from_params(&$params, $legacy = 0, $entity = 
  * @param array $params params array as passed into civicrm_api
  * @param object $dao DAO object
  */
-function _civicrm_api3_apply_options_to_dao(&$params, &$dao, $defaults = array(
-  )) {
+function _civicrm_api3_apply_options_to_dao(&$params, &$dao, $entity) {
 
-  $options = _civicrm_api3_get_options_from_params($params);
+  $options = _civicrm_api3_get_options_from_params($params,false,$entity);
   $dao->limit((int)$options['offset'], (int)$options['limit']);
   if (!empty($options['sort'])) {
     $dao->orderBy($options['sort']);
@@ -569,6 +586,19 @@ function _civicrm_api3_build_fields_array(&$bao, $unique = TRUE) {
   }
   return $dbFields;
 }
+
+/*
+ * build fields array. This is the array of fields as it relates to the given DAO
+ * returns unique fields as keys by default but if set but can return by DB fields
+ */
+function _civicrm_api3_get_unique_name_array(&$bao) {
+  $fields = $bao->fields();
+  foreach ($fields as $field => $values) {
+    $uniqueFields[$field] = CRM_Utils_Array::value('name',$values, $field);
+  }
+  return $uniqueFields;
+}
+
 
 /**
  * Converts an DAO object to an array
@@ -775,7 +805,7 @@ function _civicrm_api3_api_check_permission($entity, $action, &$params, $throw =
  */
 function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE, $entity = "") {
   $bao = new $bao_name();
-  _civicrm_api3_dao_set_filter($bao, $params, TRUE);
+  _civicrm_api3_dao_set_filter($bao, $params, TRUE,$entity);
   if ($returnAsSuccess) {
     return civicrm_api3_create_success(_civicrm_api3_dao_to_array($bao, $params, FALSE, $entity), $params, $bao);
   }
@@ -1284,6 +1314,15 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
           $params[$fieldname] = $numericvalue;
         }
       }
+    }
+    // once we have done any swaps check our field length
+    if(is_string($params[$fieldname]) && 
+      CRM_Utils_Array::value('maxlength',$fieldInfo) 
+      && strlen($params[$fieldname]) > $fieldInfo['maxlength']
+      ){
+      throw new api_Exception( $params[$fieldname] . " is " . strlen($params[$fieldname]) . " characters  - longer than $fieldname length" . $fieldInfo['maxlength'] . ' characters',
+        2100, array('field' => $fieldname)
+      );
     }
   }
 }
