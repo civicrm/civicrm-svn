@@ -38,20 +38,17 @@
 
 require_once 'CRM/Contact/BAO/GroupNesting.php';
 
- 
 /**
  * Provides group nesting record(s) given parent and/or child id.
  *
  * @param array $params  an array containing at least child_group_id or parent_group_id
  * {@getfields GroupNesting_get}
+ *
  * @return  array  list of group nesting records
  */
-function civicrm_api3_group_nesting_get( $params )
-{
+function civicrm_api3_group_nesting_get($params) {
 
-    return _civicrm_api3_basic_get('CRM_Contact_DAO_GroupNesting', $params);
-
-
+  return _civicrm_api3_basic_get('CRM_Contact_DAO_GroupNesting', $params);
 }
 
 /**
@@ -64,15 +61,13 @@ function civicrm_api3_group_nesting_get( $params )
  * {@getfields GroupNesting_create
  * @todo Work out the return value.
  */
-function civicrm_api3_group_nesting_create( $params )
-{
+function civicrm_api3_group_nesting_create($params) {
 
-  CRM_Contact_BAO_GroupNesting::add( $params['parent_group_id'], $params['child_group_id'] );
+  CRM_Contact_BAO_GroupNesting::add($params['parent_group_id'], $params['child_group_id']);
 
   // FIXME: CRM_Contact_BAO_GroupNesting requires some work
-  $result = array( 'is_error' => 0 );
-  return civicrm_api3_create_success($result,$params);
-
+  $result = array('is_error' => 0);
+  return civicrm_api3_create_success($result, $params);
 }
 /*
  * Adjust Metadata for Create action
@@ -80,10 +75,11 @@ function civicrm_api3_group_nesting_create( $params )
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_group_nesting_create_spec(&$params){
-    $params['child_group_id']['api.required'] = 1; 
-    $params['parent_group_id']['api.required'] = 1; 
+function _civicrm_api3_group_nesting_create_spec(&$params) {
+  $params['child_group_id']['api.required'] = 1;
+  $params['parent_group_id']['api.required'] = 1;
 }
+
 /**
  * Removes specific nesting records.
  *
@@ -91,13 +87,11 @@ function _civicrm_api3_group_nesting_create_spec(&$params){
  * {@getfields GroupNesting_delete}
  *
  * @return array API Success or fail array
- * 
+ *
  * @todo Work out the return value.
  */
-function civicrm_api3_group_nesting_delete( $params )
-{
+function civicrm_api3_group_nesting_delete($params) {
 
-    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
-  
-
+  return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
+

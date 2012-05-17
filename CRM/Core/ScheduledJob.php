@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,89 +34,92 @@
  * $Id$
  *
  */
+class CRM_Core_ScheduledJob {
 
-class CRM_Core_ScheduledJob
-{
+  var $version = 3;
 
-    var $version = 3;
+  var $name = NULL;
 
-    var $name = null;
+  var $apiParams = array();
 
-    var $apiParams = array();
+  var $remarks = array();
 
-    var $remarks = array();
-
-    /*
+  /*
      * Class constructor
      * 
      * @param string $namespace namespace prefix for component's files
      * @access public
      * 
      */
-    public function __construct( $params ) {
-        foreach( $params as $name => $param ) {
-            $this->$name = $param;
-        }
 
-        // version is set to 3 by default - if different number 
-        // defined in params, it's replaced later on, however, 
-        // it's practically useles, since it seems none of api v2
-        // will work properly in cron job setup. It might become
-        // useful when/if api v4 starts to emerge and will need
-        // testing in the cron job setup. To permanenty require
-        // hardcoded api version, it's enough to move below line
-        // under following if block.
-        $this->apiParams = array( 'version' => $this->version );
-
-        if( !empty( $this->parameters ) ) {
-            $lines = split( "\n", $this->parameters );
-
-            foreach( $lines as $line ) {
-                $pair = split( "=", $line );
-                if( empty($pair[0]) || empty($pair[1]) ) {
-                    $this->remarks[] .= 'Malformed parameters!';
-                    break;
-                }
-                $this->apiParams[ trim($pair[0]) ] = trim($pair[1]);
-            }
-        }
-    }                                                          
-
-    public function saveLastRun( $date = null ) {
-        require_once 'CRM/Core/DAO/Job.php';
-        $dao = new CRM_Core_DAO_Job();
-        $dao->id = $this->id;
-        $dao->last_run = ( $date == null ) ? CRM_Utils_Date::currentDBDate( ) : CRM_Utils_Date::currentDBDate( $date );
-        $dao->save();
+  public function __construct($params) {
+    foreach ($params as $name => $param) {
+      $this->$name = $param;
     }
 
-    public function needsRunning( ) {
-        // run if it was never run
-        if( empty( $this->last_run ) ) return true;
-        
-        // run_frequency check
-        switch ( $this->run_frequency ) {
-            case 'Always':
-                return true;
-                break;
-            case 'Hourly':
-                $now = CRM_Utils_Date::currentDBDate( );
-                $hourAgo = strtotime( '-1 hour', strtotime( $now ) );
-                $lastRun = strtotime( $this->last_run );
-                if( $lastRun < $hourAgo ) return true;
-                break;
-            case 'Daily':
-                $now = CRM_Utils_Date::currentDBDate( );
-                $dayAgo = strtotime( '-1 day', strtotime( $now ) );
-                $lastRun = strtotime( $this->last_run );
-                if( $lastRun < $dayAgo ) return true;
-                break;
+    // version is set to 3 by default - if different number
+    // defined in params, it's replaced later on, however,
+    // it's practically useles, since it seems none of api v2
+    // will work properly in cron job setup. It might become
+    // useful when/if api v4 starts to emerge and will need
+    // testing in the cron job setup. To permanenty require
+    // hardcoded api version, it's enough to move below line
+    // under following if block.
+    $this->apiParams = array('version' => $this->version);
+
+    if (!empty($this->parameters)) {
+      $lines = split("\n", $this->parameters);
+
+      foreach ($lines as $line) {
+        $pair = split("=", $line);
+        if (empty($pair[0]) || empty($pair[1])) {
+          $this->remarks[] .= 'Malformed parameters!';
+          break;
+        }
+        $this->apiParams[trim($pair[0])] = trim($pair[1]);
+      }
+    }
+  }
+
+  public function saveLastRun($date = NULL) {
+    require_once 'CRM/Core/DAO/Job.php';
+    $dao           = new CRM_Core_DAO_Job();
+    $dao->id       = $this->id;
+    $dao->last_run = ($date == NULL) ? CRM_Utils_Date::currentDBDate() : CRM_Utils_Date::currentDBDate($date);
+    $dao->save();
+  }
+
+  public function needsRunning() {
+    // run if it was never run
+    if (empty($this->last_run)) {
+      return TRUE;
+    }
+
+    // run_frequency check
+    switch ($this->run_frequency) {
+      case 'Always':
+        return TRUE;
+
+      case 'Hourly':
+        $now     = CRM_Utils_Date::currentDBDate();
+        $hourAgo = strtotime('-1 hour', strtotime($now));
+        $lastRun = strtotime($this->last_run);
+        if ($lastRun < $hourAgo) {
+          return TRUE;
         }
 
-        return false;
+      case 'Daily':
+        $now     = CRM_Utils_Date::currentDBDate();
+        $dayAgo  = strtotime('-1 day', strtotime($now));
+        $lastRun = strtotime($this->last_run);
+        if ($lastRun < $dayAgo) {
+          return TRUE;
+        }
     }
 
-    public function __destruct( ) {
-    }
+    return FALSE;
+  }
 
+  public function __destruct() {}
 }
+

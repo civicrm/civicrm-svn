@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -38,72 +37,68 @@ require_once 'CRM/Admin/Form/Setting.php';
 
 /**
  * This class generates form components for Mapping and Geocoding
- * 
+ *
  */
-class CRM_Admin_Form_Setting_Mapping extends CRM_Admin_Form_Setting
-{
-    /**
-     * Function to build the form
-     *
-     * @return None
-     * @access public
-     */
-    public function buildQuickForm( ) {
-        CRM_Utils_System::setTitle(ts('Settings - Mapping and Geocoding Providers'));
+class CRM_Admin_Form_Setting_Mapping extends CRM_Admin_Form_Setting {
 
-        $map = CRM_Core_SelectValues::mapProvider();
-        $geo = CRM_Core_SelectValues::geoProvider();
-        $this->addElement('select','mapProvider', ts('Mapping Provider'),array('' => '- select -') + $map, array('onChange' => 'showHideMapAPIkey( this.value );'));  
-        $this->add('text','mapAPIKey', ts('Map Provider Key'), null);  
-        $this->addElement('select','geoProvider', ts('Geocoding Provider'),array('' => '- select -') + $geo, array('onChange' => 'showHideGeoAPIkey( this.value );'));  
-        $this->add('text','geoAPIKey', ts('Geo Provider Key'), null);  
-    
-        parent::buildQuickForm();
+  /**
+   * Function to build the form
+   *
+   * @return None
+   * @access public
+   */
+  public function buildQuickForm() {
+    CRM_Utils_System::setTitle(ts('Settings - Mapping and Geocoding Providers'));
+
+    $map = CRM_Core_SelectValues::mapProvider();
+    $geo = CRM_Core_SelectValues::geoProvider();
+    $this->addElement('select', 'mapProvider', ts('Mapping Provider'), array('' => '- select -') + $map, array('onChange' => 'showHideMapAPIkey( this.value );'));
+    $this->add('text', 'mapAPIKey', ts('Map Provider Key'), NULL);
+    $this->addElement('select', 'geoProvider', ts('Geocoding Provider'), array('' => '- select -') + $geo, array('onChange' => 'showHideGeoAPIkey( this.value );'));
+    $this->add('text', 'geoAPIKey', ts('Geo Provider Key'), NULL);
+
+    parent::buildQuickForm();
+  }
+
+  /**
+   * global form rule
+   *
+   * @param array $fields  the input form values
+   *
+   * @return true if no errors, else array of errors
+   * @access public
+   * @static
+   */
+  static
+  function formRule($fields) {
+    $errors = array();
+
+    if (!CRM_Utils_System::checkPHPVersion(5, FALSE)) {
+      $errors['_qf_default'] = ts('Mapping features require PHP version 5 or greater');
     }
 
-
-    /**
-     * global form rule
-     *
-     * @param array $fields  the input form values
-     *
-     * @return true if no errors, else array of errors
-     * @access public
-     * @static
-     */
-    static function formRule( $fields) {
-        $errors = array();
-
-        if ( ! CRM_Utils_System::checkPHPVersion( 5, false ) ) {
-            $errors['_qf_default'] = ts( 'Mapping features require PHP version 5 or greater' );
-        }
-
-        if ( !$fields['mapAPIKey'] && ( $fields['mapProvider'] != '' && $fields['mapProvider'] == 'Yahoo' )) {
-            $errors['mapAPIKey'] = "Map Provider key is a required field.";
-        } 
-
-        if ( $fields['mapProvider'] == 'OpenStreetMaps' && $fields['geoProvider'] == '' ) {
-            $errors['geoProvider'] = "Please select a Geocoding Provider - Open Street Maps does not provide geocoding.";
-        } 
-
-        return $errors;
+    if (!$fields['mapAPIKey'] && ($fields['mapProvider'] != '' && $fields['mapProvider'] == 'Yahoo')) {
+      $errors['mapAPIKey'] = "Map Provider key is a required field.";
     }
 
-    /**
-     * This function is used to add the rules (mainly global rules) for form.
-     * All local rules are added near the element
-     *
-     * @param null
-     * 
-     * @return void
-     * @access public
-     */
-    function addRules( )
-    {
-        $this->addFormRule( array( 'CRM_Admin_Form_Setting_Mapping', 'formRule' ) );
+    if ($fields['mapProvider'] == 'OpenStreetMaps' && $fields['geoProvider'] == '') {
+      $errors['geoProvider'] = "Please select a Geocoding Provider - Open Street Maps does not provide geocoding.";
     }
-    
- 
+
+    return $errors;
+  }
+
+  /**
+   * This function is used to add the rules (mainly global rules) for form.
+   * All local rules are added near the element
+   *
+   * @param null
+   *
+   * @return void
+   * @access public
+   */
+  function addRules() {
+    $this->addFormRule(array('CRM_Admin_Form_Setting_Mapping', 'formRule'));
+  }
 }
-
 

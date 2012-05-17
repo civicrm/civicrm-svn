@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -41,144 +40,151 @@ require_once 'CRM/Activity/Form/Task.php';
  */
 class CRM_Activity_Form_Task_FileOnCase extends CRM_Activity_Form_Task {
 
-    /**
-     * the title of the group
-     *
-     * @var string
-     */
-    protected $_title;
+  /**
+   * the title of the group
+   *
+   * @var string
+   */
+  protected $_title;
 
-    /**
-     * variable to store redirect path
-     *
-     */
-    protected $_userContext;
+  /**
+   * variable to store redirect path
+   *
+   */
+  protected $_userContext;
 
-    /**
-     * variable to store contact Ids
-     *
-     */
-    public $_contacts;
+  /**
+   * variable to store contact Ids
+   *
+   */
+  public $_contacts;
 
-    /**
-     * build all the data structures needed to build the form
-     *
-     * @return void
-     * @access public
-     */
-    function preProcess( ) 
-    {   
-        /*
+  /**
+   * build all the data structures needed to build the form
+   *
+   * @return void
+   * @access public
+   */ function preProcess() {
+    /*
          * initialize the task and row fields
          */
-        parent::preProcess( );
-        $session = CRM_Core_Session::singleton( );
-        $this->_userContext = $session->readUserContext( );
-       
-        CRM_Utils_System::setTitle( ts( 'File on Case' ) );
-    
-        $validationFailed = false;
-        
-        // insert validations here
 
-        if ( $validationFailed ) { // then redirect
-            CRM_Utils_System::redirect( $this->_userContext );
+    parent::preProcess();
+    $session = CRM_Core_Session::singleton();
+    $this->_userContext = $session->readUserContext();
+
+    CRM_Utils_System::setTitle(ts('File on Case'));
+
+    $validationFailed = FALSE;
+
+    // insert validations here
+
+    // then redirect
+    if ($validationFailed) {
+      CRM_Utils_System::redirect($this->_userContext);
+    }
+  }
+
+  /**
+   * Build the form
+   *
+   * @access public
+   *
+   * @return void
+   */
+  function buildQuickForm() {
+    $this->addElement('text', 'unclosed_cases', ts('Select Case'));
+    $this->add('hidden', 'unclosed_case_id', '', array('id' => 'unclosed_case_id'));
+    $this->addDefaultButtons(ts('Continue >>'));
+  }
+
+  /**
+   * Add local and global form rules
+   *
+   * @access protected
+   *
+   * @return void
+   */
+  function addRules() {
+    $this->addFormRule(array('CRM_Activity_Form_Task_FileOnCase', 'formRule'));
+  }
+
+  /**
+   * global validation rules for the form
+   *
+   * @param array $fields posted values of the form
+   *
+   * @return array list of errors to be posted back to the form
+   * @static
+   * @access public
+   */
+  static
+  function formRule($fields) {
+    $errors = array();
+    if (empty($fields['unclosed_case_id'])) {
+      $errors['unclosed_case_id'] = ts('Case is a required field.');
+    }
+    return $errors;
+  }
+
+  /**
+   * process the form after the input has been submitted and validated
+   *
+   * @access public
+   *
+   * @return None
+   */
+
+  public function postProcess() {
+    $errors          = array();
+    $formparams      = $this->exportValues();
+    $caseId          = $formparams['unclosed_case_id'];
+    $filedActivities = 0;
+    require_once 'CRM/Activity/BAO/Activity.php';
+    require_once 'CRM/Activity/Page/AJAX.php';
+    foreach ($this->_activityHolderIds as $key => $id) {
+      $targetContactValues = $defaults = array();
+      $params = array('id' => $id);
+      CRM_Activity_BAO_Activity::retrieve($params, $defaults);
+      require_once 'CRM/Case/BAO/Case.php';
+      if (CRM_Case_BAO_Case::checkPermission($id, 'File On Case', $defaults['activity_type_id'])) {
+
+        if (!CRM_Utils_Array::crmIsEmptyArray($defaults['target_contact'])) {
+          $targetContactValues = array_combine(array_unique($defaults['target_contact']),
+            explode(';', trim($defaults['target_contact_value']))
+          );
+          $targetContactValues = implode(',', array_keys($targetContactValues));
         }
-    }
-  
-    /**
-     * Build the form
-     *
-     * @access public
-     * @return void
-     */
-    function buildQuickForm( ) 
-    {
-        $this->addElement( 'text', 'unclosed_cases', ts('Select Case') );
-        $this->add( 'hidden', 'unclosed_case_id', '',array( 'id' => 'unclosed_case_id' ) );
-        $this->addDefaultButtons( ts( 'Continue >>' ) );
-    }
 
-    /**
-     * Add local and global form rules
-     *
-     * @access protected
-     * @return void
-     */
-    function addRules( ) 
-    {
-        $this->addFormRule( array( 'CRM_Activity_Form_Task_FileOnCase', 'formRule' ) );
-    }
-    
-    /**
-     * global validation rules for the form
-     *
-     * @param array $fields posted values of the form
-     *
-     * @return array list of errors to be posted back to the form
-     * @static
-     * @access public
-     */
-    static function formRule( $fields ) 
-    {
-    	$errors = array();
-    	if ( empty( $fields['unclosed_case_id'] ) ) {
-    	   $errors['unclosed_case_id'] =  ts('Case is a required field.');
-    	}
-        return $errors;
-    }    
+        $params = array(
+          'caseID' => $caseId,
+          'activityID' => $id,
+          'newSubject' => empty($defaults['subject']) ? '' : $defaults['subject'],
+          'targetContactIds' => $targetContactValues,
+          'mode' => 'file',
+        );
 
-    /**
-     * process the form after the input has been submitted and validated
-     *
-     * @access public
-     * @return None
-     */
-    
-    public function postProcess( ) 
-    {
-    	$errors = array();
-        $formparams = $this->exportValues( );
-        $caseId = $formparams['unclosed_case_id'];
-        $filedActivities = 0;
-        require_once 'CRM/Activity/BAO/Activity.php';
-        require_once 'CRM/Activity/Page/AJAX.php';
-        foreach ( $this->_activityHolderIds as $key => $id ) {
-            $targetContactValues = $defaults = array( );
-            $params = array( 'id' => $id );
-            CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
-            require_once 'CRM/Case/BAO/Case.php';
-            if ( CRM_Case_BAO_Case::checkPermission( $id, 'File On Case', $defaults['activity_type_id'] ) ) {
-            
-	            if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['target_contact'] ) ) {
-	                $targetContactValues = array_combine( array_unique( $defaults['target_contact'] ),
-	                                                  explode(';', trim($defaults['target_contact_value'] ) ) );
-	                $targetContactValues = implode( ',', array_keys( $targetContactValues) ); 
-	            }
-	
-	            $params = array( 'caseID' => $caseId,
-	        	                 'activityID' => $id,
-	                             'newSubject' => empty( $defaults['subject'] ) ? '' : $defaults['subject'],
-	                             'targetContactIds' => $targetContactValues,
-	                             'mode' => 'file'
-	                           );
-	            	
-	         	$error_msg = CRM_Activity_Page_AJAX::_convertToCaseActivity( $params );
-	          	if ( empty( $error_msg['error_msg'] ) ) {
-	                $filedActivities++;
-	           	} else {
-	          		$errors[] = $error_msg['error_msg'];
-	           	}
-            } else {
-            	$errors[] = ts( 'Not permitted to file activity %1 %2.', array( 1 => empty($defaults['subject']) ? '' : $defaults['subject'],
-            	                                                                2 => $defaults['activity_date_time'] ) );
-            }
+        $error_msg = CRM_Activity_Page_AJAX::_convertToCaseActivity($params);
+        if (empty($error_msg['error_msg'])) {
+          $filedActivities++;
         }
-        
-        $status = $errors;
-        $status[] = ts( 'Filed Activities: %1', array( 1 => $filedActivities ) );
-        $status[] = ts( 'Total Selected Activities: %1', array( 1 => count( $this->_activityHolderIds ) ) );
-
-        CRM_Core_Session::setStatus( $status );
+        else {
+          $errors[] = $error_msg['error_msg'];
+        }
+      }
+      else {
+        $errors[] = ts('Not permitted to file activity %1 %2.', array(
+          1 => empty($defaults['subject']) ? '' : $defaults['subject'],
+            2 => $defaults['activity_date_time'],
+          ));
+      }
     }
+
+    $status   = $errors;
+    $status[] = ts('Filed Activities: %1', array(1 => $filedActivities));
+    $status[] = ts('Total Selected Activities: %1', array(1 => count($this->_activityHolderIds)));
+
+    CRM_Core_Session::setStatus($status);
+  }
 }
+

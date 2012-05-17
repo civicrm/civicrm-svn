@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -38,108 +37,110 @@
  *
  */
 class CRM_Core_Permission_Joomla {
-    /**
-     * get the current permission of this user
-     *
-     * @return string the permission of the user (edit or view or null)
-     */
-    public static function getPermission( ) {
-        return CRM_Core_Permission::EDIT;
+
+  /**
+   * get the current permission of this user
+   *
+   * @return string the permission of the user (edit or view or null)
+   */
+  public static function getPermission() {
+    return CRM_Core_Permission::EDIT;
+  }
+
+  /**
+   * Get the permissioned where clause for the user
+   *
+   * @param int $type the type of permission needed
+   * @param  array $tables (reference ) add the tables that are needed for the select clause
+   * @param  array $whereTables (reference ) add the tables that are needed for the where clause
+   *
+   * @return string the group where clause for this user
+   * @access public
+   */
+  public static function whereClause($type, &$tables, &$whereTables) {
+    return '( 1 )';
+  }
+
+  /**
+   * Get all groups from database, filtered by permissions
+   * for this user
+   *
+   * @param string $groupType     type of group(Access/Mailing)
+   * @param boolen $excludeHidden exclude hidden groups.
+   *
+   * @access public
+   * @static
+   *
+   * @return array - array reference of all groups.
+   *
+   */
+  public static function &group($groupType = NULL, $excludeHidden = TRUE) {
+    return CRM_Core_PseudoConstant::allGroup($groupType, $excludeHidden);
+  }
+
+  /**
+   * given a permission string, check for access requirements
+   *
+   * @param string $str the permission to check
+   *
+   * @return boolean true if yes, else false
+   * @static
+   * @access public
+   */
+  static
+  function check($str) {
+    $config = CRM_Core_Config::singleton();
+
+    // ensure that we are running in a joomla context
+    // we've not yet figured out how to bootstrap joomla, so we should
+    // not execute hooks if joomla is not loaded
+    if (defined('_JEXEC')) {
+      require_once 'CRM/Utils/String.php';
+      $permissionStr = 'civicrm.' . CRM_Utils_String::munge(strtolower($str));
+      $permission = JFactory::getUser()->authorise($permissionStr,
+        'com_civicrm'
+      );
+      return $permission;
     }
-
-    /**
-     * Get the permissioned where clause for the user
-     *
-     * @param int $type the type of permission needed
-     * @param  array $tables (reference ) add the tables that are needed for the select clause
-     * @param  array $whereTables (reference ) add the tables that are needed for the where clause
-     *
-     * @return string the group where clause for this user
-     * @access public
-     */
-    public static function whereClause( $type, &$tables, &$whereTables ) {
-        return '( 1 )';
+    else {
+      return '(1)';
     }
+  }
 
-    /**
-     * Get all groups from database, filtered by permissions
-     * for this user
-     *
-     * @param string $groupType     type of group(Access/Mailing) 
-     * @param boolen $excludeHidden exclude hidden groups.
-     *
-     * @access public
-     * @static
-     *
-     * @return array - array reference of all groups.
-     *
-     */
-    public static function &group( $groupType = null, $excludeHidden = true ) {
-        return CRM_Core_PseudoConstant::allGroup( $groupType, $excludeHidden );
-    }
+  /**
+   * Given a roles array, check for access requirements
+   *
+   * @param array $array the roles to check
+   *
+   * @return boolean true if yes, else false
+   * @static
+   * @access public
+   */
+  static
+  function checkGroupRole($array) {
+    return FALSE;
+  }
 
-    /**
-     * given a permission string, check for access requirements
-     *
-     * @param string $str the permission to check
-     *
-     * @return boolean true if yes, else false
-     * @static
-     * @access public
-     */
-    static function check( $str ) {
-        $config = CRM_Core_Config::singleton( );
+  /**
+   * Get all the contact emails for users that have a specific permission
+   *
+   * @param string $permissionName name of the permission we are interested in
+   *
+   * @return string a comma separated list of email addresses
+   */
+  public static function permissionEmails($permissionName) {
+    return '';
+  }
 
-       // ensure that we are running in a joomla context
-       // we've not yet figured out how to bootstrap joomla, so we should
-       // not execute hooks if joomla is not loaded
-        if ( defined( '_JEXEC' ) ) {
-            require_once 'CRM/Utils/String.php';
-            $permissionStr = 'civicrm.' . CRM_Utils_String::munge( strtolower( $str ) );
-            $permission = JFactory::getUser()->authorise( $permissionStr,
-                                                          'com_civicrm' );
-            return $permission;
-        } else {
-            return '(1)';
-        }
-    }
-
-    /**
-     * Given a roles array, check for access requirements
-     *
-     * @param array $array the roles to check
-     *
-     * @return boolean true if yes, else false
-     * @static
-     * @access public
-     */
-    static function checkGroupRole( $array) {
-        return false;
-    }
-
-
-    /**
-     * Get all the contact emails for users that have a specific permission
-     *
-     * @param string $permissionName name of the permission we are interested in
-     *
-     * @return string a comma separated list of email addresses
-     */
-    public static function permissionEmails( $permissionName ) {
-        return '';
-    }
-
-    /**
-     * Get all the contact emails for users that have a specific role
-     *
-     * @param string $roleName name of the role we are interested in
-     *
-     * @return string a comma separated list of email addresses
-     */
-    public static function roleEmails( $roleName ) {
-        return '';
-    }
-    
+  /**
+   * Get all the contact emails for users that have a specific role
+   *
+   * @param string $roleName name of the role we are interested in
+   *
+   * @return string a comma separated list of email addresses
+   */
+  public static function roleEmails($roleName) {
+    return '';
+  }
 }
-
 

@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -42,28 +41,26 @@ require_once 'CRM/Core/StateMachine.php';
  */
 class CRM_PCP_StateMachine_PCP extends CRM_Core_StateMachine {
 
-    /**
-     * class constructor
-     *
-     * @param object  CRM_Import_Controller
-     * @param int     $action
-     *
-     * @return object CRM_Import_StateMachine
-     */
-    function __construct( $controller, $action = CRM_Core_Action::NONE ) {
-        parent::__construct( $controller, $action );
+  /**
+   * class constructor
+   *
+   * @param object  CRM_Import_Controller
+   * @param int     $action
+   *
+   * @return object CRM_Import_StateMachine
+   */
+  function __construct($controller, $action = CRM_Core_Action::NONE) {
+    parent::__construct($controller, $action);
 
-        $session = CRM_Core_Session::singleton();
-        $session->set('singleForm', false);
+    $session = CRM_Core_Session::singleton();
+    $session->set('singleForm', FALSE);
 
-        $this->_pages = array(
-                              'CRM_PCP_Form_PCPAccount' => null,
-                              'CRM_PCP_Form_Campaign'   => null
-                              );
-        
-        $this->addSequentialPages( $this->_pages, $action );
-    }
+    $this->_pages = array(
+      'CRM_PCP_Form_PCPAccount' => NULL,
+      'CRM_PCP_Form_Campaign' => NULL,
+    );
 
+    $this->addSequentialPages($this->_pages, $action);
+  }
 }
-
 

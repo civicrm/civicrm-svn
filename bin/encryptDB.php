@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -34,69 +33,71 @@
  *
  */
 
-define( 'CRM_ENCRYPT', 1 );
-define( 'CRM_SETNULL', 2 );
+define('CRM_ENCRYPT', 1);
+define('CRM_SETNULL', 2);
+function encryptDB() {
+  $tables = array(
+    'civicrm_contact' => array(
+      'first_name' => CRM_ENCRYPT,
+      'last_name' => CRM_ENCRYPT,
+      'organization_name' => CRM_ENCRYPT,
+      'household_name' => CRM_ENCRYPT,
+      'sort_name' => CRM_ENCRYPT,
+      'display_name' => CRM_ENCRYPT,
+      'legal_name' => CRM_ENCRYPT,
+    ),
+    'civicrm_address' => array(
+      'street_address' => CRM_ENCRYPT,
+      'supplemental_address_1' => CRM_ENCRYPT,
+      'supplemental_address_2' => CRM_ENCRYPT,
+      'city' => CRM_ENCRYPT,
+      'postal_code' => CRM_SETNULL,
+      'postal_code_suffix' => CRM_SETNULL,
+      'geo_code_1' => CRM_SETNULL,
+      'geo_code_2' => CRM_SETNULL,
+    ),
+    'civicrm_website' => array(
+      'url' => CRM_ENCRYPT,
+    ),
+    'civicrm_email' => array(
+      'email' => CRM_ENCRYPT,
+    ),
+    'civicrm_phone' => array(
+      'phone' => CRM_ENCRYPT,
+    ),
+  );
 
-function encryptDB( ) {
-    $tables =
-        array(
-              'civicrm_contact' => array( 'first_name' => CRM_ENCRYPT,
-                                          'last_name' => CRM_ENCRYPT,
-                                          'organization_name' => CRM_ENCRYPT,
-                                          'household_name' => CRM_ENCRYPT,
-                                          'sort_name' => CRM_ENCRYPT,
-                                          'display_name' => CRM_ENCRYPT,
-                                          'legal_name' => CRM_ENCRYPT, ),
-              'civicrm_address' => array( 'street_address' => CRM_ENCRYPT,
-                                          'supplemental_address_1' => CRM_ENCRYPT,
-                                          'supplemental_address_2' => CRM_ENCRYPT,
-                                          'city'        => CRM_ENCRYPT,
-                                          'postal_code' => CRM_SETNULL,
-                                          'postal_code_suffix' => CRM_SETNULL,
-                                          'geo_code_1' => CRM_SETNULL,
-                                          'geo_code_2' => CRM_SETNULL, ),
-              'civicrm_website' => array( 'url' => CRM_ENCRYPT, ),
-              'civicrm_email' => array( 'email' => CRM_ENCRYPT, ),
-              'civicrm_phone' => array( 'phone' => CRM_ENCRYPT, ),
-              );
-
-    foreach ( $tables as $tableName => $fields ) {
-        $clauses = array( );
-        foreach ( $fields as $fieldName => $action ) {
-            if ( $action == CRM_ENCRYPT ) {
-                $clauses[] = "$fieldName = md5($fieldName)";
-            } else if ( $action == CRM_SETNULL ) {
-                $clauses[] = "$fieldName = null";
-            }
-        }
-
-        if ( ! empty( $clauses ) ) {
-            $clause = implode( ',', $clauses );
-            $query = "UPDATE $tableName SET $clause";
-            CRM_Core_DAO::executeQuery( $query );
-        }
+  foreach ($tables as $tableName => $fields) {
+    $clauses = array();
+    foreach ($fields as $fieldName => $action) {
+      if ($action == CRM_ENCRYPT) {
+        $clauses[] = "$fieldName = md5($fieldName)";
+      }
+      elseif ($action == CRM_SETNULL) {
+        $clauses[] = "$fieldName = null";
+      }
     }
 
-              
-                                          
+    if (!empty($clauses)) {
+      $clause = implode(',', $clauses);
+      $query = "UPDATE $tableName SET $clause";
+      CRM_Core_DAO::executeQuery($query);
+    }
+  }
 }
 
-function run( ) {
-    session_start( );
+function run() {
+  session_start();
 
-    require_once '../civicrm.config.php';
-    require_once 'CRM/Core/Config.php'; 
-    $config = CRM_Core_Config::singleton( );
+  require_once '../civicrm.config.php';
+  require_once 'CRM/Core/Config.php';
+  $config = CRM_Core_Config::singleton();
 
-    // this does not return on failure
-    CRM_Utils_System::authenticateScript( true );
+  // this does not return on failure
+  CRM_Utils_System::authenticateScript(TRUE);
 
-    encryptDB( );
+  encryptDB();
 }
 
-run( );
-
-
-
-
+run();
 

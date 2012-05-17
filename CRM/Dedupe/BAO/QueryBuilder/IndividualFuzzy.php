@@ -1,37 +1,38 @@
 <?php
-
 require_once 'CRM/Dedupe/BAO/QueryBuilder.php';
 
 // TODO: How to handle NULL values/records?
 class CRM_Dedupe_BAO_QueryBuilder_IndividualFuzzy extends CRM_Dedupe_BAO_QueryBuilder {
 
-    static function record($rg) {
-        require_once 'CRM/Core/DAO.php';
-        require_once 'CRM/Utils/Array.php';
+  static
+  function record($rg) {
+    require_once 'CRM/Core/DAO.php';
+    require_once 'CRM/Utils/Array.php';
 
-        $civicrm_contact = CRM_Utils_Array::value('civicrm_contact', $rg->params, array());
-        $civicrm_email = CRM_Utils_Array::value('civicrm_email', $rg->params, array());
+    $civicrm_contact = CRM_Utils_Array::value('civicrm_contact', $rg->params, array());
+    $civicrm_email = CRM_Utils_Array::value('civicrm_email', $rg->params, array());
 
-        $params = array(
-              1 => array(CRM_Utils_Array::value('first_name',$civicrm_contact,''), 'String'),
-              2 => array(CRM_Utils_Array::value('last_name',$civicrm_contact,''), 'String'),
-              3 => array(CRM_Utils_Array::value('email',$civicrm_email,''), 'String')
-          );
+    $params = array(
+      1 => array(CRM_Utils_Array::value('first_name', $civicrm_contact, ''), 'String'),
+      2 => array(CRM_Utils_Array::value('last_name', $civicrm_contact, ''), 'String'),
+      3 => array(CRM_Utils_Array::value('email', $civicrm_email, ''), 'String'),
+    );
 
-        return array(
-            "civicrm_contact.{$rg->name}.{$rg->threshold}" => CRM_Core_DAO::composeQuery("
+    return array(
+      "civicrm_contact.{$rg->name}.{$rg->threshold}" => CRM_Core_DAO::composeQuery("
                 SELECT contact.id as id1, {$rg->threshold} as weight
                 FROM civicrm_contact as contact
                   JOIN civicrm_email as email ON email.contact_id=contact.id
                 WHERE contact_type = 'Individual'
                   AND first_name = %1
                   AND last_name = %2
-                  AND email = %3", $params, true)
-            );
-    }
+                  AND email = %3", $params, TRUE),
+    );
+  }
 
-    static function internal($rg) {
-        $query = "
+  static
+  function internal($rg) {
+    $query = "
             SELECT contact1.id as id1, contact2.id as id2, {$rg->threshold} as weight
             FROM civicrm_contact as contact1
               JOIN civicrm_email as email1 ON email1.contact_id=contact1.id
@@ -42,9 +43,10 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualFuzzy extends CRM_Dedupe_BAO_QueryBu
                 email2.contact_id=contact2.id AND
                 email1.email=email2.email
             WHERE contact1.contact_type = 'Individual'
-              AND ".self::internalFilters($rg);
-        return array("civicrm_contact.{$rg->name}.{$rg->threshold}" => $query);
-    }
+              AND " . self::internalFilters($rg);
+    return array("civicrm_contact.{$rg->name}.{$rg->threshold}" => $query);
+  }
 };
 
-?>
+
+

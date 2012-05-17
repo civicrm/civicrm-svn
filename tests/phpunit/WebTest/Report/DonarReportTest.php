@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,101 +24,99 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CiviTest/CiviSeleniumTestCase.php';
 
+require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Report_DonarReportTest extends CiviSeleniumTestCase {
 
-  protected function setUp()
-  {
-      parent::setUp();
+  protected function setUp() {
+    parent::setUp();
   }
 
-  function testDonarReportPager( )
-  {
-      // This is the path where our testing install resides. 
-      // The rest of URL is defined in CiviSeleniumTestCase base class, in
-      // class attributes.
-      $this->open( $this->sboxPath );
-      
-      // Logging in. Remember to wait for page to load. In most cases,
-      // you can rely on 30000 as the value that allows your test to pass, however,
-      // sometimes your test might fail because of this. In such cases, it's better to pick one element
-      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-      // page contents loaded and you can continue your test execution.
-      $this->webtestLogin( );
+  function testDonarReportPager() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
 
-      // now create new donar detail report instance 
-      $this->open($this->sboxPath . "civicrm/report/contribute/detail?reset=1");
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
 
-      // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-      // button at the end of this page to show up, to make sure it's fully loaded.
-      $this->waitForElementPresent("_qf_Detail_submit");
-     
-      // preview result 
-      $this->click("_qf_Detail_submit");
-      $this->waitForPageToLoad("30000");
+    // now create new donar detail report instance
+    $this->open($this->sboxPath . "civicrm/report/contribute/detail?reset=1");
 
-      // Create report
-      $this->click("css=div.crm-report_setting-accordion div.crm-accordion-header");
-      $this->waitForElementPresent("title");
+    // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+    // button at the end of this page to show up, to make sure it's fully loaded.
+    $this->waitForElementPresent("_qf_Detail_submit");
 
-      $reportName        = 'ContributeDetail_'.substr(sha1(rand()), 0, 7);
-      $reportDescription = "New Contribute Detail Report";
+    // preview result
+    $this->click("_qf_Detail_submit");
+    $this->waitForPageToLoad("30000");
 
-      // Fill Report Title
-      $this->type("title", $reportName );
+    // Create report
+    $this->click("css=div.crm-report_setting-accordion div.crm-accordion-header");
+    $this->waitForElementPresent("title");
 
-      // Fill Report Description
-      $this->type("description", $reportDescription);
-      
-      // We want navigation menu
-      $this->click("is_navigation");
-      $this->waitForElementPresent("parent_id");
+    $reportName = 'ContributeDetail_' . substr(sha1(rand()), 0, 7);
+    $reportDescription = "New Contribute Detail Report";
 
-      // Navigation menu under Reports section
-      $this->select("parent_id", "label=Reports" );
+    // Fill Report Title
+    $this->type("title", $reportName);
 
-      // Set permission as access CiviCRM
-      $this->select("permission", "value=access CiviCRM");
+    // Fill Report Description
+    $this->type("description", $reportDescription);
 
-      // click to create report
-      $this->click("_qf_Detail_submit_save");
-      $this->waitForPageToLoad("30000");
+    // We want navigation menu
+    $this->click("is_navigation");
+    $this->waitForElementPresent("parent_id");
 
-      // Open report list
-      $this->open($this->sboxPath . "civicrm/report/list?reset=1");
-      $this->waitForPageToLoad("30000");
+    // Navigation menu under Reports section
+    $this->select("parent_id", "label=Reports");
 
-      // Is report is resent in list?
-      $this->assertTrue($this->isTextPresent($reportName));
+    // Set permission as access CiviCRM
+    $this->select("permission", "value=access CiviCRM");
 
-      // Visit report
-      $this->click("link=$reportName");
-      $this->waitForPageToLoad("30000");
+    // click to create report
+    $this->click("_qf_Detail_submit_save");
+    $this->waitForPageToLoad("30000");
 
-      //now select the criteria
-      //click report criteria accordian
-      $this->click("css=div.crm-report_criteria-accordion div.crm-accordion-header");
+    // Open report list
+    $this->open($this->sboxPath . "civicrm/report/list?reset=1");
+    $this->waitForPageToLoad("30000");
 
-      //enter contribution amount
-      $this->select( 'total_amount_op', "value=gte"); 
-      $this->type('total_amount_value', "10" );
+    // Is report is resent in list?
+    $this->assertTrue($this->isTextPresent($reportName));
 
-      // click preview 
-      $this->click("_qf_Detail_submit");
-      $this->waitForPageToLoad("30000");
+    // Visit report
+    $this->click("link=$reportName");
+    $this->waitForPageToLoad("30000");
 
-      //Is greater than or equal to 100
-      //check for criteria
-      $this->assertTrue($this->isTextPresent("Is greater than or equal to 10"), "Criteria is not selected");
-      
-      //click on next link
-      $this->click( "_qf_Detail_submit_print" );
-      $this->waitForPageToLoad("30000");
-       
-      // check if criteria still exits
-      $this->assertTrue($this->isTextPresent("Is greater than or equal to 10"), "Criteria is not selected");
+    //now select the criteria
+    //click report criteria accordian
+    $this->click("css=div.crm-report_criteria-accordion div.crm-accordion-header");
 
-  }  
+    //enter contribution amount
+    $this->select('total_amount_op', "value=gte");
+    $this->type('total_amount_value', "10");
+
+    // click preview
+    $this->click("_qf_Detail_submit");
+    $this->waitForPageToLoad("30000");
+
+    //Is greater than or equal to 100
+    //check for criteria
+    $this->assertTrue($this->isTextPresent("Is greater than or equal to 10"), "Criteria is not selected");
+
+    //click on next link
+    $this->click("_qf_Detail_submit_print");
+    $this->waitForPageToLoad("30000");
+
+    // check if criteria still exits
+    $this->assertTrue($this->isTextPresent("Is greater than or equal to 10"), "Criteria is not selected");
+  }
 }
-?>
+
+

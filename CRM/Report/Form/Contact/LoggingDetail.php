@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,50 +34,47 @@
  */
 
 require_once 'CRM/Logging/ReportDetail.php';
+class CRM_Report_Form_Contact_LoggingDetail extends CRM_Logging_ReportDetail {
+  function __construct() {
+    $logging        = new CRM_Logging_Schema;
+    $this->tables[] = 'civicrm_contact';
+    $this->tables   = array_merge($this->tables, array_keys($logging->customDataLogTables()));
+    $this->tables[] = 'civicrm_email';
+    $this->tables[] = 'civicrm_phone';
+    $this->tables[] = 'civicrm_im';
+    $this->tables[] = 'civicrm_openid';
+    $this->tables[] = 'civicrm_website';
+    $this->tables[] = 'civicrm_address';
 
-class CRM_Report_Form_Contact_LoggingDetail extends CRM_Logging_ReportDetail
-{
-    function __construct()
-    {
-        $logging = new CRM_Logging_Schema;
-        $this->tables[] = 'civicrm_contact';
-        $this->tables   = array_merge($this->tables, array_keys($logging->customDataLogTables()));
-        $this->tables[] = 'civicrm_email';
-        $this->tables[] = 'civicrm_phone';
-        $this->tables[] = 'civicrm_im';
-        $this->tables[] = 'civicrm_openid';
-        $this->tables[] = 'civicrm_website';
-        $this->tables[] = 'civicrm_address';
+    $this->detail = 'logging/contact/detail';
+    $this->summary = 'logging/contact/summary';
 
-        $this->detail  = 'logging/contact/detail';
-        $this->summary = 'logging/contact/summary';
+    parent::__construct();
+  }
 
-        parent::__construct();
+  function buildQuickForm() {
+    parent::buildQuickForm();
+
+    if ($this->cid) {
+      // link back to contact summary
+      $this->assign('backURL', CRM_Utils_System::url('civicrm/contact/view', "reset=1&selectedChild=log&cid={$this->cid}", FALSE, NULL, FALSE));
+      $this->assign('revertURL', self::$_template->get_template_vars('revertURL') . "&cid={$this->cid}");
     }
-
-    function buildQuickForm()
-    {
-        parent::buildQuickForm();
-
-        if ($this->cid) {
-            // link back to contact summary
-            $this->assign('backURL', CRM_Utils_System::url('civicrm/contact/view', "reset=1&selectedChild=log&cid={$this->cid}", false, null, false));
-            $this->assign('revertURL', self::$_template->get_template_vars('revertURL') . "&cid={$this->cid}");
-        } else {
-            // link back to summary report
-            require_once 'CRM/Report/Utils/Report.php';
-            $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', false, true));
-        }
+    else {
+      // link back to summary report
+      require_once 'CRM/Report/Utils/Report.php';
+      $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contact/summary', 'reset=1', FALSE, TRUE));
     }
+  }
 
-    protected function whoWhomWhenSql()
-    {
-        return "
+  protected function whoWhomWhenSql() {
+    return "
             SELECT who.id who_id, who.display_name who_name, whom.id whom_id, whom.display_name whom_name, l.is_deleted
             FROM `{$this->db}`.log_civicrm_contact l
             JOIN civicrm_contact who ON (l.log_user_id = who.id)
             JOIN civicrm_contact whom ON (l.id = whom.id)
             WHERE log_action = 'Update' AND log_conn_id = %1 AND log_date = %2 ORDER BY log_date DESC LIMIT 1
         ";
-    }
+  }
 }
+

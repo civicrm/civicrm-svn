@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -36,55 +35,53 @@
  */
 
 require_once 'CRM/Core/Config.php';
+class CRM_Core_Extensions_Module {
 
-class CRM_Core_Extensions_Module
-{
+  /**
+   *
+   */
+  CONST CUSTOM_SEARCH_GROUP_NAME = 'custom_search';
+
+  public function __construct($ext) {
+    $this->ext = $ext;
+
+    $this->config = CRM_Core_Config::singleton();
+  }
 
 
-    /**
-     * 
-     */
-    const CUSTOM_SEARCH_GROUP_NAME = 'custom_search';
-
-    public function __construct( $ext ) {
-        $this->ext = $ext;
-
-        $this->config = CRM_Core_Config::singleton( );
+  public function install() {
+    if (array_key_exists($this->ext->key, $this->config->civiModules)) {
+      CRM_Core_Error::fatal('This civiModule is already registered.');
     }
 
-    
-    public function install( ) {
-        if ( array_key_exists( $this->ext->key, $this->config->civiModules ) ) {
-            CRM_Core_Error::fatal( 'This civiModule is already registered.' );
-        }
+    $config = CRM_Core_Config::singleton();
+    $params['civiModules'] = $config->civiModules;
+    $params['civiModules'][$this->ext->file] = $this->ext->key . DIRECTORY_SEPARATOR . $this->ext->file . ".php";
 
-        $config = CRM_Core_Config::singleton( );
-        $params['civiModules'] = $config->civiModules;
-        $params['civiModules'][$this->ext->file] = $this->ext->key . DIRECTORY_SEPARATOR . $this->ext->file . ".php";
+    require_once 'CRM/Admin/Form/Setting.php';
+    CRM_Admin_Form_Setting::commonProcess($params);
+  }
 
-        require_once 'CRM/Admin/Form/Setting.php';
-        CRM_Admin_Form_Setting::commonProcess( $params );
+  public function uninstall() {
+    if (!array_key_exists($this->ext->key, $this->customSearches)) {
+      CRM_Core_Error::fatal('This civiModule is not registered.');
     }
 
-    public function uninstall( ) {
-        if( !array_key_exists( $this->ext->key, $this->customSearches ) ) {
-            CRM_Core_Error::fatal( 'This civiModule is not registered.' );
-        }
-        
-        $params['civiModules'] = $config->civiModules;
-        $params['civiModules'] = array_diff( $config->civiModules,
-                                             array( $this->ext->key ) );
+    $params['civiModules'] = $config->civiModules;
+    $params['civiModules'] = array_diff($config->civiModules,
+      array($this->ext->key)
+    );
 
-        require_once 'CRM/Admin/Form/Setting.php';
-        CRM_Admin_Form_Setting::commonProcess( $params );
-    }
-    
-    public function disable() {
-        $this->uninstall( );
-    }
-    
-    public function enable() {
-        $this->install( );
-    }
-    
+    require_once 'CRM/Admin/Form/Setting.php';
+    CRM_Admin_Form_Setting::commonProcess($params);
+  }
+
+  public function disable() {
+    $this->uninstall();
+  }
+
+  public function enable() {
+    $this->install();
+  }
 }
+

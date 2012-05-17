@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,56 +34,50 @@
  */
 
 require_once 'CRM/Report/Form.php';
+class CRM_Logging_ReportSummary extends CRM_Report_Form {
+  protected $cid;
+  protected $loggingDB; function __construct() {
+    // don’t display the ‘Add these Contacts to Group’ button
+    $this->_add2groupSupported = FALSE;
 
-class CRM_Logging_ReportSummary extends CRM_Report_Form
-{
-    protected $cid;
-    protected $loggingDB;
+    $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
+    $this->loggingDB = $dsn['database'];
 
-    function __construct()
-    {
-        $this->_add2groupSupported = false; // don’t display the ‘Add these Contacts to Group’ button
+    // used for redirect back to contact summary
+    $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer', CRM_Core_DAO::$_nullObject);
 
-        $dsn = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
-        $this->loggingDB = $dsn['database'];
+    parent::__construct();
+  }
 
-        // used for redirect back to contact summary
-        $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer', CRM_Core_DAO::$_nullObject);
+  function groupBy() {
+    $this->_groupBy = 'GROUP BY log_conn_id, log_user_id, EXTRACT(DAY_MINUTE FROM log_date)';
+  }
 
-        parent::__construct();
-    }
+  function orderBy() {
+    $this->_orderBy = 'ORDER BY log_date DESC';
+  }
 
-    function groupBy()
-    {
-        $this->_groupBy = 'GROUP BY log_conn_id, log_user_id, EXTRACT(DAY_MINUTE FROM log_date)';
-    }
-
-    function orderBy()
-    {
-        $this->_orderBy = 'ORDER BY log_date DESC';
-    }
-
-    function select() {
-        $select = array();
-        $this->_columnHeaders = array();
-        foreach ($this->_columns as $tableName => $table) {
-            if (array_key_exists('fields', $table)) {
-                foreach ($table['fields'] as $fieldName => $field) {
-                    if (CRM_Utils_Array::value('required', $field) or CRM_Utils_Array::value($fieldName, $this->_params['fields'])) {
-                        $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value('type', $field);
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display']  = CRM_Utils_Array::value('no_display', $field);
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field);
-                    }
-                }
-            }
+  function select() {
+    $select = array();
+    $this->_columnHeaders = array();
+    foreach ($this->_columns as $tableName => $table) {
+      if (array_key_exists('fields', $table)) {
+        foreach ($table['fields'] as $fieldName => $field) {
+          if (CRM_Utils_Array::value('required', $field) or CRM_Utils_Array::value($fieldName, $this->_params['fields'])) {
+            $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+            $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
+            $this->_columnHeaders["{$tableName}_{$fieldName}"]['no_display'] = CRM_Utils_Array::value('no_display', $field);
+            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field);
+          }
         }
-        $this->_select = 'SELECT ' . implode(', ', $select) . ' ';
+      }
     }
+    $this->_select = 'SELECT ' . implode(', ', $select) . ' ';
+  }
 
-    function where()
-    {
-        parent::where();
-        $this->_where .= " AND (log_action != 'Initialization')";
-    }
+  function where() {
+    parent::where();
+    $this->_where .= " AND (log_action != 'Initialization')";
+  }
 }
+

@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,13 +34,10 @@
  */
 
 require_once 'CRM/Mailing/Page/Common.php';
-
-class CRM_Mailing_Page_Optout extends CRM_Mailing_Page_Common
-{
-    function run() {
-        $this->_type = 'optout';
-        return parent::run();
-    }
+class CRM_Mailing_Page_Optout extends CRM_Mailing_Page_Common {
+  function run() {
+    $this->_type = 'optout';
+    return parent::run();
+  }
 }
-
 

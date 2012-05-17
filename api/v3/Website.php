@@ -44,21 +44,21 @@ require_once 'CRM/Core/BAO/Website.php';
  * {@getfields website_create}
  * @example WebsiteCreate.php
  * {@example WebsiteCreate.php}
+ *
  * @return array of newly created website property values.
  * @access public
  */
-function civicrm_api3_website_create( $params )
-{
-    $websiteBAO = CRM_Core_BAO_Website::add($params);
+function civicrm_api3_website_create($params) {
+  $websiteBAO = CRM_Core_BAO_Website::add($params);
 
-	 if ( is_a( $websiteBAO, 'CRM_Core_Error' )) {
-		 return civicrm_api3_create_error( "Website is not created or updated ");
-	 } else {
-		 $values = array( );
-		 _civicrm_api3_object_to_array($websiteBAO, $values[$websiteBAO->id]);
-		 return civicrm_api3_create_success($values, $params,'website','get');
-	 }
-
+  if (is_a($websiteBAO, 'CRM_Core_Error')) {
+    return civicrm_api3_create_error("Website is not created or updated ");
+  }
+  else {
+    $values = array();
+    _civicrm_api3_object_to_array($websiteBAO, $values[$websiteBAO->id]);
+    return civicrm_api3_create_success($values, $params, 'website', 'get');
+  }
 }
 /*
  * Adjust Metadata for Create action
@@ -66,9 +66,10 @@ function civicrm_api3_website_create( $params )
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_website_create_spec( &$params ) {
-  $params['contact_id']['api.required'] =1;
+function _civicrm_api3_website_create_spec(&$params) {
+  $params['contact_id']['api.required'] = 1;
 }
+
 /**
  * Deletes an existing Website
  *
@@ -80,22 +81,21 @@ function _civicrm_api3_website_create_spec( &$params ) {
  * @return boolean | error  true if successfull, error otherwise
  * @access public
  */
-function civicrm_api3_website_delete( $params )
-{
-    $websiteID = CRM_Utils_Array::value( 'id', $params );
+function civicrm_api3_website_delete($params) {
+  $websiteID = CRM_Utils_Array::value('id', $params);
 
-    require_once 'CRM/Core/DAO/Website.php';
-    $websiteDAO = new CRM_Core_DAO_Website();
-    $websiteDAO->id = $websiteID;
-    if ( $websiteDAO->find( ) ) {
-		while ( $websiteDAO->fetch() ) {
-			$websiteDAO->delete();
-			return civicrm_api3_create_success(1,$params,'website','delete');
-		}
-	} else {
-		return civicrm_api3_create_error( 'Could not delete website with id '.$websiteID);
-	}
-
+  require_once 'CRM/Core/DAO/Website.php';
+  $websiteDAO = new CRM_Core_DAO_Website();
+  $websiteDAO->id = $websiteID;
+  if ($websiteDAO->find()) {
+    while ($websiteDAO->fetch()) {
+      $websiteDAO->delete();
+      return civicrm_api3_create_success(1, $params, 'website', 'delete');
+    }
+  }
+  else {
+    return civicrm_api3_create_error('Could not delete website with id ' . $websiteID);
+  }
 }
 
 /**
@@ -111,28 +111,26 @@ function civicrm_api3_website_delete( $params )
  *
  * @access public
  */
+function civicrm_api3_website_get($params) {
+  $websiteBAO = new CRM_Core_BAO_Website();
+  $fields = array_keys($websiteBAO->fields());
 
-function civicrm_api3_website_get( $params )
-{
-    $websiteBAO = new CRM_Core_BAO_Website();
-    $fields = array_keys($websiteBAO->fields());
-
-    foreach ( $fields as $name) {
-        if (array_key_exists($name, $params)) {
-            $websiteBAO->$name = $params[$name];
-        }
+  foreach ($fields as $name) {
+    if (array_key_exists($name, $params)) {
+      $websiteBAO->$name = $params[$name];
     }
+  }
 
-    if ( $websiteBAO->find() ) {
-        $websites = array();
-        while ( $websiteBAO->fetch() ) {
-            CRM_Core_DAO::storeValues( $websiteBAO, $website );
-            $websites[$websiteBAO->id] = $website;
-        }
-        return civicrm_api3_create_success($websites,$params,$websiteBAO);
-    } else {
-        return civicrm_api3_create_success(array(),$params,'website','get',$websiteBAO);
+  if ($websiteBAO->find()) {
+    $websites = array();
+    while ($websiteBAO->fetch()) {
+      CRM_Core_DAO::storeValues($websiteBAO, $website);
+      $websites[$websiteBAO->id] = $website;
     }
-
+    return civicrm_api3_create_success($websites, $params, $websiteBAO);
+  }
+  else {
+    return civicrm_api3_create_success(array(), $params, 'website', 'get', $websiteBAO);
+  }
 }
 

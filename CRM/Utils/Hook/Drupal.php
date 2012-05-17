@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  +--------------------------------------------------------------------+
@@ -35,29 +35,30 @@
  */
 
 require_once 'CRM/Utils/Hook.php';
-
 class CRM_Utils_Hook_Drupal extends CRM_Utils_Hook {
+  function invoke($numParams,
+    &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+    $fnSuffix
+  ) {
+    static $first = FALSE;
+    static $allModules = array();
 
-    function invoke( $numParams,
-                     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-                     $fnSuffix ) {
-        static $first = false;
-        static $allModules = array( );
+    if (!$first ||
+      empty($allModules)
+    ) {
+      $first = TRUE;
 
-        if ( ! $first ||
-             empty( $allModules ) ) {
-            $first = true;
+      // copied from user_module_invoke
+      if (function_exists('module_list')) {
+        $allModules = module_list();
+      }
 
-            // copied from user_module_invoke
-            if (function_exists('module_list')) {
-                $allModules =  module_list();
-            }
-            
-            $this->requireCiviModules( $allModules );
-        }
+      $this->requireCiviModules($allModules);
+    }
 
-        return $this->runHooks( $allModules, $fnSuffix,
-                                $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
-   }
-
+    return $this->runHooks($allModules, $fnSuffix,
+      $numParams, $arg1, $arg2, $arg3, $arg4, $arg5
+    );
+  }
 }
+

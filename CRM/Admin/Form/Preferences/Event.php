@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -38,26 +37,24 @@ require_once 'CRM/Admin/Form/Preferences.php';
 
 /**
  * This class generates form components for the display preferences
- * 
+ *
  */
-class CRM_Admin_Form_Preferences_Event extends CRM_Admin_Form_Preferences
-{
-    function preProcess( ) {
-        CRM_Utils_System::setTitle(ts('CiviEvent Component Settings'));
-        $this->_varNames = 
-            array( CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME =>
-                   array( 
-                         'enable_cart'              => array( 'html_type'    => 'checkbox',
-                                                              'title'        => ts( 'Use Shopping Cart Style Event Registration' ),
-                                                              'weight'       => 1,
-                                                              'description'  => ts( 'This feature allows users to register for more than one event at a time. When enabled, users will add event(s) to a "cart" and then pay for them all at once. Enabling this setting will affect online registration for all active events. The code is an alpha state, and you will potentially need to have developer resources to debug and fix sections of the codebase while testing and deploying it.'),
-                                                            ),
-                          )
-                   );
+class CRM_Admin_Form_Preferences_Event extends CRM_Admin_Form_Preferences {
+  function preProcess() {
+    CRM_Utils_System::setTitle(ts('CiviEvent Component Settings'));
+    $this->_varNames = array(
+      CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME =>
+      array(
+        'enable_cart' => array(
+          'html_type' => 'checkbox',
+          'title' => ts('Use Shopping Cart Style Event Registration'),
+          'weight' => 1,
+          'description' => ts('This feature allows users to register for more than one event at a time. When enabled, users will add event(s) to a "cart" and then pay for them all at once. Enabling this setting will affect online registration for all active events. The code is an alpha state, and you will potentially need to have developer resources to debug and fix sections of the codebase while testing and deploying it.'),
+        ),
+      ),
+    );
 
-        parent::preProcess( );
-    }
-
+    parent::preProcess();
+  }
 }
-
 

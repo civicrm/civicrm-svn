@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,38 +34,34 @@
  */
 
 require_once 'CRM/Logging/ReportDetail.php';
+class CRM_Report_Form_Contribute_LoggingDetail extends CRM_Logging_ReportDetail {
+  function __construct() {
+    $logging        = new CRM_Logging_Schema;
+    $this->tables[] = 'civicrm_contribution';
+    $this->tables   = array_merge($this->tables, array_keys($logging->customDataLogTables()));
 
-class CRM_Report_Form_Contribute_LoggingDetail extends CRM_Logging_ReportDetail
-{
-    function __construct()
-    {
-        $logging = new CRM_Logging_Schema;
-        $this->tables[] = 'civicrm_contribution';
-        $this->tables   = array_merge($this->tables, array_keys($logging->customDataLogTables()));
+    $this->detail = 'logging/contribute/detail';
+    $this->summary = 'logging/contribute/summary';
 
-        $this->detail  = 'logging/contribute/detail';
-        $this->summary = 'logging/contribute/summary';
+    parent::__construct();
+  }
 
-        parent::__construct();
-    }
+  function buildQuickForm() {
+    parent::buildQuickForm();
 
-    function buildQuickForm()
-    {
-        parent::buildQuickForm();
+    // link back to summary report
+    require_once 'CRM/Report/Utils/Report.php';
+    $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contribute/summary', 'reset=1', FALSE, TRUE));
+  }
 
-        // link back to summary report
-        require_once 'CRM/Report/Utils/Report.php';
-        $this->assign('backURL', CRM_Report_Utils_Report::getNextUrl('logging/contribute/summary', 'reset=1', false, true));
-    }
-
-    protected function whoWhomWhenSql()
-    {
-        return "
+  protected function whoWhomWhenSql() {
+    return "
             SELECT who.id who_id, who.display_name who_name, whom.id whom_id, whom.display_name whom_name
             FROM `{$this->db}`.log_civicrm_contribution l
             LEFT JOIN civicrm_contact who ON (l.log_user_id = who.id)
             LEFT JOIN civicrm_contact whom ON (l.contact_id = whom.id)
             WHERE log_action = 'Update' AND log_conn_id = %1 AND log_date = %2 ORDER BY log_date DESC LIMIT 1
         ";
-    }
+  }
 }
+

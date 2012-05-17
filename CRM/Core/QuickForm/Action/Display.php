@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -38,176 +37,176 @@
 require_once 'CRM/Core/QuickForm/Action.php';
 
 require_once 'CRM/Core/Config.php';
-
 class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
 
-    /**
-     * the template to display the required "red" asterick
-     * @var string
-     */
-    static $_requiredTemplate = null;
+  /**
+   * the template to display the required "red" asterick
+   * @var string
+   */
+  static $_requiredTemplate = NULL;
 
-    /**
-     * the template to display error messages inline with the form element
-     * @var string
-     */
-    static $_errorTemplate    = null;
-    
-    /**
-     * class constructor
-     *
-     * @param object $stateMachine reference to state machine object
-     *
-     * @return object
-     * @access public
-     */
-    function __construct( &$stateMachine ) {
-        parent::__construct( $stateMachine );
+  /**
+   * the template to display error messages inline with the form element
+   * @var string
+   */
+  static $_errorTemplate = NULL;
+
+  /**
+   * class constructor
+   *
+   * @param object $stateMachine reference to state machine object
+   *
+   * @return object
+   * @access public
+   */
+  function __construct(&$stateMachine) {
+    parent::__construct($stateMachine);
+  }
+
+  /**
+   * Processes the request.
+   *
+   * @param  object    $page       CRM_Core_Form the current form-page
+   * @param  string    $actionName Current action name, as one Action object can serve multiple actions
+   *
+   * @return void
+   * @access public
+   */
+  function perform(&$page, $actionName) {
+    $pageName = $page->getAttribute('id');
+
+    // If the original action was 'display' and we have values in container then we load them
+    // BTW, if the page was invalid, we should later call validate() to get the errors
+    list(, $oldName) = $page->controller->getActionName();
+    if ('display' == $oldName) {
+      // If the controller is "modal" we should not allow direct access to a page
+      // unless all previous pages are valid (see also bug #2323)
+      if ($page->controller->isModal() && !$page->controller->isValid($page->getAttribute('id'))) {
+        $target = &$page->controller->getPage($page->controller->findInvalid());
+        return $target->handle('jump');
+      }
+      $data = &$page->controller->container();
+      if (!empty($data['values'][$pageName])) {
+        $page->loadValues($data['values'][$pageName]);
+        $validate = FALSE === $data['valid'][$pageName];
+      }
     }
 
-    /**
-     * Processes the request.
-     *
-     * @param  object    $page       CRM_Core_Form the current form-page
-     * @param  string    $actionName Current action name, as one Action object can serve multiple actions
-     *
-     * @return void
-     * @access public
-     */
-    function perform(&$page, $actionName) {
-        $pageName = $page->getAttribute('id');
+    // set "common" defaults and constants
+    $page->controller->applyDefaults($pageName);
+    $page->isFormBuilt() or $page->buildForm();
+    // if we had errors we should show them again
+    if (isset($validate) && $validate) {
+      $page->validate();
+    }
+    //will this work generally as TRUE (i.e., return output)
+    //was default, i.e., FALSE
+    return $this->renderForm($page);
+  }
 
-        // If the original action was 'display' and we have values in container then we load them
-        // BTW, if the page was invalid, we should later call validate() to get the errors
-        list(, $oldName) = $page->controller->getActionName();
-        if ('display' == $oldName) {
-            // If the controller is "modal" we should not allow direct access to a page
-            // unless all previous pages are valid (see also bug #2323)
-            if ($page->controller->isModal() && !$page->controller->isValid($page->getAttribute('id'))) {
-                $target =& $page->controller->getPage($page->controller->findInvalid());
-                return $target->handle('jump');
-            }
-            $data =& $page->controller->container();
-            if (!empty($data['values'][$pageName])) {
-                $page->loadValues($data['values'][$pageName]);
-                $validate = false === $data['valid'][$pageName];
-            }
-        }
+  /**
+   * render the page using a custom templating
+   * system
+   *
+   * @param object  $page the CRM_Core_Form page
+   * @param boolean $ret  should we echo or return output
+   *
+   * @return void
+   * @access public
+   */
+  function renderForm(&$page, $ret = FALSE) {
+    $this->_setRenderTemplates($page);
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign('form', $page->toSmarty());
+    $template->assign('isForm', 1);
 
-        // set "common" defaults and constants
-        $page->controller->applyDefaults($pageName);
-        $page->isFormBuilt() or $page->buildForm();
-        // if we had errors we should show them again
-        if (isset($validate) && $validate) {
-            $page->validate();
-        }
-        //will this work generally as TRUE (i.e., return output)
-        //was default, i.e., FALSE
-        return $this->renderForm($page);
+    $controller = &$page->controller;
+    if ($controller->getEmbedded()) {
+      return;
     }
 
-    /**
-     * render the page using a custom templating
-     * system
-     *
-     * @param object  $page the CRM_Core_Form page
-     * @param boolean $ret  should we echo or return output
-     *
-     * @return void
-     * @access public
-     */
-    function renderForm(&$page, $ret = false) {
-        $this->_setRenderTemplates($page);
-        $template = CRM_Core_Smarty::singleton( );
-        $template->assign( 'form'   ,  $page->toSmarty());
-        $template->assign( 'isForm' , 1 );
+    $template->assign('action', $page->getAction());
 
-        $controller =& $page->controller;
-        if ( $controller->getEmbedded( ) ) {
-            return;
-        }
+    $pageTemplateFile = $page->getTemplateFileName();
+    $template->assign('tplFile', $pageTemplateFile);
 
-        $template->assign( 'action' , $page->getAction( ) );
+    $content = $template->fetch($controller->getTemplateFile());
 
-        $pageTemplateFile = $page->getTemplateFileName( );
-        $template->assign( 'tplFile', $pageTemplateFile );
+    CRM_Utils_System::appendTPLFile($pageTemplateFile, $content);
 
-        $content = $template->fetch( $controller->getTemplateFile( ) );
+    //its time to call the hook.
+    require_once 'CRM/Utils/Hook.php';
+    CRM_Utils_Hook::alterContent($content, 'form', $pageTemplateFile, $page);
 
-        CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
-
-        //its time to call the hook.
-        require_once 'CRM/Utils/Hook.php';
-        CRM_Utils_Hook::alterContent( $content, 'form', $pageTemplateFile, $page );
-
-        $print = $controller->getPrint( );
-        if ( $print ) {
-            $html =& $content;
-        } else {
-            $html = CRM_Utils_System::theme( 'page', $content, true, $print, $ret );
-        }
-
-        if ( $ret ) {
-            return $html;
-        }
-
-        if ( $print ) {
-            if ( $print == CRM_Core_Smarty::PRINT_PDF ) {
-                require_once 'CRM/Utils/PDF/Utils.php';
-                CRM_Utils_PDF_Utils::html2pdf( $content, "{$page->_name}.pdf", false,
-                                               array( 'paper_size' => 'a3', 'orientation' => 'landscape' ) );
-            } else {
-                echo $html;
-            }
-            CRM_Utils_System::civiExit( );
-        }
-
-        print $html;
+    $print = $controller->getPrint();
+    if ($print) {
+      $html = &$content;
+    }
+    else {
+      $html = CRM_Utils_System::theme('page', $content, TRUE, $print, $ret);
     }
 
-    /**
-     * set the various rendering templates
-     *
-     * @param object  $page the CRM_Core_Form page
-     *
-     * @return void
-     * @access public
-     */
-    function _setRenderTemplates(&$page) {
-        if ( self::$_requiredTemplate === null ) {
-            $this->initializeTemplates();
-        }
-
-        $renderer =& $page->getRenderer();
-    
-        $renderer->setRequiredTemplate( self::$_requiredTemplate );
-        $renderer->setErrorTemplate   ( self::$_errorTemplate    );
+    if ($ret) {
+      return $html;
     }
 
-    /**
-     * initialize the various templates
-     *
-     * @param object  $page the CRM_Core_Form page
-     *
-     * @return void
-     * @access public
-     */
-    function initializeTemplates() {
-        if ( self::$_requiredTemplate !== null ) {
-            return;
-        }
-
-        $config = CRM_Core_Config::singleton();
-
-        $templateDir = $config->templateDir;
-        if ( is_array( $templateDir ) ) {
-            $templateDir = array_pop( $templateDir );
-        }
-
-        self::$_requiredTemplate = file_get_contents( $templateDir . '/CRM/Form/label.tpl' );
-        self::$_errorTemplate    = file_get_contents( $templateDir . '/CRM/Form/error.tpl' );
+    if ($print) {
+      if ($print == CRM_Core_Smarty::PRINT_PDF) {
+        require_once 'CRM/Utils/PDF/Utils.php';
+        CRM_Utils_PDF_Utils::html2pdf($content, "{$page->_name}.pdf", FALSE,
+          array('paper_size' => 'a3', 'orientation' => 'landscape')
+        );
+      }
+      else {
+        echo $html;
+      }
+      CRM_Utils_System::civiExit();
     }
 
+    print $html;
+  }
+
+  /**
+   * set the various rendering templates
+   *
+   * @param object  $page the CRM_Core_Form page
+   *
+   * @return void
+   * @access public
+   */
+  function _setRenderTemplates(&$page) {
+    if (self::$_requiredTemplate === NULL) {
+      $this->initializeTemplates();
+    }
+
+    $renderer = &$page->getRenderer();
+
+    $renderer->setRequiredTemplate(self::$_requiredTemplate);
+    $renderer->setErrorTemplate(self::$_errorTemplate);
+  }
+
+  /**
+   * initialize the various templates
+   *
+   * @param object  $page the CRM_Core_Form page
+   *
+   * @return void
+   * @access public
+   */
+  function initializeTemplates() {
+    if (self::$_requiredTemplate !== NULL) {
+      return;
+    }
+
+    $config = CRM_Core_Config::singleton();
+
+    $templateDir = $config->templateDir;
+    if (is_array($templateDir)) {
+      $templateDir = array_pop($templateDir);
+    }
+
+    self::$_requiredTemplate = file_get_contents($templateDir . '/CRM/Form/label.tpl');
+    self::$_errorTemplate = file_get_contents($templateDir . '/CRM/Form/error.tpl');
+  }
 }
-
 

@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -39,15 +38,14 @@ require_once 'CRM/Core/DAO/PrevNextCache.php';
 /**
  * BAO object for civicrm_prevnext_cache table
  */
+class CRM_Core_BAO_PrevNextCache extends CRM_Core_DAO_PrevNextCache {
+  function getPositions($cacheKey, $id1, $id2, &$mergeId = NULL, $join = NULL, $where = NULL, $flip = FALSE) {
+    if ($flip) {
+      list($id1, $id2) = array($id2, $id1);
+    }
 
-class CRM_Core_BAO_PrevNextCache extends CRM_Core_DAO_PrevNextCache
-{
-    function getPositions( $cacheKey, $id1, $id2, &$mergeId = null, $join = null, $where = null, $flip = false ) 
-    {               
-        if ( $flip ) list( $id1, $id2 ) = array( $id2, $id1 );
-
-        if ( $mergeId == null ) {
-            $query = "
+    if ($mergeId == NULL) {
+      $query = "
 SELECT id 
 FROM   civicrm_prevnext_cache
 WHERE  cacheKey     = %3 AND
@@ -55,128 +53,142 @@ WHERE  cacheKey     = %3 AND
        entity_id2 = %2 AND
        entity_table = 'civicrm_contact'
 ";
-            
-            $params = array( 1 => array( $id1, 'Integer' ),
-                             2 => array( $id2, 'Integer' ),
-                             3 => array( $cacheKey, 'String' ) );
 
-            $mergeId = CRM_Core_DAO::singleValueQuery( $query, $params );
-        }
-        
-        $pos = array( 'foundEntry' => 0 );
-        if ( $mergeId ) {
-            $pos['foundEntry'] = 1;
+      $params = array(1 => array($id1, 'Integer'),
+        2 => array($id2, 'Integer'),
+        3 => array($cacheKey, 'String'),
+      );
 
-            if ( $where ) $where = " AND {$where}";
-            $p         = array( 1 => array( $mergeId, 'Integer' ),
-                                2 => array( $cacheKey,'String' ) );
-            $sql       = "SELECT pn.id, pn.entity_id1, pn.entity_id2, pn.data FROM civicrm_prevnext_cache pn {$join} ";
-            $wherePrev = " WHERE pn.id < %1 AND pn.cacheKey = %2 {$where} ORDER BY ID DESC LIMIT 1";
-            $sqlPrev   = $sql . $wherePrev;
-
-
-            $dao = CRM_Core_DAO::executeQuery( $sqlPrev, $p );
-            if ( $dao->fetch() ) {
-                $pos['prev']['id1']     = $dao->entity_id1;
-                $pos['prev']['id2']     = $dao->entity_id2;  
-                $pos['prev']['mergeId'] = $dao->id;
-                $pos['prev']['data']    = $dao->data;
-          }
-            
-            $whereNext = " WHERE pn.id > %1 AND pn.cacheKey = %2 {$where} ORDER BY ID ASC LIMIT 1";
-            $sqlNext   = $sql . $whereNext;
-
-            $dao = CRM_Core_DAO::executeQuery( $sqlNext, $p );
-            if ( $dao->fetch() ) {
-                $pos['next']['id1']     = $dao->entity_id1;
-                $pos['next']['id2']     = $dao->entity_id2;
-                $pos['next']['mergeId'] = $dao->id;
-                $pos['next']['data']    = $dao->data;
-            }
-        }
-        return $pos;
+      $mergeId = CRM_Core_DAO::singleValueQuery($query, $params);
     }
 
-    function deleteItem( $id = null, $cacheKey = null, $entityTable = 'civicrm_contact' )
-    {
-        //clear cache
-        $sql = "DELETE FROM civicrm_prevnext_cache
+    $pos = array('foundEntry' => 0);
+    if ($mergeId) {
+      $pos['foundEntry'] = 1;
+
+      if ($where) {
+
+        $where = " AND {$where}";
+
+      }
+      $p = array(1 => array($mergeId, 'Integer'),
+        2 => array($cacheKey, 'String'),
+      );
+      $sql       = "SELECT pn.id, pn.entity_id1, pn.entity_id2, pn.data FROM civicrm_prevnext_cache pn {$join} ";
+      $wherePrev = " WHERE pn.id < %1 AND pn.cacheKey = %2 {$where} ORDER BY ID DESC LIMIT 1";
+      $sqlPrev   = $sql . $wherePrev;
+
+
+      $dao = CRM_Core_DAO::executeQuery($sqlPrev, $p);
+      if ($dao->fetch()) {
+        $pos['prev']['id1'] = $dao->entity_id1;
+        $pos['prev']['id2'] = $dao->entity_id2;
+        $pos['prev']['mergeId'] = $dao->id;
+        $pos['prev']['data'] = $dao->data;
+      }
+
+      $whereNext = " WHERE pn.id > %1 AND pn.cacheKey = %2 {$where} ORDER BY ID ASC LIMIT 1";
+      $sqlNext = $sql . $whereNext;
+
+      $dao = CRM_Core_DAO::executeQuery($sqlNext, $p);
+      if ($dao->fetch()) {
+        $pos['next']['id1'] = $dao->entity_id1;
+        $pos['next']['id2'] = $dao->entity_id2;
+        $pos['next']['mergeId'] = $dao->id;
+        $pos['next']['data'] = $dao->data;
+      }
+    }
+    return $pos;
+  }
+
+  function deleteItem($id = NULL, $cacheKey = NULL, $entityTable = 'civicrm_contact') {
+    //clear cache
+    $sql = "DELETE FROM civicrm_prevnext_cache
                            WHERE  entity_table = %1";
-        $params = array( 1 => array( $entityTable, 'String' ) );
+    $params = array(1 => array($entityTable, 'String'));
 
-        if ( is_numeric( $id ) ) {
-            $sql .= " AND ( entity_id1 = %2 OR
+    if (is_numeric($id)) {
+      $sql .= " AND ( entity_id1 = %2 OR
                             entity_id2 = %2 )";
-            $params[2] = array( $id, 'Integer' );
-        }
-        
-        if ( isset( $cacheKey ) ) {
-            $sql .= " AND cacheKey LIKE %3";
-            $params[3] = array( "{$cacheKey}%", 'String' );
-        }
-
-        CRM_Core_DAO::executeQuery( $sql, $params );
+      $params[2] = array($id, 'Integer');
     }
 
-    function retrieve( $cacheKey, $join = null, $where = null, $offset = 0, $rowCount = 0 ) 
-    {
-        $query = "
+    if (isset($cacheKey)) {
+      $sql .= " AND cacheKey LIKE %3";
+      $params[3] = array("{$cacheKey}%", 'String');
+    }
+
+    CRM_Core_DAO::executeQuery($sql, $params);
+  }
+
+  function retrieve($cacheKey, $join = NULL, $where = NULL, $offset = 0, $rowCount = 0) {
+    $query = "
 SELECT data 
 FROM   civicrm_prevnext_cache pn
 {$join}
 WHERE  cacheKey = %1
 ";
-        $params = array( 1 => array( $cacheKey, 'String' ) );
-        
-        if ( $where    ) $query .= " AND {$where}";
-        if ( $rowCount ) $query .= " LIMIT {$offset}, {$rowCount}";
-            
-        $dao  = CRM_Core_DAO::executeQuery( $query, $params );
+    $params = array(1 => array($cacheKey, 'String'));
 
-        $main = array();
-        while ( $dao->fetch() ) {
-            $main[] = unserialize( $dao->data );
-        }
-        
-        return $main;
+    if ($where) {
+
+      $query .= " AND {$where}";
+
+    }
+    if ($rowCount) {
+      $query .= " LIMIT {$offset}, {$rowCount}";
     }
 
-    function setItem( $values )
-    {
-        $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data ) VALUES \n";
-        $query  = $insert . implode( ",\n ", $values );
-        
-        //dump the dedupe matches in the prevnext_cache table
-        CRM_Core_DAO::executeQuery( $query );
+    $dao = CRM_Core_DAO::executeQuery($query, $params);
+
+    $main = array();
+    while ($dao->fetch()) {
+      $main[] = unserialize($dao->data);
     }
 
-    function  getCount( $cacheKey, $join = null, $where = null ) {
-        
-        $query = "
+    return $main;
+  }
+
+  function setItem($values) {
+    $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data ) VALUES \n";
+    $query = $insert . implode(",\n ", $values);
+
+    //dump the dedupe matches in the prevnext_cache table
+    CRM_Core_DAO::executeQuery($query);
+  }
+
+  function getCount($cacheKey, $join = NULL, $where = NULL) {
+
+    $query = "
 SELECT COUNT(*) FROM civicrm_prevnext_cache pn 
 {$join}
 WHERE cacheKey = %1
 ";
-        if ( $where )  $query .= " AND {$where}";  
-        $params = array( 1 => array( $cacheKey, 'String' ) ); 
-
-        return CRM_Core_DAO::singleValueQuery( $query, $params);
+    if ($where) {
+      $query .= " AND {$where}";
     }
+    $params = array(1 => array($cacheKey, 'String'));
 
-    static function cleanupCache( ) {
-        // clean up all prev next caches older than $cacheTimeIntervalDays days
-        $cacheTimeIntervalDays  = 2;
+    return CRM_Core_DAO::singleValueQuery($query, $params);
+  }
 
-        // first find all the cacheKeys that match this
-        $sql = "
+  static
+  function cleanupCache() {
+    // clean up all prev next caches older than $cacheTimeIntervalDays days
+    $cacheTimeIntervalDays = 2;
+
+    // first find all the cacheKeys that match this
+    $sql = "
 DELETE     pn, c
 FROM       civicrm_cache c
 INNER JOIN civicrm_prevnext_cache pn ON c.path = pn.cacheKey
 WHERE      c.group_name = %1
 AND        c.created_date < date_sub( NOW( ), INTERVAL %2 day )
 ";
-        $params = array( 1 => array( 'CiviCRM Search PrevNextCache', 'String' ),
-                         2 => array( $cacheTimeIntervalDays, 'Integer' ) );
-        CRM_Core_DAO::executeQuery( $sql, $params );
-    }
+    $params = array(1 => array('CiviCRM Search PrevNextCache', 'String'),
+      2 => array($cacheTimeIntervalDays, 'Integer'),
+    );
+    CRM_Core_DAO::executeQuery($sql, $params);
+  }
 }
+

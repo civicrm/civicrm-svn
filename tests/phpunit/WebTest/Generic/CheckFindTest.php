@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,28 +24,25 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
- 
-class WebTest_Generic_CheckFindTest extends CiviSeleniumTestCase
-{
-    
-  protected function setUp()
-  {
-      parent::setUp();
+class WebTest_Generic_CheckFindTest extends CiviSeleniumTestCase {
+
+  protected function setUp() {
+    parent::setUp();
   }
 
-  function testCheckDashboardElements()
-  {
-      $this->open( $this->sboxPath );
-      $this->webtestLogin( );
-      
-      // Go directly to the URL of the screen that you will be testing.
-      $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
-      $this->waitForElementPresent("_qf_Basic_refresh");
-      $this->click("//input[@name='_qf_Basic_refresh' and @value='Search']");
-      $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isElementPresent("search-status"));
-  }
+  function testCheckDashboardElements() {
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
 
+    // Go directly to the URL of the screen that you will be testing.
+    $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
+    $this->waitForElementPresent("_qf_Basic_refresh");
+    $this->click("//input[@name='_qf_Basic_refresh' and @value='Search']");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isElementPresent("search-status"));
+  }
 }
-?>
+
+

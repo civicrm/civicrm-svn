@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -33,35 +32,33 @@
  * $Id$
  *
  */
+function civicrm_rules_get_entity() {
 
-function civicrm_rules_get_entity( ) {
-
-    return array(
-                 'contact' => array(
-                                    'label' => t( 'Contact' ),
-                                    'class' => 'rules_data_type_contact',
-                                    'savable' => FALSE,
-                                    'identifiable' => TRUE,
-                                    ),
-                 'mailing' => array(
-                                    'label' => t( 'Mailing' ),
-                                    'class' => 'rules_data_type_mailing',
-                                    'savable' => FALSE,
-                                    'identifiable' => TRUE,
-                                    ),
-                 'event' => array(
-                                    'label' => t( 'Event' ),
-                                    'class' => 'rules_data_type_event',
-                                    'savable' => FALSE,
-                                    'identifiable' => TRUE,
-                                    ),
-                 'participant' => array(
-                                        'label' => t( 'Participant' ),
-                                        'class' => 'rules_data_type_participant',
-                                        'savable' => FALSE,
-                                        'identifiable' => TRUE,
-                                        ),
-                 
-                 );
-
+  return array(
+    'contact' => array(
+      'label' => t('Contact'),
+      'class' => 'rules_data_type_contact',
+      'savable' => FALSE,
+      'identifiable' => TRUE,
+    ),
+    'mailing' => array(
+      'label' => t('Mailing'),
+      'class' => 'rules_data_type_mailing',
+      'savable' => FALSE,
+      'identifiable' => TRUE,
+    ),
+    'event' => array(
+      'label' => t('Event'),
+      'class' => 'rules_data_type_event',
+      'savable' => FALSE,
+      'identifiable' => TRUE,
+    ),
+    'participant' => array(
+      'label' => t('Participant'),
+      'class' => 'rules_data_type_participant',
+      'savable' => FALSE,
+      'identifiable' => TRUE,
+    ),
+  );
 }
+

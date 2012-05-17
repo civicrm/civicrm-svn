@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,53 +34,52 @@
  */
 
 require_once 'CRM/Core/OptionValue.php';
+class CRM_Core_I18n_PseudoConstant {
+  static
+  function &languages() {
+    static $languages = NULL;
+    if ($languages === NULL) {
+      $rows = array();
+      CRM_Core_OptionValue::getValues(array('name' => 'languages'), $rows, 'weight', TRUE);
 
-class CRM_Core_I18n_PseudoConstant
-{
-    static function &languages()
-    {
-        static $languages = null;
-        if ($languages === null) {
-            $rows = array();
-            CRM_Core_OptionValue::getValues(array('name' => 'languages'), $rows, 'weight', true);
-
-            $languages = array();
-            foreach ($rows as $row) {
-                $languages[$row['name']] = $row['label'];
-            }
-        }
-        return $languages;
+      $languages = array();
+      foreach ($rows as $row) {
+        $languages[$row['name']] = $row['label'];
+      }
     }
+    return $languages;
+  }
 
-    static function longForShort($short)
-    {
-        $longForShortMapping = self::longForShortMapping();
-        return $longForShortMapping[$short];
+  static
+  function longForShort($short) {
+    $longForShortMapping = self::longForShortMapping();
+    return $longForShortMapping[$short];
+  }
+
+  static
+  function &longForShortMapping() {
+    static $longForShortMapping = NULL;
+    if ($longForShortMapping === NULL) {
+      $rows = array();
+      CRM_Core_OptionValue::getValues(array('name' => 'languages'), $rows);
+
+      $longForShortMapping = array();
+      foreach ($rows as $row) {
+        $longForShortMapping[$row['value']] = $row['name'];
+      }
+      // hand-crafted enforced overrides for language variants
+      $longForShortMapping['zh'] = defined("CIVICRM_LANGUAGE_MAPPING_ZH") ? CIVICRM_LANGUAGE_MAPPING_ZH : 'zh_CN';
+      $longForShortMapping['en'] = defined("CIVICRM_LANGUAGE_MAPPING_EN") ? CIVICRM_LANGUAGE_MAPPING_EN : 'en_US';
+      $longForShortMapping['fr'] = defined("CIVICRM_LANGUAGE_MAPPING_FR") ? CIVICRM_LANGUAGE_MAPPING_FR : 'fr_FR';
+      $longForShortMapping['pt'] = defined("CIVICRM_LANGUAGE_MAPPING_PT") ? CIVICRM_LANGUAGE_MAPPING_PT : 'pt_PT';
+      $longForShortMapping['es'] = defined("CIVICRM_LANGUAGE_MAPPING_ES") ? CIVICRM_LANGUAGE_MAPPING_ES : 'es_ES';
     }
+    return $longForShortMapping;
+  }
 
-    static function &longForShortMapping()
-    {
-        static $longForShortMapping = null;
-        if ($longForShortMapping === null) {
-            $rows = array();
-            CRM_Core_OptionValue::getValues(array('name' => 'languages'), $rows);
-
-            $longForShortMapping = array();
-            foreach ($rows as $row) {
-                $longForShortMapping[$row['value']] = $row['name'];
-            }
-            // hand-crafted enforced overrides for language variants
-            $longForShortMapping['zh'] = defined("CIVICRM_LANGUAGE_MAPPING_ZH") ? CIVICRM_LANGUAGE_MAPPING_ZH : 'zh_CN';
-            $longForShortMapping['en'] = defined("CIVICRM_LANGUAGE_MAPPING_EN") ? CIVICRM_LANGUAGE_MAPPING_EN : 'en_US';
-            $longForShortMapping['fr'] = defined("CIVICRM_LANGUAGE_MAPPING_FR") ? CIVICRM_LANGUAGE_MAPPING_FR : 'fr_FR';
-            $longForShortMapping['pt'] = defined("CIVICRM_LANGUAGE_MAPPING_PT") ? CIVICRM_LANGUAGE_MAPPING_PT : 'pt_PT';
-            $longForShortMapping['es'] = defined("CIVICRM_LANGUAGE_MAPPING_ES") ? CIVICRM_LANGUAGE_MAPPING_ES : 'es_ES';
-        }
-        return $longForShortMapping;
-    }
-
-    static function shortForLong($long)
-    {
-        return substr($long, 0, 2);
-    }
+  static
+  function shortForLong($long) {
+    return substr($long, 0, 2);
+  }
 }
+

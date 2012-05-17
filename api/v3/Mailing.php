@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -55,175 +54,174 @@ require_once 'CRM/Mailing/Event/BAO/Reply.php';
 require_once 'CRM/Mailing/Event/BAO/Forward.php';
 require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
 
-
 /**
  * Process a bounce event by passing through to the BAOs.
  *
  * @param array $params
+ *
  * @return array
  */
-function civicrm_api3_mailing_event_bounce($params)
-{   
+function civicrm_api3_mailing_event_bounce($params) {
 
-        civicrm_api3_verify_mandatory ($params,
-                                       'CRM_Mailing_Event_DAO_Bounce',
-                                       array ( 'job_id', 'event_queue_id', 'hash', 'body' ),
-                                       false );
-           
-        $body = $params['body']; 
-        unset ( $params['body'] );
+  civicrm_api3_verify_mandatory($params,
+    'CRM_Mailing_Event_DAO_Bounce',
+    array('job_id', 'event_queue_id', 'hash', 'body'),
+    FALSE
+  );
 
-        $params += CRM_Mailing_BAO_BouncePattern::match($body);
-    
-        if ( CRM_Mailing_Event_BAO_Bounce::create($params) ) {
-            return civicrm_api3_create_success ( $params );
-        } else {
-            return civicrm_api3_create_error(  'Queue event could not be found'  );
-        }
-  
-    
+  $body = $params['body'];
+  unset($params['body']);
+
+  $params += CRM_Mailing_BAO_BouncePattern::match($body);
+
+  if (CRM_Mailing_Event_BAO_Bounce::create($params)) {
+    return civicrm_api3_create_success($params);
+  }
+  else {
+    return civicrm_api3_create_error('Queue event could not be found');
+  }
 }
 
 /**
  * Handle a confirm event
  *
  * @param array $params
+ *
  * @return array
  */
-function civicrm_api3_mailing_event_confirm( $params ) 
-{
+function civicrm_api3_mailing_event_confirm($params) {
 
-        civicrm_api3_verify_mandatory ($params,
-                                       'CRM_Mailing_Event_DAO_Confirm',
-                                       array ( 'contact_id', 'subscribe_id', 'hash' ),
-                                       false );
-          
-        $contact_id   = $params['contact_id']; 
-        $subscribe_id = $params['subscribe_id']; 
-        $hash         = $params['hash']; 
-    
-        $confirm = CRM_Mailing_Event_BAO_Confirm::confirm( $contact_id, $subscribe_id, $hash ) !== false;
-    
-        if ( !$confirm ) {
-            return civicrm_api3_create_error( 'Confirmation failed' );
-        }    
-        return civicrm_api3_create_success( $params );
+  civicrm_api3_verify_mandatory($params,
+    'CRM_Mailing_Event_DAO_Confirm',
+    array('contact_id', 'subscribe_id', 'hash'),
+    FALSE
+  );
 
+  $contact_id   = $params['contact_id'];
+  $subscribe_id = $params['subscribe_id'];
+  $hash         = $params['hash'];
+
+  $confirm = CRM_Mailing_Event_BAO_Confirm::confirm($contact_id, $subscribe_id, $hash) !== FALSE;
+
+  if (!$confirm) {
+    return civicrm_api3_create_error('Confirmation failed');
+  }
+  return civicrm_api3_create_success($params);
 }
 
 /**
  * Handle a reply event
  *
  * @param array $params
+ *
  * @return array
  */
-function civicrm_api3_mailing_event_reply($params)
-{
-    civicrm_api3_verify_mandatory ($params,
-                                   'CRM_Mailing_Event_DAO_Reply',
-                                   array( 'job_id', 'event_queue_id', 'hash', 'replyTo' ),
-                                   false );
+function civicrm_api3_mailing_event_reply($params) {
+  civicrm_api3_verify_mandatory($params,
+    'CRM_Mailing_Event_DAO_Reply',
+    array('job_id', 'event_queue_id', 'hash', 'replyTo'),
+    FALSE
+  );
 
-    $job       = $params['job_id']; 
-    $queue     = $params['event_queue_id']; 
-    $hash      = $params['hash']; 
-    $replyto   = $params['replyTo']; 
-    $bodyTxt   = CRM_Utils_Array::value('bodyTxt'  , $params);
-    $bodyHTML  = CRM_Utils_Array::value('bodyHTML' , $params);
-    $fullEmail = CRM_Utils_Array::value('fullEmail', $params);
+  $job       = $params['job_id'];
+  $queue     = $params['event_queue_id'];
+  $hash      = $params['hash'];
+  $replyto   = $params['replyTo'];
+  $bodyTxt   = CRM_Utils_Array::value('bodyTxt', $params);
+  $bodyHTML  = CRM_Utils_Array::value('bodyHTML', $params);
+  $fullEmail = CRM_Utils_Array::value('fullEmail', $params);
 
-    $mailing = CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
+  $mailing = CRM_Mailing_Event_BAO_Reply::reply($job, $queue, $hash, $replyto);
 
-    if (empty($mailing)) {
-        return civicrm_api3_create_error( 'Queue event could not be found'  );
-    }
+  if (empty($mailing)) {
+    return civicrm_api3_create_error('Queue event could not be found');
+  }
 
-    CRM_Mailing_Event_BAO_Reply::send( $queue, $mailing, $bodyTxt, $replyto, $bodyHTML, $fullEmail );
+  CRM_Mailing_Event_BAO_Reply::send($queue, $mailing, $bodyTxt, $replyto, $bodyHTML, $fullEmail);
 
-    return civicrm_api3_create_success( $params );
-
+  return civicrm_api3_create_success($params);
 }
 
 /**
  * Handle a forward event
  *
  * @param array $params
+ *
  * @return array
  */
-function civicrm_api3_mailing_event_forward($params) 
-{
+function civicrm_api3_mailing_event_forward($params) {
 
-    civicrm_api3_verify_mandatory ($params,
-                                   'CRM_Mailing_Event_DAO_Forward',
-                                   array('job_id', 'event_queue_id', 'hash', 'email'),
-                                   false );
-                   
-    $job       = $params['job_id']; 
-    $queue     = $params['event_queue_id']; 
-    $hash      = $params['hash']; 
-    $email     = $params['email']; 
-    $fromEmail = CRM_Utils_Array::value('fromEmail', $params);
-    $params    = CRM_Utils_Array::value('params', $params);
+  civicrm_api3_verify_mandatory($params,
+    'CRM_Mailing_Event_DAO_Forward',
+    array('job_id', 'event_queue_id', 'hash', 'email'),
+    FALSE
+  );
 
-    $forward   = CRM_Mailing_Event_BAO_Forward::forward($job, $queue, $hash, $email, $fromEmail, $params );
-    
-    if ( $forward ) {
-        return civicrm_api3_create_success( $params );
-    }
-    
-    return civicrm_api3_create_error( 'Queue event could not be found'  );    
+  $job       = $params['job_id'];
+  $queue     = $params['event_queue_id'];
+  $hash      = $params['hash'];
+  $email     = $params['email'];
+  $fromEmail = CRM_Utils_Array::value('fromEmail', $params);
+  $params    = CRM_Utils_Array::value('params', $params);
 
+  $forward = CRM_Mailing_Event_BAO_Forward::forward($job, $queue, $hash, $email, $fromEmail, $params);
+
+  if ($forward) {
+    return civicrm_api3_create_success($params);
+  }
+
+  return civicrm_api3_create_error('Queue event could not be found');
 }
 
 /**
  * Handle a click event
  *
  * @param array $params
+ *
  * @return array
  */
-function civicrm_api3_mailing_event_click($params) 
-{
+function civicrm_api3_mailing_event_click($params) {
 
-    civicrm_api3_verify_mandatory ($params,
-                                   'CRM_Mailing_Event_DAO_TrackableURLOpen',
-                                   array('event_queue_id', 'url_id'),
-                                   false );
-          
-    $url_id = $params['url_id']; 
-    $queue  = $params['event_queue_id']; 
+  civicrm_api3_verify_mandatory($params,
+    'CRM_Mailing_Event_DAO_TrackableURLOpen',
+    array('event_queue_id', 'url_id'),
+    FALSE
+  );
 
-    $url = CRM_Mailing_Event_BAO_TrackableURLOpen::track( $queue, $url_id );
+  $url_id = $params['url_id'];
+  $queue = $params['event_queue_id'];
 
-    $values = array( );
-    $values['url'] = $url;
-    $values['is_error'] = 0;
-        
-    return civicrm_api3_create_success( $values );  
+  $url = CRM_Mailing_Event_BAO_TrackableURLOpen::track($queue, $url_id);
 
+  $values             = array();
+  $values['url']      = $url;
+  $values['is_error'] = 0;
+
+  return civicrm_api3_create_success($values);
 }
 
 /**
  * Handle an open event
  *
  * @param array $params
+ *
  * @return array
  */
-function civicrm_api3_mailing_event_open($params) 
-{
+function civicrm_api3_mailing_event_open($params) {
 
-    civicrm_api3_verify_mandatory ($params,
-                                   'CRM_Mailing_Event_DAO_Opened',
-                                   array('event_queue_id'),
-                                   false );
+  civicrm_api3_verify_mandatory($params,
+    'CRM_Mailing_Event_DAO_Opened',
+    array('event_queue_id'),
+    FALSE
+  );
 
-    $queue   = $params['event_queue_id']; 
-    $success = CRM_Mailing_Event_BAO_Opened::open( $queue );
+  $queue = $params['event_queue_id'];
+  $success = CRM_Mailing_Event_BAO_Opened::open($queue);
 
-    if ( !$success ) {
-        return civicrm_api3_create_error( 'mailing open event failed' );
-    }
+  if (!$success) {
+    return civicrm_api3_create_error('mailing open event failed');
+  }
 
-    return civicrm_api3_create_success( $params );
-
+  return civicrm_api3_create_success($params);
 }
 

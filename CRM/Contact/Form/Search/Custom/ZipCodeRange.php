@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,108 +34,114 @@
  */
 
 require_once 'CRM/Contact/Form/Search/Custom/Base.php';
+class CRM_Contact_Form_Search_Custom_ZipCodeRange extends CRM_Contact_Form_Search_Custom_Base implements CRM_Contact_Form_Search_Interface {
+  function __construct(&$formValues) {
+    parent::__construct($formValues);
 
-class CRM_Contact_Form_Search_Custom_ZipCodeRange
-   extends    CRM_Contact_Form_Search_Custom_Base
-   implements CRM_Contact_Form_Search_Interface {
+    $this->_columns = array(
+      ts('Contact Id') => 'contact_id',
+      ts('Name') => 'sort_name',
+      ts('Email') => 'email',
+      ts('Zip') => 'postal_code',
+    );
+  }
 
-    function __construct( &$formValues ) {
-        parent::__construct( $formValues );
+  function buildForm(&$form) {
+    $form->add('text',
+      'postal_code_low',
+      ts('Postal Code Start'),
+      TRUE
+    );
 
-        $this->_columns = array( ts('Contact Id')   => 'contact_id'  ,
-                                 ts('Name')         => 'sort_name'   ,
-                                 ts('Email')        => 'email'       ,
-                                 ts('Zip')          => 'postal_code' );
-    }
+    $form->add('text',
+      'postal_code_high',
+      ts('Postal Code End'),
+      TRUE
+    );
 
-    function buildForm( &$form ) {
-        $form->add( 'text',
-                    'postal_code_low',
-                    ts( 'Postal Code Start' ),
-                    true );
+    /**
+     * You can define a custom title for the search form
+     */
+    $this->setTitle('Zip Code Range Search');
 
-        $form->add( 'text',
-                    'postal_code_high',
-                    ts( 'Postal Code End' ),
-                    true );
+    /**
+     * if you are using the standard template, this array tells the template what elements
+     * are part of the search criteria
+     */
+    $form->assign('elements', array('postal_code_low', 'postal_code_high'));
+  }
 
-        /**
-         * You can define a custom title for the search form
-         */
-         $this->setTitle('Zip Code Range Search');
-         
-         /**
-         * if you are using the standard template, this array tells the template what elements
-         * are part of the search criteria
-         */
-         $form->assign( 'elements', array( 'postal_code_low', 'postal_code_high' ) );
-    }
+  function summary() {
+    $summary = array();
+    return $summary;
+  }
 
-    function summary( ) {
-        $summary = array( );
-        return $summary;
-    }
-
-    function all( $offset = 0, $rowcount = 0, $sort = null,
-                  $includeContactIDs = false ) {
-        $selectClause = "
+  function all($offset = 0, $rowcount = 0, $sort = NULL,
+    $includeContactIDs = FALSE
+  ) {
+    $selectClause = "
 contact_a.id           as contact_id ,
 contact_a.sort_name    as sort_name  ,
 email.email            as email   ,
 address.postal_code    as postal_code
 ";
-        return $this->sql( $selectClause,
-                           $offset, $rowcount, $sort,
-                           $includeContactIDs, null );
+    return $this->sql($selectClause,
+      $offset, $rowcount, $sort,
+      $includeContactIDs, NULL
+    );
+  }
 
-    }
-    
-    function from( ) {
-        return "
+  function from() {
+    return "
 FROM      civicrm_contact contact_a
 LEFT JOIN civicrm_address address ON ( address.contact_id       = contact_a.id AND
                                        address.is_primary       = 1 )
 LEFT JOIN civicrm_email   email   ON ( email.contact_id = contact_a.id AND
                                        email.is_primary = 1 )
 ";
+  }
+
+  function where($includeContactIDs = FALSE) {
+    $params = array();
+
+    $low = CRM_Utils_Array::value('postal_code_low',
+      $this->_formValues
+    );
+    $high = CRM_Utils_Array::value('postal_code_high',
+      $this->_formValues
+    );
+    if ($low == NULL || $high == NULL) {
+      CRM_Core_Error::statusBounce(ts('Please provide start and end postal codes'),
+        CRM_Utils_System::url('civicrm/contact/search/custom',
+          "reset=1&csid={$this->_formValues['customSearchID']}",
+          FALSE, NULL, FALSE, TRUE
+        )
+      );
     }
 
-    function where( $includeContactIDs = false ) {
-        $params = array( );
+    $where = "ROUND(address.postal_code) >= %1 AND ROUND(address.postal_code) <= %2";
+    $params = array(1 => array(trim($low), 'Integer'),
+      2 => array(trim($high), 'Integer'),
+    );
 
-        $low    = CRM_Utils_Array::value( 'postal_code_low',
-                                          $this->_formValues );
-        $high   = CRM_Utils_Array::value( 'postal_code_high',
-                                          $this->_formValues );
-        if ( $low == null || $high == null ) {
-            CRM_Core_Error::statusBounce( ts('Please provide start and end postal codes'),
-                                          CRM_Utils_System::url( 'civicrm/contact/search/custom',
-                                                                 "reset=1&csid={$this->_formValues['customSearchID']}",
-                                                                 false, null, false, true ) );
-        }
+    return $this->whereClause($where, $params);
+  }
 
-        $where  = "ROUND(address.postal_code) >= %1 AND ROUND(address.postal_code) <= %2";
-        $params = array( 1 => array( trim( $low  ), 'Integer' ),
-                         2 => array( trim( $high ), 'Integer' ) );
+  function setDefaultValues() {
+    return array();
+  }
 
-        return $this->whereClause( $where, $params );
+  function templateFile() {
+    return 'CRM/Contact/Form/Search/Custom.tpl';
+  }
+
+  function setTitle($title) {
+    if ($title) {
+      CRM_Utils_System::setTitle($title);
     }
-
-    function setDefaultValues( ) {
-        return array( );
+    else {
+      CRM_Utils_System::setTitle(ts('Search'));
     }
-
-    function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom.tpl';
-    }
-    
-    function setTitle( $title ) {
-        if ( $title ) {
-            CRM_Utils_System::setTitle( $title );
-        } else {
-            CRM_Utils_System::setTitle(ts('Search'));
-        }
-    }
+  }
 }
-
 

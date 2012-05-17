@@ -1,14 +1,11 @@
 <?php
-
 require_once 'CiviTest/CiviUnitTestCase.php';
-
 class CRM_Utils_SystemTest extends CiviUnitTestCase {
-
   function get_info() {
     return array(
-      'name'      => 'System Test',
+      'name' => 'System Test',
       'description' => 'Test system functions',
-      'group'      => 'CiviCRM BAO Tests',
+      'group' => 'CiviCRM BAO Tests',
     );
   }
 
@@ -20,18 +17,19 @@ class CRM_Utils_SystemTest extends CiviUnitTestCase {
     $config = CRM_Core_Config::singleton();
     $this->assertTrue($config->userSystem instanceof CRM_Utils_System_UnitTests);
     $expected = '/index.php?q=civicrm/foo/bar&foo=ab&bar=cd%26ef';
-    $actual = CRM_Utils_System::url('civicrm/foo/bar', 'foo=ab&bar=cd%26ef', false, null, false);
+    $actual = CRM_Utils_System::url('civicrm/foo/bar', 'foo=ab&bar=cd%26ef', FALSE, NULL, FALSE);
     $this->assertEquals($expected, $actual);
   }
-  
+
   function testUrlQueryArray() {
     $config = CRM_Core_Config::singleton();
     $this->assertTrue($config->userSystem instanceof CRM_Utils_System_UnitTests);
     $expected = '/index.php?q=civicrm/foo/bar&foo=ab&bar=cd%26ef';
     $actual = CRM_Utils_System::url('civicrm/foo/bar', array(
-      'foo' => 'ab',
-      'bar' => 'cd&ef',
-    ), false, null, false);
+        'foo' => 'ab',
+        'bar' => 'cd&ef',
+      ), FALSE, NULL, FALSE);
     $this->assertEquals($expected, $actual);
   }
 }
+

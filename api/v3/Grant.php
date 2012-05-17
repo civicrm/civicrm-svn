@@ -35,13 +35,12 @@
 
 require_once 'CRM/Grant/BAO/Grant.php';
 
-
 /**
  * create/update grant
  *
  * This API is used to create new grant or update any of the existing
  * In case of updating existing grant, id of that particular grant must
- * be in $params array. 
+ * be in $params array.
  *
  * @param array $params  Associative array of property
  *                       name/value pairs to insert in new 'grant'
@@ -50,22 +49,22 @@ require_once 'CRM/Grant/BAO/Grant.php';
  * {@getfields grant_create}
  * @access public
  */
-function civicrm_api3_grant_create( $params )
-{   
-    // BAO is non standard to we need to construct $ids array. Ideally we would fix BAO to accept $params without
-    // id for standardisation
-    $ids = array();
-    if(CRM_Utils_Array::value('id', $params)){
-      $ids['grant'] = $params['id'];
-    }
-    $bao = CRM_GRANT_BAO_GRANT::create($params, $ids);
-    if ( is_null( $bao) ) {
-        return civicrm_api3_create_error( 'Grant not created ');
-    } else {
-        $values = array();
-        _civicrm_api3_object_to_array($bao, $values[ $bao->id]);
-        return civicrm_api3_create_success($values,$params,$bao,'create' );
-    }
+function civicrm_api3_grant_create($params) {
+  // BAO is non standard to we need to construct $ids array. Ideally we would fix BAO to accept $params without
+  // id for standardisation
+  $ids = array();
+  if (CRM_Utils_Array::value('id', $params)) {
+    $ids['grant'] = $params['id'];
+  }
+  $bao = CRM_GRANT_BAO_GRANT::create($params, $ids);
+  if (is_null($bao)) {
+    return civicrm_api3_create_error('Grant not created ');
+  }
+  else {
+    $values = array();
+    _civicrm_api3_object_to_array($bao, $values[$bao->id]);
+    return civicrm_api3_create_success($values, $params, $bao, 'create');
+  }
 }
 /*
  * Adjust Metadata for Create action
@@ -73,9 +72,10 @@ function civicrm_api3_grant_create( $params )
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_grant_create_spec(&$params){
-  $params['grant_type_id']['api.required'] =1;
+function _civicrm_api3_grant_create_spec(&$params) {
+  $params['grant_type_id']['api.required'] = 1;
 }
+
 /**
  * Returns array of grants  matching a set of one or more group properties
  *
@@ -87,9 +87,8 @@ function _civicrm_api3_grant_create_spec(&$params){
  * {@getfields grant_get}
  * @access public
  */
-function civicrm_api3_grant_get( $params )
-{
-    return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+function civicrm_api3_grant_get($params) {
+  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
 /**
@@ -105,7 +104,7 @@ function civicrm_api3_grant_get( $params )
  * {@getfields grant_delete}
  * @access public
  */
-function civicrm_api3_grant_delete( $params )
-{
-    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+function civicrm_api3_grant_delete($params) {
+  return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
+

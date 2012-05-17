@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,33 +34,33 @@
  */
 
 require_once 'CRM/Event/Form/Task/Batch.php';
+class CRM_Event_Form_Task_ParticipantStatus extends CRM_Event_Form_Task_Batch {
+  function buildQuickForm() {
+    // CRM_Event_Form_Task_Batch::buildQuickForm() gets ufGroupId
+    // from the form, so set it here to the id of the reserved profile
+    require_once 'CRM/Core/DAO/UFGroup.php';
+    $dao = new CRM_Core_DAO_UFGroup;
+    $dao->name = 'participant_status';
+    $dao->find(TRUE);
+    $this->set('ufGroupId', $dao->id);
 
-class CRM_Event_Form_Task_ParticipantStatus extends CRM_Event_Form_Task_Batch
-{
-    function buildQuickForm()
-    {
-        // CRM_Event_Form_Task_Batch::buildQuickForm() gets ufGroupId 
-        // from the form, so set it here to the id of the reserved profile
-        require_once 'CRM/Core/DAO/UFGroup.php';
-        $dao = new CRM_Core_DAO_UFGroup;
-        $dao->name = 'participant_status';
-        $dao->find(true);
-        $this->set('ufGroupId', $dao->id);
+    require_once 'CRM/Event/PseudoConstant.php';
+    $statuses = CRM_Event_PseudoConstant::participantStatus(NULL, NULL, 'label');
+    asort($statuses, SORT_STRING);
+    $this->add('select', 'status_change', ts('Change All Statuses'),
+      array(
+        '' => ts('- select status -')) + $statuses
+    );
 
-        require_once 'CRM/Event/PseudoConstant.php';
-        $statuses = CRM_Event_PseudoConstant::participantStatus(null, null, 'label');
-        asort($statuses, SORT_STRING);
-        $this->add('select', 'status_change', ts('Change All Statuses'),  
-                    array( '' => ts('- select status -')) + $statuses );
+    $this->assign('context', 'statusChange');
 
-        $this->assign('context', 'statusChange');
+    # CRM-4321: display info on users being notified if any of the below statuses is enabled
+    require_once 'CRM/Event/PseudoConstant.php';
+    $notifyingStatuses = array('Pending from waitlist', 'Pending from approval', 'Expired', 'Cancelled');
+    $notifyingStatuses = array_intersect($notifyingStatuses, CRM_Event_PseudoConstant::participantStatus());
+    $this->assign('notifyingStatuses', implode(', ', $notifyingStatuses));
 
-        # CRM-4321: display info on users being notified if any of the below statuses is enabled
-        require_once 'CRM/Event/PseudoConstant.php';
-        $notifyingStatuses = array('Pending from waitlist', 'Pending from approval', 'Expired', 'Cancelled');
-        $notifyingStatuses = array_intersect($notifyingStatuses, CRM_Event_PseudoConstant::participantStatus());
-        $this->assign('notifyingStatuses', implode(', ', $notifyingStatuses));
-
-        parent::buildQuickForm();
-    }
+    parent::buildQuickForm();
+  }
 }
+

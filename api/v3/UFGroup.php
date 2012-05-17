@@ -30,7 +30,7 @@
  *
  * @package CiviCRM_APIv3
  * @subpackage API_UF
- * 
+ *
  * @copyright CiviCRM LLC (c) 2004-2011
  * @version $Id: UFGroup.php 30171 2010-10-14 09:11:27Z mover $
  *
@@ -50,19 +50,18 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  * @return   Newly create $ufGroupArray array
  * {@getfields UFGroup_create}
  * @example UFGroupCreate.php
- * @access public 
+ * @access public
  */
 function civicrm_api3_uf_group_create($params) {
 
-		$ids = array ();
-		$ids ['ufgroup'] = $params ['id'];
-		
-	
-		$ufGroup = CRM_Core_BAO_UFGroup::add ( $params, $ids );
-		_civicrm_api3_object_to_array ( $ufGroup, $ufGroupArray [$ufGroup->id] );
-		
-		return civicrm_api3_create_success ( $ufGroupArray, $params );
+  $ids = array();
+  $ids['ufgroup'] = $params['id'];
 
+
+  $ufGroup = CRM_Core_BAO_UFGroup::add($params, $ids);
+  _civicrm_api3_object_to_array($ufGroup, $ufGroupArray[$ufGroup->id]);
+
+  return civicrm_api3_create_success($ufGroupArray, $params);
 }
 
 /**
@@ -77,17 +76,14 @@ function civicrm_api3_uf_group_create($params) {
  * @example UFGroupGet.php
  * @access public
  */
-function civicrm_api3_uf_group_get( $params )
-{
+function civicrm_api3_uf_group_get($params) {
 
-    return _civicrm_api3_basic_get('CRM_Core_BAO_UFGroup', $params);
-
+  return _civicrm_api3_basic_get('CRM_Core_BAO_UFGroup', $params);
 }
-
 
 /**
  * Delete uf group
- * 
+ *
  * @param $groupId int  Valid uf_group id that to be deleted
  *
  * @return true on successful delete or return error
@@ -98,6 +94,6 @@ function civicrm_api3_uf_group_get( $params )
  */
 function civicrm_api3_uf_group_delete($params) {
 
-    return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
-
+  return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
+

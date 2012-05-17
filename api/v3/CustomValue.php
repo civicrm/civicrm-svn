@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -44,68 +43,75 @@ require_once 'CRM/Core/BAO/CustomField.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
 require_once 'CRM/Core/BAO/CustomValueTable.php';
 
-
 /**
  * Sets custom values for an entity.
  *
  *
  * @param $params  expected keys are in format custom_fieldID:recordID or custom_groupName:fieldName:recordID
  * for example:
- * 'entity_id' => 123, // entity ID. You do not need to specify entity type, we figure it out based on the fields you're using
- * 'custom_6' => 'foo', // (omitting :id) inserts or updates a field in a single-valued group
- * 'custom_24' => array('bar', 'baz'), // custom_24 is checkbox or multiselect, so pass items as an array
- * 'custom_33:5' => value, // in this case custom_33 is part of a multi-valued group, and we're updating record id 5
- * 'custom_33:-1' => value, // inserts new record in multi-valued group
- * 'custom_33:-2' => value, // inserts another new record in multi-valued group
- * 'custom_some_group:my_field => 'myinfo', // you can use group_name:field_name instead of ID
- * 'custom_some_big_group:my_other_field:8 => 'myinfo', // updates record ID 8 in my_other_field in multi-valued some_big_group
+ // entity ID. You do not need to specify entity type, we figure it out based on the fields you're using
+ * 'entity_id' => 123,
+ // (omitting :id) inserts or updates a field in a single-valued group
+ * 'custom_6' => 'foo',
+ // custom_24 is checkbox or multiselect, so pass items as an array
+ * 'custom_24' => array('bar', 'baz'),
+ // in this case custom_33 is part of a multi-valued group, and we're updating record id 5
+ * 'custom_33:5' => value,
+ // inserts new record in multi-valued group
+ * 'custom_33:-1' => value,
+ // inserts another new record in multi-valued group
+ * 'custom_33:-2' => value,
+ // you can use group_name:field_name instead of ID
+ * 'custom_some_group:my_field => 'myinfo',
+ // updates record ID 8 in my_other_field in multi-valued some_big_group
+ * 'custom_some_big_group:my_other_field:8 => 'myinfo',
  *
  *
  * @return array('values' => TRUE) or array('is_error' => 1, 'error_message' => 'what went wrong')
  *
  * @access public
- * 
+ *
  */
-function civicrm_api3_custom_value_create( $params ) {
-    civicrm_api3_verify_mandatory($params, null, array('entity_id'));
-    if(substr($params['entity_table'],0,7) == 'civicrm'){
-        $params['entity_table'] = substr($params['entity_table'],8,7);
+function civicrm_api3_custom_value_create($params) {
+  civicrm_api3_verify_mandatory($params, NULL, array('entity_id'));
+  if (substr($params['entity_table'], 0, 7) == 'civicrm') {
+    $params['entity_table'] = substr($params['entity_table'], 8, 7);
+  }
+  $create = array('entityID' => $params['entity_id']);
+  // Translate names and
+  //Convert arrays to multi-value strings
+  $sp = CRM_Core_DAO::VALUE_SEPARATOR;
+  foreach ($params as $id => $param) {
+    if (is_array($param)) {
+      $param = $sp . implode($sp, $param) . $sp;
     }
-    $create = array('entityID' => $params['entity_id']);
-    // Translate names and
-    //Convert arrays to multi-value strings
-    $sp = CRM_Core_DAO::VALUE_SEPARATOR;
-    foreach ($params as $id => $param) {
-        if (is_array($param)) {
-            $param = $sp . implode($sp, $param) . $sp;
-        }
-        list($c, $id) = explode('_', $id, 2);
-        if ($c != 'custom') {
-            continue;
-        }
-        list($i, $n, $x) = explode(':', $id);
-        if (is_numeric($i)) {
-            $key = $i;
-            $x = $n;
-        } else {
-            // Lookup names if ID was not supplied
-            $key = CRM_Core_BAO_CustomField::getCustomFieldID($n, $i);
-            if (!$key) {
-                continue;
-            }
-        }
-        if ($x && is_numeric($x)) {
-            $key .= '_' . $x;
-        }
-        $create['custom_' . $key] = $param;
+    list($c, $id) = explode('_', $id, 2);
+    if ($c != 'custom') {
+      continue;
     }
-    $result = CRM_Core_BAO_CustomValueTable::setValues($create);
-    if ($result['is_error']) {
-        return civicrm_api3_create_error($result['error_message']);
+    list($i, $n, $x) = explode(':', $id);
+    if (is_numeric($i)) {
+      $key = $i;
+      $x = $n;
     }
-    return civicrm_api3_create_success(true, $params);
+    else {
+      // Lookup names if ID was not supplied
+      $key = CRM_Core_BAO_CustomField::getCustomFieldID($n, $i);
+      if (!$key) {
+        continue;
+      }
+    }
+    if ($x && is_numeric($x)) {
+      $key .= '_' . $x;
+    }
+    $create['custom_' . $key] = $param;
+  }
+  $result = CRM_Core_BAO_CustomValueTable::setValues($create);
+  if ($result['is_error']) {
+    return civicrm_api3_create_error($result['error_message']);
+  }
+  return civicrm_api3_create_success(TRUE, $params);
 }
-
 
 /**
  * Use this API to get existing custom values for an entity.
@@ -121,17 +127,17 @@ function civicrm_api3_custom_value_create( $params ) {
  * @return array.
  *
  * @access public
- * 
+ *
  **/
 function civicrm_api3_custom_value_get($params) {
-  civicrm_api3_verify_mandatory($params, null, array('entity_id'));
+  civicrm_api3_verify_mandatory($params, NULL, array('entity_id'));
 
   $getParams = array(
     'entityID' => $params['entity_id'],
     'entityType' => $params['entity_table'],
   );
-  if(strstr($getParams['entityType'], 'civicrm_' )){
-    $getParams['entityType'] = ucfirst(substr($getParams['entityType'],8));
+  if (strstr($getParams['entityType'], 'civicrm_')) {
+    $getParams['entityType'] = ucfirst(substr($getParams['entityType'], 8));
   }
   unset($params['entity_id'], $params['entity_table']);
   foreach ($params as $id => $param) {
@@ -141,24 +147,26 @@ function civicrm_api3_custom_value_get($params) {
       if ($c == 'custom' && is_numeric($i)) {
         $names['custom_' . $i] = 'custom_' . $i;
         $id = $i;
-      } else {
+      }
+      else {
         // Lookup names if ID was not supplied
         list($group, $field) = explode(':', $id, 2);
         $id = CRM_Core_BAO_CustomField::getCustomFieldID($field, $group);
         if (!$id) {
           continue;
         }
-        $names['custom_' .$id] = 'custom_' . $i;
+        $names['custom_' . $id] = 'custom_' . $i;
       }
       $getParams['custom_' . $id] = 1;
     }
   }
 
   $result = CRM_Core_BAO_CustomValueTable::getValues($getParams);
-  
+
   if ($result['is_error']) {
     return civicrm_api3_create_error($result['error_message']);
-  } else {
+  }
+  else {
     $entity_id = $result['entityID'];
     unset($result['is_error'], $result['entityID']);
 
@@ -169,30 +177,32 @@ function civicrm_api3_custom_value_get($params) {
         $value = explode($sp, trim($value, $sp));
       }
       list($c, $i, $n) = explode('_', $id);
-      if($c != 'custom') {
+      if ($c != 'custom') {
         continue;
       }
-      $info = array_pop(CRM_Core_BAO_CustomField::getNameFromID( $i ));
-      $id = $i. "." . $n;// id is the index for returned results
+      $info = array_pop(CRM_Core_BAO_CustomField::getNameFromID($i));
+      // id is the index for returned results
+      $id = $i . "." . $n;
       if (!$n) {
         $n = 0;
         $id = $i;
       }
-      if(CRM_Utils_Array::value('format.field_names',$params)){
+      if (CRM_Utils_Array::value('format.field_names', $params)) {
         $id = $info['field_name'];
-      }else{ 
+      }
+      else {
         $id = $i;
-      }   
-      $values[$id]['entity_id'] =  $getParams['entityID'];
-      if(CRM_Utils_Array::value('entityType',$getParams)){
-        $values[$n]['entity_table'] =  $getParams['entityType'];
-      } 
+      }
+      $values[$id]['entity_id'] = $getParams['entityID'];
+      if (CRM_Utils_Array::value('entityType', $getParams)) {
+        $values[$n]['entity_table'] = $getParams['entityType'];
+      }
       //set 'latest' -useful for multi fields but set for single for consistency
       $values[$id]['latest'] = $value;
       $values[$id]['id'] = $id;
       $values[$id][$n] = $value;
-    
     }
     return civicrm_api3_create_success($values, $params);
   }
 }
+

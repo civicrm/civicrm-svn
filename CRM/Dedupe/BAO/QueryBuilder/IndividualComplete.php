@@ -1,20 +1,18 @@
 <?php
-
 require_once 'CRM/Dedupe/BAO/QueryBuilder.php';
 
 // TODO: How to handle NULL values/records?
 class CRM_Dedupe_BAO_QueryBuilder_IndividualComplete extends CRM_Dedupe_BAO_QueryBuilder {
+  function record($rg) {
+    $civicrm_contact = CRM_Utils_Array::value('civicrm_contact', $rg->params);
+    $civicrm_address = CRM_Utils_Array::value('civicrm_address', $rg->params);
 
-    function record($rg) {
-        $civicrm_contact = CRM_Utils_Array::value('civicrm_contact',$rg->params);
-        $civicrm_address = CRM_Utils_Array::value('civicrm_address',$rg->params);
+    // Since definitely have first and last name, escape them upfront.
+    $first_name     = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('first_name', $civicrm_contact, ''));
+    $last_name      = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('last_name', $civicrm_contact, ''));
+    $street_address = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('street_address', $civicrm_address, ''));
 
-        // Since definitely have first and last name, escape them upfront.
-        $first_name = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('first_name', $civicrm_contact, ''));
-        $last_name = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('last_name', $civicrm_contact, ''));
-        $street_address = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('street_address', $civicrm_address, ''));
-
-        $query = "
+    $query = "
             SELECT contact1.id id1, 5 weight
             FROM civicrm_contact AS contact1
               JOIN civicrm_address AS address1 ON contact1.id=address1.contact_id
@@ -24,20 +22,29 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualComplete extends CRM_Dedupe_BAO_Quer
               AND address1.street_address = '$street_address'
               ";
 
-        if($birth_date = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('birth_date', $civicrm_contact, '')))
-            $query .= " AND (contact1.birth_date IS NULL or contact1.birth_date = '$birth_date')\n";
+    if ($birth_date = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('birth_date', $civicrm_contact, ''))) {
 
-        if($suffix_id = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('suffix_id', $civicrm_contact, '')))
-            $query .= " AND (contact1.suffix_id IS NULL or contact1.suffix_id = $suffix_id)\n";
+      $query .= " AND (contact1.birth_date IS NULL or contact1.birth_date = '$birth_date')\n";
 
-        if($middle_name = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('middle_name', $civicrm_contact, '')))
-            $query .= " AND (contact1.middle_name IS NULL or contact1.middle_name = '$middle_name')\n";
-
-        return $query;
     }
 
-    function internal($rg) {
-        $query = "
+    if ($suffix_id = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('suffix_id', $civicrm_contact, ''))) {
+
+      $query .= " AND (contact1.suffix_id IS NULL or contact1.suffix_id = $suffix_id)\n";
+
+    }
+
+    if ($middle_name = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('middle_name', $civicrm_contact, ''))) {
+
+      $query .= " AND (contact1.middle_name IS NULL or contact1.middle_name = '$middle_name')\n";
+
+    }
+
+    return $query;
+  }
+
+  function internal($rg) {
+    $query = "
             SELECT contact1.id id1,  contact2.id id2, 5 weight
             FROM civicrm_contact AS contact1
               JOIN civicrm_contact AS contact2 ON (
@@ -52,11 +59,10 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualComplete extends CRM_Dedupe_BAO_Quer
               AND (contact1.suffix_id IS NULL OR contact2.suffix_id IS NULL OR contact1.suffix_id = contact2.suffix_id)
               AND (contact1.middle_name IS NULL OR contact2.middle_name IS NULL OR contact1.middle_name = contact2.middle_name)
               AND (contact1.birth_date IS NULL OR contact2.birth_date IS NULL OR contact1.birth_date = contact2.birth_date)
-              AND ".self::internalFilters($rg);
-        return array("civicrm_contact.{$rg->name}.{$rg->threshold}" => $query);
-    }
-
-
+              AND " . self::internalFilters($rg);
+    return array("civicrm_contact.{$rg->name}.{$rg->threshold}" => $query);
+  }
 }
 
-?>
+
+

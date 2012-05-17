@@ -24,152 +24,151 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-
 class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
-    
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-    
-    function testSearchProfile( ) {
-        // This is the path where our testing install resides. 
-        // The rest of URL is defined in CiviSeleniumTestCase base class, in
-        // class attributes.
-        $this->open( $this->sboxPath );
-        
-        // Logging in. Remember to wait for page to load. In most cases,
-        // you can rely on 30000 as the value that allows your test to pass, however,
-        // sometimes your test might fail because of this. In such cases, it's better to pick one element
-        // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-        // page contents loaded and you can continue your test execution.
-        $this->webtestLogin( );
-        
-        // Go directly to the URL of the screen where you will be
-        // Add new profile.
-        $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
-        
-        $this->waitForPageToLoad('30000');
-        
-        $this->click('newCiviCRMProfile-bottom');
-        
-        $this->waitForElementPresent('_qf_Group_next-bottom');
-        
-        //Name of profile
-        $profileTitle = 'profile_'.substr(sha1(rand()), 0, 7);
-        $this->type('title' , $profileTitle );
 
-        //click on save
-        $this->click('_qf_Group_next-bottom');
-        $this->waitForPageToLoad('30000');
+  protected function setUp() {
+    parent::setUp();
+  }
 
-        //check for  profile create     
-        $this->assertTrue( $this->isTextPresent("Your CiviCRM Profile '$profileTitle' has been added. You can add fields to this profile now") );
-        
-        // Get profile id (gid) from URL
-        $elements = $this->parseURL( );
-        $profileId = $elements['queryString']['gid'];
-        
-        // Add Last Name field.
-        $this->click('field_name[0]');
-        $this->select('field_name[0]', 'value=Individual');
-        $this->click('field_name[1]');
-        $this->select('field_name[1]', 'value=last_name');
-        $this->click("//option[@value='Individual']");
-        $this->click('visibility');
-        $this->select('visibility', 'value=Public Pages');
-        $this->click('is_searchable');
-        $this->click('in_selector');
-        // click on save
-        $this->click('_qf_Field_next_new-bottom');
-        $this->waitForPageToLoad('30000');
-        //check for field add    
-        $this->assertTrue( $this->isTextPresent("Your CiviCRM Profile Field 'Last Name' has been saved to '$profileTitle'. You can add another profile field.") );
+  function testSearchProfile() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
 
-        // Add Email field.
-        $this->click('field_name[0]');
-        $this->select('field_name[0]', 'value=Contact');
-        $this->click('field_name[1]');
-        $this->select('field_name[1]', 'value=email');
-        $this->click("//option[@value='Contact']");
-        $this->click('visibility');
-        $this->select('visibility', 'value=Public Pages');
-        $this->click('is_searchable');
-        $this->click('in_selector');
-        // click on save
-        $this->click('_qf_Field_next_new-bottom');
-        $this->waitForPageToLoad('30000');
-        //check for field add    
-        $this->assertTrue( $this->isTextPresent("Your CiviCRM Profile Field 'Email' has been saved to '$profileTitle'. You can add another profile field.") ); 
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
 
-        // Add Sample Custom Field.
-        $this->click('field_name[0]');
-        $this->select('field_name[0]', 'value=Individual');
-        $this->click('field_name[1]');
-        $this->select('field_name[1]', 'value=custom_1');
-        $this->click("//option[@value='Individual']");
-        $this->click('visibility');
-        $this->select('visibility', 'value=Public Pages');
-        $this->click('is_searchable');
-        $this->click('in_selector');
-        // click on save
-        $this->click('_qf_Field_next-bottom');
-        $this->waitForPageToLoad('30000');
-        
-        // Add Individual Contact.
-        $this->waitForElementPresent("xpath=//div[@id='field_page']/div[1]/a[4]/span[text()='Use (create mode)']");
-        $this->click("xpath=//div[@id='field_page']/div[1]/a[4]/span[text()='Use (create mode)']");
+    // Go directly to the URL of the screen where you will be
+    // Add new profile.
+    $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
 
-        $this->waitForElementPresent('_qf_Edit_next');
-        $lastName = substr(sha1(rand()), 0, 7);
-        
-        // Fill Last Name
-        $this->type('last_name', $lastName);
-        // Fill Email
-        $this->type('email-Primary', "jhon@$lastName.com");
-        // Select Custom option
-        $this->click('CIVICRM_QFID_Edu_2');
-        $this->click('_qf_Edit_next');
-        $this->isTextPresent('Thank you. Your information has been saved.');
+    $this->waitForPageToLoad('30000');
 
-        // Search Contact via profile.
-        $this->waitForElementPresent("xpath=//div[@id='crm-container']//div/a[text()='» Back to Listings']");
-        $this->click("xpath=//div[@id='crm-container']//div/a[text()='» Back to Listings']" );
-        $this->waitForElementPresent('css=div.crm-block div div div');
-        $this->click('css=div.crm-block div div div');
-        // Fill Last Name
-        $this->type('last_name', $lastName);
-        // Fill Email
-        $this->type('email-Primary', "jhon@$lastName.com");
-        // Select Custom option
-        $this->click('CIVICRM_QFID_Edu_2');
-        $this->click('_qf_Search_refresh');
-        
-        // Verify Data.
-        $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[2][text()='$lastName']");
-        $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[3][text()='$lastName']");
-        $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[4][text()='jhon@$lastName.com']");
-        $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[5][text()='Education']");
-        
-        // Go back to Profile fields admin
-        $this->open($this->sboxPath . 'civicrm/admin/uf/group/field?reset=1&action=browse&gid=' . $profileId);
-        $this->waitForPageToLoad('30000');
+    $this->click('newCiviCRMProfile-bottom');
 
-        // Edit first profile field
-        $this->waitForElementPresent("xpath=//table/tbody/tr[1]/td[9]");
-        $this->click("xpath=//table/tbody/tr[1]/td[9]/span[1]/a[1]");
-        
-        // Verify that visibility field is present in edit form
-        $this->waitForPageToLoad('30000');
-        $this->waitForElementPresent('_qf_Field_next-bottom');
+    $this->waitForElementPresent('_qf_Group_next-bottom');
 
-        // sleep 5 to make sure jQuery is not hiding field after page load
-        sleep(5);
-        $this->assertTrue( $this->isElementPresent("visibility"), 'Visibility field not present when editing existing profile field.' );
-        $this->assertTrue( $this->isTextPresent("Is this field hidden from other users") ); 
-        $this->select('visibility', 'value=Public Pages and Listings');
-        
-    }
+    //Name of profile
+    $profileTitle = 'profile_' . substr(sha1(rand()), 0, 7);
+    $this->type('title', $profileTitle);
+
+    //click on save
+    $this->click('_qf_Group_next-bottom');
+    $this->waitForPageToLoad('30000');
+
+    //check for  profile create
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '$profileTitle' has been added. You can add fields to this profile now"));
+
+    // Get profile id (gid) from URL
+    $elements = $this->parseURL();
+    $profileId = $elements['queryString']['gid'];
+
+    // Add Last Name field.
+    $this->click('field_name[0]');
+    $this->select('field_name[0]', 'value=Individual');
+    $this->click('field_name[1]');
+    $this->select('field_name[1]', 'value=last_name');
+    $this->click("//option[@value='Individual']");
+    $this->click('visibility');
+    $this->select('visibility', 'value=Public Pages');
+    $this->click('is_searchable');
+    $this->click('in_selector');
+    // click on save
+    $this->click('_qf_Field_next_new-bottom');
+    $this->waitForPageToLoad('30000');
+    //check for field add
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Last Name' has been saved to '$profileTitle'. You can add another profile field."));
+
+    // Add Email field.
+    $this->click('field_name[0]');
+    $this->select('field_name[0]', 'value=Contact');
+    $this->click('field_name[1]');
+    $this->select('field_name[1]', 'value=email');
+    $this->click("//option[@value='Contact']");
+    $this->click('visibility');
+    $this->select('visibility', 'value=Public Pages');
+    $this->click('is_searchable');
+    $this->click('in_selector');
+    // click on save
+    $this->click('_qf_Field_next_new-bottom');
+    $this->waitForPageToLoad('30000');
+    //check for field add
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Email' has been saved to '$profileTitle'. You can add another profile field."));
+
+    // Add Sample Custom Field.
+    $this->click('field_name[0]');
+    $this->select('field_name[0]', 'value=Individual');
+    $this->click('field_name[1]');
+    $this->select('field_name[1]', 'value=custom_1');
+    $this->click("//option[@value='Individual']");
+    $this->click('visibility');
+    $this->select('visibility', 'value=Public Pages');
+    $this->click('is_searchable');
+    $this->click('in_selector');
+    // click on save
+    $this->click('_qf_Field_next-bottom');
+    $this->waitForPageToLoad('30000');
+
+    // Add Individual Contact.
+    $this->waitForElementPresent("xpath=//div[@id='field_page']/div[1]/a[4]/span[text()='Use (create mode)']");
+    $this->click("xpath=//div[@id='field_page']/div[1]/a[4]/span[text()='Use (create mode)']");
+
+    $this->waitForElementPresent('_qf_Edit_next');
+    $lastName = substr(sha1(rand()), 0, 7);
+
+    // Fill Last Name
+    $this->type('last_name', $lastName);
+    // Fill Email
+    $this->type('email-Primary', "jhon@$lastName.com");
+    // Select Custom option
+    $this->click('CIVICRM_QFID_Edu_2');
+    $this->click('_qf_Edit_next');
+    $this->isTextPresent('Thank you. Your information has been saved.');
+
+    // Search Contact via profile.
+    $this->waitForElementPresent("xpath=//div[@id='crm-container']//div/a[text()='» Back to Listings']");
+    $this->click("xpath=//div[@id='crm-container']//div/a[text()='» Back to Listings']");
+    $this->waitForElementPresent('css=div.crm-block div div div');
+    $this->click('css=div.crm-block div div div');
+    // Fill Last Name
+    $this->type('last_name', $lastName);
+    // Fill Email
+    $this->type('email-Primary', "jhon@$lastName.com");
+    // Select Custom option
+    $this->click('CIVICRM_QFID_Edu_2');
+    $this->click('_qf_Search_refresh');
+
+    // Verify Data.
+    $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[2][text()='$lastName']");
+    $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[3][text()='$lastName']");
+    $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[4][text()='jhon@$lastName.com']");
+    $this->waitForElementPresent("xpath=//table/tbody/tr[2]/td[5][text()='Education']");
+
+    // Go back to Profile fields admin
+    $this->open($this->sboxPath . 'civicrm/admin/uf/group/field?reset=1&action=browse&gid=' . $profileId);
+    $this->waitForPageToLoad('30000');
+
+    // Edit first profile field
+    $this->waitForElementPresent("xpath=//table/tbody/tr[1]/td[9]");
+    $this->click("xpath=//table/tbody/tr[1]/td[9]/span[1]/a[1]");
+
+    // Verify that visibility field is present in edit form
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent('_qf_Field_next-bottom');
+
+    // sleep 5 to make sure jQuery is not hiding field after page load
+    sleep(5);
+    $this->assertTrue($this->isElementPresent("visibility"), 'Visibility field not present when editing existing profile field.');
+    $this->assertTrue($this->isTextPresent("Is this field hidden from other users"));
+    $this->select('visibility', 'value=Public Pages and Listings');
+  }
 }
-?>
+
+

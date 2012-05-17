@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -26,26 +25,32 @@
  +--------------------------------------------------------------------+
 */
 
+
 // patch for CRM-3154
-if ( phpversion( ) == "5.2.2" &&
-     ! isset( $GLOBALS['HTTP_RAW_POST_DATA'] ) ) {
-    $GLOBALS['HTTP_RAW_POST_DATA'] = file_get_contents('php://input');
+if (phpversion() == "5.2.2" &&
+  !isset($GLOBALS['HTTP_RAW_POST_DATA'])
+) {
+  $GLOBALS['HTTP_RAW_POST_DATA'] = file_get_contents('php://input');
 }
 
-session_start( );
+session_start();
 
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
 
-$server = new SoapServer(null, 
-                          array('uri' => 'urn:civicrm',
-                                'soap_version' => SOAP_1_2 ) );
+$server = new SoapServer(NULL,
+  array(
+    'uri' => 'urn:civicrm',
+    'soap_version' => SOAP_1_2,
+  )
+);
 
 
 require_once 'CRM/Utils/SoapServer.php';
 $crm_soap = new CRM_Utils_SoapServer();
 
 /* Cache the real UF, override it with the SOAP environment */
+
 $config = CRM_Core_Config::singleton();
 
 $server->setClass('CRM_Utils_SoapServer', $config->userFrameworkClass);

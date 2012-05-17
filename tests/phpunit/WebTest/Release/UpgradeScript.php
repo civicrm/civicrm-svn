@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -25,28 +24,27 @@
  +--------------------------------------------------------------------+
 */
 
+
 require_once 'ReleaseTestCase.php';
 
-// name of the class doesn't end with Test on purpose - this way this 
+// name of the class doesn't end with Test on purpose - this way this
 // webtest is not picked up by the suite, since it needs to run
 // on specially prepare sandbox
 // more details: http://wiki.civicrm.org/confluence/display/CRMDOC40/Release+testing+script+documentation
 class WebTest_Release_UpgradeScript extends WebTest_Release_ReleaseTestCase {
 
-  protected function setUp()
-  {
-      parent::setUp();
+  protected function setUp() {
+    parent::setUp();
   }
 
-  function testUpgrade( )
-  {
-      $this->open( $this->sboxPath );
-      $this->webtestLogin( );
-      $this->open($this->settings->upgradeURL);
-      $this->waitForTextPresent("Upgrade CiviCRM to Version");
-      $this->clickAndWait("css=input[type=submit]");
-      
-      $this->waitForTextPresent("CiviCRM upgrade was successful.");      
+  function testUpgrade() {
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
+    $this->open($this->settings->upgradeURL);
+    $this->waitForTextPresent("Upgrade CiviCRM to Version");
+    $this->clickAndWait("css=input[type=submit]");
+
+    $this->waitForTextPresent("CiviCRM upgrade was successful.");
   }
-  
 }
+

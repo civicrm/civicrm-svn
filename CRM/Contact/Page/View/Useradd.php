@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -40,28 +39,29 @@ require_once 'CRM/Contact/BAO/Contact.php';
  * Dummy page for details of Email
  *
  */
-class CRM_Contact_Page_View_Useradd extends CRM_Core_Page 
-{
-    /**
-     * Run the page.
-     *
-     * This method is called after the page is created.
-     *
-     * @return void
-     * @access public
-     *
-     */
-    function run()
-    {
-        require_once 'CRM/Core/Action.php';
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Task_Useradd',
-                                                      ts('Add User'),
-                                                      CRM_Core_Action::ADD );
-        $controller->setEmbedded( true );
+class CRM_Contact_Page_View_Useradd extends CRM_Core_Page {
 
-        $controller->process( );
-        $controller->run( ); 
-        
-        return parent::run();
-    }
+  /**
+   * Run the page.
+   *
+   * This method is called after the page is created.
+   *
+   * @return void
+   * @access public
+   *
+   */
+  function run() {
+    require_once 'CRM/Core/Action.php';
+    $controller = new CRM_Core_Controller_Simple('CRM_Contact_Form_Task_Useradd',
+      ts('Add User'),
+      CRM_Core_Action::ADD
+    );
+    $controller->setEmbedded(TRUE);
+
+    $controller->process();
+    $controller->run();
+
+    return parent::run();
+  }
 }
+

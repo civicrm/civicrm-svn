@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -51,7 +50,6 @@ require_once 'CRM/Core/BAO/CustomField.php';
  *
  */
 
-
 /**
  * Defines 'custom field' within a group.
  *
@@ -61,73 +59,67 @@ require_once 'CRM/Core/BAO/CustomField.php';
  * @return Newly created custom_field id array
  *
  * @access public
- * 
+ *
  * @example CustomFieldCreate.php
  * {@getfields CustomField_create}
  * {@example CustomFieldCreate.php 0}
  *
  */
+function civicrm_api3_custom_field_create($params) {
 
-function civicrm_api3_custom_field_create( $params )
-{
-        
-        if ( !( CRM_Utils_Array::value('option_type', $params ) ) ) {
-            if( CRM_Utils_Array::value('id', $params ) ){
-                $params['option_type'] = 2;
-            } else {
-                $params['option_type'] = 1;
-            }
-        }
-        
-        
-        // Array created for passing options in params
-        if ( isset( $params['option_values'] ) && is_array( $params['option_values'] ) ) {
-            foreach ( $params['option_values'] as $key => $value ){
-                $params['option_label'][$key] = $value['label'];
-                $params['option_value'][$key] = $value['value'];
-                $params['option_status'][$key] = $value['is_active'];
-                $params['option_weight'][$key] = $value['weight']; 
-            }
-        }
-        
-        $customField = CRM_Core_BAO_CustomField::create($params);
-        _civicrm_api3_object_to_array_unique_fields($customField , $values[$customField->id]);
-        return civicrm_api3_create_success($values,$params, 'custom_field',$customField);
+  if (!(CRM_Utils_Array::value('option_type', $params))) {
+    if (CRM_Utils_Array::value('id', $params)) {
+      $params['option_type'] = 2;
+    }
+    else {
+      $params['option_type'] = 1;
+    }
+  }
 
+
+  // Array created for passing options in params
+  if (isset($params['option_values']) && is_array($params['option_values'])) {
+    foreach ($params['option_values'] as $key => $value) {
+      $params['option_label'][$key] = $value['label'];
+      $params['option_value'][$key] = $value['value'];
+      $params['option_status'][$key] = $value['is_active'];
+      $params['option_weight'][$key] = $value['weight'];
+    }
+  }
+
+  $customField = CRM_Core_BAO_CustomField::create($params);
+  _civicrm_api3_object_to_array_unique_fields($customField, $values[$customField->id]);
+  return civicrm_api3_create_success($values, $params, 'custom_field', $customField);
 }
 /*
  * Adjust Metadata for Create action
  * 
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_custom_field_create_spec(&$params){
+function _civicrm_api3_custom_field_create_spec(&$params) {
   $params['label']['api.required'] = 1;
-  $params['custom_group_id']['api.required'] = 1; 
+  $params['custom_group_id']['api.required'] = 1;
 }
+
 /**
  * Use this API to delete an existing custom group field.
  *
  * @param $params     Array id of the field to be deleted
  * @example CustomFieldDelete.php
- * 
+ *
  * {@example CustomFieldDelete.php 0}
  * {@getfields CustomField_delete}
  * @access public
  **/
-function civicrm_api3_custom_field_delete( $params )
-{
-       
-        $field = new CRM_Core_BAO_CustomField( );
-        $field->id = $params['id'];
-        $field->find(true);
-        
-        
-        $customFieldDelete = CRM_Core_BAO_CustomField::deleteField( $field );
-        return $customFieldDelete ?
-            civicrm_api3_create_error('Error while deleting custom field') :
-            civicrm_api3_create_success( );
+function civicrm_api3_custom_field_delete($params) {
+
+  $field = new CRM_Core_BAO_CustomField();
+  $field->id = $params['id'];
+  $field->find(TRUE);
 
 
+  $customFieldDelete = CRM_Core_BAO_CustomField::deleteField($field);
+  return $customFieldDelete ? civicrm_api3_create_error('Error while deleting custom field') : civicrm_api3_create_success();
 }
 
 /**
@@ -135,13 +127,11 @@ function civicrm_api3_custom_field_delete( $params )
  *
  * @param array $params Array to search on
  *{@getfields CustomField_get}
-* @access public
- * 
+ * @access public
+ *
  **/
-function civicrm_api3_custom_field_get($params)
-{
-        return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
-
+function civicrm_api3_custom_field_get($params) {
+  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
 /*
@@ -155,41 +145,42 @@ function civicrm_api3_custom_field_get($params)
  *                                     in params
  * @return Array  Validation errors
  */
-function _civicrm_api3_custom_field_validate_fields($params, $fields, $checkForDisallowed = false, $checkForRequired = false) {
-    $checkFields = $errors = $disallowedFields = $requiredFields = array( );
-    foreach ( $params as $fieldName => $value ) {
-        if (substr($fieldName, 0, 6) === 'custom') {
-            $customFieldID = CRM_Core_BAO_CustomField::getKeyID($fieldName);
-            if ( $customFieldID ) {
-                $checkFields[$customFieldID] = $fieldName;
-                if ( !in_array($customFieldID, array_keys($fields) ) ) {
-                    $disallowedFields[$customFieldID] = $fieldName;
-                } else if( CRM_Utils_Array::value('is_required', $fields[$customFieldID] ) ) {
-                    $requiredFields[$customFieldID] = $fieldName;
-                }
-            }
+function _civicrm_api3_custom_field_validate_fields($params, $fields, $checkForDisallowed = FALSE, $checkForRequired = FALSE) {
+  $checkFields = $errors = $disallowedFields = $requiredFields = array();
+  foreach ($params as $fieldName => $value) {
+    if (substr($fieldName, 0, 6) === 'custom') {
+      $customFieldID = CRM_Core_BAO_CustomField::getKeyID($fieldName);
+      if ($customFieldID) {
+        $checkFields[$customFieldID] = $fieldName;
+        if (!in_array($customFieldID, array_keys($fields))) {
+          $disallowedFields[$customFieldID] = $fieldName;
         }
+        elseif (CRM_Utils_Array::value('is_required', $fields[$customFieldID])) {
+          $requiredFields[$customFieldID] = $fieldName;
+        }
+      }
     }
-    
-    if ( empty($checkFields) ) {
-        return $errors;
-    }
-    
-    if ( $checkForDisallowed && !empty($disallowedFields) ) {
-        $errors[] = "Can't use custom field(s) : ". implode(', ', $disallowedFields);
-        return $errors; 
-    }
-    
-    if ( $checkForRequired && !empty($missingRequired) ) {
-        $errors[] = 'Missing required field(s) : '. implode(', ', $missingRequired);
-        return $errors;
-    }
-    
-    foreach( $checkFields as $fieldId => $fieldName ) {
-        _civicrm_api3_custom_field_validate_field($fieldName, $params[$fieldName], $fields[$fieldId], $errors );   
-    }
-    
+  }
+
+  if (empty($checkFields)) {
     return $errors;
+  }
+
+  if ($checkForDisallowed && !empty($disallowedFields)) {
+    $errors[] = "Can't use custom field(s) : " . implode(', ', $disallowedFields);
+    return $errors;
+  }
+
+  if ($checkForRequired && !empty($missingRequired)) {
+    $errors[] = 'Missing required field(s) : ' . implode(', ', $missingRequired);
+    return $errors;
+  }
+
+  foreach ($checkFields as $fieldId => $fieldName) {
+    _civicrm_api3_custom_field_validate_field($fieldName, $params[$fieldName], $fields[$fieldId], $errors);
+  }
+
+  return $errors;
 }
 
 /*
@@ -202,107 +193,109 @@ function _civicrm_api3_custom_field_validate_fields($params, $fields, $checkForD
  *
  * @return Array  Validation errors
  */
-function _civicrm_api3_custom_field_validate_field( $fieldName, $value, $fieldDetails, &$errors = array( ) ) {
-    if ( !$value ) {
-        return $errors;
-    }
+function _civicrm_api3_custom_field_validate_field($fieldName, $value, $fieldDetails, &$errors = array(
+  )) {
+  if (!$value) {
+    return $errors;
+  }
 
-    $dataType = $fieldDetails['data_type'];
-    $htmlType = $fieldDetails['html_type'];
-    
-    switch ( $dataType ) {
-        
+  $dataType = $fieldDetails['data_type'];
+  $htmlType = $fieldDetails['html_type'];
+
+  switch ($dataType) {
     case 'Int':
-        if ( ! CRM_Utils_Rule::integer($value) ) {
-            $errors[$fieldName] = 'Invalid integer value for '. $fieldName;
-        }
-        break;
-        
+      if (!CRM_Utils_Rule::integer($value)) {
+        $errors[$fieldName] = 'Invalid integer value for ' . $fieldName;
+      }
+      break;
+
     case 'Float':
-        if ( ! CRM_Utils_Rule::numeric($value) ) {
-            $errors[$fieldName] = 'Invalid numeric value for '. $fieldName;
-        }
-        break;
-        
+      if (!CRM_Utils_Rule::numeric($value)) {
+        $errors[$fieldName] = 'Invalid numeric value for ' . $fieldName;
+      }
+      break;
+
     case 'Money':
-        if ( ! CRM_Utils_Rule::money($value) ) {
-            $errors[$fieldName] = 'Invalid numeric value for '. $fieldName;
-        }
-        break;
-        
+      if (!CRM_Utils_Rule::money($value)) {
+        $errors[$fieldName] = 'Invalid numeric value for ' . $fieldName;
+      }
+      break;
+
     case 'Link':
-        if ( ! CRM_Utils_Rule::url($value) ) {
-            $errors[$fieldName] = 'Invalid link for '. $fieldName;
-        }
-        break;
-        
-        
+      if (!CRM_Utils_Rule::url($value)) {
+        $errors[$fieldName] = 'Invalid link for ' . $fieldName;
+      }
+      break;
+
     case 'Boolean':
-        if ( $value != '1' && $value != '0' ) {
-            $errors[$fieldName] = 'Invalid boolean (use 1 or 0) value for '. $fieldName;
-            }
-        break;
-            
+      if ($value != '1' && $value != '0') {
+        $errors[$fieldName] = 'Invalid boolean (use 1 or 0) value for ' . $fieldName;
+      }
+      break;
+
     case 'Country':
-        if( empty($value) ) {
-            break;
-        }
-        if ( $htmlType != 'Multi-Select Country' && is_array($value) ) {
-            $errors[$fieldName] = 'Invalid country for '. $fieldName;
-            break;
-        }
-
-        if ( !is_array($value) ) {
-            $value = array($value);
-        }
-        
-        $query  = "SELECT count(*) FROM civicrm_country WHERE id IN (". implode(',', $value) .")";
-        if ( CRM_Core_DAO::singleValueQuery( $query ) < count($value) ) {
-            $errors[$fieldName] = 'Invalid country(s) for '. $fieldName;
-        }
+      if (empty($value)) {
         break;
-        
+      }
+      if ($htmlType != 'Multi-Select Country' && is_array($value)) {
+        $errors[$fieldName] = 'Invalid country for ' . $fieldName;
+        break;
+      }
+
+      if (!is_array($value)) {
+        $value = array($value);
+      }
+
+      $query = "SELECT count(*) FROM civicrm_country WHERE id IN (" . implode(',', $value) . ")";
+      if (CRM_Core_DAO::singleValueQuery($query) < count($value)) {
+        $errors[$fieldName] = 'Invalid country(s) for ' . $fieldName;
+      }
+      break;
+
     case 'StateProvince':
-        if( empty($value) ) {
-            break;
-        }
+      if (empty($value)) {
+        break;
+      }
 
-        if ( $htmlType != 'Multi-Select State/Province' && is_array($value) ) {
-            $errors[$fieldName] = 'Invalid State/Province for '. $fieldName;
-            break;
-        }
-        
-        if ( !is_array($value) ) {
-            $value = array($value);
-        }
+      if ($htmlType != 'Multi-Select State/Province' && is_array($value)) {
+        $errors[$fieldName] = 'Invalid State/Province for ' . $fieldName;
+        break;
+      }
 
-        $query = "
+      if (!is_array($value)) {
+        $value = array($value);
+      }
+
+      $query = "
 SELECT count(*) 
   FROM civicrm_state_province
- WHERE id IN ('". implode("','", $value ) ."')";
-        if ( CRM_Core_DAO::singleValueQuery( $query ) < count($value) ) {
-            $errors[$fieldName] = 'Invalid State/Province for '. $fieldName;
-        }
-        break;
-        
+ WHERE id IN ('" . implode("','", $value) . "')";
+      if (CRM_Core_DAO::singleValueQuery($query) < count($value)) {
+        $errors[$fieldName] = 'Invalid State/Province for ' . $fieldName;
+      }
+      break;
+
     case 'ContactReference':
-        //FIX ME
-        break;
-    }
-    
-    if ( in_array($htmlType, array('Select', 'Multi-Select', 'CheckBox', 'Radio', 'AdvMulti-Select')) &&
-         !isset($errors[$fieldName]) ) {
-        require_once 'CRM/Core/OptionGroup.php';
-        $options = CRM_Core_OptionGroup::valuesByID( $fieldDetails['option_group_id'] );
-        if ( !is_array($value) ) {
-            $value = array( $value );
-        }
-        
-        $invalidOptions = array_diff( $value, array_keys($options) );
-        if (!empty($invalidOptions) ) {
-            $errors[$fieldName] = "Invalid option(s) for field '{$fieldName}': ". implode(',', $invalidOptions); 
-        }
+      //FIX ME
+      break;
+  }
+
+  if (in_array($htmlType, array(
+    'Select', 'Multi-Select', 'CheckBox', 'Radio', 'AdvMulti-Select')) &&
+    !isset($errors[$fieldName])
+  ) {
+    require_once 'CRM/Core/OptionGroup.php';
+    $options = CRM_Core_OptionGroup::valuesByID($fieldDetails['option_group_id']);
+    if (!is_array($value)) {
+      $value = array($value);
     }
 
-    return $errors;
+    $invalidOptions = array_diff($value, array_keys($options));
+    if (!empty($invalidOptions)) {
+      $errors[$fieldName] = "Invalid option(s) for field '{$fieldName}': " . implode(',', $invalidOptions);
+    }
+  }
+
+  return $errors;
 }
+

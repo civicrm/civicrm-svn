@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -38,42 +37,44 @@ require_once 'CRM/Admin/Form/Preferences.php';
 
 /**
  * This class generates form components for multi site preferences
- * 
+ *
  */
-class CRM_Admin_Form_Preferences_Multisite extends CRM_Admin_Form_Preferences
-{
-    function preProcess( ) {
-        require_once 'CRM/Utils/System.php';
-        $msDoc = CRM_Utils_System::docURL2( 'Multi Site Installation' );
-        CRM_Utils_System::setTitle(ts('Multi Site Settings'));
-        $this->_varNames = 
-            array( CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME =>
-                   array( 
-                       'is_enabled'                         => array( 'html_type'    => 'checkbox',
-                                                                      'title'        => ts( 'Enable Multi Site Configuration' ),
-                                                                      'weight'       => 1,
-                                                                      'description'  => ts('Multi Site provides support for sharing a single CiviCRM database among multiple sites.') . ' ' . $msDoc,
-                                                                      ),
-                       'uniq_email_per_site'                => array( 'html_type'    => 'checkbox',
-                                                                      'title'        => ts( 'Ensure multi sites have a unique email per site' ),
-                                                                      'weight'       => 2,
-                                                                      'description'  => null,
-                                                                     ),
-                       'domain_group_id'                    => array( 'html_type'    => 'text',
-                                                                      'title'        => ts( 'Parent group for this domain' ),
-                                                                      'weight'       => 3,
-                                                                      'description'  => ts( 'Enter the group ID (civicrm_group.id).')
-                                                                    ),
-                       'event_price_set_domain_id'          => array( 'html_type'    => 'text',
-                                                                       'title'        => ts( 'Domain for event price sets' ),
-                                                                       'weight'       => 4,
-                                                                       'description'  => null,
-                                                                     ),
-                          )
-                   );
+class CRM_Admin_Form_Preferences_Multisite extends CRM_Admin_Form_Preferences {
+  function preProcess() {
+    require_once 'CRM/Utils/System.php';
+    $msDoc = CRM_Utils_System::docURL2('Multi Site Installation');
+    CRM_Utils_System::setTitle(ts('Multi Site Settings'));
+    $this->_varNames = array(
+      CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME =>
+      array(
+        'is_enabled' => array(
+          'html_type' => 'checkbox',
+          'title' => ts('Enable Multi Site Configuration'),
+          'weight' => 1,
+          'description' => ts('Multi Site provides support for sharing a single CiviCRM database among multiple sites.') . ' ' . $msDoc,
+        ),
+        'uniq_email_per_site' => array(
+          'html_type' => 'checkbox',
+          'title' => ts('Ensure multi sites have a unique email per site'),
+          'weight' => 2,
+          'description' => NULL,
+        ),
+        'domain_group_id' => array(
+          'html_type' => 'text',
+          'title' => ts('Parent group for this domain'),
+          'weight' => 3,
+          'description' => ts('Enter the group ID (civicrm_group.id).'),
+        ),
+        'event_price_set_domain_id' => array(
+          'html_type' => 'text',
+          'title' => ts('Domain for event price sets'),
+          'weight' => 4,
+          'description' => NULL,
+        ),
+      ),
+    );
 
-        parent::preProcess( );
-    }
-
+    parent::preProcess();
+  }
 }
 

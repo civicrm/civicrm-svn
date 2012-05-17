@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -38,98 +37,99 @@ require_once 'CRM/Admin/Form.php';
 
 /**
  * This class generates form components for Option Group
- * 
+ *
  */
-class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form
-{
-    /**
-     * Function to build the form
-     *
-     * @return None
-     * @access public
-     */
-    public function buildQuickForm( ) 
-    {
-        parent::buildQuickForm( );
-        if ($this->_action & CRM_Core_Action::DELETE ) { 
-            return;
-        }
-        CRM_Utils_System::setTitle(ts('Dropdown Options'));
+class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form {
 
-        $this->applyFilter('__ALL__', 'trim');
-        $this->add('text',
-                   'name',
-                   ts('Name'),
-                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionGroup', 'name' ),
-                   true );
-        $this->addRule( 'name',
-                        ts('Name already exists in Database.'),
-                        'objectExists',
-                        array( 'CRM_Core_DAO_OptionGroup', $this->_id ) );
-        
-        $this->add('text',
-                   'title',
-                   ts('Group Title'),
-                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionGroup', 'title' ) );
+  /**
+   * Function to build the form
+   *
+   * @return None
+   * @access public
+   */
+  public function buildQuickForm() {
+    parent::buildQuickForm();
+    if ($this->_action & CRM_Core_Action::DELETE) {
+      return;
+    }
+    CRM_Utils_System::setTitle(ts('Dropdown Options'));
 
-        $this->add('text',
-                   'description',
-                   ts('Description'),
-                   CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionGroup', 'description' ) );
-        
-        $element = $this->add( 'checkbox', 'is_active', ts('Enabled?') );
-        if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            if ( in_array( $this->_values['name'], array( 'encounter_medium', 'case_type', 'case_status' ) ) ) {
-                static $caseCount = null; 
-                require_once 'CRM/Case/BAO/Case.php';
-                if ( !isset( $caseCount ) ) {
-                    $caseCount = CRM_Case_BAO_Case::caseCount( null, false );
-                }
-                
-                if ( $caseCount > 0 ) {
-                    $element->freeze( );
-                }
-               
-            } 
-            if ( CRM_Utils_Array::value('is_reserved', $this->_values ) ) { 
-                $this->freeze( array( 'name','is_active' ) );
-            }
+    $this->applyFilter('__ALL__', 'trim');
+    $this->add('text',
+      'name',
+      ts('Name'),
+      CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionGroup', 'name'),
+      TRUE
+    );
+    $this->addRule('name',
+      ts('Name already exists in Database.'),
+      'objectExists',
+      array('CRM_Core_DAO_OptionGroup', $this->_id)
+    );
+
+    $this->add('text',
+      'title',
+      ts('Group Title'),
+      CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionGroup', 'title')
+    );
+
+    $this->add('text',
+      'description',
+      ts('Description'),
+      CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionGroup', 'description')
+    );
+
+    $element = $this->add('checkbox', 'is_active', ts('Enabled?'));
+    if ($this->_action & CRM_Core_Action::UPDATE) {
+      if (in_array($this->_values['name'], array(
+        'encounter_medium', 'case_type', 'case_status'))) {
+        static $caseCount = NULL;
+        require_once 'CRM/Case/BAO/Case.php';
+        if (!isset($caseCount)) {
+          $caseCount = CRM_Case_BAO_Case::caseCount(NULL, FALSE);
         }
 
-        $this->assign('id', $this->_id);
+        if ($caseCount > 0) {
+          $element->freeze();
+        }
+      }
+      if (CRM_Utils_Array::value('is_reserved', $this->_values)) {
+        $this->freeze(array('name', 'is_active'));
+      }
     }
 
-       
-    /**
-     * Function to process the form
-     *
-     * @access public
-     * @return None
-     */
-    public function postProcess() 
-    {
-        CRM_Utils_System::flushCache( );
-        
-        $params = $this->exportValues();
-        require_once 'CRM/Core/BAO/OptionGroup.php';
-        if($this->_action & CRM_Core_Action::DELETE) {
-            CRM_Core_BAO_OptionGroup::del($this->_id);
-            CRM_Core_Session::setStatus( ts('Selected option group has been deleted.') );
-        } else { 
+    $this->assign('id', $this->_id);
+  }
 
-            $params = $ids = array( );
-            // store the submitted values in an array
-            $params = $this->exportValues();
-            
-            if ($this->_action & CRM_Core_Action::UPDATE ) {
-                $ids['optionGroup'] = $this->_id;
-            }
-            
-            $optionGroup = CRM_Core_BAO_OptionGroup::add($params, $ids);
-            CRM_Core_Session::setStatus( ts('The Option Group \'%1\' has been saved.', array( 1 => $optionGroup->name )) );
-        }
-        
+  /**
+   * Function to process the form
+   *
+   * @access public
+   *
+   * @return None
+   */
+  public function postProcess() {
+    CRM_Utils_System::flushCache();
+
+    $params = $this->exportValues();
+    require_once 'CRM/Core/BAO/OptionGroup.php';
+    if ($this->_action & CRM_Core_Action::DELETE) {
+      CRM_Core_BAO_OptionGroup::del($this->_id);
+      CRM_Core_Session::setStatus(ts('Selected option group has been deleted.'));
     }
+    else {
+
+      $params = $ids = array();
+      // store the submitted values in an array
+      $params = $this->exportValues();
+
+      if ($this->_action & CRM_Core_Action::UPDATE) {
+        $ids['optionGroup'] = $this->_id;
+      }
+
+      $optionGroup = CRM_Core_BAO_OptionGroup::add($params, $ids);
+      CRM_Core_Session::setStatus(ts('The Option Group \'%1\' has been saved.', array(1 => $optionGroup->name)));
+    }
+  }
 }
-
 

@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -36,26 +35,27 @@
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
 
-$config   = CRM_Core_Config::singleton( );
-$template = CRM_Core_Smarty::singleton( );
+$config = CRM_Core_Config::singleton();
+$template = CRM_Core_Smarty::singleton();
 
 require_once 'CRM/Utils/Request.php';
-$cpageId  = CRM_Utils_Request::retrieve( 'cpageId',  'Positive', CRM_Core_DAO::$_nullObject );
-$widgetId = CRM_Utils_Request::retrieve( 'widgetId', 'Positive', CRM_Core_DAO::$_nullObject );
-$format   = CRM_Utils_Request::retrieve( 'format',   'Positive', CRM_Core_DAO::$_nullObject );
+$cpageId  = CRM_Utils_Request::retrieve('cpageId', 'Positive', CRM_Core_DAO::$_nullObject);
+$widgetId = CRM_Utils_Request::retrieve('widgetId', 'Positive', CRM_Core_DAO::$_nullObject);
+$format   = CRM_Utils_Request::retrieve('format', 'Positive', CRM_Core_DAO::$_nullObject);
 
 require_once 'CRM/Contribute/BAO/Widget.php';
 
 $jsonvar = 'jsondata';
-if ( isset( $format ) ) {
-    $jsonvar .= $cpageId; 
+if (isset($format)) {
+  $jsonvar .= $cpageId;
 }
 
-$data = CRM_Contribute_BAO_Widget::getContributionPageData( $cpageId, $widgetId );
+$data = CRM_Contribute_BAO_Widget::getContributionPageData($cpageId, $widgetId);
 
 $output = '
-    var '.$jsonvar.' = '.json_encode( $data ) .';
+    var ' . $jsonvar . ' = ' . json_encode($data) . ';
 ';
 
 echo $output;
-CRM_Utils_System::civiExit( );
+CRM_Utils_System::civiExit();
+

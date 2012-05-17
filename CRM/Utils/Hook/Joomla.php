@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -35,53 +34,56 @@
  */
 
 require_once 'CRM/Utils/Hook.php';
-
 class CRM_Utils_Hook_Joomla extends CRM_Utils_Hook {
+  function invoke($numParams,
+    &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
+    $fnSuffix
+  ) {
+    // ensure that we are running in a joomla context
+    // we've not yet figured out how to bootstrap joomla, so we should
+    // not execute hooks if joomla is not loaded
+    if (defined('_JEXEC')) {
+      //Invoke the Joomla plugin system to observe to civicrm events.
+      jimport('joomla.plugin.helper');
+      JPluginHelper::importPlugin('civicrm');
 
-    function invoke( $numParams,
-                     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-                     $fnSuffix ) {
-       // ensure that we are running in a joomla context
-       // we've not yet figured out how to bootstrap joomla, so we should
-       // not execute hooks if joomla is not loaded
-       if ( defined( '_JEXEC' ) ) {
-           //Invoke the Joomla plugin system to observe to civicrm events.
-           jimport( 'joomla.plugin.helper' );
-           JPluginHelper::importPlugin('civicrm');
+      // get app based on cli or web
+      if (PHP_SAPI != 'cli') {
+        $app = JFactory::getApplication('administrator');
+      }
+      else {
+        $app = JCli::getInstance();
+      }
 
-           // get app based on cli or web
-           if ( PHP_SAPI != 'cli' ) {
-             $app = JFactory::getApplication( 'administrator' );
-           } else {
-             $app = JCli::getInstance( );
-           }
+      $result = $app->triggerEvent($fnSuffix, array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5));
 
-           $result = $app->triggerEvent($fnSuffix,array(&$arg1, &$arg2, &$arg3, &$arg4, &$arg5));
+      $moduleResult = $this->commonInvoke($numParams,
+        $arg1, $arg2, $arg3, $arg4, $arg5,
+        $fnSuffix, 'joomla'
+      );
+      if (!empty($moduleResult) && is_array($moduleResult)) {
+        if (empty($result)) {
+          $result = $moduleResult;
+        }
+        elseif (is_array($moduleResult)) {
+          $result = array_merge($result, $moduleResult);
+        }
+      }
 
-           $moduleResult = $this->commonInvoke( $numParams,
-                                                $arg1, $arg2, $arg3, $arg4, $arg5,
-                                                $fnSuffix, 'joomla' );
-           if ( ! empty( $moduleResult ) && is_array( $moduleResult ) ) {
-             if ( empty( $result ) ) {
-               $result = $moduleResult;
-             } else if ( is_array( $moduleResult ) ) {
-               $result = array_merge( $result, $moduleResult );
-             }
-           }
-
-           if ( ! empty( $result ) ) {
-               // collapse result returned from hooks
-               // CRM-9XXX
-               $finalResult = array( );
-               foreach ( $result as $res ) {
-                   if ( ! is_array( $res ) ) {
-                       $res = array( $res );
-                   }
-                   $finalResult = array_merge( $finalResult, $res );
-               }
-               $result = $finalResult;
-           }
-           return $result;
-       }
-   }
+      if (!empty($result)) {
+        // collapse result returned from hooks
+        // CRM-9XXX
+        $finalResult = array();
+        foreach ($result as $res) {
+          if (!is_array($res)) {
+            $res = array($res);
+          }
+          $finalResult = array_merge($finalResult, $res);
+        }
+        $result = $finalResult;
+      }
+      return $result;
+    }
+  }
 }
+

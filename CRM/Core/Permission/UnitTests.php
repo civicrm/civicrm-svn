@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -39,60 +38,60 @@
  */
 class CRM_Core_Permission_UnitTests {
 
-    public static function getPermission( ) {
-        return CRM_Core_Permission::EDIT;
-    }
+  public static function getPermission() {
+    return CRM_Core_Permission::EDIT;
+  }
 
-    public static function whereClause( $type, &$tables, &$whereTables ) {
-        return '( 1 )';
-    }
+  public static function whereClause($type, &$tables, &$whereTables) {
+    return '( 1 )';
+  }
 
-    public static function &group( $groupType = null, $excludeHidden = true ) {
-        return CRM_Core_PseudoConstant::allGroup( $groupType, $excludeHidden );
-    }
+  public static function &group($groupType = NULL, $excludeHidden = TRUE) {
+    return CRM_Core_PseudoConstant::allGroup($groupType, $excludeHidden);
+  }
 
-    // permission mapping to stub check() calls
-    public static $permissions = null;
+  // permission mapping to stub check() calls
+  public static $permissions = NULL;
 
-    static function check($str)
-    {
-        // return the stubbed permission (defaulting to true if the array is missing)
-        return is_array(self::$permissions) ? in_array($str, self::$permissions) : true;
-    }
+  static function check($str) {
+    // return the stubbed permission (defaulting to true if the array is missing)
+    return is_array(self::$permissions) ? in_array($str, self::$permissions) : TRUE;
+  }
 
-    /**
-     * Given a roles array, check for access requirements
-     *
-     * @param array $array the roles to check
-     *
-     * @return boolean true if yes, else false
-     * @static
-     * @access public
-     */
-    static function checkGroupRole( $array) {
-        return false;
-    }
+  /**
+   * Given a roles array, check for access requirements
+   *
+   * @param array $array the roles to check
+   *
+   * @return boolean true if yes, else false
+   * @static
+   * @access public
+   */
+  static
+  function checkGroupRole($array) {
+    return FALSE;
+  }
 
-    /**
-     * Get all the contact emails for users that have a specific permission
-     *
-     * @param string $permissionName name of the permission we are interested in
-     *
-     * @return string a comma separated list of email addresses
-     */
-    public static function permissionEmails( $permissionName ) {
-        return '';
-    }
+  /**
+   * Get all the contact emails for users that have a specific permission
+   *
+   * @param string $permissionName name of the permission we are interested in
+   *
+   * @return string a comma separated list of email addresses
+   */
+  public static function permissionEmails($permissionName) {
+    return '';
+  }
 
-    /**
-     * Get all the contact emails for users that have a specific role
-     *
-     * @param string $roleName name of the role we are interested in
-     *
-     * @return string a comma separated list of email addresses
-     */
-    public static function roleEmails( $roleName ) {
-        return '';
-    }
-    
+  /**
+   * Get all the contact emails for users that have a specific role
+   *
+   * @param string $roleName name of the role we are interested in
+   *
+   * @return string a comma separated list of email addresses
+   */
+  public static function roleEmails($roleName) {
+    return '';
+  }
 }
+

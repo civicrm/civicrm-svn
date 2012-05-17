@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -37,41 +36,40 @@
 /**
  * Date time utilties
  */
-class CRM_Utils_Time 
-{
-    static private $_time = null;
+class CRM_Utils_Time {
+  static private $_time = NULL;
 
-    /**
-     * get the time
-     *
-     * @param string $returnFormat format in which date is to be retrieved
-     *
-     * @return date
-     *
-     * @static
-     */
-    static function getTime( $returnFormat = 'YmdHis' )
-    {
-        if ( ! isset( self::$_time ) ) {
-            self::$_time = date( 'YmdHis' );
-        }
-        return date( $returnFormat, strtotime(self::$_time) );
+  /**
+   * get the time
+   *
+   * @param string $returnFormat format in which date is to be retrieved
+   *
+   * @return date
+   *
+   * @static
+   */
+  static function getTime($returnFormat = 'YmdHis') {
+    if (!isset(self::$_time)) {
+      self::$_time = date('YmdHis');
     }
+    return date($returnFormat, strtotime(self::$_time));
+  }
 
-    /**
-     * set the given time
-     *
-     * @param string $newDateTime  a date formatted with strtotime
-     * @param string $returnFormat format in which date is to be retrieved
-     *
-     * @return date
-     *
-     * @static
-     */
-    static function setTime( $newDateTime, $returnFormat = 'YmdHis' )
-    {
-        self::$_time = date( 'YmdHis', $newDateTime );
+  /**
+   * set the given time
+   *
+   * @param string $newDateTime  a date formatted with strtotime
+   * @param string $returnFormat format in which date is to be retrieved
+   *
+   * @return date
+   *
+   * @static
+   */
+  static
+  function setTime($newDateTime, $returnFormat = 'YmdHis') {
+    self::$_time = date('YmdHis', $newDateTime);
 
-        return self::getTime( $returnFormat );
-    }
+    return self::getTime($returnFormat);
+  }
 }
+

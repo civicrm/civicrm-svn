@@ -23,6 +23,7 @@
  +--------------------------------------------------------------------+
 */
 
+
 /*
  * Heavily based on anonymous code contribution. No claim.
  * CiviCRM Views Integration
@@ -30,31 +31,29 @@
  * Filters Suffix configured using the labels from the database
  *
  */
-
 class civicrm_handler_filter_suffix extends views_handler_filter_in_operator {
-    static $_individualSuffix;
-
-    function construct( ) {
-        parent::construct();
-        if ( ! self::$_individualSuffix ) {
-            if ( ! civicrm_initialize( ) ) {
-                return;
-            }
-            require_once 'CRM/Core/PseudoConstant.php';
-            self::$_individualSuffix = CRM_Core_PseudoConstant::individualSuffix( );
-        }
+  static $_individualSuffix;
+  function construct() {
+    parent::construct();
+    if (!self::$_individualSuffix) {
+      if (!civicrm_initialize()) {
+        return;
+      }
+      require_once 'CRM/Core/PseudoConstant.php';
+      self::$_individualSuffix = CRM_Core_PseudoConstant::individualSuffix();
     }
+  }
 
-    function get_value_options() {
-        if (!isset($this->value_options)) {
-            $this->value_title = t('Suffix');
-            $options = array( );
-            foreach (self::$_individualSuffix as $id => $name ) {
-                $options[$id] = $name;
-            }
-            $this->value_options = $options;
-        }
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('Suffix');
+      $options = array();
+      foreach (self::$_individualSuffix as $id => $name) {
+        $options[$id] = $name;
+      }
+      $this->value_options = $options;
     }
-
+  }
 }
-?>
+
+
