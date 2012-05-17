@@ -66,11 +66,17 @@ function copyFieldValues( fname ) {
     // wysiwyg editor, advanced multi-select ( to do )
     if ( elementType == 'radio' ) {
         firstElementValue = elementId.filter(':checked').eq(0).val();
-        elementId.filter("[value=" + firstElementValue + "]").prop("checked",true);
+        elementId.filter("[value=" + firstElementValue + "]").prop("checked",true).change();
     } else if ( elementType == 'checkbox' ) {
         // handle checkbox
         // get the entity id of first element
-        var firstEntityId = cj('.crm-copy-fields > tbody > tr').attr('entity_id');
+        var firstEntityId = cj('.crm-copy-fields > tbody > tr');
+        
+        if ( firstEntityId.length == 0 ) {
+          firstEntityId = firstElement.closest('div.crm-grid-row');
+        }
+
+        firstEntityId = firstEntityId.attr('entity_id');
     
         var firstCheckElement = cj('.crm-copy-fields [type=checkbox][name^="field['+ firstEntityId +']['+ fname +']"][type!=hidden]');
         
@@ -84,14 +90,14 @@ function copyFieldValues( fname ) {
                  var elementName = cj(this).attr('name');
                  var correctIndex = elementName.split('field['+ firstEntityId +']['+ fname +'][');
                  correctIndexValue = correctIndex[1].replace(']', '');
-                 cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true);
+                 cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']['+ correctIndexValue+']"][type!=hidden]').prop('checked',true).change();
                }
             });
         } else {
             if ( firstCheckElement.prop('checked') ) {
-                cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']"][type!=hidden]').prop('checked',true);
+                cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']"][type!=hidden]').prop('checked',true).change();
             } else {
-                cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']"][type!=hidden]').prop('checked',false);
+                cj('.crm-copy-fields [type=checkbox][name^="field["][name*="['+ fname +']"][type!=hidden]').prop('checked',false).change();
             }
         }
     } else if ( editor ) {
