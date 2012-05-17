@@ -440,7 +440,7 @@ WHERE  inst.report_id = %1";
             // (e.g., values for 'nll' and 'nnll' ops are blank),
             // so store them temporarily and examine below.
             $string_values[$basename] = $field_value;
-            $op_values[$basename] = $params["{$basename}_op"];
+            $op_values[$basename] = CRM_Utils_Array::value("{$basename}_op", $params);
           }
           elseif ($suffix == '_op') {
             // These filters can have an effect even without a value
