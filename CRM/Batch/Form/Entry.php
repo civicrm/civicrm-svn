@@ -503,8 +503,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
     $this->_priceSet = $priceSets = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
 
-    $fieldID = key($this->_priceSet['fields']);
-
     if (isset($params['field'])) {
       $customFields = array();
       foreach ($params['field'] as $key => $value) {
@@ -606,7 +604,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $editedResults = array();
         CRM_Price_BAO_Field::retrieve($editedFieldParams, $editedResults);
-        
+
         if (!empty($editedResults)) {
           unset($this->_priceSet['fields']);
           $this->_priceSet['fields'][$editedResults['id']] = $priceSets['fields'][$editedResults['id']];
@@ -625,6 +623,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           }
         }
 
+        $fieldID = key($this->_priceSet['fields']);
         $value['price_' . $fieldID] = $editedResults['id'];
 
         CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
