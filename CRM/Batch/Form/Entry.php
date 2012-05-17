@@ -233,11 +233,21 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $batchTotal = 0;
     foreach ($params['field'] as $key => $value) {
       $batchTotal += $value['total_amount'];
+
+      //membership type is required for membership batch entry
+      if ( $self->_batchInfo['type_id'] == 2 ) {
+        if ( !CRM_Utils_Array::value( 1, $value['membership_type'] ) ) {
+          $errors["field[$key][membership_type]"] = ts('Membership type is a required field.');
+        }
+      }
     }
 
     if ($batchTotal != $self->_batchInfo['total']) {
       $self->assign('batchAmountMismatch', TRUE);
       $errors['_qf_defaults'] = ts('Total for amounts entered below does not match the expected batch total.');
+    }
+
+    if (!empty($errors)) {
       return $errors;
     }
 

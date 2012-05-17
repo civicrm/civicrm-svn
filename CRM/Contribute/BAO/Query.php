@@ -92,7 +92,7 @@ class CRM_Contribute_BAO_Query {
     }
 
     if (CRM_Utils_Array::value('contribution_batch', $query->_returnProperties)) {
-      $query->_select['contribution_note'] = "civicrm_batch.title as contribution_batch";
+      $query->_select['contribution_batch'] = "civicrm_batch.title as contribution_batch";
       $query->_element['contribution_batch'] = 1;
       $query->_tables['contribution_batch'] = 1;
     }
@@ -233,7 +233,6 @@ class CRM_Contribute_BAO_Query {
     if (!empty($value)) {
       $quoteValue = "\"$value\"";
     }
-
 
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
 
@@ -508,7 +507,8 @@ class CRM_Contribute_BAO_Query {
         $batches = CRM_Core_BAO_Batch::getBatches();
         $query->_where[$grouping][] = " civicrm_entity_batch.batch_id $op $value";
         $query->_qill[$grouping][] = ts('Batch Name %1 %2', array(1 => $op, 2 => $batches[$value]));
-        $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = $query->_whereTables['contribution_batch'] = 1;
+        $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1; 
+        $query->_tables['contribution_batch'] = $query->_whereTables['contribution_batch'] = 1;
         return;
 
       default:

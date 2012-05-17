@@ -131,7 +131,6 @@
           setPaymentBlock( cj(this), cj(this).val() ); 
         });
 
-        showHideOrgSelect( );
       {/literal}{/if}{literal}
 
       // line breaks between radio buttons and checkboxes
@@ -143,12 +142,6 @@
 
    });
    
-   function showHideOrgSelect() {
-     if ( cj('select[id="field[1][membership_type][0]"] option').size() < 2 ) {
-       cj( 'select[id*="][membership_type][0]"]').hide();
-     }
-   }
-
    function setPaymentBlock( form, memType ) {
      var rowID = form.closest('div.crm-grid-row').attr('entity_id');
      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};

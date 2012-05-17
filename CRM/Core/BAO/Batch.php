@@ -346,7 +346,8 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
   static function getBatches() {
     $query = 'SELECT id, title
       FROM civicrm_batch
-      WHERE type_id IN (1,2)';
+      WHERE type_id IN (1,2)
+      AND status_id = 2';
     
     $batches = array();
     $dao = CRM_Core_DAO::executeQuery( $query );
