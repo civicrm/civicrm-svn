@@ -90,6 +90,13 @@ class api_v3_AddressTest extends CiviUnitTestCase {
     $this->getAndCheck($this->_params, $result['id'], 'address');
   }
 
+  public function testCreateAddressTooLongSuffix() {
+    $params = $this->_params;
+    $params['street_number_suffix'] = 'really long string';
+    $result = civicrm_api('address', 'create', $params);
+    $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
+    $this->assertEquals(2100, $result['error_code']);
+  }
   /*
      * is_primary shoule be set as a default. ie. create the address, unset the params & recreate.
      * is_primary should be 0 before & after the update. ie - having no other address
