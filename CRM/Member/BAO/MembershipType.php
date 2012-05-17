@@ -660,7 +660,8 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
       $orgs = $types = array();
 
       $query = 'SELECT memType.id, memType.name, memType.member_of_contact_id, c.sort_name
-        FROM civicrm_membership_type memType INNER JOIN civicrm_contact c ON c.id = memType.member_of_contact_id ';
+        FROM civicrm_membership_type memType INNER JOIN civicrm_contact c ON c.id = memType.member_of_contact_id
+        WHERE memType.is_active = 1 ';
       $dao = CRM_Core_DAO::executeQuery( $query );
       while ($dao->fetch()) {
         $orgs[$dao->member_of_contact_id] = $dao->sort_name;
