@@ -148,16 +148,22 @@ class CRM_Core_Payment_BaseIPN {
       }
     }  
 
+    $addLineItems = FALSE;
+    if (empty($contribution->id)) {
+      $addLineItems = TRUE;
+    }
     $participant = &$objects['participant'];
 
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
 
     $contribution->contribution_status_id = array_search('Failed', $contributionStatus);
     $contribution->save();
-
-    /* $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id ); */
-    if ($objects['contributionRecur']->id)
-
+    
+    //add lineitems for recurring payments
+    if (CRM_Utils_Array::value('contributionRecur', $objects) && $objects['contributionRecur']->id && $addLineItems) {
+      $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
+    }
+    
     foreach ($memberships as $membership) {
       if ($membership) {
         $membership->status_id = 4;
@@ -194,12 +200,20 @@ class CRM_Core_Payment_BaseIPN {
     }
 
     $participant = &$objects['participant'];
-
+    $addLineItems = FALSE;
+    if (empty($contribution->id)) {
+      $addLineItems = TRUE;
+    }
     $contribution->contribution_status_id = 3;
     $contribution->cancel_date = self::$_now;
     $contribution->cancel_reason = CRM_Utils_Array::value('reasonCode', $input);
     $contribution->save();
 
+    //add lineitems for recurring payments
+    if (CRM_Utils_Array::value('contributionRecur', $objects) && $objects['contributionRecur']->id && $addLineItems) {
+      $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
+    }
+    
     foreach ($memberships as $membership) {
       if ($membership) {
         $membership->status_id = 6;
@@ -397,7 +411,11 @@ LIMIT 1;";
     ) {
       $input['net_amount'] = $input['amount'] - $input['fee_amount'];
     }
-
+    $addLineItems = FALSE;
+    if (empty($contribution->id)) {
+      $addLineItems = TRUE;
+    }
+    
     $contribution->contribution_status_id = 1;
     $contribution->is_test = $input['is_test'];
     $contribution->fee_amount = CRM_Utils_Array::value('fee_amount', $input, 0);
@@ -416,8 +434,11 @@ LIMIT 1;";
     }
 
     $contribution->save();
-    /* $this->addrecurLineItems( $objects['contributionRecur']->id, $contribution->id ); */
-    if ($objects['contributionRecur']->id)
+
+    //add lineitems for recurring payments
+    if (CRM_Utils_Array::value('contributionRecur', $objects) && $objects['contributionRecur']->id && $addLineItems) {
+      $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
+    }
 
     // next create the transaction record
     $paymentProcessor = '';
