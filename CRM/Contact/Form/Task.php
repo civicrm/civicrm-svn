@@ -227,20 +227,15 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
       }
     }
 
-    if(CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_all')
-        {
-            $params = array();
-            $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($form,$params);
-            $result1 = CRM_Core_BAO_PrevNextCache::retrieve($cacheKey,null,null,$value['offset'],$value['rowCount1']);
-            $form->assign("value", $result1);
-        }
-    elseif(CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_sel'){
-        $params = array();
-        $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($form,$params);
-        $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($value['offset'],$value['rowCount1']);
-        $form->assign("value", $result);
+   
+    if(CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_sel'){
+      $params = array();
+      $sel = CRM_Utils_Array::value('radio_ts', self::$_searchFormValues);
+      $form->assign('searchtype',$sel);
+      $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($form,$params);
+      $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($value['offset'],$value['rowCount1']);
+      $form->assign("value", $result);
     }
-    
     
     if (!empty($form->_contactIds)) {
       $form->_componentClause = ' contact_a.id IN ( ' . implode(',', $form->_contactIds) . ' ) ';

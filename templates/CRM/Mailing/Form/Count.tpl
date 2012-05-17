@@ -25,7 +25,7 @@
 *}
 <div class="messages status float-right" style="margin-left: 1em;">
     {ts}Total Recipients:{/ts} <strong>{$count|crmNumberFormat}</strong><br />
-   {if $action eq 256}
+   {if $action eq 256 & $ssid eq null}
    <a href="#" id="button"title="Contacts selected in the Find Contacts page"> {ts}View Selected Contacts{/ts}</a>
    {/if}
 </div>
@@ -33,7 +33,7 @@
      {include file="CRM/common/pager.tpl" location="top" noForm=1}
 <table>
 <tr class="columnheader">
-   <th>{ts}Name and Email{/ts}</th>
+   <th>{ts}Name{/ts}</th>
 </tr>
 {foreach from=$value item="row"}
 <tr class="{cycle values="odd-row,even-row"}">

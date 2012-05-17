@@ -39,8 +39,9 @@
 </table>
  {include file="CRM/common/pager.tpl" location="bottom" noForm=1}
 </div>
+{if $searchtype eq 'ts_sel'}
 <br /><a href="#"id="button">{ts}View Selected Contacts{/ts}</a>
-
+{/if}
 {if $rows } 
 <div class="form-item">
 <table width="30%">
