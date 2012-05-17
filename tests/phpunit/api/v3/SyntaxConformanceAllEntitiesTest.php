@@ -154,7 +154,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'MembershipPayment',
       'Participant',
       'ParticipantPayment',
-      'Address',
+
       'PledgePayment',
     );
     if ($sequential === TRUE) {
@@ -511,6 +511,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         'version' => 3,
         'id' => $entity['id'],
         $field => $entity[$field],
+        'debug' => 1,
       );
 
       $update = civicrm_api($entityName, 'create', $updateParams);

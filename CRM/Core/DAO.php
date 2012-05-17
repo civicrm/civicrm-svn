@@ -56,7 +56,11 @@ class CRM_Core_DAO extends DB_DataObject {
   // potential duplication, assuming a smaller number reduces number of queries
   // by some factor, so some tradeoff. CRM-8678
   BULK_MAIL_INSERT_COUNT = 10;
-
+  /*
+   * Define entities that shouldn't be created or deleted when creating/ deleting
+   *  test objects - this prevents world regions, countries etc from being added / deleted
+   */
+  static $_testEntitiesToSkip = array();
   /**
    * the factory class for this application
    * @var object
@@ -1232,6 +1236,11 @@ SELECT contact_id
     ), $numObjects = 1, $createOnly = FALSE) {
 
     static $counter = 0;
+    CRM_Core_DAO::$_testEntitiesToSkip = array(
+      'CRM_Core_DAO_Worldregion',
+      'CRM_Core_DAO_StateProvince',
+      'CRM_Core_DAO_Country',
+    );
 
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
 
@@ -1256,9 +1265,13 @@ SELECT contact_id
             if (!$required && $dbName != 'contact_id') {
               continue;
             }
-
+            if(in_array($FKClassName, CRM_Core_DAO::$_testEntitiesToSkip)){
+              $depObject = new $FKClassName();
+              $depObject->find(true);
+            }else{
             //if it is required we need to generate the dependency object first
-            $depObject = CRM_Core_DAO::createTestObject($FKClassName, CRM_Utils_Array::value($dbName, $params, 1));
+              $depObject = CRM_Core_DAO::createTestObject($FKClassName, CRM_Utils_Array::value($dbName, $params, 1));
+            }
             $object->$dbName = $depObject->id;
             unset($depObject);
 
@@ -1383,7 +1396,7 @@ SELECT contact_id
 
         $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
 
-        if ($FKClassName != NULL && $object->$dbName) {
+        if ($FKClassName != NULL && $object->$dbName && !in_array($FKClassName, CRM_Core_DAO::$_testEntitiesToSkip)) {
 
           //if it is required we need to generate the dependency object first
           CRM_Core_DAO::deleteTestObjects($FKClassName, array('id' => $object->$dbName));
