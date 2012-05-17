@@ -1,10 +1,12 @@
+{include file='../CRM/Upgrade/4.2.alpha1.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-9542 mailing detail report template
 SELECT @option_group_id_report := MAX(id)     FROM civicrm_option_group WHERE name = 'report_template';
 SELECT @weight                 := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_report;
 SELECT @mailCompId       := MAX(id)     FROM civicrm_component where name = 'CiviMail';
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
-  (@option_group_id_report, {localize}'Mail Detail Report'{/localize}, 'mailing/detail', 'CRM_Report_Form_Mailing_Detail', @weight := @weight + 1, {localize}'Provides reporting on Intended and Successful Deliveries, Unsubscribes and Opt-outs, Replies and Forwards.'{/localize}, 0, @mailCompId);
+  (@option_group_id_report, {localize}'Mail Detail Report'{/localize}, 'mailing/detail', 'CRM_Report_Form_Mailing_Detail', @weight := @weight + 1, {localize}'Provides reporting on Intended and Successful Deliveries, Unsubscribes and Opt-outs, Replies and Forwards.'{/localize}, 1, @mailCompId);
 
 INSERT INTO `civicrm_report_instance`
     ( `domain_id`, `title`, `report_id`, `description`, `permission`, `form_values`)
@@ -45,8 +47,8 @@ ALTER TABLE `civicrm_batch` ADD CONSTRAINT `FK_civicrm_batch_saved_search_id` FO
 INSERT INTO
    `civicrm_option_group` (`name`, {localize field='title'}title{/localize}, `is_reserved`, `is_active`)
 VALUES
-  ('batch_type'          , '{ts escape="sql"}Batch Type{/ts}'                         , 1, 1),
-  ('batch_status'        , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1);
+  ('batch_type'          , {localize}'Batch Type'{/localize}                         , 1, 1),
+  ('batch_status'        , {localize}'Batch Status'{/localize}                       , 1, 1);
 
 SELECT @option_group_id_batch_type     := max(id) from civicrm_option_group where name = 'batch_type';
 SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';
@@ -54,17 +56,17 @@ SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group wher
 INSERT INTO
    `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`)
 VALUES
-   (@option_group_id_batch_type, '{ts escape="sql"}Contribution{/ts}', 1, 'Contribution', NULL, 0, 0, 1),
-   (@option_group_id_batch_type, '{ts escape="sql"}Membership{/ts}', 2, 'Membership', NULL, 0, 0, 2),
-   (@option_group_id_batch_status, '{ts escape="sql"}Open{/ts}', 1, 'Open', NULL, 0, 0, 1),
-   (@option_group_id_batch_status, '{ts escape="sql"}Closed{/ts}', 2, 'Closed', NULL, 0, 0, 2);
+   (@option_group_id_batch_type, {localize}'Contribution'{/localize}, 1, 'Contribution', NULL, 0, 0, 1),
+   (@option_group_id_batch_type, {localize}'Membership'{/localize}, 2, 'Membership', NULL, 0, 0, 2),
+   (@option_group_id_batch_status, {localize}'Open'{/localize}, 1, 'Open', NULL, 0, 0, 1),
+   (@option_group_id_batch_status, {localize}'Closed'{/localize}, 2, 'Closed', NULL, 0, 0, 2);
 
 --default profile for contribution and membership batch entry
 INSERT INTO civicrm_uf_group
     ( name, group_type, {localize field='title'}title{/localize}, is_cms_user, is_reserved, help_post)
  VALUES
-    ( 'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Batch Entry{/ts}' , 0, 1, NULL),
-    ( 'membership_batch_entry',   'Membership',   '{ts escape="sql"}Membership Batch Entry{/ts}' ,   0, 1, NULL);
+    ( 'contribution_batch_entry', 'Contribution', {localize}'Contribution Batch Entry'{/localize} , 0, 1, NULL),
+    ( 'membership_batch_entry',   'Membership',   {localize}'Membership Batch Entry'{/localize} ,   0, 1, NULL);
 
 SELECT @uf_group_contribution_batch_entry     := max(id) FROM civicrm_uf_group WHERE name = 'contribution_batch_entry';
 SELECT @uf_group_membership_batch_entry       := max(id) FROM civicrm_uf_group WHERE name = 'membership_batch_entry';
@@ -78,26 +80,26 @@ VALUES
 INSERT INTO civicrm_uf_field
        ( uf_group_id, field_name,              is_required, is_reserved, weight, visibility,                  in_selector, is_searchable, location_type_id, {localize field='label'}label{/localize},  field_type )
 VALUES
-       ( @uf_group_contribution_batch_entry,     'contribution_type',           1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Contribution'),
-       ( @uf_group_contribution_batch_entry,     'total_amount',                1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Amount{/ts}', 'Contribution' ),
-       ( @uf_group_contribution_batch_entry,     'contribution_status_id',      1, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Contribution' ),
-       ( @uf_group_contribution_batch_entry,     'receive_date',                1, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Received{/ts}', 'Contribution'),
-       ( @uf_group_contribution_batch_entry,     'contribution_source',         0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Contribution' ),
-       ( @uf_group_contribution_batch_entry,     'payment_instrument',          0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Instrument{/ts}', 'Contribution' ),
-       ( @uf_group_contribution_batch_entry,     'check_number',                0, 0, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Check Number{/ts}', 'Contribution' ),
-       ( @uf_group_contribution_batch_entry,     'send_receipt',                0, 0, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Send Receipt{/ts}', 'Contribution' ),
-       ( @uf_group_contribution_batch_entry,     'invoice_id',                  0, 0, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Invoice ID{/ts}', 'Contribution' ),
-       ( @uf_group_membership_batch_entry,     'membership_type',             1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'join_date',                   1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Member Since{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'membership_start_date',       0, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Start Date{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'membership_end_date',         0, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}End Date{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'membership_source',           0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'send_receipt',                0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Send Receipt{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'contribution_type',           1, 1, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Contribution Type{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'total_amount',                1, 1, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Amount{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'receive_date',                1, 1, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Received{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'payment_instrument',          0, 0, 10, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Instrument{/ts}', 'Membership' ),
-       ( @uf_group_membership_batch_entry,     'contribution_status_id',      1, 1, 11, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Payment Status{/ts}', 'Membership' );
+       ( @uf_group_contribution_batch_entry,     'contribution_type',           1, 1, 1, 'User and User Admin Only', 0, 0, NULL, {localize}'Type'{/localize}, 'Contribution'),
+       ( @uf_group_contribution_batch_entry,     'total_amount',                1, 1, 2, 'User and User Admin Only', 0, 0, NULL, {localize}'Amount'{/localize}, 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'contribution_status_id',      1, 1, 3, 'User and User Admin Only', 0, 0, NULL, {localize}'Status'{/localize}, 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'receive_date',                1, 1, 4, 'User and User Admin Only', 0, 0, NULL, {localize}'Received'{/localize}, 'Contribution'),
+       ( @uf_group_contribution_batch_entry,     'contribution_source',         0, 0, 5, 'User and User Admin Only', 0, 0, NULL, {localize}'Source'{/localize}, 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'payment_instrument',          0, 0, 6, 'User and User Admin Only', 0, 0, NULL, {localize}'Payment Instrument'{/localize}, 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'check_number',                0, 0, 7, 'User and User Admin Only', 0, 0, NULL, {localize}'Check Number'{/localize}, 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'send_receipt',                0, 0, 8, 'User and User Admin Only', 0, 0, NULL, {localize}'Send Receipt'{/localize}, 'Contribution' ),
+       ( @uf_group_contribution_batch_entry,     'invoice_id',                  0, 0, 9, 'User and User Admin Only', 0, 0, NULL, {localize}'Invoice ID'{/localize}, 'Contribution' ),
+       ( @uf_group_membership_batch_entry,     'membership_type',             1, 1, 1, 'User and User Admin Only', 0, 0, NULL, {localize}'Type'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'join_date',                   1, 1, 2, 'User and User Admin Only', 0, 0, NULL, {localize}'Member Since'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'membership_start_date',       0, 1, 3, 'User and User Admin Only', 0, 0, NULL, {localize}'Start Date'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'membership_end_date',         0, 1, 4, 'User and User Admin Only', 0, 0, NULL, {localize}'End Date'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'membership_source',           0, 0, 5, 'User and User Admin Only', 0, 0, NULL, {localize}'Source'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'send_receipt',                0, 0, 6, 'User and User Admin Only', 0, 0, NULL, {localize}'Send Receipt'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'contribution_type',           1, 1, 7, 'User and User Admin Only', 0, 0, NULL, {localize}'Contribution Type'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'total_amount',                1, 1, 8, 'User and User Admin Only', 0, 0, NULL, {localize}'Amount'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'receive_date',                1, 1, 9, 'User and User Admin Only', 0, 0, NULL, {localize}'Received'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'payment_instrument',          0, 0, 10, 'User and User Admin Only', 0, 0, NULL, {localize}'Payment Instrument'{/localize}, 'Membership' ),
+       ( @uf_group_membership_batch_entry,     'contribution_status_id',      1, 1, 11, 'User and User Admin Only', 0, 0, NULL, {localize}'Payment Status'{/localize}, 'Membership' );
 
 --navigation menu entries
 SELECT @navContributionsID := MAX(id) FROM civicrm_navigation where name = 'Contributions';
@@ -149,15 +151,15 @@ ALTER TABLE `civicrm_mailing` ADD `sms_provider_id` int(10) unsigned NULL COMMEN
 ALTER TABLE `civicrm_mailing` ADD CONSTRAINT `FK_civicrm_mailing_sms_provider_id` FOREIGN KEY (`sms_provider_id`) REFERENCES `civicrm_sms_provider` (`id`) ON DELETE SET NULL;
 
 INSERT INTO
-   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`)
+   `civicrm_option_group` (`name`, {localize field='title'}`title`{/localize}, `is_reserved`, `is_active`)
 VALUES
-   ('sms_provider_name', '{ts escape="sql"}Sms provider Internal Name{/ts}' , 1, 1);
+   ('sms_provider_name', {localize}'Sms provider Internal Name'{/localize} , 1, 1);
 SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
 
 INSERT INTO civicrm_option_value
      (option_group_id, {localize field='label'}label{/localize}, value, name, weight, filter, is_default, component_id)
 VALUES
-     (@option_group_id_sms_provider_name, 'Clickatell', 'Clickatell', 'Clickatell', 1, 0, NULL, NULL);
+     (@option_group_id_sms_provider_name, {localize}'Clickatell'{/localize}, 'Clickatell', 'Clickatell', 1, 0, NULL, NULL);
 
 INSERT INTO
    `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`)
@@ -168,9 +170,9 @@ SELECT @option_group_id_sms_api_type := max(id) from civicrm_option_group where 
 INSERT INTO civicrm_option_value
      (option_group_id, {localize field='label'}label{/localize}, value, name, weight, filter, is_default, is_reserved, component_id)
 VALUES
-     (@option_group_id_sms_api_type, 'http',  1, 'http',  1, NULL, 0, 1, NULL),
-     (@option_group_id_sms_api_type, 'xml',   2, 'xml',   2, NULL, 0, 1, NULL),
-     (@option_group_id_sms_api_type, 'smtp',  3, 'smtp',  3, NULL, 0, 1, NULL);
+     (@option_group_id_sms_api_type, {localize}'http'{/localize},  1, 'http',  1, NULL, 0, 1, NULL),
+     (@option_group_id_sms_api_type, {localize}'xml'{/localize},   2, 'xml',   2, NULL, 0, 1, NULL),
+     (@option_group_id_sms_api_type, {localize}'smtp'{/localize},  3, 'smtp',  3, NULL, 0, 1, NULL);
 
 -- CRM-9784
 SELECT @adminSystemSettingsID := MAX(id) FROM civicrm_navigation where name = 'System Settings';
@@ -197,9 +199,9 @@ SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'a
 SELECT @max_wt              := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
 
 INSERT INTO
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
-   (@option_group_id_act, '{ts escape="sql"}BULK SMS{/ts}', @max_wt, 'BULK SMS', NULL, 1, NULL, @max_wt, '{ts escape="sql"}BULK SMS{/ts}', 0, 1, 1, NULL, NULL);
+   (@option_group_id_act, {localize}'BULK SMS'{/localize}, @max_wt, 'BULK SMS', NULL, 1, NULL, @max_wt, {localize}'BULK SMS'{/localize}, 0, 1, 1, NULL, NULL);
 
 ALTER TABLE `civicrm_mailing_recipients` ADD `phone_id` int(10) unsigned DEFAULT NULL;
 
@@ -301,7 +303,7 @@ SELECT @weight                 := MAX(weight) FROM civicrm_option_value WHERE op
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
-  (@option_group_id_report, {localize}'Contribution and Membership Details'{/localize}, 'contribute/membershipDetail', 'CRM_Report_Form_Contribute_MembershipDetail', @weight := @weight + 1, {localize}'Contribution and Membership Details'{/localize}, 0, @contributeCompId);
+  (@option_group_id_report, {localize}'Contribution and Membership Details'{/localize}, 'contribute/membershipDetail', 'CRM_Report_Form_Contribute_MembershipDetail', @weight := @weight + 1, {localize}'Contribution and Membership Details'{/localize}, 1, @contributeCompId);
 
 INSERT INTO `civicrm_report_instance`
     ( `domain_id`, `title`, `report_id`, `description`, `permission`, `form_values`)
@@ -353,40 +355,13 @@ VALUES
 
 -- CRM-10084
 INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES
-   (@option_group_id_act, '{ts escape="sql"}Cancel Recurring Contribution{/ts}', (SELECT @max_val := @max_val+1), 'Cancel Recurring Contribution', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
-
-SELECT @msg_tpl_workflow_contribution := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_contribution';
-SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_contribution;
-
-SELECT @msg_tpl_workflow_membership := MAX(id)     FROM civicrm_option_group WHERE name = 'msg_tpl_workflow_membership';
-SELECT @weight                 := MAX(weight) + 1 FROM civicrm_option_value WHERE option_group_id = @msg_tpl_workflow_membership;
-
-INSERT INTO civicrm_option_value
-  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
-VALUES
-  (@msg_tpl_workflow_contribution, 'contribution_recurring_cancelled', {localize}'{ts escape="sql"}Contributions - Recurring Cancellation Notification{/ts}'{/localize}, @weight, @weight),
-  (@msg_tpl_workflow_contribution, 'contribution_recurring_edit',      {localize}'{ts escape="sql"}Contributions - Recurring Updates{/ts}'{/localize}, @weight+1, @weight+1);
-
-INSERT INTO civicrm_option_value
-  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
-VALUES
-  (@msg_tpl_workflow_membership, 'membership_autorenew_cancelled', {localize}'{ts escape="sql"}Memberships - Auto-renew Cancellation Notification{/ts}'{/localize}, @weight, @weight);
+   (@option_group_id_act, {localize}'Cancel Recurring Contribution'{/localize}, (SELECT @max_val := @max_val+1), 'Cancel Recurring Contribution', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
 
 -- CRM-10090
 INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES
-(@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution Billing Details{/ts}', (SELECT @max_val := @max_val+1), 'Update Recurring Contribution Billing Details', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL),
-(@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution{/ts}', (SELECT @max_val := @max_val+1), 'Update Recurring Contribution', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
-
-INSERT INTO civicrm_option_value
-  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
-VALUES
-  (@msg_tpl_workflow_contribution, 'contribution_recurring_billing', {localize}'{ts escape="sql"}Contributions - Recurring Billing Updates{/ts}'{/localize}, @weight, @weight);
-
-INSERT INTO civicrm_option_value
-  (option_group_id,         name,                         {localize field='label'}label{/localize},                                         value,   weight)
-VALUES
-  (@msg_tpl_workflow_membership, 'membership_autorenew_billing', {localize}'{ts escape="sql"}Memberships - Auto-renew Billing Updates{/ts}'{/localize}, @weight, @weight);
+(@option_group_id_act, {localize}'Update Recurring Contribution Billing Details'{/localize}, (SELECT @max_val := @max_val+1), 'Update Recurring Contribution Billing Details', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL),
+(@option_group_id_act, {localize}'Update Recurring Contribution'{/localize}, (SELECT @max_val := @max_val+1), 'Update Recurring Contribution', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
