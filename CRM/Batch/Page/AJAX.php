@@ -78,7 +78,7 @@ class CRM_Batch_Page_AJAX {
     $iFilteredTotal = $iTotal = $params['total'];
     $selectorElements = array(
       'batch_name', 'batch_type',
-      'item_count', 'total_amount', 'status', 'created_by', 'links', 'class',
+      'item_count', 'total_amount', 'status', 'created_by', 'links'
     );
 
     echo CRM_Utils_JSON::encodeDataTableSelector($batches, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
