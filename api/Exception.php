@@ -25,7 +25,8 @@ class api_Exception extends Exception
     public function getErrorCodes(){
       return array(
         2000 => '$params was not an array',
-        2001 => 'Invalid Value for Date field'
+        2001 => 'Invalid Value for Date field',
+        2100 => 'String value is longer than permitted length'
       );
     }
 }

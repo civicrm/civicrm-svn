@@ -1296,14 +1296,13 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
 function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
   //if fieldname exists in params
   if (CRM_Utils_Array::value($fieldname, $params)) {
-
     if ($fieldname == 'currency') {
       if (!CRM_Utils_Rule::currencyCode($params[$fieldname])) {
         throw new Exception("currency not a valid code: " . $params[$fieldname]);
       }
     }
-
     if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
+    // validate / swap out any pseudoconstants 
       $constant = $fieldInfo['options'];
       $enum = CRM_Utils_Array::value('enumValues', $fieldInfo);
       if (empty($constant) && !empty($enum)) {
@@ -1321,6 +1320,15 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
           $params[$fieldname] = $numericvalue;
         }
       }
+    }
+    // once we have done any swaps check our field length
+    if(is_string($params[$fieldname]) && 
+      CRM_Utils_Array::value('maxlength',$fieldInfo) 
+      && strlen($params[$fieldname]) > $fieldInfo['maxlength']
+      ){
+      throw new api_Exception( $params[$fieldname] . " is " . strlen($params[$fieldname]) . " characters  - longer than $fieldname length" . $fieldInfo['maxlength'] . ' characters',
+        2100, array('field' => $fieldname)
+      );
     }
   }
 }
