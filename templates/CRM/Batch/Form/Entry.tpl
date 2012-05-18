@@ -278,9 +278,21 @@
       },
       { success:function (data){
         if ( data.count > 0 ) {
-          cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
-          cj('select[id="field[' + blockNo + '][membership_type][1]"]').val( data.values[0].membership_type_id ).change();
-          setDateFieldValue( 'join_date', data.values[0].join_date, blockNo )
+          //get the information on membership type
+          var membershipTypeId   = data.values[0].membership_type_id;
+          var membershipJoinDate = data.values[0].join_date;
+          cj().crmAPI ('MembershipType','get',{ 
+            'sequential' :'1',
+            'id' : membershipTypeId 
+            },
+            { success:function (data){    
+                var memTypeContactId = data.values[0].member_of_contact_id;
+                cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
+                cj('select[id="field[' + blockNo + '][membership_type][0]"]').val( memTypeContactId ).change();
+                cj('select[id="field[' + blockNo + '][membership_type][1]"]').val( membershipTypeId ).change();
+                setDateFieldValue( 'join_date', membershipJoinDate, blockNo )
+              }
+          });
         }
       }
     });
