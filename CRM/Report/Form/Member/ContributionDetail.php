@@ -34,7 +34,7 @@
  * $Id$
  *
  */
-class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
+class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
   protected $_addressField = FALSE;
 
   protected $_emailField = FALSE;
@@ -695,11 +695,11 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         }
       }
     }
+
+    // allow repeat for first donation amount and date in csv
     $fAmt  = '';
     $fDate = '';
     foreach ($rows as $rowNum => $row) {
-      
-      // allow repeat for first donation amount and date in csv
       if ($this->_outputMode == 'csv') {
         if (array_key_exists('civicrm_contact_id', $row)) {
           if ($contactId = $row['civicrm_contact_id']) {
@@ -850,7 +850,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         }
       }
 
-      $entryFound = $this->alterDisplayAddressFields($row, $rows, $rowNum, 'contribute/MembershipDetail', 'List all contribution(s) for this ') ? TRUE : $entryFound;
+      $entryFound = $this->alterDisplayAddressFields($row, $rows, $rowNum, 'member/contributionDetail', 'List all contribution(s) for this ') ? TRUE : $entryFound;
 
       // skip looking further in rows, if first row itself doesn't
       // have the column we need
