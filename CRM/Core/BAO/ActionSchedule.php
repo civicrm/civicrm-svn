@@ -602,14 +602,15 @@ INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.optio
 
       if ($mapping->entity == 'civicrm_participant') {
         $tokenEntity = 'event';
-        $tokenFields = array('event_type', 'title', 'event_id', 'start_date', 'end_date', 'summary', 'description', 'loc_block_id');
+        $tokenFields = array('event_type', 'title', 'event_id', 'start_date', 'end_date', 'summary', 'description', 'location');
         $extraSelect = ", ov.label as event_type, ev.title, ev.id as event_id, ev.start_date, ev.end_date, ev.summary, ev.description, address.* ";
         $extraJoin   = "
 INNER JOIN civicrm_event ev ON e.event_id = ev.id
 INNER JOIN civicrm_option_group og ON og.name = 'event_type'
-INNER JOIN civicrm_loc_block lb ON lb.id = ev.loc_block_id
-INNER JOIN civicrm_address address ON address.id = lb.address_id
-INNER JOIN civicrm_option_value ov ON ev.event_type_id = ov.value AND ov.option_group_id = og.id";
+INNER JOIN civicrm_option_value ov ON ev.event_type_id = ov.value AND ov.option_group_id = og.id
+LEFT  JOIN civicrm_loc_block lb ON lb.id = ev.loc_block_id
+LEFT  JOIN civicrm_address address ON address.id = lb.address_id";
+
       }
 
       if ($mapping->entity == 'civicrm_membership') {
@@ -638,6 +639,15 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
 
         foreach ($tokenFields as $field) {
           $entityTokenParams["{$tokenEntity}." . $field] = $dao->$field;
+          if ($field == 'location') {
+            $loc = array();
+            $loc['street_address'] = $dao->street_address;
+            $loc['city'] = $dao->city;
+            $loc['state_province'] = $dao->state_province_id;
+            $loc['postal_code'] = $dao->postal_code;
+            
+            $entityTokenParams["{$tokenEntity}." . $field] = CRM_Utils_Address::format($loc);
+          }
         }
 
         $isError  = 0;
