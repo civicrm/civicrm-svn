@@ -647,30 +647,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $memType = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $renewMembership->membership_type_id, 'name');
 
     if (CRM_Utils_Array::value('record_contribution', $formValues) || $this->_mode) {
-      //building contribution params
-      $contributionParams = array();
-      $config = CRM_Core_Config::singleton();
-      $contributionParams['currency'] = $config->defaultCurrency;
-      $contributionParams['contact_id'] = $this->_contactID;
-      $contributionParams['source'] = "{$memType} Membership: Offline membership renewal (by {$userName})";
-      $contributionParams['non_deductible_amount'] = 'null';
-      $contributionParams['receive_date'] = date('Y-m-d H:i:s');
-      $contributionParams['receipt_date'] = CRM_Utils_Array::value('send_receipt', $formValues) ? $contributionParams['receive_date'] : 'null';
-
-      $recordContribution = array('total_amount', 'contribution_type_id', 'payment_instrument_id', 'trxn_id', 'contribution_status_id', 'invoice_id', 'check_number', 'is_test');
-      foreach ($recordContribution as $f) {
-        $contributionParams[$f] = CRM_Utils_Array::value($f, $formValues);
-      }
-
-      $contribution = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
-
-      $mpDAO = new CRM_Member_DAO_MembershipPayment();
-      $mpDAO->membership_id = $renewMembership->id;
-      $mpDAO->contribution_id = $contribution->id;
-
-      CRM_Utils_Hook::pre('create', 'MembershipPayment', NULL, $mpDAO);
-      $mpDAO->save();
-      CRM_Utils_Hook::post('create', 'MembershipPayment', $mpDAO->id, $mpDAO);
+      $formValues['contact_id'] = $this->_contactID;
+      CRM_Member_BAO_Membership::recordMembershipContribution( $formValues, CRM_Core_DAO::$_nullArray, $renewMembership->id );
 
       if ($this->_mode) {
         $trxnParams = array(
@@ -732,8 +710,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       CRM_Core_BAO_UFGroup::getValues($this->_contactID, $customFields, $customValues, FALSE, $members);
 
       $this->assign_by_ref('formValues', $formValues);
-      if (is_object($contribution)) {
-        $this->assign('contributionID', $contribution->id);
+      if ( CRM_Utils_Array::value( 'contribution_id', $formValues ) ) {
+        $this->assign('contributionID', $formValues['contribution_id']);
       }
       $this->assign('receive_date', $renewalDate);
       $this->assign('membershipID', $this->_id);
