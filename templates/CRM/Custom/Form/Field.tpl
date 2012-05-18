@@ -250,7 +250,7 @@ function custom_option_html_type( ) {
             <td class="label">{$form.is_searchable.label}</td>
             <td class="html-adjust">{$form.is_searchable.html}
                 {if $action neq 4}
-                    <br /><span class="description">{ts}Can you search on this field in the Advanced and component search forms? NOTE: This feature is available to custom fields used for <strong>Contacts (individuals, organizations and househoulds), Contributions, Pledges, Memberships, Event Participants, Activities, and Relationships</strong>.{/ts}</span>
+                    <br /><span class="description">{ts}Can you search on this field in the Advanced and component search forms? Also determines whether you can include this field as a display column and / or filter in related detail reports.{/ts}</span>
                 {/if}        
             </td>
         </tr>
