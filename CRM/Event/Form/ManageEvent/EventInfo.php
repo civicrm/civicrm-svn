@@ -329,30 +329,6 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent {
 
     // now that we have the event’s id, do some more template-based stuff
     if (CRM_Utils_Array::value('template_id', $params)) {
-      // copy event fees
-      $ogParams = array('name' => "civicrm_event.amount.$event->id");
-      $defaults = array();
-      if (is_null(CRM_Core_BAO_OptionGroup::retrieve($ogParams, $defaults))) {
-
-        // Copy the Main Event Fees
-        CRM_Core_BAO_OptionGroup::copyValue('event', $params['template_id'], $event->id);
-
-        // Copy the Discount option Group and Values
-        $optionGroupIds = CRM_Core_BAO_Discount::getOptionGroup($params['template_id'], 'civicrm_event');
-        foreach ($optionGroupIds as $id) {
-          $discountSuffix = '.discount.' . CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup',
-            $id,
-            'title'
-          );
-          CRM_Core_BAO_OptionGroup::copyValue('event',
-            $params['template_id'],
-            $event->id,
-            FALSE,
-            $discountSuffix
-          );
-        }
-      }
-
       // copy price sets if any
       $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_event', $params['template_id']);
       if ($priceSetId) {

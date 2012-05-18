@@ -203,37 +203,6 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
       CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
     }
 
-    $dependencies = array(
-      'CRM_Core_DAO_OptionGroup' => array('name' => 'civicrm_event.amount.' . $id),
-      'CRM_Core_DAO_UFJoin' => array(
-        'entity_id' => $id,
-        'entity_table' => 'civicrm_event',
-      ),
-    );
-    foreach ($dependencies as $daoName => $values) {
-      require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . '.php');
-      eval('$dao = new ' . $daoName . '( );');
-      if ($daoName == 'CRM_Core_DAO_OptionGroup') {
-        $dao->name = $values['name'];
-        $dao->find();
-        while ($dao->fetch()) {
-          CRM_Core_BAO_OptionGroup::del($dao->id);
-        }
-      }
-      else {
-        foreach ($values as $fieldName => $fieldValue) {
-          $dao->$fieldName = $fieldValue;
-        }
-
-        $dao->find();
-
-        while ($dao->fetch()) {
-          $dao->delete();
-        }
-      }
-    }
-    CRM_Core_OptionGroup::deleteAssoc("civicrm_event.amount.{$id}.discount.%", 'LIKE');
-
     // price set cleanup, CRM-5527
     CRM_Price_BAO_Set::removeFrom('civicrm_event', $id);
 
@@ -951,34 +920,6 @@ WHERE civicrm_event.is_active = 1
       ),
       array('entity_value' => $copyEvent->id)
     );
-
-    //copy option Group and values
-    $copyEvent->default_fee_id = CRM_Core_BAO_OptionGroup::copyValue('event',
-      $id,
-      $copyEvent->id,
-      CRM_Utils_Array::value('default_fee_id', $eventValues)
-    );
-
-    //copy discounted fee levels
-    $discount = CRM_Core_BAO_Discount::getOptionGroup($id, 'civicrm_event');
-
-    if (!empty($discount)) {
-      foreach ($discount as $discountOptionGroup) {
-        $name = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup',
-          $discountOptionGroup
-        );
-        $length = substr_compare($name, "civicrm_event.amount." . $id, 0);
-        $discountSuffix = substr($name, $length * (-1));
-
-        $copyEvent->default_discount_fee_id = CRM_Core_BAO_OptionGroup::copyValue('event',
-          $id,
-          $copyEvent->id,
-          CRM_Utils_Array::value('default_discount_fee_id', $eventValues),
-          $discountSuffix
-        );
-      }
-    }
-
 
     //copy custom data
     $extends = array('event');

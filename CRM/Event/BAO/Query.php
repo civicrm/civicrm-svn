@@ -289,7 +289,7 @@ class CRM_Event_BAO_Query {
         return;
 
       case 'participant_fee_id':
-        $feeLabel = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $value, 'label');
+        $feeLabel = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $value, 'label');
         $feeLabel = CRM_Core_DAO::escapeString(trim($feeLabel));
         if ($value) {
           $query->_where[$grouping][] = "civicrm_participant.fee_level $op '$feeLabel'";

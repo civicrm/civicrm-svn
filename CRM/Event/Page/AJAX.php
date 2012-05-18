@@ -96,19 +96,21 @@ ORDER by v.weight";
    */
   function eventFee() {
     $name = trim(CRM_Utils_Type::escape($_GET['s'], 'String'));
+
     if (!$name) {
       $name = '%';
     }
 
     $whereClause = "cv.label LIKE '$name%' ";
-
-    $query = "
-SELECT distinct(cv.label), cv.id
-FROM civicrm_option_value cv, civicrm_option_group cg
-WHERE cg.name LIKE 'civicrm_event.amount%'
-   AND cg.id = cv.option_group_id AND {$whereClause}
-   GROUP BY cv.label
-";
+    
+    $query = "SELECT DISTINCT (
+cv.label
+), cv.id
+FROM civicrm_price_field_value cv
+LEFT JOIN civicrm_price_field cf ON cv.price_field_id = cf.id
+LEFT JOIN civicrm_price_set_entity ce ON ce.price_set_id = cf.price_set_id
+WHERE ce.entity_table = 'civicrm_event' AND {$whereClause} 
+GROUP BY cv.label";
     $dao = CRM_Core_DAO::executeQuery($query);
     while ($dao->fetch()) {
       echo $elements = "$dao->label|$dao->id\n";

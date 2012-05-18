@@ -150,9 +150,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page {
             $values['feeBlock'], FALSE, 'id'
           );
         }
-        else {
-          CRM_Core_OptionGroup::getAssoc("civicrm_event.amount.{$this->_id}", $values['feeBlock']);
-        }
       }
     }
 

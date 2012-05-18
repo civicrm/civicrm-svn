@@ -310,28 +310,6 @@ class CRM_Event_Form_EventFees {
             }
           }
         }
-
-        if (!isset($defaults[$form->_pId]['amount'])) {
-          // keeping the old code too
-          if (!$optionGroupId) {
-            $optionGroupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup',
-              'civicrm_event.amount.' .
-              $defaults[$form->_pId]['event_id'],
-              'id',
-              'name'
-            );
-          }
-
-          $optionParams = array(
-            'option_group_id' => $optionGroupId,
-            'label' => CRM_Utils_Array::value('fee_level',
-              $defaults[$form->_pId]
-            ),
-          );
-
-          CRM_Core_BAO_CustomOption::retrieve($optionParams, $params);
-          $defaults[$form->_pId]['amount'] = $params['id'];
-        }
       }
       $form->assign('amountId', $defaults[$form->_pId]['amount']);
     }

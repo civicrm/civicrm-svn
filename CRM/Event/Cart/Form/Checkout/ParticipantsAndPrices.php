@@ -59,20 +59,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
     $price_fields_for_event = array();
     $base_field_name = "event_{$event->id}_amount";
     $price_set_id = CRM_Price_BAO_Set::getFor('civicrm_event', $event->id);
-    if ($price_set_id === FALSE && $event->is_monetary) {
-      //$fee_data = array();
-      CRM_Core_OptionGroup::getAssoc("civicrm_event.amount.{$event->id}", $fee_data, TRUE);
-      $choices = array();
-      foreach ($fee_data as $fee) {
-        if (is_array($fee)) {
-          $choices[] = $this->createElement('radio', NULL, '', CRM_Utils_Money::format($fee['value']) . ' ' . $fee['label'], $fee['amount_id']);
-        }
-      }
-      $this->addGroup($choices, $base_field_name, $event->fee_label);
-      $this->addRule($base_field_name, ts('Select at least one option from Price Levels'), 'required');
-      $price_fields_for_event[] = $base_field_name;
-    }
-    elseif ($price_set_id) {
+    if ($price_set_id) {
       $price_sets = CRM_Price_BAO_Set::getSetDetail($price_set_id, TRUE, TRUE);
       $price_set  = $price_sets[$price_set_id];
       $index      = -1;

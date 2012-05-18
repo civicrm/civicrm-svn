@@ -226,15 +226,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
     $cost         = 0;
     $price_set_id = CRM_Price_BAO_Set::getFor("civicrm_event", $event_in_cart->event_id);
     $amount_level = NULL;
-    if ($price_set_id === FALSE) {
-      CRM_Core_OptionGroup::getAssoc("civicrm_event.amount.{$event_in_cart->event_id}", $fee_data, TRUE);
-      $price_set_amount = CRM_Utils_Array::value("event_{$event_in_cart->event_id}_amount", $this->_price_values);
-      $fee_level = CRM_Utils_Array::value($price_set_amount, $fee_data);
-      if ($fee_level) {
-        $cost = $fee_data[$price_set_amount]['value'];
-      }
-    }
-    else {
+    if ($price_set_id) {
       $event_price_values = array();
       foreach ($this->_price_values as $key => $value) {
         if (preg_match("/event_{$event_in_cart->event_id}_(price.*)/", $key, $matches)) {
