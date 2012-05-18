@@ -81,7 +81,7 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form {
       ts('Permission') . ' ', $permissions,
       array(
         'size' => 5,
-        'style' => 'width:150px',
+        'style' => 'width:auto',
         'class' => 'advmultiselect',
       )
     );
