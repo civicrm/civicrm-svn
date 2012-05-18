@@ -108,20 +108,20 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
     $selectClause = $whereClause = $fromClause = NULL;
 
     $selectClause = "
-SELECT    li.id, 
-          li.label, 
-          li.qty, 
-          li.unit_price, 
-          li.line_total, 
-          pf.label as field_title, 
-          pf.html_type, 
+SELECT    li.id,
+          li.label,
+          li.qty,
+          li.unit_price,
+          li.line_total,
+          pf.label as field_title,
+          pf.html_type,
           li.price_field_id,
           li.participant_count,
           li.price_field_value_id,
           pfv.description";
 
     $fromClause = "
-FROM      civicrm_%2 as %2 
+FROM      civicrm_%2 as %2
 LEFT JOIN civicrm_line_item li ON ( li.entity_id = %2.id AND li.entity_table = 'civicrm_%2')
 LEFT JOIN civicrm_price_field_value pfv ON ( pfv.id = li.price_field_value_id )
 LEFT JOIN civicrm_price_field pf ON (pf.id = li.price_field_id )";
@@ -132,12 +132,11 @@ WHERE     %2.id = %1";
     $lineItems = array();
 
     if (!$entityId || !$entity || !$fromClause) {
-
       return $lineItems;
-
     }
 
-    $params = array(1 => array($entityId, 'Integer'),
+    $params = array(
+      1 => array($entityId, 'Integer'),
       2 => array($entity, 'Text'),
     );
 
@@ -157,6 +156,7 @@ WHERE     %2.id = %1";
         'field_title' => $dao->field_title,
         'html_type' => $dao->html_type,
         'description' => $dao->description,
+        'entity_id' => $entityId,
       );
     }
     return $lineItems;

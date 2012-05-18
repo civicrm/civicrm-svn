@@ -2120,7 +2120,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     }
 
     //not really sure what params might be passed in but lets merge em into values
-    $values = array_merge($this->_gatherMessageValues($input, $values), $values);
+    $values = array_merge($this->_gatherMessageValues($input, $values, $ids), $values);
     $template = CRM_Core_Smarty::singleton();
     $this->_assignMessageVariablesToTemplate($values, $input, $template, $recur);
     //what does recur 'mean here - to do with payment processor return functionality but
@@ -2158,7 +2158,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     // todo remove strtolower - check consistency
     if (strtolower($this->_component) == 'event') {
       return CRM_Event_BAO_Event::sendMail($ids['contact'], $values,
-        $this->_relatedObjects['participant']->id, $this->is_test, TRUE
+        $this->_relatedObjects['participant']->id, $this->is_test
       );
     }
     else {
@@ -2216,7 +2216,6 @@ WHERE  contribution_id = %1 AND membership_id != %2";
 
             $result = CRM_Contribute_BAO_ContributionPage::sendMail($ids['contact'], $values, $isTest, $returnMessageText);
 
-
             return $result;
             // otherwise if its about sending emails, continue sending without return, as we
             // don't want to exit the loop.
@@ -2234,9 +2233,11 @@ WHERE  contribution_id = %1 AND membership_id != %2";
      * Values related to the contribution in question are gathered
      *
      * @param array $input input into function (probably from payment processor)
+     * @param array $ids   the set of ids related to the inpurt
+     *
      * @return array $values
      */
-  function _gatherMessageValues($input, &$values) {
+  function _gatherMessageValues($input, &$values, &$ids) {
     // set display address of contributor
     if ($this->address_id) {
       $addressParams     = array('id' => $this->address_id);
@@ -2320,7 +2321,6 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         }
       }
     }
-
 
     return $values;
   }
@@ -2471,7 +2471,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
           $additional->save();
           $additional->free();
           $template->assign('amount', $amount);
-          CRM_Event_BAO_Event::sendMail($cId, $values, $pId, $isTest, TRUE);
+          CRM_Event_BAO_Event::sendMail($cId, $values, $pId, $isTest);
         }
       }
 
@@ -2543,7 +2543,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
   static
   function isSubscriptionCancelled($contributionId) {
     $sql = "
-   SELECT cr.contribution_status_id 
+   SELECT cr.contribution_status_id
      FROM civicrm_contribution_recur cr
 LEFT JOIN civicrm_contribution con ON ( cr.id = con.contribution_recur_id )
     WHERE con.id = %1 LIMIT 1";

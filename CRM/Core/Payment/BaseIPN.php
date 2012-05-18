@@ -146,7 +146,7 @@ class CRM_Core_Payment_BaseIPN {
       if (is_numeric($memberships)) {
         $memberships = array($objects['membership']);
       }
-    }  
+    }
 
     $addLineItems = FALSE;
     if (empty($contribution->id)) {
@@ -158,12 +158,12 @@ class CRM_Core_Payment_BaseIPN {
 
     $contribution->contribution_status_id = array_search('Failed', $contributionStatus);
     $contribution->save();
-    
+
     //add lineitems for recurring payments
     if (CRM_Utils_Array::value('contributionRecur', $objects) && $objects['contributionRecur']->id && $addLineItems) {
       $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
     }
-    
+
     foreach ($memberships as $membership) {
       if ($membership) {
         $membership->status_id = 4;
@@ -213,7 +213,7 @@ class CRM_Core_Payment_BaseIPN {
     if (CRM_Utils_Array::value('contributionRecur', $objects) && $objects['contributionRecur']->id && $addLineItems) {
       $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
     }
-    
+
     foreach ($memberships as $membership) {
       if ($membership) {
         $membership->status_id = 6;
@@ -415,7 +415,7 @@ LIMIT 1;";
     if (empty($contribution->id)) {
       $addLineItems = TRUE;
     }
-    
+
     $contribution->contribution_status_id = 1;
     $contribution->is_test = $input['is_test'];
     $contribution->fee_amount = CRM_Utils_Array::value('fee_amount', $input, 0);

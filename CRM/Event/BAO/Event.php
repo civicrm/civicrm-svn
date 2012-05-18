@@ -1033,8 +1033,8 @@ WHERE civicrm_event.is_active = 1
         $postProfileID = CRM_Utils_Array::value('custom_post_id', $values);
 
         if (CRM_Utils_Array::value('additionalParticipant', $values['params'])) {
-          $preProfileID = CRM_Utils_Array::value('additional_custom_pre_id', $values);
-          $postProfileID = CRM_Utils_Array::value('additional_custom_post_id', $values);
+          $preProfileID = CRM_Utils_Array::value('additional_custom_pre_id', $values, $preProfileID );
+          $postProfileID = CRM_Utils_Array::value('additional_custom_post_id', $values, $postProfileID );
         }
 
         self::buildCustomDisplay($preProfileID,
@@ -1082,9 +1082,27 @@ WHERE civicrm_event.is_active = 1
           $sendTemplateParams['tplParams']['address'] = $displayAddress;
           $sendTemplateParams['tplParams']['contributeMode'] = NULL;
         }
+
         // set lineItem details
         if ($lineItem = CRM_Utils_Array::value('lineItem', $values)) {
-          $sendTemplateParams['tplParams']['lineItem'] = $lineItem;
+          // check if additional prticipant, if so filter only to relevant ones
+          // CRM-9902
+          if (CRM_Utils_Array::value('additionalParticipant', $values['params'])) {
+            $ownLineItems = array( );
+            foreach ( $lineItem as $liKey => $liValue ) {
+              $firstElement = array_pop( $liValue );
+              if ( $firstElement['entity_id'] == $participantId ) {
+                $ownLineItems[0] = $lineItem[$liKey];
+                break;
+              }
+            }
+            if ( ! empty( $ownLineItems ) ) {
+              $sendTemplateParams['tplParams']['lineItem'] = $ownLineItems;
+            }
+          }
+          else {
+            $sendTemplateParams['tplParams']['lineItem'] = $lineItem;
+          }
         }
 
         if ($returnMessageText) {

@@ -407,7 +407,6 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
     }
 
     // replace tokens in the three elements (in subject as if it was the text body)
-
     $domain             = CRM_Core_BAO_Domain::getDomain();
     $hookTokens         = array();
     $mailing            = new CRM_Mailing_BAO_Mailing;
