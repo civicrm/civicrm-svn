@@ -93,7 +93,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
           $priceFieldOptions = CRM_Price_BAO_FieldValue::getValues($defaults['mem_price_field_id'], $options, 'id', 1);
           foreach ($options as $k => $v) {
             $newMembershipType[$v['membership_type_id']] = 1;
-            //$defaults["auto_renew_$v"] = $defaults['auto_renew'][$v];
+            $defaults["auto_renew_".$v['membership_type_id']] = $defaults['auto_renew'][$v['membership_type_id']];
           }
           $defaults['membership_type'] = $newMembershipType;
         }
@@ -363,11 +363,11 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             unset($options[$priceFieldID]);
           }
           $membetype = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($memType);
-          $fieldParams['option_label'][$rowCount] = $membetype['name'];
-          $fieldParams['option_amount'][$rowCount] = $membetype['minimum_fee'];
-          $fieldParams['option_weight'][$rowCount] = $membetype['weight'];
-          $fieldParams['option_description'][$rowCount] = $membetype['description'];
-          $fieldParams['default_option'] = $params['membership_type_default'];
+          $fieldParams['option_label'][$rowCount]       = CRM_Utils_Array::value('name', $membetype);
+          $fieldParams['option_amount'][$rowCount]      = CRM_Utils_Array::value('minimum_fee', $membetype);
+          $fieldParams['option_weight'][$rowCount]      = CRM_Utils_Array::value('weight', $membetype);
+          $fieldParams['option_description'][$rowCount] = CRM_Utils_Array::value('description', $membetype);
+          $fieldParams['default_option']                = CRM_Utils_Array::value('membership_type_default', $params);
 
           $fieldParams['membership_type_id'][$rowCount] = $memType;
           // [$rowCount] = $membetype[''];
@@ -389,9 +389,9 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
       if ($priceSetID) {
         $params['membership_types'] = 'null';
         $params['membership_type_default'] = CRM_Utils_Array::value('membership_type_default', $params, 'null');
-        //$params['membership_types']        = serialize( $membershipTypes );
-        $params['display_min_fee'] = CRM_Utils_Array::value('display_min_fee', $params, FALSE);
-        $params['is_separate_payment'] = CRM_Utils_Array::value('is_separate_payment', $params, FALSE);
+        $params['membership_types']        = serialize( $membershipTypes );
+        $params['display_min_fee']         = CRM_Utils_Array::value('display_min_fee', $params, FALSE);
+        $params['is_separate_payment']     = CRM_Utils_Array::value('is_separate_payment', $params, FALSE);
       }
       $params['entity_table'] = 'civicrm_contribution_page';
       $params['entity_id'] = $this->_id;

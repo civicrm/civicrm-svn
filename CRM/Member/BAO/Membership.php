@@ -684,6 +684,8 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       $allowAutoRenewMembership = $autoRenewOption = FALSE;
       $autoRenewMembershipTypeOptions = array();
 
+      $paymentProcessor = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, 'is_recur = 1');
+
       $separateMembershipPayment = CRM_Utils_Array::value('is_separate_payment', $membershipBlock);
 
       if ($membershipPriceset) {
@@ -742,7 +744,8 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
           elseif ($memType['is_active']) {
             $javascriptMethod = NULL;
             $allowAutoRenewOpt = CRM_Utils_Array::value($value, $form->_membershipBlock['auto_renew']);
-            if (!CRM_Utils_Array::value('is_recur', $form->_paymentProcessor)) {
+            if (is_array($paymentProcessor) &&
+              !CRM_Utils_Array::value($form->_values['payment_processor'], $paymentProcessor)) {
               $allowAutoRenewOpt = 0;
             }
             $javascriptMethod = array('onclick' => "return showHideAutoRenew( this.value );");
@@ -820,7 +823,8 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
           $form->assign('autoRenewOption', $autoRenewOption);
         }
 
-        if (CRM_Utils_Array::value('is_recur', $form->_paymentProcessor) &&
+        if (is_array($paymentProcessor) &&
+          CRM_Utils_Array::value($form->_values['payment_processor'], $paymentProcessor) &&
           ($allowAutoRenewMembership || $autoRenewOption)
         ) {
           $form->addElement('checkbox', 'auto_renew', ts('Please renew my membership automatically.'));

@@ -327,6 +327,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
                          );
           if (property_exists($qf, '_quickConfig') && $qf->_quickConfig && $field->name == 'contribution_amount') {
             $extra += array('onclick' => 'clearAmountOther();');
+          } elseif (property_exists($qf, '_quickConfig') && $qf->_quickConfig && $field->name == 'membership_amount') {
+            $extra += array('onclick' => "return showHideAutoRenew({$opt['membership_type_id']});",
+                            'membership-type' => $opt['membership_type_id'],                            
+                            );
+            $qf->assign('membershipFieldID',$field->id);
           }
           $choice[$opId] = $qf->createElement('radio', NULL, '', $opt['label'], $opt['id'], $extra);
 
