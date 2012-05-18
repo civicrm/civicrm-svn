@@ -2854,11 +2854,11 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                         'default' => CRM_Utils_Array::value('street_address', $defaults, FALSE),
                       ),
                       'supplemental_address_1' =>
-                      array('title' => ts('Supplmentary Address Field 1'),
+                      array('title' => ts('Supplementary Address Field 1'),
                         'default' => CRM_Utils_Array::value('supplemental_address_1', $defaults, FALSE),
                       ),
                       'supplemental_address_2' =>
-                      array('title' => ts('Supplmentary Address Field 2'),
+                      array('title' => ts('Supplementary Address Field 2'),
                         'default' => CRM_Utils_Array::value('supplemental_address_2', $defaults, FALSE),
                       ),
                       'street_number' =>

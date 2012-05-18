@@ -558,7 +558,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'default' => CRM_Utils_Array::value('supplemental_address_1', $defaults, FALSE),
           ),
           'supplemental_address_2' => array(
-            'title' => ts('Supplmentary Address Field 2'),
+            'title' => ts('Supplementary Address Field 2'),
             'default' => CRM_Utils_Array::value('supplemental_address_2', $defaults, FALSE),
           ),
           'street_number' => array(
