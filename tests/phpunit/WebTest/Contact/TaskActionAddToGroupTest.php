@@ -80,7 +80,7 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("2 Contacts"), 'Looking for 2 results with email like ' . $emailString);
 
     // Click "check all" box and act on "Add to group" action
-    $this->click("//form[@id='Advanced']/div[3]/div/div[2]/table/thead/tr/th[1]/input");
+    $this->click("//form[@id='Advanced']/div[3]/div/div[2]/a[2]/table/thead/tr/th[1]/input");
     $this->select("task", "label=Add Contacts to Group");
     $this->click("Go");
     $this->waitForPageToLoad("30000");

@@ -78,7 +78,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     // Remove contacts from group
     $this->waitForElementPresent('Go');
     $this->assertTrue($this->isTextPresent('2 Contacts'));
-    $this->click("xpath=//form[@id='Advanced']/div[3]/div/div[2]/table/thead/tr/th/input");
+    $this->click("xpath=//form[@id='Advanced']/div[3]/div/div[2]/a[2]/table/thead/tr/th/input");
 
     $this->select('task', 'label=Remove Contacts from Group');
     $this->click("xpath=//div[@id='search-status']/table/tbody/tr[3]/td/ul/input[2]");
