@@ -80,7 +80,7 @@ class CRM_Core_Smarty extends Smarty {
     // else we sometime suppress errors quietly and this results
     // in blank emails etc
     if (!is_writable($this->compile_dir)) {
-      echo "CiviCRM doeso not have permission to write temp files in {$smarty->compile_dir}, Exiting";
+           echo "CiviCRM does not have permission to write temp files in {$this->compile_dir}, Exiting";
       exit();
     }
 

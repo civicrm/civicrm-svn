@@ -37,7 +37,7 @@ Plugin Name: CiviCRM
 Plugin URI: http://civicrm.org/
 Description: CiviCRM WP Plugin
 Author: CiviCRM LLC
-Version: 4.1.0
+Version: 4.1.3
 Author URI: http://civicrm.org/
 License: AGPL3
 */
@@ -332,6 +332,15 @@ function civicrm_wp_frontend( $shortcode = false ) {
 
     require_once 'wp-includes/pluggable.php';
 
+    // if snippet is set, which means ajax call, we just
+    // output civicrm html and skip the header
+    if ( CRM_Utils_Array::value( 'snippet', $_GET ) ||
+         ( CRM_Utils_Array::value( 0, $args ) == 'civicrm' &&
+         CRM_Utils_Array::value( 1, $args ) == 'ajax' ) ) {
+      civicrm_wp_invoke( );
+      exit;
+    }
+
     // this places civicrm inside frontend theme
     // wp documentation rocks if you know what you are looking for
     // but best way is to check other plugin implementation :)
@@ -453,7 +462,9 @@ function wp_civicrm_capability( ){
     $roles = array( 'super admin', 'administrator', 'editor' );
 
     foreach( $roles as $role ){
-        if ( is_array( $wp_roles->get_role( $role )->capabilities ) && !array_key_exists( 'access_civicrm_nav_link', $wp_roles->get_role( $role )->capabilities ) ){
+        if ( is_array( $wp_roles->get_role( $role )->capabilities ) &&
+             ! array_key_exists( 'access_civicrm_nav_link',
+                                 $wp_roles->get_role( $role )->capabilities ) ){
             $wp_roles->add_cap( $role, 'access_civicrm_nav_link' );
         }
     }

@@ -177,6 +177,10 @@ class CRM_Report_Form_Instance {
 
     $instanceID = $form->getVar('_id');
     $navigationDefaults = array();
+
+        $permissions = array_flip(CRM_Core_Permission::basicPermissions( ));
+        $defaults['permission'] = $permissions['CiviReport: access CiviReport'];
+
     $config = CRM_Core_Config::singleton();
     $defaults['report_header'] = $report_header = "<html>
   <head>

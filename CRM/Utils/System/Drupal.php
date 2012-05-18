@@ -63,7 +63,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
 
     $admin = user_access('administer users');
     if (!variable_get('user_email_verification', TRUE) || $admin) {
-      $form_state['input']['pass'] = $params['cms_pass'];
+            $form_state['input']['pass'] = array('pass1'=>$params['cms_pass'],'pass2'=>$params['cms_pass']);
     }
 
     $form_state['rebuild'] = FALSE;

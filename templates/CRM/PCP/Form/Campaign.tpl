@@ -30,13 +30,13 @@
 <div class="crm-block crm-contribution-campaign-form-block">
 <table class="form-layout-compressed" width="100%">
 	<tr class="crm-contribution-form-block-title">
-		<td class="label">{$form.title.label}</td>
-		<td>{$form.title.html|crmReplace:class:big}</td>
+		<td class="label">{$form.pcp_title.label}</td>
+		<td>{$form.pcp_title.html|crmReplace:class:big}</td>
 	</tr>
 	<tr class="crm-contribution-form-block-intro_text">
-		<td class="label">{$form.intro_text.label}</td>
+		<td class="label">{$form.pcp_intro_text.label}</td>
 		<td>
-            {$form.intro_text.html|crmReplace:class:big}<br />
+            {$form.pcp_intro_text.html|crmReplace:class:big}<br />
             <span class="description">{ts}Introduce the campaign and why you're supporting it. This text will appear at the top of your personal page AND at the top of the main contribution or event registration page.{/ts}</span>
         </td>
 	</tr>

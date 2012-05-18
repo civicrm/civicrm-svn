@@ -70,3 +70,9 @@ function civicrm_group_roles_schema() {
  */
 function civicrm_group_roles_uninstall() {}
 
+/**
+ * Update CiviGroup Roles Sync module weight to be greater than CiviCRM's.
+ */
+function civicrm_group_roles_update_7400(&$sandbox) {
+    db_query("UPDATE {system} SET weight = 101 WHERE name = 'civicrm_group_roles'");
+}

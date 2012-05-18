@@ -357,6 +357,7 @@ ADD UNIQUE INDEX `unique_entity_id` ( `entity_id` )";
     )) {
     $queries = array();
 
+        require_once 'CRM/Core/DAO/Domain.php';
     $domain = new CRM_Core_DAO_Domain;
     $domain->find(TRUE);
     $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);

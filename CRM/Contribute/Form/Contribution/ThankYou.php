@@ -131,8 +131,11 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
       $this->assign('honor_last_name', $params["honor_last_name"]);
       $this->assign('honor_email', $params["honor_email"]);
     }
+
+        $qParams = "reset=1&amp;id={$this->_id}";
     //pcp elements
     if ($this->_pcpId) {
+      $qParams .= "&amp;pcpId={$this->_pcpId}";
       $this->assign('pcpBlock', TRUE);
       foreach (array(
         'pcp_display_in_roll', 'pcp_is_anonymous', 'pcp_roll_nickname', 'pcp_personal_note') as $val) {
@@ -141,6 +144,8 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
         }
       }
     }
+
+        $this->assign( 'qParams' , $qParams );
 
     if ($membershipTypeID) {
       $transactionID    = $this->get('membership_trx_id');

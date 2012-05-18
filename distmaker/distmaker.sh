@@ -30,6 +30,7 @@ ORIGPWD=`pwd`
 
 # Set no actions by default 
 D5PACK=0
+D56PACK=0
 J5PACK=0
 WP5PACK=0
 

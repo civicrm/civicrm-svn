@@ -337,11 +337,10 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser {
             break;
         }
         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
-          if ($customFields[$customFieldID][2] == 'Date') {
+                    if ( $customFields[$customFieldID]['data_type'] == 'Date' ) {
             CRM_Import_Parser_Contact::formatCustomDate($params, $formatted, $dateType, $key);
             unset($params[$key]);
-          }
-          elseif ($customFields[$customFieldID][2] == 'Boolean') {
+                    } else if ( $customFields[$customFieldID]['data_type'] == 'Boolean' ) {
             $params[$key] = CRM_Utils_String::strtoboolstr($val);
           }
         }
@@ -394,7 +393,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser {
         $dao->id = $formatValues['membership_id'];
         $dates   = array('join_date', 'start_date', 'end_date');
         foreach ($dates as $v) {
-          if (!$formatted[$v]) {
+                    if (!CRM_Utils_Array::value( $v, $formatted )) {
             $formatted[$v] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $formatValues['membership_id'], $v);
           }
         }

@@ -33,7 +33,7 @@ var checkSimilar =  {$checkSimilar};
 {literal}
 
   cj(function( ) {
-     if (cj('#contact_sub_type *').length ==1) {//if they aren't any subtype we don't offer the option
+     if (cj('#contact_sub_type *').length == 0) {//if they aren't any subtype we don't offer the option
         cj('#contact_sub_type').parent().hide();
      }
 

@@ -167,7 +167,7 @@ class CRM_Utils_System {
    * Generate an internal CiviCRM URL
    *
    * @param $path     string   The path being linked to, such as "civicrm/add"
-   * @param $query    string   A query string to append to the link.
+     * @param $query    mixed    A query string to append to the link, or an array of key-value pairs
    * @param $absolute boolean  Whether to force the output to be an absolute link (beginning with http:).
    *                           Useful for links that will be displayed outside the site, such as in an
    *                           RSS feed.
@@ -185,6 +185,16 @@ class CRM_Utils_System {
     $htmlize  = TRUE,
     $frontend = FALSE
   ) {
+        if (is_array($query)) {
+            $buf = '';
+            foreach ($query as $key => $value) {
+              if ($buf != '') {
+                $buf .= '&';
+              }
+              $buf .= urlencode($key) . '=' . urlencode($value);
+            }
+            $query = $buf;
+        }
     // we have a valid query and it has not yet been transformed
     if ($htmlize && !empty($query) && strpos($query, '&amp;') === FALSE) {
       $query = htmlentities($query);

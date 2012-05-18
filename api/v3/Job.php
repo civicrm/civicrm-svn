@@ -278,12 +278,14 @@ function civicrm_api3_job_fetch_activities($params) {
   if (!$lock->isAcquired()) {
     return civicrm_api3_create_error("Could not acquire lock, another EmailProcessor process is running");
   }
-  if (!CRM_Utils_Mail_EmailProcessor::processActivities()) {
+    try {
+       CRM_Utils_Mail_EmailProcessor::processActivities();
+       $values = array( );
+       return civicrm_api3_create_success($values, $params,'mailing','activities');
+    } catch (Exception $e) {
     return civicrm_api3_create_error("Process Activities failed");
   }
-  //   FIXME: processActivities doesn't return true/false on success/failure
-  $values = array();
-  return civicrm_api3_create_success($values, $params, 'mailing', 'activities');
+
   $lock->release();
 }
 

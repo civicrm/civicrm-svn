@@ -586,5 +586,35 @@ class CRM_Utils_String {
 
     return str_replace($search, $replace, $string);
   }
+
+
+  /**
+   * Use HTMLPurifier to clean up a text string and remove any potential
+   * xss attacks. This is primarily used in public facing pages which
+   * accept html as the input string
+   *
+   * @param string $string the input string
+   *
+   * @return string the cleaned up string
+   * @public
+   * @static
+   */
+  static function purifyHTML($string) {
+    static $_filter = null;
+    if ( ! $_filter ) {
+      require_once 'packages/IDS/vendors/htmlpurifier/HTMLPurifier.auto.php';
+
+      $config = HTMLPurifier_Config::createDefault();
+      $config->set('Core.Encoding', 'UTF-8');
+
+      // Disable the cache entirely
+      $config->set('Cache.DefinitionImpl', null);
+
+      $_filter = new HTMLPurifier();
+}
+
+    return $_filter->purify($string);
+  }
+
 }
 

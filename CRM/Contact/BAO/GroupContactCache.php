@@ -246,7 +246,11 @@ WHERE  id = %1
   function load(&$group) {
     $groupID = $group->id;
     $savedSearchID = $group->saved_search_id;
-
+        static $alreadyLoaded = array();
+        if (in_array($groupID, $alreadyLoaded)) {
+          return;
+        }
+        $alreadyLoaded[] = $groupID;
     $sql         = NULL;
     $idName      = 'id';
     $customClass = NULL;

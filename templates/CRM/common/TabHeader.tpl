@@ -62,7 +62,7 @@ function stopSpinner( ) {
             select: function(event, ui) {
                 // we need to change the action of parent form, so that form submits to correct page
                 var url = cj.data(ui.tab, 'load.tabs');
-                {/literal}{if $config->userFramework eq 'Drupal'}{literal}
+                {/literal}{if $config->userSystem->is_drupal}{literal}
                     var actionUrl = url.split( '?' );
                     {/literal}{if $config->cleanURL}{literal}
                       var actualUrl = actionUrl[0];

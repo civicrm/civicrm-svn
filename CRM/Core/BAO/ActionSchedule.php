@@ -825,7 +825,7 @@ reminder.action_schedule_id = %1";
         $startDateClause[] = "'{$now}' >= {$date}";
 
         if ($mapping->entity == 'civicrm_participant') {
-          $startDateClause[] = $operator . "({$now}, INTERVAL 1 DAY ) {$op} r.start_date";
+          $startDateClause[] = $operator. "({$now}, INTERVAL 1 DAY ) {$op} " . $actionSchedule->start_action_date;
         }
         else {
           $startDateClause[] = $operator . "({$now}, INTERVAL 1 DAY ) {$op} " . $dateField;

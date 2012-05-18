@@ -390,6 +390,7 @@ class CRM_Core_BAO_Block {
    */
   static
   function blockDelete($blockName, $params) {
+        require_once "CRM/Core/DAO/{$blockName}.php";
     eval('$block = new CRM_Core_DAO_' . $blockName . '( );');
 
     $block->copyValues($params);

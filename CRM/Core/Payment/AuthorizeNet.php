@@ -318,6 +318,10 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
   }
 
   function _getAuthorizeNetFields() {
+    $amount = $this->_getParam('total_amount');//Total amount is from the form contribution field
+    if(empty($amount)){//CRM-9894 would this ever be the case?? 
+      $amount = $this->_getParam('amount');
+    }
     $fields = array();
     $fields['x_login'] = $this->_getParam('apiLogin');
     $fields['x_tran_key'] = $this->_getParam('paymentKey');
@@ -332,7 +336,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
     $fields['x_customer_ip'] = $this->_getParam('ip_address');
     $fields['x_email'] = $this->_getParam('email');
     $fields['x_invoice_num'] = substr($this->_getParam('invoiceID'), 0, 20);
-    $fields['x_amount'] = $this->_getParam('amount');
+        $fields['x_amount']         = $amount;
     $fields['x_currency_code'] = $this->_getParam('currencyID');
     $fields['x_description'] = $this->_getParam('description');
     $fields['x_cust_id'] = $this->_getParam('contactID');

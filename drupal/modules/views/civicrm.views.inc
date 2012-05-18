@@ -395,20 +395,13 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
 
 
       if (in_array($currentfield['html_type'],
-          $customHTMLTypes
-        )) {
-        $handler = array(
-          'civicrm_handler_field_custom',
-          'click sortable' => TRUE,
-        );
-      }
-      elseif ($currentfield['html_type'] == 'File') {
-        $handler = array(
-          'civicrm_handler_field_custom_file',
-          'click sortable' => TRUE,
-        );
-      }
-      else {
+                           $customHTMLTypes ) ) {
+                $handler = array('handler' => 'civicrm_handler_field_custom',
+                                 'click sortable' => TRUE,);
+            } else if ( $currentfield['html_type'] == 'File' ) {
+                $handler = array('handler' => 'civicrm_handler_field_custom_file',
+                                 'click sortable' => TRUE,);
+             } else {
         $handler = civicrm_get_field_handler($currentfield['data_type']);
       }
 

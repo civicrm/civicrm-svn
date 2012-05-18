@@ -183,11 +183,11 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         global $post;
         $script = get_permalink($post->ID);
       }
-      else {
-        $script = 'index.php';
-      }
 
       // when shortcode is inlcuded in page
+            // also make sure we have valid query object
+            global $wp_query;
+            if ( method_exists( $wp_query, 'get' ) ) {
       if (get_query_var('page_id')) {
         $pageID = "{$separator}page_id=" . get_query_var('page_id');
       }
@@ -196,6 +196,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         $pageID = "{$separator}p=" . get_query_var('p');
       }
     }
+        }
 
     if (isset($fragment)) {
       $fragment = '#' . $fragment;
@@ -213,7 +214,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
 
     if (isset($path)) {
-      if (get_option('permalink_structure') != '') {
+            if ( get_option('permalink_structure') != '' && $pageID ) {
         if (isset($query)) {
           return $script . '?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
@@ -223,10 +224,10 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
       }
       else {
         if (isset($query)) {
-          return $base . $script . '?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
+                    return $base .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
         else {
-          return $base . $script . '?page=CiviCRM&q=' . $path . $pageID . $fragment;
+                    return $base .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
         }
       }
     }
@@ -294,6 +295,10 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
    */
   function setMessage($message) {}
 
+    function loadUser( $user ) {
+        return true;
+    }
+
   function permissionDenied() {
     CRM_Core_Error::fatal(ts('You do not have permission to access this page'));
   }
@@ -333,6 +338,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
 
     require_once ($cmsRootPath . DIRECTORY_SEPARATOR . 'wp-load.php');
+    return true;
   }
 
   function cmsRootPath() {

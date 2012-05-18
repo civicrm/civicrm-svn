@@ -125,6 +125,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $this->assign('intro_text', $this->_values['intro_text']);
     }
 
+        $qParams = "reset=1&amp;id={$this->_id}";
+        if ( $pcpId = CRM_Utils_Array::value( 'pcp_id', $this->_pcpInfo ) ) {
+            $qParams .= "&amp;pcpId={$pcpId}";
+        }
+        $this->assign( 'qParams' , $qParams );
+
     if (CRM_Utils_Array::value('footer_text', $this->_values)) {
       $this->assign('footer_text', $this->_values['footer_text']);
     }
@@ -943,7 +949,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       }
     }
 
-    if (isset($fields['is_recur']) && $fields['is_recur']) {
+        if ( CRM_Utils_Array::value( 'is_recur', $fields ) ) {
       if ($fields['frequency_interval'] <= 0) {
         $errors['frequency_interval'] = ts('Please enter a number for how often you want to make this recurring contribution (EXAMPLE: Every 3 months).');
       }

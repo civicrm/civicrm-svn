@@ -340,7 +340,7 @@ AND         tag_id = ( SELECT id FROM civicrm_tag WHERE name = %2 )";
             s.title,
             ov.label AS activity_type
             FROM  civicrm_survey s, civicrm_option_value ov, civicrm_option_group og
-            WHERE s.id = " . $surveyId . "
+            WHERE s.id = " . (int) $surveyId ."
             AND s.activity_type_id = ov.value
             AND ov.option_group_id = og.id
             AND og.name = 'activity_type'";

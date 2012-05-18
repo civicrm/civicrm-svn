@@ -43,7 +43,7 @@
 {else}
     <table class="report"> 
         <tr>
-    {if $config->userFramework EQ 'Drupal'}
+    {if $config->userSystem->is_drupal EQ '1'}
             <td class="nowrap"><a href="{$ufAccessURL}" id="adminAccess">&raquo; {ts}Drupal Access Control{/ts}</a></td>
             <td>{ts}Grant access to CiviCRM components and other CiviCRM permissions.{/ts}</td>
     {elseif $config->userFramework EQ 'Joomla'}

@@ -108,6 +108,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
         // LINKING TO EVENT REGISTRATION PAGE
       case 'registration':
         if (user_access('register for events') && $data !== NULL && $data !== '') {
+	     require_once 'CRM/Core/Config.php';
           $config = CRM_Core_Config::singleton();
           if ($config->enable_cart) {
             require_once 'CRM/Event/Cart/BAO/EventInCart.php';

@@ -428,7 +428,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     $query->select('id, username, email, password');
     $query->from($JUserTable->getTableName());
     $query->where('(LOWER(username) = LOWER(\'' . $name . '\')) AND (block = 0)');
-    $db->setQuery($query, 0, $limit);
+        $db->setQuery($query, 0, 0);
     $users = $db->loadAssocList();
 
     $row = array();;
@@ -523,12 +523,17 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
      */
   function loadBootStrap($params = array(
     ), $loadUser = TRUE, $throwError = TRUE) {
+        // Setup the base path related constant.
+        $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
+
     // load BootStrap here if needed
     // We are a valid Joomla entry point.
+        if ( ! defined( '_JEXEC' ) ) {
     define('_JEXEC', 1);
-
-    // Setup the base path related constant.
-    $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
+            define('DS', DIRECTORY_SEPARATOR);
+            define('JPATH_BASE', $joomlaBase . '/administrator/' );
+            require $joomlaBase . '/administrator/includes/defines.php';
+        }
 
     // Get the framework.
     require $joomlaBase . '/libraries/import.php';

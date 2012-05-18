@@ -89,7 +89,10 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
     }
 
     //fix for validate contact sub type CRM-5143
-    if (!empty($params['contact_sub_type'])) {
+    if ( isset( $params['contact_sub_type'] ) ) {
+      if ( empty($params['contact_sub_type']) ) {
+        $params['contact_sub_type'] = 'null';
+      } else {
       if (!CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'],
           $params['contact_type'], TRUE
         )) {
@@ -103,6 +106,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
       else {
         $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . trim($params['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
       }
+    }
     }
     else {
       // reset the value
@@ -823,7 +827,12 @@ WHERE id={$id}; ";
         $baseUrl,
         str_replace('\\', '/', $absolutePath)
       );
+        } else if ( $config->userFramework == 'WordPress' ) {
+            $userFrameworkBaseURL = trim( str_replace( '/wp-admin/', '', $config->userFrameworkBaseURL ) );
+            $customFileUploadDirectory = strstr( str_replace('\\', '/', $absolutePath), '/wp-content/' );
+            $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;
     }
+
     return $relativePath;
   }
 

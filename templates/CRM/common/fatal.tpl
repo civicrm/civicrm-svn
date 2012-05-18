@@ -49,7 +49,7 @@
         <hr style="solid 1px" />
         <div class="crm-section crm-error-message">{$error.message}</div>
     {/if}
-    {if $code OR $mysql_code OR $errorDetails}
+    {if ($code OR $mysql_code OR $errorDetails) AND $config->debug}
         <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-fatal-error-details-block" onclick="toggle(this);";>
          <div class="crm-accordion-header">
           <div class="icon crm-accordion-pointer"></div> 
