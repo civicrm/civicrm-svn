@@ -141,7 +141,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
       'Contribution Type' => 'Donation',
       'Contribution Status' => 'Completed',
       'Paid By' => 'Check',
-      'Contribution Amount' => '$ 100.00',
+      'Total Amount' => '$ 100.00',
       'Check Number' => 'check #1041',
     );
     foreach ($verifyData as $label => $value) {
