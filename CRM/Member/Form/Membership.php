@@ -1122,8 +1122,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $memType
       );
     }
+    
     $membershipType = implode(', ', $membershipTypes);
-
 
     // Retrieve the name and email of the current user - this will be the FROM for the receipt email
     list($userName, $userEmail) = CRM_Contact_BAO_Contact_Location::getEmailDetails($ids['userId']);
@@ -1489,107 +1489,12 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $receiptSend = FALSE;
     if (CRM_Utils_Array::value('send_receipt', $formValues)) {
       $receiptSend = TRUE;
-      // retrieve 'from email id' for acknowledgement
-      $receiptFrom = $formValues['from_email_address'];
 
-      if (CRM_Utils_Array::value('payment_instrument_id', $formValues)) {
-        $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
-        $formValues['paidBy'] = $paymentInstrument[$formValues['payment_instrument_id']];
-      }
-
-      // retrieve custom data
-      $customFields = $customValues = array();
-      foreach ($this->_groupTree as $groupID => $group) {
-        if ($groupID == 'info') {
-          continue;
-        }
-        foreach ($group['fields'] as $k => $field) {
-          $field['title'] = $field['label'];
-          $customFields["custom_{$k}"] = $field;
-        }
-      }
-      $members = array(array('member_id', '=', $membership->id, 0, 0));
-      // check whether its a test drive
-      if ($this->_mode == 'test') {
-        $members[] = array('member_test', '=', 1, 0, 0);
-      }
-      CRM_Core_BAO_UFGroup::getValues($this->_contactID, $customFields, $customValues, FALSE, $members);
-      if ($this->_mode) {
-        if (CRM_Utils_Array::value('billing_first_name', $this->_params)) {
-          $name = $this->_params['billing_first_name'];
-        }
-
-        if (CRM_Utils_Array::value('billing_middle_name', $this->_params)) {
-          $name .= " {$this->_params['billing_middle_name']}";
-        }
-
-        if (CRM_Utils_Array::value('billing_last_name', $this->_params)) {
-          $name .= " {$this->_params['billing_last_name']}";
-        }
-        $this->assign('billingName', $name);
-
-        // assign the address formatted up for display
-        $addressParts = array(
-          "street_address-{$this->_bltID}",
-          "city-{$this->_bltID}",
-          "postal_code-{$this->_bltID}",
-          "state_province-{$this->_bltID}",
-          "country-{$this->_bltID}",
-        );
-        $addressFields = array();
-        foreach ($addressParts as $part) {
-          list($n, $id) = explode('-', $part);
-          if (isset($this->_params['billing_' . $part])) {
-            $addressFields[$n] = $this->_params['billing_' . $part];
-          }
-        }
-        $this->assign('address', CRM_Utils_Address::format($addressFields));
-
-        $date = CRM_Utils_Date::format($this->_params['credit_card_exp_date']);
-        $date = CRM_Utils_Date::mysqlToIso($date);
-        $this->assign('credit_card_exp_date', $date);
-        $this->assign('credit_card_number',
-          CRM_Utils_System::mungeCreditCard($this->_params['credit_card_number'])
-        );
-        $this->assign('credit_card_type', $this->_params['credit_card_type']);
-        $this->assign('contributeMode', 'direct');
-        $this->assign('isAmountzero', 0);
-        $this->assign('is_pay_later', 0);
-        $this->assign('isPrimary', 1);
-      }
-      $this->assign('module', 'Membership');
-      $this->assign('contactID', $this->_contactID);
-      $this->assign('membershipID', CRM_Utils_Array::value('membership_id', $params, CRM_Utils_Array::value('membership_id', $this->_defaultValues)));
-      $this->assign('contributionID', isset($contribution) ? $contribution->id : $this->_onlinePendingContributionId);
-      if (CRM_Utils_Array::value('contribution_status_id', $params)) {
-        $this->assign('contributionStatusID', $params['contribution_status_id']);
-        $this->assign('contributionStatus', CRM_Contribute_PseudoConstant::contributionStatus($params['contribution_status_id'], 'name'));
-      }
-      $this->assign('receiptType', 'membership signup');
-      $this->assign('receive_date', CRM_Utils_Array::value('receive_date', $params));
-      $this->assign('formValues', $formValues);
-
-      if (empty($lineItem)) {
-        $this->assign('mem_start_date', CRM_Utils_Date::customFormat($calcDates[$membership->membership_type_id]['start_date']));
-        $this->assign('mem_end_date', CRM_Utils_Date::customFormat($calcDates[$membership->membership_type_id]['end_date']));
-        $this->assign('membership_name', $membershipType);
-      }
-
-      $this->assign('customValues', $customValues);
-
-      list($mailSend, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
-        array(
-          'groupName' => 'msg_tpl_workflow_membership',
-          'valueName' => 'membership_offline_receipt',
-          'contactId' => $this->_contactID,
-          'from' => $receiptFrom,
-          'toName' => $this->_memberDisplayName,
-          'toEmail' => $this->_memberEmail,
-          'isTest' => (bool)($this->_action & CRM_Core_Action::PREVIEW),
-        )
-      );
+      $formValues['contact_id']     = $this->_contactID;
+      
+      // send email receipt
+      $mailSend = self::emailReceipt( $this, $formValues, $membership );
     }
-
 
     if (($this->_action & CRM_Core_Action::UPDATE)) {
       //end date can be modified by hooks, so if end date is set then use it.
@@ -1649,6 +1554,141 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           "reset=1&action=add&context=membership&cid={$this->_contactID}"
         ));
     }
+  }
+
+  /**
+   * Function to send email receipt
+   *
+   * @param object $form   form object
+   * @param array  $values submitted values
+   * @param object $membership object
+   *
+   * @return boolean true if mail was sent successfully 
+   * @static
+   */
+  static function emailReceipt( &$form, &$formValues, &$membership ) {
+    // retrieve 'from email id' for acknowledgement
+    $receiptFrom = $formValues['from_email_address'];
+
+    if (CRM_Utils_Array::value('payment_instrument_id', $formValues)) {
+      $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
+      $formValues['paidBy'] = $paymentInstrument[$formValues['payment_instrument_id']];
+    }
+
+    // retrieve custom data
+    $customFields = $customValues = array();
+    if ( property_exists( $form, '_groupTree' ) 
+      && !empty( $form->_groupTree ) ) { 
+      foreach ($form->_groupTree as $groupID => $group) {
+        if ($groupID == 'info') {
+          continue;
+        }
+        foreach ($group['fields'] as $k => $field) {
+          $field['title'] = $field['label'];
+          $customFields["custom_{$k}"] = $field;
+        }
+      }
+    }
+
+    $members = array(array('member_id', '=', $membership->id, 0, 0));
+    // check whether its a test drive
+    if ($form->_mode == 'test') {
+      $members[] = array('member_test', '=', 1, 0, 0);
+    }
+    
+    CRM_Core_BAO_UFGroup::getValues($formValues['contact_id'], $customFields, $customValues, FALSE, $members);
+
+    if ($form->_mode) {
+      if (CRM_Utils_Array::value('billing_first_name', $form->_params)) {
+        $name = $form->_params['billing_first_name'];
+      }
+
+      if (CRM_Utils_Array::value('billing_middle_name', $form->_params)) {
+        $name .= " {$form->_params['billing_middle_name']}";
+      }
+
+      if (CRM_Utils_Array::value('billing_last_name', $form->_params)) {
+        $name .= " {$form->_params['billing_last_name']}";
+      }
+
+      $form->assign('billingName', $name);
+
+      // assign the address formatted up for display
+      $addressParts = array(
+        "street_address-{$form->_bltID}",
+        "city-{$form->_bltID}",
+        "postal_code-{$form->_bltID}",
+        "state_province-{$form->_bltID}",
+        "country-{$form->_bltID}",
+      );
+      $addressFields = array();
+      foreach ($addressParts as $part) {
+        list($n, $id) = explode('-', $part);
+        if (isset($form->_params['billing_' . $part])) {
+          $addressFields[$n] = $form->_params['billing_' . $part];
+        }
+      }
+      $form->assign('address', CRM_Utils_Address::format($addressFields));
+
+      $date = CRM_Utils_Date::format($form->_params['credit_card_exp_date']);
+      $date = CRM_Utils_Date::mysqlToIso($date);
+      $form->assign('credit_card_exp_date', $date);
+      $form->assign('credit_card_number',
+        CRM_Utils_System::mungeCreditCard($form->_params['credit_card_number'])
+      );
+      $form->assign('credit_card_type', $form->_params['credit_card_type']);
+      $form->assign('contributeMode', 'direct');
+      $form->assign('isAmountzero', 0);
+      $form->assign('is_pay_later', 0);
+      $form->assign('isPrimary', 1);
+    }
+
+    $form->assign('module', 'Membership');
+    $form->assign('contactID', $formValues['contact_id'] );
+
+    $form->assign('membershipID', CRM_Utils_Array::value('membership_id', $params, CRM_Utils_Array::value('membership_id', $form->_defaultValues)));
+    
+    if ( CRM_Utils_Array::value('contribution_id', $formValues ) ) {
+      $form->assign( 'contributionID', $formValues['contribution_id'] );
+    }
+    else {
+      $form->assign( 'contributionID', $form->_onlinePendingContributionId );
+    }
+
+    if (CRM_Utils_Array::value('contribution_status_id', $formValues )) {
+      $form->assign('contributionStatusID', $formValues['contribution_status_id']);
+      $form->assign('contributionStatus', CRM_Contribute_PseudoConstant::contributionStatus($formValues['contribution_status_id'], 'name'));
+    }
+    $form->assign('receiptType', 'membership signup');
+    $form->assign('receive_date', CRM_Utils_Array::value('receive_date', $formValues ) );
+    $form->assign('formValues', $formValues);
+    
+    if (empty($lineItem)) {
+      $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date ) );
+      $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date ) );
+      $form->assign('membership_name', $membership->membership_type_id  );
+    }
+
+    $form->assign('customValues', $customValues);
+    list( 
+      $memberDisplayName,
+      $memberEmail
+    ) = CRM_Contact_BAO_Contact_Location::getEmailDetails(
+      $formValues['contact_id']);
+
+    list($mailSend, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
+      array(
+        'groupName' => 'msg_tpl_workflow_membership',
+        'valueName' => 'membership_offline_receipt',
+        'contactId' => $formValues['contact_id'],
+        'from' => $receiptFrom,
+        'toName' => $memberDisplayName,
+        'toEmail' => $memberEmail,
+        'isTest' => (bool)($form->_action & CRM_Core_Action::PREVIEW)
+      )
+    );
+
+    return true;
   }
 }
 

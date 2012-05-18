@@ -540,6 +540,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           }
         }
 
+        if (CRM_Utils_Array::value('send_receipt', $value)) {
+          $value['receipt_date'] = date('Y-m-d His');
+        }
+
         if (CRM_Utils_Array::value('membership_source', $value)) {
           $value['source'] = $value['membership_source'];
         }
@@ -676,6 +680,19 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           }
         }
         // end of premium
+
+        //send receipt mail.
+        if ( $membership->id &&
+          CRM_Utils_Array::value( 'send_receipt', $value ) ) {
+
+            // add the domain email id
+            $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail();
+            $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
+
+            $value['from_email_address'] = $domainEmail;
+            $value['membership_id']      = $membership->id;
+            CRM_Member_Form_Membership::emailReceipt( $this, $value, $membership );
+        }
       }
     }
   }
