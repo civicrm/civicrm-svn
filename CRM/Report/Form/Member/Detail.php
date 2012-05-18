@@ -41,10 +41,12 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
   protected $_emailField = FALSE;
 
   protected $_phoneField = FALSE;
+  
+  protected $_contribField = FALSE;
 
   protected $_summary = NULL;
 
-  protected $_customGroupExtends = array('Membership');
+  protected $_customGroupExtends = array('Membership', 'Contribution');
   protected $_customGroupGroupBy = FALSE; function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
@@ -188,6 +190,56 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
         array('phone' => NULL),
         'grouping' => 'contact-fields',
       ),
+      'civicrm_contribution' =>
+      array(
+        'dao' => 'CRM_Contribute_DAO_Contribution',
+        'fields' =>
+        array(
+          'contribution_id' => array(
+            'name' => 'id',
+            'no_display' => TRUE,
+            'required' => TRUE,
+          ),
+          'contribution_type_id' => array('title' => ts('Contribution Type')),
+          'contribution_status_id' => array('title' => ts('Contribution Status')),
+          'payment_instrument_id' => array('title' => ts('Payment Type')),
+          'trxn_id' => NULL,
+          'receive_date' => NULL,
+          'receipt_date' => NULL,
+          'fee_amount' => NULL,
+          'net_amount' => NULL,
+          'total_amount' => array('title' => ts('Amount'),
+            'statistics' =>
+            array('sum' => ts('Amount')),
+          ),
+        ),
+        'filters' =>
+        array(
+          'receive_date' =>
+          array('operatorType' => CRM_Report_Form::OP_DATE),
+          'contribution_type_id' =>
+          array('title' => ts('Contribution Type'),
+            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+            'options' => CRM_Contribute_PseudoConstant::contributionType(),
+            'type' => CRM_Utils_Type::T_INT,
+          ),
+          'payment_instrument_id' =>
+          array('title' => ts('Payment Type'),
+            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+            'options' => CRM_Contribute_PseudoConstant::paymentInstrument(),
+            'type' => CRM_Utils_Type::T_INT,
+          ),
+          'contribution_status_id' =>
+          array('title' => ts('Contribution Status'),
+            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+            'options' => CRM_Contribute_PseudoConstant::contributionStatus(),
+            'type' => CRM_Utils_Type::T_INT,
+          ),
+          'total_amount' =>
+          array('title' => ts('Contribution Amount')),
+        ),
+        'grouping' => 'contri-fields',
+      ),
     );
     $this->_groupFilter = TRUE;
     $this->_tagFilter = TRUE;
@@ -217,8 +269,13 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
             elseif ($tableName == 'civicrm_phone') {
               $this->_phoneField = TRUE;
             }
+            elseif ($tableName == 'civicrm_contribution') {
+              $this->_contribField = TRUE;
+            }
             $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-            $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+            if (array_key_exists('title', $field)) {
+              $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
+            }
             $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
           }
         }
@@ -264,6 +321,16 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
                         ON {$this->_aliases['civicrm_contact']}.id = 
                            {$this->_aliases['civicrm_phone']}.contact_id AND 
                            {$this->_aliases['civicrm_phone']}.is_primary = 1\n";
+    }
+    //used when contribution field is selected
+    if ($this->_contribField) {
+      $this->_from .= "
+              LEFT JOIN civicrm_membership_payment mem_pay
+                        ON {$this->_aliases['civicrm_membership']}.id = 
+                           mem_pay.membership_id
+              LEFT JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
+                        ON mem_pay.contribution_id = 
+                           {$this->_aliases['civicrm_contribution']}.id\n";
     }
   }
 
@@ -339,6 +406,11 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
     // custom code to alter rows
     $entryFound = FALSE;
     $checkList = array();
+    
+    $contributionTypes  = CRM_Contribute_PseudoConstant::contributionType();
+    $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus();
+    $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
+    
     foreach ($rows as $rowNum => $row) {
 
       if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
@@ -390,6 +462,19 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
         );
         $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
         $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Contact Summary for this Contact.");
+        $entryFound = TRUE;
+      }
+      
+      if ($value = CRM_Utils_Array::value('civicrm_contribution_contribution_type_id', $row)) {
+        $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
+        $entryFound = TRUE;
+      }
+      if ($value = CRM_Utils_Array::value('civicrm_contribution_contribution_status_id', $row)) {
+        $rows[$rowNum]['civicrm_contribution_contribution_status_id'] = $contributionStatus[$value];
+        $entryFound = TRUE;
+      }
+      if ($value = CRM_Utils_Array::value('civicrm_contribution_payment_instrument_id', $row)) {
+        $rows[$rowNum]['civicrm_contribution_payment_instrument_id'] = $paymentInstruments[$value];
         $entryFound = TRUE;
       }
 
