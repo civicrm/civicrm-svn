@@ -187,7 +187,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
         CRM_Core_DAO::commonRetrieve('CRM_Contact_DAO_Contact', $params, $defaults, $returnProperities);
 
         if (!CRM_Utils_Array::value('id', $defaults)) {
-          CRM_Core_Error::statusBounce(ts('contact does not exist: %1', array(1 => $this->_contactId)));
+          CRM_Core_Error::statusBounce(ts('A Contact with that ID does not exist: %1', array(1 => $this->_contactId)));
         }
 
         $this->_contactType = CRM_Utils_Array::value('contact_type', $defaults);

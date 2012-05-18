@@ -101,8 +101,20 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     }
 
     if (!$this->_contactId) {
-      CRM_Core_Error::statusBounce(ts('We could not find a contact id.'));
+      CRM_Core_Error::statusBounce(
+        ts('We could not find a contact id.'),
+        CRM_Utils_System::url('civicrm/dashboard', 'reset=1')
+      );
     }
+
+    // ensure that the id does exist
+    if ( CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', 'id', 'id' ) != $this->_contactId ) {
+      CRM_Core_Error::statusBounce(
+        ts('A Contact with that ID does not exist: %1', array(1 => $this->_contactId)),
+        CRM_Utils_System::url('civicrm/dashboard', 'reset=1')
+      );
+    }
+
     $this->assign('contactId', $this->_contactId);
 
     // see if we can get prev/next positions from qfKey
