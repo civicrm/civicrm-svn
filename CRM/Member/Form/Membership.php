@@ -1659,14 +1659,20 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $form->assign('contributionStatusID', $formValues['contribution_status_id']);
       $form->assign('contributionStatus', CRM_Contribute_PseudoConstant::contributionStatus($formValues['contribution_status_id'], 'name'));
     }
-    $form->assign('receiptType', 'membership signup');
+
+    if ( CRM_Utils_Array::value( 'is_renew', $formValues ) ) {
+      $form->assign('receiptType', 'membership renewal');
+    }
+    else {
+      $form->assign('receiptType', 'membership signup');
+    }
     $form->assign('receive_date', CRM_Utils_Array::value('receive_date', $formValues ) );
     $form->assign('formValues', $formValues);
     
     if (empty($lineItem)) {
       $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date ) );
       $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date ) );
-      $form->assign('membership_name', $membership->membership_type_id  );
+      $form->assign('membership_name', CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id )  );
     }
 
     $form->assign('customValues', $customValues);

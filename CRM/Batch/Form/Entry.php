@@ -644,7 +644,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         unset($value['membership_start_date']);
         unset($value['membership_end_date']);
         
+        $value['is_renew'] = false; 
         if ( CRM_Utils_Array::value( $key, $params['member_option'] ) == 2 ) {
+          $value['is_renew'] = true; 
           $membership = CRM_Member_BAO_Membership::renewMembership( 
             $value['contact_id'],
             $value['membership_type_id'],
