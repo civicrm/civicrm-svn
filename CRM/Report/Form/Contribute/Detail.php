@@ -460,7 +460,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
 
             if ($display_flag) {
               foreach ($row as $colName => $colVal) {
-                if (in_array($colName, $this->_noRepeats)) {
+                // Hide repeats in no-repeat columns, but not if the field's a section header
+                if (in_array($colName, $this->_noRepeats) && !array_key_exists($colName, $this->_sections)) {
                   unset($rows[$rowNum][$colName]);
                 }
               }
