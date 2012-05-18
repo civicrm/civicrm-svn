@@ -46,6 +46,13 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
 
   protected $_customGroupExtends = array(
     'Contribution', 'Membership'); function __construct() {
+    $config = CRM_Core_Config::singleton();
+    $campaignEnabled = in_array("CiviCampaign", $config->enableComponents);
+    if ($campaignEnabled) {
+      $getCampaigns = CRM_Campaign_BAO_Campaign::getPermissionedCampaigns(NULL, NULL, TRUE, FALSE, TRUE);
+      $this->activeCampaigns = $getCampaigns['campaigns'];
+      asort($this->activeCampaigns);
+    }
     $this->_columns = array(
       'civicrm_contact' =>
       array(
@@ -184,7 +191,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
       ),
       'first_donation' => array(
         'dao' => 'CRM_Contribute_DAO_Contribution',
-        'fields' =>
+        'fields' => 
         array(
           'first_donation_date' => array(
             'title' => ts('First Donation Date'),
@@ -392,9 +399,81 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         ),
         'grouping' => 'member-fields',
       ),
+      'civicrm_note' => 
+      array(
+        'dao' => 'CRM_Core_DAO_Note',
+        'fields' =>
+        array(
+          'contribution_note' =>
+          array(
+            'name' => 'note',
+            'title' => ts('Contribution Note'),
+          ),
+        ),
+        'filters' =>
+        array(
+          'note' =>
+          array(
+                'name'  => 'note',
+                'title' => ts('Contribution Note'),
+                'operator' => 'like',
+                'type'  => CRM_Utils_Type::T_STRING,
+          ),
+        ),
+      ),
+      'civicrm_batch' =>
+      array(
+        'dao' => 'CRM_Core_DAO_Batch',
+        'fields' =>
+        array(
+          'batch_id' =>
+          array(
+            'name' => 'id',
+            'title' => ts('Batch Name'),
+          ),
+        ),
+        'filters' =>
+        array(
+          'bid' =>
+          array(
+            'name' => 'id',
+            'title' => ts('Batch Name'),
+            'type' => CRM_Utils_Type::T_INT,
+            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+            'options' => CRM_Core_BAO_Batch::getBatches(),
+          ),
+        ),
+      ),
+      'civicrm_entity_batch' =>
+      array(
+        'dao' => 'CRM_Core_DAO_EntityBatch',
+        'fields' =>
+        array(
+          'entity_batch_id' =>
+          array(
+            'name' => 'batch_id',    
+            'default' => TRUE,
+            'no_display' => TRUE,
+          ),
+        ),
+      ),
     ) + $this->addAddressFields(FALSE);
 
     $this->_tagFilter = TRUE;
+
+    if ($campaignEnabled && !empty($this->activeCampaigns)) {
+      $this->_columns['civicrm_contribution']['fields']['campaign_id'] = array(
+        'title' => ts('Campaign'),
+        'default' => 'false',
+      );
+      $this->_columns['civicrm_contribution']['filters']['campaign_id'] = array('title' => ts('Campaign'),
+        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+        'options' => $this->activeCampaigns,
+      );
+      $this->_columns['civicrm_contribution']['order_bys']['campaign_id'] = array('title' => ts('Campaign'));
+    }
+
+
     parent::__construct();
   }
 
@@ -487,7 +566,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
                           ON {$this->_aliases['civicrm_membership_status']}.id = 
                              {$this->_aliases['civicrm_membership']}.status_id 
 ";
-
+    
     //for premium products
     $this->_from .= "
                LEFT JOIN  civicrm_contribution_product {$this->_aliases['civicrm_contribution_product']} 
@@ -501,11 +580,26 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
                       ON {$this->_aliases['civicrm_contribution_ordinality']}.id = {$this->_aliases['civicrm_contribution']}.id";
     }
 
+    //include contribution note
+    $this->_from.= "
+          LEFT JOIN civicrm_note {$this->_aliases['civicrm_note']}
+                    ON ( {$this->_aliases['civicrm_note']}.entity_table = 'civicrm_contribution' AND
+                         {$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_note']}.entity_id )";
+  
     $this->_from .= "
                LEFT JOIN  civicrm_phone {$this->_aliases['civicrm_phone']} 
                       ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
                          {$this->_aliases['civicrm_phone']}.is_primary = 1)";
 
+    //for batch contribution
+    $this->_from .= "
+               LEFT JOIN  civicrm_entity_batch {$this->_aliases['civicrm_entity_batch']} 
+                      ON ({$this->_aliases['civicrm_entity_batch']}.entity_id = {$this->_aliases['civicrm_contribution']}.id AND
+                      {$this->_aliases['civicrm_entity_batch']}.entity_table = 'civicrm_contribution')
+               LEFT JOIN civicrm_batch {$this->_aliases['civicrm_batch']} 
+                      ON {$this->_aliases['civicrm_batch']}.id = {$this->_aliases['civicrm_entity_batch']}.batch_id
+";
+    
     if ($this->_addressField OR (!empty($this->_params['state_province_id_value']) OR !empty($this->_params['country_id_value']))) {
       $this->_from .= "
             LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
@@ -526,6 +620,7 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
             LEFT JOIN civicrm_contact contacthonor 
                       ON contacthonor.id = {$this->_aliases['civicrm_contribution']}.honor_contact_id";
     }
+    
     // include Honor email field
     if ($this->_emailFieldHonor) {
       $this->_from .= "
@@ -600,10 +695,39 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         }
       }
     }
-
+    $fAmt  = '';
+    $fDate = '';
     foreach ($rows as $rowNum => $row) {
+      
+      // allow repeat for first donation amount and date in csv
+      if ($this->_outputMode == 'csv') {
+        if (array_key_exists('civicrm_contact_id', $row)) {
+          if ($contactId = $row['civicrm_contact_id']) {
+            if ($rowNum == 0) {
+              $pcid  = $contactId;
+              $fAmt  = $row['first_donation_first_donation_amount'];
+              $fDate = $row['first_donation_first_donation_date'];
+            }
+            else {
+              if ($pcid == $contactId) {
+                $rows[$rowNum]['first_donation_first_donation_amount'] = $fAmt;
+                $rows[$rowNum]['first_donation_first_donation_date']   = $fDate;
+                $pcid = $contactId;
+              }
+              else {
+                $fAmt  = $row['first_donation_first_donation_amount'];
+                $fDate = $row['first_donation_first_donation_date'];
+                $pcid = $contactId;
+              }
+            }
+          }
+        }    
+      }
+
       if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
         $repeatFound = FALSE;
+        
+        
         $display_flag = NULL;
         if (array_key_exists('civicrm_contact_id', $row)) {
           if ($cid = $row['civicrm_contact_id']) {
@@ -633,9 +757,17 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         }
       }
 
+      
       if (array_key_exists('civicrm_membership_membership_type_id', $row)) {
         if ($value = $row['civicrm_membership_membership_type_id']) {
           $rows[$rowNum]['civicrm_membership_membership_type_id'] = CRM_Member_PseudoConstant::membershipType($value, FALSE);
+        }
+        $entryFound = TRUE;
+      }
+      
+       if (array_key_exists('civicrm_batch_batch_id', $row)) {
+        if ($value = $row['civicrm_batch_batch_id']) {
+          $rows[$rowNum]['civicrm_batch_batch_id'] = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $value, 'title');
         }
         $entryFound = TRUE;
       }
@@ -709,6 +841,15 @@ class CRM_Report_Form_Contribute_MembershipDetail extends CRM_Report_Form {
         $rows[$rowNum]['civicrm_contribution_total_amount_sum_hover'] = ts("View Details of this Contribution.");
         $entryFound = TRUE;
       }
+
+      // convert campaign_id to campaign title
+      if (array_key_exists('civicrm_contribution_campaign_id', $row)) {
+        if ($value = $row['civicrm_contribution_campaign_id']) {
+          $rows[$rowNum]['civicrm_contribution_campaign_id'] = $this->activeCampaigns[$value];
+          $entryFound = TRUE;
+        }
+      }
+
       $entryFound = $this->alterDisplayAddressFields($row, $rows, $rowNum, 'contribute/MembershipDetail', 'List all contribution(s) for this ') ? TRUE : $entryFound;
 
       // skip looking further in rows, if first row itself doesn't
