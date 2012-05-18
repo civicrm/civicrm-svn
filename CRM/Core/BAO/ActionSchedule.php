@@ -638,7 +638,6 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         $entityTokenParams = array();
 
         foreach ($tokenFields as $field) {
-          $entityTokenParams["{$tokenEntity}." . $field] = $dao->$field;
           if ($field == 'location') {
             $loc = array();
             $stateProvince = CRM_Core_PseudoConstant::stateProvince(); 
@@ -647,6 +646,9 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
             $loc['state_province'] = CRM_Utils_array::value($dao->state_province_id, $stateProvince);
             $loc['postal_code'] = $dao->postal_code;
             $entityTokenParams["{$tokenEntity}." . $field] = CRM_Utils_Address::format($loc);
+          }
+          else {
+            $entityTokenParams["{$tokenEntity}." . $field] = $dao->$field;
           }
         }
 
