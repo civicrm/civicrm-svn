@@ -254,9 +254,55 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
           ),
         ),
       ),
+      'civicrm_note' => 
+      array(
+        'dao' => 'CRM_Core_DAO_Note',
+        'fields' =>
+        array(
+          'contribution_note' =>
+          array(
+            'name' => 'note',
+            'title' => ts('Contribution Note'),
+          ),
+        ),
+        'filters' =>
+        array(
+          'note' =>
+          array(
+                'name'  => 'note',
+                'title' => ts('Contribution Note'),
+                'operator' => 'like',
+                'type'  => CRM_Utils_Type::T_STRING,
+          ),
+        ),
+      ),
     ) + $this->addAddressFields(FALSE);
 
     $this->_tagFilter = TRUE;
+    
+    // Don't show Batch display column and filter unless batches are being used
+    $this->_closedBatches = CRM_Core_BAO_Batch::getBatches();
+    if (!empty($this->_closedBatches)) {
+      $this->_columns['civicrm_batch']['dao'] = 'CRM_Core_DAO_Batch';
+      $this->_columns['civicrm_batch']['fields']['batch_id'] = array(
+        'name' => 'id',
+        'title' => ts('Batch Name'),        
+      );
+      $this->_columns['civicrm_batch']['filters']['bid'] = array(
+        'name' => 'id',
+        'title' => ts('Batch Name'),
+        'type' => CRM_Utils_Type::T_INT,
+        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+        'options' => $this->_closedBatches,
+      );
+      $this->_columns['civicrm_entity_batch']['dao'] = 'CRM_Core_DAO_EntityBatch';
+      $this->_columns['civicrm_entity_batch']['fields']['entity_batch_id'] = array(
+        'name' => 'batch_id',    
+        'default' => TRUE,
+        'no_display' => TRUE,
+      );
+    }
+
     if ($campaignEnabled && !empty($this->activeCampaigns)) {
       $this->_columns['civicrm_contribution']['fields']['campaign_id'] = array(
         'title' => ts('Campaign'),
@@ -388,6 +434,22 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                       ON emailhonor.contact_id = {$this->_aliases['civicrm_contribution']}.honor_contact_id
                       AND emailhonor.is_primary = 1\n";
     }
+    // include contribution note
+    if (CRM_Utils_Array::value('contribution_note', $this->_params['fields'])) {
+      $this->_from.= "
+            LEFT JOIN civicrm_note {$this->_aliases['civicrm_note']}
+                      ON ( {$this->_aliases['civicrm_note']}.entity_table = 'civicrm_contribution' AND
+                           {$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_note']}.entity_id )";
+    }
+    //for contribution batches
+    if ($this->_closedBatches && CRM_Utils_Array::value('batch_id', $this->_params['fields'])) {
+      $this->_from .= "
+                 LEFT JOIN  civicrm_entity_batch {$this->_aliases['civicrm_entity_batch']} 
+                        ON ({$this->_aliases['civicrm_entity_batch']}.entity_id = {$this->_aliases['civicrm_contribution']}.id AND
+                        {$this->_aliases['civicrm_entity_batch']}.entity_table = 'civicrm_contribution')
+                 LEFT JOIN civicrm_batch {$this->_aliases['civicrm_batch']} 
+                        ON {$this->_aliases['civicrm_batch']}.id = {$this->_aliases['civicrm_entity_batch']}.batch_id";
+    }
   }
 
   function groupBy() {
@@ -514,6 +576,12 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
       }
       if ($value = CRM_Utils_Array::value('civicrm_contribution_honor_type_id', $row)) {
         $rows[$rowNum]['civicrm_contribution_honor_type_id'] = $honorTypes[$value];
+        $entryFound = TRUE;
+      }
+      if (array_key_exists('civicrm_batch_batch_id', $row)) {
+        if ($value = $row['civicrm_batch_batch_id']) {
+          $rows[$rowNum]['civicrm_batch_batch_id'] = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $value, 'title');
+        }
         $entryFound = TRUE;
       }
 
