@@ -325,21 +325,24 @@ class CRM_Report_Form extends CRM_Core_Form {
       $this->assign('mode', 'template');
     }
 
-    // lets display the
+    // lets display the Report Settings section
     $this->_instanceForm = $this->_force || $this->_id || (!empty($_POST));
 
-    // do not display instance form if administer Reports permission is absent
-    if (!CRM_Core_Permission::check('administer Reports')) {
+    // Do not display Report Settings section if administer Reports permission is absent OR
+    // if report instance is reserved and administer reserved reports absent
+    if (!CRM_Core_Permission::check('administer Reports') ||
+        ($this->_instanceValues['is_reserved'] && !CRM_Core_Permission::check('administer reserved reports'))) {
       $this->_instanceForm = FALSE;
     }
 
     $this->assign('criteriaForm', FALSE);
-    if (CRM_Core_Permission::check('administer Reports') ||
-      CRM_Core_Permission::check('access Report Criteria')
-    ) {
+    // Display Report Criteria section if user has access Report Criteria OR administer Reports AND report instance is not reserved
+    if (CRM_Core_Permission::check('administer Reports') || CRM_Core_Permission::check('access Report Criteria')) {
+      if (!$this->_instanceValues['is_reserved'] || CRM_Core_Permission::check('administer reserved reports')) {
       $this->assign('criteriaForm', TRUE);
+      }
     }
-
+    
     $this->_instanceButtonName = $this->getButtonName('submit', 'save');
     $this->_createNewButtonName = $this->getButtonName('submit', 'next');
     $this->_printButtonName = $this->getButtonName('submit', 'print');

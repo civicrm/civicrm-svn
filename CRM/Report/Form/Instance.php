@@ -101,6 +101,10 @@ class CRM_Report_Form_Instance {
     );
 
     $form->addElement('checkbox', 'addToDashboard', ts('Available for Dashboard?'));
+    $form->addElement('checkbox', 'is_reserved', ts('Reserved Report?'));
+    if (!CRM_Core_Permission::check('administer reserved reports')) {
+      $form->freeze('is_reserved');      
+    }
 
     $config = CRM_Core_Config::singleton();
     if ($config->userFramework != 'Joomla' ||
@@ -283,6 +287,7 @@ class CRM_Report_Form_Instance {
       }
       unset($params['addToDashboard']);
     }
+    $params['is_reserved'] = CRM_Utils_Array::value('is_reserved', $params, FALSE);
 
     $dao = new CRM_Report_DAO_Instance();
     $dao->copyValues($params);
