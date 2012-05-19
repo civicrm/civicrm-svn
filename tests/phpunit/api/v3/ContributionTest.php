@@ -105,6 +105,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     );
     $contribution = &civicrm_api('contribution', 'get', $params);
     $this->assertAPISuccess($contribution, 'In line ' . __LINE__);
+    $this->assertEquals(1,$contribution['count']);
     $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contribution_type_id'], $this->_contributionTypeId);
@@ -641,26 +642,65 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->contributionDelete($contribution1['id']);
     $this->contributionDelete($contribution2['id']);
   }
-  ///////////////  _civicrm_contribute_format_params for $create
+  /*
+   * Test sending a mail via the API
+   */
   function testSendMail() {
-    if(!defined(CIVICRM_MAIL_LOG)){
-      define( 'CIVICRM_MAIL_LOG', CIVICRM_TEMPLATE_COMPILEDIR . '/mail.log' );
-    }
-    $this->assertFalse(is_numeric(CIVICRM_MAIL_LOG) ,'we need to be able to log email to check receipt');
-    file_put_contents(CIVICRM_MAIL_LOG,'');
+    $this->prepareMailLog();
     $contribution = civicrm_api('contribution','create',$this->_params);
     $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
       'version' => $this->_apiversion,
       'id' => $contribution['id']) );
     $this->assertAPISuccess($apiResult);
-    $mail = file_get_contents(CIVICRM_MAIL_LOG);
-    $this->assertNotEmpty(strstr($mail,'$ 100.00'));
-    $this->assertEmpty(strstr($mail,'Event'));
-    $this->assertNotEmpty(strstr($mail,'Contribution Information'));
-    $this->assertNotEmpty(strstr($mail,'Please print this confirmation for your records'));
-
-       
+    $this->checkMailLog(array(
+        '$ 100.00',
+        'Contribution Information',
+        'Please print this confirmation for your records',
+      ), array(
+        'Event'
+      )
+    );
   }
+  
+  /*
+   * Test sending a mail via the API
+   */
+  function testSendMailEvent() {
+    $this->prepareMailLog();
+    $contribution = civicrm_api('contribution','create',$this->_params);
+    $event          = $this->eventCreate(array('is_email_confirm' => 1));
+    $this->_eventID = $event['id'];
+    $participantParams = array(
+      'contact_id' => $this->_individualId,
+      'event_id' => $this->_eventID,
+      'status_id' => 1,
+      'role_id' => 1,
+      // to ensure it matches later on
+      'register_date' => '2007-07-21 00:00:00',
+      'source' => 'Online Event Registration: API Testing',
+      'version' => $this->_apiversion,
+    );
+    $participant = civicrm_api('participant', 'create', $participantParams);
+    $this->assertAPISuccess($participant, "participant created in line " . __LINE__);
+    $this->assertAPISuccess(civicrm_api('participant_payment', 'create', array(
+      'version' => 3,
+      'participant_id' => $participant['id'],
+      'contribution_id' => $contribution['id'],
+    )), " in line " . __LINE__);
+    $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
+      'version' => $this->_apiversion,
+      'id' => $contribution['id']) );
+    $this->assertAPISuccess($apiResult);
+    $this->checkMailLog(array(
+        'Annual CiviCRM meet',
+        'Event',
+        'To: "Mr. Anthony Anderson II" <anthony_anderson@civicrm.org>',
+      ), array(
+        
+      )
+    );
+  }
+  
   ///////////////  _civicrm_contribute_format_params for $create
   function testFormatParams() {
     require_once 'CRM/Contribute/DAO/Contribution.php';

@@ -2026,6 +2026,38 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
       $config->customTemplateDir = $template_path;
     }
   }
+  /*
+   * Empty mail log in preparation for test
+   */
+  function prepareMailLog(){
+    if(!defined(CIVICRM_MAIL_LOG)){
+      define( 'CIVICRM_MAIL_LOG', CIVICRM_TEMPLATE_COMPILEDIR . '/mail.log' );
+    }
+    $this->assertFalse(is_numeric(CIVICRM_MAIL_LOG) ,'we need to be able to log email to check receipt');
+    file_put_contents(CIVICRM_MAIL_LOG,'');
+  }
+  /*
+   * Check contents of mail log
+   * @param array $strings strings that should be included
+   * @param array $absentStrings strings that should not be included
+   */
+  function checkMailLog($strings, $absentStrings = array(), $prefix = ''){
+    $mail = file_get_contents(CIVICRM_MAIL_LOG);
+    foreach ($strings as $string) {
+      $this->assertContains($string, $mail, "$string .  not found in  $mail  $prefix");
+    }
+    foreach ($absentStrings as $string) {
+      $this->assertEmpty(strstr($mail,$string),"$string  incorrectly found in $mail $prefix");;
+    }
+    return $mail;
+  }
+  /*
+   * Check that mail log is empty
+   */
+  function assertMailLogEmpty($prefix = ''){
+    $mail = file_get_contents(CIVICRM_MAIL_LOG);
+    $this->assertEmpty($mail, 'mail sent when it should not have been ' . $prefix);
+  }
 }
 
 function CiviUnitTestCase_fatalErrorHandler($message) {

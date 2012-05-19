@@ -198,15 +198,63 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
    * Test the LoadObjects function with a participant
    *
    */
-  function testsendMailParticipant() {
+  function testComposeMailParticipant() {
     $this->_setUpParticipantObjects();
     $this->IPN->loadObjects($this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
     $values = array();
     $this->assertFalse(empty($this->objects['event']));
-    $msg = $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values);
+    $msg = $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values, False,True);
     $this->assertContains('registration has been received and your status has been updated to registered', $msg['body']);
     $this->assertContains('Annual CiviCRM meet', $msg['html']);
   }
+  
+  /**
+   * 
+   *
+   */
+  function testComposeMailParticipantObjects() {
+    $this->_setUpParticipantObjects();
+    $values = array();
+    $msg = $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values, FALSE, TRUE);
+    $this->assertTrue(is_array($msg), "Message returned as an array in line" . __LINE__);
+    $this->assertEquals('Mr. Anthony Anderson II', $msg['to']);
+    $this->assertContains('<p>Please print this confirmation for your records.</p>', $msg['html']);
+    $this->assertContains('Thank you for your participation', $msg['body']);
+  }
+  
+  /**
+   * Test the LoadObjects function with recurring membership data
+   *
+   */
+  function testsendMailParticipantObjectsCheckLog() {
+    $this->_setUpParticipantObjects();
+    $values = array();
+    $this->prepareMailLog();
+    $this->IPN->loadObjects($this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
+    $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values, FALSE, FALSE);
+    $msg = $this->checkMailLog(array(
+      'Thank you for your participation',
+      'Annual CiviCRM meet',
+      'Mr. Anthony Anderson II')
+    );
+  }
+  /**
+   * Test the LoadObjects function with recurring membership data
+   *
+   */
+  function testsendMailParticipantObjectsNoMail() {
+    $this->_setUpParticipantObjects();
+    $event = new CRM_Event_BAO_Event();
+    $event->id = $this->_eventId;
+    $event->is_email_confirm = FALSE;
+    $event->save();
+    $values = array();
+    $this->prepareMailLog();
+    $this->IPN->loadObjects($this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
+    $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values, FALSE, FALSE);
+    $this->assertMailLogEmpty('no mail should have been send as event set to no confirm');
+  }
+  
   /*
      * Test that loadObjects works with participant values
      */
@@ -495,7 +543,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
      * Set up participant requirements for test
      */
   function _setUpParticipantObjects() {
-    $event = $this->eventCreate();
+    $event = $this->eventCreate(array('is_email_confirm' => 1));
     $this->assertAPISuccess($event, 'line ' . __LINE__ . ' set-up of event');
     $this->_eventId = $event['id'];
     $this->_participantId = $this->participantCreate(array(
