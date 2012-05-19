@@ -2122,7 +2122,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     //not really sure what params might be passed in but lets merge em into values
     $values = array_merge($this->_gatherMessageValues($input, $values, $ids), $values);
     $template = CRM_Core_Smarty::singleton();
-    $this->_assignMessageVariablesToTemplate($values, $input, $template, $recur);
+    $this->_assignMessageVariablesToTemplate($values, $input, $template, $recur, $returnMessageText);
     //what does recur 'mean here - to do with payment processor return functionality but
     // what is the importance
     if ($recur && !empty($this->_relatedObjects['paymentProcessor'])) {
@@ -2158,7 +2158,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
     // todo remove strtolower - check consistency
     if (strtolower($this->_component) == 'event') {
       return CRM_Event_BAO_Event::sendMail($ids['contact'], $values,
-        $this->_relatedObjects['participant']->id, $this->is_test
+        $this->_relatedObjects['participant']->id, $this->is_test, $returnMessageText
       );
     }
     else {
@@ -2236,8 +2236,10 @@ WHERE  contribution_id = %1 AND membership_id != %2";
      * @param array $ids   the set of ids related to the inpurt
      *
      * @return array $values
+     * 
+     * NB don't add direct calls to the function as we intend to change the signature
      */
-  function _gatherMessageValues($input, &$values, &$ids) {
+  function _gatherMessageValues($input, &$values, $ids = array()) {
     // set display address of contributor
     if ($this->address_id) {
       $addressParams     = array('id' => $this->address_id);
@@ -2328,8 +2330,10 @@ WHERE  contribution_id = %1 AND membership_id != %2";
   /**
    * Apply variables for message to smarty template - this function is part of analysing what is in the huge
    * function & breaking it down into manageable chunks. Eventually it will be refactored into something else
+   * Note we send directly from this function in some cases because it is only partly refactored
+   * Don't call this function directly as the signature will change
    */
-  function _assignMessageVariablesToTemplate(&$values, $input, &$template, $recur = FALSE) {
+  function _assignMessageVariablesToTemplate(&$values, $input, &$template, $recur = FALSE, $returnMessageText = True) {
     $template->assign('first_name', $this->_relatedObjects['contact']->first_name);
     $template->assign('last_name', $this->_relatedObjects['contact']->last_name);
     $template->assign('displayName', $this->_relatedObjects['contact']->display_name);
@@ -2471,7 +2475,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
           $additional->save();
           $additional->free();
           $template->assign('amount', $amount);
-          CRM_Event_BAO_Event::sendMail($cId, $values, $pId, $isTest);
+          CRM_Event_BAO_Event::sendMail($cId, $values, $pId, $isTest, $returnMessageText);
         }
       }
 
@@ -2543,7 +2547,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
   static
   function isSubscriptionCancelled($contributionId) {
     $sql = "
-   SELECT cr.contribution_status_id
+   SELECT cr.contribution_status_id 
      FROM civicrm_contribution_recur cr
 LEFT JOIN civicrm_contribution con ON ( cr.id = con.contribution_recur_id )
     WHERE con.id = %1 LIMIT 1";
