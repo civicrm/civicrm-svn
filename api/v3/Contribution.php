@@ -150,14 +150,13 @@ function _civicrm_api3_contribution_delete_spec(&$params) {
  */
 function civicrm_api3_contribution_get($params) {
 
-  $options          = _civicrm_api3_get_options_from_params($params, TRUE,'Contribution','get');
+  $options          = _civicrm_api3_get_options_from_params($params, TRUE,'contribution','get');
   $sort             = CRM_Utils_Array::value('sort', $options, NULL);
   $offset           = CRM_Utils_Array::value('offset', $options);
   $rowCount         = CRM_Utils_Array::value('limit', $options);
   $smartGroupCache  = CRM_Utils_Array::value('smartGroupCache', $params);
   $inputParams      = CRM_Utils_Array::value('input_params', $options, array());
   $returnProperties = CRM_Utils_Array::value('return', $options, NULL);
-
   require_once 'CRM/Contribute/BAO/Query.php';
   require_once 'CRM/Contact/BAO/Query.php';
   if (empty($returnProperties)) {
