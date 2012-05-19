@@ -132,13 +132,13 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       ));
     $this->assertEquals(2, $contribution);
     //test id only format
-    $contribution = &civicrm_api('contribution', 'get', array
+    $contribution = civicrm_api('contribution', 'get', array
       ('version' => $this->_apiversion,
         'id' => $this->_contribution['id'],
         'format.only_id' => 1,
       )
     );
-    $this->assertEquals($this->_contribution['id'], $contribution);
+    $this->assertEquals($this->_contribution['id'], $contribution, print_r($contribution,true) . " in line " . __LINE__);
     //test id only format
     $contribution = &civicrm_api('contribution', 'get', array
       ('version' => $this->_apiversion,
