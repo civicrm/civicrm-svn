@@ -141,12 +141,29 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
     $params = array(
       'participant_id' => $this->_participantID,
       'version' => $this->_apiversion,
+      'return' => array(
+        'participant_id',
+        'event_id',
+        'participant_register_date',
+        'participant_source',
+      )
     );
     $result = civicrm_api('participant', 'get', $params);
-
+    $this->assertAPISuccess($result, " in line " . __LINE__);
+    $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID, "in line " . __LINE__);
+    $this->assertEquals($result['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00', "in line " . __LINE__);
+    $this->assertEquals($result['values'][$this->_participantID]['participant_source'], 'Wimbeldon', "in line " . __LINE__);
+      $params = array(
+      'id' => $this->_participantID,
+      'version' => $this->_apiversion,
+      'return' => 'id,participant_register_date,event_id',
+      
+    );
+    $result = civicrm_api('participant', 'get', $params);
     $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID);
     $this->assertEquals($result['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
-    $this->assertEquals($result['values'][$this->_participantID]['participant_source'], 'Wimbeldon');
+ 
+  
   }
 
   /**

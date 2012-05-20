@@ -102,14 +102,7 @@ function _civicrm_api3_participant_create_spec(&$params) {
  */
 function civicrm_api3_participant_get($params) {
 
-  $values = array();
-  if (isset($params['id'])) {
-    $params['participant_id'] = $params['id'];
-    unset($params['id']);
-  }
-
-
-  $options          = _civicrm_api3_get_options_from_params($params, TRUE);
+  $options          = _civicrm_api3_get_options_from_params($params, TRUE,'participant','get');
   $sort             = CRM_Utils_Array::value('sort', $options, NULL);
   $offset           = CRM_Utils_Array::value('offset', $options);
   $rowCount         = CRM_Utils_Array::value('limit', $options);
@@ -117,18 +110,10 @@ function civicrm_api3_participant_get($params) {
   $inputParams      = CRM_Utils_Array::value('input_params', $options, array());
   $returnProperties = CRM_Utils_Array::value('return', $options, NULL);
 
-  // add is_test to the clause if not present
-  if (!array_key_exists('participant_test', $inputParams)) {
-    $inputParams['participant_test'] = 0;
-  }
-
-  require_once 'CRM/Contact/BAO/Query.php';
-  require_once 'CRM/Event/BAO/Query.php';
   if (empty($returnProperties)) {
     $returnProperties = CRM_Event_BAO_Query::defaultReturnProperties(CRM_Contact_BAO_Query::MODE_EVENT);
   }
-
-  $newParams = CRM_Contact_BAO_Query::convertFormValues($params);
+  $newParams = CRM_Contact_BAO_Query::convertFormValues($inputParams);
   $query = new CRM_Contact_BAO_Query($newParams, $returnProperties, NULL,
     FALSE, FALSE, CRM_Contact_BAO_Query::MODE_EVENT
   );
@@ -149,6 +134,16 @@ function civicrm_api3_participant_get($params) {
   }
 
   return civicrm_api3_create_success($participant, $params, 'participant', 'get', $dao);
+}
+
+/*
+ * Adjust Metadata for Get action
+ * 
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_participant_get_spec(&$params) {
+  $params['participant_test']['api.default'] = 0;
 }
 
 /**
