@@ -31,9 +31,6 @@
 
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/Membership.php';
-require_once 'api/v3/MembershipType.php';
-require_once 'api/v3/MembershipStatus.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_MembershipTest extends CiviUnitTestCase {
   protected $_apiversion;
@@ -72,9 +69,14 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
+    $this->quickCleanup(array(
+      'civicrm_membership', 
+      'civicrm_membership_payment')
+    );
     $this->membershipStatusDelete($this->_membershipStatusID);
     $this->membershipTypeDelete(array('id' => $this->_membershipTypeID));
     $this->contactDelete($this->_contactID);
+
   }
 
   /**
@@ -270,6 +272,37 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
     $this->assertEquals($result['is_override'], 1, "In line " . __LINE__);
   }
 
+  
+  /**
+   * Test civicrm_membership_get with proper params.
+   * Memberships expected.
+   */
+  function testGetWithId() {
+    $membershipID = $this->contactMembershipCreate($this->_params);
+    $params = array(
+      'contact_id' => $this->_contactID,
+      'version' => $this->_apiversion,
+      'id' => $this->__membershipID,
+      'return' => 'id',
+    );
+    $result = civicrm_api('membership', 'get', $params);
+    $this->assertAPISuccess($result);
+    $this->assertEquals($membershipID, $result['id']);
+    $params = array(
+      'contact_id' => $this->_contactID,
+      'version' => $this->_apiversion,
+      'membership_id' => $this->__membershipID,
+      'return' => 'membership_id',
+    );
+    $result = civicrm_api('membership', 'get', $params);
+    $this->assertAPISuccess($result);
+    $this->assertEquals($membershipID, $result['id']);
+    civicrm_api('Membership', 'Delete', array(
+      'id' => $result['id'],
+        'version' => $this->_apiversion,
+      ));
+  }
+  
   /**
    * Test civicrm_membership_get for only active.
    * Memberships expected.
