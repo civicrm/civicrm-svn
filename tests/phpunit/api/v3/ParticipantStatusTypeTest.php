@@ -12,7 +12,7 @@ class api_v3_ParticipantStatusTypeTest extends CiviUnitTestCase {
     $this->params = array(
       'version' => 3,
       'name' => 'test status',
-      'label' => "I'm a test",
+      'label' => 'I am a test',
       'class' => 'Positive',
       'is_reserved' => 0,
       'is_active' => 1,
