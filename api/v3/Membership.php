@@ -44,8 +44,6 @@
 
 require_once 'CRM/Utils/Rule.php';
 require_once 'CRM/Utils/Array.php';
-require_once "CRM/Member/DAO/Membership.php";
-require_once "CRM/Member/PseudoConstant.php";
 
 /**
  * Deletes an existing contact membership
@@ -66,7 +64,6 @@ function civicrm_api3_membership_delete($params) {
     return civicrm_api3_create_error('Input parameter should be numeric');
   }
 
-  require_once 'CRM/Member/BAO/Membership.php';
   CRM_Member_BAO_Membership::deleteRelatedMemberships($params['id']);
 
   $membership = new CRM_Member_BAO_Membership();
@@ -125,7 +122,7 @@ function civicrm_api3_membership_create($params) {
   _civicrm_api3_custom_format_params($params, $values, 'Membership');
   $params = array_merge($params, $values);
 
-  require_once 'CRM/Core/Action.php';
+
   $action = CRM_Core_Action::ADD;
   // we need user id during add mode
   $ids = array('userId' => $params['contact_id']);
@@ -142,7 +139,7 @@ function civicrm_api3_membership_create($params) {
   //need to pass action to handle related memberships.
   $params['action'] = $action;
 
-  require_once 'CRM/Member/BAO/Membership.php';
+
   $membershipBAO = CRM_Member_BAO_Membership::create($params, $ids, TRUE);
 
   if (array_key_exists('is_error', $membershipBAO)) {
@@ -195,7 +192,6 @@ function civicrm_api3_membership_get($params) {
   if (!$membershipTypeId) {
     $membershipType = CRM_Utils_Array::value('membership_type', $params);
     if ($membershipType) {
-      require_once 'CRM/Member/DAO/MembershipType.php';
       $membershipTypeId = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
         $membershipType, 'id', 'name'
       );
@@ -203,7 +199,7 @@ function civicrm_api3_membership_get($params) {
   }
 
   // get the membership for the given contact ID
-  require_once 'CRM/Member/BAO/Membership.php';
+
   $membershipParams = array('contact_id' => $contactID);
   if ($membershipTypeId) {
     $membershipParams['membership_type_id'] = $membershipTypeId;
@@ -224,7 +220,6 @@ function civicrm_api3_membership_get($params) {
   $relationships = array();
   foreach ($membershipValues as $membershipId => $values) {
     // populate the membership type name for the membership type id
-    require_once 'CRM/Member/BAO/MembershipType.php';
     $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($values['membership_type_id']);
 
     $membershipValues[$membershipId]['membership_name'] = $membershipType['name'];
@@ -234,7 +229,6 @@ function civicrm_api3_membership_get($params) {
     }
 
     // populating relationship type name.
-    require_once 'CRM/Contact/BAO/RelationshipType.php';
     $relationshipType = new CRM_Contact_BAO_RelationshipType();
     $relationshipType->id = CRM_Utils_Array::value('relationship_type_id', $membershipType);
     if ($relationshipType->find(TRUE)) {
@@ -247,7 +241,6 @@ function civicrm_api3_membership_get($params) {
   $members = $membershipValues;
 
   // populating contacts in members array based on their relationship with direct members.
-  require_once 'CRM/Contact/BAO/Relationship.php';
   if (!empty($relationships)) {
     foreach ($relationships as $relTypeId => $membershipId) {
       // As members are not direct members, there should not be
