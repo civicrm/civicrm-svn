@@ -258,7 +258,7 @@ class CRM_Event_Form_ManageEvent_Location extends CRM_Event_Form_ManageEvent {
 
     // if 'create new loc' option is selected, set the loc_block_id for this event to null
     // so that an update would result in creating a new loc.
-    if ($this->_oldLocBlockId && ($params['location_option'] == 1)) {
+    if ($this->_oldLocBlockId && (CRM_Utils_Array::value('location_option', $params) == 1)) {
       $deleteOldBlock = TRUE;
       CRM_Core_DAO::setFieldValue('CRM_Event_DAO_Event', $this->_id,
         'loc_block_id', 'null'
