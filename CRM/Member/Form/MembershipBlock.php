@@ -93,7 +93,9 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
           $priceFieldOptions = CRM_Price_BAO_FieldValue::getValues($defaults['mem_price_field_id'], $options, 'id', 1);
           foreach ($options as $k => $v) {
             $newMembershipType[$v['membership_type_id']] = 1;
-            $defaults["auto_renew_".$v['membership_type_id']] = $defaults['auto_renew'][$v['membership_type_id']];
+            if ( !empty($defaults['auto_renew']) ) {
+              $defaults["auto_renew_".$v['membership_type_id']] = $defaults['auto_renew'][$v['membership_type_id']];
+            }
           }
           $defaults['membership_type'] = $newMembershipType;
         }
