@@ -27,9 +27,6 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
   protected $pageno = '';
   protected function setUp() {
     parent::setUp();
@@ -795,6 +792,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Main_upload-bottom");
     $this->click('CIVICRM_QFID_amount_other_radio_4');
     $this->type('amount_other', 60);
+    $this->click('onbehalf_organization_name');
+    $this->type('onbehalf_organization_name', $orgName1);
     $this->typeKeys('onbehalf_organization_name', $orgName1);
     $this->click("onbehalf_organization_name");
     $this->waitForElementPresent("css=div.ac_results-inner li");

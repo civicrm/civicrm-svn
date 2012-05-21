@@ -28,10 +28,6 @@
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
 
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-
   protected function setUp() {
     parent::setUp();
   }
@@ -87,8 +83,9 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
     $this->type("trxn_id", "P20901X1" . rand(100, 10000));
 
     // soft credit
+    $this->click("soft_credit_to");
+    $this->type("soft_credit_to", $softCreditFname);
     $this->typeKeys("soft_credit_to", $softCreditFname);
-    $this->fireEvent("soft_credit_to", "focus");
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
 
