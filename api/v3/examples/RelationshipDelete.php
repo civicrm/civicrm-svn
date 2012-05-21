@@ -30,11 +30,11 @@ function relationship_delete_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 7,
+  'id' => 1,
   'values' => array( 
-      '7' => array( 
-          'id' => 7,
-          'moreIDs' => '7',
+      '1' => array( 
+          'id' => 1,
+          'moreIDs' => '1',
         ),
     ),
 );

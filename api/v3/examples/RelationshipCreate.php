@@ -32,11 +32,11 @@ function relationship_create_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 3,
+  'id' => 1,
   'values' => array( 
-      '3' => array( 
-          'id' => 3,
-          'moreIDs' => '3',
+      '1' => array( 
+          'id' => 1,
+          'moreIDs' => '1',
         ),
     ),
 );
