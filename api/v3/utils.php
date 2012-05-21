@@ -463,6 +463,12 @@ function _civicrm_api3_apply_filters_to_dao($filterField, $filterValue, &$dao) {
     $fieldName = substr($filterField, 0, -4);
     $dao->whereAdd("($fieldName >= $filterValue )");
   }
+  if($filterField == 'is_current' && $filterValue == 1){
+    $dao->whereAdd('(start_date <= NOW() OR start_date IS NULL) AND (end_date >= NOW() OR end_date IS NULL)');
+    if(property_exists($dao, 'is_active')){
+      $dao->whereAdd('is_active = 1');
+    }
+  }
 }
 /*
  *

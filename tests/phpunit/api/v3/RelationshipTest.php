@@ -37,6 +37,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_cId_a;
   protected $_cId_b;
+  protected $_cId_b2;// second org
   protected $_relTypeID;
   protected $_ids = array();
   protected $_customGroupId = NULL;
@@ -54,7 +55,8 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     parent::setUp();
     $this->_apiversion = 3;
     $this->_cId_a      = $this->individualCreate(NULL);
-    $this->_cId_b      = $this->organizationCreate(NULL);
+    $this->_cId_b      = $this->organizationCreate();
+    $this->_cId_b2      = $this->organizationCreate(array('organization_name' => ' Org 2'));
     $this->_entity     = 'relationship';
     //Create a relationship type
     $relTypeParams = array(
@@ -76,9 +78,11 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'is_active' => 1,
       'version' => $this->_apiversion,
     );
+    
   }
 
   function tearDown() {
+    $this->quickCleanup(array('civicrm_relationship'));
     $this->relationshipTypeDelete($this->_relTypeID);
     $this->contactDelete($this->_cId_a);
     $this->contactDelete($this->_cId_b);
@@ -708,8 +712,46 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $result = civicrm_api('relationship', 'get', $params);
     $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
   }
-  ///////////////// civicrm_relationship_type_add methods
 
+  function testGetIsCurrent() {
+    $rel2Params =array(
+      'contact_id_a' => $this->_cId_a,
+      'contact_id_b' => $this->_cId_b2,
+      'relationship_type_id' => $this->_relTypeID,
+      'start_date' => '2008-12-20',
+      'is_active' => 0,
+      'version' => $this->_apiversion,
+    );
+    $rel2 = civicrm_api('relationship', 'create', $rel2Params);
+    $this->assertAPISuccess($rel2);
+    $rel1 = civicrm_api('relationship', 'create', $this->_params);
+    $this->assertAPISuccess($rel1);
+    $getParams = array(
+      'version' => $this->_apiversion,
+      'filters' => array('is_current' => 1)
+    );
+    $description = "demonstrates is_current filter";
+    $subfile = 'filterIsCurrent';
+    //no relationship has been created
+    $result = civicrm_api('relationship', 'get', $getParams);
+    $this->documentMe($getParams, $result, __FUNCTION__, __FILE__, $description, $subfile);
+    $this->assertEquals($result['count'], 1);
+    $this->AssertEquals($rel1['id'], $result['id']);
+    
+    // now try not started
+    $rel2Params['is_active'] =1;
+    $rel2Params['start_date'] ='tomorrow';
+    $rel2 = civicrm_api('relationship', 'create', $rel2Params);
+    $result = civicrm_api('relationship', 'get', $getParams);
+    $this->assertEquals($result['count'], 1);
+    $this->AssertEquals($rel1['id'], $result['id']);
+    
+    // now try finished
+    $rel2Params['is_active'] =1;
+    $rel2Params['start_date'] ='last week';
+    $rel2Params['end_date'] ='yesterday';
+    $rel2 = civicrm_api('relationship', 'create', $rel2Params);
+  }
   /**
    * check with invalid relationshipType Id
    */
