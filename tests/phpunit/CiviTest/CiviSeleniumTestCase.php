@@ -203,6 +203,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   /**
    */
   function webtestFillAutocomplete($sortName) {
+    $this->click('contact_1');
+    $this->type('contact_1', $sortName);
     $this->typeKeys('contact_1', $sortName);
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
@@ -1085,6 +1087,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->assertTrue($this->isTextPresent("Anderson, " . $firstName2), "Contact not found in line " . __LINE__);
 
     // Typing contact's name into the field (using typeKeys(), not type()!)...
+    $this->click("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id");
+    $this->type("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
     $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
     // ...waiting for drop down with results to show up...
