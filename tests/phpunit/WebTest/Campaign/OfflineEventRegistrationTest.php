@@ -213,11 +213,9 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
     $this->assertTrue($this->isTextPresent("Source for this registration (if applicable)."));
 
     // Select an event fee
-    $feeHelp = "Event Fee Level (if applicable).";
-    $this->waitForTextPresent($feeHelp);
-
-    $this->click("xpath=id('feeBlock')/table/tbody/tr[1]/td/table/tbody/tr/td[2]/label[1]");
-
+    $this->waitForElementPresent('priceset');
+    $this->click("xpath=//div[@id='priceset']//input[1][@class='form-radio']");
+    
     // Select 'Record Payment'
     $this->click("record_contribution");
 

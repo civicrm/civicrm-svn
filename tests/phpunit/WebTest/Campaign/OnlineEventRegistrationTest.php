@@ -133,7 +133,7 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
 
     $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
     $id = (int) $this->getText("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody/tr/td[text()='{$campaignTitle}']/../td[1]");
-
+    
     $this->onlineParticipantAddTest($campaignTitle, $id);
   }
 
@@ -162,11 +162,12 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
     $eventInfoStrings = array($eventTitle, $eventDescription, $streetAddress);
     $this->_testVerifyEventInfo($eventTitle, $eventInfoStrings);
 
-    $registerStrings = array("250.00 Member", "325.00 Non-member", $registerIntro);
+    $registerStrings = array("Member - $ 250.00", "Non-member - $ 325.00", $registerIntro);
     $registerUrl = $this->_testVerifyRegisterPage($registerStrings);
 
     $numberRegistrations = 3;
     $anonymous = TRUE;
+    
     $this->_testOnlineRegistration($campaignTitle, $registerUrl, $numberRegistrations, $anonymous);
   }
 
@@ -305,7 +306,8 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
 
     $this->select("additional_participants", "value=" . $numberRegistrations);
     $email = "smith" . substr(sha1(rand()), 0, 7) . "@example.org";
-    $this->type("email-5", $email);
+
+    $this->type("email-Primary", $email);
 
     $this->select("credit_card_type", "value=Visa");
     $this->type("credit_card_number", "4111111111111111");
@@ -327,7 +329,7 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
         $this->waitForPageToLoad('30000');
         // Look for Skip button
         $this->waitForElementPresent("_qf_Participant_{$i}_next_skip-Array");
-        $this->type("email-5", "smith" . substr(sha1(rand()), 0, 7) . "@example.org");
+        $this->type("email-Primary", "smith" . substr(sha1(rand()), 0, 7) . "@example.org");
         $this->click("_qf_Participant_{$i}_next");
       }
     }
@@ -354,4 +356,3 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
     $this->assertTrue($this->isTextPresent("$campaignTitle"));
   }
 }
-
