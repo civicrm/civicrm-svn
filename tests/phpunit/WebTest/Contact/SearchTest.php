@@ -58,8 +58,9 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     // type sortname in autocomplete
-    $this->typeKeys("css=input#sort_name_navigation", $sortName);
     $this->click("css=input#sort_name_navigation");
+    $this->type("css=input#sort_name_navigation", $sortName);
+    $this->typeKeys("css=input#sort_name_navigation", $sortName);
 
     // wait for result list
     $this->waitForElementPresent("css=div.ac_results-inner li");
@@ -88,7 +89,10 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     // type partial sortname in autocomplete
+    $this->click("css=input#sort_name_navigation");
+    $this->type("css=input#sort_name_navigation", 'ada');
     $this->typeKeys("css=input#sort_name_navigation", 'ada');
+    
     $this->click("_qf_Basic_refresh");
 
     // wait for result list

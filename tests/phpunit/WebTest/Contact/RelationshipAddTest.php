@@ -85,10 +85,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->select('relationship_type_id', "label={$params['label_b_a']}");
 
     //fill in the individual
-    $this->typeKeys('contact_1', $sortName);
-    $this->fireEvent('contact_1', 'focus');
-    $this->waitForElementPresent("css=div.ac_results-inner li");
-    $this->click("css=div.ac_results-inner li");
+    $this->webtestFillAutocomplete($sortName);
 
     $this->waitForElementPresent("quick-save");
 
@@ -180,12 +177,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->select('relationship_type_id', "label={$params['label_b_a']}");
 
     //fill in the individual
-    $this->typeKeys('contact_1', $sortName);
-    $this->fireEvent('contact_1', 'focus');
-
-    $this->waitForElementPresent("css=div.ac_results-inner li");
-    $this->click("css=div.ac_results-inner li");
-
+    $this->webtestFillAutocomplete($sortName);
+    
     $this->waitForElementPresent("quick-save");
 
     //fill in the relationship start date
@@ -284,12 +277,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->select('relationship_type_id', "label={$params['label_b_a']}");
 
     //fill in the individual
-    $this->typeKeys('contact_1', $sortName);
-    $this->fireEvent('contact_1', 'focus');
-
-    $this->waitForElementPresent("css=div.ac_results-inner li");
-    $this->click("css=div.ac_results-inner li");
-
+    $this->webtestFillAutocomplete($sortName);
+ 
     $this->waitForElementPresent("quick-save");
 
     //fill in the relationship start date

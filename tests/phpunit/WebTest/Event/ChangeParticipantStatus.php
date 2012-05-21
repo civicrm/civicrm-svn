@@ -59,6 +59,7 @@ class WebTest_Event_ChangeParticipantStatus extends CiviSeleniumTestCase {
 
     $eventName = 'Rain';
     $this->click("event_name");
+    $this->type("event_name", $eventName);
     $this->typeKeys("event_name", $eventName);
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
