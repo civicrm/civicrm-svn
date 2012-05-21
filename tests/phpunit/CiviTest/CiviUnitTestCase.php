@@ -521,16 +521,16 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *
    * @return int    id of Organisation created
    */
-  function organizationCreate($params = NULL) {
-
-    if ($params === NULL) {
-      $params = array(
+  function organizationCreate($params = array()) {
+    if(!$params){
+      $params = array();
+    }
+    $orgParams = array(
         'organization_name' => 'Unit Test Organization',
         'contact_type' => 'Organization',
-      );
-    }
-    $params['version'] = API_LATEST_VERSION;
-    return $this->_contactCreate($params);
+        'version' => API_LATEST_VERSION,
+    );
+    return $this->_contactCreate(array_merge($orgParams,$params));
   }
 
   /**
