@@ -548,8 +548,9 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
 
 
       // Type search name in autocomplete.
-      $this->typeKeys("css=input#sort_name_navigation", $searchName);
       $this->click("css=input#sort_name_navigation");
+      $this->type("css=input#sort_name_navigation", $searchName);
+      $this->typeKeys("css=input#sort_name_navigation", $searchName);
 
       // Wait for result list.
       $this->waitForElementPresent("css=div.ac_results-inner li");

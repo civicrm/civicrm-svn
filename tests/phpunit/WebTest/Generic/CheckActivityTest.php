@@ -56,6 +56,8 @@ class WebTest_Generic_CheckActivityTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Activity_upload");
     $this->select("activity_type_id", "label=Meeting");
 
+    $this->click("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id");
+    $this->type("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$contactFirstName1");
     $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$contactFirstName1");
 
     // ...waiting for drop down with results to show up...
@@ -70,6 +72,8 @@ class WebTest_Generic_CheckActivityTest extends CiviSeleniumTestCase {
 
     // Now we're doing the same for "Assigned To" field.
     // Typing contact's name into the field (using typeKeys(), not type()!)...
+    $this->click("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id");
+    $this->type("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", "$contactFirstName2");
     $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", "$contactFirstName2");
 
     // ...waiting for drop down with results to show up...

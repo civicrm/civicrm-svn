@@ -27,9 +27,6 @@
 
 require_once 'WebTest/Import/ImportCiviSeleniumTestCase.php';
 class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
 
   protected function setUp() {
     parent::setUp();
@@ -104,8 +101,9 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     $this->importContacts($headers, $rows, 'Individual', 'No Duplicate Checking', array(), $other);
 
     // Type search name in autocomplete.
-    $this->typeKeys('css=input#sort_name_navigation', $firstName1);
     $this->click('sort_name_navigation');
+    $this->type('css=input#sort_name_navigation', $firstName1);
+    $this->typeKeys('css=input#sort_name_navigation', $firstName1);
 
     // Wait for result list.
     $this->waitForElementPresent("css=div.ac_results-inner li");
