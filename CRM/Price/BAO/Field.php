@@ -270,7 +270,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         $priceVal  = implode($seperator, array($customOption[$optionKey][$valueFieldName], $count, $max_value));
 
         $extra = array();
-        if (property_exists($qf,'_quickConfig') && $qf->_quickConfig) {
+        if (property_exists($qf,'_quickConfig') && $qf->_quickConfig && property_exists($qf,'_contributionAmount') && $qf->_contributionAmount) {
           $qf->assign('priceset', $elementName);
           $extra = array('onclick' => 'useAmountOther();');
         }
@@ -309,7 +309,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
       case 'Radio':
         $choice = array();
 
-        if (property_exists($qf, '_quickConfig') && $qf->_quickConfig) {
+        if (property_exists($qf, '_quickConfig') && $qf->_quickConfig && property_exists($qf,'_contributionAmount') && $qf->_contributionAmount) {
           $qf->assign('contriPriceset', $elementName);
         }
 

@@ -1029,5 +1029,21 @@ return CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MULTISITE_PREFERENCES
 NULL, FALSE
 );
 }
+
+
+  /**
+   * update the is_quick_config flag in the db
+   *
+   * @param  int      $id             id of the database record
+   * @param  boolean  $isQuickConfig  value we want to set the is_quick_config field
+   *
+   * @return Object                   DAO object on sucess, null otherwise
+   * @static
+   * @access public
+   */
+  static
+  function setIsQuickConfig($id, $isQuickConfig) {
+    return CRM_Core_DAO::setFieldValue('CRM_Price_DAO_Set', $id, 'is_quick_config', $isQuickConfig);
+  }
 }
 
