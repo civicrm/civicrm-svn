@@ -140,6 +140,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
 
     //add Tagset to contact
     $this->click("//div[@id='Tag']/div[3]/div[1]/ul/li[1]/input");
+    $this->type("//div[@id='Tag']/div[3]/div[1]/ul/li[1]/input", 'tagset1');
     $this->typeKeys("//div[@id='Tag']/div[3]/div[1]/ul/li[1]/input", 'tagset1');
 
     // ...waiting for drop down with results to show up...
@@ -151,6 +152,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
 
     $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[1]/ul/li[1]/span");
     $this->click("//div[@id='Tag']/div[3]/div[1]/ul/li[2]/input");
+    $this->type("//div[@id='Tag']/div[3]/div[1]/ul/li[2]/input", 'tagset2');
     $this->typeKeys("//div[@id='Tag']/div[3]/div[1]/ul/li[2]/input", 'tagset2');
 
     // ...waiting for drop down with results to show up...
@@ -163,8 +165,9 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
     $this->click("//div[@id='Tag']/div[3]/div[1]/ul/li");
 
     // Type search name in autocomplete.
-    $this->typeKeys("css=input#sort_name_navigation", $firstName);
     $this->click("css=input#sort_name_navigation");
+    $this->type("css=input#sort_name_navigation", $firstName);
+    $this->typeKeys("css=input#sort_name_navigation", $firstName);
 
     // Wait for result list.
     $this->waitForElementPresent("css=div.ac_results-inner li");

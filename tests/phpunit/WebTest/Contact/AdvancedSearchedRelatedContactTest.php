@@ -250,11 +250,8 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->select('relationship_type_id', "label={$relType}");
 
     //fill in the individual
-    $this->typeKeys('contact_1', $relatedName);
-    $this->fireEvent("contact_1", "focus");
-    $this->waitForElementPresent("css=div.ac_results-inner li");
-    $this->click("css=div.ac_results-inner li");
-
+    $this->webtestFillAutocomplete($relatedName);
+    
     $this->waitForElementPresent("quick-save");
 
     //fill in the relationship start date

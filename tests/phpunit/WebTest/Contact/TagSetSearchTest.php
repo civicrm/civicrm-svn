@@ -49,6 +49,8 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
 
     // Add tag1 for Individual 1
     $tag1 = substr(sha1(rand()), 0, 5);
+    $this->click("css=input#token-input-contact_taglist_{$tagSet1}");
+    $this->type("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
     $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
     // ...waiting for drop down with results to show up...
     $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
@@ -59,6 +61,8 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
 
     // Add tag2 for Individual 1
     $tag2 = substr(sha1(rand()), 0, 5);
+    $this->click("css=input#token-input-contact_taglist_{$tagSet2}");
+    $this->type("css=input#token-input-contact_taglist_{$tagSet2}", $tag2);
     $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet2}", $tag2);
     // ...waiting for drop down with results to show up...
     $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
@@ -76,6 +80,8 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("token-input-contact_taglist_{$tagSet1}");
 
     // Add tag1 for Individual 2
+    $this->click("css=input#token-input-contact_taglist_{$tagSet1}");
+    $this->type("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
     $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
     // ...waiting for drop down with results to show up...
     $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
@@ -94,6 +100,8 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isElementPresent("token-input-contact_taglist_{$tagSet2}"));
 
     // Search contact using tags.
+    $this->click("css=input#token-input-contact_taglist_{$tagSet1}");
+    $this->type("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
     $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
 
     // ...waiting for drop down with results to show up...
@@ -105,6 +113,8 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
 
     $this->waitForTextPresent($tag1);
 
+    $this->click("css=input#token-input-contact_taglist_{$tagSet2}");
+    $this->type("css=input#token-input-contact_taglist_{$tagSet2}", $tag2);
     $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet2}", $tag2);
 
     // ...waiting for drop down with results to show up...

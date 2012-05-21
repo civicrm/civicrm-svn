@@ -154,10 +154,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->click('relationship_type_id');
     $this->select('relationship_type_id', 'label=Employee of');
 
-    $this->typeKeys('contact_1', $title1);
-    $this->fireEvent('contact_1', 'focus');
-    $this->waitForElementPresent('css=div.ac_results-inner li');
-    $this->click('css=div.ac_results-inner li');
+    $this->webtestFillAutocomplete($title1);
 
     $this->waitForElementPresent('quick-save');
 
