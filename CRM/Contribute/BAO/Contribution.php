@@ -2301,14 +2301,16 @@ WHERE  contribution_id = %1 AND membership_id != %2";
 
       $ufJoinParams = array(
         'entity_table' => 'civicrm_event',
-        'entity_id' => $ids['event'],
-        'weight' => 1,
+        'entity_id'    => $ids['event'],
+        'module'       => 'CiviEvent',
       );
+      
+      list($custom_pre_id,
+           $custom_post_ids
+           ) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
 
-      $values['custom_pre_id'] = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams);
-
-      $ufJoinParams['weight'] = 2;
-      $values['custom_post_id'] = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams);
+      $values['custom_pre_id'] = $custom_pre_id;
+      $values['custom_post_id'] = $custom_post_ids;
 
       // set lineItem for event contribution
       if ($this->id) {
