@@ -643,13 +643,15 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       //add field for amount to allow an amount to be entered that differs from minimum
       $this->add('text', 'total_amount', ts('Amount'));
     }
-
-    //CRM-10223 - allow contribution to be recorded against different contact
-    $this->addElement('checkbox', 'contribution_contact', ts('Record payment from different contact?'));
-    $this->add( 'select', 'honor_type_id', ts('Membership payment is : '),
+    if ($this->_context != 'standalone') {
+      //CRM-10223 - allow contribution to be recorded against different contact
+      // causes a conflict in standalone mode so skip in standalone for now
+      $this->addElement('checkbox', 'contribution_contact', ts('Record payment from different contact?'));
+      $this->add( 'select', 'honor_type_id', ts('Membership payment is : '),
                         array( '' => ts( '-') ) + CRM_Core_PseudoConstant::honor() );
-    CRM_Contact_Form_NewContact::buildQuickForm($this,1, null, false,'contribution_');
-
+      CRM_Contact_Form_NewContact::buildQuickForm($this,2, null, false,'contribution_');
+    }
+    
     $this->addElement('checkbox',
       'send_receipt',
       ts('Send Confirmation and Receipt?'), NULL,

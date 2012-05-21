@@ -164,7 +164,7 @@
         </tr>
         <tr class="crm-membership-form-block-record_contribution"><td colspan="2">    
           <fieldset id="recordContribution"><legend>{ts}Membership Payment and Receipt{/ts}</legend>
-              <table>
+              <table>{if $context neq 'standalone'}
                  <tr class="crm-membership-form-block-contribution-contact">
                    <td class="label">{$form.contribution_contact.label}</td>
                    <td>{$form.contribution_contact.html}</td>
@@ -182,7 +182,7 @@
                       </tr>
                     </table>
                   </td>
-                 </tr>
+                 </tr>{/if}
                  <tr class="crm-membership-form-block-contribution_type_id">
                     <td class="label">{$form.contribution_type_id.label}</td>
                     <td>{$form.contribution_type_id.html}<br />
