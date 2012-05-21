@@ -165,33 +165,42 @@
         <tr class="crm-membership-form-block-record_contribution"><td colspan="2">    
           <fieldset id="recordContribution"><legend>{ts}Membership Payment and Receipt{/ts}</legend>
               <table>
-               <tr class="crm-membership-form-block-contribution-contact">
-                 <td class="label">{$form.contribution_contact.label}</td>
-                 <td>{$form.contribution_contact.html}</td></tr>
-                 <tr class="crm-membership-form-block-honor-type">
-                 <td class="label">{$form.honor_type_id.label}</td>
-                 <td>{$form.honor_type_id.html}</td></tr>
-                 <tr id ='contributionContact' class="crm-membership-form-block-contribution-type">
-                 {include file="CRM/Contact/Form/NewContact.tpl"} 
-               </tr>         
-                  <tr class="crm-membership-form-block-contribution_type_id">
-                      <td class="label">{$form.contribution_type_id.label}</td>
-                      <td>{$form.contribution_type_id.html}<br />
-                      <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
-                  </tr>
-                  <tr class="crm-membership-form-block-total_amount">
+                 <tr class="crm-membership-form-block-contribution-contact">
+                   <td class="label">{$form.contribution_contact.label}</td>
+                   <td>{$form.contribution_contact.html}</td>
+                 </tr>
+                 <tr id="record-different-contact">
+                  <td>&nbsp;</td>
+                  <td>
+                    <table class="compressed">
+                      <tr class="crm-membership-form-block-honor-type">
+                        <td class="label">{$form.honor_type_id.label}</td>
+                        <td>{$form.honor_type_id.html}</td>
+                      </tr>
+                      <tr id ='contributionContact' class="crm-membership-form-block-contribution-type">
+                        {include file="CRM/Contact/Form/NewContact.tpl"} 
+                      </tr>
+                    </table>
+                  </td>
+                 </tr>
+                 <tr class="crm-membership-form-block-contribution_type_id">
+                    <td class="label">{$form.contribution_type_id.label}</td>
+                    <td>{$form.contribution_type_id.html}<br />
+                    <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
+                 </tr>
+                 <tr class="crm-membership-form-block-total_amount">
                       <td class="label">{$form.total_amount.label}</td>
                       <td>{$form.total_amount.html}<br />
                     <span class="description">{ts}Membership payment amount. A contribution record will be created for this amount.{/ts}</span></td>
-                  </tr>
-                  <tr class="crm-membership-form-block-receive_date">
+                 </tr>
+                 <tr class="crm-membership-form-block-receive_date">
                       <td class="label">{$form.receive_date.label}</td>
                       <td>{include file="CRM/common/jcalendar.tpl" elementName=receive_date}</td>  
-                  </tr>
-                  <tr class="crm-membership-form-block-payment_instrument_id">
+                 </tr>
+                 <tr class="crm-membership-form-block-payment_instrument_id">
                       <td class="label">{$form.payment_instrument_id.label}</td>
                       <td>{$form.payment_instrument_id.html}</td>
-                  </tr>
+                 </tr>
               <tr id="checkNumber" class="crm-membership-form-block-check_number">
                       <td class="label">{$form.check_number.label}</td>
                       <td>{$form.check_number.html|crmReplace:class:six}</td>
@@ -300,6 +309,21 @@ cj( function( ) {
     cj('#membership_type_id\\[1\\]').change( function( ) {
         setPaymentBlock( mode );
     });
+
+    // show/hide different contact section
+    setDifferentContactBlock();
+    cj('#contribution_contact').change( function() {
+      setDifferentContactBlock();
+    });
+
+    function setDifferentContactBlock( ) {
+      //get the
+      if ( cj('#contribution_contact').attr('checked') ) {
+        cj('#record-different-contact').show();
+      } else {
+        cj('#record-different-contact').hide();
+      }
+    }
 });
 </script>
 {/literal}

@@ -196,11 +196,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
       );
     }
     $this->assign('onlinePendingContributionId', $this->_onlinePendingContributionId);
-    //CRM-10223 - allow contribution to be recorded against different contact
-    $this->addElement('checkbox', 'contribution_contact', ts('Record payment from different contact?'));
-    $this->add( 'select', 'honor_type_id', ts('Membership payment is : '),
-                        array( '' => ts( '-') ) + CRM_Core_PseudoConstant::honor() );
-    CRM_Contact_Form_NewContact::buildQuickForm($this,1, null, false,'contribution_');
     $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail();
 
     parent::preProcess();
@@ -648,6 +643,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       //add field for amount to allow an amount to be entered that differs from minimum
       $this->add('text', 'total_amount', ts('Amount'));
     }
+
+    //CRM-10223 - allow contribution to be recorded against different contact
+    $this->addElement('checkbox', 'contribution_contact', ts('Record payment from different contact?'));
+    $this->add( 'select', 'honor_type_id', ts('Membership payment is : '),
+                        array( '' => ts( '-') ) + CRM_Core_PseudoConstant::honor() );
+    CRM_Contact_Form_NewContact::buildQuickForm($this,1, null, false,'contribution_');
+
     $this->addElement('checkbox',
       'send_receipt',
       ts('Send Confirmation and Receipt?'), NULL,
