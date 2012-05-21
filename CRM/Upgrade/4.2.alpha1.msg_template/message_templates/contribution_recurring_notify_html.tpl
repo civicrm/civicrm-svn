@@ -21,14 +21,22 @@
 
   <tr>
    <td>
-
     <p>{ts 1=$displayName}Dear %1{/ts},</p>
+   </td>
+  </tr>
+
+  <tr>
+   <td>&nbsp;</td>
+  </tr>
 
     {if $recur_txnType eq 'START'}
      {if $auto_renew_membership}
-     <p>{ts}Thanks for your auto renew membership sign-up.{/ts}</p>
-     <p>{ts 1=$recur_frequency_interval 2=$recur_frequency_unit}This membership will be automatically renewed 
-      every %1 %2(s). {/ts}</p>
+       <tr>
+        <td>
+         <p>{ts}Thanks for your auto renew membership sign-up.{/ts}</p>
+         <p>{ts 1=$recur_frequency_interval 2=$recur_frequency_unit}This membership will be automatically renewed every %1 %2(s). {/ts}</p>
+        </td>
+       </tr>
        <tr>
         <td {$labelStyle}>
          {ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can modify or cancel the auto-renewal option by <a href="%1">visiting this web page</a>.{/ts}
@@ -40,11 +48,13 @@
         </td>
        </tr>
      {else}
-
-     <p>{ts}Thanks for your recurring contribution sign-up.{/ts}</p>
-     <p>{ts 1=$recur_frequency_interval 2=$recur_frequency_unit 3=$recur_installments}This recurring contribution will be
-     automatically processed every %1 %2(s) for a total of %3 installment(s).{/ts}</p>
-     <p>{ts}Start Date{/ts}: {$recur_start_date|crmDate}</p>
+      <tr>
+       <td>
+        <p>{ts}Thanks for your recurring contribution sign-up.{/ts}</p>
+        <p>{ts 1=$recur_frequency_interval 2=$recur_frequency_unit 3=$recur_installments}This recurring contribution will be automatically processed every %1 %2(s) for a total of %3 installment(s).{/ts}</p>
+        <p>{ts}Start Date{/ts}: {$recur_start_date|crmDate}</p>
+       </td>
+      </tr>
       <tr>
         <td {$labelStyle}>
          {ts 1=$cancelSubscriptionUrl} You can modify or cancel the recurring contribution option by <a href="%1">visiting this web page</a>.{/ts}
@@ -61,15 +71,24 @@
         </td>
        </tr>
      {/if}
-     <p>{ts 1=$receipt_from_name 2=$receipt_from_email}You have pledged to make this recurring donation. You will be charged periodically (per frequency listed above), and you will receive an email receipt from %1 following each charge. These recurring donations will continue until you explicitly cancel the donation. You may change or cancel your recurring donation at anytime by logging into your account. If you have questions about recurring donations please contact us at %2.{/ts}</p>
 
     {elseif $recur_txnType eq 'END'}
 
      {if $auto_renew_membership}
-     <p>{ts}Your auto renew membership sign-up has ended and your membership will not be automatically renewed.{/ts}</p>   
+      <tr>
+       <td>
+        <p>{ts}Your auto renew membership sign-up has ended and your membership will not be automatically renewed.{/ts}</p>   
+       </td>
+      </tr>
      {else}
-     <p>{ts}Your recurring contribution term has ended.{/ts}</p>
-     <p>{ts 1=$recur_installments}You have successfully completed %1 recurring contributions. Thank you for your support.{/ts}</p>
+      <tr>
+       <td>
+        <p>{ts}Your recurring contribution term has ended.{/ts}</p>
+        <p>{ts 1=$recur_installments}You have successfully completed %1 recurring contributions. Thank you for your support.{/ts}</p>
+       </td>
+      </tr>
+      <tr>
+       <td>
      <table style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse; width:100%;">
       <tr>
        <th {$headerStyle}>
@@ -93,12 +112,11 @@
        </td>
       </tr>
      </table>
+       </td>
+      </tr>
 
      {/if}
     {/if}
-
-   </td>
-  </tr>
 
  </table>
 </center>

@@ -43,8 +43,7 @@
 {ts}Transaction #{/ts}: {$trxn_id}
 {/if}
 
-{if $is_recur}
-{if $contributeMode eq 'notify'}
+{if $is_recur and ($contributeMode eq 'notify' or $contributeMode eq 'directIPN')}
 {ts}This is a recurring contribution. You can modify or cancel future contributions by logging in to your account at:{/ts}
 
 {$cancelSubscriptionUrl}
@@ -57,10 +56,6 @@
 
 {$updateSubscriptionUrl}
 
-{elseif $contributeMode eq 'directIPN' and $receiptFromEmail}
-{ts 1=$receiptFromEmail}This is a recurring contribution. To modify or cancel future contributions please contact us at %1.{/ts}
-
-{/if}
 {/if}
 
 {if $honor_block_is_active }

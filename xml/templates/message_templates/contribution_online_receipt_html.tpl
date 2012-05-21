@@ -129,17 +129,17 @@
      {if $is_recur}
       {if $contributeMode eq 'notify' or $contributeMode eq 'directIPN'}
        <tr>
-        <td {$labelStyle}>
-         {ts 1=$cancelSubscriptionUrl}This is a recurring contribution. You can modify or cancel future contributions by <a href="%1">logging in to your account</a>.{/ts}
+        <td  colspan="2" {$labelStyle}>
+         {ts 1=$cancelSubscriptionUrl}This is a recurring contribution. You can modify or cancel future contributions by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        <tr>
        </tr>
-        <td {$labelStyle}>
+        <td colspan="2" {$labelStyle}>
          {ts 1=$updateSubscriptionBillingUrl}You can update billing details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        <tr>
        </tr>
-        <td {$labelStyle}>
+        <td colspan="2" {$labelStyle}>
          {ts 1=$updateSubscriptionUrl}You can update details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>

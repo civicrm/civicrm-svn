@@ -12,21 +12,19 @@
 {ts 1=$updateSubscriptionBillingUrl}You can update billing details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
         
 {else}
-
 {ts}Thanks for your recurring contribution sign-up.{/ts}
 
 
 {ts 1=$recur_frequency_interval 2=$recur_frequency_unit 3=$recur_installments}This recurring contribution will be automatically processed every %1 %2(s) for a total of %3 installment(s).{/ts}
+
+{ts}Start Date{/ts}:  {$recur_start_date|crmDate}
 
 {ts 1=$cancelSubscriptionUrl}You can modify or cancel the recurring contribution option by <a href="%1">visiting this web page</a>.{/ts}
 
 {ts 1=$updateSubscriptionBillingUrl}You can update billing details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
 
 {ts 1=$updateSubscriptionUrl}You can update details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
-{ts}Start Date{/ts}:  {$recur_start_date|crmDate}
 {/if}
-
-{ts 1=$receipt_from_name 2=$receipt_from_email}You have pledged to make this recurring donation. You will be charged periodically (per frequency listed above), and you will receive an email receipt from %1 following each charge. These recurring donations will continue until you explicitly cancel the donation. You may change or cancel your recurring donation at anytime by logging into your account. If you have questions about recurring donations please contact us at %2.{/ts}
 
 {elseif $recur_txnType eq 'END'}
 {if $auto_renew_membership}

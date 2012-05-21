@@ -265,12 +265,12 @@
      {if $is_recur}
       {if $contributeMode eq 'notify' or $contributeMode eq 'directIPN'}
        <tr>
-        <td {$labelStyle}>
+        <td colspan="2" {$labelStyle}>
          {ts 1=$cancelSubscriptionUrl}This membership will be renewed automatically. You can modify or cancel the auto-renewal option by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>
        <tr>
-        <td {$labelStyle}>
+        <td colspan="2" {$labelStyle}>
          {ts 1=$updateSubscriptionBillingUrl}You can update billing details for this subscription by <a href="%1">visiting this web page</a>.{/ts}
         </td>
        </tr>
