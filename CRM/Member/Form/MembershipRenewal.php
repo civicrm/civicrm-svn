@@ -647,6 +647,19 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $memType = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $renewMembership->membership_type_id, 'name');
 
     if (CRM_Utils_Array::value('record_contribution', $formValues) || $this->_mode) {
+      //create lin items
+      $lineItem = array();
+      $priceSetId = null;
+      CRM_Member_BAO_Membership::createLineItems($this, $formValues['membership_type_id'], $priceSetId);
+      CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
+                                       $this->_params, $lineItem[$priceSetId]
+                                       );
+      $formValues['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
+      if (!empty($lineItem)) {
+        $formValues['lineItems'] = $lineItem;
+        $formValues['processPriceSet'] = TRUE;
+      }
+      
       $formValues['contact_id'] = $this->_contactID;
       CRM_Member_BAO_Membership::recordMembershipContribution( $formValues, CRM_Core_DAO::$_nullArray, $renewMembership->id );
 

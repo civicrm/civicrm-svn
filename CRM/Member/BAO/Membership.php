@@ -2774,5 +2774,50 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       CRM_Utils_Hook::post('create', 'MembershipPayment', $mpDAO->id, $mpDAO);
     }
   }
+
+  /**
+   * Function to record line items for default membership
+   *
+   * @param $qf object
+   *
+   * @param $membershipType array with membership type and organization
+   *
+   * @param$ priceSetId priceset id
+   * @access public
+   * @static
+   */
+  static
+    function createLineItems(&$qf, $membershipType, &$priceSetId) {
+    $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
+    if ($priceSetId) {
+      $qf->_priceSet = $priceSets = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
+    }
+    $editedFieldParams = array(
+                               'price_set_id' => $priceSetId,
+                               'name' => $membershipType[0],
+                               );
+    $editedResults = array();
+    CRM_Price_BAO_Field::retrieve($editedFieldParams, $editedResults);
+
+    if (!empty($editedResults)) {
+      unset($qf->_priceSet['fields']);
+      $qf->_priceSet['fields'][$editedResults['id']] = $priceSets['fields'][$editedResults['id']];
+      unset($qf->_priceSet['fields'][$editedResults['id']]['options']);
+      $fid = $editedResults['id'];
+      $editedFieldParams = array(
+                                 'price_field_id' => $editedResults['id'],
+                                 'membership_type_id' => $membershipType[1],
+                                 );
+      $editedResults = array();
+      CRM_Price_BAO_FieldValue::retrieve($editedFieldParams, $editedResults);
+      $qf->_priceSet['fields'][$fid]['options'][$editedResults['id']] = $priceSets['fields'][$fid]['options'][$editedResults['id']];
+      if (CRM_Utils_Array::value('total_amount', $qf->_params)) {
+        $qf->_priceSet['fields'][$fid]['options'][$editedResults['id']]['amount'] = $qf->_params['total_amount'];
+      }
+    }
+
+    $fieldID = key($qf->_priceSet['fields']);
+    $qf->_params['price_' . $fieldID] = $editedResults['id'];
+  }
 }
 

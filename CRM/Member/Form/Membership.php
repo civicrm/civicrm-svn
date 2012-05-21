@@ -988,36 +988,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $lineItem = array();
     $priceSetId = NULL;
     if (!$priceSetId = CRM_Utils_Array::value('price_set_id', $formValues)) {
-      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
-      if ($priceSetId) {
-        $this->_priceSet = $priceSets = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
-      }
-      $editedFieldParams = array(
-        'price_set_id' => $priceSetId,
-        'name' => $formValues['membership_type_id'][0],
-      );
-      $editedResults = array();
-      CRM_Price_BAO_Field::retrieve($editedFieldParams, $editedResults);
-
-      if (!empty($editedResults)) {
-        unset($this->_priceSet['fields']);
-        $this->_priceSet['fields'][$editedResults['id']] = $priceSets['fields'][$editedResults['id']];
-        unset($this->_priceSet['fields'][$editedResults['id']]['options']);
-        $fid = $editedResults['id'];
-        $editedFieldParams = array(
-          'price_field_id' => $editedResults['id'],
-          'membership_type_id' => $formValues['membership_type_id'][1],
-        );
-        $editedResults = array();
-        CRM_Price_BAO_FieldValue::retrieve($editedFieldParams, $editedResults);
-        $this->_priceSet['fields'][$fid]['options'][$editedResults['id']] = $priceSets['fields'][$fid]['options'][$editedResults['id']];
-        if (CRM_Utils_Array::value('total_amount', $this->_params)) {
-          $this->_priceSet['fields'][$fid]['options'][$editedResults['id']]['amount'] = $this->_params['total_amount'];
-        }
-      }
-
-      $fieldID = key($this->_priceSet['fields']);
-      $this->_params['price_' . $fieldID] = $editedResults['id'];
+      CRM_Member_BAO_Membership::createLineItems($this, $formValues['membership_type_id'], $priceSetId);
     }
 
     if ($priceSetId) {
@@ -1425,6 +1396,21 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $params['componentId'] = $params['id'];
         $params['componentName'] = 'contribute';
         $result = CRM_Contribute_BAO_Contribution::transitionComponents($params, TRUE);
+        if (!empty($result) && CRM_Utils_Array::value('contribution_id', $params)) {
+          $lineItem = array();
+          $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_contribution', $params['contribution_id']);
+          $lineItems         = CRM_Price_BAO_LineItem::getLineItems($params['contribution_id'], 'contribution');
+          $itemId            = key($lineItems);
+          $fieldType         = NULL;
+          if ($itemId && CRM_Utils_Array::value('price_field_id', $lineItems[$itemId])) {
+            $fieldType = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'html_type');
+          }
+          $lineItems[$itemId]['unit_price'] = $params['total_amount'];
+          $lineItems[$itemId]['line_total'] = $params['total_amount'];
+          $lineItems[$itemId]['id'] = $itemId;
+          $lineItem[$priceSetId] = $lineItems;
+          CRM_Contribute_Form_AdditionalInfo::processPriceSet($params['contribution_id'], $lineItem);
+        }
 
         //carry updated membership object.
         $membership = new CRM_Member_DAO_Membership();
