@@ -52,3 +52,10 @@
   {ts}If you need to make a dashlet NOT available, AND remove it from existing user dashboards - you can do that from the 'Configure' screen on your dashboard. Click the 'x' on the right side of the dashlet's icon.{/ts}
 </p>
 {/htxt}
+
+{htxt id="id-is_reserved""}
+{ts}Users with 'administer reserved reports' permission can mark a report instance as reserved, which prevents other users from accessing or modifying Report Criteria and Report Settings.
+This is particularly useful for report instances whose criteria affect the data available on non-report screens. For example, the display columns configured for the 
+Contact Logging Summary affect the columns shown under each contact's Change Log tab.{/ts}
+{/htxt}
+
