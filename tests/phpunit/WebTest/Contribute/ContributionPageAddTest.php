@@ -140,7 +140,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
     // create contribution page with randomized title, default params and separate payment for Membership and Contribution
     $pageId = $this->webtestAddContributionPage($hash, $rand, $pageTitle, array("Webtest Dummy" . substr(sha1(rand()), 0, 7) => 'Dummy'),
-      NULL, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, NULL, FALSE,
+      TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, NULL, FALSE,
       1, 0, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE
     );
 
