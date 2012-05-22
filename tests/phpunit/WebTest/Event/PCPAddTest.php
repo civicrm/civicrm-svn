@@ -316,8 +316,8 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
     $pcpTitle = 'PCPTitle' . substr(sha1(rand()), 0, 7);
-    $this->type("title", $pcpTitle);
-    $this->type("intro_text", "Welcome Text $hash");
+    $this->type("pcp_title", $pcpTitle);
+    $this->type("pcp_intro_text", "Welcome Text $hash");
     $this->type("goal_amount", $contributionAmount);
     $this->click("_qf_Campaign_upload-bottom");
     $this->waitForPageToLoad("30000");
@@ -347,12 +347,14 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . $pcpUrl);
     $this->waitForElementPresent("xpath=//div[@class='pcp-donate']/a");
     $this->click("xpath=//div[@class='pcp-donate']/a");
-
+    $emailElement = "";
     if ($campaignType == 'contribute') {
       $this->waitForElementPresent("_qf_Main_upload-bottom");
+      $emailElement = "email-5";
     }
     elseif ($campaignType == 'event') {
       $this->waitForElementPresent('_qf_Register_upload-bottom');
+      $emailElement = "email-Primary";
     }
 
     if ($campaignType == 'contribute') {
@@ -366,7 +368,8 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $firstNameDonar  = 'Andrew' . substr(sha1(rand()), 0, 7);
     $lastNameDonar   = 'Roger' . substr(sha1(rand()), 0, 7);
     $middleNameDonar = 'Nicholas' . substr(sha1(rand()), 0, 7);
-    $this->type("email-5", $firstNameDonar . "@example.com");
+    
+    $this->type("{$emailElement}", $firstNameDonar . "@example.com");
     $this->webtestAddCreditCardDetails();
     $this->webtestAddBillingDetails($firstNameDonar, $middleNameDonar, $lastNameDonar);
 
