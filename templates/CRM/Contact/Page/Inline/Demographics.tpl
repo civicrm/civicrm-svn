@@ -77,7 +77,7 @@ cj(function(){
         var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
         var response = cj.ajax({
                         type: "GET",
-                        data: { 'class_name':'CRM_Contact_Form_Inline_Demographic' },
+                        data: { 'class_name':'CRM_Contact_Form_Inline_Demographics' },
                         url: dataUrl,
                         async: false
 					}).responseText;
