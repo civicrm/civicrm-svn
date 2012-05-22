@@ -203,7 +203,7 @@ GROUP BY cc.id ";
           }
           else {
             $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
-            $lineParams['price_field_id'] = 'Membership Amount';
+            $lineParams['label'] = 'Membership Amount';
             $lineParams['qty'] = 1;
             $lineParams['unit_price'] = $lineParams['line_total'] = $result->total_amount;
             $lineParams['participant_count'] = 0;
@@ -235,14 +235,14 @@ GROUP BY cc.id ";
             CRM_Price_BAO_Field::retrieve($params, $defaults);
             if (!empty($defaults)) {
               $lineParams['price_field_id'] = $defaults['id'];
-              $lineParams['price_field_id'] = $defaults['label'];
+              $lineParams['label'] = $defaults['label'];
               $lineParams['qty'] = $result->total_amount;
               $lineParams['unit_price'] = $lineParams['line_total'] = 1;
               $lineParams['price_field_value_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $defaults['id'], 'id', 'price_field_id');
             }
             else {
               $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
-              $lineParams['price_field_id'] = 'Contribution Amount';
+              $lineParams['label'] = 'Contribution Amount';
               $lineParams['qty'] = 1;
               $lineParams['unit_price'] = $lineParams['line_total'] = $result->total_amount;
             }
