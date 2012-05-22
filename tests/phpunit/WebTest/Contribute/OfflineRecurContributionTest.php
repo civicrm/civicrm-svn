@@ -103,10 +103,11 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
     $verifyData = array(
       'From' => "$contactName",
       'Contribution Type' => 'Donation (test)',
-      'Contribution Amount' => 'Installments: 12, Interval: 1 month(s)',
+      'Total Amount' => 'Installments: 12, Interval: 1 month(s)',
       'Contribution Status' => 'Pending : Incomplete Transaction',
       'Paid By' => 'Credit Card',
     );
+    
     foreach ($verifyData as $label => $value) {
       $this->verifyText("xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td",
         preg_quote($value)

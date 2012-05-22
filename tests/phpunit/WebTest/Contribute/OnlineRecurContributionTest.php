@@ -147,7 +147,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
     $verifyData = array(
       'From' => "$contactName",
       'Contribution Type' => 'Donation (test)',
-      'Contribution Amount' => 'Installments: 12, Interval: 1 month(s)',
+      'Total Amount' => 'Installments: 12, Interval: 1 month(s)',
       'Contribution Status' => 'Pending : Incomplete Transaction',
       'Paid By' => 'Credit Card',
       'Online Contribution Page' => $pageTitle,
