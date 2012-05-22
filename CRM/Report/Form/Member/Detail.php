@@ -208,7 +208,7 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
           'receipt_date' => NULL,
           'fee_amount' => NULL,
           'net_amount' => NULL,
-          'total_amount' => array('title' => ts('Amount'),
+          'total_amount' => array('title' => ts('Payment Amount (most recent)'),
             'statistics' =>
             array('sum' => ts('Amount')),
           ),
@@ -325,12 +325,15 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
     //used when contribution field is selected
     if ($this->_contribField) {
       $this->_from .= "
-              LEFT JOIN civicrm_membership_payment mem_pay
-                        ON {$this->_aliases['civicrm_membership']}.id = 
-                           mem_pay.membership_id
-              LEFT JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
-                        ON mem_pay.contribution_id = 
-                           {$this->_aliases['civicrm_contribution']}.id\n";
+              LEFT JOIN (
+                  SELECT cc.*, cmp.membership_id as membership_id 
+                  FROM civicrm_membership_payment cmp
+                    JOIN civicrm_contribution cc 
+                      ON cc.id = cmp.contribution_id 
+                  ORDER BY cc.receive_date DESC
+                  ) {$this->_aliases['civicrm_contribution']} 
+                ON {$this->_aliases['civicrm_membership']}.id = 
+                  {$this->_aliases['civicrm_contribution']}.membership_id\n";
     }
   }
 
