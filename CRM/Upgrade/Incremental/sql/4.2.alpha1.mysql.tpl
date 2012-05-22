@@ -240,11 +240,6 @@ INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VA
 INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Sint Maarten (Dutch Part)", "SX", @region_id, 0);
 INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Bonaire, Saint Eustatius and Saba", "BQ", @region_id, 0);
 
--- CRM-9714
-
-ALTER TABLE `civicrm_price_set` ADD `is_quick_config` TINYINT( 4 ) NOT NULL DEFAULT '0' COMMENT 'Is set if information from the Regular Fees section is being stored as price set' AFTER `contribution_type_id`,
-ADD `is_reserved` tinyint(4) DEFAULT '0' COMMENT 'Is this a predefined system price set  (i.e. it can not be deleted, edited)?';
-
 -- CRM-9714 create a default price set for contribution and membership
 SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';  
 INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `is_reserved`, `contribution_type_id`)

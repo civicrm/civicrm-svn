@@ -73,66 +73,34 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    * Upgrade code to create priceset for contribution pages and events
    */
   static function task_4_2_alpha1_createPriceSets(CRM_Queue_TaskContext $ctx) {
-    //CRM-9714
+    //CRM-9714 drop unique index for title
     CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`");
     $daoName = array('civicrm_contribution_page' => array('CRM_Contribute_BAO_ContributionPage', CRM_Core_Component::getComponentID('CiviContribute')),
       'civicrm_event' => array('CRM_Event_BAO_Event', CRM_Core_Component::getComponentID('CiviEvent')),
     );
 
+    // add column in is_quick_config and is_reserved civicrm_price_set 
+    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` ADD `is_quick_config` TINYINT( 4 ) NOT NULL DEFAULT '0' COMMENT 'Is set if information from the Regular Fees section is being stored as price set' AFTER `contribution_type_id`,
+ADD `is_reserved` tinyint(4) DEFAULT '0' COMMENT 'Is this a predefined system price set  (i.e. it can not be deleted, edited)?'");
+    
     $query = " SELECT `id`, `name` FROM `civicrm_option_group` 
 WHERE `name` LIKE '%.amount.%' ";
     $dao = CRM_Core_DAO::executeQuery($query);
     while ($dao->fetch()) {
       $addTo = explode('.', $dao->name);
+      self::creatPriceSet($daoName, $addTo, $dao->name);      
+    }
 
-      $setParams['title'] = CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], 'title');
-      $pageTitle = strtolower(CRM_Utils_String::munge($setParams['title'], '_', 245));
-
-      if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
-        $setParams['name'] = $pageTitle;
-      }
-      //FIXME: "_id" does not appear to be setup in either static or instance context
-      //elseif (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle . '_' . $this->_id, 'id', 'name')) {
-      //  $setParams['name'] = $pageTitle . '_' . $this->_id;
-      //}
-      else {
-        $setParams['name'] = $pageTitle . '_' . rand(1, 99);
-      }
-      $setParams['extends'] = $daoName[$addTo[0]][1];
-      $priceSet = CRM_Price_BAO_Set::create($setParams);
-      CRM_Price_BAO_Set::addTo($addTo[0], $addTo[2], $priceSet->id, 1);
-
-      $fieldParams['html_type'] = 'Radio';
-      $fieldParams['is_required'] = 1;
-      if ($addTo[0] == 'civicrm_event') {
-        $fieldParams['name'] = $fieldParams['label'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $addTo[2], 'fee_label');
-      }
-      else {
-        $fieldParams['name'] = strtolower(CRM_Utils_String::munge("Contribution Amount", '_', 245));
-        $fieldParams['label'] = "Contribution Amount";
-        $otherAmount = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $addTo[2], 'is_allow_other_amount');
-        if ($otherAmount) {
-          $fieldParams['is_required'] = 0;
-        }
-      }
-      $fieldParams['price_set_id'] = $priceSet->id;
-      $optionValue = array();
-      CRM_Core_OptionGroup::getAssoc($dao->name, $optionValue);
-      $fieldParams['option_label'] = $optionValue['label'];
-      $fieldParams['option_amount'] = $optionValue['value'];
-      $fieldParams['option_weight'] = $optionValue['weight'];
-      $priceField = CRM_Price_BAO_Field::create($fieldParams);
-      if ($otherAmount) {
-        $fieldParams['label'] = "Other Amount";
-        $fieldParams['name'] = strtolower(CRM_Utils_String::munge($fieldParams['label'], '_', 245));
-        $fieldParams['price_set_id'] = $priceSet->id;
-        $fieldParams['html_type'] = 'Text';
-        $fieldParams['is_display_amounts'] = $fieldParams['is_required'] = 0;
-        $fieldParams['weight'] = $fieldParams['option_weight'][1] = 2;
-        $fieldParams['option_label'][1] = "Other Amount";
-        $fieldParams['option_amount'][1] = 1;
-        $priceField = CRM_Price_BAO_Field::create($fieldParams);
-      }
+    //create pricesets for contribution with only other amount
+    $query = " SELECT ccp.id as contribution_id FROM `civicrm_contribution_page` ccp
+LEFT JOIN civicrm_price_set_entity cpse 
+ON cpse.entity_id = ccp.id and cpse.entity_table = 'civicrm_contribution_page'
+where ccp.is_allow_other_amount =1 and cpse.price_set_id IS NULL ";
+    $dao = CRM_Core_DAO::executeQuery($query);
+    $addTo = array('civicrm_contribution_page');
+    while ($dao->fetch()) {
+      $addTo[2] = $dao->contribution_id;
+      self::creatPriceSet($daoName, $addTo);
     }
 
     return TRUE;
@@ -152,6 +120,95 @@ WHERE `name` LIKE '%.amount.%' ";
       return TRUE;
   }
 
+  
+  /**
+   * 
+   * Function to create price sets
+   */
+  static function creatPriceSet($daoName, $addTo, $optionGroup = null) {
+
+    $otherAmount = null;
+    $setParams['title'] = CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], 'title');
+    $pageTitle = strtolower(CRM_Utils_String::munge($setParams['title'], '_', 245));
+    
+    if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
+      $setParams['name'] = $pageTitle;
+    }
+    //FIXME: "_id" does not appear to be setup in either static or instance context
+    //elseif (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle . '_' . $this->_id, 'id', 'name')) {
+    //  $setParams['name'] = $pageTitle . '_' . $this->_id;
+    //}
+    else {
+      $setParams['name'] = $pageTitle . '_' . rand(1, 99);
+    }
+    $setParams['extends'] = $daoName[$addTo[0]][1];
+    $setParams['is_quick_config'] = 1;
+    $priceSet = CRM_Price_BAO_Set::create($setParams);
+    CRM_Price_BAO_Set::addTo($addTo[0], $addTo[2], $priceSet->id, 1);
+      
+    $fieldParams['price_set_id'] = $priceSet->id;
+    if ( $optionGroup ) {
+      $fieldParams['html_type'] = 'Radio';
+      $fieldParams['is_required'] = 1;
+      if ($addTo[0] == 'civicrm_event') {
+        $fieldParams['name'] = $fieldParams['label'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $addTo[2], 'fee_label');
+      }
+      else {
+        $dao               = new CRM_Member_DAO_MembershipBlock();
+        $dao->entity_table = 'civicrm_contribution_page';
+        $dao->entity_id    = $addTo[2];
+        
+        if ($dao->find(TRUE)) {
+          if ($dao->membership_types) {
+            $fieldParams['name'] = strtolower(CRM_Utils_String::munge("Membership Amount", '_', 245));
+            $fieldParams['label'] = "Membership Amount";
+            $fieldParams['is_required'] = $dao->is_required;
+            $fieldParams['is_display_amounts'] = $dao->display_min_fee;
+            $membershipTypes = unserialize($dao->membership_types);
+            $rowcount = 0;
+            foreach ($membershipTypes as $membershipType => $autoRenew) {
+              $membershipTypeDetail = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($membershipType);
+              $rowcount++;
+              $fieldParams['option_label'][$rowcount]  = $membershipTypeDetail['name'];
+              $fieldParams['option_amount'][$rowcount] = $membershipTypeDetail['minimum_fee'];
+              $fieldParams['option_weight'][$rowcount] = $rowcount;
+              $fieldParams['membership_type_id'][$rowcount] = $membershipType;
+              if ($membershipType == $dao->membership_type_default) {
+                $fieldParams['default_option'] = $rowcount;
+              }
+            }
+            $priceField = CRM_Price_BAO_Field::create($fieldParams);
+          }
+        }
+        $fieldParams['name'] = strtolower(CRM_Utils_String::munge("Contribution Amount", '_', 245));
+        $fieldParams['label'] = "Contribution Amount";
+        $otherAmount = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $addTo[2], 'is_allow_other_amount');
+        if ($otherAmount) {
+          $fieldParams['is_required'] = 0;
+        }
+      }
+      $optionValue = array();
+      CRM_Core_OptionGroup::getAssoc($optionGroup, $optionValue);
+      $fieldParams['option_label'] = $optionValue['label'];
+      $fieldParams['option_amount'] = $optionValue['value'];
+      $fieldParams['option_weight'] = $optionValue['weight'];
+      $priceField = CRM_Price_BAO_Field::create($fieldParams);
+    }
+    if ($otherAmount || !$optionGroup) {
+      $fieldParams['label'] = "Other Amount";
+      $fieldParams['name'] = strtolower(CRM_Utils_String::munge($fieldParams['label'], '_', 245));
+      $fieldParams['price_set_id'] = $priceSet->id;
+      $fieldParams['html_type'] = 'Text';
+      $fieldParams['is_display_amounts'] = $fieldParams['is_required'] = 0;
+      $fieldParams['weight'] = $fieldParams['option_weight'][1] = 2;
+      $fieldParams['option_label'][1] = "Other Amount";
+      $fieldParams['option_amount'][1] = 1;
+      $priceField = CRM_Price_BAO_Field::create($fieldParams);
+    }
+  }
+
+
+
   /**
    * (Queue Task Callback)
    *
@@ -162,9 +219,9 @@ WHERE `name` LIKE '%.amount.%' ";
    * @param $endId int, the last/highest contribution ID to convert
    */
   static function task_4_2_alpha1_convertContributions(CRM_Queue_TaskContext $ctx, $startId, $endId) {
-
-      // create lineitems for contribution done for membership
-      $sql = " SELECT cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
+    
+    // create lineitems for contribution done for membership
+    $sql = " SELECT cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
 FROM `civicrm_contribution` cc
 LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
 LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
@@ -173,92 +230,120 @@ LEFT JOIN civicrm_price_set_entity cpse on cpse.entity_table = 'civicrm_contribu
 WHERE (cc.id BETWEEN %1 AND %2)
 AND cli.entity_id IS NULL AND cc.contribution_page_id IS NOT NULL AND cpp.contribution_id IS NULL
 GROUP BY cc.id ";
-      $sqlParams = array(
-        1 => array($startId, 'Integer'),
-        2 => array($endId, 'Integer'),
-      );
-      $result = CRM_Core_DAO::executeQuery($sql, $sqlParams);
-
-      while ($result->fetch()) {
-        $sql = " SELECT cpf.id, cpfv.id as price_field_value_id, cpfv.label, cpfv.amount, cpfv.count FROM civicrm_price_field cpf LEFT JOIN civicrm_price_field_value cpfv ON cpf.id = cpfv.price_field_id WHERE cpf.price_set_id = %1 ";
-        $lineParams = array(
-          'entity_table' => 'civicrm_contribution',
-          'entity_id' => $result->id,
-        );
-        if ($result->membership_id) {
-          $sql .= " AND cpf.name = %2 AND cpfv.membership_type_id = %3 ";
-          $params = array('1' => array($result->price_set_id, 'Integer'),
-            '2' => array('membership_amount', 'String'),
-            '3' => array(CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $result->membership_id, 'membership_type_id'), 'Integer'),
-          );
-          $res = CRM_Core_DAO::executeQuery($sql, $params);
-          if ($res->fetch()) {
-            $lineParams += array(
-              'price_field_id' => $res->id,
-              'label' => $res->label,
-              'qty' => 1,
-              'unit_price' => $res->amount,
-              'line_total' => $res->amount,
-              'participant_count' => $res->count ? $res->count : 0,
-              'price_field_value_id' => $res->price_field_value_id,
-            );
+    $sqlParams = array(
+                       1 => array($startId, 'Integer'),
+                       2 => array($endId, 'Integer'),
+                       );
+    $result = CRM_Core_DAO::executeQuery($sql, $sqlParams);
+    
+    while ($result->fetch()) {
+      $sql = " SELECT cpf.id, cpfv.id as price_field_value_id, cpfv.label, cpfv.amount, cpfv.count FROM civicrm_price_field cpf LEFT JOIN civicrm_price_field_value cpfv ON cpf.id = cpfv.price_field_id WHERE cpf.price_set_id = %1 ";
+      $lineParams = array(
+                          'entity_table' => 'civicrm_contribution',
+                          'entity_id' => $result->id,
+                          );
+      if ($result->membership_id) {
+        $sql .= " AND cpf.name = %2 AND cpfv.membership_type_id = %3 ";
+        $params = array('1' => array($result->price_set_id, 'Integer'),
+                        '2' => array('membership_amount', 'String'),
+                        '3' => array(CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $result->membership_id, 'membership_type_id'), 'Integer'),
+                        );
+        $res = CRM_Core_DAO::executeQuery($sql, $params);
+        if ($res->fetch()) {
+          $lineParams += array(
+                               'price_field_id' => $res->id,
+                               'label' => $res->label,
+                               'qty' => 1,
+                               'unit_price' => $res->amount,
+                               'line_total' => $res->amount,
+                               'participant_count' => $res->count ? $res->count : 0,
+                               'price_field_value_id' => $res->price_field_value_id,
+                               );
+        }
+        else {
+          $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
+          $lineParams['label'] = 'Membership Amount';
+          $lineParams['qty'] = 1;
+          $lineParams['unit_price'] = $lineParams['line_total'] = $result->total_amount;
+          $lineParams['participant_count'] = 0;
+        }
+      }
+      else {
+        $sql .= "AND cpfv.amount = %2";
+        $params = array('1' => array($result->price_set_id, 'Integer'),
+                        '2' => array($result->total_amount, 'String'),
+                        );
+        $res = CRM_Core_DAO::executeQuery($sql, $params);
+        if ($res->fetch()) {
+          $lineParams += array(
+                               'price_field_id' => $res->id,
+                               'label' => $res->label,
+                               'qty' => 1,
+                               'unit_price' => $res->amount,
+                               'line_total' => $res->amount,
+                               'participant_count' => $res->count ? $res->count : 0,
+                               'price_field_value_id' => $res->price_field_value_id,
+                               );
+        }
+        else {
+          $params = array(
+                          'price_set_id' => $result->price_set_id,
+                          'name' => 'other_amount',
+                          );
+          $defaults = array();
+          CRM_Price_BAO_Field::retrieve($params, $defaults);
+          if (!empty($defaults)) {
+            $lineParams['price_field_id'] = $defaults['id'];
+            $lineParams['label'] = $defaults['label'];
+            $lineParams['qty'] = $result->total_amount;
+            $lineParams['unit_price'] = $lineParams['line_total'] = 1;
+            $lineParams['price_field_value_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $defaults['id'], 'id', 'price_field_id');
           }
           else {
             $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
-            $lineParams['label'] = 'Membership Amount';
+            $lineParams['label'] = 'Contribution Amount';
             $lineParams['qty'] = 1;
             $lineParams['unit_price'] = $lineParams['line_total'] = $result->total_amount;
-            $lineParams['participant_count'] = 0;
           }
+          $lineParams['participant_count'] = 0;
         }
-        else {
-          $sql .= "AND cpfv.amount = %2";
-          $params = array('1' => array($result->price_set_id, 'Integer'),
-            '2' => array($result->total_amount, 'String'),
-          );
-          $res = CRM_Core_DAO::executeQuery($sql, $params);
-          if ($res->fetch()) {
-            $lineParams += array(
-              'price_field_id' => $res->id,
-              'label' => $res->label,
-              'qty' => 1,
-              'unit_price' => $res->amount,
-              'line_total' => $res->amount,
-              'participant_count' => $res->count ? $res->count : 0,
-              'price_field_value_id' => $res->price_field_value_id,
-            );
-          }
-          else {
-            $params = array(
-              'price_set_id' => $result->price_set_id,
-              'name' => 'other_amount',
-            );
-            $defaults = array();
-            CRM_Price_BAO_Field::retrieve($params, $defaults);
-            if (!empty($defaults)) {
-              $lineParams['price_field_id'] = $defaults['id'];
-              $lineParams['label'] = $defaults['label'];
-              $lineParams['qty'] = $result->total_amount;
-              $lineParams['unit_price'] = $lineParams['line_total'] = 1;
-              $lineParams['price_field_value_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $defaults['id'], 'id', 'price_field_id');
-            }
-            else {
-              $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
-              $lineParams['label'] = 'Contribution Amount';
-              $lineParams['qty'] = 1;
-              $lineParams['unit_price'] = $lineParams['line_total'] = $result->total_amount;
-            }
-            $lineParams['participant_count'] = 0;
-          }
-        }
-        CRM_Price_BAO_LineItem::create($lineParams);
       }
+      CRM_Price_BAO_LineItem::create($lineParams);
+    }
+    
+    //create lineitems for edge cases.
+    $query = " SELECT cpp.participant_id, cp.fee_amount, cp.fee_level  FROM `civicrm_event` ce
+LEFT JOIN civicrm_participant cp ON cp.event_id = ce.id
+LEFT JOIN civicrm_participant_payment cpp  ON cpp.participant_id = cp.id
+LEFT JOIN civicrm_line_item cli ON cli.entity_id=cpp.participant_id and cli.entity_table = 'civicrm_participant'
+WHERE is_monetary = 0 and cpp.participant_id IS NOT NULL ";
+    $dao = CRM_Core_DAO::executeQuery($query);
+    if ($dao->N) {
+      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
+      $priceSets = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
+      $fieldID = key($priceSets['fields']);
+    }
+    
+    while ($dao->fetch()) {
+      $lineParams = array(
+                          'entity_table' => 'civicrm_participant',
+                          'entity_id' => $dao->participant_id,
+                          'price_field_id' => $fieldID,
+                          'label' => $dao->fee_level,
+                          'qty' => 1,
+                          'unit_price' => $dao->fee_amount,
+                          'line_total' => $dao->fee_amount,
+                          'participant_count' => 1,
+                          );
+      CRM_Price_BAO_LineItem::create($lineParams);
+    }
+    
       //create entry in lineitems for participants
-      $sql = " SELECT cc.id, cc.total_amount, cpse.price_set_id, cp.fee_level, cpf.id as price_field_id,cpfv.id as price_field_value_id
+      $sql = " SELECT cpp.participant_id, cc.total_amount, cpse.price_set_id, cp.fee_level, cpf.id as price_field_id,cpfv.id as price_field_value_id
 FROM `civicrm_contribution` cc
-LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
 LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
 LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
+LEFT JOIN civicrm_line_item cli ON cli.entity_id=cpp.participant_id and cli.entity_table = 'civicrm_participant'
 LEFT JOIN civicrm_participant cp ON cp.id = cpp.participant_id
 LEFT JOIN civicrm_price_set_entity cpse ON cp.event_id = cpse.entity_id and cpse.entity_table = 'civicrm_event'
 LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpse.price_set_id
@@ -275,7 +360,7 @@ GROUP BY cc.id;";
       while ($result->fetch()) {
         $lineParams = array(
           'entity_table' => 'civicrm_participant',
-          'entity_id' => $result->id,
+          'entity_id' => $result->participant_id,
           'price_field_id' => $result->price_field_id,
           'label' => $result->fee_level,
           'qty' => 1,
