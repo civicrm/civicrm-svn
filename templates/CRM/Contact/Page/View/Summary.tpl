@@ -334,9 +334,13 @@
                                 </tr>
                             </table>
                         </div>
-
-                        {include file="CRM/Contact/Page/View/Demographics.tpl"}
-
+                        <div class="contactCardRight">
+                           <div class="crm-table2div-layout">
+                              <div class="crm-clear crm-summary-block" id="demographic-block">
+                                {include file="CRM/Contact/Page/Inline/Demographics.tpl"} 
+                              </div>
+                           </div>
+                        </div> <!-- contactCardRight -->
                         <div class="clear"></div>
                         <div class="separator"></div>
 
