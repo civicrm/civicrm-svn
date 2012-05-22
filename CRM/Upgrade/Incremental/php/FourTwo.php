@@ -73,6 +73,8 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    * Upgrade code to create priceset for contribution pages and events
    */
   static function task_4_2_alpha1_createPriceSets(CRM_Queue_TaskContext $ctx) {
+    //CRM-9714
+    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`");
     $daoName = array('civicrm_contribution_page' => array('CRM_Contribute_BAO_ContributionPage', CRM_Core_Component::getComponentID('CiviContribute')),
       'civicrm_event' => array('CRM_Event_BAO_Event', CRM_Core_Component::getComponentID('CiviEvent')),
     );
@@ -86,7 +88,7 @@ WHERE `name` LIKE '%.amount.%' ";
       $setParams['title'] = CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], 'title');
       $pageTitle = strtolower(CRM_Utils_String::munge($setParams['title'], '_', 245));
 
-      if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name')) {
+      if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
         $setParams['name'] = $pageTitle;
       }
       //FIXME: "_id" does not appear to be setup in either static or instance context
