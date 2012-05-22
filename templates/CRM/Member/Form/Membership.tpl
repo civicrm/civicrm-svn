@@ -167,7 +167,7 @@
               <table>{if $context neq 'standalone'}
                  <tr class="crm-membership-form-block-contribution-contact">
                    <td class="label">{$form.contribution_contact.label}</td>
-                   <td>{$form.contribution_contact.html}</td>
+                   <td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
                  </tr>
                  <tr id="record-different-contact">
                   <td>&nbsp;</td>
