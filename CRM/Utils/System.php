@@ -1042,7 +1042,7 @@ class CRM_Utils_System {
   }
 
   /**
-   * Returns documentation URL base
+   * Returns default documentation URL base
    *
    * @return string documentation url
    * @access public
@@ -1051,6 +1051,18 @@ class CRM_Utils_System {
   function getDocBaseURL() {
     // FIXME: move this to configuration at some stage
     return 'http://book.civicrm.org/';
+  }
+
+  /**
+   * Returns wiki (alternate) documentation URL base
+   *
+   * @return string documentation url
+   * @access public
+   */
+  static
+  function getWikiBaseURL() {
+    // FIXME: move this to configuration at some stage
+    return 'http://wiki.civicrm.org/confluence/display/CRMDOC/';
   }
 
   /**
@@ -1068,11 +1080,15 @@ class CRM_Utils_System {
    * @access public
    */
   static
-  function docURL2($page, $URLonly = FALSE, $text = NULL, $title = NULL, $style = NULL) {
+  function docURL2($page, $URLonly = FALSE, $text = NULL, $title = NULL, $style = NULL, $resource = NULL) {
     // if ts function doesn't exist, it means that CiviCRM hasn't been fully initialised yet -
     // return just the URL, no matter what other parameters are defined
     if (!function_exists('ts')) {
-      $docBaseURL = self::getDocBaseURL();
+      if (CRM_Utils_Array::value('resource', $params) == 'wiki') {
+          $docBaseURL = self::getWikiBaseURL();
+      } else {
+        $docBaseURL = self::getDocBaseURL();
+      }
       return $docBaseURL . str_replace(' ', '+', $page);
     }
     else {
@@ -1082,6 +1098,7 @@ class CRM_Utils_System {
         'text' => $text,
         'title' => $title,
         'style' => $style,
+        'resource' => $resource,
       );
       return self::docURL($params);
     }
@@ -1103,7 +1120,11 @@ class CRM_Utils_System {
       return;
     }
 
-    $docBaseURL = self::getDocBaseURL();
+    if (CRM_Utils_Array::value('resource', $params) == 'wiki') {
+      $docBaseURL = self::getWikiBaseURL();
+    } else {
+      $docBaseURL = self::getDocBaseURL();      
+    }
 
     if (!isset($params['title']) or $params['title'] === NULL) {
       $params['title'] = ts('Opens documentation in a new window.');

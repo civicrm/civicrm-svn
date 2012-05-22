@@ -33,7 +33,7 @@
             </tr>
         <tr class="crm-preferences-display-form-block-description">
            <td>&nbsp;</td>
-           <td class="description">{ts}Select the <strong>tabs</strong> that should be displayed when viewing a contact record. EXAMPLE: If your organization does not keep track of 'Relationships', then un-check this option to simplify the screen display. Tabs for Contributions, Pledges, Memberships, Events, Grants and Cases are also hidden if the corresponding component is not enabled.{/ts} {docURL page="Enable Components"}</td>
+           <td class="description">{capture assign=crmURL}{crmURL p='civicrm/admin/setting/component' q='action=add&reset=1'}{/capture}{ts 1=$crmURL}Select the <strong>tabs</strong> that should be displayed when viewing a contact record. EXAMPLE: If your organization does not keep track of 'Relationships', then un-check this option to simplify the screen display. Tabs for Contributions, Pledges, Memberships, Events, Grants and Cases are also hidden if the corresponding component is not enabled. Go to <a href="%1">Administer > System Settings > Enable Components</a> to modify the components which are available for your site.{/ts}</td>
         </tr>
 	    <tr class="crm-preferences-display-form-block-contact_edit_options">
             <td class="label">{$form.contact_edit_options.label}</td>
@@ -110,7 +110,7 @@
                 <td class="label">{$form.wysiwyg_input_format.label}</td>
                 <td>
                     {$form.wysiwyg_input_format.html}{literal}<script type="text/javascript">cj(document).ready(function() { if (cj('#editor_id').val() == 4) cj('#crm-preferences-display-form-block-wysiwyg_input_format').show(); });</script>{/literal}
-                    <br /><span class="description">{ts}You will need to enable and configure several modules if you want to allow users to upload images while using a Druapl Default Editor.{/ts} {docURL page="Configuring CiviCRM to Use the Default Drupal Editor"}</span>
+                    <br /><span class="description">{ts}You will need to enable and configure several modules if you want to allow users to upload images while using a Drupal Default Editor.{/ts} {docURL page="Configuring CiviCRM to Use the Default Drupal Editor" resource="wiki"}</span>
                 </td>
             </tr>    
         {/if}

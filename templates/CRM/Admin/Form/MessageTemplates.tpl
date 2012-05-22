@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting Message Templates *}
-{capture assign=tokenDocsRepeated}{docURL page="Mail-merge Tokens for Contact Data" text="token documentation"}{/capture}
+{capture assign=tokenDocsRepeated}{docURL page="user/common-workflows/tokens-and-mail-merge" text="token documentation"}{/capture}
 
 <h3>{if $action eq 1}{ts}New Message Template{/ts}{elseif $action eq 2}{ts}Edit Message Template{/ts}{else}{ts}Delete Message Template{/ts}{/if}</h3>
 {if $action neq 8}
