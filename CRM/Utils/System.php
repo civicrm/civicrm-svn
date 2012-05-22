@@ -1050,7 +1050,7 @@ class CRM_Utils_System {
   static
   function getDocBaseURL() {
     // FIXME: move this to configuration at some stage
-    return 'http://wiki.civicrm.org/confluence/display/CRMDOC/';
+    return 'http://book.civicrm.org/';
   }
 
   /**

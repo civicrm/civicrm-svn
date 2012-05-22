@@ -25,7 +25,7 @@
 *}
 {capture assign=erURL}{crmURL p='civicrm/acl/entityrole' q='reset=1'}{/capture}
 {capture assign=rolesURL}{crmURL p='civicrm/admin/options/acl_role' q='group=acl_role&reset=1'}{/capture}
-{capture assign=docLink}{docURL page='Access Control' text='Access Control Documentation'}{/capture}
+{capture assign=docLink}{docURL page='user/initial-set-up/access-control' text='Access Control Documentation'}{/capture}
 
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
