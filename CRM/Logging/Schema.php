@@ -243,7 +243,6 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
    * Create a log table with schema mirroring the given table’s structure and seeding it with the given table’s contents.
    */
   private function createLogTableFor($table) {
-    echo "Creating table for: $table<p>";
     $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
     $dao->fetch();
     $query = $dao->Create_Table;
