@@ -191,7 +191,9 @@
         {/if}
     {/if}
     
-    {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) }
+		{* Show credit or debit card section for 'direct' mode, except for PayPal Express (detected because credit card number is empty) *}
+    {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )
+				and ($credit_card_number or $bank_account_number)}
         <div class="crm-group credit_card-group">
             <div class="header-dark">
             {if $paymentProcessor.payment_type & 2}
