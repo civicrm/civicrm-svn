@@ -25,6 +25,9 @@
 *}
 
 {* enclosed all tabs and its content in a block *}	
+{* include wysiwyg related files*}
+{include file="CRM/common/wysiwyg.tpl" includeWysiwygEditor=true}
+
 <div class="crm-block crm-content-block">
 
 {if $tabHeader and count($tabHeader) gt 1}
