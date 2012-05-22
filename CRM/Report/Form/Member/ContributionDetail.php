@@ -194,12 +194,12 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
         'fields' => 
         array(
           'first_donation_date' => array(
-            'title' => ts('First Donation Date'),
+            'title' => ts('First Contribution Date'),
             'base_field' => 'receive_date',
             'no_repeat' => TRUE,
           ),
           'first_donation_amount' => array(
-            'title' => ts('First Donation Amount'),
+            'title' => ts('First Contribution Amount'),
             'base_field' => 'total_amount',
             'no_repeat' => TRUE,
           ),
