@@ -158,11 +158,11 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
   }
 
   function checkOptions($priceSetSection, $optionNumber) {
-    $this->assertChecked("xpath=//div[@id='priceset']/div[@class='crm-section {$priceSetSection}']/div[@class='content']/div[{$optionNumber}]/span/input");
+    $this->assertChecked("xpath=//div[@id='priceset']/div[@class='crm-section {$priceSetSection}']/div[2]/div[{$optionNumber}]/span/input");
   }
 
   function _testDefaultSenarios($priceSetSection, $optionNumber) {
-    $this->click("xpath=//div[@id='priceset']/div[@class='crm-section {$priceSetSection}']/div[@class='content']/div[{$optionNumber}]/span/input");
+    $this->click("xpath=//div[@id='priceset']/div[@class='crm-section {$priceSetSection}']/div[2]/div[{$optionNumber}]/span/input");
   }
 
   function _testAddSet($setTitle, $usedFor, $contributionType = NULL, $setHelp) {
