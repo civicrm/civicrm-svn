@@ -135,13 +135,17 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->_params['ip_address'] = '127.0.0.1';
       }
       $this->_params['amount'] = $this->get('amount');
-
+      
       if ($this->_params['amount']) {
-        $this->_params['amount_level'] = CRM_Core_OptionGroup::optionLabel("civicrm_contribution_page.amount.{$this->_id}",
-          $this->_params['amount']
-        );
+        $priceField = new CRM_Price_DAO_Field();
+        $priceField->price_set_id = $this->_params['priceSetId'];
+        $priceField->find();
+        while ($priceField->fetch()) {
+          if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_params['priceSetId'], 'is_quick_config') && !empty($this->_params["price_{$priceField->id}"])) {
+            $this->_params['amount_level'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'label');
+          }
+        }
       }
-
       $this->_params['currencyID'] = $config->defaultCurrency;
       $this->_params['payment_action'] = 'Sale';
     }
@@ -642,6 +646,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       }
     }
 
+    
     foreach ($addToGroups as $k) {
       if (array_key_exists($k, $subscribeGroupIds)) {
         unset($addToGroups[$k]);

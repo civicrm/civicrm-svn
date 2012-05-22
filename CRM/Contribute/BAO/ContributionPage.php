@@ -75,11 +75,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
     );
 
     CRM_Core_DAO::commonRetrieve('CRM_Contribute_DAO_ContributionPage', $params, $values);
-
-    // get the amounts and the label
-    $values['amount'] = array();
-    CRM_Core_OptionGroup::getAssoc("civicrm_contribution_page.amount.{$id}", $values['amount'], TRUE);
-
+    
     // get the profile ids
     $ufJoinParams = array(
       'module' => 'CiviContribute',

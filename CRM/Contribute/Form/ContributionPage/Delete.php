@@ -125,9 +125,6 @@ class CRM_Contribute_Form_ContributionPage_Delete extends CRM_Contribute_Form_Co
     $dao->copyValues($params);
     $dao->delete();
 
-    $groupName = "civicrm_contribution_page.amount.{$this->_id}";
-    CRM_Core_OptionGroup::deleteAssoc($groupName);
-
     //next delete the membership block fields
     $dao               = new CRM_Member_DAO_MembershipBlock();
     $dao->entity_table = 'civicrm_contribution_page';
