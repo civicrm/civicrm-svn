@@ -243,6 +243,7 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
    * Create a log table with schema mirroring the given table’s structure and seeding it with the given table’s contents.
    */
   private function createLogTableFor($table) {
+    echo "Creating table for: $table<p>";
     $dao = CRM_Core_DAO::executeQuery("SHOW CREATE TABLE $table");
     $dao->fetch();
     $query = $dao->Create_Table;
@@ -327,7 +328,8 @@ COLS;
       return;
     }
 
-    $upsert = array('INSERT', 'UPDATE');
+    $insert = array('INSERT');
+    $update = array('UPDATE');
     $delete = array('DELETE');
 
     if ($tableName) {
@@ -341,25 +343,46 @@ COLS;
     foreach ($tableNames as $table) {
       $columns = $this->columnsOf($table);
 
-      $upsertSQL = $deleteSQL = "INSERT INTO `{$this->db}`.log_{tableName} (";
+      // only do the change if any data has changed
+      $updateSQL = "IF (";
+      $cond = array( );
       foreach ($columns as $column) {
-        $upsertSQL .= "$column, ";
+        $cond[] = "OLD.$column <> NEW.$column";
+      }
+      $updateSQL = "IF (" . implode( ' OR ', $cond ) . ") THEN ";
+
+      $insertSQL = $deleteSQL = "INSERT INTO `{$this->db}`.log_{tableName} (";
+      $updateSQL .= "INSERT INTO `{$this->db}`.log_{tableName} (";
+      foreach ($columns as $column) {
+        $insertSQL .= "$column, ";
+        $updateSQL .= "$column, ";
         $deleteSQL .= "$column, ";
       }
-      $upsertSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
+      $insertSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
+      $updateSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
       $deleteSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
 
       foreach ($columns as $column) {
-        $upsertSQL .= "NEW.$column, ";
+        $insertSQL .= "NEW.$column, ";
+        $updateSQL .= "NEW.$column, ";
         $deleteSQL .= "OLD.$column, ";
       }
-      $upsertSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
+      $insertSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
+      $updateSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
       $deleteSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
+
+      $updateSQL .= "END IF;";
 
       $info[] = array('table' => array($table),
         'when' => 'AFTER',
-        'event' => $upsert,
-        'sql' => $upsertSQL,
+        'event' => $insert,
+        'sql' => $insertSQL,
+      );
+
+      $info[] = array('table' => array($table),
+        'when' => 'AFTER',
+        'event' => $update,
+        'sql' => $updateSQL,
       );
 
       $info[] = array('table' => array($table),
