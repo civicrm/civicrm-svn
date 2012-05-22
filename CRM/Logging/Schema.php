@@ -344,53 +344,74 @@ COLS;
       $columns = $this->columnsOf($table);
 
       // only do the change if any data has changed
-      $updateSQL = "IF (";
       $cond = array( );
       foreach ($columns as $column) {
         $cond[] = "OLD.$column <> NEW.$column";
       }
-      $updateSQL = "IF (" . implode( ' OR ', $cond ) . ") THEN ";
+      $updateSQL = "IF ( (" . implode( ' OR ', $cond ) . ") AND (@civicrm_disable_logging != 1) ) THEN ";
 
-      $insertSQL = $deleteSQL = "INSERT INTO `{$this->db}`.log_{tableName} (";
-      $updateSQL .= "INSERT INTO `{$this->db}`.log_{tableName} (";
+
+      $sqlStmt = "INSERT INTO `{$this->db}`.log_{tableName} (";
       foreach ($columns as $column) {
-        $insertSQL .= "$column, ";
-        $updateSQL .= "$column, ";
-        $deleteSQL .= "$column, ";
+        $sqlStmt .= "$column, ";
       }
-      $insertSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
-      $updateSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
-      $deleteSQL .= "log_conn_id, log_user_id, log_action) VALUES (";
+      $sqlStmt .= "log_conn_id, log_user_id, log_action) VALUES (";
 
+      $insertSQL = $deleteSQL = "IF (@civicrm_disable_logging != 1) THEN $sqlStmt ";
+      $updateSQL .= $sqlStmt;
+
+      $sqlStmt = '';
       foreach ($columns as $column) {
-        $insertSQL .= "NEW.$column, ";
-        $updateSQL .= "NEW.$column, ";
+        $sqlStmt   .= "NEW.$column, ";
         $deleteSQL .= "OLD.$column, ";
       }
-      $insertSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
-      $updateSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
+      $sqlStmt   .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
       $deleteSQL .= "CONNECTION_ID(), @civicrm_user_id, '{eventName}');";
 
-      $updateSQL .= "END IF;";
+      $sqlStmt   .= "END IF;";
+      $deleteSQL .= "END IF;";
 
-      $info[] = array('table' => array($table),
+      $insertSQL .= $sqlStmt;
+      $updateSQL .= $sqlStmt;
+
+      $info[] = array(
+        'table' => array($table),
         'when' => 'AFTER',
         'event' => $insert,
         'sql' => $insertSQL,
       );
 
-      $info[] = array('table' => array($table),
+      $info[] = array(
+        'table' => array($table),
         'when' => 'AFTER',
         'event' => $update,
         'sql' => $updateSQL,
       );
 
-      $info[] = array('table' => array($table),
+      $info[] = array(
+        'table' => array($table),
         'when' => 'AFTER',
         'event' => $delete,
         'sql' => $deleteSQL,
       );
     }
   }
+
+  /**
+   * This allow logging to be temporarily disabled for certain cases
+   * where we want to do a mass cleanup but dont want to bother with
+   * an audit trail
+   *
+   * @static
+   * @public
+   */
+  static function disableLoggingForThisConnection( ) {
+    // do this only if logging is enabled
+    $config = CRM_Core_Config::singleton( );
+    if ( $config->logging ) {
+      CRM_Core_DAO::executeQuery( 'SET @civicrm_disable_logging = 1' );
+    }
+  }
+
 }
 

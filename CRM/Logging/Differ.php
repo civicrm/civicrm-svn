@@ -35,7 +35,9 @@
 class CRM_Logging_Differ {
   private $db;
   private $log_conn_id;
-  private $log_date; function __construct($log_conn_id, $log_date) {
+  private $log_date;
+
+  function __construct($log_conn_id, $log_date) {
     $dsn               = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
     $this->db          = $dsn['database'];
     $this->log_conn_id = $log_conn_id;
@@ -80,53 +82,57 @@ class CRM_Logging_Differ {
       3 => array($id, 'Integer'),
     );
 
-    // look for the last change in the given connection that happended less than 10 seconds later than log_date to the given id to catch multi-query changes
+    // look for all the changes in the given connection that happended less than 10 seconds later than log_date to the given id to catch multi-query changes
     $changedSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
-    $changed = $this->sqlToArray($changedSQL, $params);
 
-    // return early if nothing found
-    if (empty($changed)) {
-      return array();
-    }
+    $changedDAO = CRM_Core_DAO::executeQuery($changedSQL, $params);
+    while ($changedDAO->fetch( )) {
+      $changed = $changedDAO->toArray();
 
-    switch ($changed['log_action']) {
-      case 'Delete':
-        // the previous state is kept in the current state, current should keep the keys and clear the values
-        $original = $changed;
-        foreach ($changed as & $val) $val = NULL;
-        $changed['log_action'] = 'Delete';
-        break;
-
-      case 'Insert':
-        // the previous state does not exist
-        $original = array();
-        break;
-
-      case 'Update':
-        // look for the previous state (different log_conn_id) of the given id
-        $originalSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
-        $original = $this->sqlToArray($originalSQL, $params);
-        break;
-    }
-
-    // populate $diffs with only the differences between $changed and $original
-    $skipped = array('log_action', 'log_conn_id', 'log_date', 'log_user_id');
-    foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
-      if (in_array($diff, $skipped)) {
+      // return early if nothing found
+      if (empty($changed)) {
         continue;
       }
 
-      if (CRM_Utils_Array::value($diff, $original) === CRM_Utils_Array::value($diff, $changed)) {
-        continue;
+      switch ($changed['log_action']) {
+        case 'Delete':
+          // the previous state is kept in the current state, current should keep the keys and clear the values
+          $original = $changed;
+          foreach ($changed as & $val) $val = NULL;
+          $changed['log_action'] = 'Delete';
+          break;
+
+        case 'Insert':
+          // the previous state does not exist
+          $original = array();
+          break;
+
+        case 'Update':
+          // look for the previous state (different log_conn_id) of the given id
+          $originalSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
+          $original = $this->sqlToArray($originalSQL, $params);
+          break;
       }
 
-      $diffs[] = array(
-        'action' => $changed['log_action'],
-        'id' => $id,
-        'field' => $diff,
-        'from' => CRM_Utils_Array::value($diff, $original),
-        'to' => CRM_Utils_Array::value($diff, $changed),
-      );
+      // populate $diffs with only the differences between $changed and $original
+      $skipped = array('log_action', 'log_conn_id', 'log_date', 'log_user_id');
+      foreach (array_keys(array_diff_assoc($changed, $original)) as $diff) {
+        if (in_array($diff, $skipped)) {
+          continue;
+        }
+
+        if (CRM_Utils_Array::value($diff, $original) === CRM_Utils_Array::value($diff, $changed)) {
+          continue;
+        }
+
+        $diffs[] = array(
+          'action' => $changed['log_action'],
+          'id' => $id,
+          'field' => $diff,
+          'from' => CRM_Utils_Array::value($diff, $original),
+          'to' => CRM_Utils_Array::value($diff, $changed),
+        );
+      }
     }
 
     return $diffs;
@@ -212,10 +218,10 @@ class CRM_Logging_Differ {
 
     $params[3] = array($cgDao->id, 'Integer');
     $sql = "
-SELECT column_name, data_type, label, name, option_group_id 
-FROM   `{$this->db}`.log_civicrm_custom_field 
+SELECT column_name, data_type, label, name, option_group_id
+FROM   `{$this->db}`.log_civicrm_custom_field
 WHERE  log_date <= %2
-AND    custom_group_id = %3 
+AND    custom_group_id = %3
 ORDER BY log_date
 ";
     $cfDao = CRM_Core_DAO::executeQuery($sql, $params);
@@ -233,8 +239,8 @@ ORDER BY log_date
           if (!empty($cfDao->option_group_id)) {
             $params[3] = array($cfDao->option_group_id, 'Integer');
             $sql = "
-SELECT   label, value 
-FROM     `{$this->db}`.log_civicrm_option_value 
+SELECT   label, value
+FROM     `{$this->db}`.log_civicrm_option_value
 WHERE    log_date <= %2
 AND      option_group_id = %3
 ORDER BY log_date

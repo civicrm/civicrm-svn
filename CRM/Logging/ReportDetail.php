@@ -42,7 +42,9 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
 
   // detail/summary report ids
   protected $detail;
-  protected $summary; function __construct() {
+  protected $summary;
+
+  function __construct() {
     // don’t display the ‘Add these Contacts to Group’ button
     $this->_add2groupSupported = FALSE;
 
