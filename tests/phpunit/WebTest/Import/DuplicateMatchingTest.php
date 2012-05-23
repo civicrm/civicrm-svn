@@ -143,7 +143,7 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
       $displayName = "{$updateRows[$cid]['first_name']} {$updateRows[$cid]['last_name']}";
       $this->assertTrue($this->isTextPresent("$displayName"), 'Contact display name should not update in fill mode!');
 
-      $this->verifyText('css=td.crm-contact-gender_display', preg_quote($fillRows[$cid]['gender']));
+      $this->verifyText('css=div.crm-contact-gender_display', preg_quote($fillRows[$cid]['gender']));
     }
 
     // Recreate same conacts using 'No Duplicate Checking'

@@ -128,7 +128,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
 
     // delete all custom data
     if (isset($cfId)) {
-      $this->_removeEmailField( $cfId );
+      $this->_removeEmailField($cfId);
     }
     
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[0]);
@@ -830,7 +830,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     return $cfId;
   }
   
-  function _removeEmailField($cfId) {      
+  function _removeEmailField($cfId) {    
     $this->open($this->sboxPath . "civicrm/admin/uf/group/field?action=delete&id={$cfId}");
     $this->waitForPageToLoad("30000");
     $this->click("_qf_Field_next-bottom");
