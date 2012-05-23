@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
@@ -23,10 +23,12 @@
  +--------------------------------------------------------------------+
 */
 
-defined('_JEXEC') or die('Restricted access'); 
 
-require_once( JApplicationHelper::getPath( 'toolbar_html' ) );
+defined('_JEXEC') or die('Restricted access');
 
-TOOLBAR_civicrm::_DEFAULT( );   
+require_once (JApplicationHelper::getPath('toolbar_html'));
 
-?>
+TOOLBAR_civicrm::_DEFAULT();
+
+
+

@@ -1,5 +1,5 @@
 <?php
-  /*
+/*
    +--------------------------------------------------------------------+
    | CiviCRM version 4.1                                                |
    +--------------------------------------------------------------------+
@@ -23,41 +23,42 @@
    +--------------------------------------------------------------------+
   */
 
-  // Retrieve list of CiviCRM profiles
-  // Active
-  // Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die( 'Restricted access' );
 
+// Retrieve list of CiviCRM profiles
+// Active
+// Check to ensure this file is included in Joomla!
+defined('_JEXEC') or die('Restricted access');
 class JFormFieldCiviProfiles extends JFormField {
-	/**
-	 * Element name
-	 *
-	 * @access	protected
-	 * @var		string
-	 */
-	var	$type = 'CiviProfiles';
-	
-    protected function getInput( )
-	{
-        $value = $this->value;
-        $name  = $this->name;
-        
-        // Initiate CiviCRM
-		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 
-		require_once 'CRM/Core/ClassLoader.php';
-		$classLoader = new CRM_Core_ClassLoader();
-		$classLoader->register();
+  /**
+   * Element name
+   *
+   * @access	protected
+   * @var		string
+   */
+  var $type = 'CiviProfiles';
 
-		require_once 'CRM/Core/Config.php';
-		$config = CRM_Core_Config::singleton( );
-        
-        $ufGroups = CRM_Core_PseudoConstant::ufGroup( );
-        $options[] = JHTML::_( 'select.option', '', JText::_( '- Select Profile -' ) );
-        foreach ( $ufGroups  as $key =>$values ) {
-            $options[] = JHTML::_( 'select.option', $key, $values );
-        }
-        return JHTML::_( 'select.genericlist', $options, $name, null, 'value', 'text', $value );
-	}
+  protected function getInput() {
+    $value = $this->value;
+    $name = $this->name;
+
+    // Initiate CiviCRM
+    require_once JPATH_ROOT . '/' . 'administrator/components/com_civicrm/civicrm.settings.php';
+
+    require_once 'CRM/Core/ClassLoader.php';
+    $classLoader = new CRM_Core_ClassLoader();
+    $classLoader->register();
+
+    require_once 'CRM/Core/Config.php';
+    $config = CRM_Core_Config::singleton();
+
+    $ufGroups = CRM_Core_PseudoConstant::ufGroup();
+    $options[] = JHTML::_('select.option', '', JText::_('- Select Profile -'));
+    foreach ($ufGroups as $key => $values) {
+      $options[] = JHTML::_('select.option', $key, $values);
+    }
+    return JHTML::_('select.genericlist', $options, $name, NULL, 'value', 'text', $value);
+  }
 }
-?>
+
+
