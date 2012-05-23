@@ -390,14 +390,14 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           'Contribution'
         );
 
-        if (CRM_Utils_Array::value('send_receipt', $value)) {
-          $value['receipt_date'] = date('Y-m-d His');
-        }
-
         foreach ($dates as $val) {
           if ( CRM_Utils_Array::value( $val, $value ) ) {
             $value[$val] = CRM_Utils_Date::processDate( $value[$val], $value[$val . '_time'], TRUE );
           }
+        }
+
+        if (CRM_Utils_Array::value('send_receipt', $value)) {
+          $value['receipt_date'] = date('Y-m-d His');
         }
 
         if ($value['contribution_type']) {
