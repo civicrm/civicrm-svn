@@ -328,7 +328,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     $this->click("link=Fees");
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
     $this->click("CIVICRM_QFID_1_2");
-    $this->select("payment_processor_id", "label=" . $params['payment_processor']);
+    $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
     $this->select("contribution_type_id", "value=4");
 
     $counter = 1;
