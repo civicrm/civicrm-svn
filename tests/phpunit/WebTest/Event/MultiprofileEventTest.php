@@ -53,6 +53,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
     $this->webtestAddPaymentProcessor($processorName);
 
+    //add email to name and address profile
+    $cfId = $this->_addEmailField();
+    
     // create custom group1
     $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
     $this->click("newCustomDataGroup");
@@ -124,11 +127,15 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->verifyText("xpath=//form[@id='ParticipantView']/div[2]/table/tbody/tr[6]/td[2]", preg_quote($status));
 
     // delete all custom data
+    if (isset($cfId)) {
+      $this->_removeEmailField( $cfId );
+    }
+    
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[0]);
     $this->waitForPageToLoad("30000");
     $this->click("_qf_DeleteField_next-bottom");
     $this->waitForPageToLoad("30000");
-
+    
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[1]);
     $this->waitForPageToLoad("30000");
     $this->click("_qf_DeleteField_next-bottom");
@@ -177,6 +184,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
     $this->webtestAddPaymentProcessor($processorName);
 
+    //add email field to name and address profile
+    $cfId = $this->_addEmailField( );
+    
     // create custom group1
     $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
     $this->click("newCustomDataGroup");
@@ -299,6 +309,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->verifyText("xpath=//form[@id='ParticipantView']/div[2]/table/tbody/tr[6]/td[2]", preg_quote($status));
 
     // delete all custom data
+    if (isset($cfId)) {  
+      $this->_removeEmailField($cfId);
+    }
+    
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[0]);
     $this->waitForPageToLoad("30000");
     $this->click("_qf_DeleteField_next-bottom");
@@ -368,10 +382,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     // Go to Online Contribution tab
     $this->click("link=Online Registration");
     $this->waitForElementPresent("_qf_Registration_upload-bottom");
-    $this->select("additional_custom_post_id_multiple_1", "value=none");
-    $this->select("additional_custom_post_id_multiple_2", "value=none");
-    $this->select("additional_custom_post_id_multiple_3", "value=none");
-    $this->select("additional_custom_post_id_multiple_4", "value=none");
+    $this->click("xpath=//select[@id='additional_custom_post_id_multiple_1']/../span/a[text()='remove profile']");
+    $this->click("xpath=//select[@id='additional_custom_post_id_multiple_2']/../span/a[text()='remove profile']");
+    $this->click("xpath=//select[@id='additional_custom_post_id_multiple_3']/../span/a[text()='remove profile']");
+    $this->click("xpath=//select[@id='additional_custom_post_id_multiple_4']/../span/a[text()='remove profile']");
     $this->click("_qf_Registration_upload-bottom");
     $this->waitForPageToLoad('30000');
   }
@@ -653,7 +667,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Register_upload-bottom");
     $this->select("additional_participants", "value=1");
 
-    $this->type("email-5", $email1);
+    $this->type("email-Primary", $email1);
     $this->type("first_name", $firstName);
     $this->type("last_name", $lastName);
     $this->type("street_address-1", "Test street addres");
@@ -698,7 +712,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->click("_qf_Register_upload-bottom");
     $this->waitForElementPresent("_qf_Participant_1_next-Array");
 
-    $this->type("email-5", $email2);
+    $this->type("email-Primary", $email2);
     $this->type("first_name", $participantfname);
     $this->type("last_name", $participantlname);
     $this->type("street_address-1", "participant street addres");
@@ -733,7 +747,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Register_upload-bottom");
     $this->select("additional_participants", "value=1");
 
-    $this->type("email-5", $email4);
+    $this->type("email-Primary", $email4);
     $this->type("first_name", $firstName2);
     $this->type("last_name", $lastName2);
     $this->type("street_address-1", "Test street addres");
@@ -779,7 +793,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->click("_qf_Register_upload-bottom");
     $this->waitForElementPresent("_qf_Participant_1_next-Array");
 
-    $this->type("email-5", $email3);
+    $this->type("email-Primary", $email3);
     $this->type("first_name", $participantfname2);
     $this->type("last_name", $participantlname2);
     $this->type("street_address-1", "participant street addres");
@@ -794,6 +808,33 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
+  }
+  
+  function _addEmailField( ){
+    //add email field in name and address profile
+    $this->open($this->sboxPath . "civicrm/admin/uf/group/field/add?reset=1&action=add&gid=1");
+    $this->waitForElementPresent("_qf_Field_next-bottom");
+    $this->select("field_name[0]", "value=Contact");
+    $this->select("field_name[1]", "value=email");
+    $this->select("field_name[2]", "value=0");
+    $this->click('_qf_Field_next-bottom');
+    $this->waitForPageToLoad('30000');
+    
+    $cfId = "";
+    //check wheather webtest has created the field
+    if (!$this->isTextPresent("The selected field was not added. It already exists in this profile")) {
+      $this->waitForElementPresent("xpath=//div[@id='field_page']//table/tbody//tr[8]/td[9]/span/a[text()='Edit']");
+      $cfId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr[8]/td[9]/span/a[text()='Edit']/@href"));
+      $cfId = $cfId[1];
+    }
+    return $cfId;
+  }
+  
+  function _removeEmailField($cfId) {      
+    $this->open($this->sboxPath . "civicrm/admin/uf/group/field?action=delete&id={$cfId}");
+    $this->waitForPageToLoad("30000");
+    $this->click("_qf_Field_next-bottom");
+    $this->waitForPageToLoad("30000");
   }
 }
 
