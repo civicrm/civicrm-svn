@@ -127,10 +127,6 @@ registration process.{/ts}
 {/if}
 {/foreach}
 {/if}
-{if $amount && !$lineItem}
-{foreach from=$amount item=amnt key=level}{$amnt.amount|crmMoney} {$amnt.label}
-{/foreach}
-{/if}
 {if $isPrimary }
 
 {ts}Total Amount{/ts}: {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}

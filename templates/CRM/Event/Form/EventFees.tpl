@@ -49,32 +49,12 @@
         {else}
 	    {assign var=isRecordPayment value=0 }
             <div class='messages status'>{ts}No any active price fields found for this event!{/ts}</div>
-        {/if}
+    	    {/if}
     </table>
-
     {/if}
-    {else} {* NOT Price Set *}
-     <tr>
-     <td class ='html-adjust' colspan=2>
-     	<table class="form-layout" style="width: auto;">
-        {if $discount and $hasPayment}
-            <tr class="crm-event-eventfees-form-block-discount"><td class="label">&nbsp;&nbsp;{ts}Discount Set{/ts}</td><td class="view-value">{$discount}</td></tr>
-        {elseif $form.discount_id.label}
-            <tr class="crm-event-eventfees-form-block-discount_id"><td class="label">&nbsp;&nbsp;{$form.discount_id.label}</td><td>{$form.discount_id.html}</td></tr>
-        {/if}
-        {if $action EQ 2 and $hasPayment}
-            <tr class="crm-event-eventfees-form-block-fee_level"><td class="label">&nbsp;&nbsp;{ts}Event Level{/ts}</td><td class="view-value"><span class="bold">{$fee_level}&nbsp;{if $fee_amount}- {$fee_amount|crmMoney:$fee_currency}{/if}</span></td></tr>
-        {else}
-            <tr class="crm-event-eventfees-form-block-fee_amount"><td class="label">&nbsp;&nbsp;{$form.amount.label}</td><td>{$form.amount.html}
-        {/if}
-        {if $action EQ 1}
-            <br />&nbsp;&nbsp;<span class="description">{ts}Event Fee Level (if applicable).{/ts}</span>
-        {/if}
-        </td></tr>
-     	</table>
-     </td>
-     </tr>
-    {/if}
+    </td>
+    </tr>
+ {/if}
 
     { if $accessContribution and ! $participantMode and ($action neq 2 or !$rows.0.contribution_id or $onlinePendingContributionId) and $isRecordPayment }
         <tr class="crm-event-eventfees-form-block-record_contribution">

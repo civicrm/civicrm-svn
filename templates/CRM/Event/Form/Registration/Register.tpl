@@ -86,22 +86,6 @@
             <div class="clear"></div>
         </div>
     {/if}
-
-{else}
-    {if $paidEvent}
-        <div class="crm-section paid_event-section">
-    	    <div class="label">{$event.fee_label} <span class="marker">*</span></div>
-    		<div class="content">{$form.amount.html}</div>
-            <div class="clear"></div>
-     	</div>
-        {if $form.is_pay_later}
-            <div class="crm-section pay_later-section">
-    	        <div class="label">&nbsp;</div>
-                <div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
-                <div class="clear"></div>
-            </div>
-        {/if}
-    {/if}
 {/if}
 
 {if $pcp && $is_honor_roll }

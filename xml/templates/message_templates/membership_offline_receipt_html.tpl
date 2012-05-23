@@ -36,56 +36,6 @@
   <tr>
    <td>
     <table style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse; width:100%;">
-     {if !$lineItem}
-     <tr>
-      <th {$headerStyle}>
-       {ts}Membership Information{/ts}
-      </th>
-     </tr>
-     <tr>
-      <td {$labelStyle}>
-       {ts}Membership Type{/ts}
-      </td>
-      <td {$valueStyle}>
-       {$membership_name}
-      </td>
-     </tr>
-     {/if}
-     {if ! $cancelled}
-     {if !$lineItem}
-      <tr>
-       <td {$labelStyle}>
-        {ts}Membership Start Date{/ts}
-       </td>
-       <td {$valueStyle}>
-        {$mem_start_date}
-       </td>
-      </tr>
-      <tr>
-       <td {$labelStyle}>
-        {ts}Membership End Date{/ts}
-       </td>
-       <td {$valueStyle}>
-        {$mem_end_date}
-       </td>
-      </tr>
-      {/if}
-      {if $formValues.total_amount}
-       <tr>
-        <th {$headerStyle}>
-         {ts}Membership Fee{/ts}
-        </th>
-       </tr>
-       {if $formValues.contributionType_name}
-        <tr>
-         <td {$labelStyle}>
-          {ts}Contribution Type{/ts}
-         </td>
-         <td {$valueStyle}>
-          {$formValues.contributionType_name}
-         </td>
-        </tr>
-       {/if}
 
        {if $lineItem}
        {foreach from=$lineItem item=value key=priceset}
