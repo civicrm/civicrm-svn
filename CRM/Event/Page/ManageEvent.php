@@ -310,7 +310,7 @@ ORDER BY start_date desc
     $urlParams = 'reset=1';
     // Redirect to Copied Event Configuration
     if ($copyEvent->id) {
-      $urlString = 'civicrm/event/manage/eventInfo';
+      $urlString = 'civicrm/event/manage/settings';
       $urlParams .= '&action=update&id=' . $copyEvent->id;
     }
 
