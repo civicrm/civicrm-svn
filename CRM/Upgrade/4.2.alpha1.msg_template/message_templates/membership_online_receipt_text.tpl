@@ -28,18 +28,7 @@
 {ts}Membership Fee{/ts}
 
 ===========================================================
-{if !$useForMember && $membership_amount }
-{ts 1=$membership_name}%1 Membership{/ts}: {$membership_amount|crmMoney}
-{if $amount}
-{if ! $is_separate_payment }
-{ts}Contribution Amount{/ts}: {$amount|crmMoney}
-{else}
-{ts}Additional Contribution{/ts}: {$amount|crmMoney}
-{/if}
-{/if}
--------------------------------------------
-{ts}Total{/ts}: {$amount+$membership_amount|crmMoney}
-{elseif !$useForMember && $lineItem and $priceSetID}
+{if !$useForMember && $lineItem and $priceSetID}
 {foreach from=$lineItem item=value key=priceset}
 ---------------------------------------------------------
 {capture assign=ts_item}{ts}Item{/ts}{/capture}
@@ -72,12 +61,6 @@
 {/if}
 {ts}Amount{/ts}: {$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}
 {/if}
-{elseif $membership_amount}
-===========================================================
-{ts}Membership Fee{/ts}
-
-===========================================================
-{ts 1=$membership_name}%1 Membership{/ts}: {$membership_amount|crmMoney}
 {/if}
 {if $receive_date}
 

@@ -83,47 +83,7 @@
        </th>
       </tr>
 
-      {if !$useForMember && $membership_amount}
-
-       <tr>
-        <td {$labelStyle}>
-         {ts 1=$membership_name}%1 Membership{/ts}
-        </td>
-        <td {$valueStyle}>
-         {$membership_amount|crmMoney}
-        </td>
-       </tr>
-       {if $amount}
-        {if ! $is_separate_payment }
-         <tr>
-          <td {$labelStyle}>
-           {ts}Contribution Amount{/ts}
-          </td>
-          <td {$valueStyle}>
-           {$amount|crmMoney}
-          </td>
-         </tr>
-        {else}
-         <tr>
-          <td {$labelStyle}>
-           {ts}Additional Contribution{/ts}
-          </td>
-          <td {$valueStyle}>
-           {$amount|crmMoney}
-          </td>
-         </tr>
-        {/if}
-       {/if}
-       <tr>
-        <td {$labelStyle}>
-         {ts}Total{/ts}
-        </td>
-        <td {$valueStyle}>
-         {$amount+$membership_amount|crmMoney}
-        </td>
-       </tr>
-
-      {elseif !$useForMember && $lineItem and $priceSetID}
+      {if !$useForMember && $lineItem and $priceSetID}
 
        {foreach from=$lineItem item=value key=priceset}
         <tr>
@@ -207,25 +167,6 @@
        </tr>
 
       {/if}
-
-
-     {elseif $membership_amount}
-
-
-      <tr>
-       <th {$headerStyle}>
-        {ts}Membership Fee{/ts}
-       </th>
-      </tr>
-      <tr>
-       <td {$labelStyle}>
-        {ts 1=$membership_name}%1 Membership{/ts}
-       </td>
-       <td {$valueStyle}>
-        {$membership_amount|crmMoney}
-       </td>
-      </tr>
-
 
      {/if}
 

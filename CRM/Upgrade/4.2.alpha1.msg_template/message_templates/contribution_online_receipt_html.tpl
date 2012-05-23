@@ -87,16 +87,6 @@
         </td>
        </tr>
 
-      {else}
-
-       <tr>
-        <td {$labelStyle}>
-         {ts}Amount{/ts}
-        </td>
-        <td {$valueStyle}>
-         {$amount|crmMoney:$currency} {if $amount_level} - {$amount_level}{/if}
-        </td>
-       </tr>
 
       {/if}
 

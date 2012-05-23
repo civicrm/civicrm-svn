@@ -238,15 +238,6 @@ registration process.{/ts}</p>
        {/foreach}
       {/if}
 
-      {if $amount && !$lineItem}
-       {foreach from=$amount item=amnt key=level}
-        <tr>
-         <td colspan="2" {$valueStyle}>
-          {$amnt.amount|crmMoney} {$amnt.label}
-         </td>
-        </tr>
-       {/foreach}
-      {/if}
 
       {if $isPrimary}
        <tr>
