@@ -441,9 +441,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
           }
 
           // don't load fields, use js to populate.
-          foreach (array(
-            'street_number', 'street_name', 'street_unit') as $f) {
-            if (isset($address[$f]))unset($address[$f]);
+          foreach (array('street_number', 'street_name', 'street_unit') as $f) {
+            if (isset($address[$f])) {
+              unset($address[$f]);
+            }
           }
         }
         $this->assign('allAddressFieldValues', json_encode($addressValues));
@@ -456,8 +457,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
         ) {
           foreach ($_POST['address'] as $cnt => $values) {
             $showField = 'streetAddress';
-            foreach (array(
-              'street_number', 'street_name', 'street_unit') as $fld) {
+            foreach (array('street_number', 'street_name', 'street_unit') as $fld) {
               if (CRM_Utils_Array::value($fld, $values)) {
                 $showField = 'addressElements';
                 break;
