@@ -313,7 +313,7 @@ class CRM_Utils_REST {
     //  This used to be done in the authenticate function, but that was bad...trust me
     // first check for civicrm site key
     if (!CRM_Utils_System::authenticateKey(FALSE)) {
-      $docLink = CRM_Utils_System::docURL2("Command-line Script Configuration", TRUE);
+      $docLink = CRM_Utils_System::docURL2("Managing Scheduled Jobs", TRUE, NULL, NULL, NULL, "wiki");
       $key = CRM_Utils_array::value('key', $_REQUEST);
       if (empty($key)) {
         return self::error("FATAL: mandatory param 'key' missing. More info at: " . $docLink);

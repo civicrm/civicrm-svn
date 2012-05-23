@@ -116,7 +116,7 @@ class CRM_Utils_File {
     CRM_Utils_File::createDir(dirname($path), $abort);
     if (@mkdir($path, 0777) == FALSE) {
       if ($abort) {
-        $docLink = CRM_Utils_System::docURL2('Moving an Existing Installation to a New Server or Location', FALSE, 'Moving an Existing Installation to a New Server or Location');
+        $docLink = CRM_Utils_System::docURL2('Moving an Existing Installation to a New Server or Location', NULL, NULL, NULL, NULL, "wiki");
         echo "Error: Could not create directory: $path.<p>If you have moved an existing CiviCRM installation from one location or server to another there are several steps you will need to follow. They are detailed on this CiviCRM wiki page - {$docLink}. A fix for the specific problem that caused this error message to be displayed is to set the value of the config_backend column in the civicrm_domain table to NULL. However we strongly recommend that you review and follow all the steps in that document.</p>";
 
         CRM_Utils_System::civiExit();

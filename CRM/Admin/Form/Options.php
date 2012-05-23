@@ -92,7 +92,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form {
       $sql        = "SELECT count(id) FROM civicrm_contact WHERE " . $columnName . " = %1";
       $isInUse    = CRM_Core_DAO::singleValueQuery($sql, $queryParam);
       if ($isInUse) {
-        $scriptURL = "<a href='" . CRM_Utils_System::docURL2('Update Greetings and Address Data for Contacts', TRUE) . "'>" . ts('Learn more about a script that can automatically update contact addressee and greeting options.') . "</a>";
+        $scriptURL = "<a href='" . CRM_Utils_System::docURL2('Update Greetings and Address Data for Contacts', TRUE, NULL, NULL, NULL, "wiki") . "'>" . ts('Learn more about a script that can automatically update contact addressee and greeting options.') . "</a>";
         CRM_Core_Session::setStatus(ts('The selected %1 option has <strong>not been deleted</strong> because it is currently in use. Please update these contacts to use a different format before deleting this option. %2', array(1 => $this->_GName, 2 => $scriptURL)) . "<br /><br />");
         $redirect = CRM_Utils_System::url($url, $params);
         CRM_Utils_System::redirect($redirect);

@@ -214,7 +214,7 @@ class CRM_Upgrade_ThreeZero_ThreeZero extends CRM_Upgrade_Form {
       }
     }
 
-    $docURL = CRM_Utils_System::docURL2('Update Greetings and Address Data for Contacts', FALSE, NULL, NULL, 'color: white; text-decoration: underline;');
+    $docURL = CRM_Utils_System::docURL2('Update Greetings and Address Data for Contacts', FALSE, NULL, NULL, 'color: white; text-decoration: underline;', "wiki");
 
     if ($addNewAddressee) {
       //otherwise insert new token in addressee and set as a default

@@ -232,7 +232,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form {
     );
 
     //Added code to add custom field as Reply-To on form when it is enabled from Mailer settings
-        if ( $config->replyTo && ! CRM_Utils_Array::value( 'override_verp', $options ) ) {
+    if ( isset($config->replyTo) && ! CRM_Utils_Array::value( 'override_verp', $options ) ) {
       $this->add('select', 'reply_to_address', ts('Reply-To'),
         array(
           '' => '- select -') + $fromEmailAddress
@@ -672,7 +672,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form {
       }
       if (!empty($dataErrors)) {
         $errors[$file . 'File'] = ts('The following errors were detected in %1:', array(
-          1 => $name)) . ' <ul>' . implode('', $dataErrors) . '</ul><br /><a href="' . CRM_Utils_System::docURL2('Sample CiviMail Messages', TRUE) . '" target="_blank">' . ts('More information on required tokens...') . '</a>';
+          1 => $name)) . ' <ul>' . implode('', $dataErrors) . '</ul><br /><a href="' . CRM_Utils_System::docURL2('Sample CiviMail Messages', TRUE, NULL, NULL, NULL, "wiki") . '" target="_blank">' . ts('More information on required tokens...') . '</a>';
       }
     }
 
