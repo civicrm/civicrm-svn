@@ -44,15 +44,15 @@
 {/if}
 
 {if $is_recur and ($contributeMode eq 'notify' or $contributeMode eq 'directIPN')}
-{ts}This is a recurring contribution. You can modify or cancel future contributions by logging in to your account at:{/ts}
+{ts}This is a recurring contribution. You can cancel future contributions at:{/ts}
 
 {$cancelSubscriptionUrl}
 
-{ts}You can update billing details for this subscription at:{/ts}
+{ts}You can update billing details for this recurring contribution at:{/ts}
 
 {$updateSubscriptionBillingUrl}
 
-{ts}You can update details for this subscription at:{/ts}
+{ts}You can update recurring contribution amount or change the number of installments for this recurring contribution at:{/ts}
 
 {$updateSubscriptionUrl}
 
