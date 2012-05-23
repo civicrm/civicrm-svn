@@ -182,7 +182,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     $this->waitForElementPresent('newCustomField');
 
     $this->assertTrue($this->isTextPresent("Your custom field '{$customField}' has been saved."));
-    $customFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$customField']/../td[8]/span/a@href"));
+    $customFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td/span[text()='$customField']/../../td[8]/span/a@href"));
     $customFieldId = $customFieldId[1];
 
     return array("custom_{$customFieldId}", $customField, $customGroupTitle);
