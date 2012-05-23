@@ -1123,7 +1123,7 @@ class CRM_Utils_System {
     if (CRM_Utils_Array::value('resource', $params) == 'wiki') {
       $docBaseURL = self::getWikiBaseURL();
     } else {
-      $docBaseURL = self::getDocBaseURL();      
+      $docBaseURL = self::getDocBaseURL();
     }
 
     if (!isset($params['title']) or $params['title'] === NULL) {
