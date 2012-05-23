@@ -48,7 +48,14 @@ function civicrm_rules_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   }
 
   // process only contacts for now
-  $validObjects = variable_get('civicrm_rules_post_entities', array());
+  $validObjects = array_merge(
+    variable_get('civicrm_rules_post_entities', array()),
+    array('contact' => 'contact')
+  );
+
+  if (!in_array(strtolower($objectName), $validObjects, true)) {
+    return;
+  }
 
   $eventObject = strtolower($objectName);
   if (!in_array($eventObject, $validObjects) &&
