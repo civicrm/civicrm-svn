@@ -613,7 +613,7 @@ class CRM_Core_SelectValues {
         '{event.location}' => ts('Event Location'),
         '{event.description}' => ts('Event Description'),
         '{event.location}' => ts('Event Location'),
-        '{event.fees}' => ts('Event Fees'),
+        '{event.fee_amount}' => ts('Event Fees'),
         '{event.info_url}' => ts('Event Info URL'),
         '{event.registration_url}' => ts('Event Registration URL'),
       );

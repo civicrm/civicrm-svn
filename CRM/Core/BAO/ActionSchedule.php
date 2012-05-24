@@ -602,7 +602,7 @@ INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.optio
 
       if ($mapping->entity == 'civicrm_participant') {
         $tokenEntity = 'event';
-        $tokenFields = array('event_type', 'title', 'event_id', 'start_date', 'end_date', 'summary', 'description', 'location', 'info_url', 'registration_url');
+        $tokenFields = array('event_type', 'title', 'event_id', 'start_date', 'end_date', 'summary', 'description', 'location', 'info_url', 'registration_url', 'fee_amount');
         $extraSelect = ", ov.label as event_type, ev.title, ev.id as event_id, ev.start_date, ev.end_date, ev.summary, ev.description, address.* ";
         $extraJoin   = "
 INNER JOIN civicrm_event ev ON e.event_id = ev.id
