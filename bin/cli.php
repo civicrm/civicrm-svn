@@ -78,6 +78,8 @@ class civicrm_Cli {
     elseif ($this->_output) {
       print_r($result['values']);
     }
+
+    return true;
   }
 
   private function _parseOptions() {
@@ -230,8 +232,10 @@ class civicrm_Cli {
 
 function main() {
   $cli = new civicrm_Cli();
-  $cli->initialize() || die();
-  $cli->callApi() || die();
+  echo "before init\n";
+  $cli->initialize() || die( 'Died during initialization' );
+  echo "before call\n";
+  $cli->callApi() || die( 'Died during callApi' );
 }
 
 main();
