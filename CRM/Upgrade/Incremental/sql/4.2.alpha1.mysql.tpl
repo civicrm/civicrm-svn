@@ -260,26 +260,32 @@ ALTER TABLE `civicrm_custom_group` CHANGE `extends_entity_column_value` `extends
 -- CRM-9714 create price fields for all membershiptype
 SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_membership_type_amount' AND extends = 3 AND is_quick_config = 1 ;
 
-INSERT INTO civicrm_price_field ( price_set_id, name, label, html_type, help_pre, is_display_amounts, is_required )
-SELECT @setID as price_set_id,  CONCAT_WS( '_', LOWER( REPLACE( TRIM( cc.sort_name ), ' ', '_' ) ), CAST(cc.id AS CHAR)) as name, cc.sort_name as label, 'Radio' as html_type, CONCAT('id_',CAST(cc.id AS CHAR)) as help_pre, 0 as is_display_amounts, 0 as is_required
+INSERT INTO civicrm_price_field ( price_set_id, name, label, html_type, is_display_amounts, is_required )
+SELECT @setID as price_set_id,  cmt.member_of_contact_id as name, 'Membership Amount', 'Radio' as html_type, 0 as is_display_amounts, 0 as is_required
 FROM `civicrm_membership_type` cmt
-LEFT JOIN civicrm_contact cc ON cmt.member_of_contact_id = cc.id
-GROUP BY cc.id;
+GROUP BY cmt.member_of_contact_id;
 
 INSERT INTO civicrm_price_field_value ( price_field_id, name, label, description, amount, membership_type_id)
 SELECT
 cpf.id, cmt.name as label1, cmt.name as label2, cmt.description, cmt.minimum_fee, cmt.id
 FROM `civicrm_membership_type` cmt
-LEFT JOIN civicrm_contact cc ON cmt.member_of_contact_id = cc.id
-LEFT JOIN civicrm_price_field cpf ON cc.id = SUBSTRING(cpf.help_pre,4);
-
-UPDATE civicrm_price_field SET help_pre = NULL WHERE price_set_id = @setID;
+LEFT JOIN civicrm_price_field cpf ON cmt.member_of_contact_id = cpf.name;
 
 -- CRM-9714
 SELECT @fieldID := cpf.id, @fieldValueID := cpfv.id FROM civicrm_price_set cps
 LEFT JOIN civicrm_price_field cpf ON  cps.id = cpf.price_set_id
 LEFT JOIN civicrm_price_field_value cpfv ON cpf.id = cpfv.price_field_id
 WHERE cps.name = 'default_contribution_amount';
+
+INSERT INTO civicrm_price_set_entity( entity_table, entity_id, price_set_id )
+
+SELECT 'civicrm_contribution', cc.id as id, @setId 
+FROM `civicrm_contribution` cc
+LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
+LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
+WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NULL 
+GROUP BY cc.id;
 
 INSERT INTO civicrm_line_item ( entity_table, entity_id, price_field_id, label, qty, unit_price, line_total, participant_count, price_field_value_id )
 SELECT 'civicrm_contribution', cc.id, @fieldID, 'Contribution Amount', ROUND(total_amount,0), '1.00', total_amount , 0, @fieldValueID
@@ -289,6 +295,27 @@ LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
 LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
 WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NULL
 GROUP BY cc.id;
+
+-- create entry in line items for offline membership 
+SELECT  @priceSet := MAX(id) FROM `civicrm_price_set` WHERE `name` LIKE 'default_membership_type_amount';
+
+INSERT INTO civicrm_price_set_entity(entity_table, entity_id, price_set_id)
+SELECT 'civicrm_contribution',cc.id, @priceSet
+FROM civicrm_membership_payment cmp
+LEFT JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
+LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL;
+
+INSERT INTO civicrm_line_item(`entity_table` ,`entity_id` ,`price_field_id` ,`label` , `qty` ,`unit_price` ,`line_total` ,`participant_count` ,`price_field_value_id`)
+SELECT 'civicrm_contribution',cc.id, cpf.id as price_field_id, cpfv.label, 1, cc.total_amount, cc.total_amount line_total, 0, cpfv.id as price_field_value
+FROM civicrm_membership_payment cmp
+LEFT JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
+LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+LEFT JOIN civicrm_membership cm ON cm.id=cmp.membership_id
+LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
+LEFT JOIN civicrm_price_field cpf ON cpf.name = cmt.member_of_contact_id
+LEFT JOIN civicrm_price_field_value cpfv ON cpfv.membership_type_id = cm.membership_type_id
+WHERE cli.entity_id IS NULL ; 
 
 -- CRM-10071 contribution membership detail report template
 SELECT @option_group_id_report := MAX(id)     FROM civicrm_option_group WHERE name = 'report_template';
@@ -361,3 +388,4 @@ VALUES
 
 -- CRM-10117 
 ALTER TABLE `civicrm_price_field_value` CHANGE `is_active` `is_active` TINYINT( 4 ) NULL DEFAULT '1' COMMENT 'Is this price field value active';
+
