@@ -83,7 +83,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
     $this->type('sort_name', $firstName1);
     $this->click('_qf_Basic_refresh');
     $this->waitForPageToLoad("30000");
-    $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
+    $this->click("xpath=//div[@class='crm-search-results']/a/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad("30000");
 
     for ($cnt = 0; $cnt < 2; $cnt++) {
@@ -207,7 +207,8 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
     $this->waitForElementPresent('newCustomField');
 
     $this->assertTrue($this->isTextPresent("Your custom field '{$dateFieldLabel}' has been saved."));
-    $dateFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$dateFieldLabel']/../td[8]/span/a@href"));
+    
+    $dateFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td/span[text()='$dateFieldLabel']/../../td[8]/span/a@href"));
     $dateFieldId = $dateFieldId[1];
 
     // create another custom field - Integer Radio
@@ -247,7 +248,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
-    $radioFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$radioFieldLabel']/../td[8]/span/a@href"));
+    $radioFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td/span[text()='$radioFieldLabel']/../../td[8]/span/a@href"));
     $radioFieldId = $radioFieldId[1];
 
     // create another custom field - multiselect
@@ -285,7 +286,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
     $this->click('_qf_Field_next-bottom');
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent("Your custom field '{$multiSelectLabel}' has been saved."));
-    $multiSelectFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$multiSelectLabel']/../td[8]/span/a@href"));
+    $multiSelectFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td/span[text()='$multiSelectLabel']/../../td[8]/span/a@href"));
     $multiSelectFieldId = $multiSelectFieldId[1];
 
     // create another custom field - contact reference
@@ -310,7 +311,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     $this->assertTrue($this->isTextPresent("Your custom field '{$contactReferenceLabel}' has been saved."));
-    $contactReferenceFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td[text()='$contactReferenceLabel']/../td[8]/span/a@href"));
+    $contactReferenceFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td/span[text()='$contactReferenceLabel']/../../td[8]/span/a@href"));
     $contactReferenceFieldId = $contactReferenceFieldId[1];
 
     $customDataParams = array(
