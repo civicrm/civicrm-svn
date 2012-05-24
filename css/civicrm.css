@@ -1944,7 +1944,7 @@ div.grippie {
   background-color: #FAFAFA;
   color: #7A7A60;
   text-align: left;
-  width: 120px;
+  width: 128px;
   float:left;
   padding: 4px 0px 5px 4px;
   margin-right: 5px;
@@ -1955,7 +1955,7 @@ div.grippie {
   background-color: #F4F4ED;
   padding: 4px 0px 5px 4px;
   margin-bottom: 1px;
-  margin-left: 124px;
+  margin-left: 132px;
   min-height: 17px;
   border-top: 1px solid #ffffff
 }
@@ -3011,7 +3011,7 @@ table.crm-info-panel td {
 #crm-container #customFields div.contact_panel td.label,
 table.crm-info-panel td.label {
     background-color: #fafafa;
-    width:117px;
+    width:126px;
     text-align: left;
     color: #7a7a60;
 }

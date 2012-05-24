@@ -27,8 +27,8 @@
 <div class="crm-table2div-layout" id="crm-communication-pref-content">
   <div class="crm-clear"><!-- start of main -->
     <div class="crm-config-option">
-      <a id="edit-communication-pref" class="hiddenElement crm-link-action" title="{ts}click to add or edit preferences{/ts}">
-      <span class="batch-edit"></span>{ts}add or edit preferences{/ts}
+      <a id="edit-communication-pref" class="hiddenElement crm-link-action" title="{ts}click to add or edit communication preferences{/ts}">
+      <span class="batch-edit"></span>{ts}add or edit communication preferences{/ts}
       </a>
     </div>
     <div class="crm-label">{ts}Privacy{/ts}</div>
@@ -53,19 +53,19 @@
       {$preferred_mail_format}
     </div>
     <div class="crm-label">{ts}Email Greeting{/ts}
-    {if !empty($email_greeting_custom)}<span style="font-size:9px;">({ts}Customized{/ts})</span>{/if}
+    {if !empty($email_greeting_custom)}<span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}
     </div>
     <div class="crm-content crm-contact-email_greeting_display">
       {$email_greeting_display}
     </div>
     <div class="crm-label">{ts}Postal Greeting{/ts}
-    {if !empty($postal_greeting_custom)}<span style="font-size:9px;">({ts}Customized{/ts})</span>{/if}
+    {if !empty($postal_greeting_custom)}<span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}
     </div>
     <div class="crm-content crm-contact-postal_greeting_display">
       {$postal_greeting_display}
     </div>
     <div class="crm-label">{ts}Addressee{/ts}
-    {if !empty($addressee_custom)}<span style="font-size:9px;">({ts}Customized{/ts})</span>{/if}
+    {if !empty($addressee_custom)}<span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}
     </div>
     <div class="crm-content crm-contact-addressee_display">
       {$addressee_display}
