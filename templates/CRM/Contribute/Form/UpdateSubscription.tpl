@@ -37,8 +37,10 @@
     </tr>
     <tr><td class="label">{$form.installments.label}</td><td>{$form.installments.html}<br />
           <span class="description">{ts}Total number of payments to be made. Set this to 0 if this is an open-ended commitment i.e. no set end date.{/ts}</span></td></tr>
+    {if !$self_service}
     <tr><td class="label">{$form.is_notify.label}</td><td>{$form.is_notify.html}</td></tr>
-    
+    {/if}
+
     {* Currently changes to interval, unit and cycle day are not supported. *}
     {*
       <tr><td class="label">{$form.frequency_interval.label}</td><td>{$form.frequency_interval.html}<br />

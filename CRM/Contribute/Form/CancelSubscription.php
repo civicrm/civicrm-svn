@@ -50,6 +50,8 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
 
   protected $_crid = NULL;
 
+  protected $_selfService = FALSE;
+
   /**
    * Function to set variables up before form is built
    *
@@ -107,7 +109,9 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
       if (!CRM_Contact_BAO_Contact_Utils::validChecksum($this->_subscriptionDetails->contact_id, $userChecksum)) {
         CRM_Core_Error::fatal(ts('You do not have permission to cancel this recurring contribution.'));
       }
+      $this->_selfService = TRUE;
     }
+    $this->assign('self_service', $this->_selfService);
 
     // handle context redirection
     CRM_Contribute_BAO_ContributionRecur::setSubscriptionContext();
@@ -190,6 +194,14 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
     $cancelSubscription = TRUE;
     $params             = $this->controller->exportValues($this->_name);
 
+    if ($this->_selfService) {
+      // for self service force sending-request & notify
+      if ($this->_paymentProcessorObj->isSupported('cancelSubscription'))
+        $params['send_cancel_request'] = 1;
+      if ($this->_donorEmail)
+        $params['is_notify'] = 1;
+    }
+
     if (CRM_Utils_Array::value('send_cancel_request', $params) == 1) {
       $cancelParams = array('subscriptionId' => $this->_subscriptionDetails->subscription_id);
       $cancelSubscription = $this->_paymentProcessorObj->cancelSubscription($message, $cancelParams);
@@ -229,34 +241,37 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
           );
         }
 
-        if ($this->_subscriptionDetails->contribution_page_id) {
-          CRM_Core_DAO::commonRetrieveAll('CRM_Contribute_DAO_ContributionPage', 'id',
-            $this->_subscriptionDetails->contribution_page_id, $value, array(
-              'title',
-              'receipt_from_name',
-              'receipt_from_email',
-            )
-          );
-          $receiptFrom = '"' . CRM_Utils_Array::value('receipt_from_name', $value[$this->_subscriptionDetails->contribution_page_id]) . '" <' . $value[$this->_subscriptionDetails->contribution_page_id]['receipt_from_email'] . '>';
+        if (CRM_Utils_Array::value('is_notify', $params) == 1) {
+          if ($this->_subscriptionDetails->contribution_page_id) {
+            CRM_Core_DAO::commonRetrieveAll('CRM_Contribute_DAO_ContributionPage', 'id',
+                                            $this->_subscriptionDetails->contribution_page_id, 
+                                            $value, array('title',
+                                                          'receipt_from_name',
+                                                          'receipt_from_email',
+                                                          )
+                                            );
+            $receiptFrom = '"' . CRM_Utils_Array::value('receipt_from_name', $value[$this->_subscriptionDetails->contribution_page_id]) . '" <' . $value[$this->_subscriptionDetails->contribution_page_id]['receipt_from_email'] . '>';
+          }
+          else {
+            $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
+            $receiptFrom = "$domainValues[0] <$domainValues[1]>";
+          }
+          
+          // send notification
+          $sendTemplateParams = 
+            array(
+                  'groupName' => $this->_mode == 'auto_renew' ? 'msg_tpl_workflow_membership' : 'msg_tpl_workflow_contribution',
+                  'valueName' => $this->_mode == 'auto_renew' ? 'membership_autorenew_cancelled' : 'contribution_recurring_cancelled',
+                  'contactId' => $this->_subscriptionDetails->contact_id,
+                  'tplParams' => $tplParams,
+                  //'isTest'    => $isTest, set this from _objects
+                  'PDFFilename' => 'receipt.pdf',
+                  'from' => $receiptFrom,
+                  'toName' => $this->_donorDisplayName,
+                  'toEmail' => $this->_donorEmail,
+                  );
+          list($sent) = CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
         }
-        else {
-          $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
-          $receiptFrom = "$domainValues[0] <$domainValues[1]>";
-        }
-
-        // send notification
-        $sendTemplateParams = array(
-          'groupName' => $this->_mode == 'auto_renew' ? 'msg_tpl_workflow_membership' : 'msg_tpl_workflow_contribution',
-          'valueName' => $this->_mode == 'auto_renew' ? 'membership_autorenew_cancelled' : 'contribution_recurring_cancelled',
-          'contactId' => $this->_subscriptionDetails->contact_id,
-          'tplParams' => $tplParams,
-          //'isTest'    => $isTest, set this from _objects
-          'PDFFilename' => 'receipt.pdf',
-          'from' => $receiptFrom,
-          'toName' => $this->_donorDisplayName,
-          'toEmail' => $this->_donorEmail,
-        );
-        list($sent) = CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
       }
       else {
         if ($params['send_cancel_request'] == 1) {
@@ -275,7 +290,7 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
         CRM_Core_Session::setStatus($status);
       }
       else {
-        CRM_Utils_System::setUFMessage($message);
+        CRM_Utils_System::setUFMessage($status);
       }
     }
   }

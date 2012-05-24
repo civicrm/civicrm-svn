@@ -42,6 +42,7 @@
 		</div>
 	{/if}
 </div>
+{if !$self_service}
 <table class="form-layout">
    <tr>
       <td class="label">{$form.send_cancel_request.label}</td>
@@ -52,5 +53,6 @@
       <td class="html-adjust">{$form.is_notify.html}</td>
    </tr>
 </table>
+{/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 </div>

@@ -102,13 +102,19 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
           $currentMask = $currentMask & ~CRM_Core_Action::RENEW & ~CRM_Core_Action::FOLLOWUP;
         }
 
+        $isUpdateBilling = false;
+        $paymentObject   = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($membership[$dao->id]['membership_id'], 'membership', 'obj');
+        if (!empty($paymentObject)) {
+          $isUpdateBilling = $paymentObject->isSupported('updateSubscriptionBillingInfo');
+        }
 
         $isCancelSupported = CRM_Member_BAO_Membership::isCancelSubscriptionSupported($membership[$dao->id]['membership_id']);
 
         $membership[$dao->id]['action'] = CRM_Core_Action::formLink(self::links('all',
             NULL,
             NULL,
-            $isCancelSupported
+            $isCancelSupported,
+            $isUpdateBilling
           ),
           $currentMask,
           array(
@@ -386,7 +392,8 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
   function &links($status = 'all',
     $isPaymentProcessor = NULL,
     $accessContribution = NULL,
-    $isCancelSupported  = FALSE
+    $isCancelSupported  = FALSE,
+    $isUpdateBilling    = FALSE
   ) {
     if (!CRM_Utils_Array::value('view', self::$_links)) {
       self::$_links['view'] = array(
@@ -447,6 +454,18 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
     }
     elseif (isset(self::$_links['all'][CRM_Core_Action::DISABLE])) {
       unset(self::$_links['all'][CRM_Core_Action::DISABLE]);
+    }
+
+    if ($isUpdateBilling) {
+      self::$_links['all'][CRM_Core_Action::MAP] = array(
+        'name' => ts('Change Billing Details'),
+        'url' => 'civicrm/contribute/updatebilling',
+        'qs' => 'reset=1&cid=%%cid%%&mid=%%id%%&context=membership&selectedChild=member',
+        'title' => ts('Change Billing Details'),
+      );
+    }
+    elseif (isset(self::$_links['all'][CRM_Core_Action::MAP])) {
+      unset(self::$_links['all'][CRM_Core_Action::MAP]);
     }
     return self::$_links[$status];
   }

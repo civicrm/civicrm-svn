@@ -54,6 +54,8 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
 
   protected $_subscriptionDetails = NULL;
 
+  protected $_selfService = FALSE;
+
   public $_paymentProcessor = NULL;
 
   public $_paymentProcessorObj = NULL;
@@ -91,10 +93,13 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
     }
 
     if (!CRM_Core_Permission::check('edit contributions')) {
+      $userChecksum = CRM_Utils_Request::retrieve('cs', 'String', $this, FALSE);
       if (!CRM_Contact_BAO_Contact_Utils::validChecksum($this->_subscriptionDetails->contact_id, $userChecksum)) {
         CRM_Core_Error::fatal(ts('You do not have permission to update subscription.'));
       }
+      $this->_selfService = TRUE;
     }
+    $this->assign('self_service', $this->_selfService);
 
     if (!$this->_paymentProcessorObj->isSupported('changeSubscriptionAmount')) {
       $userAlert = "<span class='font-red'>" . ts('WARNING: Updates made using this form will change the recurring contribution information stored in your CiviCRM database, but will NOT be sent to the payment processor. You must enter the same changes using the payment processor web site.',
@@ -186,6 +191,11 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
     // store the submitted values in an array
     $params = $this->exportValues();
 
+    if ($this->_selfService && $this->_donorEmail) {
+      // for self service force notify
+      $params['is_notify'] = 1;
+    }
+
     // if this is an update of an existing recurring contribution, pass the ID
     $params['id'] = $this->_subscriptionDetails->recur_id;
     $message = '';
@@ -200,7 +210,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
         $status = ts('Could not update the Recurring contribution details');
     }
     elseif ($updateSubscription) {
-        // save the changes                                                                                                                                                                  
+        // save the changes
         $result = CRM_Contribute_BAO_ContributionRecur::add($params);
         $status = ts('Recurring contribution has been updated to: %1, every %2 %3(s) for %4 installments.',
                      array(1 => CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency),
