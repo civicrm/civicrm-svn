@@ -355,14 +355,14 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
       );
 
       if ($result->is_pay_later && CRM_Utils_Array::value('contribution_status_name', $row) == 'Pending') {
-        $row['contribution_status'] .= ' (Pay Later)';
+        $row['contribution_status'] .= ' (' . ts('Pay Later') . ')';
       }
       elseif (CRM_Utils_Array::value('contribution_status_name', $row) == 'Pending') {
-        $row['contribution_status'] .= ' (Incomplete Transaction)';
+        $row['contribution_status'] .= ' (' . ts('Incomplete Transaction') . ')';
       }
 
       if ($row['is_test']) {
-        $row['contribution_type'] = $row['contribution_type'] . ' (test)';
+        $row['contribution_type'] = $row['contribution_type'] . ' (' . ts('test') . ')';
       }
 
       $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->contribution_id;
