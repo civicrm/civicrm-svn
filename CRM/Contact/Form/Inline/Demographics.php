@@ -93,6 +93,13 @@ class CRM_Contact_Form_Inline_Demographics extends CRM_Core_Form {
    */
   public function setDefaultValues() {
     $defaults = array();
+    $params = array(
+      'id' => $this->_contactId
+    );
+
+    $defaults = array();
+    CRM_Contact_BAO_Contact::getValues( $params, $defaults );
+
     return $defaults;
   }
 

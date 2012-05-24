@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $contact_type eq 'Individual' AND $showDemographics}
 <div class="crm-table2div-layout" id="crm-demographic-content">
     <div class="crm-clear"> <!-- start of main -->
       <div class="crm-config-option">
@@ -88,5 +87,3 @@ cj(function(){
 
 </script>
 {/literal}
-
-{/if}

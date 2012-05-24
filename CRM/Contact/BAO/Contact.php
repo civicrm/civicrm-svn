@@ -626,7 +626,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
       $params['contact_id'] = $params['id'];
     }
 
-    $contact = self::_getValues($params, $defaults);
+    $contact = self::getValues($params, $defaults);
 
     unset($params['id']);
 
@@ -2194,7 +2194,7 @@ AND       civicrm_openid.is_primary = 1";
    * @access public
    * @static
    */
-  private static function _getValues(&$params, &$values) {
+  public static function getValues(&$params, &$values) {
     $contact = new CRM_Contact_BAO_Contact();
 
     $contact->copyValues($params);

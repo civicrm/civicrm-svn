@@ -52,10 +52,26 @@ class CRM_Contact_Page_Inline_Demographics {
     // get the emails for this contact
     $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
 
+    $params = array(
+      'id' => $contactId
+    );
+
+    $defaults = array();
+    CRM_Contact_BAO_Contact::getValues( $params, $defaults );
+
+    if (CRM_Utils_Array::value('gender_id', $defaults)) {
+      $gender = CRM_Core_PseudoConstant::gender();
+      $defaults['gender_display'] = $gender[CRM_Utils_Array::value('gender_id', $defaults)];
+    }
+
     $template = CRM_Core_Smarty::singleton();
     $template->assign('contactId', $contactId);
+    $template->assign($defaults);
+    
+    //for birthdate format with respect to birth format set
+    $template->assign('birthDateViewFormat', CRM_Utils_Array::value('qfMapping', CRM_Utils_Date::checkBirthDateFormat()));
 
-    echo $content = $template->fetch('CRM/Contact/Page/Inline/Demographic.tpl');
+    echo $content = $template->fetch('CRM/Contact/Page/Inline/Demographics.tpl');
     CRM_Utils_System::civiExit();
   }
 }

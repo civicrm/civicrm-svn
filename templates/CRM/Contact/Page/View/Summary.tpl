@@ -334,6 +334,8 @@
                                 </tr>
                             </table>
                         </div>
+                        
+                        {if $contact_type eq 'Individual' AND $showDemographics}
                         <div class="contactCardRight">
                            <div class="crm-table2div-layout">
                               <div class="crm-clear crm-summary-block" id="demographic-block">
@@ -341,6 +343,7 @@
                               </div>
                            </div>
                         </div> <!-- contactCardRight -->
+                        {/if}
                         <div class="clear"></div>
                         <div class="separator"></div>
 
