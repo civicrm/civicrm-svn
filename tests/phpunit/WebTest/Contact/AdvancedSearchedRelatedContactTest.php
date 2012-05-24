@@ -98,10 +98,10 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->select("contact_type", "value=Individual");
     $this->click("_qf_Basic_refresh");
     $this->waitForPageToLoad("300000");
-    $this->waitForElementPresent("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/");
+    $this->waitForElementPresent("xpath=//form[@id='Basic']/div[3]/div/div[2]/a/table/tbody/tr/");
 
     // click through to the Relationship view screen
-    $this->click("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/td[11]/span/a[text()='View']");
+    $this->click("xpath=//form[@id='Basic']/div[3]/div/div[2]/a/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad("300000");
     $this->click("css=li#tab_participant a");
 
@@ -233,10 +233,10 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->select("contact_type", "value=Individual");
     $this->click("_qf_Basic_refresh");
     $this->waitForPageToLoad("300000");
-    $this->waitForElementPresent("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/");
+    $this->waitForElementPresent("xpath=//form[@id='Basic']/div[3]/div/div[2]/a/table/tbody/tr/");
 
     // click through to the Contribution view screen
-    $this->click("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/td[11]/span/a[text()='View']");
+    $this->click("xpath=//form[@id='Basic']/div[3]/div/div[2]/a/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad("300000");
 
     $this->click("css=li#tab_rel a");

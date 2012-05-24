@@ -78,7 +78,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->click('_qf_Advanced_refresh');
     $this->waitForPageToLoad('30000');
 
-    if ($this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && $this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_email']['last_name']}, {$contactsReffOptions['dn_phone_email']['first_name']}']") && !$this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
+    if ($this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && $this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_email']['last_name']}, {$contactsReffOptions['dn_phone_email']['first_name']}']") && !$this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
       $assertCheck = TRUE;
     }
     else {
@@ -90,7 +90,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->click('_qf_Advanced_refresh');
     $this->waitForPageToLoad('30000');
 
-    if (!$this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && $this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
+    if (!$this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && $this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
       $assertCheck = TRUE;
     }
     else {
@@ -102,7 +102,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->click('_qf_Advanced_refresh');
     $this->waitForPageToLoad('30000');
 
-    if ($this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && !$this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_email']['last_name']}, {$contactsReffOptions['dn_phone_email']['first_name']}']") && !$this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
+    if ($this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && !$this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_email']['last_name']}, {$contactsReffOptions['dn_phone_email']['first_name']}']") && !$this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
       $assertCheck = TRUE;
     }
     else {
@@ -114,7 +114,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->click('_qf_Advanced_refresh');
     $this->waitForPageToLoad('30000');
 
-    if (!$this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && $this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
+    if (!$this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && $this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
       $assertCheck = TRUE;
     }
     else {
@@ -125,8 +125,8 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->_addPrivacyCriteria('include', $privacyOptions['dn_trade_sms'], 'AND', $allPrivacyOptions);
     $this->click('_qf_Advanced_refresh');
     $this->waitForPageToLoad('30000');
-
-    if (!$this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && !$this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_email']['last_name']}, {$contactsReffOptions['dn_phone_email']['first_name']}']") && $this->isElementPresent("xpath=//div[@class='crm-search-results']/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
+        
+    if (!$this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_mail']['last_name']}, {$contactsReffOptions['dn_phone_mail']['first_name']}']") && !$this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_phone_email']['last_name']}, {$contactsReffOptions['dn_phone_email']['first_name']}']") && $this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$contactsReffOptions['dn_trade_sms']['last_name']}, {$contactsReffOptions['dn_trade_sms']['first_name']}']")) {
       $assertCheck = TRUE;
     }
     else {
