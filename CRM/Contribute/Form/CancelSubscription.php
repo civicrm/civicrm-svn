@@ -63,6 +63,11 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
     if ($this->_crid) {
       $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_crid);
+      $this->assign('frequency_unit', $this->_subscriptionDetails->frequency_unit);
+      $this->assign('frequency_interval', $this->_subscriptionDetails->frequency_interval);
+      $this->assign('amount', $this->_subscriptionDetails->amount);
+      $this->assign('installments', $this->_subscriptionDetails->installments);
+      
       // Are we cancelling a recurring contribution that is linked to an auto-renew membership?
       if ($this->_subscriptionDetails->membership_id) {
         $this->_mid = $this->_subscriptionDetails->membership_id;

@@ -23,19 +23,18 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $mode eq 'auto_renew'}
-  <h3>{ts}Cancel Automatic Renewal Option for {$membershipType} Membership{/ts}</h3>
-{else}
-  <h3>{ts}Cancel Recurring Contribution{/ts}</h3>
-{/if}
+
 <div class="crm-block crm-form-block crm-auto-renew-membership-cancellation">
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <div class="messages status">
-  <div class="icon inform-icon"></div>       
+  <div class="icon inform-icon"></div>&nbsp;
   {if $mode eq 'auto_renew'}
       {ts}Click the button below if you want to cancel the auto-renewal option for your {$membershipType} membership? This will not cancel your membership. However you will need to arrange payment for renewal when your membership expires.{/ts}  
   {else}
-      {ts}Click the button below if you want to cancel the recurring contribution? This will set the CiviCRM recurring contribution status to Cancelled.{/ts}  
+			<strong>{ts 1=$amount|crmMoney 2=$frequency_interval 3=$frequency_unit}Recurring Contribution Details: %1 every %2 %3{/ts}
+			{if $installments}
+				{ts 1=$installments}for %1 installments{/ts}.
+			{/if}</strong>
+      <div class="status">{ts}Click the button below to cancel this commitment and stop future transactions. This does not affect contributions which have already been completed.{/ts}</div>
 	{/if}
 	{if !$cancelSupported}
 		<div class="status-warning">
