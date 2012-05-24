@@ -232,9 +232,7 @@ class civicrm_Cli {
 
 function main() {
   $cli = new civicrm_Cli();
-  echo "before init\n";
   $cli->initialize() || die( 'Died during initialization' );
-  echo "before call\n";
   $cli->callApi() || die( 'Died during callApi' );
 }
 
