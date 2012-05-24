@@ -200,7 +200,6 @@
                               </div>
 
                               {if $website}
-
                               <div class="crm-clear crm-summary-block">
                                 {foreach from=$website item=item}
                                     {if !empty($item.url)}

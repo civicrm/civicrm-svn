@@ -34,14 +34,13 @@
     <div class="crm-label">{ts}Privacy{/ts}</div>
     <div class="crm-content crm-contact-privacy_values font-red upper">
       {foreach from=$privacy item=priv key=index}
-        {if $priv}{$privacy_values.$index},{/if}
+        {if $priv}{$privacy_values.$index}<br/>{/if}
       {/foreach}
       {if $is_opt_out}{ts}No Bulk Emails (User Opt Out){/ts}{/if}
-      &nbsp;
     </div>
     <div class="crm-label">{ts}Preferred Method(s){/ts}</div>
     <div class="crm-content crm-contact-preferred_communication_method_display">
-      {$preferred_communication_method_display}&nbsp;
+      {$preferred_communication_method_display}
     </div>
     {if $preferred_language}
     <div class="crm-label">{ts}Preferred Language{/ts}</div>

@@ -1836,6 +1836,7 @@ div.grippie {
 
 #crm-container div.contact_panel div.crm-summary-block {
     border: 2px dashed white;
+    background: none;
 }
 
 #crm-container div.contact_panel div.crm-inline-edit-hover {
@@ -1917,12 +1918,15 @@ div.grippie {
 }
 
 #crm-container div.contact_panel .crm-address-block {
+   /*
     border:1px solid #D7D7D0;
     margin-bottom:1em;
-    }
+    */
+    margin-bottom:6px;
+}
 #crm-container .crm-add-address-wrapper {
     height:25px;
-    }
+}
 
 #crm-container span.email-hold a:link, 
 #crm-container span.email-hold a:visited, 		
@@ -1934,6 +1938,7 @@ div.grippie {
 #crm-container div.crm-clear {
   clear:both;
   margin-bottom: 1px;
+  background-color: #FAFAFA;
 }
 
 #crm-container div.crm-label {
@@ -1944,6 +1949,7 @@ div.grippie {
   float:left;
   padding: 4px 0px 5px 4px;
   margin-right: 5px;
+  border-top: 1px solid #ffffff
 }
 
 #crm-container div.crm-content {
@@ -1951,6 +1957,8 @@ div.grippie {
   padding: 4px 0px 5px 4px;
   margin-bottom: 1px;
   margin-left: 124px;
+  min-height: 17px;
+  border-top: 1px solid #ffffff
 }
 
 #crm-container div.crm-table2div-layout {
@@ -3004,13 +3012,13 @@ table.crm-info-panel td {
 #crm-container #customFields div.contact_panel td.label,
 table.crm-info-panel td.label {
     background-color: #fafafa;
-    width:100px;
+    width:117px;
     text-align: left;
     color: #7a7a60;
 }
-    table.crm-info-panel td.label {
-        width:150px;
-    }
+table.crm-info-panel td.label {
+    width:150px;
+}
 
 #crm-container .form-layout td.label, 
 #crm-container .form-layout-compressed td.label,

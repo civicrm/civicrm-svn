@@ -32,7 +32,7 @@
       </div>
 
       <div class="crm-label">{ts}Gender{/ts}</div>
-      <div class="crm-content crm-contact-gender_display">{$gender_display}&nbsp;</div>
+      <div class="crm-content crm-contact-gender_display">{$gender_display}</div>
       <div class="crm-label">{ts}Date of birth{/ts}</div>
       <div class="crm-content crm-contact-birth_date_display">
           {if $birthDateViewFormat}	 
@@ -51,14 +51,13 @@
            {else}
             {$deceased_date_display|crmDate}
            {/if}
-           &nbsp;
          </div>
          {else}
          <div class="crm-label crm-contact-deceased_message"><span class="font-red upper">{ts}Contact is Deceased{/ts}</span></div>
          {/if}
        {else}
           <div class="crm-label">{ts}Age{/ts}</div>
-          <div class="crm-content crm-contact-age_display">{if $age.y}{ts count=$age.y plural='%count years'}%count year{/ts}{elseif $age.m}{ts count=$age.m plural='%count months'}%count month{/ts}{/if}&nbsp;</div>
+          <div class="crm-content crm-contact-age_display">{if $age.y}{ts count=$age.y plural='%count years'}%count year{/ts}{elseif $age.m}{ts count=$age.m plural='%count months'}%count month{/ts}{/if}</div>
        {/if}
     </div> <!-- end of main -->
   </div>
