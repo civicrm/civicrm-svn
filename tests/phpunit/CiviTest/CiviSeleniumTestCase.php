@@ -683,7 +683,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->waitForElementPresent('_qf_Amount_next-bottom');
 
     // fill in step 2 (Processor, Pay Later, Amounts)
-    if ($isAddPaymentProcessor) {
+    if (!empty($processor)) {
       reset($processor);
       while (list($processorName) = each($processor)) {
         // select newly created processor
