@@ -109,6 +109,9 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
 
     $this->click('_qf_Form_submit');
     $this->waitForPageToLoad('30000');
+
+    //to wait for thank you message to appear
+    sleep(5);
     $this->assertTrue($this->isTextPresent($thankYouMsg));
 
     // Log in using webtestLogin() method
@@ -121,7 +124,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $this->type('sort_name', $firstName1);
     $this->click('_qf_Basic_refresh ');
     $this->waitForPageToLoad('30000');
-    $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
+    $this->click("xpath=//div[@class='crm-search-results']/a/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad('30000');
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
@@ -129,7 +132,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $this->type('sort_name', $firstName2);
     $this->click('_qf_Basic_refresh ');
     $this->waitForPageToLoad('30000');
-    $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
+    $this->click("xpath=//div[@class='crm-search-results']/a/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad('30000');
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
@@ -137,7 +140,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $this->type('sort_name', $firstName3);
     $this->click('_qf_Basic_refresh ');
     $this->waitForPageToLoad('30000');
-    $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
+    $this->click("xpath=//div[@class='crm-search-results']/a/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad('30000');
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
