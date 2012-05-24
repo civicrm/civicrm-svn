@@ -253,7 +253,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
   static
   function formRule($fields, $files, $form) {
     $errors = array();
-    if ($fields['count'] && $fields['max_value'] &&
+    if (CRM_Utils_Array::value('count', $fields) && CRM_Utils_Array::value('max_value', $fields) &&
       $fields['count'] > $fields['max_value']
     ) {
       $errors['count'] = ts('Participant count can not be greater than max participants.');
