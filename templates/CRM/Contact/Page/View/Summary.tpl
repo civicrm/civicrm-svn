@@ -310,67 +310,23 @@
                     </div>
 					{/if}
 
-                    <div class="contact_panel">
-                        <div class="contactCardLeft">
-                            <table>
-                                <tr><td class="label">{ts}Privacy{/ts}</td>
-                                    <td class="crm-contact-privacy_values"><span class="font-red upper">
-                                        {foreach from=$privacy item=priv key=index}
-                                            {if $priv}{$privacy_values.$index}<br />{/if}
-                                        {/foreach}
-                                        {if $is_opt_out}{ts}No Bulk Emails (User Opt Out){/ts}{/if}
-                                    </span></td>
-                                </tr>
-                                <tr>
-                                    <td class="label">{ts}Preferred Method(s){/ts}</td><td class="crm-contact-preferred_communication_method_display">{$preferred_communication_method_display}</td>
-                                </tr>
-                                {if $preferred_language}
-                                <tr>
-                                    <td class="label">{ts}Preferred Language{/ts}</td><td class="crm-contact-preferred_language">{$preferred_language}</td>
-                                </tr>
-                                {/if}
-                                <tr>
-                                    <td class="label">{ts}Email Format{/ts}</td><td class="crm-contact-preferred_mail_format">{$preferred_mail_format}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        
-                        {if $contact_type eq 'Individual' AND $showDemographics}
-                        <div class="contactCardRight">
-                           <div class="crm-table2div-layout">
-                              <div class="crm-clear crm-summary-block" id="demographic-block">
-                                {include file="CRM/Contact/Page/Inline/Demographics.tpl"} 
-                              </div>
-                           </div>
-                        </div> <!-- contactCardRight -->
-                        {/if}
-                        <div class="clear"></div>
-                        <div class="separator"></div>
-
-						<div class="contactCardLeft">
-						 <table>
-							<tr>
-								<td class="label">{ts}Email Greeting{/ts}{if !empty($email_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}</td>
-								<td class="crm-contact-email_greeting_display">{$email_greeting_display}</td>
-							</tr>
-							<tr>
-								<td class="label">{ts}Postal Greeting{/ts}{if !empty($postal_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}</td>
-								<td class="crm-contact-postal_greeting_display">{$postal_greeting_display}</td>
-							</tr>
-						 </table>
-						</div>
-						<div class="contactCardRight">
-						 <table>
-							<tr>
-								<td class="label">{ts}Addressee{/ts}{if !empty($addressee_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}</td>
-								<td class="crm-contact-addressee_display">{$addressee_display}</td>
-							</tr>
-						 </table>
-						</div>
-
-                        <div class="clear"></div>
-                    </div>
-                </div><!--contact_details-->
+          <div class="contact_panel">
+            <div class="contactCardLeft">
+              <div class="crm-summary-block" id="communication-pref-block" >
+                {include file="CRM/Contact/Page/Inline/CommunicationPreferences.tpl"} 
+              </div>
+            </div> <!-- contactCardLeft -->
+            {if $contact_type eq 'Individual' AND $showDemographics}
+              <div class="contactCardRight">
+                <div class="crm-summary-block" id="demographic-block">
+                  {include file="CRM/Contact/Page/Inline/Demographics.tpl"} 
+                </div>
+              </div> <!-- contactCardRight -->
+            {/if}
+            <div class="clear"></div>
+            <div class="separator"></div>
+          </div> <!-- contact panel -->
+     </div><!--contact_details-->
 
                 <div id="customFields">
                     <div class="contact_panel">

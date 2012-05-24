@@ -1824,6 +1824,16 @@ div.grippie {
     display:block;
 }
 
+#crm-container .upper {   
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#crm-container table.caseSelector td.status-urgent {   
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
 #crm-container div.contact_panel div.crm-summary-block {
     border: 2px dashed white;
 }
