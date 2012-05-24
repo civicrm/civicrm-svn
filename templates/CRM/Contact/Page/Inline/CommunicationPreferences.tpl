@@ -53,19 +53,19 @@
       {$preferred_mail_format}
     </div>
     <div class="crm-label">{ts}Email Greeting{/ts}
-    {if !empty($email_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}
+    {if !empty($email_greeting_custom)}<span style="font-size:9px;">({ts}Customized{/ts})</span>{/if}
     </div>
     <div class="crm-content crm-contact-email_greeting_display">
       {$email_greeting_display}
     </div>
     <div class="crm-label">{ts}Postal Greeting{/ts}
-    {if !empty($postal_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}
+    {if !empty($postal_greeting_custom)}<span style="font-size:9px;">({ts}Customized{/ts})</span>{/if}
     </div>
     <div class="crm-content crm-contact-postal_greeting_display">
       {$postal_greeting_display}
     </div>
     <div class="crm-label">{ts}Addressee{/ts}
-    {if !empty($addressee_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}
+    {if !empty($addressee_custom)}<span style="font-size:9px;">({ts}Customized{/ts})</span>{/if}
     </div>
     <div class="crm-content crm-contact-addressee_display">
       {$addressee_display}
