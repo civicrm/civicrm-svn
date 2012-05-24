@@ -347,8 +347,8 @@ COLS;
       foreach ($columns as $column) {
         $cond[] = "OLD.$column <> NEW.$column";
       }
-      $updateSQL = "IF ( (" . implode( ' OR ', $cond ) . ") AND (@civicrm_disable_logging != 1) ) THEN ";
-
+      $suppressLoggingCond = "@civicrm_disable_logging IS NULL OR @civicrm_disable_logging = 0";
+      $updateSQL = "IF ( (" . implode( ' OR ', $cond ) . ") AND ( $suppressLoggingCond ) ) THEN ";
 
       $sqlStmt = "INSERT INTO `{$this->db}`.log_{tableName} (";
       foreach ($columns as $column) {
@@ -356,7 +356,7 @@ COLS;
       }
       $sqlStmt .= "log_conn_id, log_user_id, log_action) VALUES (";
 
-      $insertSQL = $deleteSQL = "IF (@civicrm_disable_logging != 1) THEN $sqlStmt ";
+      $insertSQL = $deleteSQL = "IF ( $suppressLoggingCond ) THEN $sqlStmt ";
       $updateSQL .= $sqlStmt;
 
       $sqlStmt = '';
