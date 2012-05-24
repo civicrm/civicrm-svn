@@ -160,9 +160,9 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
       $this->add('checkbox', 'is_notify', ts('Notify Contributor?'));
     }
 
-    $type = 'submit';
-    if ($this->_crid) {
-      $type = 'next';
+    $type = 'next';
+    if ( $this->_selfService ) {
+      $type = 'submit';
     }
 
     // define the buttons

@@ -44,6 +44,8 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
 
   protected $_subscriptionDetails = NULL;
 
+  protected $_selfService = FALSE;
+
   public $_bltID = NULL;
   public $_paymentProcessor = NULL;
 
@@ -96,6 +98,7 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
       if (!CRM_Contact_BAO_Contact_Utils::validChecksum($this->_subscriptionDetails->contact_id, $userChecksum)) {
         CRM_Core_Error::fatal(ts('You do not have permission to cancel subscription.'));
       }
+      $this->_selfService = TRUE;
     }
 
     if (!$this->_paymentProcessorObj->isSupported('updateSubscriptionBillingInfo')) {
@@ -177,9 +180,14 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
+    $type = 'next';
+    if ( $this->_selfService ) {
+      $type = 'submit';
+    }
+
     $this->addButtons(array(
         array(
-          'type' => 'submit',
+          'type' => $type,
           'name' => ts('Save'),
           'isDefault' => TRUE,
         ),

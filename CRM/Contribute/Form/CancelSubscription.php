@@ -152,9 +152,14 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
       $cancelButton = ts('Cancel Recurring Contribution');
     }
 
+    $type = 'next';
+    if ( $this->_selfService ) {
+      $type = 'submit';
+    }
+
     $this->addButtons(array(
         array(
-          'type' => 'next',
+          'type' => $type,
           'name' => $cancelButton,
           'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
           'isDefault' => TRUE,
