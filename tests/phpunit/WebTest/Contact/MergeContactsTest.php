@@ -192,9 +192,9 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Advanced_refresh');
     $this->type('sort_name', $firstName);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForElementPresent("xpath=//form[@id='Advanced']/div[3]/div/div[2]/table/tbody/tr");
+    $this->waitForElementPresent("xpath=//form[@id='Advanced']/div[3]/div/div[2]/a/table/tbody/tr");
 
-    $this->click("//form[@id='Advanced']/div[3]/div/div[2]/table/tbody/tr/td[11]/span[1]/a[text()='View']");
+    $this->click("//form[@id='Advanced']/div[3]/div/div[2]/a/table/tbody/tr/td[11]/span[1]/a[text()='View']");
     $this->waitForPageToLoad("30000");
 
     // Verify prefix merged
