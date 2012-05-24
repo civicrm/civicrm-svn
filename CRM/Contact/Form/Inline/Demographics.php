@@ -113,8 +113,14 @@ class CRM_Contact_Form_Inline_Demographics extends CRM_Core_Form {
     $params = $this->exportValues();
 
     // need to process / save demographics 
-    $params['contact_id'] = $this->_contactId;
+    if ( !CRM_Utils_Array::value('is_deceased', $params) ) {
+      $params['is_deceased'  ] = FALSE;
+      $params['deceased_date'] = NULL;
+    }
 
+    $params['contact_type'] = 'Individual';
+    $params['contact_id']   = $this->_contactId;
+    CRM_Contact_BAO_Contact::create( $params );
 
     $response = array('status' => 'save');
     echo json_encode($response);
