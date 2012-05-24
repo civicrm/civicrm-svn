@@ -265,7 +265,7 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
     if (CRM_Price_BAO_Set::eventPriceSetDomainID()) {
       $dao->domain_id = CRM_Core_Config::domainID();
     }
-
+    $dao->is_quick_config = 0;
     $dao->find();
     while ($dao->fetch()) {
       $priceSet[$dao->id] = array();

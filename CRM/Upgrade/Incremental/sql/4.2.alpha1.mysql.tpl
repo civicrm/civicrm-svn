@@ -358,3 +358,6 @@ INSERT INTO
 VALUES
 (@option_group_id_act, {localize}'Update Recurring Contribution Billing Details'{/localize}, (SELECT @max_val := @max_val+1), 'Update Recurring Contribution Billing Details', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL),
 (@option_group_id_act, {localize}'Update Recurring Contribution'{/localize}, (SELECT @max_val := @max_val+1), 'Update Recurring Contribution', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
+
+-- CRM-10117 
+ALTER TABLE `civicrm_price_field_value` CHANGE `is_active` `is_active` TINYINT( 4 ) NULL DEFAULT '1' COMMENT 'Is this price field value active';

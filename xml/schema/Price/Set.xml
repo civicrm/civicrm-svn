@@ -112,7 +112,7 @@
        <name>is_quick_config</name>
        <type>boolean</type>  
        <default>0</default>
-      <comment>Is set if information from the Regular Fees section is being stored as price set</comment>
+      <comment>Is set if edited on Contribution or Event Page rather than through Manage Price Sets</comment>
        <add>4.1</add>
   </field>
   <field>

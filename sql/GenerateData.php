@@ -1689,19 +1689,19 @@ VALUES
   }
 
   function addLineItem() {
-    $query = " INSERT INTO civicrm_line_item ( entity_table, entity_id, price_field_id, label, qty, unit_price, line_total, participant_count, price_field_value_id ) VALUES ('civicrm_contribution', 1, 1, 'contribution_amount', 125, '1.00', '125.00', 0, 1),
-                   ('civicrm_contribution', 2, 1, 'contribution_amount', 50, '1.00', '50.00', 0, 1),
-                   ('civicrm_contribution', 3, 1, 'contribution_amount', 25, '1.00', '25.00', 0, 1),
-                   ('civicrm_contribution', 4, 1, 'contribution_amount', 50, '1.00', '50.00', 0, 1),
-                   ('civicrm_contribution', 5, 1, 'contribution_amount', 500, '1.00', '500.00', 0, 1),
-                   ('civicrm_contribution', 6, 1, 'contribution_amount', 175, '1.00', '175.00', 0, 1),
-                   ('civicrm_contribution', 7, 1, 'contribution_amount', 50, '1.00', '50.00', 0, 1),
-                   ('civicrm_contribution', 8, 1, 'contribution_amount', 10, '1.00', '10.00', 0, 1),
-                   ('civicrm_contribution', 9, 1, 'contribution_amount', 250, '1.00', '250.00', 0, 1),
-                   ('civicrm_contribution', 10, 1, 'contribution_amount', 500, '1.00', '500.00', 0, 1),
-                   ('civicrm_contribution', 11, 1, 'contribution_amount', 200, '1.00', '200.00', 0, 1),
-                   ('civicrm_contribution', 12, 1, 'contribution_amount', 200, '1.00', '200.00', 0, 1),
-                   ('civicrm_contribution', 13, 1, 'contribution_amount', 200, '1.00', '200.00', 0, 1);";
+    $query = " INSERT INTO civicrm_line_item ( entity_table, entity_id, price_field_id, label, unit_price, qty, line_total, participant_count, price_field_value_id ) VALUES ('civicrm_contribution', 1, 1, 'Contribution Amount', 125, '1', '125.00', 0, 1),
+                   ('civicrm_contribution', 2, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
+                   ('civicrm_contribution', 3, 1, 'Contribution Amount', 25, '1', '25.00', 0, 1),
+                   ('civicrm_contribution', 4, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
+                   ('civicrm_contribution', 5, 1, 'Contribution Amount', 500, '1', '500.00', 0, 1),
+                   ('civicrm_contribution', 6, 1, 'Contribution Amount', 175, '1', '175.00', 0, 1),
+                   ('civicrm_contribution', 7, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
+                   ('civicrm_contribution', 8, 1, 'Contribution Amount', 10, '1', '10.00', 0, 1),
+                   ('civicrm_contribution', 9, 1, 'Contribution Amount', 250, '1', '250.00', 0, 1),
+                   ('civicrm_contribution', 10, 1, 'Contribution Amount', 500, '1', '500.00', 0, 1),
+                   ('civicrm_contribution', 11, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
+                   ('civicrm_contribution', 12, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
+                   ('civicrm_contribution', 13, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1);";
     CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
     $entitySet = "INSERT INTO civicrm_price_set_entity ( entity_table, entity_id, price_set_id) 
                       VALUES ( 'civicrm_contribution', 1, 1),
@@ -1722,7 +1722,7 @@ VALUES
 
   function addLineItemParticipants() {
     $participant = new CRM_Event_DAO_Participant();
-    $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`) SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, cpf.is_enter_qty, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
+    $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`) SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
   }
 }
 

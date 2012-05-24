@@ -113,7 +113,7 @@
   <field>
       <name>is_active</name>
       <type>boolean</type>
-      <comment>Is this price field active</comment>
+      <comment>Is this price field value active</comment>
       <default>1</default>
       <add>3.3</add>
   </field>
