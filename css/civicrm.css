@@ -1848,21 +1848,21 @@ div.grippie {
 }
 
 #crm-container div.contactCardLeft, #crm-container div#Top {
-    WIDTH   : 49%; 
-    DISPLAY : block; 
-    FLOAT   : left;
+  width   : 49%; 
+  display : block; 
+  float   : left;
 }
 
 #crm-container div.contactCardRight {
-    WIDTH   : 49%; 
-    DISPLAY : block; 
-    FLOAT   : right;
+  width : 49%; 
+  display : block; 
+  float   : right;
 }
 
 #crm-container div#contactTopBar table,
 #crm-container div.contact_panel table {
 	margin-bottom: 0px;
-	}
+}
 
 #crm-container div#contactTopBar .label, 
 #crm-container div.contactCardLeft .label, 
@@ -1950,6 +1950,7 @@ div.grippie {
   background-color: #F4F4ED;
   padding: 4px 0px 5px 4px;
   margin-bottom: 1px;
+  margin-left: 109px;
 }
 
 #crm-container div.crm-table2div-layout {

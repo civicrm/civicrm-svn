@@ -37,11 +37,11 @@
         {if $priv}{$privacy_values.$index},{/if}
       {/foreach}
       {if $is_opt_out}{ts}No Bulk Emails (User Opt Out){/ts}{/if}
-    &nbsp;
+      &nbsp;
     </div>
     <div class="crm-label">{ts}Preferred Method(s){/ts}</div>
     <div class="crm-content crm-contact-preferred_communication_method_display">
-    {$preferred_communication_method_display}&nbsp;
+      {$preferred_communication_method_display}&nbsp;
     </div>
     {if $preferred_language}
     <div class="crm-label">{ts}Preferred Language{/ts}</div>
@@ -56,7 +56,8 @@
     <div class="crm-label">{ts}Email Greeting{/ts}
     {if !empty($email_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}
     </div>
-    <div class="crm-content crm-contact-email_greeting_display">{$email_greeting_display}
+    <div class="crm-content crm-contact-email_greeting_display">
+      {$email_greeting_display}
     </div>
     <div class="crm-label">{ts}Postal Greeting{/ts}
     {if !empty($postal_greeting_custom)}<br/><span style="font-size:8px;">({ts}Customized{/ts})</span>{/if}
@@ -85,13 +86,13 @@ cj(function(){
     });
 
     cj('#edit-communication-pref').click( function() {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-        var response = cj.ajax({
-                        type: "GET",
-                        data: { 'class_name':'CRM_Contact_Form_Inline_CommunicationPreferences' },
-                        url: dataUrl,
-                        async: false
-					}).responseText;
+      var dataUrl  = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+      var response = cj.ajax({
+                              type: "GET",
+                              data: { 'class_name':'CRM_Contact_Form_Inline_CommunicationPreferences' },
+                              url: dataUrl,
+                              async: false
+                            }).responseText;
 
 	    cj( '#communication-pref-block' ).html( response );
     });
