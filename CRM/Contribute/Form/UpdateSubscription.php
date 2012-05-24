@@ -110,7 +110,9 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
     if ($this->_subscriptionDetails->contact_id) {
       list($this->_donorDisplayName, $this->_donorEmail) = CRM_Contact_BAO_Contact::getContactDetails($this->_subscriptionDetails->contact_id);
     }
-
+    
+    CRM_Utils_System::setTitle(ts('Update Recurring Contribution'));
+    
     // handle context redirection
     CRM_Contribute_BAO_ContributionRecur::setSubscriptionContext();
   }

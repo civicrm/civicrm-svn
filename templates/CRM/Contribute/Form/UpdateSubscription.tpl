@@ -23,12 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<h3>{ts}Edit Recurring Contribution{/ts}</h3>
 <div class="crm-block crm-form-block crm-recurcontrib-form-block">
 	{if $isChangeSupported}
 	  <div id="help">
-			{ts}Changes to the recurring amount and / or the number of installments will be automatically sent to the payment processor.
-You can not change the contribution frequency. An email will be sent to the contributor if Notify Contributor is checked.{/ts}
+			{ts}Use this form to change the amount or number of installments for this recurring contribution. Changes will be automatically sent to the payment processor. You can not change the contribution frequency.{/ts}
   </div>
 	{/if}
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>

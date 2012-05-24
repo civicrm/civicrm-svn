@@ -23,5 +23,19 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-  {include file="CRM/Core/BillingBlock.tpl"}
+<div id="help">
+  <div class="icon inform-icon"></div>&nbsp;
+  {if $mode eq 'auto_renew'}
+      {ts}Use this form to update the credit card and billing name and address used with the auto-renewal option for your {$membershipType} membership.{/ts}  
+	{else}
+		<strong>{ts 1=$amount|crmMoney 2=$frequency_interval 3=$frequency_unit}Recurring Contribution Details: %1 every %2 %3{/ts}
+		{if $installments}
+			{ts 1=$installments}for %1 installments{/ts}.
+		{/if}</strong>
+	  <div class="content">{ts}Use this form to update the credit card and billing name and address used for this recurring contribution.{/ts}</div>
+	{/if}
+</div>
+
+{include file="CRM/Core/BillingBlock.tpl"}
+
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>

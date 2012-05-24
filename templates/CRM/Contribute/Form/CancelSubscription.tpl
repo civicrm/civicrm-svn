@@ -25,16 +25,16 @@
 *}
 
 <div class="crm-block crm-form-block crm-auto-renew-membership-cancellation">
-<div class="messages status">
+<div id="help">
   <div class="icon inform-icon"></div>&nbsp;
   {if $mode eq 'auto_renew'}
-      {ts}Click the button below if you want to cancel the auto-renewal option for your {$membershipType} membership? This will not cancel your membership. However you will need to arrange payment for renewal when your membership expires.{/ts}  
+      {ts}Click the button below if you want to cancel the auto-renewal option for your {$membershipType} membership. This will not cancel your membership. However you will need to arrange payment for renewal when your membership expires.{/ts}  
   {else}
 			<strong>{ts 1=$amount|crmMoney 2=$frequency_interval 3=$frequency_unit}Recurring Contribution Details: %1 every %2 %3{/ts}
 			{if $installments}
 				{ts 1=$installments}for %1 installments{/ts}.
 			{/if}</strong>
-      <div class="status">{ts}Click the button below to cancel this commitment and stop future transactions. This does not affect contributions which have already been completed.{/ts}</div>
+      <div class="content">{ts}Click the button below to cancel this commitment and stop future transactions. This does not affect contributions which have already been completed.{/ts}</div>
 	{/if}
 	{if !$cancelSupported}
 		<div class="status-warning">

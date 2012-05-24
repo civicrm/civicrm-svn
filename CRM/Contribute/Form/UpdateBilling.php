@@ -40,6 +40,7 @@
 class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
   protected $_crid = NULL;
   protected $_coid = NULL;
+  protected $_mode = NULL;
 
   protected $_subscriptionDetails = NULL;
 
@@ -55,11 +56,17 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
    * @access public
    */
   public function preProcess() {
+    $this->_mid = CRM_Utils_Request::retrieve('mid', 'Integer', $this, FALSE);
     $this->_crid = CRM_Utils_Request::retrieve('crid', 'Integer', $this, FALSE);
     if ($this->_crid) {
       $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'info');
       $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_crid);
+      
+      // Are we cancelling a recurring contribution that is linked to an auto-renew membership?
+      if ($this->_subscriptionDetails->membership_id) {
+        $this->_mid = $this->_subscriptionDetails->membership_id;
+      }
     }
 
     $this->_coid = CRM_Utils_Request::retrieve('coid', 'Integer', $this, FALSE);
@@ -69,11 +76,14 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_coid, 'contribution');
     }
 
-    $this->_mid = CRM_Utils_Request::retrieve('mid', 'Integer', $this, FALSE);
     if ($this->_mid) {
       $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_mid, 'membership', 'info');
       $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_mid, 'membership', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_mid, 'membership');
+      $membershipTypes = CRM_Member_PseudoConstant::membershipType();
+      $membershipTypeId = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $this->_mid, 'membership_type_id');
+      $this->assign('membershipType', CRM_Utils_Array::value($membershipTypeId, $membershipTypes));
+      $this->_mode = 'auto_renew';
     }
 
     if ((!$this->_crid && !$this->_coid && !$this->_mid) ||
@@ -101,6 +111,12 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
     if (!$this->_bltID) {
       CRM_Core_Error::fatal(ts('Please set a location type of %1', array(1 => 'Billing')));
     }
+
+    $this->assign('frequency_unit', $this->_subscriptionDetails->frequency_unit);
+    $this->assign('frequency_interval', $this->_subscriptionDetails->frequency_interval);
+    $this->assign('amount', $this->_subscriptionDetails->amount);
+    $this->assign('installments', $this->_subscriptionDetails->installments);
+    $this->assign('mode', $this->_mode);
 
     // handle context redirection
     CRM_Contribute_BAO_ContributionRecur::setSubscriptionContext();
