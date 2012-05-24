@@ -602,7 +602,7 @@ INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.optio
 
       if ($mapping->entity == 'civicrm_participant') {
         $tokenEntity = 'event';
-        $tokenFields = array('event_type', 'title', 'event_id', 'start_date', 'end_date', 'summary', 'description', 'location');
+        $tokenFields = array('event_type', 'title', 'event_id', 'start_date', 'end_date', 'summary', 'description', 'location', 'info_url', 'registration_url');
         $extraSelect = ", ov.label as event_type, ev.title, ev.id as event_id, ev.start_date, ev.end_date, ev.summary, ev.description, address.* ";
         $extraJoin   = "
 INNER JOIN civicrm_event ev ON e.event_id = ev.id
@@ -646,6 +646,12 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
             $loc['state_province'] = CRM_Utils_array::value($dao->state_province_id, $stateProvince);
             $loc['postal_code'] = $dao->postal_code;
             $entityTokenParams["{$tokenEntity}." . $field] = CRM_Utils_Address::format($loc);
+          }
+          elseif ($field == 'info_url') {
+            $entityTokenParams["{$tokenEntity}." . $field] = CRM_Utils_System::url('civicrm/event/info', 'reset=1&id=' . $dao->event_id, TRUE, NULL, FALSE);
+          }
+          elseif ($field == 'registration_url') {
+            $entityTokenParams["{$tokenEntity}." . $field] = CRM_Utils_System::url('civicrm/event/register', 'reset=1&id=' . $dao->event_id, TRUE, NULL, FALSE);
           }
           else {
             $entityTokenParams["{$tokenEntity}." . $field] = $dao->$field;
