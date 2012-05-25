@@ -125,11 +125,8 @@ class CRM_Core_Config_Defaults {
     }
     //set defaults if not set in db
     if (!isset($defaults['userFrameworkResourceURL'])) {
-      $testIMG = "i/tracker.gif";
       if ($config->userFramework == 'Joomla') {
-        if (CRM_Utils_System::checkURL("{$baseURL}components/com_civicrm/civicrm/{$testIMG}")) {
-          $defaults['userFrameworkResourceURL'] = $baseURL . "components/com_civicrm/civicrm/";
-        }
+        $defaults['userFrameworkResourceURL'] = $baseURL . "components/com_civicrm/civicrm/";
       }
       elseif ($config->userFramework == 'WordPress') {
         $defaults['userFrameworkResourceURL'] = $baseURL . "wp-content/plugins/civicrm/civicrm/";

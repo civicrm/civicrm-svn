@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension method="upgrade" type="component" version="1.6">
+<extension method="upgrade" type="component" version="2.5">
   <name>CiviCRM</name>
   <creationDate>{$creationDate}</creationDate>
   <copyright>(C) CiviCRM LLC</copyright>
@@ -38,7 +38,7 @@
       <filename>civicrm.zip</filename>
 {/if}
       <folder>helpers</folder>
-    </files> 
+    </files>
     <languages folder="admin">
       <language tag="en-GB">language/en-GB/en-GB.com_civicrm.ini</language>
       <language tag="en-GB">language/en-GB/en-GB.com_civicrm.sys.ini</language>

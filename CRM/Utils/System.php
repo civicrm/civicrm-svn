@@ -829,6 +829,10 @@ class CRM_Utils_System {
     }
     // it's quite alright to use a self-signed cert
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+    // lets capture the return stuff rather than echo
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+
     return curl_exec($ch);
   }
 
