@@ -866,6 +866,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
         if (!is_array($membershipTypes)) {
           return $membershipBlock;
         }
+        $memTypes = array();
         foreach ($membershipTypes as $key => $value) {
           $membershipBlock['auto_renew'][$key] = $value;
           $memTypes[$key] = $key;
