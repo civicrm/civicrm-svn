@@ -768,7 +768,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
 
         $this->click('is_required');
-
+        $this->waitForElementPresent('CIVICRM_QFID_2_4');
+        $this->click('CIVICRM_QFID_2_4');
         if ($isSeparatePayment) {
           $this->click('is_separate_payment');
         }
