@@ -35,7 +35,7 @@
             <div style="background-color: #E43D2B; padding: 10px;"><strong>{ts}Warning:{/ts}&nbsp;</strong>{$preUpgradeMessage}</div>
         {/if}
         <p><strong>{ts}Back up your database before continuing.{/ts}</strong>
-            {capture assign=docLink}{docURL page="Installation and Upgrades" text="Upgrade Documentation" style="color: white; text-decoration: underline;"}{/capture}
+            {capture assign=docLink}{docURL page="Installation and Upgrades" text="Upgrade Documentation" style="color: white; text-decoration: underline;" resource="wiki"}{/capture}
             {ts 1=$docLink}This process may change your database structure and values. In case of emergency you may need to revert to a backup. For more detailed information, refer to the %1.{/ts}</p>
         <p>{ts}Click 'Upgrade Now' if you are ready to proceed. Otherwise click 'Cancel' to return to the CiviCRM home page.{/ts}</p>
         <input type="hidden" name="action" value="begin" />

@@ -25,7 +25,7 @@
 *}
 {* CiviCase Configuration Help - displayed when component is enabled but not yet configured. *}
 
-{capture assign=docLink}{docURL page="CiviCase Admin" text="CiviCase Administration Documentation"}{/capture}
+{capture assign=docLink}{docURL page="user/case-management/setup" text="CiviCase Setup documentation"}{/capture}
 
 <div class="messages status">
       <div class="icon inform-icon"></div>&nbsp;    

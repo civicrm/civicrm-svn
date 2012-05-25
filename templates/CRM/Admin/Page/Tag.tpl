@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 
-{capture assign=docLink}{docURL page="Tags Admin"}{/capture}
+{capture assign=docLink}{docURL page="user/organising-your-data/groups-and-tags"}{/capture}
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
     {include file="CRM/Admin/Form/Tag.tpl"}	

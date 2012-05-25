@@ -95,7 +95,7 @@
        <tr class="crm-campaign-survey-form-block-release_frequency">
            <td class="label">{$form.release_frequency.label}</td>
            <td class="view-value">{$form.release_frequency.html}
- 	       <div class="description">{ts}Reserved respondents are released if they haven't been surveyed within this number of days. The Respondent Processor script must be run periodically to release respondents.{/ts} {docURL page="Managing Scheduled Jobs"}</div> </td>
+ 	       <div class="description">{ts}Reserved respondents are released if they haven't been surveyed within this number of days. The Respondent Processor script must be run periodically to release respondents.{/ts} {docURL page="Managing Scheduled Jobs" resource="wiki"}</div> </td>
        </tr>
        <tr class="crm-campaign-survey-form-block-is_active">
            <td class="label">{$form.is_active.label}</td>

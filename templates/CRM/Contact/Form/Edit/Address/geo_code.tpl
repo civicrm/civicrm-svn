@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if !empty($form.address.$blockId.geo_code_1) && !empty($form.address.$blockId.geo_code_2)}
-    {capture assign=docLink}{docURL page="Mapping and Geocoding"}{/capture}
+    {capture assign=docLink}{docURL page="user/initial-set-up/installation-and-basic-setup" text="(Refer to the Mapping and Geocoding section in the Installation and Basic Setup Chapter)"}{/capture}
    <tr>
       <td colspan="2">
           {$form.address.$blockId.geo_code_1.label},&nbsp;{$form.address.$blockId.geo_code_2.label}<br />

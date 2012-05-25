@@ -46,6 +46,6 @@
 {if ! $urlIsPublic AND $config->debug}
     <div class="messages status">
       <div class="icon inform-icon"></div>
-        &nbsp;{ts}WARNING: Debug is currently enabled in Global Settings.{/ts} {docURL page="Debugging"}
+        &nbsp;{ts}WARNING: Debug is currently enabled in Global Settings.{/ts} {docURL page="developer/development-environment/debugging"}
     </div>
 {/if}

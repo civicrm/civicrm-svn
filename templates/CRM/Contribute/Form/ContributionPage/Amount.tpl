@@ -26,13 +26,13 @@
 {capture assign="adminPriceSets"}{crmURL p='civicrm/admin/price' q="reset=1"}{/capture}
 <div class="crm-block crm-form-block crm-contribution-contributionpage-amount-form-block">
 <div id="help">
-    {ts}Use this form to configure Contribution Amount options. You can give contributors the ability to enter their own contribution amounts - and/or provide a fixed list of amounts. For fixed amounts, you can enter a label for each 'level' of contribution (e.g. Friend, Sustainer, etc.). If you allow people to enter their own dollar amounts, you can also set minimum and maximum values. Depending on your choice of Payment Processor, you may be able to offer a recurring contribution option.{/ts} {docURL page="CiviContribute Payment Processor Configuration"}
+    {ts}Use this form to configure Contribution Amount options. You can give contributors the ability to enter their own contribution amounts - and/or provide a fixed list of amounts. For fixed amounts, you can enter a label for each 'level' of contribution (e.g. Friend, Sustainer, etc.). If you allow people to enter their own dollar amounts, you can also set minimum and maximum values. Depending on your choice of Payment Processor, you may be able to offer a recurring contribution option.{/ts} {docURL page="user/contributions/payment-processors"}
 </div>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     {if !$paymentProcessor}
         {capture assign=ppUrl}{crmURL p='civicrm/admin/paymentProcessor' q="reset=1"}{/capture}
         <div class="status message">
-            {ts 1=$ppUrl}No Payment Processor has been configured / enabled for your site. Unless you are only using CiviContribute to solicit non-monetary / in-kind contributions, you will need to <a href='%1'>configure a Payment Processor</a>. Then return to this screen and assign the processor to this Contribution Page.{/ts} {docURL page="CiviContribute Payment Processor Configuration"}
+            {ts 1=$ppUrl}No Payment Processor has been configured / enabled for your site. Unless you are only using CiviContribute to solicit non-monetary / in-kind contributions, you will need to <a href='%1'>configure a Payment Processor</a>. Then return to this screen and assign the processor to this Contribution Page.{/ts} {docURL page="user/contributions/payment-processors"}
             <p>{ts}NOTE: Alternatively, you can enable the <strong>Pay Later</strong> option below without setting up a payment processor. All users will then be asked to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts}</p>
         </div>
     {/if}
@@ -48,7 +48,7 @@
         {if $paymentProcessor}
           <tr class="crm-contribution-contributionpage-amount-form-block-payment_processor"><th scope="row" class="label" width="20%">{$form.payment_processor.label}</th>
             <td>{$form.payment_processor.html}<br />
-            <span class="description">{ts}Select the payment processor to be used for contributions submitted from this contribution page (unless you are soliciting non-monetary / in-kind contributions only).{/ts} {docURL page="CiviContribute Payment Processor Configuration"}</span></td>
+            <span class="description">{ts}Select the payment processor to be used for contributions submitted from this contribution page (unless you are soliciting non-monetary / in-kind contributions only).{/ts} {docURL page="user/contributions/payment-processors"}</span></td>
           </tr>
         {/if}
         <tr class="crm-contribution-contributionpage-amount-form-block-is_pay_later"><th scope="row" class="label">{$form.is_pay_later.label}</th>
@@ -89,7 +89,7 @@
 	{if $recurringPaymentProcessor}
         <tr id="recurringContribution" class="crm-contribution-form-block-is_recur"><th scope="row" class="label" width="20%">{$form.is_recur.label}</th>
                <td>{$form.is_recur.html}<br />
-                  <span class="description">{ts}Check this box if you want to give users the option to make recurring contributions. This feature requires that you use a payment processor which supports recurring billing / subscriptions functionality.{/ts} {docURL page="CiviContribute Payment Processor Configuration"}</span>
+                  <span class="description">{ts}Check this box if you want to give users the option to make recurring contributions. This feature requires that you use a payment processor which supports recurring billing / subscriptions functionality.{/ts} {docURL page="user/contributions/payment-processors"}</span>
                </td>
         </tr>
         <tr id="recurFields" class="crm-contribution-form-block-recurFields"><td>&nbsp;</td>
