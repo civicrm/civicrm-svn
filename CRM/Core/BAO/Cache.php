@@ -192,7 +192,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
       }
     }
 
-    self::cleanupCache();
+    self::cleanup();
   }
 
   /* Retrieve the session values from the cache and populate the $_SESSION array
@@ -236,25 +236,25 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
    * @static
    * @access private
    */
-  static
-  function cleanupCache() {
+  static function cleanup($session = false, $table = false) {
     // clean up the session cache every $cacheCleanUpNumber probabilistically
-    $cacheCleanUpNumber = 1396;
+    $cleanUpNumber = 757;
 
     // clean up all sessions older than $cacheTimeIntervalDays days
-    $cacheTimeIntervalDays = 2;
+    $timeIntervalDays = 2;
+    $timeIntervalMins = 30;
 
-    if (mt_rand(1, 100000) % $cacheCleanUpNumber == 0) {
+    if (mt_rand(1, 100000) % $cleanUpNumber == 0) {
+      $session = $table = true;
+    }
 
+    if ( ! $session && ! $table ) {
+      return;
+    }
+
+    if ( $table ) {
       // delete all PrevNext caches
       CRM_Core_BAO_PrevNextCache::cleanupCache();
-
-      $sql = "
-DELETE FROM civicrm_cache
-WHERE       group_name = 'CiviCRM Session'
-AND         created_date < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays day )
-";
-      CRM_Core_DAO::executeQuery($sql);
 
       // also delete all the action temp tables
       // that were created the same interval ago
@@ -266,7 +266,7 @@ WHERE  TABLE_SCHEMA = %1
 AND    ( TABLE_NAME LIKE 'civicrm_task_action_temp_%'
  OR      TABLE_NAME LIKE 'civicrm_export_temp_%'
  OR      TABLE_NAME LIKE 'civicrm_import_job_%' )
-AND    CREATE_TIME < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays day )
+AND    CREATE_TIME < date_sub( NOW( ), INTERVAL $timeIntervalDays day )
 ";
 
       $params   = array(1 => array($dao->database(), 'String'));
@@ -281,6 +281,31 @@ AND    CREATE_TIME < date_sub( NOW( ), INTERVAL $cacheTimeIntervalDays day )
         CRM_Core_DAO::executeQuery("DROP TABLE $table");
       }
     }
+
+    if ( $session ) {
+      // first delete all sessions which are related to any potential transaction
+      // page
+      $transactionPages =
+        array(
+          'CRM_Contribute_Controller_Contribution',
+          'CRM_Event_Controller_Registration',
+        );
+
+      $sql = "
+DELETE FROM civicrm_cache
+WHERE       group_name = 'CiviCRM Session'
+AND         ( ( path LIKE '%CRM_Contribute_Controller_Contribution%' ) OR ( path LIKE '%CRM_Event_Controller_Registration%' ) )
+AND         created_date < date_sub( NOW( ), INTERVAL $timeIntervalMins MINUTE )
+";
+      CRM_Core_DAO::executeQuery($sql);
+
+      $sql = "
+DELETE FROM civicrm_cache
+WHERE       group_name = 'CiviCRM Session'
+AND         created_date < date_sub( NOW( ), INTERVAL $timeIntervalDays DAY )
+";
+      CRM_Core_DAO::executeQuery($sql);
   }
+}
 }
 

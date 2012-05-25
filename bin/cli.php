@@ -27,6 +27,6 @@
 
 require_once ('cli.class.php');
 $cli = new civicrm_Cli();
-$cli->initialize() || die();
-$cli->callApi() || die();
+$cli->initialize() || die( 'Died during initialization' );
+$cli->callApi() || die( 'Died during callApi' );
 

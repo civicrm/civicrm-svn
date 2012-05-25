@@ -453,3 +453,35 @@ function civicrm_api3_job_run_payment_cron($params) {
   );
 }
 
+/*
+ * This api cleans up all the old session entries and temp tables. We recommend that sites run this on an hourly basis
+ *
+ * @param  array    $params (reference ) - sends in various config parameters to decide what needs to be cleaned
+ *
+ * @return boolean  true if success, else false
+ * @static void
+ * @access public
+ */
+function civicrm_api3_job_cleanup( $params ) {
+  require_once 'CRM/Utils/Array.php';
+
+  $sessionCleanup   = CRM_Utils_Array::value( 'session'   , $params, true  );
+  $tempTableCleanup = CRM_Utils_Array::value( 'tempTables', $params, true  );
+  $dbCacheCleanup   = CRM_Utils_Array::value( 'dbCache'   , $params, false );
+  $memCacheCleanup   = CRM_Utils_Array::value( 'memCache' , $params, false );
+
+
+  if ( $sessionCleanup || $tempTableCleanup ) {
+    require_once 'CRM/Core/BAO/Cache.php';
+    CRM_Core_BAO_Cache::cleanup( $sessionCleanup, $tempTableCleanup );
+  }
+
+  if ( $dbCacheCleanup ) {
+    CRM_Core_Config::clearDBCache( );
+  }
+
+  if ( $memCacheCleanup ) {
+    CRM_Utils_System::flushCache( );
+  }
+
+}

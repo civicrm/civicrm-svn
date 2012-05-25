@@ -498,8 +498,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      CREATE TEMPORARY TABLE {$tempTableName} (
             id int unsigned NOT NULL AUTO_INCREMENT,
             survey_contact_id int unsigned NOT NULL,  
-PRIMARY KEY ( id ),
- CONSTRAINT FK_civicrm_survey_respondent FOREIGN KEY (survey_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE )";
+  PRIMARY KEY ( id )
+);
+";
         CRM_Core_DAO::executeQuery($query);
         $batch = 100;
         $insertedCount = 0;

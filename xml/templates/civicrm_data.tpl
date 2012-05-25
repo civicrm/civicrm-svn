@@ -1375,7 +1375,8 @@ VALUES
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Update Participant Statuses{/ts}',  '{ts escape="sql" skip="true"}Updates pending event participant statuses based on time{/ts}',                                    'civicrm_api3', 'job', 'process_participant',     NULL, 0),
     ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Update Membership Statuses and Send Renewal Reminders{/ts}', '{ts escape="sql" skip="true"}Updates membership statuses and conditionally sends renewal reminders{/ts}', 'civicrm_api3', 'job', 'process_membership',   NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Process Survey Respondents{/ts}',   '{ts escape="sql" skip="true"}Releases reserved survey respondents when they have been reserved for longer than the Release Frequency days specified for that survey.{/ts}','civicrm_api3', 'job', 'process_respondent',NULL, 0),
-    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Set Membership Reminder Dates{/ts}','{ts escape="sql" skip="true"}Sets membership renewal reminder dates for current membership records where reminder date is null{/ts}','civicrm_api3', 'job', 'process_membership_reminder_date',NULL, 0);
+    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Set Membership Reminder Dates{/ts}','{ts escape="sql" skip="true"}Sets membership renewal reminder dates for current membership records where reminder date is null{/ts}','civicrm_api3', 'job', 'process_membership_reminder_date',NULL, 0),
+    ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Clean-up Temporary Data and Files{/ts}','{ts escape="sql" skip="true"}Removes temporary data and files, and clears old data from cache tables. Recommend running this job every hour to help prevent database and file system bloat.{/ts}','civicrm_api3', 'job', 'cleanup', NULL, 0);
 
 -- CRM-9714
 

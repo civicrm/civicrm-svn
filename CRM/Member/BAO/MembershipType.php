@@ -499,15 +499,16 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
         $date = $membershipDetails[$membershipId]->end_date;
       }
       $date  = explode('-', $date);
-      $year  = $date[0];
-      $month = $date[1];
-      $day   = $date[2];
-
       $logStartDate = date('Y-m-d', mktime(0, 0, 0,
           (double) $date[1],
           (double)($date[2] + 1),
           (double) $date[0]
         ));
+
+      $date  = explode('-', $logStartDate);
+      $year  = $date[0];
+      $month = $date[1];
+      $day   = $date[2];
 
       switch ($membershipTypeDetails['duration_unit']) {
         case 'year':
