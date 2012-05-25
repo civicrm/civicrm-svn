@@ -821,12 +821,15 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $check = array();
       $otherAmount = FALSE;
       while ($priceField->fetch()) {
-        if ($priceField->name == "other_amount") {
-          if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $fields['priceSetId'], 'is_quick_config') && empty($fields["price_{$priceField->id}"]) && $fields["price_{$previousId}"] == 0) {
+        if ($priceField->name == 'other_amount') {
+          if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $fields['priceSetId'], 'is_quick_config') && 
+              empty($fields["price_{$priceField->id}"]) && 
+              CRM_Utils_Array::value("price_{$previousId}", $fields) == 0) {
             $otherAmount = TRUE;
             $errors["price_{$priceField->id}"] = ts('Amount is required field.');
           }
-          elseif (empty($fields["price_{$priceField->id}"]) && $fields["price_{$previousId}"] == 0) {
+          elseif (empty($fields["price_{$priceField->id}"]) && 
+                  CRM_Utils_Array::value("price_{$previousId}", $fields) == 0) {
             $otherAmountVal = $fields["price_{$priceField->id}"];
             $min            = CRM_Utils_Array::value('min_amount', $self->_values);
             $max            = CRM_Utils_Array::value('max_amount', $self->_values);
@@ -1285,7 +1288,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config' );
         if ( $is_quick_config ) {
             foreach ( $this->_values['fee'] as $key => & $val ) {
-                if ( $val['name'] == 'other_amount' && $val['html_type'] == "Text" && $params['price_'.$key] != 0 ) {
+                if ( $val['name'] == 'other_amount' && $val['html_type'] == 'Text' && $params['price_'.$key] != 0 ) {
                     foreach ( $val['options'] as $optionKey => & $options ) {
                         $options['amount'] = CRM_Utils_Array::value( 'price_'.$key, $params );
                         break;
