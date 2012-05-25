@@ -57,6 +57,8 @@
     {/section}
 </table>
 
+{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
+
 {literal}
 <script type="text/javascript">
     cj( function() {
@@ -97,55 +99,9 @@
         }
       });
 
-      // handle ajax form submitting
-      var options = { 
-          beforeSubmit:  showRequest  // pre-submit callback  
-      }; 
-      
-      // bind form using 'ajaxForm'
-      cj('#Phone').ajaxForm( options );
-
-      // pre-submit callback 
-      function showRequest(formData, jqForm, options) { 
-          // formData is an array; here we use $.param to convert it to a string to display it 
-          // but the form plugin does this for you automatically when it submits the data 
-          var queryString = cj.param(formData); 
-          queryString = queryString + '&class_name=CRM_Contact_Form_Inline_Phone&snippet=5&cid=' + {/literal}"{$contactId}"{literal};
-          var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 }"{literal}; 
-          var status = '';
-          var response = cj.ajax({
-             type: "POST",
-             url: postUrl,
-             async: false,
-             data: queryString,
-             dataType: "json",
-             success: function( response ) {
-               status = response.status; 
-             }
-          }).responseText;
-
-          //check if form is submitted successfully
-          if ( status ) {
-            // fetch the view of email block after edit
-            var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1' }"{literal}; 
-            var queryString = 'class_name=CRM_Contact_Page_Inline_Phone&type=page&cid=' + {/literal}"{$contactId}"{literal};
-            var response = cj.ajax({
-               type: "POST",
-               url: postUrl,
-               async: false,
-               data: queryString,
-               dataType: "json",
-               success: function( response ) {
-               }
-            }).responseText;
-          }
-            
-          cj('#phone-block').html( response );
-          
-          // here we could return false to prevent the form from being submitted; 
-          // returning anything other than false will allow the form submit to continue 
-          return false; 
-      }
+      // add ajax form submitting
+      inlineEditForm( 'Phone', 'phone-block', {/literal}{$contactId}{literal} ); 
+ 
     });
 
 </script>
