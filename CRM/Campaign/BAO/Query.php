@@ -496,12 +496,11 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS {$tempTableName}");
 
         $query = "
-CREATE TEMPORARY TABLE {$tempTableName} (
-   id int unsigned NOT NULL AUTO_INCREMENT,
-   survey_contact_id int unsigned NOT NULL,
-   PRIMARY KEY ( id )
-);
-";
+     CREATE TEMPORARY TABLE {$tempTableName} (
+            id int unsigned NOT NULL AUTO_INCREMENT,
+            survey_contact_id int unsigned NOT NULL,
+PRIMARY KEY ( id ),
+ CONSTRAINT FK_civicrm_survey_respondent FOREIGN KEY (survey_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE )";
         CRM_Core_DAO::executeQuery($query);
 
         $batch = 100;
