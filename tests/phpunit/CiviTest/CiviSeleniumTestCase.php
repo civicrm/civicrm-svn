@@ -725,6 +725,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       }
       $this->type('label_1', "Label $hash");
       $this->type('value_1', "$rand");
+      $this->click('CIVICRM_QFID_1_2');
     }
     else {
       $this->click('amount_block_is_active');
