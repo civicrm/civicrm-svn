@@ -57,6 +57,11 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
     if ($id = CRM_Utils_Array::value('id', $ids)) {
       $fieldValueBAO->id = $id;
     }
+    if (CRM_Utils_Array::value('is_default', $params)) {
+      $query = 'UPDATE civicrm_price_field_value SET is_default = 0 WHERE  price_field_id = %1';
+      $p = array(1 => array($params['price_field_id'], 'Integer'));
+      CRM_Core_DAO::executeQuery($query, $p);
+    }
 
     $fieldValueBAO->save();
     return $fieldValueBAO;
@@ -96,11 +101,6 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
       if (!CRM_Utils_Array::value('weight', $params)) {
         $params['weight'] = 1;
       }
-    }
-    if (CRM_Utils_Array::value('is_default', $params)) {
-      $query = 'UPDATE civicrm_price_field_value SET is_default = 0 WHERE  price_field_id = %1';
-      $p = array(1 => array($params['price_field_id'], 'Integer'));
-      CRM_Core_DAO::executeQuery($query, $p);
     }
     $params['is_active'] = CRM_Utils_Array::value('is_active', $params, 0);
 

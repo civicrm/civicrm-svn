@@ -25,6 +25,11 @@
 *}
 {* Configure Membership signup/renewal block for an Online Contribution page *}
 <div id="form" class="crm-block crm-form-block crm-member-membershipblock-form-block">
+{if $isQuick}
+    <div id="memPopupContainer">
+    {ts}Once you switch to using a Price Set, you won't be able to switch back to your existing settings below except by re-entering them. Are you sure you want to switch to a Price Set?{/ts}
+    </div>
+{/if}
 <div id="help">
     {ts}Use this form to enable and configure a Membership Signup and Renewal section for this Online Contribution Page. If you're not using this page for membership signup, leave the <strong>Enabled</strong> box un-checked..{/ts} {docURL page="Configure Membership"}
 </div>
@@ -74,8 +79,8 @@
               <td>
                 {assign var="count" value="1"}
                 {strip}
-                  <table class="report">
-                    <tr class="columnheader" style="vertical-align:top;"><th style="border-right: 1px solid #4E82CF;">{ts}Include these membership types{/ts}:</th><th>{ts}Default{/ts}:<br />
+                  <table class="report">	
+                    <tr class="columnheader" style="vertical-align:top;"><th style="border-right: 1px solid #4E82CF;">{if $isQuick}{ts}Click <a id = 'memQuickconfig' href='#'>here</a> if you want to configure the Membership Types below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}<br />{/if}{ts}Include these membership types{/ts}:</th><th>{ts}Default{/ts}:<br />
                     <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('membership_type_default', 'MembershipBlock'); return false;" >unselect</a>)</span></th>{if $is_recur}<th>{ts}Auto-renew:{/ts}</th>{/if}</tr>
                       {assign var="index" value="1"}
                       {foreach name=outer key=key item=item from=$form.membership_type}
@@ -86,7 +91,7 @@
                           <td class="labels font-light">{$form.membership_type.$key.html}</td>
                           <td class="labels font-light">{$form.membership_type_default.$key.html}</td>
                           {if $is_recur}
-                              <td class="labels font-light">
+                               <td class="labels font-light">
                                 {if $auto_renew.$key}
                                    {assign var="element" value="auto_renew"|cat:_|cat:$key}{$form.$element.html}
                                 {else} 
@@ -169,3 +174,44 @@
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
+{if $isQuick}
+{literal}
+<script type="text/javascript">
+cj( document ).ready( function( ) {    
+  cj("#memPopupContainer").hide();
+});    
+cj("#memQuickconfig").click(function(){
+  cj("#memPopupContainer").dialog({
+	title: "Selected Price Set",
+	width:400,
+	height:220,
+	modal: true,
+	overlay: {
+            	   opacity: 0.5,
+             	   background: "black"
+        },
+        buttons: { 
+                   "Ok": function() {
+		   var dataUrl  = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Core_Page_AJAX&fnName=setIsQuickConfig&context=civicrm_contribution_page&id=$contributionPageID" }'{literal};
+		   
+		   cj.ajax({
+			url: dataUrl,
+			async: false,
+			global: false,
+			success: function ( result ) {
+			  if (result) {
+			    location.reload(true);
+			  }
+			}	
+		   });
+                   },
+		   "Close": function() { 
+                     cj(this).dialog("close");
+                   }
+	}	
+  });
+return false;
+});
+</script>
+{/literal}
+{/if}

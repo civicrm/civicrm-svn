@@ -98,7 +98,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
 
         $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_event', $eventId, NULL);
         if ($priceSetId) {
-          if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
+          if ($isQuick = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
+            $this->assign('isQuick', $isQuick);
             $priceField = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $priceSetId, 'id', 'price_set_id');
             $options = array();
             $priceFieldOptions = CRM_Price_BAO_FieldValue::getValues($priceField, $options, 'weight', true);

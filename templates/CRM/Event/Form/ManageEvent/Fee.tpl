@@ -33,6 +33,11 @@
         </div>
     {/if}
 <div class="crm-block crm-form-block crm-event-manage-fee-form-block">
+{if $isQuick}
+    <div id="popupContainer">
+    {ts}Once you switch to using a Price Set, you won't be able to switch back to your existing settings below except by re-entering them. Are you sure you want to switch to a Price Set?{/ts}
+    </div>
+{/if}
 <div class="crm-submit-buttons">
    {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
@@ -144,7 +149,8 @@
      
         <div id="map-field" >
         <fieldset id="map-field"><legend>{ts}Regular Fees{/ts}</legend>
-        {ts}Use the table below to enter descriptive labels and amounts for up to ten event fee levels. These will be presented as a list of radio button options. Both the label and dollar amount will be displayed. You can also configure one or more sets of discounted fees by checking "Discounts by Signup Date" below.{/ts}
+        {ts}Use the table below to enter descriptive labels and amounts for up to ten event fee levels. These will be presented as a list of radio button options. Both the label and dollar amount will be displayed. You can also configure one or more sets of discounted fees by checking "Discounts by Signup Date" below.{/ts}<br />
+	{if $isQuick}{ts}Click <a id = 'quickconfig' href='#'>here</a> if you want to configure the Regular Fees below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}{/if}
         <table id="map-field-table">
         <tr class="columnheader"><td scope="column">{ts}Fee Label{/ts}</td><td scope="column">{ts}Amount{/ts}</td><td scope="column">{ts}Default?{/ts}</td></tr>
         {section name=loop start=1 loop=11}
@@ -239,7 +245,6 @@
 </div>
 
 {include file="CRM/common/showHide.tpl"}
-
 <script type="text/javascript">
     var showRows   = new Array({$showBlocks});
     var hideBlocks = new Array({$hideBlocks});
@@ -351,4 +356,43 @@
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
-
+{if $isQuick}
+{literal}
+<script type="text/javascript">
+cj( document ).ready( function( ) {    
+    cj("#popupContainer").hide();
+});
+cj("#quickconfig").click(function(){
+cj("#popupContainer").dialog({
+	title: "Selected Price Set",
+	width:400,
+	height:220,
+	modal: true,
+	overlay: {
+            	   opacity: 0.5,
+             	   background: "black"
+        },
+        buttons: { 
+                   "Ok": function() { 
+		    var dataUrl  = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Core_Page_AJAX&fnName=setIsQuickConfig&context=civicrm_event&id=$eventId" }'{literal};
+		   cj.ajax({
+			url: dataUrl,
+			async: false,
+			global: false,
+			success: function ( result ) {
+			  if (result) {
+			    location.reload(true);
+			  }
+			}	
+		   });
+                   },
+		   "Close": function() { 
+                     cj(this).dialog("close");
+                   }
+	}	
+});
+return false;
+});
+</script>
+{/literal}
+{/if}

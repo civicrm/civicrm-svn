@@ -201,8 +201,8 @@ SELECT id
     if (CRM_Utils_Array::value('amount_block_is_active', $defaults)) {
 
       if ($priceSetId = CRM_Price_BAO_Set::getFor('civicrm_contribution_page', $this->_id, NULL)) {
-        if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
-
+        if ($isQuick = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
+          $this->assign('isQuick', $isQuick);
           //$priceField = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $priceSetId, 'id', 'price_set_id' );
           $options          = $pFIDs = array();
           $priceFieldParams = array('price_set_id' => $priceSetId);

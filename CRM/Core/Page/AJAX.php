@@ -66,5 +66,26 @@ class CRM_Core_Page_AJAX {
     }
     CRM_Utils_System::civiExit();
   }
+
+  /**
+   * function to change is_quick_config priceSet to complex
+   *
+   * @static
+   * @access public
+   */
+  static
+    function setIsQuickConfig() {
+    if (!$id = CRM_Utils_Array::value('id', $_GET)) {
+        return false;
+    }
+    $priceSetId = CRM_Price_BAO_Set::getFor($_GET['context'], $id, NULL);
+    if ($priceSetId) {
+      $result = CRM_Price_BAO_Set::setIsQuickConfig($priceSetId,0);
+    }
+    echo json_encode($result);
+      
+    CRM_Utils_System::civiExit();
+  }
+
 }
 

@@ -78,6 +78,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
       // for membership_types
       // if ( isset( $defaults['membership_types'] ) ) {
       $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_contribution_page', $this->_id, 3);
+      $this->assign('isQuick', 1);
       $this->_memPriceSetId = $priceSetId;
       $pFIDs = array();
       if ($priceSetId) {
