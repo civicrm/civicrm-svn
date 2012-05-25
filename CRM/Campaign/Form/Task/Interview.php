@@ -518,11 +518,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $tempTableName = CRM_Core_DAO::createTempTableName('civicrm_survey_respondent');
         CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS {$tempTableName}");
         $query = "
-     CREATE TEMPORARY TABLE {$tempTableName} (
-            id int unsigned NOT NULL AUTO_INCREMENT,
-            survey_contact_id int unsigned NOT NULL,  
-PRIMARY KEY ( id ),
- CONSTRAINT FK_civicrm_survey_respondent FOREIGN KEY (survey_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE )";
+CREATE TEMPORARY TABLE {$tempTableName} (
+  id int unsigned NOT NULL AUTO_INCREMENT,
+  survey_contact_id int unsigned NOT NULL,
+  PRIMARY KEY ( id )
+);
+";
         CRM_Core_DAO::executeQuery($query);
         $batch = 100;
         $insertedCount = 0;
@@ -530,7 +531,7 @@ PRIMARY KEY ( id ),
           $processIds = $this->_contactIds;
           $insertIds = array_splice($processIds, $insertedCount, $batch);
           if (!empty($insertIds)) {
-            $insertSQL = "INSERT IGNORE INTO {$tempTableName}( survey_contact_id ) 
+            $insertSQL = "INSERT IGNORE INTO {$tempTableName}( survey_contact_id )
                      VALUES (" . implode('),(', $insertIds) . ');';
             CRM_Core_DAO::executeQuery($insertSQL);
           }
@@ -539,7 +540,7 @@ PRIMARY KEY ( id ),
 
         $query = "
     SELECT  contact.id as id
-      FROM  civicrm_contact contact 
+      FROM  civicrm_contact contact
 INNER JOIN  {$tempTableName} ON ( {$tempTableName}.survey_contact_id = contact.id )
      WHERE  contact.contact_type != %1";
         $removeContact = CRM_Core_DAO::executeQuery($query,
