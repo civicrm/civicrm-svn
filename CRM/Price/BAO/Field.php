@@ -287,35 +287,22 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           $label .= CRM_Utils_Money::format(CRM_Utils_Array::value($valueFieldName, $customOption[$optionKey]));
         }
 
-        if (property_exists($qf,'_quickConfig') && $qf->_quickConfig) {
-          $element = $qf->addMoney($elementName,
-                                   $label,
-                                   $useRequired && $field->is_required,
-                                   array_merge($extra,
-                                               array('price' => json_encode(array($optionKey, $priceVal)),
-                                                     'size' => '4',
-                                                     )
-                                               ),
-                                   TRUE, 'currency', NULL
-                                   );
-          
-        } else {
-          $element = &$qf->add('text', $elementName, $label,
-            array_merge($extra,
-              array('price' => json_encode(array($optionKey, $priceVal)),
-                'size' => '4',
-              )
-            ),
-            $useRequired && $field->is_required
-          );
-          
-        // integers will have numeric rule applied to them.
-        $qf->addRule($elementName, ts('%1 must be an integer (whole number).', array(1 => $label)), 'positiveInteger');
-        }
+        $element = &$qf->add('text', $elementName, $label,
+          array_merge($extra,
+            array('price' => json_encode(array($optionKey, $priceVal)),
+              'size' => '4',
+            )
+          ),
+          $useRequired && $field->is_required
+        );
+
         // CRM-6902
         if (in_array($optionKey, $feezeOptions)) {
           $element->freeze();
         }
+
+        // integers will have numeric rule applied to them.
+        $qf->addRule($elementName, ts('%1 must be an integer (whole number).', array(1 => $label)), 'positiveInteger');
         break;
 
       case 'Radio':
