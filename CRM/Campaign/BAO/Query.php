@@ -217,12 +217,12 @@ class CRM_Campaign_BAO_Query {
       case self::civicrm_activity:
         $surveyActivityTypes = CRM_Campaign_PseudoConstant::activityType();
         $surveyKeys          = "(" . implode(',', array_keys($surveyActivityTypes)) . ")";
-        $from                = " INNER JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
+        $from                = " INNER JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id
                                  AND civicrm_activity.activity_type_id IN $surveyKeys ) ";
         break;
 
       case self::civicrm_activity_assignment:
-        $from = " 
+        $from = "
 INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activity_assignment.activity_id ) ";
         break;
 
@@ -369,8 +369,8 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
 
     //build ward and precinct custom fields.
     $query = '
-    SELECT  fld.id, fld.label 
-      FROM  civicrm_custom_field fld 
+    SELECT  fld.id, fld.label
+      FROM  civicrm_custom_field fld
 INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
      WHERE  grp.name = %1';
     $dao = CRM_Core_DAO::executeQuery($query, array(1 => array('Voter_Info', 'String')));
@@ -419,8 +419,8 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
      * Retrieve all valid voter ids,
      * and build respective clause to restrict search.
      *
-     * @param  array  $criteria an array 
-     * @return $voterClause as a string  
+     * @param  array  $criteria an array
+     * @return $voterClause as a string
      * @static
      */
   function voterClause($params) {
@@ -496,11 +496,12 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS {$tempTableName}");
 
         $query = "
-     CREATE TEMPORARY TABLE {$tempTableName} (
-            id int unsigned NOT NULL AUTO_INCREMENT,
-            survey_contact_id int unsigned NOT NULL,  
-PRIMARY KEY ( id ),
- CONSTRAINT FK_civicrm_survey_respondent FOREIGN KEY (survey_contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE )";
+CREATE TEMPORARY TABLE {$tempTableName} (
+   id int unsigned NOT NULL AUTO_INCREMENT,
+   survey_contact_id int unsigned NOT NULL,
+   PRIMARY KEY ( id )
+);
+";
         CRM_Core_DAO::executeQuery($query);
 
         $batch = 100;
@@ -509,7 +510,7 @@ PRIMARY KEY ( id ),
           $processIds = $voterIds;
           $insertIds = array_splice($processIds, $insertedCount, $batch);
           if (!empty($insertIds)) {
-            $insertSQL = "INSERT IGNORE INTO {$tempTableName}( survey_contact_id ) 
+            $insertSQL = "INSERT IGNORE INTO {$tempTableName}( survey_contact_id )
                      VALUES (" . implode('),(', $insertIds) . ');';
             CRM_Core_DAO::executeQuery($insertSQL);
           }
