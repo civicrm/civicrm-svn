@@ -1182,7 +1182,7 @@ LIMIT {$offset}, {$rowCount}
     }
 
     echo json_encode($elements);
-    CRM_Utils_System::civiExit();
+    CRM_Utils_System::civiExit();  
   }
 
   static
@@ -1228,5 +1228,23 @@ LIMIT {$offset}, {$rowCount}
     }
     return $cId;
   }
+
+  static
+  function getAddressDisplay() {
+    $contactId = CRM_Utils_Array::value('contact_id', $_POST);
+    if (!$contactId) {
+      $addressVal["error_message"] = "no contact id found";
+    } else {
+      $entityBlock = 
+        array(
+          'contact_id' => $contactId,
+          'entity_id' => $contactId
+        );
+      $addressVal = CRM_Core_BAO_Address::getValues($entityBlock);
+    }
+    echo json_encode($addressVal);
+    CRM_Utils_System::civiExit();  
+  }
+
 }
 

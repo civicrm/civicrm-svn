@@ -126,19 +126,23 @@
                 return;
             }
             
-            var addressHTML = '';
-            cj( ).crmAPI( 'location', 'get', { 'contact_id': sharedContactId, 'version' : 2 }, {
-                  success: function( response ) {
-                      if ( response.address ) {
+            var addressHTML = '';	    
+            var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' q='class_name=CRM_Contact_Page_AJAX::getAddressDisplay' }"{literal};	
+            cj.post( postUrl, { 'contact_id': sharedContactId , 'type': 'method' }, 
+                   function( response ) {
+                      if ( response ) {
+
                           var selected = 'checked';
                           var addressExists = false;
-                          cj.each( response.address, function( i, val ) {
+			  
+                          cj.each( response, function( i, val ) {
                               if ( i > 1 ) {
                                   selected = '';
                               } else {
                                   cj( 'input[name="address[' + blockNo + '][master_id]"]' ).val( val.id );
                               }
-                              addressHTML = addressHTML + '<input type="radio" name="selected_shared_address-'+ blockNo +'" value=' + val.id + ' ' + selected +'>' + val.display + '<br/>'; 
+                              addressHTML = addressHTML + '<input type="radio" name="selected_shared_address-'+ blockNo +'" value=' + val.id + ' ' + selected +'>' + val.display_text + '<br/>'; 
+
                               addressExists = true; 
                           });
 
@@ -156,9 +160,7 @@
                               cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + helpText + '</td></tr>');
                           }
                       }
-                  },
-                  ajaxURL: {/literal}"{crmURL p='civicrm/ajax/rest' h=0}"{literal} 
-            });            
+                  },'json');            
          });
 
          // continuous check for changed value
