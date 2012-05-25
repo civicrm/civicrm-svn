@@ -35,6 +35,7 @@ class Com_CiviCRMInstallerScript {
     $registerSiteURL = "http://civicrm.org/civicrm/profile/create?reset=1&gid=15";
 
     require_once 'CRM/Utils/System.php';
+    require_once 'CRM/Utils/Array.php';
     if ($civicrmUpgrade) {
       $docLink = CRM_Utils_System::docURL2('Installation and Upgrades', TRUE, 'Upgrade Guide');
       // UPGRADE successful status and links

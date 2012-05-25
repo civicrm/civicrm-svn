@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="1.6" type="plugin" group="user">
+<extension method="upgrade" version="1.6" type="plugin" group="user">
 	<name>CiviCRM User Management</name>
 	<author>CiviCRM, LLC</author>
 	<creationDate>January 2011</creationDate>

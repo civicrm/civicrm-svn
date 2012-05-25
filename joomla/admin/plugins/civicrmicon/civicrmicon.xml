@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5" type="plugin" group="quickicon">
+<extension method="upgrade" version="2.5" type="plugin" group="quickicon">
 	<name>CiviCRM QuickIcon</name>
 	<author>CiviCRM, LLC</author>
 	<creationDate>April 2012</creationDate>
