@@ -368,18 +368,11 @@
  var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
  {if $selectedChild}selectedTab = "{$selectedChild}";{/if}
  {literal}
- function fixTabAbort(event,ui){
-//	jQuery(ui.tab).data("cache.tabs",(jQuery(ui.panel).html() == "") ? false : true);
-    }
 
-//explicitly stop spinner
-function stopSpinner( ) {
- cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})
-}
  cj( function() {
-     var tabIndex = cj('#tab_' + selectedTab).prevAll().length;
-     cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage,cache: true, select: fixTabAbort, load: stopSpinner});
-     cj(".crm-tab-button").addClass("ui-corner-bottom");
+  var tabIndex = cj('#tab_' + selectedTab).prevAll().length;
+  cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage,cache: true});
+  cj(".crm-tab-button").addClass("ui-corner-bottom");
  });
  {/literal}
  </script>
