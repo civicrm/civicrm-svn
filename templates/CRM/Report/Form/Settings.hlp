@@ -29,7 +29,7 @@
 </p>
 
 <p>
-  {ts}Your site administrator will need to setup an instance of the Scheduled Job "Mail Reports" to trigger creation and delivery of each report. When invoked, this job will deliver email to the recipients specified for the report. The report can be attached to the email as a PDF file (default), as a CSV file, or included in HTML format.{/ts} {docURL page="Managing Scheduled Jobs"}
+  {ts}Your site administrator will need to setup an instance of the Scheduled Job "Mail Reports" to trigger creation and delivery of each report. When invoked, this job will deliver email to the recipients specified for the report. The report can be attached to the email as a PDF file (default), as a CSV file, or included in HTML format.{/ts} {docURL page="Managing Scheduled Jobs" resource="wiki"}
 </p>
 {/htxt}
 

@@ -28,7 +28,7 @@
     {if !$paymentProcessor}
         {capture assign=ppUrl}{crmURL p='civicrm/admin/paymentProcessor' q="reset=1"}{/capture}
         <div class="status message">
-                {ts 1=$ppUrl}No Payment Processor has been configured / enabled for your site. If this is a <strong>paid event</strong> AND you want users to be able to <strong>register and pay online</strong>, you will need to <a href='%1'>configure a Payment Processor</a> first. Then return to this screen and assign the processor to this event.{/ts} {docURL page="CiviContribute Payment Processor Configuration"}
+                {ts 1=$ppUrl}No Payment Processor has been configured / enabled for your site. If this is a <strong>paid event</strong> AND you want users to be able to <strong>register and pay online</strong>, you will need to <a href='%1'>configure a Payment Processor</a> first. Then return to this screen and assign the processor to this event.{/ts} {docURL page="user/contributions/payment-processors"}
                 <p>{ts}NOTE: Alternatively, you can enable the <strong>Pay Later</strong> option below without setting up a payment processor. All users will then be asked to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts}</p>
         </div>
     {/if}
@@ -72,7 +72,7 @@
                 <td class="">&nbsp;</td>
                 <td class="description">
                  {ts}If this is a paid event and you want users to be able to register and pay online, select a payment processor to use.{/ts}
-                 {ts}NOTE: Alternatively, you can enable the <strong>Pay Later</strong> feature below without setting up a payment processor. All users will then be asked to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts} {docURL page="CiviContribute Payment Processor Configuration"}<td>
+                 {ts}NOTE: Alternatively, you can enable the <strong>Pay Later</strong> feature below without setting up a payment processor. All users will then be asked to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts} {docURL page="user/contributions/payment-processors"}<td>
              </tr>
          </table>
         {/if}

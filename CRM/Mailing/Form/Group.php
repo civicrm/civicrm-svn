@@ -47,7 +47,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
    */
   public function preProcess() {
     if (CRM_Core_BAO_MailSettings::defaultDomain() == "FIXME.ORG") {
-      CRM_Core_Error::fatal(ts('The <a href="%1">default mailbox</a> has not been configured. You will find <a href="%2">more info in our online user and administrator guide.</a>', array(1 => CRM_Utils_System::url('civicrm/admin/mailSettings', 'reset=1'), 2 => "http://book.civicrm.org/user/basic-setup/email-system-configuration")));
+      CRM_Core_Error::fatal(ts('The <a href="%1">default mailbox</a> has not been configured. You will find <a href="%2">more info in our online user and administrator guide.</a>', array(1 => CRM_Utils_System::url('civicrm/admin/mailSettings', 'reset=1'), 2 => "http://book.civicrm.org/user/initial-set-up/email-system-configuration")));
     }
     //when user come from search context.
     $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext($this->get('context'));

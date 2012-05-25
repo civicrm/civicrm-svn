@@ -2547,7 +2547,7 @@ WHERE  civicrm_mailing_job.id = %1
     CRM_Core_Error::debug_log_message("Beginning processQueue run: {$config->mailerJobsMax}, {$config->mailerJobSize}");
 
     if ($mode == NULL && CRM_Core_BAO_MailSettings::defaultDomain() == "FIXME.ORG") {
-      CRM_Core_Error::fatal(ts('The <a href="%1">default mailbox</a> has not been configured. You will find <a href="%2">more info in the online user and administrator guide</a>', array(1 => CRM_Utils_System::url('civicrm/admin/mailSettings', 'reset=1'), 2 => "http://book.civicrm.org/user/basic-setup/email-system-configuration")));
+      CRM_Core_Error::fatal(ts('The <a href="%1">default mailbox</a> has not been configured. You will find <a href="%2">more info in the online user and administrator guide</a>', array(1 => CRM_Utils_System::url('civicrm/admin/mailSettings', 'reset=1'), 2 => "http://book.civicrm.org/user/initial-set-up/email-system-configuration")));
     }
 
     // check if we are enforcing number of parallel cron jobs

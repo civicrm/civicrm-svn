@@ -31,7 +31,7 @@
     </div>
 {/if}
 <div id="help">
-    {ts}Use this form to enable and configure a Membership Signup and Renewal section for this Online Contribution Page. If you're not using this page for membership signup, leave the <strong>Enabled</strong> box un-checked..{/ts} {docURL page="Configure Membership"}
+    {ts}Use this form to enable and configure a Membership Signup and Renewal section for this Online Contribution Page. If you're not using this page for membership signup, leave the <strong>Enabled</strong> box un-checked..{/ts} {docURL page="user/membership/setup"}
 </div>
   {if $form.membership_type.html}   
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
@@ -123,8 +123,8 @@
    </div>
   {else}
       <div class="status message">
-         {capture assign=docURL}{crmURL p="civicrm/admin/member/membershipType" q="reset=1"}{/capture}
-         {ts 1=$docURL}You need to have at least one <a href="%1">Membership Type</a> with 'Public' visibility in order to enable self-service Membership Signup and Renewal.{/ts}
+         {capture assign=linkURL}{crmURL p="civicrm/admin/member/membershipType" q="reset=1"}{/capture}
+         {ts 1=$linkURL}You need to have at least one <a href="%1">Membership Type</a> with 'Public' visibility in order to enable self-service Membership Signup and Renewal.{/ts}
       </div>
   {/if} 
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>

@@ -139,7 +139,7 @@
                      {if $authorize}
                         <td>{$form.auto_renew.html}</td>
                      {else}
-                        <td>{ts}You will need to select and configure a supported payment processor (currently Authorize.Net, PayPal Pro, or PayPal Website Standard) in order to offer automatically renewing memberships.{/ts} {docURL page="CiviContribute Payment Processor Configuration"}</td>
+                        <td>{ts}You will need to select and configure a supported payment processor (currently Authorize.Net, PayPal Pro, or PayPal Website Standard) in order to offer automatically renewing memberships.{/ts} {docURL page="user/contributions/payment-processors"}</td>
                      {/if}
              </tr>
              <tr class="crm-membership-type-form-block-duration_unit_interval">        
@@ -196,7 +196,7 @@
         <div class="spacer"></div>
         <fieldset><legend>{ts}Renewal Reminders{/ts}</legend>
         <div class="description">
-            {ts}If you would like Membership Renewal Reminder emails sent to members automatically, you need to create a reminder message template and you need to configure and periodically run a 'cron' job on your server.{/ts} {docURL page="Membership Types"}
+            {ts}If you would like Membership Renewal Reminder emails sent to members automatically, you need to create a reminder message template and you need to configure and periodically run a 'cron' job on your server.{/ts} {docURL page="user/membership/setup"}
         </div>
         {if !$hasMsgTemplates}
             {capture assign=msgTemplate}{crmURL p='civicrm/admin/messageTemplates' q="action=add&reset=1"}{/capture}
