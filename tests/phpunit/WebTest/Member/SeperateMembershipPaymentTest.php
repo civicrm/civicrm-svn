@@ -75,7 +75,7 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     $pageId = $this->webtestAddContributionPage($hash,
       $rand,
       $contributionTitle,
-      array('Dummy Processor' => 'Dummy'),
+      NULL,
       $amountSection,
       $payLater,
       $onBehalf,
