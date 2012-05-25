@@ -53,7 +53,8 @@
            {/if}
          </div>
          {else}
-         <div class="crm-label crm-contact-deceased_message"><span class="font-red upper">{ts}Contact is Deceased{/ts}</span></div>
+          <div class="crm-label"></div>
+          <div class="crm-content crm-contact-deceased_message"><span class="font-red upper">{ts}Contact is Deceased{/ts}</span></div>
          {/if}
        {else}
           <div class="crm-label">{ts}Age{/ts}</div>
