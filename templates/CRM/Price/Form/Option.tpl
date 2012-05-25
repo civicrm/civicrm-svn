@@ -53,14 +53,21 @@
                 <td class="label">{$form.description.label}</td>
                 <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field_value' field='description' id=$sid}{/if}{$form.description.html}</td>
             </tr>
+            {* fix for CRM-10241 *}
+            {if $form.count.html}
             <tr class="crm-price-option-form-block-count">
                 <td class="label">{$form.count.label}</td>
                 <td>{$form.count.html} {help id="id-participant-count" file="CRM/Price/Page/Field.hlp"}</td>
             </tr>
+            {* 2 line fix for CRM-10241 *}
+            {/if}
+            {if $form.max_value.html}
             <tr class="crm-price-option-form-block-max_value">
                 <td class="label">{$form.max_value.label}</td>
                 <td>{$form.max_value.html} {help id="id-participant-max" file="CRM/Price/Page/Field.hlp"}</td>
             </tr>
+            {* fix for CRM-10241 *}
+            {/if}
             <tr class="crm-price-option-form-block-weight">
                <td class="label">{$form.weight.label}</td>
                <td>{$form.weight.html}</td>
