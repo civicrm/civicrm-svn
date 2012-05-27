@@ -2392,6 +2392,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
                   $offset = ($pageId - 1) * $rowCount;
 
                   $this->_limit = " LIMIT $offset, " . $rowCount;
+                  return array($offset, $rowCount);
                 }
               }
 

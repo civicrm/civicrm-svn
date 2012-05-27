@@ -34,6 +34,19 @@
  */
 class CRM_Logging_ReportSummary extends CRM_Report_Form {
   protected $cid;
+
+  protected $_logTables = 
+    array( 'log_civicrm_note' => 
+           array( 'fk'     => 'entity_id',
+                  'entity_table' => true ),
+           'log_civicrm_email' => 
+           array( 'fk'     => 'contact_id' ),
+           'log_civicrm_phone' => 
+           array( 'fk'     => 'contact_id' ),
+           'log_civicrm_group_contact' => 
+           array( 'fk'     => 'contact_id' ),
+           );
+
   protected $loggingDB; function __construct() {
     // don’t display the ‘Add these Contacts to Group’ button
     $this->_add2groupSupported = FALSE;
@@ -75,7 +88,47 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
 
   function where() {
     parent::where();
-    $this->_where .= " AND (log_action != 'Initialization')";
+
+    list($offset, $rowCount) = $this->limit();
+    $this->_where .= " AND (log_action != 'Initialization') AND temp.id BETWEEN $offset AND $rowCount";
+
+    unset($this->_limit);
+  }
+
+  function postProcess() {
+    $this->beginPostProcess();
+
+    // temp table to hold all altered contact-ids
+    $sql = "
+CREATE TEMPORARY TABLE 
+       civicrm_temp_civireport_logsummary ( id int PRIMARY KEY AUTO_INCREMENT, 
+                                            contact_id int, UNIQUE UI_id (contact_id) ) ENGINE=HEAP";
+    CRM_Core_DAO::executeQuery($sql);
+
+    foreach ( $this->_logTables as $entity => $detail ) {
+      $clause = CRM_Utils_Array::value('entity_table', $detail);
+      $clause = $clause ? "entity_table = 'civicrm_contact' AND" : null;
+      $sql    = "
+INSERT IGNORE INTO civicrm_temp_civireport_logsummary ( contact_id ) 
+SELECT DISTINCT {$detail['fk']} FROM {$entity}
+WHERE {$clause} log_action != 'Initialization'";
+      CRM_Core_DAO::executeQuery($sql);
+    }
+
+    foreach ( $this->_logTables as $entity => $detail ) {
+      $this->from( $entity );
+      $sql = $this->buildQuery(false);
+      $sql = str_replace("entity_log_civireport.log_type as", "'Note' as", $sql);
+      $this->buildRows($sql, $rows);
+    }
+
+    // format result set.
+    $this->formatDisplay($rows);
+    
+    // assign variables to templates
+    $this->doTemplateAssignment($rows);
+    
+    // do print / pdf / instance stuff if needed
+    $this->endPostProcess($rows);
   }
 }
-
