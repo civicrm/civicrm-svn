@@ -20,7 +20,9 @@ if (!jQuery) {ldelim}
    head.appendChild(script);
 {rdelim}
 
-restURL = '{crmURL p="civicrm/ajax/rest"}';
+var restURL = '{crmURL p="civicrm/ajax/rest"}';
+restURL = restURL.replace("&amp;","&"); // needed for J! fix CRM-10270
+
 if (restURL.indexOf('?') == -1 )
   restURL = restURL + '?';
 else
@@ -31,7 +33,7 @@ if (typeof $ == "undefined") {
 }
 
 function toggleField (name,label,type) {
-  h = '<div><label>'+label+'</label><input name='+name+ ' id="'+name+ '" /></div>';
+  var h = '<div><label>'+label+'</label><input name='+name+ ' id="'+name+ '" /></div>';
   if ( $('#extra #'+ name).length > 0) {
     $('#extra #'+ name).parent().remove();
   }
@@ -40,8 +42,8 @@ function toggleField (name,label,type) {
 }
 
 function buildForm (entity, action) {
-  id = entity+ '_id';
-  h = '<label>'+id+'</label><input id="'+id+ '" size="3" maxlength="20" />';
+  var id = entity+ '_id';
+  var h = '<label>'+id+'</label><input id="'+id+ '" size="3" maxlength="20" />';
   if (action == 'delete') {
     $('#extra').html(h);
     return;
