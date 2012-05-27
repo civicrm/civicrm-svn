@@ -310,7 +310,7 @@ class CRM_Core_BAO_ConfigSetting {
       }
       else {
         // if a single-lang site or the above didn't yield a result, use default
-        $lcMessages = $defaults['lcMessages'];
+        $lcMessages = CRM_Utils_Array::value( 'lcMessages', $defaults );
       }
 
       // set suffix for table names - use views if more than one language
