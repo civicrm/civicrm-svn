@@ -39,7 +39,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
     $logTypes = array_keys($this->_logTables);
     $logTypes = array_flip($logTypes);
     foreach ( $logTypes as $table => &$type ) {
-      $type = ucfirst(substr($table, strrpos($table, '_') + 1));
+      $type = $this->getLogType($table);
     }
 
     $this->_columns = array(
@@ -149,6 +149,9 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
       if (!$isDeleted[$row['log_civicrm_entity_id']]) {
         $row['log_civicrm_entity_altered_contact_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_entity_id']);
         $row['log_civicrm_entity_altered_contact_hover'] = ts("Go to contact summary");
+        $entity = $this->getEntityValue($row['log_civicrm_entity_id'], $row['log_civicrm_entity_log_type']);
+        if ($entity)
+          $row['log_civicrm_entity_altered_contact'] = $row['log_civicrm_entity_altered_contact'] . " [{$entity}]";
       }
       $row['civicrm_contact_altered_by_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_entity_log_user_id']);
       $row['civicrm_contact_altered_by_hover'] = ts("Go to contact summary");
@@ -156,6 +159,11 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
       if ($row['log_civicrm_entity_is_deleted'] and $row['log_civicrm_entity_log_action'] == 'Update') {
         $row['log_civicrm_entity_log_action'] = ts('Delete (to trash)');
       }
+
+      if ($newAction = $this->getEntityAction($row['log_civicrm_entity_id'], $row['log_civicrm_entity_log_conn_id'], $row['log_civicrm_entity_log_type']))
+        $row['log_civicrm_entity_log_action'] = $newAction;
+
+      $row['log_civicrm_entity_log_type'] = $this->getLogType($row['log_civicrm_entity_log_type']);
 
       if ($row['log_civicrm_entity_log_action'] == 'Update') {
         $q = "reset=1&log_conn_id={$row['log_civicrm_entity_log_conn_id']}&log_date={$row['log_civicrm_entity_log_date']}";

@@ -36,15 +36,34 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
   protected $cid;
 
   protected $_logTables = 
-    array( 'log_civicrm_note' => 
-           array( 'fk'     => 'entity_id',
-                  'entity_table' => true ),
-           'log_civicrm_email' => 
-           array( 'fk'     => 'contact_id' ),
-           'log_civicrm_phone' => 
-           array( 'fk'     => 'contact_id' ),
-           'log_civicrm_group_contact' => 
-           array( 'fk'     => 'contact_id' ),
+    array( 
+          'log_civicrm_contact' => 
+          array( 'fk'  => 'id',
+                 ),
+          'log_civicrm_email' => 
+          array( 'fk'  => 'contact_id',
+                 ),
+          'log_civicrm_phone' => 
+          array( 'fk'  => 'contact_id',
+                 ),
+          'log_civicrm_note' => 
+          array( 'fk'  => 'entity_id',
+                 'entity_table' => true 
+                 ),
+          'log_civicrm_group_contact' => 
+          array( 'fk'  => 'contact_id',
+                 'dao' => 'CRM_Contact_DAO_Group',
+                 'dao_column'    => 'title',
+                 'entity_column' => 'group_id',
+                 'action_column' => 'status', 
+                 ),
+          'log_civicrm_entity_tag' => 
+          array( 'fk'  => 'entity_id',
+                 'dao' => 'CRM_Core_DAO_Tag',
+                 'dao_column'    => 'name',
+                 'entity_column' => 'tag_id', 
+                 'entity_table'  => true 
+                 ),
            );
 
   protected $loggingDB; function __construct() {
@@ -126,9 +145,7 @@ WHERE {$clause} log_action != 'Initialization'";
       if ( in_array($entity, $logTypes) ) {
         $this->from( $entity );
         $sql = $this->buildQuery(false);
-        
-        $logType = ucfirst(substr($entity, strrpos($entity, '_') + 1));
-        $sql = str_replace("entity_log_civireport.log_type as", "'{$logType}' as", $sql);
+        $sql = str_replace("entity_log_civireport.log_type as", "'{$entity}' as", $sql);
         $this->buildRows($sql, $rows);
       }
     }
@@ -141,5 +158,30 @@ WHERE {$clause} log_action != 'Initialization'";
     
     // do print / pdf / instance stuff if needed
     $this->endPostProcess($rows);
+  }
+
+  function getLogType( $entity ) {
+    if ( $entity == 'log_civicrm_group_contact' ) {
+      $entity = 'log_civicrm_group';
+    }
+    $logType = ucfirst(substr($entity, strrpos($entity, '_') + 1));
+    return $logType;
+  }
+
+  function getEntityValue( $id, $entity ) {
+    if (CRM_Utils_Array::value('dao', $this->_logTables[$entity])) {
+      $sql = "select {$this->_logTables[$entity]['entity_column']} from {$entity} where id = %1";
+      $entityID = CRM_Core_DAO::singleValueQuery($sql, array(1 => array($id, 'Integer')));
+      return CRM_Core_DAO::getFieldValue($this->_logTables[$entity]['dao'], $entityID, $this->_logTables[$entity]['dao_column']);
+    }
+    return null;
+  }
+
+  function getEntityAction( $id, $connId, $entity ) {
+    if (CRM_Utils_Array::value('action_column', $this->_logTables[$entity])) {
+      $sql = "select {$this->_logTables[$entity]['action_column']} from {$entity} where id = %1 AND log_conn_id = %2";
+      return CRM_Core_DAO::singleValueQuery($sql, array(1 => array($id, 'Integer'), 2 => array($connId, 'Integer')));
+    }
+    return null;
   }
 }
