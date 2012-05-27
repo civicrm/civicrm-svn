@@ -36,6 +36,12 @@
  */
 class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
   function __construct() {
+    $logTypes = array_keys($this->_logTables);
+    $logTypes = array_flip($logTypes);
+    foreach ( $logTypes as $table => &$type ) {
+      $type = ucfirst(substr($table, strrpos($table, '_') + 1));
+    }
+
     $this->_columns = array(
       'log_civicrm_entity' => array(
         'dao' => 'CRM_Contact_DAO_Contact',
@@ -88,6 +94,12 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
           'altered_contact' => array(
             'name' => 'display_name',
             'title' => ts('Altered Contact'),
+            'type' => CRM_Utils_Type::T_STRING,
+          ),
+          'log_type' => array(
+            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+            'options' => $logTypes,
+            'title' => ts('Log Type'),
             'type' => CRM_Utils_Type::T_STRING,
           ),
           'log_action' => array(

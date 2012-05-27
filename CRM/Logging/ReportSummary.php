@@ -92,7 +92,8 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
     list($offset, $rowCount) = $this->limit();
     $this->_where .= " AND (log_action != 'Initialization') AND temp.id BETWEEN $offset AND $rowCount";
 
-    unset($this->_limit);
+    // unset limit
+    $this->_limit = NULL;
   }
 
   function postProcess() {
@@ -115,11 +116,21 @@ WHERE {$clause} log_action != 'Initialization'";
       CRM_Core_DAO::executeQuery($sql);
     }
 
+    $logTypes = $this->_params['log_type_value'];
+    unset($this->_params['log_type_value']);
+    if ( empty($logTypes) ) {
+      $logTypes = array_keys($this->_logTables);
+    }
+
     foreach ( $this->_logTables as $entity => $detail ) {
-      $this->from( $entity );
-      $sql = $this->buildQuery(false);
-      $sql = str_replace("entity_log_civireport.log_type as", "'Note' as", $sql);
-      $this->buildRows($sql, $rows);
+      if ( in_array($entity, $logTypes) ) {
+        $this->from( $entity );
+        $sql = $this->buildQuery(false);
+        
+        $logType = ucfirst(substr($entity, strrpos($entity, '_') + 1));
+        $sql = str_replace("entity_log_civireport.log_type as", "'{$logType}' as", $sql);
+        $this->buildRows($sql, $rows);
+      }
     }
 
     // format result set.
