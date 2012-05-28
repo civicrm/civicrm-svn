@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -268,7 +268,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
   }
 
   function getParticipantColumns() {
-    static $_events;
+    static $_events = array();
     if (!isset($_events['all'])) {
       CRM_Core_PseudoConstant::populate($_events['all'], 'CRM_Event_DAO_Event', FALSE, 'title', 'is_active', "is_template IS NULL OR is_template = 0", 'end_date DESC');
     }
@@ -1019,7 +1019,7 @@ WHERE 	line_item_civireport.id IS NOT NULL
     $url = CRM_Utils_System::url(CRM_Utils_System::currentPath(), "reset=1&force=1&state_province_id_op=in&state_province_id_value={$value}", $this->_absoluteUrl);
     $row['civicrm_address_state_province_id_link'] = $url;
     $row['civicrm_address_state_province_id_hover'] = ts("%1 for this state.", array(
-        1 => $urltxt,
+        1 => $value,
       ));
 
     return CRM_Core_PseudoConstant::stateProvince($value, FALSE);
