@@ -155,7 +155,10 @@ WHERE {$clause} log_action != 'Initialization'";
     }
 
     foreach ( $this->_logTables as $entity => $detail ) {
-      if ( in_array($entity, $logTypes) ) {
+      if ((in_array($this->getLogType($entity), $logTypes) && 
+           CRM_Utils_Array::value('log_type_op', $this->_params) == 'in') ||
+          (!in_array($this->getLogType($entity), $logTypes) && 
+           CRM_Utils_Array::value('log_type_op', $this->_params) == 'notin')) {
         $this->from( $entity );
         $sql = $this->buildQuery(false);
         $sql = str_replace("entity_log_civireport.log_type as", "'{$entity}' as", $sql);

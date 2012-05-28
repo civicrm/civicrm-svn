@@ -36,11 +36,11 @@
  */
 class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
   function __construct() {
-    $logTypes = array_keys($this->_logTables);
-    $logTypes = array_flip($logTypes);
-    foreach ( $logTypes as $table => &$type ) {
+    foreach ( array_keys($this->_logTables) as  $table ) {
       $type = $this->getLogType($table);
+      $logTypes[$type] = $type;
     }
+    asort($logTypes);
 
     $this->_columns = array(
       'log_civicrm_entity' => array(
