@@ -166,63 +166,19 @@ function _civicrm_api3_contact_create_spec(&$params) {
  *
  * @example ContactGet.php Standard GET example
  *
- * @todo EM 7 Jan 11 - does this return the number of contacts if required (replacement for deprecated contact_search_count function - if so is this tested?
  */
 function civicrm_api3_contact_get($params) {
+  $options = array();
+  _civicrm_api3_contact_get_supportanomalies($params, $options);
+  $contacts = _civicrm_api3_get_using_query_object($params,$options);
 
-  if (isset($params['showAll'])) {
-    if (strtolower($params['showAll']) == "active") {
-      $params['contact_is_deleted'] = 0;
-    }
-    if (strtolower($params['showAll']) == "trash") {
-      $params['contact_is_deleted'] = 1;
-    }
-    if (strtolower($params['showAll']) == "all" && isset($params['contact_is_deleted'])) {
-      unset($params['contact_is_deleted']);
-    }
-  }
-  // CRM-9890 get options from params should be the function that does all this sorting.
-  // we don't need to redefine these into variables below - can just use them in the array
-  // but it's going to make it easier to copy into the other functions so leave for now
-  //& tidy up in a later re-factor
-  $options          = _civicrm_api3_get_options_from_params($params, TRUE);
-  $sort             = CRM_Utils_Array::value('sort', $options, NULL);
-  $offset           = CRM_Utils_Array::value('offset', $options);
-  $rowCount         = CRM_Utils_Array::value('limit', $options);
-  $smartGroupCache  = CRM_Utils_Array::value('smartGroupCache', $params);
-  $inputParams      = CRM_Utils_Array::value('input_params', $options, array());
-  $returnProperties = CRM_Utils_Array::value('return', $options, NULL);
-
-
-  if (array_key_exists('filter_group_id', $params)) {
-    $params['filter.group_id'] = $params['filter_group_id'];
-    unset($params['filter_group_id']);
-  }
-  // filter.group_id works both for 1,2,3 and array (1,2,3)
-  if (array_key_exists('filter.group_id', $params)) {
-    if (is_array($params['filter.group_id'])) {
-      $groups = $params['filter.group_id'];
-    }
-    else $groups = explode(',', $params['filter.group_id']);
-    unset($params['filter.group_id']);
-    $groups = array_flip($groups);
-    $groups[key($groups)] = 1;
-    $inputParams['group'] = $groups;
-  }
-
-  require_once 'CRM/Contact/BAO/Query.php';
-  $newParams = CRM_Contact_BAO_Query::convertFormValues($inputParams);
-  list($contacts, $options) = CRM_Contact_BAO_Query::apiQuery($newParams,
-    $returnProperties,
-    NULL,
-    $sort,
-    $offset,
-    $rowCount,
-    $smartGroupCache
-  );
   // CRM-7929 Quick fix by colemanw
   // TODO: Figure out what function is responsible for prepending 'individual_' to these keys
   // and sort it out there rather than going to all this trouble here.
+  // Eileen's note - not sure anymore if we went the right path stripping the 'individual' here
+  // as is arguable whether it makes more sense now I think it would make more sense to rename
+  // the table field  or uniquefield to have
+  // the individual prefix but we are stuck with this for apiv3 series.
   $returnContacts = array();
   if (is_array($contacts)) {
     foreach ($contacts as $cid => $contact) {
@@ -244,6 +200,47 @@ function civicrm_api3_contact_get($params) {
  */
 function _civicrm_api3_contact_get_spec(&$params) {
   $params['contact_is_deleted']['api.default'] = 0;
+}
+
+/*
+ * We are supporting 'showAll' = 'all', 'trash' or 'active' for contact get
+ * and for getcount
+ * - hopefully some day we'll come up with a std syntax for the 3-way-boolean of
+ * 0, 1 or not set
+ *
+ * We also support 'filter_group_id' & 'filter.group_id'
+ *
+ * @param array $params as passed into api get or getcount function
+ * @param array $options array of options (so we can modify the filter)
+ */
+function _civicrm_api3_contact_get_supportanomalies(&$params, &$options) {
+  if (isset($params['showAll'])) {
+    if (strtolower($params['showAll']) == "active") {
+      $params['contact_is_deleted'] = 0;
+    }
+    if (strtolower($params['showAll']) == "trash") {
+      $params['contact_is_deleted'] = 1;
+    }
+    if (strtolower($params['showAll']) == "all" && isset($params['contact_is_deleted'])) {
+      unset($params['contact_is_deleted']);
+    }
+  }
+  // support for group filters
+  if (array_key_exists('filter_group_id', $params)) {
+    $params['filter.group_id'] = $params['filter_group_id'];
+    unset($params['filter_group_id']);
+  }
+  // filter.group_id works both for 1,2,3 and array (1,2,3)
+  if (array_key_exists('filter.group_id', $params)) {
+    if (is_array($params['filter.group_id'])) {
+      $groups = $params['filter.group_id'];
+    }
+    else $groups = explode(',', $params['filter.group_id']);
+    unset($params['filter.group_id']);
+    $groups = array_flip($groups);
+    $groups[key($groups)] = 1;
+    $options['input_params']['group'] = $groups;
+  }
 }
 
 /**

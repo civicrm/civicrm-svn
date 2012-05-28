@@ -336,7 +336,61 @@ function _civicrm_api3_store_values(&$fields, &$params, &$values) {
   }
   return $valueFound;
 }
+/*
+ * The API supports 2 types of get requestion. The more complex uses the BAO query object.
+ *  This is a generic function for those functions that call it
+ *
+ *  At the moment only called by contact we should extend to contribution &
+ *  others that use the query object
+ *
+ * @param array $params as passed into api get or getcount function
+ * @param array $options array of options (so we can modify the filter)
+ * @param bool $getCount are we just after the count
+ */
+function _civicrm_api3_get_using_query_object($params, $additional_options = array(),$getCount = null){
 
+  $options          = _civicrm_api3_get_options_from_params($params, TRUE);
+
+  $inputParams = array_merge(
+    CRM_Utils_Array::value('input_params', $options, array()),
+    CRM_Utils_Array::value('input_params', $additional_options, array())
+  );
+  $returnProperties = array_merge(
+    CRM_Utils_Array::value('return', $options, array()),
+    CRM_Utils_Array::value('return', $additional_options, array())
+  );
+  if(empty($returnProperties)){
+    $returnProperties = null;
+  }
+
+  $options = array_merge($options,$additional_options);
+  $sort             = CRM_Utils_Array::value('sort', $options, NULL);
+  $offset             = CRM_Utils_Array::value('offset', $options, NULL);
+  $limit             = CRM_Utils_Array::value('limit', $options, NULL);
+  $smartGroupCache  = CRM_Utils_Array::value('smartGroupCache', $params);
+
+  if($getCount){
+    $limit = NULL;
+    $returnProperties = NULL;
+  }
+
+  $newParams = CRM_Contact_BAO_Query::convertFormValues($inputParams);
+  list($entities, $options) = CRM_Contact_BAO_Query::apiQuery(
+    $newParams,
+    $returnProperties,
+    NULL,
+    $sort,
+    $offset ,
+    $limit,
+    $smartGroupCache,
+    $getCount
+  );
+  if ($getCount) { // only return the count of contacts
+    return $entities[0];
+  }
+
+  return $entities;
+}
 /*
  * Function transfers the filters being passed into the DAO onto the params object
  */
