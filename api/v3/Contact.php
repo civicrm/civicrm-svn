@@ -80,11 +80,11 @@ function civicrm_api3_contact_create($params) {
     }
   }
 
-  if ($homeUrl = CRM_Utils_Array::value('home_url', $params)) {
+  if (CRM_Utils_Array::value('home_url', $params)) {
     require_once 'CRM/Core/PseudoConstant.php';
     $websiteTypes = CRM_Core_PseudoConstant::websiteType();
     $params['website'] = array(1 => array('website_type_id' => key($websiteTypes),
-        'url' => $homeUrl,
+        'url' => $params['home_url'],
       ),
     );
   }
@@ -304,9 +304,9 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
     // contact_type has a limited number of valid values
     $fields = CRM_Utils_Array::value($params['contact_type'], $required);
 
-    if ($csType = CRM_Utils_Array::value('contact_sub_type', $params)) {
-      if (!(CRM_Contact_BAO_ContactType::isExtendsContactType($csType, $params['contact_type']))) {
-        return civicrm_api3_create_error("Invalid or Mismatched Contact SubType: " . implode(', ', (array)$csType));
+    if (CRM_Utils_Array::value('contact_sub_type', $params)) {
+      if (!(CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'], $params['contact_type']))) {
+        return civicrm_api3_create_error("Invalid or Mismatched Contact SubType: " . implode(', ', (array)$params['contact_sub_type']));
       }
     }
 
