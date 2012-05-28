@@ -72,7 +72,8 @@ class WebTest_Contact_UpdateProfileTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent($street), 'In line ' . __LINE__);
     $this->assertTrue($this->isTextPresent($city), 'In line ' . __LINE__);
     $this->assertTrue($this->isTextPresent($postalCode), 'In line ' . __LINE__);
-    $this->assertTrue($this->isElementPresent("//div[@id='profilewrap1']/div[@id='crm-container']/div[7]/div[2]/a[text()='AR']"));
+
+    $this->assertTrue($this->isElementPresent("//div[@id='profilewrap1']/div[@id='crm-container']/div[7]/div[2][contains(text(), 'AR')]"));
   }
 }
 
