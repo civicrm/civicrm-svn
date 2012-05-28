@@ -122,7 +122,9 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
     parent::where();
 
     list($offset, $rowCount) = $this->limit();
-    $this->_where .= " AND (log_action != 'Initialization') AND temp.id BETWEEN $offset AND $rowCount";
+    $tempClause    = ($offset && $rowCount) ? "AND temp.id BETWEEN $offset AND $rowCount" : null;
+
+    $this->_where .= " AND (log_action != 'Initialization') {$tempClause}";
 
     // unset limit
     $this->_limit = NULL;
