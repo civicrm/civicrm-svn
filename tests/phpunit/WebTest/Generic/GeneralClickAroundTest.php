@@ -100,6 +100,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
     $this->assertTextPresent("Find Groups");
     $this->assertElementPresent("title");
     $this->assertTextPresent("Access Control");
+    $this->waitForElementPresent('link=Settings');
     $this->assertTextPresent("Newsletter Subscribers");
     $this->assertTextPresent("Add Group");
   }
