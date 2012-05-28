@@ -148,7 +148,7 @@ WHERE {$clause} log_action != 'Initialization'";
       CRM_Core_DAO::executeQuery($sql);
     }
 
-    $logTypes = $this->_params['log_type_value'];
+    $logTypes = CRM_Utils_Array::value('log_type_value', $this->_params);
     unset($this->_params['log_type_value']);
     if ( empty($logTypes) ) {
       $logTypes = array_keys($this->_logTables);

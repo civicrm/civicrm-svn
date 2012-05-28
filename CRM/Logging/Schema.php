@@ -191,7 +191,7 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
 
   private function addReports() {
     $titles = array(
-      'logging/contact/detail' => ts('Contact Logging Report (Detail)'),
+      'logging/contact/detail' => ts('Logging Details'),
       'logging/contact/summary' => ts('Contact Logging Report (Summary)'),
       'logging/contribute/detail' => ts('Contribution Logging Report (Detail)'),
       'logging/contribute/summary' => ts('Contribution Logging Report (Summary)'),
@@ -211,6 +211,8 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
       $dao->report_id  = $report;
       $dao->title      = $titles[$report];
       $dao->permission = 'administer CiviCRM';
+      if ($report == 'logging/contact/summary') 
+        $dao->is_reserved = 1;
       $dao->insert();
     }
   }
