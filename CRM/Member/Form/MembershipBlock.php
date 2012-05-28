@@ -420,14 +420,9 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
           CRM_Core_DAO::commonRetrieve('CRM_Price_DAO_Field', $conditionParams, $pFIDs);
           if (!CRM_Utils_Array::value('id', $pFIDs)) {
             CRM_Price_BAO_Set::removeFrom('civicrm_contribution_page', $this->_id);
-            CRM_Price_BAO_Set::setIsActive($this->_memPriceSetId, '0');
+            CRM_Price_BAO_Set::setIsQuickConfig($this->_memPriceSetId, '0');
           }
           else {
-            $setParams = array();
-            $setParams['extends'] = CRM_Core_Component::getComponentID('CiviContribute');
-            $setParams['contribution_type_id'] = NULL;
-            $setParams['id'] = $this->_memPriceSetId;
-            $priceSet = CRM_Price_BAO_Set::create($setParams);
             CRM_Price_BAO_Field::setIsActive($params['mem_price_field_id'], '0');
           }
         }
