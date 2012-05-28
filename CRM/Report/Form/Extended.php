@@ -120,13 +120,13 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     }
     $selectedFields = array_keys($firstRow);
 
-    $alterfunctions = array();
+    $alterfunctions = $altermap = array();
     foreach ($this->_columns as $tablename => $table) {
       if (array_key_exists('fields', $table)) {
         foreach ($table['fields'] as $field => $specs) {
-
           if (in_array($tablename . '_' . $field, $selectedFields) && array_key_exists('alter_display', $specs)) {
             $alterfunctions[$tablename . '_' . $field] = $specs['alter_display'];
+            $altermap[$tablename . '_' . $field] = $field;
           }
         }
       }
@@ -139,7 +139,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     foreach ($rows as $index => & $row) {
       foreach ($row as $selectedfield => $value) {
         if (array_key_exists($selectedfield, $alterfunctions)) {
-          $rows[$index][$selectedfield] = $this->$alterfunctions[$selectedfield]($value, $row, $selectedfield);
+          $rows[$index][$selectedfield] = $this->$alterfunctions[$selectedfield]($value, $row, $selectedfield, $altermap[$selectedfield]);
         }
       }
     }
@@ -535,117 +535,148 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
 
   /*
      * function for adding address fields to construct function in reports
-     * @param bool $groupBy Add GroupBy? Not appropriate for detail report
-     * @param bool $orderBy Add GroupBy? Not appropriate for detail report
+     * @param array $options Options for the report
+     * - prefix prefix to add (e.g. 'honor' when getting address details for honor contact
+     * - prefix_label optional prefix lable eg. "Honoree " for front end
+     * - group_by enable these fields for group by - default false 
+     * - order_by enable these fields for order by
+     * - filters enable these fields for filtering
+     * - defaults - (is this working?) values to pre-populate
      * @return array address fields for construct clause
      */
-  function getAddressColumns($groupBy = TRUE, $orderBy = FALSE, $filters = TRUE, $defaults = array(
-    'country_id' => TRUE)) {
+  function getAddressColumns($options = array()) {
+    $defaultOptions = array(
+      'prefix' => '', 
+      'prefix_label' => '',
+      'group_by' => false,
+      'order_by' => true,
+      'filters' => true,
+      'defaults' => array(
+        'country_id' => TRUE
+      ),
+     );
+     
+    $options = array_merge($defaultOptions,$options);
+    
     $addressFields = array(
-      'civicrm_address' => array(
+      $options['prefix'] . 'civicrm_address' => array(
         'dao' => 'CRM_Core_DAO_Address',
+        'name' => 'civicrm_address',
+        'alias' => $options['prefix'] . 'civicrm_address',
         'fields' => array(
-          'name' => array(
-            'title' => ts('Address Name'),
-            'default' => CRM_Utils_Array::value('name', $defaults, FALSE),
+          $options['prefix'] . 'name' => array(
+            'title' => ts($options['prefix_label'] . 'Address Name'),
+            'default' => CRM_Utils_Array::value('name', $options['defaults'], FALSE),
+            'name' => 'name',
           ),
-          'street_address' => array(
-            'title' => ts('Street Address'),
-            'default' => CRM_Utils_Array::value('street_address', $defaults, FALSE),
+          $options['prefix'] . 'street_address' => array(
+            'title' => ts($options['prefix_label'] . 'Street Address'),
+            'default' => CRM_Utils_Array::value('street_address', $options['defaults'], FALSE),
+            'name' => 'street_address',
           ),
-          'supplemental_address_1' => array(
-            'title' => ts('Supplementary Address Field 1'),
-            'default' => CRM_Utils_Array::value('supplemental_address_1', $defaults, FALSE),
+          $options['prefix'] . 'supplemental_address_1' => array(
+            'title' => ts($options['prefix_label'] . 'Supplementary Address Field 1'),
+            'default' => CRM_Utils_Array::value('supplemental_address_1', $options['defaults'], FALSE),
+            'name' => 'supplemental_address_1',
           ),
-          'supplemental_address_2' => array(
-            'title' => ts('Supplementary Address Field 2'),
-            'default' => CRM_Utils_Array::value('supplemental_address_2', $defaults, FALSE),
+          $options['prefix'] . 'supplemental_address_2' => array(
+            'title' => ts($options['prefix_label'] . 'Supplementary Address Field 2'),
+            'default' => CRM_Utils_Array::value('supplemental_address_2', $options['defaults'], FALSE),
+            'name' => 'supplemental_address_2',
           ),
-          'street_number' => array(
+          $options['prefix'] . 'street_number' => array(
             'name' => 'street_number',
-            'title' => ts('Street Number'),
+            'title' => ts($options['prefix_label'] . 'Street Number'),
             'type' => 1,
-            'default' => CRM_Utils_Array::value('street_number', $defaults, FALSE),
+            'default' => CRM_Utils_Array::value('street_number', $options['defaults'], FALSE),
+            'name' => 'street_number',
           ),
-          'street_name' => array(
+          $options['prefix'] . 'street_name' => array(
             'name' => 'street_name',
-            'title' => ts('Street Name'),
+            'title' => ts($options['prefix_label'] . 'Street Name'),
             'type' => 1,
-            'default' => CRM_Utils_Array::value('street_name', $defaults, FALSE),
+            'default' => CRM_Utils_Array::value('street_name', $options['defaults'], FALSE),
+            'name' => 'street_name',
           ),
-          'street_unit' => array(
+          $options['prefix'] . 'street_unit' => array(
             'name' => 'street_unit',
-            'title' => ts('Street Unit'),
+            'title' => ts($options['prefix_label'] . 'Street Unit'),
             'type' => 1,
-            'default' => CRM_Utils_Array::value('street_unit', $defaults, FALSE),
+            'default' => CRM_Utils_Array::value('street_unit', $options['defaults'], FALSE),
+            'name' => 'street_unit',
           ),
-          'city' => array(
-            'title' => ts('City'),
-            'default' => CRM_Utils_Array::value('city', $defaults, FALSE),
+          $options['prefix'] . 'city' => array(
+            'title' => ts($options['prefix_label'] . 'City'),
+            'default' => CRM_Utils_Array::value('city', $options['defaults'], FALSE),
+            'name' => 'city',
           ),
-          'postal_code' => array(
-            'title' => ts('Postal Code'),
-            'default' => CRM_Utils_Array::value('postal_code', $defaults, FALSE),
+          $options['prefix'] . 'postal_code' => array(
+            'title' => ts($options['prefix_label'] . 'Postal Code'),
+            'default' => CRM_Utils_Array::value('postal_code', $options['defaults'], FALSE),
+            'name' => 'postal_code',
           ),
-          'county_id' => array(
-            'title' => ts('County'),
-            'default' => CRM_Utils_Array::value('county_id', $defaults, FALSE),
+          $options['prefix'] . 'county_id' => array(
+            'title' => ts($options['prefix_label'] . 'County'),
+            'default' => CRM_Utils_Array::value('county_id', $options['defaults'], FALSE),
             'alter_display' => 'alterCountyID',
+            'name' => 'county_id',
           ),
-          'state_province_id' => array(
-            'title' => ts('State/Province'),
-            'default' => CRM_Utils_Array::value('state_province_id', $defaults, FALSE),
+          $options['prefix'] . 'state_province_id' => array(
+            'title' => ts($options['prefix_label'] . 'State/Province'),
+            'default' => CRM_Utils_Array::value('state_province_id', $options['defaults'], FALSE),
             'alter_display' => 'alterStateProvinceID',
+            'name' =>  'state_province_id',
           ),
-          'country_id' => array(
-            'title' => ts('Country'),
-            'default' => CRM_Utils_Array::value('country_id', $defaults, FALSE),
+          $options['prefix'] . 'country_id' => array(
+            'title' => ts($options['prefix_label'] . 'Country'),
+            'default' => CRM_Utils_Array::value('country_id', $options['defaults'], FALSE),
             'alter_display' => 'alterCountryID',
+            'name' => 'country_id',
           ),
         ),
         'grouping' => 'location-fields',
       ),
     );
 
-    if ($filters) {
-      $addressFields['civicrm_address']['filters'] = array(
-        'street_number' => array(
-          'title' => ts('Street Number'),
+    if ($options['filters']) {
+      $addressFields[$options['prefix'] .'civicrm_address']['filters'] = array(
+        $options['prefix'] . 'street_number' => array(
+          'title' => ts($options['prefix_label'] . 'Street Number'),
           'type' => 1,
           'name' => 'street_number',
         ),
-        'street_name' => array(
-          'title' => ts('Street Name'),
-          'name' => 'street_name',
+        $options['prefix'] . 'street_name' => array(
+          'title' => ts($options['prefix_label'] . 'Street Name'),
+          'name' => $options['prefix'] . 'street_name',
           'operator' => 'like',
         ),
-        'postal_code' => array(
-          'title' => ts('Postal Code'),
+        $options['prefix'] . 'postal_code' => array(
+          'title' => ts($options['prefix_label'] . 'Postal Code'),
           'type' => 1,
           'name' => 'postal_code',
         ),
-        'city' => array(
-          'title' => ts('City'),
+        $options['prefix'] . 'city' => array(
+          'title' => ts($options['prefix_label'] . 'City'),
           'operator' => 'like',
           'name' => 'city',
         ),
-        'county_id' => array(
+        $options['prefix'] . 'county_id' => array(
           'name' => 'county_id',
-          'title' => ts('County'),
+          'title' => ts($options['prefix_label'] . 'County'),
           'type' => CRM_Utils_Type::T_INT,
           'operatorType' => CRM_Report_Form::OP_MULTISELECT,
           'options' => CRM_Core_PseudoConstant::county(),
         ),
-        'state_province_id' => array(
+        $options['prefix'] . 'state_province_id' => array(
           'name' => 'state_province_id',
-          'title' => ts('State/Province'),
+          'title' => ts($options['prefix_label'] . 'State/Province'),
           'type' => CRM_Utils_Type::T_INT,
           'operatorType' => CRM_Report_Form::OP_MULTISELECT,
           'options' => CRM_Core_PseudoConstant::stateProvince(),
         ),
-        'country_id' => array(
+        $options['prefix'] . 'country_id' => array(
           'name' => 'country_id',
-          'title' => ts('Country'),
+          'title' => ts($options['prefix_label'] . 'Country'),
           'type' => CRM_Utils_Type::T_INT,
           'operatorType' => CRM_Report_Form::OP_MULTISELECT,
           'options' => CRM_Core_PseudoConstant::country(),
@@ -653,33 +684,56 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
       );
     }
 
-    if ($orderBy) {
-      $addressFields['civicrm_address']['order_bys'] = array(
-        'street_name' => array(
-          'title' => ts('Street Name'),
+    if ($options['order_by']) {
+      $addressFields[$options['prefix'] . 'civicrm_address']['order_bys'] = array(
+        $options['prefix'] . 'street_name' => array(
+          'title' => ts($options['prefix_label'] . 'Street Name'),
+          'name' => 'street_name',
         ),
-        'street_number' => array(
-          'title' => 'Odd / Even Street Number',
+        $options['prefix'] . 'street_number' => array(
+          'title' => ts($options['prefix_label'] . 'Odd / Even Street Number'),
+          'name' => 'street_number',
         ),
-        'street_address' => NULL,
-        'city' => NULL,
-        'postal_code' => NULL,
+        $options['prefix'] . 'street_address' => array(
+          'title' => ts($options['prefix_label'] . 'Street Address'),
+          'name' => 'street_address',
+        ),
+        $options['prefix'] . 'city' => array(
+          'title' => ts($options['prefix_label'] . 'City'),
+          'name' => 'city',
+        ),
+        $options['prefix'] . 'postal_code' => array(
+          'title' => ts($options['prefix_label'] . 'Post Code'),
+          'name' => 'postal_code',
+        ),
       );
     }
 
-    if ($groupBy) {
+    if ($options['group_by']) {
       $addressFields['civicrm_address']['group_bys'] = array(
-        'street_address' => NULL,
-        'city' => NULL,
-        'postal_code' => NULL,
-        'state_province_id' => array(
-          'title' => ts('State/Province'),
+        $options['prefix'] . 'street_address' => array(
+          'title' => ts($options['prefix_label'] . 'Street Address'),
+          'name' => 'street_address',
         ),
-        'country_id' => array(
-          'title' => ts('Country'),
+        $options['prefix'] . 'city' => array(
+          'title' => ts($options['prefix_label'] . 'City'),
+          'name' => 'city',
         ),
-        'county_id' => array(
-          'title' => ts('County'),
+        $options['prefix'] . 'postal_code' => array(
+          'title' => ts($options['prefix_label'] . 'Post Code'),
+          'name' => 'postal_code',
+        ),
+        $options['prefix'] . 'state_province_id' => array(
+          'title' => ts($options['prefix_label'] . 'State/Province'),
+          'name' => 'state_province_id',
+        ),
+        $options['prefix'] . 'country_id' => array(
+          'title' => ts($options['prefix_label'] . 'Country'),
+          'name' => 'country_id',
+        ),
+        $options['prefix'] . 'county_id' => array(
+          'title' => ts($options['prefix_label'] . 'County'),
+          'name' => 'county_id',
         ),
       );
     }
@@ -774,9 +828,13 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     );
   }
 
-  function joinAddressFromContact() {
-    $this->_from .= " LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']}
-      ON {$this->_aliases['civicrm_address']}.contact_id = {$this->_aliases['civicrm_contact']}.id";
+  /*
+   * Add join from contact table to address. Prefix will be added to both tables
+   * as it's assumed you are using it to get address of a secondary contact
+   */
+  function joinAddressFromContact( $prefix = '') {
+    $this->_from .= " LEFT JOIN civicrm_address {$this->_aliases[$prefix . 'civicrm_address']}
+      ON {$this->_aliases[$prefix . 'civicrm_address']}.contact_id = {$this->_aliases[$prefix . 'civicrm_contact']}.id";
   }
 
   function joinPriceFieldValueFromLineItem() {
@@ -868,11 +926,11 @@ LEFT JOIN civicrm_contribution contribution_civireport_direct
                        ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = contribution_civireport_direct.id AND line_item_civireport.entity_table = 'civicrm_contribution')
 
 
-WHERE 	contribution_civireport_direct.id IS NOT NULL
+WHERE  contribution_civireport_direct.id IS NOT NULL
 
 UNION SELECT line_item_civireport.id as lid, contribution_civireport.*
-			FROM civicrm_line_item line_item_civireport
-			LEFT JOIN civicrm_participant participant_civireport
+  FROM civicrm_line_item line_item_civireport
+  LEFT JOIN civicrm_participant participant_civireport
                           ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id = participant_civireport.id AND line_item_civireport.entity_table = 'civicrm_participant')
 
 LEFT JOIN civicrm_participant_payment pp
@@ -881,8 +939,8 @@ LEFT JOIN civicrm_participant_payment pp
                           ON pp.contribution_id = contribution_civireport.id
 
 UNION SELECT line_item_civireport.id as lid,contribution_civireport.*
-			FROM civicrm_line_item line_item_civireport
-			LEFT JOIN civicrm_membership membership_civireport
+  FROM civicrm_line_item line_item_civireport
+  LEFT JOIN civicrm_membership membership_civireport
                           ON (line_item_civireport.line_total > 0 AND line_item_civireport.entity_id =membership_civireport.id AND line_item_civireport.entity_table = 'civicrm_membership')
 
 LEFT JOIN civicrm_membership_payment pp
@@ -1007,22 +1065,41 @@ WHERE 	line_item_civireport.id IS NOT NULL
     return is_string(CRM_Member_PseudoConstant::membershipStatus($value, FALSE)) ? CRM_Member_PseudoConstant::membershipStatus($value, FALSE) : '';
   }
 
-  function alterCountryID($value, &$row) {
-    return CRM_Core_PseudoConstant::country($value, FALSE);
+  function alterCountryID($value, &$row, $selectedfield, $criteriaFieldName) {
+    $url = CRM_Utils_System::url(CRM_Utils_System::currentPath(), "reset=1&force=1&{$criteriaFieldName}_op=in&{$criteriaFieldName}_value={$value}", $this->_absoluteUrl);
+    $row[$selectedfield . '_link'] = $url;
+    $row[$selectedfield . '_hover'] = ts("%1 for this country.", array(
+        1 => $value,
+      ));
+    $countries =  CRM_Core_PseudoConstant::country($value, FALSE);
+    if(!is_array($countries)){
+      return $countries;
+    }
   }
 
-  function alterCountyID($value, &$row) {
-    return CRM_Core_PseudoConstant::county($value, FALSE);
+  function alterCountyID($value, &$row,$selectedfield, $criteriaFieldName) {
+    $url = CRM_Utils_System::url(CRM_Utils_System::currentPath(), "reset=1&force=1&{$criteriaFieldName}_op=in&{$criteriaFieldName}_value={$value}", $this->_absoluteUrl);
+    $row[$selectedfield . '_link'] = $url;
+    $row[$selectedfield . '_hover'] = ts("%1 for this county.", array(
+        1 => $value,
+      ));
+    $counties = CRM_Core_PseudoConstant::county($value, FALSE);
+    if(!is_array($counties)){
+      return $counties;
+    }
   }
 
-  function alterStateProvinceID($value, &$row) {
-    $url = CRM_Utils_System::url(CRM_Utils_System::currentPath(), "reset=1&force=1&state_province_id_op=in&state_province_id_value={$value}", $this->_absoluteUrl);
-    $row['civicrm_address_state_province_id_link'] = $url;
-    $row['civicrm_address_state_province_id_hover'] = ts("%1 for this state.", array(
+  function alterStateProvinceID($value, &$row, $selectedfield, $criteriaFieldName) {
+    $url = CRM_Utils_System::url(CRM_Utils_System::currentPath(), "reset=1&force=1&{$criteriaFieldName}_op=in&{$criteriaFieldName}_value={$value}", $this->_absoluteUrl);
+    $row[$selectedfield . '_link'] = $url;
+    $row[$selectedfield . '_hover'] = ts("%1 for this state.", array(
         1 => $value,
       ));
 
-    return CRM_Core_PseudoConstant::stateProvince($value, FALSE);
+    $states =  CRM_Core_PseudoConstant::stateProvince($value, FALSE);
+    if(!is_array($states)){
+      return $states;
+    }
   }
 
   function alterContactID($value, &$row, $fieldname) {
