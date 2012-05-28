@@ -140,13 +140,13 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
     //asser that the success text is present
     $this->assertTrue($this->isTextPresent("has been moved"), "Move field success message not displayed");
 
-    //assert that the custom field not on old data set page
-    $this->assertTrue(!$this->isElementPresent("row_" . $field_to_move), "The moved custom field still displays on the old fieldset page");
+    //assert that the custom field not on old data set page 
+    $this->assertTrue(!$this->isElementPresent("CustomField-" . $field_to_move), "The moved custom field still displays on the old fieldset page");
 
     //go to the destination fieldset and make sure the field is present
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?reset=1&action=browse&gid=" . $to_group_id);
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isElementPresent("row_" . $field_to_move), "The moved custom field does not display on the new fieldset page");
+    $this->assertTrue($this->isElementPresent("CustomField-" . $field_to_move), "The moved custom field does not display on the new fieldset page");
   }
 
   //create a contact and return the contact id
