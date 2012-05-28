@@ -45,6 +45,7 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Logging_ReportDetail {
     $this->tables[] = 'civicrm_openid';
     $this->tables[] = 'civicrm_website';
     $this->tables[] = 'civicrm_address';
+    $this->tables[] = 'civicrm_note';
 
     $this->detail = 'logging/contact/detail';
     $this->summary = 'logging/contact/summary';

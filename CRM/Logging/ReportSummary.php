@@ -42,9 +42,15 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
                  ),
           'log_civicrm_email' => 
           array( 'fk'  => 'contact_id',
+                 'log_type' => 'Contact', 
                  ),
           'log_civicrm_phone' => 
           array( 'fk'  => 'contact_id',
+                 'log_type' => 'Contact', 
+                 ),
+          'log_civicrm_address' => 
+          array( 'fk'  => 'contact_id',
+                 'log_type' => 'Contact', 
                  ),
           'log_civicrm_note' => 
           array( 'fk'  => 'entity_id',
@@ -56,6 +62,7 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
                  'dao_column'    => 'title',
                  'entity_column' => 'group_id',
                  'action_column' => 'status', 
+                 'log_type'      => 'Group', 
                  ),
           'log_civicrm_entity_tag' => 
           array( 'fk'  => 'entity_id',
@@ -63,6 +70,12 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
                  'dao_column'    => 'name',
                  'entity_column' => 'tag_id', 
                  'entity_table'  => true 
+                 ),
+          'log_civicrm_relationship' => 
+          array( 'fk'  => 'contact_id_a',
+                 'entity_column' => 'relationship_type_id', 
+                 'dao' => 'CRM_Contact_DAO_RelationshipType',
+                 'dao_column' => 'label_a_b',
                  ),
            );
 
@@ -161,8 +174,8 @@ WHERE {$clause} log_action != 'Initialization'";
   }
 
   function getLogType( $entity ) {
-    if ( $entity == 'log_civicrm_group_contact' ) {
-      $entity = 'log_civicrm_group';
+    if (CRM_Utils_Array::value('log_type', $this->_logTables[$entity])) {
+      return $this->_logTables[$entity]['log_type'];
     }
     $logType = ucfirst(substr($entity, strrpos($entity, '_') + 1));
     return $logType;

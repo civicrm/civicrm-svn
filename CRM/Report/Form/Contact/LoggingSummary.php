@@ -71,6 +71,12 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
             'title' => ts('Altered Contact'),
             'alias' => 'modified_contact_civireport',
           ),
+          'altered_contact_id' => array(
+            'name' => 'id',
+            'no_display' => TRUE,
+            'required' => TRUE,
+            'alias'    => 'modified_contact_civireport',
+          ),
           'log_conn_id' => array(
             'no_display' => TRUE,
             'required' => TRUE,
@@ -118,14 +124,14 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
         'dao'   => 'CRM_Contact_DAO_Contact',
         'alias' => 'altered_by_contact',
         'fields' => array(
-          'altered_by' => array(
+          'display_name' => array(
             'default' => TRUE,
             'name' => 'display_name',
             'title' => ts('Altered By'),
           ),
         ),
         'filters' => array(
-          'altered_by' => array(
+          'display_name' => array(
             'name' => 'display_name',
             'title' => ts('Altered By'),
             'type' => CRM_Utils_Type::T_STRING,
@@ -142,19 +148,21 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
     $newRows   = array();
 
     foreach ($rows as $key => &$row) {
-      if (!isset($isDeleted[$row['log_civicrm_entity_id']])) {
-        $isDeleted[$row['log_civicrm_entity_id']] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $row['log_civicrm_entity_id'], 'is_deleted') !== '0';
+      if (!isset($isDeleted[$row['log_civicrm_entity_altered_contact_id']])) {
+        $isDeleted[$row['log_civicrm_entity_altered_contact_id']] = 
+          CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $row['log_civicrm_entity_altered_contact_id'], 'is_deleted') !== '0';
       }
 
-      if (!$isDeleted[$row['log_civicrm_entity_id']]) {
-        $row['log_civicrm_entity_altered_contact_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_entity_id']);
+      if (!$isDeleted[$row['log_civicrm_entity_altered_contact_id']]) {
+        $row['log_civicrm_entity_altered_contact_link'] = 
+          CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_entity_altered_contact_id']);
         $row['log_civicrm_entity_altered_contact_hover'] = ts("Go to contact summary");
         $entity = $this->getEntityValue($row['log_civicrm_entity_id'], $row['log_civicrm_entity_log_type']);
         if ($entity)
           $row['log_civicrm_entity_altered_contact'] = $row['log_civicrm_entity_altered_contact'] . " [{$entity}]";
       }
-      $row['civicrm_contact_altered_by_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_entity_log_user_id']);
-      $row['civicrm_contact_altered_by_hover'] = ts("Go to contact summary");
+      $row['altered_by_contact_display_name_link'] = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_entity_log_user_id']);
+      $row['altered_by_contact_display_name_hover'] = ts("Go to contact summary");
 
       if ($row['log_civicrm_entity_is_deleted'] and $row['log_civicrm_entity_log_action'] == 'Update') {
         $row['log_civicrm_entity_log_action'] = ts('Delete (to trash)');
