@@ -153,6 +153,7 @@ class CRM_Logging_Differ {
       'civicrm_phone' => 'CRM_Core_DAO_Phone',
       'civicrm_website' => 'CRM_Core_DAO_Website',
       'civicrm_contribution' => 'CRM_Contribute_DAO_Contribution',
+      'civicrm_note' => 'CRM_Core_DAO_Note',
     );
 
     if (!isset($titles[$table]) or !isset($values[$table])) {

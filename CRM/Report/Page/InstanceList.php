@@ -48,6 +48,8 @@ class CRM_Report_Page_InstanceList extends CRM_Core_Page {
    */
   static $_links = NULL;
 
+  static $_exceptions = array( 'logging/contact/detail' );
+
   public static function &info($ovID = NULL, &$title = NULL) {
 
     $report = '';
@@ -79,6 +81,10 @@ class CRM_Report_Page_InstanceList extends CRM_Core_Page {
     $rows   = array();
     $url    = 'civicrm/report/instance';
     while ($dao->fetch()) {
+      if (in_array($dao->report_id, self::$_exceptions)) {
+        continue;
+      }
+
       $enabled = in_array("Civi{$dao->compName}", $config->enableComponents);
       if ($dao->compName == 'Contact') {
         $enabled = TRUE;

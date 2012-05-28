@@ -389,3 +389,7 @@ VALUES
 -- CRM-10117 
 ALTER TABLE `civicrm_price_field_value` CHANGE `is_active` `is_active` TINYINT( 4 ) NULL DEFAULT '1' COMMENT 'Is this price field value active';
 
+-- CRM-10150
+SELECT @instanceID := id FROM civicrm_report_instance WHERE report_id = 'logging/contact/detail' LIMIT 1;
+SELECT @url := CONCAT('civicrm/report/instance/', @instanceID,'&reset=1');
+DELETE FROM civicrm_navigation WHERE url = '@url' LIMIT 1;

@@ -186,11 +186,12 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
 
     // let the template know who updated whom when
     $dao = CRM_Core_DAO::executeQuery($this->whoWhomWhenSql(), $params);
-    $dao->fetch();
-    $this->assign('who_url', CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->who_id}"));
-    $this->assign('whom_url', CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->whom_id}"));
-    $this->assign('who_name', $dao->who_name);
-    $this->assign('whom_name', $dao->whom_name);
+    if ($dao->fetch()) {
+      $this->assign('who_url', CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->who_id}"));
+      $this->assign('whom_url', CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->whom_id}"));
+      $this->assign('who_name', $dao->who_name);
+      $this->assign('whom_name', $dao->whom_name);
+    }
     $this->assign('log_date', $this->log_date);
 
     $q = "reset=1&log_conn_id={$this->log_conn_id}&log_date={$this->log_date}";
