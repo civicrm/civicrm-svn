@@ -63,6 +63,13 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     $this->contributionTypeDelete();
     $this->contactDelete($this->_individualId);
+    $this->quickCleanup(array(
+      'civicrm_contribution',
+      'civicrm_event',
+      'civicrm_participant',
+      'civicrm_contact',
+      'civicrm_participant_payment',
+    ));
   }
 
   ///////////////// civicrm_contribution_get methods
@@ -392,7 +399,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   /*
      * This is the test for creating soft credits - however a 'get' is not yet possible via API
      * as the current BAO functions are contact-centric (from what I can find)
-     * 
+     *
      */
   function testCreateContributionWithSoftCredt() {
     $description = "Demonstrates creating contribution with SoftCredit";
@@ -661,7 +668,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       )
     );
   }
-  
+
   /*
    * Test sending a mail via the API
    */
@@ -696,11 +703,11 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'Event',
         'To: "Mr. Anthony Anderson II" <anthony_anderson@civicrm.org>',
       ), array(
-        
+
       )
     );
   }
-  
+
   ///////////////  _civicrm_contribute_format_params for $create
   function testFormatParams() {
     require_once 'CRM/Contribute/DAO/Contribution.php';
