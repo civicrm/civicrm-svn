@@ -138,20 +138,32 @@ CREATE TEMPORARY TABLE
                                             contact_id int, UNIQUE UI_id (contact_id) ) ENGINE=HEAP";
     CRM_Core_DAO::executeQuery($sql);
 
+    $logDateClause = $this->dateClause('log_date', 
+                                       CRM_Utils_Array::value("log_date_relative",  $this->_params), 
+                                       CRM_Utils_Array::value("log_date_from",      $this->_params), 
+                                       CRM_Utils_Array::value("log_date_to",        $this->_params), 
+                                       CRM_Utils_Type::T_DATE, 
+                                       CRM_Utils_Array::value("log_date_from_time", $this->_params), 
+                                       CRM_Utils_Array::value("log_date_to_time",   $this->_params));
+    $logDateClause = $logDateClause ? "AND {$logDateClause}" : null;
+
     foreach ( $this->_logTables as $entity => $detail ) {
       $clause = CRM_Utils_Array::value('entity_table', $detail);
       $clause = $clause ? "entity_table = 'civicrm_contact' AND" : null;
       $sql    = "
 INSERT IGNORE INTO civicrm_temp_civireport_logsummary ( contact_id ) 
 SELECT DISTINCT {$detail['fk']} FROM {$entity}
-WHERE {$clause} log_action != 'Initialization'";
+WHERE {$clause} log_action != 'Initialization' {$logDateClause}";
       CRM_Core_DAO::executeQuery($sql);
     }
 
     $logTypes = CRM_Utils_Array::value('log_type_value', $this->_params);
     unset($this->_params['log_type_value']);
     if ( empty($logTypes) ) {
-      $logTypes = array_keys($this->_logTables);
+      foreach ( array_keys($this->_logTables) as  $table ) {
+        $type = $this->getLogType($table);
+        $logTypes[$type] = $type;
+      }
     }
 
     foreach ( $this->_logTables as $entity => $detail ) {
