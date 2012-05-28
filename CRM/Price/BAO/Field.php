@@ -300,9 +300,17 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if (in_array($optionKey, $feezeOptions)) {
           $element->freeze();
         }
-
+        
+        //CRM-10117
+        if ($qf->_quickConfig) {
+          $message = ts("Please enter a valid amount.");
+          $type = "money";
+        } else {
+          $message = ts('%1 must be an integer (whole number).', array(1 => $label));
+          $type = "positiveInteger";          
+        }
         // integers will have numeric rule applied to them.
-        $qf->addRule($elementName, ts('%1 must be an integer (whole number).', array(1 => $label)), 'positiveInteger');
+        $qf->addRule($elementName, $message, $type);
         break;
 
       case 'Radio':
