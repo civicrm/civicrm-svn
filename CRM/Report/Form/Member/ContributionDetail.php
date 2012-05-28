@@ -191,7 +191,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
       ),
       'first_donation' => array(
         'dao' => 'CRM_Contribute_DAO_Contribution',
-        'fields' => 
+        'fields' =>
         array(
           'first_donation_date' => array(
             'title' => ts('First Contribution Date'),
@@ -399,7 +399,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
         ),
         'grouping' => 'member-fields',
       ),
-      'civicrm_note' => 
+      'civicrm_note' =>
       array(
         'dao' => 'CRM_Core_DAO_Note',
         'fields' =>
@@ -431,7 +431,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
       $this->_columns['civicrm_batch']['dao'] = 'CRM_Core_DAO_Batch';
       $this->_columns['civicrm_batch']['fields']['batch_id'] = array(
         'name' => 'id',
-        'title' => ts('Batch Name'),        
+        'title' => ts('Batch Name'),
       );
       $this->_columns['civicrm_batch']['filters']['bid'] = array(
         'name' => 'id',
@@ -442,7 +442,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
       );
       $this->_columns['civicrm_entity_batch']['dao'] = 'CRM_Core_DAO_EntityBatch';
       $this->_columns['civicrm_entity_batch']['fields']['entity_batch_id'] = array(
-        'name' => 'batch_id',    
+        'name' => 'batch_id',
         'default' => TRUE,
         'no_display' => TRUE,
       );
@@ -541,30 +541,30 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
   function from() {
 
     $this->_from = "
-        FROM  civicrm_contribution {$this->_aliases['civicrm_contribution']} 
+        FROM  civicrm_contribution {$this->_aliases['civicrm_contribution']}
               INNER JOIN civicrm_contact  {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
-                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0 
+                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0
               LEFT JOIN civicrm_membership_payment {$this->_aliases['civicrm_membership_payment']}
  ON {$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_membership_payment']}.contribution_id
 
               LEFT JOIN civicrm_membership {$this->_aliases['civicrm_membership']}
- ON {$this->_aliases['civicrm_membership_payment']}.membership_id = {$this->_aliases['civicrm_membership']}.id AND {$this->_aliases['civicrm_membership']}.is_test = 0 
+ ON {$this->_aliases['civicrm_membership_payment']}.membership_id = {$this->_aliases['civicrm_membership']}.id AND {$this->_aliases['civicrm_membership']}.is_test = 0
               LEFT  JOIN civicrm_membership_status {$this->_aliases['civicrm_membership_status']}
-                          ON {$this->_aliases['civicrm_membership_status']}.id = 
-                             {$this->_aliases['civicrm_membership']}.status_id 
+                          ON {$this->_aliases['civicrm_membership_status']}.id =
+                             {$this->_aliases['civicrm_membership']}.status_id
 ";
-    
+
     //for premiums
     if (CRM_Utils_Array::value('product_name', $this->_params['fields']) || CRM_Utils_Array::value('product_option', $this->_params['fields'])) {
       $this->_from .= "
-                 LEFT JOIN  civicrm_contribution_product {$this->_aliases['civicrm_contribution_product']} 
+                 LEFT JOIN  civicrm_contribution_product {$this->_aliases['civicrm_contribution_product']}
                         ON ({$this->_aliases['civicrm_contribution_product']}.contribution_id = {$this->_aliases['civicrm_contribution']}.id)
                  LEFT JOIN  civicrm_product {$this->_aliases['civicrm_product']} ON ({$this->_aliases['civicrm_product']}.id = {$this->_aliases['civicrm_contribution_product']}.product_id)";
     }
-    
+
     if (!empty($this->_params['ordinality_value'])) {
       $this->_from .= "
-              INNER JOIN (SELECT c.id, IF(COUNT(oc.id) = 0, 0, 1) AS ordinality FROM civicrm_contribution c LEFT JOIN civicrm_contribution oc ON c.contact_id = oc.contact_id AND oc.receive_date < c.receive_date GROUP BY c.id) {$this->_aliases['civicrm_contribution_ordinality']} 
+              INNER JOIN (SELECT c.id, IF(COUNT(oc.id) = 0, 0, 1) AS ordinality FROM civicrm_contribution c LEFT JOIN civicrm_contribution oc ON c.contact_id = oc.contact_id AND oc.receive_date < c.receive_date GROUP BY c.id) {$this->_aliases['civicrm_contribution_ordinality']}
                       ON {$this->_aliases['civicrm_contribution_ordinality']}.id = {$this->_aliases['civicrm_contribution']}.id";
     }
 
@@ -575,47 +575,47 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
                       ON ( {$this->_aliases['civicrm_note']}.entity_table = 'civicrm_contribution' AND
                            {$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_note']}.entity_id )";
     }
-      
+
     $this->_from .= "
-               LEFT JOIN  civicrm_phone {$this->_aliases['civicrm_phone']} 
-                      ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND 
+               LEFT JOIN  civicrm_phone {$this->_aliases['civicrm_phone']}
+                      ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND
                          {$this->_aliases['civicrm_phone']}.is_primary = 1)";
 
     //for contribution batches
     if ($this->_closedBatches && CRM_Utils_Array::value('batch_id', $this->_params['fields'])) {
       $this->_from .= "
-                 LEFT JOIN  civicrm_entity_batch {$this->_aliases['civicrm_entity_batch']} 
+                 LEFT JOIN  civicrm_entity_batch {$this->_aliases['civicrm_entity_batch']}
                         ON ({$this->_aliases['civicrm_entity_batch']}.entity_id = {$this->_aliases['civicrm_contribution']}.id AND
                         {$this->_aliases['civicrm_entity_batch']}.entity_table = 'civicrm_contribution')
-                 LEFT JOIN civicrm_batch {$this->_aliases['civicrm_batch']} 
+                 LEFT JOIN civicrm_batch {$this->_aliases['civicrm_batch']}
                         ON {$this->_aliases['civicrm_batch']}.id = {$this->_aliases['civicrm_entity_batch']}.batch_id";
     }
-    
+
     if ($this->_addressField OR (!empty($this->_params['state_province_id_value']) OR !empty($this->_params['country_id_value']))) {
       $this->_from .= "
-            LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
-                   ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND 
+            LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']}
+                   ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id AND
                       {$this->_aliases['civicrm_address']}.is_primary = 1\n";
     }
 
     if ($this->_emailField) {
-      $this->_from .= " 
-            LEFT JOIN civicrm_email {$this->_aliases['civicrm_email']} 
-                   ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND 
+      $this->_from .= "
+            LEFT JOIN civicrm_email {$this->_aliases['civicrm_email']}
+                   ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND
                       {$this->_aliases['civicrm_email']}.is_primary = 1\n";
     }
 
     // include Honor name field
     if ($this->_nameFieldHonor) {
       $this->_from .= "
-            LEFT JOIN civicrm_contact contacthonor 
+            LEFT JOIN civicrm_contact contacthonor
                       ON contacthonor.id = {$this->_aliases['civicrm_contribution']}.honor_contact_id";
     }
-    
+
     // include Honor email field
     if ($this->_emailFieldHonor) {
       $this->_from .= "
-            LEFT JOIN civicrm_email emailhonor 
+            LEFT JOIN civicrm_email emailhonor
                       ON emailhonor.contact_id = {$this->_aliases['civicrm_contribution']}.honor_contact_id
                       AND emailhonor.is_primary = 1\n";
     }
@@ -712,13 +712,13 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
               }
             }
           }
-        }    
+        }
       }
 
       if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
         $repeatFound = FALSE;
-        
-        
+
+
         $display_flag = NULL;
         if (array_key_exists('civicrm_contact_id', $row)) {
           if ($cid = $row['civicrm_contact_id']) {
@@ -748,14 +748,14 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
         }
       }
 
-      
+
       if (array_key_exists('civicrm_membership_membership_type_id', $row)) {
         if ($value = $row['civicrm_membership_membership_type_id']) {
           $rows[$rowNum]['civicrm_membership_membership_type_id'] = CRM_Member_PseudoConstant::membershipType($value, FALSE);
         }
         $entryFound = TRUE;
       }
-      
+
       if (array_key_exists('civicrm_batch_batch_id', $row)) {
         if ($value = $row['civicrm_batch_batch_id']) {
           $rows[$rowNum]['civicrm_batch_batch_id'] = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $value, 'title');
