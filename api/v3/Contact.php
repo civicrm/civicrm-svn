@@ -176,9 +176,8 @@ function civicrm_api3_contact_get($params) {
   // TODO: Figure out what function is responsible for prepending 'individual_' to these keys
   // and sort it out there rather than going to all this trouble here.
   // Eileen's note - not sure anymore if we went the right path stripping the 'individual' here
-  // as is arguable whether it makes more sense now I think it would make more sense to rename
-  // the table field  or uniquefield to have
-  // the individual prefix but we are stuck with this for apiv3 series.
+  // as is arguable whether it makes more sense now I think it would make more sense to rename the table field  or uniquefield to have
+  // the individual prefix but we are stuck with it now for apiv3 series.
   $returnContacts = array();
   if (is_array($contacts)) {
     foreach ($contacts as $cid => $contact) {
