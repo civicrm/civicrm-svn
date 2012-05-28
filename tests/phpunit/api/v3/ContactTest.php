@@ -538,6 +538,14 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $result = civicrm_api('contact', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
     $this->assertEquals(1, $result['count']);
+
+    //test in conjunction with other criteria
+      $params = array('filter.group_id' => array($groupId, 26),
+      'version' => $this->_apiversion,
+      'contact_type' => 'Organization',
+    );
+    $result = civicrm_api('contact', 'get', $params);
+    $this->assertEquals(0, $result['count']);
     $params = array('filter.group_id' => array(26, 27),
       'version' => $this->_apiversion,
       'contact_type' => 'Individual',
