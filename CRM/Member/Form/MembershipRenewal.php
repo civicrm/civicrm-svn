@@ -497,6 +497,16 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       );
     }
 
+    $now = CRM_Utils_Date::getToday( null, 'YmdHis');
+    $formValues['receive_date'] = $now;
+    if (CRM_Utils_Array::value('send_receipt', $this->_params)) {
+      $formValues['receipt_date'] = $now;
+      $this->assign('receive_date', CRM_Utils_Date::mysqlToIso($formValues['receive_date']));
+    }
+    else {
+      $formValues['receipt_date'] = NULL;
+    }
+
     if ($this->_mode) {
       $formValues['total_amount'] = CRM_Utils_Array::value('total_amount', $this->_params, CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
           $this->_memType, 'minimum_fee'
@@ -508,7 +518,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($formValues['payment_processor_id'],
         $this->_mode
       );
-      $now = CRM_Utils_Date::getToday($now, 'YmdHis');
+      
       $fields = array();
 
       // set email for primary location.
@@ -581,21 +591,12 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $this->_params = array_merge($this->_params, $result);
       }
       $formValues['contribution_status_id'] = 1;
-      $formValues['receive_date'] = $now;
       $formValues['invoice_id'] = $this->_params['invoiceID'];
       $formValues['trxn_id'] = $result['trxn_id'];
       $formValues['payment_instrument_id'] = 1;
       $formValues['is_test'] = ($this->_mode == 'live') ? 0 : 1;
-      if (CRM_Utils_Array::value('send_receipt', $this->_params)) {
-        $formValues['receipt_date'] = $now;
-      }
-      else {
-        $formValues['receipt_date'] = NULL;
-      }
-
       $this->set('params', $this->_params);
       $this->assign('trxn_id', $result['trxn_id']);
-      $this->assign('receive_date', CRM_Utils_Date::mysqlToIso($formValues['receive_date']));
     }
 
     $renewalDate = NULL;
@@ -647,7 +648,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $memType = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $renewMembership->membership_type_id, 'name');
 
     if (CRM_Utils_Array::value('record_contribution', $formValues) || $this->_mode) {
-      //create lin items
+      //create line items
       $lineItem = array();
       $priceSetId = null;
       CRM_Member_BAO_Membership::createLineItems($this, $formValues['membership_type_id'], $priceSetId);
