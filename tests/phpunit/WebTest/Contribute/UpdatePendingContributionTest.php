@@ -287,7 +287,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     $this->click("_qf_Confirm_next-bottom");
     $this->waitForPageToLoad('30000');
 
-    //login to check contribution
+   //login to check contribution
     $this->open($this->sboxPath);
 
     // Log in using webtestLogin() method
@@ -310,7 +310,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     //View Contribution Record
     $expected = array(
       2 => 'Donation',
-      3 => '100.00',
+      3 => $rand,
       6 => 'Pending : Pay Later',
       1 => "{$firstName} {$lastName}",
     );
