@@ -519,6 +519,7 @@ class CRM_Case_Form_Search extends CRM_Core_Form {
       }
     }
     else {
+        // First, if "all" is stored in the session, default to all cases, otherwise default to no selection.
       $session = CRM_Core_Session::singleton();
       if (CRM_Utils_Request::retrieve('all', 'Positive', $session)) {
         $this->_formValues['case_owner'] = 1;
@@ -529,12 +530,13 @@ class CRM_Case_Form_Search extends CRM_Core_Form {
         $this->_defaults['case_owner'] = 0;
       }
 
-      $caseOwner = CRM_Utils_Request::retrieve('case_owner', 'Boolean',
+      // Now if case_owner is set in the url/post, use that instead.
+      $caseOwner = CRM_Utils_Request::retrieve('case_owner', 'Positive',
         CRM_Core_DAO::$_nullObject
       );
       if ($caseOwner) {
-        $this->_formValues['case_owner'] = 2;
-        $this->_defaults['case_owner'] = 2;
+        $this->_formValues['case_owner'] = $caseOwner;
+        $this->_defaults['case_owner'] = $caseOwner;
       }
     }
   }

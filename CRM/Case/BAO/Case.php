@@ -875,9 +875,11 @@ AND civicrm_case.status_id != $closedId";
     if ($allCases) {
       $userID = 'null';
       $all = 1;
+      $case_owner = 1;
     }
     else {
       $all               = 0;
+      $case_owner = 2;
       $myCaseWhereClause = " AND case_relationship.contact_id_b = {$userID}";
       $myGroupByClause   = " GROUP BY CONCAT(case_relationship.case_id,'-',case_relationship.contact_id_b)";
     }
@@ -908,7 +910,7 @@ WHERE is_deleted =0
         $rows[$res->case_type][$res->case_status] = array(
           'count' => 1,
           'url' => CRM_Utils_System::url('civicrm/case/search',
-            "reset=1&force=1&status={$res->status_id}&type={$res->case_type_id}&all={$all}"
+            "reset=1&force=1&status={$res->status_id}&type={$res->case_type_id}&case_owner={$case_owner}"
           ),
         );
       }
