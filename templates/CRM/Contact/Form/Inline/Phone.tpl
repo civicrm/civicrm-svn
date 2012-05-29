@@ -34,7 +34,7 @@
     </tr>
     <tr>
       <td>{ts}Phone{/ts}&nbsp; 
-      <span id="add-more" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
+      <span id="add-more-phone" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
       </td>
 	    <td>{ts}Phone Location{/ts}</td>
 	    <td>{ts}Phone Type{/ts}</td>
@@ -88,14 +88,14 @@
       });
 
       // add more and set focus to new row
-      cj('#add-more').click(function() {
+      cj('#add-more-phone').click(function() {
         var rowSelector = cj('tr[id^="Phone_Block_"][class="hiddenElement"] :first').parent(); 
         rowSelector.removeClass('hiddenElement');
         var rowId = rowSelector.attr('id').replace('Phone_Block_', '');
         cj('#phone_' + rowId + '_phone').focus();
         console.log(rowId);
         if ( cj('tr[id^="Phone_Block_"][class="hiddenElement"]').length == 0  ) {
-          cj('#add-more').hide();
+          cj('#add-more-phone').hide();
         }
       });
 

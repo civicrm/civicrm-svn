@@ -34,7 +34,7 @@
     </tr>
     <tr>
       <td>{ts}Email{/ts}&nbsp; 
-      <span id="add-more" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
+      <span id="add-more-email" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
       </td>
 	    <td>{ts}On Hold?{/ts}</td>
 	    <td>{ts}Bulk Mailings?{/ts}</td>
@@ -101,15 +101,22 @@
       });
 
       // add more and set focus to new row
-      cj('#add-more').click(function() {
+      cj('#add-more-email').click(function() {
         var rowSelector = cj('tr[id^="Email_Block_"][class="hiddenElement"] :first').parent(); 
         rowSelector.removeClass('hiddenElement');
         var rowId = rowSelector.attr('id').replace('Email_Block_', '');
         cj('#email_' + rowId + '_email').focus();
         
         if ( cj('tr[id^="Email_Block_"][class="hiddenElement"]').length == 0  ) {
-          cj('#add-more').hide();
+          cj('#add-more-email').hide();
         }
+      });
+
+      // error handling / show hideen elements duing form validation
+      cj('tr[id^="Email_Block_"]' ).each( function() {
+          if( cj(this).find('td:first span').length > 0 ) {
+            cj(this).removeClass('hiddenElement');
+          } 
       });
 
       // add ajax form submitting
