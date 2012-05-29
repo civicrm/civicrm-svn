@@ -40,12 +40,13 @@
           {$form.$key.$k.html}<br/>
         {/foreach}
       </div>
+      {if $key eq 'privacy'}
+        <div class="crm-label">&nbsp;</div>
+        <div class="crm-content">{
+          $form.is_opt_out.html} {$form.is_opt_out.label} {help id="id-optOut" file="CRM/Contact/Form/Contact.hlp"}
+        </div>
+      {/if}
       {/foreach}
-      <div class="crm-label">&nbsp;</div>
-      <div class="crm-content">{
-        $form.is_opt_out.html} {$form.is_opt_out.label} {help id="id-optOut" file="CRM/Contact/Form/Contact.hlp"}
-      </div>
-
       <div class="crm-label">
         {$form.preferred_language.label}
       </div>
