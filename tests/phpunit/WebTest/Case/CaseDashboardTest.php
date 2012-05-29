@@ -73,6 +73,42 @@ class WebTest_Case_CaseDashboardTest extends CiviSeleniumTestCase {
 
     $this->assertTrue($this->isChecked("name=allupcoming value=1"), 'Selection of All Cases failed.');
     $this->assertTextPresent("Summary of All Cases");
+
+    // Go back to dashboard
+    $this->open($this->sboxPath . "civicrm/case?reset=1");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("css=a.button");
+
+    // Click on find my cases and check if right radio is checked
+    $this->click("name=find_my_cases");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("css=input.form-submit");
+    $this->assertTrue($this->isChecked("name=case_owner value=2"), 'Find my cases button not properly setting search form value to my cases.');
+
+    // Go back to dashboard
+    $this->open($this->sboxPath . "civicrm/case?reset=1");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("css=a.button");
+
+    // Click on a drilldown cell and check if right radio is checked
+    $this->click("css=a.crm-case-summary-drilldown");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("css=input.form-submit");
+    $this->assertTrue($this->isChecked("name=case_owner value=1"), 'Drilldown on dashboard summary cells not properly setting search form value to all cases.');
+
+    // Go back to dashboard and reset to my cases
+    $this->open($this->sboxPath . "civicrm/case?reset=1");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("css=a.button");
+    $this->click("name=allupcoming value=0");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("css=a.button");
+
+    // Click on a drilldown cell and check if right radio is checked
+    $this->click("css=a.crm-case-summary-drilldown");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("css=input.form-submit");
+    $this->assertTrue($this->isChecked("name=case_owner value=2"), 'Drilldown on dashboard summary cells not properly setting search form value to my cases.');
   }
 }
 

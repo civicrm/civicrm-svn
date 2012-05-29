@@ -36,7 +36,7 @@
     {if $newClient and $allowToAddNewCase}	
 	    <a href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
     {/if}
-    <a class="button" href="{crmURL p="civicrm/case/search" q="reset=1&case_owner=2&force=1"}"><span>{ts}Find My Cases{/ts}</span></a>
+    <a class="button" name="find_my_cases" href="{crmURL p="civicrm/case/search" q="reset=1&case_owner=2&force=1"}"><span>{ts}Find My Cases{/ts}</span></a>
 
     <div class="crm-case-dashboard-switch-view-buttons">
         {if $myCases}
@@ -74,7 +74,7 @@
     {assign var="caseStatus" value=$header.status}
     <td class="label">
     {if $row.$caseStatus}
-    <a href="{$row.$caseStatus.url}">{$row.$caseStatus.count}</a>
+    <a class="crm-case-summary-drilldown" href="{$row.$caseStatus.url}">{$row.$caseStatus.count}</a>
     {else}
      0
     {/if}
