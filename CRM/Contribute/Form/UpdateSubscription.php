@@ -297,16 +297,17 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
         }
       }
 
-      if ($status) {
-        $session = CRM_Core_Session::singleton();
-        if ($session->get('userID')) {
-          CRM_Core_Session::setStatus($status);
-        }
-        else {
-          CRM_Utils_System::setUFMessage($status);
-        }
-      }
+    $session = CRM_Core_Session::singleton();
+    $userID  = $session->get('userID');
+    if ( $userID && $status) {
+      CRM_Core_Session::setStatus($status);
+    } else if (!$userID) {
+      if ($status) 
+        CRM_Utils_System::setUFMessage($status);
+      // keep result as 1, since we not displaying anything on the redirected page anyway
+      return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contribute/subscriptionstatus', 
+                                                              "reset=1&task=update&result=1"));
+    }
   }
-  //end of function
 }
 

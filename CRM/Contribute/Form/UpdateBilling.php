@@ -418,14 +418,18 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
       $status = ts('There was some problem updating the billing details.');
     }
 
-    if ($status) {
-      $session = CRM_Core_Session::singleton();
-      if ($session->get('userID')) {
-        CRM_Core_Session::setStatus($status);
-      }
-      else {
+    $session = CRM_Core_Session::singleton();
+    $userID  = $session->get('userID');
+    if ( $userID && $status) {
+      CRM_Core_Session::setStatus($status);
+    } else if (!$userID) {
+      if ($status) 
         CRM_Utils_System::setUFMessage($status);
-      }
+      $result = (int) ($updateSubscription && isset($ctype));
+      if (isset($tplParams)) 
+        $session->set('resultParams', $tplParams);
+      return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contribute/subscriptionstatus', 
+                                                              "reset=1&task=billing&result={$result}"));
     }
   }
 }

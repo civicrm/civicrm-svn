@@ -222,4 +222,9 @@
      <page_callback>CRM_Contribute_Form_UpdateSubscription</page_callback>
      <access_arguments>make online contributions</access_arguments>
    </item>
+  <item>
+     <path>civicrm/contribute/subscriptionstatus</path>
+     <page_callback>CRM_Contribute_Page_SubscriptionStatus</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item>
 </menu>
