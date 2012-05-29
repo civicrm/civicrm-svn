@@ -34,7 +34,9 @@
     </tr>
     <tr>
       <td>{ts}Phone{/ts}&nbsp; 
-      <span id="add-more-phone" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
+      {if $actualBlockCount lt 5 }
+        <span id="add-more-phone" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
+      {/if}
       </td>
 	    <td>{ts}Phone Location{/ts}</td>
 	    <td>{ts}Phone Type{/ts}</td>

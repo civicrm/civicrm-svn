@@ -33,8 +33,10 @@
       </td>
     </tr>
     <tr>
-      <td>{ts}Email{/ts}&nbsp; 
-      <span id="add-more-email" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
+      <td>{ts}Email{/ts}&nbsp;
+      {if $actualBlockCount lt 5 }
+        <span id="add-more-email" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
+      {/if}
       </td>
 	    <td>{ts}On Hold?{/ts}</td>
 	    <td>{ts}Bulk Mailings?{/ts}</td>
