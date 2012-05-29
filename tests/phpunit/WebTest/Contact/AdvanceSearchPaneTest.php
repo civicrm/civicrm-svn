@@ -273,7 +273,7 @@ class WebTest_Contact_AdvanceSearchPaneTest extends CiviSeleniumTestCase {
             array(
               'type' => 'date',
               'locator' => 'birth_date_low',
-              'values' => array('10 September 1992'),
+              'values' => array('10 September 1980'),
             ),
             'Birth Date to' =>
             array(
