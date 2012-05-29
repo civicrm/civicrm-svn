@@ -268,7 +268,8 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
 
     $this->type("first_name", $firstName);
     $this->type("last_name", $lastName);
-
+    
+    $this->click("xpath=//div[@class='crm-section other_amount-section']//div[2]/input");
     $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", 100);
     $this->click("xpath=//div[@class='crm-section payment_processor-section']/div[2]//label[text()='Pay later label {$hash}']");
     $streetAddress = "100 Main Street";
@@ -310,7 +311,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     //View Contribution Record
     $expected = array(
       2 => 'Donation',
-      3 => $rand,
+      3 => '100.00',
       6 => 'Pending : Pay Later',
       1 => "{$firstName} {$lastName}",
     );
