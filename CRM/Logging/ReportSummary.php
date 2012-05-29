@@ -122,12 +122,10 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
     parent::where();
 
     list($offset, $rowCount) = $this->limit();
-    $tempClause    = ($offset && $rowCount) ? "AND temp.id BETWEEN $offset AND $rowCount" : null;
-
-    $this->_where .= " AND (log_action != 'Initialization') {$tempClause}";
-
-    // unset limit
     $this->_limit = NULL;
+
+    $tempClause    = ($offset && $rowCount) ? "AND temp.id BETWEEN $offset AND $rowCount" : null;
+    $this->_where .= " AND (log_action != 'Initialization') {$tempClause}";
   }
 
   function postProcess() {
@@ -149,13 +147,16 @@ CREATE TEMPORARY TABLE
                                        CRM_Utils_Array::value("log_date_to_time",   $this->_params));
     $logDateClause = $logDateClause ? "AND {$logDateClause}" : null;
 
+    list($offset, $rowCount) = $this->limit();
+    $this->_limit = NULL;
+
     foreach ( $this->_logTables as $entity => $detail ) {
       $clause = CRM_Utils_Array::value('entity_table', $detail);
       $clause = $clause ? "entity_table = 'civicrm_contact' AND" : null;
       $sql    = "
 INSERT IGNORE INTO civicrm_temp_civireport_logsummary ( contact_id ) 
 SELECT DISTINCT {$detail['fk']} FROM {$entity}
-WHERE {$clause} log_action != 'Initialization' {$logDateClause}";
+WHERE {$clause} log_action != 'Initialization' {$logDateClause} LIMIT {$rowCount}";
       CRM_Core_DAO::executeQuery($sql);
     }
 
