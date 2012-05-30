@@ -373,6 +373,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
         $element = &$qf->addGroup($choice, $elementName, $label);
 
+        // make contribution field required for quick config when membership block is enabled
+        if (($field->name == 'contribution_amount' || $field->name == 'membership_amount')&& !empty($qf->_membershipBlock) && !$field->is_required) {
+          $useRequired = $field->is_required = TRUE;
+        }
+
         if ($useRequired && $field->is_required) {
           $qf->addRule($elementName, ts('%1 is a required field.', array(1 => $label)), 'required');
         }
