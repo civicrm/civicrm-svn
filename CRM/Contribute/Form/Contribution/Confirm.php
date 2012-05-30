@@ -1398,15 +1398,16 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
   function createHonorContact() {
     $params = $this->controller->exportValues('Main');
 
-    // return if we dont have enough information
-    if (CRM_Utils_Array::value('honor_first_name', $params) &&
-      CRM_Utils_Array::value('honor_last_name', $params) &&
-      CRM_Utils_Array::value('honor_email', $params)
-    ) {
-      return NULL;
+    // email is enough to create a contact
+    if (! CRM_Utils_Array::value('honor_email', $params) &&
+      // or we need first name AND last name
+      (! CRM_Utils_Array::value('honor_first_name', $params)
+      || ! CRM_Utils_Array::value('honor_last_name', $params))) {
+      //don't create contact - possibly the form was left blank
+      return null;
     }
 
-    //assign to template for email reciept
+    //assign to template for email receipt
     $honor_block_is_active = $this->get('honor_block_is_active');
 
     $this->assign('honor_block_is_active', $honor_block_is_active);
