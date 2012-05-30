@@ -182,7 +182,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
 /*
  * Array to store any profile address fields set so they can be mapped against billing block
  */
-  public $profileAddressFields = array();
+  public $_profileAddressFields = array();
 
   /**
    * Function to set variables up before form is built
@@ -621,7 +621,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
    * @access public
    */
   function buildCustom($id, $name, $viewOnly = FALSE, $onBehalf = FALSE, $fieldTypes = NULL) {
-    $stateCountryMap = $profileAddressFields = array();
+    $stateCountryMap = array();
 
     if ($id) {
       $session = CRM_Core_Session::singleton();
@@ -690,7 +690,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
             $stateCountryMap[$index][$prefixName] = $key;
           }
 
-          CRM_Core_BAO_UFField::assignAddressField($key, $profileAddressFields);
+          CRM_Core_BAO_UFField::assignAddressField($key, $this->_profileAddressFields);
 
           if ($onBehalf) {
             if (!empty($fieldTypes) && in_array($field['field_type'], $fieldTypes)) {
@@ -713,9 +713,8 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
         }
 
         $this->assign($name, $fields);
-        if(!empty( $profileAddressFields)){
-          $this->assign('profileAddressFields',$profileAddressFields);
-          $this->profileAddressFields = $profileAddressFields;
+        if(!empty( $this->_profileAddressFields)){
+          $this->assign('profileAddressFields',$this->_profileAddressFields);
         }
         CRM_Core_BAO_Address::addStateCountryMap($stateCountryMap);
 
