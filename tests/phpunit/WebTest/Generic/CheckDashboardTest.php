@@ -118,7 +118,7 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("Are you sure you want to delete"));
     $this->click("_qf_Activity_next-bottom");
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Selected Activity has been deleted sucessfully."));
+    $this->assertTrue($this->isTextPresent("Selected Activity has been deleted successfully."));
     // FIXMED: Currently there's a bug, dashboard context is ignored after delete so we should already be back on home dash.
     // Issue filed: CRM-
     //  $this->assertTrue($this->isTextPresent("Configure Your Dashboard");
