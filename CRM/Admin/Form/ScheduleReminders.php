@@ -125,9 +125,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
     //pass the mapping ID in UPDATE mode
     $mappings = CRM_Core_BAO_ActionSchedule::getMapping($mappingID);
 
-    $numericOptions = array(0 => ts('0'), 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5'),
-      6 => ts('6'), 7 => ts('7'), 8 => ts('8'), 9 => ts('9'), 10 => ts('10'),
-    );
+    $numericOptions = CRM_Core_SelectValues::getNumericOptions(0, 30);
+
     //reminder_interval
     $this->add('select', 'start_action_offset', ts('When'), $numericOptions);
 

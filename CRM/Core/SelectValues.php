@@ -829,5 +829,18 @@ class CRM_Core_SelectValues {
     );
     return $timeFormats;
   }
+
+  /**
+   * Function to get numeric options
+   *
+   *
+   * @static
+   */
+  function getNumericOptions( $start = 0, $end = 10 ) {
+    for ($i = $start; $i <= $end; $i++) {
+        $numericOptions[$i] = $i;
+    }
+    return $numericOptions;
+  }
 }
 
