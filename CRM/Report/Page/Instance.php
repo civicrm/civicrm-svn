@@ -39,7 +39,6 @@
  * Page for invoking report instances
  */
 class CRM_Report_Page_Instance extends CRM_Core_Page {
-
   /**
    * run this page (figure out the action needed and perform it).
    *
@@ -56,10 +55,8 @@ class CRM_Report_Page_Instance extends CRM_Core_Page {
 
     if ($action & CRM_Core_Action::DELETE) {
       if (!CRM_Core_Permission::check('administer Reports')) {
-        $statusMessage = ts('Your do not have permission to Delete Report.');
-        CRM_Core_Error::statusBounce($statusMessage,
-          $reportUrl
-        );
+        $statusMessage = ts('You do not have permission to Delete Report.');
+        CRM_Core_Error::statusBounce($statusMessage, $reportUrl);
       }
 
       $navId = CRM_Core_DAO::getFieldValue('CRM_Report_DAO_Instance', $instanceId, 'navigation_id', 'id');
@@ -79,7 +76,6 @@ class CRM_Report_Page_Instance extends CRM_Core_Page {
         CRM_Core_Session::setStatus(ts('Could not find template for the instance.'));
         return;
       }
-
 
       $extKey = strpos($templateInfo['name'], '.');
 
