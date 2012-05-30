@@ -101,6 +101,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
     $this->waitForElementPresent("_qf_Main_upload-bottom");
 
     // helper AddContributionPage sets Minimum Other Amout = $rand / 2 so must contribute more than that
+    $this->click("xpath=//div[@class='crm-section other_amount-section']//div[2]/input");
     $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", $contributionAmount);
 
     // recurring contribution - each month for 12 months
