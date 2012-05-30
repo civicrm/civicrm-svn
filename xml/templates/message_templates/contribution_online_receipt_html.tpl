@@ -46,7 +46,7 @@
        </th>
       </tr>
 
-      {if $lineItem and $priceSetID}
+      {if $lineItem and $priceSetID and !$is_quick_config}
 
        {foreach from=$lineItem item=value key=priceset}
         <tr>
