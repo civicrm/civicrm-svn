@@ -359,14 +359,16 @@ cj("#popupContainer").dialog({
         },
         buttons: { 
                    "Ok": function() {
-		   var dataUrl  = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Core_Page_AJAX&fnName=setIsQuickConfig&context=civicrm_contribution_page&id=$contributionPageID" }'{literal};
+		   var dataUrl  = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Core_Page_AJAX&fnName=setIsQuickConfig&context=civicrm_contribution_page&id=$contributionPageID" }';
+		    var redirectUrl = '{crmURL p="civicrm/admin/price/field" h=0 q="reset=1&action=browse&sid=" }';
+		   {literal}
 		   cj.ajax({
 			url: dataUrl,
 			async: false,
 			global: false,
 			success: function ( result ) {
 			  if (result) {
-			    location.reload(true);
+			    window.location= redirectUrl+eval(result);
 			  }
 			}	
 		   });
