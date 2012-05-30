@@ -190,9 +190,8 @@ class WebTest_Report_AddTest extends CiviSeleniumTestCase {
     // Is correct Navigation Parent?
     $this->assertSelectedLabel("parent_id", "Reports");
 
-    // commenting the permission checking WRT CRM-10034
-    // // Is correct access permission?
-    // $this->assertSelectedLabel("permission", "access CiviCRM");
+    // Is correct access permission?
+    $this->assertSelectedLabel("permission", "access CiviReport");
   }
 }
 
