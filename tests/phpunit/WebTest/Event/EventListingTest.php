@@ -39,11 +39,22 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
     //upcomming events
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
     $this->waitForPageToLoad("30000");
+    $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle1);
+    $this->click("_qf_SearchEvent_refresh");
     $this->assertFalse($this->isTextPresent("{$eventTitle1}"));
+    $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle2);
+    $this->click("_qf_SearchEvent_refresh");
     $this->assertFalse($this->isTextPresent("{$eventTitle2}"));
+    $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle3);
+    $this->click("_qf_SearchEvent_refresh");
     $this->assertTrue($this->isTextPresent("{$eventTitle3}"));
+    $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle4);
+    $this->click("_qf_SearchEvent_refresh");
     $this->assertTrue($this->isTextPresent("{$eventTitle4}"));
+    $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle5);
+    $this->click("_qf_SearchEvent_refresh");
     $this->assertTrue($this->isTextPresent("{$eventTitle5}"));
+    $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input","");
 
     //check if closed Event is present
     $this->waitForElementPresent('CIVICRM_QFID_1_4');
