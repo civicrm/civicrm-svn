@@ -31,6 +31,8 @@
 {/foreach}
 
 {ts}Total Amount{/ts}: {$amount|crmMoney:$currency}
+{else}
+{ts}Amount{/ts}: {$amount|crmMoney:$currency} {if $amount_level } - {$amount_level} {/if}
 {/if}
 {/if}
 {if $receive_date}
