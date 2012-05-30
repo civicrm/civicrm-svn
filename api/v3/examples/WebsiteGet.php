@@ -28,10 +28,10 @@ function website_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 2,
+  'id' => 1,
   'values' => array( 
-      '2' => array( 
-          'id' => '2',
+      '1' => array( 
+          'id' => '1',
           'contact_id' => '1',
           'url' => 'website.com',
           'website_type_id' => '1',
