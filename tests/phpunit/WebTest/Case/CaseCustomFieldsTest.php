@@ -162,6 +162,8 @@ class WebTest_Case_CaseCustomFieldsTest extends CiviSeleniumTestCase {
     $this->click("_qf_CaseView_cancel-bottom");
     $this->waitForPageToLoad("30000");
     $this->open($this->sboxPath . "civicrm/case?reset=1");
+
+    $this->waitForElementPresent("xpath=//table[@class='caseSelector']/tbody//tr/td[2]/a[text()='{$contactName}']/../../td[8]/a[text()='Open Case']");
     $this->click("xpath=//table[@class='caseSelector']/tbody//tr/td[2]/a[text()='{$contactName}']/../../td[8]/a[text()='Open Case']");
     $this->waitForElementPresent("xpath=//div[@class='ui-dialog-buttonset']/button/span[text()='Done']");
     sleep(3);
