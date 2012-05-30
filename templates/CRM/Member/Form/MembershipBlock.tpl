@@ -74,13 +74,18 @@
 		      {/if}
 		      </td>
     	  </tr>   
+	  {if $isQuick}
+	  <tr>
+	  <td></td><td><div class="status message">{ts}Click <a id = 'memQuickconfig' href='#'>here</a> if you want to configure the Membership Types below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}</div></td>
+	  </tr>
+	  {/if}
           <tr id="membership_type-block" class="crm-member-membershipblock-form-block-membership_type">
               <td class="label">{$form.membership_type.label}</td> 
               <td>
                 {assign var="count" value="1"}
                 {strip}
                   <table class="report">	
-                    <tr class="columnheader" style="vertical-align:top;"><th style="border-right: 1px solid #4E82CF;">{if $isQuick}{ts}Click <a id = 'memQuickconfig' href='#'>here</a> if you want to configure the Membership Types below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}<br />{/if}{ts}Include these membership types{/ts}:</th><th>{ts}Default{/ts}:<br />
+                    <tr class="columnheader" style="vertical-align:top;"><th style="border-right: 1px solid #4E82CF;">{ts}Include these membership types{/ts}:</th><th>{ts}Default{/ts}:<br />
                     <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('membership_type_default', 'MembershipBlock'); return false;" >unselect</a>)</span></th>{if $is_recur}<th>{ts}Auto-renew:{/ts}</th>{/if}</tr>
                       {assign var="index" value="1"}
                       {foreach name=outer key=key item=item from=$form.membership_type}

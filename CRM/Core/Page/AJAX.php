@@ -82,7 +82,10 @@ class CRM_Core_Page_AJAX {
     if ($priceSetId) {
       $result = CRM_Price_BAO_Set::setIsQuickConfig($priceSetId,0);
     }
-    echo json_encode($result);
+    if (!$result) {
+      $priceSetId = null;
+    }
+    echo json_encode($priceSetId);
       
     CRM_Utils_System::civiExit();
   }
