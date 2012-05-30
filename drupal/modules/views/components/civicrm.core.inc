@@ -516,6 +516,7 @@ function _civicrm_core_data(&$data, $enabled) {
       'pseudo method' => t('basicTypePairs'),
     ),
   );
+
   //Contact Sub Type
   $data['civicrm_contact']['contact_sub_type'] = array(
     'title' => t('Contact Sub Type'),
@@ -534,6 +535,23 @@ function _civicrm_core_data(&$data, $enabled) {
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
+  );
+
+  //Birth Date
+  $data['civicrm_contact']['birth_date'] = array(
+    'title' => t('Birth Date'),
+    'help' => t('The contact\'s birth date.'),
+    'field' => array(
+      'handler' => 'civicrm_handler_field_datetime',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'civicrm_handler_filter_datetime',
+      'is date' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'civicrm_handler_sort_date',
+     ),
   );
 
   // add the other generic fields
