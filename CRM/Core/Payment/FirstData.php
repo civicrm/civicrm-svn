@@ -246,7 +246,7 @@ class CRM_Core_Payment_FirstData extends CRM_Core_Payment {
       // Paranoia - in the unlikley event that 'curl' error fails
       if (strlen($errorDesc) == 0)
       $errorDesc = "Connection to payment gateway failed";
-      if ($errorNum = 60) {
+      if ($errorNum == 60) {
         return self::errorExit($errorNum, "Curl error - " . $errorDesc . " Try this link for more information http://curl.haxx.se/docs/sslcerts.html");
       }
 
