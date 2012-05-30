@@ -52,6 +52,9 @@ require_once 'CRM/Grant/BAO/Grant.php';
  * @access public
  */
 function civicrm_api3_grant_create($params) {
+  $values = array();
+  _civicrm_api3_custom_format_params($params, $values, 'Grant');
+  $params = array_merge($values,$params);
   // BAO is non standard to we need to construct $ids array. Ideally we would fix BAO to accept $params without
   // id for standardisation
   $ids = array();
@@ -70,7 +73,7 @@ function civicrm_api3_grant_create($params) {
 }
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
