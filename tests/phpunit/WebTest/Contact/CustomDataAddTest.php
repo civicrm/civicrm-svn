@@ -252,13 +252,14 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->type("email_1_email", $emailId);
 
     //fill custom values for the contact
-    $this->click("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]");
+    $this->click("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]");    
     $this->type("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]/../following-sibling::td/input", "12345678.98");
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
 
     //verify the money custom field value in the proper format
-    $this->verifyText("xpath=//table//tbody/tr/td[text()='$moneyTextFieldLabel']/following-sibling::td", '12,345,678.98');
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='custom-block-{$customGroupTitle}']"));
+    $this->verifyText("xpath=//div[@id='custom-block-{$customGroupTitle}']/div[2]", '12,345,678.98');
   }
 }
 
