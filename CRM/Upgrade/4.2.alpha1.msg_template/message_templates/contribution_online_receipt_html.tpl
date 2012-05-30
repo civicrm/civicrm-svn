@@ -46,7 +46,7 @@
        </th>
       </tr>
 
-      {if $lineItem and $priceSetID}
+      {if $lineItem and $priceSetID and !$is_quick_config}
 
        {foreach from=$lineItem item=value key=priceset}
         <tr>
@@ -87,6 +87,16 @@
         </td>
        </tr>
 
+      {else}
+
+       <tr>
+        <td {$labelStyle}>
+         {ts}Amount{/ts}
+        </td>
+        <td {$valueStyle}>
+         {$amount|crmMoney:$currency} {if $amount_level} - {$amount_level}{/if}
+        </td>
+       </tr>
 
       {/if}
 
