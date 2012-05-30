@@ -375,7 +375,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       if (empty($membership->contact_id) && (!empty($membership->owner_membership_id))) {
         $membership->contact_id = $realMembershipContactId;
       }
-      CRM_Activity_BAO_Activity::addActivity($membership, $activityType, $targetContactID);
+      if (CRM_Utils_Array::value('membership', $ids) && $activityType != 'Membership Signup') {
+        CRM_Activity_BAO_Activity::addActivity($membership, $activityType, $targetContactID);
+      }
 
       // we might created activity record w/ individual
       // contact as target so update membership object w/
