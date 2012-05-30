@@ -38,9 +38,13 @@
                         </a>
                     </td>
                   </tr>
-                  {foreach from=$cd_edit.fields item=element key=field_id}
-                     {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl"}
-                  {/foreach}
+                  <tr class= "{if $cd_edit.collapse_display}hiddenElement{/if}">
+                  <td>
+                    <div class="crm-table2div-layout" id="custom-block-{$cd_edit.name}">
+                      {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl"}
+                    </div>
+                  </td>
+                  </tr>
                 </table>
             </div>
         {/foreach}
