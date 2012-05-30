@@ -378,6 +378,11 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
     $params['mapping_id'] = $values['entity'][0];
     $entity_value = $values['entity'][1];
     $entity_status = $values['entity'][2];
+    
+    //force recording activity for membership reminder
+    if ($params['mapping_id'] == 4) {
+      $params['record_activity'] = 1;  
+    }
 
     foreach (array(
       'entity_value', 'entity_status') as $key) {
