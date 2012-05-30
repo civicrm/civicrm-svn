@@ -1394,7 +1394,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       $dao->contact_id = $contactId;
       $dao->whereAdd("status_id != $deceasedStatusId");
       $dao->find();
-
+      $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
+      $allStatus     = CRM_Member_PseudoConstant::membershipStatus();
       $memCount = 0;
       while ($dao->fetch()) {
         // update status to deceased (for both active/inactive membership )
@@ -1416,6 +1417,23 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
 
         CRM_Member_BAO_MembershipLog::add($membershipLog, CRM_Core_DAO::$_nullArray);
+        
+        //create activity when membership status is changed 
+        $activityParam = array(
+          'subject' => "Status changed from {$allStatus[$dao->status_id]} to {$allStatus[$deceasedStatusId]}",
+          'source_contact_id' => $userId,
+          'target_contact_id' => $dao->contact_id,
+          'source_record_id' => $dao->id,
+          'activity_type_id' => array_search('Change Membership Status', $activityTypes),
+          'status_id' => 2,
+          'version' => 3,
+          'priority_id' => 2,
+          'activity_date_time' => date('Y-m-d H:i:s'),
+          'is_auto' => 0,
+          'is_current_revision' => 1,
+          'is_deleted' => 0,
+        );
+        $activityResult = civicrm_api('activity', 'create', $activityParam);
 
         $memCount++;
       }
