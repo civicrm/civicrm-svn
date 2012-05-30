@@ -361,7 +361,7 @@
                 {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
             {/if}
         </div>
-		<div class="clear"></div>
+		    <div class="clear"></div>
     </div>
  <script type="text/javascript">
  var selectedTab  = 'summary';
@@ -381,11 +381,27 @@
 {if !empty($isAddressCustomPresent)}
   {literal}
   <script type="text/javascript">
-      cj(function() {
-          cj().crmaccordions();
-      });
+  cj(function() {
+    cj().crmaccordions();
+  });
   </script>
   {/literal}
 {/if}
 <div class="clear"></div>
 </div><!-- /.crm-content-block -->
+
+{literal}
+<script type="text/javascript">
+cj(function(){
+  var customBlock = cj('div[id^="custom-set-block-"]');
+  customBlock.mouseenter( function() {
+    cj(this).addClass('crm-inline-edit-hover');
+    cj(this).find('a[id^="edit-custom-set-block-"]').show();
+  }).mouseleave( function() {
+    cj(this).removeClass('crm-inline-edit-hover');
+    cj(this).find('a[id^="edit-custom-set-block-"]').hide();
+  });
+});
+</script>
+{/literal}
+

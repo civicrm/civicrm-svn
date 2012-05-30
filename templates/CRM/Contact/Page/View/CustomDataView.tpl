@@ -40,9 +40,7 @@
                   </tr>
                   <tr class= "{if $cd_edit.collapse_display}hiddenElement{/if}">
                   <td>
-                    <div class="crm-table2div-layout" id="custom-block-{$cd_edit.name}">
-                      {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl"}
-                    </div>
+                    {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupName=$cd_edit.name}
                   </td>
                   </tr>
                 </table>

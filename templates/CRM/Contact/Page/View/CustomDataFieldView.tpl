@@ -23,7 +23,17 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{foreach from=$cd_edit.fields item=element key=field_id}
+
+<div class="crm-summary-block" id="custom-set-block-{$customGroupName}">
+<div class="crm-table2div-layout" id="custom-set-content-{$customGroupName}">
+  <div class="crm-clear">
+    <div class="crm-config-option">
+      <a id="edit-custom-set-block-{$customGroupName}" class="hiddenElement crm-link-action" title="{ts}click to add or edit{/ts}">
+      <span class="batch-edit"></span>{ts}add or edit custom set{/ts}
+      </a>
+    </div>
+
+  {foreach from=$cd_edit.fields item=element key=field_id}
   {if $element.options_per_line != 0}
       <div class="crm-label">{$element.field_title}</div>
       <div class="crm-content crm-custom_data">
@@ -49,4 +59,7 @@
           <div class="crm-content html-adjust crm-custom-data">{$element.field_value}</div>
       {/if}
   {/if}
-{/foreach}
+  {/foreach}
+  </div>
+</div>
+</div>

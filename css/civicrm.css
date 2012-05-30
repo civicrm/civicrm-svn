@@ -1834,7 +1834,7 @@ div.grippie {
 }
 
 #crm-container div.contact_panel div.crm-summary-block {
-    border: 2px dashed white;
+    border: 2px dashed transparent;
     background: none;
 }
 
