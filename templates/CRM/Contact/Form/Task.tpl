@@ -24,6 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {ts 1=$totalSelectedContacts}Number of selected contacts: %1{/ts}
+
+{if $searchtype eq 'ts_sel'}
 <div id="popupContainer" class="hidden">
 {ts 1=$totalSelectedContacts}Number of selected contacts: %1{/ts}    
      {include file="CRM/common/pager.tpl" location="top" noForm=1}
@@ -39,24 +41,9 @@
 </table>
  {include file="CRM/common/pager.tpl" location="bottom" noForm=1}
 </div>
-{if $searchtype eq 'ts_sel'}
 <br /><a href="#"id="button">{ts}View Selected Contacts{/ts}</a>
 {/if}
-{if $rows } 
-<div class="form-item">
-<table width="30%">
-  <tr class="columnheader">
-    <th>{ts}Name{/ts}</th>
-  </tr>
-{foreach from=$rows item=row}
-<tr class="{cycle values="odd-row,even-row"}">
-<td>{$row.displayName}</td>
-</tr>
-{/foreach}
-</table>
-</div>
-{/if}
-
+{if $searchtype eq 'ts_sel'}
 {literal}
 <script type="text/javascript">
 cj("#popupContainer").css({
@@ -75,11 +62,10 @@ cj("#popupContainer").dialog({
              	}
 });
 });
-
 var url=location.href.split('&');
     if(url[3])
-	{
-		cj("#popupContainer").dialog({
+{   
+	cj("#popupContainer").dialog({
 			title: "Selected Contacts",
 			width:600,
 			height:400,
@@ -89,7 +75,7 @@ var url=location.href.split('&');
              			 	background: "black"
              			 }
 		});
-	}
+}
 else
 {
 cj(document).ready(function(){
@@ -108,6 +94,20 @@ cj("#button").click(function(){
 		});
 });
 }
-
 </script>
 {/literal}
+{/if}
+{if $rows } 
+<div class="form-item">
+<table width="30%">
+  <tr class="columnheader">
+    <th>{ts}Name{/ts}</th>
+  </tr>
+{foreach from=$rows item=row}
+<tr class="{cycle values="odd-row,even-row"}">
+<td>{$row.displayName}</td>
+</tr>
+{/foreach}
+</table>
+</div>
+{/if}
