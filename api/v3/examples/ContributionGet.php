@@ -69,6 +69,7 @@ function contribution_get_expectedresult(){
           'contribution_end_date' => '',
           'contribution_recur_id' => '',
           'contribution_note' => '',
+          'contribution_batch' => '',
           'contribution_status' => 'Completed',
           'contribution_payment_instrument' => '',
           'contribution_check_number' => '',

@@ -47,7 +47,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->_individualId = $this->individualCreate();
     $this->_params = array(
       'contact_id' => $this->_individualId,
-      'receive_date' => date('Ymd'),
+      'receive_date' => '20120511',
       'total_amount' => 100.00,
       'contribution_type_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
@@ -266,7 +266,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     $params = array(
       'contact_id' => $this->_individualId,
-      'receive_date' => date('Ymd'),
+      'receive_date' => '20120511',
       'total_amount' => 100.00,
       'contribution_type_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
@@ -655,6 +655,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   function testSendMail() {
     $this->prepareMailLog();
     $contribution = civicrm_api('contribution','create',$this->_params);
+    $this->assertAPISuccess($contribution);
     $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
       'version' => $this->_apiversion,
       'id' => $contribution['id']) );
