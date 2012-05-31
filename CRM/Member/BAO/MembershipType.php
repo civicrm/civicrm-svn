@@ -484,6 +484,10 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
     $params            = array('id' => $membershipId);
     $membershipDetails = CRM_Member_BAO_Membership::getValues($params, $values);
     $statusID          = $membershipDetails[$membershipId]->status_id;
+
+    $oldPeriodType = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
+        CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $membershipId, 'membership_type_id'), 'period_type');
+    
     // CRM-7297 Membership Upsell
     if (is_null($membershipTypeID)) {
       $membershipTypeDetails = self::getMembershipTypeDetails($membershipDetails[$membershipId]->membership_type_id);
@@ -517,10 +521,12 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
 
       switch ($membershipTypeDetails['duration_unit']) {
         case 'year':
-          $year = $year + ($numRenewTerms * $membershipTypeDetails['duration_interval']);
-          if ($membershipTypeDetails['period_type'] == 'fixed') {
+          //need to check if the upsell is from rolling to fixed and adjust accordingly 
+          if ($membershipTypeDetails['period_type'] == 'fixed' && $oldPeriodType == 'rolling' ) {
             $month = substr($membershipTypeDetails['fixed_period_rollover_day'], 0, strlen($membershipTypeDetails['fixed_period_rollover_day']) - 2);
             $day = substr($membershipTypeDetails['fixed_period_rollover_day'], -2) + 1;
+          } else {
+            $year = $year + ($numRenewTerms * $membershipTypeDetails['duration_interval']);
           }
           break;
 
