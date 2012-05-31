@@ -152,7 +152,6 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
       'From' => $firstName1 . ' ' . $lastName1,
       'Total Amount' => '$ 100.00',
     );
-    sleep(20);
     foreach ($verifyData as $label => $value) {
       $this->verifyText("xpath=//form[@id='ContributionView']/div[2]/table/tbody/tr/td[text()='{$label}']/following-sibling::td",
         preg_quote($value)
