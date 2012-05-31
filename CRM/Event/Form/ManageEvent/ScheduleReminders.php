@@ -120,9 +120,8 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     //get the frequency units.
     $this->_freqUnits = array('hour' => 'hour') + CRM_Core_OptionGroup::values('recur_frequency_units');
 
-    $numericOptions = array(0 => ts('0'), 1 => ts('1'), 2 => ts('2'), 3 => ts('3'), 4 => ts('4'), 5 => ts('5'),
-      6 => ts('6'), 7 => ts('7'), 8 => ts('8'), 9 => ts('9'), 10 => ts('10'),
-    );
+    $numericOptions = CRM_Core_SelectValues::getNumericOptions(0, 30);
+
     //reminder_interval
     $this->add('select', 'start_action_offset', ts('When'), $numericOptions);
 
