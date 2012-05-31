@@ -648,6 +648,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $memType = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $renewMembership->membership_type_id, 'name');
 
     if (CRM_Utils_Array::value('record_contribution', $formValues) || $this->_mode) {
+      // set the source
+      $formValues['contribution_source'] = "{$memType} Membership: Offline membership renewal (by {$userName})";
+      
       //create line items
       $lineItem = array();
       $priceSetId = null;
