@@ -34,18 +34,19 @@
 // Putting these functions directly in template so they are available for standalone forms
 
 function useAmountOther() {
-    var priceset = {/literal}{if $contriPriceset}'{$contriPriceset}'{else}0{/if}{literal};
+  var priceset = {/literal}{if $contriPriceset}'{$contriPriceset}'{else}0{/if}{literal};
 
-    for( i=0; i < document.Main.elements.length; i++ ) {
-        element = document.Main.elements[i];
-        if ( element.type == 'radio' && element.name == priceset ) {
-            if (element.value == '0' ) {
-    element.click();
-            } else {
-                element.checked = false;
-            }
-        }
+  for( i=0; i < document.Main.elements.length; i++ ) {
+    element = document.Main.elements[i];
+    if ( element.type == 'radio' && element.name == priceset ) {
+      if (element.value == '0' ) {
+        element.click();
+      }
+      else {
+        element.checked = false;
+      }
     }
+  }
 }
 
 function clearAmountOther() {
@@ -394,25 +395,26 @@ function enablePeriod ( ) {
 {/literal} {/if}{literal}
 
 function enableHonorType( ) {
-    var element = document.getElementsByName("honor_type_id");
-    for (var i = 0; i < element.length; i++ ) {
-  var isHonor = false;
-  if ( element[i].checked == true ) {
+  var element = document.getElementsByName("honor_type_id");
+  for (var i = 0; i < element.length; i++ ) {
+    var isHonor = false;
+    if ( element[i].checked == true ) {
       var isHonor = true;
       break;
+    }
   }
-    }
-    if ( isHonor ) {
-  show('honorType', 'block');
-  show('honorTypeEmail', 'block');
-    } else {
-  document.getElementById('honor_first_name').value = '';
-  document.getElementById('honor_last_name').value  = '';
-  document.getElementById('honor_email').value      = '';
-  document.getElementById('honor_prefix_id').value  = '';
-  hide('honorType', 'block');
-  hide('honorTypeEmail', 'block');
-    }
+  if ( isHonor ) {
+    show('honorType', 'block');
+    show('honorTypeEmail', 'block');
+  }
+  else {
+    document.getElementById('honor_first_name').value = '';
+    document.getElementById('honor_last_name').value  = '';
+    document.getElementById('honor_email').value      = '';
+    document.getElementById('honor_prefix_id').value  = '';
+    hide('honorType', 'block');
+    hide('honorTypeEmail', 'block');
+  }
 }
 
 function pcpAnonymous( ) {
@@ -438,13 +440,16 @@ function pcpAnonymous( ) {
 }
 {/literal}{if $form.is_pay_later and $paymentProcessor.payment_processor_type EQ 'PayPal_Express'}{literal}
     showHidePayPalExpressOption();
-{/literal} {/if}{literal}
+{/literal} {/if}
+
+{literal}
 function showHidePayPalExpressOption()
 {
   if (document.getElementsByName("is_pay_later")[0].checked) {
     show("crm-submit-buttons");
     hide("paypalExpress");
-  } else {
+  }
+  else {
     show("paypalExpress");
     hide("crm-submit-buttons");
   }
