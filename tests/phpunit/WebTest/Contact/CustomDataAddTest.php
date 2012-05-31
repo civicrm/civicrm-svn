@@ -201,7 +201,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("//option[@value='Contact']");
     $this->click("_qf_Group_next-bottom");
     $this->waitForElementPresent("_qf_Field_cancel-bottom");
-
+    
     //Is custom group created?
     $this->assertTrue($this->isTextPresent("Your custom field set '{$customGroupTitle}' has been added. You can add custom fields now."));
 
@@ -258,8 +258,8 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     //verify the money custom field value in the proper format
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='custom-block-{$customGroupTitle}']"));
-    $this->verifyText("xpath=//div[@id='custom-block-{$customGroupTitle}']/div[2]", '12,345,678.98');
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='custom-set-content-{$customGroupTitle}']"));
+    $this->verifyText("xpath=//div[@id='custom-set-content-{$customGroupTitle}']/div/div[3]", '12,345,678.98');
   }
 }
 
