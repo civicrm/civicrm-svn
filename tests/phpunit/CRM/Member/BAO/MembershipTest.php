@@ -495,12 +495,14 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
      */
   function testRenewMembership() {
     $contactId = Contact::createIndividual();
+    $joinDate  = $startDate = date("Ymd", strtotime(date("Ymd") . " -6 month"));
+    $endDate   = date("Ymd", strtotime($joinDate . " +1 year -1 day"));
     $params = array(
       'contact_id' => $contactId,
       'membership_type_id' => $this->_membershipTypeID,
-      'join_date' => '20110225000000',
-      'start_date' => '20110225000000',
-      'end_date' => '20120224000000',
+      'join_date' => $joinDate,
+      'start_date' => $startDate,
+      'end_date' => $endDate,
       'source' => 'Payment',
       'is_override' => 1,
       'status_id' => $this->_membershipStatusID,
@@ -521,7 +523,7 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
     $membershipRenewal = new CRM_Core_Form();
     $membershipRenewal->controller = new CRM_Core_Controller();
     $MembershipRenew = CRM_Member_BAO_Membership::renewMembership($contactId, $this->_membershipTypeID, $isTestMembership = 0, $membershipRenewal, NULL, NULL);
-    $endDate = date("Y-m-d", strtotime($membership->end_date . " +1 year -1 day"));
+    $endDate = date("Y-m-d", strtotime($membership->end_date . " +1 year"));
 
     $this->assertDBNotNull('CRM_Member_BAO_MembershipLog',
       $MembershipRenew->id,
