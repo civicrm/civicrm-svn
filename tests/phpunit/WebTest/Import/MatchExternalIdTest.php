@@ -362,6 +362,9 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     // verify event input on info page
     // start at Manage Events listing
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
+    $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$params['title']);
+    $this->click("_qf_SearchEvent_refresh");
+    $this->waitForPageToLoad("30000");
     $this->click("link=" . $params['title']);
 
     $this->waitForPageToLoad('30000');
