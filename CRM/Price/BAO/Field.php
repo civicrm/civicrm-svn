@@ -130,11 +130,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           'price_field_id' => $priceField->id,
           'label' => trim($params['option_label'][$index]),
           'name' => CRM_Utils_String::munge($params['option_label'][$index], '_', 64),
-          'amount' => CRM_Utils_Rule::cleanMoney(trim($params['option_amount'][$index])),
-          'count' => CRM_Utils_Array::value($index, $params['option_count'], NULL),
-          'max_value' => CRM_Utils_Array::value($index, $params['option_max_value'], NULL),
-          'description' => CRM_Utils_Array::value($index, $params['option_description'], NULL),
-          'membership_type_id' => CRM_Utils_Array::value($index, $params['membership_type_id'], NULL),
+          'amount' => CRM_Utils_Rule::cleanMoney(trim($params['option_amount'][$index])), 
+          'count' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_count', $params), NULL),
+          'max_value' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_max_value', $params), NULL),
+          'description' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_description', $params), NULL),
+          'membership_type_id' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('membership_type_id', $params), NULL),
           'weight' => $params['option_weight'][$index],
           'is_active' => 1,
           'is_default' => CRM_Utils_Array::value($params['option_weight'][$index], $defaultArray) ? $defaultArray[$params['option_weight'][$index]] : 0,
@@ -348,7 +348,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           }
         }
 
-        if (CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount') {
+        if (property_exists($qf, '_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount') {
           $choice[] = $qf->createElement('radio', NULL, '', 'No thank you', '00',
             array('price' => json_encode(array($elementName, "0")),
               'onclick' => 'clearAmountOther();',
