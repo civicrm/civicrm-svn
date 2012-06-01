@@ -151,6 +151,9 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
           $defaults["discounted_label"][$discountFieldsval['weight']] = $discountFieldsval['label'];
           $defaults["discounted_value"][$discountFieldsval['weight']][$rowCount] = $discountFieldsval['amount'];
           $defaults['discount_option_id'][$rowCount][]= $discountFieldsval['id'];
+          if (CRM_Utils_Array::value('is_default', $discountFieldsval)) {
+            $defaults['discounted_default'] = $discountFieldsval['weight'];
+          }
         }
         $rowCount++;
       }
@@ -679,11 +682,12 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                                              );
                 }
               }
-
+   
               if (!empty($discountOptions)) {
                 $fieldParams = array();
                 $params['default_discount_fee_id'] = NULL;
-                if (!CRM_Utils_Array::value($j-1, $discountPriceSets)) {
+                $keyCheck = $j-1;
+                if (!CRM_Utils_Array::value($keyCheck, $discountPriceSets)) {
                   if (!$eventTitle) {
                     $eventTitle = strtolower(CRM_Utils_String::munge($this->_defaultValues['title'], '_', 200));
                   }
@@ -715,6 +719,9 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                   $fieldParams['option_label'][$value['weight']] = $value['label'];
                   $fieldParams['option_amount'][$value['weight']] = $value['value'];
                   $fieldParams['option_weight'][$value['weight']] = $value['weight'];
+                  if (CRM_Utils_Array::value('is_default', $value)) {
+                    $fieldParams['default_option'] = $value['weight'];
+                  }
                   if (CRM_Utils_Array::value($value['weight']-1, $discountFieldIDs[$j])) {
                     $fieldParams['option_id'][$value['weight']] = $discountFieldIDs[$j][$value['weight']-1];
                     unset($discountFieldIDs[$j][$value['weight']-1]);
