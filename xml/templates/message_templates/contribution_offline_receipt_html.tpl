@@ -49,7 +49,7 @@
       </td>
      </tr>
 
-     {if $lineItem}
+     {if $lineItem and !$is_quick_config}
       {foreach from=$lineItem item=value key=priceset}
        <tr>
         <td colspan="2" {$valueStyle}>

@@ -37,7 +37,7 @@
   </table>
   <table width="500" style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse;">
 
-     {if $membership_assign && !$useForMember}
+     {if $membership_assign}
       <tr>
        <th {$headerStyle}>
         {ts}Membership Information{/ts}
