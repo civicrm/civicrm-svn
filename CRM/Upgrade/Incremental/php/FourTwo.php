@@ -75,40 +75,60 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   static function task_4_2_alpha1_createPriceSets(CRM_Queue_TaskContext $ctx) {
     //CRM-9714 drop unique index for title
     CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`");
-    $daoName = array('civicrm_contribution_page' => array('CRM_Contribute_BAO_ContributionPage', CRM_Core_Component::getComponentID('CiviContribute')),
-      'civicrm_event' => array('CRM_Event_BAO_Event', CRM_Core_Component::getComponentID('CiviEvent')),
-    );
+    $daoName =
+      array(
+        'civicrm_contribution_page' =>
+        array(
+          'CRM_Contribute_BAO_ContributionPage',
+          CRM_Core_Component::getComponentID('CiviContribute')
+        ),
+        'civicrm_event' =>
+        array(
+          'CRM_Event_BAO_Event',
+          CRM_Core_Component::getComponentID('CiviEvent')
+        ),
+      );
 
-    // add column in is_quick_config and is_reserved civicrm_price_set 
-    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` ADD `is_quick_config` TINYINT( 4 ) NOT NULL DEFAULT '0' COMMENT 'Is set if edited on Contribution or Event Page rather than through Manage Price Sets' AFTER `contribution_type_id`,
-ADD `is_reserved` tinyint(4) DEFAULT '0' COMMENT 'Is this a predefined system price set  (i.e. it can not be deleted, edited)?'");
-    
-    //get all option group used for event and contribution page
-    $query = " SELECT `id`, `name` FROM `civicrm_option_group` 
-WHERE `name` LIKE '%.amount.%' ";
+    // add column in is_quick_config and is_reserved civicrm_price_set
+    $sql = "
+ALTER TABLE `civicrm_price_set`
+ADD         `is_quick_config` TINYINT(4) NOT NULL DEFAULT '0'
+                              COMMENT 'Is set if edited on Contribution or Event Page rather than through Manage Price Sets'
+                              AFTER `contribution_type_id`,
+ADD         `is_reserved`     TINYINT(4) DEFAULT '0'
+                              COMMENT 'Is this a predefined system price set  (i.e. it can not be deleted, edited)?'
+";
+    CRM_Core_DAO::executeQuery( $sql );
+
+    // get all option group used for event and contribution page
+    $query = "
+SELECT id, name
+FROM   civicrm_option_group
+WHERE  name LIKE '%.amount.%' ";
     $dao = CRM_Core_DAO::executeQuery($query);
     while ($dao->fetch()) {
       $addTo = explode('.', $dao->name);
       if (CRM_Utils_Array::value(2, $addTo)) {
         $options = array ('optionGroup' => $dao->name);
-        self::creatPriceSet($daoName, $addTo, $options); 
-      }     
+        self::createPriceSet($daoName, $addTo, $options);
+      }
       CRM_Core_OptionGroup::deleteAssoc($dao->name);
     }
 
     //create pricesets for contribution with only other amount
-    $query = " SELECT ccp.id as contribution_page_id, ccp.is_allow_other_amount, cmb.id as membership_block_id FROM `civicrm_contribution_page` ccp
+    $query = "
+SELECT    ccp.id as contribution_page_id, ccp.is_allow_other_amount, cmb.id as membership_block_id
+FROM      civicrm_contribution_page ccp
 LEFT JOIN civicrm_membership_block cmb ON  cmb.entity_id = ccp.id AND cmb.entity_table = 'civicrm_contribution_page'
-LEFT JOIN civicrm_price_set_entity cpse 
-ON cpse.entity_id = ccp.id and cpse.entity_table = 'civicrm_contribution_page'
-where  cpse.price_set_id IS NULL";
+LEFT JOIN civicrm_price_set_entity cpse ON cpse.entity_id = ccp.id and cpse.entity_table = 'civicrm_contribution_page'
+WHERE     cpse.price_set_id IS NULL";
     $dao = CRM_Core_DAO::executeQuery($query);
     $addTo = array('civicrm_contribution_page');
     while ($dao->fetch()) {
       $addTo[2] = $dao->contribution_page_id;
       $options = array ('otherAmount' =>$dao->is_allow_other_amount,
-                      'membership' => $dao->membership_block_id );      
-      self::creatPriceSet($daoName, $addTo, $options);
+                      'membership' => $dao->membership_block_id );
+      self::createPriceSet($daoName, $addTo, $options);
     }
 
     return TRUE;
@@ -128,17 +148,17 @@ where  cpse.price_set_id IS NULL";
       return TRUE;
   }
 
-  
+
   /**
-   * 
+   *
    * Function to create price sets
    */
-  static function creatPriceSet($daoName, $addTo,  $options = array()) {
+  static function createPriceSet($daoName, $addTo,  $options = array()) {
 
-    
+
     $setParams['title'] = CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], 'title');
     $pageTitle = strtolower(CRM_Utils_String::munge($setParams['title'], '_', 245));
-    
+
     if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
       $setParams['name'] = $pageTitle;
     }
@@ -153,7 +173,7 @@ where  cpse.price_set_id IS NULL";
     $setParams['is_quick_config'] = 1;
     $priceSet = CRM_Price_BAO_Set::create($setParams);
     CRM_Price_BAO_Set::addTo($addTo[0], $addTo[2], $priceSet->id, 1);
-    
+
     $fieldParams['price_set_id'] = $priceSet->id;
     if (CRM_Utils_Array::value('optionGroup', $options)) {
       $fieldParams['html_type'] = 'Radio';
@@ -178,16 +198,16 @@ where  cpse.price_set_id IS NULL";
       $fieldParams['option_amount'] = $optionValue['value'];
       $fieldParams['option_weight'] = $optionValue['weight'];
       if ($defaultAmount = CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], $defaultAmountColumn)) {
-        $fieldParams['default_option'] = array_search($defaultAmount, $optionValue['amount_id']); 
+        $fieldParams['default_option'] = array_search($defaultAmount, $optionValue['amount_id']);
       }
       $priceField = CRM_Price_BAO_Field::create($fieldParams);
-      
+
     }
     if (CRM_Utils_Array::value('membership', $options)) {
       $dao               = new CRM_Member_DAO_MembershipBlock();
       $dao->entity_table = 'civicrm_contribution_page';
       $dao->entity_id    = $addTo[2];
-      
+
       if ($dao->find(TRUE)) {
         if ($dao->membership_types) {
           $fieldParams = array(
@@ -197,7 +217,7 @@ where  cpse.price_set_id IS NULL";
             'is_display_amounts' => $dao->display_min_fee,
             'is_active'          => $dao->is_active,
             'price_set_id'       => $priceSet->id,
-            'html_type'          => 'Radio', 
+            'html_type'          => 'Radio',
             'weight'             => 1,
           );
           $membershipTypes = unserialize($dao->membership_types);
@@ -218,7 +238,7 @@ where  cpse.price_set_id IS NULL";
       }
     }
     if (CRM_Utils_Array::value('otherAmount', $options)) {
-      
+
       $fieldParams = array(
         'name'               => strtolower(CRM_Utils_String::munge("Other Amount", '_', 245)),
         'label'              => "Other Amount",
@@ -226,7 +246,7 @@ where  cpse.price_set_id IS NULL";
         'is_display_amounts' => 0,
         'is_active'          => 1,
         'price_set_id'       => $priceSet->id,
-        'html_type'          => 'Text',  
+        'html_type'          => 'Text',
         'weight'             => 3,
       );
       $fieldParams['option_label'][1]  = "Other Amount";
@@ -235,7 +255,7 @@ where  cpse.price_set_id IS NULL";
       $priceField = CRM_Price_BAO_Field::create($fieldParams);
     }
   }
-  
+
 
 
   /**
@@ -248,46 +268,54 @@ where  cpse.price_set_id IS NULL";
    * @param $endId int, the last/highest contribution ID to convert
    */
   static function task_4_2_alpha1_convertContributions(CRM_Queue_TaskContext $ctx, $startId, $endId) {
-    
+
     // create lineitems for contribution done for membership
-    $sql = " SELECT cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
-FROM `civicrm_contribution` cc
-LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+    $sql = "
+SELECT    cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
+FROM      civicrm_contribution cc
+LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id AND cli.entity_table = 'civicrm_contribution'
 LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
 LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
-LEFT JOIN civicrm_price_set_entity cpse on cpse.entity_table = 'civicrm_contribution_page' and cpse.entity_id = cc.contribution_page_id
-WHERE (cc.id BETWEEN %1 AND %2)
-AND cli.entity_id IS NULL AND cc.contribution_page_id IS NOT NULL AND cpp.contribution_id IS NULL
-GROUP BY cc.id ";
+LEFT JOIN civicrm_price_set_entity cpse on cpse.entity_table = 'civicrm_contribution_page' AND cpse.entity_id = cc.contribution_page_id
+WHERE     (cc.id BETWEEN %1 AND %2)
+AND       cli.entity_id IS NULL AND cc.contribution_page_id IS NOT NULL AND cpp.contribution_id IS NULL
+GROUP BY  cc.id
+";
     $sqlParams = array(
-                       1 => array($startId, 'Integer'),
-                       2 => array($endId, 'Integer'),
-                       );
+      1 => array($startId, 'Integer'),
+      2 => array($endId, 'Integer'),
+    );
     $result = CRM_Core_DAO::executeQuery($sql, $sqlParams);
-    
+
     while ($result->fetch()) {
-      $sql = " SELECT cpf.id, cpfv.id as price_field_value_id, cpfv.label, cpfv.amount, cpfv.count FROM civicrm_price_field cpf LEFT JOIN civicrm_price_field_value cpfv ON cpf.id = cpfv.price_field_id WHERE cpf.price_set_id = %1 ";
+      $sql = "
+SELECT    cpf.id, cpfv.id as price_field_value_id, cpfv.label, cpfv.amount, cpfv.count
+FROM      civicrm_price_field cpf
+LEFT JOIN civicrm_price_field_value cpfv ON cpf.id = cpfv.price_field_id
+WHERE     cpf.price_set_id = %1
+";
       $lineParams = array(
-                          'entity_table' => 'civicrm_contribution',
-                          'entity_id' => $result->id,
-                          );
+        'entity_table' => 'civicrm_contribution',
+        'entity_id' => $result->id,
+      );
       if ($result->membership_id) {
         $sql .= " AND cpf.name = %2 AND cpfv.membership_type_id = %3 ";
-        $params = array('1' => array($result->price_set_id, 'Integer'),
-                        '2' => array('membership_amount', 'String'),
-                        '3' => array(CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $result->membership_id, 'membership_type_id'), 'Integer'),
-                        );
+        $params = array(
+          '1' => array($result->price_set_id, 'Integer'),
+          '2' => array('membership_amount', 'String'),
+          '3' => array(CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $result->membership_id, 'membership_type_id'), 'Integer'),
+        );
         $res = CRM_Core_DAO::executeQuery($sql, $params);
         if ($res->fetch()) {
           $lineParams += array(
-                               'price_field_id' => $res->id,
-                               'label' => $res->label,
-                               'qty' => 1,
-                               'unit_price' => $res->amount,
-                               'line_total' => $res->amount,
-                               'participant_count' => $res->count ? $res->count : 0,
-                               'price_field_value_id' => $res->price_field_value_id,
-                               );
+            'price_field_id' => $res->id,
+            'label' => $res->label,
+            'qty' => 1,
+            'unit_price' => $res->amount,
+            'line_total' => $res->amount,
+            'participant_count' => $res->count ? $res->count : 0,
+            'price_field_value_id' => $res->price_field_value_id,
+          );
         }
         else {
           $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
@@ -299,35 +327,38 @@ GROUP BY cc.id ";
       }
       else {
         $sql .= "AND cpfv.amount = %2";
-        $params = array('1' => array($result->price_set_id, 'Integer'),
-                        '2' => array($result->total_amount, 'String'),
-                        );
+        $params = array(
+          '1' => array($result->price_set_id, 'Integer'),
+          '2' => array($result->total_amount, 'String'),
+        );
         $res = CRM_Core_DAO::executeQuery($sql, $params);
         if ($res->fetch()) {
           $lineParams += array(
-                               'price_field_id' => $res->id,
-                               'label' => $res->label,
-                               'qty' => 1,
-                               'unit_price' => $res->amount,
-                               'line_total' => $res->amount,
-                               'participant_count' => $res->count ? $res->count : 0,
-                               'price_field_value_id' => $res->price_field_value_id,
-                               );
+            'price_field_id' => $res->id,
+            'label' => $res->label,
+            'qty' => 1,
+            'unit_price' => $res->amount,
+            'line_total' => $res->amount,
+            'participant_count' => $res->count ? $res->count : 0,
+            'price_field_value_id' => $res->price_field_value_id,
+          );
         }
         else {
           $params = array(
-                          'price_set_id' => $result->price_set_id,
-                          'name' => 'other_amount',
-                          );
+            'price_set_id' => $result->price_set_id,
+            'name' => 'other_amount',
+          );
           $defaults = array();
           CRM_Price_BAO_Field::retrieve($params, $defaults);
           if (!empty($defaults)) {
             $lineParams['price_field_id'] = $defaults['id'];
             $lineParams['label'] = $defaults['label'];
-            $lineParams['price_field_value_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $defaults['id'], 'id', 'price_field_id');
+            $lineParams['price_field_value_id'] =
+              CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $defaults['id'], 'id', 'price_field_id');
           }
           else {
-            $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
+            $lineParams['price_field_id'] =
+              CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
             $lineParams['label'] = 'Contribution Amount';
           }
           $lineParams['qty'] = 1;
@@ -337,18 +368,21 @@ GROUP BY cc.id ";
       }
       CRM_Price_BAO_LineItem::create($lineParams);
       CRM_Price_BAO_Set::addTo('civicrm_contribution', $result->id, $result->price_set_id);
-      
+
     }
-    
+
     //create lineitems for participant in edge cases using default price set for contribution.
-    $query = " SELECT cp.id as participant_id, cp.fee_amount, cp.fee_level,ce.is_monetary, cpse.price_set_id, cpf.id as price_field_id, cpfv.id as price_field_value_id  FROM civicrm_participant cp 
+    $query = "
+SELECT    cp.id as participant_id, cp.fee_amount, cp.fee_level,ce.is_monetary,
+          cpse.price_set_id, cpf.id as price_field_id, cpfv.id as price_field_value_id
+FROM      civicrm_participant cp
 LEFT JOIN civicrm_line_item cli ON cli.entity_id=cp.id and cli.entity_table = 'civicrm_participant'
 LEFT JOIN civicrm_event ce ON ce.id=cp.event_id
 LEFT JOIN civicrm_price_set_entity cpse ON cp.event_id = cpse.entity_id and cpse.entity_table = 'civicrm_event'
 LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpse.price_set_id
-LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id AND cpfv.label = cp.fee_level 
-WHERE  (cp.id BETWEEN %1 AND %2)
-AND cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
+LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id AND cpfv.label = cp.fee_level
+WHERE     (cp.id BETWEEN %1 AND %2)
+AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
     $sqlParams = array(
       1 => array($startId, 'Integer'),
       2 => array($endId, 'Integer'),
@@ -359,7 +393,7 @@ AND cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
       $priceSets = current(CRM_Price_BAO_Set::getSetDetail($defaultPriceSetId));
       $fieldID = key($priceSets['fields']);
     }
-    
+
     while ($dao->fetch()) {
       $lineParams = array(
         'entity_table' => 'civicrm_participant',
@@ -373,7 +407,7 @@ AND cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
       if ($dao->is_monetary) {
         $lineParams += array(
           'price_field_id' => $dao->price_field_id,
-          'price_field_value_id' => $dao->price_field_value_id, 
+          'price_field_value_id' => $dao->price_field_value_id,
         );
         $priceSetId = $dao->price_set_id;
       } else {
@@ -383,7 +417,7 @@ AND cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
       CRM_Price_BAO_LineItem::create($lineParams);
       CRM_Price_BAO_Set::addTo('civicrm_participant', $dao->participant_id, $priceSetId);
     }
-    
+
     return TRUE;
   }
 
@@ -393,41 +427,64 @@ AND cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
    * Create an event registration profile with a single email field CRM-9587
    */
   static function task_4_2_alpha1_eventProfile(CRM_Queue_TaskContext $ctx) {
-      $profileTitle = ts('Your Registration Info');
-      $sql = "INSERT INTO `civicrm_uf_group` (`is_active`, `group_type`, `title`, `help_pre`, `help_post`, `limit_listings_group_id`, `post_URL`, `add_to_group_id`, `add_captcha`, `is_map`, `is_edit_link`, `is_uf_link`, `is_update_dupe`, `cancel_URL`, `is_cms_user`, `notify`, `is_reserved`, `name`, `created_id`, `created_date`, `is_proximity_search`)
-              VALUES (1, 'Individual, Contact', '{$profileTitle}', NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, 'event_registration', NULL, NULL, 0);";
-      CRM_Core_DAO::executeQuery($sql);
-      $eventRegistrationId = CRM_Core_DAO::singleValueQuery('SELECT LAST_INSERT_ID()');
-      $sql = "INSERT INTO `civicrm_uf_field` (`uf_group_id`, `field_name`, `is_active`, `is_view`, `is_required`, `weight`, `help_post`, `help_pre`, `visibility`, `in_selector`, `is_searchable`, `location_type_id`, `phone_type_id`, `label`, `field_type`, `is_reserved`)
-              VALUES ({$eventRegistrationId}, 'email', 1, 0, 1, 1, NULL, NULL, 'User and User Admin Only', 0, 0, NULL, NULL, 'Email Address', 'Contact', 0);";
-      CRM_Core_DAO::executeQuery($sql);
+    $profileTitle = ts('Your Registration Info');
+    $sql = "
+INSERT INTO civicrm_uf_group
+  (is_active, group_type, title, help_pre, help_post, limit_listings_group_id, post_URL, add_to_group_id, add_captcha, is_map, is_edit_link, is_uf_link, is_update_dupe, cancel_URL, is_cms_user, notify, is_reserved, name, created_id, created_date, is_proximity_search)
+VALUES
+  (1, 'Individual, Contact', '{$profileTitle}', NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, 'event_registration', NULL, NULL, 0);
+";
+    CRM_Core_DAO::executeQuery($sql);
 
-      $sql = "SELECT * FROM `civicrm_event` WHERE is_online_registration = 1;";
-      $events = CRM_Core_DAO::executeQuery($sql);
-      while ($events->fetch()) {
-        // Get next weights for the event registration profile
-        $nextMainWeight = $nextAdditionalWeight = 1;
-        $sql            = "SELECT weight FROM `civicrm_uf_join` WHERE entity_id = {$events->id} AND module = 'CiviEvent' ORDER BY weight DESC LIMIT 1";
-        $weights        = CRM_Core_DAO::executeQuery($sql);
-        $weights->fetch();
-        if (isset($weights->weight)) {
-          $nextMainWeight += $weights->weight;
-        }
-        $sql = "SELECT weight FROM `civicrm_uf_join` WHERE entity_id = {$events->id} AND module = 'CiviEvent_Additional' ORDER BY weight DESC LIMIT 1";
-        $weights = CRM_Core_DAO::executeQuery($sql);
-        $weights->fetch();
-        if (isset($weights->weight)) {
-          $nextAdditionalWeight += $weights->weight;
-        }
-        // Add an event registration profile to the event
-        $sql = "INSERT INTO `civicrm_uf_join` (`is_active`, `module`, `entity_table`, `entity_id`, `weight`, `uf_group_id`)
-                    VALUES (1, 'CiviEvent', 'civicrm_event', {$events->id}, {$nextMainWeight}, {$eventRegistrationId});";
-        CRM_Core_DAO::executeQuery($sql);
-        $sql = "INSERT INTO `civicrm_uf_join` (`is_active`, `module`, `entity_table`, `entity_id`, `weight`, `uf_group_id`)
-                    VALUES (1, 'CiviEvent_Additional', 'civicrm_event', {$events->id}, {$nextAdditionalWeight}, {$eventRegistrationId});";
-        CRM_Core_DAO::executeQuery($sql);
+    $eventRegistrationId = CRM_Core_DAO::singleValueQuery('SELECT LAST_INSERT_ID()');
+    $sql = "
+INSERT INTO civicrm_uf_field
+  (uf_group_id, field_name, is_active, is_view, is_required, weight, help_post, help_pre, visibility, in_selector, is_searchable, location_type_id, phone_type_id, label, field_type, is_reserved)
+VALUES
+  ({$eventRegistrationId}, 'email', 1, 0, 1, 1, NULL, NULL, 'User and User Admin Only', 0, 0, NULL, NULL, 'Email Address', 'Contact', 0);
+";
+    CRM_Core_DAO::executeQuery($sql);
+
+    $sql = "SELECT * FROM civicrm_event WHERE is_online_registration = 1;";
+    $events = CRM_Core_DAO::executeQuery($sql);
+    while ($events->fetch()) {
+      // Get next weights for the event registration profile
+      $nextMainWeight = $nextAdditionalWeight = 1;
+      $sql = "
+SELECT   weight
+FROM     civicrm_uf_join
+WHERE    entity_id = {$events->id} AND module = 'CiviEvent'
+ORDER BY weight DESC LIMIT 1";
+      $weights        = CRM_Core_DAO::executeQuery($sql);
+      $weights->fetch();
+      if (isset($weights->weight)) {
+        $nextMainWeight += $weights->weight;
       }
-      
+      $sql = "
+SELECT   weight
+FROM     civicrm_uf_join
+WHERE    entity_id = {$events->id} AND module = 'CiviEvent_Additional'
+ORDER BY weight DESC LIMIT 1";
+      $weights = CRM_Core_DAO::executeQuery($sql);
+      $weights->fetch();
+      if (isset($weights->weight)) {
+        $nextAdditionalWeight += $weights->weight;
+      }
+      // Add an event registration profile to the event
+      $sql = "
+INSERT INTO civicrm_uf_join
+  (is_active, module, entity_table, entity_id, weight, uf_group_id)
+VALUES
+  (1, 'CiviEvent', 'civicrm_event', {$events->id}, {$nextMainWeight}, {$eventRegistrationId});
+";
+      CRM_Core_DAO::executeQuery($sql);
+      $sql = "
+INSERT INTO civicrm_uf_join
+  (is_active, module, entity_table, entity_id, weight, uf_group_id)
+VALUES
+  (1, 'CiviEvent_Additional', 'civicrm_event', {$events->id}, {$nextAdditionalWeight}, {$eventRegistrationId});";
+      CRM_Core_DAO::executeQuery($sql);
+    }
     return TRUE;
   }
 
@@ -443,7 +500,7 @@ AND cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
       'type' => 'Sql',
       'name' => CRM_Upgrade_Form::QUEUE_NAME,
     ));
-    
+
     $args = func_get_args();
     $title = array_shift($args);
     $funcName = array_shift($args);
@@ -455,4 +512,3 @@ AND cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
     $queue->createItem($task, array('weight' => -1));
   }
 }
-
