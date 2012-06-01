@@ -16,7 +16,7 @@
 # DM_RSYNC=/usr/bin/rsync                       <- rsync binary
 # DM_VERSION=trunk.r1234                        <- what the version number should be
 # DM_ZIP=/usr/bin/zip                           <- zip binary
-# 
+#
 #
 # ========================================================
 # DO NOT MODIFY BELOW
@@ -28,11 +28,12 @@ P=`dirname $0`
 # Current dir
 ORIGPWD=`pwd`
 
-# Set no actions by default 
+# Set no actions by default
 D5PACK=0
 D56PACK=0
 J5PACK=0
 WP5PACK=0
+SK5PACK=0
 
 # Display usage
 display_usage()
@@ -40,13 +41,14 @@ display_usage()
 	echo
 	echo "Usage: "
 	echo "  distmaker.sh OPTION"
-	echo 
+	echo
 	echo "Options available:"
 	echo "  all  - generate all available tarballs"
 	echo "  d5   - generate Drupal7 PHP5 module"
 	echo "  d5.6 - generate Drupal6 PHP5 module"
 	echo "  j5   - generate Joomla PHP5 module"
 	echo "  wp5  - generate Wordpress PHP5 module"
+	echo "  sk - generate Drupal StarterKit module"
 	echo
 	echo "You also need to have distmaker.conf file in place."
 	echo "See distmaker.conf.dist for example contents."
@@ -94,7 +96,13 @@ case $1 in
 	D5PACK=1
 	;;
 
-	# DRUPAL7 PHP5
+	# DRUPAL7 PHP5 StarterKit package
+	sk)
+	echo; echo "Generating Drupal7 PHP5 starter kit minimal module"; echo;
+	SKPACK=1
+	;;
+
+	# DRUPAL6 PHP5
 	d5.6)
 	echo; echo "Generating Drupal6 PHP5 module"; echo;
 	D56PACK=1
@@ -105,7 +113,7 @@ case $1 in
 	echo; echo "Generating Joomla PHP5 module"; echo;
 	J5PACK=1
 	;;
-	
+
 	# WORDPRESS PHP5
 	wp5)
 	echo; echo "Generating Wordpress PHP5 module"; echo;
@@ -119,12 +127,13 @@ case $1 in
 	D56PACK=1
 	J5PACK=1
 	WP5PACK=1
+	SKPACK=1
 	;;
 
 	# USAGE
 	*)
 	display_usage
-	exit 0	
+	exit 0
 	;;
 
 esac
@@ -140,6 +149,11 @@ cd $ORIGPWD
 if [ $D5PACK = 1 ]; then
 	echo; echo "Packaging for Drupal7, PHP5 version"; echo;
 	sh $P/dists/drupal_php5.sh
+fi
+
+if [ $SKPACK = 1 ]; then
+	echo; echo "Packaging for Drupal7, PHP5 StarterKit version"; echo;
+	sh $P/dists/drupal_sk_php5.sh
 fi
 
 if [ $D56PACK = 1 ]; then
