@@ -122,7 +122,8 @@ class CRM_Utils_JSON {
 
         //CRM-7130 --lets addslashes to only double quotes,
         //since we are using it to quote the field value.
-        $sOutput .= '"' . addcslashes($value[$element], '"\\') . '"';
+        //str_replace helps to provide a break for new-line
+        $sOutput .= '"' . addcslashes(str_replace(array("\r\n", "\n", "\r"), '<br />', $value[$element]), '"\\') . '"';
 
         $addcomma = TRUE;
       }
