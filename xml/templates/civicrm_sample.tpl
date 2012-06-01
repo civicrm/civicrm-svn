@@ -182,7 +182,7 @@ VALUES
 SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 AND `name` = 'pledge_for_civicrm';
 
 INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`, `is_enter_qty`, `weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`, `visibility_id`)
-VALUES ( @priceSetId, 'other_amount', 'Other Amount', 'Text', 0, 3, 0, 1, 1, 1, 1);
+VALUES ( @priceSetId, 'other_amount', 'Contribution Amount', 'Text', 0, 3, 0, 1, 1, 1, 1);
 
 INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id`) 
          VALUES ('civicrm_contribution_page', 3, @priceSetId);
