@@ -490,6 +490,11 @@ WHERE  id = %1";
       $priceSetId = self::getFor($entityTable, $id);
     }
 
+    //check if priceset is is_config
+    if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
+      $form->assign('quickConfig', 1);
+    }
+
     // get price info
     if ($priceSetId) {
       if ($form->_action & CRM_Core_Action::UPDATE) {
