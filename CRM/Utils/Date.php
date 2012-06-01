@@ -837,7 +837,7 @@ class CRM_Utils_Date {
    * @return array $result contains new date with added interval
    * @access public
    */
-  function intervalAdd($unit, $interval, $date, $dontCareTime = FALSE) {
+  static function intervalAdd($unit, $interval, $date, $dontCareTime = FALSE) {
     if (is_array($date)) {
       $hour   = CRM_Utils_Array::value('H', $date);
       $minute = CRM_Utils_Array::value('i', $date);

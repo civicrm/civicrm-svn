@@ -392,14 +392,14 @@ class api_v3_EventTest extends CiviUnitTestCase {
   ///////////////// civicrm_event_delete methods
   function testDeleteWrongParamsType() {
     $params = 'Annual CiviCRM meet';
-    $result = &civicrm_api('Event', 'Delete', $params);
+    $result = civicrm_api('Event', 'Delete', $params);
 
     $this->assertEquals($result['is_error'], 1);
   }
 
   function testDeleteEmptyParams() {
     $params = array();
-    $result = &civicrm_api('Event', 'Delete', $params);
+    $result = civicrm_api('Event', 'Delete', $params);
     $this->assertEquals($result['is_error'], 1);
   }
 
@@ -408,7 +408,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
       'id' => $this->_eventIds[0],
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('Event', 'Delete', $params);
+    $result = civicrm_api('Event', 'Delete', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertNotEquals($result['is_error'], 1);
   }
@@ -420,7 +420,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
       'event_id' => $this->_eventIds[0],
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('Event', 'Delete', $params);
+    $result = civicrm_api('Event', 'Delete', $params);
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
   }
   /*
@@ -440,10 +440,10 @@ class api_v3_EventTest extends CiviUnitTestCase {
 
   function testDeleteWithWrongEventId() {
     $params = array('event_id' => $this->_eventIds[0], 'version' => $this->_apiversion);
-    $result = &civicrm_api('Event', 'Delete', $params);
+    $result = civicrm_api('Event', 'Delete', $params);
     // try to delete again - there's no such event anymore
     $params = array('event_id' => $this->_eventIds[0]);
-    $result = &civicrm_api('Event', 'Delete', $params);
+    $result = civicrm_api('Event', 'Delete', $params);
     $this->assertEquals($result['is_error'], 1);
   }
 
@@ -454,7 +454,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
    */
   function testSearchWrongParamsType() {
     $params = 'a string';
-    $result = &civicrm_api('event', 'get', $params);
+    $result = civicrm_api('event', 'get', $params);
 
     $this->assertEquals($result['is_error'], 1, 'In line ' . __LINE__);
   }
@@ -469,7 +469,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
       'sequential' => 1,
     );
-    $result = &civicrm_api('event', 'get', $getparams);
+    $result = civicrm_api('event', 'get', $getparams);
     $this->assertEquals($result['count'], 3, 'In line ' . __LINE__);
     $res = $result['values'][0];
     $this->assertArrayKeyExists('title', $res, 'In line ' . __LINE__);
@@ -487,7 +487,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
       'return.start_date' => 1,
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('event', 'get', $params);
+    $result = civicrm_api('event', 'get', $params);
 
     $this->assertEquals($result['values'][$this->_eventIds[0]]['id'], $this->_eventIds[0], 'In line ' . __LINE__);
     $this->assertEquals($result['values'][$this->_eventIds[0]]['title'], 'Annual CiviCRM meet', 'In line ' . __LINE__);

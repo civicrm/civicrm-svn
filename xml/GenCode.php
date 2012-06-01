@@ -202,15 +202,16 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     $this->smarty->clear_all_assign();
     $this->smarty->assign_by_ref('database', $database);
     $this->smarty->assign_by_ref('tables', $tables);
-    $this->smarty->assign_by_ref('dropOrder', array_reverse(array_keys($tables)));
+    $dropOrder = array_reverse(array_keys($tables));
+    $this->smarty->assign_by_ref('dropOrder', $dropOrder);
     $this->smarty->assign('mysql', 'modern');
     file_put_contents($this->sqlCodePath . "civicrm.mysql", $this->smarty->fetch('schema.tpl'));
   }
 
   function generateDropSql($tables) {
     echo "Generating sql drop tables file\n";
-    //$this->smarty->clear_all_assign();
-    $this->smarty->assign_by_ref('dropOrder', array_reverse(array_keys($tables)));
+    $dropOrder = array_reverse(array_keys($tables));
+    $this->smarty->assign_by_ref('dropOrder', $dropOrder);
     file_put_contents($this->sqlCodePath . "civicrm_drop.mysql", $this->smarty->fetch('drop.tpl'));
   }
 

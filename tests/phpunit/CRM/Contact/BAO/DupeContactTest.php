@@ -28,7 +28,7 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase {
       'version' => 3,
     );
     // TODO: This is not an API test!!
-    $result = &civicrm_api('group', 'create', $params);
+    $result = civicrm_api('group', 'create', $params);
     $groupId = $result['id'];
 
     // contact data set
@@ -82,7 +82,7 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase {
     // TODO: This is not an API test!!
     foreach ($params as $param) {
       $param['version'] = 3;
-      $contact = &civicrm_api('contact', 'create', $param);
+      $contact = civicrm_api('contact', 'create', $param);
       $contactIds[$count++] = $contact['id'];
 
       $grpParams = array(
@@ -184,7 +184,7 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase {
     // TODO: This is not an API test!!
     foreach ($params as $param) {
       $param['version'] = 3;
-      $contact = &civicrm_api('contact', 'create', $param);
+      $contact = civicrm_api('contact', 'create', $param);
       $contactIds[$count++] = $contact['id'];
     }
 

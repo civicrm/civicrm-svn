@@ -2706,7 +2706,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    *
    * @return array list of calculated group type
    */
-  function calculateGroupType($gId, $includeTypeValues = FALSE, $ignoreFieldId = NULL) {
+  static function calculateGroupType($gId, $includeTypeValues = FALSE, $ignoreFieldId = NULL) {
     //get the profile fields.
     $ufFields = self::getFields($gId, FALSE, NULL, NULL, NULL, TRUE, NULL, TRUE);
     $groupType = $groupTypeValues = $customFieldIds = array();
@@ -2765,7 +2765,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    *
    * @return Boolean
    */
-  function updateGroupTypes($gId, $groupTypes = array(
+  static function updateGroupTypes($gId, $groupTypes = array(
     )) {
     if (!is_array($groupTypes) || !$gId) {
       return FALSE;

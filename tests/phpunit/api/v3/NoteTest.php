@@ -91,7 +91,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    */
   function testGetWithWrongParamsType() {
     $params = 'a string';
-    $result = &civicrm_api('note', 'get', $params);
+    $result = civicrm_api('note', 'get', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -103,7 +103,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    */
   function testGetWithEmptyParams() {
     $params = array();
-    $note = &civicrm_api('note', 'get', $params);
+    $note = civicrm_api('note', 'get', $params);
     $this->assertEquals($note['is_error'], 1);
   }
 
@@ -116,7 +116,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
       'entity_table' => 'civicrm_contact',
       'version' => 3,
     );
-    $note = &civicrm_api('note', 'get', $params);
+    $note = civicrm_api('note', 'get', $params);
     $this->assertEquals($note['is_error'], 0);
   }
 
@@ -144,7 +144,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    */
   function testCreateWithWrongParamsType() {
     $params = 'a string';
-    $result = &civicrm_api('note', 'create', $params);
+    $result = civicrm_api('note', 'create', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -251,7 +251,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    */
   function testUpdateWithWrongParamsType() {
     $params = 'a string';
-    $result = &civicrm_api('note', 'create', $params);
+    $result = civicrm_api('note', 'create', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -263,7 +263,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    */
   function testUpdateWithEmptyParams() {
     $params = array();
-    $note = &civicrm_api('note', 'create', $params);
+    $note = civicrm_api('note', 'create', $params);
     $this->assertEquals($note['is_error'], 1);
   }
 
@@ -277,7 +277,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
       'entity_table' => 'civicrm_contact',
       'version' => $this->_apiversion,
     );
-    $note = &civicrm_api('note', 'create', $params);
+    $note = civicrm_api('note', 'create', $params);
     $this->assertEquals($note['is_error'], 1);
     $this->assertEquals($note['error_message'], 'Mandatory key(s) missing from params array: note');
   }
@@ -313,7 +313,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    */
   function testDeleteWithWrongParamsType() {
     $params = 'a string';
-    $result = &civicrm_api('note', 'delete', $params);
+    $result = civicrm_api('note', 'delete', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -325,7 +325,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
    */
   function testDeleteWithEmptyParams() {
     $params = array();
-    $deleteNote = &civicrm_api('note', 'delete', $params);
+    $deleteNote = civicrm_api('note', 'delete', $params);
     $this->assertEquals($deleteNote['is_error'], 1);
     $this->assertEquals($deleteNote['error_message'], 'Mandatory key(s) missing from params array: version, id');
   }
@@ -339,7 +339,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
       'id' => 0,
       'version' => $this->_apiversion,
     );
-    $deleteNote = &civicrm_api('note', 'delete', $params);
+    $deleteNote = civicrm_api('note', 'delete', $params);
     $this->assertEquals($deleteNote['is_error'], 1);
     $this->assertEquals($deleteNote['error_message'], 'Mandatory key(s) missing from params array: id');
   }
@@ -355,7 +355,7 @@ class api_v3_NoteTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $result = &civicrm_api('note', 'delete', $params);
+    $result = civicrm_api('note', 'delete', $params);
 
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);

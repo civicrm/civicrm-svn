@@ -302,7 +302,7 @@ WHERE  id = %1
         );
         $query->_useDistinct = FALSE;
         $query->_useGroupBy  = FALSE;
-        $searchSQL           = &$query->searchQuery(0, 0, NULL,
+        $searchSQL           = $query->searchQuery(0, 0, NULL,
           FALSE, FALSE,
           FALSE, TRUE,
           TRUE,

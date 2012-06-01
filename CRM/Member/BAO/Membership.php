@@ -536,7 +536,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
    * @return array of key value pairs
    * @access public
    */
-  function getStatusANDTypeValues($membershipId) {
+  static function getStatusANDTypeValues($membershipId) {
     $values = array();
     if (!$membershipId) {
       return $values;

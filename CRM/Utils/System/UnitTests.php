@@ -46,7 +46,8 @@ class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
     return;
   }
 
-  function authenticate($name, $password) {
+  static
+  function authenticate($name, $password, $loadCMSBootstrap = FALSE, $realPath = NULL) {
     $retVal = array(1, 1, 12345);
     return $retVal;
   }
@@ -72,7 +73,7 @@ class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
     return;
   }
 
-  function url($path = NULL, $query = NULL, $absolute = TRUE, $fragment = NULL, $htmlize = TRUE) {
+  function url($path = NULL, $query = NULL, $absolute = TRUE, $fragment = NULL, $htmlize = TRUE, $frontend = FALSE) {
     $config = CRM_Core_Config::singleton();
     static $script = 'index.php';
 

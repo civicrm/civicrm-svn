@@ -2127,7 +2127,7 @@ ORDER BY html_type";
     return $defaultValue;
   }
 
-  function postProcess(&$params,
+  static function postProcess(&$params,
     &$customFields,
     $entityID,
     $customFieldExtends,

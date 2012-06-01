@@ -1138,7 +1138,7 @@ WHERE civicrm_event.is_active = 1
    * @return None
    * @access public
    */
-  function buildCustomDisplay($id,
+  static function buildCustomDisplay($id,
     $name,
     $cid,
     &$template,
@@ -1572,7 +1572,7 @@ WHERE  id = $cfID
    *@return array $customProfile array of Additional participant's info OR array of Ids.
    *@access public
    */
-  function buildCustomProfile($participantId,
+  static function buildCustomProfile($participantId,
     $values,
     $contactId  = NULL,
     $isTest     = FALSE,

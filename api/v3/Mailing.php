@@ -45,17 +45,6 @@
 
 require_once 'api/v3/utils.php';
 
-require_once 'CRM/Contact/BAO/Group.php';
-
-require_once 'CRM/Mailing/BAO/BouncePattern.php';
-require_once 'CRM/Mailing/Event/BAO/Bounce.php';
-require_once 'CRM/Mailing/Event/BAO/Confirm.php';
-require_once 'CRM/Mailing/Event/BAO/Opened.php';
-require_once 'CRM/Mailing/Event/BAO/Queue.php';
-require_once 'CRM/Mailing/Event/BAO/Reply.php';
-require_once 'CRM/Mailing/Event/BAO/Forward.php';
-require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
-
 /**
  * Process a bounce event by passing through to the BAOs.
  *

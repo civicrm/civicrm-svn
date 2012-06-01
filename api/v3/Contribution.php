@@ -163,7 +163,7 @@ function civicrm_api3_contribution_get($params) {
     $returnProperties = CRM_Contribute_BAO_Query::defaultReturnProperties(CRM_Contact_BAO_Query::MODE_CONTRIBUTE);
   }
 
-  $newParams = &CRM_Contact_BAO_Query::convertFormValues($inputParams);
+  $newParams = CRM_Contact_BAO_Query::convertFormValues($inputParams);
   $query = new CRM_Contact_BAO_Query($newParams, $returnProperties, NULL,
     FALSE, FALSE, CRM_Contact_BAO_Query::MODE_CONTRIBUTE
   );

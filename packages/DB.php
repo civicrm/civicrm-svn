@@ -651,7 +651,7 @@ class DB
      * @return string  the error message or false if the error code was
      *                  not recognized
      */
-    function errorMessage($value)
+    static function errorMessage($value)
     {
         static $errorMessages;
         if (!isset($errorMessages)) {
@@ -732,7 +732,7 @@ class DB
      *  + username: User name for login
      *  + password: Password for login
      */
-    function parseDSN($dsn)
+	 static function parseDSN($dsn)
     {
         $parsed = array(
             'phptype'  => false,

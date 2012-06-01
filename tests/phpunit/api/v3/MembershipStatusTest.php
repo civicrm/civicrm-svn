@@ -85,7 +85,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
    */
   function testGetEmptyParams() {
     $params = array('version' => 3);
-    $result = &civicrm_api('membership_status', 'get', $params);
+    $result = civicrm_api('membership_status', 'get', $params);
     // It should be 8 statuses, 7 default from mysql_data
     // plus one test status added in setUp
     $this->assertEquals(8, $result['count'], 'In line ' . __LINE__);
@@ -99,7 +99,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
       'name' => 'test status',
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('membership_status', 'get', $params);
+    $result = civicrm_api('membership_status', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals($result['values'][$this->_membershipStatusID]['name'], "test status", "In line " . __LINE__);
   }
@@ -111,10 +111,10 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     $params = array(
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('membership_status', 'getcount', $params);
+    $result = civicrm_api('membership_status', 'getcount', $params);
     $this->assertGreaterThan(1, $result, "Check more than one exists In line " . __LINE__);
     $params['option.limit'] = 1;
-    $result = &civicrm_api('membership_status', 'getcount', $params);
+    $result = civicrm_api('membership_status', 'getcount', $params);
     $this->assertEquals(1, $result, "Check only 1 retrieved " . __LINE__);
   }
 

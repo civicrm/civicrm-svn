@@ -1,6 +1,4 @@
 <?php
-// vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
-
 /**
  *  File for the TestCase class
  *
@@ -263,7 +261,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
    */
   function testCaseCreateEmpty() {
     $params = array('version' => $this->_apiversion);
-    $result = &civicrm_api('case', 'create', $params);
+    $result = civicrm_api('case', 'create', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -279,7 +277,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $result = &civicrm_api('case', 'create', $params);
+    $result = civicrm_api('case', 'create', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -379,7 +377,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
       'activity_id' => $this->_caseActivityId,
       'version' => $this->_apiversion,
     );
-    $revActivity = &civicrm_api('activity', 'get', $revParams);
+    $revActivity = civicrm_api('activity', 'get', $revParams);
     $this->assertEquals($revActivity['values'][$this->_caseActivityId]['is_current_revision'],
       0,
       'in line ' . __LINE__
@@ -395,7 +393,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
   function testCaseActivityUpdateCustom() {
     // Create a case first
     $params = $this->_params;
-    $result = &civicrm_api('case', 'create', $params);
+    $result = civicrm_api('case', 'create', $params);
 
     // Create custom field group
     // Note the second parameter is Activity on purpose, not Case.
@@ -412,7 +410,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
       'custom_' . $custom_ids['custom_field_id'] => "custom string",
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('activity', 'create', $params);
+    $result = civicrm_api('activity', 'create', $params);
 
     $this->assertEquals($result['is_error'], 0,
       "Error message: " . CRM_Utils_Array::value('error_message', $result) . ' in line ' . __LINE__
@@ -429,7 +427,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
       'subject' => 'New subject',
       'version' => $this->_apiversion,
     );
-    $revAct = &civicrm_api('activity', 'create', $params);
+    $revAct = civicrm_api('activity', 'create', $params);
 
     $this->assertEquals($revAct['is_error'], 0,
       "Error message: " . CRM_Utils_Array::value('error_message', $revAct) . ' in line ' . __LINE__
@@ -441,7 +439,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
       'return.custom_' . $custom_ids['custom_field_id'] => 1,
     );
-    $revAct = &civicrm_api('activity', 'get', $revParams);
+    $revAct = civicrm_api('activity', 'get', $revParams);
 
     $this->assertEquals($revAct['is_error'], 0,
       "Error message: " . CRM_Utils_Array::value('error_message', $revAct) . ' in line ' . __LINE__
@@ -454,12 +452,3 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     $this->customGroupDelete($custom_ids['custom_group_id']);
   }
 }
-// -- set Emacs parameters --
-// Local variables:
-// mode: php;
-// tab-width: 4
-// c-basic-offset: 4
-// c-hanging-comment-ender-p: nil
-// indent-tabs-mode: nil
-// End:
-

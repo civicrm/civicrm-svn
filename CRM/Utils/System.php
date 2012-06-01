@@ -595,9 +595,9 @@ class CRM_Utils_System {
    * @static
    */
   static
-  function authenticate($name, $password, $loadCMSBootstrap = FALSE) {
+  function authenticate($name, $password, $loadCMSBootstrap = FALSE, $realPath = NULL) {
     $config = CRM_Core_Config::singleton();
-    return $config->userSystem->authenticate($name, $password, $loadCMSBootstrap);
+    return $config->userSystem->authenticate($name, $password, $loadCMSBootstrap, $realPath);
   }
 
   /**

@@ -111,7 +111,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $result = &civicrm_api('group_nesting', 'get', $params);
+    $result = civicrm_api('group_nesting', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     // expected data loaded in setUp
     $expected = array(
@@ -133,7 +133,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $result = &civicrm_api('group_nesting', 'get', $params);
+    $result = civicrm_api('group_nesting', 'get', $params);
 
     // expected data loaded in setUp
     $expected = array(
@@ -161,7 +161,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
       'version' => _apiversion,
     );
 
-    $result = &civicrm_api('group_nesting', 'get', $params);
+    $result = civicrm_api('group_nesting', 'get', $params);
 
     // expected data loaded in setUp
     $expected = array(
@@ -195,7 +195,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
       'child_group_id' => 700,
     );
 
-    $result = &civicrm_api('group_nesting', 'get', $params);
+    $result = civicrm_api('group_nesting', 'get', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -208,7 +208,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
   public function testGetWithEmptyParams() {
     $params = array();
 
-    $result = &civicrm_api('group_nesting', 'get', $params);
+    $result = civicrm_api('group_nesting', 'get', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -221,7 +221,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
   public function testGetWithWrongParamsType() {
     $params = 'a string';
 
-    $result = &civicrm_api('group_nesting', 'get', $params);
+    $result = civicrm_api('group_nesting', 'get', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -258,7 +258,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
   public function testCreateWithEmptyParams() {
     $params = array();
 
-    $result = &civicrm_api('group_nesting', 'create', $params);
+    $result = civicrm_api('group_nesting', 'create', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -271,7 +271,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
   public function testCreateWithWrongParamsType() {
     $params = 'a string';
 
-    $result = &civicrm_api('group_nesting', 'create', $params);
+    $result = civicrm_api('group_nesting', 'create', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -305,7 +305,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
   public function testDeleteWithEmptyParams() {
     $params = array();
 
-    $result = &civicrm_api('group_nesting', 'delete', $params);
+    $result = civicrm_api('group_nesting', 'delete', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );
@@ -318,7 +318,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
   public function testDeleteWithWrongParamsType() {
     $params = 'a string';
 
-    $result = &civicrm_api('group_nesting', 'delete', $params);
+    $result = civicrm_api('group_nesting', 'delete', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );

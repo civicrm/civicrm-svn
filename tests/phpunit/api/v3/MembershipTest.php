@@ -121,7 +121,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
 
     $this->assertTrue(function_exists(civicrm_api3_membership_get));
     $params = array('version' => $this->_apiversion);
-    $result = &civicrm_api('membership', 'get', $params);
+    $result = civicrm_api('membership', 'get', $params);
     $this->assertEquals(0, $result['is_error'], "In line " . __LINE__);
     $result = civicrm_api('Membership', 'Delete', array(
       'id' => $this->_membershipID,
@@ -254,7 +254,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $membership = &civicrm_api('membership', 'get', $params);
+    $membership = civicrm_api('membership', 'get', $params);
     //$this->documentMe($params,$membership,__FUNCTION__,__FILE__);
     $result = $membership['values'][$membershipID];
     civicrm_api('Membership', 'Delete', array(
@@ -317,7 +317,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $membership = &civicrm_api('membership', 'get', $params);
+    $membership = civicrm_api('membership', 'get', $params);
     $result = $membership['values'][$this->_membershipID];
     $this->assertEquals($membership['values'][$this->_membershipID]['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
     $this->assertEquals($membership['values'][$this->_membershipID]['contact_id'], $this->_contactID, "In line " . __LINE__);
@@ -329,7 +329,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $membership = &civicrm_api('membership', 'get', $params);
+    $membership = civicrm_api('membership', 'get', $params);
     $this->documentMe($params, $membership, __FUNCTION__, __FILE__, $description, $subfile);
     $result = $membership['values'][$this->_membershipID];
     $this->assertEquals($membership['values'][$this->_membershipID]['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
@@ -412,7 +412,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $result = &civicrm_api('membership', 'get', $params);
+    $result = civicrm_api('membership', 'get', $params);
 
     $membership = $result['values'][$membershipID];
     $this->assertEquals($this->_membershipStatusID, $membership['status_id'],
@@ -446,7 +446,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
    */
   function testCreateWithParamsString() {
     $params = 'a string';
-    $result = &civicrm_api('membership', 'create', $params);
+    $result = civicrm_api('membership', 'create', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__
     );

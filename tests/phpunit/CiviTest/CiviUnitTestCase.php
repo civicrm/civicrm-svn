@@ -164,7 +164,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       //  install test database
       echo PHP_EOL . "Installing {$dbName} database" . PHP_EOL;
 
-      $this->_populateDB();
+      self::_populateDB( FALSE, $this );
 
       self::$dbInit = TRUE;
     }
@@ -178,13 +178,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   protected function getDataSet() {}
 
-  private function _populateDB($perClass = FALSE) {
+  private static function _populateDB($perClass = FALSE, &$object = NULL) {
 
-    if ($perClass) {
+    if ($perClass || $object == NULL) {
       $dbreset = TRUE;
     }
     else {
-      $dbreset = $this->requireDBReset();
+      $dbreset = $object->requireDBReset();
     }
 
     if (self::$populateOnce || !$dbreset) {
@@ -256,6 +256,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
   public static function setUpBeforeClass() {
     self::_populateDB(TRUE);
+
+    // also set this global hack
+    $GLOBALS['_PEAR_ERRORSTACK_OVERRIDE_CALLBACK'] = array( );
   }
 
   /**
@@ -474,7 +477,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     );
   }
 
-  function assertAttributesEquals(&$expectedValues, &$actualValues) {
+  function assertAttributesEquals($expectedValues, $actualValues) {
     foreach ($expectedValues as $paramName => $paramValue) {
       if (isset($actualValues[$paramName])) {
         $this->assertEquals($paramValue, $actualValues[$paramName]);
@@ -1953,7 +1956,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
         $value = date('Y-m-d', strtotime($value));
         $result[$key] = date('Y-m-d', strtotime($result[$key]));
       }
-      $this->assertEquals($value, $result[$keys[$key]], $key . "EGetandCheck function determines that value: $value doesn't match " . print_r($result, TRUE) . $errorText);
+      $this->assertEquals($value, $result[$keys[$key]], $key . " GetandCheck function determines that value: $value doesn't match " . print_r($result, TRUE) . $errorText);
     }
   }
   /*

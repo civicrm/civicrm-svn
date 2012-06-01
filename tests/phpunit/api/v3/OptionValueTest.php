@@ -32,10 +32,10 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
     $params = array(
       'version' => $this->_apiversion,
     );
-    $result = &civicrm_api('option_value', 'getcount', $params);
+    $result = civicrm_api('option_value', 'getcount', $params);
     $this->assertGreaterThan(1, $result, "Check more than one exists In line " . __LINE__);
     $params['options']['limit'] = 1;
-    $result = &civicrm_api('option_value', 'getcount', $params);
+    $result = civicrm_api('option_value', 'getcount', $params);
     $this->assertEquals(1, $result, "Check only 1 retrieved " . __LINE__);
   }
 

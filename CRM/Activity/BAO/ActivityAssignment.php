@@ -56,7 +56,7 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
    * @access public
    *
    */
-  public function create(&$params) {
+  public static function create(&$params) {
     $assignment = new CRM_Activity_BAO_ActivityAssignment();
 
     $assignment->copyValues($params);

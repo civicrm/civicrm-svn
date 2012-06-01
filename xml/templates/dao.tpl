@@ -147,7 +147,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
        * @access public
        * @return array
        */
-      function &fields( ) {ldelim}
+      static function &fields( ) {ldelim}
         if ( ! ( self::$_fields ) ) {ldelim}
                self::$_fields = array (
 {foreach from=$table.fields item=field}

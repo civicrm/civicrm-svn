@@ -43,7 +43,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
    * @access public
    *
    */
-  function create(&$params) {
+  static function create(&$params) {
     return self::add($params);
   }
 
@@ -62,8 +62,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
    * @static
    * @todo move hook calls / extended logic to create - requires changing calls to call create not add
    */
-  static
-  function add(&$params) {
+  static function add(&$params) {
     if (CRM_Utils_Array::value('id', $params)) {
       CRM_Utils_Hook::pre('edit', 'ContributionRecur', $params['id'], $params);
     }

@@ -405,7 +405,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
       contactID, ufID, unique string ) if success
    * @access public
    */
-  function authenticate($name, $password, $loadCMSBootstrap = FALSE, $realPath = NULL) {
+   static function authenticate($name, $password, $loadCMSBootstrap = FALSE, $realPath = NULL) {
     require_once 'DB.php';
 
     $config = CRM_Core_Config::singleton();

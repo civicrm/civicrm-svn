@@ -48,7 +48,7 @@ class CRM_Utils_Array {
    *
    */
   static
-  function value($key, &$list, $default = NULL) {
+  function value($key, $list, $default = NULL) {
     if (is_array($list)) {
       return array_key_exists($key, $list) ? $list[$key] : $default;
     }

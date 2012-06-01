@@ -152,7 +152,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case {
    * @return object
    * @access public
    */
-  function addCaseToContact($params) {
+  static function addCaseToContact($params) {
     $caseContact = new CRM_Case_DAO_CaseContact();
     $caseContact->case_id = $params['case_id'];
     $caseContact->contact_id = $params['contact_id'];

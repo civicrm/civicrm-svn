@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -39,7 +38,6 @@
 
 require_once 'PEAR/ErrorStack.php';
 require_once 'PEAR/Exception.php';
-
 
 require_once 'Log.php';
 class CRM_Exception extends PEAR_Exception {
@@ -86,7 +84,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
    *
    * @return object
    * @static
-   */ function &singleton($package = NULL,
+   */ 
+   static function &singleton($package = NULL,
     $msgCallback     = FALSE,
     $contextCallback = FALSE,
     $throwPEAR_Error = FALSE,
@@ -461,7 +460,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
     // Roll log file monthly or if greater than 256M
     // note that PHP file functions have a limit of 2G and hence
-    // the alternative was introduce :)
+    // the alternative was introduce
     if (file_exists($fileName)) {
       $fileTime = date("Ym", filemtime($fileName));
       $fileSize = filesize($fileName);
@@ -645,4 +644,3 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
 $e = new PEAR_ErrorStack('CRM');
 $e->singleton('CRM', FALSE, NULL, 'CRM_Core_Error');
-

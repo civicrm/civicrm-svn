@@ -52,7 +52,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'contact_id' => 1,
       'version' => 3,
     );
-    $result = &civicrm_api('profile', 'get', $params);
+    $result = civicrm_api('profile', 'get', $params);
     $this->assertEquals($result['is_error'], 1);
     $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: profile_id');
   }
@@ -66,7 +66,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'profile_id' => 1000,
       'version' => 3,
     );
-    $result = &civicrm_api('profile', 'get', $params);
+    $result = civicrm_api('profile', 'get', $params);
     $this->assertEquals($result['is_error'], 1);
   }
 
@@ -190,7 +190,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
    */
   function testProfileSetNoArray() {
     $params = NULL;
-    $result = &civicrm_api('profile', 'set', $params);
+    $result = civicrm_api('profile', 'set', $params);
     $this->assertEquals($result['is_error'], 1);
     $this->assertEquals($result['error_message'], 'Input variable `params` is not an array');
   }
@@ -203,7 +203,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'contact_id' => 1,
       'version' => 3,
     );
-    $result = &civicrm_api('profile', 'set', $params);
+    $result = civicrm_api('profile', 'set', $params);
     $this->assertEquals($result['is_error'], 1);
     $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: profile_id');
   }
@@ -217,7 +217,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'profile_id' => 1000,
       'version' => 3,
     );
-    $result = &civicrm_api('profile', 'set', $params);
+    $result = civicrm_api('profile', 'set', $params);
     $this->assertEquals($result['is_error'], 1);
   }
 
@@ -240,7 +240,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       $updateParams
     );
 
-    $result = &civicrm_api('profile', 'set', $params);
+    $result = civicrm_api('profile', 'set', $params);
 
     $this->assertEquals($result['is_error'], 1);
     $this->assertEquals($result['error_message'], 'Missing required parameters for profile id 25: email-Primary');
@@ -413,7 +413,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'contact_id' => 1,
       'version' => 3,
     );
-    $result = &civicrm_api('profile', 'apply', $params);
+    $result = civicrm_api('profile', 'apply', $params);
     $this->assertEquals($result['is_error'], 1);
     $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: profile_id');
   }
@@ -427,7 +427,7 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
       'profile_id' => 1000,
       'version' => 3,
     );
-    $result = &civicrm_api('profile', 'apply', $params);
+    $result = civicrm_api('profile', 'apply', $params);
     $this->assertEquals($result['is_error'], 1);
   }
 

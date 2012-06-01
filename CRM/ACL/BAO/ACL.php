@@ -354,12 +354,13 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
   /**
    * Construct an associative array of an ACL rule's properties
    *
-   * @param
+   * @param   string  sprintf format for array
+   * @param   bool    empty only return elemnts that have a value set.
    *
    * @return array    - Assoc. array of the ACL rule's properties
    * @access public
    */
-  public function toArray() {
+  function toArray($format = '%s', $hideEmpty = false) {
     $result = array();
 
     if (!self::$_fieldKeys) {

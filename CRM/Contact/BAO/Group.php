@@ -731,7 +731,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     // CRM-9936
     $reservedPermission = CRM_Core_Permission::check('administer reserved groups');
 
-    $links = self::links();
+    $links = self::actionLinks();
 
     $allTypes = CRM_Core_OptionGroup::values('group_type');
     $values = array();
@@ -914,7 +914,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @return array $links array of action links
    * @access public
    */
-  function links() {
+  static function actionLinks() {
     $links = array(
       CRM_Core_Action::VIEW => array(
         'name' => ts('Contacts'),

@@ -27,7 +27,7 @@ class api_v3_GroupTest extends CiviUnitTestCase {
 
   function testgroupCreateEmptyParams() {
     $params = array();
-    $group = &civicrm_api('group', 'create', $params);
+    $group = civicrm_api('group', 'create', $params);
     $this->assertEquals($group['error_message'], 'Mandatory key(s) missing from params array: version, title');
   }
 
@@ -44,7 +44,7 @@ class api_v3_GroupTest extends CiviUnitTestCase {
       ),
     );
 
-    $group = &civicrm_api('group', 'create', $params);
+    $group = civicrm_api('group', 'create', $params);
     $this->assertEquals($group['error_message'], 'Mandatory key(s) missing from params array: version, title');
   }
 
@@ -70,7 +70,7 @@ class api_v3_GroupTest extends CiviUnitTestCase {
   function testGetGroupParamsWithGroupId() {
     $params       = array('version' => $this->_apiversion);
     $params['id'] = $this->_groupID;
-    $group        = &civicrm_api('group', 'get', $params);
+    $group        = civicrm_api('group', 'get', $params);
 
     foreach ($group['values'] as $v) {
       $this->assertEquals($v['name'], "Test Group 1_{$this->_groupID}");
@@ -101,7 +101,7 @@ class api_v3_GroupTest extends CiviUnitTestCase {
     $params = array('version' => $this->_apiversion);
     $params['id'] = $this->_groupID;
     $params['return.name'] = 1;
-    $group = &civicrm_api('group', 'get', $params);
+    $group = civicrm_api('group', 'get', $params);
     $this->assertEquals($group['values'][$this->_groupID]['name'],
       "Test Group 1_{$this->_groupID}"
     );
@@ -110,7 +110,7 @@ class api_v3_GroupTest extends CiviUnitTestCase {
   function testGetGroupParamsWithGroupTitle() {
     $params          = array('version' => $this->_apiversion);
     $params['title'] = 'New Test Group Created';
-    $group           = &civicrm_api('group', 'get', $params);
+    $group           = civicrm_api('group', 'get', $params);
 
     foreach ($group['values'] as $v) {
       $this->assertEquals($v['id'], $this->_groupID);
@@ -124,19 +124,19 @@ class api_v3_GroupTest extends CiviUnitTestCase {
   function testGetNonExistingGroup() {
     $params          = array('version' => $this->_apiversion);
     $params['title'] = 'No such group Exist';
-    $group           = &civicrm_api('group', 'get', $params);
+    $group           = civicrm_api('group', 'get', $params);
     $this->assertEquals(0, $group['is_error']);
   }
 
   function testgroupdeleteNonArrayParams() {
     $params = 'TestNotArray';
-    $group = &civicrm_api('group', 'delete', $params);
+    $group = civicrm_api('group', 'delete', $params);
     $this->assertEquals($group['error_message'], 'Input variable `params` is not an array');
   }
 
   function testgroupdeleteParamsnoId() {
     $params = array();
-    $group = &civicrm_api('group', 'delete', $params);
+    $group = civicrm_api('group', 'delete', $params);
     $this->assertEquals($group['error_message'], 'Mandatory key(s) missing from params array: version, id');
   }
 

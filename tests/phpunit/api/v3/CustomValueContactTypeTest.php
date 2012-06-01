@@ -138,7 +138,7 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
     $params = array(
       'version' => 3,
     );
-    $contact = &civicrm_api('contact', 'create', $params);
+    $contact = civicrm_api('contact', 'create', $params);
     $this->assertEquals($contact['is_error'], 1);
     $this->assertEquals($contact['error_message'], 'Mandatory key(s) missing from params array: contact_type');
   }
@@ -154,7 +154,7 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
       "custom_{$this->IndividualField[id]}" => 'Test String',
       'version' => $this->_apiversion,
     );
-    $contact = &civicrm_api('contact', 'create', $params);
+    $contact = civicrm_api('contact', 'create', $params);
 
     $this->assertNotNull($contact['id'], 'In line ' . __LINE__);
     $entityValues = CRM_Core_BAO_CustomValueTable::getEntityValues($this->individual);
@@ -259,7 +259,7 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
 
-    $contact = &civicrm_api('contact', 'create', $params);
+    $contact = civicrm_api('contact', 'create', $params);
 
     $this->assertEquals(0, $contact['is_error'], $contact['error_message'] . " in line " . __LINE__);
     $params = array(

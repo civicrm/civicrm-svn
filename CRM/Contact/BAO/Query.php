@@ -2531,6 +2531,10 @@ class CRM_Contact_BAO_Query {
 
     // find all the groups that are part of a saved search
     $groupIDs = implode(',', $groups);
+    if (empty($groupIDs)) {
+      return NULL;
+    }
+
     $sql = "
 SELECT id, cache_date, saved_search_id, children
 FROM   civicrm_group
@@ -4318,7 +4322,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
    * @return where clause for the query
    * @access public
    */
-  function buildClause($field, $op, $value = NULL, $dataType = NULL) {
+  static function buildClause($field, $op, $value = NULL, $dataType = NULL) {
     $op = trim($op);
     $clause = "$field $op";
 

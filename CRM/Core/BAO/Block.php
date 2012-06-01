@@ -413,9 +413,10 @@ class CRM_Core_BAO_Block {
      *  if $params['id'] is set $params['contact_id'] may need to be retrieved
      *
      *  @param array $params
+     * @static
      */
 
-  public function handlePrimary(&$params, $class) {
+  public static function handlePrimary(&$params, $class) {
 
     switch ($class) {
       case 'CRM_Core_BAO_Phone':

@@ -581,7 +581,7 @@ class CRM_Utils_Token {
     return $str;
   }
 
-  public function getContactTokenReplacement($token, &$contact, $html = FALSE,
+  public static function getContactTokenReplacement($token, &$contact, $html = FALSE,
     $returnBlankToken = FALSE, $escapeSmarty = FALSE
   ) {
     if (self::$_tokens['contact'] == NULL) {
@@ -655,7 +655,7 @@ class CRM_Utils_Token {
     return $str;
   }
 
-  public function getHookTokenReplacement($token, &$contact, $category, $html = FALSE, $escapeSmarty = FALSE) {
+  public static function getHookTokenReplacement($token, &$contact, $category, $html = FALSE, $escapeSmarty = FALSE) {
     $value = CRM_Utils_Array::value("{$category}.{$token}", $contact);
 
     if ($value &&
@@ -889,7 +889,7 @@ class CRM_Utils_Token {
    * @access public
    * @static
    */
-  function getTokens($string) {
+  static function getTokens($string) {
     $matches = array();
     $tokens = array();
     preg_match_all('/(?<!\{|\\\\)\{(\w+\.\w+)\}(?!\})/',
@@ -927,7 +927,7 @@ class CRM_Utils_Token {
    * @access public
    * @static
    */
-  function getTokenDetails($contactIDs,
+  static function getTokenDetails($contactIDs,
     $returnProperties = NULL,
     $skipOnHold       = TRUE,
     $skipDeceased     = TRUE,
@@ -1053,7 +1053,7 @@ class CRM_Utils_Token {
    * @access public
    * @static
    */
-  function getContributionTokenDetails($contributionIDs,
+  static function getContributionTokenDetails($contributionIDs,
     $returnProperties = NULL,
     $extraParams      = NULL,
     $tokens           = array(),
@@ -1101,14 +1101,14 @@ class CRM_Utils_Token {
    *
    * @access public
    */
-  function replaceGreetingTokens(&$tokenString, $contactDetails = NULL, $contactId = NULL, $className = NULL) {
+  static function replaceGreetingTokens(&$tokenString, $contactDetails = NULL, $contactId = NULL, $className = NULL) {
 
     if (!$contactDetails && !$contactId) {
       return;
     }
 
     // check if there are any tokens
-    $greetingTokens = CRM_Utils_Token::getTokens($tokenString);
+    $greetingTokens = self::getTokens($tokenString);
 
     if (!empty($greetingTokens)) {
       // first use the existing contact object for token replacement
@@ -1117,7 +1117,7 @@ class CRM_Utils_Token {
       }
 
       // check if there are any unevaluated tokens
-      $greetingTokens = CRM_Utils_Token::getTokens($tokenString);
+      $greetingTokens = self::getTokens($tokenString);
 
       // $greetingTokens not empty, means there are few tokens which are not evaluated, like custom data etc
       // so retrieve it from database
@@ -1126,7 +1126,7 @@ class CRM_Utils_Token {
         $greetingsReturnProperties = array_fill_keys(array_keys($greetingsReturnProperties), 1);
         $contactParams = array('contact_id' => $contactId);
 
-        $greetingDetails = CRM_Utils_Token::getTokenDetails($contactParams,
+        $greetingDetails = self::getTokenDetails($contactParams,
           $greetingsReturnProperties,
           FALSE, FALSE, NULL,
           $greetingTokens,
@@ -1143,8 +1143,7 @@ class CRM_Utils_Token {
     }
   }
 
-  static
-  function flattenTokens(&$tokens) {
+  static function flattenTokens(&$tokens) {
     $flattenTokens = array();
 
     foreach (array(

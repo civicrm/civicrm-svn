@@ -148,7 +148,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
 
   function testIndividualEntityTagGetWithoutContactID() {
     $paramsEntity = array('version' => $this->_apiversion);
-    $entity = &civicrm_api('entity_tag', 'get', $paramsEntity);
+    $entity = civicrm_api('entity_tag', 'get', $paramsEntity);
     $this->assertEquals($entity['is_error'], 1);
     $this->assertNotNull($entity['error_message']);
     $this->assertEquals($entity['error_message'], 'Mandatory key(s) missing from params array: entity_id');
@@ -171,12 +171,12 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
       'contact_id' => $contactId,
       'version' => $this->_apiversion,
     );
-    $entity = &civicrm_api('entity_tag', 'get', $paramsEntity);
+    $entity = civicrm_api('entity_tag', 'get', $paramsEntity);
   }
 
   function testHouseholdEntityGetWithoutContactID() {
     $paramsEntity = array('version' => $this->_apiversion);
-    $entity = &civicrm_api('entity_tag', 'get', $paramsEntity);
+    $entity = civicrm_api('entity_tag', 'get', $paramsEntity);
     $this->assertEquals($entity['is_error'], 1);
     $this->assertNotNull($entity['error_message']);
   }
@@ -195,12 +195,12 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
     $this->assertEquals($householdEntity['added'], 1);
 
     $paramsEntity = array('contact_id' => $ContactId);
-    $entity = &civicrm_api('entity_tag', 'get', $paramsEntity);
+    $entity = civicrm_api('entity_tag', 'get', $paramsEntity);
   }
 
   function testOrganizationEntityGetWithoutContactID() {
     $paramsEntity = array('version' => $this->_apiversion);
-    $entity = &civicrm_api('entity_tag', 'get', $paramsEntity);
+    $entity = civicrm_api('entity_tag', 'get', $paramsEntity);
     $this->assertEquals($entity['is_error'], 1);
     $this->assertNotNull($entity['error_message']);
   }
@@ -219,7 +219,7 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
     $this->assertEquals($organizationEntity['added'], 1);
 
     $paramsEntity = array('contact_id' => $ContactId);
-    $entity = &civicrm_api('entity_tag', 'get', $paramsEntity);
+    $entity = civicrm_api('entity_tag', 'get', $paramsEntity);
   }
 
   ///////////////// civicrm_entity_tag_remove methods

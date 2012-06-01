@@ -259,7 +259,7 @@ class CRM_Core_DAO extends DB_DataObject {
    *
    * @return array
    */
-  function &fields() {
+   static function &fields() {
     $result = NULL;
     return $result;
   }

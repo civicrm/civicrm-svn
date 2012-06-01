@@ -19,7 +19,8 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
    * test with empty params.
    */
   function testAddWithEmptyParams() {
-    $contact = CRM_Contact_BAO_Contact::add($params = array());
+    $params = array( );
+    $contact = CRM_Contact_BAO_Contact::add($params);
 
     //Now check Contact object
     $this->assertNull($contact);

@@ -685,6 +685,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
    * @access public
    * @static
    */
+  static
   function deleteContact($id, $restore = FALSE, $skipUndelete = FALSE) {
 
     if (!$id) {
@@ -939,7 +940,9 @@ WHERE id={$id}; ";
    *                                i.e. is_delete = 0
    *
    *  @return void
+   * @static
    */
+  static
   function contactTrashRestore($contact, $restore = FALSE) {
     $op = ($restore ? 'restore' : 'trash');
 

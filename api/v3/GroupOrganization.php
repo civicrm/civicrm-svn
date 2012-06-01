@@ -103,7 +103,7 @@ function _civicrm_api3_group_organization_create_spec(&$params) {
  */
 function civicrm_api3_group_organization_delete($params) {
 
-  $result = CRM_Contact_BAO_GroupOrganization::delete($params['id']);
+  $result = CRM_Contact_BAO_GroupOrganization::deleteGroupOrganization($params['id']);
   return $result ? civicrm_api3_create_success('Deleted Group Organization successfully') : civicrm_api3_create_error('Could not delete Group Organization');
 }
 

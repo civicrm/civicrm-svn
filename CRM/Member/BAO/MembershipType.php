@@ -253,7 +253,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
    * @param int $membershipTypeId
    * @static
    */
-  function getMembershipTypeDetails($membershipTypeId) {
+  static function getMembershipTypeDetails($membershipTypeId) {
     $membershipTypeDetails = array();
 
     $membershipType = new CRM_Member_DAO_MembershipType();

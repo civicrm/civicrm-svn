@@ -65,8 +65,6 @@ function civicrm_api3_contact_create($params) {
   }
 
   if (empty($contactID)) {
-
-
     // If we get here, we're ready to create a new contact
     if (($email = CRM_Utils_Array::value('email', $params)) && !is_array($params['email'])) {
       require_once 'CRM/Core/BAO/LocationType.php';
@@ -132,7 +130,7 @@ function civicrm_api3_contact_create($params) {
 
   $params = array_merge($params, $values);
 
-  $contact = &_civicrm_api3_contact_update($params, $contactID);
+  $contact = _civicrm_api3_contact_update($params, $contactID);
 
   if (is_a($contact, 'CRM_Core_Error')) {
     return civicrm_api3_create_error($contact->_errors[0]['message']);

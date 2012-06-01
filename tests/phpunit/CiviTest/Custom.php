@@ -5,7 +5,7 @@ class Custom extends CiviUnitTestCase {
      *
      * @return object of created group
      */
-  function createGroup($group, $extends = NULL, $isMultiple = FALSE) {
+  static function createGroup($group, $extends = NULL, $isMultiple = FALSE) {
     if (empty($group)) {
       if (isset($extends) &&
         !is_array($extends)
@@ -53,7 +53,7 @@ class Custom extends CiviUnitTestCase {
      *
      * @return object of created field
      */
-  function createField($params, $fields = NULL) {
+  static function createField($params, $fields = NULL) {
     if (empty($params)) {
       $params = array(
         'custom_group_id' => $fields['groupId'],
@@ -90,7 +90,7 @@ class Custom extends CiviUnitTestCase {
      * @param  object of Custom Field to delete
      * 
      */
-  function deleteField($params) {
+  static function deleteField($params) {
     require_once 'CRM/Core/BAO/CustomField.php';
     CRM_Core_BAO_CustomField::deleteField($params);
   }
@@ -102,7 +102,7 @@ class Custom extends CiviUnitTestCase {
      * @return boolean true if Group deleted, false otherwise
      * 
      */
-  function deleteGroup($params) {
+  static function deleteGroup($params) {
     require_once 'CRM/Core/BAO/CustomGroup.php';
     $deleteCustomGroup = CRM_Core_BAO_CustomGroup::deleteGroup($params, TRUE);
     return $deleteCustomGroup;

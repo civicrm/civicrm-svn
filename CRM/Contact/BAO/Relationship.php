@@ -716,7 +716,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
       $v['data'] = &CRM_Contact_BAO_Relationship::getRelationship($params['contact_id'], NULL, $params['numRelationship']);
     }
     else {
-      $v['data'] = &CRM_Contact_BAO_Relationship::getRelationship($params['contact_id']);
+      $v['data'] = CRM_Contact_BAO_Relationship::getRelationship($params['contact_id']);
     }
 
     // get the total count of relationships
