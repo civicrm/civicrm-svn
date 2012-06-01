@@ -242,7 +242,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
     $currencyName = $config->defaultCurrency;
 
     if (!isset($label)) {
-      $label = (CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount' && !CRM_Utils_Array::value('is_allow_other_amount', $otherAmount)) ? 'Additional Contribution' : $field->label;
+      $label = (property_exists($qf,'_membershipBlock') &&  CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount' && !CRM_Utils_Array::value('is_allow_other_amount', $otherAmount)) ? 'Additional Contribution' : $field->label;
     }
 
     if ($field->name == 'contribution_amount') {
@@ -275,7 +275,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         }
        
         // if seperate membership payment is used with quick config priceset then change the other amount label
-        if (CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $qf->_quickConfig && $field->name == 'other_amount' && !property_exists($qf,'_contributionAmount')) {
+        if (property_exists($qf,'_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $qf->_quickConfig && $field->name == 'other_amount' && !property_exists($qf,'_contributionAmount')) {
             $label = 'Additional Contribution';
             $useRequired = 0;
         } elseif (CRM_Utils_Array::value('label', $fieldOptions[$optionKey])) {      //check for label.
@@ -302,7 +302,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         }
         
         //CRM-10117
-        if ($qf->_quickConfig) {
+        if (property_exists($qf, '_quickConfig') && $qf->_quickConfig) {
           $message = ts("Please enter a valid amount.");
           $type = "money";
         } else {
