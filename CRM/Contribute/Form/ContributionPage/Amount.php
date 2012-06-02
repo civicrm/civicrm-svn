@@ -473,7 +473,7 @@ SELECT id
         if ($priceSetID) {
           // add/update price set.
           $deletePriceSet = FALSE;
-          if (CRM_Utils_Array::value('price_field_id', $params)) {
+          if (CRM_Utils_Array::value('price_field_id', $params) || CRM_Utils_Array::value('price_field_other', $params) ) {
             $deleteAmountBlk = TRUE;
           }
 
@@ -679,6 +679,14 @@ SELECT id
       // delete previous price set.
       if ($deletePriceSet) {
         CRM_Price_BAO_Set::removeFrom('civicrm_contribution_page', $contributionPageID);
+      }
+      
+      if ($deleteAmountBlk ) {   
+        $priceField = CRM_Utils_Array::value('price_field_id', $params)?$params['price_field_id']:CRM_Utils_Array::value('price_field_other', $params);
+        if ($priceField) {
+          $priceSetID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $priceField, 'price_set_id');
+          CRM_Price_BAO_Set::setIsQuickConfig($priceSetID,0);
+        }
       }
     }
     parent::endPostProcess();
