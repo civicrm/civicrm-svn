@@ -756,6 +756,10 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       }
     }
     else {
+      if (CRM_Utils_Array::value('price_field_id', $params)) {
+        $priceSetID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $params['price_field_id'], 'price_set_id');
+        CRM_Price_BAO_Set::setIsQuickConfig($priceSetID,0);
+      }
       $params['contribution_type_id'] = '';
     }
 
