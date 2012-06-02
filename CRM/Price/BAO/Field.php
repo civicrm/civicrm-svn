@@ -360,7 +360,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           // add "none" option
           if (CRM_Utils_Array::value('is_allow_other_amount', $otherAmount) && $field->name == 'contribution_amount') {
             $none = 'Other Amount';
-          } elseif (!CRM_Utils_Array::value('is_required', $qf->_membershipBlock) && $field->name == 'membership_amount') {
+          } elseif (property_exists($qf, '_membershipBlock') && !CRM_Utils_Array::value('is_required', $qf->_membershipBlock) && $field->name == 'membership_amount') {
             $none = 'No thank you';
           } else {
             $none = '-none-';
@@ -374,7 +374,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         $element = &$qf->addGroup($choice, $elementName, $label);
 
         // make contribution field required for quick config when membership block is enabled
-        if (($field->name == 'contribution_amount' || $field->name == 'membership_amount')&& !empty($qf->_membershipBlock) && !$field->is_required) {
+        if (($field->name == 'contribution_amount' || $field->name == 'membership_amount') && property_exists($qf, '_membershipBlock') && !empty($qf->_membershipBlock) && !$field->is_required) {
           $useRequired = $field->is_required = TRUE;
         }
 
