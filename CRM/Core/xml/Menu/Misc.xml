@@ -101,6 +101,11 @@
      <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
+     <path>civicrm/inline</path>
+     <page_callback>CRM_Utils_REST::loadTemplate</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
      <path>civicrm/ajax/chart</path>
      <page_callback>CRM_Contribute_Form_ContributionCharts</page_callback> 
      <access_arguments>access CiviCRM</access_arguments> 
