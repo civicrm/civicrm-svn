@@ -189,7 +189,7 @@ class CRM_Core_Menu {
 
       foreach ($fieldsToPropagate as $field) {
         if (!$fieldsPresent[$field]) {
-          if (CRM_Utils_Array::value($field, $menu[$parentPath]) !== NULL) {
+          if (CRM_Utils_Array::value($field, CRM_Utils_Array::value($parentPath, $menu)) !== NULL) {
             $fieldsPresent[$field] = TRUE;
             $menu[$path][$field] = $menu[$parentPath][$field];
           }
