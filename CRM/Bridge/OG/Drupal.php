@@ -66,7 +66,7 @@ class CRM_Bridge_OG_Drupal {
 
   static
   function updateCiviGroup(&$params, $op, $groupType = NULL) {
-    $abort             = ($op == 'delete') ? TRUE : FALSE;
+    $abort             = false;
     $params['version'] = 3;
     $params['id']      = CRM_Bridge_OG_Utils::groupID($params['source'], $params['title'], $abort);
 
