@@ -44,6 +44,14 @@
 
 require_once 'CRM/Core/BAO/UFGroup.php';
 
+function _civicrm_api3_uf_group_create_spec(&$params) {
+  $session = CRM_Core_Session::singleton();
+  $params['title']['api.required'] = 1;
+  $params['is_active']['api.default'] = 1;
+  $params['is_update_dupe']['api.default'] = 1;
+  $params['created_id']['api.default'] = $session->get('userID');
+  $params['created_date']['api.default'] = date('YmdHis');
+}
 /**
  * Use this API to create a new group. See the CRM Data Model for uf_group property definitions
  *
