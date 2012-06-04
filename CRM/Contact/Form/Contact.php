@@ -122,6 +122,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
   public $_isContactSubType;
 
   /**
+   * Lets keep a cache of all the values that we retrieved.
+   * THis is an attempt to avoid the number of update statements
+   * during the write phase
+   */
+  public $_preEditValues;
+
+  /**
    * build all the data structures needed to build the form
    *
    * @return void
@@ -153,7 +160,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
         $this->_isContactSubType = TRUE;
       }
 
-      if ($this->_contactSubType && !(CRM_Contact_BAO_ContactType::isExtendsContactType($this->_contactSubType, $this->_contactType, TRUE))) {
+      if (
+        $this->_contactSubType &&
+        !(CRM_Contact_BAO_ContactType::isExtendsContactType($this->_contactSubType, $this->_contactType, TRUE))) {
         CRM_Core_Error::statusBounce(ts("Could not get a valid contact subtype for contact type '%1'", array(1 => $this->_contactType)));
       }
 
@@ -484,6 +493,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
     //set location type and country to default for each block
     $this->blockSetDefaults($defaults);
+
+    $this->_preEditValues = $defaults;
     return $defaults;
   }
 
@@ -882,6 +893,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
     //get the submitted values in an array
     $params = $this->controller->exportValues($this->_name);
+
+    CRM_Contact_BAO_Contact_Optimizer::edit( $params, $this->_preEditValues );
+    // CRM_Core_Error::debug( 'PEV', $this->_preEditValues ) ; CRM_Core_Error::debug( 'POST', $params ); exit( );
 
     if (CRM_Utils_Array::value('image_URL', $params)) {
       CRM_Contact_BAO_Contact::processImageParams($params);
@@ -1417,8 +1431,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
 
         CRM_Member_BAO_MembershipLog::add($membershipLog, CRM_Core_DAO::$_nullArray);
-        
-        //create activity when membership status is changed 
+
+        //create activity when membership status is changed
         $activityParam = array(
           'subject' => "Status changed from {$allStatus[$dao->status_id]} to {$allStatus[$deceasedStatusId]}",
           'source_contact_id' => $userId,
