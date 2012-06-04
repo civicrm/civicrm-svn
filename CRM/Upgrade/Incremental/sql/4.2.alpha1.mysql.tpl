@@ -323,7 +323,7 @@ SELECT @weight                 := MAX(weight) FROM civicrm_option_value WHERE op
 SELECT @memberCompId := max(id) FROM civicrm_component where name = 'CiviMember';
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, component_id) VALUES
-  (@option_group_id_report, {localize}'Contribution and Membership Details'{/localize}, 'contribute/membershipDetail', 'CRM_Report_Form_Contribute_MembershipDetail', @weight := @weight + 1, {localize}'Contribution details for any type of contribution, plus associated membership information for contributions which are in payment for memberships.'{/localize}, 1, @memberCompId);
+  (@option_group_id_report, {localize}'Contribution and Membership Details'{/localize}, 'member/contributionDetail', 'CRM_Report_Form_Member_ContributionDetail', @weight := @weight + 1, {localize}'Contribution details for any type of contribution, plus associated membership information for contributions which are in payment for memberships.'{/localize}, 1, @memberCompId);
 
 INSERT INTO `civicrm_report_instance`
     ( `domain_id`, `title`, `report_id`, `description`, `permission`, `form_values`)
