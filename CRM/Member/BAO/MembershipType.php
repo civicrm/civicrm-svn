@@ -523,8 +523,9 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
         case 'year':
           //need to check if the upsell is from rolling to fixed and adjust accordingly 
           if ($membershipTypeDetails['period_type'] == 'fixed' && $oldPeriodType == 'rolling' ) {
-            $month = substr($membershipTypeDetails['fixed_period_rollover_day'], 0, strlen($membershipTypeDetails['fixed_period_rollover_day']) - 2);
-            $day = substr($membershipTypeDetails['fixed_period_rollover_day'], -2) + 1;
+            $month = substr($membershipTypeDetails['fixed_period_start_day'], 0, strlen($membershipTypeDetails['fixed_period_start_day']) - 2);
+            $day = substr($membershipTypeDetails['fixed_period_start_day'], -2);
+            $year += 1;
           } else {
             $year = $year + ($numRenewTerms * $membershipTypeDetails['duration_interval']);
           }
