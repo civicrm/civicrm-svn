@@ -121,7 +121,10 @@ class CRM_Utils_PagerAToZ {
     //get the current path
     $path = CRM_Utils_System::currentPath();
 
-    $qfKey = CRM_Utils_Array::value('qfKey', $query->_formValues);
+    $qfKey = null;
+    if (isset($query->_formValues)) {
+      $qfKey = CRM_Utils_Array::value('qfKey', $query->_formValues);
+    }
     if (empty($qfKey)) {
       $qfKey = CRM_Utils_Request::retrieve('qfKey', 'String', $this, FALSE, NULL, $_REQUEST);
     }

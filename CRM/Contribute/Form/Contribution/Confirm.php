@@ -135,7 +135,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->_params['ip_address'] = '127.0.0.1';
       }
       $this->_params['amount'] = $this->get('amount');
-      
+
       if ($this->_params['amount']) {
         $priceField = new CRM_Price_DAO_Field();
         $priceField->price_set_id = $this->_params['priceSetId'];
@@ -646,7 +646,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       }
     }
 
-    
+
     foreach ($addToGroups as $k) {
       if (array_key_exists($k, $subscribeGroupIds)) {
         unset($addToGroups[$k]);
@@ -773,17 +773,25 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $membershipParams['campaign_id'] = CRM_Utils_Array::value('campaign_id', $this->_values);
       }
 
-      if (CRM_Utils_Array::value('member_campaign_id', $membershipParams['onbehalf'])) {
+      if (!empty($membershipParams['onbehalf']) &&
+        is_array($membershipParams['onbehalf']) &&
+        CRM_Utils_Array::value('member_campaign_id', $membershipParams['onbehalf'])) {
         $this->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
       }
 
       $customFieldsFormatted = $fieldTypes = array();
-      if (is_array($membershipParams['onbehalf']) && !empty($membershipParams['onbehalf'])) {
+      if (!empty($membershipParams['onbehalf']) &&
+        is_array($membershipParams['onbehalf'])) {
         foreach ($membershipParams['onbehalf'] as $key => $value) {
           if (strstr($key, 'custom_')) {
             $customFieldId = explode('_', $key);
-            CRM_Core_BAO_CustomField::formatCustomField($customFieldId[1], $customFieldsFormatted, $value,
-              'Membership', NULL, $contactID
+            CRM_Core_BAO_CustomField::formatCustomField(
+              $customFieldId[1],
+              $customFieldsFormatted,
+              $value,
+              'Membership',
+              NULL,
+              $contactID
             );
           }
         }
@@ -817,8 +825,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $contributionTypeId = $this->_values['contribution_type_id'];
 
       $fieldTypes = array();
-      if (CRM_Utils_Array::value('onbehalf', $paymentParams) && is_array($paymentParams['onbehalf'])
-        && !empty($paymentParams['onbehalf'])
+      if (!empty($paymentParams['onbehalf']) &&
+        is_array($paymentParams['onbehalf'])
       ) {
         foreach ($paymentParams['onbehalf'] as $key => $value) {
           if (strstr($key, 'custom_')) {
@@ -985,7 +993,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $nonDeductibleAmount = $params['amount'];
     }
     if ($online && $contributionType->is_deductible && $deductibleMode) {
-      $selectProduct = CRM_Utils_Array::value('selectProduct', $premiumParams);
+      $selectProduct = CRM_Utils_Array::value('selectProduct', $params);
       if ($selectProduct &&
         $selectProduct != 'no_thanks'
       ) {
@@ -1601,4 +1609,3 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     return $params;
   }
 }
-
