@@ -145,8 +145,8 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
         if ($field == 'preferred_communication_method') {
           $froms = array();
           $tos = array();
-          foreach (explode(CRM_Core_DAO::VALUE_SEPARATOR, $from) as $val) $froms[] = $values[$field][$val];
-          foreach (explode(CRM_Core_DAO::VALUE_SEPARATOR, $to) as $val) $tos[] = $values[$field][$val];
+          foreach (explode(CRM_Core_DAO::VALUE_SEPARATOR, $from) as $val) $froms[] = CRM_Utils_Array::value($val, $values[$field]);
+          foreach (explode(CRM_Core_DAO::VALUE_SEPARATOR, $to) as $val) $tos[] = CRM_Utils_Array::value($val, $values[$field]);
           $from = implode(', ', array_filter($froms));
           $to = implode(', ', array_filter($tos));
         }
