@@ -154,18 +154,19 @@ WHERE     cpse.price_set_id IS NULL";
    * Function to create price sets
    */
   static function createPriceSet($daoName, $addTo,  $options = array()) {
-
-
     $setParams['title'] = CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], 'title');
     $pageTitle = strtolower(CRM_Utils_String::munge($setParams['title'], '_', 245));
 
-    if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
+    // an event or contrib page has been deleted but left the option group behind - (this may be fixed in later versions?)
+    // we should probably delete the option group - but at least early exit here as the code following it does not fatal
+    // CRM-10298
+    if ( empty($pageTitle)) {
+      return;
+    }
+
+    if (! CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
       $setParams['name'] = $pageTitle;
     }
-    //FIXME: "_id" does not appear to be setup in either static or instance context
-    //elseif (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle . '_' . $this->_id, 'id', 'name')) {
-    //  $setParams['name'] = $pageTitle . '_' . $this->_id;
-    //}
     else {
       $setParams['name'] = $pageTitle . '_' . rand(1, 99);
     }
