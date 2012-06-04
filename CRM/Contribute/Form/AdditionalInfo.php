@@ -486,7 +486,7 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @return None
    */
-  function processPriceSet($contributionId, $lineItem) {
+  function processPriceSet($contributionId, $lineItem, $entityTable = 'civicrm_contribution') {
     if (!$contributionId || !is_array($lineItem)
       || CRM_Utils_system::isNull($lineItem)
     ) {
@@ -498,7 +498,7 @@ class CRM_Contribute_Form_AdditionalInfo {
         continue;
       }
       foreach ($values as $line) {
-        $line['entity_table'] = 'civicrm_contribution';
+        $line['entity_table'] = $entityTable;
         $line['entity_id'] = $contributionId;
         CRM_Price_BAO_LineItem::create($line);
       }

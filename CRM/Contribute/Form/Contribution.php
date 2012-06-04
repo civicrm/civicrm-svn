@@ -146,6 +146,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
 
   public $_context;
 
+  public $_compId;
+
   /*
      * Store the line items if price set used.
      */
@@ -197,7 +199,9 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
 
     $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
     $this->assign('context', $this->_context);
-
+    
+    $this->_compId = CRM_Utils_Request::retrieve('compId', 'Positive', $this);
+    
     //set the contribution mode.
     $this->_mode = CRM_Utils_Request::retrieve('mode', 'String', $this);
 
@@ -1140,7 +1144,7 @@ WHERE  contribution_id = {$this->_id}
       $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] = $submittedValues['total_amount'];
       $submittedValues['price_'.$fieldID] = 1;
     }
-
+ 
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
         $submittedValues, $lineItem[$priceSetId]
@@ -1148,8 +1152,21 @@ WHERE  contribution_id = {$this->_id}
       $submittedValues['total_amount'] = CRM_Utils_Array::value('amount', $submittedValues);
     }
     if (!$priceSetId && CRM_Utils_Array::value('total_amount', $submittedValues) && $this->_id) {
-      $this->_priceSetId = CRM_Price_BAO_Set::getFor('civicrm_contribution', $this->_id);
-      $lineItems         = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
+      // 10117 update th line items for participants
+      if ($this->_context == 'participant' && $this->_compId) {
+        $entityTable = 'participant';
+        $entityID = $this->_compId;
+        $participantParams = array(
+                                   'fee_amount' => $submittedValues['total_amount'],
+                                   'id'         => $entityID);
+        CRM_Event_BAO_Participant::add($participantParams);
+      } else {
+        $entityTable = 'contribution';
+        $entityID = $this->_id;
+        $this->_priceSetId = CRM_Price_BAO_Set::getFor("civicrm_".$entityTable, $entityID);
+      }
+      
+      $lineItems         = CRM_Price_BAO_LineItem::getLineItems($entityID, $entityTable);
       $itemId            = key($lineItems);
       $fieldType         = NULL;
       if ($itemId && CRM_Utils_Array::value('price_field_id', $lineItems[$itemId])) {
@@ -1158,6 +1175,10 @@ WHERE  contribution_id = {$this->_id}
       $lineItems[$itemId]['unit_price'] = $submittedValues['total_amount'];
       $lineItems[$itemId]['line_total'] = $submittedValues['total_amount'];
       $lineItems[$itemId]['id'] = $itemId;
+      // 10117 update th line items for participants
+      if ($this->_context == 'participant') { 
+        $this->_priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'price_set_id');
+      }
       $lineItem[$this->_priceSetId] = $lineItems;
     }
 
@@ -1432,9 +1453,13 @@ WHERE  contribution_id = {$this->_id}
         );
       }
 
+      if (($this->_context != 'participant')) {
+        $entityID = $contribution->id;
+        $entityTable = 'contribution';
+      }
       // process line items, until no previous line items.
-      if (empty($this->_lineItems) && $contribution->id && !empty($lineItem)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $lineItem);
+      if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, "civicrm_".$entityTable);
       }
 
       //send receipt mail.
@@ -1577,10 +1602,14 @@ WHERE  contribution_id = {$this->_id}
 
       //create contribution.
       $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
-
+      // 10117 update th line items for participants
+      if ($this->_context != 'participant') {
+        $entityID = $contribution->id;
+        $entityTable = 'contribution';
+      }
       // process line items, until no previous line items.
-      if (empty($this->_lineItems) && $contribution->id && !empty($lineItem)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $lineItem);
+      if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, "civicrm_".$entityTable);
       }
 
       // process associated membership / participant, CRM-4395
