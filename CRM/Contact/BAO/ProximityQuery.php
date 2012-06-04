@@ -347,7 +347,7 @@ $earthDistanceSQL  <= $distance
   static
   function fixInputParams(&$input) {
     foreach ($input as $param) {
-      if (CRM_Utils_Array::value('0', $params) == 'prox_distance') {
+      if (CRM_Utils_Array::value('0', $param) == 'prox_distance') {
         // add prox_ prefix to these
         $param_alter = array('street_address', 'city', 'postal_code', 'state_province', 'country');
 
