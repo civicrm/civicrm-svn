@@ -620,7 +620,7 @@ UPDATE civicrm_contact
     $permissions = array(
       'view' => 'view all contacts',
       'edit' => 'edit all contacts',
-      'merge' => 'administer CiviCRM',
+      'merge' => 'merge duplicate contacts',
     );
 
     $permissionedContactIds = array();
