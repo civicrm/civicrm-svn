@@ -1088,7 +1088,7 @@ class CRM_Utils_System {
     // if ts function doesn't exist, it means that CiviCRM hasn't been fully initialised yet -
     // return just the URL, no matter what other parameters are defined
     if (!function_exists('ts')) {
-      if (CRM_Utils_Array::value('resource', $params) == 'wiki') {
+      if ($resource == 'wiki') {
           $docBaseURL = self::getWikiBaseURL();
       } else {
         $docBaseURL = self::getDocBaseURL();
