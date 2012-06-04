@@ -538,7 +538,7 @@ class CRM_Core_Menu {
       $menu[$path]['component_id'] = $cache[$compPath];
     }
     else {
-      if (CRM_Utils_Array::value('component', $menu[$compPath])) {
+      if (CRM_Utils_Array::value('component', CRM_Utils_Array::value($compPath, $menu))) {
         $componentId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Component',
           $menu[$compPath]['component'],
           'id', 'name'
