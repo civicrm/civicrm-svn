@@ -413,7 +413,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
         break;
 
       case 1:
-        $this->_contactId = $ids[0];
+        $this->_contactId = $params['contactId'] = $ids[0];
 
         // check if user has already signed this petition - redirects to Thank You if true
         $this->redirectIfSigned($params);
@@ -442,7 +442,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
       default:
         // more than 1 matching contact
         // for time being, take the first matching contact (not sure that's the best strategy, but better than creating another duplicate)
-        $this->_contactId = $ids[0];
+        $this->_contactId = $params['contactId'] = $ids[0];
 
         // check if user has already signed this petition - redirects to Thank You if true
         $this->redirectIfSigned($params);
