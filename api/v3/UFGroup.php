@@ -49,8 +49,8 @@ function _civicrm_api3_uf_group_create_spec(&$params) {
   $params['title']['api.required'] = 1;
   $params['is_active']['api.default'] = 1;
   $params['is_update_dupe']['api.default'] = 1;
-  $params['created_id']['api.default'] = $session->get('userID');
-  $params['created_date']['api.default'] = date('YmdHis');
+  $params['created_id']['api.default'] = 'user_contact_id';//the current user
+  $params['created_date']['api.default'] = 'now';
 }
 /**
  * Use this API to create a new group. See the CRM Data Model for uf_group property definitions
