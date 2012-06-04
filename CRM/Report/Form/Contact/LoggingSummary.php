@@ -196,11 +196,12 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
         $row['log_civicrm_entity_log_action'] = '<div class="icon details-icon"></div> ' . ts('Update');
       }
 
+      $date = CRM_Utils_Date::isoToMysql($row['log_civicrm_entity_log_date']);
+      $key  = $date . '_' . $row['log_civicrm_entity_log_type'] . '_' . $row['log_civicrm_entity_log_conn_id'] . '_' . $row['log_civicrm_entity_log_user_id'];
+      $newRows[$key] = $row;
+
       unset($row['log_civicrm_entity_log_user_id']);
       unset($row['log_civicrm_entity_log_conn_id']);
-
-      $date = CRM_Utils_Date::isoToMysql($row['log_civicrm_entity_log_date']);
-      $newRows[$date] = $row;
     }
 
     krsort($newRows);

@@ -54,7 +54,9 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
                  ),
           'log_civicrm_note' => 
           array( 'fk'  => 'entity_id',
-                 'entity_table' => true 
+                 'entity_table' => true, 
+                 'dao' => 'CRM_Core_DAO_Note',
+                 'dao_column'  => 'subject',
                  ),
           'log_civicrm_group_contact' => 
           array( 'fk'  => 'contact_id',
@@ -201,8 +203,12 @@ WHERE {$clause} log_action != 'Initialization' {$logDateClause} LIMIT {$rowCount
 
   function getEntityValue( $id, $entity ) {
     if (CRM_Utils_Array::value('dao', $this->_logTables[$entity])) {
-      $sql = "select {$this->_logTables[$entity]['entity_column']} from {$entity} where id = %1";
-      $entityID = CRM_Core_DAO::singleValueQuery($sql, array(1 => array($id, 'Integer')));
+      if (CRM_Utils_Array::value('entity_column', $this->_logTables[$entity])) {
+        $sql = "select {$this->_logTables[$entity]['entity_column']} from {$entity} where id = %1";
+        $entityID = CRM_Core_DAO::singleValueQuery($sql, array(1 => array($id, 'Integer')));
+      } else {
+        $entityID = $id;
+      }
       return CRM_Core_DAO::getFieldValue($this->_logTables[$entity]['dao'], $entityID, $this->_logTables[$entity]['dao_column']);
     }
     return null;
