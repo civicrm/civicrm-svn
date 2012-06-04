@@ -168,7 +168,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       );
 
       $blocks = array('email', 'phone', 'im', 'url', 'openid');
-
+      crm_core_error::debug( 'p', $this->_params ); exit;
       foreach ($this->_params['onbehalf'] as $loc => $value) {
         $field = $typeId = NULL;
         if (strstr($loc, '-')) {
@@ -180,7 +180,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $value = CRM_Core_PseudoConstant::countryIsoCode($value);
           }
           elseif ($field == 'state_province') {
-            $value = CRM_Core_PseudoConstant::stateProvinceAbbreviation($value);
+            $value = CRM_Core_PseudoConstant::stateProvinceAbbreviation($value, false );
+            crm_core_error::debug( $value ); exit;
           }
           $this->_params['onbehalf_location']['address'][$locType][$field] = $value;
           $this->_params['onbehalf_location']['address'][$locType]['is_primary'] = 1;
