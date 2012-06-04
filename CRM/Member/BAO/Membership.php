@@ -1307,7 +1307,8 @@ AND civicrm_membership.is_test = %2";
     $index = CRM_Utils_Array::value('is_separate_payment', $memBlockDetails) ? 2 : 1;
 
     if (!CRM_Utils_Array::value($index, $errors)) {
-      if (CRM_Utils_Array::value('member_campaign_id', $membershipParams['onbehalf'])) {
+      if (isset($membershipParams['onbehalf']) &&
+        CRM_Utils_Array::value('member_campaign_id', $membershipParams['onbehalf'])) {
         $form->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
       }
       if (is_array($membershipTypeID)) {
@@ -2714,7 +2715,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
 
   /**
    * Functon to records contribution record associated with membership
-   * 
+   *
    * @param array  $params array of submitted params
    * @param array  $ids    array of ids
    * @param object $membershipId  membership id
@@ -2749,7 +2750,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       // deal with possibility of a different person paying for contribution
       $contributionParams['contact_id'] = $params['contribution_contact_id'];
     }
-    
+
     $contribution = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
 
     // store contribution id
@@ -2760,7 +2761,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
     ) {
       CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $params['lineItems']);
     }
-    
+
     //insert payment record for this membership
     if (!CRM_Utils_Array::value('contribution', $ids) ||
       CRM_Utils_Array::value('is_recur', $params)
