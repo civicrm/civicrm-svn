@@ -44,7 +44,12 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-
+    $this->open($this->sboxPath . 'civicrm/admin/setting/localization?reset=1');
+    $this->select("currencyLimit-f","value=FJD");
+    $this->click("add");
+    $this->click("_qf_Localization_next-bottom");
+    $this->waitForPageToLoad("30000");
+    
     // create unique name
     $name      = substr(sha1(rand()), 0, 7);
     $firstName = 'Adam' . $name;
@@ -71,6 +76,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
     $this->assertTrue($this->isTextPresent("$firstName $lastName"));
 
     // Let's start filling the form with values.
+    $this->select("currency","value=FJD");
     $this->type("amount", "30");
     $this->type("installments", "3");
     $this->select("frequency_unit", "value=week");
@@ -217,6 +223,11 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         'Send additional reminders' => '4 days after the last one sent',
       )
     );
+     $this->open($this->sboxPath . 'civicrm/admin/setting/localization?reset=1');
+     $this->select("currencyLimit-t","value=FJD");
+     $this->click("remove");
+     $this->click("_qf_Localization_next-bottom");
+     $this->waitForPageToLoad("30000");
   }
 
   function testAddPledgePaymentWithAdjustTotalPledgeAmount() {
