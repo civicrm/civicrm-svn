@@ -795,6 +795,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Main_upload-bottom");
     $this->click('CIVICRM_QFID_amount_other_radio_4');
     $this->type('amount_other', 60);
+    $this->click("onbehalf_organization_name");
+    $this->type('onbehalf_organization_name', $orgName1);
     $this->typeKeys('onbehalf_organization_name', $orgName1);
     $this->click("onbehalf_organization_name");
     $this->waitForElementPresent("css=div.ac_results-inner li");

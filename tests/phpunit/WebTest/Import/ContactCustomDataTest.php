@@ -104,9 +104,11 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     $this->importContacts($headers, $rows, 'Individual', 'No Duplicate Checking', array(), $other);
 
     // Type search name in autocomplete.
+    $this->click('sort_name_navigation');
+    $this->type('css=input#sort_name_navigation', $firstName1);
     $this->typeKeys('css=input#sort_name_navigation', $firstName1);
     $this->click('sort_name_navigation');
-
+    
     // Wait for result list.
     $this->waitForElementPresent("css=div.ac_results-inner li");
 

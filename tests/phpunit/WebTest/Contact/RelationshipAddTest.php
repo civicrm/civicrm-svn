@@ -85,8 +85,9 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->select('relationship_type_id', "label={$params['label_b_a']}");
 
     //fill in the individual
+    $this->click('contact_1');
+    $this->type('contact_1', $sortName);
     $this->typeKeys('contact_1', $sortName);
-    $this->fireEvent('contact_1', 'focus');
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
 
@@ -180,8 +181,9 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->select('relationship_type_id', "label={$params['label_b_a']}");
 
     //fill in the individual
+    $this->click('contact_1');
+    $this->type('contact_1', $sortName);
     $this->typeKeys('contact_1', $sortName);
-    $this->fireEvent('contact_1', 'focus');
 
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
@@ -284,8 +286,9 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->select('relationship_type_id', "label={$params['label_b_a']}");
 
     //fill in the individual
+    $this->click('contact_1');
+    $this->type('contact_1', $sortName);
     $this->typeKeys('contact_1', $sortName);
-    $this->fireEvent('contact_1', 'focus');
 
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");

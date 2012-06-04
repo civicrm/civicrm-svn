@@ -213,7 +213,8 @@ class WebTest_Contact_ContactAdvanceSearch extends CiviSeleniumTestCase {
 
   // function to fill auto complete
   function fillAutoComplete($text, $elementId) {
-
+    $this->click("$elementId");
+    $this->type("$elementId", "$text");
     $this->typeKeys("$elementId", "$text");
     $this->waitForElementPresent("css=div.ac_results li");
     $this->click("css=div.ac_results li");

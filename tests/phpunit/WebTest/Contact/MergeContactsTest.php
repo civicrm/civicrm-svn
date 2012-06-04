@@ -246,7 +246,8 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
 
     // Now we're filling the "Assigned To" field.
     // Typing contact's name into the field (using typeKeys(), not type()!)...
-    $this->fireEvent('assignee_contact_id', 'focus');
+    $this->click("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id");
+    $this->type("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName);
     $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName);
 
     // ...waiting for drop down with results to show up...

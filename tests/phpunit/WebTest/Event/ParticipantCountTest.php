@@ -100,6 +100,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . 'civicrm/event/search?reset=1');
     $this->waitForElementPresent('participant_fee_amount_low');
     $this->click("event_name");
+    $this->type("event_name", $eventTitle);
     $this->typeKeys("event_name", $eventTitle);
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
@@ -285,6 +286,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . 'civicrm/event/search?reset=1');
     $this->waitForElementPresent('participant_fee_amount_low');
     $this->click("event_name");
+    $this->type("event_name", $eventTitle);
     $this->typeKeys("event_name", $eventTitle);
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
