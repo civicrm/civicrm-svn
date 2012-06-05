@@ -374,15 +374,15 @@ function civicrm_api3_job_process_membership_reminder_date($params) {
 function civicrm_api3_job_cleanup( $params ) {
   require_once 'CRM/Utils/Array.php';
 
-  $sessionCleanup   = CRM_Utils_Array::value( 'session'   , $params, true  );
-  $tempTableCleanup = CRM_Utils_Array::value( 'tempTables', $params, true  );
-  $dbCacheCleanup   = CRM_Utils_Array::value( 'dbCache'   , $params, false );
-  $memCacheCleanup   = CRM_Utils_Array::value( 'memCache' , $params, false );
+  $session   = CRM_Utils_Array::value( 'session'   , $params, true  );
+  $tempTable = CRM_Utils_Array::value( 'tempTables', $params, true  );
+  $dbCache   = CRM_Utils_Array::value( 'dbCache'   , $params, false );
+  $memCache  = CRM_Utils_Array::value( 'memCache'  , $params, false );
+  $prevNext  = CRM_Utils_Array::value( 'prevNext'  , $params, false );
 
-
-  if ( $sessionCleanup || $tempTableCleanup ) {
+  if ( $session || $tempTable || $prevNext ) {
     require_once 'CRM/Core/BAO/Cache.php';
-    CRM_Core_BAO_Cache::cleanup( $sessionCleanup, $tempTableCleanup );
+    CRM_Core_BAO_Cache::cleanup( $session, $tempTable, $prevNext );
   }
 
   if ( $dbCacheCleanup ) {
