@@ -366,8 +366,10 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     $renewalReminderDay = CRM_Utils_Array::value('renewal_reminder_day', $params);
     $renewalMsgId       = CRM_Utils_Array::value('renewal_msg_id', $params);
     $autoRenewalMsgId   = CRM_Utils_Array::value('autorenewal_msg_id', $params);
+    // FIXME: Commented out this form rule for 4.2 so that admins can disable existing membership type based renewal reminders when they
+    // implement the new reminder method via Schedule Reminders. CRM-8359 dgg
+    /*
     if (!((($renewalReminderDay && $renewalMsgId)) || (!$renewalReminderDay && !$renewalMsgId))) {
-
       if (!$renewalReminderDay) {
         $errors['renewal_reminder_day'] = ts('Please enter renewal reminder days.');
       }
@@ -375,6 +377,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         $errors['renewal_msg_id'] = ts('Please select renewal message.');
       }
     }
+    */
     return empty($errors) ? TRUE : $errors;
   }
 

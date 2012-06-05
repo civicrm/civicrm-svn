@@ -195,9 +195,14 @@
          </table>
         <div class="spacer"></div>
         <fieldset><legend>{ts}Renewal Reminders{/ts}</legend>
-        <div class="description">
-            {ts}If you would like Membership Renewal Reminder emails sent to members automatically, you need to create a reminder message template and you need to configure and periodically run a 'cron' job on your server.{/ts} {docURL page="user/membership/setup"}
-        </div>
+				<div class="messages status status-warning">
+					{capture assign=reminderLink}{crmURL p='civicrm/admin/scheduleReminders' q='reset=1'}{/capture}
+					<div class="icon alert-icon"></div>&nbsp;
+					{ts 1=$reminderLink}WARNING: Membership renewal reminders should now be configured using the <a href="%1">Schedule Reminders</a> feature, which supports multiple renewal reminders. The reminders configured on this form will no longer function as of the 4.3 release.{/ts} {docURL page="user/email/scheduled-reminders"}
+					{if $form.renewal_reminder_day.value}
+						<p>{ts}You can use your existing renewal reminder message template(s) with the Schedule Reminders feature. Then disable this reminder by un-selecting the Renewal Reminder Message templates on this form. This will prevent duplicate reminders being sent.{/ts}
+					{/if}
+				</div>
         {if !$hasMsgTemplates}
             {capture assign=msgTemplate}{crmURL p='civicrm/admin/messageTemplates' q="action=add&reset=1"}{/capture}
             <div class="status message">
