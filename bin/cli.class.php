@@ -89,6 +89,7 @@ class civicrm_cli {
     elseif ($this->_output) {
       print_r($result['values']);
     }
+    return TRUE;
   }
 
   private function _parseOptions() {

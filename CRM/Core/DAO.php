@@ -81,8 +81,7 @@ class CRM_Core_DAO extends DB_DataObject {
   /**
    * empty definition for virtual function
    */
-  static
-  function getTableName() {
+  static function getTableName() {
     return NULL;
   }
 
@@ -95,8 +94,7 @@ class CRM_Core_DAO extends DB_DataObject {
    * @access private
    * @static
    */
-  static
-  function init($dsn) {
+  static function init($dsn) {
     $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
     $options['database'] = $dsn;
     if (defined('CIVICRM_DAO_DEBUG')) {
@@ -128,8 +126,7 @@ class CRM_Core_DAO extends DB_DataObject {
     $this->joinAdd();
   }
 
-  static
-  function getLocaleTableName($tableName) {
+  static function getLocaleTableName($tableName) {
     global $dbLocale;
     if ($dbLocale) {
       $tables = CRM_Core_I18n_Schema::schemaStructureTables();
@@ -167,8 +164,7 @@ class CRM_Core_DAO extends DB_DataObject {
    * @access public
    * @static
    */
-  static
-  function setFactory(&$factory) {
+  static function setFactory(&$factory) {
     self::$_factory = &$factory;
   }
 
@@ -374,8 +370,7 @@ class CRM_Core_DAO extends DB_DataObject {
    * @access public
    * @static
    */
-  static
-  function storeValues(&$object, &$values) {
+  static function storeValues(&$object, &$values) {
     $fields = &$object->fields();
     foreach ($fields as $name => $value) {
       $dbName = $value['name'];
@@ -397,8 +392,7 @@ class CRM_Core_DAO extends DB_DataObject {
    * @access public
    * @static
    */
-  static
-  function makeAttribute($field) {
+  static function makeAttribute($field) {
     if ($field) {
       if (CRM_Utils_Array::value('type', $field) == CRM_Utils_Type::T_STRING) {
         $maxLength = CRM_Utils_Array::value('maxlength', $field);
@@ -450,8 +444,7 @@ class CRM_Core_DAO extends DB_DataObject {
    * @access public
    * @static
    */
-  static
-  function getAttribute($class, $fieldName = NULL) {
+  static function getAttribute($class, $fieldName = NULL) {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php');
     eval('$object = new ' . $class . '( );');
     $fields = &$object->fields();
@@ -474,8 +467,7 @@ class CRM_Core_DAO extends DB_DataObject {
     return NULL;
   }
 
-  static
-  function transaction($type) {
+  static function transaction($type) {
     CRM_Core_Error::fatal('This function is obsolete, please use CRM_Core_Transaction');
   }
 
@@ -492,8 +484,7 @@ class CRM_Core_DAO extends DB_DataObject {
    * @access public
    * @static
    */
-  static
-  function objectExists($value, $daoName, $daoID, $fieldName = 'name') {
+  static function objectExists($value, $daoName, $daoID, $fieldName = 'name') {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
     eval('$object = new ' . $daoName . '( );');
     $object->$fieldName = $value;
@@ -518,7 +509,7 @@ class CRM_Core_DAO extends DB_DataObject {
    * @return boolean true if exists, else false
    * @static
    */
-  function checkFieldExists($tableName, $columnName, $i18nRewrite = TRUE) {
+  static function checkFieldExists($tableName, $columnName, $i18nRewrite = TRUE) {
     $query = "
 SHOW COLUMNS
 FROM $tableName
@@ -541,7 +532,7 @@ LIKE %1
    * @return array
    * @static
    */
-  function getStorageValues($tableName = NULL, $maxTablesToCheck = 10, $fieldName = 'Engine') {
+  static function getStorageValues($tableName = NULL, $maxTablesToCheck = 10, $fieldName = 'Engine') {
     $values = array();
     $query = "SHOW TABLE STATUS LIKE %1";
 
@@ -577,8 +568,7 @@ LIKE %1
     return $values;
   }
 
-  static
-  function isDBMyISAM($maxTablesToCheck = 10) {
+  static function isDBMyISAM($maxTablesToCheck = 10) {
     // show error if any of the tables, use 'MyISAM' storage engine.
     $engines = self::getStorageValues(NULL, $maxTablesToCheck);
     if (array_key_exists('MyISAM', $engines)) {
@@ -596,7 +586,7 @@ LIKE %1
    * @return boolean true if constraint exists, false otherwise
    * @static
    */
-  function checkConstraintExists($tableName, $constraint) {
+  static function checkConstraintExists($tableName, $constraint) {
     static $show = array();
 
     if (!array_key_exists($tableName, $show)) {
@@ -624,7 +614,7 @@ LIKE %1
    * @return boolean true if in format, false otherwise
    * @static
    */
-  function checkFKConstraintInFormat($tableName, $columnName) {
+  static function checkFKConstraintInFormat($tableName, $columnName) {
     static $show = array();
 
     if (!array_key_exists($tableName, $show)) {
@@ -652,7 +642,7 @@ LIKE %1
    * @return boolean true if the value is always $columnValue, false otherwise
    * @static
    */
-  function checkFieldHasAlwaysValue($tableName, $columnName, $columnValue) {
+  static function checkFieldHasAlwaysValue($tableName, $columnName, $columnValue) {
     $query  = "SELECT * FROM $tableName WHERE $columnName != '$columnValue'";
     $dao    = CRM_Core_DAO::executeQuery($query);
     $result = $dao->fetch() ? FALSE : TRUE;
@@ -669,7 +659,7 @@ LIKE %1
    * @return boolean true if if the value is always NULL, false otherwise
    * @static
    */
-  function checkFieldIsAlwaysNull($tableName, $columnName) {
+  static function checkFieldIsAlwaysNull($tableName, $columnName) {
     $query  = "SELECT * FROM $tableName WHERE $columnName IS NOT NULL";
     $dao    = CRM_Core_DAO::executeQuery($query);
     $result = $dao->fetch() ? FALSE : TRUE;
@@ -685,7 +675,7 @@ LIKE %1
    * @return boolean true if exists, else false
    * @static
    */
-  function checkTableExists($tableName) {
+  static function checkTableExists($tableName) {
     $query = "
 SHOW TABLES
 LIKE %1
@@ -763,8 +753,7 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static
-  function setFieldValue($daoName, $searchValue, $setColumn, $setValue, $searchColumn = 'id') {
+  static function setFieldValue($daoName, $searchValue, $setColumn, $setValue, $searchColumn = 'id') {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
     eval('$object = new ' . $daoName . '( );');
     $object->selectAdd();
@@ -791,8 +780,7 @@ FROM   civicrm_domain
    * @access public
    * @static
    */
-  static
-  function getSortString($sort, $default = NULL) {
+  static function getSortString($sort, $default = NULL) {
     // check if sort is of type CRM_Utils_Sort
     if (is_a($sort, 'CRM_Utils_Sort')) {
       return $sort->orderBy();
@@ -824,8 +812,7 @@ FROM   civicrm_domain
    * @access public
    * @static
    */
-  static
-  function commonRetrieve($daoName, &$params, &$defaults, $returnProperities = NULL) {
+  static function commonRetrieve($daoName, &$params, &$defaults, $returnProperities = NULL) {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
     eval('$object = new ' . $daoName . '( );');
     $object->copyValues($params);
@@ -853,8 +840,7 @@ FROM   civicrm_domain
    * @access public
    * @static
    */
-  static
-  function deleteEntityContact($daoName, $contactId) {
+  static function deleteEntityContact($daoName, $contactId) {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
     eval('$object = new ' . $daoName . '( );');
 
@@ -872,8 +858,7 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static
-  function &executeQuery($query,
+  static function &executeQuery($query,
     $params        = array(),
     $abort         = TRUE,
     $daoName       = NULL,
@@ -925,8 +910,7 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static
-  function &singleValueQuery($query,
+  static function &singleValueQuery($query,
     $params      = array(),
     $abort       = TRUE,
     $i18nRewrite = TRUE
@@ -953,9 +937,7 @@ FROM   civicrm_domain
     return $ret;
   }
 
-  static
-  function composeQuery($query, &$params, $abort) {
-
+  static function composeQuery($query, &$params, $abort) {
     $tr = array();
     foreach ($params as $key => $item) {
       if (is_numeric($key)) {
@@ -991,8 +973,7 @@ FROM   civicrm_domain
     return strtr($query, $tr);
   }
 
-  static
-  function freeResult($ids = NULL) {
+  static function freeResult($ids = NULL) {
     global $_DB_DATAOBJECT;
 
     /***
@@ -1044,8 +1025,7 @@ FROM   civicrm_domain
    * @return (reference )                   the newly created copy of the object
    * @access public
    */
-  static
-  function &copyGeneric($daoName, $criteria, $newData = NULL, $fieldsFix = NULL, $blockCopyOfDependencies = NULL) {
+  static function &copyGeneric($daoName, $criteria, $newData = NULL, $fieldsFix = NULL, $blockCopyOfDependencies = NULL) {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
     eval('$object   = new ' . $daoName . '( );');
     if (!$newData) {
@@ -1161,8 +1141,7 @@ SELECT contact_id
    * @access public
    * @static
    */
-  static
-  function commonRetrieveAll($daoName, $fieldIdName = 'id', $fieldId, &$details, $returnProperities = NULL) {
+  static function commonRetrieveAll($daoName, $fieldIdName = 'id', $fieldId, &$details, $returnProperities = NULL) {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
     eval('$object = new ' . $daoName . '( );');
     $object->$fieldIdName = $fieldId;
@@ -1184,8 +1163,7 @@ SELECT contact_id
     return $details;
   }
 
-  static
-  function dropAllTables() {
+  static function dropAllTables() {
 
     // first drop all the custom tables we've created
     CRM_Core_BAO_CustomGroup::dropAllTables();
@@ -1202,8 +1180,7 @@ SELECT contact_id
     );
   }
 
-  static
-  function escapeString($string) {
+  static function escapeString($string) {
     static $_dao = NULL;
 
     if (!$_dao) {
@@ -1213,8 +1190,7 @@ SELECT contact_id
     return $_dao->escape($string);
   }
 
-  static
-  function escapeWildCardString($string) {
+  static function escapeWildCardString($string) {
     // CRM-9155
     // ensure we escape the single characters % and _ which are mysql wild
     // card characters and could come in via sortByCharacter
@@ -1231,8 +1207,7 @@ SELECT contact_id
   //Creates a test object, including any required objects it needs via recursion
   //createOnly: only create in database, do not store or return the objects (useful for perf testing)
   //ONLY USE FOR TESTING
-  static
-  function createTestObject($daoName, $params = array(
+  static function createTestObject($daoName, $params = array(
     ), $numObjects = 1, $createOnly = FALSE) {
 
     static $counter = 0;
@@ -1379,8 +1354,7 @@ SELECT contact_id
   //deletes the this object plus any dependent objects that are associated with it
   //ONLY USE FOR TESTING
 
-  static
-  function deleteTestObjects($daoName, $params = array(
+  static function deleteTestObjects($daoName, $params = array(
     )) {
 
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
@@ -1407,8 +1381,7 @@ SELECT contact_id
     $object->delete();
   }
 
-  static
-  function createTempTableName($prefix = 'civicrm', $addRandomString = TRUE, $string = NULL) {
+  static function createTempTableName($prefix = 'civicrm', $addRandomString = TRUE, $string = NULL) {
     $tableName = $prefix . "_temp";
 
     if ($addRandomString) {
@@ -1422,8 +1395,7 @@ SELECT contact_id
     return $tableName;
   }
 
-  static
-  function checkTriggerViewPermission($view = TRUE, $trigger = TRUE) {
+  static function checkTriggerViewPermission($view = TRUE, $trigger = TRUE) {
     // test for create view and trigger permissions and if allowed, add the option to go multilingual
     // and logging
     CRM_Core_Error::ignoreException();
@@ -1469,8 +1441,7 @@ SELECT contact_id
     return TRUE;
   }
 
-  static
-  function debugPrint($message = NULL, $printDAO = TRUE) {
+  static function debugPrint($message = NULL, $printDAO = TRUE) {
     CRM_Utils_System::xMemory("{$message}: ");
 
     if ($printDAO) {
@@ -1484,8 +1455,7 @@ SELECT contact_id
   }
 
   // CRM-9716
-  static
-  function triggerRebuild($tableName = NULL) {
+  static function triggerRebuild($tableName = NULL) {
     $info = array();
 
     $logging = new CRM_Logging_Schema;
@@ -1498,8 +1468,7 @@ SELECT contact_id
     self::createTriggers($info);
   }
 
-  static
-  function createTriggers(&$info) {
+  static function createTriggers(&$info) {
     // Validate info array, should probably raise errors?
     if (is_array($info) == FALSE) {
       return;
