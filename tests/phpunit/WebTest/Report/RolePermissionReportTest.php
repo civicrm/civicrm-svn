@@ -1,4 +1,4 @@
-<?php
+\<?php
 /*
    +--------------------------------------------------------------------+
    | CiviCRM version 4.1                                                |
@@ -110,7 +110,151 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
     $this->_roleDelete($role1);
     $this->_roleDelete($role2);
   }
+  
+  /*
+   *check for CRM-10148
+   */
+  function testReservedReportPermission() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
 
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin(TRUE);
+
+    //create new role
+    $role = 'role' . substr(sha1(rand()), 0, 7);
+    $this->open($this->sboxPath . "admin/people/permissions/roles");
+
+    $this->waitForElementPresent("edit-add");
+    $this->type("edit-name", $role);
+    $this->click("edit-add");
+    $this->waitForPageToLoad("30000");
+    
+    $this->open($this->sboxPath . "admin/people/permissions/roles");
+    $this->waitForElementPresent("xpath=//table[@id='user-roles']/tbody//tr/td[1][text()='{$role}']");
+    $roleId = explode('/', $this->getAttribute("xpath=//table[@id='user-roles']/tbody//tr/td[1][text()='{$role}']/../td[4]/a[text()='edit permissions']/@href"));
+    $roleId = end($roleId);
+    $user = $this->_testCreateUser($roleId);
+    $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
+    $this->waitForPageToLoad('30000');
+    if ($this->isChecked("is_reserved")) {
+      $this->click("is_reserved");
+      $this->click("_qf_Summary_submit_save");
+      $this->waitForPageToLoad("30000");
+    }
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->open($this->sboxPath);
+    $this->waitForElementPresent('edit-submit');
+    $this->type('edit-name', $user);
+    $this->type('edit-pass', 'Test12345');
+    $this->click('edit-submit');
+    $this->waitForPageToLoad('30000');
+    $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
+    $this->waitForPageToLoad('30000');
+
+    //check if the reserved report field is frozen
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='instanceForm']//table[3]/tbody//tr/td[2]/tt[text()='[ ]']"));
+
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->open($this->sboxPath);
+    $this->webtestLogin(TRUE);
+    // let's give full CiviReport permissions.
+    $permissions = array(
+      "edit-{$roleId}-access-civireport",
+      "edit-{$roleId}-view-all-contacts",
+      "edit-{$roleId}-administer-civicrm",
+      "edit-{$roleId}-access-civicrm",
+      "edit-{$roleId}-administer-reserved-reports"
+    );
+    $this->changePermissions($permissions);
+    
+    $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
+    $this->waitForPageToLoad('30000');
+    //make the report reserved
+    $this->click("is_reserved");
+    $this->click("_qf_Summary_submit_save");
+    $this->waitForPageToLoad("30000");
+    
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->open($this->sboxPath);
+    $this->waitForElementPresent('edit-submit');
+    $this->type('edit-name', $user);
+    $this->type('edit-pass', 'Test12345');
+    $this->click('edit-submit');
+    $this->waitForPageToLoad('30000');
+    $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
+    $this->waitForPageToLoad('30000');
+
+    //check if the report criteria and settings is accessible
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='Summary']//div[@id='id_default']//input[@id='fields[email]']"));
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='Summary']//div[@id='instanceForm']/table//input[@id='title']"));
+    
+    //login as admin and remove reserved permission
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->open($this->sboxPath);
+    $this->webtestLogin(TRUE);
+    $this->open($this->sboxPath . "admin/people/permissions");
+    $this->waitForElementPresent("edit-submit");
+    
+    if ($this->isChecked("edit-2-administer-reserved-reports")) {
+      $this->click("edit-2-administer-reserved-reports");
+    } else {
+      $this->click("edit-{$roleId}-administer-reserved-reports");
+    }
+    $this->click("edit-submit");
+    $this->waitForPageToLoad('30000');
+
+    //login as user and check for absence of report criteria and settings
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->open($this->sboxPath);
+    $this->waitForElementPresent('edit-submit');
+    $this->type('edit-name', $user);
+    $this->type('edit-pass', 'Test12345');    
+    $this->click('edit-submit');
+    $this->waitForPageToLoad('30000');
+    $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
+    $this->waitForPageToLoad('30000');
+    
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='Summary']/div[2]/div[@style='display: none;']"));
+    $this->assertFalse($this->isElementPresent("xpath=//form[@id='Summary']//div[@id='instanceForm']//input[@id='title']"));
+
+    //login as admin and turn the is_reserved flag off for the instance
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->open($this->sboxPath);
+    $this->webtestLogin(TRUE);
+    $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
+    $this->waitForPageToLoad('30000');
+    $this->click("is_reserved");
+    $this->click("_qf_Summary_submit_save");
+    $this->waitForPageToLoad("30000");
+    
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->open($this->sboxPath);
+    $this->waitForElementPresent('edit-submit');
+    $this->type('edit-name', $user);
+    $this->type('edit-pass', 'Test12345');    
+    $this->click('edit-submit');
+    $this->waitForPageToLoad('30000');
+    $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
+    $this->waitForPageToLoad('30000');
+
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='Summary']//div[@id='id_default']//input[@id='fields[email]']"));
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='Summary']//div[@id='instanceForm']//input[@id='title']"));
+    
+    //login as admin and delete the role
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->open($this->sboxPath);
+    $this->webtestLogin(TRUE);
+    $this->open($this->sboxPath . "admin/people/permissions/roles");
+    $this->_roleDelete($role);
+  }
+  
   function _roleDelete($role) {
     $this->waitForElementPresent("xpath=//table[@id='user-roles']/tbody//tr/td[text()='{$role}']/..//td/a[text()='edit role']");
     $this->click("xpath=//table[@id='user-roles']/tbody//tr/td[text()='{$role}']/..//td/a[text()='edit role']");
