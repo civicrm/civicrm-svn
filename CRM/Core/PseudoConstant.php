@@ -641,9 +641,9 @@ class CRM_Core_PseudoConstant {
    * @return array - array reference of all gender.
    *
    */
-  public static function &gender() {
+  public static function &gender($localize = FALSE) {
     if (!self::$gender) {
-      self::$gender = CRM_Core_OptionGroup::values('gender');
+      self::$gender = CRM_Core_OptionGroup::values('gender', FALSE, FALSE, $localize);
     }
     return self::$gender;
   }
@@ -663,9 +663,9 @@ class CRM_Core_PseudoConstant {
    * @return array - array reference of all IM providers.
    *
    */
-  public static function &IMProvider() {
+  public static function &IMProvider($localize = FALSE) {
     if (!self::$imProvider) {
-      self::$imProvider = CRM_Core_OptionGroup::values('instant_messenger_service');
+      self::$imProvider = CRM_Core_OptionGroup::values('instant_messenger_service', FALSE, FALSE, $localize);
     }
     return self::$imProvider;
   }
@@ -1541,9 +1541,9 @@ WHERE  id = %1";
    * @return array self::pcm - array reference of all preferred communication methods.
    *
    */
-  public static function &pcm() {
+  public static function &pcm($localize = FALSE) {
     if (!self::$pcm) {
-      self::$pcm = CRM_Core_OptionGroup::values('preferred_communication_method');
+      self::$pcm = CRM_Core_OptionGroup::values('preferred_communication_method', FALSE, FALSE, $localize);
     }
     return self::$pcm;
   }

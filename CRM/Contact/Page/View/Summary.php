@@ -163,7 +163,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         foreach ($defaults[$key] as & $val) {
           CRM_Utils_Array::lookupValue($val, 'location_type', CRM_Core_PseudoConstant::locationDisplayName(), FALSE);
           if (!CRM_Utils_Array::value('skip', $value)) {
-            eval('$pseudoConst = CRM_Core_PseudoConstant::' . $value['type'] . '( );');
+            eval('$pseudoConst = CRM_Core_PseudoConstant::' . $value['type'] . '();');
             CRM_Utils_Array::lookupValue($val, $value['id'], $pseudoConst, FALSE);
           }
         }
@@ -183,7 +183,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
     }
 
     if (CRM_Utils_Array::value('gender_id', $defaults)) {
-      $gender = CRM_Core_PseudoConstant::gender();
+      $gender = CRM_Core_PseudoConstant::gender(TRUE);
       $defaults['gender_display'] = $gender[CRM_Utils_Array::value('gender_id', $defaults)];
     }
 

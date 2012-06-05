@@ -322,8 +322,10 @@ class CRM_Core_I18n {
    *
    * @return        void
    */
-  function localizeArray(&$array, $params = array(
-    )) {
+  function localizeArray(
+    &$array,
+    $params = array()
+  ) {
     global $tsLocale;
 
     if ($tsLocale == 'en_US') {
