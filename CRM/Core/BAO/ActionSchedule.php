@@ -53,8 +53,9 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     }
     $dao->find();
 
-    $mapping = $defaults = array();
+    $mapping = array();
     while ($dao->fetch()) {
+      $defaults = array();
       CRM_Core_DAO::storeValues($dao, $defaults);
       $mapping[$dao->id] = $defaults;
     }
@@ -196,7 +197,11 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
             $vval = $statusLabel + $participantStatus;
           }
           break;
-        /*
+
+      case '':
+          $sel3[$id] = '';
+          break;
+          /*
             case 'civicrm_membership_status':
                 foreach( $sel3[$id] as $kkey => &$vval ) {
                     $vval = $statusLabel + $membershipStatus;
