@@ -199,9 +199,9 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
 
     $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
     $this->assign('context', $this->_context);
-    
+
     $this->_compId = CRM_Utils_Request::retrieve('compId', 'Positive', $this);
-    
+
     //set the contribution mode.
     $this->_mode = CRM_Utils_Request::retrieve('mode', 'String', $this);
 
@@ -1144,11 +1144,13 @@ WHERE  contribution_id = {$this->_id}
       $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] = $submittedValues['total_amount'];
       $submittedValues['price_'.$fieldID] = 1;
     }
- 
+
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
-        $submittedValues, $lineItem[$priceSetId]
-      );
+        $submittedValues, $lineItem[$priceSetId]);
+      if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
+        $lineItem = null;
+      }
       $submittedValues['total_amount'] = CRM_Utils_Array::value('amount', $submittedValues);
     }
     if (!$priceSetId && CRM_Utils_Array::value('total_amount', $submittedValues) && $this->_id) {
@@ -1165,7 +1167,7 @@ WHERE  contribution_id = {$this->_id}
         $entityID = $this->_id;
         $this->_priceSetId = CRM_Price_BAO_Set::getFor("civicrm_".$entityTable, $entityID);
       }
-      
+
       $lineItems         = CRM_Price_BAO_LineItem::getLineItems($entityID, $entityTable);
       $itemId            = key($lineItems);
       $fieldType         = NULL;
@@ -1176,7 +1178,7 @@ WHERE  contribution_id = {$this->_id}
       $lineItems[$itemId]['line_total'] = $submittedValues['total_amount'];
       $lineItems[$itemId]['id'] = $itemId;
       // 10117 update th line items for participants
-      if ($this->_context == 'participant') { 
+      if ($this->_context == 'participant') {
         $this->_priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'price_set_id');
       }
       $lineItem[$this->_priceSetId] = $lineItems;
@@ -1750,7 +1752,7 @@ WHERE  contribution_id = {$this->_id}
 
     // get the user display name.
     $sql = "
-   SELECT  display_name as displayName 
+   SELECT  display_name as displayName
      FROM  civicrm_contact
 LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_contact.id )
     WHERE  civicrm_contribution.id = {$contributionId}";

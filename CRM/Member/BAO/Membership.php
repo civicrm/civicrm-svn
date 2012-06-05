@@ -1181,7 +1181,8 @@ AND civicrm_membership.is_test = %2";
     $form->set('membershipTypeID', $membershipParams['selectMembership']);
 
     $membershipTypeID = $membershipParams['selectMembership'];
-    $membershipDetails = self::buildMembershipTypeValues($form, $membershipTypeID);
+    $membership_details = self::buildMembershipTypeValues($form, $membershipTypeID);
+    $membershipDetails = current($membership_details);
 
     $form->assign('membership_name', CRM_Utils_Array::value('name', $membershipDetails));
 

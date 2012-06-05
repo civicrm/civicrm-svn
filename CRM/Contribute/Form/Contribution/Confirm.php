@@ -136,6 +136,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       }
       $this->_params['amount'] = $this->get('amount');
 
+      $this->_useForMember = $this->get('useForMember');
       if ($this->_params['amount']) {
         $priceField = new CRM_Price_DAO_Field();
         $priceField->price_set_id = $this->_params['priceSetId'];
@@ -143,6 +144,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         while ($priceField->fetch()) {
           if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_params['priceSetId'], 'is_quick_config') && !empty($this->_params["price_{$priceField->id}"])) {
             $this->_params['amount_level'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'label');
+            if ($priceField->name == "membership_amount") {
+              $this->_params['selectMembership'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'membership_type_id');
+            }
           }
         }
       }
@@ -374,6 +378,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     $this->assign('is_separate_payment', $this->_separateMembershipPayment);
     if ($this->_priceSetId && !CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
       $this->assign('lineItem', $this->_lineItem);
+    } else {
+      $this->assign('is_quick_config', 1);
+      $this->_params['is_quick_config'] = 1;
     }
     $this->assign('priceSetID', $this->_priceSetId);
 
@@ -1156,7 +1163,19 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
     // process price set, CRM-5095
     if ($contribution->id && $form->_priceSetId) {
-      CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem);
+      if (CRM_Utils_Array::value('is_quick_config', $form->_params)) {
+        $temp = array();
+        foreach ($form->_lineItem as $key => $val) {
+          foreach ($val as $k => $v) {
+            if (CRM_Utils_Money::format($v['line_total']) == CRM_Utils_Money::format($contribution->total_amount )) {
+              $temp[$key][$k] = $form->_lineItem[$key][$k];
+              CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $temp);
+            }
+          }
+        }
+      } elseif (!CRM_Utils_Array::value('is_quick_config', $form->_params)) {
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem);
+      }
     }
 
     //handle pledge stuff.

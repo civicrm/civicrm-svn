@@ -831,7 +831,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
           }
         }
         if ($priceField->name == 'other_amount') {
-          if ($self->_quickConfig && !CRM_Utils_Array::value("price_{$priceField->id}", $fields) &&  
+          if ($self->_quickConfig && !CRM_Utils_Array::value("price_{$priceField->id}", $fields) &&
               array_key_exists("price_{$previousId}", $fields) && isset($fields["price_{$previousId}"]) && $self->_values['fee'][$previousId]['name'] == 'contribution_amount' && empty($fields["price_{$previousId}"])) {
             $otherAmount = $priceField->id;
           }
@@ -851,7 +851,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
           }
         }
-         if (!empty($fields["price_{$priceField->id}"]) || ($previousId == $priceField->id && isset($fields["price_{$previousId}"]) 
+         if (!empty($fields["price_{$priceField->id}"]) || ($previousId == $priceField->id && isset($fields["price_{$previousId}"])
            && empty($fields["price_{$previousId}"]))) {
           $check[] = $priceField->id;
         }
@@ -926,8 +926,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
           $errors['_qf_default'] = ts('Please select at least one membership option.');
         }
       }
-       
-      $fieldId = $memPresent = $membershipLabel = $fieldOption = $proceFieldAmount = NULL; 
+
+      $fieldId = $memPresent = $membershipLabel = $fieldOption = $proceFieldAmount = NULL;
       if ($self->_separateMembershipPayment == 0 && $self->_quickConfig) {
         foreach ($self->_priceSet['fields'] as $fieldKey => $fieldVal) {
           if ($fieldVal['name'] == 'membership_amount') {
@@ -948,7 +948,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
           }
         }
       }
-      
+
       CRM_Price_BAO_Set::processAmount($self->_values['fee'],
         $fields, $lineItem
       );
@@ -1089,7 +1089,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     // also return if paylater mode
-    if (CRM_Utils_Array::value('is_pay_later', $fields) || 
+    if (CRM_Utils_Array::value('is_pay_later', $fields) ||
         CRM_Utils_Array::value('payment_processor', $fields) == 0) {
       return empty($errors) ? TRUE : $errors;
     }
@@ -1161,8 +1161,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $amountID = CRM_Utils_Array::value('amount', $params);
 
         if ($amountID) {
-          $params['amount_level'] = CRM_Utils_Array::value('label', $form->_values['amount'][$amountID]);
-          $amount = CRM_Utils_Array::value('value', $form->_values['amount'][$amountID]);
+          $params['amount_level'] = CRM_Utils_Array::value('label', $form->_values[$amountID]);
+          $amount = CRM_Utils_Array::value('value', $form->_values[$amountID]);
         }
       }
     }
@@ -1179,12 +1179,45 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
   public function postProcess() {
     $config = CRM_Core_Config::singleton();
 
-
     // we first reset the confirm page so it accepts new values
     $this->controller->resetPage('Confirm');
 
     // get the submitted form values.
     $params = $this->controller->exportValues($this->_name);
+    if (CRM_Utils_Array::value('priceSetId', $params)) {
+      $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config');
+      $formValue = array();
+      if ($is_quick_config) {
+        $priceField = new CRM_Price_DAO_Field();
+        $priceField->price_set_id = $params['priceSetId'];
+        $priceField->find();
+
+        $check = array();
+        $otherAmount = FALSE;
+        while ($priceField->fetch()) {
+          CRM_Price_BAO_FieldValue::getValues($priceField->id,&$values);
+          if ($priceField->name == "membership_amount") {
+            if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
+             $this->_params['selectMembership'] = $params['selectMembership'] = CRM_Utils_Array::value('membership_type_id', $values[$priceFiledID]);
+              if (CRM_Utils_Array::value('is_separate_payment', $this->_membershipBlock) == 0) {
+                $this->_values['amount'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
+              }
+            }
+          }
+          if ($priceField->name == "contribution_amount") {
+            if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
+              $params['amount'] = $priceFiledID;
+              $this->_values['amount'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
+              $this->_values[$priceFiledID]['value'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
+              $this->_values[$priceFiledID]['label'] = CRM_Utils_Array::value('label', $values[$priceFiledID]);
+              $this->_values[$priceFiledID]['amount_id'] = CRM_Utils_Array::value('id', $values[$priceFiledID]);
+              $this->_values[$priceFiledID]['weight'] = CRM_Utils_Array::value('weight', $values[$priceFiledID]);
+            }
+          }
+        }
+      }
+    }
+
     if (($this->_values['is_pay_later'] &&
       empty($this->_paymentProcessor) &&
          !array_key_exists('hidden_processor', $params)) ||
@@ -1216,6 +1249,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     $params['currencyID'] = $config->defaultCurrency;
 
     $params['amount'] = self::computeAmount($params, $this);
+    $params['separate_amount'] =  $params['amount'];
     $memFee = NULL;
     if (CRM_Utils_Array::value('selectMembership', $params)) {
       if (!empty($this->_membershipTypeValues)) {
@@ -1279,14 +1313,19 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
         CRM_Price_BAO_Set::processAmount($this->_values['fee'], $params, $lineItem[$priceSetId]);
         if ($proceFieldAmount) {
-            $lineItem[$params['priceSetId']][$fieldOption]['line_total'] = $proceFieldAmount;
-            $lineItem[$params['priceSetId']][$fieldOption]['unit_price'] = $proceFieldAmount;
-            $params['amount'] = $proceFieldAmount;
+          $lineItem[$params['priceSetId']][$fieldOption]['line_total'] = $proceFieldAmount;
+          $lineItem[$params['priceSetId']][$fieldOption]['unit_price'] = $proceFieldAmount;
+          if (!$this->_membershipBlock['is_separate_payment']) {
+            $params['amount'] = $proceFieldAmount; //require when separate membership not used
+          }
         }
         $this->set('lineItem', $lineItem);
     }
-    $this->set('amount', $params['amount']);
-
+    if ($this->_membershipBlock['is_separate_payment']) {
+      $this->set('amount', $params['separate_amount']);
+    } else {
+      $this->set('amount', $params['amount']);
+    }
     // generate and set an invoiceID for this transaction
     $invoiceID = md5(uniqid(rand(), TRUE));
     $this->set('invoiceID', $invoiceID);

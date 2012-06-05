@@ -651,7 +651,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
                         array( '' => ts( '-') ) + CRM_Core_PseudoConstant::honor() );
       CRM_Contact_Form_NewContact::buildQuickForm($this,1, null, false,'contribution_');
     }
-    
+
     $this->addElement('checkbox',
       'send_receipt',
       ts('Send Confirmation and Receipt?'), NULL,
@@ -995,8 +995,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
-        $this->_params, $lineItem[$priceSetId]
-      );
+        $this->_params, $lineItem[$priceSetId]);
+      //unset LineItem is the priceset is quick config
+      if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
+        $lineItem = NULL;
+      }
       $params['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
     }
 
@@ -1097,7 +1100,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $memType
       );
     }
-    
+
     $membershipType = implode(', ', $membershipTypes);
 
     // Retrieve the name and email of the current user - this will be the FROM for the receipt email
@@ -1481,7 +1484,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $receiptSend = TRUE;
 
       $formValues['contact_id']     = $this->_contactID;
-      
+
       // send email receipt
       $mailSend = self::emailReceipt( $this, $formValues, $membership );
     }
@@ -1553,7 +1556,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
    * @param array  $values submitted values
    * @param object $membership object
    *
-   * @return boolean true if mail was sent successfully 
+   * @return boolean true if mail was sent successfully
    * @static
    */
   static function emailReceipt( &$form, &$formValues, &$membership ) {
@@ -1567,8 +1570,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     // retrieve custom data
     $customFields = $customValues = array();
-    if ( property_exists( $form, '_groupTree' ) 
-      && !empty( $form->_groupTree ) ) { 
+    if ( property_exists( $form, '_groupTree' )
+      && !empty( $form->_groupTree ) ) {
       foreach ($form->_groupTree as $groupID => $group) {
         if ($groupID == 'info') {
           continue;
@@ -1585,7 +1588,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     if ($form->_mode == 'test') {
       $members[] = array('member_test', '=', 1, 0, 0);
     }
-    
+
     CRM_Core_BAO_UFGroup::getValues($formValues['contact_id'], $customFields, $customValues, FALSE, $members);
 
     if ($form->_mode) {
@@ -1637,7 +1640,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $form->assign('contactID', $formValues['contact_id'] );
 
     $form->assign('membershipID', CRM_Utils_Array::value('membership_id', $params, CRM_Utils_Array::value('membership_id', $form->_defaultValues)));
-    
+
     if ( CRM_Utils_Array::value('contribution_id', $formValues ) ) {
       $form->assign( 'contributionID', $formValues['contribution_id'] );
     }
@@ -1658,7 +1661,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     }
     $form->assign('receive_date', CRM_Utils_Array::value('receive_date', $formValues ) );
     $form->assign('formValues', $formValues);
-    
+
     if (empty($lineItem)) {
       $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date ) );
       $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date ) );
@@ -1666,7 +1669,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     }
 
     $form->assign('customValues', $customValues);
-    list( 
+    list(
       $memberDisplayName,
       $memberEmail
     ) = CRM_Contact_BAO_Contact_Location::getEmailDetails(

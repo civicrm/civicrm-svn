@@ -35,19 +35,19 @@
             {$thankyou_text}
         </div>
     {/if}
-    
+
     {* Show link to Tell a Friend (CRM-2153) *}
     {if $friendText}
         <div id="tell-a-friend" class="crm-section friend_link-section">
             <a href="{$friendURL}" title="{$friendText}" class="button"><span>&raquo; {$friendText}</span></a>
        </div>{if !$linkText}<br /><br />{/if}
-    {/if}  
+    {/if}
     {* Add button for donor to create their own Personal Campaign page *}
     {if $linkText}
  	<div class="crm-section create_pcp_link-section">
         <a href="{$linkTextUrl}" title="{$linkText}" class="button"><span>&raquo; {$linkText}</span></a>
     </div><br /><br />
-    {/if}  
+    {/if}
 
     <div id="help">
         {* PayPal_Standard sets contribution_mode to 'notify'. We don't know if transaction is successful until we receive the IPN (payment notification) *}
@@ -55,7 +55,7 @@
 	    <div class="bold">{$pay_later_receipt}</div>
 	    {if $is_email_receipt}
                 <div>
-		    {if $onBehalfEmail AND ($onBehalfEmail neq $email)}		    
+		    {if $onBehalfEmail AND ($onBehalfEmail neq $email)}
 			{ts 1=$email 2=$onBehalfEmail}An email confirmation with these payment instructions has been sent to %1 and to %2.{/ts}
 		    {else}
 			{ts 1=$email}An email confirmation with these payment instructions has been sent to %1.{/ts}
@@ -76,9 +76,9 @@
         {else}
             <div>{ts}Your transaction has been processed successfully. Please print this page for your records.{/ts}</div>
             {if $is_email_receipt}
-                <div>		    
+                <div>
 		    {if $onBehalfEmail AND ($onBehalfEmail neq $email)}
-			{ts 1=$email 2=$onBehalfEmail}An email receipt has also been sent to %1 and to %2{/ts}		    
+			{ts 1=$email 2=$onBehalfEmail}An email receipt has also been sent to %1 and to %2{/ts}
 		    {else}
 			{ts 1=$email}An email receipt has also been sent to %1{/ts}
 		    {/if}
@@ -87,47 +87,43 @@
         {/if}
     </div>
     <div class="spacer"></div>
-    
+
     {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="thankContribution"}
 
     {if $amount GT 0 OR $minimum_fee GT 0 OR ( $priceSetID and $lineItem ) }
     <div class="crm-group amount_display-group">
-       {if !$useForMember}
         <div class="header-dark">
             {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem )}{ts}Contribution Information{/ts}{else}{ts}Membership Fee{/ts}{/if}
         </div>
-        {/if}
         <div class="display-block">
-            {if !$useForMember}
-            {if $lineItem and $priceSetID}
+        {if $lineItem and $priceSetID}
     	    {if !$amount}{assign var="amount" value=0}{/if}
-    	    {assign var="totalAmount" value=$amount}
-                {include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}
-            {elseif $membership_amount } 
-                {$membership_name} {ts}Membership{/ts}: <strong>{$membership_amount|crmMoney}</strong><br />
-                {if $amount}
-                    {if ! $is_separate_payment }
-    		    {ts}Contribution Amount{/ts}: <strong>{$amount|crmMoney}</strong><br />
+    	      {assign var="totalAmount" value=$amount}
+            {include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}
+          {elseif $membership_amount}
+            {$membership_name} {ts}Membership{/ts}: <strong>{$membership_amount|crmMoney}</strong><br />
+            {if $amount}
+              {if !$is_separate_payment}
+                {ts}Contribution Amount{/ts}: <strong>{$amount|crmMoney}</strong><br />
     	        {else}
-    		    {ts}Additional Contribution{/ts}: <strong>{$amount|crmMoney}</strong><br />
-      	        {/if}
-                {/if} 		
-                <strong> -------------------------------------------</strong><br />
-                {ts}Total{/ts}: <strong>{$amount+$membership_amount|crmMoney}</strong><br />
-            {else}
-                {ts}Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong><br />
+    		        {ts}Additional Contribution{/ts}: <strong>{$amount|crmMoney}</strong><br />
+      	      {/if}
             {/if}
-	    {/if}
-            {if $receive_date}
+            <strong> -------------------------------------------</strong><br />
+            {ts}Total{/ts}: <strong>{$amount+$membership_amount|crmMoney}</strong><br />
+          {else}
+            {ts}Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level} - {$amount_level} {/if}</strong><br />
+          {/if}
+	        {if $receive_date}
             {ts}Date{/ts}: <strong>{$receive_date|crmDate}</strong><br />
-            {/if}
-            {if $contributeMode ne 'notify' and $is_monetary and ! $is_pay_later and $trxn_id}
-    	    {ts}Transaction #{/ts}: {$trxn_id}<br />
-            {/if}
-            {if $membership_trx_id}
-    	    {ts}Membership Transaction #{/ts}: {$membership_trx_id}
-            {/if}
-        
+          {/if}
+          {if $contributeMode ne 'notify' and $is_monetary and ! $is_pay_later and $trxn_id}
+    	      {ts}Transaction #{/ts}: {$trxn_id}<br />
+          {/if}
+          {if $membership_trx_id}
+    	      {ts}Membership Transaction #{/ts}: {$membership_trx_id}
+          {/if}
+
             {* Recurring contribution / pledge information *}
             {if $is_recur}
                 {if $membershipBlock} {* Auto-renew membership confirmation *}
@@ -167,7 +163,7 @@
         </div>
     </div>
     {/if}
-    
+
     {include file="CRM/Contribute/Form/Contribution/Honor.tpl"}
 
     {if $customPre}
@@ -175,7 +171,7 @@
                 {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
             </fieldset>
     {/if}
-    
+
     {if $pcpBlock}
     <div class="crm-group pcp_display-group">
         <div class="header-dark">
@@ -201,7 +197,7 @@
        </div>
     </div>
     {/if}
-    
+
     {if $onbehalfProfile}
       <div class="crm-group onBehalf_display-group">
          {include file="CRM/UF/Form/Block.tpl" fields=$onbehalfProfile}
@@ -212,8 +208,8 @@
          </div>
       </div>
     {/if}
-    
-    {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}    
+
+    {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}
     <div class="crm-group billing_name_address-group">
         <div class="header-dark">
             {ts}Billing Name and Address{/ts}
