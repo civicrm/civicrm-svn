@@ -53,6 +53,8 @@ class CRM_Logging_Reverter {
       'civicrm_phone' => 'CRM_Core_DAO_Phone',
       'civicrm_website' => 'CRM_Core_DAO_Website',
       'civicrm_contribution' => 'CRM_Contribute_DAO_Contribution',
+      'civicrm_note' => 'CRM_Core_DAO_Note',
+      'civicrm_relationship' => 'CRM_Contact_DAO_Relationship',
     );
 
     // get custom data tables, columns and types
