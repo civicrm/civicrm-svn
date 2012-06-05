@@ -780,8 +780,9 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     color: #696969;
 }
 
-#crm-container .form-layout-compressed td.description {
-    padding: 20px 5px 0 5px;
+#crm-container .form-layout-compressed td.description,
+#crm-container .form-layout td.description {
+    padding: 0 5px 5px 5px;
     font-size: 1em;
 }
 
