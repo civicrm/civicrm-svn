@@ -1074,10 +1074,12 @@ WHERE id={$id}; ";
       array('contact_type', 'contact_sub_type')
     );
     if ($contact) {
-      return array(
-        $contact->contact_type,
-        $contact->contact_sub_type,
-      );
+      $contactTypes = array();
+      if ($contact->contact_sub_type) 
+        $contactTypes = explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($contact->contact_sub_type, CRM_Core_DAO::VALUE_SEPARATOR));
+      array_unshift($contactTypes, $contact->contact_type);
+
+      return $contactTypes;
     }
     else {
       CRM_Core_Error::fatal();
