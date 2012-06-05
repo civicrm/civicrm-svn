@@ -99,7 +99,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
 
     $dao->find(TRUE);
     $dao->data = serialize($data);
-    $dao->created_date = date('Ymdhis');
+    $dao->created_date = date('YmdHis');
 
     $dao->save();
 
@@ -280,12 +280,6 @@ AND    CREATE_TIME < date_sub( NOW( ), INTERVAL $timeIntervalDays day )
     if ( $session ) {
       // first delete all sessions which are related to any potential transaction
       // page
-      $transactionPages =
-        array(
-          'CRM_Contribute_Controller_Contribution',
-          'CRM_Event_Controller_Registration',
-        );
-
       $sql = "
 DELETE FROM civicrm_cache
 WHERE       group_name = 'CiviCRM Session'
