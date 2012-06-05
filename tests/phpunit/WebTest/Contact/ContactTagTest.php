@@ -152,7 +152,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
 
     $this->waitForElementPresent("//div[@id='Tag']/div[3]/div[1]/ul/li[1]/span");
     $this->click("//div[@id='Tag']/div[3]/div[1]/ul/li[2]/input");
-    $this->type("//div[@id='Tag']/div[3]/div[1]/ul/li[1]/input", 'tagset1');
+    $this->type("//div[@id='Tag']/div[3]/div[1]/ul/li[2]/input", 'tagset2');
     $this->typeKeys("//div[@id='Tag']/div[3]/div[1]/ul/li[2]/input", 'tagset2');
 
     // ...waiting for drop down with results to show up...

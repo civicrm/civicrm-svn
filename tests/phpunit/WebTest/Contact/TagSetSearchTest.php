@@ -112,8 +112,8 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
     $this->mouseDownAt("css=li.token-input-dropdown-item2-facebook");
 
     $this->waitForTextPresent($tag1);
-    $this->click("css=input#token-input-contact_taglist_{$tagSet1}");
-    $this->type("css=input#token-input-contact_taglist_{$tagSet1}", $tag1);
+    $this->click("css=input#token-input-contact_taglist_{$tagSet2}");
+    $this->type("css=input#token-input-contact_taglist_{$tagSet2}", $tag2);
     $this->typeKeys("css=input#token-input-contact_taglist_{$tagSet2}", $tag2);
 
     // ...waiting for drop down with results to show up...
