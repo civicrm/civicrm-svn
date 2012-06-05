@@ -477,7 +477,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
       $this->_pcpInfo  = $pcp['pcpInfo'];
     }
 
-    if (CRM_Utils_Array::value('intro_text', $this->_pcpInfo)) {
+    if (isset($this->_pcpInfo) && CRM_Utils_Array::value('intro_text', $this->_pcpInfo)) {
       $this->_values['event']['intro_text'] = $this->_pcpInfo['intro_text'];
     }
 
