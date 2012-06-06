@@ -288,7 +288,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     $civicrm_event = CRM_Event_PseudoConstant::event(NULL, FALSE, "( is_template IS NULL OR is_template != 1 )");
     $civicrm_participant_status_type = CRM_Event_PseudoConstant::participantStatus(NULL, NULL, 'label');
 
-    //$civicrm_membership_status = CRM_Member_PseudoConstant::membershipStatus();
+    $auto_renew_options = CRM_Core_PseudoConstant::autoRenew();
     $civicrm_membership_type = CRM_Member_PseudoConstant::membershipType();
 
     asort($activity_type);
