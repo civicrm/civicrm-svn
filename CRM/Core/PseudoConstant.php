@@ -2061,5 +2061,22 @@ ORDER BY name";
 
     return self::$$constant;
   }
+
+
+  /**                                                                                                                                                                                                       
+   * Get all the auto renew options
+   *
+   * @access public
+   * @static
+   *
+   * @return array self::autoRenew - array reference of all autoRenew 
+   *
+   */
+  public static function &autoRenew() {
+      if (!self::$autoRenew) {
+          self::$autoRenew = CRM_Core_OptionGroup::values('auto_renew_options', FALSE, FALSE);
+      }
+      return self::$autoRenew;
+  }
 }
 

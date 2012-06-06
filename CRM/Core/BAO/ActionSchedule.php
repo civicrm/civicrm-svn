@@ -84,7 +84,8 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     $event             = CRM_Event_PseudoConstant::event(NULL, FALSE, "( is_template IS NULL OR is_template != 1 )");
     $eventType         = CRM_Event_PseudoConstant::eventType();
 
-    //$membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
+    
+    $autoRenew = CRM_Core_PseudoConstant::autoRenew();
     $membershipType = CRM_Member_PseudoConstant::membershipType();
 
     asort($activityType);
@@ -198,16 +199,16 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
           }
           break;
 
+      case 'auto_renew_options':
+          foreach ($sel3[$id] as $kkey => & $vval) {
+              $vval = $statusLabel + $autoRenew;
+          }
+          break;
+          
       case '':
           $sel3[$id] = '';
           break;
-          /*
-            case 'civicrm_membership_status':
-                foreach( $sel3[$id] as $kkey => &$vval ) {
-                    $vval = $statusLabel + $membershipStatus;
-                }
-                break;
-                */
+
       }
     }
 
