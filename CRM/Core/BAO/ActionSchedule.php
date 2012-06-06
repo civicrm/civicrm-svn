@@ -589,9 +589,17 @@ WHERE   cas.entity_value = $id AND
       $extraSelect = $extraJoin = $extraWhere = '';
 
       if ($actionSchedule->record_activity) {
-        $activityTypeID = CRM_Core_OptionGroup::getValue('activity_type',
-          'Reminder Sent', 'name'
-        );
+        if ($mapping->entity == 'civicrm_membership') {
+          $activityTypeID = CRM_Core_OptionGroup::getValue('activity_type',
+            'Membership Renewal Reminder', 'name'
+          );
+        }
+        else {
+          $activityTypeID = CRM_Core_OptionGroup::getValue('activity_type',
+            'Reminder Sent', 'name'
+          );
+        }
+
         $activityStatusID = CRM_Core_OptionGroup::getValue('activity_status',
           'Completed', 'name'
         );
