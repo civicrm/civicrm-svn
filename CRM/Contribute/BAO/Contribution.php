@@ -886,15 +886,18 @@ GROUP BY p.id
    *
    * @param array $params  associated array of fields (by reference)
    * @param int   $honorId honor Id
-   *
+   * @param array $honorParams any params that should be send to the create function
    * @return contact id
    */
-  function createHonorContact(&$params, $honorId = NULL) {
-    $honorParams = array(
-      'first_name' => $params['honor_first_name'],
-      'last_name' => $params['honor_last_name'],
-      'prefix_id' => $params['honor_prefix_id'],
-      'email-Primary' => $params['honor_email'],
+  function createHonorContact(&$params, $honorId = NULL, $honorParams = array()) {
+    $honorParams = array_merge(
+      array(
+        'first_name' => $params['honor_first_name'],
+        'last_name' => $params['honor_last_name'],
+        'prefix_id' => $params['honor_prefix_id'],
+        'email-Primary' => $params['honor_email'],
+      ),
+      $honorParams
     );
     if (!$honorId) {
       $honorParams['email'] = $params['honor_email'];
@@ -2236,7 +2239,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
      * @param array $ids   the set of ids related to the inpurt
      *
      * @return array $values
-     * 
+     *
      * NB don't add direct calls to the function as we intend to change the signature
      */
   function _gatherMessageValues($input, &$values, $ids = array()) {
@@ -2304,7 +2307,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         'entity_id'    => $ids['event'],
         'module'       => 'CiviEvent',
       );
-      
+
       list($custom_pre_id,
            $custom_post_ids
            ) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
@@ -2549,7 +2552,7 @@ WHERE  contribution_id = %1 AND membership_id != %2";
   static
   function isSubscriptionCancelled($contributionId) {
     $sql = "
-   SELECT cr.contribution_status_id 
+   SELECT cr.contribution_status_id
      FROM civicrm_contribution_recur cr
 LEFT JOIN civicrm_contribution con ON ( cr.id = con.contribution_recur_id )
     WHERE con.id = %1 LIMIT 1";
