@@ -1321,7 +1321,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
         $this->set('lineItem', $lineItem);
     }
-    if ($this->_membershipBlock['is_separate_payment']) {
+    if ($this->_membershipBlock['is_separate_payment'] && CRM_Utils_Array::value('separate_amount', $params)) {
       $this->set('amount', $params['separate_amount']);
     } else {
       $this->set('amount', $params['amount']);
