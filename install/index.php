@@ -21,9 +21,11 @@ ini_set('max_execution_time', 3000);
 
 if (stristr(PHP_OS, 'WIN')) {
   define('CIVICRM_DIRECTORY_SEPARATOR', '/');
+  define('CIVICRM_WINDOWS', 1 );
 }
 else {
   define('CIVICRM_DIRECTORY_SEPARATOR', DIRECTORY_SEPARATOR);
+  define('CIVICRM_WINDOWS', 0 );
 }
 
 // set installation type - drupal
@@ -420,7 +422,8 @@ class InstallRequirements {
     }
 
     foreach ($writableDirectories as $dir) {
-      $this->requireWriteable((strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? '' : CIVICRM_DIRECTORY_SEPARATOR) . $dir,
+      $dirName = CIVICRM_WINDOWS ? $dir : CIVICRM_DIRECTORY_SEPARATOR . $dir;
+      $this->requireWriteable($dirName,
         array("File permissions", "Is the $dir folder writeable?", NULL),
         TRUE
       );

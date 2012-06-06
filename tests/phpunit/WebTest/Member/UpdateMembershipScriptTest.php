@@ -78,7 +78,7 @@ class WebTest_Member_UpdateMembershipScriptTest extends CiviSeleniumTestCase {
     );
 
     // click through to the membership view screen
-    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[7]");
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]");
     $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 

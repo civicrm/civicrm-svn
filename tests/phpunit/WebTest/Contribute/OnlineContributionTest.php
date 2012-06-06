@@ -101,6 +101,11 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
 
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
     $lastName = 'An' . substr(sha1(rand()), 0, 7);
+    $honorFirstName = 'In' . substr(sha1(rand()), 0, 4);
+    $honorLastName = 'Hon' . substr(sha1(rand()), 0, 7);
+    $honorEmail = $honorFirstName . "@example.com";
+    $honorSortName = $honorLastName . ', ' . $honorFirstName;
+    $honorDisplayName = 'Ms. ' . $honorFirstName . ' ' . $honorLastName; 
 
     $this->type("email-5", $firstName . "@example.com");
 
@@ -117,6 +122,15 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->select("country-1", "value=1228");
     $this->select("state_province-1", "value=1001");
 
+    // Honoree Info
+    $this->click("xpath=id('Main')/x:div[2]/x:fieldset/x:div[2]/x:div/x:label[text()='In Honor of']");
+    $this->waitForElementPresent("honor_email");
+
+    $this->select("honor_prefix_id", "label=Ms.");
+    $this->type("honor_first_name", $honorFirstName);
+    $this->type("honor_last_name", $honorLastName);
+    $this->type("honor_email", $honorEmail);
+    
     //Credit Card Info
     $this->select("credit_card_type", "value=Visa");
     $this->type("credit_card_number", "4111111111111111");
@@ -161,16 +175,31 @@ class WebTest_Contribute_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
-    //View Contribution Record
+    //View Contribution Record and verify data
     $expected = array(
-      3 => 'Donation',
-      3 => '100.00',
-      7 => 'Completed',
-      1 => "{$firstName} {$lastName}",
+      'From'                => "{$firstName} {$lastName}",
+      'Contribution Type'   => 'Donation',
+      'Total Amount'        => '100.00',
+      'Contribution Status' => 'Completed',
+      'In Honor of'         => $honorDisplayName
     );
-    foreach ($expected as $value => $label) {
-      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label));
+    $this->webtestVerifyTabularData($expected);
+
+    // Check for Honoree contact created
+    $this->click("css=input#sort_name_navigation");
+    $this->type("css=input#sort_name_navigation", $honorSortName);
+    $this->typeKeys("css=input#sort_name_navigation", $honorSortName);
+
+    // wait for result list
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+
+    // visit contact summary page
+    $this->click("css=div.ac_results-inner li");
+    $this->waitForPageToLoad("30000");
+
+    // Is contact present?
+    $this->assertTrue($this->isTextPresent("$honorDisplayName"), "Honoree contact not found.");
+    
     }
   }
-}
 

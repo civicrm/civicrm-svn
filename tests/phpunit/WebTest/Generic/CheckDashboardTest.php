@@ -93,7 +93,6 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase {
   function _testActivityDashlet() {
     // Add an activity that will show up in the widget
     $this->WebtestAddActivity();
-
     $widgetTitle = "Activities";
     $widgetEnabledSelector = "contact-activity-selector-dashlet_wrapper";
     $widgetConfigureID = "1-0";

@@ -426,7 +426,7 @@ function _civicrm_event_data(&$data, $enabled) {
     ),
     'relationship' => array(
       'base' => 'civicrm_contact',
-      'field' => 'id',
+      'field' => 'contact_id',
       'handler' => 'views_handler_relationship',
       'label' => t('CiviCRM Contact, with custom fields'),
     ),

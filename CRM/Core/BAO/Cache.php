@@ -97,7 +97,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
 
     $dao->find(TRUE);
     $dao->data = serialize($data);
-    $dao->created_date = date('Ymdhis');
+    $dao->created_date = date('YmdHis');
 
     $dao->save();
 
@@ -236,7 +236,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
    * @static
    * @access private
    */
-  static function cleanup($session = false, $table = false) {
+  static function cleanup($session = false, $table = false, $prevNext = false) {
     // clean up the session cache every $cacheCleanUpNumber probabilistically
     $cleanUpNumber = 757;
 
@@ -245,17 +245,19 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
     $timeIntervalMins = 30;
 
     if (mt_rand(1, 100000) % $cleanUpNumber == 0) {
-      $session = $table = true;
+      $session = $table = $prevNext = true;
     }
 
-    if ( ! $session && ! $table ) {
+    if ( ! $session && ! $table && ! $prevNext ) {
       return;
     }
 
-    if ( $table ) {
+    if ( $prevNext ) {
       // delete all PrevNext caches
       CRM_Core_BAO_PrevNextCache::cleanupCache();
+    }
 
+    if ( $table ) {
       // also delete all the action temp tables
       // that were created the same interval ago
       $dao = new CRM_Core_DAO();
@@ -285,19 +287,25 @@ AND    CREATE_TIME < date_sub( NOW( ), INTERVAL $timeIntervalDays day )
     if ( $session ) {
       // first delete all sessions which are related to any potential transaction
       // page
-      $transactionPages =
-        array(
+      $transactionPages = array(
           'CRM_Contribute_Controller_Contribution',
           'CRM_Event_Controller_Registration',
         );
 
+      $params = array(
+        1 => array(date('Y-m-d H:i:s', time() - $timeIntervalMins * 60), 'String'),
+      );
+      foreach ($transactionPages as $trPage) {
+        $params[] = array("%${trPage}%", 'String');
+        $where[]  = 'path LIKE %' . sizeof($params);
+      }
+
       $sql = "
 DELETE FROM civicrm_cache
 WHERE       group_name = 'CiviCRM Session'
-AND         ( ( path LIKE '%CRM_Contribute_Controller_Contribution%' ) OR ( path LIKE '%CRM_Event_Controller_Registration%' ) )
-AND         created_date < date_sub( NOW( ), INTERVAL $timeIntervalMins MINUTE )
-";
-      CRM_Core_DAO::executeQuery($sql);
+AND         created_date <= %1
+AND         ("  . implode(' OR ', $where) . ")";
+      CRM_Core_DAO::executeQuery($sql, $params);
 
       $sql = "
 DELETE FROM civicrm_cache

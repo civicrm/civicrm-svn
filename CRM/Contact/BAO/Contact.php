@@ -1026,14 +1026,14 @@ WHERE id={$id}; ";
       $details,
       array('contact_type', 'contact_sub_type')
     );
-    //construct subtypes
-    $subTypes = explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($contact->contact_sub_type, CRM_Core_DAO::VALUE_SEPARATOR));
-    foreach ($subTypes as $k => $v) {
-      $subTypes[$k] = trim($v, CRM_Core_DAO::VALUE_SEPARATOR);
-    }
 
     if ($contact) {
-      return array_merge(array($contact->contact_type), $subTypes);
+      $contactTypes = array();
+      if ($contact->contact_sub_type) 
+        $contactTypes = explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($contact->contact_sub_type, CRM_Core_DAO::VALUE_SEPARATOR));
+      array_unshift($contactTypes, $contact->contact_type);
+
+      return $contactTypes;
     }
     else {
       CRM_Core_Error::fatal();
