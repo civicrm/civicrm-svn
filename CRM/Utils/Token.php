@@ -605,7 +605,8 @@ class CRM_Utils_Token {
     }
     elseif ($token == 'checksum') {
       $hash = CRM_Utils_Array::value('hash', $contact);
-      $cs = CRM_Contact_BAO_Contact_Utils::generateChecksum(CRM_Utils_Array::value('contact_id', $contact),
+      $contactID = CRM_Utils_Array::retrieveValueRecursive($contact, 'contact_id');
+      $cs = CRM_Contact_BAO_Contact_Utils::generateChecksum($contactID,
         NULL,
         NULL,
         $hash
