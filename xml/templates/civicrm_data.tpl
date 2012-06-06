@@ -208,7 +208,8 @@ VALUES
    ('batch_type'                    , '{ts escape="sql"}Batch Type{/ts}'                         , 1, 1),
    ('batch_status'                  , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1),
    ('sms_api_type'                  , '{ts escape="sql"}Api Type{/ts}'                           , 1, 1),
-   ('sms_provider_name'             , '{ts escape="sql"}Sms Provider Internal Name{/ts}'         , 1, 1);
+   ('sms_provider_name'             , '{ts escape="sql"}Sms Provider Internal Name{/ts}'         , 1, 1),
+   ('auto_renew_options'            , '{ts escape="sql"}Auto Renew Options{/ts}'         	 , 1, 1);
 
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -276,6 +277,8 @@ SELECT @option_group_id_batch_type     := max(id) from civicrm_option_group wher
 SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';
 SELECT @option_group_id_sms_api_type   := max(id) from civicrm_option_group where name = 'sms_api_type';
 SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
+SELECT @option_group_id_aro := max(id) from civicrm_option_group where name = 'auto_renew_options';
+
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -820,6 +823,10 @@ VALUES
 -- sms provider name
    (@option_group_id_sms_provider_name, 'Clickatell', 'Clickatell', 'Clickatell', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
+-- auto renew options
+   (@option_group_id_aro, 'Renewal Reminder (non-auto-renew memberships only)', 1, 'Renewal Reminder (non-auto-renew memberships only)', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aro, 'Auto-renew Memberships Only', 2, 'Auto-renew Memberships Only', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_label, '{ts escape="sql"}Avery 5160{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.21975,"tMargin":0.5,"NX":3,"NY":10,"SpaceX":0.14,"SpaceY":0,"width":2.5935,"height":1,"lPadding":0.20,"tPadding":0.20}{/literal}', '5160',  'Avery', NULL, 0, 2,  NULL, 0, 1, 1, NULL, NULL),
@@ -1348,7 +1355,7 @@ VALUES
 ( 'civicrm_activity', 'activity_type', 'Activity Type', 'activity_status', 'Activity Status', 'activity_date_time', NULL, 'activity_contacts'),
 ( 'civicrm_participant', 'event_type', 'Event Type', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts'),
 ( 'civicrm_participant', 'civicrm_event', 'Event Name', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts'),
-( 'civicrm_membership', 'civicrm_membership_type', 'Membership Type', NULL, NULL, 'membership_join_date', 'membership_end_date', NULL);
+( 'civicrm_membership', 'civicrm_membership_type', 'Membership Type', 'auto_renew_options', 'Auto Renew Options', 'membership_join_date', 'membership_end_date', NULL);
 
 INSERT INTO `civicrm_contact_type`
   (`id`, `name`, `label`,`image_URL`, `parent_id`, `is_active`,`is_reserved`)
