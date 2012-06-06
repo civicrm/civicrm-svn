@@ -313,6 +313,13 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
       $this->addElement('text', 'organization', ts('Organization'), '');
       $this->addElement('hidden', 'organization_id', '', array('id' => 'organization_id'));
     }
+
+    // is_reserved property CRM-9936
+    $this->addElement('checkbox', 'is_reserved', ts('Reserved Group?'));
+    if (!CRM_Core_Permission::check('administer reserved groups')) {
+      $this->freeze('is_reserved');
+    }
+
     //build custom data
     CRM_Custom_Form_CustomData::buildQuickForm($this);
 
@@ -432,6 +439,8 @@ WHERE  title = %1
       if ($this->_action & CRM_Core_Action::UPDATE && isset($this->_groupOrganizationID)) {
         $params['group_organization'] = $this->_groupOrganizationID;
       }
+
+      $params['is_reserved'] = CRM_Utils_Array::value('is_reserved', $params, FALSE);
 
       $customFields = CRM_Core_BAO_CustomField::getFields('Group');
       $params['custom'] = CRM_Core_BAO_CustomField::postProcess($params,

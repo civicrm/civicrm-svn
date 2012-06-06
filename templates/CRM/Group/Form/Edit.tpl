@@ -50,16 +50,23 @@
         </tr>
 
 	{if $form.group_type}
-	    <tr class="crm-group-form-block-group_type">
-		<td class="label">{$form.group_type.label}</td>
-		<td>{$form.group_type.html} {help id="id-group-type" file="CRM/Group/Page/Group.hlp"}</td>
-	    </tr>
+    <tr class="crm-group-form-block-group_type">
+			<td class="label">{$form.group_type.label}</td>
+			<td>{$form.group_type.html} {help id="id-group-type" file="CRM/Group/Page/Group.hlp"}</td>
+    </tr>
 	{/if}
     
-        <tr class="crm-group-form-block-visibility">
-	    <td class="label">{$form.visibility.label}</td>
-	    <td>{$form.visibility.html|crmReplace:class:huge} {help id="id-group-visibility" file="CRM/Group/Page/Group.hlp"}</td>
+	<tr class="crm-group-form-block-visibility">
+		<td class="label">{$form.visibility.label}</td>
+	  <td>{$form.visibility.html|crmReplace:class:huge} {help id="id-group-visibility" file="CRM/Group/Page/Group.hlp"}</td>
 	</tr>
+
+  <tr class="crm-group-form-block-isReserved">
+    <td class="report-label">{$form.is_reserved.label}</td>
+    <td>{$form.is_reserved.html}
+      <span class="description">{ts}If reserved, only users with 'administer reserved groups' permission can disable, delete, or change settings for this group. The reserved flag does NOT affect users ability to add or remove contacts from a group.{/ts}</span>
+    </td>
+  </tr>
 	
 	<tr>
 	    <td colspan=2>{include file="CRM/Custom/Form/CustomData.tpl"}</td>
