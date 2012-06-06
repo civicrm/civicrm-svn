@@ -1532,7 +1532,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @access public
    */
   static
-  function buildProfile(&$form, &$field, $mode, $contactId = NULL, $online = FALSE, $onBehalf = FALSE, $rowNumber = NULL) {
+  function buildProfile(&$form, &$field, $mode, $contactId = NULL, $online = FALSE, $onBehalf = FALSE, $rowNumber = NULL , $prefix = '') {
     $defaultValues = array();
     $fieldName     = $field['name'];
     $title         = $field['title'];
@@ -1557,6 +1557,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     }
     elseif ($rowNumber) {
       $name = "field[$rowNumber][$fieldName]";
+    }
+    elseif (!empty($prefix)) {
+      $name = $prefix ."[$fieldName]";
     }
     else {
       $name = $fieldName;
@@ -3245,7 +3248,7 @@ SELECT  group_id
     }
     return FALSE;
   }
-  
+
   /**
    * get profiles used for batch entry
    *
@@ -3253,8 +3256,8 @@ SELECT  group_id
    * @static
    */
   static function getBatchProfiles() {
-    $query = "SELECT id 
-      FROM civicrm_uf_group 
+    $query = "SELECT id
+      FROM civicrm_uf_group
       WHERE name IN ('contribution_batch_entry', 'membership_batch_entry')";
     $dao = CRM_Core_DAO::executeQuery( $query );
     $profileIds = array();
