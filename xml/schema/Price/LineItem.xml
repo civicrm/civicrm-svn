@@ -43,7 +43,7 @@
       <name>price_field_id</name>
       <table>civicrm_price_field</table>
       <key>id</key>
-      <onDelete>CASCADE</onDelete>
+      <onDelete>NO ACTION</onDelete>
   </foreignKey>
   <field>
       <name>option_group_id</name>
@@ -115,7 +115,7 @@
       <name>price_field_value_id</name>
       <table>civicrm_price_field_value</table>
       <key>id</key>
-      <onDelete>SET NULL</onDelete>
+      <onDelete>NO ACTION</onDelete>
   </foreignKey>
 </table>
 

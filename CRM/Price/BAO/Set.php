@@ -124,7 +124,7 @@ class CRM_Price_BAO_Set extends CRM_Price_DAO_Set {
   public static function &getUsedBy($id, $onlyTable = FALSE) {
     $usedBy = $forms = $tables = array();
     $queryString = "
-SELECT   entity_table, entity_id 
+SELECT   entity_table, entity_id
 FROM     civicrm_price_set_entity
 WHERE    price_set_id = %1";
     $params = array(1 => array($id, 'Integer'));
@@ -147,13 +147,13 @@ WHERE    price_set_id = %1";
           $ids = implode(',', $entities);
           $queryString = "SELECT ce.id as id, ce.title as title, ce.is_public as isPublic, ce.start_date as startDate, ce.end_date as endDate, civicrm_option_value.label as eventType
 FROM       civicrm_event ce
-LEFT JOIN  civicrm_option_value ON  
+LEFT JOIN  civicrm_option_value ON
            ( ce.event_type_id = civicrm_option_value.value )
-LEFT JOIN  civicrm_option_group ON 
+LEFT JOIN  civicrm_option_group ON
            ( civicrm_option_group.id = civicrm_option_value.option_group_id )
-WHERE     
+WHERE
 	       civicrm_option_group.name = 'event_type' AND
-           ( ce.is_template IS NULL OR ce.is_template = 0) AND 
+           ( ce.is_template IS NULL OR ce.is_template = 0) AND
            ce.id IN ($ids) AND
            ce.is_active = 1;";
           $crmDAO = CRM_Core_DAO::executeQuery($queryString);
@@ -170,8 +170,8 @@ WHERE
           $ids = implode(',', $entities);
           $queryString = "SELECT cp.id as id, cp.title as title, cp.start_date as startDate, cp.end_date as endDate,ct.name as type
 FROM      civicrm_contribution_page cp, civicrm_contribution_type ct
-WHERE     ct.id = cp.contribution_type_id AND 
-          cp.id IN ($ids) AND                                                                                                                                                    
+WHERE     ct.id = cp.contribution_type_id AND
+          cp.id IN ($ids) AND
           cp.is_active = 1;";
           $crmDAO = CRM_Core_DAO::executeQuery($queryString);
           while ($crmDAO->fetch()) {
@@ -184,6 +184,7 @@ WHERE     ct.id = cp.contribution_type_id AND
 
         case 'civicrm_contribution':
         case 'civicrm_membership':
+        case 'civicrm_participant':
           $usedBy[$table] = 1;
           break;
 
@@ -292,7 +293,7 @@ WHERE     ct.id = cp.contribution_type_id AND
       return FALSE;
     }
 
-    $sql = 'SELECT ps.id as price_set_id, ps.name as price_set_name 
+    $sql = 'SELECT ps.id as price_set_id, ps.name as price_set_name
                 FROM civicrm_price_set ps
                 INNER JOIN civicrm_price_set_entity pse ON ps.id = pse.price_set_id
                 WHERE pse.entity_table = %1 AND pse.entity_id = %2 ';
@@ -355,12 +356,12 @@ WHERE     ct.id = cp.contribution_type_id AND
    */
   public static function getAssoc($withInactive = FALSE, $extendComponentName = FALSE) {
     $query = "
-    SELECT 
-       DISTINCT ( price_set_id ) as id, title 
-    FROM 
-       civicrm_price_field, 
-       civicrm_price_set 
-    WHERE 
+    SELECT
+       DISTINCT ( price_set_id ) as id, title
+    FROM
+       civicrm_price_field,
+       civicrm_price_set
+    WHERE
        civicrm_price_set.id = civicrm_price_field.price_set_id  AND is_quick_config = 0 ";
 
     if (!$withInactive) {
@@ -929,7 +930,7 @@ $sql = "
     SELECT  sum(value.count) as totalCount
       FROM  civicrm_price_field_value  value
 INNER JOIN  civicrm_price_field field ON ( field.id = value.price_field_id )
-INNER JOIN  civicrm_price_set pset    ON ( pset.id = field.price_set_id ) 
+INNER JOIN  civicrm_price_set pset    ON ( pset.id = field.price_set_id )
      WHERE  pset.id = %1
             $where";
 
@@ -972,7 +973,7 @@ public static function checkAutoRenewForPriceSet($priceSetId) {
 
 // get the membership type auto renew option and check if required or optional
 $query = 'SELECT mt.auto_renew, mt.duration_interval, mt.duration_unit
-            FROM civicrm_price_field_value pfv 
+            FROM civicrm_price_field_value pfv
             INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
             INNER JOIN civicrm_price_field pf ON pfv.price_field_id = pf.id
             WHERE pf.price_set_id = %1
@@ -1016,7 +1017,7 @@ return 0;
  */
 public static function getRecurDetails($priceSetId) {
 $query = 'SELECT mt.duration_interval, mt.duration_unit
-            FROM civicrm_price_field_value pfv 
+            FROM civicrm_price_field_value pfv
             INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
             INNER JOIN civicrm_price_field pf ON pfv.price_field_id = pf.id
             WHERE pf.price_set_id = %1 LIMIT 1';

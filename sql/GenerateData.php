@@ -1247,10 +1247,10 @@ class CRM_GCD {
     $membershipTypeNames = array('General', 'Student');
     $statuses            = array(3, 4);
 
-    $membership = " 
+    $membership = "
 INSERT INTO civicrm_membership
         (contact_id, membership_type_id, join_date, start_date, end_date, source, status_id)
-VALUES 
+VALUES
 ";
     $activity = "
 INSERT INTO civicrm_activity
@@ -1423,10 +1423,10 @@ VALUES
     CRM_Core_DAO::executeQuery($event, CRM_Core_DAO::$_nullArray);
 
     //CRM-4464
-    $eventTemplates = "INSERT INTO civicrm_event 
+    $eventTemplates = "INSERT INTO civicrm_event
         ( is_template, template_title, event_type_id, default_role_id, participant_listing_id, is_public, is_monetary, is_online_registration, is_multiple_registrations, allow_same_participant_emails, is_email_confirm, contribution_type_id, fee_label, confirm_title, thankyou_title, confirm_from_name, confirm_from_email, is_active, currency )
         VALUES
-        ( 1, 'Free Meeting without Online Registration', 4, 1, 1, 1, 0, 0, null, null, null, null,             null, null, null, null, null, 1, 'USD'  ), 
+        ( 1, 'Free Meeting without Online Registration', 4, 1, 1, 1, 0, 0, null, null, null, null,             null, null, null, null, null, 1, 'USD'  ),
         ( 1, 'Free Meeting with Online Registration',    4, 1, 1, 1, 0, 1,    1,    1,    0, null,             null, 'Confirm Your Registration Information', 'Thanks for Registering!', null, null, 1, 'USD'  ),
         ( 1, 'Paid Conference with Online Registration', 1, 1, 1, 1, 1, 1,    1,    1,    1,     4, 'Conference Fee', 'Confirm Your Registration Information', 'Thanks for Registering!', 'Event Template Dept.', 'event_templates@example.org', 1, 'USD' )";
 
@@ -1459,7 +1459,7 @@ SELECT  id
     //insert values in civicrm_tell_friend
     if (!empty($tellFriendValues)) {
       $tellFriend = "INSERT INTO civicrm_tell_friend
-                           (entity_table, entity_id, title, intro, suggested_message, 
+                           (entity_table, entity_id, title, intro, suggested_message,
                            general_link,  thankyou_title, thankyou_text, is_active)
                            VALUES " . implode(',', $tellFriendValues);
       CRM_Core_DAO::executeQuery($tellFriend, CRM_Core_DAO::$_nullArray);
@@ -1662,8 +1662,8 @@ VALUES
 
   function addPledge() {
     $pledge = "INSERT INTO civicrm_pledge
-        (contact_id, contribution_type_id, contribution_page_id, amount, original_installment_amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
-        VALUES 
+        (contact_id, contribution_type_id, contribution_page_id, amount, original_installment_amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test)
+        VALUES
        (71, 1, 1, 500.00, '500', 'USD', 'month', 1, 1, 1, '2009-07-01 00:00:00', '2009-06-26 00:00:00', NULL, NULL, NULL,'2009-07-01 00:00:00', NULL, NULL, 1, 0),
        (43, 1, 1, 800.00, '200', 'USD', 'month', 3, 1, 4, '2009-07-01 00:00:00', '2009-06-23 00:00:00', '2009-06-23 00:00:00', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),
        (32, 1, 1, 600.00, '200', 'USD', 'month', 1, 1, 3, '2009-10-01 00:00:00', '2009-09-14 00:00:00', '2009-09-14 00:00:00', NULL, NULL, '2009-12-01 00:00:00', NULL, NULL, 5, 0);
@@ -1672,9 +1672,9 @@ VALUES
   }
 
   function addPledgePayment() {
-    $pledgePayment = "INSERT INTO civicrm_pledge_payment 
-        ( pledge_id, contribution_id, scheduled_amount, actual_amount, currency, scheduled_date, reminder_date, reminder_count, status_id) 
-       VALUES 
+    $pledgePayment = "INSERT INTO civicrm_pledge_payment
+        ( pledge_id, contribution_id, scheduled_amount, actual_amount, currency, scheduled_date, reminder_date, reminder_count, status_id)
+       VALUES
          (1, 10, 500.00, 500.00, 'USD','2009-07-01 00:00:00', null, 0, 1 ),
          (2, 11,   200.00, 200.00, 'USD','2009-07-01 00:00:00', null, 0,  1 ),
          (2, null, 200.00, null, 'USD', '2009-10-01 00:00:00', null, 0,  2 ),
@@ -1703,7 +1703,7 @@ VALUES
                    ('civicrm_contribution', 12, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
                    ('civicrm_contribution', 13, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1);";
     CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
-    $entitySet = "INSERT INTO civicrm_price_set_entity ( entity_table, entity_id, price_set_id) 
+    $entitySet = "INSERT INTO civicrm_price_set_entity ( entity_table, entity_id, price_set_id)
                       VALUES ( 'civicrm_contribution', 1, 1),
                              ( 'civicrm_contribution', 2, 1),
                              ( 'civicrm_contribution', 3, 1),
@@ -1712,7 +1712,7 @@ VALUES
                              ( 'civicrm_contribution', 6, 1),
                              ( 'civicrm_contribution', 7, 1),
                              ( 'civicrm_contribution', 8, 1),
-                             ( 'civicrm_contribution', 9, 1), 
+                             ( 'civicrm_contribution', 9, 1),
                              ( 'civicrm_contribution', 10, 1),
                              ( 'civicrm_contribution', 11, 1),
                              ( 'civicrm_contribution', 12, 1),
@@ -1723,6 +1723,10 @@ VALUES
   function addLineItemParticipants() {
     $participant = new CRM_Event_DAO_Participant();
     $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`) SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
+    $participant->query("INSERT INTO civicrm_price_set_entity (entity_table, entity_id, price_set_id)
+SELECT cli.entity_table, cli.entity_id, cpf.price_set_id FROM `civicrm_line_item` cli
+LEFT JOIN civicrm_price_field cpf ON cpf.id = cli.price_field_id
+WHERE entity_table = 'civicrm_participant' ");
   }
 }
 

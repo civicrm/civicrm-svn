@@ -718,6 +718,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           }
         }
       }
+      CRM_Price_BAO_Set::addTo($entityTable, $entityId, $this->_priceSetId);
     }
 
     //update status and send mail to cancelled additonal participants, CRM-4320
