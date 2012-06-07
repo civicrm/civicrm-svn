@@ -395,3 +395,15 @@ INSERT INTO
    `civicrm_action_mapping` (`entity`, `entity_value`, `entity_value_label`, `entity_status`, `entity_status_label`, `entity_date_start`, `entity_date_end`, `entity_recipient`) VALUES
    ('civicrm_membership', 'civicrm_membership_type', 'Membership Type', 'auto_renew_options', 'Auto Renew Options', 'membership_join_date', 'membership_end_date', NULL);
 
+INSERT INTO
+   `civicrm_option_group` (`name`, {localize field='title'}title{/localize}, `is_reserved`, `is_active`)
+VALUES
+  ('auto_renew_options', {localize}'Auto Renew Options'{/localize}, 1, 1);
+
+SELECT @option_group_id_aro := max(id) from civicrm_option_group where name = 'auto_renew_options';
+
+INSERT INTO
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`)
+VALUES
+   (@option_group_id_aro, {localize}'Auto-renew Memberships Only{/localize}, 1, 'Auto-renew Memberships Only', NULL, 0, 0, 1),
+   (@option_group_id_aro, {localize}'Renewal Reminder (non-auto-renew memberships only)'{/localize}, 2, 'Renewal Reminder (non-auto-renew memberships only)', NULL, 0, 0, 2);
