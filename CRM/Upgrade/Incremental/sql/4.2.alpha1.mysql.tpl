@@ -389,3 +389,9 @@ VALUES
 -- CRM-10117 
 ALTER TABLE `civicrm_price_field_value` CHANGE `is_active` `is_active` TINYINT( 4 ) NULL DEFAULT '1' COMMENT 'Is this price field value active';
 
+
+-- CRM-8359
+INSERT INTO 
+   `civicrm_action_mapping` (`entity`, `entity_value`, `entity_value_label`, `entity_status`, `entity_status_label`, `entity_date_start`, `entity_date_end`, `entity_recipient`) VALUES
+   ('civicrm_membership', 'civicrm_membership_type', 'Membership Type', 'auto_renew_options', 'Auto Renew Options', 'membership_join_date', 'membership_end_date', NULL);
+
