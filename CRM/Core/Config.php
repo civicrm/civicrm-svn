@@ -695,8 +695,7 @@ OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
   /**
    * function to check if running in upgrade mode
    */
-  static
-  function isUpgradeMode($path = NULL) {
+  static function isUpgradeMode($path = NULL) {
     if (defined('CIVICRM_UPGRADE_ACTIVE')) {
       return TRUE;
     }

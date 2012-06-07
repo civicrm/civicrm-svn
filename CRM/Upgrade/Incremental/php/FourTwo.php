@@ -257,8 +257,6 @@ WHERE     cpse.price_set_id IS NULL";
     }
   }
 
-
-
   /**
    * (Queue Task Callback)
    *
@@ -269,7 +267,6 @@ WHERE     cpse.price_set_id IS NULL";
    * @param $endId int, the last/highest contribution ID to convert
    */
   static function task_4_2_alpha1_convertContributions(CRM_Queue_TaskContext $ctx, $startId, $endId) {
-
     // create lineitems for contribution done for membership
     $sql = "
 SELECT    cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
