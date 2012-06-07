@@ -324,14 +324,14 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
   /**
    */
-  function webtestNewDialogContact($fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4) {
+  function webtestNewDialogContact($fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4, $selectId = 'profiles_1', $row = 1) {
     // 4 - Individual profile
     // 5 - Organization profile
     // 6 - Household profile
-    $this->select('profiles_1', "value={$type}");
+    $this->select($selectId, "value={$type}");
 
     // create new contact using dialog
-    $this->waitForElementPresent("css=div#contact-dialog-1");
+    $this->waitForElementPresent("css=div#contact-dialog-{$row}");
     $this->waitForElementPresent('_qf_Edit_next');
 
     switch ($type) {
