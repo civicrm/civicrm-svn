@@ -392,6 +392,7 @@
 
 {literal}
 <script type="text/javascript">
+/*
 cj(function(){
   var customBlock = cj('div[id^="custom-set-block-"]');
   customBlock.mouseenter( function() {
@@ -402,6 +403,7 @@ cj(function(){
     cj(this).find('a[id^="edit-custom-set-block-"]').hide();
   });
 });
+*/
 </script>
 {/literal}
 
