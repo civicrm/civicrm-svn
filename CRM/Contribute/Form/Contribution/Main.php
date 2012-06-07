@@ -1205,7 +1205,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
           }
           if ($priceField->name == "contribution_amount") {
-            if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
+            if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params) && !empty($priceFiledID)) {
               $params['amount'] = $priceFiledID;
               $this->_values['amount'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
               $this->_values[$priceFiledID]['value'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
