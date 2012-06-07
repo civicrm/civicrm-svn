@@ -818,8 +818,12 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         $contactField = "e.contact_id";
 
         // build where clause
-        if (!empty($status)) {
-          $where[] = "e.status_id IN ({$status})";
+        if ( $status == 2) {
+          //auto-renew memberships
+          $where[] = "e.contribution_recur_id IS NOT NULL ";
+        }
+        else {
+            $where[] = "e.contribution_recur_id IS NULL ";
         }
 
         // build where clause
@@ -890,6 +894,7 @@ LEFT JOIN {$reminderJoinClause}
 {$whereClause} AND {$dateClause}";
 
       CRM_Core_DAO::executeQuery($query, array(1 => array($actionSchedule->id, 'Integer')));
+
       // if repeat is turned ON:
       if ($actionSchedule->is_repeat) {
         $repeatEvent = ($actionSchedule->end_action == 'before' ? "DATE_SUB" : "DATE_ADD") . "({$dateField}, INTERVAL {$actionSchedule->end_frequency_interval} {$actionSchedule->end_frequency_unit})";
