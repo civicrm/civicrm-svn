@@ -81,10 +81,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
       {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
   {else}
     <div id="priceset-div">
-      <fieldset>
-        <legend>{ts}Contribution{/ts}</legend>
-        {include file="CRM/Price/Form/PriceSet.tpl" extends="Contribution"}
-      </fieldset>
+      {include file="CRM/Price/Form/PriceSet.tpl" extends="Contribution"}
     </div>
   {/if}
 

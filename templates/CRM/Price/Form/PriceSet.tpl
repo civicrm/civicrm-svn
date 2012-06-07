@@ -75,8 +75,9 @@
     {if $priceSet.help_post}
     	<div class="messages help">{$priceSet.help_post}</div>
     {/if}
- 
-{if $priceSet.fields|@count > 1 || !$quickConfig}
+
+{* Include the total calculation widget if this is NOT a quickconfig event/contribution page AND if there is > 1 price field. *}
+{if !$quickConfig AND $priceSet.fields|@count > 1}
     {include file="CRM/Price/Form/Calculate.tpl"} 
 {/if}
 

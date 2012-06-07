@@ -125,7 +125,7 @@
             </tr>
             <tr>
                <td>&nbsp;</td>
-               <td class="description">{ts}This label is displayed with the list of event fees.{/ts}
+               <td class="description">{ts}This label is displayed with the list of event fees. When using a Price Set, this label is the title for the section containing the price fields.{/ts}
                </td>
             </tr>
         </table>
