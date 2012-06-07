@@ -405,5 +405,5 @@ SELECT @option_group_id_aro := max(id) from civicrm_option_group where name = 'a
 INSERT INTO
    `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`)
 VALUES
-   (@option_group_id_aro, {localize}'Auto-renew Memberships Only{/localize}, 1, 'Auto-renew Memberships Only', NULL, 0, 0, 1),
-   (@option_group_id_aro, {localize}'Renewal Reminder (non-auto-renew memberships only)'{/localize}, 2, 'Renewal Reminder (non-auto-renew memberships only)', NULL, 0, 0, 2);
+   (@option_group_id_aro, {localize}'Renewal Reminder (non-auto-renew memberships only)'{/localize}, 1, 'Renewal Reminder (non-auto-renew memberships only)', NULL, 0, 0, 1),
+   (@option_group_id_aro, {localize}'Auto-renew Memberships Only{/localize}, 2, 'Auto-renew Memberships Only', NULL, 0, 0, 2);
