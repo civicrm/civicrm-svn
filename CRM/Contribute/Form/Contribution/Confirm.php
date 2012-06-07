@@ -143,7 +143,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $priceField->find();
         while ($priceField->fetch()) {
           if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_params['priceSetId'], 'is_quick_config') && !empty($this->_params["price_{$priceField->id}"])) {
-            $this->_params['amount_level'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'label');
+            if ($this->_values['fee'][$priceField->id]['html_type'] != 'Text') {
+              $this->_params['amount_level'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'label');
+            }
             if ($priceField->name == "membership_amount") {
               $this->_params['selectMembership'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'membership_type_id');
             }
