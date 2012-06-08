@@ -348,6 +348,8 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution Billing Details{/ts}',      38, 'Update Recurring Contribution Billing Details', NULL,1, 0, 38, '', 0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution{/ts}',      39, 'Update Recurring Contribution', NULL,1, 0, 39, '', 0, 1, 1, NULL, NULL),
 
+   (@option_group_id_act, '{ts escape="sql"}Reminder Sent{/ts}',      		      40, 'Reminder Sent', NULL, 1, 0, 40, '', 0, 1, 1, NULL, NULL),
+
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Transgender{/ts}', 3, 'Transgender', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
