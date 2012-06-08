@@ -58,7 +58,12 @@ else {
 }
 
 function civicrm_wp_add_menu_items() {
-  add_menu_page('CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke');
+  $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'civicrm.settings.php';
+  
+  if (file_exists($settingsFile)) {
+    add_menu_page('CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke');
+  }
+  
   add_options_page('CiviCRM Settings', 'CiviCRM Settings', 'manage_options', 'civicrm-settings', 'civicrm_db_settings');
 }
 
@@ -113,7 +118,7 @@ function civicrm_wp_initialize() {
     }
 
     // autoload
-    require_once 'civicrm/CRM/Core/ClassLoader.php';
+    require_once 'CRM/Core/ClassLoader.php';
     $classLoader = new CRM_Core_ClassLoader();
     $classLoader->register();
 
