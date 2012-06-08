@@ -826,11 +826,11 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         $contactField = "e.contact_id";
 
         // build where clause
-        if ( $status == 2) {
+        if ( $status == 2 ) {
           //auto-renew memberships
           $where[] = "e.contribution_recur_id IS NOT NULL ";
         }
-        else {
+        elseif ( $status == 1 ) {
             $where[] = "e.contribution_recur_id IS NULL ";
         }
 
