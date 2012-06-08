@@ -127,7 +127,8 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'group_bys' =>
         array(
           'contribution_type' =>
-          array('name' => 'id'),
+          array('name' => 'id',
+                'title' => 'Contribution Type' ),
         ),
       ),
       'civicrm_contribution' =>
