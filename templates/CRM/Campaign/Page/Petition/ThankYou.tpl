@@ -46,5 +46,10 @@
 {/if}
 
 {if $status_id neq 2}{* if asked to confirm the email, focus on that and don't put additional messages *}
+{if $thankyou_text}
+    <div id="thankyou_text" class="crm-section thankyou_text-section">
+        {$thankyou_text}
+    </div>
+{/if}
 {include file="CRM/Campaign/Page/Petition/SocialNetwork.tpl" petition_id=$survey_id petitionTitle=$petitionTitle}
 {/if}

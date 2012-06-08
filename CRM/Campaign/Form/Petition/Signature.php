@@ -397,19 +397,28 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
       $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);
     }
 
+    $petition_params['id'] = $this->_surveyId;
+    $petition = array();
+    CRM_Campaign_BAO_Survey::retrieve($petition_params, $petition);
+
     switch (count($ids)) {
       case 0:
         //no matching contacts - create a new contact
-        $petition_params['id'] = $this->_surveyId;
-        $petition = array();
-        CRM_Campaign_BAO_Survey::retrieve($petition_params, $petition);
-
         // Add a source for this new contact
         $params['source'] = ts('Petition Signature') . ' ' . $this->petition['title'];
-        $this->_sendEmailMode = self::EMAIL_CONFIRM;
 
-        // Set status for signature activity to scheduled until email is verified
-        $params['statusId'] = 1;
+        if ($this->petition['bypass_confirm']) {
+          // send thank you email directly, bypassing confirmation
+          $this->_sendEmailMode = self::EMAIL_THANK;
+          // Set status for signature activity to completed
+          $params['statusId'] = 2;
+        }
+        else {
+          $this->_sendEmailMode = self::EMAIL_CONFIRM;
+
+          // Set status for signature activity to scheduled until email is verified
+          $params['statusId'] = 1;
+        }
         break;
 
       case 1:
@@ -417,6 +426,14 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
 
         // check if user has already signed this petition - redirects to Thank You if true
         $this->redirectIfSigned($params);
+
+        if ($this->petition['bypass_confirm']) {
+          // send thank you email directly, bypassing confirmation
+          $this->_sendEmailMode = self::EMAIL_THANK;
+          // Set status for signature activity to completed
+          $params['statusId'] = 2;
+          break;
+        }
 
         // dedupe matched single contact, check for 'unconfirmed' tag
         if ($tag_name) {
@@ -446,6 +463,15 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
 
         // check if user has already signed this petition - redirects to Thank You if true
         $this->redirectIfSigned($params);
+        
+        if ($this->petition['bypass_confirm']) {
+          // send thank you email directly, bypassing confirmation
+          $this->_sendEmailMode = self::EMAIL_THANK;
+          // Set status for signature activity to completed
+          $params['statusId'] = 2;
+          break;
+        }
+        
         if ($tag_name) {
           $tag            = new CRM_Core_DAO_EntityTag();
           $tag->entity_id = $this->_contactId;

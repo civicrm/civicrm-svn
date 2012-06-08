@@ -132,6 +132,13 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey {
       array(
         '' => ts('- select -')) + $customProfiles
     );
+    
+    // thank you title and text (html allowed in text)
+    $this->add('text', 'thankyou_title', ts('Thank-you Page Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'thankyou_title'));
+    $this->addWysiwyg('thankyou_text', ts('Thank-you Message'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'thankyou_text'));
+    
+    // bypass email confirmation?
+    $this->add('checkbox', 'bypass_confirm', ts('Bypass email confirmation'));
 
     // is active ?
     $this->add('checkbox', 'is_active', ts('Is Active?'));
@@ -188,6 +195,7 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey {
       $params['created_date'] = date('YmdHis');
     }
 
+    $params['bypass_confirm'] = CRM_Utils_Array::value('bypass_confirm', $params, 0);
     $params['is_active'] = CRM_Utils_Array::value('is_active', $params, 0);
     $params['is_default'] = CRM_Utils_Array::value('is_default', $params, 0);
 
