@@ -114,7 +114,8 @@ class CRM_Core_Permission_WordPress {
         'register for events' => 1,
         'view event info' => 1,
         'access Contact Dashboard' => 1,
-                                 'sign CiviCRM Petition'                       => 1,
+        'sign CiviCRM Petition' => 1,
+        'view public CiviMail content' => 1,
       );
     }
 
