@@ -735,7 +735,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       );
     }
 
-    if (CRM_Utils_Array::value(1, $defaults['field_name']) == 'url-1') {
+    if (isset($defaults['field_name']) && CRM_Utils_Array::value(1, $defaults['field_name']) == 'url-1') {
       $defaults['field_name'][1] = 'url';
     }
 
