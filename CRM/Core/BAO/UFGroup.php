@@ -1873,6 +1873,12 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
           '' => ts('- select -')) + CRM_Core_PseudoConstant::activityStatus(), $required
       );
     }
+    elseif ($fieldName == 'activity_engagement_level') {
+      $form->add('select', $name, $title,
+        array(
+          '' => ts('- select -')) + CRM_Campaign_PseudoConstant::engagementLevel(), $required
+      );
+    }
     elseif ($fieldName == 'activity_date_time') {
       $form->addDateTime($name, $title, $required, array('formatType' => 'activityDateTime'));
     }

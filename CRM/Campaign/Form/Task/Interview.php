@@ -422,11 +422,15 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     $activity->find(TRUE);
     $activity->activity_date_time = date('Ymdhis');
     $activity->status_id = $statusId;
+    
     if (CRM_Utils_Array::value('details', $params)) {
       $activity->details = $params['details'];
     }
     if ($result = CRM_Utils_Array::value('result', $params)) {
       $activity->result = $result;
+    }
+    if (CRM_Utils_Array::value('activity_engagement_level', $params)) {
+      $activity->engagement_level = $params['activity_engagement_level'];
     }
 
     $subject = '';

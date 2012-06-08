@@ -940,7 +940,9 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
       if (!in_array($field['field_type'], $supportableFieldTypes)) {
         continue;
       }
-
+      if ($field['name'] == 'activity_engagement_level') {
+        $responseFields[$cacheKey][$name] = $field;        
+      }
       // we should allow all supported custom data for survey
       // In case of activity, allow normal activity and with subtype survey,
       // suppress custom data of other activity types
