@@ -42,7 +42,7 @@ ALTER TABLE `civicrm_batch` ADD `total` decimal(20,2) DEFAULT NULL COMMENT 'Tota
 ALTER TABLE `civicrm_batch` ADD `item_count` int(10) unsigned NOT NULL COMMENT 'Number of items in a batch.';
 
 ALTER TABLE `civicrm_batch` ADD CONSTRAINT `FK_civicrm_batch_saved_search_id` FOREIGN KEY (`saved_search_id`) REFERENCES `civicrm_saved_search` (`id`) ON DELETE SET NULL;
- 
+
 --batch type and batch status option groups
 INSERT INTO
    `civicrm_option_group` (`name`, {localize field='title'}title{/localize}, `is_reserved`, `is_active`)
@@ -104,10 +104,10 @@ VALUES
 --navigation menu entries
 SELECT @navContributionsID := MAX(id) FROM civicrm_navigation where name = 'Contributions';
 SELECT @navMembershipsID := MAX(id) FROM civicrm_navigation where name = 'Memberships';
-	     
+
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES     
+VALUES
     ( {$domainID}, 'civicrm/batch&reset=1', '{ts escape="sql" skip="true"}Batches{/ts}', 'Batches', 'access CiviContribute,access CiviMember', '', @navContributionsID, '1', NULL, 4 ),
     ( {$domainID}, 'civicrm/batch&reset=1', '{ts escape="sql" skip="true"}Batches{/ts}', 'Batches', 'access CiviMember,acess CiviContribute',  '', @navMembershipsID, '1', NULL, 4 );
 
@@ -241,7 +241,7 @@ INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VA
 INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Bonaire, Saint Eustatius and Saba", "BQ", @region_id, 0);
 
 -- CRM-9714 create a default price set for contribution and membership
-SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';  
+SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';
 INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `is_reserved`, `contribution_type_id`)
 VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', '1', null),
  ( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', '1', @contribution_type_id);
@@ -279,12 +279,12 @@ WHERE cps.name = 'default_contribution_amount';
 
 INSERT INTO civicrm_price_set_entity( entity_table, entity_id, price_set_id )
 
-SELECT 'civicrm_contribution', cc.id as id, @setId 
+SELECT 'civicrm_contribution', cc.id as id, @setId
 FROM `civicrm_contribution` cc
 LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
 LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
 LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
-WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NULL 
+WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NULL
 GROUP BY cc.id;
 
 INSERT INTO civicrm_line_item ( entity_table, entity_id, price_field_id, label, qty, unit_price, line_total, participant_count, price_field_value_id )
@@ -296,7 +296,7 @@ LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
 WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NULL
 GROUP BY cc.id;
 
--- create entry in line items for offline membership 
+-- create entry in line items for offline membership
 SELECT  @priceSet := MAX(id) FROM `civicrm_price_set` WHERE `name` LIKE 'default_membership_type_amount';
 
 INSERT INTO civicrm_price_set_entity(entity_table, entity_id, price_set_id)
@@ -315,7 +315,7 @@ LEFT JOIN civicrm_membership cm ON cm.id=cmp.membership_id
 LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
 LEFT JOIN civicrm_price_field cpf ON cpf.name = cmt.member_of_contact_id
 LEFT JOIN civicrm_price_field_value cpfv ON cpfv.membership_type_id = cm.membership_type_id
-WHERE cli.entity_id IS NULL ; 
+WHERE cli.entity_id IS NULL ;
 
 -- CRM-10071 contribution membership detail report template
 SELECT @option_group_id_report := MAX(id)     FROM civicrm_option_group WHERE name = 'report_template';
@@ -374,24 +374,24 @@ VALUES
   (@option_group_id_act, {localize field='label'}'Change Membership Type'{/localize}, (SELECT @max_val := @max_val+1), 'Change Membership Type', (SELECT @max_wt := @max_wt+1), {localize field='description'}'Change Membership Type.'{/localize}, 1, 1, @CompId);
 
 -- CRM-10084
-INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+INSERT INTO
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
    (@option_group_id_act, {localize}'Cancel Recurring Contribution'{/localize}, (SELECT @max_val := @max_val+1), 'Cancel Recurring Contribution', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
 
 -- CRM-10090
-INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+INSERT INTO
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
 (@option_group_id_act, {localize}'Update Recurring Contribution Billing Details'{/localize}, (SELECT @max_val := @max_val+1), 'Update Recurring Contribution Billing Details', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL),
 (@option_group_id_act, {localize}'Update Recurring Contribution'{/localize}, (SELECT @max_val := @max_val+1), 'Update Recurring Contribution', NULL,1, 0, (SELECT @max_wt := @max_wt+1), '', 0, 1, 1, NULL, NULL);
 
--- CRM-10117 
+-- CRM-10117
 ALTER TABLE `civicrm_price_field_value` CHANGE `is_active` `is_active` TINYINT( 4 ) NULL DEFAULT '1' COMMENT 'Is this price field value active';
 
 
 -- CRM-8359
-INSERT INTO 
+INSERT INTO
    `civicrm_action_mapping` (`entity`, `entity_value`, `entity_value_label`, `entity_status`, `entity_status_label`, `entity_date_start`, `entity_date_end`, `entity_recipient`) VALUES
    ('civicrm_membership', 'civicrm_membership_type', 'Membership Type', 'auto_renew_options', 'Auto Renew Options', 'membership_join_date', 'membership_end_date', NULL);
 
@@ -417,3 +417,10 @@ INSERT INTO
    `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
    (@option_group_id_act, {localize}'Reminder Sent'{/localize}, (SELECT @max_val := @max_val+1), 'Reminder Sent', NULL, 1, NULL, (SELECT @max_wt := @max_wt+1), {localize}'Reminder Sent'{/localize}, 0, 1, 1, NULL, NULL);
+
+-- CRM-10335
+TRUNCATE civicrm_cache;
+ALTER TABLE civicrm_cache
+  DROP INDEX UI_group_path,
+  ADD UNIQUE INDEX `UI_group_path_date` (`group_name`, `path`, `created_date`);
+
