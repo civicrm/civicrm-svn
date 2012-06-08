@@ -113,7 +113,7 @@ function civicrm_wp_initialize() {
     }
 
     // autoload
-    require_once 'CRM/Core/ClassLoader.php';
+    require_once 'civicrm/CRM/Core/ClassLoader.php';
     $classLoader = new CRM_Core_ClassLoader();
     $classLoader->register();
 
