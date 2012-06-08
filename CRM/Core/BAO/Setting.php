@@ -400,7 +400,7 @@ OR       group_name = %2 )
       if (CRM_Core_Config::isUpgradeMode()) {
         // seems like this is a 4.0 -> 4.1 upgrade, so we suppress this error and continue
         return;
-      }
+      }      
       else {
         echo "Fatal DB error, exiting, seems like your schema does not have civicrm_setting table\n";
         exit();
@@ -475,6 +475,10 @@ OR       group_name = %2 )
     if (is_a($dao, 'DB_Error')) {
       if (CRM_Core_Config::isUpgradeMode()) {
         // seems like this is a 4.0 -> 4.1 upgrade, so we suppress this error and continue
+        // hack to set the resource base url so that js/ css etc is loaded correctly
+        if (defined('CIVICRM_UF') && CIVICRM_UF == 'Joomla') {
+          $params['userFrameworkResourceURL'] = CRM_Utils_File::addTrailingSlash(CIVICRM_UF_BASEURL, '/') . str_replace('administrator', '', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', 'userFrameworkResourceURL', 'value', 'name'));
+        }
         return;
       }
       else {
