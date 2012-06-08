@@ -59,11 +59,11 @@ else {
 
 function civicrm_wp_add_menu_items() {
   $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'civicrm.settings.php';
-  
+
   if (file_exists($settingsFile)) {
     add_menu_page('CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke');
   }
-  
+
   add_options_page('CiviCRM Settings', 'CiviCRM Settings', 'manage_options', 'civicrm-settings', 'civicrm_db_settings');
 }
 
@@ -274,10 +274,10 @@ function civicrm_wp_scripts() {
       wp_enqueue_script($line, WP_PLUGIN_URL . "/civicrm/civicrm/$line");
     }
   }
-  
+
   //add namespacing js
   wp_enqueue_script('js/jquery.conflict.js', WP_PLUGIN_URL . '/civicrm/civicrm/js/jquery.conflict.js');
-   
+
   return;
 }
 
@@ -354,7 +354,7 @@ function civicrm_wp_frontend($shortcode = FALSE) {
     )
   ) {
     civicrm_wp_invoke();
-    exit;
+    CRM_Utils_System::civiExit( );
   }
 
   // this places civicrm inside frontend theme
@@ -362,7 +362,10 @@ function civicrm_wp_frontend($shortcode = FALSE) {
   // but best way is to check other plugin implementation :)
 
   if ($shortcode) {
-    civicrm_wp_invoke();
+    ob_start(); // start buffering
+    civicrm_wp_invoke( ); // now, instead of echoing, shortcode output ends up in buffer
+    $content = ob_get_clean(); // save the output and flush the buffer
+    return $content;
   }
   else {
     add_filter('the_content', 'civicrm_wp_invoke');
