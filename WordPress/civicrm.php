@@ -237,9 +237,9 @@ function civicrm_wp_invoke() {
   get_currentuserinfo();
 
   /* bypass synchronize if running upgrade
-     * to avoid any serious non-recoverable error
-     * which might hinder the upgrade process.
-     */
+   * to avoid any serious non-recoverable error
+   * which might hinder the upgrade process.
+   */
 
   require_once 'CRM/Utils/Array.php';
   if (CRM_Utils_Array::value('q', $_GET) != 'civicrm/upgrade') {
@@ -269,9 +269,10 @@ function civicrm_wp_scripts() {
       wp_enqueue_script($line, WP_PLUGIN_URL . "/civicrm/civicrm/$line");
     }
   }
-
-  // add Common.js
-  wp_enqueue_script('js/Common.js', WP_PLUGIN_URL . '/civicrm/civicrm/js/Common.js');
+  
+  //add namespacing js
+  wp_enqueue_script('js/jquery.conflict.js', WP_PLUGIN_URL . '/civicrm/civicrm/js/jquery.conflict.js');
+   
   return;
 }
 

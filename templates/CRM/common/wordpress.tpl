@@ -27,12 +27,6 @@
 {include file="CRM/common/debug.tpl"}
 {/if}
 
-<script type="text/javascript">
-<!--//--><![CDATA[//><!--
-var cj = jQuery.noConflict(); $ = cj;
-//--><!]]>
-</script>
-
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 
 {* we should uncomment below code only when we are experimenting with new css for specific pages and comment css inclusion in civicrm.module*}
