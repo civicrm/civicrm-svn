@@ -655,7 +655,7 @@ GROUP BY  participant.event_id
           'name' => 'event_type',
           'data_type' => CRM_Utils_Type::T_STRING,
         ));
-      $tmpConatctField = array();
+      $tmpContactField = array();
       if (!$onlyParticipant) {
         $contactFields = CRM_Contact_BAO_Contact::importableFields($contactType, NULL);
 
