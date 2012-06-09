@@ -192,12 +192,6 @@ class api_v3_UFGroupTest extends CiviUnitTestCase {
     }
   }
 
-  function testUFGroupCreateWithEmptyParams() {
-    $result = civicrm_api('uf_group', 'create', array());
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals('Mandatory key(s) missing from params array: version', $result['error_message']);
-  }
-
   function testUFGroupCreateWithWrongParams() {
     $result = civicrm_api('uf_group', 'create', 'a string');
     $this->assertEquals($result['is_error'], 1);
