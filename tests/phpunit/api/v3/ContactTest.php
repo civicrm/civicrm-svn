@@ -1566,8 +1566,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     /* it will be ignored if there is not exactly 1 result";
     $subfile = "FormatSingleValue";
     $params  = array('version' => 3, 'id' => 17, 'return' => 'display_name');
-    $result  = civicrm_api('Contact', 'Get', $params);
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
+    $result  = civicrm_api('Contact', 'getvalue', $params);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile,'getvalue');
     $this->assertEquals('Test Contact', $result, "in line " . __LINE__);
     civicrm_api('Contact', 'Delete', $params);
   }
