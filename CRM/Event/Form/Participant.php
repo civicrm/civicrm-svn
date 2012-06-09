@@ -1033,7 +1033,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     if ($this->_priceSetId && $isQuickConfig = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
       $this->_quickConfig = $isQuickConfig;
     }
-      
+
     if ($this->_id) {
       $params['id'] = $this->_id;
     }
@@ -1097,7 +1097,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
 
         $params['fee_level'] = $params['amount_level'];
         $contributionParams['total_amount'] = $params['amount'];
-        if ($this->_quickConfig && CRM_Utils_Array::value('total_amount', $params)) { 
+        if ($this->_quickConfig && CRM_Utils_Array::value('total_amount', $params)) {
           $params['fee_amount'] = $params['total_amount'];
         } else {
           //fix for CRM-3086
@@ -1452,7 +1452,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
               $line['entity_id'] = $participants[$num]->id;
               //10117 update the line items for participants if contribution amount is recorded
               if ($this->_quickConfig && CRM_Utils_Array::value('total_amount', $params )) {
-                $line['unit_price'] = 
+                $line['unit_price'] =
                   $line['line_total'] = $params['total_amount'];
               }
               CRM_Price_BAO_LineItem::create($line);
