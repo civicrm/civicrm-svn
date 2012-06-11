@@ -1639,7 +1639,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $form->assign('module', 'Membership');
     $form->assign('contactID', $formValues['contact_id'] );
 
-    $form->assign('membershipID', CRM_Utils_Array::value('membership_id', $params, CRM_Utils_Array::value('membership_id', $form->_defaultValues)));
+    $form->assign('membershipID', CRM_Utils_Array::value('membership_id', $form->_params, CRM_Utils_Array::value('membership_id', $form->_defaultValues)));
 
     if ( CRM_Utils_Array::value('contribution_id', $formValues ) ) {
       $form->assign( 'contributionID', $formValues['contribution_id'] );
