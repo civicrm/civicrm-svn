@@ -1619,7 +1619,7 @@ AND civicrm_membership.is_test = %2";
           if (CRM_Utils_Array::value('membership_source', $form->_params)) {
             $memParams['source'] = $form->_params['membership_source'];
           }
-          elseif (CRM_Utils_Array::value('title', $form->_values)) {
+          elseif (property_exists($form, '_values') && CRM_Utils_Array::value('title', $form->_values)) {
             $memParams['source'] = ts('Online Contribution:') . ' ' . $form->_values['title'];
           }
           else {
