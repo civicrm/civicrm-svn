@@ -27,7 +27,7 @@
     {if $priceSet.help_pre}
         <div class="messages help">{$priceSet.help_pre}</div>
     {/if}
-          
+
     {foreach from=$priceSet.fields item=element key=field_id}
         {* Skip 'Admin' visibility price fields since this tpl is used in online registration. *}
         {if $element.visibility EQ 'public' || $context eq 'standalone' || $context eq 'search' || $context eq 'participant' || $action eq 1024}
@@ -56,7 +56,7 @@
                 {/if}
                 </div>
                 <div class="clear"></div>
-	
+
             {else}
 
                 {assign var="element_name" value="price_"|cat:$field_id}
@@ -71,14 +71,14 @@
             </div>
         {/if}
     {/foreach}
-    
+
     {if $priceSet.help_post}
     	<div class="messages help">{$priceSet.help_post}</div>
     {/if}
 
-{* Include the total calculation widget if this is NOT a quickconfig event/contribution page AND if there is > 1 price field. *}
-{if !$quickConfig AND $priceSet.fields|@count > 1}
-    {include file="CRM/Price/Form/Calculate.tpl"} 
+{* Include the total calculation widget if this is NOT a quickconfig event/contribution page. *}
+{if !$quickConfig}
+    {include file="CRM/Price/Form/Calculate.tpl"}
 {/if}
 
 </div>
