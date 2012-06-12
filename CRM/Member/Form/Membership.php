@@ -1139,7 +1139,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
 
       if (CRM_Utils_Array::value('receive_date', $params)) {
-        $params['receive_date'] = CRM_Utils_Date::processDate($params['receive_date']);
+        $formValues['receive_date'] = $params['receive_date'] = CRM_Utils_Date::processDate($params['receive_date']);
       }
       if (CRM_Utils_Array::value('send_receipt', $formValues)) {
         $params['receipt_date'] = CRM_Utils_Array::value('receive_date', $params);
@@ -1663,8 +1663,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $form->assign('formValues', $formValues);
 
     if (empty($lineItem)) {
-      $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date, '%b %E%f, %Y' ) );
-      $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date, '%b %E%f, %Y' ) );
+      $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date, '%B %E%f, %Y' ) );
+      $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date, '%B %E%f, %Y' ) );
       $form->assign('membership_name', CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id )  );
     }
 
