@@ -319,7 +319,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     );
     $msgTemplate = NULL;
     //mail template is composed
-
+    $composeParams = array();
     foreach ($composeFields as $key) {
       if (CRM_Utils_Array::value($key, $values)) {
         $composeParams[$key] = $values[$key];
