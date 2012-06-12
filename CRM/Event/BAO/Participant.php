@@ -655,7 +655,7 @@ GROUP BY  participant.event_id
           'name' => 'event_type',
           'data_type' => CRM_Utils_Type::T_STRING,
         ));
-      $tmpContactField = array();
+      $tmpContactField = $contactFields = array();
       if (!$onlyParticipant) {
         $contactFields = CRM_Contact_BAO_Contact::importableFields($contactType, NULL);
 
@@ -687,7 +687,7 @@ GROUP BY  participant.event_id
         }
       }
       $tmpContactField['external_identifier'] = CRM_Utils_Array::value('external_identifier', $contactFields);
-      $tmpContactField['external_identifier']['title'] = $contactFields['external_identifier']['title'] . ' (match to contact)';
+      $tmpContactField['external_identifier']['title'] = CRM_Utils_Array::value('title', CRM_Utils_Array::value('external_identifier', $contactFields)). ' (match to contact)';
       $tmpFields['participant_contact_id']['title'] = $tmpFields['participant_contact_id']['title'] . ' (match to contact)';
 
       //campaign fields.
