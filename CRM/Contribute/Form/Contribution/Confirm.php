@@ -811,7 +811,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       if (!empty($priceFieldIds)) {
         $contributionTypeID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceFieldIds['id'], 'contribution_type_id');
         unset($priceFieldIds['id']);
-
+        $membershipTypeIds = array();
         foreach ($priceFieldIds as $priceFieldId) {
           if ($id = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id')) {
             $membershipTypeIds[] = $id;
