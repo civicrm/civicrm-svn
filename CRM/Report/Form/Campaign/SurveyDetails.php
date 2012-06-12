@@ -878,7 +878,7 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
       if (!CRM_Utils_Array::value('alias', $this->_columns[$resTable])) {
         $this->_columns[$resTable]['alias'] = "{$resTable}_survey_response";
       }
-      if (!is_array($this->_columns[$resTable]['fields'])) {
+      if (!is_array(CRM_Utils_Array::value('fields', $this->_columns[$resTable]))) {
         $this->_columns[$resTable]['fields'] = array();
       }
       if (array_key_exists($fieldName, $this->_columns[$resTable]['fields'])) {
