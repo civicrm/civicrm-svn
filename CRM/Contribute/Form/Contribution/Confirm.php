@@ -140,8 +140,13 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       if ($this->_params['amount']) {
         $priceField = new CRM_Price_DAO_Field();
         $priceField->price_set_id = $this->_params['priceSetId'];
+        $priceField->orderBy('weight');
         $priceField->find();
+        $contriPriceId = NULL;
         while ($priceField->fetch()) {
+          if ($priceField->name == "contribution_amount") {
+            $contriPriceId = $priceField->id;
+          }
           if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_params['priceSetId'], 'is_quick_config') && !empty($this->_params["price_{$priceField->id}"])) {
             if ($this->_values['fee'][$priceField->id]['html_type'] != 'Text') {
               $this->_params['amount_level'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'label');
@@ -149,8 +154,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             if ($priceField->name == "membership_amount") {
               $this->_params['selectMembership'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'membership_type_id');
             }
-          }
-        }
+          } // if seperate payment we set contribution amount to be null, so that it will not show contribution amount same as membership amount.
+          else 
+            if ((CRM_Utils_Array::value('is_separate_payment', $this->_membershipBlock)) && ($this->_values['fee'][$priceField->id]['name'] == "other_amount") && CRM_Utils_Array::value("price_{$contriPriceId}", $this->_params) < 1 && !CRM_Utils_Array::value("price_{$priceField->id}", $this->_params)) {
+              $this->_params['amount'] = null; 
+            }        
+        }    
       }
       $this->_params['currencyID'] = $config->defaultCurrency;
       $this->_params['payment_action'] = 'Sale';
@@ -1040,7 +1049,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $contributionPageId = CRM_Utils_Array::value('contribution_page_id', $params);
       $campaignId = CRM_Utils_Array::value('campaign_id', $params);
     }
-
+    
     // first create the contribution record
     $contribParams = array(
       'contact_id' => $contactID,
@@ -1155,10 +1164,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       // available at hook_post_process, CRM-8908
       $contribParams['soft_credit_to'] = $params['soft_credit_to'] = $contribSoftContactId;
     }
-
-    //add contribution record
-    $contribution = &CRM_Contribute_BAO_Contribution::add($contribParams, $ids);
-
+    
+    if ($params['amount']) {
+      //add contribution record
+      $contribution = &CRM_Contribute_BAO_Contribution::add($contribParams, $ids);
+    }
+    
     // process soft credit / pcp pages
     CRM_Contribute_Form_Contribution_Confirm::processPcpSoft($params, $contribution);
 

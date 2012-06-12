@@ -1190,6 +1190,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       if ($is_quick_config) {
         $priceField = new CRM_Price_DAO_Field();
         $priceField->price_set_id = $params['priceSetId'];
+        $priceField->orderBy('weight');
         $priceField->find();
 
         $check = array();
@@ -1198,14 +1199,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
           CRM_Price_BAO_FieldValue::getValues($priceField->id,&$values);
           if ($priceField->name == "membership_amount") {
             if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
-             $this->_params['selectMembership'] = $params['selectMembership'] = CRM_Utils_Array::value('membership_type_id', $values[$priceFiledID]);
+              $this->_params['selectMembership'] = $params['selectMembership'] = CRM_Utils_Array::value('membership_type_id', $values[$priceFiledID]);
               if (CRM_Utils_Array::value('is_separate_payment', $this->_membershipBlock) == 0) {
                 $this->_values['amount'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
               }
             }
           }
           if ($priceField->name == "contribution_amount") {
-            if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params) && !empty($priceFiledID)) {
+            if (CRM_Utils_Array::value("price_{$priceField->id}", $params) > 0 && $priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params) && !empty($priceFiledID)) {
               $params['amount'] = $priceFiledID;
               $this->_values['amount'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
               $this->_values[$priceFiledID]['value'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
@@ -1213,6 +1214,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
               $this->_values[$priceFiledID]['amount_id'] = CRM_Utils_Array::value('id', $values[$priceFiledID]);
               $this->_values[$priceFiledID]['weight'] = CRM_Utils_Array::value('weight', $values[$priceFiledID]);
             }
+          }
+          if ($priceField->name == "other_amount" && $priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
+            $params['amount_other'] = $priceFiledID;
           }
         }
       }
