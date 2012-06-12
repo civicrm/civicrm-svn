@@ -109,7 +109,8 @@ class CRM_Contribute_BAO_Contribution_Utils {
         $contributionType,
         TRUE, TRUE, TRUE
       );
-      $form->_params['contributionID'] = $contribution->id;
+      if ($contribution)
+        $form->_params['contributionID'] = $contribution->id;
       $form->_params['contributionTypeID'] = $contributionType->id;
       $form->_params['item_name'] = $form->_params['description'];
       $form->_params['receive_date'] = $now;

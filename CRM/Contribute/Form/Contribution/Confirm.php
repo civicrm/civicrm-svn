@@ -829,10 +829,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $membershipParams['selectMembership'] = $membershipTypeIds;
         $membershipParams['contribution_type_id'] = $contributionTypeID;
       }
+      if (CRM_Utils_Array::value('selectMembership', $membershipParams)) {
       CRM_Member_BAO_Membership::postProcessMembership($membershipParams, $contactID,
         $this, $premiumParams, $customFieldsFormatted,
         $fieldTypes
       );
+      }
     }
     else {
       // at this point we've created a contact and stored its address etc
@@ -1174,7 +1176,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     CRM_Contribute_Form_Contribution_Confirm::processPcpSoft($params, $contribution);
 
     // process price set, CRM-5095
-    if ($contribution->id && $form->_priceSetId) {
+    if ($contribution && $contribution->id && $form->_priceSetId) {
       if (CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         $temp = array();
         foreach ($form->_lineItem as $key => $val) {
@@ -1275,7 +1277,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       }
     }
 
-    if ($online) {
+    if ($online && $contribution) {
       CRM_Core_BAO_CustomValueTable::postProcess($form->_params,
         CRM_Core_DAO::$_nullArray,
         'civicrm_contribution',
@@ -1283,7 +1285,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         'Contribution'
       );
     }
-    else {
+    elseif ($contribution) {
       //handle custom data.
       $params['contribution_id'] = $contribution->id;
       if (CRM_Utils_Array::value('custom', $params) &&

@@ -1215,7 +1215,8 @@ AND civicrm_membership.is_test = %2";
 
       // Save the contribution ID so that I can be used in email receipts
       // For example, if you need to generate a tax receipt for the donation only.
-      $form->_values['contribution_other_id'] = $result[1]->id;
+      if ($result[1])
+        $form->_values['contribution_other_id'] = $result[1]->id;
     }
     else {
       // create the CMS contact here since we normally do this under processConfirm
@@ -1293,7 +1294,6 @@ AND civicrm_membership.is_test = %2";
         //so for differentiating membership contributon from
         //main contribution.
         $form->_params['separate_membership_payment'] = 1;
-
         $contribution[2] = CRM_Contribute_Form_Contribution_Confirm::processContribution($form,
           $tempParams,
           $result,
