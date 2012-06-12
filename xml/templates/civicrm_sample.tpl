@@ -192,7 +192,7 @@ SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` 
 INSERT INTO 
        `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
 VALUES
-    (@priceFieldID,'other_amount','Other Amount','1',1,1,0);
+    (@priceFieldID,'other_amount','Contribution Amount','1',1,1,0);
 
 
 -- Insert sample data for event
