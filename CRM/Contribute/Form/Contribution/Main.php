@@ -1300,16 +1300,16 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $lineItem = array();
         $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config' );
         if ( $is_quick_config ) {
-            foreach ( $this->_values['fee'] as $key => & $val ) {
-                if ( $val['name'] == 'other_amount' && $val['html_type'] == 'Text' && array_key_exists( 'price_'.$key, $params ) && $params['price_'.$key] != 0 ) {
-                    foreach ( $val['options'] as $optionKey => & $options ) {
-                        $options['amount'] = CRM_Utils_Array::value( 'price_'.$key, $params );
-                        break;
-                    }
-                    $params['price_'.$key] = 1;
-                    break;
-                }
+          foreach ( $this->_values['fee'] as $key => & $val ) {
+            if ( $val['name'] == 'other_amount' && $val['html_type'] == 'Text' && array_key_exists( 'price_'.$key, $params ) && $params['price_'.$key] != 0 ) {
+              foreach ( $val['options'] as $optionKey => & $options ) {
+                $options['amount'] = CRM_Utils_Array::value( 'price_'.$key, $params );
+                break;
+              }
+              $params['price_'.$key] = 1;
+              break;
             }
+          }
         }
         CRM_Price_BAO_Set::processAmount($this->_values['fee'], $params, $lineItem[$priceSetId]);
         if ($proceFieldAmount) {
