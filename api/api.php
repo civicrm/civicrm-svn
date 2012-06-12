@@ -6,7 +6,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API
  *
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * @version $Id: api.php 30486 2010-11-02 16:12:09Z shot $
  */
 
