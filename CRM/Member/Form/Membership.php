@@ -1663,8 +1663,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $form->assign('formValues', $formValues);
 
     if (empty($lineItem)) {
-      $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date ) );
-      $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date ) );
+      $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date, '%b %E%f, %Y' ) );
+      $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date, '%b %E%f, %Y' ) );
       $form->assign('membership_name', CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id )  );
     }
 
