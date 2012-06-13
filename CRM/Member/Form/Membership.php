@@ -1010,7 +1010,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $this->_memberEmail
       ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
     }
-
+    if( CRM_Utils_Array::value('1', $formValues['contribution_contact_select_id'] ) ) {
+      $this->_contributioncontactID = $formValues['contribution_contact_select_id'][1];
+       // we can set memberdisplay name from the form as we know it will be set in this case
+       $this->_memberDisplayName = $params['contribution_contact'][1];
+       list( $dontcare,
+         $this->_memberEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contributioncontactID );
+    }
     $params['contact_id'] = $this->_contactID;
 
     $fields = array(
