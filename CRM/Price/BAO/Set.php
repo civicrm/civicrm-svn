@@ -600,7 +600,7 @@ WHERE  id = %1";
 
         case 'Radio':
           //special case if user select -none-
-          if ($params["price_{$id}"] == 0) {
+          if ($params["price_{$id}"] <= 0) {
             continue;
           }
         $params["price_{$id}"] = array($params["price_{$id}"] => 1);

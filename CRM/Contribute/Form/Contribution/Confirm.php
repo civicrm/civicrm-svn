@@ -759,7 +759,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       ) ||
       $this->_useForMember
     ) {
-      $processMembership = TRUE;
+      if (CRM_Utils_Array::value('selectMembership', $membershipParams))
+          $processMembership = TRUE;
 
       if (!$this->_useForMember) {
         $this->assign('membership_assign', TRUE);
@@ -1315,7 +1316,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
 
     // next create the transaction record
-    if ((!$online || $form->_values['is_monetary']) && $result['trxn_id']) {
+    if ($contribution && (!$online || $form->_values['is_monetary']) && $result['trxn_id']) {
       $trxnParams = array(
         'contribution_id' => $contribution->id,
         'trxn_date' => $now,

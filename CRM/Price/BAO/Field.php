@@ -349,8 +349,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         }
 
         if (property_exists($qf, '_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount') {
-          $choice[] = $qf->createElement('radio', NULL, '', 'No thank you', '00',
-            array('price' => json_encode(array($elementName, "0")),
+          $choice[] = $qf->createElement('radio', NULL, '', 'No thank you', '-1',
+            array(
               'onclick' => 'clearAmountOther();',
             )
           );

@@ -115,7 +115,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
       $form->_params['item_name'] = $form->_params['description'];
       $form->_params['receive_date'] = $now;
 
-      if ($form->_values['is_recur'] &&
+      if ($contribution && $form->_values['is_recur'] &&
         $contribution->contribution_recur_id
       ) {
         $form->_params['contributionRecurID'] = $contribution->contribution_recur_id;
@@ -287,10 +287,12 @@ class CRM_Contribute_BAO_Contribution_Utils {
     }
 
     // finally send an email receipt
-    $form->_values['contribution_id'] = $contribution->id;
-    CRM_Contribute_BAO_ContributionPage::sendMail($contactID, $form->_values, $contribution->is_test,
-      FALSE, $fieldTypes
-    );
+    if ($contribution) {
+      $form->_values['contribution_id'] = $contribution->id;
+      CRM_Contribute_BAO_ContributionPage::sendMail($contactID, $form->_values, $contribution->is_test,
+                                                    FALSE, $fieldTypes
+                                                    );
+    }
   }
 
   /**
