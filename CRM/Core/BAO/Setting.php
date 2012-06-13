@@ -48,7 +48,18 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   /**
    * various predefined settings that have been migrated to the setting table
    */
-  CONST ADDRESS_STANDARDIZATION_PREFERENCES_NAME = 'Address Standardization Preferences', CAMPAIGN_PREFERENCES_NAME = 'Campaign Preferences', DIRECTORY_PREFERENCES_NAME = 'Directory Preferences', EVENT_PREFERENCES_NAME = 'Event Preferences', MAILING_PREFERENCES_NAME = 'Mailing Preferences', MEMBER_PREFERENCES_NAME = 'Member Preferences', MULTISITE_PREFERENCES_NAME = 'Multi Site Preferences', NAVIGATION_NAME = 'Navigation Menu', SYSTEM_PREFERENCES_NAME = 'CiviCRM Preferences', URL_PREFERENCES_NAME = 'URL Preferences';
+  CONST
+    ADDRESS_STANDARDIZATION_PREFERENCES_NAME = 'Address Standardization Preferences',
+    CAMPAIGN_PREFERENCES_NAME = 'Campaign Preferences',
+    DIRECTORY_PREFERENCES_NAME = 'Directory Preferences',
+    EVENT_PREFERENCES_NAME = 'Event Preferences',
+    MAILING_PREFERENCES_NAME = 'Mailing Preferences',
+    CONTRIBUTE_PREFERENCES_NAME = 'Contribute Preferences',
+    MEMBER_PREFERENCES_NAME = 'Member Preferences',
+    MULTISITE_PREFERENCES_NAME = 'Multi Site Preferences',
+    NAVIGATION_NAME = 'Navigation Menu',
+    SYSTEM_PREFERENCES_NAME = 'CiviCRM Preferences',
+    URL_PREFERENCES_NAME = 'URL Preferences';
 
   static $_cache = NULL;
 
@@ -381,7 +392,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   static
   function fixAndStoreDirAndURL(&$params) {
     $sql = "
-SELECT name, group_name 
+SELECT name, group_name
 FROM   civicrm_setting
 WHERE  ( group_name = %1
 OR       group_name = %2 )
