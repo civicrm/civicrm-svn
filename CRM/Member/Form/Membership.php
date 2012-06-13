@@ -1010,6 +1010,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $this->_memberEmail
       ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
     }
+    //CRM-10375 - fix backoffice membership form to send receipt to payer where different to member
     if( CRM_Utils_Array::value('1', $formValues['contribution_contact_select_id'] ) ) {
       $this->_contributioncontactID = $formValues['contribution_contact_select_id'][1];
        // we can set memberdisplay name from the form as we know it will be set in this case
