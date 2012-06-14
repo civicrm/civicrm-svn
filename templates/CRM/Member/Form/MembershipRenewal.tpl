@@ -110,7 +110,27 @@
                         <td>{$form.num_terms.html|crmReplace:class:two} {ts}membership periods{/ts}<br />
                         <span class="description">{ts}Extend the membership end date by this many membership periods. Make sure the appropriate corresponding fee is entered below.{/ts}</span></td>
                      </tr>
-                    <tr class="crm-member-membershiprenew-form-block-contribution_type_id">	
+                       {if $context neq 'standalone'}
+                     <tr class="crm-membership-form-block-contribution-contact">
+                       <td class="label">{$form.contribution_contact.label}</td>
+                       <td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
+                     </tr>
+                     <tr id="record-different-contact">
+                       <td>&nbsp;</td>
+                       <td>
+                         <table class="compressed">
+                           <tr class="crm-membership-form-block-honor-type">
+                             <td class="label">{$form.honor_type_id.label}</td>
+                             <td>{$form.honor_type_id.html}</td>
+                           </tr>
+                           <tr id ='contributionContact' class="crm-membership-form-block-contribution-type">
+                             {include file="CRM/Contact/Form/NewContact.tpl"}
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  {/if}
+                    <tr class="crm-member-membershiprenew-form-block-total_amount">
                        <td class="label">{$form.contribution_type_id.label}</td>
                        <td>{$form.contribution_type_id.html}<br />
                        <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
@@ -149,8 +169,32 @@
 	 {/if}  
     </table>
     {if $membershipMode}
-     	<div class="spacer"></div>
-     	{include file='CRM/Core/BillingBlock.tpl'}
+     {if $context neq 'standalone'}
+         <tr class="crm-membership-form-block-contribution-contact">
+           <td class="label">{$form.contribution_contact.label}</td>
+            <td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
+         </tr>
+          <tr id="record-different-contact">
+                  <td>&nbsp;</td>
+                  <td>
+                    <table class="compressed">
+                      <tr class="crm-membership-form-block-honor-type">
+                        <td class="label">{$form.honor_type_id.label}</td>
+                        <td>{$form.honor_type_id.html}</td>
+                      </tr>
+                      <tr id ='contributionContact' class="crm-membership-form-block-contribution-type">
+                        {include file="CRM/Contact/Form/NewContact.tpl"}
+                      </tr>
+                    </table>
+                  </td>
+                 </tr>
+
+       {/if}
+     </table>
+       <div class="spacer"></div>
+       {include file='CRM/Core/BillingBlock.tpl'}
+     {/else}
+        </table>
      {/if}
      {if $email and $outBound_option != 2}
      <table class="form-layout">
@@ -290,6 +334,20 @@ function setPaymentBlock( ) {
         cj("#total_amount").val( renewTotal.toFixed(2) );
     }, 'json');    
 }
+    // show/hide different contact section
+    setDifferentContactBlock();
+    cj('#contribution_contact').change( function() {
+      setDifferentContactBlock();
+    });
+
+    function setDifferentContactBlock( ) {
+      //get the
+      if ( cj('#contribution_contact').attr('checked') ) {
+        cj('#record-different-contact').show();
+      } else {
+        cj('#record-different-contact').hide();
+      }
+    }
 </script>
 {/literal}
 {/if}{* closing of custom data if *}
