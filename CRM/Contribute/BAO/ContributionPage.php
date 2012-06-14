@@ -108,8 +108,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
    * @access public
    * @static
    */
-  static
-  function sendMail($contactID, &$values, $isTest = FALSE, $returnMessageText = FALSE, $fieldTypes = NULL) {
+  static function sendMail($contactID, &$values, $isTest = FALSE, $returnMessageText = FALSE, $fieldTypes = NULL) {
     $gIds = $params = array();
     $email = NULL;
     if (isset($values['custom_pre_id'])) {
@@ -167,7 +166,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
 
       $gIds['custom_post_id'] = $values['custom_post_id'];
     }
-
+    
     if (CRM_Utils_Array::value('is_for_organization', $values)) {
       if (CRM_Utils_Array::value('membership_id', $values)) {
         $params['onbehalf_profile'] = array(
@@ -213,6 +212,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         0,
       );
     }
+    
     if (!$returnMessageText && !empty($gIds)) {
       //send notification email if field values are set (CRM-1941)
       foreach ($gIds as $key => $gId) {
@@ -226,8 +226,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
       }
     }
 
-    if (
-      CRM_Utils_Array::value('is_email_receipt', $values) ||
+    if ( CRM_Utils_Array::value('is_email_receipt', $values) ||
       CRM_Utils_Array::value('onbehalf_dupe_alert', $values) ||
       $returnMessageText
     ) {
@@ -258,9 +257,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
       }
 
       //for display profile need to get individual contact id,
-      //hence get it from related_contact if on behalf of org true CRM-3767.
-
-
+      //hence get it from related_contact if on behalf of org true CRM-3767
       //CRM-5001 Contribution/Membership:: On Behalf of Organization,
       //If profile GROUP contain the Individual type then consider the
       //profile is of Individual ( including the custom data of membership/contribution )
@@ -574,8 +571,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
    * @access public
    * @static
    */
-  static
-  function copy($id) {
+  static function copy($id) {
     $fieldsFix = array(
       'prefix' => array(
         'title' => ts('Copy of') . ' ',

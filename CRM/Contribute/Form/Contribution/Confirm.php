@@ -831,10 +831,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $membershipParams['contribution_type_id'] = $contributionTypeID;
       }
       if (CRM_Utils_Array::value('selectMembership', $membershipParams)) {
-      CRM_Member_BAO_Membership::postProcessMembership($membershipParams, $contactID,
-        $this, $premiumParams, $customFieldsFormatted,
-        $fieldTypes
-      );
+        CRM_Member_BAO_Membership::postProcessMembership($membershipParams, $contactID,
+          $this, $premiumParams, $customFieldsFormatted,
+          $fieldTypes
+        );
       }
     }
     else {
