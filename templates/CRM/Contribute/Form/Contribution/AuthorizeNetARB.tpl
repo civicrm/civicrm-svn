@@ -82,7 +82,7 @@
   </merchantAuthentication>
   <refId>{$refId}</refId>
   <subscription>
-    {if $name}<name>{$name}</name>{/if}
+    {if $name}<name>{$name|truncate:50}</name>{/if}
     <paymentSchedule>
       <interval>
         <length>{$intervalLength}</length>
