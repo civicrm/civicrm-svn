@@ -211,7 +211,7 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
       $dao->report_id  = $report;
       $dao->title      = $titles[$report];
       $dao->permission = 'administer CiviCRM';
-      if ($report == 'logging/contact/summary') 
+      if ($report == 'logging/contact/summary')
         $dao->is_reserved = 1;
       $dao->insert();
     }
@@ -347,7 +347,7 @@ COLS;
       // only do the change if any data has changed
       $cond = array( );
       foreach ($columns as $column) {
-        $cond[] = "OLD.$column <> NEW.$column";
+        $cond[] = "IFNULL(OLD.$column,'') <> IFNULL(NEW.$column,'')";
       }
       $suppressLoggingCond = "@civicrm_disable_logging IS NULL OR @civicrm_disable_logging = 0";
       $updateSQL = "IF ( (" . implode( ' OR ', $cond ) . ") AND ( $suppressLoggingCond ) ) THEN ";
