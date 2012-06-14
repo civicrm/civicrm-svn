@@ -226,7 +226,14 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
     foreach ($fields as $name => $dontCare) {
       if ($name == 'onbehalf') {
         foreach ($dontCare as $key => $value) {
-          $defaults[$key] = $contact['onbehalf'][$key];
+          //$defaults[$key] = $contact['onbehalf'][$key];
+          if (isset($contact['onbehalf'][$key])) {
+            $defaults[$key] = $contact['onbehalf'][$key];
+          }
+          if (isset($contact['onbehalf']["{$key}_id"])) {
+            $defaults["{$key}_id"] = $contact['onbehalf']["{$key}_id"];
+          }
+
         }
       }
       elseif (isset($contact[$name])) {
@@ -245,11 +252,12 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
       }
     }
     
-    //crm_core_error::debug('def', $defaults );
-    //crm_core_error::debug( 'sub', $this->_sumitValues );
-    //exit;
+    // now fix all state country selectors
+    CRM_Core_BAO_Address::fixAllStateSelects($this, $defaults);
+
     $this->_submitValues = array_merge($this->_submitValues, $defaults);
     $this->setDefaults($defaults);
+    
     $values['entity_id'] = $this->_id;
     $values['entity_table'] = 'civicrm_contribution_page';
 
