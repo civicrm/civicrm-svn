@@ -148,6 +148,14 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
       $this->click("_qf_Summary_submit_save");
       $this->waitForPageToLoad("30000");
     }
+    $permissions = array(
+      "edit-{$roleId}-access-civireport",
+      "edit-{$roleId}-view-all-contacts",
+      "edit-{$roleId}-administer-reports",
+      "edit-{$roleId}-access-civicrm"
+     );
+    $this->changePermissions($permissions);
+    
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->open($this->sboxPath);
     $this->waitForElementPresent('edit-submit');
@@ -157,7 +165,7 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
     $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
     $this->waitForPageToLoad('30000');
-
+    
     //check if the reserved report field is frozen
     $this->assertTrue($this->isElementPresent("xpath=//div[@id='instanceForm']//table[3]/tbody//tr/td[2]/tt[text()='[ ]']"));
 
@@ -168,7 +176,7 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
     $permissions = array(
       "edit-{$roleId}-access-civireport",
       "edit-{$roleId}-view-all-contacts",
-      "edit-{$roleId}-administer-civicrm",
+      "edit-{$roleId}-administer-reports",
       "edit-{$roleId}-access-civicrm",
       "edit-{$roleId}-administer-reserved-reports"
     );
@@ -209,7 +217,7 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
     }
     $this->click("edit-submit");
     $this->waitForPageToLoad('30000');
-
+    
     //login as user and check for absence of report criteria and settings
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->open($this->sboxPath);
@@ -220,7 +228,7 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
     $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
     $this->waitForPageToLoad('30000');
-    
+   
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='Summary']/div[2]/div[@style='display: none;']"));
     $this->assertFalse($this->isElementPresent("xpath=//form[@id='Summary']//div[@id='instanceForm']//input[@id='title']"));
 
