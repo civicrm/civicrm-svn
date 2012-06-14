@@ -144,7 +144,11 @@ class CRM_Core_Payment_Form {
       'title' => ts('Security Code'),
       'cc_field' => TRUE,
       'attributes' => array('size' => 5, 'maxlength' => 10, 'autocomplete' => 'off'),
-      'is_required' => TRUE,
+      'is_required' => CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::CONTRIBUTE_PREFERENCES_NAME,
+        'cvv_backoffice_required',
+        CRM_Core_Component::getComponentID('CiviContribute')
+        ,1
+      ),
     );
 
     $form->_fields['credit_card_exp_date'] = array(
