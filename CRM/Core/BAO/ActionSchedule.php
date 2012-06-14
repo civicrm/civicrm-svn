@@ -817,7 +817,7 @@ reminder.action_schedule_id = %1";
         $date              = $operator . "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
         $startDateClause[] = "'{$now}' >= {$date}";
 
-        $startDateClause[] = $operator . "({$now}, INTERVAL 1 DAY ) {$op} " . $actionSchedule->start_action_date;
+        $startDateClause[] = $operator . "({$now}, INTERVAL 1 DAY ) {$op} {$dateField}";
         $startDate = implode(' AND ', $startDateClause);
       }
       elseif ($actionSchedule->absolute_date) {
