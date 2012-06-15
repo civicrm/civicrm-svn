@@ -812,6 +812,7 @@ reminder.action_schedule_id = %1";
       $where[] = "c.is_deleted = 0";
 
       if ($actionSchedule->start_action_date) {
+        $startDateClause   = array();  
         $operator          = ($actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD");
         $op                = ($actionSchedule->start_action_condition == 'before' ? "<=" : ">=");
         $date              = $operator . "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
