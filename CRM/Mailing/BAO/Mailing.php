@@ -1505,7 +1505,11 @@ AND civicrm_contact.is_opt_out =0";
       'groups', 'mailings') as $entity) {
       foreach (array(
         'include', 'exclude', 'base') as $type) {
-        if (CRM_Utils_Array::value($type, $params[$entity]) && is_array($params[$entity][$type])) {
+        if (
+          isset($params[$entity]) &&
+          CRM_Utils_Array::value($type, $params[$entity]) &&
+          is_array($params[$entity][$type])
+        ) {
           foreach ($params[$entity][$type] as $entityId) {
             $mg->reset();
             $mg->mailing_id   = $mailing->id;
