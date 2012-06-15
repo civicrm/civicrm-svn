@@ -74,7 +74,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     $this->_votingTab = $this->get('votingTab');
     $this->_reserveToInterview = $this->get('reserveToInterview');
     if ($this->_reserveToInterview || $this->_votingTab) {
@@ -93,6 +94,23 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
       //get the survey id from user submitted values.
       $this->_surveyId = CRM_Utils_Array::value('campaign_survey_id', $this->get('formValues'));
       $this->_interviewerId = CRM_Utils_Array::value('survey_interviewer_id', $this->get('formValues'));
+    }
+    
+    $orderClause = $this->get('orderBy');
+    if (!empty($this->_contactIds) && $orderClause) {
+      $clause = 'contact_a.id IN ( ' . implode(',', $this->_contactIds) . ' ) ';
+      $sql    = "
+SELECT contact_a.id
+FROM civicrm_contact contact_a
+LEFT JOIN civicrm_address ON contact_a.id = civicrm_address.contact_id
+WHERE {$clause}
+{$orderClause}";
+
+      $this->_contactIds = array();
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      While ($dao->fetch()) {
+        $this->_contactIds[] = $dao->id;
+      }
     }
 
     //get the contact read only fields to display.
@@ -224,6 +242,17 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
   function buildQuickForm() {
     $this->assign('surveyTypeId', $this->_surveyTypeId);
 
+    $options = 
+      array('' => ' - none - ',
+            'civicrm_address.street_number%2' => 'Odd / Even Street Number',
+            'contact_a.sort_name'             => 'Respondent Name',
+            'civicrm_address.street_name'     => 'Street Name',
+            );
+    for ($i = 1; $i < count($options); $i++) {
+      $this->addElement('select', "order_bys[{$i}][column]", ts('Order by Column'), $options);
+      $this->addElement('select', "order_bys[{$i}][order]", ts('Order by Order'), array('ASC' => 'Ascending', 'DESC' => 'Descending'));
+    }
+
     //pickup the uf fields.
     $this->_surveyFields = CRM_Campaign_BAO_Survey::getSurveyResponseFields($this->_surveyId,
       $this->_surveyTypeId
@@ -267,6 +296,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         'subName' => 'interview',
         'isDefault' => TRUE,
       ));
+
+    $buttons[] = array(
+        'type' => 'submit',
+        'name' => ts('ORDER BY >>'),
+        'subName' => 'orderBy',
+      );
 
     $manageCampaign = CRM_Core_Permission::check('manage campaign');
     $adminCampaign = CRM_Core_Permission::check('administer CiviCampaign');
@@ -327,7 +362,21 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
    */
   public function postProcess() {
     $buttonName = $this->controller->getButtonName();
-    if ($buttonName == '_qf_Interview_done_interviewToReserve') {
+    if ($buttonName == '_qf_Interview_submit_orderBy') {
+      $params  = $this->controller->exportValues($this->_name);
+      $orderBy = array();
+      foreach ( $params['order_bys'] as $key => $val ) {
+        if (CRM_Utils_Array::value('column', $val)) {
+          $orderBy[] = "{$val['column']} {$val['order']}";
+        }
+      }
+
+      if ( !empty($orderBy) ) {
+        $clause = "ORDER BY " . implode(', ', $orderBy);
+        $this->set('orderBy', $clause);
+      }
+    } 
+    elseif ($buttonName == '_qf_Interview_done_interviewToReserve') {
       //hey its time to stop cycle.
       CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/survey/search', 'reset=1&op=reserve'));
     }
