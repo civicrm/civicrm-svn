@@ -249,9 +249,9 @@ class CRM_Core_Action {
 
         if ($urlPath) {
           if ($frontend) {
-            $extra .= "target=_blank";
+            $extra .= " target=_blank";
           }
-          $url[] = sprintf('<a href="%s" %s title="%s"' . $extra . '>%s</a>',
+          $url[] = sprintf('<a href="%s" %s title="%s" ' . $extra . '>%s</a>',
             $urlPath,
             $linkClasses,
             CRM_Utils_Array::value('title', $link),

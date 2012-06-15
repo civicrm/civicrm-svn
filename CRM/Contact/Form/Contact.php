@@ -489,7 +489,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
   }
 
   /*
-     * do the set default related to location type id, 
+     * do the set default related to location type id,
      * primary location,  default country
      *
      */
@@ -775,7 +775,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
           'url' => 'civicrm/contact/image',
           'qs' => 'reset=1&cid=%%id%%&action=delete',
           'extra' =>
-          'onclick = "if (confirm( \'' . $deleteExtra . '\' ) ) {  this.href+=\'&amp;confirmed=1\'; else return false;}"',
+          'onclick = "if (confirm( \'' . $deleteExtra . '\' ) ) this.href+=\'&amp;confirmed=1\'; else return false;"',
         ),
       );
       $deleteURL = CRM_Core_Action::formLink($deleteURL,
@@ -1215,7 +1215,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
   /* Parse all address blocks present in given params
      * and return parse result for all address blocks,
-     * This function either parse street address in to child 
+     * This function either parse street address in to child
      * elements or build street address from child elements.
      *
      * @params $params an array of key value consist of address  blocks.
@@ -1305,10 +1305,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
   /* check parse result and if some address block fails then this
      * function return the status message for all address blocks.
-     * 
+     *
      * @param  $parseResult an array of address blk instance and its status.
      *
-     * @return $statusMsg   string status message for all address blocks. 
+     * @return $statusMsg   string status message for all address blocks.
      */
   function parseAddressStatusMsg($parseResult) {
     $statusMsg = NULL;
@@ -1332,7 +1332,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return $statusMsg;
   }
 
-  /* 
+  /*
      * Convert normal number to ordinal number format.
      * like 1 => 1st, 2 => 2nd and so on...
      *
@@ -1369,10 +1369,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
   /* Update membership status to deceased
      * function return the status message for updated membership.
-     * 
+     *
      * @param  $deceasedParams array  having contact id and deceased value.
      *
-     * @return $updateMembershipMsg string  status message for updated membership. 
+     * @return $updateMembershipMsg string  status message for updated membership.
      */
   function updateMembershipStatus($deceasedParams) {
     $updateMembershipMsg = NULL;

@@ -286,8 +286,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     $gids = implode(',', $profileIds);
     $params = array();
     if ($restrict) {
-      $query = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j 
-                WHERE g.id IN ( {$gids} ) 
+      $query = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j
+                WHERE g.id IN ( {$gids} )
                 AND j.uf_group_id IN ( {$gids} )
                 AND j.module      = %1
                 ";
@@ -1317,7 +1317,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
 
     //update the weight
     $query = "
-UPDATE civicrm_uf_join 
+UPDATE civicrm_uf_join
 SET    weight = %1
 WHERE  uf_group_id = %2
 AND    ( entity_id IS NULL OR entity_id <= 0 )
@@ -1437,7 +1437,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     $p = array();
     if (!$ufGroupId) {
       $queryString = "SELECT ( MAX(civicrm_uf_join.weight)+1) as new_weight
-                            FROM civicrm_uf_join 
+                            FROM civicrm_uf_join
                             WHERE module = 'User Registration' OR module = 'User Account' OR module = 'Profile'";
     }
     else {
@@ -1616,7 +1616,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
           'url' => 'civicrm/contact/image',
           'qs' => 'reset=1&id=%%id%%&gid=%%gid%%&action=delete',
           'extra' =>
-          'onclick = "if (confirm( \'' . $deleteExtra . '\' ) ) {  this.href+=\'&amp;confirmed=1\'; else return false;}"',
+          'onclick = "if (confirm( \'' . $deleteExtra . '\' ) ) this.href+=\'&amp;confirmed=1\'; else return false;"',
         ),
       );
       $deleteURL = CRM_Core_Action::formLink($deleteURL,
@@ -2472,7 +2472,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 
     //update the weight
     $query = "
-UPDATE civicrm_uf_join 
+UPDATE civicrm_uf_join
 SET    weight = %1
 WHERE  uf_group_id = %2
 AND    ( entity_id IS NULL OR entity_id <= 0 )

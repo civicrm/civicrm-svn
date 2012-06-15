@@ -376,8 +376,8 @@ LEFT JOIN civicrm_custom_field ON (civicrm_custom_field.custom_group_id = civicr
       }
 
       $strWhere = "
-WHERE civicrm_custom_group.is_active = 1 
-  AND civicrm_custom_field.is_active = 1 
+WHERE civicrm_custom_group.is_active = 1
+  AND civicrm_custom_field.is_active = 1
   AND civicrm_custom_group.extends IN ($in)
   AND $subTypeClause
 ";
@@ -387,8 +387,8 @@ WHERE civicrm_custom_group.is_active = 1
     }
     else {
       $strWhere = "
-WHERE civicrm_custom_group.is_active = 1 
-  AND civicrm_custom_field.is_active = 1 
+WHERE civicrm_custom_group.is_active = 1
+  AND civicrm_custom_field.is_active = 1
   AND civicrm_custom_group.extends IN ($in)
   AND civicrm_custom_group.extends_entity_column_value IS NULL
 ";
@@ -573,7 +573,7 @@ SELECT $select
                           'url' => 'civicrm/file',
                           'qs' => 'reset=1&id=%%id%%&eid=%%eid%%&fid=%%fid%%&action=delete',
                           'extra' =>
-                          'onclick = "if (confirm( \'' . $deleteExtra . '\' ) ) {  this.href+=\'&amp;confirmed=1\'; else return false;}"',
+                          'onclick = "if (confirm( \'' . $deleteExtra . '\' ) ) this.href+=\'&amp;confirmed=1\'; else return false;"',
                         ),
                       );
                       $customValue['deleteURL'] = CRM_Core_Action::formLink($deleteURL,
@@ -1800,7 +1800,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
                 $customData = explode(CRM_Core_DAO::VALUE_SEPARATOR, $value);
               }
               $query = "
-                    SELECT id as value, name as label  
+                    SELECT id as value, name as label
                     FROM civicrm_country";
               $coDAO = CRM_Core_DAO::executeQuery($query);
               break;
@@ -1812,7 +1812,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
                   $customData = explode(CRM_Core_DAO::VALUE_SEPARATOR, $value);
                 }
                 $query = "
-                    SELECT id as value, name as label  
+                    SELECT id as value, name as label
                     FROM civicrm_state_province";
                 $coDAO = CRM_Core_DAO::executeQuery($query);
                 break;
