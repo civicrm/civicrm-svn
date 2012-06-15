@@ -78,8 +78,14 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
     $actualBlockCount = 1;
     if (count($this->_emails) > 1) {
       $actualBlockCount = $totalBlocks = count($this->_emails);
-      $additionalBlocks = $this->_blockCount - $totalBlocks;
-      $totalBlocks += $additionalBlocks;
+      if ( $totalBlocks < $this->_blockCount ) {
+        $additionalBlocks = $this->_blockCount - $totalBlocks;
+        $totalBlocks += $additionalBlocks;
+      }
+      else {
+        $actualBlockCount++;
+        $totalBlocks++;
+      }
     }
 
     $this->assign('actualBlockCount', $actualBlockCount);

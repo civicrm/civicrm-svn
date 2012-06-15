@@ -78,8 +78,14 @@ class CRM_Contact_Form_Inline_Phone extends CRM_Core_Form {
     $actualBlockCount = 1;
     if (count($this->_phones) > 1) {
       $actualBlockCount = $totalBlocks = count($this->_phones);
-      $additionalBlocks = $this->_blockCount - $totalBlocks;
-      $totalBlocks += $additionalBlocks;
+      if ( $totalBlocks < $this->_blockCount ) {
+        $additionalBlocks = $this->_blockCount - $totalBlocks;
+        $totalBlocks += $additionalBlocks;
+      }
+      else {
+        $actualBlockCount++;
+        $totalBlocks++;
+      }
     }
 
     $this->assign('actualBlockCount', $actualBlockCount);
