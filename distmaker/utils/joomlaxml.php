@@ -30,7 +30,7 @@ else {
 }
 
 ini_set('include_path',
-  ini_get('include_path') . ":{$sourceCheckoutDir}:{$sourceCheckoutDir}/packages"
+  "{$sourceCheckoutDir}:{$sourceCheckoutDir}/packages:" . ini_get('include_path')
 );
 require_once "$sourceCheckoutDir/civicrm.config.php";
 require_once 'Smarty/Smarty.class.php';
