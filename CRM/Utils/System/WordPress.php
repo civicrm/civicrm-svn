@@ -167,8 +167,12 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
    * @access public
    *
    */
-  function url($path = NULL, $query = NULL, $absolute = FALSE,
-    $fragment = NULL, $htmlize = TRUE,
+  function url(
+    $path = NULL,
+    $query = NULL,
+    $absolute = FALSE,
+    $fragment = NULL,
+    $htmlize = TRUE,
     $frontend = FALSE
   ) {
     $config    = CRM_Core_Config::singleton();
@@ -185,18 +189,18 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
       }
 
       // when shortcode is inlcuded in page
-            // also make sure we have valid query object
-            global $wp_query;
-            if ( method_exists( $wp_query, 'get' ) ) {
-      if (get_query_var('page_id')) {
-        $pageID = "{$separator}page_id=" . get_query_var('page_id');
-      }
-      elseif (get_query_var('p')) {
-        // when shortcode is inserted in post
-        $pageID = "{$separator}p=" . get_query_var('p');
+      // also make sure we have valid query object
+      global $wp_query;
+      if ( method_exists( $wp_query, 'get' ) ) {
+        if (get_query_var('page_id')) {
+          $pageID = "{$separator}page_id=" . get_query_var('page_id');
+        }
+        elseif (get_query_var('p')) {
+          // when shortcode is inserted in post
+          $pageID = "{$separator}p=" . get_query_var('p');
+        }
       }
     }
-        }
 
     if (isset($fragment)) {
       $fragment = '#' . $fragment;
@@ -214,7 +218,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
 
     if (isset($path)) {
-            if ( get_option('permalink_structure') != '' && $pageID ) {
+      if ( get_option('permalink_structure') != '' && $pageID ) {
         if (isset($query)) {
           return $script . '?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
@@ -224,10 +228,10 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
       }
       else {
         if (isset($query)) {
-                    return $base .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
+          return $base .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
         else {
-                    return $base .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
+          return $base .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
         }
       }
     }

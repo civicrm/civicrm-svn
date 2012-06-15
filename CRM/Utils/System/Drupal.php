@@ -105,7 +105,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
 
   /*
      *  Change user name in host CMS
-     *  
+     *
      *  @param integer $ufID User ID in CMS
      *  @param string $ufName User name
      */
@@ -129,7 +129,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
    *
    * @return void
    */
-  function checkUserNameEmailExists(&$params, &$errors, $emailName = 'email') {
+  static function checkUserNameEmailExists(&$params, &$errors, $emailName = 'email') {
     $config = CRM_Core_Config::singleton();
 
     $dao    = new CRM_Core_DAO();
@@ -449,7 +449,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
       $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
       $name       = $dbDrupal->escapeSimple($strtolower($name));
       $sql        = "
-SELECT u.* 
+SELECT u.*
 FROM   {$config->userFrameworkUsersTableName} u
 WHERE  LOWER(u.name) = '$name'
 AND    u.status = 1
