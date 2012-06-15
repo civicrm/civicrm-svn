@@ -149,6 +149,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     $this->resolveForeignKeys($tables, $this->classNames);
     $tables = $this->orderTables($tables);
 
+    $this->generateTemplateVersion($argVersion);
     $this->generateListAll($tables);
     $this->generateCiviTestTruncate($tables);
     $this->generateCreateSql($database, $tables);
@@ -159,7 +160,6 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     $this->generateInstallLangs();
     $this->generateDAOs($tables);
     $this->generateSchemaStructure($tables);
-    $this->generateTemplateVersion($argVersion);
   }
 
   function generateListAll($tables) {
