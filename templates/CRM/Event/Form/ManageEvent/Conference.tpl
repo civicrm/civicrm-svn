@@ -64,7 +64,7 @@
 
 {literal}
 <script type="text/javascript"> 
-var eventUrl = "{/literal}{crmURL p='civicrm/ajax/event'}{literal}";
+var eventUrl = "{/literal}{crmURL p='civicrm/ajax/event' h=0}{literal}";
 
 cj('input#parent_event_name').autocomplete(
     eventUrl,
