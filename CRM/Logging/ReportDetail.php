@@ -58,6 +58,20 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
 
     parent::__construct();
 
+    CRM_Utils_System::resetBreadCrumb();
+    $breadcrumb = 
+      array(
+            array('title' => ts('Home'), 
+                  'url' => CRM_Utils_System::url()),
+            array('title' => ts('CiviCRM'), 
+                  'url' => CRM_Utils_System::url('civicrm', 'reset=1')),
+            array('title' => ts('View Contact'), 
+                  'url' => CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$this->cid}")),
+            array('title' => ts('Search Results'), 
+                  'url' => CRM_Utils_System::url('civicrm/contact/search', "force=1")),
+            );
+    CRM_Utils_System::appendBreadCrumb($breadcrumb);
+
     if (CRM_Utils_Request::retrieve('revert', 'Boolean', CRM_Core_DAO::$_nullObject)) {
       $reverter = new CRM_Logging_Reverter($this->log_conn_id, $this->log_date);
       $reverter->revert($this->tables);
