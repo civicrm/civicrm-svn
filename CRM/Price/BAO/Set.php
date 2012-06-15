@@ -139,7 +139,20 @@ WHERE    price_set_id = %1";
       return $tables;
     }
     if (empty($forms)) {
-      return $usedBy;
+    $queryString = "
+SELECT    cli.entity_table, cli.entity_id
+FROM      civicrm_line_item cli
+LEFT JOIN civicrm_price_field cpf ON cli.price_field_id = cpf.id
+WHERE     cpf.price_set_id = %1";
+      $params = array(1 => array($id, 'Integer'));
+      $crmFormDAO = CRM_Core_DAO::executeQuery($queryString, $params);
+      while ($crmFormDAO->fetch()) {
+        $forms[$crmFormDAO->entity_table][] = $crmFormDAO->entity_id;
+        $tables[] = $crmFormDAO->entity_table;
+      }
+      if (empty($forms)) {
+        return $usedBy;
+      }
     }
     foreach ($forms as $table => $entities) {
       switch ($table) {

@@ -365,8 +365,6 @@ WHERE     cpf.price_set_id = %1
         }
       }
       CRM_Price_BAO_LineItem::create($lineParams);
-      CRM_Price_BAO_Set::addTo('civicrm_contribution', $result->id, $result->price_set_id);
-
     }
 
     //create lineitems for participant in edge cases using default price set for contribution.
@@ -413,7 +411,6 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
         $priceSetId = $defaultPriceSetId;
       }
       CRM_Price_BAO_LineItem::create($lineParams);
-      CRM_Price_BAO_Set::addTo('civicrm_participant', $dao->participant_id, $priceSetId);
     }
 
     return TRUE;

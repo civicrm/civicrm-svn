@@ -1459,7 +1459,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             }
           }
         }
-        CRM_Price_BAO_Set::addTo('civicrm_participant', $participants[$num]->id, $this->_priceSetId);
       }
     }
 

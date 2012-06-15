@@ -2345,7 +2345,6 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
         $line['entity_id'] = $membershipId;
         CRM_Price_BAO_LineItem::create($line);
       }
-      CRM_Price_BAO_Set::addTo('civicrm_membership', $membershipId, $priceSetId);
     }
   }
 

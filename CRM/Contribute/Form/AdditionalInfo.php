@@ -502,7 +502,6 @@ class CRM_Contribute_Form_AdditionalInfo {
         $line['entity_id'] = $contributionId;
         CRM_Price_BAO_LineItem::create($line);
       }
-      CRM_Price_BAO_Set::addTo('civicrm_contribution', $contributionId, $priceSetId);
     }
   }
 }

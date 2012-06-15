@@ -1703,21 +1703,6 @@ VALUES
                    ('civicrm_contribution', 12, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
                    ('civicrm_contribution', 13, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1);";
     CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
-    $entitySet = "INSERT INTO civicrm_price_set_entity ( entity_table, entity_id, price_set_id)
-                      VALUES ( 'civicrm_contribution', 1, 1),
-                             ( 'civicrm_contribution', 2, 1),
-                             ( 'civicrm_contribution', 3, 1),
-                             ( 'civicrm_contribution', 4, 1),
-                             ( 'civicrm_contribution', 5, 1),
-                             ( 'civicrm_contribution', 6, 1),
-                             ( 'civicrm_contribution', 7, 1),
-                             ( 'civicrm_contribution', 8, 1),
-                             ( 'civicrm_contribution', 9, 1),
-                             ( 'civicrm_contribution', 10, 1),
-                             ( 'civicrm_contribution', 11, 1),
-                             ( 'civicrm_contribution', 12, 1),
-                             ( 'civicrm_contribution', 13, 1);";
-    CRM_Core_DAO::executeQuery($entitySet, CRM_Core_DAO::$_nullArray);
   }
 
   function addLineItemParticipants() {
