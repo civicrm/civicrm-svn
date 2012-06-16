@@ -130,7 +130,7 @@
                       </td>
                     </tr>
                   {/if}
-                    <tr class="crm-member-membershiprenew-form-block-total_amount">
+                    <tr class="crm-member-membershiprenew-form-block-contribution_type">
                        <td class="label">{$form.contribution_type_id.label}</td>
                        <td>{$form.contribution_type_id.html}<br />
                        <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
@@ -140,6 +140,10 @@
                        <td>{$form.total_amount.html}<br />
                        <span class="description">{ts}Membership payment amount. A contribution record will be created for this amount.{/ts}</span></td>
                     </tr>
+	                  <tr class="crm-membershiprenew-form-block-receive_date">
+	                  	<td class="label">{$form.receive_date.label}</td>
+	                    <td>{include file="CRM/common/jcalendar.tpl" elementName=receive_date}</td>  
+  	                </tr>
                     <tr class="crm-member-membershiprenew-form-block-payment_instrument_id">
                        <td class="label">{$form.payment_instrument_id.label}</td>
                        <td>{$form.payment_instrument_id.html}</td>

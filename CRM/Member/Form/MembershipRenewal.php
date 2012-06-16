@@ -64,6 +64,9 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
     $this->_action = CRM_Utils_Request::retrieve('action', 'String',
       $this, FALSE, 'add'
     );
+    $this->_context = CRM_Utils_Request::retrieve('context', 'String',
+      $this, FALSE, 'membership'
+    );
     $this->_id = CRM_Utils_Request::retrieve('id', 'Positive',
       $this
     );
@@ -183,9 +186,10 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
     $defaults       = parent::setDefaultValues();
     $this->_memType = $defaults['membership_type_id'];
 
-    // set renewal_date to today in correct input format (setDateDefaults uses today if no value passed)
+    // set renewal_date and receive_date to today in correct input format (setDateDefaults uses today if no value passed)
     list($now) = CRM_Utils_Date::setDateDefaults();
     $defaults['renewal_date'] = $now;
+    $defaults['receive_date'] = $now;
 
     if ($defaults['id']) {
       $defaults['record_contribution'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipPayment',
@@ -390,6 +394,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
       $this->add('text', 'total_amount', ts('Amount'));
       $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
+      
+      $this->addDate('receive_date', ts('Received'), FALSE, array('formatType' => 'activityDate'));
+      
       $this->add('text', 'num_terms', ts('Extend Membership by'), array('onchange' => "setPaymentBlock();"), TRUE);
       $this->addRule('num_terms', ts('Please enter a whole number for how many periods to renew.'), 'integer');
 
@@ -515,10 +522,16 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     }
 
     $now = CRM_Utils_Date::getToday( null, 'YmdHis');
-    $formValues['receive_date'] = $now;
+    if (CRM_Utils_Array::value('receive_date', $this->_params)) {
+      $formValues['receive_date'] = CRM_Utils_Date::processDate($this->_params['receive_date']);
+    } else {
+     $formValues['receive_date'] = $now; 
+    }
+    $this->assign('receive_date', $formValues['receive_date']);      
+
     if (CRM_Utils_Array::value('send_receipt', $this->_params)) {
       $formValues['receipt_date'] = $now;
-      $this->assign('receive_date', CRM_Utils_Date::mysqlToIso($formValues['receive_date']));
+      $this->assign('receipt_date', CRM_Utils_Date::mysqlToIso($formValues['receipt_date']));
     }
     else {
       $formValues['receipt_date'] = NULL;
@@ -626,7 +639,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $renewalDate = NULL;
 
     if ($formValues['renewal_date']) {
-      $this->set('renewDate', CRM_Utils_Date::processDate($formValues['renewal_date']));
+      $this->set('renewalDate', CRM_Utils_Date::processDate($formValues['renewal_date']));
     }
     $this->_membershipId = $this->_id;
 
@@ -688,10 +701,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $formValues['processPriceSet'] = TRUE;
       }
       //assign contribution contact id to the field expected by recordMembershipContribution
-      if(CRM_Utils_Array::value(1, $formValues[contribution_contact_select_id])){
+      if(CRM_Utils_Array::value(1, $formValues['contribution_contact_select_id'])){
         $formValues['contribution_contact_id'] = $formValues['contribution_contact_select_id'][1];
       }
       $formValues['contact_id'] = $this->_contactID;
+      
       CRM_Member_BAO_Membership::recordMembershipContribution( $formValues, CRM_Core_DAO::$_nullArray, $renewMembership->id );
 
       if ($this->_mode) {
@@ -769,7 +783,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       if ( CRM_Utils_Array::value( 'contribution_id', $formValues ) ) {
         $this->assign('contributionID', $formValues['contribution_id']);
       }
-      $this->assign('receive_date', $renewalDate);
       $this->assign('membershipID', $this->_id);
       $this->assign('contactID', $this->_contactID);
       $this->assign('module', 'Membership');
