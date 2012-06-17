@@ -1708,10 +1708,6 @@ VALUES
   function addLineItemParticipants() {
     $participant = new CRM_Event_DAO_Participant();
     $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`) SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
-    $participant->query("INSERT INTO civicrm_price_set_entity (entity_table, entity_id, price_set_id)
-SELECT cli.entity_table, cli.entity_id, cpf.price_set_id FROM `civicrm_line_item` cli
-LEFT JOIN civicrm_price_field cpf ON cpf.id = cli.price_field_id
-WHERE entity_table = 'civicrm_participant' ");
   }
 }
 
