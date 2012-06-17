@@ -94,7 +94,7 @@
 
 	<tr>
 	    <td class="label">{ts}Received{/ts}</td>
-    	<td>{if $receive_date}{$receive_date|crmDate}{else}({ts}pending{/ts}){/if}</td>
+    	<td>{if $receive_date}{$receive_date|crmDate}{else}({ts}not available{/ts}){/if}</td>
 	</tr>
 	<tr>
 	    <td class="label">{ts}Contribution Status{/ts}</td>
