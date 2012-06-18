@@ -54,7 +54,7 @@ if (civicrm_wp_in_civicrm()) {
   $_GET['noheader'] = TRUE;
 }
 else {
-  $_GET['mode'] = 'wordpress';
+  $_GET['civicrm_install_type'] = 'wordpress';
 }
 
 function civicrm_wp_add_menu_items() {
