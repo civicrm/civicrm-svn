@@ -580,6 +580,7 @@ WHERE   cas.entity_value = $id AND
     require_once 'CRM/Contact/BAO/Contact.php';
     require_once 'CRM/Core/BAO/ActionLog.php';
     require_once 'CRM/Core/BAO/Domain.php';
+    require_once 'CRM/Utils/Address.php';
     $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
     $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
 
