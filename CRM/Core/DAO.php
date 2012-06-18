@@ -1230,7 +1230,7 @@ SELECT contact_id
 
         $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
         $required = CRM_Utils_Array::value('required', $value);
-        if (CRM_Utils_Array::value($dbName, $params) && !is_array($params[$dbName])) {
+        if (CRM_Utils_Array::value($dbName, $params) !== NULL && !is_array($params[$dbName])) {
           $object->$dbName = $params[$dbName];
         }
         elseif ($dbName != 'id') {
