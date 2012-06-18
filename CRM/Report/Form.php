@@ -246,6 +246,9 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     // merge custom data columns to _columns list, if any
     $this->addCustomDataToColumns();
+    
+    // add / modify display columns, filters ..etc
+    CRM_Utils_Hook::alterReportVar('columns', $this->_columns, $this);
   }
 
   function preProcessCommon() {
@@ -1594,6 +1597,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
 
     // use this method for formatting rows for display purpose.
     $this->alterDisplay($rows);
+    CRM_Utils_Hook::alterReportVar('rows', $rows, $this);
 
     // use this method for formatting custom rows for display purpose.
     $this->alterCustomDataDisplay($rows);
@@ -1918,6 +1922,8 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
     if ($applyLimit && !CRM_Utils_Array::value('charts', $this->_params)) {
       $this->limit();
     }
+    CRM_Utils_Hook::alterReportVar('sql', $this, $this);
+
     $sql = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy} {$this->_having} {$this->_orderBy} {$this->_limit}";
     return $sql;
   }

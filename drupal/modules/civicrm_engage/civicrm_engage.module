@@ -69,6 +69,34 @@ function civicrm_engage_civicrm_buildForm($formName, &$form) {
   }
 }
 
+function civicrm_engage_civicrm_alterReportVar($varType, &$var, &$form) {
+  $formName = get_class($form);
+  if ( $formName == 'CRM_Report_Form_Campaign_SurveyDetails' ) {
+    if ( $varType == 'columns' ) {
+      $var['civicrm_contribution'] = 
+        array(
+              'dao' => 'CRM_Contribute_DAO_Contribution',
+              'fields' =>
+              array(
+                    'receive_date' => 
+                    array('title' => ts('Latest Contribution Date'),
+                          ),
+                    'total_amount' => 
+                    array('title' => ts('Latest Contribution Amount'),
+                          ),
+                    ),
+              'grouping' => 'survey-activity-fields',
+              );
+    } else if ( $varType == 'sql' ) {
+      $params = $form->getVar( '_params' );
+      if ( CRM_Utils_Array::value('receive_date', $params['fields']) || CRM_Utils_Array::value('total_amount', $params['fields']) ) {
+        $var->_from .= "
+LEFT JOIN civicrm_contribution {$form->_aliases['civicrm_contribution']} ON ({$form->_aliases['civicrm_contribution']}.id = (select id from civicrm_contribution con where con.contact_id = {$form->_aliases['civicrm_contact']}.id ORDER BY con.receive_date DESC LIMIT 1 ))\n";
+      }
+    }
+  }
+}
+
 function civicrm_engage_civicrm_postProcess($class, &$form) {
   if (is_a($form, 'CRM_Contact_Form_Contact')) {
     if (array_key_exists('_qf_Contact_refresh_dedupe', $form->_submitValues)) {

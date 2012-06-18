@@ -1033,5 +1033,14 @@ abstract class CRM_Utils_Hook {
       'civicrm_disable'
     );
   }
+
+  static
+  function alterReportVar($varType, &$var, &$object) {
+    return self::singleton()->invoke(3, $varType, $var, $object,
+      self::$_nullObject,
+      self::$_nullObject,
+      'civicrm_alterReportVar'
+    );
+  }
 }
 

@@ -1922,3 +1922,29 @@ function civitest_civicrm_triggerInfo(&$triggers, $tableName=NULL) {
     );
 }
 
+function civitest_civicrm_alterReportVar($varType, &$var, &$form) {
+  $formName = get_class($form);
+  if ( $formName == 'CRM_Report_Form_Campaign_SurveyDetails' ) {
+    if ( $varType == 'columns' ) {
+      $var['civicrm_contribution'] = 
+        array(
+              'dao' => 'CRM_Contribute_DAO_Contribution',
+              'fields' =>
+              array(
+                    'receive_date' => 
+                    array('title' => ts('last contribution date'),
+                          ),
+                    'total_amount' => 
+                    array('title' => ts('last contri Amount'),
+                          ),
+                    ),
+              'grouping' => 'survey-activity-fields',
+              );
+    } else if ( $varType == 'sql' ) {
+      $params = $form->getVar( '_params' );
+      if ( CRM_Utils_Array::value('receive_date', $params['fields']) || CRM_Utils_Array::value('total_amount', $params['fields']) ) {
+        $var->_from .= "LEFT JOIN civicrm_contribution {$form->_aliases['civicrm_contribution']} ON ({$form->_aliases['civicrm_contribution']}.id = (select id from civicrm_contribution con where con.contact_id = {$form->_aliases['civicrm_contact']}.id ORDER BY con.receive_date DESC LIMIT 1 ))\n";
+      }
+    }
+  }
+}
