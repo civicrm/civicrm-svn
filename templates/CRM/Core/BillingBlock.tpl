@@ -197,20 +197,36 @@ function sameAddress( setValue ) {
       cj(this).val( cj('#' + fieldName ).val() );
     });
     
+    var stateId;
     cj('.billing_name_address-section select').each( function( i ){
       orgID = cj(this).attr('id');
       field = orgID.split('-');
       fieldName = field[0].replace('billing_', '');
       fieldNameBase = fieldName.replace('_id', '');
-      if ( field[1] ) { // ie. there is something after the '-' like billing_street_address-5
+      if ( field[1] ) { 
         // this means it is an address field
         if ( addressFields[fieldNameBase] ) {
           fieldName =  fieldNameBase + '-' + addressFields[fieldNameBase];
         }
       }
 
-      cj(this).val( cj('#' + fieldName ).val() );
-     });
+      // don't set value for state-province, since
+      // if need reload state depending on country
+      if ( fieldNameBase == 'state_province' ) {
+        stateId = cj('#' + fieldName ).val();
+      }
+      else {
+        cj(this).val( cj('#' + fieldName ).val() ).change( );   
+      }
+    });
+
+    // now set the state province, we are delaying setdefaults
+    // before onchange takes some time / to load states
+    if ( stateId ) {
+      setTimeout(function(){
+        cj( 'select[id^="billing_state_province_id"]').val( stateId );
+      }, 250);
+    }  
   }
 }
 {/literal}
