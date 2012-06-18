@@ -101,13 +101,14 @@ class CRM_Utils_Signer {
     }
     // recall: paramNames is pre-sorted for stability
     foreach ($this->paramNames as $paramName) {
-      // $message['payload'][$paramName] = (string) CRM_Utils_Array::value($paramName, $params, NULL);
-      if (array_key_exists($paramName, $params)) {
+      if (isset($params[$paramName])) {
         if (is_numeric($params[$paramName])) {
           $params[$paramName] = (string) $params[$paramName];
         }
-        $message['payload'][$paramName] = $params[$paramName];
+      } else { // $paramName is not included or ===NULL
+        $params[$paramName] = '';
       }
+      $message['payload'][$paramName] = $params[$paramName];
     }
     $token = $message['salt'] . $this->signDelim . md5(serialize($message));
     return $token;
