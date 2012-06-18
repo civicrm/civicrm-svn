@@ -66,7 +66,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
    */
   public function preProcess() {
     parent::preProcess();
-
+    
     $this->_ppType = CRM_Utils_Array::value('type', $_GET);
     $this->assign('ppType', FALSE);
     if ($this->_ppType) {
@@ -125,11 +125,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $this->assign('intro_text', $this->_values['intro_text']);
     }
 
-        $qParams = "reset=1&amp;id={$this->_id}";
-        if ( $pcpId = CRM_Utils_Array::value( 'pcp_id', $this->_pcpInfo ) ) {
-            $qParams .= "&amp;pcpId={$pcpId}";
-        }
-        $this->assign( 'qParams' , $qParams );
+    $qParams = "reset=1&amp;id={$this->_id}";
+    if ( $pcpId = CRM_Utils_Array::value( 'pcp_id', $this->_pcpInfo ) ) {
+      $qParams .= "&amp;pcpId={$pcpId}";
+    }
+    $this->assign( 'qParams' , $qParams );
 
     if (CRM_Utils_Array::value('footer_text', $this->_values)) {
       $this->assign('footer_text', $this->_values['footer_text']);
@@ -500,15 +500,13 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     $this->buildCustom($this->_values['custom_pre_id'], 'customPre');
     $this->buildCustom($this->_values['custom_post_id'], 'customPost');
 
-    // doing this later since the express button type depends if there is an upload or not
-    /*if ( $this->_values['is_monetary'] ) {
-            if (  $this->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) {
-                CRM_Core_Payment_Form::buildDirectDebit( $this );
-            } else {
-                CRM_Core_Payment_Form::buildCreditCard( $this );
-            }
-            }*/
-
+    if ( !empty( $this->_fields ) ) {
+      $profileAddressFields = array();
+      foreach( $this->_fields as $key => $value ) {
+        CRM_Core_BAO_UFField::assignAddressField($key, $profileAddressFields);
+        $this->set('profileAddressFields', $profileAddressFields);
+      }
+    }
 
     //to create an cms user
     if (!$this->_userID) {

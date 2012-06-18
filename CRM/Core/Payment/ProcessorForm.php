@@ -104,6 +104,11 @@ class CRM_Core_Payment_ProcessorForm {
           array(1 => $form->_paymentProcessor['payment_processor_type'])
         ));
     }
+
+    $profileAddressFields = $form->get('profileAddressFields');
+    if (!empty( $profileAddressFields)){
+      $form->assign('profileAddressFields', $profileAddressFields);
+    }
   }
 
   static function buildQuickform(&$form) {
