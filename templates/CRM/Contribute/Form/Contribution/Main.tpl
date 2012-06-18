@@ -341,43 +341,43 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
 {literal}
 
 if ( {/literal}"{$form.is_recur}"{literal} ) {
-    if ( document.getElementsByName("is_recur")[0].checked == true ) {
-  window.onload = function() {
+  if ( document.getElementsByName("is_recur")[0].checked == true ) {
+    window.onload = function() {
       enablePeriod();
-  }
     }
+  }
 }
+
 function enablePeriod ( ) {
-    var frqInt  = {/literal}"{$form.frequency_interval}"{literal};
-    if ( document.getElementsByName("is_recur")[0].checked == true ) {
-  document.getElementById('installments').value = '';
-  if ( frqInt ) {
+  var frqInt  = {/literal}"{$form.frequency_interval}"{literal};
+  if ( document.getElementsByName("is_recur")[0].checked == true ) {
+    document.getElementById('installments').value = '';
+    if ( frqInt ) {
       document.getElementById('frequency_interval').value    = '';
       document.getElementById('frequency_interval').disabled = true;
-  }
-  document.getElementById('installments').disabled   = true;
-  document.getElementById('frequency_unit').disabled = true;
+    }
+    document.getElementById('installments').disabled   = true;
+    document.getElementById('frequency_unit').disabled = true;
 
-  //get back to auto renew settings.
-  var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
-  if ( allowAutoRenew && cj("#auto_renew") ) {
-     showHideAutoRenew( null );
-  }
-    } else {
-  if ( frqInt ) {
+    //get back to auto renew settings.
+    var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
+    if ( allowAutoRenew && cj("#auto_renew") ) {
+      showHideAutoRenew( null );
+    }
+  } else {
+    if ( frqInt ) {
       document.getElementById('frequency_interval').disabled = false;
-  }
-  document.getElementById('installments').disabled   = false;
-  document.getElementById('frequency_unit').disabled = false;
+    }
+    document.getElementById('installments').disabled   = false;
+    document.getElementById('frequency_unit').disabled = false;
 
-  //disabled auto renew settings.
-  var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
-  if ( allowAutoRenew && cj("#auto_renew") ) {
+    //disabled auto renew settings.
+    var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
+    if ( allowAutoRenew && cj("#auto_renew") ) {
       cj("#auto_renew").attr( 'checked', false );
       cj('#allow_auto_renew').hide( );
-  }
-
     }
+  }
 }
 
 {/literal}{if $relatedOrganizationFound and $reset}{literal}
@@ -415,33 +415,33 @@ function enableHonorType( ) {
 }
 
 function pcpAnonymous( ) {
-    // clear nickname field if anonymous is true
-    if ( document.getElementsByName("pcp_is_anonymous")[1].checked ) {
-        document.getElementById('pcp_roll_nickname').value = '';
-    }
-    if ( ! document.getElementsByName("pcp_display_in_roll")[0].checked ) {
-        hide('nickID', 'block');
-        hide('nameID', 'block');
-  hide('personalNoteID', 'block');
-    } else {
-        if ( document.getElementsByName("pcp_is_anonymous")[0].checked ) {
-            show('nameID', 'block');
-            show('nickID', 'block');
+  // clear nickname field if anonymous is true
+  if ( document.getElementsByName("pcp_is_anonymous")[1].checked ) {
+    document.getElementById('pcp_roll_nickname').value = '';
+  }
+  if ( ! document.getElementsByName("pcp_display_in_roll")[0].checked ) {
+    hide('nickID', 'block');
+    hide('nameID', 'block');
+    hide('personalNoteID', 'block');
+  } else {
+    if ( document.getElementsByName("pcp_is_anonymous")[0].checked ) {
+      show('nameID', 'block');
+      show('nickID', 'block');
       show('personalNoteID', 'block');
-        } else {
-            show('nameID', 'block');
-            hide('nickID', 'block');
+    } else {
+      show('nameID', 'block');
+      hide('nickID', 'block');
       hide('personalNoteID', 'block');
-        }
     }
+  }
 }
+
 {/literal}{if $form.is_pay_later and $paymentProcessor.payment_processor_type EQ 'PayPal_Express'}{literal}
     showHidePayPalExpressOption();
 {/literal} {/if}
 
 {literal}
-function showHidePayPalExpressOption()
-{
+function showHidePayPalExpressOption() {
   if (document.getElementsByName("is_pay_later")[0].checked) {
     show("crm-submit-buttons");
     hide("paypalExpress");

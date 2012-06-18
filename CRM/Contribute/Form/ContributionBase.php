@@ -179,9 +179,10 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
   public $_priceSet;
 
   public $_action;
-/*
- * Array to store any profile address fields set so they can be mapped against billing block
- */
+  
+  /*
+   * Array to store any profile address fields set so they can be mapped against billing block
+   */
   public $_profileAddressFields = array();
 
   /**
@@ -713,7 +714,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
         }
 
         $this->assign($name, $fields);
-        if(!empty( $this->_profileAddressFields)){
+        if (!empty( $this->_profileAddressFields)){
           $this->assign('profileAddressFields',$this->_profileAddressFields);
         }
         CRM_Core_BAO_Address::addStateCountryMap($stateCountryMap);
