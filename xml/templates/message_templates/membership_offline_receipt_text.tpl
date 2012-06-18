@@ -20,6 +20,7 @@
 {ts}Membership Start Date{/ts}: {$mem_start_date}
 {ts}Membership End Date{/ts}: {$mem_end_date}
 {/if}
+
 {if $formValues.total_amount}
 ===========================================================
 {ts}Membership Fee{/ts}
@@ -43,7 +44,6 @@
 {/foreach}
 --------------------------------------------------------------------------------------------------
 {/if}
-
 {ts}Amount{/ts}: {$formValues.total_amount|crmMoney}
 {if $receive_date}
 {ts}Received Date{/ts}: {$receive_date|truncate:10:''|crmDate}
