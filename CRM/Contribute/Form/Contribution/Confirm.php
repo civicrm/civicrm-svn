@@ -188,7 +188,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
           if (!$typeId || is_numeric($typeId)) {
             $blockName     = $fieldName = $field;
             $locationType  = 'location_type_id';
-            $locationValue = $locType;
+            if ( $locType == 'Primary' ) {
+              require_once 'CRM/Core/BAO/LocationType.php';
+              $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
+              $locationValue = $defaultLocationType->id;
+            }
+            else {
+              $locationValue = $locType;
+            }
             $locTypeId     = '';
 
             if ($field == 'url') {
@@ -206,11 +213,25 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
               $locTypeId = 'phone_type_id';
             }
 
-            $this->_params['onbehalf_location'][$blockName][$locType][$fieldName] = $value;
-            $this->_params['onbehalf_location'][$blockName][$locType][$locationType] = $locationValue;
-            $this->_params['onbehalf_location'][$blockName][$locType]['is_primary'] = 1;
-            if ($locTypeId) {
-              $this->_params['onbehalf_location'][$blockName][$locType][$locTypeId] = $typeId;
+            $isPrimary = 1;
+            if ( isset ($this->_params['onbehalf_location'][$blockName] )
+              && count( $this->_params['onbehalf_location'][$blockName] ) > 0 ) {
+                $isPrimary = 0;
+            }
+            if ( !$locTypeId ) {
+              $this->_params['onbehalf_location'][$blockName][] = array( 
+                $fieldName    => $value,
+                $locationType => $locationValue,
+                'is_primary'  => $isPrimary
+              );
+            }
+            else {
+               $this->_params['onbehalf_location'][$blockName][] = array( 
+                $fieldName    => $value,
+                $locationType => $locationValue,
+                'is_primary'  => $isPrimary,
+                $locTypeId  => $typeId
+              );
             }
           }
         }
@@ -235,7 +256,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
       }
     }
-
+    
     // if auto renew checkbox is set, initiate a open-ended recurring membership
     if ((CRM_Utils_Array::value('selectMembership', $this->_params) ||
         CRM_Utils_Array::value('priceSetId', $this->_params)
@@ -621,7 +642,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
       if (array_key_exists('onbehalf_location', $params) && is_array($params['onbehalf_location'])) {
         foreach ($params['onbehalf_location'] as $block => $vals) {
-          $behalfOrganization[$block] = $vals;
+          if ( !is_array( $vals ) ) {
+            continue;
+          }
+
+          // fix the index of block elements
+          foreach ( $vals as $key => $val ) {
+            $behalfOrganization[$block][++$key] = $val;
+          }
         }
         unset($params['onbehalf_location']);
       }
@@ -1437,8 +1465,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
    * @return void
    * @access public
    */
-  static
-  function processOnBehalfOrganization(&$behalfOrganization, &$contactID, &$values, &$params, $fields = NULL) {
+  static function processOnBehalfOrganization(&$behalfOrganization, &$contactID, &$values, &$params, $fields = NULL) {
     $isCurrentEmployer = FALSE;
     $orgID = NULL;
     if (CRM_Utils_Array::value('organization_id', $behalfOrganization) &&
@@ -1451,22 +1478,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
     // formalities for creating / editing organization.
     $behalfOrganization['contact_type'] = 'Organization';
-    foreach ($behalfOrganization as $locFld => $value) {
-      if (in_array($locFld, array(
-        'phone', 'email', 'address'))) {
-        $locTypeId = array_keys($value);
-        foreach ($locTypeId as $locVal) {
-          $locVal = ($locVal == 'Primary') ? 1 : $locVal;
-
-          if ($locVal == 1) {
-            $behalfOrganization[$locFld][$locVal] = $value['Primary'];
-            unset($behalfOrganization[$locFld]['Primary']);
-          }
-          $behalfOrganization[$locFld][$locVal]['is_primary'] = 1;
-          $behalfOrganization[$locFld][$locVal]['location_type_id'] = $locVal;
-        }
-      }
-    }
 
     // get the relationship type id
     require_once 'CRM/Contact/DAO/RelationshipType.php';
