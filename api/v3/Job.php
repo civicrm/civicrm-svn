@@ -247,8 +247,8 @@ function civicrm_api3_job_fetch_bounces($params) {
   }
   //   FIXME: processBounces doesn't return true/false on success/failure
   $values = array();
-  return civicrm_api3_create_success($values, $params, 'mailing', 'bounces');
   $lock->release();
+  return civicrm_api3_create_success($values, $params, 'mailing', 'bounces');
 }
 
 function civicrm_api3_job_fetch_activities($params) {
@@ -261,13 +261,13 @@ function civicrm_api3_job_fetch_activities($params) {
   try {
     CRM_Utils_Mail_EmailProcessor::processActivities();
     $values = array();
+    $lock->release();
     return civicrm_api3_create_success($values, $params, 'mailing', 'activities');
   }
   catch(Exception$e) {
+    $lock->release();
     return civicrm_api3_create_error("Process Activities failed");
   }
-
-  $lock->release();
 }
 
 /**
