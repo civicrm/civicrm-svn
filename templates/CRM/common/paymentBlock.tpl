@@ -48,7 +48,8 @@ function buildPaymentBlock( type ) {
 	{if $qfKey}
     dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'
 	{/if}
-  
+  {literal}
+
 	var fname = '#billing-payment-block';	
 	var response = cj.ajax({	
                         url: dataUrl,
