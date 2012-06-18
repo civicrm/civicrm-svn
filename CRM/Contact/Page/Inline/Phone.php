@@ -64,10 +64,21 @@ class CRM_Contact_Page_Inline_Phone {
       }
     }
 
+    $contact = new CRM_Contact_BAO_Contact( );
+    $contact->id = $contactId;
+    $contact->find(true);
+    $privacy = array( );
+    foreach ( CRM_Contact_BAO_Contact::$_commPrefs as $name ) {
+      if ( isset( $contact->$name ) ) {
+        $privacy[$name] = $contact->$name;
+      }
+    }
+   
     $template = CRM_Core_Smarty::singleton();
     $template->assign('contactId', $contactId);
     $template->assign('phone', $phones);
-
+    $template->assign('privacy', $privacy);
+    
     echo $content = $template->fetch('CRM/Contact/Page/Inline/Phone.tpl');
     CRM_Utils_System::civiExit();
   }
