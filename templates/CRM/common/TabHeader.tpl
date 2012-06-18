@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 
-{* enclosed all tabs and its content in a block *}	
+{* enclosed all tabs and its content in a block *}
 {* include wysiwyg related files*}
 {include file="CRM/common/wysiwyg.tpl" includeWysiwygEditor=true}
 
@@ -47,10 +47,10 @@
   <div class="clear"></div>
 </div> {* crm-content-block ends here *}
 
-<script type="text/javascript"> 
+<script type="text/javascript">
    var selectedTab = 'EventInfo';
    {if $selectedTab}selectedTab = "{$selectedTab}";{/if}
-   var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';    
+   var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
 {literal}
 
 cj( function() {
@@ -77,7 +77,7 @@ cj( function() {
             cj(this).parents("form").attr("action", actualUrl );
 
             if ( !global_formNavigate ) {
-              var message = '{/literal}{ts escape="js"}Confirm\n\nAre you sure you want to navigate away from this tab?\n\nYou have unsaved changes.\n\nPress OK to continue, or Cancel to stay on the current tab.{/ts}{literal}';
+              var message = '{/literal}{ts escape="js"}Are you sure you want to navigate away from this tab?{/ts}' + '\n\n' + '{ts escape="js"}You have unsaved changes.{/ts}' + '\n\n' + '{ts escape="js"}Press OK to continue, or Cancel to stay on the current tab.{/ts}{literal}';
               if ( !confirm( message ) ) {
                 return false;
               } else {
@@ -91,7 +91,7 @@ cj( function() {
             Drupal.attachBehaviors(ui.panel);
           }
         }
-    });        
+    });
 });
 {/literal}
 </script>
