@@ -750,7 +750,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
       $logDAO->delete();
 
       // do activity cleanup, CRM-5604
-      CRM_Activity_BAO_activity::cleanupActivity($id);
+      CRM_Activity_BAO_Activity::cleanupActivity($id);
 
       // delete all notes related to contact
       CRM_Core_BAO_Note::cleanContactNotes($id);
