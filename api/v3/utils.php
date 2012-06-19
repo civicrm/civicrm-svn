@@ -342,7 +342,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE) {
   //accept filters like filter.activity_date_time_high
   // std is now 'filters' => ..
   if (strstr(implode(',', array_keys($params)), 'filter')) {
-    if (is_array($params['filters'])) {
+    if (isset($params['filters']) && is_array($params['filters'])) {
       foreach ($params['filters'] as $paramkey => $paramvalue) {
         _civicrm_api3_apply_filters_to_dao($paramkey, $paramvalue, $dao);
       }
