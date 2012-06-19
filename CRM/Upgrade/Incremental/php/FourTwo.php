@@ -164,6 +164,13 @@ WHERE     cpse.price_set_id IS NULL";
       return;
     }
 
+    $optionValue = array();
+    if (CRM_Utils_Array::value('optionGroup', $options)) {
+      CRM_Core_OptionGroup::getAssoc($options['optionGroup'], $optionValue);
+      if (empty($optionValue))
+        return;
+    }
+      
     if (! CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
       $setParams['name'] = $pageTitle;
     }
@@ -193,8 +200,6 @@ WHERE     cpse.price_set_id IS NULL";
           $fieldParams['is_required'] = 0;
         }
       }
-      $optionValue = array();
-      CRM_Core_OptionGroup::getAssoc($options['optionGroup'], $optionValue);
       $fieldParams['option_label'] = $optionValue['label'];
       $fieldParams['option_amount'] = $optionValue['value'];
       $fieldParams['option_weight'] = $optionValue['weight'];
