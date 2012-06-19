@@ -1129,7 +1129,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     list($userName, $userEmail) = CRM_Contact_BAO_Contact_Location::getEmailDetails($ids['userId']);
 
     //CRM-10223 - allow contribution to be recorded against different contact
-    if(CRM_Utils_Array::value(1, $this->_params['contribution_contact_select_id'])){
+    if(CRM_Utils_Array::value(1, CRM_Utils_Array::value('contribution_contact_select_id', $this->_params))){
         $params['contribution_contact_id'] = $this->_params['contribution_contact_select_id'][1];
         if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
           $params['honor_type_id'] = $this->_params['honor_type_id'];
@@ -1764,7 +1764,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     //CRM-10375 Where the payer differs to the member the payer should get the email.
     // here we store details in order to do that
-    if( CRM_Utils_Array::value('1', $formValues['contribution_contact_select_id'] ) ) {
+    if( CRM_Utils_Array::value('1', CRM_Utils_Array::value('contribution_contact_select_id', $formValues))) {
       $this->_receiptContactId = $this->_contributorContactID = $formValues['contribution_contact_select_id'][1];
        list( $this->_contributorDisplayName,
          $this->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contributorContactID );
