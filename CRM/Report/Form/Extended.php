@@ -87,7 +87,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
       $this->_groupBy[] = $this->_aliases[$this->_baseTable] . ".id";
     }
     //@todo - this should be in the parent function or at parent level - perhaps build query should do this?
-    if (!empty($this->_groupBy)) {
+    if (!empty($this->_groupBy) && is_array($this->_groupBy)) {
       $this->_groupBy = 'GROUP BY ' . implode(',', $this->_groupBy);
     }
   }
@@ -538,7 +538,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
      * @param array $options Options for the report
      * - prefix prefix to add (e.g. 'honor' when getting address details for honor contact
      * - prefix_label optional prefix lable eg. "Honoree " for front end
-     * - group_by enable these fields for group by - default false 
+     * - group_by enable these fields for group by - default false
      * - order_by enable these fields for order by
      * - filters enable these fields for filtering
      * - defaults - (is this working?) values to pre-populate
@@ -546,7 +546,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
      */
   function getAddressColumns($options = array()) {
     $defaultOptions = array(
-      'prefix' => '', 
+      'prefix' => '',
       'prefix_label' => '',
       'group_by' => false,
       'order_by' => true,
@@ -555,9 +555,9 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
         'country_id' => TRUE
       ),
      );
-     
+
     $options = array_merge($defaultOptions,$options);
-    
+
     $addressFields = array(
       $options['prefix'] . 'civicrm_address' => array(
         'dao' => 'CRM_Core_DAO_Address',
