@@ -59,6 +59,18 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
       self::$_surveyRespondentStatus[$statusId] = 'Interviewed';
     }
 
+    $optionGroups  = CRM_Campaign_BAO_Survey::getResultSets( 'name' );
+    $resultOptions = array();
+    foreach ( $optionGroups as $gid => $name ) {
+      if ( $name ) {
+        $value = array();
+        $value = CRM_Core_OptionGroup::values($name);
+        if (!empty($value))
+          $resultOptions = $resultOptions + $value;
+      }
+    }
+    asort($resultOptions);
+
     //get all interviewers.
     $allSurveyInterviewers = CRM_Campaign_BAO_Survey::getInterviewers();
 
@@ -232,6 +244,13 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_SELECT,
             'options' => $responseStatus,
           ),
+          'result' => 
+          array(
+                'title' => ts('Result Options'),
+                'type'  => CRM_Utils_Type::T_STRING,
+                'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                'options'      => $resultOptions,
+                ),
         ),
         'grouping' => 'survey-activity-fields',
       ),
