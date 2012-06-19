@@ -49,6 +49,34 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
   protected $_recurMembershipTypes;
 
   protected $_memTypeSelected;
+  /*
+   * Display name of the member
+   */
+  protected $_memberDisplayName = null;
+  /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_memberEmail = null;
+  /*
+  * Contact ID of the member
+  */
+  protected $_contactID = null;
+  /*
+  * Display name of the person paying for the membership (used for receipts)
+  */
+  protected $_contributorDisplayName = null;
+ /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_contributorEmail = null;
+  /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_contributorContactID = null;
+ /*
+  * ID of the person the receipt is to go to
+  */
+  protected $_receiptContactId = null;
 
   public function preProcess() {
     //custom data related code
@@ -1003,21 +1031,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $params['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
     }
 
-    // set the contact, when contact is selected
-    if (CRM_Utils_Array::value('contact_select_id', $formValues)) {
-      $this->_contactID = $formValues['contact_select_id'][1];
-      list($this->_memberDisplayName,
-        $this->_memberEmail
-      ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
-    }
-    //CRM-10375 - fix backoffice membership form to send receipt to payer where different to member
-    if( CRM_Utils_Array::value('1', $formValues['contribution_contact_select_id'] ) ) {
-      $this->_contributioncontactID = $formValues['contribution_contact_select_id'][1];
-       // we can set memberdisplay name from the form as we know it will be set in this case
-       $this->_memberDisplayName = $params['contribution_contact'][1];
-       list( $dontcare,
-         $this->_memberEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contributioncontactID );
-    }
+    $this->storeContactFields($formValues);
+
     $params['contact_id'] = $this->_contactID;
 
     $fields = array(
@@ -1265,7 +1280,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           $paymentParams['honor_contact_id'] = $this->_contactID;
           $paymentParams['honor_type_id'] = $this->_params['honor_type_id'];
         }
-      } 
+      }
       if (CRM_Utils_Array::value('send_receipt', $this->_params)) {
         $paymentParams['email'] = $this->_memberEmail;
       }
@@ -1517,7 +1532,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $statusMsg .= ' ' . ts('The membership End Date is %1.', array(1 => $endDate));
       }
       if ($receiptSend) {
-        $statusMsg .= ' ' . ts('A confirmation and receipt has been sent to %1.', array(1 => $this->_memberEmail));
+        $statusMsg .= ' ' . ts('A confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
       }
     }
     elseif (($this->_action & CRM_Core_Action::ADD)) {
@@ -1687,25 +1702,78 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     }
 
     $form->assign('customValues', $customValues);
-    list(
-      $memberDisplayName,
-      $memberEmail
-    ) = CRM_Contact_BAO_Contact_Location::getEmailDetails(
-      $formValues['contact_id']);
+    if(empty($form->_contributorDisplayName) || empty($form->_contributorEmail)){
+      // in this case the form is being called statically from the batch editing screen
+      // having one class in the form layer call another statically is not greate
+      // & we should aim to move this function to the BAO layer in future.
+      // however, we can assume that the contact_id passed in by the batch
+      // function will be the recipient
+      list(
+        $form->_contributorDisplayName,
+        $form->_contributorEmail
+      ) = CRM_Contact_BAO_Contact_Location::getEmailDetails(
+            $formValues['contact_id']
+          );
+       if(empty($form->_receiptContactId)){
+         $form->_receiptContactId = $formValues['contact_id'];
+       }
+    }
 
     list($mailSend, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
       array(
         'groupName' => 'msg_tpl_workflow_membership',
         'valueName' => 'membership_offline_receipt',
-        'contactId' => $formValues['contact_id'],
+        'contactId' => $form->_receiptContactId,
         'from' => $receiptFrom,
-        'toName' => $memberDisplayName,
-        'toEmail' => $memberEmail,
+        'toName' => $form->_contributorDisplayName,
+        'toEmail' => $form->_contributorEmail,
         'isTest' => (bool)($form->_action & CRM_Core_Action::PREVIEW)
       )
     );
 
     return true;
+  }
+  /*
+   * Function to extract values from the contact create boxes on the form and assign appropriatley  to
+   *
+   *  - $this->_contributorEmail,
+   *  - $this->_memberEmail &
+   *  - $this->_contributonName
+   *  - $this->_memberName
+   *  - $this->_contactID (effectively memberContactId but changing might have spin-off effects)
+   *  - $this->_contributorContactId - id of the contributor
+   *  - $this->_receiptContactId
+   *
+   * If the member & contributor are the same then the values will be the same. But if different people paid
+   * then they weill differ
+   *
+   * @param $formValues array values from form. The important values we are looking for are
+   *  - contact_select_id[1]
+   *  - contribution_contact_select_id[1]
+   */
+  function storeContactFields($formValues){
+
+    // in a 'standalone form' (contact id not in the url) the contact will be in the form values
+    if (CRM_Utils_Array::value('contact_select_id', $formValues)) {
+      $this->_contactID = $formValues['contact_select_id'][1];
+    }
+
+    list($this->_memberDisplayName,
+         $this->_memberEmail
+    ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
+
+    //CRM-10375 Where the payer differs to the member the payer should get the email.
+    // here we store details in order to do that
+    if( CRM_Utils_Array::value('1', $formValues['contribution_contact_select_id'] ) ) {
+      $this->_receiptContactId = $this->_contributorContactID = $formValues['contribution_contact_select_id'][1];
+       list( $this->_contributorDisplayName,
+         $this->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contributorContactID );
+    }
+    else{
+      $this->_receiptContactId = $this->_contributorContactID = $this->_contactID;
+      $this->_contributorDisplayName = $this->_memberDisplayName;
+      $this->_contributorEmail = $this->_memberEmail;
+    }
   }
 }
 
