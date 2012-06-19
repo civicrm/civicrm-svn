@@ -469,7 +469,8 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     //click report link of created mailing
     $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
     $this->waitForPageToLoad("30000");
-
+   
+    $mailingReportUrl = $this->getLocation();
     // do check again for recipient group
     $this->assertTrue($this->isTextPresent("Members of $groupName"));
 
@@ -490,18 +491,93 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     $this->verifyText("xpath=//table//tr[td[1]/text()='Subject']/descendant::td[2]", preg_quote("Test subject $mailingName for Webtest"));    
   
     // after asserts do clicks and confirm filters 
+    $criteriaCheck = 
+      array(
+        'Intended Recipients' => 
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest")
+        ),
+        'Successful Deliveries' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            "Delivery Status" => " Successful"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing Delivery -' => "Successful")
+        ),
+        'Tracked Opens' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable Opens -' => "Opened")
+        ),
+        'Click-throughs' =>
+        array(
+          'report' => array('report_name' => 'Mail Clickthrough Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable URL Clicks -' => "Clicked")
+        ),
+        'Forwards' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            'Forwarded' => 'Is equal to Yes'),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Forwards")
+        ),
+        'Replies' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            'Replied' => 'Is equal to Yes'),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable Replies -' => "Replied")
+        ),
+        'Bounces' =>
+        array(
+          'report' => array('report_name' => 'Mail Bounce Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing Delivery -' => "Bounced")
+        ),
+        'Unsubscribe Requests' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            'Unsubscribed' => 'Is equal to Yes'),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Unsubscribe Requests")
+        ),
+        'Opt-out Requests' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            'Opted-out' => 'Is equal to Yes'),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Opt-out Requests")
+        ),
+      );
+    $this->criteriaCheck($criteriaCheck, $mailingReportUrl);
   }
   
-  function verifyCriteria($dataToCheck, $entity) {
-    foreach($dataToCheck as $key => $value) {
-      if ($entity == 'report') {
-        $this->assertTrue("xpath=//form//div[3]/table/tbody//tr/th[contains(text(),'{$key}')]/../td[contains(text(),'{$value}')]","Criteria check for {$key} failed");
-      } else {
-        $this->assertTrue("xpath=//form//div[3]/table/tbody//tr/th[contains(text(),'{$key}')]/../td[contains(text(),'{$value}')]","Criteria check for {$key} failed");
+  function criteriaCheck($criteriaCheck, $mailingReportUrl) {
+    foreach($criteriaCheck as $key => $infoFilter) {
+      foreach($infoFilter as $entity => $dataToCheck) {
+        $this->open($mailingReportUrl);
+        if ($entity == "report") {
+          $this->click("xpath=//fieldset/legend[text()='Delivery Summary']/../table//tr[td/a[text()='{$key}']]/descendant::td[3]/span/a[1][text()='Report']");
+        } else {
+          $this->click("xpath=//fieldset/legend[text()='Delivery Summary']/../table//tr[td/a[text()='{$key}']]/descendant::td[3]/span/a[2][text()='Advanced Search']");
+        }
+        $this->waitForPageToLoad("30000");
+        $this-> _verifyCriteria($key, $dataToCheck, $entity);
       }
     }
   }
   
+  function _verifyCriteria($summaryInfo, $dataToCheck, $entity) {
+    foreach($dataToCheck as $key => $value) {
+      if ($entity == 'report') {
+        if ($key == 'report_name') {
+          $this->assertTrue($this->isTextPresent("{$value}"));
+          continue;
+        }
+        $this->assertTrue($this->isElementPresent("xpath=//form//div[3]/table/tbody//tr/th[contains(text(),'{$key}')]/../td[contains(text(),'{$value}')]"),"Criteria check for {$key} failed for Report for {$summaryInfo}");
+      } else {
+        $this->assertTrue($this->isTextPresent("Advanced Search"));
+        $assertedValue = $this->isElementPresent("xpath=//div[@class='crm-results-block']//div[@class='qill'][contains(text(),'{$key} {$value}')]");
+        if (!$assertedValue) {
+          $assertedValue = $this->isTextPresent("{$key} {$value}");
+        }
+       $this->assertTrue($assertedValue,"Criteria check for {$key} failed for Advance Search for {$summaryInfo}");
+      }
+    }
+  } 
 }
-
-
