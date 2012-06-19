@@ -60,6 +60,7 @@
        <table>civicrm_saved_search</table>
        <key>id</key>
        <add>1.1</add>
+       <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
        <name>is_active</name>

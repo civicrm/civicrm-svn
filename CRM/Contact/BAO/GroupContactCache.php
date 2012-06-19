@@ -243,11 +243,11 @@ WHERE  id = %1
    * load the smart group cache for a saved search
    */
   static
-  function load(&$group) {
+  function load(&$group, $fresh = FALSE) {
     $groupID = $group->id;
     $savedSearchID = $group->saved_search_id;
         static $alreadyLoaded = array();
-        if (in_array($groupID, $alreadyLoaded)) {
+        if (in_array($groupID, $alreadyLoaded) && !$fresh) {
           return;
         }
         $alreadyLoaded[] = $groupID;
