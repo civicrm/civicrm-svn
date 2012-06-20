@@ -210,7 +210,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $blockName     = $fieldName = $field;
             $locationType  = 'location_type_id';
             if ( $locType == 'Primary' ) {
-              require_once 'CRM/Core/BAO/LocationType.php';
               $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
               $locationValue = $defaultLocationType->id;
             }

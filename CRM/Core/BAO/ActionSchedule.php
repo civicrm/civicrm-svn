@@ -578,7 +578,6 @@ WHERE   cas.entity_value = $id AND
 
   static
   function sendMailings($mappingID, $now) {
-    require_once 'CRM/Utils/Address.php';
     $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
     $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
 

@@ -33,10 +33,6 @@
  *
  */
 
-//require_once 'CRM/Price/BAO/Set.php';
-//
-//require_once 'CRM/Core/BAO/CustomOption.php';
-
 /**
  * This class generates form components for previewing custom data
  *
