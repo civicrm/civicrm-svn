@@ -92,11 +92,14 @@
 
     {if $amount GT 0 OR $minimum_fee GT 0 OR ( $priceSetID and $lineItem ) }
     <div class="crm-group amount_display-group">
+        {if !$useForMember}
         <div class="header-dark">
             {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem )}{ts}Contribution Information{/ts}{else}{ts}Membership Fee{/ts}{/if}
         </div>
+	{/if}
         <div class="display-block">
-        {if $lineItem and $priceSetID}
+         {if !$useForMember}
+         {if $lineItem and $priceSetID}
     	    {if !$amount}{assign var="amount" value=0}{/if}
     	      {assign var="totalAmount" value=$amount}
             {include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}
@@ -114,7 +117,8 @@
           {else}
             {ts}Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level} - {$amount_level} {/if}</strong><br />
           {/if}
-	        {if $receive_date}
+	  {/if}
+        {if $receive_date}
             {ts}Date{/ts}: <strong>{$receive_date|crmDate}</strong><br />
           {/if}
           {if $contributeMode ne 'notify' and $is_monetary and ! $is_pay_later and $trxn_id}

@@ -743,7 +743,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
           }
           elseif ($memType['is_active']) {
             $javascriptMethod = NULL;
-            $allowAutoRenewOpt = CRM_Utils_Array::value($value, $form->_membershipBlock['auto_renew']);
+            $allowAutoRenewOpt = CRM_Utils_Array::value($value, CRM_Utils_Array::value('auto_renew', $form->_membershipBlock));
             if (is_array($paymentProcessor) &&
               !CRM_Utils_Array::value(CRM_Utils_Array::value('payment_processor', $form->_values),$paymentProcessor)) {
               $allowAutoRenewOpt = 0;
@@ -1179,8 +1179,7 @@ AND civicrm_membership.is_test = %2";
     $form->set('membershipTypeID', $membershipParams['selectMembership']);
 
     $membershipTypeID = $membershipParams['selectMembership'];
-    $membership_details = self::buildMembershipTypeValues($form, $membershipTypeID);
-    $membershipDetails = current($membership_details);
+    $membershipDetails = self::buildMembershipTypeValues($form, $membershipTypeID);
 
     $form->assign('membership_name', CRM_Utils_Array::value('name', $membershipDetails));
 
@@ -1196,7 +1195,7 @@ AND civicrm_membership.is_test = %2";
       $params['amount']   = $minimumFee;
       $contributionTypeId = CRM_Utils_Array::value('contribution_type_id', $membershipDetails);
       if (!$contributionTypeId) {
-        $contributionTypeId = $membershipParams['contribution_type_id'];
+        $contributionTypeId = CRM_Utils_Array::value('contribution_type_id' ,$membershipParams);
       }
     }
 
