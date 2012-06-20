@@ -1218,8 +1218,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       } elseif (!CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem);
       }
-      if (!$form->_separateMembershipPayment && CRM_Utils_Array::value('is_quick_config', $form->_params))
+      if (!$form->_separateMembershipPayment && CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         $form->_lineItem = null;
+      }
     }
 
     //handle pledge stuff.
