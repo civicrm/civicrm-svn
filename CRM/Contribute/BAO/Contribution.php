@@ -345,7 +345,23 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $url = CRM_Utils_System::url('civicrm/contact/view/contribution',
         "action=view&reset=1&id={$contribution->id}&cid={$contribution->contact_id}&context=home"
       );
-
+      // in some update cases we need to get extra fields - ie an update that doesn't pass in all these params
+      $titleFields = array(
+        'contact_id',
+        'total_amount',
+        'currencty',
+        'contribution_type_id',
+      );
+      $retrieverequired = 0;
+      foreach ($titleFields as $titleField) {
+        if(!isset($contribution->$titleField)){
+          $retrieverequired = 1;
+          break;
+        }
+      }
+      if($retrieverequired == 1){
+        $contribution->find(true);
+      }
       $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
       $title = CRM_Contact_BAO_Contact::displayName($contribution->contact_id) . ' - (' . CRM_Utils_Money::format($contribution->total_amount, $contribution->currency) . ' ' . ' - ' . $contributionTypes[$contribution->contribution_type_id] . ')';
 
