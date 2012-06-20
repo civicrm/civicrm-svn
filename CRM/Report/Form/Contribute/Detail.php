@@ -685,7 +685,6 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
       }
       if ($showsumcontribs) {
         $totalandsum = array();
-        require_once 'CRM/Utils/Money.php';
         foreach ($totals as $key => $total) {
           $totalandsumvals = array( 
             1 => $total, 

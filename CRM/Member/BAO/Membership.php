@@ -142,7 +142,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
 
     if (CRM_Utils_Array::value('membership', $ids)) {
       if ($membership->status_id != $oldStatus) {
-        require_once 'CRM/Member/PseudoConstant.php';
         $allStatus     = CRM_Member_PseudoConstant::membershipStatus();
         $session       = CRM_Core_Session::singleton();
         $activityParam = array(
@@ -163,7 +162,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       }
       if ($membership->membership_type_id != $oldType) {
         $session = CRM_Core_Session::singleton();
-        require_once 'CRM/Member/PseudoConstant.php';
         $membershipTypes = CRM_Member_PseudoConstant::membershipType();
         $activityParam = array(
           'subject' => "Type changed from {$membershipTypes[$oldType]} to {$membershipTypes[$membership->membership_type_id]}",
