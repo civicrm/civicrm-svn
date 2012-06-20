@@ -1129,8 +1129,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     list($userName, $userEmail) = CRM_Contact_BAO_Contact_Location::getEmailDetails($ids['userId']);
 
     //CRM-10223 - allow contribution to be recorded against different contact
-    if(CRM_Utils_Array::value('contribution_contact_select_id', $this->_params) && CRM_Utils_Array::value(1, $this->_params['contribution_contact_select_id'])){
-        $params['contribution_contact_id'] = $this->_params['contribution_contact_select_id'][1];
+    if($this->_contributorContactID != $this->_contactID){
+        $params['contribution_contact_id'] = $this->_contributorContactID;
         if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
           $params['honor_type_id'] = $this->_params['honor_type_id'];
           $params['honor_contact_id'] = $params['contact_id'];
@@ -1249,10 +1249,12 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           $formValues['preserveDBName'] = TRUE;
         }
       }
-
-       $contributionContactID = $contactID = CRM_Contact_BAO_Contact::createProfileContact($formValues, $fields,
-        $this->_contactID, NULL, NULL, $ctype
+      //here we are setting up the billing contact - if different from the member they are already created
+      // but they will get billing details assigned
+      CRM_Contact_BAO_Contact::createProfileContact($formValues, $fields,
+        $this->_contributorContactID, NULL, NULL, $ctype
       );
+
 
       // add all the additioanl payment params we need
       $this->_params["state_province-{$this->_bltID}"] = $this->_params["billing_state_province-{$this->_bltID}"] = CRM_Core_PseudoConstant::stateProvinceAbbreviation($this->_params["billing_state_province_id-{$this->_bltID}"]);
@@ -1271,18 +1273,17 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       // all the payment processors expect the name and address to be in the
       // so we copy stuff over to first_name etc.
       $paymentParams = $this->_params;
-
+      $paymentParams['contactID'] = $this->_contributorContactID;
       //CRM-10377 if payment is by an alternate contact then we need to set that person
       // as the contact in the payment params
-      if(CRM_Utils_Array::value(1, $this->_params['contribution_contact_select_id'])){
-        $paymentParams['contactID'] = $contributionContactID = $this->_params['contribution_contact_select_id'][1];
+      if($this->_contributorContactID != $this->_contactID){
         if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
           $paymentParams['honor_contact_id'] = $this->_contactID;
           $paymentParams['honor_type_id'] = $this->_params['honor_type_id'];
         }
       }
       if (CRM_Utils_Array::value('send_receipt', $this->_params)) {
-        $paymentParams['email'] = $this->_memberEmail;
+        $paymentParams['email'] = $this->_contributorEmail;
       }
 
       CRM_Core_Payment_Form::mapParams($this->_bltID, $this->_params, $paymentParams, TRUE);
@@ -1302,13 +1303,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $contribution = CRM_Contribute_Form_Contribution_Confirm::processContribution($this,
           $paymentParams,
           $result,
-          $contributionContactID,
+          $this->_contributorContactID,
           $contributionType,
           FALSE,
           TRUE,
           FALSE
         );
-        $paymentParams['contactID'] = $contributionContactID;
+
         $paymentParams['contributionID'] = $contribution->id;
         $paymentParams['contributionTypeID'] = $contribution->contribution_type_id;
         $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
@@ -1557,7 +1558,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
       $statusMsg = implode('<br/>', $statusMsg);
       if ($receiptSend && $mailSend) {
-        $statusMsg .= '<br/>' . ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_memberEmail));
+        $statusMsg .= '<br/>' . ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
       }
     }
     CRM_Core_Session::setStatus($statusMsg);
