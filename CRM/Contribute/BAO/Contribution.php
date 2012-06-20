@@ -291,7 +291,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $titleFields = array(
         'contact_id',
         'total_amount',
-        'currencty',
+        'currency',
         'contribution_type_id',
       );
       $retrieverequired = 0;
@@ -365,7 +365,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $titleFields = array(
         'contact_id',
         'total_amount',
-        'currencty',
+        'currency',
         'contribution_type_id',
       );
       $retrieverequired = 0;
