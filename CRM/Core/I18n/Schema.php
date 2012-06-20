@@ -354,6 +354,9 @@ class CRM_Core_I18n_Schema {
     if ($_tables === NULL || $force) {
       if ($version) {
         $latest = self::getLatestSchema($version);
+        // FIXME: Doing require_once is a must here because a call like CRM_Core_I18n_SchemaStructure_4_1_0 makes
+        // class loader look for file like - CRM/Core/I18n/SchemaStructure/4/1/0.php which is not what we want to be loaded
+        require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
         $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
         eval("\$tables  =& $class::tables();");
       }
