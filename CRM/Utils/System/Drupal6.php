@@ -602,7 +602,7 @@ SELECT name, mail
     }
   }
 
-  function cmsRootPath($scriptFilename) {
+  function cmsRootPath($scriptFilename = NULL) {
     $cmsRoot = $valid = NULL;
 
     if (!is_null($scriptFilename)) {
