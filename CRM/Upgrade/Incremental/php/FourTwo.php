@@ -240,6 +240,13 @@ WHERE     cpse.price_set_id IS NULL";
             }
           }
           $priceField = CRM_Price_BAO_Field::create($fieldParams);
+          
+          $setParams = array(
+            'id'                   => $priceSet->id,
+            'extends'              => CRM_Core_Component::getComponentID('CiviMember'),
+            'contribution_type_id' => CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], 'contribution_type_id'),
+          );
+          CRM_Price_BAO_Set::create($setParams);
         }
       }
     }
