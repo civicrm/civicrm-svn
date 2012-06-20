@@ -396,10 +396,24 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     return array(
       'civicrm_event' => array(
         'dao' => 'CRM_Event_DAO_Event',
-        'fields' => array(
-          'event_type_id' => array(
-            'title' => ts('Event Type'),
-            'alter_display' => 'alterEventType',
+        'fields' =>
+        array(
+          'id' => array(
+            'no_display' => TRUE,
+            'required' => TRUE,
+          ),
+          'title' => array('title' => ts('Event Title'),
+            'required' => TRUE,
+          ),
+          'event_type_id' => array('title' => ts('Event Type'),
+            'required' => TRUE,
+          ),
+          'fee_label' => array('title' => ts('Fee Label')),
+          'event_start_date' => array('title' => ts('Event Start Date'),
+          ),
+          'event_end_date' => array('title' => ts('Event End Date')),
+          'max_participants' => array('title' => ts('Capacity'),
+            'type' => CRM_Utils_Type::T_INT,
           ),
         ),
         'grouping' => 'event-fields',
