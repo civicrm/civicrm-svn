@@ -144,8 +144,8 @@ You were registered by: {$payer.name}
 {/if}
 {/foreach}
 {/if}
-{if $amount && !$lineItem}
-{foreach from=$amount item=amnt key=level}{$amnt.amount|crmMoney} {$amnt.label}
+{if $amounts && !$lineItem}
+{foreach from=$amounts item=amnt key=level}{$amnt.amount|crmMoney} {$amnt.label}
 {/foreach}
 {/if}
 {if $isPrimary }

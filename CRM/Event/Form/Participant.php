@@ -1120,7 +1120,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         if ($participantCount) {
           $this->assign('pricesetFieldsCount', $participantCount);
         }
-        $this->assign('lineItem', empty($lineItem[0]) ? FALSE : $lineItem);
+         $this->assign('lineItem', empty($lineItem[0]) || $this->_quickConfig? FALSE : $lineItem);
       }
       else {
         $this->assign('amount_level', $params['amount_level']);

@@ -1,3 +1,5 @@
+{include file='../CRM/Upgrade/4.2.alpha2.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-10326
 DELETE FROM `civicrm_price_set_entity` WHERE entity_table = "civicrm_contribution" or entity_table = "civicrm_participant";
 

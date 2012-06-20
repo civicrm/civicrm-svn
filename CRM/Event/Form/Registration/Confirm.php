@@ -267,7 +267,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
       $this->assign('part', $this->_part);
       $this->set('part', $this->_part);
-      $this->assign('amount', $this->_amount);
+      $this->assign('amounts', $this->_amount);
       $this->assign('totalAmount', $this->_totalAmount);
       $this->set('totalAmount', $this->_totalAmount);
     }
