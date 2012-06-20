@@ -40,8 +40,7 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf {
    * @return void
    * @access public
    */
-  static
-  function preProcess(&$form) {
+  static function preProcess(&$form) {
     $session = CRM_Core_Session::singleton();
     $contactID = $session->get('userID');
 
@@ -107,8 +106,7 @@ class CRM_Contribute_Form_Contribution_OnBehalfOf {
    *
    * @static
    */
-  static
-  function buildQuickForm(&$form) {
+  static function buildQuickForm(&$form) {
     $form->assign('fieldSetTitle', ts('Organization Details'));
     $form->assign('buildOnBehalfForm', TRUE);
 

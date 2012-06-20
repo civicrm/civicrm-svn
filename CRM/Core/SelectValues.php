@@ -601,11 +601,11 @@ class CRM_Core_SelectValues {
 
     if (!$tokens) {
       $tokens = array(
-        '{event.id}' => ts('Event ID'),
+        '{event.event_id}' => ts('Event ID'),
         '{event.title}' => ts('Event Title'),
         '{event.start_date}' => ts('Event Start Date'),
         '{event.end_date}' => ts('Event End Date'),
-        '{event.type}' => ts('Event Type'),
+        '{event.event_type}' => ts('Event Type'),
         '{event.summary}' => ts('Event Summary'),
         '{event.description}' => ts('Event Description'),
         '{event.contact_email}' => ts('Event Contact Email'),

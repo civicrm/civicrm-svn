@@ -109,6 +109,7 @@ class CRM_Utils_Mail_EmailProcessor {
     if (!$found) {
       CRM_Core_Error::fatal(ts('No mailboxes have been configured for Email to Activity Processing'));
     }
+    return $found;
   }
 
   /**
