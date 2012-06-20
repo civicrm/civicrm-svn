@@ -461,7 +461,15 @@ OR       group_name = %2 )
     if ($setInConfig) {
       $config = CRM_Core_Config::singleton();
     }
-
+    
+    $isJoomla = (defined('CIVICRM_UF') && CIVICRM_UF == 'Joomla') ? TRUE : FALSE;
+    
+    if (CRM_Core_Config::isUpgradeMode() && !$isJoomla) {
+      $currentVer = CRM_Core_BAO_Domain::version();
+      if (version_compare($currentVer, '4.1.alpha1') < 0) {
+        return;
+      }
+    }
     $sql = "
 SELECT name, group_name, value
 FROM   civicrm_setting
@@ -486,7 +494,7 @@ OR       group_name = %2 )
       if (CRM_Core_Config::isUpgradeMode()) {
         // seems like this is a 4.0 -> 4.1 upgrade, so we suppress this error and continue
         // hack to set the resource base url so that js/ css etc is loaded correctly
-        if (defined('CIVICRM_UF') && CIVICRM_UF == 'Joomla') {
+        if ($isJoomla) {
           $params['userFrameworkResourceURL'] = CRM_Utils_File::addTrailingSlash(CIVICRM_UF_BASEURL, '/') . str_replace('administrator', '', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', 'userFrameworkResourceURL', 'value', 'name'));
         }
         return;
