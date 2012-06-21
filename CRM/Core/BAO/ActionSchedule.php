@@ -841,11 +841,9 @@ reminder.action_schedule_id = %1";
       if ($actionSchedule->start_action_date) {
         $startDateClause   = array();  
         $operator          = ($actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD");
-        $op                = ($actionSchedule->start_action_condition == 'before' ? "<=" : ">=");
         $date              = $operator . "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
         $startDateClause[] = "'{$now}' >= {$date}";
-
-        $startDateClause[] = $operator . "({$now}, INTERVAL 1 DAY ) {$op} {$dateField}";
+        $startDateClause[] = "DATE_SUB({$now}, INTERVAL 1 DAY ) <= {$date}";
         $startDate = implode(' AND ', $startDateClause);
       }
       elseif ($actionSchedule->absolute_date) {
