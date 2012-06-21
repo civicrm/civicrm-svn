@@ -1138,7 +1138,7 @@ WHERE  contribution_id = {$this->_id}
     $lineItem = array();
     $priceSetId = NULL;
     if (!($priceSetId = CRM_Utils_Array::value('price_set_id', $submittedValues)) && !$this->_id) {
-      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
+      $this->_priceSetId = $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
       $this->_priceSet = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
       $fieldID = key($this->_priceSet['fields']);
       $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] = $submittedValues['total_amount'];
@@ -1148,9 +1148,6 @@ WHERE  contribution_id = {$this->_id}
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
         $submittedValues, $lineItem[$priceSetId]);
-      if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
-        $lineItem = null;
-      }
       $submittedValues['total_amount'] = CRM_Utils_Array::value('amount', $submittedValues);
     }
     if (!$priceSetId && CRM_Utils_Array::value('total_amount', $submittedValues) && $this->_id) {
@@ -1183,11 +1180,15 @@ WHERE  contribution_id = {$this->_id}
       }
       $lineItem[$this->_priceSetId] = $lineItems;
     }
+    $isQuickConfig = 0;
+    if ($this->_priceSetId &&  CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
+      $isQuickConfig = 1;
+    }
 
     if (!CRM_Utils_Array::value('total_amount', $submittedValues)) {
       $submittedValues['total_amount'] = CRM_Utils_Array::value('total_amount', $this->_values);
     }
-    $this->assign('lineItem', !empty($lineItem) ? $lineItem : FALSE);
+    $this->assign('lineItem', !empty($lineItem) && !$isQuickConfig ? $lineItem : FALSE);
 
     if (CRM_Utils_Array::value('soft_credit_to', $submittedValues)) {
       $submittedValues['soft_credit_to'] = $submittedValues['soft_contact_id'];

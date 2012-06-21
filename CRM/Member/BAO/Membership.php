@@ -2789,7 +2789,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
    */
   static
     function createLineItems(&$qf, $membershipType, &$priceSetId) {
-    $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
+    $qf->_priceSetId = $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
     if ($priceSetId) {
       $qf->_priceSet = $priceSets = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
     }
