@@ -1173,7 +1173,7 @@ WHERE  contribution_id = {$this->_id}
       $submittedValues['total_amount'] = CRM_Utils_Array::value('amount', $submittedValues);
     }
     if (!CRM_Utils_Array::value('total_amount', $submittedValues)) {
-      $submittedValues['total_amount'] = $this->_values['total_amount'];
+      $submittedValues['total_amount'] = CRM_Utils_Array::value('total_amount', $this->_values);
     }
     $this->assign('lineItem', !empty($lineItem) ? $lineItem : FALSE);
 
