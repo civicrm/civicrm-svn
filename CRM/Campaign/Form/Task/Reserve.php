@@ -267,7 +267,9 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
 
     $status = array();
     if ($countVoters > 0) {
-      $status[] = ts('Reservation has been added for %1 Contact(s).', array(1 => $countVoters));
+      $url = CRM_Utils_System::url('civicrm/report/survey/detail','reset=1&name='.$this->_surveyDetails['title'].'&activity='.$this->_surveyDetails['activity_type_id'].'&surveyid='.$this->_surveyId);
+         $status[] = ts("Reservation has been added for %1 Contact(s).<a href='%2'>Create Survey Report for %3</a>", array(1 => $countVoters,2 => $url,3 => $this->_surveyDetails['title']));
+
     }
     if (count($this->_contactIds) > $countVoters) {
       $status[] = ts('Reservation did not add for %1 Contact(s).',
