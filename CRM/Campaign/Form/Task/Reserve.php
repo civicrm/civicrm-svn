@@ -283,6 +283,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     if ($countVoters > 0) {
       $title = $this->_surveyDetails['title'];
       $query = "SELECT MAX(id) FROM civicrm_report_instance WHERE title = %1";
+      $params[1] = array();
       $params[1] = array("{$title}",'String');
       $result = CRM_Core_DAO::singleValueQuery($query,$params);
     
