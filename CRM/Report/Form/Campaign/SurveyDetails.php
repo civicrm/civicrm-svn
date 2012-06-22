@@ -255,23 +255,30 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         'grouping' => 'survey-activity-fields',
       ),
     );
-
     parent::__construct();
   }
 
   function preProcess() {
-    parent::preProcess();
-    if ( CRM_Utils_Array::value('surveyid',$_GET) && CRM_Utils_Array::value('activity',$_GET) ){
-      if ( CRM_Utils_Array::value('activity',$_GET) && (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','WalkList')) ){
-        $this->_setParams('WalkList');
+    $output = CRM_Utils_Request::retrieve('output', 'String', CRM_Core_DAO::$_nullObject);
+    if ( $output == 'create_report' ) {
+      $title = CRM_Utils_Request::retrieve('name', 'String', CRM_Core_DAO::$_nullObject);
+      $activityType = CRM_Utils_Request::retrieve('activity', 'Integer', CRM_Core_DAO::$_nullObject, true);
+   
+      $this->_defaults['title'] = $title . rand();
+      // for WalkList or default
+      $displayFields = array('street_number','street_name','street_unit','survey_response');
+      if ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $activityType ) {
+        array_push($displayFields, 'phone');
       }
-      elseif ( CRM_Utils_Array::value('activity',$_GET) && (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','PhoneBank')) ){
-        $this->_setParams('PhoneBank');
+      elseif ((CRM_Core_OptionGroup::getValue('activity_type','Survey')  == $activityType) || 
+              (CRM_Core_OptionGroup::getValue('activity_type','Canvass') == $activityType) ) {
+        array_push($displayFields, 'phone','city','state_province_id','postal_code','email');
       }
-      elseif ( CRM_Utils_Array::value('activity',$_GET) && ((CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','Survey')) || (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','Canvass'))) ){
-        $this->_setParams();
-      }
+      foreach($displayFields as $key){
+        $this->_defaults['fields'][$key] = 1;
+      } 
     }
+    parent::preProcess();
   }
   
   function select() {
@@ -947,28 +954,4 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
       $this->_aliases[$resTable] = $this->_columns[$resTable]['alias'];
     }
   }
-  private function _setParams($activityType = NULL){
-    
-    $val = array('title' => CRM_Utils_Array::value('name',$_GET), 'survey_id_value' => CRM_Utils_Array::value('surveyid',$_GET), 'status_id_value' => 1,'report_header' => "", 'report_footer' => "" );
-    $this->_params['title'] = $val['title'];
-    $this->_params['survey_id_value'] = $val['survey_id_value'];
-    $this->_params['status_id_value'] = $val['status_id_value'];
-    $this->_params['report_header'] = $val['report_header'];
-    $this->_params['report_footer'] = $val['report_footer'];
-    if ($activityType == 'WalkList'){
-      $value = array('fields[street_number]','fields[street_name]','fields[street_unit]','fields[survey_response]');
-    }
-    elseif ($activityType == 'PhoneBank'){
-      $value = array('fields[phone]','fields[street_number]','fields[street_name]','fields[street_unit]','fields[survey_response]');
-    }
-    else{
-      $value = array('fields[phone]','fields[street_number]','fields[street_name]','fields[street_unit]','fields[survey_response]','fields[city]','fields[state_province_id]','fields[postal_code]','fields[email]');
-    }
-    foreach($value as $key){
-      $this->_params[$key] = 1;
-    } 
-    CRM_Report_Form_Instance::postProcess($this);
-    
-  }
 }
-

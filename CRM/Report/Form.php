@@ -167,6 +167,7 @@ class CRM_Report_Form extends CRM_Core_Form {
   protected $_instanceValues = NULL;
 
   protected $_instanceForm = FALSE;
+  protected $_criteriaForm = FALSE;
 
   protected $_instanceButtonName = NULL;
   protected $_createNewButtonName = NULL;
@@ -343,6 +344,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     if (CRM_Core_Permission::check('administer Reports') || CRM_Core_Permission::check('access Report Criteria')) {
       if (!$this->_instanceValues['is_reserved'] || CRM_Core_Permission::check('administer reserved reports')) {
         $this->assign('criteriaForm', TRUE);
+        $this->_criteriaForm = TRUE;
       }
     }
 
@@ -1866,6 +1868,10 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
       $this->assign('outputMode', 'group');
       $this->_outputMode = 'group';
     }
+    elseif ($output == 'create_report' && $this->_criteriaForm) {
+      $this->assign('outputMode', 'create_report');
+      $this->_outputMode = 'create_report';
+    }
     else {
       $this->assign('outputMode', 'html');
       $this->_outputMode = 'html';
@@ -2357,7 +2363,8 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
     elseif ($this->_instanceButtonName == $this->controller->getButtonName()) {
       CRM_Report_Form_Instance::postProcess($this);
     }
-    elseif ($this->_createNewButtonName == $this->controller->getButtonName()) {
+    elseif ($this->_createNewButtonName == $this->controller->getButtonName() ||
+            $this->_outputMode == 'create_report' ) {
       $this->_createNew = TRUE;
       CRM_Report_Form_Instance::postProcess($this);
     }
