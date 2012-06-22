@@ -264,7 +264,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
       $title = CRM_Utils_Request::retrieve('name', 'String', CRM_Core_DAO::$_nullObject);
       $activityType = CRM_Utils_Request::retrieve('activity', 'Integer', CRM_Core_DAO::$_nullObject, true);
    
-      $this->_defaults['title'] = $title . rand();
+      $this->_defaults['title'] = $title;
       // for WalkList or default
       $displayFields = array('street_number','street_name','street_unit','survey_response');
       if ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $activityType ) {
