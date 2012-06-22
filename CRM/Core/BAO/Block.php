@@ -439,10 +439,12 @@ class CRM_Core_BAO_Block {
     elseif (CRM_Utils_Array::value('contact_id', $params)) {
       $contactId = $params['contact_id'];
     }
-    else {
+
+    if ( !$contactId ) {
       // entity not associated with contact so concept of is_primary not relevant
       return;
     }
+    
     // if params is_primary then set all others to not be primary & exit out
     if (CRM_Utils_Array::value('is_primary', $params)) {
       $sql = "UPDATE $table SET is_primary = 0 WHERE contact_id = %1";
