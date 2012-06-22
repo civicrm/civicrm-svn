@@ -707,9 +707,17 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
       }
 
       $relationship = TRUE;
-      $contactID = $newContact['error_message']['params'][0];
-      if (!in_array($contactID, $this->_newContacts)) {
-        $this->_newContacts[] = $contactID;
+      # see CRM-10433 - might return comma separate list of all dupes
+      $dupeContactIDs = explode(',',$newContact['error_message']['params'][0]);
+      $dupeCount = count($dupeContactIDs);
+      $contactID = array_pop($dupeContactIDs);
+      // check to see if we had more than one duplicate contact id.
+      // if we have more than one, the record will be rejected below
+      if($dupeCount == 1) {
+        // there was only one dupe, we will continue normally...
+        if (!in_array($contactID, $this->_newContacts)) {
+          $this->_newContacts[] = $contactID;
+        }
       }
     }
 
