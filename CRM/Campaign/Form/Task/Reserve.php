@@ -112,6 +112,8 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     //validate the selected survey.
     $this->validateSurvey();
     $this->assign('surveyTitle', $this->_surveyDetails['title']);
+    $this->assign('activityType', $this->_surveyDetails['activity_type_id']);
+    $this->assign('surveyId', $this->_surveyId);
 
     //append breadcrumb to survey dashboard.
     if (CRM_Campaign_BAO_Campaign::accessCampaign()) {
@@ -158,6 +160,9 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
    */
   function buildQuickForm() {
     // allow to add contact to either new or existing group.
+    $this->addElement('checkbox', 'create', ts('Create Report'));
+    $this->addElement('text', 'ReportName', ts('Name of the Report'));
+    $this->addElement('text', 'ActivityType', ts('Activity Type'));
     $this->addElement('text', 'newGroupName', ts('Name for new group'));
     $this->addElement('text', 'newGroupDesc', ts('Description of new group'));
     $groups = CRM_Core_PseudoConstant::group();
@@ -185,6 +190,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
       $buttons[] = array(
         'type' => 'next',
         'name' => ts('Reserve and Interview'),
+        'js' => array('onclick' => 'createReport();'),
         'subName' => 'reserveToInterview',
       );
     }
@@ -197,6 +203,13 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     $this->addFormRule(array('CRM_Campaign_Form_Task_Reserve', 'formRule'), $this);
   }
 
+  function setDefaultValues(){
+    
+    $this->_defaults = array();
+    $this->_defaults['ReportName'] = $this->_surveyDetails['title'];
+    $this->_defaults['create'] = 1;
+    return $this->_defaults;
+  }
   /**
    * global validation rules for the form
    *

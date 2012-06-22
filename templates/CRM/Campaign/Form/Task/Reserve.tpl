@@ -38,6 +38,25 @@
   </tr>
   <tr><td colspan=2>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
 </table>
+{* Create Report *}
+<div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+ <div class="icon crm-accordion-pointer"></div> 
+ {ts}Create Report{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+            <table class="form-layout-compressed">
+	      <tr>
+		<td class="description label">{$form.create.label}</td>
+		<td>{$form.create.html}</td>
+  	     </tr>
+             <tr>
+               <td class="description label">{$form.ReportName.label}</td>
+               <td>{$form.ReportName.html}</td>
+             </tr>
+            </table>
+ </div><!-- /.crm-accordion-body -->
+ </div><!-- /.crm-accordion-wrapper -->
 
 {* Group options *}
  {* New Group *}
@@ -100,12 +119,15 @@
  }
 
  function createReport( ) { 
-    var dataUrl = {/literal}"{crmURL p='civicrm/report/survey/detail' h=0 q='force=1&name=sth new&&activity=28&survey_id_op=in&survey_id_value=1&output=create_report'}"{literal};
+ if ( cj("#create").is(':checked')){
+    var dataUrl = {/literal}"{crmURL p='civicrm/report/survey/detail' h=0 q='force=1'}"{literal};
+    dataUrl = dataUrl +'&name='+'{/literal}{$surveyTitle}{literal}'+'&activity='+'{/literal}{$activityType}{literal}'+'&survey_id_value='+'{/literal}{$surveyId}{literal}'+'&survey_id_op=in'+'&output=create_report'
 
     cj.ajax({
        url: dataUrl,
        async: false
        });
+     }
  }
 </script>
 {/literal} 
