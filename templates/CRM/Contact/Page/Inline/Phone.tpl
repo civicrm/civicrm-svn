@@ -34,7 +34,7 @@
     </div>
     {else}
       <div>
-        <a id="edit-phone" class="crm-link-action" title="{ts}click to add a phone number{/ts}">
+        <a id="edit-phone" class="crm-link-action empty-phone" title="{ts}click to add a phone number{/ts}">
           <span class="batch-edit"></span>{ts}add phone{/ts}
         </a>
       </div>
@@ -60,9 +60,9 @@ cj(function(){
       cj('#edit-phone').show();
     }).mouseleave( function() {
       cj(this).removeClass('crm-inline-edit-hover');
-      {/literal}{if $phone}{literal}
-      cj('#edit-phone').hide();
-      {/literal}{/if}{literal}
+      if ( !cj('#edit-phone').hasClass('empty-phone') ) { 
+        cj('#edit-phone').hide();
+      }
     });
 
     cj('#edit-phone').click( function() {
