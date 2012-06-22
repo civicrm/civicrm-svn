@@ -98,5 +98,14 @@
        cj("#newGroupDesc").val( '' );
     }
  }
+
+ function createReport( ) { 
+    var dataUrl = {/literal}"{crmURL p='civicrm/report/survey/detail' h=0 q='force=1&name=sth new&&activity=28&survey_id_op=in&survey_id_value=1&output=create_report'}"{literal};
+
+    cj.ajax({
+       url: dataUrl,
+       async: false
+       });
+ }
 </script>
 {/literal} 

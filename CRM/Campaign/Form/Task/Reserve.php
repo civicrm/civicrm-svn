@@ -174,6 +174,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
       array('type' => 'done',
         'name' => ts('Reserve'),
         'subName' => 'reserve',
+        'js' => array('onclick' => 'createReport();'),
         'isDefault' => TRUE,
       ));
 
