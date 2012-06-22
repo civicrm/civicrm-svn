@@ -44,8 +44,7 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
    * @param array $params input parameters
    */
 
-  static
-  function create($params) {
+  static function create($params) {
     if (!empty($params['d'])) {
       CRM_Utils_Hook::pre('edit', 'Email', $params['id'], $params);
     }
@@ -79,8 +78,7 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
    * @access public
    * @static
    */
-  static
-  function add(&$params) {
+  static function add(&$params) {
     $email = new CRM_Core_DAO_Email();
     $email->copyValues($params);
 
@@ -115,8 +113,7 @@ WHERE  contact_id = {$params['contact_id']}
    * @access public
    * @static
    */
-  static
-  function &getValues($entityBlock) {
+  static function &getValues($entityBlock) {
     return CRM_Core_BAO_Block::getValues('email', $entityBlock);
   }
 
@@ -129,8 +126,7 @@ WHERE  contact_id = {$params['contact_id']}
    * @access public
    * @static
    */
-  static
-  function allEmails($id, $updateBlankLocInfo = FALSE) {
+  static function allEmails($id, $updateBlankLocInfo = FALSE) {
     if (!$id) {
       return NULL;
     }
@@ -187,8 +183,7 @@ ORDER BY  civicrm_email.is_primary DESC, email_id ASC ";
    * @access public
    * @static
    */
-  static
-  function allEntityEmails(&$entityElements) {
+  static function allEntityEmails(&$entityElements) {
     if (empty($entityElements)) {
       return NULL;
     }
@@ -236,8 +231,7 @@ ORDER BY e.is_primary DESC, email_id ASC ";
    * @return void
    * @static
    */
-  static
-  function holdEmail(&$email) {
+  static function holdEmail(&$email) {
     //check for update mode
     if ($email->id) {
       $params = array(1 => array($email->id, 'Integer'));
@@ -284,8 +278,7 @@ AND    reset_date IS NULL
    * @access public
    * @static
    */
-  static
-  function getFromEmail() {
+  static function getFromEmail() {
     $session         = CRM_Core_Session::singleton();
     $contactID       = $session->get('userID');
     $fromEmailValues = array();
@@ -317,8 +310,7 @@ AND    reset_date IS NULL
     return $fromEmailValues;
   }
 
-  static
-  function isMultipleBulkMail() {
+  static function isMultipleBulkMail() {
     return CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME, 'civimail_multiple_bulk_emails', NULL, FALSE);
   }
 }
