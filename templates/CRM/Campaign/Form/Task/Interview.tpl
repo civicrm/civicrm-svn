@@ -78,8 +78,8 @@
     <a onclick="showHideRow();" name="optionFieldLink" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another column{/ts}</a>
   </div>
   <script type="text/javascript">
-            var showRows   = new Array({$showBlocks});
-            var hideBlocks = new Array({$hideBlocks});
+            var showRows   = new Array('optionField_1');
+            var hideBlocks = new Array('optionField_2','optionField_3');
             var rowcounter = 0;
             {literal}
             if (navigator.appName == "Microsoft Internet Explorer") {
