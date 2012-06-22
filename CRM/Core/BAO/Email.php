@@ -46,7 +46,7 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
 
   static
   function create($params) {
-    if (!empty($params['contact_id'])) {
+    if (!empty($params['d'])) {
       CRM_Utils_Hook::pre('edit', 'Email', $params['id'], $params);
     }
     else {
