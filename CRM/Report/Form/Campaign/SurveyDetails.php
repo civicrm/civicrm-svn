@@ -263,16 +263,13 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     parent::preProcess();
     if ( CRM_Utils_Array::value('surveyid',$_GET) && CRM_Utils_Array::value('activity',$_GET) ){
       if ( CRM_Utils_Array::value('activity',$_GET) && (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','WalkList')) ){
-        $val = array('title' => CRM_Utils_Array::value('name',$_GET), 'survey_id_value' => CRM_Utils_Array::value('surveyid',$_GET), 'status_id_value' => 1,'report_header' => "", 'report_footer' => "" );
-        $this->_setParams($val);
+        $this->_setParams('WalkList');
       }
       elseif ( CRM_Utils_Array::value('activity',$_GET) && (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','PhoneBank')) ){
-        $val = array('title' => CRM_Utils_Array::value('name',$_GET), 'survey_id_value' => CRM_Utils_Array::value('surveyid',$_GET), 'status_id_value' => 1,'report_header' => "", 'report_footer' => "" );
-        $this->_setParams($val);
+        $this->_setParams('PhoneBank');
       }
       elseif ( CRM_Utils_Array::value('activity',$_GET) && ((CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','Survey')) || (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','Canvass'))) ){
-        $val = array('title' => CRM_Utils_Array::value('name',$_GET), 'survey_id_value' => CRM_Utils_Array::value('surveyid',$_GET), 'status_id_value' => 1,'report_header' => "", 'report_footer' => "" );
-        $this->_setParams($val);
+        $this->_setParams();
       }
     }
   }
@@ -950,31 +947,26 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
       $this->_aliases[$resTable] = $this->_columns[$resTable]['alias'];
     }
   }
-  private function _setParams($val){
+  private function _setParams($activityType = NULL){
     
+    $val = array('title' => CRM_Utils_Array::value('name',$_GET), 'survey_id_value' => CRM_Utils_Array::value('surveyid',$_GET), 'status_id_value' => 1,'report_header' => "", 'report_footer' => "" );
     $this->_params['title'] = $val['title'];
     $this->_params['survey_id_value'] = $val['survey_id_value'];
     $this->_params['status_id_value'] = $val['status_id_value'];
     $this->_params['report_header'] = $val['report_header'];
     $this->_params['report_footer'] = $val['report_footer'];
-    if ( CRM_Utils_Array::value('activity',$_GET) && (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','WalkList')) ){
+    if ($activityType == 'WalkList'){
       $value = array('fields[street_number]','fields[street_name]','fields[street_unit]','fields[survey_response]');
-      foreach($value as $key){
-        $this->_params[$key] = 1;
-      }
     }
-    elseif ( CRM_Utils_Array::value('activity',$_GET) && (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','PhoneBank')) ){
+    elseif ($activityType == 'PhoneBank'){
       $value = array('fields[phone]','fields[street_number]','fields[street_name]','fields[street_unit]','fields[survey_response]');
-      foreach($value as $key){
-        $this->_params[$key] = 1;
-      }
     }
-    elseif ( CRM_Utils_Array::value('activity',$_GET) && ((CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','Survey')) || (CRM_Utils_Array::value('activity',$_GET) == CRM_Core_OptionGroup::getValue('activity_type','Canvass'))) ){
-      $value = array('fields[phone]','fields[street_number]','fields[street_name]','fields[street_unit]','fields[survey_response]','fields[city]','fields[state_province_id]','fields[postal_Code]','fields[email]');
-      foreach($value as $key){
-        $this->_params[$key] = 1;
-      }
+    else{
+      $value = array('fields[phone]','fields[street_number]','fields[street_name]','fields[street_unit]','fields[survey_response]','fields[city]','fields[state_province_id]','fields[postal_code]','fields[email]');
     }
+    foreach($value as $key){
+      $this->_params[$key] = 1;
+    } 
     CRM_Report_Form_Instance::postProcess($this);
     
   }
