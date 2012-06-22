@@ -123,6 +123,16 @@ AND     ( g.cache_date IS NULL OR
       $sql       = "INSERT IGNORE INTO civicrm_group_contact_cache (group_id,contact_id) VALUES $str;";
       CRM_Core_DAO::executeQuery($sql);
     }
+    self::updateCacheTime($groupID, $processed);
+  }
+
+  /**
+   * Change the cache_date
+   *
+   * @param $groupID array(int) 
+   * @param $processed bool, whether the cache data was recently modified
+   */
+  static function updateCacheTime($groupID, $processed) {
 
     // only update cache entry if we had any values
     if ($processed) {
@@ -318,27 +328,28 @@ WHERE  id = %1
     }
 
     if ($sql) {
-      $sql .= " UNION ";
+      // $sql .= " UNION ";
+      $sql = preg_replace("/^SELECT/", "SELECT $groupID as group_id, ", $sql);
     }
 
     // lets also store the records that are explicitly added to the group
     // this allows us to skip the group contact LEFT JOIN
-    $sql .= "
-SELECT contact_id as $idName
+    $sqlB = "
+SELECT $groupID as group_id, contact_id as $idName
 FROM   civicrm_group_contact
 WHERE  civicrm_group_contact.status = 'Added'
   AND  civicrm_group_contact.group_id = $groupID ";
 
-    $dao = CRM_Core_DAO::executeQuery($sql);
-
-    $values = array();
-    while ($dao->fetch()) {
-      $values[] = "({$groupID},{$dao->$idName})";
-    }
-
     $groupIDs = array($groupID);
     self::remove($groupIDs);
-    self::store($groupIDs, $values);
+
+    foreach (array($sql, $sqlB) as $selectSql) {
+      $insertSql = "INSERT IGNORE INTO civicrm_group_contact_cache (group_id,contact_id) ($selectSql);";
+      // CRM_Core_Error::debug_var('insertSql', $insertSql);
+      $processed = TRUE; // FIXME
+      $result = CRM_Core_DAO::executeQuery($insertSql);
+    }
+    self::updateCacheTime($groupIDs, $processed);
 
     if ($group->children) {
 
