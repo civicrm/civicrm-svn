@@ -256,6 +256,13 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'name' => 'label',
           ),
         ),
+        'order_bys' =>
+        array(
+          'price_field_label' =>
+          array('title' => ts('Price Field Label'),
+                'name' => 'label',
+          ),
+        ),
         'group_bys' =>
         array(
           'price_field_label' =>
@@ -491,6 +498,12 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'total_amount' =>
           array('title' => ts('Contribution Amount')),
         ),
+        'order_bys' =>
+        array(
+          'payment_instrument_id' =>
+          array('title' => ts('Payment Instrument'),
+          ),
+        ),
         'group_bys' =>
         array(
           'contribution_type_id' =>
@@ -545,7 +558,8 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
         ),
       ),
     );
-  }  function getCaseColumns() {
+  }
+  function getCaseColumns() {
     return array(
       'civicrm_case' => array(
         'dao' => 'CRM_Case_DAO_Case',
