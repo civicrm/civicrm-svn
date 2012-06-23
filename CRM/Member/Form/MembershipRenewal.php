@@ -345,7 +345,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
         $autoRenew = array();
         if (!empty($membershipType)) {
           $sql = '
-SELECT  id, 
+SELECT  id,
         auto_renew,
         duration_unit,
         duration_interval
@@ -394,9 +394,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
       $this->add('text', 'total_amount', ts('Amount'));
       $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
-      
+
       $this->addDate('receive_date', ts('Received'), FALSE, array('formatType' => 'activityDate'));
-      
+
       $this->add('text', 'num_terms', ts('Extend Membership by'), array('onchange' => "setPaymentBlock();"), TRUE);
       $this->addRule('num_terms', ts('Please enter a whole number for how many periods to renew.'), 'integer');
 
@@ -525,9 +525,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     if (CRM_Utils_Array::value('receive_date', $this->_params)) {
       $formValues['receive_date'] = CRM_Utils_Date::processDate($this->_params['receive_date']);
     } else {
-     $formValues['receive_date'] = $now; 
+     $formValues['receive_date'] = $now;
     }
-    $this->assign('receive_date', $formValues['receive_date']);      
+    $this->assign('receive_date', $formValues['receive_date']);
 
     if (CRM_Utils_Array::value('send_receipt', $this->_params)) {
       $formValues['receipt_date'] = $now;
@@ -548,7 +548,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($formValues['payment_processor_id'],
         $this->_mode
       );
-      
+
       $fields = array();
 
       // set email for primary location.
@@ -603,7 +603,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       if (CRM_Utils_Array::value('send_receipt', $this->_params)) {
         $paymentParams['email'] = $this->_contributorEmail;
       }
-      
+
       if(CRM_Utils_Array::value(1,$this->_params['contribution_contact_select_id'])){
         $paymentParams['contactID'] = $contributionContactID = $this->_params['contribution_contact_select_id'][1];
         if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
@@ -687,7 +687,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     if (CRM_Utils_Array::value('record_contribution', $formValues) || $this->_mode) {
       // set the source
       $formValues['contribution_source'] = "{$memType} Membership: Offline membership renewal (by {$userName})";
-      
+
       //create line items
       $lineItem = array();
       $priceSetId = null;
@@ -705,7 +705,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $formValues['contribution_contact_id'] = $formValues['contribution_contact_select_id'][1];
       }
       $formValues['contact_id'] = $this->_contactID;
-      
+
       CRM_Member_BAO_Membership::recordMembershipContribution( $formValues, CRM_Core_DAO::$_nullArray, $renewMembership->id );
 
       if ($this->_mode) {
