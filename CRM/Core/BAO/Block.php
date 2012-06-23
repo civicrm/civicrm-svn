@@ -430,6 +430,7 @@ class CRM_Core_BAO_Block {
         break;
     }
     // if id is set & we don't have contact_id we need to retrieve it
+    $contactId = null;
     if (!empty($params['id']) && empty($params['contact_id'])) {
       $entity = new $class();
       $entity->id = $params['id'];
