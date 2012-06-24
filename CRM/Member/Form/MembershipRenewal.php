@@ -41,11 +41,31 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
   /*
    * Display name of the member
    */
-  protected $_memberDisplayName;
+  protected $_memberDisplayName = null;
+  /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_memberEmail = null;
+  /*
+  * Contact ID of the member
+  */
+  protected $_contactID = null;
   /*
   * Display name of the person paying for the membership (used for receipts)
   */
-  protected $_contributorDisplayName;
+  protected $_contributorDisplayName = null;
+ /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_contributorEmail = null;
+  /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_contributorContactID = null;
+ /*
+  * ID of the person the receipt is to go to
+  */
+  protected $_receiptContactId = null;
 
   public function preProcess() {
     //custom data related code
@@ -511,7 +531,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     // get the submitted form values.
     $this->_params = $formValues = $this->controller->exportValues($this->_name);
-
+    $this->storeContactFields($formValues);
     // use values from screen
 
     if ($formValues['membership_type_id'][1] <> 0) {
@@ -582,7 +602,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         }
       }
 
-      $contactID = CRM_Contact_BAO_Contact::createProfileContact($formValues, $fields, $this->_contactID, NULL, NULL, $ctype);
+      //here we are setting up the billing contact - if different from the member they are already created
+      // but they will get billing details assigned
+      CRM_Contact_BAO_Contact::createProfileContact($formValues, $fields,
+        $this->_contributorContactID, NULL, NULL, $ctype
+      );
 
       // add all the additional payment params we need
       $this->_params["state_province-{$this->_bltID}"] = $this->_params["billing_state_province-{$this->_bltID}"] = CRM_Core_PseudoConstant::stateProvinceAbbreviation($this->_params["billing_state_province_id-{$this->_bltID}"]);
@@ -604,11 +628,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $paymentParams['email'] = $this->_contributorEmail;
       }
 
-      if(CRM_Utils_Array::value(1,$this->_params['contribution_contact_select_id'])){
-        $paymentParams['contactID'] = $contributionContactID = $this->_params['contribution_contact_select_id'][1];
+      $paymentParams['contactID'] = $this->_contributorContactID;
+      //CRM-10377 if payment is by an alternate contact then we need to set that person
+      // as the contact in the payment params
+      if($this->_contributorContactID != $this->_contactID){
         if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
           $paymentParams['honor_contact_id'] = $this->_contactID;
-         $paymentParams['honor_type_id'] = $this->_params['honor_type_id'];
+          $paymentParams['honor_type_id'] = $this->_params['honor_type_id'];
         }
       }
       CRM_Core_Payment_Form::mapParams($this->_bltID, $this->_params, $paymentParams, TRUE);
@@ -701,8 +727,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $formValues['processPriceSet'] = TRUE;
       }
       //assign contribution contact id to the field expected by recordMembershipContribution
-      if(CRM_Utils_Array::value(1, $formValues['contribution_contact_select_id'])){
-        $formValues['contribution_contact_id'] = $formValues['contribution_contact_select_id'][1];
+      if($this->_contributorContactID != $this->_contactID){
+        $formValues['contribution_contact_id'] = $this->_contributorContactID;
+        if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
+          $formValues['honor_contact_id'] = $this->_contactID;
+        }
       }
       $formValues['contact_id'] = $this->_contactID;
 
@@ -736,22 +765,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $receiptSend = FALSE;
     if (CRM_Utils_Array::value('send_receipt', $formValues)) {
       $receiptSend = TRUE;
-      // Retrieve the name and email of the contact - this will be the TO for receipt email
-      list($this->_memberDisplayName,
-        $this->_contributorEmail
-      ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
 
-      //if the membership was paid for by someone will send them the email
-      if( CRM_Utils_Array::value('1', $formValues['contribution_contact_select_id'] ) ) {
-        $this->_contributioncontactID = $formValues['contribution_contact_select_id'][1];
-        // we can set memberdisplay name from the form as we know it will be set in this case
-        $this->_contributorDisplayName = $formValues['contribution_contact'][1];
-         list( $dontcare,
-           $this->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contributioncontactID );
-      }
-      else{
-        $this->_contributorDisplayName = $this->_memberDisplayName;
-      }
       $receiptFrom = $formValues['from_email_address'];
 
       if (CRM_Utils_Array::value('payment_instrument_id', $formValues)) {
@@ -843,7 +857,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         array(
           'groupName' => 'msg_tpl_workflow_membership',
           'valueName' => 'membership_offline_receipt',
-          'contactId' => $this->_contactID,
+          'contactId' => $this->_receiptContactId,
           'from' => $receiptFrom,
           'toName' => $this->_contributorDisplayName,
           'toEmail' => $this->_contributorEmail,
