@@ -104,6 +104,12 @@ function _civicrm_api3_contribution_create_spec(&$params) {
     'description' => 'ID of Contact to be Soft credited to',
     'FKClassName' => 'CRM_Contact_DAO_Contact',
   );
+    $params['skipRecentView'] = array(
+    'name' => 'skipRecentView',
+    'title' => 'Skip adding to recent view',
+    'type' => 1,
+    'description' => 'Do not add to recent view (setting this improves performance)',
+  );
 }
 
 /**
@@ -352,7 +358,7 @@ function civicrm_api3_contribution_transact($params) {
  * @return array  Api result array
  * @static void
  * @access public
- * 
+ *
  */
 function civicrm_api3_contribution_sendconfirmation($params) {
   $contribution = new CRM_Contribute_BAO_Contribution();
