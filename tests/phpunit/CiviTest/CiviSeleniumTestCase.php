@@ -147,8 +147,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     return $_config_backend[$field];
   }
 
-  function webtestAddContact($fname = 'Anthony', $lname = 'Anderson', $email = NULL) {
-    $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual');
+  function webtestAddContact($fname = 'Anthony', $lname = 'Anderson', $email = NULL, $contactSubtype = NULL) {
+    $url = $this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual';
+    if ($contactSubtype) {
+      $url = $url . "&cst={$contactSubtype}";  
+    }
+    $this->open($url);
     $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
     $this->type('first_name', $fname);
     $this->type('last_name', $lname);

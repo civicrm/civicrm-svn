@@ -36,6 +36,30 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     parent::setUp();
   }
 
+  function testBatchUpdateWithContactSubtypes() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
+
+    // Add new individual using Quick Add block on the main page
+    $firstName1 = "John_" . substr(sha1(rand()), 0, 7);
+    $lastName   = "Smiths_" . substr(sha1(rand()), 0, 7);
+    $Name1      = $lastName . ', ' . $firstName1;
+    $this->webtestAddContact($firstName1, $lastName, "$firstName1.$lastName@example.com");
+    $this->waitForPageToLoad("30000");
+    
+    // Add new individual using Quick Add block on the main page
+    $firstName1 = "James_" . substr(sha1(rand()), 0, 7);
+    $Name2 = $lastName . ', ' . $firstName1;
+    $this->webtestAddContact($firstName1, $lastName, "$firstName1.$lastName@example.com", "Student");
+
+    $this->waitForPageToLoad("30000");
+  }
+
   function testBatchUpdate() {
     // This is the path where our testing install resides.
     // The rest of URL is defined in CiviSeleniumTestCase base class, in
