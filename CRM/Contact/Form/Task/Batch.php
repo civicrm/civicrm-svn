@@ -176,7 +176,8 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task {
     if (empty($this->_fields)) {
       return;
     }
-
+    
+    $defaults = $sortName = array();
     foreach ($this->_contactIds as $contactId) {
       $details[$contactId] = array();
 
