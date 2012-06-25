@@ -1542,7 +1542,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     $required      = ($mode == CRM_Profile_Form::MODE_SEARCH) ? FALSE : $field['is_required'];
     $search        = ($mode == CRM_Profile_Form::MODE_SEARCH) ? TRUE : FALSE;
     $isShared      = CRM_Utils_Array::value('is_shared', $field, 0);
-
+    
     // do not display view fields in drupal registration form
     // CRM-4632
     if ($view && $mode == CRM_Profile_Form::MODE_REGISTER) {
@@ -1652,13 +1652,13 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       'membership_start_date', 'membership_end_date', 'join_date'))) {
       $form->addDate($name, $title, $required, array('formatType' => 'custom'));
     }
-    elseif ($field['name'] == 'membership_type') {
+    elseif (CRM_Utils_Array::value('name',$field) == 'membership_type') {
       list($orgInfo, $types) = CRM_Member_BAO_MembershipType::getMembershipTypeInfo();
       $sel = &$form->addElement('hierselect', $name, $title);
       $select = array( '' => ts('- select -') );
       $sel->setOptions(array( $select + $orgInfo, $types));
     }
-    elseif ($field['name'] == 'membership_status') {
+    elseif (CRM_Utils_Array::value('name',$field) == 'membership_status') {
       $form->add('select', $name, $title,
         array(
           '' => ts('- select -')) + CRM_Member_PseudoConstant::membershipStatus(NULL, NULL, 'label'), $required

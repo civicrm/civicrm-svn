@@ -261,7 +261,9 @@ WHERE {$clause}
     foreach ($this->_contactIds as $contactId) {
       //build the profile fields.
       foreach ($this->_surveyFields as $name => $field) {
-        CRM_Core_BAO_UFGroup::buildProfile($this, $field, NULL, $contactId);
+        if ($field){
+          CRM_Core_BAO_UFGroup::buildProfile($this, $field, NULL, $contactId);
+         }
       }
 
       //build the result field.
@@ -340,7 +342,7 @@ WHERE {$clause}
     //load default data for only contact fields.
     $contactFields = $defaults = array();
     foreach ($this->_surveyFields as $name => $field) {
-      if ($field['field_type'] == 'Contact') {
+      if (CRM_Utils_Array::value('field_type',$field) == 'Contact') {
         $contactFields[$name] = $field;
       }
     }
