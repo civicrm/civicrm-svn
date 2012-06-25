@@ -49,12 +49,15 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     $firstName = 'Anthony' . substr(sha1(rand()), 0, 7);
     $lastName  = 'Anderson' . substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName, $lastName);
-  
+    
     //email block check
     $this->_addEditPhoneEmail();
     
     //phone block check
     $this->_addEditPhoneEmail('phone');
+
+    //communications block check
+    $this->_addCommunicationPreferences($firstName, $lastName);
   }
   
   function _addEditPhoneEmail($field = "email") {
@@ -140,6 +143,63 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
       sleep(2);
       $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-label'][1]", "Home " . $phoneType[2]);
       $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content '][1]/span", preg_quote($assertValues['Work'] ."  ext. ". 543));
+    }
+
+  }
+  
+  function _addCommunicationPreferences($firstName, $lastName) {
+    $linkText = "add or edit communication preferences";
+    $field = "communication-pref";
+    $this->_checkClickLink($linkText, $field);
+    $privacyOptions = array(
+      "do_not_mail" => "Do not mail",
+      "do_not_sms" => "Do not sms",                         
+      "do_not_trade" => "Do not trade"
+    );
+   
+    foreach ($privacyOptions as $key => $value) {
+      $this->check("privacy[{$key}]");
+    }
+    $this->check("is_opt_out");
+    
+    $preferedCommunication = array(1 => "Phone", 2 => "Email");
+    foreach ($preferedCommunication as $key => $value) {
+      $this->check("preferred_communication_method[{$key}]");
+    }
+    
+    $this->assertTrue($this->isElementPresent("preferred_language"), "preferred language field missing");
+    $this->assertTrue($this->isElementPresent("preferred_mail_format"), "preferred mail format field missing");
+    $this->click("xpath=//span[@id='email_greeting_display']/a");
+        
+    $this->click("xpath=//span[@id='postal_greeting_display']/a");
+    $this->select("postal_greeting_id", "value=1");
+
+    $this->click("xpath=//span[@id='addressee_display']/a");
+    $this->select("addressee_id", "value=1");
+
+    $this->click("_qf_CommunicationPreferences_upload");
+    
+    //assertions
+    $assertValues = array(
+      'preferred_communication_method_display' => array('label' => "Preferred Method(s)", 'content' => implode(", ", $preferedCommunication)),
+      'preferred_language' => array('label' => "Preferred Language", 'content' => "English (United States)"),
+      'preferred_mail_format' => array('label' => "Email Format", 'content' => "Both"),
+      'email_greeting_display' => array('label' => "Email Greeting", 'content' => "Dear {$firstName}"),
+      'postal_greeting_display' => array('label' => "Postal Greeting", 'content' => "Dear {$firstName}"),
+      'addressee_display' => array('label' => "Addressee", 'content' => "{$firstName} {$lastName}")
+    );
+    
+    //privacy options check
+    $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[@class='crm-label']", "Privacy");
+    $assertCheck = array_merge($privacyOptions, array("No Bulk Emails (User Opt Out)"));
+    $assertCheck = implode("\n ", $assertCheck);
+    $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[3]", preg_quote("{$assertCheck}"));
+    
+    $i = 2;
+    foreach ($assertValues as $key => $value) {
+      $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[@class='crm-label'][{$i}]", preg_quote($value['label']));
+      $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact-{$key}']", preg_quote($value['content']));
+      $i++;
     }
   }
   
