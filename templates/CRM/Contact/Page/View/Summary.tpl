@@ -28,6 +28,8 @@
     {include file="CRM/Contact/Form/Contact.tpl"}
 {else}
 
+{include file="CRM/common/wysiwyg.tpl" includeWysiwygEditor=true}
+
 <div class="crm-actions-ribbon">
     <ul id="actions">
         {assign var='urlParams' value="reset=1"}
