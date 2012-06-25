@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,33 +23,53 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{* Custom Data view mode*}
-{assign var="customGroupCount" value = 1}
-{foreach from=$viewCustomData item=customValues key=customGroupId}
-  {assign var="count" value=$customGroupCount%2}
-  {if ($count eq $side) or $skipTitle }
-    {foreach from=$customValues item=cd_edit key=cvID}
-      <div class="customFieldGroup ui-corner-all {$cd_edit.name}">
-        <table id="{$cd_edit.name}_{$count}" >
-          {if !$skipTitle}
-          <tr class="columnheader">
-            <td colspan="2" class="grouplabel">
-              <a href="#" class="show-block {if $cd_edit.collapse_display eq 0 } expanded collapsed {else} collapsed {/if}" >
-                {$cd_edit.title}
-              </a>
-            </td>
-          </tr>
-          {/if}
-          <tr class= "{if $cd_edit.collapse_display and !$skipTitle}hiddenElement{/if}">
-            <td>
-              {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupId=$customGroupId}
-            </td>
-          </tr>
-        </table>
-      </div>
-    {/foreach}
-  {/if}
-  {assign var="customGroupCount" value = $customGroupCount+1}
-{/foreach}
+ */
+
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * $Id$
+ *
+ */
+
+/**
+ * This page displays custom data during inline edit 
+ *
+ */
+class CRM_Contact_Page_Inline_CustomData {
+
+  /**
+   * Run the page.
+   *
+   * This method is called after the page is created.
+   *
+   * @return void
+   * @access public
+   *
+   */
+  function run() {
+    // get the emails for this contact
+    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
+    $cgId = CRM_Utils_Request::retrieve('groupID', 'Positive', $this, TRUE, NULL, $_REQUEST);
+ 
+    //custom groups Inline
+    $entityType    = CRM_Contact_BAO_Contact::getContactType($contactId);
+    $entitySubType = CRM_Contact_BAO_Contact::getContactSubType($contactId);
+    $page = new CRM_Core_Page();
+    $groupTree     = &CRM_Core_BAO_CustomGroup::getTree($entityType, $page, $contactId,
+      $cgId, $entitySubType
+      );
+
+    CRM_Core_BAO_CustomGroup::buildCustomDataView($page, $groupTree);
+    
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign('contactId', $contactId);
+    $template->assign('customGroupId', $cgId);
+    $template->assign($defaults);
+
+    echo $content = $template->fetch('CRM/Contact/Page/Inline/CustomData.tpl');
+    CRM_Utils_System::civiExit();
+  }
+}
 

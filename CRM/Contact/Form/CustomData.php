@@ -94,10 +94,10 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form {
   protected $_groupCollapseDisplay;
 
   /**
-   * the id of the object being viewed (note/relationship etc)
+   * custom group id 
    *
    * @int
-   * @access protected
+   * @access public
    */
   public $_groupID;
 
@@ -112,7 +112,8 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form {
    *
    * @access public
    *
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     $this->_cdType = CRM_Utils_Array::value('type', $_GET);
 
     $this->assign('cdType', FALSE);

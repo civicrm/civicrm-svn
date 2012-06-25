@@ -23,32 +23,21 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* Custom Data view mode*}
-{assign var="customGroupCount" value = 1}
-{foreach from=$viewCustomData item=customValues key=customGroupId}
-  {assign var="count" value=$customGroupCount%2}
-  {if ($count eq $side) or $skipTitle }
-    {foreach from=$customValues item=cd_edit key=cvID}
-      <div class="customFieldGroup ui-corner-all {$cd_edit.name}">
-        <table id="{$cd_edit.name}_{$count}" >
-          {if !$skipTitle}
-          <tr class="columnheader">
-            <td colspan="2" class="grouplabel">
-              <a href="#" class="show-block {if $cd_edit.collapse_display eq 0 } expanded collapsed {else} collapsed {/if}" >
-                {$cd_edit.title}
-              </a>
-            </td>
-          </tr>
-          {/if}
-          <tr class= "{if $cd_edit.collapse_display and !$skipTitle}hiddenElement{/if}">
-            <td>
-              {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupId=$customGroupId}
-            </td>
-          </tr>
-        </table>
-      </div>
-    {/foreach}
-  {/if}
-  {assign var="customGroupCount" value = $customGroupCount+1}
-{/foreach}
 
+<div class="crm-inline-edit-form crm-table2div-layout">
+  <div class="crm-inline-button">
+    {include file="CRM/common/formButtons.tpl"}
+  </div>
+  {include file="CRM/Custom/Form/CustomData.tpl" skipTitle=true}
+</div> <!-- end of main -->
+{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
+
+{literal}
+<script type="text/javascript">
+cj( function() {
+  var cgId = {/literal}{$customGroupId}{literal};
+  // add ajax form submitting
+  inlineEditForm( 'CustomData', 'custom-set-block-' + cgId, {/literal}{$contactId}{literal}, cgId ); 
+});
+</script>
+{/literal}

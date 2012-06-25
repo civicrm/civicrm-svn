@@ -24,11 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 
-<div class="crm-summary-block" id="custom-set-block-{$customGroupName}">
-<div class="crm-table2div-layout" id="custom-set-content-{$customGroupName}">
+<div class="crm-summary-block" id="custom-set-block-{$customGroupId}">
+<div class="crm-table2div-layout" id="custom-set-content-{$customGroupId}">
   <div class="crm-clear">
     <div class="crm-config-option">
-      <a id="edit-custom-set-block-{$customGroupName}" class="hiddenElement crm-link-action" title="{ts}click to add or edit{/ts}">
+      <a id="edit-custom-set-block-{$customGroupId}" class="hiddenElement crm-link-action" title="{ts}click to add or edit{/ts}" cgId="{$customGroupId}">
       <span class="batch-edit"></span>{ts}add or edit custom set{/ts}
       </a>
     </div>

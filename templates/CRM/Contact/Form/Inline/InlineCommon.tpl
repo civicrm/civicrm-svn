@@ -27,7 +27,7 @@
 
 {literal}
 <script type="text/javascript">
-function inlineEditForm( formName, blockName, contactId ) {
+function inlineEditForm( formName, blockName, contactId, cgId ) {
   // handle ajax form submitting
   var options = { 
     beforeSubmit:  showRequest  // pre-submit callback  
@@ -42,6 +42,9 @@ function inlineEditForm( formName, blockName, contactId ) {
     // but the form plugin does this for you automatically when it submits the data 
     var queryString = cj.param(formData); 
     queryString = queryString + '&class_name=CRM_Contact_Form_Inline_' + formName + '&snippet=5&cid=' + contactId;
+    if ( cgId ) {
+      queryString += '&groupID=' + cgId;
+    }
     var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 }"{literal}; 
     var status = '';
     var response = cj.ajax({
@@ -60,6 +63,10 @@ function inlineEditForm( formName, blockName, contactId ) {
       // fetch the view of email block after edit
       var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1' }"{literal}; 
       var queryString = 'class_name=CRM_Contact_Page_Inline_' + formName + '&type=page&cid=' + contactId;
+      if ( cgId ) {
+        queryString += '&groupID=' + cgId;
+      }
+ 
       var response = cj.ajax({
           type: "POST",
           url: postUrl,

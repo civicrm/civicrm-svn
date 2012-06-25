@@ -23,32 +23,5 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* Custom Data view mode*}
-{assign var="customGroupCount" value = 1}
-{foreach from=$viewCustomData item=customValues key=customGroupId}
-  {assign var="count" value=$customGroupCount%2}
-  {if ($count eq $side) or $skipTitle }
-    {foreach from=$customValues item=cd_edit key=cvID}
-      <div class="customFieldGroup ui-corner-all {$cd_edit.name}">
-        <table id="{$cd_edit.name}_{$count}" >
-          {if !$skipTitle}
-          <tr class="columnheader">
-            <td colspan="2" class="grouplabel">
-              <a href="#" class="show-block {if $cd_edit.collapse_display eq 0 } expanded collapsed {else} collapsed {/if}" >
-                {$cd_edit.title}
-              </a>
-            </td>
-          </tr>
-          {/if}
-          <tr class= "{if $cd_edit.collapse_display and !$skipTitle}hiddenElement{/if}">
-            <td>
-              {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupId=$customGroupId}
-            </td>
-          </tr>
-        </table>
-      </div>
-    {/foreach}
-  {/if}
-  {assign var="customGroupCount" value = $customGroupCount+1}
-{/foreach}
-
+ 
+{include file="CRM/Contact/Page/View/CustomDataView.tpl" skipTitle=true}

@@ -392,7 +392,7 @@
 
 {literal}
 <script type="text/javascript">
-/*
+
 cj(function(){
   var customBlock = cj('div[id^="custom-set-block-"]');
   customBlock.mouseenter( function() {
@@ -402,8 +402,23 @@ cj(function(){
     cj(this).removeClass('crm-inline-edit-hover');
     cj(this).find('a[id^="edit-custom-set-block-"]').hide();
   });
+
+  cj('a[id^="edit-custom-set-block-"]').live( 'click', function() {
+    var cgId   = cj(this).attr('cgId');
+    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&groupID=' + cgId;
+
+    var response = cj.ajax({
+                    type: "GET",
+                    data: {'class_name':'CRM_Contact_Form_Inline_CustomData'},
+                    url: dataUrl,
+                    async: false
+    }).responseText;
+
+    cj( '#custom-set-block-'+ cgId ).html( response );
+  });
+ 
 });
-*/
+
 </script>
 {/literal}
 
