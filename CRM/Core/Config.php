@@ -506,6 +506,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       $mailingInfo = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
         'mailing_backend'
       );
+
       if (defined('CIVICRM_MAILER_SPOOL') &&
         CIVICRM_MAILER_SPOOL
       ) {
@@ -556,6 +557,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       elseif ($mailingInfo['outBound_option'] == 3) {
         $params = array();
         self::$_mail = Mail::factory('mail', $params);
+      }
+      elseif ($mailingInfo['outBound_option'] == 4) {
+        self::$_mail = Mail::factory('mock', $params);
       }
       else {
         CRM_Core_Session::setStatus(ts('There is no valid SMTP server Setting Or SendMail path setting. Click <a href=\'%1\'>Administer CiviCRM >> Global Settings</a> to set the OutBound Email.', array(1 => CRM_Utils_System::url('civicrm/admin/setting', 'reset=1'))));

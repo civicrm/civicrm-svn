@@ -165,12 +165,12 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     $contactID    = NULL
   ) {
 
-    // if both group and name are defined, check if over-ridden by the admin
+    global $civicrm_setting;
     if ($group &&
       $name &&
-      defined("{$group}.{$name}")
+      isset($civicrm_setting[$group][$name])
     ) {
-      return constant("{$group}.{$name}");
+      return $civicrm_setting[$group][$name];
     }
 
     $cacheKey = self::inCache($group, $name, $componentID, $contactID, TRUE);
