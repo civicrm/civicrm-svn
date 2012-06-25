@@ -544,7 +544,8 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         $repeatFound = FALSE;
 
         foreach ($row as $colName => $colVal) {
-          if (is_array($checkList[$colName]) &&
+          if (isset($checkList) && CRM_Utils_Array::value($colName, $checkList) && 
+            is_array($checkList[$colName]) &&
             in_array($colVal, $checkList[$colName])
           ) {
             $rows[$rowNum][$colName] = "";
