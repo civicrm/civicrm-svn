@@ -416,6 +416,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
     $msgTemplate = NULL;
     //mail template is composed
 
+    $composeParams = array();
     foreach ($composeFields as $key) {
       if (CRM_Utils_Array::value($key, $values)) {
         $composeParams[$key] = $values[$key];
