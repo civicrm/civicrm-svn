@@ -402,7 +402,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
     }
 
     if ($form->_action & CRM_Core_Action::ADD) {
-
       if ($fields['html_type'] != 'Text') {
         $countemptyrows = 0;
         $_flagOption = $_rowError = 0;
@@ -425,7 +424,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
               $_flagOption = 1;
             }
           }
-          if ($form->_useForMember && $fields['html_type'] == 'CheckBox') {
+          if ($form->_useForMember) {
             if (!empty($fields['membership_type_id'][$index])) {
               $memTypesIDS[] = $fields['membership_type_id'][$index];
             }
@@ -495,18 +494,41 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         }
 
         if (!empty($memTypesIDS)) {
-          $foundDuplicate = FALSE;
-          $orgIds = array();
+          // check for checkboxes allowing user to select multiple memberships from same membership organization
+          if ($fields['html_type'] == 'CheckBox') {
+            $foundDuplicate = FALSE;
+            $orgIds = array();
+            foreach ($memTypesIDS as $key => $val) {
+              $org = CRM_Member_BAO_MembershipType::getMembershipTypeOrganization($val);
+              if (in_array($org[$val], $orgIds)) {
+                $foundDuplicate = TRUE;
+                break;
+              }
+              $orgIds[$val] = $org[$val];
+
+            }
+            if ($foundDuplicate) {
+              $errors['_qf_default'] = ts('You have selected multiple memberships for the same organization or entity. Please review your selections and choose only one membership per entity.');
+            }
+          }
+          
+          // CRM-10390 - Only one price field in a set can include auto-renew membership options
+          $foundAutorenew = FALSE;
           foreach ($memTypesIDS as $key => $val) {
-            $org = CRM_Member_BAO_MembershipType::getMembershipTypeOrganization($val);
-            if (in_array($org[$val], $orgIds)) {
-              $foundDuplicate = TRUE;
+            // see if any price field option values in this price field are for memberships with autorenew
+            $memTypeDetails = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($val);
+            if (CRM_Utils_Array::value('auto_renew', $memTypeDetails)) {
+              $foundAutorenew = TRUE;
               break;
             }
-            $orgIds[$val] = $org[$val];
           }
-          if ($foundDuplicate) {
-            $errors['_qf_default'] = ts('You have selected multiple memberships for the same organization or entity. Please review your selections and choose only one membership per entity.');
+
+          if ($foundAutorenew) {
+            // if so, check for other fields in this price set which also have auto-renew membership options
+            $otherFieldAutorenew = CRM_Price_BAO_Set::checkAutoRenewForPriceSet($form->_sid);
+            if ($otherFieldAutorenew) {
+              $errors['_qf_default'] = ts('You can include auto-renew membership choices for only one price field in a price set. Another field in this set already contains one or more auto-renew membership options.');
+            }
           }
         }
         $_showHide->addToTemplate();
