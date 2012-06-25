@@ -193,10 +193,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       }
     }
 
-    if (!isset($defaults['default'])) {
-      $defaults['default'] = 1;
-    }
-
     if (!isset($defaults['discounted_default'])) {
       $defaults['discounted_default'] = 1;
     }
