@@ -47,17 +47,56 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     // Add new individual using Quick Add block on the main page
     $firstName1 = "John_" . substr(sha1(rand()), 0, 7);
-    $lastName   = "Smiths_" . substr(sha1(rand()), 0, 7);
-    $Name1      = $lastName . ', ' . $firstName1;
-    $this->webtestAddContact($firstName1, $lastName, "$firstName1.$lastName@example.com");
+    $lastName1   = "Smiths_x" . substr(sha1(rand()), 0, 7);
+    $Name1      = $lastName1 . ', ' . $firstName1;
+    $this->webtestAddContact($firstName1, $lastName1, "$firstName1.$lastName1@example.com");
     $this->waitForPageToLoad("30000");
     
     // Add new individual using Quick Add block on the main page
-    $firstName1 = "James_" . substr(sha1(rand()), 0, 7);
-    $Name2 = $lastName . ', ' . $firstName1;
-    $this->webtestAddContact($firstName1, $lastName, "$firstName1.$lastName@example.com", "Student");
+    $firstName2 = "James_" . substr(sha1(rand()), 0, 7);
+    $lastName2   = "Smiths_x" . substr(sha1(rand()), 0, 7);
+    $Name2 = $lastName2 . ', ' . $firstName2;
+    $this->webtestAddContact($firstName2, $lastName2, "$firstName2.$lastName2@example.com", "Student");
 
     $this->waitForPageToLoad("30000");
+
+    $profileTitle  = 'Batch Profile test_' . substr(sha1(rand()), 0, 7);
+    $profileFields = array (array (
+                                   'type' => 'Individual',
+                                   'name' => 'Last Name',
+                                   'label' => 'Last Name'
+                                   ));
+    $this->addProfile($profileTitle, $profileFields);
+        
+    $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
+    $this->waitForElementPresent('_qf_Basic_refresh');
+    $this->type('sort_name', "Smiths_x");
+    $this->click('_qf_Basic_refresh');
+    $this->waitForElementPresent('_qf_Basic_next_print');
+
+    // Batch Update Via Profile
+    $this->waitForElementPresent('CIVICRM_QFID_ts_all_4');
+    $this->click('CIVICRM_QFID_ts_all_4');
+
+    $this->select('task', "label=Batch Update via Profile");
+    $this->click('Go');
+    $this->waitForElementPresent('_qf_PickProfile_next');
+    $this->waitForElementPresent('uf_group_id');
+    $this->select('uf_group_id', "label={$profileTitle}");
+    $this->click('_qf_PickProfile_next');
+
+    $this->waitForElementPresent('_qf_Batch_next');
+
+    $this->isElementPresent("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name2}']");
+    $this->isElementPresent("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name1}']");
+
+    // selecting first check of profile                                                                                                                                                                     
+    $this->click("xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[2]/input");
+    
+    $this->waitForElementPresent('_qf_Batch_next');
+    $this->click('_qf_Batch_next');
+    $this->waitForElementPresent('_qf_Result_done');
+    $this->click('_qf_Result_done');
   }
 
   function testBatchUpdate() {
