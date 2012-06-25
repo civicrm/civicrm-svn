@@ -118,7 +118,7 @@
 
 	     <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=note}Click to copy %1 from row one to all rows.{/ts}" fname="note" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{ts}Note{/ts}</th>
 	     <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=result}Click to copy %1 from row one to all rows.{/ts}" fname="result" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{ts}Result{/ts}</th>
-	     <th></th> 
+	     <th><a id = "interview_voter_button" class='button' style="float:left;" href="#" title={ts}Vote{/ts} onClick="registerInterviewforall( );return false;">{ts}Record Responses for All{/ts}</a></th> 
        </tr>
     </thead>
 
@@ -183,7 +183,8 @@
 
 {literal}
 <script type="text/javascript">
-    var updateVote = "{/literal}{ts}Update Response{/ts}{literal}";	
+    var updateVote = "{/literal}{ts}Update Response{/ts}{literal}";
+    var updateVoteforall = "{/literal}{ts}Update Responses for All{/ts}{literal}";	
     cj( function( ) {
         var count = 0; var columns=''; var sortColumn = '';
 	
@@ -363,7 +364,21 @@
 	         }, 
 		 'json' );		     
     }
-    
+
+    function registerInterviewforall( )
+    {
+	{/literal}
+	{foreach from=$componentIds item=id}
+	{literal}
+		if (cj('#field_{/literal}{$id}{literal}_result').val()) {
+	         	registerInterview({/literal}{$id}{literal});
+		 	cj('#interview_voter_button').html(updateVoteforall);
+		}
+	{/literal}
+	{/foreach}
+	{literal}
+    }
+    	
 </script>
 {/literal}
 {*include batch copy js js file*}
