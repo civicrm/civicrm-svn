@@ -59,40 +59,43 @@
     <div>{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout">
         <tr class="crm-member-membershiprenew-form-block-payment_processor_id">
-            <td class="label">{$form.payment_processor_id.label}</td>
-            <td class="html-adjust">{$form.payment_processor_id.html}</td>
+          <td class="label">{$form.payment_processor_id.label}</td>
+          <td class="html-adjust">{$form.payment_processor_id.html}</td>
         </tr>
         <tr class="crm-member-membershiprenew-form-block-org_name">
-            <td class="label">{ts}Membership Organization and Type{/ts}</td>
-            <td class="html-adjust">{$orgName}&nbsp;&nbsp;-&nbsp;&nbsp;{$memType}
-                {if $member_is_test} {ts}(test){/ts}{/if}
-                &nbsp; <a id="changeMembershipOrgType" href='#' onclick='adjustMembershipOrgType(); return false;'>{ts}change membership type{/ts}</a></td>
+          <td class="label">{ts}Membership Organization and Type{/ts}</td>
+          <td class="html-adjust">{$orgName}&nbsp;&nbsp;-&nbsp;&nbsp;{$memType}
+            {if $member_is_test} {ts}(test){/ts}{/if}
+            &nbsp; <a id="changeMembershipOrgType" href='#' onclick='adjustMembershipOrgType(); return false;'>{ts}change membership type{/ts}</a>
+					</td>
         </tr>
         <tr id="membershipOrgType" class="crm-member-membershiprenew-form-block-renew_org_name">
-			<td class="label">{$form.membership_type_id.label}</td>
-			<td>{$form.membership_type_id.html}
-    {if $member_is_test} {ts}(test){/ts}{/if}<br />
-        <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span></td>
+					<td class="label">{$form.membership_type_id.label}</td>
+					<td>{$form.membership_type_id.html}
+    					{if $member_is_test} {ts}(test){/ts}{/if}<br />
+        			<span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span>
+					</td>
         </tr>
         <tr class="crm-member-membershiprenew-form-block-membership_status">
-            <td class="label">{ts}Membership Status{/ts}</td>
-            <td class="html-adjust">&nbsp;{$membershipStatus}<br />
+          <td class="label">{ts}Membership Status{/ts}</td>
+          <td class="html-adjust">&nbsp;{$membershipStatus}<br />
             <span class="description">{ts}Status of this membership.{/ts}</span></td>
         </tr>
         <tr class="crm-member-membershiprenew-form-block-end_date">
-            <td class="label">{ts}Membership End Date{/ts}</td>
-            <td class="html-adjust">&nbsp;{$endDate}</td>
+          <td class="label">{ts}Membership End Date{/ts}</td>
+          <td class="html-adjust">&nbsp;{$endDate}</td>
         </tr>
         <tr class="crm-member-membershiprenew-form-block-renewal_date">
-            <td class="label">{$form.renewal_date.label}</td>
-            <td>{include file="CRM/common/jcalendar.tpl" elementName=renewal_date}</td>
+          <td class="label">{$form.renewal_date.label}</td>
+          <td>{include file="CRM/common/jcalendar.tpl" elementName=renewal_date}</td>
         </tr>
 
         {if $accessContribution and ! $membershipMode}
         <tr class="crm-member-membershiprenew-form-block-record_contribution">
-	    <td class="label">{$form.record_contribution.label}</td>
-            <td class="html-adjust">{$form.record_contribution.html}<br />
-            <span class="description">{ts}Check this box to enter payment information. You will also be able to generate a customized receipt.{/ts}</span></td>
+	    		<td class="label">{$form.record_contribution.label}</td>
+          <td class="html-adjust">{$form.record_contribution.html}<br />
+            <span class="description">{ts}Check this box to enter payment information. You will also be able to generate a customized receipt.{/ts}</span>
+					</td>
         </tr>
 
         <tr id="recordContribution" class="crm-member-membershiprenew-form-block-membership_renewal">
@@ -174,26 +177,25 @@
     </table>
     {if $membershipMode}
      {if $context neq 'standalone'}
-         <tr class="crm-membership-form-block-contribution-contact">
-           <td class="label">{$form.contribution_contact.label}</td>
-            <td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
-         </tr>
-          <tr id="record-different-contact">
-                  <td>&nbsp;</td>
-                  <td>
-                    <table class="compressed">
-                      <tr class="crm-membership-form-block-honor-type">
-                        <td class="label">{$form.honor_type_id.label}</td>
-                        <td>{$form.honor_type_id.html}</td>
-                      </tr>
-                      <tr id ='contributionContact' class="crm-membership-form-block-contribution-type">
-                        {include file="CRM/Contact/Form/NewContact.tpl"}
-                      </tr>
-                    </table>
-                  </td>
-                 </tr>
-
-       {/if}
+     	<tr class="crm-membership-form-block-contribution-contact">
+       	<td class="label">{$form.contribution_contact.label}</td>
+      	<td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
+     	</tr>
+     	<tr id="record-different-contact">
+       <td>&nbsp;</td>
+       <td>
+         <table class="compressed">
+           <tr class="crm-membership-form-block-honor-type">
+             <td class="label">{$form.honor_type_id.label}</td>
+             <td>{$form.honor_type_id.html}</td>
+           </tr>
+           <tr id ='contributionContact' class="crm-membership-form-block-contribution-type">
+             {include file="CRM/Contact/Form/NewContact.tpl"}
+           </tr>
+         </table>
+       </td>
+     	</tr>
+     {/if}
      </table>
        <div class="spacer"></div>
        {include file='CRM/Core/BillingBlock.tpl'}
@@ -204,14 +206,14 @@
      <table class="form-layout">
 	     <tr class="crm-member-membershiprenew-form-block-send_receipt">
 	        <td class="label">{$form.send_receipt.label}</td>
-                <td>{$form.send_receipt.html}<br />
+          <td>{$form.send_receipt.html}<br />
 	           <span class="description">{ts 1=$email}Automatically email a membership confirmation and receipt to %1?{/ts}</span>
-                </td>
-             </tr>
+          </td>
+       </tr>
 	     <tr id="fromEmail" >
-                <td class="label">{$form.from_email_address.label}</td>
-                <td>{$form.from_email_address.html}</td>
-             </tr>
+         <td class="label">{$form.from_email_address.label}</td>
+         <td>{$form.from_email_address.html}</td>
+       </tr>
 	     <tr id="notice" class="crm-member-membershiprenew-form-block-receipt_text_renewal">
     	        <td class="label">{$form.receipt_text_renewal.label}</td>
                 <td><span class="description">{ts}Enter a message you want included at the beginning of the emailed receipt. EXAMPLE: 'Thanks for supporting our organization with your membership.'{/ts}</span><br />
