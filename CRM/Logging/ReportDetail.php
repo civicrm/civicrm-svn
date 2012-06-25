@@ -123,7 +123,7 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
     $rows = array();
 
     $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
-    $diffs = $differ->diffsInTable($table);
+    $diffs = $differ->diffsInTable($table, $this->cid);
 
     // return early if nothing found
     if (empty($diffs)) {
