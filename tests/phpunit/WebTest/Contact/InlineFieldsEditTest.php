@@ -51,16 +51,19 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     $this->webtestAddContact($firstName, $lastName);
     
     //email block check
-    $this->_addEditPhoneEmail();
+    $this->addEditPhoneEmail();
     
     //phone block check
-    $this->_addEditPhoneEmail('phone');
+    $this->addEditPhoneEmail('phone');
 
     //communications block check
-    $this->_addCommunicationPreferences($firstName, $lastName);
+    $this->addCommunicationPreferences($firstName, $lastName);
+    
+    //demographics block check
+    $this->addDemographics();
   }
   
-  function _addEditPhoneEmail($field = "email") {
+  function addEditPhoneEmail($field = "email") {
     $isEmail = $isPhone = FALSE;
     if ($field == "email") {
       $isEmail = TRUE;
@@ -147,7 +150,7 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
 
   }
   
-  function _addCommunicationPreferences($firstName, $lastName) {
+  function addCommunicationPreferences($firstName, $lastName) {
     $linkText = "add or edit communication preferences";
     $field = "communication-pref";
     $this->_checkClickLink($linkText, $field);
@@ -170,10 +173,10 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isElementPresent("preferred_language"), "preferred language field missing");
     $this->assertTrue($this->isElementPresent("preferred_mail_format"), "preferred mail format field missing");
     $this->click("xpath=//span[@id='email_greeting_display']/a");
-        
+    $this->select("email_greeting_id", "value=1");        
     $this->click("xpath=//span[@id='postal_greeting_display']/a");
     $this->select("postal_greeting_id", "value=1");
-
+    
     $this->click("xpath=//span[@id='addressee_display']/a");
     $this->select("addressee_id", "value=1");
 
@@ -201,6 +204,51 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
       $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact-{$key}']", preg_quote($value['content']));
       $i++;
     }
+
+    //check for default values set
+    $this->_checkClickLink($linkText, $field);
+    foreach ($privacyOptions as $key => $value) {
+      $this->assertTrue($this->isChecked("privacy[{$key}]"), "{$value} privacy option is not set by default during edit mode");
+    }
+    $this->assertTrue($this->isChecked("is_opt_out"), "is_opt_out is not set by default during edit mode");
+    
+    $preferedCommunication = array(1 => "Phone", 2 => "Email");
+    foreach ($preferedCommunication as $key => $value) {
+      $this->assertTrue($this->isChecked("preferred_communication_method[{$key}]"), "{$value} preferred communication method is not set by default during edit mode");
+    }
+    $this->verifySelectedValue("postal_greeting_id", "1");
+    $this->verifySelectedValue("addressee_id", "1");
+    $this->verifySelectedValue("email_greeting_id", "1");
+  }
+
+  function addDemographics() {
+    $linkText = "add or edit demographic";
+    $field = "demographic";
+
+    $this->_checkClickLink($linkText, $field);
+    $this->click("civicrm_gender_Male_2");
+    $this->webtestFillDate("birth_date", "10 September 1989");
+    $this->click("is_deceased");
+    $this->click("_qf_Demographics_upload");
+    sleep(2);
+    $assertValues = array(
+      "crm-contact-gender_display" => array("label" => 'Gender', "content" => "Male"),
+      "crm-contact-birth_date_display" => array("label" => "Date of birth", "content" => "September 10th, 1989"),
+      "crm-contact-deceased_message" => array("label" => "", "content" => "Contact is Deceased")
+    );
+    
+    $i = 1;
+    foreach ($assertValues as $key => $value) {
+      $this->verifyText("xpath=//div[@id='crm-demographic-content']/div[@class='crm-clear']/div[@class='crm-label'][{$i}]", preg_quote($value['label']));
+      $this->verifyText("xpath=//div[@id='crm-demographic-content']/div[@class='crm-clear']/div[@class='crm-content {$key}']", preg_quote($value['content']));
+      $i++;
+    }
+  
+    //check for default value
+    $this->_checkClickLink($linkText, $field);
+    $this->assertTrue($this->isChecked("civicrm_gender_Male_2"), "Gender field is not set");
+    $this->assertTrue(($this->getValue("birth_date") == "09/10/1989"), "Birth date is not set expected 09/10/1989");
+    $this->assertTrue($this->isChecked("is_deceased"), "Deceased field is not set");
   }
   
   function _checkClickLink($linkText, $field) {
