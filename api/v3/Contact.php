@@ -281,10 +281,6 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
   }
 
   if ($requiredCheck) {
-    if (isset($params['id'])) {
-      $required = array('Individual', 'Household', 'Organization');
-    }
-
     $required = array(
       'Individual' => array(
         array('first_name', 'last_name'),
