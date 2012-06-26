@@ -96,7 +96,23 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
       $this->_interviewerId = CRM_Utils_Array::value('survey_interviewer_id', $this->get('formValues'));
     }
     
-    $orderClause = $this->get('orderBy');
+    $orderClause = false;
+    $buttonName  = $this->controller->getButtonName();
+    if ($buttonName == '_qf_Interview_submit_orderBy') {
+      $orderBy = array();
+      if ( $orderByParams = CRM_Utils_Array::value('order_bys', $_POST) ) {
+        foreach ( $orderByParams as $key => $val ) {
+          if (CRM_Utils_Array::value('column', $val)) {
+            $orderBy[] = "{$val['column']} {$val['order']}";
+          }
+        }
+        if ( !empty($orderBy) ) {
+          $orderClause = "ORDER BY " . implode(', ', $orderBy);
+        }
+      }
+    } 
+
+    $this->_contactIds = array_unique($this->_contactIds);
     if (!empty($this->_contactIds) && $orderClause) {
       $clause = 'contact_a.id IN ( ' . implode(',', $this->_contactIds) . ' ) ';
       $sql    = "
@@ -122,8 +138,6 @@ WHERE {$clause}
     //get the read only field data.
     $returnProperties = array_fill_keys(array_keys($readOnlyFields), 1);
     $returnProperties['contact_sub_type'] = TRUE;
-
-
 
     //validate all voters for required activity.
     //get the survey activities for given voters.
@@ -364,21 +378,7 @@ WHERE {$clause}
    */
   public function postProcess() {
     $buttonName = $this->controller->getButtonName();
-    if ($buttonName == '_qf_Interview_submit_orderBy') {
-      $params  = $this->controller->exportValues($this->_name);
-      $orderBy = array();
-      foreach ( $params['order_bys'] as $key => $val ) {
-        if (CRM_Utils_Array::value('column', $val)) {
-          $orderBy[] = "{$val['column']} {$val['order']}";
-        }
-      }
-
-      if ( !empty($orderBy) ) {
-        $clause = "ORDER BY " . implode(', ', $orderBy);
-        $this->set('orderBy', $clause);
-      }
-    } 
-    elseif ($buttonName == '_qf_Interview_done_interviewToReserve') {
+    if ($buttonName == '_qf_Interview_done_interviewToReserve') {
       //hey its time to stop cycle.
       CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/survey/search', 'reset=1&op=reserve'));
     }

@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-
+{debug}
 {if $votingTab and $errorMessages}
   <div class='messages status'>
      <div class="icon inform-icon"></div>
@@ -184,13 +184,12 @@
 {literal}
 <script type="text/javascript">
     var updateVote = "{/literal}{ts}Update Response{/ts}{literal}";
-    var updateVoteforall = "{/literal}{ts}Update Responses for All{/ts}{literal}";	
+    var updateVoteforall = "{/literal}{ts}Update Responses for All{/ts}{literal}";
     cj( function( ) {
-        var count = 0; var columns=''; var sortColumn = '';
+        var count = 0; var columns='';
 	
         cj('#voterRecords th').each( function( ) {
           if ( cj(this).attr('class') == 'contact_details' ) {
-	    sortColumn += '[' + count + ', "asc" ],'; 
 	    columns += '{"sClass": "contact_details"},';
 	  } else {
 	    columns += '{ "bSortable": false },';
@@ -199,15 +198,12 @@
 	});
 
 	columns    = columns.substring(0, columns.length - 1 );
-	sortColumn = sortColumn.substring(0, sortColumn.length - 1 );
-	eval('sortColumn =[' + sortColumn + ']');
 	eval('columns =[' + columns + ']');
 
 	//load jQuery data table.
         cj('#voterRecords').dataTable( {
 		"sPaginationType": "full_numbers",
 		"bJQueryUI"  : true,
-		"aaSorting"  : sortColumn,
 		"aoColumns"  : columns
         });        
 
