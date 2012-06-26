@@ -23,5 +23,5 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
- 
-{include file="CRM/Contact/Page/View/CustomDataView.tpl" skipTitle=true}
+
+{include file="CRM/Contact/Page/View/CustomDataFieldView.tpl"}

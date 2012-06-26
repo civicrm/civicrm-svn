@@ -31,7 +31,6 @@
     {foreach from=$customValues item=cd_edit key=cvID}
       <div class="customFieldGroup ui-corner-all {$cd_edit.name}">
         <table id="{$cd_edit.name}_{$count}" >
-          {if !$skipTitle}
           <tr class="columnheader">
             <td colspan="2" class="grouplabel">
               <a href="#" class="show-block {if $cd_edit.collapse_display eq 0 } expanded collapsed {else} collapsed {/if}" >
@@ -39,10 +38,11 @@
               </a>
             </td>
           </tr>
-          {/if}
-          <tr class= "{if $cd_edit.collapse_display and !$skipTitle}hiddenElement{/if}">
+          <tr class= "{if $cd_edit.collapse_display}hiddenElement{/if}">
             <td>
-              {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupId=$customGroupId}
+              <div class="crm-summary-block" id="custom-set-block-{$customGroupId}">
+                {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupId=$customGroupId}
+              </div>
             </td>
           </tr>
         </table>

@@ -61,12 +61,13 @@ class CRM_Contact_Page_Inline_CustomData {
       $cgId, $entitySubType
       );
 
-    CRM_Core_BAO_CustomGroup::buildCustomDataView($page, $groupTree);
-    
+    $details = CRM_Core_BAO_CustomGroup::buildCustomDataView($page, $groupTree);
+    $fields = array_pop($details[$cgId]);
+
     $template = CRM_Core_Smarty::singleton();
     $template->assign('contactId', $contactId);
     $template->assign('customGroupId', $cgId);
-    $template->assign($defaults);
+    $template->assign_by_ref('cd_edit', $fields);
 
     echo $content = $template->fetch('CRM/Contact/Page/Inline/CustomData.tpl');
     CRM_Utils_System::civiExit();
