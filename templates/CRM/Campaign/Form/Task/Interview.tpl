@@ -90,6 +90,13 @@
 
             // hide and display the appropriate blocks as directed by the php code
             on_load_init_blocks( showRows, hideBlocks, '' );
+	    
+	    if(cj("#order_bys_2_column").val()){
+	    	   cj("#optionField_2").show();
+	    }
+	    if(cj("#order_bys_3_column").val()){
+	    	  cj("#optionField_3").show();
+	    }
 
             function hideRow(i) {
                 showHideRow(i);
