@@ -50,10 +50,6 @@
 		<td class="description label">{$form.create.label}</td>
 		<td>{$form.create.html}</td>
   	     </tr>
-             <tr>
-               <td class="description label">{$form.ReportName.label}</td>
-               <td>{$form.ReportName.html}</td>
-             </tr>
             </table>
  </div><!-- /.crm-accordion-body -->
  </div><!-- /.crm-accordion-wrapper -->

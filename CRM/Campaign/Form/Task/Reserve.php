@@ -161,7 +161,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
   function buildQuickForm() {
     // allow to add contact to either new or existing group.
     $this->addElement('checkbox', 'create', ts('Create Report'));
-    $this->addElement('text', 'ReportName', ts('Name of the Report'));
     $this->addElement('text', 'ActivityType', ts('Activity Type'));
     $this->addElement('text', 'newGroupName', ts('Name for new group'));
     $this->addElement('text', 'newGroupDesc', ts('Description of new group'));
@@ -204,9 +203,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
   }
 
   function setDefaultValues(){
-    
     $this->_defaults = array();
-    $this->_defaults['ReportName'] = $this->_surveyDetails['title'];
     $this->_defaults['create'] = 1;
     return $this->_defaults;
   }
