@@ -279,15 +279,15 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     $status = array();
     if ($countVoters > 0) {
       $title = $this->_surveyDetails['title'];
+      $values = $this->controller->exportValues();
       $query = "SELECT MAX(id) FROM civicrm_report_instance WHERE title = %1";
-      $params[1] = array();
-      $params[1] = array("{$title}",'String');
+      $params = array( 1 => array("{$title}",'String'));
       $result = CRM_Core_DAO::singleValueQuery($query,$params);
       
       $status[] = ts("Reservation has been added for %1 Contact(s).",array(1 => $countVoters));
-      if ($result){
-      $url = CRM_Utils_System::url("civicrm/report/instance/".$result,'reset=1');
-      $status[] .= ts("A Survey Detail Report <a href='%2'>%3</a> has been created.", array(1 => $countVoters,2 => $url,3 => $this->_surveyDetails['title']));
+      if ($result && CRM_Utils_Array::value('create',$values)){
+        $url = CRM_Utils_System::url("civicrm/report/instance/".$result,'reset=1');
+        $status[] = ts("A Survey Detail Report <a href='%2'>%3</a> has been created.", array(1 => $countVoters,2 => $url,3 => $this->_surveyDetails['title']));
       }
     }
     if (count($this->_contactIds) > $countVoters) {
