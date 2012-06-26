@@ -44,7 +44,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     // Log in using webtestLogin() method
     $this->webtestLogin();
-
+    
     // Add new individual using Quick Add block on the main page
     $firstName1 = "John_" . substr(sha1(rand()), 0, 7);
     $lastName1   = "Smiths_x" . substr(sha1(rand()), 0, 7);
@@ -94,9 +94,29 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->click("xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[2]/input");
     
     $this->waitForElementPresent('_qf_Batch_next');
+    $this->click("xpath=//table[@class='crm-copy-fields']/thead/tr/td[2]/img");
+    sleep(5);
+    //$this->waitForPageToLoad("30000");
+    $this->waitForElementPresent('_qf_Batch_next');
     $this->click('_qf_Batch_next');
     $this->waitForElementPresent('_qf_Result_done');
     $this->click('_qf_Result_done');
+
+    // Find Contact                                                                                                                                                                                        
+    $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
+    $this->waitForElementPresent('_qf_Basic_refresh');
+
+    $this->type('sort_name',  $firstName2);
+    $this->click('_qf_Basic_refresh');
+    
+    $this->waitForElementPresent('link=View');
+    $this->click('link=View');
+
+    $this->waitForPageToLoad("30000"); 
+
+    $xpath = "xpath=//div/table/tbody/tr/td[@class='crm-contact_type_label']";
+    $this->verifyText($xpath, preg_quote("Student"));
+
   }
 
   function testBatchUpdate() {
