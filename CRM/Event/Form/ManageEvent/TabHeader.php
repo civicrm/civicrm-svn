@@ -104,12 +104,6 @@ class CRM_Event_Form_ManageEvent_TabHeader {
         'valid' => FALSE,
         'active' => FALSE,
         'current' => FALSE,
-      ),
-      'promote' => array('title' => ts('Publish to Facebook'),
-        'link' => NULL,
-        'valid' => FALSE,
-        'active' => FALSE,
-        'current' => FALSE,
       )
     );
 
