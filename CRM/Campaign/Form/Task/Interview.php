@@ -179,9 +179,9 @@ WHERE {$clause}
 
     //validate voter ids across profile.
     $this->filterVoterIds();
-
     $this->assign('votingTab', $this->_votingTab);
     $this->assign('componentIds', $this->_contactIds);
+    $this->assign('componentIdsJson', json_encode($this->_contactIds));
     $this->assign('voterDetails', $voterDetails);
     $this->assign('readOnlyFields', $readOnlyFields);
     $this->assign('interviewerId', $this->_interviewerId);

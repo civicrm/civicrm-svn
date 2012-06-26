@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{debug}
 {if $votingTab and $errorMessages}
   <div class='messages status'>
      <div class="icon inform-icon"></div>
@@ -363,16 +362,14 @@
 
     function registerInterviewforall( )
     {
-	{/literal}
-	{foreach from=$componentIds item=id}
-	{literal}
-		if (cj('#field_{/literal}{$id}{literal}_result').val()) {
-	         	registerInterview({/literal}{$id}{literal});
+	var Ids = {/literal}{$componentIdsJson}{literal};
+	  for ( var contactid in Ids ) {
+		if (cj('#field_'+ Ids[contactid] +'_result').val()) {
+	         	registerInterview(Ids[contactid]);
 		 	cj('#interview_voter_button').html(updateVoteforall);
 		}
-	{/literal}
-	{/foreach}
-	{literal}
+	}
+
     }
     	
 </script>
