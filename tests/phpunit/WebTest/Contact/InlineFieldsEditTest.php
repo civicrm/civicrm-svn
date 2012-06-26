@@ -256,7 +256,7 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
  
   function fillCustomData() {
     $this->verifyText("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a", "add or edit custom set");
-    $this->click('edit-custom-set-block-1');
+    $this->click("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a");
     
     $this->click("xpath=//table[@id='constituent_information_1']/tbody/tr/td/a");
     $dateFieldId = $this->getAttribute("xpath=//div[@id='constituent_information']/table/tbody/tr[3]/td[@class='html-adjust']/input@id");
@@ -279,7 +279,7 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     }
     
     $this->verifyText("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a", "add or edit custom set");
-    $this->click('edit-custom-set-block-1');
+    $this->click("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a");
     $this->click("xpath=//table[@id='constituent_information_1']/tbody/tr/td/a");
     
     //assert for default values
