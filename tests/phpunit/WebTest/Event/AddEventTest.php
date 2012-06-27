@@ -246,6 +246,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->type("value_1", "250.00");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
+      $this->click("CIVICRM_QFID_1_6");
     }
 
     if ($discount) {
@@ -311,7 +312,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
     }
     $this->open($registerUrl);
-
+    
     $this->select("additional_participants", "value=" . $numberRegistrations);
     $this->type("email-Primary", "smith" . substr(sha1(rand()), 0, 7) . "@example.org");
 

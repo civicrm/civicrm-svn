@@ -55,8 +55,7 @@ class CRM_Price_BAO_Set extends CRM_Price_DAO_Set {
    * @access public
    * @static
    */
-  static
-  function create(&$params) {
+  static function create(&$params) {
     $priceSetBAO = new CRM_Price_BAO_Set();
     $priceSetBAO->copyValues($params);
     if (self::eventPriceSetDomainID()) {
@@ -79,8 +78,7 @@ class CRM_Price_BAO_Set extends CRM_Price_DAO_Set {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     return CRM_Core_DAO::commonRetrieve('CRM_Price_DAO_Set', $params, $defaults);
   }
 
@@ -94,8 +92,7 @@ class CRM_Price_BAO_Set extends CRM_Price_DAO_Set {
    * @static
    * @access public
    */
-  static
-  function setIsActive($id, $isActive) {
+  static function setIsActive($id, $isActive) {
     return CRM_Core_DAO::setFieldValue('CRM_Price_DAO_Set', $id, 'is_active', $isActive);
   }
 
@@ -498,8 +495,7 @@ WHERE  id = %1";
     return $setTree;
   }
 
-  static
-  function initSet(&$form, $id, $entityTable = 'civicrm_event', $validOnly = FALSE, $priceSetId = NULL) {
+  static function initSet(&$form, $id, $entityTable = 'civicrm_event', $validOnly = FALSE, $priceSetId = NULL) {
     if (!$priceSetId) {
       $priceSetId = self::getFor($entityTable, $id);
     }
@@ -590,8 +586,7 @@ WHERE  id = %1";
     return FALSE;
   }
 
-  static
-  function processAmount(&$fields, &$params, &$lineItem) {
+  static function processAmount(&$fields, &$params, &$lineItem) {
     // using price set
     $totalPrice = 0;
     $radioLevel = $checkboxLevel = $selectLevel = $textLevel = array();
@@ -701,8 +696,7 @@ WHERE  id = %1";
  * @return None
  * @access public
  */
-static
-function buildPriceSet(&$form) {
+static function buildPriceSet(&$form) {
 $priceSetId = $form->get('priceSetId');
 $userid = $form->getVar('_userID');
 if (!$priceSetId) {
@@ -777,8 +771,7 @@ $options
  * Function to check the current Membership
  * having end date null.
  */
-static
-function checkCurrentMembership(&$options, $userid) {
+static function checkCurrentMembership(&$options, $userid) {
 if (!$userid || empty($options)) {
 return;
 }
@@ -810,8 +803,7 @@ return FALSE;
  * @return array $defaults
  * @access public
  */
-static
-function setDefaultPriceSet(&$form, &$defaults) {
+static function setDefaultPriceSet(&$form, &$defaults) {
 if (!isset($form->_priceSet) || empty($form->_priceSet['fields'])) {
 return $defaults;
 }
@@ -861,8 +853,7 @@ return $var;
  * @access public
  * @static
  */
-static
-function copy($id) {
+static function copy($id) {
 $maxId = CRM_Core_DAO::singleValueQuery("SELECT max(id) FROM civicrm_price_set");
 
 $title = ts('[Copy id %1]', array(1 => $maxId + 1));
@@ -1019,37 +1010,35 @@ return 0;
 }
 }
 
-/**
- * Function to retrieve auto renew frequency and interval
- *
- * @param int $priceSetId price set id
- *
- * @return array associate array of frequency interval and unit
- * @static
- * @access public
- */
-public static function getRecurDetails($priceSetId) {
-$query = 'SELECT mt.duration_interval, mt.duration_unit
+  /**
+   * Function to retrieve auto renew frequency and interval
+   *
+   * @param int $priceSetId price set id
+   *
+   * @return array associate array of frequency interval and unit
+   * @static
+   * @access public
+   */ 
+   public static function getRecurDetails($priceSetId) {
+     $query = 'SELECT mt.duration_interval, mt.duration_unit
             FROM civicrm_price_field_value pfv
             INNER JOIN civicrm_membership_type mt ON pfv.membership_type_id = mt.id
             INNER JOIN civicrm_price_field pf ON pfv.price_field_id = pf.id
             WHERE pf.price_set_id = %1 LIMIT 1';
 
-$params = array(1 => array($priceSetId, 'Integer'));
-$dao = CRM_Core_DAO::executeQuery($query, $params);
-$dao->fetch();
-return array($dao->duration_interval, $dao->duration_unit);
-}
-
-static
-function eventPriceSetDomainID() {
-return CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
-'event_price_set_domain_id',
-NULL, FALSE
-);
-}
-
-
+     $params = array(1 => array($priceSetId, 'Integer'));
+     $dao = CRM_Core_DAO::executeQuery($query, $params);
+     $dao->fetch();
+     return array($dao->duration_interval, $dao->duration_unit);
+   }
+   
+  static function eventPriceSetDomainID() {
+    return CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
+           'event_price_set_domain_id',
+           NULL, FALSE
+           );
+  }
+   
   /**
    * update the is_quick_config flag in the db
    *
@@ -1060,8 +1049,7 @@ NULL, FALSE
    * @static
    * @access public
    */
-  static
-  function setIsQuickConfig($id, $isQuickConfig) {
+  static function setIsQuickConfig($id, $isQuickConfig) {
     return CRM_Core_DAO::setFieldValue('CRM_Price_DAO_Set', $id, 'is_quick_config', $isQuickConfig);
   }
 }
