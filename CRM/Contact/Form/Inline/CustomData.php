@@ -52,6 +52,13 @@ class CRM_Contact_Form_Inline_CustomData extends CRM_Core_Form {
   public $_groupID;
 
   /**
+   * entity type of the table id
+   *
+   * @var string
+   */
+  protected $_entityType;
+
+  /**
    * call preprocess
    */
   public function preProcess() {
@@ -124,8 +131,6 @@ class CRM_Contact_Form_Inline_CustomData extends CRM_Core_Form {
    * @access public
    */
   public function postProcess() {
-    //$params = $this->exportValues();
-
     // need to process / save custom data 
     // Get the form values and groupTree
     $params = $this->controller->exportValues($this->_name);
