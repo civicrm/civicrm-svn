@@ -52,7 +52,7 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
       CRM_Utils_Hook::pre('create', 'Email', NULL, $params);
       $isEdit = FALSE;
     }
-    if (is_integer(CRM_Utils_Array::value('is_primary', $params)) ||
+    if (is_numeric(CRM_Utils_Array::value('is_primary', $params)) ||
       // if id is set & is_primary isn't we can assume no change
       empty($params['id'])
     ) {

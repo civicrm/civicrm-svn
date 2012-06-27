@@ -39,9 +39,9 @@
 class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone {
 
   /*
-   * Create phone address - note that the create function calls 'add' but 
+   * Create phone address - note that the create function calls 'add' but
    * has more business logic & calls the hooks
-   * 
+   *
    * @param array $params input parameters
    */
 
@@ -54,7 +54,7 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone {
       CRM_Utils_Hook::pre('create', 'Phone', NULL, $params);
       $isEdit = FALSE;
     }
-    if (is_integer(CRM_Utils_Array::value('is_primary', $params)) ||
+    if (is_numeric(CRM_Utils_Array::value('is_primary', $params)) ||
       // if id is set & is_primary isn't we can assume no change
       empty($params['id'])
     ) {
