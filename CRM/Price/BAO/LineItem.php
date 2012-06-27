@@ -101,7 +101,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
    *
    * @return array of line items
    */
-  static function getLineItems($entityId, $entity = 'participant') {
+  static function getLineItems($entityId, $entity = 'participant', $isQuick = NULL) {
     $selectClause = $whereClause = $fromClause = NULL;
 
     $selectClause = "
@@ -122,10 +122,13 @@ FROM      civicrm_%2 as %2
 LEFT JOIN civicrm_line_item li ON ( li.entity_id = %2.id AND li.entity_table = 'civicrm_%2')
 LEFT JOIN civicrm_price_field_value pfv ON ( pfv.id = li.price_field_value_id )
 LEFT JOIN civicrm_price_field pf ON (pf.id = li.price_field_id )";
-
     $whereClause = "
 WHERE     %2.id = %1";
 
+    if ($isQuick) {
+      $fromClause .= " LEFT JOIN civicrm_price_set cps on cps.id = pf.price_set_id ";
+      $whereClause .= " and cps.is_quick_config = 0";
+    }
     $lineItems = array();
 
     if (!$entityId || !$entity || !$fromClause) {
