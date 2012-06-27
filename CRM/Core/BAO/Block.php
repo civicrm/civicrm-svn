@@ -463,12 +463,22 @@ class CRM_Core_BAO_Block {
       return;
     }
     else {
-      // so at this point we are only dealing with ones explicity setting is_primary to 0
-      // since we have reverse sorted by email we can either set the first one to
-      // primary or return if is already is
+      /*
+       * If the only existing email is the one we are editing then we must set
+       * is_primary to 1
+       * CRM-10451
+       */
+      if($existingEntities->N == 1 && $existingEntities->id == $params['id']){
+        $params['is_primary'] = 1;
+        return;
+      }
+
       if ($existingEntities->is_primary == 1) {
         return;
       }
+      // so at this point we are only dealing with ones explicity setting is_primary to 0
+      // since we have reverse sorted by email we can either set the first one to
+      // primary or return if is already is
       $existingEntities->is_primary = 1;
       $existingEntities->save();
     }
