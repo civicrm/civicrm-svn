@@ -55,7 +55,7 @@
 <div id="order-by-elements" class="civireport-criteria">
    <table id="optionField" class="form-layout-compressed">
         <tr>
-        <th class="crm-submit-buttons">{$form.buttons._qf_Interview_submit_orderBy.html}</th>
+        <th></th>
         <th> Column</th>
         <th> Order</th>
         </tr>
@@ -66,6 +66,8 @@
         <td>
         {if $index GT 1}
             <a onclick="hideRow({$index});" name="orderBy_{$index}" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>
+        {else}
+            {$form.buttons._qf_Interview_submit_orderBy.html}
         {/if}
         </td>
         <td> {$form.order_bys.$index.column.html}</td>

@@ -50,6 +50,10 @@
 		<td class="description label">{$form.create.label}</td>
 		<td>{$form.create.html}</td>
   	     </tr>
+             <tr>
+               <td class="description label">{$form.ReportName.label}</td>
+               <td>{$form.ReportName.html}</td>
+             </tr>
             </table>
  </div><!-- /.crm-accordion-body -->
  </div><!-- /.crm-accordion-wrapper -->
@@ -117,7 +121,8 @@
  function createReport( ) { 
  if ( cj("#create").is(':checked')){
     var dataUrl = {/literal}"{crmURL p='civicrm/report/survey/detail' h=0 q='force=1'}"{literal};
-    dataUrl = dataUrl +'&name='+'{/literal}{$surveyTitle}{literal}'+'&activity='+'{/literal}{$activityType}{literal}'+'&survey_id_value='+'{/literal}{$surveyId}{literal}'+'&survey_id_op=in'+'&output=create_report'
+    var surveyTitle = cj("#ReportName").val();
+    dataUrl = dataUrl +'&name='+surveyTitle+'&activity='+'{/literal}{$activityType}{literal}'+'&survey_id_value='+'{/literal}{$surveyId}{literal}'+'&survey_id_op=in'+'&output=create_report'
 
     cj.ajax({
        url: dataUrl,

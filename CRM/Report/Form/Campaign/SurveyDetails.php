@@ -267,7 +267,11 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
       $this->_defaults['title'] = $title;
       // for WalkList or default
       $displayFields = array('street_number','street_name','street_unit','survey_response');
-      if ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $activityType ) {
+      if ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $activityType ) {
+        $this->_defaults['group_bys']['street_name']   = 1;
+        $this->_defaults['group_bys']['street_number'] = 1;
+      }
+      elseif ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $activityType ) {
         array_push($displayFields, 'phone');
       }
       elseif ((CRM_Core_OptionGroup::getValue('activity_type','Survey')  == $activityType) || 

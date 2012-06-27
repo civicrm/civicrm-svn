@@ -258,9 +258,9 @@ WHERE {$clause}
 
     $options = 
       array('' => ' - none - ',
+            'civicrm_address.street_name'     => 'Street Name',
             'civicrm_address.street_number%2' => 'Odd / Even Street Number',
             'contact_a.sort_name'             => 'Respondent Name',
-            'civicrm_address.street_name'     => 'Street Name',
             );
     for ($i = 1; $i < count($options); $i++) {
       $this->addElement('select', "order_bys[{$i}][column]", ts('Order by Column'), $options);
@@ -315,7 +315,7 @@ WHERE {$clause}
 
     $buttons[] = array(
         'type' => 'submit',
-        'name' => ts('ORDER BY >>'),
+        'name' => ts('Order By >>'),
         'subName' => 'orderBy',
       );
 
