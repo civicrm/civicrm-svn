@@ -32,7 +32,7 @@
  * $Id$
  *
  */
-class CRM_Core_I18n_SchemaStructure_4_2_alpha2 {
+class CRM_Core_I18n_SchemaStructure_4_2_alpha1 {
   static
   function &columns() {
     static $result = NULL;

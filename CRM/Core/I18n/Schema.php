@@ -277,6 +277,7 @@ class CRM_Core_I18n_Schema {
   function rebuildMultilingualSchema($locales, $version = NULL) {
     if ($version) {
       $latest = self::getLatestSchema($version);
+      require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
       $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
     }
     else {
