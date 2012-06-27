@@ -181,6 +181,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
       CRM_Event_Form_Registration_Register::buildAmount($this);
     }
     $first_name = $last_name = NULL;
+    $pre = $post = array();
     foreach (array(
       'pre', 'post') as $keys) {
       if (isset($this->_values['additional_custom_' . $keys . '_id'])) {
@@ -418,9 +419,11 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
               //collect all email fields
               $existingEmails = array();
               $additionalParticipantEmails = array();
-              foreach ($value as $key => $val) {
-                if (substr($key, 0, 6) == 'email-' && $val) {
-                  $existingEmails[] = $val;
+              if (is_array($value)) {
+                foreach ($value as $key => $val) {
+                  if (substr($key, 0, 6) == 'email-' && $val) {
+                    $existingEmails[] = $val;
+                  }
                 }
               }
               foreach ($fields as $key => $val) {
