@@ -480,7 +480,6 @@ class CRM_Core_I18n_Schema {
       
     if ($currentVer && CRM_Core_Config::isUpgradeMode()) {
       // take exact version so that proper schema structure file in invoked
-      $currentVer = preg_replace('/.upgrade/', "", $currentVer);
       $latest = self::getLatestSchema($currentVer);
       require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
       $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
