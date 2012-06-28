@@ -2257,6 +2257,19 @@ function _civicrm_core_data(&$data, $enabled) {
       'handler' => 'views_handler_sort',
     ),
   );
+  $data['civicrm_uf_match']['domain_id'] = array(
+    'title' => t('Domain ID'),
+    'help' => t('Relates a CiviCRM contact to its domain'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_numeric',
+    ),
+  );
 
 
   // Pull in all the Custom fields
