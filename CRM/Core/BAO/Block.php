@@ -468,7 +468,7 @@ class CRM_Core_BAO_Block {
        * is_primary to 1
        * CRM-10451
        */
-      if($existingEntities->N == 1 && $existingEntities->id == $params['id']){
+      if ( $existingEntities->N == 1 && $existingEntities->id == CRM_Utils_Array::value( 'id', $params ) ) {
         $params['is_primary'] = 1;
         return;
       }
