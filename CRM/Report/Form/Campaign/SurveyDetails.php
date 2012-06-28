@@ -246,7 +246,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
           ),
           'result' => 
           array(
-                'title' => ts('Result Options'),
+                'title' => ts('Survey Result'),
                 'type'  => CRM_Utils_Type::T_STRING,
                 'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                 'options'      => $resultOptions,
