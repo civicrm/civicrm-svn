@@ -229,8 +229,15 @@ class CRM_Contact_Form_Edit_Address {
       // Below eval() fixes this issue.
       $address = array();
       foreach ($defaults as $key => $val) {
-        eval("\${$key} = " . (!is_array($val) ? "'{$val}'" : var_export($val, TRUE)) . ";");
+        if ( empty( $val ) ) {
+          continue;
+        }
+        elseif ( is_array($val) ) {
+          $val = var_export($val, TRUE);
+        }
+        @eval("\${$key} = " .$val . ";" );
       }
+      
       $defaults = array('address' => $address);
       $form->setDefaults($defaults);
 
