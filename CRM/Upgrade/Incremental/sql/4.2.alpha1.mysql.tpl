@@ -229,6 +229,10 @@ ALTER TABLE `civicrm_contribution_page` ADD COLUMN is_confirm_enabled tinyint(4)
     ALTER TABLE `civicrm_batch` CHANGE `label_{$locale}` `title_{$locale}` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Friendly Name.'; 
     UPDATE civicrm_group SET title_{$locale} = title;
     ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title_{$locale}`;
+
+    ALTER TABLE civicrm_survey
+     ADD COLUMN thankyou_title_{$locale} varchar(255)    COMMENT 'Title for Thank-you page (header title tag, and display at the top of the page).',
+     ADD COLUMN thankyou_text_{$locale}  text    COMMENT 'text and html allowed. displayed above result on success page';    
   {/foreach}
 
   ALTER TABLE civicrm_group DROP INDEX `UI_title`;
@@ -236,6 +240,9 @@ ALTER TABLE `civicrm_contribution_page` ADD COLUMN is_confirm_enabled tinyint(4)
 {else}
   ALTER TABLE `civicrm_batch` CHANGE `label` `title` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Friendly Name.';
   ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`;
+  ALTER TABLE civicrm_survey
+     ADD COLUMN thankyou_title varchar(255)    COMMENT 'Title for Thank-you page (header title tag, and display at the top of the page).',
+     ADD COLUMN thankyou_text  text    COMMENT 'text and html allowed. displayed above result on success page';
 {/if}
 
 -- CRM-9780
@@ -411,6 +418,4 @@ ALTER TABLE civicrm_cache
 
 -- CRM-10337
 ALTER TABLE civicrm_survey
-  ADD COLUMN bypass_confirm tinyint(4) DEFAULT '0' COMMENT 'Used to store option group id.',
-  ADD COLUMN thankyou_title varchar(255)    COMMENT 'Title for Thank-you page (header title tag, and display at the top of the page).',
-  ADD COLUMN thankyou_text  text    COMMENT 'text and html allowed. displayed above result on success page';
+  ADD COLUMN bypass_confirm tinyint(4) DEFAULT '0' COMMENT 'Used to store option group id.';
