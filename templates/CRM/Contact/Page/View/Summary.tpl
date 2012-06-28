@@ -256,60 +256,68 @@
                     </div><!-- #contact_panel -->
 
 					{if $address}
-                    <div class="contact_panel">
-                        {foreach from=$address item=add key=locationIndex}
-                        <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
-                            <table>
-                                <tr>
-                                    <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
-                                        {if $config->mapProvider AND
-					 !empty($add.geo_code_1) AND
-					 is_numeric($add.geo_code_1) AND
-					 !empty($add.geo_code_2) AND
-					 is_numeric($add.geo_code_2)
-					 }
-                                            <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
-                                        {/if}</td>
-                                    <td class="crm-contact-address_display">
-                                        {if !empty($sharedAddresses.$locationIndex.shared_address_display.name)}
-                                             <strong>{ts}Shared with:{/ts}</strong><br />
-                                             {$sharedAddresses.$locationIndex.shared_address_display.name}<br />
-                                         {/if}
-                                         {$add.display|nl2br}
-                                    </td>
-                                </tr>
-                            </table>
-			    {foreach from=$add.custom item=customGroup key=cgId}
-                            {assign var="isAddressCustomPresent" value=1}
-			        {foreach from=$customGroup item=customValue key=cvId}
-			            <div id="address_custom_{$cgId}_{$locationIndex}" class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion crm-accordion-closed">
-			                <div class="crm-accordion-header">
-			                    <div class="icon crm-accordion-pointer"></div>
-				            {$customValue.title}
-			                </div>
-			                <div class="crm-accordion-body">
-				            <table>
-				                {foreach from=$customValue.fields item=customField key=cfId}
-					            <tr><td class="label">{$customField.field_title}</td><td class="crm-contact_custom_field_value">{$customField.field_value}</td></tr>
-	                  	                {/foreach}
-			                    </table>
-			                </div>
-			            </div>
-                                    <script type="text/javascript">
-                                        {if $customValue.collapse_display eq 1 }
-                                            cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
-                                        {else}
-                                            cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
-                                        {/if}
-                                    </script>
-                                {/foreach}
-                            {/foreach}
-                        </div>
-                        {/foreach}
-
-                        <div class="clear"></div>
+            <div class="contact_panel">
+              {foreach from=$address item=add key=locationIndex}
+                <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
+                  <div class="crm-table2div-layout">
+                    <div class="crm-clear"> <!-- start of main -->
+                      <div class="crm-label">
+                        {ts 1=$add.location_type}%1&nbsp;Address{/ts}
+                        {if $config->mapProvider AND
+                            !empty($add.geo_code_1) AND
+                            is_numeric($add.geo_code_1) AND
+                            !empty($add.geo_code_2) AND
+                            is_numeric($add.geo_code_2)
+                        }
+                        <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
+                        {/if}
+                      </div>
+                      <div class="crm-content">
+                        {if !empty($sharedAddresses.$locationIndex.shared_address_display.name)}
+                          <strong>{ts}Shared with:{/ts}</strong><br />
+                          {$sharedAddresses.$locationIndex.shared_address_display.name}<br />
+                        {/if}
+                        {$add.display|nl2br}
+                      </div>
                     </div>
-					{/if}
+                  </div>
+
+                  <!-- add custom data -->
+                  {foreach from=$add.custom item=customGroup key=cgId} {* start of outer foreach *}
+                    {assign var="isAddressCustomPresent" value=1}
+                    {foreach from=$customGroup item=customValue key=cvId}
+                    <div id="address_custom_{$cgId}_{$locationIndex}" 
+                    class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion 
+                    {if $customValue.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
+                    <div class="crm-accordion-header">
+                      <div class="icon crm-accordion-pointer"></div>
+                      {$customValue.title}
+                    </div>
+                    <div class="crm-accordion-body">
+                      <div class="crm-table2div-layout">
+                        <div class="crm-clear">
+                          {foreach from=$customValue.fields item=customField key=cfId}
+                          <div class="crm-label">
+                            {$customField.field_title}
+                          </div>
+                          <div class="crm-content">
+                            {$customField.field_value}
+                          </div>
+                          {/foreach}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/foreach}
+                  {/foreach} {* end of outer custom group foreach *}
+                  <!-- end custom data -->
+                  
+                  </div>
+                {/foreach} {* end of address foreach *}
+
+              <div class="clear"></div>
+            </div> <!-- end of contact panel -->
+          {/if}
 
           <div class="contact_panel">
             <div class="contactCardLeft">
