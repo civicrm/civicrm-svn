@@ -63,13 +63,11 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Contribute_DAO_ContributionPage', $id, 'is_active', $is_active);
   }
 
-  static
-  function setValues($id, &$values) {
+  static function setValues($id, &$values) {
     $params = array(
       'id' => $id,
     );
@@ -393,10 +391,11 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
       }
     }
   }
+  
   /*
-     * Construct the message to be sent by the send function
-     *
-     */
+   * Construct the message to be sent by the send function
+   *
+   */
   function composeMessage($tplParams, $contactID, $isTest) {
     $sendTemplateParams = array(
       'groupName' => $tplParams['membershipID'] ? 'msg_tpl_workflow_membership' : 'msg_tpl_workflow_contribution',
@@ -430,8 +429,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
    * @access public
    * @static
    */
-  static
-  function recurringNotify($type, $contactID, $pageID, $recur, $autoRenewMembership = FALSE) {
+  static function recurringNotify($type, $contactID, $pageID, $recur, $autoRenewMembership = FALSE) {
     $value = array();
     if ($pageID) {
       CRM_Core_DAO::commonRetrieveAll('CRM_Contribute_DAO_ContributionPage', 'id', $pageID, $value, array(
@@ -667,8 +665,7 @@ WHERE entity_table = 'civicrm_contribution_page'
    * @access public
    * @static
    */
-  static
-  function checkRecurPaymentProcessor($contributionPageId) {
+  static function checkRecurPaymentProcessor($contributionPageId) {
     //FIXME
     $sql = "
   SELECT pp.is_recur
