@@ -39,7 +39,7 @@
   <tr><td colspan=2>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
 </table>
 {* Create Report *}
-<div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
  <div class="crm-accordion-header">
  <div class="icon crm-accordion-pointer"></div> 
  {ts}Create Report{/ts}
@@ -52,7 +52,7 @@
   	     </tr>
              <tr>
                <td class="description label">{$form.ReportName.label}</td>
-               <td>{$form.ReportName.html}</td>
+               <td>{$form.ReportName.html|crmReplace:class:big}</td>
              </tr>
             </table>
  </div><!-- /.crm-accordion-body -->
