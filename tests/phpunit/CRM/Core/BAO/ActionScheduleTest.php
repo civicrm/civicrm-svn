@@ -174,94 +174,67 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
     global $civicrm_setting;
     unset($civicrm_setting[CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME]['mailing_backend']);
     unset($this->mailer);
-    
+
     $this->_tearDown();
   }
 
   function testNonRepeatableSchedule() {
     $actionScheduleDao = CRM_Core_BAO_ActionSchedule::add($this->fixtures['sched_activity_1day'], $ids);
     $this->assertTrue(is_numeric($actionScheduleDao->id));
-    
+
     $activity = $this->createTestObject('CRM_Activity_DAO_Activity', $this->fixtures['phonecall']);
     $this->assertTrue(is_numeric($activity->id));
     $contact = civicrm_api('contact', 'create', $this->fixtures['contact']);
     $activity->source_contact_id = $contact['id'];
     $activity->save();
 
-    // Before the 24-hour mark, no email
-    CRM_Utils_Time::setTime('2012-06-14 04:00:00');
-    $result = civicrm_api('job', 'send_reminder', array(
-      'version' => 3,
+    $this->assertCronRuns(array(
+      array( // Before the 24-hour mark, no email
+        'time' => '2012-06-14 04:00:00',
+        'recipients' => array(),
+      ),
+      array( // After the 24-hour mark, an email
+        'time' => '2012-06-14 15:00:00',
+        'recipients' => array(array('test@example.com')),
+      ),
+      array( // Run cron again; message already sent
+        'time' => '',
+        'recipients' => array(),
+      ),
     ));
-    $this->assertAPISuccess($result);
-    $this->assertRecipients(array(), $this->mailer);
-    
-    // After the 24-hour mark, an email
-    CRM_Utils_Time::setTime('2012-06-14 15:00:00');
-    $result = civicrm_api('job', 'send_reminder', array(
-      'version' => 3,
-    ));
-    $this->assertAPISuccess($result);
-    $this->assertRecipients(array(array('test@example.com')), $this->mailer);
-    $this->mailer->sentMessages = array();
-    
-    // Run cron again; message already sent
-    CRM_Utils_Time::setTime('2012-06-14 16:00:00');
-    $result = civicrm_api('job', 'send_reminder', array(
-      'version' => 3,
-    ));
-    $this->assertAPISuccess($result);
-    $this->assertRecipients(array(), $this->mailer);
-    $this->mailer->sentMessages = array();
   }
-  
+
   function testRepeatableSchedule() {
     $actionScheduleDao = CRM_Core_BAO_ActionSchedule::add($this->fixtures['sched_activity_1day_r'], $ids);
     $this->assertTrue(is_numeric($actionScheduleDao->id));
-    
+
     $activity = $this->createTestObject('CRM_Activity_DAO_Activity', $this->fixtures['phonecall']);
     $this->assertTrue(is_numeric($activity->id));
     $contact = civicrm_api('contact', 'create', $this->fixtures['contact']);
     $activity->source_contact_id = $contact['id'];
     $activity->save();
 
-    /// Before the 24-hour mark, no email
-    CRM_Utils_Time::setTime('2012-06-14 04:00:00');
-    $result = civicrm_api('job', 'send_reminder', array(
-      'version' => 3,
-    ));
-    $this->assertAPISuccess($result);
-    $this->assertRecipients(array(), $this->mailer);
-    $this->mailer->sentMessages = array();
 
-    /// After the 24-hour mark, an email
-    CRM_Utils_Time::setTime('2012-06-14 15:00:00');
-    $result = civicrm_api('job', 'send_reminder', array(
-      'version' => 3,
+    $this->assertCronRuns(array(
+      array( // Before the 24-hour mark, no email
+        'time' => '012-06-14 04:00:00',
+        'recipients' => array(),
+      ),
+      array( // After the 24-hour mark, an email
+        'time' => '2012-06-14 15:00:00',
+        'recipients' => array(array('test@example.com')),
+      ),
+      array( // Run cron 4 hours later; first message already sent
+        'time' => '2012-06-14 20:00:00',
+        'recipients' => array(),
+      ),
+      array( // Run cron 6 hours later; send second message
+        'time' => '2012-06-14 21:00:01',
+        'recipients' => array(array('test@example.com')),
+      ),
     ));
-    $this->assertAPISuccess($result);
-    $this->assertRecipients(array(array('test@example.com')), $this->mailer);
-    $this->mailer->sentMessages = array();
-    
-    /// Run cron 4 hours later; first message already sent
-    CRM_Utils_Time::setTime('2012-06-14 20:00:00');
-    $result = civicrm_api('job', 'send_reminder', array(
-      'version' => 3,
-    ));
-    $this->assertAPISuccess($result);
-    $this->assertRecipients(array(), $this->mailer);
-    $this->mailer->sentMessages = array();
-
-    // Run cron 6 hours later; send second message
-    CRM_Utils_Time::setTime('2012-06-15 21:00:01');
-    $result = civicrm_api('job', 'send_reminder', array(
-      'version' => 3,
-    ));
-    $this->assertAPISuccess($result);
-    $this->assertRecipients(array(array('test@example.com')), $this->mailer);
-    $this->mailer->sentMessages = array();
   }
-  
+
   /**
    *
    *
@@ -272,7 +245,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
   }
   */
 
-  function assertRecipients($expectedRecipients, $mailer) {      
+  function assertRecipients($expectedRecipients, $mailer) {
     $recipients = array();
     foreach($mailer->sentMessages as $message) {
       $recipients[] = $message['recipients'];
@@ -285,13 +258,31 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
       "Incorrect recipients: " . print_r(array('expected'=>$expectedRecipients, 'actual'=>$recipients), TRUE)
     );
   }
-  
+
+  /**
+   * Run a series of cron jobs and make an assertion about email deliveries
+   *
+   * @param $jobSchedule array specifying when to run cron and what messages to expect; each item is an array with keys:
+   *  - time: string, e.g. '2012-06-15 21:00:01'
+   *  - recipients: array(array(string)), list of email addresses
+   */
+  function assertCronRuns($cronRuns) {
+    foreach ($cronRuns as $cronRun) {
+      CRM_Utils_Time::setTime($cronRun['time']);
+      $result = civicrm_api('job', 'send_reminder', array(
+        'version' => 3,
+      ));
+      $this->assertAPISuccess($result);
+      $this->assertRecipients($cronRun['recipients'], $this->mailer);
+      $this->mailer->sentMessages = array();
+    }
+  }
+
   ////////////////////////////////
   ////////////////////////////////
   ////////////////////////////////
   ////////////////////////////////
-  
-  
+
   /**
    * @var array(DAO_Name => array(int)) List of items to garbage-collect during tearDown
    */
