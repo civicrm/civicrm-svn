@@ -114,7 +114,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
   /**
    * Do we want to parse street address.
    */
-  private $_parseStreetAddress;
+  public $_parseStreetAddress;
 
   /**
    * check contact has a subtype or not
@@ -391,95 +391,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       }
     }
 
-    $addressValues = array();
-    if (isset($defaults['address']) && is_array($defaults['address']) &&
-      !CRM_Utils_system::isNull($defaults['address'])
-    ) {
-
-      // start of contact shared adddress defaults
-      $sharedAddresses = array();
-      $masterAddress = array();
-
-      // get contact name of shared contact names
-      $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames($defaults['address']);
-
-      foreach ($defaults['address'] as $key => $addressValue) {
-        if (CRM_Utils_Array::value('master_id', $addressValue) && !$shareAddressContactNames[$addressValue['master_id']]['is_deleted']) {
-          $sharedAddresses[$key]['shared_address_display'] = array(
-            'address' => $addressValue['display'],
-            'name' => $shareAddressContactNames[$addressValue['master_id']]['name'],
-          );
-        }
-        else {
-          $defaults['address'][$key]['use_shared_address'] = 0;
-        }
-
-        //check if any address is shared by any other contacts
-        $masterAddress[$key] = CRM_Core_BAO_Address::checkContactSharedAddress($addressValue['id']);
-      }
-
-      $this->assign('sharedAddresses', $sharedAddresses);
-      $this->assign('masterAddress', $masterAddress);
-      // end of shared address defaults
-
-      // start of parse address functionality
-      // build street address, CRM-5450.
-      if ($this->_parseStreetAddress) {
-        $parseFields = array('street_address', 'street_number', 'street_name', 'street_unit');
-        foreach ($defaults['address'] as $cnt => & $address) {
-          $streetAddress = NULL;
-          foreach (array(
-            'street_number', 'street_number_suffix', 'street_name', 'street_unit') as $fld) {
-            if (in_array($fld, array(
-              'street_name', 'street_unit'))) {
-              $streetAddress .= ' ';
-            }
-            $streetAddress .= CRM_Utils_Array::value($fld, $address);
-          }
-          $streetAddress = trim($streetAddress);
-          if (!empty($streetAddress)) {
-            $address['street_address'] = $streetAddress;
-          }
-          if (isset($address['street_number'])) {
-            $address['street_number'] .= CRM_Utils_Array::value('street_number_suffix', $address);
-          }
-
-          // build array for set default.
-          foreach ($parseFields as $field) {
-            $addressValues["{$field}_{$cnt}"] = CRM_Utils_Array::value($field, $address);
-          }
-
-          // don't load fields, use js to populate.
-          foreach (array('street_number', 'street_name', 'street_unit') as $f) {
-            if (isset($address[$f])) {
-              unset($address[$f]);
-            }
-          }
-        }
-        $this->assign('allAddressFieldValues', json_encode($addressValues));
-
-        //hack to handle show/hide address fields.
-        $parsedAddress = array();
-        if ($this->_contactId &&
-          CRM_Utils_Array::value('address', $_POST)
-          && is_array($_POST['address'])
-        ) {
-          foreach ($_POST['address'] as $cnt => $values) {
-            $showField = 'streetAddress';
-            foreach (array('street_number', 'street_name', 'street_unit') as $fld) {
-              if (CRM_Utils_Array::value($fld, $values)) {
-                $showField = 'addressElements';
-                break;
-              }
-            }
-            $parsedAddress[$cnt] = $showField;
-          }
-        }
-        $this->assign('showHideAddressFields', $parsedAddress);
-        $this->assign('loadShowHideAddressFields', empty($parsedAddress) ? FALSE : TRUE);
-      }
-      // end of parse address functionality
-    }
+    //set address block defaults
+    CRM_Contact_Form_Edit_Address::setDefaultValues( $defaults, $this );
 
     if (CRM_Utils_Array::value('image_URL', $defaults)) {
       list($imageWidth, $imageHeight) = getimagesize($defaults['image_URL']);

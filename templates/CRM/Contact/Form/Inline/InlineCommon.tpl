@@ -27,7 +27,7 @@
 
 {literal}
 <script type="text/javascript">
-function inlineEditForm( formName, blockName, contactId, cgId ) {
+function inlineEditForm( formName, blockName, contactId, cgId, locNo ) {
   // handle ajax form submitting
   var options = { 
     beforeSubmit:  showRequest  // pre-submit callback  
@@ -45,6 +45,11 @@ function inlineEditForm( formName, blockName, contactId, cgId ) {
     if ( cgId ) {
       queryString += '&groupID=' + cgId;
     }
+
+    if ( locNo ) {
+      queryString += '&locno=' + locNo;
+    }
+
     var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 }"{literal}; 
     var status = '';
     var response = cj.ajax({
@@ -67,6 +72,10 @@ function inlineEditForm( formName, blockName, contactId, cgId ) {
         queryString += '&groupID=' + cgId;
       }
  
+      if ( locNo ) {
+        queryString += '&locno=' + locNo;
+      }
+
       var response = cj.ajax({
           type: "POST",
           url: postUrl,
