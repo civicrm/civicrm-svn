@@ -23,8 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-
-<div class="crm-summary-block" id="custom-set-block-{$customGroupId}">
 <div class="crm-table2div-layout" id="custom-set-content-{$customGroupId}">
   <div class="crm-clear">
     <div class="crm-config-option">
@@ -32,9 +30,9 @@
       <span class="batch-edit"></span>{ts}add or edit custom set{/ts}
       </a>
     </div>
-
+  
   {foreach from=$cd_edit.fields item=element key=field_id}
-  {if $element.options_per_line != 0}
+    {if $element.options_per_line != 0}
       <div class="crm-label">{$element.field_title}</div>
       <div class="crm-content crm-custom_data">
           {* sort by fails for option per line. Added a variable to iterate through the element array*}
@@ -42,7 +40,7 @@
               {$val}
           {/foreach}
       </div>
-{else}
+    {else}
       <div class="crm-label">{$element.field_title}</div>
       {if $element.field_type == 'File'}
           {if $element.field_value.displayURL}
@@ -53,13 +51,12 @@
       {elseif $element.field_data_type EQ 'ContactReference' && $element.contact_ref_id}
           {*Contact ref id passed if user has sufficient permissions - so make a link.*}
           <div class="crm-content html-adjust crm-custom-data crm-contact-reference">
-              <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$element.contact_ref_id`"}" title="View contact">{$element.field_value}</a>
+              <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$element.contact_ref_id`"}" title="view contact">{$element.field_value}</a>
           </div>
       {else}
           <div class="crm-content html-adjust crm-custom-data">{$element.field_value}</div>
       {/if}
-  {/if}
+    {/if}
   {/foreach}
   </div>
-</div>
 </div>

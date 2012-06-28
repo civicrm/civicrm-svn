@@ -464,11 +464,9 @@ WHERE  contribution_id = {$this->_id}
     }
 
     $this->_lineItems = array();
-    if ($this->_id &&
-      $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_contribution', $this->_id, NULL, 1)
-    ) {
-      $this->_priceSetId = $priceSetId;
-      $this->_lineItems[] = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
+    if ($this->_id) {
+      $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution',1);
+      empty($lineItem) ? null :$this->_lineItems[] =  $lineItem;
     }
     $this->assign('lineItem', empty($this->_lineItems) ? FALSE : $this->_lineItems);
   }
@@ -1162,7 +1160,6 @@ WHERE  contribution_id = {$this->_id}
       } else {
         $entityTable = 'contribution';
         $entityID = $this->_id;
-        $this->_priceSetId = CRM_Price_BAO_Set::getFor("civicrm_".$entityTable, $entityID);
       }
 
       $lineItems         = CRM_Price_BAO_LineItem::getLineItems($entityID, $entityTable);
@@ -1175,9 +1172,7 @@ WHERE  contribution_id = {$this->_id}
       $lineItems[$itemId]['line_total'] = $submittedValues['total_amount'];
       $lineItems[$itemId]['id'] = $itemId;
       // 10117 update th line items for participants
-      if ($this->_context == 'participant') {
-        $this->_priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'price_set_id');
-      }
+      $this->_priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'price_set_id');
       $lineItem[$this->_priceSetId] = $lineItems;
     }
     $isQuickConfig = 0;

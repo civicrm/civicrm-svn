@@ -1215,6 +1215,7 @@ SELECT contact_id
       'CRM_Core_DAO_Worldregion',
       'CRM_Core_DAO_StateProvince',
       'CRM_Core_DAO_Country',
+      'CRM_Core_DAO_Domain',
     );
 
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
@@ -1243,7 +1244,10 @@ SELECT contact_id
             if(in_array($FKClassName, CRM_Core_DAO::$_testEntitiesToSkip)){
               $depObject = new $FKClassName();
               $depObject->find(true);
-            }else{
+            } elseif ($daoName == 'CRM_Member_DAO_MembershipType' && $name == 'member_of_contact_id') {
+              // FIXME: the fields() metadata is not specific enough
+              $depObject = CRM_Core_DAO::createTestObject($FKClassName, array('contact_type' => 'Organization'));
+            } else {
             //if it is required we need to generate the dependency object first
               $depObject = CRM_Core_DAO::createTestObject($FKClassName, CRM_Utils_Array::value($dbName, $params, 1));
             }
@@ -1361,6 +1365,7 @@ SELECT contact_id
     eval('$object   = new ' . $daoName . '( );');
     $object->id = CRM_Utils_Array::value('id', $params);
 
+    $deletions = array(); // array(array(0 => $daoName, 1 => $daoParams))
     if ($object->find(TRUE)) {
 
       $fields = &$object->fields();
@@ -1371,14 +1376,16 @@ SELECT contact_id
         $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
 
         if ($FKClassName != NULL && $object->$dbName && !in_array($FKClassName, CRM_Core_DAO::$_testEntitiesToSkip)) {
-
-          //if it is required we need to generate the dependency object first
-          CRM_Core_DAO::deleteTestObjects($FKClassName, array('id' => $object->$dbName));
+          $deletions[] = array($FKClassName, array('id' => $object->$dbName)); // x
         }
       }
     }
 
     $object->delete();
+    
+    foreach ($deletions as $deletion) {
+      CRM_Core_DAO::deleteTestObjects($deletion[0], $deletion[1]);
+    }
   }
 
   static function createTempTableName($prefix = 'civicrm', $addRandomString = TRUE, $string = NULL) {

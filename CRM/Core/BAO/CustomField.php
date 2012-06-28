@@ -1489,8 +1489,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
    * @return array $customFormatted formatted custom field array
    * @static
    */
-  static
-  function formatCustomField($customFieldId, &$customFormatted, $value,
+  static function formatCustomField($customFieldId, &$customFormatted, $value,
     $customFieldExtend, $customValueId = NULL,
     $entityId = NULL,
     $inline = FALSE,

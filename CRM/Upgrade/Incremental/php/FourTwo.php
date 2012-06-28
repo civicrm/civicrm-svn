@@ -55,8 +55,8 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   function upgrade_4_2_alpha1($rev) {
     // Some steps take a long time, so we break them up into separate
     // tasks and enqueue them separately.
-    $this->addTask(ts('Upgrade DB to 4.2.alpha1: Price Sets'), 'task_4_2_alpha1_createPriceSets');
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    $this->addTask(ts('Upgrade DB to 4.2.alpha1: Price Sets'), 'task_4_2_alpha1_createPriceSets');
     $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
     $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');
     for ($startId = $minContributionId; $startId <= $maxContributionId; $startId += self::BATCH_SIZE) {
@@ -73,19 +73,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    * Upgrade code to create priceset for contribution pages and events
    */
   static function task_4_2_alpha1_createPriceSets(CRM_Queue_TaskContext $ctx) {
-    //CRM-9714 drop unique index for title
-
-    $domain = new CRM_Core_DAO_Domain;
-    $domain->find(TRUE);
-    if ( $domain->locales ) {
-      $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
-      foreach ($locales as $locale) {
-        CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title_{$locale}`");
-      }
-    } else {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`");
-    }
-
+    $upgrade = new CRM_Upgrade_Form();
     $daoName =
       array(
         'civicrm_contribution_page' =>
@@ -99,17 +87,6 @@ class CRM_Upgrade_Incremental_php_FourTwo {
           CRM_Core_Component::getComponentID('CiviEvent')
         ),
       );
-
-    // add column in is_quick_config and is_reserved civicrm_price_set
-    $sql = "
-ALTER TABLE `civicrm_price_set`
-ADD         `is_quick_config` TINYINT(4) NOT NULL DEFAULT '0'
-                              COMMENT 'Is set if edited on Contribution or Event Page rather than through Manage Price Sets'
-                              AFTER `contribution_type_id`,
-ADD         `is_reserved`     TINYINT(4) DEFAULT '0'
-                              COMMENT 'Is this a predefined system price set  (i.e. it can not be deleted, edited)?'
-";
-    CRM_Core_DAO::executeQuery( $sql );
 
     // get all option group used for event and contribution page
     $query = "
@@ -165,7 +142,10 @@ WHERE     cpse.price_set_id IS NULL";
    * Function to create price sets
    */
   static function createPriceSet($daoName, $addTo,  $options = array()) {
-    $setParams['title'] = CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], 'title');
+    $query = "SELECT title FROM {$addTo[0]} where id =%1";
+    $setParams['title']  = CRM_Core_DAO::singleValueQuery($query,
+      array(1 => array($addTo[2], 'Integer'))
+    );
     $pageTitle = strtolower(CRM_Utils_String::munge($setParams['title'], '_', 245));
 
     // an event or contrib page has been deleted but left the option group behind - (this may be fixed in later versions?)
@@ -198,7 +178,10 @@ WHERE     cpse.price_set_id IS NULL";
       $fieldParams['html_type'] = 'Radio';
       $fieldParams['is_required'] = 1;
       if ($addTo[0] == 'civicrm_event') {
-        $fieldParams['name'] = $fieldParams['label'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $addTo[2], 'fee_label');
+        $query = "SELECT fee_label FROM civicrm_event where id =%1";
+        $fieldParams['name'] = $fieldParams['label'] = CRM_Core_DAO::singleValueQuery($query,
+          array(1 => array($addTo[2], 'Integer'))
+        );
         $defaultAmountColumn = 'default_fee_id';
       }
       else {
@@ -290,6 +273,25 @@ WHERE     cpse.price_set_id IS NULL";
    * @param $endId int, the last/highest contribution ID to convert
    */
   static function task_4_2_alpha1_convertContributions(CRM_Queue_TaskContext $ctx, $startId, $endId) {
+    $upgrade = new CRM_Upgrade_Form();
+    $query = "
+ INSERT INTO civicrm_line_item(`entity_table` ,`entity_id` ,`price_field_id` ,`label` , `qty` ,`unit_price` ,`line_total` ,`participant_count` ,`price_field_value_id`)
+ SELECT 'civicrm_contribution',cc.id, cpf.id as price_field_id, cpfv.label, 1, cc.total_amount, cc.total_amount line_total, 0, cpfv.id as price_field_value
+ FROM civicrm_membership_payment cmp
+ LEFT JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
+ LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+ LEFT JOIN civicrm_membership cm ON cm.id=cmp.membership_id
+ LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
+ LEFT JOIN civicrm_price_field cpf ON cpf.name = cmt.member_of_contact_id
+ LEFT JOIN civicrm_price_field_value cpfv ON cpfv.membership_type_id = cm.membership_type_id
+ WHERE (cc.id BETWEEN %1 AND %2) AND cli.entity_id IS NULL ;
+ ";
+    $sqlParams = array(
+      1 => array($startId, 'Integer'),
+      2 => array($endId, 'Integer'),
+    );
+    CRM_Core_DAO::executeQuery($query, $sqlParams);
+
     // create lineitems for contribution done for membership
     $sql = "
 SELECT    cc.id, cmp.membership_id, cpse.price_set_id, cc.total_amount
@@ -302,10 +304,6 @@ WHERE     (cc.id BETWEEN %1 AND %2)
 AND       cli.entity_id IS NULL AND cc.contribution_page_id IS NOT NULL AND cpp.contribution_id IS NULL
 GROUP BY  cc.id
 ";
-    $sqlParams = array(
-      1 => array($startId, 'Integer'),
-      2 => array($endId, 'Integer'),
-    );
     $result = CRM_Core_DAO::executeQuery($sql, $sqlParams);
 
     while ($result->fetch()) {
@@ -445,6 +443,7 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
    * Create an event registration profile with a single email field CRM-9587
    */
   static function task_4_2_alpha1_eventProfile(CRM_Queue_TaskContext $ctx) {
+    $upgrade = new CRM_Upgrade_Form();
     $profileTitle = ts('Your Registration Info');
     $sql = "
 INSERT INTO civicrm_uf_group

@@ -1437,9 +1437,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $result = CRM_Contribute_BAO_Contribution::transitionComponents($params, TRUE);
         if (!empty($result) && CRM_Utils_Array::value('contribution_id', $params)) {
           $lineItem = array();
-          $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_contribution', $params['contribution_id']);
           $lineItems         = CRM_Price_BAO_LineItem::getLineItems($params['contribution_id'], 'contribution');
           $itemId            = key($lineItems);
+          $priceSetId  = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'price_set_id');
           $fieldType         = NULL;
           if ($itemId && CRM_Utils_Array::value('price_field_id', $lineItems[$itemId])) {
             $fieldType = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'html_type');

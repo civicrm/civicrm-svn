@@ -277,6 +277,7 @@ class CRM_Core_I18n_Schema {
   function rebuildMultilingualSchema($locales, $version = NULL) {
     if ($version) {
       $latest = self::getLatestSchema($version);
+      require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
       $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
     }
     else {
@@ -370,6 +371,9 @@ class CRM_Core_I18n_Schema {
 
   static
   function getLatestSchema($version) {
+    // remove any .upgrade sub-str from version. Makes it easy to do version_compare & give right result
+    $version = str_ireplace(".upgrade", "", $version);
+
     // fetch all the SchemaStructure versions we ship and sort by version
     $schemas = array();
     foreach (scandir(dirname(__FILE__)) as $file) {
@@ -476,7 +480,6 @@ class CRM_Core_I18n_Schema {
       
     if ($currentVer && CRM_Core_Config::isUpgradeMode()) {
       // take exact version so that proper schema structure file in invoked
-      $currentVer = preg_replace('/.upgrade/', "", $currentVer);
       $latest = self::getLatestSchema($currentVer);
       require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
       $class = "CRM_Core_I18n_SchemaStructure_{$latest}";

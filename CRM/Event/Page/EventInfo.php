@@ -98,9 +98,17 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page {
         $values['event'],
         $config->defaultCurrency
       );
-
+      
+      //CRM-10434
+      $discountId= CRM_Core_BAO_Discount::findSet($this->_id, 'civicrm_event');
+      if ($discountId) {
+        $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Discount', $discountId, 'option_group_id');
+      } else {
+        $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_event', $this->_id);
+      }
+      
       // get price set options, - CRM-5209
-      if ($priceSetId = CRM_Price_BAO_Set::getFor('civicrm_event', $this->_id)) {
+      if ($priceSetId) {
         $setDetails = CRM_Price_BAO_Set::getSetDetail($priceSetId, TRUE, TRUE);
         $priceSetFields = $setDetails[$priceSetId]['fields'];
         if (is_array($priceSetFields)) {
@@ -138,18 +146,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page {
         }
         // Tell tpl we have price set fee data
         $this->assign('isPriceSet', 1);
-      }
-      else {
-        //retrieve event fee block.
-        $discountId = CRM_Core_BAO_Discount::findSet($this->_id, 'civicrm_event');
-        if ($discountId) {
-          CRM_Core_OptionGroup::getAssoc(CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Discount',
-              $discountId,
-              'option_group_id'
-            ),
-            $values['feeBlock'], FALSE, 'id'
-          );
-        }
       }
     }
 

@@ -156,8 +156,8 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     $this->click("xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']");
 
-    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Sign']");
-    $url = $this->getAttribute("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Sign']@href");
+    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Sign']");
+    $url = $this->getAttribute("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Sign']@href");
 
     ////////////// Retrieve Sign Petition Url /////////////////////////
 
@@ -200,8 +200,8 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
     $this->type("petition_title", $title);
     $this->click("xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']");
 
-    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']");
-    $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
+    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']");
+    $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Signatures']");
     $this->waitForPageToLoad("30000");
 
     // verify tabular data
@@ -259,8 +259,8 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     $this->click("xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']");
 
-    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Sign']");
-    $url = $this->getAttribute("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Sign']@href");
+    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Sign']");
+    $url = $this->getAttribute("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Sign']@href");
 
     // logout and sign as anonymous.
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
@@ -304,8 +304,8 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
     $this->type("petition_title", $title);
     $this->click("xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']");
 
-    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']");
-    $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more ']/ul/li/a[text()='Signatures']");
+    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']");
+    $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Signatures']");
     $this->waitForPageToLoad("30000");
 
     // verify tabular data

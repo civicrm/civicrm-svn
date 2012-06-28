@@ -70,7 +70,8 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
 
   /*
    * construct method
-   */ function __construct() {
+   */ 
+  function __construct() {
     parent::__construct();
   }
 
@@ -2278,9 +2279,13 @@ WHERE  contribution_id = %1 AND membership_id != %2";
         $values['title'] = 'Contribution';
       }
       // set lineItem for contribution
-      if ($this->id && $pId = CRM_Price_BAO_Set::getFor('civicrm_contribution', $this->id)) {
-        $values['lineItem'][0] = CRM_Price_BAO_LineItem::getLineItems($this->id, 'contribution');
-        $values['priceSetID'] = $pId;
+      if ($this->id) {
+        $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->id, 'contribution', 1);
+        if (!empty($lineItem)) {
+          $itemId                = key($lineItems);
+          $values['lineItem'][0] = $lineItem;
+          $values['priceSetID']  = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItem[$itemId]['price_field_id'], 'price_set_id');
+        }
       }
       $relatedContact = CRM_Contribute_BAO_Contribution::getOnbehalfIds(
         $this->id,

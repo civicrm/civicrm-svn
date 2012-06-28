@@ -258,8 +258,8 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     //verify the money custom field value in the proper format
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='custom-set-content-{$customGroupTitle}']"));
-    $this->verifyText("xpath=//div[@id='custom-set-content-{$customGroupTitle}']/div/div[3]", '12,345,678.98');
+    $this->assertTrue($this->isElementPresent("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle']/table/tbody/tr[2]/td/div/div"));
+    $this->verifyText("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle']/table/tbody/tr[2]/td/div/div/div/div[3]", '12,345,678.98');
   }
 }
 

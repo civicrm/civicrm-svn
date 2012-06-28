@@ -61,6 +61,9 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     
     //demographics block check
     $this->addDemographics();
+   
+    //custom data check
+    $this->fillCustomData();
   }
   
   function addEditPhoneEmail($field = "email") {
@@ -249,6 +252,41 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isChecked("civicrm_gender_Male_2"), "Gender field is not set");
     $this->assertTrue(($this->getValue("birth_date") == "09/10/1989"), "Birth date is not set expected 09/10/1989");
     $this->assertTrue($this->isChecked("is_deceased"), "Deceased field is not set");
+  }
+ 
+  function fillCustomData() {
+    $this->verifyText("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a", "add or edit custom set");
+    $this->click("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a");
+    
+    $this->click("xpath=//table[@id='constituent_information_1']/tbody/tr/td/a");
+    $dateFieldId = $this->getAttribute("xpath=//div[@id='constituent_information']/table/tbody/tr[3]/td[@class='html-adjust']/input@id");
+    $this->click("xpath=//div[@id='constituent_information']/table/tbody/tr/td[@class='html-adjust']/input");
+    $this->select("xpath=//div[@id='constituent_information']/table/tbody/tr[2]/td[@class='html-adjust']/select", "value=S");
+    $this->webtestFillDate($dateFieldId, "1 June 2010");
+    $this->click("_qf_CustomData_upload");
+    sleep(2);
+    
+    //assertions
+    $assertValues = array(
+       1 => array('label' => 'Most Important Issue', 'content' => 'Education'),
+       2 => array('label' => 'Marital Status', 'content' => 'Single'),
+       3 => array('label' => 'Marriage Date', 'content' => 'June 1st, 2010')
+    );
+    
+    foreach($assertValues as $key => $value) {
+      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr/td/div/div/div[@class='crm-clear']/div[@class='crm-label'][{$key}]", preg_quote($value['label']));
+      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr/td/div/div/div[@class='crm-clear']/div[@class='crm-content html-adjust crm-custom-data'][$key]", preg_quote($value['content']));
+    }
+    
+    $this->verifyText("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a", "add or edit custom set");
+    $this->click("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a");
+    $this->click("xpath=//table[@id='constituent_information_1']/tbody/tr/td/a");
+    
+    //assert for default values
+    $this->assertTrue($this->isChecked("xpath=//div[@id='constituent_information']/table/tbody/tr/td[@class='html-adjust']/input"), "custom field value not set in edit mode");
+    $this->verifySelectedValue("xpath=//div[@id='constituent_information']/table/tbody/tr[2]/td[@class='html-adjust']/select", "S");
+    $this->assertTrue(($this->getValue("{$dateFieldId}") == "06/01/2010"), "Constituent information date field not set in edit mode");
+    $this->click('_qf_CustomData_cancel');
   }
   
   function _checkClickLink($linkText, $field) {

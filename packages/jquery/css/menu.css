@@ -113,6 +113,7 @@ li.menumain {
 
 div.menu-item {
 	padding: 1px 10px 1px 4px;
+	height: auto;
 }
 img.menu-item-arrow{
 	position: absolute;

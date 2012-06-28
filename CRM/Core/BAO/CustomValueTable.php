@@ -343,8 +343,7 @@ class CRM_Core_BAO_CustomValueTable {
     }
   }
 
-  static
-  function postProcess(&$params, &$customFields, $entityTable, $entityID, $customFieldExtends) {
+  static function postProcess(&$params, &$customFields, $entityTable, $entityID, $customFieldExtends) {
     $customData = CRM_Core_BAO_CustomField::postProcess($params,
       $customFields,
       $entityID,
