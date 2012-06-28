@@ -371,6 +371,9 @@ class CRM_Core_I18n_Schema {
 
   static
   function getLatestSchema($version) {
+    // remove any .upgrade sub-str from version. Makes it easy to do version_compare & give right result
+    $version = str_ireplace(".upgrade", "", $version);
+
     // fetch all the SchemaStructure versions we ship and sort by version
     $schemas = array();
     foreach (scandir(dirname(__FILE__)) as $file) {
