@@ -36,6 +36,11 @@ table.crm-table-group-summary {
   margin-bottom: .1em;
 }
 
+#crm-container table.crm-address-element {
+  border: none;
+  margin-bottom: .25em;
+}
+
 #crm-container th, 
 #crm-container table.display thead th, 
 #crm-container table thead.sticky th, 
