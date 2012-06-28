@@ -26,9 +26,8 @@
 {if !empty($form.address.$blockId.supplemental_address_1)}
   <tr>
      <td colspan="2">
-         {$form.address.$blockId.supplemental_address_1.label}<br />
-         {$form.address.$blockId.supplemental_address_1.html} <br >
-         <span class="description font-italic">{ts}Supplemental address info, e.g. c/o, department name, building name, etc.{/ts}</span>
+         {$form.address.$blockId.supplemental_address_1.label} {help id="id-supplemental-address" file="CRM/Contact/Form/Contact.hlp"}<br />
+         {$form.address.$blockId.supplemental_address_1.html}
      </td>
   </tr>
 {/if}

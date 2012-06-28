@@ -27,8 +27,7 @@
    <tr>
       <td colspan="2">
           {$form.address.$blockId.supplemental_address_2.label}<br />
-          {$form.address.$blockId.supplemental_address_2.html} <br >
-          <span class="description font-italic">{ts}Supplemental address info, e.g. c/o, department name, building name, etc.{/ts}</span>
+          {$form.address.$blockId.supplemental_address_2.html}
       </td>
    </tr>
 {/if}

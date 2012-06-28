@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <tr><td colspan="3" style="padding:0;">
-<table style="border:none;">
+<table class="crm-address-element">
 <tr>
    {if !empty($form.address.$blockId.country_id)}
      <td>
