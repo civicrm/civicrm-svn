@@ -228,12 +228,14 @@ ALTER TABLE `civicrm_contribution_page` ADD COLUMN is_confirm_enabled tinyint(4)
     
     ALTER TABLE `civicrm_batch` CHANGE `label_{$locale}` `title_{$locale}` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Friendly Name.'; 
     UPDATE civicrm_group SET title_{$locale} = title;
+    ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title_{$locale}`;
   {/foreach}
 
   ALTER TABLE civicrm_group DROP INDEX `UI_title`;
   ALTER TABLE civicrm_group DROP title;
 {else}
-   ALTER TABLE `civicrm_batch` CHANGE `label` `title` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Friendly Name.';
+  ALTER TABLE `civicrm_batch` CHANGE `label` `title` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Friendly Name.';
+  ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`;
 {/if}
 
 -- CRM-9780

@@ -73,18 +73,6 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    * Upgrade code to create priceset for contribution pages and events
    */
   static function task_4_2_alpha1_createPriceSets(CRM_Queue_TaskContext $ctx) {
-    //CRM-9714 drop unique index for title
-    $domain = new CRM_Core_DAO_Domain;
-    $domain->find(TRUE);
-    if ( $domain->locales ) {
-      $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
-      foreach ($locales as $locale) {
-        CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title_{$locale}`");
-      }
-    } else {
-      CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`");
-    }
-
     $upgrade = new CRM_Upgrade_Form();
     $daoName =
       array(
