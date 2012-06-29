@@ -107,7 +107,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
         $params['name'] = $params['label'];
       }
 
-      $params['weight'] = self::calculateWeight($params['parent_id']);
+      $params['weight'] = self::calculateWeight(CRM_Utils_Array::value('parent_id', $params));
     }
 
     if (is_array($params['permission'])) {
