@@ -96,21 +96,43 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
       $this->_interviewerId = CRM_Utils_Array::value('survey_interviewer_id', $this->get('formValues'));
     }
     
+    if ( $this->_surveyId ) {
+      $params = array('id' => $this->_surveyId);
+      CRM_Campaign_BAO_Survey::retrieve($params, $this->_surveyDetails);
+    }
+
     $orderClause = false;
     $buttonName  = $this->controller->getButtonName();
-    if ($buttonName == '_qf_Interview_submit_orderBy') {
-      $orderBy = array();
-      if ( $orderByParams = CRM_Utils_Array::value('order_bys', $_POST) ) {
-        foreach ( $orderByParams as $key => $val ) {
-          if (CRM_Utils_Array::value('column', $val)) {
-            $orderBy[] = "{$val['column']} {$val['order']}";
-          }
-        }
-        if ( !empty($orderBy) ) {
-          $orderClause = "ORDER BY " . implode(', ', $orderBy);
+    if ( $buttonName == '_qf_Interview_submit_orderBy' && 
+         CRM_Utils_Array::value('order_bys', $_POST) ) {
+      $orderByParams = CRM_Utils_Array::value('order_bys', $_POST);
+    } elseif ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $this->_surveyDetails['activity_type_id'] ) {
+      $orderByParams = 
+        array(
+              1 =>
+              array(
+                    'column' => 'civicrm_address.street_name',
+                    'order'  => 'ASC'
+                    ),
+              2 =>
+              array(
+                    'column' => 'civicrm_address.street_number%2',
+                    'order' => 'ASC'
+                    ),
+              );
+    } 
+
+    $orderBy = array();
+    if ( !empty($orderByParams) ) {
+      foreach ( $orderByParams as $key => $val ) {
+        if (CRM_Utils_Array::value('column', $val)) {
+          $orderBy[] = "{$val['column']} {$val['order']}";
         }
       }
-    } 
+      if ( !empty($orderBy) ) {
+        $orderClause = "ORDER BY " . implode(', ', $orderBy);
+      }
+    }
 
     $this->_contactIds = array_unique($this->_contactIds);
     if (!empty($this->_contactIds) && $orderClause) {
@@ -366,6 +388,21 @@ WHERE {$clause}
       }
     }
 
+    if ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $this->_surveyDetails['activity_type_id'] ) {
+      $defaults['order_bys'] = 
+        array(
+              1 =>
+              array(
+                    'column' => 'civicrm_address.street_name',
+                    'order'  => 'ASC'
+                    ),
+              2 =>
+              array(
+                    'column' => 'civicrm_address.street_number%2',
+                    'order' => 'ASC'
+                    ),
+              );
+    }
     return $defaults;
   }
 
