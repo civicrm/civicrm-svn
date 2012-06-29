@@ -125,14 +125,102 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->_testUserWithMoreThanOneRelationship($pageId, $cid, $pageTitle);
   }
 
+  function testOnBehalfOfOrganizationWithMembershipData() {
+
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+
+    // create new individual
+    $firstName     = 'John_' . substr(sha1(rand()), 0, 7);
+    $lastName      = 'Anderson_' . substr(sha1(rand()), 0, 7);
+    $email         = "{$firstName}.{$lastName}@example.com";
+    $contactParams = array(
+      'first_name' => $firstName,
+      'last_name' => $lastName,
+      'email-5' => $email,
+    );
+    $streetAddress = "100 Main Street";
+
+    //adding contact for membership sign up
+    $this->webtestAddContact($firstName, $lastName, $email);
+    $urlElements = $this->parseURL();
+    print_r($urlElements);
+    $cid = $urlElements['queryString']['cid'];
+    $this->assertType('numeric', $cid);
+
+    // We need a payment processor
+    $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+    $processorType = 'Dummy';
+    $pageTitle = substr(sha1(rand()), 0, 7);
+    $rand = 100;
+    $hash = substr(sha1(rand()), 0, 7);
+    $amountSection = TRUE;
+    $payLater = TRUE;
+    $onBehalf = 'optional';
+    $pledges = FALSE;
+    $recurring = FALSE;
+    $memberships = FALSE;
+    $memPriceSetId = NULL;
+    $friend = TRUE;
+    $profilePreId = NULL;
+    $profilePostId = NULL;
+    $premiums = FALSE;
+    $widget = FALSE;
+    $pcp = FALSE;
+    $honoreeSection = FALSE;
+    $isAddPaymentProcessor = TRUE;
+    $isPcpApprovalNeeded = FALSE;
+    $isSeparatePayment = FALSE;
+
+    // create a new online contribution page
+    // create contribution page with randomized title and default params
+    $pageId = $this->webtestAddContributionPage($hash,
+      $rand,
+      $pageTitle,
+      array($processorName => $processorType),
+      $amountSection,
+      $payLater,
+      $onBehalf,
+      $pledges,
+      $recurring,
+      $memberships,
+      $memPriceSetId,
+      $friend,
+      $profilePreId,
+      $profilePostId,
+      $premiums,
+      $widget,
+      $pcp,
+      $isAddPaymentProcessor,
+      $isPcpApprovalNeeded,
+      $isSeparatePayment,
+      $honoreeSection
+    );
+
+    //logout
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->waitForPageToLoad('30000');
+    $this->_testAnomoyousOganization($pageId, $cid, $pageTitle);
+   
+  }
+
   function _testAnomoyousOganization($pageId, $cid, $pageTitle) {
     //Open Live Contribution Page
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
 
     $this->waitForElementPresent("_qf_Main_upload-bottom");
 
-    $this->click('CIVICRM_QFID_amount_other_radio_4');
-    $this->type('amount_other', 60);
+    $this->click('CIVICRM_QFID_0_8');
+    $this->type('css=div.other_amount-section input', 60);
 
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
     $lastName  = 'An' . substr(sha1(rand()), 0, 7);
