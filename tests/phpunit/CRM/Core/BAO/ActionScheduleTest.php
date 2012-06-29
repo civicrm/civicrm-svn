@@ -357,6 +357,10 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
   }
 
   // TODO // function testMembershipEndDate_NonMatch() { }
+  // TODO // function testEventTypeStartDate_Match() { }
+  // TODO // function testEventTypeEndDate_Match() { }
+  // TODO // function testEventNameStartDate_Match() { }
+  // TODO // function testEventNameEndDate_Match() { }
 
   function assertRecipients($expectedRecipients, $mailer) {
     $recipients = array();
