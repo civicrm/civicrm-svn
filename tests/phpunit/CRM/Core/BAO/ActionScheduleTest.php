@@ -295,7 +295,36 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
     ));
   }
 
-  // TODO // function testMembershipJoinDate_NonMatch() { }
+  /**
+   * For contacts/members which match schedule based on join date,
+   * an email should be sent.
+   */
+  function testMembershipJoinDate_NonMatch() {
+    $membership = $this->createTestObject('CRM_Member_DAO_Membership', $this->fixtures['rolling_membership']);
+    $this->assertTrue(is_numeric($membership->id));
+    $result = civicrm_api('Email', 'create', array(
+      'contact_id' => $membership->contact_id,
+      'email' => 'test-member@example.com',
+      'version' => 3,
+    ));
+    $this->assertAPISuccess($result);
+    
+    // Add an alternative membership type, and only send messages for that type
+    $extraMembershipType = $this->createTestObject('CRM_Member_DAO_MembershipType', array());
+    $this->assertTrue(is_numeric($extraMembershipType->id));
+    $actionScheduleDao = CRM_Core_BAO_ActionSchedule::add($this->fixtures['sched_membership_join_2week'], $ids);
+    $this->assertTrue(is_numeric($actionScheduleDao->id));
+    $actionScheduleDao->entity_value = $extraMembershipType->id;
+    $actionScheduleDao->save();
+
+    // start_date=2012-03-15 ; schedule is 2 weeks after start_date
+    $this->assertCronRuns(array(
+      array( // After the 2-week mark, don't send email because we have different membership type
+        'time' => '2012-03-29 01:00:00',
+        'recipients' => array(),
+      ),
+    ));
+  }
 
   /**
    * For contacts/members which match schedule based on end date,
