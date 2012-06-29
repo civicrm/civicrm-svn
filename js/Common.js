@@ -580,8 +580,8 @@ function advmultiselectResize() {
       cj(this).css('display', 'table-cell');
     });
   }
-  var contactwidth = cj('#crm-container #mainTabContainer #contact-summary').width();
-  if (contactwidth < 550) {
+  var contactwidth = cj('#crm-container #mainTabContainer').width();
+  if (contactwidth < 600) {
     cj('#crm-container #mainTabContainer').addClass('narrowpage');
     cj('#crm-container #mainTabContainer').addClass('narrowpage');
     cj('#crm-container #mainTabContainer.narrowpage #contactTopBar td').each( function(index) {
