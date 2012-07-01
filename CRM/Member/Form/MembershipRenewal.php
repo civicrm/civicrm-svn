@@ -66,6 +66,11 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
   * ID of the person the receipt is to go to
   */
   protected $_receiptContactId = null;
+  /*
+   * context would be set to standalone if the contact is use is being selected from
+   * the form rather than in the URL
+   */
+  protected $_context;
 
   public function preProcess() {
     //custom data related code
