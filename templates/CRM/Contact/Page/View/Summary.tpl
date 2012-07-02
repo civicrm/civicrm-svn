@@ -40,7 +40,7 @@
             {assign var='urlParams' value=$urlParams|cat:"&context=$context"}
         {/if}
 
-    	{* Include the Actions and Edit buttons if user has 'edit' permission and contact is NOT in trash. *}
+      {* Include the Actions and Edit buttons if user has 'edit' permission and contact is NOT in trash. *}
         {if $permission EQ 'edit' and !$isDeleted}
             <li class="crm-contact-activity">
                 {include file="CRM/Contact/Form/ActionsButton.tpl"}
@@ -120,17 +120,17 @@
     <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
         <ul class="crm-contact-tabs-list">
             <li id="tab_summary" class="crm-tab-button">
-            	<a href="#contact-summary" title="{ts}Summary{/ts}">
-            	<span> </span> {ts}Summary{/ts}
-            	<em>&nbsp;</em>
-            	</a>
+              <a href="#contact-summary" title="{ts}Summary{/ts}">
+              <span> </span> {ts}Summary{/ts}
+              <em>&nbsp;</em>
+              </a>
             </li>
             {foreach from=$allTabs key=tabName item=tabValue}
             <li id="tab_{$tabValue.id}" class="crm-tab-button crm-count-{$tabValue.count}">
-            	<a href="{$tabValue.url}" title="{$tabValue.title}">
-            		<span> </span> {$tabValue.title}
-            		<em>{$tabValue.count}</em>
-            	</a>
+              <a href="{$tabValue.url}" title="{$tabValue.title}">
+                <span> </span> {$tabValue.title}
+                <em>{$tabValue.count}</em>
+              </a>
             </li>
             {/foreach}
         </ul>
@@ -255,7 +255,7 @@
                         <div class="clear"></div>
                     </div><!-- #contact_panel -->
 
-					{if $address}
+          {if $address}
                     <div class="contact_panel">
                         {foreach from=$address item=add key=locationIndex}
                         <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
@@ -263,11 +263,11 @@
                                 <tr>
                                     <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
                                         {if $config->mapProvider AND
-					 !empty($add.geo_code_1) AND
-					 is_numeric($add.geo_code_1) AND
-					 !empty($add.geo_code_2) AND
-					 is_numeric($add.geo_code_2)
-					 }
+           !empty($add.geo_code_1) AND
+           is_numeric($add.geo_code_1) AND
+           !empty($add.geo_code_2) AND
+           is_numeric($add.geo_code_2)
+           }
                                             <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
                                         {/if}</td>
                                     <td class="crm-contact-address_display">
@@ -279,22 +279,22 @@
                                     </td>
                                 </tr>
                             </table>
-			    {foreach from=$add.custom item=customGroup key=cgId}
+          {foreach from=$add.custom item=customGroup key=cgId}
                             {assign var="isAddressCustomPresent" value=1}
-			        {foreach from=$customGroup item=customValue key=cvId}
-			            <div id="address_custom_{$cgId}_{$locationIndex}" class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion crm-accordion-closed">
-			                <div class="crm-accordion-header">
-			                    <div class="icon crm-accordion-pointer"></div>
-				            {$customValue.title}
-			                </div>
-			                <div class="crm-accordion-body">
-				            <table>
-				                {foreach from=$customValue.fields item=customField key=cfId}
-					            <tr><td class="label">{$customField.field_title}</td><td class="crm-contact_custom_field_value">{$customField.field_value}</td></tr>
-	                  	                {/foreach}
-			                    </table>
-			                </div>
-			            </div>
+              {foreach from=$customGroup item=customValue key=cvId}
+                  <div id="address_custom_{$cgId}_{$locationIndex}" class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion crm-accordion-closed">
+                      <div class="crm-accordion-header">
+                          <div class="icon crm-accordion-pointer"></div>
+                    {$customValue.title}
+                      </div>
+                      <div class="crm-accordion-body">
+                    <table>
+                        {foreach from=$customValue.fields item=customField key=cfId}
+                      <tr><td class="label">{$customField.field_title}</td><td class="crm-contact_custom_field_value">{$customField.field_value}</td></tr>
+                                      {/foreach}
+                          </table>
+                      </div>
+                  </div>
                                     <script type="text/javascript">
                                         {if $customValue.collapse_display eq 1 }
                                             cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
@@ -309,18 +309,18 @@
 
                         <div class="clear"></div>
                     </div>
-					{/if}
+          {/if}
 
           <div class="contact_panel">
             <div class="contactCardLeft">
               <div class="crm-summary-block" id="communication-pref-block" >
-                {include file="CRM/Contact/Page/Inline/CommunicationPreferences.tpl"} 
+                {include file="CRM/Contact/Page/Inline/CommunicationPreferences.tpl"}
               </div>
             </div> <!-- contactCardLeft -->
             {if $contact_type eq 'Individual' AND $showDemographics}
               <div class="contactCardRight">
                 <div class="crm-summary-block" id="demographic-block">
-                  {include file="CRM/Contact/Page/Inline/Demographics.tpl"} 
+                  {include file="CRM/Contact/Page/Inline/Demographics.tpl"}
                 </div>
               </div> <!-- contactCardRight -->
             {/if}
@@ -363,7 +363,7 @@
                 {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
             {/if}
         </div>
-		    <div class="clear"></div>
+        <div class="clear"></div>
     </div>
  <script type="text/javascript">
  var selectedTab  = 'summary';
@@ -418,7 +418,7 @@ cj(function(){
 
     cj( '#custom-set-block-'+ cgId ).html( response );
   });
- 
+
 });
 
 </script>
