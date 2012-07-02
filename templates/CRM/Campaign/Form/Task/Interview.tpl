@@ -53,13 +53,11 @@
 </div>
 
 <div id="order-by-elements" class="civireport-criteria">
-   {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture}  
    <table id="optionField" class="form-layout-compressed">
         <tr>
         <th></th>
         <th> Column</th>
         <th> Order</th>
-	<th>{ts 1=$instanceURL 2=$surveyValues.title}<a href='%1'>View Survey Detail Report of "%2"</a>{/ts}</th>
         </tr>
 
 	{section name=rowLoop start=1 loop=4}
@@ -80,6 +78,10 @@
   <div id="optionFieldLink" class="add-remove-link">
     <a onclick="showHideRow();" name="optionFieldLink" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another column{/ts}</a>
   </div>
+
+  {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture}  
+  <a href='{$instanceURL}' class="button">{ts}Survey Report{/ts}</a>
+
   <script type="text/javascript">
             var showRows   = new Array('optionField_1');
             var hideBlocks = new Array('optionField_2','optionField_3');
