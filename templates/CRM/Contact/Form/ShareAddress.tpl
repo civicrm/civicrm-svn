@@ -59,11 +59,13 @@
       cj( 'table#address_' + blockNo ).hide( );
       cj( '#shared-address-display-' + blockNo ).show( );
       cj( '#shared-address-display-cancel-' + blockNo ).hide( );
+      cj( '.crm-edit-address-custom_data').hide();
     } else {
       cj( '#shared-address-' + blockNo ).hide( );
       cj( 'table#address_' + blockNo ).show( );
       cj( '#shared-address-display-' + blockNo ).hide( );
       cj( '#shared-address-display-cancel-' + blockNo ).hide( );
+      cj( '.crm-edit-address-custom_data').show();
     }
   }
 
