@@ -154,6 +154,14 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
     $params = $this->exportValues();
 
     // need to process / save address 
+    $params['contact_id'] = $this->_contactId;
+    $params['updateBlankLocInfo'] = TRUE;
+
+    // process shared contact address.
+    CRM_Contact_BAO_Contact_Utils::processSharedAddress($params['address']);
+
+    // save email changes
+    CRM_Core_BAO_Address::create( $params, TRUE );
 
     $response = array('status' => 'save');
     echo json_encode($response);
