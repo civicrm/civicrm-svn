@@ -157,6 +157,112 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $cid = $urlElements['queryString']['cid'];
     $this->assertType('numeric', $cid);
 
+    //custom data
+    // Go directly to the URL of the screen that you will be testing (New Custom Group).
+    $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
+
+    $this->waitForPageToLoad("30000");
+
+    //fill custom group title
+    $customGroupTitle = 'custom_' . substr(sha1(rand()), 0, 7);
+    $this->click("title");
+    $this->type("title", $customGroupTitle);
+
+    //custom group extends
+    $this->click("extends[0]");
+    $this->select("extends[0]", "value=Membership");
+    //$this->click("//option[@value='Contact']");
+    $this->click("_qf_Group_next-bottom");
+    $this->waitForElementPresent("_qf_Field_cancel-bottom");
+
+    //Is custom group created?
+    $this->assertTrue($this->isTextPresent("Your custom field set '{$customGroupTitle}' has been added. You can add custom fields now."));
+
+    //add custom field - alphanumeric checkbox
+    $checkboxFieldLabel = 'custom_field' . substr(sha1(rand()), 0, 4);
+    $this->click("label");
+    $this->type("label", $checkboxFieldLabel);
+    $this->click("data_type[1]");
+    $this->select("data_type[1]", "value=CheckBox");
+    $this->click("//option[@value='CheckBox']");
+    $checkboxOptionLabel1 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_1", $checkboxOptionLabel1);
+    $this->type("option_value_1", "1");
+    $checkboxOptionLabel2 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_2", $checkboxOptionLabel2);
+    $this->type("option_value_2", "2");
+    $this->click("link=another choice");
+    $checkboxOptionLabel3 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_3", $checkboxOptionLabel3);
+    $this->type("option_value_3", "3");
+
+
+    //enter options per line
+    $this->type("options_per_line", "2");
+
+    //enter pre help message
+    $this->type("help_pre", "this is field pre help");
+
+    //enter post help message
+    $this->type("help_post", "this field post help");
+
+    //Is searchable?
+    $this->click("is_searchable");
+
+    //clicking save
+    $this->click("_qf_Field_next");
+    $this->waitForPageToLoad("30000");
+
+    //Is custom field created?
+    $this->assertTrue($this->isTextPresent("Your custom field '$checkboxFieldLabel' has been saved."));
+
+    //create another custom field - Integer Radio
+    $this->click("//a[@id='newCustomField']/span");
+    $this->waitForPageToLoad("30000");
+    $this->click("data_type[0]");
+    $this->select("data_type[0]", "value=1");
+    $this->click("//option[@value='1']");
+    $this->click("data_type[1]");
+    $this->select("data_type[1]", "value=Radio");
+    $this->click("//option[@value='Radio']");
+
+    $radioFieldLabel = 'custom_field' . substr(sha1(rand()), 0, 4);
+    $this->type("label", $radioFieldLabel);
+    $radioOptionLabel1 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_1", $radioOptionLabel1);
+    $this->type("option_value_1", "1");
+    $radioOptionLabel2 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_2", $radioOptionLabel2);
+    $this->type("option_value_2", "2");
+    $this->click("link=another choice");
+    $radioOptionLabel3 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_3", $radioOptionLabel3);
+    $this->type("option_value_3", "3");
+
+    //select options per line
+    $this->type("options_per_line", "3");
+
+    //enter pre help msg
+    $this->type("help_pre", "this is field pre help");
+
+    //enter post help msg
+    $this->type("help_post", "this is field post help");
+
+    //Is searchable?
+    $this->click("is_searchable");
+
+    //clicking save
+    $this->click("_qf_Field_next");
+    $this->waitForPageToLoad("30000");
+
+    //Is custom field created
+    $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
+    
+    //create organisation
+    $orgName = "Org WebAccess ". substr(sha1(rand()), 0, 7);
+    $orgEmail = "org". substr(sha1(rand()), 0, 7) . "@web.com";
+    $this->webtestAddOrganization($orgName, $orgEmail);
+
     // We need a payment processor
     $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
     $processorType = 'Dummy';
