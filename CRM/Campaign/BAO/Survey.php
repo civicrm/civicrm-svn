@@ -398,7 +398,9 @@ SELECT  survey.id    as id,
     if (!$id) {
       return NULL;
     }
-
+    $reportId = CRM_Campaign_BAO_Survey::getReportID($id);
+    CRM_Report_BAO_Instance::delete($reportId);
+    
     $dao = new CRM_Campaign_DAO_Survey();
     $dao->id = $id;
     return $dao->delete();
