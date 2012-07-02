@@ -305,7 +305,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       return $membership;
     }
 
-
+      $params['contribution'] = $contribution;
     // add custom field values
     if (CRM_Utils_Array::value('custom', $params)
       && is_array($params['custom'])
