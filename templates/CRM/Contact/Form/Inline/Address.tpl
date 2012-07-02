@@ -33,7 +33,6 @@
         </div>
       </td>
     </tr>
-
     {if $masterAddress.$blockId gt 0 }
         <tr><td><div class="message status"><div class="icon inform-icon"></div>&nbsp; {ts 1=$masterAddress.$blockId}This address is shared with %1 contact record(s). Modifying this address will automatically update the shared address for these contacts.{/ts}</div></td></tr>
     {/if}

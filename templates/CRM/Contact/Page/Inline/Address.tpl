@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{if $add }
 <div class="crm-table2div-layout">
   <div class="crm-clear"> <!-- start of main -->
     <div class="crm-config-option">
@@ -87,4 +88,12 @@ cj( function() {
 });
 </script>
 {/literal}
-
+{else}
+<div class="crm-table2div-layout">
+  <div class="crm-clear">
+    <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block" title="{ts}click to add address{/ts}" locno={$locationIndex}>
+    <span class="batch-edit"></span>{ts}add address{/ts}
+    </a>
+  </div>
+</div>
+{/if}
