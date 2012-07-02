@@ -326,6 +326,11 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page {
             ts('more')
           );
         }
+
+        if ($reportID = CRM_Campaign_BAO_Survey::getReportID($sid)) {
+          $url = CRM_Utils_System::url("civicrm/report/instance/{$reportID}",'reset=1');
+          $surveysData[$sid]['title'] = "<a href='{$url}' title='View Survey Report'>{$surveysData[$sid]['title']}</a>";
+        }
       }
     }
 

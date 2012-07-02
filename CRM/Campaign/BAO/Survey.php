@@ -808,15 +808,17 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
       }
     }
 
-    $reportID = self::getReportID($surveyId);
-    if ($reportID) {
-      $voterLinks['report'] = 
-        array(
-              'name' => 'report',
-              'url'  => "civicrm/report/instance/{$reportID}",
-              'qs'   => 'reset=1',
-              'title' => ts('View Survey Report'),
-              );
+    if (CRM_Core_Permission::check('access CiviReport')) {
+      $reportID = self::getReportID($surveyId);
+      if ($reportID) {
+        $voterLinks['report'] = 
+          array(
+                'name' => 'report',
+                'url'  => "civicrm/report/instance/{$reportID}",
+                'qs'   => 'reset=1',
+                'title' => ts('View Survey Report'),
+                );
+      }
     }
 
     $ids = array('id' => $surveyId);
