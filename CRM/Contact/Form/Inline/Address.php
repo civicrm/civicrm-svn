@@ -101,7 +101,7 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
-    CRM_Contact_Form_Edit_Address::buildQuickForm( $this, $this->_locBlockNo );
+    CRM_Contact_Form_Edit_Address::buildQuickForm( $this, $this->_locBlockNo, TRUE, TRUE );
 
     $buttons = array(
       array(

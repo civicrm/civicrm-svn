@@ -44,13 +44,14 @@ class CRM_Contact_Form_Edit_Address {
    * @param object  $form - CRM_Core_Form (or subclass)
    * @param int     $addressBlockCount - the index of the address array (if multiple addresses on a page)
    * @param boolean $sharing - false, if we want to skip the address sharing features
+   * @param boolean $inlineEdit true when edit used in inline edit
    *
    * @return none
    *
    * @access public
    * @static
    */
-  static function buildQuickForm(&$form, $addressBlockCount = NULL, $sharing = TRUE) {
+  static function buildQuickForm(&$form, $addressBlockCount = NULL, $sharing = TRUE, $inlineEdit = FALSE) {
     // passing this via the session is AWFUL. we need to fix this
     if (!$addressBlockCount) {
       $blockId = ($form->get('Address_Block_Count')) ? $form->get('Address_Block_Count') : 1;
@@ -64,7 +65,10 @@ class CRM_Contact_Form_Edit_Address {
 
     $form->applyFilter('__ALL__', 'trim');
 
-    $js = array('onChange' => 'checkLocation( this.id );');
+    $js = array();
+    if ( !$inlineEdit ) {
+      $js = array('onChange' => 'checkLocation( this.id );');
+    }
     $form->addElement('select',
       "address[$blockId][location_type_id]",
       ts('Location Type'),
@@ -72,7 +76,11 @@ class CRM_Contact_Form_Edit_Address {
         '' => ts('- select -')) + CRM_Core_PseudoConstant::locationType(), $js
     );
 
-    $js = array('id' => 'Address_' . $blockId . '_IsPrimary', 'onClick' => 'singleSelect( this.id );');
+    
+    if ( !$inlineEdit ) {
+      $js = array('id' => 'Address_' . $blockId . '_IsPrimary', 'onClick' => 'singleSelect( this.id );');
+    }
+
     $form->addElement(
       'checkbox',
       "address[$blockId][is_primary]",
@@ -81,7 +89,10 @@ class CRM_Contact_Form_Edit_Address {
       $js
     );
 
-    $js = array('id' => 'Address_' . $blockId . '_IsBilling', 'onClick' => 'singleSelect( this.id );');
+    if ( !$inlineEdit ) {
+      $js = array('id' => 'Address_' . $blockId . '_IsBilling', 'onClick' => 'singleSelect( this.id );');
+    }
+
     $form->addElement(
       'checkbox',
       "address[$blockId][is_billing]",

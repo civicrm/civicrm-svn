@@ -30,7 +30,6 @@
       <span class="batch-edit"></span>{ts}edit address{/ts}
       </a>
     </div>
-
     <div class="crm-label">
       {ts 1=$add.location_type}%1&nbsp;Address{/ts}
       {if $config->mapProvider AND

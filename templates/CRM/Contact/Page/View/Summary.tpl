@@ -255,20 +255,35 @@
                         <div class="clear"></div>
                     </div><!-- #contact_panel -->
 
-					{if $address}
+					
             <div class="contact_panel">
-              {foreach from=$address item=add key=locationIndex}
+              {assign var='locationIndex' value=1}
+              {if $address}
+                {foreach from=$address item=add key=locationIndex}
                 <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
                   <div class="crm-summary-block" id="address-block-{$locationIndex}">
                     {include file="CRM/Contact/Page/Inline/Address.tpl"}
                   </div>
                 </div>
-              {/foreach} {* end of address foreach *}
+                {/foreach} {* end of address foreach *}
+              
+              {assign var='locationIndex' value=$locationIndex+1}
+              {/if}
+              {if $address is even}
+                <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block">
+              {else}
+                <div class="contactCardRight crm-address_{$locationIndex} crm-address-block">
+              {/if}
 
+                <div class="crm-summary-block" id="address-block-{$locationIndex}">
+                  <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block" title="{ts}click to add address{/ts}" locno={$locationIndex}>
+                  <span class="batch-edit"></span>{ts}add address{/ts}
+                  </a>
+                </div>
+              </div>
               <div class="clear"></div>
             </div> <!-- end of contact panel -->
-          {/if}
-
+          
           <div class="contact_panel">
             <div class="contactCardLeft">
               <div class="crm-summary-block" id="communication-pref-block" >
@@ -386,7 +401,9 @@ cj(function(){
     cj(this).find('a[id^="edit-address-block-"]').show();
   }).mouseleave( function() {
     cj(this).removeClass('crm-inline-edit-hover');
-    cj(this).find('a[id^="edit-address-block-"]').hide();
+    if ( !cj('a[id^="edit-address-block-"]').hasClass('empty-address-block') ) { 
+      cj(this).find('a[id^="edit-address-block-"]').hide();
+    }
   });
 
   cj('a[id^="edit-address-block-"]').live( 'click', function() {
