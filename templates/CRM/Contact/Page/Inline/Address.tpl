@@ -80,3 +80,11 @@
   {/foreach}
 {/foreach} {* end of outer custom group foreach *}
 <!-- end custom data -->
+{literal}
+<script type="text/javascript">
+cj( function() {
+  cj().crmaccordions(); 
+});
+</script>
+{/literal}
+
