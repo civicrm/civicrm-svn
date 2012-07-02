@@ -176,7 +176,8 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->isElementPresent("xpath=//form[@id='Batch']/div[2]/table/tbody//tr/td[text()='{$Name1}']");
 
     // selecting first check of profile
-    $this->click("xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[2]/input[2]");
+    $this->click("xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[2]/table/tbody/tr/td/input[2]");
+    
     // selecting second check of profile
     $this->click("xpath=//form[@id='Batch']/div[2]/table/tbody/tr/td[3]/input[2]");
     // clicking copy values to rows of first check and verifying
@@ -192,9 +193,9 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
       !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[4]") &&
       !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[6]") &&
       //verification for first field second row
-      $this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[2]") &&
-      !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[4]") &&
-      !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[6]")
+      $this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr/td/input[2]") &&
+      !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr/td[2]/input[2]") &&
+      !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[2]/td/input[2]")
     ) {
       $assertCheck = TRUE;
     }
@@ -212,9 +213,9 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
       !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[4]") &&
       !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[3]/input[6]") &&
       //verification for first field second row
-      $this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[2]") &&
-      !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[4]") &&
-      !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/input[6]")
+      $this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr/td/input[2]") &&
+      !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr/td[2]/input[2]") &&
+      !$this->isChecked("xpath=//form[@id='Batch']/div[2]/table/tbody/tr[2]/td[2]/table/tbody/tr[2]/td/input[2]")
     ) {
       $assertCheck = TRUE;
     }
@@ -594,7 +595,10 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $checkOneOptionLabel3 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
     $this->type('option_label_3', $checkOneOptionLabel3);
     $this->type('option_value_3', 3);
-
+    
+    //setting options per line to check CRM-9938
+    $this->type("options_per_line", 2);
+    
     //clicking save
     $this->click('_qf_Field_next');
     $this->waitForPageToLoad('30000');
