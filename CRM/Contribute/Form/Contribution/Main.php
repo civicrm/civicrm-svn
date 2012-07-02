@@ -470,7 +470,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $this->buildAmount($this->_separateMembershipPayment);
     }
 
-
+    if ($this->_priceSetId) {
+      $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config');
+      if ($is_quick_config) {
+        $this->_useForMember = 0;
+        $this->set('useForMember', $this->_useForMember);
+      }
+    }
+    
     if ($this->_values['is_for_organization']) {
       $this->buildOnBehalfOrganization();
     }

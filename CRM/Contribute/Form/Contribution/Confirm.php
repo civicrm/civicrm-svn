@@ -318,13 +318,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $this->_params['campaign_id'] = $this->_params['contribution_campaign_id'];
     }
 
-    if ($this->_priceSetId) {
-      $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config');
-      if ($is_quick_config) {
-        $this->_useForMember = 0;
-        $this->set('useForMember', $this->_useForMember);
-      }
-    }
     $this->set('params', $this->_params);
   }
 
