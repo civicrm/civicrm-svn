@@ -53,11 +53,13 @@
 </div>
 
 <div id="order-by-elements" class="civireport-criteria">
+   {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture}  
    <table id="optionField" class="form-layout-compressed">
         <tr>
         <th></th>
         <th> Column</th>
         <th> Order</th>
+	<th>{ts 1=$instanceURL 2=$surveyValues.title}<a href='%1'>View Survey Detail Report of "%2"</a>{/ts}</th>
         </tr>
 
 	{section name=rowLoop start=1 loop=4}

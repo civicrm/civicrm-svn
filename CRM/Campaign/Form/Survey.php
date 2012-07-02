@@ -343,6 +343,11 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
 
     $this->addElement('checkbox', 'create_report', ts('Create Report'));
     $this->addElement('text', 'report_title', ts('Report Title'));
+   
+    if( $this->_reportId){
+      $this->freeze('create_report');
+      $this->freeze('report_title');
+    }
 
     // script / instructions
     $this->addWysiwyg('instructions', ts('Instructions for interviewers'), array('rows' => 5, 'cols' => 40));

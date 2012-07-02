@@ -151,6 +151,7 @@ WHERE {$clause}
       }
     }
 
+    
     //get the contact read only fields to display.
     $readOnlyFields = array_merge(array(
       'contact_type' => '',
@@ -221,6 +222,9 @@ WHERE {$clause}
       $this->set('surveyValues', $this->_surveyValues);
     }
     $this->assign('surveyValues', $this->_surveyValues);
+
+    $result = CRM_Campaign_BAO_Survey::getReportID($this->_surveyId);
+    $this->assign("instanceId",$result);
 
     //get the survey result options.
     $this->_resultOptions = $this->get('resultOptions');
