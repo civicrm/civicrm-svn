@@ -414,6 +414,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           ),
           'event_type_id' => array('title' => ts('Event Type'),
             'required' => TRUE,
+            'alter_display' => 'alterEventType',
           ),
           'fee_label' => array('title' => ts('Fee Label')),
           'event_start_date' => array('title' => ts('Event Start Date'),
@@ -442,6 +443,11 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'title' => ts('Event Type'),
             'default_weight' => '2',
             'default_order' => 'ASC',
+          ),
+        ),
+        'group_bys' => array(
+          'event_type_id' => array(
+          'title' => ts('Event Type'),
           ),
         ),
       ),
