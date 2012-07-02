@@ -160,8 +160,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
    */
   function buildQuickForm() {
     // allow to add contact to either new or existing group.
-    $this->addElement('checkbox', 'create', ts('Create Report'));
-    $this->addElement('text', 'ReportName', ts('Name of the Report'));
     $this->addElement('text', 'ActivityType', ts('Activity Type'));
     $this->addElement('text', 'newGroupName', ts('Name for new group'));
     $this->addElement('text', 'newGroupDesc', ts('Description of new group'));
@@ -179,7 +177,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
       array('type' => 'done',
         'name' => ts('Reserve'),
         'subName' => 'reserve',
-        'js' => array('onclick' => 'createReport();'),
         'isDefault' => TRUE,
       ));
 
@@ -190,7 +187,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
       $buttons[] = array(
         'type' => 'next',
         'name' => ts('Reserve and Interview'),
-        'js' => array('onclick' => 'createReport();'),
         'subName' => 'reserveToInterview',
       );
     }
@@ -203,12 +199,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     $this->addFormRule(array('CRM_Campaign_Form_Task_Reserve', 'formRule'), $this);
   }
 
-  function setDefaultValues(){
-    $this->_defaults = array();
-    $this->_defaults['ReportName'] = $this->_surveyDetails['title'];
-    $this->_defaults['create'] = 1;
-    return $this->_defaults;
-  }
   /**
    * global validation rules for the form
    *
@@ -281,19 +271,6 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     $status = array();
     if ($countVoters > 0) {
       $status[] = ts("Reservation has been added for %1 Contact(s).",array(1 => $countVoters));
-
-      $values = $this->controller->exportValues($this->_name);
-      if ( CRM_Utils_Array::value('create', $values) ) {
-        $query  = "SELECT MAX(id) FROM civicrm_report_instance WHERE title = %1";
-        $params = array( 1 => array(CRM_Utils_Array::value('ReportName', $values),'String') );
-        $result = CRM_Core_DAO::singleValueQuery($query, $params);
-      
-        if ($result){
-          $url = CRM_Utils_System::url("civicrm/report/instance/".$result,'reset=1');
-          $status[] = ts("A Survey Detail Report <a href='%2'>%3</a> has been created.", 
-                         array(1 => $countVoters, 2 => $url, 3 => CRM_Utils_Array::value('ReportName', $values)));
-        }
-      }
     }
     if (count($this->_contactIds) > $countVoters) {
       $status[] = ts('Reservation did not add for %1 Contact(s).',

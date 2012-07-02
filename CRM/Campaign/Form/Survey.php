@@ -135,7 +135,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
     }
 
     if ($this->_surveyId) {
-      $query  = "SELECT MAX(id), title FROM civicrm_report_instance WHERE name = %1";
+      $query  = "SELECT MAX(id) as id, title FROM civicrm_report_instance WHERE name = %1";
       $params = array( 1 => array("survey_{$this->_surveyId}",'String') );
       $result = CRM_Core_DAO::executeQuery($query, $params);
       if ( $result->fetch() ) {
