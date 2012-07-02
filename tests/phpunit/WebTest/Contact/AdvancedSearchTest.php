@@ -211,7 +211,8 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $count = explode(" ", trim($this->getText("xpath=//div[@id='search-status']/table/tbody/tr/td")));
     $count = $count[0];
-       
+    $this->assertTrue(is_numeric($count), "The total count of search results not found");
+    
     //pagination calculation
     $perPageRow = 50;
     if ($count > $perPageRow) {
