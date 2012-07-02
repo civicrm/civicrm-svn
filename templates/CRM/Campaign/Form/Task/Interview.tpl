@@ -51,8 +51,10 @@
     {ts}Click <strong>record response</strong> button to update values for each respondent as needed. <br />Click <strong>Release Respondents >></strong> button below to release any respondents for whom you haven't recorded a response. <br />Click <strong>Reserve More Respondents >></strong> button if you need to get more respondents to interview.{/ts}
     {/if}
 </div>
- {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture}  
+ {if $instanceId}
+ {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture} 
   <div class="float-right"><a href='{$instanceURL}' class="button">{ts}Survey Report{/ts}</a></div>
+ {/if} 
 <div id="order-by-elements" class="civireport-criteria">
    <table id="optionField" class="form-layout-compressed">
         <tr>
