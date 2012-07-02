@@ -267,18 +267,22 @@
                 </div>
                 {/foreach} {* end of address foreach *}
               
-              {assign var='locationIndex' value=$locationIndex+1}
+                {assign var='locationIndex' value=$locationIndex+1}
               {/if}
-              {if $address is even}
+              {if $locationIndex eq 1 or $locationIndex is odd}
                 <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block">
               {else}
                 <div class="contactCardRight crm-address_{$locationIndex} crm-address-block">
               {/if}
 
                 <div class="crm-summary-block" id="address-block-{$locationIndex}">
-                  <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block" title="{ts}click to add address{/ts}" locno={$locationIndex}>
-                  <span class="batch-edit"></span>{ts}add address{/ts}
-                  </a>
+                  <div class="crm-table2div-layout">
+                  <div class="crm-clear">
+                    <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block" title="{ts}click to add address{/ts}" locno={$locationIndex}>
+                    <span class="batch-edit"></span>{ts}add address{/ts}
+                    </a>
+                  </div>
+                  </div>
                 </div>
               </div>
               <div class="clear"></div>
