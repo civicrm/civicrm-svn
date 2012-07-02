@@ -808,6 +808,17 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
       }
     }
 
+    $reportID = self::getReportID($surveyId);
+    if ($reportID) {
+      $voterLinks['report'] = 
+        array(
+              'name' => 'report',
+              'url'  => "civicrm/report/instance/{$reportID}",
+              'qs'   => 'reset=1',
+              'title' => ts('View Survey Report'),
+              );
+    }
+
     $ids = array('id' => $surveyId);
     foreach ($voterLinks as $link) {
       if (CRM_Utils_Array::value('qs', $link) &&
@@ -855,6 +866,17 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
     }
 
     return $ufIds[$surveyId];
+  }
+
+  public Static function getReportID($surveyId) {
+    static $reportIds = array();
+
+    if (!array_key_exists($surveyId, $reportIds)) {
+      $query = "SELECT MAX(id) as id FROM civicrm_report_instance WHERE name = %1";
+      $reportID = CRM_Core_DAO::singleValueQuery($query, array(1 => array("survey_{$surveyId}",'String')));
+      $reportIds[$surveyId] = $reportID;
+    }
+    return $reportIds[$surveyId];
   }
 
   /**
