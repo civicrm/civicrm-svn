@@ -87,16 +87,13 @@ class CRM_Contact_Page_Inline_Address {
     // add custom data of type address
     $page = new CRM_Core_Page();
     $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Address',
-      $page, $contactId
+      $page, $defaults['address'][$locBlockNo]['id']
     );
     
     // we setting the prefix to dnc_ below so that we don't overwrite smarty's grouptree var.
-    $customData = array();
-    $customData['custom'] = CRM_Core_BAO_CustomGroup::buildCustomDataView( $page, $groupTree, FALSE, NULL, "dnc_");
+    $currentAddressBlock['custom'] = CRM_Core_BAO_CustomGroup::buildCustomDataView( $page, $groupTree, FALSE, NULL, "dnc_");
     $page->assign("dnc_viewCustomData", NULL);
 
-    $currentAddressBlock = CRM_Utils_Array::crmArrayMerge( $currentAddressBlock, $customData);
-    
     $template = CRM_Core_Smarty::singleton();
     $template->assign('contactId', $contactId);
     $template->assign('add', $currentAddressBlock);
