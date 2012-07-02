@@ -256,7 +256,7 @@
 	var checkBoxField = 'field['+ voterId +'][custom_';		
 	cj( 'input:checkbox[id^="'+ checkBoxField +'"]' ).each( function( ) {
 	     value = '';
-	     if ( cj(this).attr('checked') == true ) value = 1;
+	     if ( cj(this).is(':checked') == true ) value = 1;
 	     data[cj(this).attr( 'id' )] = value;
         });
 	
@@ -264,7 +264,7 @@
 	var radioField = 'field['+ voterId +'][custom_';		
 	cj( 'input:radio[name^="'+ radioField +'"]' ).each( function( ) {
 	    radioName = cj(this).attr( 'name' );
-	    if ( cj(this).attr('checked') == true ) {
+	    if ( cj(this).is(':checked') == true ) {
 	       data[radioName] = cj(this).val();
 	    }
 	    allRadios[radioName] = radioName;
