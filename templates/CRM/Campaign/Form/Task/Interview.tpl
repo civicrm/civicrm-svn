@@ -52,7 +52,7 @@
     {/if}
 </div>
  {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture}  
-  <a href='{$instanceURL}' class="button" style="float:right;">{ts}Survey Report{/ts}</a>
+  <div class="float-right"><a href='{$instanceURL}' class="button">{ts}Survey Report{/ts}</a></div>
 <div id="order-by-elements" class="civireport-criteria">
    <table id="optionField" class="form-layout-compressed">
         <tr>
