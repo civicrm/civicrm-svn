@@ -51,7 +51,8 @@
     {ts}Click <strong>record response</strong> button to update values for each respondent as needed. <br />Click <strong>Release Respondents >></strong> button below to release any respondents for whom you haven't recorded a response. <br />Click <strong>Reserve More Respondents >></strong> button if you need to get more respondents to interview.{/ts}
     {/if}
 </div>
-
+ {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture}  
+  <a href='{$instanceURL}' class="button" style="float:right;">{ts}Survey Report{/ts}</a>
 <div id="order-by-elements" class="civireport-criteria">
    <table id="optionField" class="form-layout-compressed">
         <tr>
@@ -78,9 +79,6 @@
   <div id="optionFieldLink" class="add-remove-link">
     <a onclick="showHideRow();" name="optionFieldLink" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another column{/ts}</a>
   </div>
-
-  {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture}  
-  <a href='{$instanceURL}' class="button">{ts}Survey Report{/ts}</a>
 
   <script type="text/javascript">
             var showRows   = new Array('optionField_1');
