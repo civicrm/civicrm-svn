@@ -640,11 +640,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
     // create report if required.
     if ( !$this->_reportId && $surveyId->id && $params['create_report'] ) {
       $this->_params = 
-        array( 'title' => $params['report_title'] ? $params['report_title'] : $params['title'], 
+        array( 'name'  => "survey_{$surveyId->id}",
+               'title' => $params['report_title'] ? $params['report_title'] : $params['title'], 
                'survey_id_value' => array($surveyId->id), 
                'description'   => ts('Detailed report for canvassing, phone-banking, walk lists or other surveys.'),
-               'report_header' => "", 
-               'report_footer' => ""
                );
       // for WalkList or default
       $displayFields = array('id', 'sort_name', 'result', 'street_number','street_name','street_unit','survey_response');

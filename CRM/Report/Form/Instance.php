@@ -237,16 +237,16 @@ class CRM_Report_Form_Instance {
   function postProcess(&$form) {
     $params              = $form->getVar('_params');
     $config              = CRM_Core_Config::singleton();
-    $params['header']    = $params['report_header'];
-    $params['footer']    = $params['report_footer'];
+    $params['header']    = CRM_Utils_Array::value('report_header',$params);
+    $params['footer']    = CRM_Utils_Array::value('report_footer',$params);
     $params['domain_id'] = CRM_Core_Config::domainID();
-
-    $form->_navigation['permission'] = array();
-    $form->_navigation['label'] = $params['title'];
-    $form->_navigation['name'] = $params['title'];
 
     //navigation parameters
     if (CRM_Utils_Array::value('is_navigation', $params)) {
+      $form->_navigation['permission'] = array();
+      $form->_navigation['label'] = $params['title'];
+      $form->_navigation['name']  = $params['title'];
+
       $permission = CRM_Utils_Array::value('permission', $params);
 
       $form->_navigation['current_parent_id'] = CRM_Utils_Array::value('parent_id', $form->_navigation);
