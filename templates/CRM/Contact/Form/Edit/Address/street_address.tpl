@@ -61,48 +61,48 @@
 <script type="text/javascript">
 function processAddressFields( name, blockId, loadData ) {
 
-	if ( loadData ) { 
-            var allAddressValues = {/literal}{if $allAddressFieldValues}{$allAddressFieldValues}{else}''{/if}{literal};
+  if ( loadData ) { 
+    var allAddressValues = {/literal}{if $allAddressFieldValues}{$allAddressFieldValues}{else}''{/if}{literal};
 
-	    var streetName    = eval( "allAddressValues.street_name_"    + blockId );
-	    if (streetName === null) streetName = '';  
-	    var streetUnit    = eval( "allAddressValues.street_unit_"    + blockId );
-	    if (streetUnit === null) streetUnit = '';  
-	    var streetNumber  = eval( "allAddressValues.street_number_"  + blockId );
-	    if (streetNumber === null) streetNumber = '';  
-	    var streetAddress = eval( "allAddressValues.street_address_" + blockId );
-	    if (streetAddress === null) streetAddress = '';  
-	}
+    var streetName    = eval( "allAddressValues.street_name_"    + blockId );
+    if (streetName === null) streetName = '';  
+    var streetUnit    = eval( "allAddressValues.street_unit_"    + blockId );
+    if (streetUnit === null) streetUnit = '';  
+    var streetNumber  = eval( "allAddressValues.street_number_"  + blockId );
+    if (streetNumber === null) streetNumber = '';  
+    var streetAddress = eval( "allAddressValues.street_address_" + blockId );
+    if (streetAddress === null) streetAddress = '';  
+  }
 
-	var showBlockName = '';
-	var hideBlockName = '';
+  var showBlockName = '';
+  var hideBlockName = '';
 
-        if ( name == 'addressElements' ) {
-             if ( loadData ) {
-	          streetAddress = '';
-	     }
-	     
-             showBlockName = 'addressElements_' + blockId;		   
-	     hideBlockName = 'streetAddress_' + blockId;
-	} else {
-             if ( loadData ) {
-                  streetNumber = streetName = streetUnit = ''; 
-             }
+  if ( name == 'addressElements' ) {
+    if ( loadData ) {
+      streetAddress = '';
+    }
 
-             showBlockName = 'streetAddress_' +  blockId;
-             hideBlockName = 'addressElements_'+ blockId;
-       }
+    showBlockName = 'addressElements_' + blockId;		   
+    hideBlockName = 'streetAddress_' + blockId;
+  } else {
+    if ( loadData ) {
+      streetNumber = streetName = streetUnit = ''; 
+    }
 
-       show( showBlockName );
-       hide( hideBlockName );
+    showBlockName = 'streetAddress_' +  blockId;
+    hideBlockName = 'addressElements_'+ blockId;
+  }
 
-       // set the values.
-       if ( loadData ) {
-          cj( '#address_' + blockId +'_street_name'    ).val( streetName    );   
-          cj( '#address_' + blockId +'_street_unit'    ).val( streetUnit    );
-          cj( '#address_' + blockId +'_street_number'  ).val( streetNumber  );
-          cj( '#address_' + blockId +'_street_address' ).val( streetAddress );
-       }
+  show( showBlockName );
+  hide( hideBlockName );
+
+  // set the values.
+  if ( loadData ) {
+    cj( '#address_' + blockId +'_street_name'    ).val( streetName    );   
+    cj( '#address_' + blockId +'_street_unit'    ).val( streetUnit    );
+    cj( '#address_' + blockId +'_street_number'  ).val( streetNumber  );
+    cj( '#address_' + blockId +'_street_address' ).val( streetAddress );
+  }
 }
 
 </script>

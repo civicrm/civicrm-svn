@@ -41,7 +41,7 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
   /**
    * contact id of the contact that is been viewed
    */
-  private $_contactId;
+  public $_contactId;
 
   /**
    * location block no 
@@ -59,6 +59,11 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
   public $_values;
 
   /**
+   * form action
+   */
+  public $_action;
+
+  /**
    * call preprocess
    */
   public function preProcess() {
@@ -73,13 +78,16 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
 
     $this->_values = array();    
     $addressId = CRM_Utils_Request::retrieve('aid', 'Positive', $this, FALSE, NULL, $_REQUEST);
-    
+
+    $this->_action = CRM_Core_Action::ADD;
     if ( $addressId ) {
       $params = array( 'id' => $addressId );
       $address = CRM_Core_BAO_Address::getValues( $params, FALSE, 'id' );
       $this->_values['address'][$this->_locBlockNo] = array_pop($address);
+      $this->_action = CRM_Core_Action::UPDATE;
     }
-    
+
+    $this->assign('action', $this->_action);
     $this->assign('addressId', $addressId);
     
     // parse street address, CRM-5450
