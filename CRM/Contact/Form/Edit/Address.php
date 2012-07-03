@@ -68,12 +68,17 @@ class CRM_Contact_Form_Edit_Address {
     $js = array();
     if ( !$inlineEdit ) {
       $js = array('onChange' => 'checkLocation( this.id );');
+      $locationTypes = array('' => ts('- select -')) + CRM_Core_PseudoConstant::locationType(); 
     }
+    else {
+      $locationTypes = CRM_Core_PseudoConstant::locationType(); 
+    }
+    
+
     $form->addElement('select',
       "address[$blockId][location_type_id]",
       ts('Location Type'),
-      array(
-        '' => ts('- select -')) + CRM_Core_PseudoConstant::locationType(), $js
+      $locationTypes, $js
     );
 
     

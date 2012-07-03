@@ -41,7 +41,7 @@
            <span class="crm-address-element location_type_id-address-element">
             {$form.address.$blockId.location_type_id.label}&nbsp;{$form.address.$blockId.location_type_id.html}
             </span>&nbsp;
-            <a href="#" title="{ts}Delete Address Block{/ts}">{ts}Delete this address{/ts}</a>
+            <!--a href="#" title="{ts}Delete Address Block{/ts}">{ts}Delete this address{/ts}</a-->
         </td>
      </tr>
      <tr>
