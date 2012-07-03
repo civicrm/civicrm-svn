@@ -89,11 +89,13 @@ cj( function() {
 </script>
 {/literal}
 {else}
-<div class="crm-table2div-layout">
-  <div class="crm-clear">
-    <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block" title="{ts}click to add address{/ts}" locno={$locationIndex}>
-    <span class="batch-edit"></span>{ts}add address{/ts}
-    </a>
+<div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
+  <div class="crm-table2div-layout">
+    <div class="crm-clear">
+      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}">
+      <span class="batch-edit"></span>{ts}add address{/ts}
+      </a>
+    </div>
   </div>
 </div>
 {/if}

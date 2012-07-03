@@ -261,7 +261,7 @@
               {if $address}
                 {foreach from=$address item=add key=locationIndex}
                 <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
-                  <div class="crm-summary-block" id="address-block-{$locationIndex}">
+                  <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                     {include file="CRM/Contact/Page/Inline/Address.tpl"}
                   </div>
                 </div>
@@ -275,10 +275,10 @@
                 <div class="contactCardRight crm-address_{$locationIndex} crm-address-block">
               {/if}
 
-                <div class="crm-summary-block" id="address-block-{$locationIndex}">
+                <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                   <div class="crm-table2div-layout">
                     <div class="crm-clear">
-                      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block" title="{ts}click to add address{/ts}" locno={$locationIndex}>
+                      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}">
                       <span class="batch-edit"></span>{ts}add address{/ts}
                       </a>
                     </div>
@@ -401,12 +401,14 @@ cj(function(){
   /* start of js for inline address */
   var addressBlock = cj('div[id^="address-block-"]');
   addressBlock.mouseenter( function() {
+    var locno   = cj(this).attr('locno');
     cj(this).addClass('crm-inline-edit-hover');
-    cj(this).find('a[id^="edit-address-block-"]').show();
+    cj('a[id^="edit-address-block-' + locno +'"]').show();
   }).mouseleave( function() {
+    var locno   = cj(this).attr('locno');
     cj(this).removeClass('crm-inline-edit-hover');
-    if ( !cj('a[id^="edit-address-block-"]').hasClass('empty-address-block') ) { 
-      cj(this).find('a[id^="edit-address-block-"]').hide();
+    if ( !cj('a[id^="edit-address-block-' + locno +'"]').hasClass('empty-address-block-' + locno ) ) { 
+      cj('a[id^="edit-address-block-'+ locno +'"]').hide();
     }
   });
 
