@@ -183,6 +183,9 @@ function _civicrm_api3_permissions($entity, $action, &$params)
             'get'    => array('access CiviCRM', 'access CiviPledge', 'access CiviContribute'),
             'update' => array('access CiviCRM', 'access CiviPledge', 'edit pledges', 'access CiviContribute', 'edit contributions'),
         ),
+        'system' => array(
+            'flush'  => array('administer CiviCRM'),
+        ),
         'website' => array(
             'create' => array('access CiviCRM', 'add contacts'),
             'delete' => array('access CiviCRM', 'delete contacts'),
