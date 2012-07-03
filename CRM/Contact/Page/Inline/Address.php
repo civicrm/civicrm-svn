@@ -52,31 +52,30 @@ class CRM_Contact_Page_Inline_Address {
     // get the emails for this contact
     $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
     $locBlockNo = CRM_Utils_Request::retrieve('locno', 'Positive', $this, TRUE, NULL, $_REQUEST);
- 
-    $locationTypes = CRM_Core_PseudoConstant::locationDisplayName();
+    $addressId = CRM_Utils_Request::retrieve('aid', 'Positive', $thisi, FALSE, NULL, $_REQUEST);
 
-    $entityBlock = array('contact_id' => $contactId);
-    $address = CRM_Core_BAO_Address::getValues($entityBlock);
-    if (!empty($address)) {
-      foreach ($address as $key => & $value) {
-        $value['location_type'] = $locationTypes[$value['location_type_id']];
+    $address = array();
+    if ( $addressId > 0 ) {
+      $locationTypes = CRM_Core_PseudoConstant::locationDisplayName();
+
+      $entityBlock = array('id' => $addressId);
+      $address = CRM_Core_BAO_Address::getValues($entityBlock, FALSE, 'id');
+      if (!empty($address)) {
+        foreach ($address as $key =>& $value) {
+          $value['location_type'] = $locationTypes[$value['location_type_id']];
+        }
       }
     }
 
-    // FIX ME: once we retrieve only address that we need below
-    // code should be delete
     // we just need current address block
-    $currentAddressBlock = CRM_Utils_Array::value( $locBlockNo, $address ); 
-
-    $sharedAddresses = array();
+    $currentAddressBlock['address'][$locBlockNo] = array_pop( $address ); 
     
     $template = CRM_Core_Smarty::singleton();
-    if ( !empty( $currentAddressBlock ) ) {
+    if ( !empty( $currentAddressBlock['address'][$locBlockNo] ) ) {
       // get contact name of shared contact names
-      //FIX ME - just send address that we need
-      $defaults['address'] = $address;
-      $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames($defaults['address']);
-      foreach ($defaults['address'] as $key => $addressValue) {
+      $sharedAddresses = array();
+      $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames($currentAddressBlock['address']);
+      foreach ($currentAddressBlock['address'] as $key => $addressValue) {
         if (CRM_Utils_Array::value('master_id', $addressValue) &&
           !$shareAddressContactNames[$addressValue['master_id']]['is_deleted']
         ) {
@@ -90,20 +89,20 @@ class CRM_Contact_Page_Inline_Address {
       // add custom data of type address
       $page = new CRM_Core_Page();
       $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Address',
-        $page, $defaults['address'][$locBlockNo]['id']
+        $page, $currentAddressBlock['address'][$locBlockNo]['id']
       );
 
       // we setting the prefix to dnc_ below so that we don't overwrite smarty's grouptree var.
-      $currentAddressBlock['custom'] = CRM_Core_BAO_CustomGroup::buildCustomDataView( $page, $groupTree, FALSE, NULL, "dnc_");
+      $currentAddressBlock['address'][$locBlockNo]['custom'] = CRM_Core_BAO_CustomGroup::buildCustomDataView( $page, $groupTree, FALSE, NULL, "dnc_");
       $page->assign("dnc_viewCustomData", NULL);
     
-    
-      $template->assign('add', $currentAddressBlock);
+      $template->assign('add', $currentAddressBlock['address'][$locBlockNo]);
       $template->assign('sharedAddresses', $sharedAddresses);
     }
 
     $template->assign('contactId', $contactId);
     $template->assign('locationIndex', $locBlockNo);
+    $template->assign('addressId', $addressId);
     
     echo $content = $template->fetch('CRM/Contact/Page/Inline/Address.tpl');
     CRM_Utils_System::civiExit();

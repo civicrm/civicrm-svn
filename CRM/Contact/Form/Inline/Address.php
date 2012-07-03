@@ -67,16 +67,21 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
     $this->assign('contactId', $this->_contactId);
     $this->_locBlockNo = CRM_Utils_Request::retrieve('locno', 'Positive', $this, TRUE, NULL, $_REQUEST);
     $this->assign('blockId', $this->_locBlockNo);
-    
+   
     $addressSequence = CRM_Core_BAO_Address::addressSequence();
     $this->assign('addressSequence', $addressSequence);
 
-    $params = array(
-      'contact_id' => $this->_contactId
-    );
-
-    $this->_values['address'] = CRM_Core_BAO_Address::getValues( $params );
-
+    $this->_values = array();    
+    $addressId = CRM_Utils_Request::retrieve('aid', 'Positive', $this, FALSE, NULL, $_REQUEST);
+    
+    if ( $addressId ) {
+      $params = array( 'id' => $addressId );
+      $address = CRM_Core_BAO_Address::getValues( $params, FALSE, 'id' );
+      $this->_values['address'][$this->_locBlockNo] = array_pop($address);
+    }
+    
+    $this->assign('addressId', $addressId);
+    
     // parse street address, CRM-5450
     $this->_parseStreetAddress = $this->get('parseStreetAddress');
     if (!isset($this->_parseStreetAddress)) {
@@ -135,11 +140,36 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
    */
   public function setDefaultValues() {
     $defaults = $this->_values;
-    
+
+    $config = CRM_Core_Config::singleton();
     //set address block defaults
     if ( CRM_Utils_Array::value( 'address', $defaults ) ) {
       CRM_Contact_Form_Edit_Address::setDefaultValues( $defaults, $this );
-    }
+    } 
+    else {
+      // get the default location type
+      $locationType = CRM_Core_BAO_LocationType::getDefault();
+
+      if ( $this->_locBlockNo == 1 ) {
+        $address['is_primary'] = TRUE;
+      }
+      
+      $address['location_type_id'] = $locationType->id;
+      $address['country_id'] = $config->defaultContactCountry;
+      $defaults['address'][$this->_locBlockNo] = $address;
+    } 
+
+    $values = $defaults['address'][$this->_locBlockNo];
+    
+    CRM_Contact_Form_Edit_Address::fixStateSelect($this,
+      "address[$this->_locBlockNo][country_id]",
+      "address[$this->_locBlockNo][state_province_id]",
+      "address[$this->_locBlockNo][county_id]",
+      CRM_Utils_Array::value('country_id',
+        $values, $config->defaultContactCountry
+      ),
+      CRM_Utils_Array::value('state_province_id', $values)
+    );
 
     return $defaults;
   }
@@ -160,10 +190,13 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
     // process shared contact address.
     CRM_Contact_BAO_Contact_Utils::processSharedAddress($params['address']);
 
-    // save email changes
-    CRM_Core_BAO_Address::create( $params, TRUE );
-
-    $response = array('status' => 'save');
+    // save address changes
+    $address = CRM_Core_BAO_Address::create( $params, TRUE );
+    
+    $response = array(
+      'status'    => 'save',
+      'addressId' => $address[0]->id
+    );
     echo json_encode($response);
     CRM_Utils_System::civiExit();
   }

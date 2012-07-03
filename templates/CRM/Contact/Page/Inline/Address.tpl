@@ -27,7 +27,7 @@
 <div class="crm-table2div-layout">
   <div class="crm-clear"> <!-- start of main -->
     <div class="crm-config-option">
-      <a id="edit-address-block-{$locationIndex}" class="hiddenElement crm-link-action" title="{ts}click to edit address{/ts}" locno="{$locationIndex}">
+      <a id="edit-address-block-{$locationIndex}" class="hiddenElement crm-link-action" title="{ts}click to edit address{/ts}" locno="{$locationIndex}" aid="{$add.id}">
       <span class="batch-edit"></span>{ts}edit address{/ts}
       </a>
     </div>
@@ -92,7 +92,7 @@ cj( function() {
 <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
   <div class="crm-table2div-layout">
     <div class="crm-clear">
-      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}">
+      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
       <span class="batch-edit"></span>{ts}add address{/ts}
       </a>
     </div>

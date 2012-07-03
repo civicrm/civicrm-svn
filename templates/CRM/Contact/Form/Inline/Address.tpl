@@ -79,10 +79,13 @@
 cj( function() {
   cj().crmaccordions(); 
   
-  var blockId = {/literal}{$blockId}{literal};
+  var blockId   = {/literal}{$blockId}{literal};
+  var addressId = {/literal}{$addressId}{literal};
+  
   // add ajax form submitting
-  inlineEditForm( 'Address', 'address-block-'+ blockId, {/literal}{$contactId}{literal},
-    null, blockId );
+  inlineEditForm( 'Address', 'address-block-'+ blockId,
+    {/literal}{$contactId}{literal},
+    null, blockId, addressId );
 });
 
 </script>

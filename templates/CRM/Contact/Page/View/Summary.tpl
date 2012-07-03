@@ -278,7 +278,7 @@
                 <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                   <div class="crm-table2div-layout">
                     <div class="crm-clear">
-                      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}">
+                      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
                       <span class="batch-edit"></span>{ts}add address{/ts}
                       </a>
                     </div>
@@ -413,8 +413,9 @@ cj(function(){
   });
 
   cj('a[id^="edit-address-block-"]').live( 'click', function() {
-    var locno   = cj(this).attr('locno');
-    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&locno=' + locno;
+    var locno = cj(this).attr('locno');
+    var aid   = cj(this).attr('aid');
+    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&locno=' + locno + '&aid=' + aid ;
 
     var response = cj.ajax({
                     type: "GET",

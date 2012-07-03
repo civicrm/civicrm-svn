@@ -411,11 +411,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return $defaults;
   }
 
-  /*
-     * do the set default related to location type id,
-     * primary location,  default country
-     *
-     */
+  /**
+   * do the set default related to location type id,
+   * primary location,  default country
+   *
+   */
   function blockSetDefaults(&$defaults) {
     $locationTypeKeys = array_filter(array_keys(CRM_Core_PseudoConstant::locationType()), 'is_int');
     sort($locationTypeKeys);
