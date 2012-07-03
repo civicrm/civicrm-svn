@@ -266,7 +266,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
       CRM_Contribute_BAO_ContributionPage::setValues($this->_id, $this->_values);
 
       // check if form is active
-      if (!$this->_values['is_active']) {
+      if (!CRM_Utils_Array::value('is_active', $this->_values)) {
         // form is inactive, die a fatal death
         CRM_Core_Error::fatal(ts('The page you requested is currently unavailable.'));
       }
