@@ -175,6 +175,12 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
         $defaults['email'][$id] = $value;
       }
     }
+    else {
+      // get the default location type
+      $locationType = CRM_Core_BAO_LocationType::getDefault();
+      $defaults['email'][1]['location_type_id'] = $locationType->id;
+    }
+
     return $defaults;
   }
 
