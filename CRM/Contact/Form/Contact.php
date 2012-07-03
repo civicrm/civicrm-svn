@@ -911,8 +911,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     // parse street address, CRM-5450
     $parseStatusMsg = NULL;
     if ($this->_parseStreetAddress) {
-      $parseResult = $this->parseAddress($params);
-      $parseStatusMsg = $this->parseAddressStatusMsg($parseResult);
+      $parseResult = self::parseAddress($params);
+      $parseStatusMsg = self::parseAddressStatusMsg($parseResult);
     }
 
     // Allow un-setting of location info, CRM-5969
@@ -1010,8 +1010,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function blockDataExists(&$fields) {
+  static function blockDataExists(&$fields) {
     if (!is_array($fields)) {
       return FALSE;
     }
@@ -1054,8 +1053,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
    *  @param int    $contactID   contact id
    *  @param string $contactType contact type
    */
-  static
-  function checkDuplicateContacts(&$fields, &$errors, $contactID, $contactType) {
+  static function checkDuplicateContacts(&$fields, &$errors, $contactID, $contactType) {
     // if this is a forced save, ignore find duplicate rule
     if (!CRM_Utils_Array::value('_qf_Contact_upload_duplicate', $fields)) {
 
@@ -1126,15 +1124,17 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return parent::getTemplateFileName();
   }
 
-  /* Parse all address blocks present in given params
-     * and return parse result for all address blocks,
-     * This function either parse street address in to child
-     * elements or build street address from child elements.
-     *
-     * @params $params an array of key value consist of address  blocks.
-     *
-     * @return $parseSuccess as array of sucess/fails for every address block.
-     */
+  /**
+   * Parse all address blocks present in given params
+   * and return parse result for all address blocks,
+   * This function either parse street address in to child
+   * elements or build street address from child elements.
+   *
+   * @params $params an array of key value consist of address  blocks.
+   *
+   * @return $parseSuccess as array of sucess/fails for each address block
+   * @static
+   */
   function parseAddress(&$params) {
     $parseSuccess = $parsedFields = array();
     if (!is_array($params['address']) ||
@@ -1142,7 +1142,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     ) {
       return $parseSuccess;
     }
-
 
     foreach ($params['address'] as $instance => & $address) {
       $buildStreetAddress = FALSE;
@@ -1215,14 +1214,16 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return $parseSuccess;
   }
 
-  /* check parse result and if some address block fails then this
-     * function return the status message for all address blocks.
-     *
-     * @param  $parseResult an array of address blk instance and its status.
-     *
-     * @return $statusMsg   string status message for all address blocks.
-     */
-  function parseAddressStatusMsg($parseResult) {
+  /**
+   * check parse result and if some address block fails then this
+   * function return the status message for all address blocks.
+   *
+   * @param  $parseResult an array of address blk instance and its status.
+   *
+   * @return $statusMsg   string status message for all address blocks.
+   * @static
+   */
+  static function parseAddressStatusMsg($parseResult) {
     $statusMsg = NULL;
     if (!is_array($parseResult) || empty($parseResult)) {
       return $statusMsg;
@@ -1231,7 +1232,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     $parseFails = array();
     foreach ($parseResult as $instance => $success) {
       if (!$success) {
-        $parseFails[] = $this->ordinalNumber($instance);
+        $parseFails[] = self::ordinalNumber($instance);
       }
     }
 
@@ -1244,15 +1245,16 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return $statusMsg;
   }
 
-  /*
-     * Convert normal number to ordinal number format.
-     * like 1 => 1st, 2 => 2nd and so on...
-     *
-     * @param  $number int number to convert in to ordinal number.
-     *
-     * @return ordinal number for given number.
-     */
-  function ordinalNumber($number) {
+  /**
+   * Convert normal number to ordinal number format.
+   * like 1 => 1st, 2 => 2nd and so on...
+   *
+   * @param  $number int number to convert in to ordinal number.
+   *
+   * @return ordinal number for given number.
+   * @static
+   */
+  static function ordinalNumber($number) {
     if (empty($number)) {
       return NULL;
     }
@@ -1279,13 +1281,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return "$number$str";
   }
 
-  /* Update membership status to deceased
-     * function return the status message for updated membership.
-     *
-     * @param  $deceasedParams array  having contact id and deceased value.
-     *
-     * @return $updateMembershipMsg string  status message for updated membership.
-     */
+  /**
+   * Update membership status to deceased
+   * function return the status message for updated membership.
+   *
+   * @param  $deceasedParams array  having contact id and deceased value.
+   *
+   * @return $updateMembershipMsg string  status message for updated membership.
+   */
   function updateMembershipStatus($deceasedParams) {
     $updateMembershipMsg = NULL;
     $contactId           = CRM_Utils_Array::value('contact_id', $deceasedParams);

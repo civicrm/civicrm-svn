@@ -201,6 +201,10 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
     // process shared contact address.
     CRM_Contact_BAO_Contact_Utils::processSharedAddress($params['address']);
 
+    if ($this->_parseStreetAddress) {
+      CRM_Contact_Form_Contact::parseAddress($params);
+    }
+
     // save address changes
     $address = CRM_Core_BAO_Address::create( $params, TRUE );
     
