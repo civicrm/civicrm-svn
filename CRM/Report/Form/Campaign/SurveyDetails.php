@@ -66,6 +66,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
         $value = array();
         $value = CRM_Core_OptionGroup::values($name);
         if (!empty($value))
+          $value = array_combine($value, $value);
           $resultOptions = $resultOptions + $value;
       }
     }
