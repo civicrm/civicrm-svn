@@ -258,10 +258,53 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
     
+    //add the above custom data to the On Behalf of Profile
+    $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->click("link=Reserved Profiles");
+
+    $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
+    $this->waitForPageToLoad("30000");
+
+    $this->click("link=Add Field");
+    $this->waitForElementPresent('_qf_Field_next-bottom');
+    $this->select('field_name[0]', 'value=Membership');
+    $label = $checkboxFieldLabel.' :: '. $customGroupTitle;
+    $this->select('field_name[1]', "label=$label");
+    $this->click('field_name[1]');
+    $this->click('_qf_Field_next_new-bottom');
+    $this->waitForPageToLoad("30000");
+
+    $this->select('field_name[0]', 'value=Membership');
+    $label = $radioFieldLabel.' :: '. $customGroupTitle;
+    $this->select('field_name[1]', "label=$label");
+    $this->click('field_name[1]');
+    $this->click('_qf_Field_next-bottom');
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$radioFieldLabel}' has been saved to 'On Behalf Of Organization'."));
+
     //create organisation
     $orgName = "Org WebAccess ". substr(sha1(rand()), 0, 7);
     $orgEmail = "org". substr(sha1(rand()), 0, 7) . "@web.com";
     $this->webtestAddOrganization($orgName, $orgEmail);
+
+    $this->waitForPageToLoad("30000");
+    $this->click("css=li#tab_member a");
+
+    $this->waitForElementPresent('link=Add Membership');
+    $this->click('link=Add Membership');
+
+    $this->waitForElementPresent('_qf_Membership_cancel-bottom');
+
+    // fill in Membership Organization and Type                                                                                                                                                             
+    $this->select('membership_type_id[0]', "value=1");
+    $this->select('membership_type_id[1]', "value=1");
+
+    // fill in Source                                                                                                                                                                                       
+    $sourceText = 'On behalf Membership Webtest';
+    $this->type('source', $sourceText);
+
+    
 
     // We need a payment processor
     $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
@@ -316,7 +359,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->waitForPageToLoad('30000');
     $this->_testAnomoyousOganization($pageId, $cid, $pageTitle);
-   
+
   }
 
   function _testAnomoyousOganization($pageId, $cid, $pageTitle) {
