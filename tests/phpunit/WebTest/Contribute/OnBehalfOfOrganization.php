@@ -140,22 +140,21 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     // create new individual
+    $this->open($this->sboxPath . "civicrm/profile/edit?reset=1&gid=4");
     $firstName     = 'John_x_' . substr(sha1(rand()), 0, 7);
     $lastName      = 'Anderson_c_' . substr(sha1(rand()), 0, 7);
-    $email         = "{$firstName}.{$lastName}@example.com";
-    $contactParams = array(
-      'first_name' => $firstName,
-      'last_name' => $lastName,
-      'email-5' => $email,
-    );
-    $streetAddress = "100 Main Street";
 
-    //adding contact for membership sign up
-    $this->webtestAddContact($firstName, $lastName, $email);
-    $urlElements = $this->parseURL();
-    print_r($urlElements);
-    $cid = $urlElements['queryString']['cid'];
-    $this->assertType('numeric', $cid);
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("_qf_Edit_next");
+    $this->type("first_name", $firstName);
+    $this->type("last_name", $lastName);
+    $this->click("_qf_Edit_next");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("profilewrap4");
+
+    // Is status message correct?                                                                                                                                                                           
+    $this->assertTextPresent("Thank you. Your information has been saved.", "Save successful status message didn't show up after saving profile to update testUserName!");
+
 
     //custom data
     // Go directly to the URL of the screen that you will be testing (New Custom Group).
@@ -401,7 +400,6 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->waitForPageToLoad('30000');
-    $this->_testAnomoyousOganization($pageId, $cid, $pageTitle);
 
   }
 
