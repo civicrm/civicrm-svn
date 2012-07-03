@@ -436,7 +436,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
           'groupHelpPre' => $group->help_pre,
           'groupHelpPost' => $group->help_post,
           'title' => $title,
-          'where' => CRM_Utils_Array::value('where', $importableFields[$field->field_name]),
+          'where' => CRM_Utils_Array::value('where', CRM_Utils_Array::value($field->field_name, $importableFields)),
           'attributes' => CRM_Core_DAO::makeAttribute(CRM_Utils_Array::value($field->field_name,
               $importableFields
             )),
@@ -446,7 +446,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
           'help_post' => $field->help_post,
           'visibility' => $field->visibility,
           'in_selector' => $field->in_selector,
-          'rule' => CRM_Utils_Array::value('rule', $importableFields[$field->field_name]),
+          'rule' => CRM_Utils_Array::value('rule', CRM_Utils_Array::value($field->field_name, $importableFields)),
           'location_type_id' => $field->location_type_id,
           'phone_type_id' => isset($field->phone_type_id) ? $field->phone_type_id : NULL,
           'group_id' => $group->id,

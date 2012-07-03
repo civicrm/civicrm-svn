@@ -140,8 +140,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     // create new individual
-    $firstName     = 'John_' . substr(sha1(rand()), 0, 7);
-    $lastName      = 'Anderson_' . substr(sha1(rand()), 0, 7);
+    $firstName     = 'John_x_' . substr(sha1(rand()), 0, 7);
+    $lastName      = 'Anderson_c_' . substr(sha1(rand()), 0, 7);
     $email         = "{$firstName}.{$lastName}@example.com";
     $contactParams = array(
       'first_name' => $firstName,
@@ -283,6 +283,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$radioFieldLabel}' has been saved to 'On Behalf Of Organization'."));
 
+
     //create organisation
     $orgName = "Org WebAccess ". substr(sha1(rand()), 0, 7);
     $orgEmail = "org". substr(sha1(rand()), 0, 7) . "@web.com";
@@ -304,7 +305,49 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $sourceText = 'On behalf Membership Webtest';
     $this->type('source', $sourceText);
 
+    $this->waitForElementPresent("css=div#{$customGroupTitle} div.crm-accordion-pointer");
+    $this->click("css=div#{$customGroupTitle} div.crm-accordion-pointer");
+    //$this->waitForElementPresent('_qf_Membership_cancel-bottom111');
+
+    // select newly created processor                                                                                                                                                                   
+    $xpath = "xpath=//label[text() = '{$checkboxOptionLabel1}']/preceding-sibling::input[1]";
+    $this->assertTrue($this->isTextPresent($checkboxOptionLabel1));
+    $this->check($xpath);
     
+    $xpath = "xpath=//label[text() = '{$checkboxOptionLabel3}']/preceding-sibling::input[1]";
+    $this->assertTrue($this->isTextPresent($checkboxOptionLabel3));
+    $this->check($xpath);
+
+    $xpath = "xpath=//label[text() = '{$radioOptionLabel1}']/preceding-sibling::input[1]";
+    $this->assertTrue($this->isTextPresent($radioOptionLabel1));
+    $this->check($xpath);
+
+    $this->waitForElementPresent('_qf_Membership_cancel-bottom');
+    $this->click('_qf_Membership_upload-bottom');
+
+
+    $this->waitForPageToLoad("30000");
+    $this->click("css=li#tab_rel a");
+
+    $this->waitForElementPresent('link=Add Relationship');
+    $this->click('link=Add Relationship');
+
+    $this->waitForElementPresent('relationship_type_id');
+    $this->click("relationship_type_id");
+    $this->select("relationship_type_id", "label=Employer of");
+    // search organization                                                                                                                                                                                  
+    $this->type('contact_1', $firstName);
+    $this->click("contact_1");
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
+    $this->assertContains($firstName, $this->getValue('contact_1'), "autocomplete expected $firstName but didn’t find it in " . $this->getValue('contact_1'));
+
+    // give permission                                                                                                                                                                                      
+    $this->click("is_permission_a_b");
+    $this->click("is_permission_b_a");
+
+    // save relationship                                                                                                                                                                                    
+    $this->click("details-save");
 
     // We need a payment processor
     $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
@@ -314,10 +357,10 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $hash = substr(sha1(rand()), 0, 7);
     $amountSection = TRUE;
     $payLater = TRUE;
-    $onBehalf = 'optional';
+    $onBehalf = TRUE;
     $pledges = FALSE;
     $recurring = FALSE;
-    $memberships = FALSE;
+    $memberships = TRUE;
     $memPriceSetId = NULL;
     $friend = TRUE;
     $profilePreId = NULL;
