@@ -52,7 +52,7 @@
     {/if}
 </div>
  {if $instanceId}
- {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId"}{/capture} 
+ {capture assign=instanceURL}{crmURL p="civicrm/report/instance/$instanceId" q="reset=1"}{/capture} 
   <div class="float-right"><a href='{$instanceURL}' class="button">{ts}Survey Report{/ts}</a></div>
  {/if} 
 <div id="order-by-elements" class="civireport-criteria">
