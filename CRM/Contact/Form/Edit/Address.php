@@ -68,22 +68,22 @@ class CRM_Contact_Form_Edit_Address {
     $js = array();
     if ( !$inlineEdit ) {
       $js = array('onChange' => 'checkLocation( this.id );');
-      $locationTypes = array('' => ts('- select -')) + CRM_Core_PseudoConstant::locationType(); 
     }
-    else {
-      $locationTypes = CRM_Core_PseudoConstant::locationType(); 
-    }
-    
 
     $form->addElement('select',
       "address[$blockId][location_type_id]",
       ts('Location Type'),
-      $locationTypes, $js
+      array(
+        '' => ts('- select -')) + CRM_Core_PseudoConstant::locationType(),
+        $js
     );
-
     
     if ( !$inlineEdit ) {
       $js = array('id' => 'Address_' . $blockId . '_IsPrimary', 'onClick' => 'singleSelect( this.id );');
+    }
+    else {
+      //make location type required for inline edit
+      $form->addRule( "address[$blockId][location_type_id]", ts('%1 is a required field.', array(1 => ts('Location Type'))), 'required');
     }
 
     $form->addElement(

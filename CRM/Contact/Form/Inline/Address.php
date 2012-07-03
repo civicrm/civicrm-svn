@@ -86,6 +86,9 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
       $this->_values['address'][$this->_locBlockNo] = array_pop($address);
       $this->_action = CRM_Core_Action::UPDATE;
     }
+    else {
+      $addressId = 0;
+    }
 
     $this->assign('action', $this->_action);
     $this->assign('addressId', $addressId);
@@ -160,9 +163,9 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
 
       if ( $this->_locBlockNo == 1 ) {
         $address['is_primary'] = TRUE;
+        $address['location_type_id'] = $locationType->id;
       }
       
-      $address['location_type_id'] = $locationType->id;
       $address['country_id'] = $config->defaultContactCountry;
       $defaults['address'][$this->_locBlockNo] = $address;
     } 
