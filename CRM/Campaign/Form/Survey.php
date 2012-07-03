@@ -644,11 +644,15 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
 
     // create report if required.
     if ( !$this->_reportId && $surveyId->id && $params['create_report'] ) {
+      $activityStatus = CRM_Core_PseudoConstant::activityStatus('name');
+      $activityStatus = array_flip($activityStatus);
       $this->_params = 
         array( 'name'  => "survey_{$surveyId->id}",
                'title' => $params['report_title'] ? $params['report_title'] : $params['title'], 
+               'status_id_op'    => 'eq',
+               'status_id_value' => $activityStatus['Scheduled'], // reserved status
                'survey_id_value' => array($surveyId->id), 
-               'description'   => ts('Detailed report for canvassing, phone-banking, walk lists or other surveys.'),
+               'description'     => ts('Detailed report for canvassing, phone-banking, walk lists or other surveys.'),
                );
       // for WalkList or default
       $displayFields = array('id', 'sort_name', 'result', 'street_number','street_name','street_unit','survey_response');
