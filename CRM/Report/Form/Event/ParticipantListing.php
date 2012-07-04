@@ -56,7 +56,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
           array('title' => ts('Participant Name'),
             'required' => TRUE,
             'no_repeat' => TRUE,
-            'dbAlias' => 'sort_name',
+            'dbAlias' => 'contact_civireport.sort_name',
           ),
           'id' =>
           array(
@@ -221,7 +221,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
     $this->_columnHeaders = array();
 
     //add blank column at the Start
-    if (CRM_Utils_Array::value('blank_column_begin', $this->_params['options'])) {
+    if (array_key_exists('options', $this->_params) && 
+        CRM_Utils_Array::value('blank_column_begin', $this->_params['options'])) {
       $select[] = " '' as blankColumnBegin";
       $this->_columnHeaders['blankColumnBegin']['title'] = '_ _ _ _';
     }
