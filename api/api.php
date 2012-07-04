@@ -115,15 +115,18 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     return $err;
   }
   catch (api_Exception $e){
-    if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
+    if(!isset($apiRequest)){
+      $apiRequest = array();
+    }
+    if (CRM_Utils_Array::value('format.is_success', CRM_Utils_Array::value('params',$apiRequest)) == 1) {
       return 0;
     }
     $data = $e->getExtraParams();
-    $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest, $e->getCode());
-    if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
+    $err = civicrm_api3_create_error($e->getMessage(), $data, CRM_Utils_Array::value('params',$apiRequest), $e->getCode());
+    if (CRM_Utils_Array::value('debug', CRM_Utils_Array::value('params',$apiRequest))) {
       $err['trace'] = $e->getTraceAsString();
     }
-    if (CRM_Utils_Array::value('is_transactional', $apiRequest)) {
+    if (CRM_Utils_Array::value('is_transactional', CRM_Utils_Array::value('params',$apiRequest))) {
       $tx->rollback();
     }
     return $err;
@@ -503,13 +506,13 @@ function _civicrm_api_get_entity_name_from_camel($entity) {
  * Having a DAO object find the entity name
  * @param object $bao DAO being passed in
  */
-function _civicrm_api_get_entity_name_from_dao($bao){ 
+function _civicrm_api_get_entity_name_from_dao($bao){
   $daoName = str_replace("BAO", "DAO", get_class($bao));
   $dao = array();
   require ('CRM/Core/DAO/.listAll.php');
   $daos = array_flip($dao);
   return _civicrm_api_get_entity_name_from_camel($daos[$daoName]);
-  	
+
 }
 
 /*
