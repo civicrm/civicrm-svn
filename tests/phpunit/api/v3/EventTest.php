@@ -258,6 +258,15 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $this->assertEquals($result['values'][0]['payment_processor_id'], 1,"handing get payment processor compatibility");
   }
 
+  function testInvalidData() {
+    $params = $this->_params[0];
+    $params['sequential'] =1;
+    $params['loc_block_id'] =100;
+    $result = civicrm_api('event', 'create', $params);
+    $this->assertEquals(1, $result['is_error']);
+
+  }
+
   /*
      * Test 'is.Current' option. Existing event is 'old' so only current should be returned
      */
