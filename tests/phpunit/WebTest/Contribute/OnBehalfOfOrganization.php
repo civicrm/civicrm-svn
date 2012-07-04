@@ -116,7 +116,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->waitForPageToLoad('30000');
-    $this->_testAnomoyousOganization($pageId, $cid, $pageTitle);
+    //$this->_testAnomoyousOganization($pageId, $cid, $pageTitle);
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->waitForPageToLoad('30000');
     $this->_testUserWithOneRelationship($pageId, $cid, $pageTitle);
@@ -499,8 +499,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $groupName = $this->WebtestAddGroup();
     $this->open($this->sboxPath . "civicrm/group?reset=1");
     $this->waitForPageToLoad('30000');
-
-    $groupId = $this->getText("xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]");
+                                     //table[@id="crm-group-selector"]/tbody//tr/td[text()='Administrators']/../td[2]x
+    $groupId = $this->getText("xpath=//table[@id='crm-group-selector']/tbody//tr/td[text()='{$groupName}']/../td[2]");
 
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
     $this->waitForPageToLoad("30000");
@@ -772,8 +772,9 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     // Create new group
     $groupName = $this->WebtestAddGroup();
     $this->open($this->sboxPath . "civicrm/group?reset=1");
-    $this->waitForPageToLoad('30000');
-
+    $this->waitForElementPresent('_qf_Search_refresh');
+    $this->click('_qf_Search_refresh');
+    $this->waitForElementPresent("xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]");
     $groupId = $this->getText("xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]");
 
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
@@ -830,7 +831,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     $this->waitForPageToLoad('30000');
     $this->assertTrue($this->isTextPresent("Your custom field '$fieldTitle' has been saved."));
-    $url = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[8]/span/a@href"));
+    $url = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1]/span[text()='$fieldTitle']/../td[8]/span/a@href"));
     $fieldId = $url[1];
 
     // Enable CiviCampaign module if necessary
