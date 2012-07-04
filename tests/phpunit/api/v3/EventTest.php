@@ -157,7 +157,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
       'event_title' => 'Annual CiviCRM meet',
       'version' => $this->_apiversion,
     );
-    
+
     $result = civicrm_api('event', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals(1, $result['count']);
@@ -201,7 +201,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $result = civicrm_api('Event', 'Get', $params);
     $this->assertEquals(1, $result['id'], ' in line ' . __LINE__);
 
-   
+
   }
   /*
    * Getting the id back of an event.
@@ -245,7 +245,18 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $this->assertEquals(3, $allEvents['count'], 'confirm three events exist (ie. two not found) ' . __LINE__);
     $this->assertEquals($currentEvent['id'], $result['id'], '');
   }
-
+/*
+ * There has been a schema change & the api needs to buffer developers from it
+ */
+  function testGetPaymentProcessorId() {
+    $params = $this->_params[0];
+    $params['payment_processor_id'] = 1;
+    $params['sequential'] =1;
+    $result = civicrm_api('event', 'create', $params);
+    $this->assertEquals( 1,$result['values'][0]['payment_processor'][0], "handing of payment processor compatibility");
+    $result = civicrm_api('event', 'get', $params);
+    $this->assertEquals($result['values'][0]['payment_processor_id'], 1,"handing get payment processor compatibility");
+  }
 
   /*
      * Test 'is.Current' option. Existing event is 'old' so only current should be returned
@@ -547,7 +558,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $result      = civicrm_api('event', 'getfields', $params);
     $this->assertEquals(1, $result['values']['title']['api.required'], 'in line ' . __LINE__);
   }
-  /* 
+  /*
      * test api_action param also works
      */
   function testgetfieldsRest() {
