@@ -33,6 +33,15 @@ function inlineEditForm( formName, blockName, contactId, cgId, locNo, addId ) {
     beforeSubmit:  showRequest  // pre-submit callback  
   }; 
 
+  var actualFormName = formName;
+
+  // since we auto-generate form name for address based on address block
+  if ( formName == 'Address' ) {
+    actualFormName = formName + '_' + locNo;
+  }
+
+  cj('#' + actualFormName ).ajaxForm( options );
+
   // bind form using 'ajaxForm'
   cj('#' + formName ).ajaxForm( options );
 

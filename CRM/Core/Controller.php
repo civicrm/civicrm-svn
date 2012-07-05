@@ -375,7 +375,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
    */
   function addPages(&$stateMachine, $action = CRM_Core_Action::NONE) {
     $pages = $stateMachine->getPages();
-
     foreach ($pages as $name => $value) {
       $className = CRM_Utils_Array::value('className', $value, $name);
       $title     = CRM_Utils_Array::value('title', $value);

@@ -50,7 +50,8 @@ class CRM_Core_Controller_Simple extends CRM_Core_Controller {
    * @return object
    * @access public
    */
-  function __construct($path,
+  function __construct(
+    $path,
     $title,
     $mode         = NULL,
     $imageUpload  = FALSE,
