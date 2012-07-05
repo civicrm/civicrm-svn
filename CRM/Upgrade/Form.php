@@ -330,7 +330,7 @@ SET    version = '$version'
    */
   function getUpgradeVersions() {
     $latestVer = CRM_Utils_System::version();
-    $currentVer = CRM_Core_BAO_Domain::version();
+    $currentVer = CRM_Core_BAO_Domain::version(true);
     if (!$currentVer) {
       CRM_Core_Error::fatal(ts('Version information missing in civicrm database.'));
     }
