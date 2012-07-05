@@ -44,11 +44,6 @@ class CRM_Core_Extensions {
   CONST PUBLIC_EXTENSIONS_REPOSITORY = 'http://extdir.civicrm.org/';
 
   /**
-   * The option group name
-   */
-  CONST OPTION_GROUP_NAME = 'system_extensions';
-
-  /**
    * Extension info file name
    */
   CONST EXT_INFO_FILENAME = 'info.xml';
@@ -296,19 +291,18 @@ class CRM_Core_Extensions {
    */
   private function _discoverInstalled($fullInfo = FALSE) {
     $result      = array();
-    $groupParams = array('name' => self::OPTION_GROUP_NAME);
-    $links       = array();
-    $ov          = CRM_Core_OptionValue::getRows($groupParams, $links);
-    foreach ($ov as $id => $entry) {
-      $ext = new CRM_Core_Extensions_Extension($entry['value'], $entry['grouping'], $entry['name'],
-        $entry['label'], $entry['description'], $entry['is_active']
+    $dao         = new CRM_Core_DAO_Extension();
+    $dao->find(); // TODO need bool?
+    while ($dao->fetch()) {
+      $ext = new CRM_Core_Extensions_Extension($dao->full_name, $dao->type, $dao->name,
+        $dao->label, $dao->file, $dao->is_active
       );
       $ext->setInstalled();
-      $ext->setId($id);
+      $ext->setId((integer)$dao->id);
       if ($fullInfo) {
         $ext->readXMLInfo();
       }
-      $result[$id] = $ext;
+      $result[(integer)$dao->id] = $ext;
     }
     return $result;
   }
@@ -522,7 +516,7 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of option value record
+   * @param int $id id of the extension record
    * @param boolean $is_active active state
    *
    * @return mixed result of CRM_Core_DAO::setFieldValue
@@ -547,7 +541,7 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of option value record
+   * @param int $id id of the extension record
    * @param string $key extension key
    *
    * @return void
@@ -578,7 +572,7 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of option value record
+   * @param int $id id of the extension record
    * @param string $key extension key
    *
    * @return void
@@ -598,7 +592,7 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of option value record
+   * @param int $id id of the extension record
    * @param string $key extension key
    *
    * @return void

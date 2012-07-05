@@ -35,10 +35,6 @@
  */
 class CRM_Core_Extensions_Extension {
 
-  /**
-   *
-   */
-  CONST OPTION_GROUP_NAME = 'system_extensions';
   CONST STATUS_INSTALLED = 'installed';
   CONST STATUS_LOCAL = 'local';
   CONST STATUS_REMOTE = 'remote';
@@ -49,7 +45,9 @@ class CRM_Core_Extensions_Extension {
 
   public $upgradable = FALSE;
 
-  public $upgradeVersion = NULL; function __construct($key, $type = NULL, $name = NULL, $label = NULL, $file = NULL, $is_active = 1) {
+  public $upgradeVersion = NULL;
+  
+  function __construct($key, $type = NULL, $name = NULL, $label = NULL, $file = NULL, $is_active = 1) {
     $this->key       = $key;
     $this->type      = $type;
     $this->name      = $name;
@@ -289,7 +287,7 @@ class CRM_Core_Extensions_Extension {
 
   public function enable() {
     $this->_setActiveByType(1);
-    CRM_Core_DAO::setFieldValue('CRM_Core_DAO_OptionValue', $this->id, 'is_active', 1);
+    CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 1);
     if ($this->type == 'payment') {
       $this->_runPaymentHook('enable');
     }
@@ -300,7 +298,7 @@ class CRM_Core_Extensions_Extension {
       $this->_runPaymentHook('disable');
     }
     $this->_setActiveByType(0);
-    CRM_Core_DAO::setFieldValue('CRM_Core_DAO_OptionValue', $this->id, 'is_active', 0);
+    CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 0);
   }
 
 
@@ -326,8 +324,8 @@ class CRM_Core_Extensions_Extension {
   }
 
   private function _removeExtensionEntry() {
-    CRM_Core_BAO_OptionValue::del($this->id);
-    CRM_Core_Session::setStatus(ts('Selected option value has been deleted.'));
+    CRM_Core_BAO_Extension::del($this->id);
+    CRM_Core_Session::setStatus(ts('Selected extension has been deleted.'));
   }
 
   /**
@@ -360,14 +358,11 @@ class CRM_Core_Extensions_Extension {
     // See if we have any instances of this PP defined ..
     if ($this->id && $processor_id = CRM_Core_DAO::singleValueQuery("
                 SELECT pp.id
-                  FROM civicrm_option_group og
-            INNER JOIN civicrm_option_value ov
-                    ON ov.option_group_id = og.id
+                  FROM civicrm_extension ext
             INNER JOIN civicrm_payment_processor pp
-                    ON pp.payment_processor_type = ov.name
-                 WHERE og.name = 'system_extensions'
-                   AND ov.grouping = 'payment'
-                   AND ov.id = %1
+                    ON pp.payment_processor_type = ext.name
+                 WHERE ext.type = 'payment'
+                   AND ext.id = %1
 
         ",
         array(
@@ -380,11 +375,12 @@ class CRM_Core_Extensions_Extension {
     else {
       // Otherwise, do the best we can to construct some ..
       $dao = CRM_Core_DAO::executeQuery("
-                    SELECT ppt.* FROM civicrm_option_value ov
+                    SELECT ppt.*
+                      FROM civicrm_extension ext
                 INNER JOIN civicrm_payment_processor_type ppt
-                        ON ppt.name = ov.name
-                     WHERE ov.name = %1
-                       AND ov.grouping = 'payment'
+                        ON ppt.name = ext.name
+                     WHERE ext.name = %1
+                       AND ext.type = 'payment'
             ",
         array(
           1 => array($this->name, 'String'),
@@ -439,22 +435,16 @@ class CRM_Core_Extensions_Extension {
   }
 
   private function _createExtensionEntry() {
-    $groupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup', self::OPTION_GROUP_NAME, 'id', 'name');
-    $weight = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue', array('option_group_id' => $groupId));
-
-    $params = array(
-      'option_group_id' => $groupId,
-      'weight' => $weight,
-      'label' => $this->label,
-      'name' => $this->name,
-      'value' => $this->key,
-      'grouping' => $this->type,
-      'description' => $this->file,
-      'is_active' => 1,
-    );
-
-    $ids = array();
-    $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
+    $dao = new CRM_Core_DAO_Extension();
+    $dao->label = $this->label;
+    $dao->name = $this->name;
+    $dao->full_name = $this->key;
+    $dao->type = $this->type;
+    $dao->file = $this->file;
+    $dao->is_active = 1;
+    $dao->insert();
+    
+    $this->id = $dao->id;
   }
 }
 
