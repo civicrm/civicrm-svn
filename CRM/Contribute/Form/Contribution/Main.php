@@ -470,7 +470,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $this->buildAmount($this->_separateMembershipPayment);
     }
 
-
+    if ($this->_priceSetId) {
+      $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config');
+      if ($is_quick_config) {
+        $this->_useForMember = 0;
+        $this->set('useForMember', $this->_useForMember);
+      }
+    }
+    
     if ($this->_values['is_for_organization']) {
       $this->buildOnBehalfOrganization();
     }
@@ -986,7 +993,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       }
     }
 
-        if ( CRM_Utils_Array::value( 'is_recur', $fields ) ) {
+    if ( CRM_Utils_Array::value( 'is_recur', $fields ) ) {
       if ($fields['frequency_interval'] <= 0) {
         $errors['frequency_interval'] = ts('Please enter a number for how often you want to make this recurring contribution (EXAMPLE: Every 3 months).');
       }
@@ -996,9 +1003,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     if (CRM_Utils_Array::value('is_recur', $fields) &&
-      CRM_Utils_Array::value('is_pay_later', $fields)
-    ) {
-      $errors['is_pay_later'] = ' ';
+        CRM_Utils_Array::value('payment_processor', $fields) == 0) {
       $errors['_qf_default'] = ts('You cannot set up a recurring contribution if you are not paying online by credit card.');
     }
 
@@ -1084,8 +1089,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     // also return if paylater mode
-    if (CRM_Utils_Array::value('is_pay_later', $fields) ||
-        CRM_Utils_Array::value('payment_processor', $fields) == 0) {
+    if (CRM_Utils_Array::value('payment_processor', $fields) == 0) {
       return empty($errors) ? TRUE : $errors;
     }
 
@@ -1200,7 +1204,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
               }
             }
           }
-          if ($priceField->name == "contribution_amount") {
+          if ($priceField->name == 'contribution_amount') {
             $priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params);
             if ($priceFiledID > 0 && !empty($priceFiledID)) {
               $params['amount'] = $priceFiledID;

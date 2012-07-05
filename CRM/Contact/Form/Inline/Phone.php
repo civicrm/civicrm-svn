@@ -199,6 +199,12 @@ class CRM_Contact_Form_Inline_Phone extends CRM_Core_Form {
     // save phone changes
     CRM_Core_BAO_Block::create('phone', $params);
 
+    // make entry in log table
+    CRM_Core_BAO_Log::register( $this->_contactId,
+      'civicrm_contact',
+      $this->_contactId
+    );
+
     $response = array('status' => 'save');
     echo json_encode($response);
     CRM_Utils_System::civiExit();

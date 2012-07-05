@@ -89,7 +89,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
       $values['custom_post_id'] = '';
     }
     // add an accounting code also
-    if ($values['contribution_type_id']) {
+    if (CRM_Utils_Array::value('contribution_type_id', $values)) {
       $values['accountingCode'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType', $values['contribution_type_id'], 'accounting_code');
     }
   }

@@ -213,7 +213,7 @@ class CRM_Utils_Mail_EmailProcessor {
           // if its the activities that needs to be processed ..
           $mailParams = CRM_Utils_Mail_Incoming::parseMailingObject($mail);
 
-          civicrm_api_include('activity', FALSE, 2);
+          require_once 'api/v2/Activity.php';
           $params            = _civicrm_activity_buildmailparams($mailParams, $emailActivityTypeId);
           $params['version'] = 2;
           $result            = civicrm_api('activity', 'create', $params);

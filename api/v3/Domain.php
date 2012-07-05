@@ -39,11 +39,6 @@
  */
 
 /**
- * Include utility functions
- */
-require_once 'CRM/Core/BAO/Domain.php';
-
-/**
  * Get CiviCRM domain details
  * {@getfields domain_create}
  * @example DomainGet.php

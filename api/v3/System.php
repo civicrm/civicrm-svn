@@ -1,4 +1,7 @@
-{*
+<?php
+// $Id$
+
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,19 +25,34 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{* No matches for submitted search request. *}
-<div class="messages status">
-    <div class="icon inform-icon"></div>
-        {if $qill}{ts}No matches found for:{/ts}
-            {include file="CRM/common/displaySearchCriteria.tpl"}
-        {else}
-            {ts}No matching pledge results found.{/ts}
-        {/if}
-        {ts}Suggestions:{/ts}
-        <ul>
-        <li>{ts}If you are searching by pledger name, check your spelling or use fewer letters.{/ts}</li>
-        <li>{ts}If you are searching within a date or amount range, try a wider range of values.{/ts}</li>
-        <li>{ts}Make sure you have enough privileges in the access control system.{/ts}</li>
-        </ul>
-</div>
+ */
+
+/**
+ * File for the CiviCRM APIv3 domain functions
+ *
+ * @package CiviCRM_APIv3
+ * @subpackage API_Domain
+ *
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * @version $Id: Domain.php 30171 2010-10-14 09:11:27Z mover $
+ *
+ */
+
+/**
+ * Flush all system caches
+ *
+ * @param  array   	  $params input parameters
+ *                          - triggers: bool, whether to drop/create SQL triggers; default: FALSE
+ *
+ * @return boolean        true if success, else false
+ * @static void
+ * @access public
+ * @example SystemFlush.php
+ *
+ */
+function civicrm_api3_system_flush($params) {
+  CRM_Core_Invoke::rebuildMenuAndCaches(
+    CRM_Utils_Array::value('triggers', $params, FALSE)
+  );
+  return civicrm_api3_create_success();
+}

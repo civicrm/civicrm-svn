@@ -186,7 +186,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     return $email;
   }
 
-  function webtestAddOrganization($organizationName = "Smith's Home", $email = NULL) {
+  function webtestAddOrganization($organizationName = "Organization XYZ", $email = NULL) {
 
     $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Organization');
     $this->click('organization_name');

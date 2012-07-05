@@ -40,6 +40,9 @@
 
 require_once 'api/v3/utils.php';
 
+// @codeCoverageIgnoreStart 
+// this doesn't belong to the API
+
 /**
  * take the input parameter list as specified in the data model and
  * convert it into the same format that we use in QF and BAO object
@@ -1557,3 +1560,4 @@ function _civicrm_api3_deprecated_contact_check_params(&$params, $dupeCheck = TR
   return NULL;
 }
 
+// @codeCoverageIgnoreEnd

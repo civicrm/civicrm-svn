@@ -40,7 +40,7 @@
             {assign var='urlParams' value=$urlParams|cat:"&context=$context"}
         {/if}
 
-    	{* Include the Actions and Edit buttons if user has 'edit' permission and contact is NOT in trash. *}
+      {* Include the Actions and Edit buttons if user has 'edit' permission and contact is NOT in trash. *}
         {if $permission EQ 'edit' and !$isDeleted}
             <li class="crm-contact-activity">
                 {include file="CRM/Contact/Form/ActionsButton.tpl"}
@@ -120,17 +120,17 @@
     <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
         <ul class="crm-contact-tabs-list">
             <li id="tab_summary" class="crm-tab-button">
-            	<a href="#contact-summary" title="{ts}Summary{/ts}">
-            	<span> </span> {ts}Summary{/ts}
-            	<em>&nbsp;</em>
-            	</a>
+              <a href="#contact-summary" title="{ts}Summary{/ts}">
+              <span> </span> {ts}Summary{/ts}
+              <em>&nbsp;</em>
+              </a>
             </li>
             {foreach from=$allTabs key=tabName item=tabValue}
             <li id="tab_{$tabValue.id}" class="crm-tab-button crm-count-{$tabValue.count}">
-            	<a href="{$tabValue.url}" title="{$tabValue.title}">
-            		<span> </span> {$tabValue.title}
-            		<em>{$tabValue.count}</em>
-            	</a>
+              <a href="{$tabValue.url}" title="{$tabValue.title}">
+                <span> </span> {$tabValue.title}
+                <em>{$tabValue.count}</em>
+              </a>
             </li>
             {/foreach}
         </ul>
@@ -255,7 +255,6 @@
                         <div class="clear"></div>
                     </div><!-- #contact_panel -->
 
-					
             <div class="contact_panel">
               {assign var='locationIndex' value=1}
               {if $address}
@@ -291,13 +290,13 @@
           <div class="contact_panel">
             <div class="contactCardLeft">
               <div class="crm-summary-block" id="communication-pref-block" >
-                {include file="CRM/Contact/Page/Inline/CommunicationPreferences.tpl"} 
+                {include file="CRM/Contact/Page/Inline/CommunicationPreferences.tpl"}
               </div>
             </div> <!-- contactCardLeft -->
             {if $contact_type eq 'Individual' AND $showDemographics}
               <div class="contactCardRight">
                 <div class="crm-summary-block" id="demographic-block">
-                  {include file="CRM/Contact/Page/Inline/Demographics.tpl"} 
+                  {include file="CRM/Contact/Page/Inline/Demographics.tpl"}
                 </div>
               </div> <!-- contactCardRight -->
             {/if}
@@ -340,7 +339,7 @@
                 {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
             {/if}
         </div>
-		    <div class="clear"></div>
+        <div class="clear"></div>
     </div>
  <script type="text/javascript">
  var selectedTab  = 'summary';
@@ -396,6 +395,7 @@ cj(function(){
 
     cj( '#custom-set-block-'+ cgId ).html( response );
   });
+  
   /* end of js for inline custom data */
 
   /* start of js for inline address */

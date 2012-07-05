@@ -305,7 +305,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       return $membership;
     }
 
-
     // add custom field values
     if (CRM_Utils_Array::value('custom', $params)
       && is_array($params['custom'])
@@ -324,7 +323,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
 
     //record contribution for this membership
     if (CRM_Utils_Array::value('contribution_status_id', $params) && !CRM_Utils_Array::value('relate_contribution_id', $params)) {
-      self::recordMembershipContribution( $params, $ids, $membership->id );
+      $params['contribution'] = self::recordMembershipContribution( $params, $ids, $membership->id );
     }
 
     if (CRM_Utils_Array::value('relate_contribution_id', $params)) {
@@ -1464,7 +1463,8 @@ AND civicrm_membership.is_test = %2";
           )
         ) &&
         (($form->_values['is_monetary'] && $form->_amount > 0.0) ||
-          CRM_Utils_Array::value('separate_membership_payment', $form->_params)
+         CRM_Utils_Array::value('separate_membership_payment', $form->_params) ||
+         CRM_Utils_Array::value('record_contribution', $form->_params)
         )
       ) {
         $pending = TRUE;
@@ -2776,6 +2776,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       $mpDAO->save();
       CRM_Utils_Hook::post('create', 'MembershipPayment', $mpDAO->id, $mpDAO);
     }
+    return $contribution;
   }
 
   /**

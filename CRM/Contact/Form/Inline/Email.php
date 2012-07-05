@@ -200,6 +200,12 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
     // save email changes
     CRM_Core_BAO_Block::create('email', $params);
 
+    // make entry in log table
+    CRM_Core_BAO_Log::register( $this->_contactId,
+      'civicrm_contact',
+      $this->_contactId
+    );
+
     $response = array('status' => 'save');
     echo json_encode($response);
     CRM_Utils_System::civiExit();

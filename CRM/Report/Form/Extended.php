@@ -189,6 +189,10 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'price_field_value_id' =>
           array('title' => ts('Price Field Option'),
           ),
+          'line_item_id' =>
+          array('title' => ts('Individual Line Item'),
+            'name' => 'id',
+          ),
         ),
       ),
     );
@@ -414,6 +418,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           ),
           'event_type_id' => array('title' => ts('Event Type'),
             'required' => TRUE,
+            'alter_display' => 'alterEventType',
           ),
           'fee_label' => array('title' => ts('Fee Label')),
           'event_start_date' => array('title' => ts('Event Start Date'),
@@ -444,6 +449,11 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'default_order' => 'ASC',
           ),
         ),
+        'group_bys' => array(
+          'event_type_id' => array(
+          'title' => ts('Event Type'),
+          ),
+        ),
       ),
     );
   }
@@ -465,6 +475,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'payment_instrument_id' => array('title' => ts('Payment Instrument'),
             'alter_display' => 'alterPaymentType',
           ),
+          'source' => array('title' => 'Contribution Source'),
           'trxn_id' => NULL,
           'receive_date' => array('default' => TRUE),
           'receipt_date' => NULL,
@@ -510,6 +521,11 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           array('title' => ts('Contribution Type')),
           'payment_instrument_id' =>
           array('title' => ts('Payment Instrument')),
+          'contribution_id' =>
+          array('title' => ts('Individual Contribution'),
+            'name' => 'id',
+          ),
+          'source' => array('title' => 'Contribution Source'),
         ),
         'grouping' => 'contribution-fields',
       ),
@@ -536,6 +552,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           ),
           'nick_name' => array(
             'title' => ts('Nick Name'),
+            'alter_display' => 'alterNickName',
           ),
         ),
         'filters' => array(
@@ -1144,6 +1161,19 @@ WHERE 	line_item_civireport.id IS NOT NULL
   /*
     * Retrieve text for contribution type from pseudoconstant
     */
+  function alterNickName($value, &$row) {
+    if(empty($row['civicrm_contact_id'])){
+      return;
+    }
+    $contactID = $row['civicrm_contact_id'];
+    return "<div id=contact-{$contactID} class='crm-entity'>
+           <div class='crm-editable crmf-nick_name crm-editable-enabled' data-action='create'>
+           " . $value . "</div>";
+  }
+  
+  /*
+   * Retrieve text for contribution type from pseudoconstant
+   */
   function alterContributionType($value, &$row) {
     return is_string(CRM_Contribute_PseudoConstant::contributionType($value, FALSE)) ? CRM_Contribute_PseudoConstant::contributionType($value, FALSE) : '';
   }

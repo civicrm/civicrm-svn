@@ -1714,10 +1714,15 @@ WHERE  id = %1";
    *
    */
   public static function &visibility($column = 'label') {
-    if (!self::$visibility) {
-      self::$visibility = CRM_Core_OptionGroup::values('visibility', FALSE, FALSE, FALSE, NULL, $column);
+    if (!isset(self::$visibility)) {
+      self::$visibility = array( );
     }
-    return self::$visibility;
+
+    if (!isset(self::$visibility[$column])) {
+      self::$visibility[$column] = CRM_Core_OptionGroup::values('visibility', FALSE, FALSE, FALSE, NULL, $column);
+    }
+
+    return self::$visibility[$column];
   }
 
   /**
@@ -2063,13 +2068,13 @@ ORDER BY name";
   }
 
 
-  /**                                                                                                                                                                                                       
+  /**
    * Get all the auto renew options
    *
    * @access public
    * @static
    *
-   * @return array self::autoRenew - array reference of all autoRenew 
+   * @return array self::autoRenew - array reference of all autoRenew
    *
    */
   public static function &autoRenew() {

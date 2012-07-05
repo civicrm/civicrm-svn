@@ -271,7 +271,7 @@ class CRM_Contact_Form_Edit_Address {
 
     if ($sharing) {
       // shared address
-      $form->addElement('checkbox', "address[$blockId][use_shared_address]", NULL, ts('Share Address With'));
+      $form->addElement('checkbox', "address[$blockId][use_shared_address]", NULL, ts('Use another contact\'s address'));
 
       // get the reserved for address
       $profileId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', 'shared_address', 'id', 'name');
