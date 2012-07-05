@@ -1487,7 +1487,8 @@ AND civicrm_membership.is_test = %2";
           )
         ) &&
         (($form->_values['is_monetary'] && $form->_amount > 0.0) ||
-          CRM_Utils_Array::value('separate_membership_payment', $form->_params)
+         CRM_Utils_Array::value('separate_membership_payment', $form->_params) ||
+         CRM_Utils_Array::value('record_contribution', $form->_params)
         )
       ) {
         $pending = TRUE;

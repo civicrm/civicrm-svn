@@ -653,6 +653,10 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $numRenewTerms = $formValues['num_terms'];
     }
 
+    //if contribution status is pending then set pay later
+    if ($formValues["contribution_type_id"] == array_search('Pending', CRM_Contribute_PseudoConstant::contributionStatus())) {
+      $this->_params['is_pay_later'] = 1;
+    }
     $renewMembership = CRM_Member_BAO_Membership::renewMembership($this->_contactID,
       $formValues['membership_type_id'][1],
       $isTestMembership, $this, NULL, NULL,
