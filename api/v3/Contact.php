@@ -150,6 +150,7 @@ function civicrm_api3_contact_create($params) {
  */
 function _civicrm_api3_contact_create_spec(&$params) {
   $params['contact_type']['api.required'] = 1;
+  $params['id']['api.aliases'] = array('contact_id');
 }
 
 /**
