@@ -1931,7 +1931,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
       _civicrm_api3_deprecated_add_formatted_param($formatValues, $formatted);
 
       //Handling Custom Data
-      if (($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) && array_key_exists($customFieldID, $customFields)) {
+      // note: Address custom fields will be handled separately inside _civicrm_api3_deprecated_add_formatted_param
+      if (($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) && 
+          array_key_exists($customFieldID, $customFields) && 
+          !array_key_exists($customFieldID, $addressCustomFields)) {
 
         $extends = CRM_Utils_Array::value('extends', $customFields[$customFieldID]);
                 $htmlType = CRM_Utils_Array::value( 'html_type', $customFields[$customFieldID] );

@@ -953,7 +953,6 @@ function _civicrm_api3_deprecated_add_formatted_param(&$values, &$params) {
 
   /* Check for custom field values */
 
-
   if (!CRM_Utils_Array::value('custom', $fields)) {
     $fields['custom'] = &CRM_Core_BAO_CustomField::getFields(CRM_Utils_Array::value('contact_type', $values),
       FALSE, FALSE, NULL, NULL, FALSE, FALSE, FALSE
@@ -1046,6 +1045,53 @@ function _civicrm_api3_deprecated_add_formatted_location_blocks(&$values, &$para
     require_once 'CRM/Core/DAO/Address.php';
     $fields['Address'] = CRM_Core_DAO_Address::fields();
   }
+
+  // Note: we doing multiple value formatting here for address custom fields, plus putting into right format. 
+  // The actual formatting (like date, country ..etc) for address custom fields is taken care of while saving 
+  // the address in CRM_Core_BAO_Address::create method
+  if (CRM_Utils_Array::value('location_type_id', $values)) {
+    static $customFields = array();
+    if (empty($customFields)) {
+      $customFields = CRM_Core_BAO_CustomField::getFields('Address');
+    }
+    // make a copy of values, as we going to make changes
+    $newValues = $values;
+    foreach ($values as $key => $val) {
+      $customFieldID = CRM_Core_BAO_CustomField::getKeyID($key);
+      if ($customFieldID && array_key_exists($customFieldID, $customFields)) {
+        // mark an entry in fields array since we want the value of custom field to be copied
+        $fields['Address'][$key] = null;
+
+        $htmlType = CRM_Utils_Array::value( 'html_type', $customFields[$customFieldID] );
+        switch ( $htmlType ) {
+        case 'CheckBox':
+        case 'AdvMulti-Select':
+        case 'Multi-Select':
+          if ( $val ) {
+            $mulValues = explode( ',', $val );
+            $customOption = CRM_Core_BAO_CustomOption::getCustomOption( $customFieldID, true );
+            $newValues[$key] = array( );
+            foreach ( $mulValues as $v1 ) {
+              foreach ( $customOption as $v2 ) {
+                if ( ( strtolower( $v2['label'] ) == strtolower( trim( $v1 ) ) ) || 
+                     ( strtolower( $v2['value'] ) == strtolower( trim( $v1 ) ) ) ) { 
+                  if ( $htmlType == 'CheckBox' ) {
+                    $newValues[$key][$v2['value']] = 1;
+                  } else {
+                    $newValues[$key][] = $v2['value'];
+                  }
+                }
+              }
+            }
+          }
+          break;
+        }
+      }
+    }
+    // consider new values
+    $values = $newValues;
+  }
+
   _civicrm_api3_store_values($fields['Address'], $values, $params['address'][$addressCnt]);
 
   $addressFields = array(
