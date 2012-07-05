@@ -289,25 +289,6 @@ function civicrm_get_api_version($desired_version = NULL) {
 }
 
 /**
- * This function exists ONLY to support API v2 via the API wrapper (which is not actually supported :-)_
- * It was put in basically as part of a big cock up & needs to be deleted but there are still a couple of functions
- * that call it
- *
- * @param $entity deprecated
- * @param $rest_interface deprecated
- * @deprecated
- */
-function civicrm_api_include($entity, $rest_interface = FALSE, $version = NULL) {
-
-  $version    = civicrm_get_api_version($version);
-  $camel_name = _civicrm_api_get_camel_name($entity, $version);
-  $file       = 'api/v' . $version . '/' . $camel_name . '.php';
-  if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . $file)) {
-    require_once $file;
-  }
-}
-
-/**
  * Check if the result is an error. Note that this function has been retained from
  * api v2 for convenience but the result is more standardised in v3 and param
  * 'format.is_success' => 1
