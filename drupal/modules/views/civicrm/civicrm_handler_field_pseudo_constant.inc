@@ -31,7 +31,10 @@
  *
  */
 class civicrm_handler_field_pseudo_constant extends views_handler_field {
-  public $_pseudo_constant; function construct() {
+  public $_pseudo_constant;
+
+  function construct() {
+    parent::construct();
     if (!civicrm_initialize() ||
       !isset($this->definition['pseudo class']) ||
       !isset($this->definition['pseudo method'])
