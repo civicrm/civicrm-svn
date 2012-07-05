@@ -2264,7 +2264,7 @@ function _civicrm_core_data(&$data, $enabled) {
       'handler' => 'views_handler_field_numeric',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_numeric',
+      'handler' => 'civicrm_handler_filter_domain',
     ),
     'sort' => array(
       'handler' => 'views_handler_sort_numeric',
