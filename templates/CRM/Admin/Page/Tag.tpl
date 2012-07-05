@@ -65,7 +65,7 @@
                 </thead>
                 {foreach from=$rows item=row key=id }
                 <tr class="{cycle values="odd-row,even-row"} {$row.class} crm-tag crm-entity" id="tag-{$row.id}" >
-                    <td class="crm-tag-name crm-editable crmf-name" data-action='create'>{$row.name}</td>
+                    <td class="crm-tag-name crm-editable crmf-name">{$row.name}</td>
                     <td class="crm-tag-id">{$row.id}</td>	
                     <td class="crm-tag-description crm-editable crmf-description">{$row.description} </td>
                     <td class="crm-tag-parent">{$row.parent} {if $row.parent_id}(<span class='crmf-parent_id crm-editable'>{$row.parent_id}</span>){/if}</td>
