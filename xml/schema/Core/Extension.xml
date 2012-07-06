@@ -75,6 +75,15 @@
     <add>4.2</add>
   </field>
   <field>
+    <name>schema_version</name>
+    <title>Schema Version</title>
+    <type>varchar</type>
+    <length>63</length>
+    <import>true</import>
+    <comment>Revision code of the database schema; the format is module-defined</comment>
+    <add>4.2</add>
+  </field>
+  <field>
     <name>is_active</name>
     <type>boolean</type>
     <default>1</default>
