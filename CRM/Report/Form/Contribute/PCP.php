@@ -94,7 +94,7 @@ class CRM_Report_Form_Contribute_PCP extends CRM_Report_Form {
         'fields' =>
         array(
           'title' =>
-          array('title' => ts('Pesonal Campaign Title'),
+          array('title' => ts('Personal Campaign Title'),
             'default' => TRUE,
           ),
           'goal_amount' =>

@@ -217,40 +217,36 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
       $base .= 'wp-admin/admin.php';
     }
 
+    $permlinkStructure = get_option('permalink_structure');
     if (isset($path)) {
-      if ( get_option('permalink_structure') != '' && $pageID ) {
-        if (isset($query)) {
+      if (isset($query)) {
+        if ( $permlinkStructure != '' && $pageID ) {
           return $script . '?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
         else {
-          return $script . '?page=CiviCRM&q=' . $path . $pageID . $fragment;
+          return $base . '?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
       }
       else {
-        if (isset($query)) {
-          return $base .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
+        if ( $permlinkStructure != '' && $pageID ) {
+          return $script . '?page=CiviCRM&q=' . $path . $pageID . $fragment;
         }
         else {
-          return $base .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
+          return $base . '?page=CiviCRM&q=' . $path . $pageID . $fragment;
         }
       }
     }
     else {
-      if (get_option('permalink_structure') != '') {
-        if (isset($query)) {
+      if (isset($query)) {
+        if ( $permlinkStructure != '' && $pageID ) {
           return $script . '?' . $query . $pageID . $fragment;
         }
         else {
-          return $base . $fragment;
+          return $base . $script . '?' . $query . $pageID . $fragment;
         }
       }
       else {
-        if (isset($query)) {
-          return $base . $script . '?' . $query . $pageID . $fragment;
-        }
-        else {
-          return $base . $fragment;
-        }
+        return $base . $fragment;
       }
     }
   }

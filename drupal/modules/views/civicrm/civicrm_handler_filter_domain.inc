@@ -23,46 +23,39 @@
  +--------------------------------------------------------------------+
 */
 
-/*
- * Developed by Jim Taylor.
- *
- * civicrm_handler_field_pseudo_constant.inc
- * Display's Pseudo Constant after grabbing the label from the database
- *
+/**
+ * Field hanlder to allow filtering by CiviCRM domain.
  */
-class civicrm_handler_field_pseudo_constant extends views_handler_field {
-  public $_pseudo_constant;
-
-  function construct() {
-    parent::construct();
-    if (!civicrm_initialize() ||
-      !isset($this->definition['pseudo class']) ||
-      !isset($this->definition['pseudo method'])
-    ) {
-      return;
-    }
-
-    // Load pseudo arguments if passed as array from hook_views_data
-    if (isset($this->definition['pseudo args']) && is_array($this->definition['pseudo args'])) {
-      $pseudo_args = $this->definition['pseudo args'];
-    }
-    else {
-      $pseudo_args = array();
-    }
-
-    // Include and call the Pseudo Class method
-    require_once str_replace('_', DIRECTORY_SEPARATOR, $this->definition['pseudo class']) . '.php';
-    $this->_pseudo_constant = call_user_func_array($this->definition['pseudo class'] . "::" . $this->definition['pseudo method'], $pseudo_args);
+class civicrm_handler_filter_domain extends views_handler_filter_numeric {
+  /**
+   * Add an additonal operator which takes no arguments to the existing list provided by views_handler_filter_numeric.
+   */
+  function operators() {
+    $operators = parent::operators();
+    $operators['current_domain'] = array(
+      'title' => t('Current CiviCRM domain'),
+      'method' => 'current_domain',
+      'short' => t('current domain'),
+      'values' => 0,
+    );
+    return $operators;
   }
 
-  function render($values) {
-    $sid = $values->{$this->field_alias};
-    if (empty($sid) ||
-      (int ) $sid <= 0
-    ) {
-      return NULL;
+  /**
+   * Grab the current domain id using the civicrm api and filter the query.
+   */
+  function current_domain($field) {
+    if (!civicrm_initialize()) {
+      return FALSE;
     }
-    return $this->_pseudo_constant[$values->{$this->field_alias}];
+
+    $domain = civicrm_api('domain', 'getsingle', array(
+      'current_domain' => 1,
+      'version' => 3,
+    ));
+
+    if (!$domain['is_error']) {
+      $this->query->add_where($this->options['group'], $field, $domain['id']);
+    }
   }
 }
-
