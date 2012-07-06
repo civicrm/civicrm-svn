@@ -1149,7 +1149,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
 
         if ($value) {
           if ($customFields[$customFieldID]['data_type'] == 'Date') {
-            if (CRM_Utils_Date::convertToDefaultDate($params, $dateType, $key)) {
+            if (array_key_exists($customFieldID, $addressCustomFields) && CRM_Utils_Date::convertToDefaultDate($params[$key][0], $dateType, $key)) {
+              $value = $params[$key][0][$key];
+            } 
+            else if (CRM_Utils_Date::convertToDefaultDate($params, $dateType, $key)) {
               $value = $params[$key];
             }
             else {
@@ -1851,7 +1854,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
     $session = CRM_Core_Session::singleton();
     $dateType = $session->get("dateTypes");
     foreach ($params as $key => $val) {
-      if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+      $customFieldID = CRM_Core_BAO_CustomField::getKeyID($key);
+      if ($customFieldID && 
+          !array_key_exists($customFieldID, $addressCustomFields)) {
         //we should not update Date to null, CRM-4062
         if ($val && ($customFields[$customFieldID]['data_type'] == 'Date')) {
           self::formatCustomDate($params, $formatted, $dateType, $key);
