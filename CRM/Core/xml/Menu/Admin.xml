@@ -263,6 +263,12 @@
      <weight>120</weight>
   </item>  
   <item>
+     <path>civicrm/admin/extensions/upgrade</path>
+     <title>Database Upgrades</title>
+     <page_callback>CRM_Admin_Page_ExtensionsUpgrade</page_callback>
+     <access_arguments>administer CiviCRM</access_arguments>
+  </item>  
+  <item>
      <path>civicrm/admin/domain</path>
      <title>Organization Address and Contact Info</title>
      <desc>Configure primary contact name, email, return-path and address information. This information is used by CiviMail to identify the sending organization.</desc>

@@ -151,6 +151,9 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
       return;
     }
 
+    $this->assign('extDbUpgrades', CRM_Core_Extensions_Upgrades::hasPending());
+    $this->assign('extDbUpgradeUrl', CRM_Utils_System::url('civicrm/admin/extensions/upgrade', 'reset=1'));
+
     $extensionRows = array();
     $em = self::$_extensions;
 
