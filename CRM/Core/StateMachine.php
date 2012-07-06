@@ -218,7 +218,22 @@ class CRM_Core_StateMachine {
    * @access public
    */
   function &getState($name) {
-    return $this->_states[$name];
+    if (isset($this->_states[$name])) {
+      return $this->_states[$name];
+    }
+
+    /*
+     * This is a gross hack for ajax driven requests where
+     * we change the form name to allow multiple edits to happen
+     * We need a cleaner way of doing this going forward
+     */
+    foreach ($this->_states as $n => $s ) {
+      if (substr($name, 0, strlen($n)) == $n) {
+        return $s;
+      }
+    }
+
+    return null;
   }
 
   /**

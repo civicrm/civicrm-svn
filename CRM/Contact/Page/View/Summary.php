@@ -169,9 +169,15 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         }
         if (isset($value['customData'])) {
           foreach ($defaults[$key] as $blockId => $blockVal) {
+            $idValue = $blockVal['id'];
+            if ( $key == 'address' ) {
+              if ( CRM_Utils_Array::value( 'master_id', $blockVal ) ) {
+                $idValue = $blockVal['master_id'];
+              }
+            }
             $groupTree = CRM_Core_BAO_CustomGroup::getTree(ucfirst($key),
               $this,
-              $blockVal['id']
+              $idValue
             );
             // we setting the prefix to dnc_ below so that we don't overwrite smarty's grouptree var.
             $defaults[$key][$blockId]['custom'] = CRM_Core_BAO_CustomGroup::buildCustomDataView($this, $groupTree, FALSE, NULL, "dnc_");

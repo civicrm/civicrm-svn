@@ -255,61 +255,38 @@
                         <div class="clear"></div>
                     </div><!-- #contact_panel -->
 
-          {if $address}
-                    <div class="contact_panel">
-                        {foreach from=$address item=add key=locationIndex}
-                        <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
-                            <table>
-                                <tr>
-                                    <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
-                                        {if $config->mapProvider AND
-           !empty($add.geo_code_1) AND
-           is_numeric($add.geo_code_1) AND
-           !empty($add.geo_code_2) AND
-           is_numeric($add.geo_code_2)
-           }
-                                            <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
-                                        {/if}</td>
-                                    <td class="crm-contact-address_display">
-                                        {if !empty($sharedAddresses.$locationIndex.shared_address_display.name)}
-                                             <strong>{ts 1=$sharedAddresses.$locationIndex.shared_address_display.name}Address belongs to %1{/ts}</strong><br />
-                                         {/if}
-                                         {$add.display|nl2br}
-                                    </td>
-                                </tr>
-                            </table>
-          {foreach from=$add.custom item=customGroup key=cgId}
-                            {assign var="isAddressCustomPresent" value=1}
-              {foreach from=$customGroup item=customValue key=cvId}
-                  <div id="address_custom_{$cgId}_{$locationIndex}" class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion crm-accordion-closed">
-                      <div class="crm-accordion-header">
-                          <div class="icon crm-accordion-pointer"></div>
-                    {$customValue.title}
-                      </div>
-                      <div class="crm-accordion-body">
-                    <table>
-                        {foreach from=$customValue.fields item=customField key=cfId}
-                      <tr><td class="label">{$customField.field_title}</td><td class="crm-contact_custom_field_value">{$customField.field_value}</td></tr>
-                                      {/foreach}
-                          </table>
-                      </div>
+            <div class="contact_panel">
+              {assign var='locationIndex' value=1}
+              {if $address}
+                {foreach from=$address item=add key=locationIndex}
+                <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
+                  <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
+                    {include file="CRM/Contact/Page/Inline/Address.tpl"}
                   </div>
-                                    <script type="text/javascript">
-                                        {if $customValue.collapse_display eq 1 }
-                                            cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
-                                        {else}
-                                            cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
-                                        {/if}
-                                    </script>
-                                {/foreach}
-                            {/foreach}
-                        </div>
-                        {/foreach}
+                </div>
+                {/foreach} {* end of address foreach *}
+              
+                {assign var='locationIndex' value=$locationIndex+1}
+              {/if}
+              {if $locationIndex eq 1 or $locationIndex is odd}
+                <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block">
+              {else}
+                <div class="contactCardRight crm-address_{$locationIndex} crm-address-block">
+              {/if}
 
-                        <div class="clear"></div>
+                <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
+                  <div class="crm-table2div-layout">
+                    <div class="crm-clear">
+                      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
+                      <span class="batch-edit"></span>{ts}add address{/ts}
+                      </a>
                     </div>
-          {/if}
-
+                  </div>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div> <!-- end of contact panel -->
+          
           <div class="contact_panel">
             <div class="contactCardLeft">
               <div class="crm-summary-block" id="communication-pref-block" >
@@ -395,6 +372,7 @@
 <script type="text/javascript">
 
 cj(function(){
+  /* start of js for inline custom data */
   var customBlock = cj('div[id^="custom-set-block-"]');
   customBlock.mouseenter( function() {
     cj(this).addClass('crm-inline-edit-hover');
@@ -417,7 +395,37 @@ cj(function(){
 
     cj( '#custom-set-block-'+ cgId ).html( response );
   });
+  /* end of js for inline custom data */
 
+  /* start of js for inline address */
+  var addressBlock = cj('div[id^="address-block-"]');
+  addressBlock.mouseenter( function() {
+    var locno   = cj(this).attr('locno');
+    cj(this).addClass('crm-inline-edit-hover');
+    cj('a[id^="edit-address-block-' + locno +'"]').show();
+  }).mouseleave( function() {
+    var locno   = cj(this).attr('locno');
+    cj(this).removeClass('crm-inline-edit-hover');
+    if ( !cj('a[id^="edit-address-block-' + locno +'"]').hasClass('empty-address-block-' + locno ) ) { 
+      cj('a[id^="edit-address-block-'+ locno +'"]').hide();
+    }
+  });
+
+  cj('a[id^="edit-address-block-"]').live( 'click', function() {
+    var locno = cj(this).attr('locno');
+    var aid   = cj(this).attr('aid');
+    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&locno=' + locno + '&aid=' + aid ;
+
+    var response = cj.ajax({
+                    type: "GET",
+                    data: {'class_name':'CRM_Contact_Form_Inline_Address'},
+                    url: dataUrl,
+                    async: false
+    }).responseText;
+
+    cj( '#address-block-'+ locno ).html( response );
+  });
+  /* end of js for inline address data */
 });
 
 </script>

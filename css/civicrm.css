@@ -1859,6 +1859,7 @@ div.grippie {
   width   : 49%; 
   display : block; 
   float   : left;
+  clear   : both;
 }
 
 #crm-container div.contactCardRight {

@@ -30,10 +30,8 @@
         <div class="crm-accordion-header">
             <div class="icon crm-accordion-pointer"></div> 
                 {$cd_edit.title}
-
         </div><!-- /.crm-accordion-header -->
         <div class="crm-accordion-body">
-
             {if $cd_edit.help_pre}
                 <div class="messages help">{$cd_edit.help_pre}</div>
             {/if}

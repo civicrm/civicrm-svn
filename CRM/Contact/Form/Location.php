@@ -77,8 +77,7 @@ class CRM_Contact_Form_Location {
    * @return None
    * @access public
    */
-  static
-  function buildQuickForm(&$form) {
+  static function buildQuickForm(&$form) {
     // required for subsequent AJAX requests.
     $ajaxRequestBlocks = array();
     $generateAjaxRequest = 0;

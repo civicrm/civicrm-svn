@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if ! $suppressForm}
-<form {$form.attributes} >
+  <form {$form.attributes} >
 {/if}
 
 {include file="CRM/Form/body.tpl"}
@@ -32,12 +32,15 @@
 {include file=$tplFile}
 
 {if ! $suppressForm}
-</form>
-{literal}
-<script type="text/javascript" >
-cj( function( ) {
-    cj("#{/literal}{$form.formName}{literal}").validate({ 'errorClass': 'crm-error'});
-});
-</script>
-{/literal}
+  </form>
+
+  {if $smarty.get.snippet neq 5}
+    {literal}
+    <script type="text/javascript" >
+      cj( function( ) {
+        cj("#{/literal}{$form.formName}{literal}").validate({ 'errorClass': 'crm-error'});
+      });
+    </script>
+    {/literal}
+  {/if}
 {/if}

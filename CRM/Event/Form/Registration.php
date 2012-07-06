@@ -192,7 +192,8 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     $this->_eventId = CRM_Utils_Request::retrieve('id', 'Positive', $this, TRUE);
     $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE);
 
