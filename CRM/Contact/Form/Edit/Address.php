@@ -216,7 +216,7 @@ class CRM_Contact_Form_Edit_Address {
     CRM_Core_BAO_Address::addStateCountryMap($stateCountryMap);
 
     $entityId = NULL;
-    if (!empty($form->_values['address'])) {
+    if (!empty($form->_values['address']) && CRM_Utils_Array::value($blockId, $form->_values['address'])) {
       $entityId = $form->_values['address'][$blockId]['id'];
     }
     // Process any address custom data -
