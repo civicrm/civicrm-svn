@@ -1941,11 +1941,20 @@ ORDER BY name";
    * @access public
    * @static
    *
-   * @return array - array reference of all system extensions
+   * @return array - array($fullyQualifiedName => $label) list of extensions
    */
   public static function &getExtensions() {
     if (!self::$extensions) {
-      self::$extensions = CRM_Core_OptionGroup::values('system_extensions');
+      self::$extensions = array();
+      $sql = '
+        SELECT full_name, label
+        FROM civicrm_extension
+        WHERE is_active = 1
+      ';
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      while ($dao->fetch()) {
+        self::$extensions[$dao->full_name] = $dao->label;
+      }
     }
 
     return self::$extensions;
