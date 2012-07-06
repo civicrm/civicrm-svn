@@ -610,7 +610,7 @@ class CRM_Utils_String {
       // Disable the cache entirely
       $config->set('Cache.DefinitionImpl', null);
 
-      $_filter = new HTMLPurifier();
+      $_filter = new HTMLPurifier($config);
 }
 
     return $_filter->purify($string);
