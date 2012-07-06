@@ -64,6 +64,18 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
   public $_action;
 
   /**
+   * Since we are using same class / code to generate multiple instances 
+   * of address block, we need to generate unique form name for each, 
+   * hence calling parent contructor
+   */
+  function __construct( ) {
+    $locBlockNo = CRM_Utils_Request::retrieve('locno', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
+    $name = "Address_{$locBlockNo}";
+
+    parent::__construct( null, CRM_Core_Action::NONE, 'post', $name ); 
+  }
+
+  /**
    * call preprocess
    */
   public function preProcess() {
