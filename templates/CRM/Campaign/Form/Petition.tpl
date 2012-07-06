@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -71,6 +71,23 @@
            </div>
            </td>
        </tr>	
+      <tr class="crm-campaign-survey-form-block-thankyou_title">
+         <td class="label">{$form.thankyou_title.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='thankyou_title' id=$contributionPageID}{/if}</td>
+         <td>{$form.thankyou_title.html}<br />
+             <div class="description">{ts}This title will be displayed at the top of the thank-you page.{/ts}</div>
+         </td>
+      </tr>
+      <tr class="crm-campaign-survey-form-block-thankyou_text">
+         <td class="label">{$form.thankyou_text.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='thankyou_text' id=$contributionPageID}{/if}</td>
+         <td>{$form.thankyou_text.html}<br />
+         	   <div class="description">{ts}Enter text (and optional HTML layout tags) for the thank-you message that will appear at the top of the thank-you page.{/ts}</div>
+         </td>
+      </tr>
+       <tr class="crm-campaign-survey-form-block-bypass_confirm">
+           <td class="label">{$form.bypass_confirm.label}</td>
+           <td>{$form.bypass_confirm.html}
+	   <div class="description">{ts}Disable the email confirmation for unverified contacts?{/ts}</div></td>
+       </tr>
        <tr class="crm-campaign-survey-form-block-is_active">
            <td class="label">{$form.is_active.label}</td>
            <td>{$form.is_active.html}

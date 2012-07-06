@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -114,7 +114,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
   /**
    * Do we want to parse street address.
    */
-  private $_parseStreetAddress;
+  public $_parseStreetAddress;
 
   /**
    * check contact has a subtype or not
@@ -391,95 +391,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       }
     }
 
-    $addressValues = array();
-    if (isset($defaults['address']) && is_array($defaults['address']) &&
-      !CRM_Utils_system::isNull($defaults['address'])
-    ) {
-
-      // start of contact shared adddress defaults
-      $sharedAddresses = array();
-      $masterAddress = array();
-
-      // get contact name of shared contact names
-      $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames($defaults['address']);
-
-      foreach ($defaults['address'] as $key => $addressValue) {
-        if (CRM_Utils_Array::value('master_id', $addressValue) && !$shareAddressContactNames[$addressValue['master_id']]['is_deleted']) {
-          $sharedAddresses[$key]['shared_address_display'] = array(
-            'address' => $addressValue['display'],
-            'name' => $shareAddressContactNames[$addressValue['master_id']]['name'],
-          );
-        }
-        else {
-          $defaults['address'][$key]['use_shared_address'] = 0;
-        }
-
-        //check if any address is shared by any other contacts
-        $masterAddress[$key] = CRM_Core_BAO_Address::checkContactSharedAddress($addressValue['id']);
-      }
-
-      $this->assign('sharedAddresses', $sharedAddresses);
-      $this->assign('masterAddress', $masterAddress);
-      // end of shared address defaults
-
-      // start of parse address functionality
-      // build street address, CRM-5450.
-      if ($this->_parseStreetAddress) {
-        $parseFields = array('street_address', 'street_number', 'street_name', 'street_unit');
-        foreach ($defaults['address'] as $cnt => & $address) {
-          $streetAddress = NULL;
-          foreach (array(
-            'street_number', 'street_number_suffix', 'street_name', 'street_unit') as $fld) {
-            if (in_array($fld, array(
-              'street_name', 'street_unit'))) {
-              $streetAddress .= ' ';
-            }
-            $streetAddress .= CRM_Utils_Array::value($fld, $address);
-          }
-          $streetAddress = trim($streetAddress);
-          if (!empty($streetAddress)) {
-            $address['street_address'] = $streetAddress;
-          }
-          if (isset($address['street_number'])) {
-            $address['street_number'] .= CRM_Utils_Array::value('street_number_suffix', $address);
-          }
-
-          // build array for set default.
-          foreach ($parseFields as $field) {
-            $addressValues["{$field}_{$cnt}"] = CRM_Utils_Array::value($field, $address);
-          }
-
-          // don't load fields, use js to populate.
-          foreach (array('street_number', 'street_name', 'street_unit') as $f) {
-            if (isset($address[$f])) {
-              unset($address[$f]);
-            }
-          }
-        }
-        $this->assign('allAddressFieldValues', json_encode($addressValues));
-
-        //hack to handle show/hide address fields.
-        $parsedAddress = array();
-        if ($this->_contactId &&
-          CRM_Utils_Array::value('address', $_POST)
-          && is_array($_POST['address'])
-        ) {
-          foreach ($_POST['address'] as $cnt => $values) {
-            $showField = 'streetAddress';
-            foreach (array('street_number', 'street_name', 'street_unit') as $fld) {
-              if (CRM_Utils_Array::value($fld, $values)) {
-                $showField = 'addressElements';
-                break;
-              }
-            }
-            $parsedAddress[$cnt] = $showField;
-          }
-        }
-        $this->assign('showHideAddressFields', $parsedAddress);
-        $this->assign('loadShowHideAddressFields', empty($parsedAddress) ? FALSE : TRUE);
-      }
-      // end of parse address functionality
-    }
+    //set address block defaults
+    CRM_Contact_Form_Edit_Address::setDefaultValues( $defaults, $this );
 
     if (CRM_Utils_Array::value('image_URL', $defaults)) {
       list($imageWidth, $imageHeight) = getimagesize($defaults['image_URL']);
@@ -498,7 +411,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return $defaults;
   }
 
-  /*
+  /**
      * do the set default related to location type id,
      * primary location,  default country
      *
@@ -779,7 +692,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
           'url' => 'civicrm/contact/image',
           'qs' => 'reset=1&cid=%%id%%&action=delete',
           'extra' =>
-          'onclick = "if (confirm( \'' . $deleteExtra . '\' ) ) {  this.href+=\'&amp;confirmed=1\'; else return false;}"',
+          'onclick = "if (confirm( \'' . $deleteExtra . '\' ) ) this.href+=\'&amp;confirmed=1\'; else return false;"',
         ),
       );
       $deleteURL = CRM_Core_Action::formLink($deleteURL,
@@ -998,8 +911,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     // parse street address, CRM-5450
     $parseStatusMsg = NULL;
     if ($this->_parseStreetAddress) {
-      $parseResult = $this->parseAddress($params);
-      $parseStatusMsg = $this->parseAddressStatusMsg($parseResult);
+      $parseResult = self::parseAddress($params);
+      $parseStatusMsg = self::parseAddressStatusMsg($parseResult);
     }
 
     // Allow un-setting of location info, CRM-5969
@@ -1097,8 +1010,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function blockDataExists(&$fields) {
+  static function blockDataExists(&$fields) {
     if (!is_array($fields)) {
       return FALSE;
     }
@@ -1141,8 +1053,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
    *  @param int    $contactID   contact id
    *  @param string $contactType contact type
    */
-  static
-  function checkDuplicateContacts(&$fields, &$errors, $contactID, $contactType) {
+  static function checkDuplicateContacts(&$fields, &$errors, $contactID, $contactType) {
     // if this is a forced save, ignore find duplicate rule
     if (!CRM_Utils_Array::value('_qf_Contact_upload_duplicate', $fields)) {
 
@@ -1213,14 +1124,16 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return parent::getTemplateFileName();
   }
 
-  /* Parse all address blocks present in given params
+  /**
+   * Parse all address blocks present in given params
      * and return parse result for all address blocks,
      * This function either parse street address in to child
      * elements or build street address from child elements.
      *
      * @params $params an array of key value consist of address  blocks.
      *
-     * @return $parseSuccess as array of sucess/fails for every address block.
+   * @return $parseSuccess as array of sucess/fails for each address block
+   * @static
      */
   function parseAddress(&$params) {
     $parseSuccess = $parsedFields = array();
@@ -1229,7 +1142,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     ) {
       return $parseSuccess;
     }
-
 
     foreach ($params['address'] as $instance => & $address) {
       $buildStreetAddress = FALSE;
@@ -1302,14 +1214,16 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return $parseSuccess;
   }
 
-  /* check parse result and if some address block fails then this
+  /**
+   * check parse result and if some address block fails then this
      * function return the status message for all address blocks.
      *
      * @param  $parseResult an array of address blk instance and its status.
      *
      * @return $statusMsg   string status message for all address blocks.
+   * @static
      */
-  function parseAddressStatusMsg($parseResult) {
+  static function parseAddressStatusMsg($parseResult) {
     $statusMsg = NULL;
     if (!is_array($parseResult) || empty($parseResult)) {
       return $statusMsg;
@@ -1318,7 +1232,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     $parseFails = array();
     foreach ($parseResult as $instance => $success) {
       if (!$success) {
-        $parseFails[] = $this->ordinalNumber($instance);
+        $parseFails[] = self::ordinalNumber($instance);
       }
     }
 
@@ -1331,15 +1245,16 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return $statusMsg;
   }
 
-  /*
+  /**
      * Convert normal number to ordinal number format.
      * like 1 => 1st, 2 => 2nd and so on...
      *
      * @param  $number int number to convert in to ordinal number.
      *
      * @return ordinal number for given number.
+   * @static
      */
-  function ordinalNumber($number) {
+  static function ordinalNumber($number) {
     if (empty($number)) {
       return NULL;
     }
@@ -1366,7 +1281,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     return "$number$str";
   }
 
-  /* Update membership status to deceased
+  /**
+   * Update membership status to deceased
      * function return the status message for updated membership.
      *
      * @param  $deceasedParams array  having contact id and deceased value.

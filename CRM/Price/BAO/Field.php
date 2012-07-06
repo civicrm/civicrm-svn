@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -79,8 +79,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
    * @access public
    * @static
    */
-  static
-  function create(&$params) {
+  static function create(&$params) {
 
     $transaction = new CRM_Core_Transaction();
 
@@ -123,7 +122,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
     for ($index = 1; $index <= $maxIndex; $index++) {
 
-      if (CRM_Utils_Array::value($index, $params['option_label']) &&
+      if (CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_label', $params)) &&
         !CRM_Utils_System::isNull($params['option_amount'][$index])
       ) {
         $options = array(
@@ -168,8 +167,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     return CRM_Core_DAO::commonRetrieve('CRM_Price_DAO_Field', $params, $defaults);
   }
 
@@ -184,8 +182,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
    * @access public
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Price_DAO_Field', $id, 'is_active', $is_active);
   }
 
@@ -349,8 +346,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         }
 
         if (property_exists($qf, '_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount') {
-          $choice[] = $qf->createElement('radio', NULL, '', 'No thank you', '00',
-            array('price' => json_encode(array($elementName, "0")),
+          $choice[] = $qf->createElement('radio', NULL, '', 'No thank you', '-1',
+            array(
               'onclick' => 'clearAmountOther();',
             )
           );
@@ -527,8 +524,7 @@ WHERE
     return NULL;
   }
 
-  static
-  function &htmlTypes() {
+  static function &htmlTypes() {
     static $htmlTypes = NULL;
     if (!$htmlTypes) {
       $htmlTypes = array(

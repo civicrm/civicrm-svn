@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -325,6 +325,259 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     // //------ end unsubscribe -------
   }
+  
+  function testAdvanceSearchAndReportCheck() {
+
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
+
+    // Go directly to the URL of the screen that you will be testing (New Group).
+    $this->open($this->sboxPath . "civicrm/group/add?reset=1");
+    $this->waitForElementPresent("_qf_Edit_upload");
+
+    // make group name
+    $groupName = 'group_' . substr(sha1(rand()), 0, 7);
+
+    // fill group name
+    $this->type("title", $groupName);
+
+    // fill description
+    $this->type("description", "New mailing group for Webtest");
+
+    // enable Mailing List
+    $this->click("group_type[2]");
+
+    // select Visibility as Public Pages
+    $this->select("visibility", "value=Public Pages");
+
+    // Clicking save.
+    $this->click("_qf_Edit_upload");
+    $this->waitForPageToLoad("30000");
+
+    // Is status message correct?
+    $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
+
+    //---- create mailing contact and add to mailing Group
+    $firstName = substr(sha1(rand()), 0, 7);
+    $this->webtestAddContact($firstName, "Mailson", "mailino$firstName@mailson.co.in");
+
+    // Get contact id from url.
+    $matches = array();
+    preg_match('/cid=([0-9]+)/', $this->getLocation(), $matches);
+    $contactId = $matches[1];
+
+    // go to group tab and add to mailing group
+    $this->click("css=li#tab_group a");
+    $this->waitForElementPresent("_qf_GroupContact_next");
+    $this->select("group_id", "$groupName");
+    $this->click("_qf_GroupContact_next");
+
+    // configure default mail-box
+    $this->open($this->sboxPath . "civicrm/admin/mailSettings?action=update&id=1&reset=1");
+    $this->waitForElementPresent('_qf_MailSettings_cancel-bottom');
+    $this->type('name', 'Test Domain');
+    $this->type('domain', 'example.com');
+    $this->select('protocol', 'value=1');
+    $this->click('_qf_MailSettings_next-bottom');
+    $this->waitForPageToLoad("30000");
+
+    // Go directly to Schedule and Send Mailing form
+    $this->open($this->sboxPath . "civicrm/mailing/send?reset=1");
+    $this->waitForElementPresent("_qf_Group_cancel");
+
+    //-------select recipients----------
+
+    // fill mailing name
+    $mailingName = substr(sha1(rand()), 0, 7);
+    $this->type("name", "Mailing $mailingName Webtest");
+
+    // Add the test mailing group
+    $this->select("includeGroups-f", "$groupName");
+    $this->click("add");
+
+    // click next
+    $this->click("_qf_Group_next");
+    $this->waitForElementPresent("_qf_Settings_cancel");
+
+    //--------track and respond----------
+
+    // check for default settings options
+    $this->assertChecked("url_tracking");
+    $this->assertChecked("open_tracking");
+
+    // do check count for Recipient
+    $this->assertTrue($this->isTextPresent("Total Recipients: 1"));
+
+    // click next with default settings
+    $this->click("_qf_Settings_next");
+    $this->waitForElementPresent("_qf_Upload_cancel");
+
+    // fill subject for mailing
+    $this->type("subject", "Test subject {$mailingName} for Webtest");
+    
+    // check for default option enabled
+    $this->assertChecked("CIVICRM_QFID_1_4");
+
+    // HTML format message
+    $HTMLMessage = "This is HTML formatted content for Mailing {$mailingName} Webtest.";
+    $this->fillRichTextField("html_message", $HTMLMessage);
+
+    // Open Plain-text Format pane and type text format msg
+    $this->click("//fieldset[@id='compose_id']/div[2]/div[1]");
+    $this->type("text_message", "This is text formatted content for Mailing {$mailingName} Webtest.");
+
+    // select default header and footer ( with label )
+    $this->select("header_id", "label=Mailing Header");
+    $this->select("footer_id", "label=Mailing Footer");
+
+    // do check count for Recipient
+    $this->assertTrue($this->isTextPresent("Total Recipients: 1"));
+
+    // click next with nominal content
+    $this->click("_qf_Upload_upload");
+    $this->waitForElementPresent("_qf_Test_cancel");
+
+    // do check count for Recipient
+    $this->assertTrue($this->isTextPresent("Total Recipients: 1"));
+
+    // click next
+    $this->click("_qf_Test_next");
+    $this->waitForElementPresent("_qf_Schedule_cancel");
+
+    //----------Schedule or Send------------
+
+    // do check for default option enabled
+    $this->assertChecked("now");
+
+    // do check count for Recipient
+    $this->assertTrue($this->isTextPresent("Total Recipients: 1"));
+
+    // finally schedule the mail by clicking submit
+    $this->click("_qf_Schedule_next");
+    $this->waitForPageToLoad("30000");
+
+    //----------end New Mailing-------------
+
+    //check redirected page to Scheduled and Sent Mailings and  verify for mailing name
+    $this->assertTrue($this->isTextPresent("Scheduled and Sent Mailings"));
+    $this->assertTrue($this->isTextPresent("Mailing $mailingName Webtest"));
+
+    // directly send schedule mailing -- not working right now
+    $this->open($this->sboxPath . "civicrm/mailing/queue?reset=1");
+    $this->waitForPageToLoad("300000");
+
+    //click report link of created mailing
+    $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
+    $this->waitForPageToLoad("30000");
+   
+    $mailingReportUrl = $this->getLocation();
+    // do check again for recipient group
+    $this->assertTrue($this->isTextPresent("Members of $groupName"));
+
+    // check for 100% delivery
+    $this->assertTrue($this->isTextPresent("1 (100.00%)"));
+
+    $summaryInfoLinks = array('Intended Recipients', 'Successful Deliveries', 'Tracked Opens', 'Click-throughs', 'Forwards', 'Replies', 'Bounces', 'Unsubscribe Requests','Opt-out Requests');
+    
+    //check for report and adv search links
+    foreach($summaryInfoLinks as $value) {
+      $this->assertTrue($this->isElementPresent("xpath=//fieldset/legend[text()='Delivery Summary']/../table//tr[td/a[text()='{$value}']]/descendant::td[3]/span/a[1][text()='Report']"), "Report link missing for {$value}");
+      $this->assertTrue($this->isElementPresent("xpath=//fieldset/legend[text()='Delivery Summary']/../table//tr[td/a[text()='{$value}']]/descendant::td[3]/span/a[2][text()='Advanced Search']"), "Advance Search link missing for {$value}");
 }
+    // verify mailing name
+    $this->verifyText("xpath=//table//tr[td[1]/text()='Mailing Name']/descendant::td[2]", preg_quote("Mailing $mailingName Webtest"));
 
+    // verify mailing subject
+    $this->verifyText("xpath=//table//tr[td[1]/text()='Subject']/descendant::td[2]", preg_quote("Test subject $mailingName for Webtest"));    
 
+    // after asserts do clicks and confirm filters 
+    $criteriaCheck = 
+      array(
+        'Intended Recipients' => 
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest")
+        ),
+        'Successful Deliveries' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            "Delivery Status" => " Successful"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing Delivery -' => "Successful")
+        ),
+        'Tracked Opens' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable Opens -' => "Opened")
+        ),
+        'Click-throughs' =>
+        array(
+          'report' => array('report_name' => 'Mail Clickthrough Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable URL Clicks -' => "Clicked")
+        ),
+        'Forwards' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            'Forwarded' => 'Is equal to Yes'),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Forwards")
+        ),
+        'Replies' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            'Replied' => 'Is equal to Yes'),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable Replies -' => "Replied")
+        ),
+        'Bounces' =>
+        array(
+          'report' => array('report_name' => 'Mail Bounce Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing Delivery -' => "Bounced")
+        ),
+        'Unsubscribe Requests' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            'Unsubscribed' => 'Is equal to Yes'),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Unsubscribe Requests")
+        ),
+        'Opt-out Requests' =>
+        array(
+          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+                            'Opted-out' => 'Is equal to Yes'),
+          'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Opt-out Requests")
+        ),
+      );
+    $this->criteriaCheck($criteriaCheck, $mailingReportUrl);
+  }
+  
+  function criteriaCheck($criteriaCheck, $mailingReportUrl) {
+    foreach($criteriaCheck as $key => $infoFilter) {
+      foreach($infoFilter as $entity => $dataToCheck) {
+        $this->open($mailingReportUrl);
+        if ($entity == "report") {
+          $this->click("xpath=//fieldset/legend[text()='Delivery Summary']/../table//tr[td/a[text()='{$key}']]/descendant::td[3]/span/a[1][text()='Report']");
+        } else {
+          $this->click("xpath=//fieldset/legend[text()='Delivery Summary']/../table//tr[td/a[text()='{$key}']]/descendant::td[3]/span/a[2][text()='Advanced Search']");
+        }
+        $this->waitForPageToLoad("30000");
+        $this-> _verifyCriteria($key, $dataToCheck, $entity);
+      }
+    }
+  }
+  
+  function _verifyCriteria($summaryInfo, $dataToCheck, $entity) {
+    foreach($dataToCheck as $key => $value) {
+      if ($entity == 'report') {
+        if ($key == 'report_name') {
+          $this->assertTrue($this->isTextPresent("{$value}"));
+          continue;
+        }
+        $this->assertTrue($this->isElementPresent("xpath=//form//div[3]/table/tbody//tr/th[contains(text(),'{$key}')]/../td[contains(text(),'{$value}')]"),"Criteria check for {$key} failed for Report for {$summaryInfo}");
+      } else {
+        $this->assertTrue($this->isTextPresent("Advanced Search"));
+        $assertedValue = $this->isElementPresent("xpath=//div[@class='crm-results-block']//div[@class='qill'][contains(text(),'{$key} {$value}')]");
+        if (!$assertedValue) {
+          $assertedValue = $this->isTextPresent("{$key} {$value}");
+        }
+       $this->assertTrue($assertedValue,"Criteria check for {$key} failed for Advance Search for {$summaryInfo}");
+      }
+    }
+  } 
+}

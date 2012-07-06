@@ -3,9 +3,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -30,7 +30,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -167,27 +167,6 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
           ),
         ),
         'grouping' => 'contact-fields',
-      ),
-      'civicrm_membership_payment' =>
-      array(
-        'dao' => 'CRM_Member_DAO_MembershipPayment',
-        'fields' =>
-        array(
-          'contribution_id' =>
-          array(
-            'name' => 'contribution_id',
-            'no_display' => TRUE,
-            'required' => TRUE,
-          ),
-          'membership_id' =>
-          array(
-            'name' => 'membership_id',
-            'no_display' => TRUE,
-            'required' => TRUE,
-            'csv_display' => TRUE,
-            'title' => ts('Membership ID'),
-          ),
-        ),
       ),
       'first_donation' => array(
         'dao' => 'CRM_Contribute_DAO_Contribution',
@@ -539,16 +518,14 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
   }
 
   function from() {
-
     $this->_from = "
-        FROM  civicrm_contribution {$this->_aliases['civicrm_contribution']}
-              INNER JOIN civicrm_contact  {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
-                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0
-              LEFT JOIN civicrm_membership_payment {$this->_aliases['civicrm_membership_payment']}
- ON {$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_membership_payment']}.contribution_id
-
+              FROM civireport_membership_contribution_detail
+              INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']}
+                      ON (civireport_membership_contribution_detail.contribution_id = {$this->_aliases['civicrm_contribution']}.id)
               LEFT JOIN civicrm_membership {$this->_aliases['civicrm_membership']}
- ON {$this->_aliases['civicrm_membership_payment']}.membership_id = {$this->_aliases['civicrm_membership']}.id AND {$this->_aliases['civicrm_membership']}.is_test = 0
+                      ON (civireport_membership_contribution_detail.membership_id = {$this->_aliases['civicrm_membership']}.id)
+              INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
+                      ON (civireport_membership_contribution_detail.contact_id = {$this->_aliases['civicrm_contact']}.id)
               LEFT  JOIN civicrm_membership_status {$this->_aliases['civicrm_membership_status']}
                           ON {$this->_aliases['civicrm_membership_status']}.id =
                              {$this->_aliases['civicrm_membership']}.status_id
@@ -569,20 +546,23 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
     }
 
     // include contribution note
-    if (CRM_Utils_Array::value('contribution_note', $this->_params['fields'])) {
+    if (CRM_Utils_Array::value('contribution_note', $this->_params['fields']) || !empty($this->_params['note_value'])) {
       $this->_from.= "
             LEFT JOIN civicrm_note {$this->_aliases['civicrm_note']}
                       ON ( {$this->_aliases['civicrm_note']}.entity_table = 'civicrm_contribution' AND
                            {$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_note']}.entity_id )";
+      
     }
 
+    if (CRM_Utils_Array::value('phone', $this->_params['fields'])) {
     $this->_from .= "
                LEFT JOIN  civicrm_phone {$this->_aliases['civicrm_phone']}
                       ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND
                          {$this->_aliases['civicrm_phone']}.is_primary = 1)";
-
+    }
     //for contribution batches
-    if ($this->_closedBatches && CRM_Utils_Array::value('batch_id', $this->_params['fields'])) {
+    if ($this->_closedBatches && 
+        (CRM_Utils_Array::value('batch_id', $this->_params['fields']) || !empty($this->_params['bid_value']))) {
       $this->_from .= "
                  LEFT JOIN  civicrm_entity_batch {$this->_aliases['civicrm_entity_batch']}
                         ON ({$this->_aliases['civicrm_entity_batch']}.entity_id = {$this->_aliases['civicrm_contribution']}.id AND
@@ -621,12 +601,63 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
     }
   }
 
+  function tempTable($applyLimit = TRUE) {
+    // create temp table with contact ids,contribtuion id,membership id
+    $dropTempTable = "DROP TABLE IF EXISTS civireport_membership_contribution_detail";
+    CRM_Core_DAO::executeQuery($dropTempTable);
+    
+    $sql = "CREATE TEMPORARY TABLE civireport_membership_contribution_detail
+            (contribution_id int, contact_id int, membership_id int, payment_id int) ENGINE=HEAP";
+    CRM_Core_DAO::executeQuery($sql);
+    
+    $fillTemp = "
+          INSERT INTO civireport_membership_contribution_detail (contribution_id, contact_id, membership_id)
+          SELECT contribution.id, contact.id, m.id
+          FROM civicrm_contribution contribution 
+          INNER JOIN civicrm_contact contact {$this->_aclFrom}
+                ON contact.id = contribution.contact_id AND contribution.is_test = 0
+           LEFT JOIN civicrm_membership_payment mp
+                ON contribution.id = mp.contribution_id
+           LEFT JOIN civicrm_membership m
+                ON mp.membership_id = m.id AND m.is_test = 0 ";
+    
+    CRM_Core_DAO::executeQuery($fillTemp);
+  }
+
+  function buildQuery($applyLimit = TRUE) {
+    $this->select();
+    //create temp table to be used as base table
+    $this->tempTable();
+    $this->from();
+    $this->customDataFrom();
+    $this->where();
+    $this->groupBy();
+    $this->orderBy();
+
+    // order_by columns not selected for display need to be included in SELECT
+    $unselectedSectionColumns = $this->unselectedSectionColumns();
+    foreach ($unselectedSectionColumns as $alias => $section) {
+      $this->_select .= ", {$section['dbAlias']} as {$alias}";
+    }
+    
+    if ($applyLimit && !CRM_Utils_Array::value('charts', $this->_params)) {
+      $this->limit();
+    }
+    
+    $sql = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy} {$this->_having} {$this->_orderBy} {$this->_limit}";
+    return $sql;
+  }
+  
   function groupBy() {
     $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_contact']}.id, {$this->_aliases['civicrm_contribution']}.id ";
   }
 
   function orderBy() {
-    $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contact']}.id, {$this->_aliases['civicrm_contribution']}.receive_date ";
+    $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contact']}.id ";
+    if (CRM_Utils_Array::value('first_donation_date', $this->_params['fields'])
+        || CRM_Utils_Array::value('first_donation_amount', $this->_params['fields'])) {
+      $this->_orderBy .= ", {$this->_aliases['civicrm_contribution']}.receive_date";
+  }
   }
 
   function statistics(&$rows) {

@@ -317,7 +317,19 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     // delete the contact
     civicrm_api('contact', 'delete', $contact);
   }
-
+  /**
+   *  Verify that attempt to create organization contact with only
+   *  organization name succeeds
+   */
+  function testCreateNoNameOrganization() {
+    $params = array(
+      'first_name' => 'The abc Organization',
+      'contact_type' => 'Organization',
+      'version' => $this->_apiversion,
+    );
+    $result = civicrm_api('contact', 'create', $params);
+    $this->assertEquals(1, $result['is_error'], "In line " . __LINE__);
+  }
   /**
    * check with complete array + custom field
    * Note that the test is written on purpose without any
@@ -669,7 +681,19 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     // delete the contact
     civicrm_api('contact', 'delete', $contact);
   }
+  /**
+   *  Verify that attempt to create individual contact with first
+   *  and last names and email succeeds
+   */
+  function testCreateIndividualWithOutNameEmail() {
+    $params = array(
+      'contact_type' => 'Individual',
+      'version' => $this->_apiversion,
+    );
 
+    $result = civicrm_api('contact', 'create', $params);
+    $this->assertEquals(1, $result['is_error'], "In line " . __LINE__);
+  }
   /**
    *  Verify that attempt to create individual contact with first
    *  and last names, email and location type succeeds
@@ -714,7 +738,21 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     // delete the contact
     civicrm_api('contact', 'delete', $contact);
   }
+  /**
+   *  Verify that attempt to create household contact with inadequate details
+   *  fails
+   */
+  function testCreateHouseholdInadequateDetails() {
+    $params = array(
+      'nick_name' => 'x House',
+      'email' => 'man8@yahoo.com',
+      'contact_type' => 'Household',
+      'version' => $this->_apiversion,
+    );
 
+    $result = civicrm_api('contact', 'create', $params);
+    $this->assertEquals(1, $result['is_error'], 'should fail due to missing household name on line ' . __LINE__);
+  }
   /**
    *  Test civicrm_contact_check_params with check for required
    *  params and no params
@@ -1566,8 +1604,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     /* it will be ignored if there is not exactly 1 result";
     $subfile = "FormatSingleValue";
     $params  = array('version' => 3, 'id' => 17, 'return' => 'display_name');
-    $result  = civicrm_api('Contact', 'Get', $params);
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
+    $result  = civicrm_api('Contact', 'getvalue', $params);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile,'getvalue');
     $this->assertEquals('Test Contact', $result, "in line " . __LINE__);
     civicrm_api('Contact', 'Delete', $params);
   }

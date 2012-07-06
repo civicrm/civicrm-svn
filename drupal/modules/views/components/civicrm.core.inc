@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -1389,22 +1389,36 @@ function _civicrm_core_data(&$data, $enabled) {
     'help' => t('The contact who scheduled this activity'),
     'relationship' => array(
       'base' => 'civicrm_contact',
-      'field' => 'id',
+      'field' => 'source_contact_id',
       'handler' => 'views_handler_relationship',
       'label' => t('CiviCRM Source Contact'),
     ),
   );
 
-  $data['civicrm_activity']['source_record_id'] = array(
-    'title' => t('Source Record ID'),
-    'help' => t('The contact who made this activity'),
-    'relationship' => array(
-      'base' => 'civicrm_contact',
-      'field' => 'id',
-      'handler' => 'views_handler_relationship',
-      'label' => t('CiviCRM Source Record Contact'),
-    ),
-  );
+  /*
+   * This block is commented out for two reasons:
+   *  1) The help text is misleading to users; source_record_id is NOT
+   *     "the contact who made this activity."
+   *  2) It doesn't work; the code attempts to join on the wrong table.
+   *
+   * TODO: Figure out how to tell Views to join to a table whose identity
+   *       isn't known yet. Because the details of the "parent" activity
+   *       reside in different tables depending on the value of
+   *       activity_type_id, Views needs to be told which table to
+   *       join to on the fly.
+   *
+   *  $data['civicrm_activity']['source_record_id'] = array(
+   *    'title' => t('Source Record ID'),
+   *    // 'help' => t('The contact who made this activity'),
+   *    'help' => t('The parent transaction (e.g. Contribution, Event Registration) if it is not an Activity.'),
+   *    'relationship' => array(
+   *      'base' => 'civicrm_contact',
+   *      'field' => 'id',
+   *      'handler' => 'views_handler_relationship',
+   *      'label' => t('CiviCRM Source Record Contact'),
+   *    ),
+   *  );
+   */
 
   //Activity Type
   $data['civicrm_activity']['activity_type'] = array(
@@ -1720,7 +1734,7 @@ function _civicrm_core_data(&$data, $enabled) {
 
   // Explain how this table joins to others.
   $data['civicrm_activity_assignment']['table']['join'] = array(
-    // Directly links to event table
+    // Directly links to activity table
     'civicrm_activity' => array(
       'left_field' => 'id',
       'field' => 'activity_id',
@@ -1732,7 +1746,7 @@ function _civicrm_core_data(&$data, $enabled) {
     'help' => t('The contact who is assigned the activity.'),
     'relationship' => array(
       'base' => 'civicrm_contact',
-      'field' => 'id',
+      'field' => 'assignee_contact_id',
       'handler' => 'views_handler_relationship',
       'label' => t('CiviCRM Assignee Contact ID'),
     ),
@@ -1744,7 +1758,7 @@ function _civicrm_core_data(&$data, $enabled) {
 
   // Explain how this table joins to others.
   $data['civicrm_activity_target']['table']['join'] = array(
-    // Directly links to event table
+    // Directly links to activity table
     'civicrm_activity' => array(
       'left_field' => 'id',
       'field' => 'activity_id',
@@ -1756,7 +1770,7 @@ function _civicrm_core_data(&$data, $enabled) {
     'help' => t('The contact who is the activity\'s target.'),
     'relationship' => array(
       'base' => 'civicrm_contact',
-      'field' => 'id',
+      'field' => 'target_contact_id',
       'handler' => 'views_handler_relationship',
       'label' => t('CiviCRM Target Contact ID'),
     ),
@@ -2241,6 +2255,19 @@ function _civicrm_core_data(&$data, $enabled) {
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
+    ),
+  );
+  $data['civicrm_uf_match']['domain_id'] = array(
+    'title' => t('Domain ID'),
+    'help' => t('Relates a CiviCRM contact to its domain'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+    ),
+    'filter' => array(
+      'handler' => 'civicrm_handler_filter_domain',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_numeric',
     ),
   );
 

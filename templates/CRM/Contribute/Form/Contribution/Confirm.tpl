@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -56,9 +56,11 @@
 
     {if $amount GT 0 OR $minimum_fee GT 0 OR ( $priceSetID and $lineItem ) }
     <div class="crm-group amount_display-group">
+       {if !$useForMember}
         <div class="header-dark">
             {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem ) }{ts}Contribution Amount{/ts}{else}{ts}Membership Fee{/ts} {/if}
         </div>
+	{/if}
         <div class="display-block">
             {if !$useForMember}
               {if $lineItem and $priceSetID}
@@ -83,30 +85,7 @@
                     {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong>
                 {/if}
               {/if}
-            {else}
-              {if $lineItem and $priceSetID}
-            	  {if !$amount}{assign var="amount" value=0}{/if}
-                {assign var="totalAmount" value=$amount}
-                {include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}
-              {elseif $is_separate_payment }
-                {if $amount AND $minimum_fee}
-                  {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong><br />
-                  {ts}Additional Contribution{/ts}: <strong>{$amount|crmMoney}</strong><br />
-                  <strong> -------------------------------------------</strong><br />
-                  {ts}Total{/ts}: <strong>{$amount+$minimum_fee|crmMoney}</strong><br />
-                {elseif $amount }
-                  {ts}Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong>
-                {else}
-                  {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong>
                 {/if}
-              {else}
-                {if $amount }
-                  {ts}Total Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong>
-                {else}
-                  {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong>
-                {/if}
-              {/if}
-            {/if}
 
             {if $is_recur}
                 {if $membershipBlock} {* Auto-renew membership confirmation *}

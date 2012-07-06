@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -1703,30 +1703,11 @@ VALUES
                    ('civicrm_contribution', 12, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
                    ('civicrm_contribution', 13, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1);";
     CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
-    $entitySet = "INSERT INTO civicrm_price_set_entity ( entity_table, entity_id, price_set_id)
-                      VALUES ( 'civicrm_contribution', 1, 1),
-                             ( 'civicrm_contribution', 2, 1),
-                             ( 'civicrm_contribution', 3, 1),
-                             ( 'civicrm_contribution', 4, 1),
-                             ( 'civicrm_contribution', 5, 1),
-                             ( 'civicrm_contribution', 6, 1),
-                             ( 'civicrm_contribution', 7, 1),
-                             ( 'civicrm_contribution', 8, 1),
-                             ( 'civicrm_contribution', 9, 1),
-                             ( 'civicrm_contribution', 10, 1),
-                             ( 'civicrm_contribution', 11, 1),
-                             ( 'civicrm_contribution', 12, 1),
-                             ( 'civicrm_contribution', 13, 1);";
-    CRM_Core_DAO::executeQuery($entitySet, CRM_Core_DAO::$_nullArray);
   }
 
   function addLineItemParticipants() {
     $participant = new CRM_Event_DAO_Participant();
     $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`) SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
-    $participant->query("INSERT INTO civicrm_price_set_entity (entity_table, entity_id, price_set_id)
-SELECT cli.entity_table, cli.entity_id, cpf.price_set_id FROM `civicrm_line_item` cli
-LEFT JOIN civicrm_price_field cpf ON cpf.id = cli.price_field_id
-WHERE entity_table = 'civicrm_participant' ");
   }
 }
 

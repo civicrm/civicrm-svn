@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -60,6 +60,13 @@
 	    <td class="label">{$form.visibility.label}</td>
 	    <td>{$form.visibility.html|crmReplace:class:huge} {help id="id-group-visibility" file="CRM/Group/Page/Group.hlp"}</td>
 	</tr>
+	
+  <tr class="crm-group-form-block-isReserved">
+    <td class="report-label">{$form.is_reserved.label}</td>
+    <td>{$form.is_reserved.html}
+      <span class="description">{ts}If reserved, only users with 'administer reserved groups' permission can disable, delete, or change settings for this group. The reserved flag does NOT affect users ability to add or remove contacts from a group.{/ts}</span>
+    </td>
+  </tr>
 	
 	<tr>
 	    <td colspan=2>{include file="CRM/Custom/Form/CustomData.tpl"}</td>

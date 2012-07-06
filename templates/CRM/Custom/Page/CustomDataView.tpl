@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -42,11 +42,13 @@
 	    </tr>	    
 	    <tr>
 		<td id="{$cd_edit.name}_{$index}" class="section-shown form-item">
-		    <div class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display eq 0 }crm-accordion-open{else}crm-accordion-closed{/if}">
+		    <div class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display eq 0 or $skipTitle}crm-accordion-open{else}crm-accordion-closed{/if}">
+        {if !$skipTitle}
              <div class="crm-accordion-header">
               <div class="icon crm-accordion-pointer"></div> 
 		      {$cd_edit.title}
              </div>
+        {/if}
             <div class="crm-accordion-body">			   
 	        {if $groupId and $cvID and $editCustomData}
 	        <div class="crm-submit-buttons">
@@ -97,14 +99,12 @@
 				</tr>
 			    </table>
 			{/foreach}
-			</div>
+			</div> <!-- end of body -->
 			<div class="clear"></div>
-		    </div>
-		  </div>
+		 </div> <!-- end of main accordian -->
 		</td>
 	    </tr>
 	</table>
-
     {/foreach}
 {/foreach}
     {literal}

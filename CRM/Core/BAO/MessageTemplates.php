@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -185,29 +185,40 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
 
       //CRM-5734
 
-      $contactArray = array($contactId => $contact);
-      CRM_Utils_Hook::tokenValues($contactArray,
-        array($contactId)
-      );
+      // get tokens to be replaced
+      $tokens = array_merge(CRM_Utils_Token::getTokens($body_text),
+                            CRM_Utils_Token::getTokens($body_html),
+                            CRM_Utils_Token::getTokens($body_subject));
 
+      // get replacement text for these tokens
+      $returnProperties = array("preferred_mail_format" => 1);
+      if (isset($tokens['contact'])) { 
+        foreach ($tokens['contact'] as $key => $value) {
+          $returnProperties[$value] = 1; 
+        }
+      }
+      list($details) = CRM_Utils_Token::getTokenDetails(array($contactId),
+                                                        $returnProperties,
+                                                        null, null, false,
+                                                        $tokens,
+                                                        'CRM_Core_BAO_MessageTemplates');
+      $contact = reset( $details );
 
+      // call token hook
+      $hookTokens = array();            
       CRM_Utils_Hook::tokens($hookTokens);
       $categories = array_keys($hookTokens);
 
+      // do replacements in text and html body            
       $type = array('html', 'text');
-
       foreach ($type as $key => $value) {
-        $dummy_mail = new CRM_Mailing_BAO_Mailing();
         $bodyType = "body_{$value}";
-        $dummy_mail->$bodyType = $$bodyType;
-        $tokens = $dummy_mail->getTokens();
-
         if ($$bodyType) {
           CRM_Utils_Token::replaceGreetingTokens($$bodyType, NULL, $contact['contact_id']);
-          $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, TRUE, $tokens[$value], TRUE);
-          $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, FALSE, $tokens[$value], FALSE, TRUE);
-          $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value], TRUE);
-          $$bodyType = CRM_Utils_Token::replaceHookTokens($$bodyType, $contact, $categories, TRUE);
+          $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, true, $tokens, true);
+          $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, false, $tokens, false, true);
+          $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens, true);
+          $$bodyType = CRM_Utils_Token::replaceHookTokens($$bodyType, $contact , $categories, true);
         }
       }
       $html = $body_html;
@@ -219,30 +230,11 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
         $$elem = $smarty->fetch("string:{$$elem}");
       }
 
-      $matches = array();
-      preg_match_all('/(?<!\{|\\\\)\{(\w+\.\w+)\}(?!\})/',
-        $body_subject,
-        $matches,
-        PREG_PATTERN_ORDER
-      );
-
-      $subjectToken = NULL;
-      if ($matches[1]) {
-        foreach ($matches[1] as $token) {
-          list($type, $name) = preg_split('/\./', $token, 2);
-          if ($name) {
-            if (!isset($subjectToken['contact'])) {
-              $subjectToken['contact'] = array();
-            }
-            $subjectToken['contact'][] = $name;
-          }
-        }
-      }
-
-      $messageSubject = CRM_Utils_Token::replaceContactTokens($body_subject, $contact, FALSE, $subjectToken);
-      $messageSubject = CRM_Utils_Token::replaceDomainTokens($messageSubject, $domain, TRUE, $tokens[$value]);
-      $messageSubject = CRM_Utils_Token::replaceComponentTokens($messageSubject, $contact, $tokens[$value], TRUE);
-      $messageSubject = CRM_Utils_Token::replaceHookTokens($messageSubject, $contact, $categories, TRUE);
+      // do replacements in message subject
+      $messageSubject = CRM_Utils_Token::replaceContactTokens($body_subject, $contact, false, $tokens);
+      $messageSubject = CRM_Utils_Token::replaceDomainTokens($messageSubject, $domain, true, $tokens);
+      $messageSubject = CRM_Utils_Token::replaceComponentTokens($messageSubject, $contact, $tokens, true);
+      $messageSubject = CRM_Utils_Token::replaceHookTokens($messageSubject, $contact, $categories, true);
 
       $messageSubject = $smarty->fetch("string:{$messageSubject}");
 

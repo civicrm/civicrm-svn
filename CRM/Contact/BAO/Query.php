@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -2639,12 +2639,18 @@ WHERE  id IN ( $groupIDs )
     }
 
     $etTable = "`civicrm_entity_tag-" . $value . "`";
-    $this->_tables[$etTable] = $this->_whereTables[$etTable] = " LEFT JOIN civicrm_entity_tag {$etTable} ON ( {$etTable}.entity_id = contact_a.id  AND
-                        {$etTable}.entity_table = 'civicrm_contact' ) ";
+    $this->_tables[$etTable] =
+      $this->_whereTables[$etTable] =
+      " LEFT JOIN civicrm_entity_tag {$etTable} ON ( {$etTable}.entity_id = contact_a.id  AND {$etTable}.entity_table = 'civicrm_contact' ) ";
 
+    // CRM-10338
+    if ( in_array( $op, array( 'IS NULL', 'IS NOT NULL' ) ) ) {
+      $this->_where[$grouping][] = "{$etTable}.tag_id $op";
+    }
+    else {
     $this->_where[$grouping][] = "{$etTable}.tag_id $op (" . $value . ')';
-    $this->_qill[$grouping][] = ts('Tagged %1', array(
-      1 => $op)) . ' ' . $names;
+  }
+    $this->_qill[$grouping][] = ts('Tagged %1', array( 1 => $op)) . ' ' . $names;
   }
 
   /**

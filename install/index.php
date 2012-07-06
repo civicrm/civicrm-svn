@@ -38,17 +38,17 @@ if (array_key_exists('CiviCRM', $_SESSION)) {
   unset($_SESSION['CiviCRM']);
 }
 
-if (isset($_GET['mode'])) {
-  $_SESSION['install_type'] = $_GET['mode'];
+if (isset($_GET['civicrm_install_type'])) {
+  $_SESSION['civicrm_install_type'] = $_GET['civicrm_install_type'];
 }
 else {
-  if (!isset($_SESSION['install_type'])) {
-    $_SESSION['install_type'] = "drupal";
+  if (!isset($_SESSION['civicrm_install_type'])) {
+    $_SESSION['civicrm_install_type'] = "drupal";
   }
 }
 
 global $installType;
-$installType = strtolower($_SESSION['install_type']);
+$installType = strtolower($_SESSION['civicrm_install_type']);
 
 if (!in_array($installType, array(
   'drupal', 'wordpress'))) {

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,7 +31,7 @@
  * The default values in general, should reflect production values (minimizes chances of screwing up)
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -506,6 +506,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       $mailingInfo = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
         'mailing_backend'
       );
+
       if (defined('CIVICRM_MAILER_SPOOL') &&
         CIVICRM_MAILER_SPOOL
       ) {
@@ -556,6 +557,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       elseif ($mailingInfo['outBound_option'] == 3) {
         $params = array();
         self::$_mail = Mail::factory('mail', $params);
+      }
+      elseif ($mailingInfo['outBound_option'] == 4) {
+        self::$_mail = Mail::factory('mock', $params);
       }
       else {
         CRM_Core_Session::setStatus(ts('There is no valid SMTP server Setting Or SendMail path setting. Click <a href=\'%1\'>Administer CiviCRM >> Global Settings</a> to set the OutBound Email.', array(1 => CRM_Utils_System::url('civicrm/admin/setting', 'reset=1'))));
@@ -695,8 +699,7 @@ OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
   /**
    * function to check if running in upgrade mode
    */
-  static
-  function isUpgradeMode($path = NULL) {
+  static function isUpgradeMode($path = NULL) {
     if (defined('CIVICRM_UPGRADE_ACTIVE')) {
       return TRUE;
     }

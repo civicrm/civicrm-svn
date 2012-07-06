@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -681,7 +681,7 @@ SELECT  id
     CRM_Core_DAO::executeQuery($query);
   }
 
-  /*
+  /**
      * Add fields to $profileAddressFields as appropriate.
      * profileAddressFields is assigned to the template to tell it
      * what fields are in the profile address
@@ -698,9 +698,7 @@ SELECT  id
      * @param string $key Field key - e.g. street_address-Primary, first_name
      * @params array $profileAddressFields array of profile fields that relate to address fields
      */
-
-  static
-  function assignAddressField($key, &$profileAddressFields) {
+  static function assignAddressField($key, &$profileAddressFields) {
     $billing_id = CRM_Core_BAO_LocationType::getBilling();
     list($prefixName, $index) = CRM_Utils_System::explode('-', $key, 2);
     if (!empty($index) && (

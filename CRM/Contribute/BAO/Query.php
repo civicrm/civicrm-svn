@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -48,8 +48,7 @@ class CRM_Contribute_BAO_Query {
    * @return array self::$_contributionFields  associative array of contribution fields
    * @static
    */
-  static
-  function &getFields() {
+  static function &getFields() {
     if (!self::$_contributionFields) {
       self::$_contributionFields = array();
 
@@ -68,8 +67,7 @@ class CRM_Contribute_BAO_Query {
    * @return void
    * @access public
    */
-  static
-  function select(&$query) {
+  static function select(&$query) {
     // if contribute mode add contribution id
     if ($query->_mode & CRM_Contact_BAO_Query::MODE_CONTRIBUTE) {
       $query->_select['contribution_id'] = "civicrm_contribution.id as contribution_id";
@@ -194,8 +192,7 @@ class CRM_Contribute_BAO_Query {
     // LCD 716 END
   }
 
-  static
-  function where(&$query) {
+  static function where(&$query) {
     $isTest = FALSE;
     $grouping = NULL;
     foreach (array_keys($query->_params) as $id) {
@@ -224,8 +221,7 @@ class CRM_Contribute_BAO_Query {
     }
   }
 
-  static
-  function whereClauseSingle(&$values, &$query) {
+  static function whereClauseSingle(&$values, &$query) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
     $fields = array();
@@ -547,8 +543,7 @@ class CRM_Contribute_BAO_Query {
     }
   }
 
-  static
-  function from($name, $mode, $side) {
+  static function from($name, $mode, $side) {
     $from = NULL;
     switch ($name) {
       case 'civicrm_contribution':
@@ -647,10 +642,7 @@ class CRM_Contribute_BAO_Query {
     return $from;
   }
 
-  static
-  function defaultReturnProperties($mode,
-    $includeCustomFields = TRUE
-  ) {
+  static function defaultReturnProperties($mode, $includeCustomFields = TRUE) {
     $properties = NULL;
     if ($mode & CRM_Contact_BAO_Query::MODE_CONTRIBUTE) {
       $properties = array(
@@ -715,8 +707,7 @@ class CRM_Contribute_BAO_Query {
    * @return void
    * @static
    */
-  static
-  function buildSearchForm(&$form) {
+  static function buildSearchForm(&$form) {
 
     //added contribution source
     $form->addElement('text', 'contribution_source', ts('Contribution Source'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Contribution', 'source'));
@@ -831,25 +822,22 @@ class CRM_Contribute_BAO_Query {
     $form->assign('validCiviContribute', TRUE);
   }
 
-  static
-  function addShowHide(&$showHide) {
+  static function addShowHide(&$showHide) {
     $showHide->addHide('contributeForm');
     $showHide->addShow('contributeForm_show');
   }
 
-  static
-  function searchAction(&$row, $id) {}
+  static function searchAction(&$row, $id) {
+  }
 
-  static
-  function tableNames(&$tables) {
+  static function tableNames(&$tables) {
     //add contribution table
     if (CRM_Utils_Array::value('civicrm_product', $tables)) {
       $tables = array_merge(array('civicrm_contribution' => 1), $tables);
     }
 
     if (CRM_Utils_Array::value('civicrm_contribution_product', $tables) &&
-      !CRM_Utils_Array::value('civicrm_product', $tables)
-    ) {
+      !CRM_Utils_Array::value('civicrm_product', $tables)) {
       $tables['civicrm_product'] = 1;
     }
   }

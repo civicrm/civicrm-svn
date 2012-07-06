@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -70,8 +70,8 @@ class WebTest_Contact_CreateCmsUserFromContactTest extends CiviSeleniumTestCase 
     $this->open($this->sboxPath . "user");
 
     // click "View Contact Record" link
-    $this->waitForElementPresent("link=» View Contact Record");
-    $this->click("link=» View Contact Record");
+    $this->waitForElementPresent("xpath=//div[@class='profile']/span/a[text()='View Contact Record']");
+    $this->click("xpath=//div[@class='profile']/span/a[text()='View Contact Record']");
     $this->waitForPageToLoad("30000");
 
     //Assert that the user actually does have a CMS Id displayed

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -115,8 +115,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
    * @access public
    * static
    */
-  static
-  function checkDuplicate($params, &$duplicates) {
+  static function checkDuplicate($params, &$duplicates) {
     $id         = CRM_Utils_Array::value('id', $params);
     $trxn_id    = CRM_Utils_Array::value('trxn_id', $params);
     $invoice_id = CRM_Utils_Array::value('invoice_id', $params);
@@ -154,8 +153,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
     return $result;
   }
 
-  static
-  function getPaymentProcessor($id, $mode) {
+  static function getPaymentProcessor($id, $mode) {
     //FIX ME:
     $sql = "
 SELECT r.payment_processor_id
@@ -181,8 +179,7 @@ SELECT r.payment_processor_id
    * @access public
    * static
    */
-  static
-  function getCount(&$ids) {
+  static function getCount(&$ids) {
     $recurID = implode(',', $ids);
     $totalCount = array();
 
@@ -207,8 +204,7 @@ SELECT r.payment_processor_id
    * @access public
    * @static
    */
-  static
-  function deleteRecurContribution($recurId) {
+  static function deleteRecurContribution($recurId) {
     $result = FALSE;
     if (!$recurId) {
       return $result;
@@ -232,9 +228,7 @@ SELECT r.payment_processor_id
    * @access public
    * @static
    */
-  static
-  function cancelRecurContribution($recurId, $objects, $activityParams = array(
-    )) {
+  static function cancelRecurContribution($recurId, $objects, $activityParams = array()) {
     if (!$recurId) {
       return FALSE;
     }
@@ -329,8 +323,7 @@ SELECT r.payment_processor_id
    * @access public
    * @static
    */
-  static
-  function getRecurContributions($contactId) {
+  static function getRecurContributions($contactId) {
     $params = array();
     $recurDAO = new CRM_Contribute_DAO_ContributionRecur();
     $recurDAO->contact_id = $contactId;
@@ -366,16 +359,14 @@ SELECT r.payment_processor_id
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     if (!$is_active) {
       return self::cancelRecurContribution($id, CRM_Core_DAO::$_nullObject);
     }
     return FALSE;
   }
 
-  static
-  function getSubscriptionDetails($entityID, $entity = 'recur') {
+  static function getSubscriptionDetails($entityID, $entity = 'recur') {
     $sql = "
 SELECT rec.id                   as recur_id, 
        rec.processor_id         as subscription_id, 
@@ -422,8 +413,7 @@ INNER JOIN civicrm_contribution       con ON ( con.id = mp.contribution_id )
     else return CRM_Core_DAO::$_nullObject;
   }
 
-  static
-  function setSubscriptionContext() {
+  static function setSubscriptionContext() {
     // handle context redirection for subscription url
     $session = CRM_Core_Session::singleton();
     if ($session->get('userID')) {

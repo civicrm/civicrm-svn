@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -216,6 +216,110 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
     foreach ($expected as $column => $value) {
       $this->verifyText("xpath=//table[@class='selector']/tbody/tr[2]/td[$column]", preg_quote($value));
     }
+    
+    // ONCE MORE, NO EMAIL VERIFICATION AND CUSTOM THANK-YOU
+
+    // Go directly to the URL of the screen that you will be add petition
+    $this->open($this->sboxPath . "civicrm/petition/add?reset=1");
+
+    // button at the end of this page to show up, to make sure it's fully loaded.
+    $this->waitForElementPresent("_qf_Petition_next-bottom");
+
+    // fill petition tile.
+    $title = substr(sha1(rand()), 0, 7);
+    $this->type("title", "$title Petition");
+
+    // fill introduction
+    //$this->type("cke_instructions", "This is introduction of $title Petition");
+
+    // select campaign
+    $this->select("campaign_id", "value=1");
+
+    // select profile
+    $this->select("contact_profile_id", "value=4");
+
+    // bypass email confirmation
+    $this->click("bypass_confirm");
+
+    // set custom thank-you title and text
+    $this->type('thankyou_title', "Awesome $title donation");
+    $this->fillRichTextField('thankyou_text', "Thank you for your kind contribution to support $title", 'CKEditor');
+
+    // click save
+    $this->click("_qf_Petition_next-bottom");
+    $this->waitForPageToLoad("30000");
+
+    $this->assertTrue($this->isTextPresent("Petition has been saved."));
+
+    $this->waitForElementPresent("link=Add Petition");
+
+    $this->waitForElementPresent("petitions");
+    $this->click("petitionSearch");
+    $this->type("petition_title", $title);
+
+    $this->click("xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']");
+
+    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Sign']");
+    $url = $this->getAttribute("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Sign']@href");
+
+    // logout and sign as anonymous.
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->waitForElementPresent("edit-submit");
+
+    // go to the link that you will be sign as anonymous
+    $this->open($url);
+    $this->waitForElementPresent("_qf_Signature_next-bottom");
+
+    // fill first name
+    $firstName = substr(sha1(rand()), 0, 7);
+    $this->type("first_name", $firstName);
+
+    // fill last name
+    $lastName = substr(sha1(rand()), 0, 7);
+    $this->type("last_name", $lastName);
+
+    // fill email
+    $email = $firstName . "@" . $lastName . ".com";
+    $this->type("email-Primary", $email);
+
+    // click Sign the petition.
+    $this->click("_qf_Signature_next-bottom");
+    $this->waitForPageToLoad("30000");
+    
+    // check that thank-you page has appropriate title and message
+    $this->assertTrue($this->isTextPresent("Awesome $title donation"));
+    $this->assertTrue($this->isTextPresent("Thank you for your kind contribution to support $title"));
+
+    // login
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
+
+    $this->open($this->sboxPath . "civicrm/campaign?reset=1&subPage=petition");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("link=Add Petition");
+
+    // check for confirmed petition signature
+    $this->waitForElementPresent("petitions");
+    $this->click("petitionSearch");
+    $this->type("petition_title", $title);
+    $this->click("xpath=//div[@class='crm-accordion-body']/table/tbody/tr[2]/td/a[text()='Search']");
+
+    $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']");
+    $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Signatures']");
+    $this->waitForPageToLoad("30000");
+
+    // verify tabular data
+    $expected = array(
+      2 => 'Petition',
+      3 => "$title Petition",
+      4 => "$firstName $lastName",
+      5 => "$lastName, $firstName",
+      8 => 'Completed',
+    );
+
+    foreach ($expected as $column => $value) {
+      $this->verifyText("xpath=//table[@class='selector']/tbody/tr[2]/td[$column]", preg_quote($value));
   }
+}
 }
 

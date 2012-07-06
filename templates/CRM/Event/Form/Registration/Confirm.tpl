@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -108,9 +108,9 @@
             </div>
             {if $lineItem}
                 {include file="CRM/Price/Page/LineItem.tpl" context="Event"}
-            {elseif $amount || $amount == 0}
+            {elseif $amounts || $amount == 0}
 			    <div class="crm-section no-label amount-item-section">
-                    {foreach from= $amount item=amount key=level}  
+                    {foreach from= $amounts item=amount key=level}  
     					<div class="content">
     					    {$amount.amount|crmMoney}&nbsp;&nbsp;{$amount.label}
     					</div>

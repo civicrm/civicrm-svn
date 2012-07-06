@@ -56,7 +56,7 @@ class CRM_Utils_SignerTest extends CiviUnitTestCase {
         'b' => 'bee',
         'c' => '',
       ),
-      'isValid' => FALSE,
+      'isValid' => TRUE,
     );
     $cases[] = array(
       'signParams' => array(
@@ -132,7 +132,7 @@ class CRM_Utils_SignerTest extends CiviUnitTestCase {
       $isValid = $validator->validate($signature, $case['validateParams']);
       
       if ($isValid !== $case['isValid']) {
-        $this->fail("Case ${caseId}: Mismatch: " . print_r($case, TRUE));
+        $this->fail("Case ${caseId}: Mismatch: " . var_export($case, TRUE));
       }
       $this->assertTrue(TRUE, 'Validation yielded expected result');
     }

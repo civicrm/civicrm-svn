@@ -3,9 +3,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -190,12 +190,6 @@ class api_v3_UFGroupTest extends CiviUnitTestCase {
       }
       $this->assertEquals($expected, $received, "The string '$received' does not equal '$expected' for key '$key' in line " . __LINE__);
     }
-  }
-
-  function testUFGroupCreateWithEmptyParams() {
-    $result = civicrm_api('uf_group', 'create', array());
-    $this->assertEquals($result['is_error'], 1);
-    $this->assertEquals('Mandatory key(s) missing from params array: version', $result['error_message']);
   }
 
   function testUFGroupCreateWithWrongParams() {

@@ -510,7 +510,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (!empty($prefix)) {
       $prefix .= ': ';
     }
-    $this->assertEquals(0, $apiResult['is_error'], $prefix . $apiResult['error_message']);
+    $this->assertEquals(0, $apiResult['is_error'], $prefix . empty($apiResult['error_message'])?'':$apiResult['error_message']);
   }
 
   function assertType($expected, $actual, $message = '') {
@@ -1692,7 +1692,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      * @param string $action - optional action - otherwise taken from function name
      */
   function documentMe($params, $result, $function, $filename, $description = "", $subfile = NULL, $action = NULL) {
-    if (DONT_DOCUMENT_TEST_CONFIG == 1) {
+    if (defined('DONT_DOCUMENT_TEST_CONFIG') ) {
       return;
     }
     $entity = substr(basename($filename), 0, strlen(basename($filename)) - 8);

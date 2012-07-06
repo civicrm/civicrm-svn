@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -364,7 +364,15 @@ function civicrm_group_roles_menu() {
     'access arguments' => array('access civicrm group role setting'),
     'type' => MENU_LOCAL_TASK,
   );
-
+  $items['admin/config/civicrm/civicrm_group_roles/manual_sync'] =
+    array(
+	  'title' => t('Manually Synchronize'),
+	  'page callback' => 'drupal_get_form',
+	  'page arguments' => array('civicrm_group_roles_manual_sync'),
+	  'access callback' => 'user_access',
+	  'access arguments' => array('access civicrm group role setting'),
+	  'type' => MENU_LOCAL_TASK,
+	  );
   return $items;
 }
 
@@ -629,3 +637,92 @@ function civicrm_group_roles_add_remove_groups($roles, $user, $op) {
         } //end if $contact
     } //endif $roles
       }
+
+
+/**
+ * Manual sync form. Provides a sumbit button to manually sync memberships to roles.
+ *
+ * @ingroup forms
+ * @see civicrm_member_roles_manual_sync_submit()
+ */
+function civicrm_group_roles_manual_sync()
+{
+  $form = array();
+  $form['manual_sync'] = array(
+			       '#type' => 'fieldset',
+			       '#title' => t('Manual Synchronization:'),
+			       );
+  $form['manual_sync']['manual_sync_submit'] = array(
+						     '#type' => 'submit',
+						     '#value' => t('Synchronize CiviCRM Groups to Drupal Roles now'),
+						     );
+
+  return $form;
+}
+
+/**
+ * Implementation of hook_submit() for the manual sync form.
+ */
+function civicrm_group_roles_manual_sync_submit($form, &$form_state)
+{
+  if ( ! civicrm_initialize( ) ) {
+    return;
+  }
+
+  return civicrm_group_roles_batch_init();
+}
+
+/**
+ * Batch functions to manually update large number of users
+ */
+function civicrm_group_roles_batch_init() {
+
+  $batch = array(
+		 'title' => t('Updating Users...'),
+		 'operations' => array(),
+		 'init_message' => t('Starting Update'),
+		 'progress_message' => t('Processed @current out of @total.'),
+		 'error_message' => t('An error occurred during processing'),
+		 'finished' => 'civicrm_group_roles_batch_finished',
+		 'progressive' => FALSE
+		 );
+
+  //query all existing users
+
+  $result = db_query('SELECT uid FROM {users}');
+
+  foreach ($result as $record) {
+    $batch['operations'][] = array('civicrm_group_roles_batch_worker', array($record->uid));
+  }
+
+  batch_set($batch);
+
+  batch_process('admin/config/civicrm/civicrm_group_roles');
+}
+
+function civicrm_group_roles_batch_worker($uid, &$context) {
+  if ( ! civicrm_initialize( ) ) {
+    return;
+  }
+  $account = user_load($uid);
+
+  $roles = array_diff_key( $account->roles, array( 1 => 'anonymous user', 2 => 'authenticated user' ) );
+
+  if ( $roles ) {
+    civicrm_group_roles_add_remove_groups ( $roles, $account, 'add' );
+  }
+
+  $context['results']['processed']++;
+  $context['message'] = 'Successfully synchronized ' . $context['results']['processed'] . ' users';
+}
+
+function civicrm_group_roles_batch_finished($success, $results, $operations) {
+  if ($success) {
+    $message = format_plural($results['processed'], 'One user processed.', '@count users processed.');
+  }
+  else {
+    $message = 'some errors';
+  }
+
+  drupal_set_message($message);
+}

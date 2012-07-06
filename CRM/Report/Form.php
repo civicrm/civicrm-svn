@@ -3,9 +3,9 @@
 
 /*
   +--------------------------------------------------------------------+
-  | CiviCRM version 4.1                                                |
+  | CiviCRM version 4.2                                                |
   +--------------------------------------------------------------------+
-  | Copyright CiviCRM LLC (c) 2004-2011                                |
+  | Copyright CiviCRM LLC (c) 2004-2012                                |
   +--------------------------------------------------------------------+
   | This file is a part of CiviCRM.                                    |
   |                                                                    |
@@ -30,7 +30,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -1774,7 +1774,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
               $op = CRM_Utils_Array::value("{$fieldName}_op", $this->_params);
               $value = CRM_Utils_Array::value("{$fieldName}_value", $this->_params);
               if (is_array($value) && !empty($value)) {
-                $clause = "(month({$field['name']}) $op (" . implode(', ', $value) . '))';
+                $clause = "(month({$field['dbAlias']}) $op (" . implode(', ', $value) . '))';
               }
             }
             else {
@@ -1783,7 +1783,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
               $to       = CRM_Utils_Array::value("{$fieldName}_to", $this->_params);
               $fromTime = CRM_Utils_Array::value("{$fieldName}_from_time", $this->_params);
               $toTime   = CRM_Utils_Array::value("{$fieldName}_to_time", $this->_params);
-              $clause   = $this->dateClause($field['name'], $relative, $from, $to, $field['type'], $fromTime, $toTime);
+              $clause   = $this->dateClause($field['dbAlias'], $relative, $from, $to, $field['type'], $fromTime, $toTime);
             }
           }
           else {

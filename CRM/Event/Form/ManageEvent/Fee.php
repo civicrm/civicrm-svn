@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -191,10 +191,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
           }
         }
       }
-    }
-
-    if (!isset($defaults['default'])) {
-      $defaults['default'] = 1;
     }
 
     if (!isset($defaults['discounted_default'])) {
@@ -722,7 +718,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                   if (CRM_Utils_Array::value('is_default', $value)) {
                     $fieldParams['default_option'] = $value['weight'];
                   }
-                  if (CRM_Utils_Array::value($value['weight']-1, $discountFieldIDs[$j])) {
+                  if (CRM_Utils_Array::value($j, $discountFieldIDs) && CRM_Utils_Array::value($value['weight']-1, $discountFieldIDs[$j])) {
                     $fieldParams['option_id'][$value['weight']] = $discountFieldIDs[$j][$value['weight']-1];
                     unset($discountFieldIDs[$j][$value['weight']-1]);
                   }

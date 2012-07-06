@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -27,11 +27,20 @@
 
 {literal}
 <script type="text/javascript">
-function inlineEditForm( formName, blockName, contactId ) {
+function inlineEditForm( formName, blockName, contactId, cgId, locNo, addId ) {
   // handle ajax form submitting
   var options = { 
     beforeSubmit:  showRequest  // pre-submit callback  
   }; 
+
+  var actualFormName = formName;
+
+  // since we auto-generate form name for address based on address block
+  if ( formName == 'Address' ) {
+    actualFormName = formName + '_' + locNo;
+  }
+
+  cj('#' + actualFormName ).ajaxForm( options );
 
   // bind form using 'ajaxForm'
   cj('#' + formName ).ajaxForm( options );
@@ -42,6 +51,18 @@ function inlineEditForm( formName, blockName, contactId ) {
     // but the form plugin does this for you automatically when it submits the data 
     var queryString = cj.param(formData); 
     queryString = queryString + '&class_name=CRM_Contact_Form_Inline_' + formName + '&snippet=5&cid=' + contactId;
+    if ( cgId ) {
+      queryString += '&groupID=' + cgId;
+    }
+
+    if ( locNo ) {
+      queryString += '&locno=' + locNo;
+    }
+
+    if ( addId ) {
+      queryString += '&aid=' + addId;
+    }
+
     var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 }"{literal}; 
     var status = '';
     var response = cj.ajax({
@@ -52,14 +73,29 @@ function inlineEditForm( formName, blockName, contactId ) {
         dataType: "json",
         success: function( response ) {
           status = response.status; 
+          if ( response.addressId ) {
+            addId = response.addressId;
+        }
         }
         }).responseText;
 
     //check if form is submitted successfully
     if ( status ) {
-      // fetch the view of email block after edit
+      // fetch the view of the block after edit
       var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1' }"{literal}; 
       var queryString = 'class_name=CRM_Contact_Page_Inline_' + formName + '&type=page&cid=' + contactId;
+      if ( cgId ) {
+        queryString += '&groupID=' + cgId;
+      }
+ 
+      if ( locNo ) {
+        queryString += '&locno=' + locNo;
+      }
+
+      if ( addId ) {
+        queryString += '&aid=' + addId;
+      }
+
       var response = cj.ajax({
           type: "POST",
           url: postUrl,

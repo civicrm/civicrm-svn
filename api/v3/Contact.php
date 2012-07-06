@@ -3,9 +3,9 @@
 
 /*
   +--------------------------------------------------------------------+
-  | CiviCRM version 4.1                                                |
+  | CiviCRM version 4.2                                                |
   +--------------------------------------------------------------------+
-  | Copyright CiviCRM LLC (c) 2004-2011                                |
+  | Copyright CiviCRM LLC (c) 2004-2012                                |
   +--------------------------------------------------------------------+
   | This file is a part of CiviCRM.                                    |
   |                                                                    |
@@ -34,7 +34,7 @@
  *
  * @package CiviCRM_APIv3
  * @subpackage API_Contact
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id: Contact.php 30879 2010-11-22 15:45:55Z shot $
  *
  */
@@ -150,6 +150,7 @@ function civicrm_api3_contact_create($params) {
  */
 function _civicrm_api3_contact_create_spec(&$params) {
   $params['contact_type']['api.required'] = 1;
+  $params['id']['api.aliases'] = array('contact_id');
 }
 
 /**
@@ -274,69 +275,32 @@ function civicrm_api3_contact_delete($params) {
 }
 
 
-function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $requiredCheck = true, $dedupeRuleGroupID = null )
+function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $obsoletevalue = true, $dedupeRuleGroupID = null )
 {
-  if(isset($params['id']) && is_numeric($params['id'])){
-    $requiredCheck = false;
+
+  switch (strtolower(CRM_Utils_Array::value('contact_type', $params))) {
+    case 'household':
+      civicrm_api3_verify_mandatory($params,null, array('household_name'));
+      break;
+    case 'organization':
+      civicrm_api3_verify_mandatory($params,null, array('organization_name'));
+      break;
+    case 'individual':
+      civicrm_api3_verify_one_mandatory($params,null, array(
+          'first_name',
+          'last_name',
+        'email',
+          'display_name',
+         )
+    );
+    break;
   }
 
-  if ($requiredCheck) {
-    if (isset($params['id'])) {
-      $required = array('Individual', 'Household', 'Organization');
-    }
-
-    $required = array(
-      'Individual' => array(
-        array('first_name', 'last_name'),
-        'email',
-      ),
-      'Household' => array(
-        'household_name',
-      ),
-      'Organization' => array(
-        'organization_name',
-      ),
-    );
-
-
-    // contact_type has a limited number of valid values
-    $fields = CRM_Utils_Array::value($params['contact_type'], $required);
-
-    if (CRM_Utils_Array::value('contact_sub_type', $params)) {
+  if (CRM_Utils_Array::value('contact_sub_type', $params) && CRM_Utils_Array::value('contact_type', $params)) {
       if (!(CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'], $params['contact_type']))) {
         return civicrm_api3_create_error("Invalid or Mismatched Contact SubType: " . implode(', ', (array)$params['contact_sub_type']));
       }
     }
-
-    if (!CRM_Utils_Array::value('contact_id', $params) && CRM_Utils_Array::value('id', $params)) {
-      $valid = FALSE;
-      $error = '';
-      foreach ($fields as $field) {
-        if (is_array($field)) {
-          $valid = TRUE;
-          foreach ($field as $element) {
-            if (!CRM_Utils_Array::value($element, $params)) {
-              $valid = FALSE;
-              $error .= $element;
-              break;
-            }
-          }
-        }
-        else {
-          if (CRM_Utils_Array::value($field, $params)) {
-            $valid = TRUE;
-          }
-        }
-        if ($valid) {
-          break;
-        }
-      }
-
-      if (!$valid) {
-        return civicrm_api3_create_error("Required fields not found for {$params['contact_type']} : $error");
-      }
-    }
-  }
 
   if ($dupeCheck) {
     // check for record already existing

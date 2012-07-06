@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -1025,7 +1025,7 @@ class CRM_Utils_Date {
             $from['M'] = (3 * $quarter) - 2;
             $to['M']   = 3 * $quarter;
             $to['Y']   = $from['Y'] = $now['year'];
-            $to['d']   = cal_days_in_month(CAL_GREGORIAN, $to['M'], $now['year']);
+            $to['d']   = date('t', mktime(0, 0, 0, $to['M'], 1, $now['year']));
             break;
 
           case 'previous':
@@ -1041,7 +1041,7 @@ class CRM_Utils_Date {
               $from['M'] = (3 * $quarter) - 2;
               $to['M']   = 3 * $quarter;
               $to['Y']   = $from['Y'] = $now['year'] - $subtractYear;
-              $to['d']   = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
+              $to['d']   = date('t', mktime(0, 0, 0, $to['M'], 1, $to['Y'])); 
               break;
 
             case 'previous_before':
@@ -1051,13 +1051,12 @@ class CRM_Utils_Date {
               if ($quarter <= 0) {
                   $subtractYear = 1;
                   $quarter += 4;
-                  srst;
                 }
                 $from['d'] = 1;
                 $from['M'] = (3 * $quarter) - 2;
                 $to['M']   = 3 * $quarter;
                 $to['Y']   = $from['Y'] = $now['year'] - $subtractYear;
-                $to['d']   = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
+                $to['d']   = date('t', mktime(0, 0, 0, $to['M'], 1, $to['Y'])); 
                 break;
 
               case 'previous_2':
@@ -1094,7 +1093,7 @@ class CRM_Utils_Date {
                         $to['M'] = 3 * ($quarter - 3);
                         $to['Y'] = $now['year'];
                       }
-                      $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
+                      $to['d'] = date('t', mktime(0, 0, 0, $to['M'], 1, $to['Y']));
                       break;
 
                     case 'earlier':
@@ -1105,7 +1104,7 @@ class CRM_Utils_Date {
                         }
                         $to['M'] = 3 * $quarter;
                         $to['Y'] = $from['Y'] = $now['year'] - $subtractYear;
-                        $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
+                        $to['d'] = date('t', mktime(0, 0, 0, $to['M'], 1, $to['Y']));
                         unset($from);
                         break;
 
@@ -1133,7 +1132,7 @@ class CRM_Utils_Date {
                     switch ($relativeTerm) {
                       case 'this':
                         $from['d'] = 1;
-                        $to['d']   = cal_days_in_month(CAL_GREGORIAN, $now['mon'], $now['year']);
+                        $to['d']   = date('t', mktime(0, 0, 0, $now['mon'], 1, $now['year']));
                         $from['M'] = $to['M'] = $now['mon'];
                         $from['Y'] = $to['Y'] = $now['year'];
                         break;
@@ -1148,8 +1147,7 @@ class CRM_Utils_Date {
                               $from['M'] = $to['M'] = $now['mon'] - 1;
                               $from['Y'] = $to['Y'] = $now['year'];
                             }
-
-                            $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
+                            $to['d'] = date('t', mktime(0, 0, 0, $to['M'], 1, $to['Y']));
                             break;
 
                           case 'previous_before':
@@ -1162,8 +1160,7 @@ class CRM_Utils_Date {
                                   $from['M'] = $to['M'] = $now['mon'] - 2;
                                   $from['Y'] = $to['Y'] = $now['year'];
                                 }
-
-                                $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
+                                $to['d'] = date('t', mktime(0, 0, 0, $to['M'], 1, $to['Y']));
                                 break;
 
                               case 'previous_2':
@@ -1186,7 +1183,7 @@ class CRM_Utils_Date {
                                           $to['Y'] = $now['year'];
                                         }
 
-                                        $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
+                                        $to['d'] = date('t', mktime(0, 0, 0, $to['M'], 1, $to['Y']));
                                         break;
 
                                       case 'earlier':
@@ -1200,7 +1197,7 @@ class CRM_Utils_Date {
                                               $to['Y'] = $now['year'];
                                             }
 
-                                            $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
+                                            $to['d'] = date('t', mktime(0, 0, 0, $to['M'], 1, $to['Y']));
                                             unset($from);
                                             break;
 

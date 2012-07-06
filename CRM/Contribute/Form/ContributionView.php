@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -138,10 +138,9 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
     }
 
     $lineItems = array();
-    if ($id && (CRM_Price_BAO_Set::getFor('civicrm_contribution', $id, CRM_Core_Component::getComponentID('CiviContribute'), 1)
-        || CRM_Price_BAO_Set::getFor('civicrm_contribution', $id, CRM_Core_Component::getComponentID('CiviMember'), 1)
-      )) {
-      $lineItems[] = CRM_Price_BAO_LineItem::getLineItems($id, 'contribution');
+    if ($id) {
+      $lineItem = CRM_Price_BAO_LineItem::getLineItems($id, 'contribution', 1);
+      empty($lineItem) ? null :$lineItems[] =  $lineItem;
     }
     $this->assign('lineItem', empty($lineItems) ? FALSE : $lineItems);
     $values['totalAmount'] = $values['total_amount'];

@@ -3,9 +3,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -245,7 +245,27 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $this->assertEquals(3, $allEvents['count'], 'confirm three events exist (ie. two not found) ' . __LINE__);
     $this->assertEquals($currentEvent['id'], $result['id'], '');
   }
+/*
+ * There has been a schema change & the api needs to buffer developers from it
+ */
+  function testGetPaymentProcessorId() {
+    $params = $this->_params[0];
+    $params['payment_processor_id'] = 1;
+    $params['sequential'] =1;
+    $result = civicrm_api('event', 'create', $params);
+    $this->assertEquals( 1,$result['values'][0]['payment_processor'][0], "handing of payment processor compatibility");
+    $result = civicrm_api('event', 'get', $params);
+    $this->assertEquals($result['values'][0]['payment_processor_id'], 1,"handing get payment processor compatibility");
+  }
 
+  function testInvalidData() {
+    $params = $this->_params[0];
+    $params['sequential'] =1;
+    $params['loc_block_id'] =100;
+    $result = civicrm_api('event', 'create', $params);
+    $this->assertEquals(1, $result['is_error']);
+
+  }
 
   /*
      * Test 'is.Current' option. Existing event is 'old' so only current should be returned

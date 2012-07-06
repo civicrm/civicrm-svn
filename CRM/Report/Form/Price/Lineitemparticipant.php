@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -43,12 +43,16 @@ class CRM_Report_Form_Price_Lineitemparticipant extends CRM_Report_Form_Extended
 
   protected $_baseTable = 'civicrm_line_item';
 
-  protected $_aclTable = 'civicrm_contact'; function __construct($child = 0) {
-    if (empty($child)) {
-      // hack because we are currently using this as base for other report
-      // plan is to move functions into Form.php instead & won't be required
-      $this->_columns = $this->getContactColumns() + $this->getLineItemColumns() + $this->getPriceFieldValueColumns() + $this->getPriceFieldColumns() + $this->getParticipantColumns() + $this->getEventColumns() + $this->getContributionColumns();
-    }
+  protected $_aclTable = 'civicrm_contact'; 
+  function __construct() {
+    $this->_columns = $this->getContactColumns() 
+      + $this->getEventColumns()
+      + $this->getParticipantColumns() 
+      + $this->getContributionColumns()
+      + $this->getPriceFieldColumns() 
+      + $this->getPriceFieldValueColumns() 
+      + $this->getLineItemColumns() ;
+    
     parent::__construct();
   }
 

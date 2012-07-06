@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,13 +28,12 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
 class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatusType {
-  static
-  function add(&$params) {
+  static function add(&$params) {
     if (empty($params)) {
       return NULL;
     }
@@ -43,8 +42,7 @@ class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatu
     return $dao->save();
   }
 
-  static
-  function &create(&$params) {
+  static function &create(&$params) {
     $transaction = new CRM_Core_Transaction;
     $statusType = self::add($params);
     if (is_a($statusType, 'CRM_Core_Error')) {
@@ -55,8 +53,7 @@ class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatu
     return $statusType;
   }
 
-  static
-  function deleteParticipantStatusType($id) {
+  static function deleteParticipantStatusType($id) {
     // return early if there are participants with this status
     $participant = new CRM_Event_DAO_Participant;
     $participant->status_id = $id;
@@ -73,8 +70,7 @@ class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatu
     return TRUE;
   }
 
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $result = NULL;
 
     $dao = new CRM_Event_DAO_ParticipantStatusType;
@@ -87,8 +83,7 @@ class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatu
     return $result;
   }
 
-  static
-  function setIsActive($id, $isActive) {
+  static function setIsActive($id, $isActive) {
     return CRM_Core_DAO::setFieldValue('CRM_Event_BAO_ParticipantStatusType', $id, 'is_active', $isActive);
   }
 

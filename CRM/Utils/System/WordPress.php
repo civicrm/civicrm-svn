@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -167,8 +167,12 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
    * @access public
    *
    */
-  function url($path = NULL, $query = NULL, $absolute = FALSE,
-    $fragment = NULL, $htmlize = TRUE,
+  function url(
+    $path = NULL,
+    $query = NULL,
+    $absolute = FALSE,
+    $fragment = NULL,
+    $htmlize = TRUE,
     $frontend = FALSE
   ) {
     $config    = CRM_Core_Config::singleton();
@@ -213,18 +217,19 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
       $base .= 'wp-admin/admin.php';
     }
 
+    $permlinkStructure = get_option('permalink_structure');
     if (isset($path)) {
-            if ( get_option('permalink_structure') != '' && $pageID ) {
         if (isset($query)) {
+        if ( $permlinkStructure != '' && $pageID ) {
           return $script . '?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
         else {
-          return $script . '?page=CiviCRM&q=' . $path . $pageID . $fragment;
+          return $base . '?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
       }
       else {
-        if (isset($query)) {
-                    return $base .'?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
+        if ( $permlinkStructure != '' && $pageID ) {
+          return $script . '?page=CiviCRM&q=' . $path . $pageID . $fragment;
         }
         else {
                     return $base .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
@@ -232,24 +237,19 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
       }
     }
     else {
-      if (get_option('permalink_structure') != '') {
         if (isset($query)) {
+        if ( $permlinkStructure != '' && $pageID ) {
           return $script . '?' . $query . $pageID . $fragment;
         }
         else {
-          return $base . $fragment;
+          return $base . $script . '?' . $query . $pageID . $fragment;
         }
       }
       else {
-        if (isset($query)) {
-          return $base . $script . '?' . $query . $pageID . $fragment;
-        }
-        else {
           return $base . $fragment;
         }
       }
     }
-  }
 
   /**
    * Authenticate the user against the wordpress db

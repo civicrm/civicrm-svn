@@ -3,9 +3,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -34,7 +34,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API_Event
  *
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * @version $Id: Event.php 30964 2010-11-29 09:41:54Z shot $
  *
  */
@@ -58,9 +58,7 @@ require_once 'CRM/Event/BAO/Event.php';
  */
 function civicrm_api3_event_create($params) {
 
-  // to be removed - need to check what's being required
-  civicrm_api3_verify_mandatory($params, 'CRM_Event_DAO_Event');
-
+  _civicrm_api3_event_create_legacy_support_42($params);
   //format custom fields so they can be added
   $value = array();
   _civicrm_api3_custom_format_params($params, $values, 'Event');
@@ -89,6 +87,17 @@ function _civicrm_api3_event_create_spec(&$params) {
   $params['event_type_id']['api.required'] = 1;;
   $params['start_date']['api.required'] = 1;
   $params['title']['api.required'] = 1;
+}
+/*
+ * Support for schema changes made in 4.2
+ * The main purpose of the API is to provide integrators a level of stability not provided by
+ * the core code or schema - this means we have to provide support for api calls (where possible)
+ * across schema changes.
+ */
+function _civicrm_api3_event_create_legacy_support_42(&$params){
+  if(!empty($params['payment_processor_id'])){
+    $params['payment_processor'] = CRM_Core_DAO::VALUE_SEPARATOR . $params['payment_processor_id'] . CRM_Core_DAO::VALUE_SEPARATOR;
+  }
 }
 
 /**
@@ -143,11 +152,27 @@ function civicrm_api3_event_get($params) {
     if (CRM_Utils_Array::value('return.is_full', $params)) {
       _civicrm_api3_event_getisfull($event, $eventDAO->id);
     }
+    _civicrm_api3_event_get_legacy_support_42($event, $eventDAO->id);
     _civicrm_api3_custom_data_get($event[$eventDAO->id], 'Event', $eventDAO->id, NULL, $eventDAO->event_type_id);
   }
   //end of the loop
 
   return civicrm_api3_create_success($event, $params, 'event', 'get', $eventDAO);
+}
+
+/*
+ * Support for schema changes made in 4.2
+ * The main purpose of the API is to provide integrators a level of stability not provided by
+ * the core code or schema - this means we have to provide support for api calls (where possible)
+ * across schema changes.
+ */
+function _civicrm_api3_event_get_legacy_support_42(&$event, $event_id){
+  if(!empty($event[$event_id]['payment_processor'])){
+    $processors = explode(CRM_Core_DAO::VALUE_SEPARATOR,$event[$event_id]['payment_processor']);
+    if(count($processors) == 3 ){
+      $event[$event_id]['payment_processor_id'] = $processors[1];
+    }
+  }
 }
 
 /**

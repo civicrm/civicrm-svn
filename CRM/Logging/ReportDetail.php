@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -57,6 +57,20 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
     $this->raw         = CRM_Utils_Request::retrieve('raw', 'Boolean', CRM_Core_DAO::$_nullObject);
 
     parent::__construct();
+
+    CRM_Utils_System::resetBreadCrumb();
+    $breadcrumb = 
+      array(
+            array('title' => ts('Home'), 
+                  'url' => CRM_Utils_System::url()),
+            array('title' => ts('CiviCRM'), 
+                  'url' => CRM_Utils_System::url('civicrm', 'reset=1')),
+            array('title' => ts('View Contact'), 
+                  'url' => CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$this->cid}")),
+            array('title' => ts('Search Results'), 
+                  'url' => CRM_Utils_System::url('civicrm/contact/search', "force=1")),
+            );
+    CRM_Utils_System::appendBreadCrumb($breadcrumb);
 
     if (CRM_Utils_Request::retrieve('revert', 'Boolean', CRM_Core_DAO::$_nullObject)) {
       $reverter = new CRM_Logging_Reverter($this->log_conn_id, $this->log_date);
@@ -109,7 +123,7 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
     $rows = array();
 
     $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
-    $diffs = $differ->diffsInTable($table);
+    $diffs = $differ->diffsInTable($table, $this->cid);
 
     // return early if nothing found
     if (empty($diffs)) {

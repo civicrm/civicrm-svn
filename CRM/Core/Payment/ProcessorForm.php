@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,19 +28,16 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
 
 /**
- *
+ * base class for building payment block for online contribution / event pages
  */
 class CRM_Core_Payment_ProcessorForm {
-  static
-  function preProcess(&$form,
-    $type = NULL, $mode = NULL
-  ) {
+  static function preProcess(&$form, $type = NULL, $mode = NULL ) {
     if ($type) {
       $form->_type = $type;
     }
@@ -107,10 +104,14 @@ class CRM_Core_Payment_ProcessorForm {
           array(1 => $form->_paymentProcessor['payment_processor_type'])
         ));
     }
+
+    $profileAddressFields = $form->get('profileAddressFields');
+    if (!empty( $profileAddressFields)){
+      $form->assign('profileAddressFields', $profileAddressFields);
+  }
   }
 
-  static
-  function buildQuickform(&$form) {
+  static function buildQuickform(&$form) {
     $form->addElement('hidden', 'hidden_processor', 1);
 
     if (($form->_paymentProcessor['payment_type'] &

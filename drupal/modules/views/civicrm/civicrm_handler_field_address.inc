@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -40,20 +40,8 @@ class civicrm_handler_field_address extends civicrm_handler_field_location {
     }
   }
 
-  /**
-   * Get this field's label.
-   */
-  function label() {
-    if (!isset($this->options['label'])) {
-      return $this->ui_name();
-    }
-    return $this->options['label'];
-  }
-
   function option_definition() {
     $options = parent::option_definition();
-    $label = !empty($this->definition['label']) ? $this->definition['label'] : $this->label();
-    $options['label'] = array('default' => $label, 'translatable' => TRUE);
     $options['is_billing'] = array('default' => '');
     return $options;
   }

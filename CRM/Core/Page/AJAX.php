@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -44,8 +44,7 @@ class CRM_Core_Page_AJAX {
    * @static
    * @access public
    */
-  static
-  function run() {
+  static function run() {
     $className = CRM_Utils_Type::escape($_REQUEST['class_name'], 'String');
     $type = '';
     if (CRM_Utils_Array::value('type', $_POST)) {
@@ -73,8 +72,7 @@ class CRM_Core_Page_AJAX {
    * @static
    * @access public
    */
-  static
-    function setIsQuickConfig() {
+  static function setIsQuickConfig() {
     if (!$id = CRM_Utils_Array::value('id', $_GET)) {
         return false;
     }

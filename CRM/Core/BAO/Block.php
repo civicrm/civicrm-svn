@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  * add static functions to include some common functionality
@@ -398,7 +398,7 @@ class CRM_Core_BAO_Block {
     $block->delete();
   }
 
-  /*
+  /**
      * Handling for is_primary.
      * $params is_primary could be
      *  #  1 - find other entries with is_primary = 1 &  reset them to 0
@@ -415,9 +415,7 @@ class CRM_Core_BAO_Block {
      *  @param array $params
      * @static
      */
-
   public static function handlePrimary(&$params, $class) {
-
     switch ($class) {
       case 'CRM_Core_BAO_Phone':
         $table = 'civicrm_phone';
@@ -432,6 +430,7 @@ class CRM_Core_BAO_Block {
         break;
     }
     // if id is set & we don't have contact_id we need to retrieve it
+    $contactId = null;
     if (!empty($params['id']) && empty($params['contact_id'])) {
       $entity = new $class();
       $entity->id = $params['id'];
@@ -441,10 +440,12 @@ class CRM_Core_BAO_Block {
     elseif (CRM_Utils_Array::value('contact_id', $params)) {
       $contactId = $params['contact_id'];
     }
-    else {
+
+    if ( !$contactId ) {
       // entity not associated with contact so concept of is_primary not relevant
       return;
     }
+    
     // if params is_primary then set all others to not be primary & exit out
     if (CRM_Utils_Array::value('is_primary', $params)) {
       $sql = "UPDATE $table SET is_primary = 0 WHERE contact_id = %1";
@@ -462,12 +463,22 @@ class CRM_Core_BAO_Block {
       return;
     }
     else {
-      // so at this point we are only dealing with ones explicity setting is_primary to 0
-      // since we have reverse sorted by email we can either set the first one to
-      // primary or return if is already is
+      /*
+       * If the only existing email is the one we are editing then we must set
+       * is_primary to 1
+       * CRM-10451
+       */
+      if ( $existingEntities->N == 1 && $existingEntities->id == CRM_Utils_Array::value( 'id', $params ) ) {
+        $params['is_primary'] = 1;
+        return;
+      }
+
       if ($existingEntities->is_primary == 1) {
         return;
       }
+      // so at this point we are only dealing with ones explicity setting is_primary to 0
+      // since we have reverse sorted by email we can either set the first one to
+      // primary or return if is already is
       $existingEntities->is_primary = 1;
       $existingEntities->save();
     }

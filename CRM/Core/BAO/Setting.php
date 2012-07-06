@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -46,8 +46,18 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   /**
    * various predefined settings that have been migrated to the setting table
    */
-  CONST ADDRESS_STANDARDIZATION_PREFERENCES_NAME = 'Address Standardization Preferences', CAMPAIGN_PREFERENCES_NAME = 'Campaign Preferences', DIRECTORY_PREFERENCES_NAME = 'Directory Preferences', EVENT_PREFERENCES_NAME = 'Event Preferences', MAILING_PREFERENCES_NAME = 'Mailing Preferences', MEMBER_PREFERENCES_NAME = 'Member Preferences', MULTISITE_PREFERENCES_NAME = 'Multi Site Preferences', NAVIGATION_NAME = 'Navigation Menu', SYSTEM_PREFERENCES_NAME = 'CiviCRM Preferences', URL_PREFERENCES_NAME = 'URL Preferences';
-
+  CONST
+    ADDRESS_STANDARDIZATION_PREFERENCES_NAME = 'Address Standardization Preferences',
+    CAMPAIGN_PREFERENCES_NAME = 'Campaign Preferences',
+    DIRECTORY_PREFERENCES_NAME = 'Directory Preferences',
+    EVENT_PREFERENCES_NAME = 'Event Preferences',
+    MAILING_PREFERENCES_NAME = 'Mailing Preferences',
+    CONTRIBUTE_PREFERENCES_NAME = 'Contribute Preferences',
+    MEMBER_PREFERENCES_NAME = 'Member Preferences',
+    MULTISITE_PREFERENCES_NAME = 'Multi Site Preferences',
+    NAVIGATION_NAME = 'Navigation Menu',
+    SYSTEM_PREFERENCES_NAME = 'CiviCRM Preferences',
+    URL_PREFERENCES_NAME = 'URL Preferences';
   static $_cache = NULL;
 
   /**
@@ -155,12 +165,12 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     $contactID    = NULL
   ) {
 
-    // if both group and name are defined, check if over-ridden by the admin
+    global $civicrm_setting;
     if ($group &&
       $name &&
-      defined("{$group}.{$name}")
+      isset($civicrm_setting[$group][$name])
     ) {
-      return constant("{$group}.{$name}");
+      return $civicrm_setting[$group][$name];
     }
 
     $cacheKey = self::inCache($group, $name, $componentID, $contactID, TRUE);
@@ -452,6 +462,14 @@ OR       group_name = %2 )
       $config = CRM_Core_Config::singleton();
     }
 
+    $isJoomla = (defined('CIVICRM_UF') && CIVICRM_UF == 'Joomla') ? TRUE : FALSE;
+    
+    if (CRM_Core_Config::isUpgradeMode() && !$isJoomla) {
+      $currentVer = CRM_Core_BAO_Domain::version();
+      if (version_compare($currentVer, '4.1.alpha1') < 0) {
+        return;
+      }
+    }
     $sql = "
 SELECT name, group_name, value
 FROM   civicrm_setting
@@ -475,6 +493,10 @@ OR       group_name = %2 )
     if (is_a($dao, 'DB_Error')) {
       if (CRM_Core_Config::isUpgradeMode()) {
         // seems like this is a 4.0 -> 4.1 upgrade, so we suppress this error and continue
+        // hack to set the resource base url so that js/ css etc is loaded correctly
+        if ($isJoomla) {
+          $params['userFrameworkResourceURL'] = CRM_Utils_File::addTrailingSlash(CIVICRM_UF_BASEURL, '/') . str_replace('administrator', '', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', 'userFrameworkResourceURL', 'value', 'name'));
+        }
         return;
       }
       else {

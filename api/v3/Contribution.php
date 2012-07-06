@@ -3,9 +3,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -33,7 +33,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API_Contribute
  *
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * @version $Id: Contribution.php 30486 2010-11-02 16:12:09Z shot $
  *
  */
@@ -106,11 +106,11 @@ function _civicrm_api3_contribution_create_spec(&$params) {
   );
   // note this is a recommended option but not adding as a default to avoid
   // creating unecessary changes for the dev
-  $params['skipRecentView'] = array(
+    $params['skipRecentView'] = array(
     'name' => 'skipRecentView',
-    'title' => 'Skip Recent View',
+    'title' => 'Skip adding to recent view',
     'type' => 1,
-    'description' => 'Do not add to recent items (improves performance)',
+    'description' => 'Do not add to recent view (setting this improves performance)',
   );
 }
 
@@ -187,9 +187,12 @@ function civicrm_api3_contribution_get($params) {
 
   $contribution = array();
   while ($dao->fetch()) {
-    $contribution[$dao->contribution_id] = $query->store($dao);
+    //CRM-8662
+    $contribution_details = $query->store ( $dao );
+    $soft_params = array('contribution_id' => $dao->contribution_id);
+    $soft_contribution = CRM_Contribute_BAO_Contribution::getSoftContribution ( $soft_params , true);
+    $contribution [$dao->contribution_id] = array_merge($contribution_details, $soft_contribution);
   }
-
   return civicrm_api3_create_success($contribution, $params, 'contribution', 'get', $dao);
 }
 /*

@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -405,6 +405,11 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
         $handler = civicrm_get_field_handler($currentfield['data_type']);
       }
 
+  $data['civicrm_group']['table']['base'] = array(
+    'field' => 'id',
+    'title' => t('CiviCRM Groups'),
+    'help' => t("View displays CiviCRM Groups."),
+  );
 
       if ($currentfield['html_type'] == 'Multi-Select Country') {
         $filter_handler = array('handler' => 'civicrm_handler_filter_country_multi');

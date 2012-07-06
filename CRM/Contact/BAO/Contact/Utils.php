@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -870,12 +870,17 @@ Group By  componentId";
 
       // 4. modify submitted params and update it with shared contact address
       // make sure you preserve specific form values like location type, is_primary_ is_billing, master_id
+      // CRM-10336: Also empty any fields from the existing address block if they don't exist in master (otherwise they will persist)
       foreach ($values as $field => $submittedValue) {
-        if (!in_array($field, $skipFields) && isset($masterAddress->$field)) {
+        if (!in_array($field, $skipFields)){
+          if (isset($masterAddress->$field)) {
           $values[$field] = $masterAddress->$field;
+          } else {
+            $values[$field] = '';
         }
       }
     }
+  }
   }
 
   /**

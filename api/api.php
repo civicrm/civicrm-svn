@@ -6,7 +6,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API
  *
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * @version $Id: api.php 30486 2010-11-02 16:12:09Z shot $
  */
 
@@ -115,15 +115,18 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     return $err;
   }
   catch (api_Exception $e){
-    if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
+    if(!isset($apiRequest)){
+      $apiRequest = array();
+    }
+    if (CRM_Utils_Array::value('format.is_success', CRM_Utils_Array::value('params',$apiRequest)) == 1) {
       return 0;
     }
     $data = $e->getExtraParams();
-    $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest, $e->getCode());
-    if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
+    $err = civicrm_api3_create_error($e->getMessage(), $data, CRM_Utils_Array::value('params',$apiRequest), $e->getCode());
+    if (CRM_Utils_Array::value('debug', CRM_Utils_Array::value('params',$apiRequest))) {
       $err['trace'] = $e->getTraceAsString();
     }
-    if (CRM_Utils_Array::value('is_transactional', $apiRequest)) {
+    if (CRM_Utils_Array::value('is_transactional', CRM_Utils_Array::value('params',$apiRequest))) {
       $tx->rollback();
     }
     return $err;
@@ -283,25 +286,6 @@ function civicrm_get_api_version($desired_version = NULL) {
     // echo "\n".'version: '. $_version ." (default)\n";
   }
   return $_version;
-}
-
-/**
- * This function exists ONLY to support API v2 via the API wrapper (which is not actually supported :-)_
- * It was put in basically as part of a big cock up & needs to be deleted but there are still a couple of functions
- * that call it
- *
- * @param $entity deprecated
- * @param $rest_interface deprecated
- * @deprecated
- */
-function civicrm_api_include($entity, $rest_interface = FALSE, $version = NULL) {
-
-  $version    = civicrm_get_api_version($version);
-  $camel_name = _civicrm_api_get_camel_name($entity, $version);
-  $file       = 'api/v' . $version . '/' . $camel_name . '.php';
-  if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . $file)) {
-    require_once $file;
-  }
 }
 
 /**

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -464,11 +464,9 @@ WHERE  contribution_id = {$this->_id}
     }
 
     $this->_lineItems = array();
-    if ($this->_id &&
-      $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_contribution', $this->_id, NULL, 1)
-    ) {
-      $this->_priceSetId = $priceSetId;
-      $this->_lineItems[] = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
+    if ($this->_id) {
+      $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution',1);
+      empty($lineItem) ? null :$this->_lineItems[] =  $lineItem;
     }
     $this->assign('lineItem', empty($this->_lineItems) ? FALSE : $this->_lineItems);
   }
@@ -1138,7 +1136,7 @@ WHERE  contribution_id = {$this->_id}
     $lineItem = array();
     $priceSetId = NULL;
     if (!($priceSetId = CRM_Utils_Array::value('price_set_id', $submittedValues)) && !$this->_id) {
-      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
+      $this->_priceSetId = $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
       $this->_priceSet = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
       $fieldID = key($this->_priceSet['fields']);
       $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] = $submittedValues['total_amount'];
@@ -1148,9 +1146,6 @@ WHERE  contribution_id = {$this->_id}
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
         $submittedValues, $lineItem[$priceSetId]);
-      if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
-        $lineItem = null;
-      }
       $submittedValues['total_amount'] = CRM_Utils_Array::value('amount', $submittedValues);
     }
     if (!$priceSetId && CRM_Utils_Array::value('total_amount', $submittedValues) && $this->_id) {
@@ -1165,7 +1160,6 @@ WHERE  contribution_id = {$this->_id}
       } else {
         $entityTable = 'contribution';
         $entityID = $this->_id;
-        $this->_priceSetId = CRM_Price_BAO_Set::getFor("civicrm_".$entityTable, $entityID);
       }
 
       $lineItems         = CRM_Price_BAO_LineItem::getLineItems($entityID, $entityTable);
@@ -1178,16 +1172,18 @@ WHERE  contribution_id = {$this->_id}
       $lineItems[$itemId]['line_total'] = $submittedValues['total_amount'];
       $lineItems[$itemId]['id'] = $itemId;
       // 10117 update th line items for participants
-      if ($this->_context == 'participant') {
         $this->_priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'price_set_id');
-      }
       $lineItem[$this->_priceSetId] = $lineItems;
+    }
+    $isQuickConfig = 0;
+    if ($this->_priceSetId &&  CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
+      $isQuickConfig = 1;
     }
 
     if (!CRM_Utils_Array::value('total_amount', $submittedValues)) {
-      $submittedValues['total_amount'] = $this->_values['total_amount'];
+      $submittedValues['total_amount'] = CRM_Utils_Array::value('total_amount', $this->_values);
     }
-    $this->assign('lineItem', !empty($lineItem) ? $lineItem : FALSE);
+    $this->assign('lineItem', !empty($lineItem) && !$isQuickConfig ? $lineItem : FALSE);
 
     if (CRM_Utils_Array::value('soft_credit_to', $submittedValues)) {
       $submittedValues['soft_credit_to'] = $submittedValues['soft_contact_id'];

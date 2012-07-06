@@ -1,9 +1,9 @@
 <?php
 /*
    +--------------------------------------------------------------------+
-   | CiviCRM version 4.1                                                |
+   | CiviCRM version 4.2                                                |
    +--------------------------------------------------------------------+
-   | Copyright CiviCRM LLC (c) 2004-2011                                |
+   | Copyright CiviCRM LLC (c) 2004-2012                                |
    +--------------------------------------------------------------------+
    | This file is a part of CiviCRM.                                    |
    |                                                                    |
@@ -296,5 +296,50 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->waitForPageToLoad("300000");
     $this->assertTrue($this->isTextPresent('2 Contacts'));
   }
+
+ function testAdvanceSearchForLog() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+    
+    
+    $Pdate     = date('F jS, Y h:i:s A', mktime( 0, 0, 0, date( 'm' ), date( 'd' ) - 1,   date( 'Y' )) );
+    $Ndate     = date('F jS, Y h:i:s A', mktime( 0, 0, 0, date( 'm' ), date( 'd' ) + 1,   date( 'Y' )) );
+
+    //create a contact and return the contact id
+    $firstNameSoft = "John_".substr(sha1(rand()), 0, 5);
+    $lastNameSoft  = "Doe_".substr(sha1(rand()), 0, 5);
+    $this->webtestAddContact( $firstNameSoft, $lastNameSoft );
+    $url = $this->parseURL( );
+    $cid = $url['queryString']['cid'];
+    $this->assertType('numeric', $cid);
+    
+
+    //advance search for created contacts
+    $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
+    $this->waitForElementPresent('_qf_Advanced_refresh');
+    $this->type('sort_name', $lastNameSoft.', '.$firstNameSoft);
+    $this->click('changeLog');
+    $this->waitForElementPresent("log_date_low");
+    $this->webtestFillDate('log_date_low', "-1 day");
+    $this->webtestFillDate('log_date_high', "+1 day");
+    $this->click('_qf_Advanced_refresh');
+    $this->waitForPageToLoad('30000');
+    $this->assertTrue(True, 'greater than or equal to "{$Pdate}" AND less than or equal to "{$Ndate}"');
+    $value = "$lastNameSoft, $firstNameSoft";
+    $this->verifyText("xpath= id('rowid{$cid}')/td[3]/a", preg_quote($value));
+   
+}
+
+
+
 }
 

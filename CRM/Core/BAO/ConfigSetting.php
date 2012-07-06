@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
  *
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -48,8 +48,7 @@ class CRM_Core_BAO_ConfigSetting {
    * @return null
    * @static
    */
-  static
-  function add(&$params) {
+  static function add(&$params) {
     self::fixParams($params);
 
     // also set a template url so js files can use this
@@ -125,8 +124,7 @@ class CRM_Core_BAO_ConfigSetting {
    * @return null
    * @static
    */
-  static
-  function fixParams(&$params) {
+  static function fixParams(&$params) {
     // in our old civicrm.settings.php we were using ISO code for country and
     // province limit, now we have changed it to use ids
 
@@ -159,8 +157,7 @@ class CRM_Core_BAO_ConfigSetting {
    * @return null
    * @static
    */
-  static
-  function formatParams(&$params, &$values) {
+  static function formatParams(&$params, &$values) {
     if (empty($params) ||
       !is_array($params)
     ) {
@@ -182,8 +179,7 @@ class CRM_Core_BAO_ConfigSetting {
    * @return array $defaults
    * @static
    */
-  static
-  function retrieve(&$defaults) {
+  static function retrieve(&$defaults) {
     $domain = new CRM_Core_DAO_Domain();
 
     //we are initializing config, really can't use, CRM-7863
@@ -222,6 +218,11 @@ class CRM_Core_BAO_ConfigSetting {
 
       // since language field won't be present before upgrade.
       if (CRM_Core_Config::isUpgradeMode()) {
+        // dont add if its empty
+        if (!empty($defaults)) {
+          // retrieve directory and url preferences also
+          CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences($defaults);
+        }
         return;
       }
 
@@ -334,9 +335,7 @@ class CRM_Core_BAO_ConfigSetting {
     }
   }
 
-
-  static
-  function getConfigSettings() {
+  static function getConfigSettings() {
     $config = CRM_Core_Config::singleton();
 
     $url = $dir = $siteName = $siteRoot = NULL;
@@ -392,8 +391,7 @@ class CRM_Core_BAO_ConfigSetting {
     return array($url, $dir, $siteName, $siteRoot);
   }
 
-  static
-  function getBestGuessSettings() {
+  static function getBestGuessSettings() {
     $config = CRM_Core_Config::singleton();
 
     $url = $config->userFrameworkBaseURL;
@@ -433,9 +431,7 @@ class CRM_Core_BAO_ConfigSetting {
     return array($url, $dir, $siteName, $siteRoot);
   }
 
-  static
-  function doSiteMove($defaultValues = array(
-    )) {
+  static function doSiteMove($defaultValues = array() ) {
     $moveStatus = ts('Beginning site move process...') . '<br />';
     // get the current and guessed values
     list($oldURL, $oldDir, $oldSiteName, $oldSiteRoot) = self::getConfigSettings();
@@ -577,8 +573,7 @@ WHERE  option_group_id = (
    * @return boolean - true if valid component name and enabling succeeds, else false
    * @static
    */
-  static
-  function enableComponent($componentName) {
+  static function enableComponent($componentName) {
     $config = CRM_Core_Config::singleton();
     if (in_array($componentName, $config->enableComponents)) {
       // component is already enabled
@@ -637,8 +632,7 @@ WHERE  id = %1
     return TRUE;
   }
 
-  static
-  function skipVars() {
+  static function skipVars() {
     return array(
       'dsn', 'templateCompileDir',
       'userFrameworkDSN',

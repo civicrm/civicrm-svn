@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -76,7 +76,8 @@
     	<div class="messages help">{$priceSet.help_post}</div>
     {/if}
  
-{if $priceSet.fields|@count > 1 || !$quickConfig}
+{* Include the total calculation widget if this is NOT a quickconfig event/contribution page. *}
+{if !$quickConfig}
     {include file="CRM/Price/Form/Calculate.tpl"} 
 {/if}
 

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -44,15 +44,14 @@ class CRM_Contact_Form_Edit_Address {
    * @param object  $form - CRM_Core_Form (or subclass)
    * @param int     $addressBlockCount - the index of the address array (if multiple addresses on a page)
    * @param boolean $sharing - false, if we want to skip the address sharing features
+   * @param boolean $inlineEdit true when edit used in inline edit
    *
    * @return none
    *
    * @access public
    * @static
    */
-  static
-  function buildQuickForm(&$form, $addressBlockCount = NULL, $sharing = TRUE) {
-
+  static function buildQuickForm(&$form, $addressBlockCount = NULL, $sharing = TRUE, $inlineEdit = FALSE) {
     // passing this via the session is AWFUL. we need to fix this
     if (!$addressBlockCount) {
       $blockId = ($form->get('Address_Block_Count')) ? $form->get('Address_Block_Count') : 1;
@@ -66,15 +65,27 @@ class CRM_Contact_Form_Edit_Address {
 
     $form->applyFilter('__ALL__', 'trim');
 
+    $js = array();
+    if ( !$inlineEdit ) {
     $js = array('onChange' => 'checkLocation( this.id );');
+    }
+
     $form->addElement('select',
       "address[$blockId][location_type_id]",
       ts('Location Type'),
       array(
-        '' => ts('- select -')) + CRM_Core_PseudoConstant::locationType(), $js
+        '' => ts('- select -')) + CRM_Core_PseudoConstant::locationType(),
+        $js
     );
 
+    if ( !$inlineEdit ) {
     $js = array('id' => 'Address_' . $blockId . '_IsPrimary', 'onClick' => 'singleSelect( this.id );');
+    }
+    else {
+      //make location type required for inline edit
+      $form->addRule( "address[$blockId][location_type_id]", ts('%1 is a required field.', array(1 => ts('Location Type'))), 'required');
+    }
+
     $form->addElement(
       'checkbox',
       "address[$blockId][is_primary]",
@@ -83,7 +94,10 @@ class CRM_Contact_Form_Edit_Address {
       $js
     );
 
+    if ( !$inlineEdit ) {
     $js = array('id' => 'Address_' . $blockId . '_IsBilling', 'onClick' => 'singleSelect( this.id );');
+    }
+
     $form->addElement(
       'checkbox',
       "address[$blockId][is_billing]",
@@ -94,7 +108,6 @@ class CRM_Contact_Form_Edit_Address {
 
     // hidden element to store master address id
     $form->addElement('hidden', "address[$blockId][master_id]");
-
 
     $addressOptions = CRM_Core_BAO_Setting::valueOptions(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
       'address_options', TRUE, NULL, TRUE
@@ -203,7 +216,7 @@ class CRM_Contact_Form_Edit_Address {
     CRM_Core_BAO_Address::addStateCountryMap($stateCountryMap);
 
     $entityId = NULL;
-    if (!empty($form->_values['address'])) {
+    if (!empty($form->_values['address']) && CRM_Utils_Array::value($blockId, $form->_values['address'])) {
       $entityId = $form->_values['address'][$blockId]['id'];
     }
     // Process any address custom data -
@@ -229,9 +242,15 @@ class CRM_Contact_Form_Edit_Address {
       // Below eval() fixes this issue.
       $address = array();
       foreach ($defaults as $key => $val) {
-        // use @ to suppress Notice: Use of undefined constant custom_8_15 - assumed 'custom_8_15' in eval() 
-        @eval("\${$key} = " . (!is_array($val) ? "'{$val}'" : var_export($val, TRUE)) . ";");
+        if ( empty( $val ) ) {
+          continue;
       }
+        elseif ( is_array($val) ) {
+          $val = var_export($val, TRUE);
+        }
+        @eval("\${$key} = " .$val . ";" );
+      }
+      
       $defaults = array('address' => $address);
       $form->setDefaults($defaults);
 
@@ -252,7 +271,7 @@ class CRM_Contact_Form_Edit_Address {
 
     if ($sharing) {
       // shared address
-      $form->addElement('checkbox', "address[$blockId][use_shared_address]", NULL, ts('Share Address With'));
+      $form->addElement('checkbox', "address[$blockId][use_shared_address]", NULL, ts('Use another contact\'s address'));
 
       // get the reserved for address
       $profileId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', 'shared_address', 'id', 'name');
@@ -277,8 +296,7 @@ class CRM_Contact_Form_Edit_Address {
    * @access public
    * @static
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
     // check for state/county match if not report error to user.
     if (CRM_Utils_Array::value('address', $fields) && is_array($fields['address'])) {
@@ -337,8 +355,7 @@ class CRM_Contact_Form_Edit_Address {
     return empty($errors) ? TRUE : $errors;
   }
 
-  static
-  function fixStateSelect(&$form,
+  static function fixStateSelect(&$form,
     $countryElementName,
     $stateElementName,
     $countyElementName,
@@ -414,6 +431,107 @@ class CRM_Contact_Form_Edit_Address {
       ) {
         $stateSelect->freeze();
       }
+    }
+  }
+
+  /**
+   * function to set default values for address block
+   *
+   * @param array  $defaults  defaults associated array
+   * @param object $form     form object
+   *
+   * @static
+   * @access public
+   */
+  static function setDefaultValues( &$defaults, &$form ) {
+    $addressValues = array();
+    if (isset($defaults['address']) && is_array($defaults['address']) &&
+      !CRM_Utils_system::isNull($defaults['address'])
+    ) {
+
+      // start of contact shared adddress defaults
+      $sharedAddresses = array();
+      $masterAddress = array();
+
+      // get contact name of shared contact names
+      $shareAddressContactNames = CRM_Contact_BAO_Contact_Utils::getAddressShareContactNames($defaults['address']);
+
+      foreach ($defaults['address'] as $key => $addressValue) {
+        if (CRM_Utils_Array::value('master_id', $addressValue) && !$shareAddressContactNames[$addressValue['master_id']]['is_deleted']) {
+          $sharedAddresses[$key]['shared_address_display'] = array(
+            'address' => $addressValue['display'],
+            'name' => $shareAddressContactNames[$addressValue['master_id']]['name'],
+          );
+}
+        else {
+          $defaults['address'][$key]['use_shared_address'] = 0;
+        }
+
+        //check if any address is shared by any other contacts
+        $masterAddress[$key] = CRM_Core_BAO_Address::checkContactSharedAddress($addressValue['id']);
+      }
+
+      $form->assign('sharedAddresses', $sharedAddresses);
+      $form->assign('masterAddress', $masterAddress);
+      // end of shared address defaults
+
+      // start of parse address functionality
+      // build street address, CRM-5450.
+      if ($form->_parseStreetAddress) {
+        $parseFields = array('street_address', 'street_number', 'street_name', 'street_unit');
+        foreach ($defaults['address'] as $cnt => & $address) {
+          $streetAddress = NULL;
+          foreach (array(
+            'street_number', 'street_number_suffix', 'street_name', 'street_unit') as $fld) {
+            if (in_array($fld, array(
+              'street_name', 'street_unit'))) {
+              $streetAddress .= ' ';
+            }
+            $streetAddress .= CRM_Utils_Array::value($fld, $address);
+          }
+          $streetAddress = trim($streetAddress);
+          if (!empty($streetAddress)) {
+            $address['street_address'] = $streetAddress;
+          }
+          if (isset($address['street_number'])) {
+            $address['street_number'] .= CRM_Utils_Array::value('street_number_suffix', $address);
+          }
+
+          // build array for set default.
+          foreach ($parseFields as $field) {
+            $addressValues["{$field}_{$cnt}"] = CRM_Utils_Array::value($field, $address);
+          }
+
+          // don't load fields, use js to populate.
+          foreach (array('street_number', 'street_name', 'street_unit') as $f) {
+            if (isset($address[$f])) {
+              unset($address[$f]);
+            }
+          }
+        }
+        $form->assign('allAddressFieldValues', json_encode($addressValues));
+
+        //hack to handle show/hide address fields.
+        $parsedAddress = array();
+        if ($form->_contactId &&
+          CRM_Utils_Array::value('address', $_POST)
+          && is_array($_POST['address'])
+        ) {
+          foreach ($_POST['address'] as $cnt => $values) {
+            $showField = 'streetAddress';
+            foreach (array('street_number', 'street_name', 'street_unit') as $fld) {
+              if (CRM_Utils_Array::value($fld, $values)) {
+                $showField = 'addressElements';
+                break;
+              }
+            }
+            $parsedAddress[$cnt] = $showField;
+          }
+        }
+        $form->assign('showHideAddressFields', $parsedAddress);
+        $form->assign('loadShowHideAddressFields', empty($parsedAddress) ? FALSE : TRUE);
+      }
+      // end of parse address functionality
     }
   }
 }

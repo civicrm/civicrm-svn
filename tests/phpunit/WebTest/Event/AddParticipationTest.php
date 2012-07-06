@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -357,6 +357,73 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
         'Check Number' => '1044',
       )
     );
+  }
+
+  function testEventAddMultipleParticipants() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+    
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
+    
+    $processorId = $this->webtestAddPaymentProcessor('dummy' . substr(sha1(rand()), 0, 7));
+    $rand = substr(sha1(rand()), 0, 7);
+    $firstName = 'First' . $rand;
+    $lastName = 'Last' . $rand;
+    $rand = substr(sha1(rand()), 0, 7);
+    $lastName2 = 'Last' . $rand;
+    
+    // Go directly to the URL of the screen that you will be testing (Register Participant for Event-standalone).
+    $this->open($this->sboxPath . 'civicrm/participant/add?reset=1&action=add&context=standalone&mode=test&eid=3');
+    
+    $this->assertTrue($this->isTextPresent("Register New Participant"), "Page title 'Register New Participant' missing");
+    $this->assertTrue($this->isTextPresent("A TEST transaction will be submitted"), "test mode status 'A TEST transaction will be submitted' missing");
+    $this->_fillParticipantDetails($firstName, $lastName, $processorId);
+    $this->click('_qf_Participant_upload_new-bottom');
+    $this->waitForPageToLoad(30000);
+    
+    $this->assertTrue($this->isTextPresent("Register New Participant"), "Page title 'Register New Participant' missing");
+    $this->assertTrue($this->isTextPresent("A TEST transaction will be submitted"), "test mode status 'A TEST transaction will be submitted' missing");
+    $this->_fillParticipantDetails($firstName, $lastName2, $processorId);
+    $this->click('_qf_Participant_upload_new-bottom');
+    $this->waitForPageToLoad(30000);
+    
+    //searching the paricipants
+    $this->open($this->sboxPath . 'civicrm/event/search?reset=1');
+    $this->type('sort_name', $firstName);
+    $eventName = "Rain-forest Cup Youth Soccer Tournament";
+    $this->type("event_name", $eventName);
+    $this->click("event_name");
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
+    $this->check('participant_test');
+    $this->click("_qf_Search_refresh");
+    $this->waitForElementPresent("participantSearch");
+      
+    //verifying the registered participants
+    $names = array( "{$lastName}, {$firstName}", "{$lastName2}, {$firstName}" );
+    $status = "Registered (test)";
+    
+    foreach($names as $name) {
+      $this->verifyText("xpath=//div[@id='participantSearch']//table//tbody//tr/td[@class='crm-participant-sort_name']/a[text()='{$name}']/../../td[9]", preg_quote($status));
+      $this->verifyText("xpath=//div[@id='participantSearch']//table//tbody//tr/td[@class='crm-participant-sort_name']/a[text()='{$name}']/../../td[4]/a", preg_quote($eventName));
+}
+  }
+
+  function _fillParticipantDetails($firstName, $lastName, $processorId) {
+    $this->select("id=profiles_1", "label=New Individual");
+    $this->waitForElementPresent('_qf_Edit_next');
+    
+    $this->type("id=first_name", $firstName);
+    $this->type("id=last_name", $lastName);
+    $this->click("id=_qf_Edit_next");
+    $this->select('payment_processor_id', "value={$processorId}");
+    $this->verifySelectedValue("event_id", "3");
+    $this->check("role_id[1]");
+    $this->webtestAddCreditCardDetails();
+    $this->webtestAddBillingDetails();
   }
 }
 

@@ -1,7 +1,7 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 4.1                                                |
+-- | CiviCRM version 4.2                                                |
 -- +--------------------------------------------------------------------+
--- | Copyright CiviCRM LLC (c) 2004-2011                                |
+-- | Copyright CiviCRM LLC (c) 2004-2012                                |
 -- +--------------------------------------------------------------------+
 -- | This file is a part of CiviCRM.                                    |
 -- |                                                                    |
@@ -126,24 +126,24 @@ INSERT INTO civicrm_msg_template
 INSERT INTO civicrm_msg_template
   (msg_title,      msg_subject,                  msg_text,                  msg_html,                  workflow_id,        is_default, is_reserved)
   VALUES
-  ('Sample CiviMail Newsletter Template', 'Sample CiviMail Newsletter', '', '<table width=612 cellpadding=0 cellspacing=0 bgcolor="#f4fff4">
+  ('Sample CiviMail Newsletter Template', 'Sample CiviMail Newsletter', '', '<table width=612 cellpadding=0 cellspacing=0 bgcolor="#ffffff">
   <tr>
   	<td colspan="2" bgcolor="#ffffff" valign="middle" >
   		<table border="0" cellpadding="0" cellspacing="0" >
   			<tr>
   				<td>
-  				<a href="http://www.YOUR-SITE.org"><img src="http://drupal.demo.civicrm.org/files/garland_logo.png" border=0 alt="Replace this logo with the URL to your own"></a> 
+  				<a href="http://www.civicrm.org"><img src="http://civicrm.org/sites/civicrm.org/files/top-logo_2.png" border=0 alt="Replace this logo with the URL to your own"></a> 
   				</td>
   				<td>&nbsp; &nbsp;</td>
   				<td>
-  				<a href="http://www.YOUR-SITE.org" style="text-decoration: none;"><font size=5 face="Arial, Verdana, sans-serif" color="#8bc539">Your Newsletter Title</font></a>
+  				<a href="http://www.civicrm.org" style="text-decoration: none;"><font size=5 face="Arial, Verdana, sans-serif" color="#8bc539">Your Newsletter Title</font></a>
   				</td>
   			</tr>
   		</table>
   	</td>
   </tr>
   <tr>
-  	<td valign="top">
+  	<td valign="top" width="70%">
   		<!-- left column -->
   		<table cellpadding="10" cellspacing="0" border="0">
   		<tr>
@@ -167,31 +167,35 @@ INSERT INTO civicrm_msg_template
   			Sincerely,
   			<br /><br />
   			Your Team		
+				<br /><br />
   			</font>
   			</td>
   		</tr>
   		</table>
   	</td>
 
-  	<td valign="top" bgcolor="#f3f3ff" >
+  	<td valign="top" width="30%" bgcolor="#ffffff" style="border: 1px solid #056085;">
   		<!-- right column -->
-  		<table width=180 cellpadding=10 cellspacing=0 border=0>
+  		<table cellpadding=10 cellspacing=0 border=0>
+  		<tr>
+				<td bgcolor="#056085"><font face="Arial, Verdana, sans-serif" size="4" color="#ffffff">News and Events</font></td>
+			</tr>
   		<tr>
   			<td style="color: #000; font-family: Arial, Verdana, sans-serif; font-size: 12px;" >
   			<font face="Arial, Verdana, sans-serif" size="2" >
-  			<font color="#003399"><strong>Featured Events</strong> </font><br />
+  			<font color="#056085"><strong>Featured Events</strong> </font><br />
   			Fundraising Dinner<br />
   			Training Meeting<br />
   			Board of Directors Annual Meeting<br />
 
   			<br /><br />
-  			<font color="#003399"><strong>Community Events</strong></font><br />
+  			<font color="#056085"><strong>Community Events</strong></font><br />
   			Bake Sale<br />
   			Charity Auction<br />
   			Art Exhibit<br />
 
   			<br /><br />
-  			<font color="#003399"><strong>Important Dates</strong></font><br />
+  			<font color="#056085"><strong>Important Dates</strong></font><br />
   			Tuesday August 27<br />
   			Wednesday September 8<br />
   			Thursday September 29<br />
@@ -210,7 +214,7 @@ INSERT INTO civicrm_msg_template
   		<tr>
   			<td>
   			<font face="Arial, Verdana, sans-serif" size="2" >
-  			<font color="#8bc539"><strong>Helpful Tips</strong></font>
+  			<font color="#7dc857"><strong>Helpful Tips</strong></font>
   			<br /><br />
   			<font color="#3b5187">Tokens</font><br />
   			Click "Insert Tokens" to dynamically insert names, addresses, and other contact data of your recipients. 
@@ -234,7 +238,7 @@ INSERT INTO civicrm_msg_template
   <tr>
   	<td colspan="2" style="color: #000; font-family: Arial, Verdana, sans-serif; font-size: 10px;">
   		<font face="Arial, Verdana, sans-serif" size="2" >
-  		<hr>
+  		<hr />
   		<a href="{literal}{action.unsubscribeUrl}{/literal}" title="click to unsubscribe">Click here</a> to unsubscribe from this mailing list.<br /><br />
   		Our mailing address is:<br />
   		{literal}{domain.address}{/literal}

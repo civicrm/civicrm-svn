@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
  *
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -57,7 +57,8 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     parent::preProcess();
 
     $participantNo = substr($this->_name, 12);
@@ -181,6 +182,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
       CRM_Event_Form_Registration_Register::buildAmount($this);
     }
     $first_name = $last_name = NULL;
+    $pre = $post = array();
     foreach (array(
       'pre', 'post') as $keys) {
       if (isset($this->_values['additional_custom_' . $keys . '_id'])) {
@@ -418,10 +420,12 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
               //collect all email fields
               $existingEmails = array();
               $additionalParticipantEmails = array();
+              if (is_array($value)) {
               foreach ($value as $key => $val) {
                 if (substr($key, 0, 6) == 'email-' && $val) {
                   $existingEmails[] = $val;
                 }
+              }
               }
               foreach ($fields as $key => $val) {
                 if (substr($key, 0, 6) == 'email-' && $val) {

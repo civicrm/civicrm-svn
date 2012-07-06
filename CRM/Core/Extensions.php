@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -32,7 +32,7 @@
  * information on single extension's operations.
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -272,23 +272,8 @@ class CRM_Core_Extensions {
         $key = $i->key;
         foreach ($remote as $dc => $r) {
           if ($key == $r->key) {
-            $installedVersion = explode('.', $i->version);
-            $remoteVersion = explode('.', $r->version);
-
-            for ($y = 0; $y < 2; $y++) {
-              if (CRM_Utils_Array::value($y, $installedVersion) == CRM_Utils_Array::value($y, $remoteVersion)) {
-                $outdated = FALSE;
-              }
-              elseif (CRM_Utils_Array::value($y, $installedVersion) > CRM_Utils_Array::value($y, $remoteVersion)) {
-                $outdated = FALSE;
-              }
-              elseif (CRM_Utils_Array::value($y, $installedVersion) < CRM_Utils_Array::value($y, $remoteVersion)) {
-                $outdated = TRUE;
-              }
-            }
             $upg = $exts[$key];
-
-            if ($outdated) {
+            if (version_compare($i->version, $r->version) < 0) {
               $upg->setUpgradable();
               $upg->setUpgradeVersion($r->version);
             }

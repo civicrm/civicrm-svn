@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -27,7 +27,7 @@
 {assign var="customGroupCount" value = 1}
 {foreach from=$viewCustomData item=customValues key=customGroupId}
     {assign var="count" value=$customGroupCount%2}
-    {if $count eq $side }
+  {if ($count eq $side) or $skipTitle }
         {foreach from=$customValues item=cd_edit key=cvID}
             <div class="customFieldGroup ui-corner-all {$cd_edit.name}">
                 <table id="{$cd_edit.name}_{$count}" >
@@ -40,7 +40,9 @@
                   </tr>
                   <tr class= "{if $cd_edit.collapse_display}hiddenElement{/if}">
                   <td>
-                    {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupName=$cd_edit.name}
+              <div class="crm-summary-block" id="custom-set-block-{$customGroupId}">
+                {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupId=$customGroupId}
+              </div>
                   </td>
                   </tr>
                 </table>
@@ -49,3 +51,4 @@
     {/if}
     {assign var="customGroupCount" value = $customGroupCount+1}
 {/foreach}
+

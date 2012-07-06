@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -147,8 +147,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     return $_config_backend[$field];
   }
 
-  function webtestAddContact($fname = 'Anthony', $lname = 'Anderson', $email = NULL) {
-    $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual');
+  function webtestAddContact($fname = 'Anthony', $lname = 'Anderson', $email = NULL, $contactSubtype = NULL) {
+    $url = $this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual';
+    if ($contactSubtype) {
+      $url = $url . "&cst={$contactSubtype}";  
+    }
+    $this->open($url);
     $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
     $this->type('first_name', $fname);
     $this->type('last_name', $lname);
@@ -182,7 +186,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     return $email;
   }
 
-  function webtestAddOrganization($organizationName = "Smith's Home", $email = NULL) {
+  function webtestAddOrganization($organizationName = "Organization XYZ", $email = NULL) {
 
     $this->open($this->sboxPath . 'civicrm/contact/add?reset=1&ct=Organization');
     $this->click('organization_name');
@@ -324,14 +328,14 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
   /**
    */
-  function webtestNewDialogContact($fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4) {
+  function webtestNewDialogContact($fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4, $selectId = 'profiles_1', $row = 1) {
     // 4 - Individual profile
     // 5 - Organization profile
     // 6 - Household profile
-    $this->select('profiles_1', "value={$type}");
+    $this->select($selectId, "value={$type}");
 
     // create new contact using dialog
-    $this->waitForElementPresent("css=div#contact-dialog-1");
+    $this->waitForElementPresent("css=div#contact-dialog-{$row}");
     $this->waitForElementPresent('_qf_Edit_next');
 
     switch ($type) {
@@ -826,15 +830,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->waitForElementPresent('_qf_Custom_next-bottom');
 
       if ($profilePreId) {
-
         $this->select('custom_pre_id', "value={$profilePreId}");
-
       }
 
       if ($profilePostId) {
-
         $this->select('custom_post_id', "value={$profilePostId}");
-
       }
 
       $this->click('_qf_Custom_next-bottom');
@@ -1280,7 +1280,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->click('_qf_Group_next-bottom');
 
     $this->waitForElementPresent('_qf_Field_cancel-bottom');
-    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '{$profileTitle}' has been added. You can add fields to this profile now."));
+    //$this->assertTrue($this->isTextPresent("Your CiviCRM Profile '{$profileTitle}' has been added. You can add fields to this profile now."));
 
     foreach ($profileFields as $field) {
       $this->waitForElementPresent('field_name[0]');
@@ -1294,7 +1294,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->type("id=label", $field['label']);
       $this->click("id=_qf_Field_next_new-top");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '" . $field['name'] . "' has been saved to '" . $profileTitle . "'. You can add another profile field."));
+      //$this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '" . $field['name'] . "' has been saved to '" . $profileTitle . "'. You can add another profile field."));
     }
   }
 }

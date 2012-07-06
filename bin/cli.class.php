@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
  | Copyright Tech To The People http:tttp.eu (c) 2008                 |
  +--------------------------------------------------------------------+
@@ -22,10 +22,26 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
+
+/**
+ * This files provides several classes for doing command line work with
+ * CiviCRM. civicrm_cli is the base class. It's used by cli.php.
+ *
+ * In addition, there are several additional classes that inherit 
+ * civicrm_cli to do more precise functions.
+ *  
+ **/
+
+/**
+ * base class for doing all command line operations via civicrm
+ * used by cli.php
+ **/
+
 class civicrm_cli {
   // required values that must be passed
   // via the command line
   var $_required_arguments = array('action', 'entity');
+  var $_additional_arguments = array();
   var $_entity = NULL;
   var $_action = NULL;
   var $_output = FALSE;
@@ -148,6 +164,13 @@ class civicrm_cli {
         $this->_joblog = TRUE;
       }
       else {
+        while(list($short, $long) = each ($this->_additional_arguments)) {
+          if ($arg == '-' . $short || $arg == '--' . $long) {
+            $property = '_' . $long;
+            $this->$property = $value;
+            continue;
+          }
+        }
         // all other arguments are parameters
         $key = ltrim($arg, '--');
         $this->_params[$key] = $value;
@@ -223,7 +246,7 @@ class civicrm_cli {
   private function _sanitize($value) {
     // restrict user input - we should not be needing anything
     // other than normal alpha numeric plus - and _.
-    return trim(preg_replace('/^[^a-zA-Z0-9\-_=]$/', '', $value));
+    return trim(preg_replace('#^[^a-zA-Z0-9\-_=/]$#', '', $value));
   }
 
   private function _getUsage() {
@@ -244,3 +267,130 @@ class civicrm_cli {
   }
 }
 
+/**
+ * class used by csv/export.php to export records from 
+ * the database in a csv file format.
+ **/
+
+class civicrm_cli_csv_exporter extends civicrm_cli {
+  var $separator = ',';
+
+  function __construct() {
+    $this->_required_arguments = array('entity');
+    parent::initialize();
+  }
+
+  function run() {
+    $out = fopen("php://output", 'w');
+    fputcsv($out, $this->columns, $this->separator, '"');
+
+    $this->row = 1;
+    $result = civicrm_api($this->_entity, 'Get', $this->_params);
+    $first = true;
+    foreach ($result['values'] as $row) {
+      if($first) {
+        $columns = array_keys($row);
+        fputcsv($out, $columns, $this->separator, '"');
+        $first = false;
+      }
+      fputcsv($out, $row, $this->separator, '"');
+    }
+    fclose($out);
+    echo "\n";
+  }
+}
+
+/**
+ * base class used by both civicrm_cli_csv_import
+ * and civicrm_cli_csv_deleter to add or delete
+ * records based on those found in a csv file
+ * passed to the script.
+ **/
+
+class civicrm_cli_csv_file extends civicrm_cli {
+  var $header;
+  var $separator = ',';
+
+  function __construct() {
+    $this->_required_arguments = array('entity','file');
+    $this->_additional_arguments = array('f' => 'file');
+    parent::initialize();
+  }
+
+  function run() {
+    $this->row = 1;
+    $handle = fopen($this->_file, "r");
+
+    if (!$handle) {
+      die("Could not open file: " . $this->_file . ". Please provide an absolute path.\n");
+    }
+
+    //header
+    $header = fgetcsv($handle, 1000, $this->separator);
+    //  $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+    if (!$header) {
+      $this->separator = ";";
+      rewind($handle);
+      $header = fgetcsv($handle, 1000, $this->separator);
+    }
+    if (!$header) {
+      die("Invalid file format for " . $this->_file . ". It must be a valid csv with separator ',' or ';'\n");
+    }
+    
+    $this->header = $header;
+    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+      // skip blank lines
+      if(count($data) == 1 && is_null($data[0])) continue;
+      $this->row++;
+      $params = $this->convertLine($data);
+      $this->processLine($params);
+    }
+    fclose($handle);
+    return;
+  }
+
+  /* return a params as expected */
+  function convertLine($data) {
+    $params = array();
+    foreach ($this->header as $i => $field) {
+      $params[$field] = $data[$i];
+    }
+    $params['version'] = 3;
+    return $params;
+  }
+}
+
+/**
+ * class for processing records to add
+ * used by csv/import.php
+ *
+ **/
+
+class civicrm_cli_csv_importer extends civicrm_cli_csv_file {
+  function processline($params) {
+    $result = civicrm_api($this->_entity, 'Create', $params);
+    if ($result['is_error']) {
+      echo "\nERROR line " . $this->row . ": " . $result['error_message'] . "\n";
+    }
+    else {
+      echo "\nline " . $this->row . ": created " . $this->_entity . " id: " . $result['id'] . "\n";
+    }
+  }
+}
+
+/**
+ * class for processing records to delete 
+ * used by csv/delete.php
+ *
+ **/
+
+class civicrm_cli_csv_deleter extends civicrm_cli_csv_file {
+  function processline($params) {
+    $result = civicrm_api($this->_entity, 'Delete', $params);
+    if ($result['is_error']) {
+      echo "\nERROR line " . $this->row . ": " . $result['error_message'] . "\n";
+    } else {
+      echo "\nline " . $this->row . ": deleted\n";
+    }
+  }
+}

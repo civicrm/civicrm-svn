@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -38,7 +38,7 @@ Plugin Name: CiviCRM
 Plugin URI: http://civicrm.org/
 Description: CiviCRM WP Plugin
 Author: CiviCRM LLC
-Version: 4.1.3
+Version: 4.2
 Author URI: http://civicrm.org/
 License: AGPL3
 */
@@ -54,11 +54,16 @@ if (civicrm_wp_in_civicrm()) {
   $_GET['noheader'] = TRUE;
 }
 else {
-  $_GET['mode'] = 'wordpress';
+  $_GET['civicrm_install_type'] = 'wordpress';
 }
 
 function civicrm_wp_add_menu_items() {
+  $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'civicrm.settings.php';
+
+  if (file_exists($settingsFile)) {
   add_menu_page('CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke');
+  }
+
   add_options_page('CiviCRM Settings', 'CiviCRM Settings', 'manage_options', 'civicrm-settings', 'civicrm_db_settings');
 }
 
@@ -270,8 +275,9 @@ function civicrm_wp_scripts() {
     }
   }
 
-  // add Common.js
-  wp_enqueue_script('js/Common.js', WP_PLUGIN_URL . '/civicrm/civicrm/js/Common.js');
+  //add namespacing js
+  wp_enqueue_script('js/jquery.conflict.js', WP_PLUGIN_URL . '/civicrm/civicrm/js/jquery.conflict.js');
+
   return;
 }
 
@@ -348,7 +354,7 @@ function civicrm_wp_frontend($shortcode = FALSE) {
     )
   ) {
     civicrm_wp_invoke();
-    exit;
+    CRM_Utils_System::civiExit( );
   }
 
   // this places civicrm inside frontend theme
@@ -356,7 +362,10 @@ function civicrm_wp_frontend($shortcode = FALSE) {
   // but best way is to check other plugin implementation :)
 
   if ($shortcode) {
-    civicrm_wp_invoke();
+    ob_start(); // start buffering
+    civicrm_wp_invoke( ); // now, instead of echoing, shortcode output ends up in buffer
+    $content = ob_get_clean(); // save the output and flush the buffer
+    return $content;
   }
   else {
     add_filter('the_content', 'civicrm_wp_invoke');
@@ -457,7 +466,7 @@ function civicrm_check_permission($args) {
     in_array('CiviMail', $config->enableComponents)
   ) {
     if (in_array($arg2,
-        array('forward', 'unsubscribe', 'resubscribe', 'optout', 'subscribe', 'confirm')
+        array('forward', 'unsubscribe', 'resubscribe', 'optout', 'subscribe', 'confirm', 'view')
       )) {
       return TRUE;
     }

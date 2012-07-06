@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -61,7 +61,8 @@ class CRM_Core_Smarty extends Smarty {
    *
    * @return CRM_Core_Smarty
    * @access private
-   */ function __construct() {
+   */ 
+  function __construct() {
     parent::__construct();
 
     $config = CRM_Core_Config::singleton();
@@ -133,13 +134,7 @@ class CRM_Core_Smarty extends Smarty {
     $this->assign('tsLocale', $tsLocale);
 
     // CRM-7163 hack: we don’t display langSwitch on upgrades anyway
-    $displayLangSwitch = TRUE;
-    if (CRM_Utils_Array::value($config->userFrameworkURLVar, $_GET) == 'civicrm/upgrade' ||
-      CRM_Utils_Array::value($config->userFrameworkURLVar, $_REQUEST) == 'civicrm/upgrade'
-    ) {
-      $displayLangSwitch = FALSE;
-    }
-    if ($displayLangSwitch) {
+    if (!CRM_Core_Config::isUpgradeMode()) {
       $this->assign('langSwitch', CRM_Core_I18n::languages(TRUE));
     }
 
@@ -167,8 +162,7 @@ class CRM_Core_Smarty extends Smarty {
    * Method providing static instance of SmartTemplate, as
    * in Singleton pattern.
    */
-  static
-  function &singleton() {
+  static function &singleton() {
     if (!isset(self::$_singleton)) {
       $config = CRM_Core_Config::singleton();
       self::$_singleton = new CRM_Core_Smarty($config->templateDir, $config->templateCompileDir);
@@ -211,8 +205,7 @@ class CRM_Core_Smarty extends Smarty {
     }
   }
 
-  static
-  function registerStringResource() {
+  static function registerStringResource() {
     require_once 'CRM/Core/Smarty/resources/String.php';
     civicrm_smarty_register_string_resource();
   }

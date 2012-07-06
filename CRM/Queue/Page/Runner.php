@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -59,9 +59,9 @@ class CRM_Queue_Page_Runner extends CRM_Core_Page {
     CRM_Utils_System::setTitle($runner->title);
     $this->assign('queueRunnerData', array(
         'qrid' => $runner->qrid,
-        'runNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/runNext'),
-        'skipNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/skipNext'),
-        'onEndAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/onEnd'),
+        'runNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/runNext', NULL, FALSE, NULL, FALSE ),
+        'skipNextAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/skipNext', NULL, FALSE, NULL, FALSE ),
+        'onEndAjax' => CRM_Utils_System::url($runner->pathPrefix . '/ajax/onEnd', NULL, FALSE, NULL, FALSE ),
         'completed' => 0,
         'numberOfItems' => $runner->queue->numberOfItems(),
       ));
@@ -76,4 +76,3 @@ class CRM_Queue_Page_Runner extends CRM_Core_Page {
     }
   }
 }
-

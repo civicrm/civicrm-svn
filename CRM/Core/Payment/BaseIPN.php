@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -333,10 +333,10 @@ LIMIT 1;";
             );
 
             $formatedParams = array('status_id' => CRM_Utils_Array::value('id', $calcStatus, 2),
-              'join_date' => CRM_Utils_Date::customFormat($dates['join_date'], $format),
-              'start_date' => CRM_Utils_Date::customFormat($dates['start_date'], $format),
-              'end_date' => CRM_Utils_Date::customFormat($dates['end_date'], $format),
-              'reminder_date' => CRM_Utils_Date::customFormat($dates['reminder_date'], $format),
+              'join_date' => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('join_date', $dates), $format),
+              'start_date' => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('start_date', $dates), $format),
+              'end_date' => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('end_date', $dates), $format),
+              'reminder_date' => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('reminder_date', $dates), $format),
             );
             //we might be renewing membership,
             //so make status override false.

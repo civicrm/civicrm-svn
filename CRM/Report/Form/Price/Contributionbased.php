@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -36,7 +36,10 @@ class CRM_Report_Form_Price_Contributionbased extends CRM_Report_Form_Extended {
 
   protected $_baseTable = 'civicrm_contribution'; function __construct() {
 
-    $this->_columns = $this->getContactColumns() + $this->getLineItemColumns() + $this->getContributionColumns();
+    $this->_columns = $this->getContactColumns() 
+      + $this->getContributionColumns()
+      + $this->getLineItemColumns();
+      
     parent::__construct();
   }
 

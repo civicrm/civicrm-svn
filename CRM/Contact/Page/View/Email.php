@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -50,12 +50,8 @@ class CRM_Contact_Page_View_Email extends CRM_Core_Page {
    */
   function run() {
     // get the callback, module and activity id
-    $action = CRM_Utils_Request::retrieve('action', 'String',
-      $this, FALSE, 'browse'
-    );
-    $id = CRM_Utils_Request::retrieve('id', 'Positive',
-      $this
-    );
+    $action = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE, 'browse' );
+    $id = CRM_Utils_Request::retrieve('id', 'Positive', $this );
 
     $dao                = new CRM_Core_DAO_ActivityHistory();
     $dao->activity_id   = $id;

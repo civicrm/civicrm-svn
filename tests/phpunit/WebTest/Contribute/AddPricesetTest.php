@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -599,6 +599,178 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     );
     foreach ($expected as $value => $label) {
       $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label));
+    }
+  }
+
+  function testContributeOfflineforSoftcreditwithApi() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
+    
+    //create a contact and return the contact id
+    $firstNameSoft = "John_".substr(sha1(rand()), 0, 5);
+    $lastNameSoft  = "Doe_".substr(sha1(rand()), 0, 5);
+    $this->webtestAddContact( $firstNameSoft, $lastNameSoft );
+    $url = $this->parseURL( );
+    $cid = $url['queryString']['cid'];
+    $this->assertType('numeric', $cid);
+    
+    $setTitle = 'Conference Fees - ' . substr(sha1(rand()), 0, 7);
+    $usedFor  = 'Contribution';
+    $setHelp  = 'Select your conference options.';
+    $this->_testAddSet($setTitle, $usedFor, $setHelp);
+
+    // Get the price set id ($sid) by retrieving and parsing the URL of the New Price Field form
+    // which is where we are after adding Price Set.
+    $elements = $this->parseURL();
+    $sid = $elements['queryString']['sid'];
+    $this->assertType('numeric', $sid);
+
+    $validStrings = array();
+    $fields = array(
+      'Full Conference' => 'Text',
+      'Meal Choice' => 'Select',
+      'Pre-conference Meetup?' => 'Radio',
+      'Evening Sessions' => 'CheckBox',
+    );
+    $this->_testAddPriceFields($fields, $validateStrings);
+
+    // load the Price Set Preview and check for expected values
+    $this->_testVerifyPriceSet($validateStrings, $sid);
+
+    $this->open($this->sboxPath . 'civicrm/contribute/add?reset=1&action=add&context=standalone');
+
+    // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
+    // button at the end of this page to show up, to make sure it's fully loaded.
+    $this->waitForElementPresent('_qf_Contribution_upload');
+
+    // Let's start filling the form with values.
+
+    // create new contact using dialog
+    $firstName = substr(sha1(rand()), 0, 7);
+    $this->webtestNewDialogContact($firstName, 'Contributor', $firstName . '@example.com');
+
+    // select contribution type
+    $this->select('contribution_type_id', 'value=1');
+
+    // fill in Received Date
+    $this->webtestFillDate('receive_date');
+
+    // source
+    $this->type('source', 'Mailer 1');
+
+    // select price set items
+    $this->select('price_set_id', "label=$setTitle");
+    $this->type("xpath=//input[@class='form-text four required']", "1");
+    $this->click("xpath=//input[@class='form-radio']");
+    $this->click("xpath=//input[@class='form-checkbox']");
+    // select payment instrument type = Check and enter chk number
+    $this->select('payment_instrument_id', 'value=4');
+    $this->waitForElementPresent('check_number');
+    $this->type('check_number', 'check #1041');
+
+    $this->type('trxn_id', 'P20901X1' . rand(100, 10000));
+   
+    $this->type( 'soft_credit_to', "$lastNameSoft, $firstNameSoft" );
+    $this->click('soft_credit_to');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
+    //Additional Detail section
+    $this->click('AdditionalDetail');
+    $this->waitForElementPresent('thankyou_date');
+
+    $this->type('note', 'This is a test note.');
+    $this->type('non_deductible_amount', '10');
+    $this->type('fee_amount', '0');
+    $this->type('net_amount', '0');
+    $this->type('invoice_id', time());
+    $this->webtestFillDate('thankyou_date');
+
+    // Clicking save.
+    $this->click('_qf_Contribution_upload');
+    $this->waitForPageToLoad('30000');
+
+    // Is status message correct?
+    $this->assertTrue($this->isTextPresent('The contribution record has been saved.'), "Status message didn't show up after saving!");
+
+    $this->waitForElementPresent("xpath=//div[@id='Contributions']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+
+    //click through to the Membership view screen
+    $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
+       
+    
+    $expected = array(
+                      2 => 'Donation',
+                      3 => '590.00',
+                      8 => 'Completed',
+                      9 => 'Check',
+                      10 => 'check #1041',
+                      16 => "$firstNameSoft $lastNameSoft",
+                      );
+    foreach ($expected as $label => $value) {
+      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+}
+
+    $exp = array(
+      2 => '$ 525.00',
+      3 => '$ 50.00',
+      4 => '$ 15.00',
+    );
+
+    foreach ($exp as $lab => $val) {
+      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[3]/td[2]/table/tbody/tr[$lab]/td[3]",
+        preg_quote($val)
+      );
+    }
+
+    
+    // Check for Soft contact created
+    $this->click("css=input#sort_name_navigation");
+     $this->type("css=input#sort_name_navigation", "$lastNameSoft, $firstNameSoft");
+    $this->typeKeys("css=input#sort_name_navigation", "$lastNameSoft, $firstNameSoft");
+    // wait for result list
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    
+    // visit contact summary page
+    $this->click("css=div.ac_results-inner li");
+    $this->waitForPageToLoad("30000");
+    $this->click( 'css=li#tab_contribute a' );
+    $this->waitForElementPresent( 'link=Record Contribution (Check, Cash, EFT ...)' );
+   
+    $id = explode( 'id=' ,$this->getAttribute("xpath=id('rowid')/td[7]/a[text()='View']@href") );
+    $id = substr($id[1],0,strpos($id[1],'&'));
+    $this->click("xpath=id('rowid')/td[7]/a");
+    $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
+    
+    foreach ($expected as $label => $value) {
+      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
+    }
+    
+    $params = array( 
+                    'contribution_id' => $id,
+                    'version' => 3,
+                     );
+    
+    require_once 'api/api.php';
+    $fields = $this->webtest_civicrm_api('contribution','get',$params );
+    $params['id'] = $params['contact_id'] = $fields['values'][$fields['id']]['soft_credit_to'];
+    $contact      = CRM_Contact_BAO_Contact::retrieve( $params, $defaults, true );
+    $expected = array(
+                      1 => $fields['values'][$fields['id']]['display_name'],
+                      2 => $fields['values'][$fields['id']]['contribution_type'],
+                      3 => $fields['values'][$fields['id']]['total_amount'],
+                      8 => $fields['values'][$fields['id']]['contribution_status'],
+                      9 => $fields['values'][$fields['id']]['contribution_payment_instrument'],
+                      10 => $fields['values'][$fields['id']]['contribution_check_number'],
+                      16 => $contact->display_name,
+                      );
+    foreach ($expected as $label => $value) {
+      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
     }
   }
 }

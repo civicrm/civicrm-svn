@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -140,13 +140,24 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       if ($this->_params['amount']) {
         $priceField = new CRM_Price_DAO_Field();
         $priceField->price_set_id = $this->_params['priceSetId'];
+        $priceField->orderBy('weight');
         $priceField->find();
+        $contriPriceId = NULL;
         while ($priceField->fetch()) {
+          if ($priceField->name == "contribution_amount") {
+            $contriPriceId = $priceField->id;
+          }
           if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_params['priceSetId'], 'is_quick_config') && !empty($this->_params["price_{$priceField->id}"])) {
+            if ($this->_values['fee'][$priceField->id]['html_type'] != 'Text') {
             $this->_params['amount_level'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'label');
+            }
             if ($priceField->name == "membership_amount") {
               $this->_params['selectMembership'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'membership_type_id');
             }
+          } // if seperate payment we set contribution amount to be null, so that it will not show contribution amount same as membership amount.
+          else 
+            if ((CRM_Utils_Array::value('is_separate_payment', $this->_membershipBlock)) && ($this->_values['fee'][$priceField->id]['name'] == "other_amount") && CRM_Utils_Array::value("price_{$contriPriceId}", $this->_params) < 1 && !CRM_Utils_Array::value("price_{$priceField->id}", $this->_params)) {
+              $this->_params['amount'] = null; 
           }
         }
       }
@@ -198,7 +209,13 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
           if (!$typeId || is_numeric($typeId)) {
             $blockName     = $fieldName = $field;
             $locationType  = 'location_type_id';
+            if ( $locType == 'Primary' ) {
+              $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
+              $locationValue = $defaultLocationType->id;
+            }
+            else {
             $locationValue = $locType;
+            }
             $locTypeId     = '';
 
             if ($field == 'url') {
@@ -216,12 +233,26 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
               $locTypeId = 'phone_type_id';
             }
 
-            $this->_params['onbehalf_location'][$blockName][$locType][$fieldName] = $value;
-            $this->_params['onbehalf_location'][$blockName][$locType][$locationType] = $locationValue;
-            $this->_params['onbehalf_location'][$blockName][$locType]['is_primary'] = 1;
-            if ($locTypeId) {
-              $this->_params['onbehalf_location'][$blockName][$locType][$locTypeId] = $typeId;
+            $isPrimary = 1;
+            if ( isset ($this->_params['onbehalf_location'][$blockName] )
+              && count( $this->_params['onbehalf_location'][$blockName] ) > 0 ) {
+                $isPrimary = 0;
             }
+            if ( !$locTypeId ) {
+              $this->_params['onbehalf_location'][$blockName][] = array( 
+                $fieldName    => $value,
+                $locationType => $locationValue,
+                'is_primary'  => $isPrimary
+              );
+          }
+            else {
+               $this->_params['onbehalf_location'][$blockName][] = array( 
+                $fieldName    => $value,
+                $locationType => $locationValue,
+                'is_primary'  => $isPrimary,
+                $locTypeId  => $typeId
+              );
+        }
           }
         }
         elseif (strstr($loc, 'custom')) {
@@ -634,7 +665,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
       if (array_key_exists('onbehalf_location', $params) && is_array($params['onbehalf_location'])) {
         foreach ($params['onbehalf_location'] as $block => $vals) {
-          $behalfOrganization[$block] = $vals;
+          if ( !is_array( $vals ) ) {
+            continue;
+        }
+
+          // fix the index of block elements
+          foreach ( $vals as $key => $val ) {
+            $behalfOrganization[$block][++$key] = $val;
+          }
         }
         unset($params['onbehalf_location']);
       }
@@ -748,6 +786,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       ) ||
       $this->_useForMember
     ) {
+      if (CRM_Utils_Array::value('selectMembership', $membershipParams))
       $processMembership = TRUE;
 
       if (!$this->_useForMember) {
@@ -809,7 +848,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       if (!empty($priceFieldIds)) {
         $contributionTypeID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceFieldIds['id'], 'contribution_type_id');
         unset($priceFieldIds['id']);
-
+        $membershipTypeIds = array();
         foreach ($priceFieldIds as $priceFieldId) {
           if ($id = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id')) {
             $membershipTypeIds[] = $id;
@@ -818,10 +857,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $membershipParams['selectMembership'] = $membershipTypeIds;
         $membershipParams['contribution_type_id'] = $contributionTypeID;
       }
+      if (CRM_Utils_Array::value('selectMembership', $membershipParams)) {
       CRM_Member_BAO_Membership::postProcessMembership($membershipParams, $contactID,
         $this, $premiumParams, $customFieldsFormatted,
         $fieldTypes
       );
+    }
     }
     else {
       // at this point we've created a contact and stored its address etc
@@ -1154,14 +1195,16 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $contribParams['soft_credit_to'] = $params['soft_credit_to'] = $contribSoftContactId;
     }
 
+    if ($params['amount']) {
     //add contribution record
     $contribution = &CRM_Contribute_BAO_Contribution::add($contribParams, $ids);
+    }
 
     // process soft credit / pcp pages
     CRM_Contribute_Form_Contribution_Confirm::processPcpSoft($params, $contribution);
 
     // process price set, CRM-5095
-    if ($contribution->id && $form->_priceSetId) {
+    if ($contribution && $contribution->id && $form->_priceSetId) {
       if (CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         $temp = array();
         foreach ($form->_lineItem as $key => $val) {
@@ -1175,6 +1218,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       } elseif (!CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem);
       }
+      if (!$form->_separateMembershipPayment && CRM_Utils_Array::value('is_quick_config', $form->_params)) {
+        $form->_lineItem = null;
+    }
     }
 
     //handle pledge stuff.
@@ -1262,7 +1308,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       }
     }
 
-    if ($online) {
+    if ($online && $contribution) {
       CRM_Core_BAO_CustomValueTable::postProcess($form->_params,
         CRM_Core_DAO::$_nullArray,
         'civicrm_contribution',
@@ -1270,7 +1316,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         'Contribution'
       );
     }
-    else {
+    elseif ($contribution) {
       //handle custom data.
       $params['contribution_id'] = $contribution->id;
       if (CRM_Utils_Array::value('custom', $params) &&
@@ -1300,7 +1346,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
 
     // next create the transaction record
-    if ((!$online || $form->_values['is_monetary']) && $result['trxn_id']) {
+    if ($contribution && (!$online || $form->_values['is_monetary']) && $result['trxn_id']) {
       $trxnParams = array(
         'contribution_id' => $contribution->id,
         'trxn_date' => $now,
@@ -1326,7 +1372,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
 
     // create an activity record
+    if ($contribution) {
     CRM_Activity_BAO_Activity::addActivity($contribution, NULL, $targetContactID);
+    }
 
     $transaction->commit();
 
@@ -1455,8 +1503,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
    * @return void
    * @access public
    */
-  static
-  function processOnBehalfOrganization(&$behalfOrganization, &$contactID, &$values, &$params, $fields = NULL) {
+  static function processOnBehalfOrganization(&$behalfOrganization, &$contactID, &$values, &$params, $fields = NULL) {
     $isCurrentEmployer = FALSE;
     $orgID = NULL;
     if (CRM_Utils_Array::value('organization_id', $behalfOrganization) &&
@@ -1469,22 +1516,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
     // formalities for creating / editing organization.
     $behalfOrganization['contact_type'] = 'Organization';
-    foreach ($behalfOrganization as $locFld => $value) {
-      if (in_array($locFld, array(
-        'phone', 'email', 'address'))) {
-        $locTypeId = array_keys($value);
-        foreach ($locTypeId as $locVal) {
-          $locVal = ($locVal == 'Primary') ? 1 : $locVal;
-
-          if ($locVal == 1) {
-            $behalfOrganization[$locFld][$locVal] = $value['Primary'];
-            unset($behalfOrganization[$locFld]['Primary']);
-          }
-          $behalfOrganization[$locFld][$locVal]['is_primary'] = 1;
-          $behalfOrganization[$locFld][$locVal]['location_type_id'] = $locVal;
-        }
-      }
-    }
 
     // get the relationship type id
     $relType = new CRM_Contact_DAO_RelationshipType();

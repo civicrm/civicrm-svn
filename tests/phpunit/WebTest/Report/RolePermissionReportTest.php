@@ -1,9 +1,9 @@
 <?php
 /*
    +--------------------------------------------------------------------+
-   | CiviCRM version 4.1                                                |
+   | CiviCRM version 4.2                                                |
    +--------------------------------------------------------------------+
-   | Copyright CiviCRM LLC (c) 2004-2011                                |
+   | Copyright CiviCRM LLC (c) 2004-2012                                |
    +--------------------------------------------------------------------+
    | This file is a part of CiviCRM.                                    |
    |                                                                    |
@@ -148,6 +148,14 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
       $this->click("_qf_Summary_submit_save");
       $this->waitForPageToLoad("30000");
     }
+    $permissions = array(
+      "edit-{$roleId}-access-civireport",
+      "edit-{$roleId}-view-all-contacts",
+      "edit-{$roleId}-administer-reports",
+      "edit-{$roleId}-access-civicrm"
+     );
+    $this->changePermissions($permissions);
+    
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->open($this->sboxPath);
     $this->waitForElementPresent('edit-submit');
@@ -168,7 +176,7 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
     $permissions = array(
       "edit-{$roleId}-access-civireport",
       "edit-{$roleId}-view-all-contacts",
-      "edit-{$roleId}-administer-civicrm",
+      "edit-{$roleId}-administer-reports",
       "edit-{$roleId}-access-civicrm",
       "edit-{$roleId}-administer-reserved-reports"
     );

@@ -32,6 +32,7 @@
 *  if you want to add an edit in place on a template:
 *  - add a class crm-entity and id {EntityName}-{Entityid} higher in the dom
 *  - add a class crm-editable and crmf-{FieldName} around the field (you can add a span if needed)
+*  - add data-action=create if you need to specify the api action to call (default setvalue)
 *  crmf- stands for crm field
 * - crmForm()
 *   this embed a civicrm form and make it in place (load+ajaxForm) 
@@ -43,29 +44,62 @@
 
     $.fn.crmEditable = function (options) {
 
+      // for a jquery object (the crm-editable), find the entity name and id to apply the changes to
+      // call result function(entity,id). The caller is responsible to use these params and do the needed
+      var getEntityID = function (field,result) {
+        var domid= $(field).closest('.crm-entity');
+        if (!domid) {
+          $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' on a parent element of the field",'notification',domid);
+          return false;
+        }
+        // trying to extract using the html5 data
+        if (domid.data('entity')) {
+          result (domid.data('entity'),domid.data('id'));
+          return true;
+        }
+        domid=domid.attr('id');
+        if (!domid) {
+          $().crmNotification ("FATAL crm-editable: Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',domid);
+          return false;
+        }
+        var e=domid.match(/(\S*)-(\S*)/);
+        if (!e) {
+           $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
+           return false;
+        }
+        result(e[1],e[2]);
+        return true;
+      }
+      // param in : a dom object that contains the field name as a class crmf-xxx
+      var getFieldName = function (field) {
+        if ($(field).data('field')) {
+           return $(field).data('field');   
+        }  
+        var fieldName=field.className.match(/crmf-(\S*)/)[1];
+        if (!fieldName) {
+          $().crmNotification ("Couldn't get the crm-editable field name to modify. You need to set crmf-{field_name} or data-{field_name}",'notification',field);
+          return false;
+        }
+        return fieldName;
+      }
+
+      
       var checkable = function () {
         $(this).change (function() {
           var params={sequential:1};
+          var entity = null;
           var checked = $(this).is(':checked');
-          var id= $(this).closest('.crm-entity').attr('id');
-          var fieldName=this.className.match(/crmf-(\S*)/)[1];
-          if (!fieldName) {
-            $().crmNotification ("FATAL crm-editable: Couldn't get the field name to modify. You need to set crmf-{field_name}",'notification',this);
+          if  (!getEntityID (this,function (e,id) {
+            entity=e;
+            params.id = id;
+            
+          })) { return };
+
+          params['field']=getFieldName(this);
+          if (!params['field'])
             return false;
-          }
-          params['field']=fieldName;
           params['value']=checked?'1':'0';//seems that the ajax backend gets lost with boolean
 
-          if (id) {
-             var e=id.match(/(\S*)-(\S*)/);
-             if (!e) 
-               $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
-             entity=e[1];
-             params.id=e[2];
-          } else {
-            $().crmNotification ("FATAL crm-editable: Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
-            return false;
-          }
           //$().crmAPI.call(this,entity,'create',params,{ create is still too buggy & perf
           $().crmAPI.call(this,entity,'setvalue',params,{
             error: function (data) {
@@ -175,7 +209,7 @@
         $i.addClass ('crm-editable-enabled');
         $i.editable(function(value,settings) {
         //$i.editable(function(value,editableSettings) {
-          parent=$i.parent('.crm-entity');
+          parent=$i.closest('.crm-entity');
           if (!parent) {
             $().crmNotification ("crm-editable: you need to define one parent element that has a class .crm-entity",'notification',this);
             return;
@@ -183,45 +217,27 @@
 
           $i.addClass ('crm-editable-saving');
           var params = {};
-          // trying to extract using the html5 data
-          var entity=parent.data('entity');
-          params.id = parent.data('id');
-          if (!entity) { //trying to extract it from the id (format: entity-id, eg: id='contact-42') if no html5 data
-             var id= cj(this).closest('.crm-entity').attr('id');
-             if (id) {
-               var e=id.match(/(\S*)-(\S*)/);
-               if (!e) 
-                 $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
-               entity=e[1];
-               params.id=e[2];
-             }
-          }
-          if (!params.id) {
-            cj().crmNotification ("FATAL crm-editable: Couldn't get the id of the entity "+entity,'notification',this);
-            return false;
-          }
+          var entity = null;
+          if  (!getEntityID (this,function (e,id) {
+            entity=e;
+            params.id = id;
+          })) {return;}
 
           if (params.id == "new") {
             params.id = '';
           }
 
-          if ($i.data('field')) {
-            //params[$i.data('field')] = value;
-            fieldName = $i.data('field');
+          if ($i.data('action')) {
+            action=$i.data('action');
           } else {
-            fieldName=this.className.match(/crmf-(\S*)/)[1];
-            if (!fieldName) {
-              cj().crmNotification ("FATAL crm-editable: Couldn't get the field name to modify. You need to set crmf-{field_name} or data-field='{field_name}' ",'notification',this);
+            action="setvalue";
+          }
+          params['field']=getFieldName(this);
+          if (!params['field'])
               return false;
-            }
-             
-          }  
-
-          params['field']=fieldName
           params['value']=value;
-          var self=this;
-          $().crmAPI.call(this,entity,'setvalue',params,{
-          //cj().crmAPI.call(this,entity,'create',params,{
+          $().crmAPI.call(this,entity,action,params,{
+          //cj().crmAPI.call(this,entity,'setvalue/create',params,{
               error: function (data) {
                 editableSettings.error.call(this,entity,fieldName,value,data);
               },

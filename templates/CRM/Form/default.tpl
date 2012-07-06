@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -33,6 +33,8 @@
 
 {if ! $suppressForm}
 </form>
+
+  {if $smarty.get.snippet neq 5}
 {literal}
 <script type="text/javascript" >
 cj( function( ) {
@@ -40,4 +42,5 @@ cj( function( ) {
 });
 </script>
 {/literal}
+{/if}
 {/if}

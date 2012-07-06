@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -142,7 +142,10 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form {
   public function usernameRule($params) {
     $config       = CRM_Core_Config::singleton();
     $errors       = array();
-    $check_params = array('name' => $params['cms_name']);
+    $check_params = array(
+      'name' => $params['cms_name'],
+      'mail' => $params['email']
+    );
     $config->userSystem->checkUserNameEmailExists($check_params, $errors);
 
     return empty($errors) ? TRUE : $errors;

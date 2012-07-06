@@ -1,7 +1,7 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 4.1                                                |
+-- | CiviCRM version 4.2                                                |
 -- +--------------------------------------------------------------------+
--- | Copyright CiviCRM LLC (c) 2004-2011                                |
+-- | Copyright CiviCRM LLC (c) 2004-2012                                |
 -- +--------------------------------------------------------------------+
 -- | This file is a part of CiviCRM.                                    |
 -- |                                                                    |
@@ -88,7 +88,7 @@ VALUES
 INSERT INTO civicrm_membership_block
     (entity_table, entity_id, membership_types, membership_type_default, display_min_fee, is_separate_payment, new_title, new_text, renewal_title, renewal_text, is_required, is_active)
 VALUES
-    ('civicrm_contribution_page', 2, '{literal}a:2:{i:1;i:0;i:2;i:0;}{/literal}', 1, 1, 0, 'Membership Levels and Fees', 'Please select the appropriate membership level below. You will have a chance to review your selection and the corresponding dues on the next page prior to your credit card being charged.', 'Renew or Upgrade Your Membership', 'Information on your current membership level and expiration date is shown below. You may renew or upgrade at any time - but don''t let your membership lapse!', 1, 1);
+    ('civicrm_contribution_page', 2, '{literal}a:2:{i:1;i:0;i:2;i:0;}{/literal}', 1, 1, 0, 'Membership Levels', 'Please select the appropriate membership level below. You will have a chance to review your selection and the corresponding dues on the next page prior to your credit card being charged.', 'Renew or Upgrade Your Membership', 'Information on your current membership level and expiration date is shown below. You may renew or upgrade at any time - but don''t let your membership lapse!', 1, 1);
 
 INSERT INTO civicrm_pledge_block ( entity_table, entity_id, pledge_frequency_unit, is_pledge_interval, max_reminders, initial_reminder_day, additional_reminder_day)
 VALUES 
@@ -192,7 +192,7 @@ SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` 
 INSERT INTO 
        `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
 VALUES
-    (@priceFieldID,'other_amount','Other Amount','1',1,1,0);
+    (@priceFieldID,'other_amount','Contribution Amount','1',1,1,0);
 
 
 -- Insert sample data for event

@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -75,10 +75,11 @@
 {/if}
 
 {if $priceSet}
-    <fieldset id="priceset" class="crm-group priceset-group"><legend>{$event.fee_label}</legend>
+    {if ! $quickConfig}<fieldset id="priceset" class="crm-group priceset-group"><legend>{$event.fee_label}</legend>{/if}
         {include file="CRM/Price/Form/PriceSet.tpl" extends="Event"}
 	{include file="CRM/Price/Form/ParticipantCount.tpl"}
-    </fieldset>
+    {if ! $quickConfig}</fieldset>{/if}
+
     {if $form.is_pay_later}
         <div class="crm-section pay_later-section">
 	        <div class="label">&nbsp;</div>

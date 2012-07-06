@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -81,10 +81,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
       {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
   {else}
     <div id="priceset-div">
-      <fieldset>
-        <legend>{ts}Contribution{/ts}</legend>
         {include file="CRM/Price/Form/PriceSet.tpl" extends="Contribution"}
-      </fieldset>
     </div>
   {/if}
 
@@ -350,6 +347,7 @@ if ( {/literal}"{$form.is_recur}"{literal} ) {
   }
     }
 }
+
 function enablePeriod ( ) {
     var frqInt  = {/literal}"{$form.frequency_interval}"{literal};
     if ( document.getElementsByName("is_recur")[0].checked == true ) {
@@ -379,7 +377,6 @@ function enablePeriod ( ) {
       cj("#auto_renew").attr( 'checked', false );
       cj('#allow_auto_renew').hide( );
   }
-
     }
 }
 
@@ -438,13 +435,13 @@ function pcpAnonymous( ) {
         }
     }
 }
+
 {/literal}{if $form.is_pay_later and $paymentProcessor.payment_processor_type EQ 'PayPal_Express'}{literal}
     showHidePayPalExpressOption();
 {/literal} {/if}
 
 {literal}
-function showHidePayPalExpressOption()
-{
+function showHidePayPalExpressOption() {
   if (document.getElementsByName("is_pay_later")[0].checked) {
     show("crm-submit-buttons");
     hide("paypalExpress");

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -54,8 +54,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
    * @access public
    * @static
    */
-  static
-  function create(&$params) {
+  static function create(&$params) {
     //create mode only as we don't support editing line items
 
     CRM_Utils_Hook::pre('create', 'LineItem', $params['entity_id'], $params);
@@ -83,8 +82,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $lineItem = new CRM_Price_BAO_LineItem();
     $lineItem->copyValues($params);
     if ($lineItem->find(TRUE)) {
@@ -103,8 +101,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
    *
    * @return array of line items
    */
-  static
-  function getLineItems($entityId, $entity = 'participant') {
+  static function getLineItems($entityId, $entity = 'participant', $isQuick = NULL) {
     $selectClause = $whereClause = $fromClause = NULL;
 
     $selectClause = "
@@ -125,10 +122,13 @@ FROM      civicrm_%2 as %2
 LEFT JOIN civicrm_line_item li ON ( li.entity_id = %2.id AND li.entity_table = 'civicrm_%2')
 LEFT JOIN civicrm_price_field_value pfv ON ( pfv.id = li.price_field_value_id )
 LEFT JOIN civicrm_price_field pf ON (pf.id = li.price_field_id )";
-
     $whereClause = "
 WHERE     %2.id = %1";
 
+    if ($isQuick) {
+      $fromClause .= " LEFT JOIN civicrm_price_set cps on cps.id = pf.price_set_id ";
+      $whereClause .= " and cps.is_quick_config = 0";
+    }
     $lineItems = array();
 
     if (!$entityId || !$entity || !$fromClause) {
@@ -177,8 +177,7 @@ WHERE     %2.id = %1";
    * @return void
    * @access static
    */
-  static
-  function format($fid, &$params, &$fields, &$values) {
+  static function format($fid, &$params, &$fields, &$values) {
     if (empty($params["price_{$fid}"])) {
       return;
     }

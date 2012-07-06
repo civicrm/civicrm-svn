@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -74,7 +74,9 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
     7 => 'Seven',
     8 => 'Eight',
     9 => 'Nine',
-  ); function __construct($state = NULL,
+  ); 
+  
+  function __construct($state = NULL,
     $action = CRM_Core_Action::NONE,
     $method = 'post',
     $name   = NULL
@@ -105,8 +107,7 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
     parent::__construct($state, $action, $method, $name);
   }
 
-  static
-  function &incrementalPhpObject($version) {
+  static function &incrementalPhpObject($version) {
     static $incrementalPhpObject = array();
 
     $versionParts = explode('.', $version);
@@ -277,8 +278,7 @@ SET    version = '$version'
     return $revList;
   }
 
-  static
-  function getRevisionPart($rev, $index = 1) {
+  static function getRevisionPart($rev, $index = 1) {
     $revPattern = '/^((\d{1,2})\.\d{1,2})\.(\d{1,2}|\w{4,7})?$/i';
     preg_match($revPattern, $rev, $matches);
 
@@ -330,7 +330,7 @@ SET    version = '$version'
    */
   function getUpgradeVersions() {
     $latestVer = CRM_Utils_System::version();
-    $currentVer = CRM_Core_BAO_Domain::version();
+    $currentVer = CRM_Core_BAO_Domain::version(true);
     if (!$currentVer) {
       CRM_Core_Error::fatal(ts('Version information missing in civicrm database.'));
     }
@@ -412,8 +412,7 @@ SET    version = '$version'
    *
    * @return CRM_Queue
    */
-  static
-  function buildQueue($currentVer, $latestVer, $postUpgradeMessageFile) {
+  static function buildQueue($currentVer, $latestVer, $postUpgradeMessageFile) {
     $upgrade = new CRM_Upgrade_Form();
 
     // hack to make 4.0.x (D7,J1.6) codebase go through 3.4.x (d6, J1.5) upgrade files,
@@ -494,8 +493,7 @@ SET    version = '$version'
    * @param $latestVer string, the target (final) revision
    * @param $postUpgradeMessageFile string, path of a modifiable file which lists the post-upgrade messages
    */
-  static
-  function doIncrementalUpgradeStep(CRM_Queue_TaskContext$ctx, $rev, $currentVer, $latestVer, $postUpgradeMessageFile) {
+  static function doIncrementalUpgradeStep(CRM_Queue_TaskContext$ctx, $rev, $currentVer, $latestVer, $postUpgradeMessageFile) {
     $upgrade = new CRM_Upgrade_Form();
 
     $phpFunctionName = 'upgrade_' . str_replace('.', '_', $rev);
@@ -559,7 +557,6 @@ SET    version = '$version'
     return TRUE;
   }
   
-  
   /**
    * Perform an incremental version update
    *
@@ -575,8 +572,7 @@ SET    version = '$version'
     return TRUE;
   }
 
-  static
-  function doFinish() {
+  static function doFinish() {
     $upgrade = new CRM_Upgrade_Form();
     list($ignore, $latestVer) = $upgrade->getUpgradeVersions();
     // Seems extraneous in context, but we'll preserve old behavior
@@ -587,4 +583,3 @@ SET    version = '$version'
     $config->cleanupCaches(1, FALSE);
   }
 }
-

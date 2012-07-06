@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,7 +31,7 @@
  * and similar across all objects (thus providing both reuse and standards)
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -271,7 +271,7 @@ class CRM_Core_Action {
     if ($enclosedAllInSingleUL) {
       $allLinks = '';
       CRM_Utils_String::append($allLinks, '</li><li>', $mainLinks);
-      $allLinks = "$extraULName <ul class='panel'><li>{$allLinks}</li></ul>";
+      $allLinks = "{$extraULName}<ul class='panel'><li>{$allLinks}</li></ul>";
       $result = "<span class='btn-slide'>{$allLinks}</span>";
     }
     else {
@@ -280,7 +280,7 @@ class CRM_Core_Action {
       if (count($extraLinks) > 1) {
         $mainLinks = array_slice($url, 0, 2);
         CRM_Utils_String::append($extra, '</li><li>', $extraLinks);
-        $extra = "$extraULName <ul class='panel'><li>{$extra}</li></ul>";
+        $extra = "{$extraULName}<ul class='panel'><li>{$extra}</li></ul>";
       }
       $resultLinks = '';
       CRM_Utils_String::append($resultLinks, '', $mainLinks);

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -111,9 +111,7 @@ class CRM_Admin_Form_RelationshipType extends CRM_Admin_Form {
     ) {
       $defaults = $params = array();
       $params = array('id' => $this->_id);
-      require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->_BAOName) . ".php");
       eval($this->_BAOName . '::retrieve( $params, $defaults );');
-
       $defaults['contact_types_a'] = $defaults['contact_type_a'];
       if (CRM_Utils_Array::value('contact_sub_type_a', $defaults)) {
         $defaults['contact_types_a'] .= CRM_Core_DAO::VALUE_SEPARATOR . $defaults['contact_sub_type_a'];

@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -34,7 +34,7 @@
     </div>
     {else}
       <div>
-        <a id="edit-email" class="crm-link-action" title="{ts}click to add email address{/ts}">
+        <a id="edit-email" class="crm-link-action empty-email" title="{ts}click to add email address{/ts}">
           <span class="batch-edit"></span>{ts}add email{/ts}
         </a>
       </div>
@@ -67,9 +67,9 @@ cj(function(){
       cj('#edit-email').show();
     }).mouseleave( function() {
       cj(this).removeClass('crm-inline-edit-hover');
-      {/literal}{if $email}{literal}
+      if ( !cj('#edit-email').hasClass('empty-email') ) { 
       cj('#edit-email').hide();
-      {/literal}{/if}{literal}
+      }
     });
 
     cj('#edit-email').click( function() {

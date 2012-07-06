@@ -3,9 +3,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -33,15 +33,10 @@
  * @package CiviCRM_APIv3
  * @subpackage API_Domain
  *
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * @version $Id: Domain.php 30171 2010-10-14 09:11:27Z mover $
  *
  */
-
-/**
- * Include utility functions
- */
-require_once 'CRM/Core/BAO/Domain.php';
 
 /**
  * Get CiviCRM domain details

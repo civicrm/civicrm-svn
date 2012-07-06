@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -152,6 +152,26 @@
                       <td>{$form.total_amount.html}<br />
                       <span class="description">{ts}Membership payment amount.{/ts}</span></td>                   
         </tr>
+       {if $context neq 'standalone'}
+         <tr class="crm-membership-form-block-contribution-contact">
+           <td class="label">{$form.contribution_contact.label}</td>
+           <td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
+         </tr>
+         <tr id="record-different-contact">
+           <td>&nbsp;</td>
+           <td>
+             <table class="compressed">
+               <tr class="crm-membership-form-block-honor-type">
+                 <td class="label">{$form.honor_type_id.label}</td>
+                 <td>{$form.honor_type_id.html}</td>
+               </tr>
+               <tr id ='contributionContact' class="crm-membership-form-block-contribution-type">
+                 {include file="CRM/Contact/Form/NewContact.tpl"}
+               </tr>
+               </table>
+            </td>
+       </tr>
+       {/if}
         <tr class="crm-membership-form-block-billing"><td colspan="2">
         {include file='CRM/Core/BillingBlock.tpl'}
         </td></tr>

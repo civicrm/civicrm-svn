@@ -1,9 +1,9 @@
 <?php
 /*
    +--------------------------------------------------------------------+
-   | CiviCRM version 4.1                                                |
+   | CiviCRM version 4.2                                                |
    +--------------------------------------------------------------------+
-   | Copyright CiviCRM LLC (c) 2004-2011                                |
+   | Copyright CiviCRM LLC (c) 2004-2012                                |
    +--------------------------------------------------------------------+
    | This file is a part of CiviCRM.                                    |
    |                                                                    |
@@ -116,7 +116,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->waitForPageToLoad('30000');
-    $this->_testAnomoyousOganization($pageId, $cid, $pageTitle);
+    //$this->_testAnomoyousOganization($pageId, $cid, $pageTitle);
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->waitForPageToLoad('30000');
     $this->_testUserWithOneRelationship($pageId, $cid, $pageTitle);
@@ -125,14 +125,292 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->_testUserWithMoreThanOneRelationship($pageId, $cid, $pageTitle);
   }
 
+  function testOnBehalfOfOrganizationWithMembershipData() {
+
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+
+    // create new individual
+    $this->open($this->sboxPath . "civicrm/profile/edit?reset=1&gid=4");
+    $firstName     = 'John_x_' . substr(sha1(rand()), 0, 7);
+    $lastName      = 'Anderson_c_' . substr(sha1(rand()), 0, 7);
+
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("_qf_Edit_next");
+    $this->type("first_name", $firstName);
+    $this->type("last_name", $lastName);
+    $this->click("_qf_Edit_next");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("profilewrap4");
+
+    // Is status message correct?                                                                                                                                                                           
+    $this->assertTextPresent("Thank you. Your information has been saved.", "Save successful status message didn't show up after saving profile to update testUserName!");
+
+
+    //custom data
+    // Go directly to the URL of the screen that you will be testing (New Custom Group).
+    $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
+
+    $this->waitForPageToLoad("30000");
+
+    //fill custom group title
+    $customGroupTitle = 'custom_' . substr(sha1(rand()), 0, 7);
+    $this->click("title");
+    $this->type("title", $customGroupTitle);
+
+    //custom group extends
+    $this->click("extends[0]");
+    $this->select("extends[0]", "value=Membership");
+    //$this->click("//option[@value='Contact']");
+    $this->click("_qf_Group_next-bottom");
+    $this->waitForElementPresent("_qf_Field_cancel-bottom");
+
+    //Is custom group created?
+    $this->assertTrue($this->isTextPresent("Your custom field set '{$customGroupTitle}' has been added. You can add custom fields now."));
+
+    //add custom field - alphanumeric checkbox
+    $checkboxFieldLabel = 'custom_field' . substr(sha1(rand()), 0, 4);
+    $this->click("label");
+    $this->type("label", $checkboxFieldLabel);
+    $this->click("data_type[1]");
+    $this->select("data_type[1]", "value=CheckBox");
+    $this->click("//option[@value='CheckBox']");
+    $checkboxOptionLabel1 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_1", $checkboxOptionLabel1);
+    $this->type("option_value_1", "1");
+    $checkboxOptionLabel2 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_2", $checkboxOptionLabel2);
+    $this->type("option_value_2", "2");
+    $this->click("link=another choice");
+    $checkboxOptionLabel3 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_3", $checkboxOptionLabel3);
+    $this->type("option_value_3", "3");
+
+
+    //enter options per line
+    $this->type("options_per_line", "2");
+
+    //enter pre help message
+    $this->type("help_pre", "this is field pre help");
+
+    //enter post help message
+    $this->type("help_post", "this field post help");
+
+    //Is searchable?
+    $this->click("is_searchable");
+
+    //clicking save
+    $this->click("_qf_Field_next");
+    $this->waitForPageToLoad("30000");
+
+    //Is custom field created?
+    $this->assertTrue($this->isTextPresent("Your custom field '$checkboxFieldLabel' has been saved."));
+
+    //create another custom field - Integer Radio
+    $this->click("//a[@id='newCustomField']/span");
+    $this->waitForPageToLoad("30000");
+    $this->click("data_type[0]");
+    $this->select("data_type[0]", "value=1");
+    $this->click("//option[@value='1']");
+    $this->click("data_type[1]");
+    $this->select("data_type[1]", "value=Radio");
+    $this->click("//option[@value='Radio']");
+
+    $radioFieldLabel = 'custom_field' . substr(sha1(rand()), 0, 4);
+    $this->type("label", $radioFieldLabel);
+    $radioOptionLabel1 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_1", $radioOptionLabel1);
+    $this->type("option_value_1", "1");
+    $radioOptionLabel2 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_2", $radioOptionLabel2);
+    $this->type("option_value_2", "2");
+    $this->click("link=another choice");
+    $radioOptionLabel3 = 'optionLabel_' . substr(sha1(rand()), 0, 5);
+    $this->type("option_label_3", $radioOptionLabel3);
+    $this->type("option_value_3", "3");
+
+    //select options per line
+    $this->type("options_per_line", "3");
+
+    //enter pre help msg
+    $this->type("help_pre", "this is field pre help");
+
+    //enter post help msg
+    $this->type("help_post", "this is field post help");
+
+    //Is searchable?
+    $this->click("is_searchable");
+
+    //clicking save
+    $this->click("_qf_Field_next");
+    $this->waitForPageToLoad("30000");
+
+    //Is custom field created
+    $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
+    
+    //add the above custom data to the On Behalf of Profile
+    $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->click("link=Reserved Profiles");
+
+    $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
+    $this->waitForPageToLoad("30000");
+
+    $this->click("link=Add Field");
+    $this->waitForElementPresent('_qf_Field_next-bottom');
+    $this->select('field_name[0]', 'value=Membership');
+    $label = $checkboxFieldLabel.' :: '. $customGroupTitle;
+    $this->select('field_name[1]', "label=$label");
+    $this->click('field_name[1]');
+    $this->click('_qf_Field_next_new-bottom');
+    $this->waitForPageToLoad("30000");
+
+    $this->select('field_name[0]', 'value=Membership');
+    $label = $radioFieldLabel.' :: '. $customGroupTitle;
+    $this->select('field_name[1]', "label=$label");
+    $this->click('field_name[1]');
+    $this->click('_qf_Field_next-bottom');
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$radioFieldLabel}' has been saved to 'On Behalf Of Organization'."));
+
+
+    //create organisation
+    $orgName = "Org WebAccess ". substr(sha1(rand()), 0, 7);
+    $orgEmail = "org". substr(sha1(rand()), 0, 7) . "@web.com";
+    $this->webtestAddOrganization($orgName, $orgEmail);
+
+    $this->waitForPageToLoad("30000");
+    $this->click("css=li#tab_member a");
+
+    $this->waitForElementPresent('link=Add Membership');
+    $this->click('link=Add Membership');
+
+    $this->waitForElementPresent('_qf_Membership_cancel-bottom');
+
+    // fill in Membership Organization and Type                                                                                                                                                             
+    $this->select('membership_type_id[0]', "value=1");
+    $this->select('membership_type_id[1]', "value=1");
+
+    // fill in Source                                                                                                                                                                                       
+    $sourceText = 'On behalf Membership Webtest';
+    $this->type('source', $sourceText);
+
+    $this->waitForElementPresent("css=div#{$customGroupTitle} div.crm-accordion-pointer");
+    $this->click("css=div#{$customGroupTitle} div.crm-accordion-pointer");
+    //$this->waitForElementPresent('_qf_Membership_cancel-bottom111');
+
+    // select newly created processor                                                                                                                                                                   
+    $xpath = "xpath=//label[text() = '{$checkboxOptionLabel1}']/preceding-sibling::input[1]";
+    $this->assertTrue($this->isTextPresent($checkboxOptionLabel1));
+    $this->check($xpath);
+    
+    $xpath = "xpath=//label[text() = '{$checkboxOptionLabel3}']/preceding-sibling::input[1]";
+    $this->assertTrue($this->isTextPresent($checkboxOptionLabel3));
+    $this->check($xpath);
+
+    $xpath = "xpath=//label[text() = '{$radioOptionLabel1}']/preceding-sibling::input[1]";
+    $this->assertTrue($this->isTextPresent($radioOptionLabel1));
+    $this->check($xpath);
+
+    $this->waitForElementPresent('_qf_Membership_cancel-bottom');
+    $this->click('_qf_Membership_upload-bottom');
+
+
+    $this->waitForPageToLoad("30000");
+    $this->click("css=li#tab_rel a");
+
+    $this->waitForElementPresent('link=Add Relationship');
+    $this->click('link=Add Relationship');
+
+    $this->waitForElementPresent('relationship_type_id');
+    $this->click("relationship_type_id");
+    $this->select("relationship_type_id", "label=Employer of");
+    // search organization                                                                                                                                                                                  
+    $this->type('contact_1', $firstName);
+    $this->click("contact_1");
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
+    $this->assertContains($firstName, $this->getValue('contact_1'), "autocomplete expected $firstName but didn’t find it in " . $this->getValue('contact_1'));
+
+    // give permission                                                                                                                                                                                      
+    $this->click("is_permission_a_b");
+    $this->click("is_permission_b_a");
+
+    // save relationship                                                                                                                                                                                    
+    $this->click("details-save");
+
+    // We need a payment processor
+    $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+    $processorType = 'Dummy';
+    $pageTitle = substr(sha1(rand()), 0, 7);
+    $rand = 100;
+    $hash = substr(sha1(rand()), 0, 7);
+    $amountSection = TRUE;
+    $payLater = TRUE;
+    $onBehalf = TRUE;
+    $pledges = FALSE;
+    $recurring = FALSE;
+    $memberships = TRUE;
+    $memPriceSetId = NULL;
+    $friend = TRUE;
+    $profilePreId = NULL;
+    $profilePostId = NULL;
+    $premiums = FALSE;
+    $widget = FALSE;
+    $pcp = FALSE;
+    $honoreeSection = FALSE;
+    $isAddPaymentProcessor = TRUE;
+    $isPcpApprovalNeeded = FALSE;
+    $isSeparatePayment = FALSE;
+
+    // create a new online contribution page
+    // create contribution page with randomized title and default params
+    $pageId = $this->webtestAddContributionPage($hash,
+      $rand,
+      $pageTitle,
+      array($processorName => $processorType),
+      $amountSection,
+      $payLater,
+      $onBehalf,
+      $pledges,
+      $recurring,
+      $memberships,
+      $memPriceSetId,
+      $friend,
+      $profilePreId,
+      $profilePostId,
+      $premiums,
+      $widget,
+      $pcp,
+      $isAddPaymentProcessor,
+      $isPcpApprovalNeeded,
+      $isSeparatePayment,
+      $honoreeSection
+    );
+
+    //logout
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->waitForPageToLoad('30000');
+
+  }
+
   function _testAnomoyousOganization($pageId, $cid, $pageTitle) {
     //Open Live Contribution Page
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
 
     $this->waitForElementPresent("_qf_Main_upload-bottom");
 
-    $this->click('CIVICRM_QFID_amount_other_radio_4');
-    $this->type('amount_other', 60);
+    $this->click('CIVICRM_QFID_0_8');
+    $this->type('css=div.other_amount-section input', 60);
 
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
     $lastName  = 'An' . substr(sha1(rand()), 0, 7);
@@ -221,8 +499,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $groupName = $this->WebtestAddGroup();
     $this->open($this->sboxPath . "civicrm/group?reset=1");
     $this->waitForPageToLoad('30000');
-
-    $groupId = $this->getText("xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]");
+                                     //table[@id="crm-group-selector"]/tbody//tr/td[text()='Administrators']/../td[2]x
+    $groupId = $this->getText("xpath=//table[@id='crm-group-selector']/tbody//tr/td[text()='{$groupName}']/../td[2]");
 
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
     $this->waitForPageToLoad("30000");
@@ -494,8 +772,9 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     // Create new group
     $groupName = $this->WebtestAddGroup();
     $this->open($this->sboxPath . "civicrm/group?reset=1");
-    $this->waitForPageToLoad('30000');
-
+    $this->waitForElementPresent('_qf_Search_refresh');
+    $this->click('_qf_Search_refresh');
+    $this->waitForElementPresent("xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]");
     $groupId = $this->getText("xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]");
 
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
@@ -552,7 +831,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     $this->waitForPageToLoad('30000');
     $this->assertTrue($this->isTextPresent("Your custom field '$fieldTitle' has been saved."));
-    $url = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[8]/span/a@href"));
+    $url = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1]/span[text()='$fieldTitle']/../td[8]/span/a@href"));
     $fieldId = $url[1];
 
     // Enable CiviCampaign module if necessary

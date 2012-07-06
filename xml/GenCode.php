@@ -132,6 +132,8 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
       exit();
     }
 
+    $this->generateTemplateVersion($argVersion);
+
     $this->setupCms($argCms, $db_version);
 
     echo "Parsing input file $file\n";
@@ -159,7 +161,6 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     $this->generateInstallLangs();
     $this->generateDAOs($tables);
     $this->generateSchemaStructure($tables);
-    $this->generateTemplateVersion($argVersion);
   }
 
   function generateListAll($tables) {

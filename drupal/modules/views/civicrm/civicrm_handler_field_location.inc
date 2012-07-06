@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -33,6 +33,7 @@ class civicrm_handler_field_location extends civicrm_handler_field {
   static $_locationOps;
   static $location_op;
   function construct() {
+    parent::construct();
     if (!self::$_locationTypes) {
       if (!civicrm_initialize()) {
         return;

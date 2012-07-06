@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -78,8 +78,14 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
     $actualBlockCount = 1;
     if (count($this->_emails) > 1) {
       $actualBlockCount = $totalBlocks = count($this->_emails);
+      if ( $totalBlocks < $this->_blockCount ) {
       $additionalBlocks = $this->_blockCount - $totalBlocks;
       $totalBlocks += $additionalBlocks;
+    }
+      else {
+        $actualBlockCount++;
+        $totalBlocks++;
+      }
     }
 
     $this->assign('actualBlockCount', $actualBlockCount);
@@ -104,6 +110,47 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
     );
 
     $this->addButtons($buttons);
+
+    $this->addFormRule( array( 'CRM_Contact_Form_Inline_Email', 'formRule' ) );
+  }
+
+  /**
+   * global validation rules for the form
+   *
+   * @param array $fields     posted values of the form
+   * @param array $errors     list of errors to be posted back to the form
+   *
+   * @return $errors
+   * @static
+   * @access public
+   */
+  static function formRule( $fields, $errors ) {
+    $hasData = $hasPrimary = $errors = array( );
+    if ( CRM_Utils_Array::value( 'email', $fields ) && is_array( $fields['email'] ) ) {
+      foreach ( $fields['email'] as $instance => $blockValues ) {
+        $dataExists = CRM_Contact_Form_Contact::blockDataExists( $blockValues );
+
+        if ( $dataExists ) {
+          $hasData[] = $instance;
+          if ( CRM_Utils_Array::value( 'is_primary', $blockValues ) ) {
+            $hasPrimary[] = $instance;
+            if ( !$primaryID &&
+              CRM_Utils_Array::value( 'email', $blockValues ) ) {
+                $primaryID = $blockValues['email'];
+            }
+          }
+        }
+      }
+
+      if ( empty( $hasPrimary ) && !empty( $hasData ) ) {
+        $errors["email[1][is_primary]"] = ts('One email should be marked as primary.' );
+      }
+
+      if ( count( $hasPrimary ) > 1 ) {
+        $errors["email[".array_pop($hasPrimary)."][is_primary]"] = ts( 'Only one email can be marked as primary.' );
+      }
+    }
+    return $errors;
   }
 
   /**
@@ -128,6 +175,12 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
         $defaults['email'][$id] = $value;
       }
     }
+    else {
+      // get the default location type
+      $locationType = CRM_Core_BAO_LocationType::getDefault();
+      $defaults['email'][1]['location_type_id'] = $locationType->id;
+    }
+
     return $defaults;
   }
 
@@ -146,6 +199,12 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
 
     // save email changes
     CRM_Core_BAO_Block::create('email', $params);
+
+    // make entry in log table
+    CRM_Core_BAO_Log::register( $this->_contactId,
+      'civicrm_contact',
+      $this->_contactId
+    );
 
     $response = array('status' => 'save');
     echo json_encode($response);

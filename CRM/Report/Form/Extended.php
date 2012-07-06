@@ -3,7 +3,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -87,7 +87,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
       $this->_groupBy[] = $this->_aliases[$this->_baseTable] . ".id";
     }
     //@todo - this should be in the parent function or at parent level - perhaps build query should do this?
-    if (!empty($this->_groupBy)) {
+    if (!empty($this->_groupBy) && is_array($this->_groupBy)) {
       $this->_groupBy = 'GROUP BY ' . implode(',', $this->_groupBy);
     }
   }
@@ -189,7 +189,11 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'price_field_value_id' =>
           array('title' => ts('Price Field Option'),
           ),
+          'line_item_id' =>
+          array('title' => ts('Individual Line Item'),
+            'name' => 'id',
         ),
+      ),
       ),
     );
   }
@@ -254,6 +258,13 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'type' => CRM_Utils_Type::T_STRING,
             'operator' => 'like',
             'name' => 'label',
+          ),
+        ),
+        'order_bys' =>
+        array(
+          'price_field_label' =>
+          array('title' => ts('Price Field Label'),
+                'name' => 'label',
           ),
         ),
         'group_bys' =>
@@ -396,10 +407,25 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
     return array(
       'civicrm_event' => array(
         'dao' => 'CRM_Event_DAO_Event',
-        'fields' => array(
-          'event_type_id' => array(
-            'title' => ts('Event Type'),
+        'fields' =>
+        array(
+          'id' => array(
+            'no_display' => TRUE,
+            'required' => TRUE,
+          ),
+          'title' => array('title' => ts('Event Title'),
+            'required' => TRUE,
+          ),
+          'event_type_id' => array('title' => ts('Event Type'),
+            'required' => TRUE,
             'alter_display' => 'alterEventType',
+          ),
+          'fee_label' => array('title' => ts('Fee Label')),
+          'event_start_date' => array('title' => ts('Event Start Date'),
+        ),
+          'event_end_date' => array('title' => ts('Event End Date')),
+          'max_participants' => array('title' => ts('Capacity'),
+            'type' => CRM_Utils_Type::T_INT,
           ),
         ),
         'grouping' => 'event-fields',
@@ -423,6 +449,11 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'default_order' => 'ASC',
           ),
         ),
+        'group_bys' => array(
+          'event_type_id' => array(
+          'title' => ts('Event Type'),
+      ),
+        ),
       ),
     );
   }
@@ -444,6 +475,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'payment_instrument_id' => array('title' => ts('Payment Instrument'),
             'alter_display' => 'alterPaymentType',
           ),
+          'source' => array('title' => 'Contribution Source'),
           'trxn_id' => NULL,
           'receive_date' => array('default' => TRUE),
           'receipt_date' => NULL,
@@ -477,12 +509,23 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'total_amount' =>
           array('title' => ts('Contribution Amount')),
         ),
+        'order_bys' =>
+        array(
+          'payment_instrument_id' =>
+          array('title' => ts('Payment Instrument'),
+          ),
+        ),
         'group_bys' =>
         array(
           'contribution_type_id' =>
           array('title' => ts('Contribution Type')),
           'payment_instrument_id' =>
           array('title' => ts('Payment Instrument')),
+          'contribution_id' =>
+          array('title' => ts('Individual Contribution'),
+            'name' => 'id',
+        ),
+          'source' => array('title' => 'Contribution Source'),
         ),
         'grouping' => 'contribution-fields',
       ),
@@ -509,6 +552,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           ),
           'nick_name' => array(
             'title' => ts('Nick Name'),
+            'alter_display' => 'alterNickName',
           ),
         ),
         'filters' => array(
@@ -530,6 +574,86 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           ),
         ),
       ),
+    );
+  }
+  function getCaseColumns() {
+    return array(
+      'civicrm_case' => array(
+        'dao' => 'CRM_Case_DAO_Case',
+        'fields' => array(
+          'id' => array(
+            'title' => ts('Case ID'),
+            'required' => false
+          ),
+          'subject' => array(
+            'title' => ts('Case Subject'),
+            'default' => true
+          ),
+          'status_id' => array(
+
+            'title' => ts('Status'),
+            'default' => true
+          ),
+          'case_type_id' => array(
+            'title' => ts('Case Type'),
+            'default' => true
+          ),
+          'case_start_date' => array(
+            'title' => ts('Case Start Date'),
+            'name' => 'start_date',
+            'default' => true
+          ),
+          'case_end_date' => array(
+            'title' => ts('Case End Date'),
+            'name' => 'end_date',
+            'default' => true
+          ),
+          'case_duration' => array(
+            'name' => 'duration',
+            'title' => ts('Duration (Days)'),
+            'default' => false
+          ),
+          'case_is_deleted' => array(
+            'name' => 'is_deleted',
+            'title' => ts('Case Deleted?'),
+            'default' => false,
+            'type' => CRM_Utils_Type::T_INT
+          )
+        ),
+        'filters' => array(
+          'case_start_date' => array(
+            'title' => ts('Case Start Date'),
+            'operatorType' => CRM_Report_Form::OP_DATE,
+            'type' => CRM_Utils_Type::T_DATE,
+            'name' => 'start_date',
+          ),
+          'case_end_date' => array(
+            'title' => ts('Case End Date'),
+            'operatorType' => CRM_Report_Form::OP_DATE,
+            'type' => CRM_Utils_Type::T_DATE,
+            'name' => 'end_date'
+          ),
+          'case_type_id' => array(
+            'title' => ts('Case Type'),
+            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+            'options' => $this->case_types
+          ),
+          'case_status_id' => array(
+            'title' => ts('Case Status'),
+            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+            'options' => $this->case_statuses,
+            'name' => 'status_id'
+          ),
+          'case_is_deleted' => array(
+            'title' => ts('Case Deleted?'),
+            'type' => CRM_Report_Form::OP_INT,
+            'operatorType' => CRM_Report_Form::OP_SELECT,
+            'options' => $this->deleted_labels,
+            'default' => 0,
+            'name' => 'is_deleted'
+          )
+        )
+      )
     );
   }
 
@@ -1037,6 +1161,19 @@ WHERE 	line_item_civireport.id IS NOT NULL
   /*
     * Retrieve text for contribution type from pseudoconstant
     */
+  function alterNickName($value, &$row) {
+    if(empty($row['civicrm_contact_id'])){
+      return;
+    }
+    $contactID = $row['civicrm_contact_id'];
+    return "<div id=contact-{$contactID} class='crm-entity'>
+           <div class='crm-editable crmf-nick_name crm-editable-enabled' data-action='create'>
+           " . $value . "</div>";
+  }
+  
+  /*
+   * Retrieve text for contribution type from pseudoconstant
+   */
   function alterContributionType($value, &$row) {
     return is_string(CRM_Contribute_PseudoConstant::contributionType($value, FALSE)) ? CRM_Contribute_PseudoConstant::contributionType($value, FALSE) : '';
   }

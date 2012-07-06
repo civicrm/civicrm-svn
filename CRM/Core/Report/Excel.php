@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -72,13 +72,8 @@ class CRM_Core_Report_Excel {
       // doing it the moronic way of assembling a buffer
       $out = trim(substr($schema_insert, 0, -1)) . $add_character;
       if ($print) {
-        if (function_exists('mb_convert_encoding')) {
-          echo mb_convert_encoding($out, $config->legacyEncoding);
-        }
-        else {
           echo $out;
         }
-      }
       else {
         $result .= $out;
       }
@@ -135,13 +130,8 @@ class CRM_Core_Report_Excel {
 
       $out = $schema_insert . $add_character;
       if ($print) {
-        if (function_exists('mb_convert_encoding')) {
-          echo mb_convert_encoding($out, $config->legacyEncoding);
-        }
-        else {
           echo $out;
         }
-      }
       else {
         $result .= $out;
       }

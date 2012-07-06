@@ -3,9 +3,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -30,7 +30,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -685,7 +685,6 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
       }
       if ($showsumcontribs) {
         $totalandsum = array();
-        require_once 'CRM/Utils/Money.php';
         foreach ($totals as $key => $total) {
           $totalandsumvals = array( 
             1 => $total, 

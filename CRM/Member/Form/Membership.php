@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -49,6 +49,34 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
   protected $_recurMembershipTypes;
 
   protected $_memTypeSelected;
+  /*
+   * Display name of the member
+   */
+  protected $_memberDisplayName = null;
+  /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_memberEmail = null;
+  /*
+  * Contact ID of the member
+  */
+  protected $_contactID = null;
+  /*
+  * Display name of the person paying for the membership (used for receipts)
+  */
+  protected $_contributorDisplayName = null;
+ /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_contributorEmail = null;
+  /*
+  * email of the person paying for the membership (used for receipts)
+  */
+  protected $_contributorContactID = null;
+ /*
+  * ID of the person the receipt is to go to
+  */
+  protected $_receiptContactId = null;
 
   public function preProcess() {
     //custom data related code
@@ -171,7 +199,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
               "reset=1&action=renew&cid={$this->_contactID}&id={$hasMembership['id']}&context=membership&selectedChild=member"
             );
           }
-          if ($hasMembership['membership_end_date']) {
+          if (CRM_Utils_Array::value('membership_end_date', $hasMembership)) {
             CRM_Core_Session::setStatus(ts('This contact has an existing %1 membership record with %2 status and end date of %3. <a href="%4">Click here if you want to renew this membership</a> (rather than creating a new membership record). <a href="%5">Click here to view all existing and / or expired memberships for this contact.</a>', array(1 => $hasMembership['membership_type'], 2 => $hasMembership['membership_status'], 3 => CRM_Utils_Date::customformat($hasMembership['membership_end_date']), 4 => $renewUrl, 5 => $membershipTab)));
           }
           else {
@@ -1003,13 +1031,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $params['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
     }
 
-    // set the contact, when contact is selected
-    if (CRM_Utils_Array::value('contact_select_id', $formValues)) {
-      $this->_contactID = $formValues['contact_select_id'][1];
-      list($this->_memberDisplayName,
-        $this->_memberEmail
-      ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
-    }
+    $this->storeContactFields($formValues);
 
     $params['contact_id'] = $this->_contactID;
 
@@ -1106,6 +1128,14 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     // Retrieve the name and email of the current user - this will be the FROM for the receipt email
     list($userName, $userEmail) = CRM_Contact_BAO_Contact_Location::getEmailDetails($ids['userId']);
 
+    //CRM-10223 - allow contribution to be recorded against different contact
+    if($this->_contributorContactID != $this->_contactID){
+        $params['contribution_contact_id'] = $this->_contributorContactID;
+        if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
+          $params['honor_type_id'] = $this->_params['honor_type_id'];
+          $params['honor_contact_id'] = $params['contact_id'];
+        }
+    }
     if (CRM_Utils_Array::value('record_contribution', $formValues)) {
       $recordContribution = array(
         'total_amount', 'honor_type_id','contribution_type_id', 'payment_instrument_id',
@@ -1115,13 +1145,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       foreach ($recordContribution as $f) {
         $params[$f] = CRM_Utils_Array::value($f, $formValues);
       }
-      //CRM-10223 - allow contribution to be recorded against different contact
-      if(CRM_Utils_Array::value('contribution_contact_select_id', $this->_params)){
-        $params['contribution_contact_id'] = $this->_params['contribution_contact_select_id'][1];
-        if(CRM_Utils_Array::value('honor_type_id',$params)){
-          $params['honor_contact_id'] = $params['contact_id'];
-        }
-      }
+
       if (!$this->_onlinePendingContributionId) {
         $params['contribution_source'] = ts('%1 Membership: Offline signup (by %2)',
           array(1 => $membershipType, 2 => $userName)
@@ -1139,7 +1163,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
 
       if (CRM_Utils_Array::value('receive_date', $params)) {
-        $params['receive_date'] = CRM_Utils_Date::processDate($params['receive_date']);
+        $formValues['receive_date'] = $params['receive_date'] = CRM_Utils_Date::processDate($params['receive_date']);
       }
       if (CRM_Utils_Array::value('send_receipt', $formValues)) {
         $params['receipt_date'] = CRM_Utils_Array::value('receive_date', $params);
@@ -1225,10 +1249,12 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           $formValues['preserveDBName'] = TRUE;
         }
       }
-
-      $contactID = CRM_Contact_BAO_Contact::createProfileContact($formValues, $fields,
-        $this->_contactID, NULL, NULL, $ctype
+      //here we are setting up the billing contact - if different from the member they are already created
+      // but they will get billing details assigned
+      CRM_Contact_BAO_Contact::createProfileContact($formValues, $fields,
+        $this->_contributorContactID, NULL, NULL, $ctype
       );
+
 
       // add all the additioanl payment params we need
       $this->_params["state_province-{$this->_bltID}"] = $this->_params["billing_state_province-{$this->_bltID}"] = CRM_Core_PseudoConstant::stateProvinceAbbreviation($this->_params["billing_state_province_id-{$this->_bltID}"]);
@@ -1247,9 +1273,17 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       // all the payment processors expect the name and address to be in the
       // so we copy stuff over to first_name etc.
       $paymentParams = $this->_params;
-
+      $paymentParams['contactID'] = $this->_contributorContactID;
+      //CRM-10377 if payment is by an alternate contact then we need to set that person
+      // as the contact in the payment params
+      if($this->_contributorContactID != $this->_contactID){
+        if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
+          $paymentParams['honor_contact_id'] = $this->_contactID;
+          $paymentParams['honor_type_id'] = $this->_params['honor_type_id'];
+        }
+      }
       if (CRM_Utils_Array::value('send_receipt', $this->_params)) {
-        $paymentParams['email'] = $this->_memberEmail;
+        $paymentParams['email'] = $this->_contributorEmail;
       }
 
       CRM_Core_Payment_Form::mapParams($this->_bltID, $this->_params, $paymentParams, TRUE);
@@ -1267,15 +1301,15 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         }
 
         $contribution = CRM_Contribute_Form_Contribution_Confirm::processContribution($this,
-          $this->_params,
+          $paymentParams,
           $result,
-          $contactID,
+          $this->_contributorContactID,
           $contributionType,
           FALSE,
           TRUE,
           FALSE
         );
-        $paymentParams['contactID'] = $contactID;
+
         $paymentParams['contributionID'] = $contribution->id;
         $paymentParams['contributionTypeID'] = $contribution->contribution_type_id;
         $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
@@ -1403,9 +1437,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $result = CRM_Contribute_BAO_Contribution::transitionComponents($params, TRUE);
         if (!empty($result) && CRM_Utils_Array::value('contribution_id', $params)) {
           $lineItem = array();
-          $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_contribution', $params['contribution_id']);
           $lineItems         = CRM_Price_BAO_LineItem::getLineItems($params['contribution_id'], 'contribution');
           $itemId            = key($lineItems);
+          $priceSetId  = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'price_set_id');
           $fieldType         = NULL;
           if ($itemId && CRM_Utils_Array::value('price_field_id', $lineItems[$itemId])) {
             $fieldType = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'html_type');
@@ -1476,8 +1510,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         }
       }
     }
-
-    $this->assign('lineItem', !empty($lineItem) ? $lineItem : FALSE);
+    $isQuickConfig = 0;
+    if ($this->_priceSetId &&  CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
+      $isQuickConfig = 1;
+    }
+    $this->assign('lineItem', !empty($lineItem) && !$isQuickConfig ? $lineItem : FALSE);
 
     $receiptSend = FALSE;
     if (CRM_Utils_Array::value('send_receipt', $formValues)) {
@@ -1499,7 +1536,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $statusMsg .= ' ' . ts('The membership End Date is %1.', array(1 => $endDate));
       }
       if ($receiptSend) {
-        $statusMsg .= ' ' . ts('A confirmation and receipt has been sent to %1.', array(1 => $this->_memberEmail));
+        $statusMsg .= ' ' . ts('A confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
       }
     }
     elseif (($this->_action & CRM_Core_Action::ADD)) {
@@ -1524,7 +1561,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
       $statusMsg = implode('<br/>', $statusMsg);
       if ($receiptSend && $mailSend) {
-        $statusMsg .= '<br/>' . ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_memberEmail));
+        $statusMsg .= '<br/>' . ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
       }
     }
     CRM_Core_Session::setStatus($statusMsg);
@@ -1639,7 +1676,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $form->assign('module', 'Membership');
     $form->assign('contactID', $formValues['contact_id'] );
 
-    $form->assign('membershipID', CRM_Utils_Array::value('membership_id', $params, CRM_Utils_Array::value('membership_id', $form->_defaultValues)));
+    $form->assign('membershipID', CRM_Utils_Array::value('membership_id', $form->_params, CRM_Utils_Array::value('membership_id', $form->_defaultValues)));
 
     if ( CRM_Utils_Array::value('contribution_id', $formValues ) ) {
       $form->assign( 'contributionID', $formValues['contribution_id'] );
@@ -1663,26 +1700,37 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $form->assign('formValues', $formValues);
 
     if (empty($lineItem)) {
-      $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date ) );
-      $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date ) );
+      $form->assign('mem_start_date', CRM_Utils_Date::customFormat($membership->start_date, '%B %E%f, %Y' ) );
+      $form->assign('mem_end_date', CRM_Utils_Date::customFormat($membership->end_date, '%B %E%f, %Y' ) );
       $form->assign('membership_name', CRM_Member_PseudoConstant::membershipType( $membership->membership_type_id )  );
     }
 
     $form->assign('customValues', $customValues);
+    if(empty($form->_contributorDisplayName) || empty($form->_contributorEmail)){
+      // in this case the form is being called statically from the batch editing screen
+      // having one class in the form layer call another statically is not greate
+      // & we should aim to move this function to the BAO layer in future.
+      // however, we can assume that the contact_id passed in by the batch
+      // function will be the recipient
     list(
-      $memberDisplayName,
-      $memberEmail
+        $form->_contributorDisplayName,
+        $form->_contributorEmail
     ) = CRM_Contact_BAO_Contact_Location::getEmailDetails(
-      $formValues['contact_id']);
+            $formValues['contact_id']
+          );
+       if(empty($form->_receiptContactId)){
+         $form->_receiptContactId = $formValues['contact_id'];
+       }
+    }
 
     list($mailSend, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
       array(
         'groupName' => 'msg_tpl_workflow_membership',
         'valueName' => 'membership_offline_receipt',
-        'contactId' => $formValues['contact_id'],
+        'contactId' => $form->_receiptContactId,
         'from' => $receiptFrom,
-        'toName' => $memberDisplayName,
-        'toEmail' => $memberEmail,
+        'toName' => $form->_contributorDisplayName,
+        'toEmail' => $form->_contributorEmail,
         'isTest' => (bool)($form->_action & CRM_Core_Action::PREVIEW)
       )
     );

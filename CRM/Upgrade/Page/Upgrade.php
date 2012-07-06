@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -150,7 +150,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         'queue' => CRM_Upgrade_Form::buildQueue($currentVer, $latestVer, $this->get('postUpgradeMessageFile')),
         'isMinimal' => TRUE,
         'pathPrefix' => 'civicrm/upgrade/queue',
-        'onEndUrl' => CRM_Utils_System::url('civicrm/upgrade', 'action=finish'),
+        'onEndUrl' => CRM_Utils_System::url('civicrm/upgrade', 'action=finish', FALSE, NULL, FALSE ),
       ));
     $queueRunner->runAllViaWeb();
     CRM_Core_Error::fatal(ts('Upgrade failed to redirect'));
@@ -163,16 +163,18 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     $upgrade = new CRM_Upgrade_Form();
     $template = CRM_Core_Smarty::singleton();
 
-    list($currentVer, $latestVer) = $upgrade->getUpgradeVersions();
-    if ($error = $upgrade->checkCurrentVersion($currentVer, $latestVer)) {
-      CRM_Core_Error::fatal($error);
-    }
-
     // TODO: Use structured message store
     $postUpgradeMessage = file_get_contents($this->get('postUpgradeMessageFile'));
 
     // This destroys $session, so do it after ge('postUpgradeMessageFile')
     CRM_Upgrade_Form::doFinish();
+
+    // do a version check - after doFinish() sets the final version
+    list($currentVer, $latestVer) = $upgrade->getUpgradeVersions();
+    if ($error = $upgrade->checkCurrentVersion($currentVer, $latestVer)) {
+      CRM_Core_Error::fatal($error);
+    }
+
     $template->assign('message', $postUpgradeMessage);
     $template->assign('upgraded', TRUE);
 

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -449,9 +449,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       }
       $this->set('separateMembershipPayment', $this->_separateMembershipPayment);
     }
-
     $this->assign('useForMember', $this->_useForMember);
-
     // If we configured price set for contribution page
     // we are not allow membership signup as well as any
     // other contribution amount field, CRM-5095
@@ -472,6 +470,13 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $this->buildAmount($this->_separateMembershipPayment);
     }
 
+    if ($this->_priceSetId) {
+      $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config');
+      if ($is_quick_config) {
+        $this->_useForMember = 0;
+        $this->set('useForMember', $this->_useForMember);
+      }
+    }
 
     if ($this->_values['is_for_organization']) {
       $this->buildOnBehalfOrganization();
@@ -500,15 +505,13 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     $this->buildCustom($this->_values['custom_pre_id'], 'customPre');
     $this->buildCustom($this->_values['custom_post_id'], 'customPost');
 
-    // doing this later since the express button type depends if there is an upload or not
-    /*if ( $this->_values['is_monetary'] ) {
-            if (  $this->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) {
-                CRM_Core_Payment_Form::buildDirectDebit( $this );
-            } else {
-                CRM_Core_Payment_Form::buildCreditCard( $this );
+    if ( !empty( $this->_fields ) ) {
+      $profileAddressFields = array();
+      foreach( $this->_fields as $key => $value ) {
+        CRM_Core_BAO_UFField::assignAddressField($key, $profileAddressFields);
+        $this->set('profileAddressFields', $profileAddressFields);
             }
-            }*/
-
+    }
 
     //to create an cms user
     if (!$this->_userID) {
@@ -790,8 +793,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     $amount = self::computeAmount($fields, $self);
 
@@ -1001,9 +1003,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     if (CRM_Utils_Array::value('is_recur', $fields) &&
-      CRM_Utils_Array::value('is_pay_later', $fields)
-    ) {
-      $errors['is_pay_later'] = ' ';
+        CRM_Utils_Array::value('payment_processor', $fields) == 0) {
       $errors['_qf_default'] = ts('You cannot set up a recurring contribution if you are not paying online by credit card.');
     }
 
@@ -1089,8 +1089,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     // also return if paylater mode
-    if (CRM_Utils_Array::value('is_pay_later', $fields) ||
-        CRM_Utils_Array::value('payment_processor', $fields) == 0) {
+    if (CRM_Utils_Array::value('payment_processor', $fields) == 0) {
       return empty($errors) ? TRUE : $errors;
     }
 
@@ -1190,6 +1189,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       if ($is_quick_config) {
         $priceField = new CRM_Price_DAO_Field();
         $priceField->price_set_id = $params['priceSetId'];
+        $priceField->orderBy('weight');
         $priceField->find();
 
         $check = array();
@@ -1204,8 +1204,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
               }
             }
           }
-          if ($priceField->name == "contribution_amount") {
-            if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
+          if ($priceField->name == 'contribution_amount') {
+            $priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params);
+            if ($priceFiledID > 0 && !empty($priceFiledID)) {
               $params['amount'] = $priceFiledID;
               $this->_values['amount'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
               $this->_values[$priceFiledID]['value'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
@@ -1214,8 +1215,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
               $this->_values[$priceFiledID]['weight'] = CRM_Utils_Array::value('weight', $values[$priceFiledID]);
             }
           }
+          if ($priceField->name == "other_amount" && $priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
+            $params['amount_other'] = $priceFiledID;
         }
       }
+    }
     }
 
     if (($this->_values['is_pay_later'] &&

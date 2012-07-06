@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -55,8 +55,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $event = new CRM_Event_DAO_Event();
     $event->copyValues($params);
     if ($event->find(TRUE)) {
@@ -75,8 +74,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Event_DAO_Event', $id, 'is_active', $is_active);
   }
 
@@ -90,8 +88,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    *
    * @return object
    */
-  static
-  function add(&$params) {
+  static function add(&$params) {
     CRM_Utils_System::flushCache();
 
     if (CRM_Utils_Array::value('id', $params)) {
@@ -183,8 +180,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    * @static
    *
    */
-  static
-  function del($id) {
+  static function del($id) {
     if (!$id) {
       return NULL;
     }
@@ -235,8 +231,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    * @static
    *
    */
-  static
-  function deleteEventLocBlock($locBlockId, $eventId = NULL) {
+  static function deleteEventLocBlock($locBlockId, $eventId = NULL) {
     $query = "SELECT count(ce.id) FROM civicrm_event ce WHERE ce.loc_block_id = $locBlockId";
 
     if ($eventId) {
@@ -260,8 +255,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    *
    * @static
    */
-  static
-  function getEvents($all = FALSE,
+  static function getEvents($all = FALSE,
     $id              = FALSE,
     $isActive        = TRUE,
     $checkPermission = TRUE
@@ -306,8 +300,7 @@ WHERE  ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 )";
    *
    * @return array Array of event summary values
    */
-  static
-  function getEventSummary() {
+  static function getEventSummary() {
     $eventSummary = $eventIds = array();
     $config = CRM_Core_Config::singleton();
 
@@ -607,9 +600,7 @@ LIMIT      0, 10
    * @static
    * @access public
    */
-
-  static
-  function &getMapInfo(&$id) {
+  static function &getMapInfo(&$id) {
 
     $sql = "
 SELECT
@@ -686,8 +677,7 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
    * @static
    * @access public
    */
-  static
-  function &getCompleteInfo($start = NULL, $type = NULL, $eventId = NULL, $end = NULL) {
+  static function &getCompleteInfo($start = NULL, $type = NULL, $eventId = NULL, $end = NULL) {
     $dateCondition = '';
     // if start and end date are NOT passed, return all events with start_date OR end_date >= today CRM-5133
     if ($start) {
@@ -853,8 +843,7 @@ WHERE civicrm_event.is_active = 1
    * @return void
    * @access public
    */
-  static
-  function copy($id) {
+  static function copy($id) {
     $defaults = $eventValues = array();
 
     //get the require event values.
@@ -953,8 +942,7 @@ WHERE civicrm_event.is_active = 1
    * This is sometimes called in a loop (during event search)
    * hence we cache the values to prevent repeated calls to the db
    */
-  static
-  function isMonetary($id) {
+  static function isMonetary($id) {
     static $isMonetary = array();
     if (!array_key_exists($id, $isMonetary)) {
       $isMonetary[$id] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event',
@@ -969,8 +957,7 @@ WHERE civicrm_event.is_active = 1
    * This is sometimes called in a loop (during event search)
    * hence we cache the values to prevent repeated calls to the db
    */
-  static
-  function usesPriceSet($id) {
+  static function usesPriceSet($id) {
     static $usesPriceSet = array();
     if (!array_key_exists($id, $usesPriceSet)) {
       $usesPriceSet[$id] = CRM_Price_BAO_Set::getFor('civicrm_event', $id);
@@ -984,8 +971,7 @@ WHERE civicrm_event.is_active = 1
    * @return void
    * @access public
    */
-  static
-  function sendMail($contactID, &$values, $participantId, $isTest = FALSE, $returnMessageText = FALSE) {
+  static function sendMail($contactID, &$values, $participantId, $isTest = FALSE, $returnMessageText = FALSE) {
 
     $template = CRM_Core_Smarty::singleton();
     $gIds = array(
@@ -1684,9 +1670,7 @@ WHERE  id = $cfID
      *
      * @return array $events array of all events.
      */
-
-  static
-  function getLocationEvents() {
+  static function getLocationEvents() {
     $events = array();
 
     $query = "
@@ -1706,8 +1690,7 @@ ORDER BY sp.name, ca.city, ca.street_address ASC
     return $events;
   }
 
-  static
-  function countEventsUsingLocBlockId($locBlockId) {
+  static function countEventsUsingLocBlockId($locBlockId) {
     if (!$locBlockId) {
       return 0;
     }
@@ -1721,8 +1704,7 @@ WHERE  ce.loc_block_id = $locBlockId";
     return CRM_Core_DAO::singleValueQuery($query);
   }
 
-  static
-  function validRegistrationRequest($values, $contactID) {
+  static function validRegistrationRequest($values, $contactID) {
     // check that the user has permission to register for this event
     $hasPermission = CRM_Core_Permission::event(CRM_Core_Permission::EDIT,
       $contactID
@@ -1731,8 +1713,7 @@ WHERE  ce.loc_block_id = $locBlockId";
     return $hasPermission && self::validRegistrationDate($values);
   }
 
-  static
-  function validRegistrationDate(&$values) {
+  static function validRegistrationDate(&$values) {
     // make sure that we are between  registration start date and registration end date
     $startDate = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('registration_start_date', $values));
     $endDate   = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('registration_end_date', $values));
@@ -1758,9 +1739,7 @@ WHERE  ce.loc_block_id = $locBlockId";
      * @return boolean true if allow registration otherwise false
      * @access public
      */
-
-  static
-  function showHideRegistrationLink($values) {
+  static function showHideRegistrationLink($values) {
 
     $session           = CRM_Core_Session::singleton();
     $contactID         = $session->get('userID');
@@ -1823,8 +1802,7 @@ WHERE  ce.loc_block_id = $locBlockId";
    * @access public
    * @static
    */
-  static
-  function checkPermission($eventId = NULL, $type = CRM_Core_Permission::VIEW) {
+  static function checkPermission($eventId = NULL, $type = CRM_Core_Permission::VIEW) {
     static $permissions = NULL;
 
     if (empty($permissions)) {
@@ -1888,8 +1866,7 @@ WHERE  ce.loc_block_id = $locBlockId";
    * @access public
    * @static
    */
-  static
-  function getFromEmailIds($eventId = NULL) {
+  static function getFromEmailIds($eventId = NULL) {
     $fromEmailValues['from_email_id'] = CRM_Core_BAO_Email::getFromEmail();
 
     if ($eventId) {
@@ -1959,6 +1936,7 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
 
     return (int)CRM_Core_DAO::singleValueQuery($query, array(1 => array($eventId, 'Positive')));
   }
+
   /*
      * Retrieve event template default values to be set
      *  as default values for current new event.
@@ -1967,7 +1945,6 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
      *
      * @return $defaults an array of custom data defaults.
      */
-
   public function getTemplateDefaultValues($templateId) {
     $defaults = array();
     if (!$templateId) {
@@ -1988,8 +1965,8 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
     $defaults = array_diff_key($defaults, array_flip($fieldsToExclude));
     return $defaults;
   }
-  static
-  function get_sub_events($event_id) {
+
+  static function get_sub_events($event_id) {
     $params = array('parent_event_id' => $event_id);
     $defaults = array();
     return CRM_Event_BAO_Event::retrieve($params, $defaults);

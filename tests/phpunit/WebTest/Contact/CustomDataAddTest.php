@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -258,9 +258,118 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     //verify the money custom field value in the proper format
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='custom-set-content-{$customGroupTitle}']"));
-    $this->verifyText("xpath=//div[@id='custom-set-content-{$customGroupTitle}']/div/div[3]", '12,345,678.98');
+    $this->assertTrue($this->isElementPresent("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle']/table/tbody/tr[2]/td/div/div"));
+    $this->verifyText("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle']/table/tbody/tr[2]/td/div/div/div/div[3]", '12,345,678.98');
   }
+  
+  function testCustomDataChangeLog(){
+     // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+    
+    //enable logging
+    $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
+    $this->click("CIVICRM_QFID_1_2");
+    $this->click("_qf_Miscellaneous_next-top");
+    $this->waitForPageToLoad("30000");
+
+    // Create new Custom Field Set
+    $this->open($this->sboxPath . 'civicrm/admin/custom/group?reset=1');
+    $this->waitForPageToLoad("30000");
+    $this->click("css=#newCustomDataGroup > span");
+    $this->waitForElementPresent('_qf_Group_next-bottom');
+    $customFieldSet = 'Fieldset' . rand();
+    $this->type("id=title", $customFieldSet);
+    $this->select("id=extends[0]", "label=Individual");
+    $this->click("id=collapse_display");
+    $this->click("id=_qf_Group_next-bottom");
+    $this->waitForElementPresent('_qf_Field_next-bottom');
+    $this->assertTrue($this->isTextPresent("Your custom field set '$customFieldSet' has been added."));
+
+    // Add field to fieldset
+    $customField = 'CustomField' . rand();
+    $this->type("id=label", $customField);
+    $this->select("id=data_type[0]", "value=0");
+    $this->click("id=_qf_Field_next-bottom");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your custom field '$customField' has been saved."));
+
+    // Go directly to the URL of the screen that you will be testing (New Individual).
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+
+    //contact details section
+    //fill in first name
+    $firstName = 'Jimmy'.substr(sha1(rand()), 0, 7);
+    $this->type('first_name', $firstName);
+    
+    //fill in last name
+    $lastName = 'Page'.substr(sha1(rand()), 0, 7);
+    $this->type('last_name', $lastName);
+
+    //fill in email id
+    $this->type('email_1_email', "{$firstName}.{$lastName}@example.com");
+
+    //fill in phone
+    $this->type("phone_1_phone", "2222-4444");
+    
+    $this->click("xpath=//table//tr/td/label[text()=\"$customField\"]");
+    $value = "custom".rand();
+    $this->type("xpath=//table//tr/td/label[text()=\"$customField\"]/../following-sibling::td/input",$value);
+
+    //check for matching contact
+    $this->click("_qf_Contact_refresh_dedupe");
+    $this->waitForPageToLoad("30000");
+
+
+    //address section
+    $this->click("addressBlock");
+    $this->waitForElementPresent("address_1_street_address");
+    //fill in address 1
+    $this->type("address_1_street_address", "902C El Camino Way SW");
+    $this->type("address_1_city", "Dumfries");
+    $this->type("address_1_postal_code", "1234");
+
+    $this->click("address_1_country_id");
+    $this->select("address_1_country_id", "value=1228");
+
+    if ($this->isTextPresent("Latitude")) {
+      $this->type("address_1_geo_code_1", "1234");
+      $this->type("address_1_geo_code_2", "5678");
+}
+
+    // Clicking save.
+    $this->click("_qf_Contact_upload_view");
+    $this->waitForPageToLoad("30000");
+
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+
+    //Update the custom field
+    $this->click("xpath=//div[@class='crm-actions-ribbon']/ul/li[2]/a/span[contains(text(), 'Edit')]");
+    $this->waitForPageToLoad("30000");
+    $this->click("xpath=//table//tr/td/label[text()=\"$customField\"]");
+    $value1 = "custom_1".rand();
+    $this->type("xpath=//table//tr/td/label[text()=\"$customField\"]/../following-sibling::td/input",$value1);
+    $this->click("_qf_Contact_upload_view-bottom");
+    $this->waitForPageToLoad("30000");
+    $this->click("xpath=//li[@id='tab_log']/a");
+    
+    //check the changed log
+    $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[3]/a[contains(text(), '$firstName $lastName')]");
+    $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[4]/a");
+    $this->click("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[4]/a");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='LoggingDetail']/div[2]/table/tbody/tr/td[2][contains(text(), '$value')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='LoggingDetail']/div[2]/table/tbody/tr/td[3][contains(text(), '$value1')]"));
+  }
+  
 }
 
 

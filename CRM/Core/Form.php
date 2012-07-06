@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,7 +31,7 @@
  * machine. Each form can also operate in various modes
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -115,7 +115,9 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
    *
    * @return object
    * @access public
-   */ function __construct($state = NULL,
+   */
+  function __construct(
+    $state = NULL,
     $action = CRM_Core_Action::NONE,
     $method = 'post',
     $name   = NULL
@@ -130,7 +132,10 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
 
     $this->HTML_QuickForm_Page($this->_name, $method);
 
-    $this->_state = $state;
+    $this->_state =& $state;
+    if ($this->_state) {
+      $this->_state->setName($this->_name);
+    }
     $this->_action = (int) $action;
 
     $this->registerRules();
@@ -141,8 +146,8 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     }
   }
 
-  static
-  function generateID() {}
+  static function generateID() {
+  }
 
   /**
    * register all the standard rules that most forms potentially use

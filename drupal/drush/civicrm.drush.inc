@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -75,8 +75,8 @@ function civicrm_drush_command() {
       'drush civicrm-api contact.create id=1 --out=json' => 'Find/display a contact in JSON format',
     ),
     'options' => array(
-      '--in' => 'Input type: "args" (command-line), "json" (STDIN)',
-      '--out' => 'Output type: "pretty" (STDOUT), "json" (STDOUT)',
+      'in' => 'Input type: "args" (command-line), "json" (STDIN)',
+      'out' => 'Output type: "pretty" (STDOUT), "json" (STDOUT)',
     ),
     'aliases' => array('cvapi'),
   );
@@ -84,16 +84,16 @@ function civicrm_drush_command() {
     'description' => "Install a new instance of CiviCRM.",
     'options' =>
     array(
-      '--dbuser' => 'MySQL username for your Drupal/CiviCRM database.',
-      '--dbpass' => 'MySQL password for your Drupal/CiviCRM database.',
-      '--dbhost' => 'MySQL host for your Drupal/CiviCRM database. Defaults to localhost.',
-      '--dbname' => 'MySQL database name of your Drupal/CiviCRM database.',
-      '--tarfile' => 'Path to your CiviCRM tar.gz file.',
-      '--destination' => 'Destination modules path to extract CiviCRM (eg : sites/all/modules ).',
-      '--lang' => 'Default language to use for installation.',
-      '--langtarfile' => 'Path to your l10n tar.gz file.',
-      '--site_url' => 'Base Url for your drupal/CiviCRM website without http (e.g. mysite.com)',
-      '--ssl' => 'Using ssl for your drupal/CiviCRM website if set to on (e.g. --ssl=on)',
+      'dbuser' => 'MySQL username for your Drupal/CiviCRM database.',
+      'dbpass' => 'MySQL password for your Drupal/CiviCRM database.',
+      'dbhost' => 'MySQL host for your Drupal/CiviCRM database. Defaults to localhost.',
+      'dbname' => 'MySQL database name of your Drupal/CiviCRM database.',
+      'tarfile' => 'Path to your CiviCRM tar.gz file.',
+      'destination' => 'Destination modules path to extract CiviCRM (eg : sites/all/modules ).',
+      'lang' => 'Default language to use for installation.',
+      'langtarfile' => 'Path to your l10n tar.gz file.',
+      'site_url' => 'Base Url for your drupal/CiviCRM website without http (e.g. mysite.com)',
+      'ssl' => 'Using ssl for your drupal/CiviCRM website if set to on (e.g. --ssl=on)',
     ),
     'aliases' => array('cvi'),
   );
@@ -122,9 +122,9 @@ function civicrm_drush_command() {
     ),
     'options' =>
     array(
-      '--tarfile' =>
+      'tarfile' =>
       'Path of new CiviCRM tarfile, with which current CiviCRM codebase is to be replaced.',
-      '--backup-dir' =>
+      'backup-dir' =>
       'Specify a directory to backup current CiviCRM codebase and database into, defaults to a backup directory above your Drupal root.',
     ),
     'aliases' => array('cvup'),
@@ -138,9 +138,9 @@ function civicrm_drush_command() {
     ),
     'options' =>
     array(
-      '--restore-dir' =>
+      'restore-dir' =>
       'Path of directory having backed up CiviCRM codebase and database.',
-      '--backup-dir' =>
+      'backup-dir' =>
       'Specify a directory to backup current CiviCRM codebase and database into, defaults to a backup directory above your Drupal root.',
     ),
   );
@@ -153,7 +153,7 @@ function civicrm_drush_command() {
     ),
     // TODO: This really makes more sense as an argument.
     'options' =>
-    array('--query' => 'Query part of url. Refer CiviCRM wiki doc for more details.'),
+    array('query' => 'Query part of url. Refer CiviCRM wiki doc for more details.'),
     'aliases' => array('cvr'),
   );
   $items['civicrm-sql-conf'] = array(
@@ -170,7 +170,7 @@ function civicrm_drush_command() {
       'drush civicrm-sql-dump --result-file=../CiviCRM.sql' => 'Save SQL dump to the directory above Drupal root.',
     ),
     'options' => array(
-      '--result-file' => 'Save to a file.',
+      'result-file' => 'Save to a file.',
     ),
   );
   $items['civicrm-sql-query'] = array(

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -32,7 +32,7 @@
  * things like going back / stepping forward / process etc
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -87,7 +87,8 @@ class CRM_Core_State {
    *
    * @return object
    * @access public
-   */ function __construct($name, $type, $back, $next, &$stateMachine) {
+   */
+  function __construct($name, $type, $back, $next, &$stateMachine) {
     $this->_name = $name;
     $this->_type = $type;
     $this->_back = $back;

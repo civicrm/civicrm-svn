@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -33,7 +33,7 @@
  * run method as explained below.
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id: $
  *
  */
@@ -62,7 +62,8 @@ class CRM_Utils_Wrapper {
    *
    * @return none.
    * @access public
-   */ function run($formName, $formLabel = NULL, $arguments = NULL) {
+   */ 
+  function run($formName, $formLabel = NULL, $arguments = NULL) {
     if (is_array($arguments)) {
       $mode         = CRM_Utils_Array::value('mode', $arguments);
       $imageUpload  = (bool) CRM_Utils_Array::value('imageUpload', $arguments, FALSE);

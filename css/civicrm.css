@@ -36,6 +36,11 @@ table.crm-table-group-summary {
   margin-bottom: .1em;
 }
 
+#crm-container table.crm-address-element {
+  border: none;
+  margin-bottom: .25em;
+}
+
 #crm-container th, 
 #crm-container table.display thead th, 
 #crm-container table thead.sticky th, 
@@ -772,9 +777,11 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 /*
 ** Styles for formatting text
 */
-/* Inline form field 'post-help' */
-#crm-container .description {
+/* Inline form field 'post-help' and radio-button unselect */
+#crm-container .description,
+#crm-container .crm-clear-link {
     font-size: 0.9em;
+    font-weight: normal;
     white-space: normal;
     width: auto;
     color: #696969;
@@ -1852,6 +1859,7 @@ div.grippie {
   width   : 49%; 
   display : block; 
   float   : left;
+  clear   : both;
 }
 
 #crm-container div.contactCardRight {
@@ -3446,4 +3454,10 @@ div#crm-toolTip
   .crm-editable-error {background:red!important;opacity:0.8;}
   .crm-editable-error input {background:red!important;opacity:0.8;}
   h2.crm-editable-enabled input {min-height:1.4em;}
+
+/*crm-10345*/
+.field-action{word-wrap:normal;}
+
+.field-action span.btn-slide{padding-left:0px;padding-right:11px;}
+/*end crm-10345*/
 

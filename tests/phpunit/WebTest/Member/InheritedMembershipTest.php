@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -154,7 +154,10 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->click('relationship_type_id');
     $this->select('relationship_type_id', 'label=Employee of');
 
-    $this->webtestFillAutocomplete($title1);
+    $this->typeKeys('contact_1', $title1);
+    $this->fireEvent('contact_1', 'focus');
+    $this->waitForElementPresent('css=div.ac_results-inner li');
+    $this->click('css=div.ac_results-inner li');
 
     $this->waitForElementPresent('quick-save');
 

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -277,6 +277,7 @@ class CRM_Core_I18n_Schema {
   function rebuildMultilingualSchema($locales, $version = NULL) {
     if ($version) {
       $latest = self::getLatestSchema($version);
+      require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
       $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
     }
     else {
@@ -354,6 +355,9 @@ class CRM_Core_I18n_Schema {
     if ($_tables === NULL || $force) {
       if ($version) {
         $latest = self::getLatestSchema($version);
+        // FIXME: Doing require_once is a must here because a call like CRM_Core_I18n_SchemaStructure_4_1_0 makes
+        // class loader look for file like - CRM/Core/I18n/SchemaStructure/4/1/0.php which is not what we want to be loaded
+        require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
         $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
         eval("\$tables  =& $class::tables();");
       }
@@ -367,6 +371,9 @@ class CRM_Core_I18n_Schema {
 
   static
   function getLatestSchema($version) {
+    // remove any .upgrade sub-str from version. Makes it easy to do version_compare & give right result
+    $version = str_ireplace(".upgrade", "", $version);
+
     // fetch all the SchemaStructure versions we ship and sort by version
     $schemas = array();
     foreach (scandir(dirname(__FILE__)) as $file) {
@@ -469,8 +476,20 @@ class CRM_Core_I18n_Schema {
       return;
     }
 
-    $columns = &CRM_Core_I18n_SchemaStructure::columns();
+    $currentVer = CRM_Core_BAO_Domain::version();
 
+    if ($currentVer && CRM_Core_Config::isUpgradeMode()) {
+      // take exact version so that proper schema structure file in invoked
+      $latest = self::getLatestSchema($currentVer);
+      require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
+      $class = "CRM_Core_I18n_SchemaStructure_{$latest}";
+    }
+    else {
+      $class = 'CRM_Core_I18n_SchemaStructure';
+    }
+    
+    eval("\$columns =& $class::columns();");
+    
     foreach ($columns as $table => $hash) {
       if ($tableName &&
         $tableName != $table

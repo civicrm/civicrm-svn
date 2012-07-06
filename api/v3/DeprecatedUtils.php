@@ -3,9 +3,9 @@
 
 /*
   +--------------------------------------------------------------------+
-  | CiviCRM version 4.1                                                |
+  | CiviCRM version 4.2                                                |
   +--------------------------------------------------------------------+
-  | Copyright CiviCRM LLC (c) 2004-2011                                |
+  | Copyright CiviCRM LLC (c) 2004-2012                                |
   +--------------------------------------------------------------------+
   | This file is a part of CiviCRM.                                    |
   |                                                                    |
@@ -39,6 +39,9 @@
 
 
 require_once 'api/v3/utils.php';
+
+// @codeCoverageIgnoreStart 
+// this doesn't belong to the API
 
 /**
  * take the input parameter list as specified in the data model and
@@ -1603,3 +1606,4 @@ function _civicrm_api3_deprecated_contact_check_params(&$params, $dupeCheck = TR
   return NULL;
 }
 
+// @codeCoverageIgnoreEnd

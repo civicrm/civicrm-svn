@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -82,7 +82,7 @@
   </merchantAuthentication>
   <refId>{$refId}</refId>
   <subscription>
-    {if $name}<name>{$name}</name>{/if}
+    {if $name}<name>{$name|truncate:50}</name>{/if}
     <paymentSchedule>
       <interval>
         <length>{$intervalLength}</length>

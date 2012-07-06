@@ -24,7 +24,7 @@
  * Drupal module file.
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -89,9 +89,6 @@ function civicrm_html_head() {
         'weight' => 12,
         'scope' => 'header',
       ));
-
-    // add Common.js
-    drupal_add_js(drupal_get_path('module', 'civicrm') . '/../js/Common.js');
   }
 
   if (isset($config->customCSSURL) && !empty($config->customCSSURL)) {

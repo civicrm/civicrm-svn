@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
  
-# define your schema file name here
+# define your schema file name here, will be overriden by
+# FIRST command line argument if given
 SCHEMA=schema/Schema.xml 
 # define your database name here, will be overriden by 
-# FIRST command line argument if given
+# SECOND command line argument if given
 DBNAME=
 # define your database usernamename here, will be overriden by 
-# SECOND command line argument if given
+# THIRD command line argument if given
 DBUSER=
 # define your database password here, will be overriden by 
-# THIRD command line argument if given
+# FOURTH command line argument if given
 DBPASS=
 # any extra args you need in your mysql connect string
 # number of arguments should be specified within "" 
-# FOURTH command line argument if given
+# FIFTH command line argument if given
 DBARGS=""
 # set your PHP5 bin dir path here, if it's not in PATH
 # The path should be terminated with dir separator!

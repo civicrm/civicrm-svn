@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -246,6 +246,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->type("value_1", "250.00");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
+      $this->click("CIVICRM_QFID_1_6");
     }
 
     if ($discount) {

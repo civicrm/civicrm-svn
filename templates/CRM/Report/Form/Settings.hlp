@@ -25,7 +25,7 @@
 *}
 {htxt id="id-email_settings"}
 <p>
-  {ts}A copy of this report can be automatically generated and delivered via email to specified recipients. Use the settings in this section to control Subject of the email containing the report, as well as the recipient list (To and Cc fields). Multiple email addresses should be separated by commas.{/ts}
+  {ts}A copy of this report can be automatically generated and delivered via email to specified recipients. Use the settings in this section to control Subject of the email containing the report, as well as the recipient list (To and Cc fields). Multiple 'To' email addresses are not allowed.{/ts}
 </p>
 
 <p>

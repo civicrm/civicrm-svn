@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -55,7 +55,7 @@ class CRM_Logging_Differ {
     return $diffs;
   }
 
-  function diffsInTable($table) {
+  function diffsInTable($table, $contactID = null) {
     $diffs = array();
 
     $params = array(
@@ -63,8 +63,30 @@ class CRM_Logging_Differ {
       2 => array($this->log_date, 'String'),
     );
 
+    $contactIdClause = '';
+    if ( $contactID ) {
+      $params[3] = array($contactID, 'Integer');
+      switch ($table) {
+      case 'civicrm_contact':
+        $contactIdClause = "AND id = {$contactID}";
+        break;
+      case 'civicrm_note':
+      case 'civicrm_entity_tag':
+        $contactIdClause = "AND entity_id = {$contactID} AND entity_table = 'civicrm_contact'";
+        break;
+      case 'civicrm_relationship':
+        $contactIdClause = "AND (contact_id_a = {$contactID} OR contact_id_b = {$contactID})";
+        break;
+      default:
+        $contactIdClause = "AND contact_id = {$contactID}";
+        if ( strpos($table, 'civicrm_value') !== false ) {
+          $contactIdClause = "AND entity_id = {$contactID}";
+        }
+      }
+    }
+
     // find ids in this table that were affected in the given connection (based on connection id and a ±10 s time period around the date)
-    $sql = "SELECT DISTINCT id FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND)";
+    $sql = "SELECT DISTINCT id FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND) {$contactIdClause}";
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
     while ($dao->fetch()) {
       $diffs = array_merge($diffs, $this->diffsInTableForId($table, $dao->id));

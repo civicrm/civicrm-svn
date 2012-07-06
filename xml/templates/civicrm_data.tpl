@@ -1,7 +1,7 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 4.1                                                |
+-- | CiviCRM version 4.2                                                |
 -- +--------------------------------------------------------------------+
--- | Copyright CiviCRM LLC (c) 2004-2011                                |
+-- | Copyright CiviCRM LLC (c) 2004-2012                                |
 -- +--------------------------------------------------------------------+
 -- | This file is a part of CiviCRM.                                    |
 -- |                                                                    |
@@ -347,6 +347,8 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Cancel Recurring Contribution{/ts}',      37, 'Cancel Recurring Contribution', NULL,1, 0, 37, '', 0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution Billing Details{/ts}',      38, 'Update Recurring Contribution Billing Details', NULL,1, 0, 38, '', 0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution{/ts}',      39, 'Update Recurring Contribution', NULL,1, 0, 39, '', 0, 1, 1, NULL, NULL),
+
+   (@option_group_id_act, '{ts escape="sql"}Reminder Sent{/ts}',      		      40, 'Reminder Sent', NULL, 1, 0, 40, '', 0, 1, 1, NULL, NULL),
 
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
@@ -826,6 +828,7 @@ VALUES
 -- auto renew options
    (@option_group_id_aro, 'Renewal Reminder (non-auto-renew memberships only)', 1, 'Renewal Reminder (non-auto-renew memberships only)', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aro, 'Auto-renew Memberships Only', 2, 'Auto-renew Memberships Only', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aro, 'Reminder for Both', 3, 'Reminder for Both', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL),
@@ -1380,9 +1383,9 @@ VALUES
     ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Mail Reports{/ts}',                 '{ts escape="sql" skip="true"}Generates and sends out reports via email{/ts}',                                                   'civicrm_api3', 'job', 'mail_report',             NULL, 0),
     ( @domainID, 'Daily' ,  NULL, '{ts escape="sql" skip="true"}Send Scheduled Reminders{/ts}',     '{ts escape="sql" skip="true"}Sends out scheduled reminders via email{/ts}',                                                     'civicrm_api3', 'job', 'send_reminder',           NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Update Participant Statuses{/ts}',  '{ts escape="sql" skip="true"}Updates pending event participant statuses based on time{/ts}',                                    'civicrm_api3', 'job', 'process_participant',     NULL, 0),
-    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Update Membership Statuses and Send Renewal Reminders{/ts}', '{ts escape="sql" skip="true"}Updates membership statuses and conditionally sends renewal reminders. WARNING: Membership renewal reminders are being migrated to the Schedule Reminders functionality which supports multiple renewal reminders. This job will no longer trigger renewal reminders as of the 4.3 release.{/ts}', 'civicrm_api3', 'job', 'process_membership',   NULL, 0),
+    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Update Membership Statuses and Send Renewal Reminders{/ts}', '{ts escape="sql" skip="true"}Updates membership statuses and conditionally sends renewal reminders. WARNING: Membership renewal reminders are being migrated to the Schedule Reminders functionality which supports multiple renewal reminders. This job will be obsoleted in 4.3.{/ts}', 'civicrm_api3', 'job', 'process_membership',   NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Process Survey Respondents{/ts}',   '{ts escape="sql" skip="true"}Releases reserved survey respondents when they have been reserved for longer than the Release Frequency days specified for that survey.{/ts}','civicrm_api3', 'job', 'process_respondent',NULL, 0),
-    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Set Membership Reminder Dates{/ts}','{ts escape="sql" skip="true"}Sets membership renewal reminder dates for current membership records where reminder date is null. WARNING: This job should never be run automatically as it will cause members to get renewal reminders repeatedly. It is disabled by default to prevent it from being included in  run-all-jobs sessions.{/ts}','civicrm_api3', 'job', 'process_membership_reminder_date',NULL, 0),
+    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Set Membership Reminder Dates{/ts}','{ts escape="sql" skip="true"}Sets membership renewal reminder dates for current membership records where reminder date is null. WARNING: This job should never be run automatically as it will cause members to get renewal reminders repeatedly. It is disabled by default.{/ts}','civicrm_api3', 'job', 'process_membership_reminder_date',NULL, 0),
     ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Clean-up Temporary Data and Files{/ts}','{ts escape="sql" skip="true"}Removes temporary data and files, and clears old data from cache tables. Recommend running this job every hour to help prevent database and file system bloat.{/ts}','civicrm_api3', 'job', 'cleanup', NULL, 0);
 
 -- CRM-9714

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -26,7 +26,7 @@
 
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-class WebTest_Contact_ContactAdvanceSearch extends CiviSeleniumTestCase {
+class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
   protected function setUp() {
     parent::setUp();
@@ -197,6 +197,51 @@ class WebTest_Contact_ContactAdvanceSearch extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("No matches found for"));
   }
 
+  /*
+   * Check for CRM-9873
+   */
+  function testActivitySearchByTypeTest() {
+    $this->open($this->sboxPath);
+    $this->webtestLogin();
+    $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
+    $this->click("activity");
+    sleep(2);
+    $this->check("xpath=//div[@id='Activity']//div/label[text()='Tell a Friend']/../input");
+    $this->click("_qf_Advanced_refresh");
+    $this->waitForPageToLoad("30000");
+    $count = explode(" ", trim($this->getText("xpath=//div[@id='search-status']/table/tbody/tr/td")));
+    $count = $count[0];
+    $this->assertTrue(is_numeric($count), "The total count of search results not found");
+
+    //pagination calculation
+    $perPageRow = 50;
+    if ($count > $perPageRow) {
+      $cal = $count / $perPageRow;
+      $mod = $count % $perPageRow;
+      $j = 1;
+      for ($i=1; $i<=$cal; $i++) {
+        $subTotal = $i * $perPageRow;
+        $lastPageSub = $subTotal + 1;
+
+        //pagination and row count assertion
+        $pagerCount = "Contact {$j} - {$subTotal} of {$count}";
+        $this->verifyText("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']", preg_quote($pagerCount));
+        $this->assertEquals($perPageRow, $this->getXpathCount("//div[@class='crm-search-results']/a/table/tbody/tr"));
+        
+        //go to next page
+        $this->click("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']/a[@title='next page']");
+        $this->waitForPageToLoad("30000");
+        $j = $j + $subTotal;
+      }
+      
+      //pagination and row count assertion for the remaining last page
+      if ($mod) {
+        $pagerCount = "Contact {$lastPageSub} - {$count} of {$count}";
+        $this->verifyText("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']", preg_quote($pagerCount));
+        $this->assertEquals($mod, $this->getXpathCount("//div[@class='crm-search-results']/a/table/tbody/tr"));
+      }
+    }
+  }  
 
   //function to check match for sumbit Advance Search
   function submitSearch($firstName) {

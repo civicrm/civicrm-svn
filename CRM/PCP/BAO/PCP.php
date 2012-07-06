@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -456,71 +456,83 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
 
     $approvedId = CRM_Core_OptionGroup::getValue('pcp_status', 'Approved', 'name');
 
-    $prms = array(
-      'entity_id' => $entity['id'],
-      'entity_table' => $entity_table,
-    );
     $pcpStatus = CRM_PCP_PseudoConstant::pcpStatus();
-    CRM_Core_DAO::commonRetrieve('CRM_PCP_DAO_PCPBlock',
-      $prms,
-      $pcpBlock
-    );
-    $prms = array('id' => $pcpId);
-    CRM_Core_DAO::commonRetrieve('CRM_PCP_DAO_PCP', $prms, $pcpInfo);
 
-    //start and end date of the contribution page
-    $startDate = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('start_date', $page->_values));
-    $endDate   = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('end_date', $page->_values));
-    $now       = time();
-
-
-    if ($component == 'event') {
-      $urlBase = 'civicrm/event/register';
-    }
-    elseif ($component == 'contribute') {
-      $urlBase = 'civicrm/contribute/transact';
-    }
-    $url = CRM_Utils_System::url($urlBase,
-      "reset=1&id={$entity['id']}",
-      FALSE, NULL, FALSE, TRUE
-    );
+    $params = array('id' => $pcpId);
+    CRM_Core_DAO::commonRetrieve('CRM_PCP_DAO_PCP', $params, $pcpInfo);
 
     $params = array('id' => $pcpInfo['pcp_block_id']);
     CRM_Core_DAO::commonRetrieve('CRM_PCP_DAO_PCPBlock', $params, $pcpBlock);
+    
+    $params = array('id' => $pcpInfo['page_id']);
+    $now       = time();
+
+    if ($component == 'event') {
+      // figure out where to redirect if an exception occurs below based on target entity
+      $urlBase = 'civicrm/event/register';
+
+      // ignore startDate for events - PCP's can be active long before event start date
+      $startDate = 0;
+      $endDate   = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('end_date', $entity));
+    }
+    
+    elseif ($component == 'contribute') {
+      $urlBase = 'civicrm/contribute/transact';
+      //start and end date of the contribution page
+      $startDate = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('start_date', $entity));
+      $endDate   = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('end_date', $entity));
+    }
+
+    // define redirect url back to contrib page or event if needed
+    $url = CRM_Utils_System::url($urlBase,
+      "reset=1&id={$pcpBlock['entity_id']}",
+      FALSE, NULL, FALSE, TRUE
+    );
 
     if ($pcpBlock['target_entity_id'] != $entity['id']) {
       $statusMessage = ts('This page is not related to the Personal Campaign Page you have just visited. However you can still make a contribution here.');
       CRM_Core_Error::statusBounce($statusMessage, $url);
     }
     elseif ($pcpInfo['status_id'] != $approvedId) {
-      $statusMessage = ts('The Personal Campaign Page you have just visited is currently %1. However you can still support the campaign by making a contribution here.', array(1 => $pcpStatus[$pcpInfo['status_id']]));
+      $statusMessage = ts('The Personal Campaign Page you have just visited is currently %1. However you can still support the campaign here.', array(1 => $pcpStatus[$pcpInfo['status_id']]));
       CRM_Core_Error::statusBounce($statusMessage, $url);
     }
     elseif (!CRM_Utils_Array::value('is_active', $pcpBlock)) {
-      $statusMessage = ts('Personal Campaign Pages are currently not enabled for this contribution page. However you can still support the campaign by making a contribution here.');
+      $statusMessage = ts('Personal Campaign Pages are currently not enabled for this contribution page. However you can still support the campaign here.');
       CRM_Core_Error::statusBounce($statusMessage, $url);
     }
     elseif (!CRM_Utils_Array::value('is_active', $pcpInfo)) {
-      $statusMessage = ts('The Personal Campaign Page you have just visited is current inactive. However you can still make a contribution here.');
+      $statusMessage = ts('The Personal Campaign Page you have just visited is currently inactive. However you can still support the campaign here.');
       CRM_Core_Error::statusBounce($statusMessage, $url);
     }
+    // Check if we're in range for contribution page start and end dates. for events, check if after event end date
     elseif (($startDate && $startDate > $now) || ($endDate && $endDate < $now)) {
-      $customStartDate = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('start_date', $entity['start_date']));
-      $customEndDate = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('end_date', $entity['end_date']));
+      $customStartDate = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('start_date', $entity));
+      $customEndDate = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('end_date', $entity));
       if ($startDate && $endDate) {
-        $statusMessage = ts('The Personal Campaign Page you have just visited is only active between %1 to %2. However you can still support the campaign by making a contribution here.',
+        $statusMessage = ts('The Personal Campaign Page you have just visited is only active from %1 to %2. However you can still support the campaign here.',
           array(1 => $customStartDate, 2 => $customEndDate)
         );
         CRM_Core_Error::statusBounce($statusMessage, $url);
       }
       elseif ($startDate) {
-        $statusMessage = ts('The Personal Campaign Page you have just visited will be active beginning on %1. However you can still support the campaign by making a contribution here.', array(1 => $customStartDate));
+        $statusMessage = ts('The Personal Campaign Page you have just visited will be active beginning on %1. However you can still support the campaign here.', array(1 => $customStartDate));
         CRM_Core_Error::statusBounce($statusMessage, $url);
       }
       elseif ($endDate) {
-        $statusMessage = ts('The Personal Campaign Page you have just visited is not longer active (as of %1). However you can still support the campaign by making a contribution here.', array(1 => $customEndDate));
+        if ($component == 'event') {
+            // Target_entity is an event and the event is over, redirect to event info instead of event registration page.
+            $url = CRM_Utils_System::url('civicrm/event/info',
+              "reset=1&id={$pcpBlock['entity_id']}",
+              FALSE, NULL, FALSE, TRUE
+            );
+            $statusMessage = ts('The event linked to the Personal Campaign Page you have just visited is over (as of %1).', array(1 => $customEndDate));            
         CRM_Core_Error::statusBounce($statusMessage, $url);
+        } else {
+          $statusMessage = ts('The Personal Campaign Page you have just visited is no longer active (as of %1). However you can still support the campaign here.', array(1 => $customEndDate));
+          CRM_Core_Error::statusBounce($statusMessage, $url);          
       }
+    }
     }
 
     return array(

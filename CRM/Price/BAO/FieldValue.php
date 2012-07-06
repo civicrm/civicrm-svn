@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -48,8 +48,7 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
    * @access public
    * @static
    */
-  static
-  function &add(&$params, $ids) {
+  static function &add(&$params, $ids) {
 
     $fieldValueBAO = new CRM_Price_BAO_FieldValue();
     $fieldValueBAO->copyValues($params);
@@ -76,8 +75,7 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
    * @access public
    * @static
    */
-  static
-  function create(&$params, $ids) {
+  static function create(&$params, $ids) {
 
     if (!is_array($params) || empty($params)) {
       return;
@@ -118,8 +116,7 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     return CRM_Core_DAO::commonRetrieve('CRM_Price_DAO_FieldValue', $params, $defaults);
   }
 
@@ -136,8 +133,7 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
    * @access public
    * @static
    */
-  static
-  function getValues($fieldId, &$values, $orderBy = 'weight', $isActive = FALSE) {
+  static function getValues($fieldId, &$values, $orderBy = 'weight', $isActive = FALSE) {
     $fieldValueDAO = new CRM_Price_DAO_FieldValue();
     $fieldValueDAO->price_field_id = $fieldId;
     $fieldValueDAO->orderBy($orderBy, 'label');
@@ -179,8 +175,7 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
    * @access public
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Price_DAO_FieldValue', $id, 'is_active', $is_active);
   }
 
@@ -194,8 +189,7 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
    * @access public
    * @static
    */
-  static
-  function deleteValues($fieldId) {
+  static function deleteValues($fieldId) {
     if (!$fieldId) {
       return FALSE;
     }
@@ -215,8 +209,7 @@ class CRM_Price_BAO_FieldValue extends CRM_Price_DAO_FieldValue {
    * @access public
    * @static
    */
-  static
-  function del($id) {
+  static function del($id) {
     if (!$id) {
       return FALSE;
     }

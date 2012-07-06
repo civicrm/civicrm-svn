@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -51,8 +51,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
    * @static
    * @access public
    */
-  static
-  function processConfirm(&$form,
+  static function processConfirm(&$form,
     &$paymentParams,
     &$premiumParams,
     $contactID,
@@ -109,12 +108,16 @@ class CRM_Contribute_BAO_Contribution_Utils {
         $contributionType,
         TRUE, TRUE, TRUE
       );
+      
+      if ($contribution) {
       $form->_params['contributionID'] = $contribution->id;
+      }
+      
       $form->_params['contributionTypeID'] = $contributionType->id;
       $form->_params['item_name'] = $form->_params['description'];
       $form->_params['receive_date'] = $now;
 
-      if ($form->_values['is_recur'] &&
+      if ($contribution && $form->_values['is_recur'] &&
         $contribution->contribution_recur_id
       ) {
         $form->_params['contributionRecurID'] = $contribution->contribution_recur_id;
@@ -286,10 +289,13 @@ class CRM_Contribute_BAO_Contribution_Utils {
     }
 
     // finally send an email receipt
+    if ($contribution) {
     $form->_values['contribution_id'] = $contribution->id;
-    CRM_Contribute_BAO_ContributionPage::sendMail($contactID, $form->_values, $contribution->is_test,
+      CRM_Contribute_BAO_ContributionPage::sendMail($contactID, 
+        $form->_values, $contribution->is_test,
       FALSE, $fieldTypes
     );
+  }
   }
 
   /**
@@ -303,8 +309,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
    * @static
    * @access public
    */
-  static
-  function contributionChartMonthly($param) {
+  static function contributionChartMonthly($param) {
     if ($param) {
       $param = array(1 => array($param, 'Integer'));
     }
@@ -345,8 +350,7 @@ INNER JOIN   civicrm_contact AS contact ON ( contact.id = contrib.contact_id )
    * @static
    * @access public
    */
-  static
-  function contributionChartYearly() {
+  static function contributionChartYearly() {
     $query = '
     SELECT   sum(contrib.total_amount) AS ctAmt,
              year(contrib.receive_date) as contribYear
@@ -368,8 +372,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
     return $params;
   }
 
-  static
-  function createCMSUser(&$params, $contactID, $mail) {
+  static function createCMSUser(&$params, $contactID, $mail) {
     // lets ensure we only create one CMS user
     static $created = FALSE;
 
@@ -386,8 +389,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
     }
   }
 
-  static
-  function _fillCommonParams(&$params, $type = 'paypal') {
+  static function _fillCommonParams(&$params, $type = 'paypal') {
     if (array_key_exists('transaction', $params)) {
       $transaction = &$params['transaction'];
     }
@@ -451,8 +453,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
     return TRUE;
   }
 
-  static
-  function formatAPIParams($apiParams, $mapper, $type = 'paypal', $category = TRUE) {
+  static function formatAPIParams($apiParams, $mapper, $type = 'paypal', $category = TRUE) {
     $type = strtolower($type);
 
     if (!in_array($type, array(
@@ -645,8 +646,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
     }
   }
 
-  static
-  function processAPIContribution($params) {
+  static function processAPIContribution($params) {
     if (empty($params) || array_key_exists('error', $params)) {
       return FALSE;
     }
@@ -724,8 +724,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
     return TRUE;
   }
 
-  static
-  function getFirstLastDetails($contactID) {
+  static function getFirstLastDetails($contactID) {
     static $_cache;
 
     if (!$_cache) {

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,8 +31,7 @@ class CRM_Queue_Page_AJAX {
    *
    * @return array(is_error => bool, is_continue => bool, numberOfItems => int, message => string)
    */
-  static
-  function runNext() {
+  static function runNext() {
     $errorPolicy = new CRM_Queue_ErrorPolicy();
     $errorPolicy->call(
     function () {
@@ -57,8 +56,7 @@ class CRM_Queue_Page_AJAX {
    *
    * @return array(is_error => bool, is_continue => bool, numberOfItems => int, message => string)
    */
-  static
-  function skipNext() {
+  static function skipNext() {
     $errorPolicy = new CRM_Queue_ErrorPolicy();
     $errorPolicy->call(
     function () {
@@ -83,8 +81,7 @@ class CRM_Queue_Page_AJAX {
    *
    * @return array(is_error => bool, is_continue => bool, numberOfItems => int, message => string)
    */
-  static
-  function onEnd() {
+  static function onEnd() {
     $errorPolicy = new CRM_Queue_ErrorPolicy();
     $errorPolicy->call(
     function () {

@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
@@ -144,7 +144,11 @@ class CRM_Core_Payment_Form {
       'title' => ts('Security Code'),
       'cc_field' => TRUE,
       'attributes' => array('size' => 5, 'maxlength' => 10, 'autocomplete' => 'off'),
-      'is_required' => TRUE,
+      'is_required' => CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::CONTRIBUTE_PREFERENCES_NAME,
+        'cvv_backoffice_required',
+        CRM_Core_Component::getComponentID('CiviContribute')
+        ,1
+      ),
     );
 
     $form->_fields['credit_card_exp_date'] = array(
@@ -315,8 +319,7 @@ class CRM_Core_Payment_Form {
    * @return void
    * @static
    */
-  static
-  function mapParams($id, &$src, &$dst, $reverse = FALSE) {
+  static function mapParams($id, &$src, &$dst, $reverse = FALSE) {
     static $map = NULL;
     if (!$map) {
       $map = array(
@@ -355,8 +358,7 @@ class CRM_Core_Payment_Form {
    * @return int
    * @static
    */
-  static
-  function getCreditCardExpirationMonth($src) {
+  static function getCreditCardExpirationMonth($src) {
     if ($month = CRM_Utils_Array::value('M', $src['credit_card_exp_date'])) {
       return $month;
     }
@@ -372,8 +374,7 @@ class CRM_Core_Payment_Form {
    * @return int
    * @static
    */
-  static
-  function getCreditCardExpirationYear($src) {
+  static function getCreditCardExpirationYear($src) {
     return CRM_Utils_Array::value('Y', $src['credit_card_exp_date']);
   }
 

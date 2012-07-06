@@ -1,9 +1,9 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -296,5 +296,230 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
   }
+
+   
+  function testMergeTest(){
+     // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+    
+    // edit the default Fuzzy rule
+    
+    
+     // edit the default Fuzzy rule
+    $this->open($this->sboxPath . "civicrm/contact/deduperules?action=update&id=1");
+    $this->waitForElementPresent('threshold');
+    $this->click("threshold");
+    $this->type("threshold", "10");
+    $this->click("_qf_DedupeRules_next-bottom");
+    $this->waitForPageToLoad("30000");
+
+    //Merge with the add new checkbox ticked
+    // Go directly to the URL of New Individual.
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    $this->waitForPageToLoad("30000");
+
+     // add contact1
+    //fill in first name
+    $firstName = substr(sha1(rand()), 0, 7);
+    $this->type('first_name', $firstName);
+
+    //fill in last name
+    $lastName = substr(sha1(rand()), 0, 7);
+    $this->type('last_name', $lastName);
+
+    //fill in email id
+    $this->type('email_1_email', "{$firstName}.{$lastName}@example.com");
+
+    //fill in billing email id
+    $this->click('addEmail');
+    $this->waitForElementPresent('email_2_email');
+    $this->type('email_2_email', "$firstName.$lastName@billing.com");
+    $this->select('email_2_location_type_id', 'value=5');
+    
+    //fill in home phone no
+    $this->type('phone_1_phone', "9876543210");
+
+    //fill in billing phone id
+    $this->click('addPhone');
+    $this->waitForElementPresent('phone_2_phone');
+    $this->type('phone_2_phone', "9876543120");
+    $this->select('phone_2_location_type_id', 'value=5');
+
+    // Clicking save.
+    $this->click("_qf_Contact_upload_view");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+
+      // contact2: duplicate of contact1.
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+
+    //fill in first name
+    $this->type("first_name", $firstName);
+
+    //fill in last name
+    $this->type("last_name", $lastName);
+
+    //fill in email
+    $this->type("email_1_email", "{$firstName}.{$lastName}@example.com");
+    
+    //fill in home phone no
+    $this->type('phone_1_phone', "9876543211");
+
+    // Clicking save.
+    $this->click("_qf_Contact_refresh_dedupe");
+    $this->waitForPageToLoad("30000");
+
+    $this->assertTrue($this->isTextPresent("One matching contact was found. You can View or Edit the existing contact."));
+    $this->click("_qf_Contact_upload_duplicate");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+
+    $this->open($this->sboxPath . "civicrm/contact/deduperules?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->click("xpath=//div[@id='browseValues']//table/tbody//tr/td[2][text()='Individual']/../td[3][text()='Fuzzy']/../td[5]/span/a[text()='Use Rule']");
+    $this->waitForPageToLoad("30000");
+    $this->click("_qf_DedupeFind_next-top");
+    $this->waitForPageToLoad("30000");
+    
+    // Select the contacts to be merged
+    $this->select("xpath=//div[@id='option51_length']//select", "value=100");
+    $this->waitForElementPresent("xpath=//table[@class='pagerDisplay']/tbody//tr/td[1]/a[text()='$firstName $lastName']/../../td[2]/a[text()='$firstName $lastName']");
+    $this->click("xpath=//table[@class='pagerDisplay']/tbody//tr/td[1]/a[text()='$firstName $lastName']/../../td[2]/a[text()='$firstName $lastName']/../../td[4]/a[text()='merge']");
+    $this->waitForElementPresent('_qf_Merge_cancel-bottom');
+    $this->click("css=div.crm-contact-merge-form-block div.action-link a");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("xpath=//form[@id='Merge']/div[2]/table/tbody/tr[2]/td[4]/span[text()='(overwrite)']");
+    $this->waitForElementPresent("xpath=//form[@id='Merge']/div[2]/table/tbody/tr[3]/td[4]/span[text()='(add)']");
+    $this->waitForElementPresent('_qf_Merge_cancel-bottom');
+  
+    $this->check("move_location_email_1");
+    $this->check("location[email][1][operation]");
+    $this->check("move_location_email_2");
+    $this->check("move_location_phone_1");
+    $this->check("location[phone][1][operation]");
+    $this->check("move_location_phone_2");
+    $this->click("_qf_Merge_next-bottom");
+    $this->waitForPageToLoad("30000");
+    
+    $this->assertTrue($this->isTextPresent('The contacts have been merged.'));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[2][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[3]/span/a[text() ='{$firstName}.{$lastName}@example.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[4][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[5]/span/a[text() ='{$firstName}.{$lastName}@example.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[6][contains(text(), 'Billing')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[7]/span/a[text() ='$firstName.$lastName@billing.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[2][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[3]/span[contains(text(), '9876543211')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[4][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[5]/span[contains(text(), '9876543210')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[6][contains(text(), 'Billing')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[7]/span[contains(text(), '9876543120')]"));
+
+    //Merge with the feature of (add)
+    // Go directly to the URL of New Individual.
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    $this->waitForPageToLoad("30000");
+
+     // add contact1
+    //fill in first name
+    $firstName1 = substr(sha1(rand()), 0, 7);
+    $this->type('first_name', $firstName1);
+
+    //fill in last name
+    $lastName1 = substr(sha1(rand()), 0, 7);
+    $this->type('last_name', $lastName1);
+
+    //fill in billing email id
+    $this->waitForElementPresent('email_1_email');
+    $this->type('email_1_email', "$firstName1.$lastName1@example.com");
+    $this->select('email_1_location_type_id', 'value=5');
+
+    $this->click('addEmail');
+    $this->waitForElementPresent('email_2_email');
+    $this->type('email_2_email', "$firstName.$lastName@home.com");
+    $this->select('email_2_location_type_id', 'value=1');
+    
+    //fill in home phone no
+    $this->type('phone_1_phone', "9876543210");
+
+    // Clicking save.
+    $this->click("_qf_Contact_upload_view");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+
+      // contact2: duplicate of contact1.
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+
+    //fill in first name
+    $this->type("first_name", $firstName1);
+
+    //fill in last name
+    $this->type("last_name", $lastName1);
+
+    //fill in email
+    $this->type("email_1_email", "{$firstName1}.{$lastName1}@example.com");
+    
+    //fill in billing phone no
+    $this->type('phone_1_phone', "9876543120");
+    $this->select('phone_1_location_type_id', 'value=5');
+
+    // Clicking save.
+    $this->click("_qf_Contact_refresh_dedupe");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("One matching contact was found. You can View or Edit the existing contact."));
+    $this->click("_qf_Contact_upload_duplicate");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+
+    
+    $this->open($this->sboxPath . "civicrm/contact/deduperules?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->click("xpath=//div[@id='browseValues']//table/tbody//tr/td[2][text()='Individual']/../td[3][text()='Fuzzy']/../td[5]/span/a[text()='Use Rule']");
+    $this->waitForPageToLoad("30000");
+    $this->click("_qf_DedupeFind_next-top");
+    $this->waitForPageToLoad("30000");
+    
+    // Select the contacts to be merged
+    $this->select("xpath=//div[@id='option51_length']//select", "value=100");
+    $this->waitForElementPresent("xpath=//table[@class='pagerDisplay']/tbody//tr/td[1]/a[text()='$firstName1 $lastName1']/../../td[2]/a[text()='$firstName1 $lastName1']");
+    $this->click("xpath=//table[@class='pagerDisplay']/tbody//tr/td[1]/a[text()='$firstName1 $lastName1']/../../td[2]/a[text()='$firstName1 $lastName1']/../../td[4]/a[text()='merge']");
+    $this->waitForElementPresent('_qf_Merge_cancel-bottom');
+    $this->click("css=div.crm-contact-merge-form-block div.action-link a");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("xpath=//form[@id='Merge']/div[2]/table/tbody/tr[2]/td[4]/span[text()='(overwrite)']");
+    $this->waitForElementPresent("xpath=//form[@id='Merge']/div[2]/table/tbody/tr[3]/td[4]/span[text()='(add)']");
+    $this->waitForElementPresent("xpath=//form[@id='Merge']/div[2]/table/tbody/tr[4]/td[4]/span[text()='(overwrite)']");
+    $this->select('location_email_1_locTypeId', 'value=3');
+    $this->select('location_phone_1_locTypeId', 'value=1');
+    $this->assertFalse($this->isElementPresent("xpath=//form[@id='Merge']/div[2]/table/tbody/tr[2]/td[4]/span[text()='(overwrite)']"));
+    $this->assertFalse($this->isElementPresent("xpath=//form[@id='Merge']/div[2]/table/tbody/tr[4]/td[4]/span[text()='(overwrite)']"));
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='Merge']/div[2]/table/tbody/tr[3]/td[4]/span[text()='(add)']"));
+    $this->waitForElementPresent('_qf_Merge_cancel-bottom');
+
+    $this->check("move_location_email_1");
+    $this->check("move_location_phone_1");
+    $this->click("_qf_Merge_next-bottom");
+    $this->waitForPageToLoad("30000");
+
+    $this->assertTrue($this->isTextPresent('The contacts have been merged.'));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[2][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[3]/span/a[text() ='{$firstName1}.{$lastName1}@example.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[4][contains(text(), 'Main')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[5]/span/a[text() ='{$firstName1}.{$lastName1}@example.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[2][contains(text(), 'Billing')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[3]/span[contains(text(), '9876543120')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[4][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[5]/span[contains(text(), '9876543210')]"));
+}
+
 }
 

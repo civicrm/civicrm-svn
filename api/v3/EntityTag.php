@@ -3,9 +3,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -33,7 +33,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API_EntityTag
  *
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * @version $Id: EntityTag.php 30879 2010-11-22 15:45:55Z shot $
  */
 
@@ -104,26 +104,6 @@ function civicrm_api3_entity_tag_display($params) {
     $result[] = $tags[$v];
   }
   return implode(',', $result);
-}
-
-/**
- * Returns all entities assigned to a specific Tag.
- *
- * @param  $params      Array   an array valid Tag id
- *
- * @return $entities    Array   An array of entity ids.
- * @access public
- */
-function civicrm_api3_tag_entities_get($params) {
-
-  civicrm_api3_verify_mandatory($params, NULL, array('tag_id'));
-
-  require_once 'CRM/Core/BAO/Tag.php';
-  require_once 'CRM/Core/BAO/EntityTag.php';
-  $tag      = new CRM_Core_BAO_Tag();
-  $tag->id  = CRM_Utils_Array::value('tag_id', $params) ? $params['tag_id'] : NULL;
-  $entities = CRM_Core_BAO_EntityTag::getEntitiesByTag($tag);
-  return $entities;
 }
 
 /**
