@@ -219,7 +219,13 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
 
     // save address changes
     $address = CRM_Core_BAO_Address::create( $params, TRUE );
-    
+
+    // make entry in log table
+    CRM_Core_BAO_Log::register( $this->_contactId,
+      'civicrm_contact',
+      $this->_contactId
+    );
+   
     $response = array(
       'status'    => 'save',
       'addressId' => $address[0]->id
