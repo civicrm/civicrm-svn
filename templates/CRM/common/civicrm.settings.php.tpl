@@ -206,11 +206,11 @@ define( 'CIVICRM_DOMAIN_ID'      , 1 );
  * server up and working, because CiviCRM will not start up if your server is
  * unavailable on the host and port that you specify.
  *
- * To use the php extension memcache use a value of 1 or 'memcache'
- * To use the php extension memcached use a value of 'memcached'
+ * To use the php extension memcache  use a value of 'Memcache'
+ * To use the php extension memcached use a value of 'Memcached'
  *
  */
-define( 'CIVICRM_USE_MEMCACHE', 0 );
+define( 'CIVICRM_DB_CACHE_CLASS', 'ArrayCache' );
 
 /**
  * Change this to the IP address of your memcache server if it is not on the
