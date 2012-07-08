@@ -44,9 +44,9 @@
  */
 function _civicrm_get_groups() {
   civicrm_initialize();
-  require_once 'api/api.php';
+  require_once 'api/v2/Group.php';
   $params = array('return.id' => 1, 'return.title' => 1, 'version' => 2);
-  $groupInformation = civicrm_api('group', 'get', $params);
+  $groupInformation = civicrm_group_get($params);
 
   $groups = array();
   foreach ($groupInformation as $values) {
