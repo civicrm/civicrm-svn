@@ -66,15 +66,8 @@ function civicrm_api3_event_create($params) {
   require_once 'CRM/Event/BAO/Event.php';
 
   $eventBAO = CRM_Event_BAO_Event::create($params);
-
-  if (is_a($eventBAO, 'CRM_Core_Error')) {
-    return civicrm_api3_create_error("Event is not created");
-  }
-  else {
-    $event = array();
-    _civicrm_api3_object_to_array($eventBAO, $event[$eventBAO->id]);
-  }
-
+  $event = array();
+  _civicrm_api3_object_to_array($eventBAO, $event[$eventBAO->id]);
   return civicrm_api3_create_success($event, $params);
 }
 /*
