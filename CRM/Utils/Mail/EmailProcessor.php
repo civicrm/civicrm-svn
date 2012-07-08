@@ -216,7 +216,7 @@ class CRM_Utils_Mail_EmailProcessor {
           require_once 'api/v2/Activity.php';
           $params            = _civicrm_activity_buildmailparams($mailParams, $emailActivityTypeId);
           $params['version'] = 2;
-          $result            = civicrm_api('activity', 'create', $params);
+          $result            = civicrm_activity_create($params);
 
           if ($result['is_error']) {
             $matches = FALSE;
