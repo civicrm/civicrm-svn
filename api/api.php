@@ -230,13 +230,7 @@ function civicrm_api_get_function_name($entity, $action, $version = NULL) {
   }
 
   $entity = _civicrm_api_get_entity_name_from_camel($entity);
-  // $action = _civicrm_api_get_entity_name_from_camel($action);
-  if ($version === 2) {
-    return 'civicrm' . '_' . $entity . '_' . $action;
-  }
-  else {
-    return 'civicrm_api3' . '_' . $entity . '_' . $action;
-  }
+  return 'civicrm_api3' . '_' . $entity . '_' . $action;
 }
 
 /**
