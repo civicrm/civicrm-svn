@@ -88,10 +88,10 @@ function civicrm_group_roles_user($op, $edit, &$user, $category = NULL) {
       if (empty($contact)) {
         return;
       }
-
+      require_once 'api/v2/GroupContact.php';
       $params = array('version' => '2', 'contact_id' => $contact);
       //find the groups for contact
-      $groups = civicrm_api('group_contact', 'get', $params);
+      $groups = civicrm_group_contact_get($params);
 
       foreach ($groups as $key) {
         $rid = db_result(db_query("SELECT role_id FROM {civicrm_group_roles_rules} WHERE group_id IN (%d)", $key['group_id']));
@@ -243,10 +243,10 @@ function civicrm_role_granted_by_other_group($contact_id, $rid, $group_id) {
   if (!civicrm_initialize()) {
     return;
   }
-
+  require_once 'api/v2/GroupContact.php';
   //get all the groups this contact belongs to
   $params = array('version' => '2', 'contact_id' => $contact_id);
-  $result = civicrm_api('group_contact', 'get', $params);
+  $result =  civicrm_group_contact_get($params);
 
   if (civicrm_error($result)) {
     drupal_set_message($result['error_message']);
@@ -336,7 +336,8 @@ function civicrm_group_roles_show_rules($action = NULL, $id = NULL) {
   // get civicrm groups
   $params = array('version' => '2',
   );
-  $groups = &civicrm_api('group', 'get', $params);
+  require_once 'api/v2/GroupContact.php';
+  $groups = civicrm_group_contact_get($params);
 
   //Begin building main output table.
   $header = array(t('Rule ID'), t('Rule Name (\'CiviCRM Group\' <--> \'Drupal Role\')'), t('Operation'));
@@ -507,7 +508,8 @@ function civicrm_group_roles_add_remove_groups($roles, $user, $op) {
 
     //find the contact record
     $params  = array('version' => '2', 'email' => $user->mail);
-    $contact = &civicrm_api('contact', 'get', $params);
+    require_once 'api/v2/GroupContact.php';
+    $contact = civicrm_group_contact_get($params);
     $contact = array_pop($contact);
 
     $contact_id = $contact['contact_id'];
@@ -524,12 +526,13 @@ function civicrm_group_roles_add_remove_groups($roles, $user, $op) {
 
           //add the contact
           $contacts = array($contact);
+          require_once 'api/v3/GroupContact.php';
           $gparams = array('version' => '2', 'group_id' => $gid, 'contact_id' => $contact_id);
           if ($op == 'add') {
-            $result = civicrm_api('group_contact', 'add', $gparams);
+            $result = civicrm_group_contact_add($gparams);
           }
           else {
-            $result = civicrm_api('group_contact', 'remove', $gparams);
+            $result = civicrm_group_contact_remove($gparams);
           }
 
           if ($result['is_error'] > 0) {
