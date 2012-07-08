@@ -66,7 +66,8 @@ function _civicrm_rules_group_contact($contactId, $groupId, $action = 'add') {
     'version' => 2,
   );
   // This used to be civicrm_group_contact_common($params, $action);
-  civicrm_api('group_contact', 'common', $params, $action);
+  require_once 'api/v2/GroupContact.php';
+  civicrm_group_contact_common('group_contact', 'common', $params, $action);
 }
 
 /**
