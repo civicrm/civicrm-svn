@@ -224,31 +224,11 @@ function _civicrm_api_resolve($apiRequest) {
  * @deprecated
  */
 function civicrm_api_get_function_name($entity, $action, $version = NULL) {
-  static $_map = NULL;
 
   if (empty($version)) {
     $version = civicrm_get_api_version();
   }
 
-  if (!isset($_map[$version])) {
-
-    if ($version === 2) {
-      $_map[$version]['event']['get'] = 'civicrm_event_search';
-      $_map[$version]['group_roles']['create'] = 'civicrm_group_roles_add_role';
-      $_map[$version]['group_contact']['create'] = 'civicrm_group_contact_add';
-      $_map[$version]['group_contact']['delete'] = 'civicrm_group_contact_remove';
-      $_map[$version]['entity_tag']['create'] = 'civicrm_entity_tag_add';
-      $_map[$version]['entity_tag']['delete'] = 'civicrm_entity_tag_remove';
-      $_map[$version]['group']['create'] = 'civicrm_group_add';
-      $_map[$version]['contact']['create'] = 'civicrm_contact_add';
-      $_map[$version]['relationship_type']['get'] = 'civicrm_relationship_types_get';
-      $_map[$version]['uf_join']['create'] = 'civicrm_uf_join_add';
-
-      if (isset($_map[$version][$entity][$action])) {
-        return $_map[$version][$entity][$action];
-      }
-    }
-  }
   $entity = _civicrm_api_get_entity_name_from_camel($entity);
   // $action = _civicrm_api_get_entity_name_from_camel($action);
   if ($version === 2) {
@@ -487,13 +467,13 @@ function _civicrm_api_get_entity_name_from_camel($entity) {
  * Having a DAO object find the entity name
  * @param object $bao DAO being passed in
  */
-function _civicrm_api_get_entity_name_from_dao($bao){ 
+function _civicrm_api_get_entity_name_from_dao($bao){
   $daoName = str_replace("BAO", "DAO", get_class($bao));
   $dao = array();
   require ('CRM/Core/DAO/.listAll.php');
   $daos = array_flip($dao);
   return _civicrm_api_get_entity_name_from_camel($daos[$daoName]);
-  	
+
 }
 
 /*
