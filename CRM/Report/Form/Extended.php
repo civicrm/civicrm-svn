@@ -590,7 +590,6 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'default' => true
           ),
           'status_id' => array(
-
             'title' => ts('Status'),
             'default' => true
           ),
@@ -1167,10 +1166,10 @@ WHERE 	line_item_civireport.id IS NOT NULL
     }
     $contactID = $row['civicrm_contact_id'];
     return "<div id=contact-{$contactID} class='crm-entity'>
-           <div class='crm-editable crmf-nick_name crm-editable-enabled' data-action='create'>
-           " . $value . "</div>";
+           <span class='crm-editable crmf-nick_name crm-editable-enabled' data-action='create'>
+           " . $value . "</span></div>";
   }
-  
+
   /*
    * Retrieve text for contribution type from pseudoconstant
    */
