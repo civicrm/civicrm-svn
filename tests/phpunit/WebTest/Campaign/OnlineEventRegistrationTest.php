@@ -238,6 +238,8 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
       $this->type("value_1", "250.00");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
+      //add a default fee
+      $this->check("xpath=//table[@id='map-field-table']/tbody/tr[2]/td[3]/input[@name='default']");
     }
 
     if ($discount) {
