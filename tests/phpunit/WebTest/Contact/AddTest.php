@@ -96,7 +96,6 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Contact_refresh_dedupe");
     $this->waitForPageToLoad("30000");
 
-
     //address section
     $this->click("addressBlock");
     $this->waitForElementPresent("address_1_street_address");
@@ -128,7 +127,6 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_2_geo_code_2", "5678");
     }
 
-
     //Communication Preferences section
     $this->click("commPrefs");
 
@@ -149,7 +147,6 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("preferred_language");
     $this->select("preferred_language", "value=en_US");
 
-
     //Notes section
     $this->click("notesBlock");
     $this->waitForElementPresent("subject");
@@ -168,9 +165,6 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     $this->click("group[{$this->webtestGetValidEntityID('Group')}]");
     $this->click("tag[{$this->webtestGetValidEntityID('Tag')}]");
-
-
-
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
