@@ -1602,7 +1602,7 @@ function _civicrm_core_data(&$data, $enabled) {
     'title' => t('Details'),
     'help' => t('Details and Notes regarding the activity.'),
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'civicrm_handler_field_markup',
       'click sortable' => TRUE,
     ),
     'argument' => array(
