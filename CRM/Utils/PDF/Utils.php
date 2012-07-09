@@ -68,6 +68,7 @@ class CRM_Utils_PDF_Utils {
     $html = "
 <html>
   <head>
+    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>
     <style>@page { margin: {$t}{$metric} {$r}{$metric} {$b}{$metric} {$l}{$metric}; }</style>
     <style type=\"text/css\">@import url({$config->userFrameworkResourceURL}css/print.css);</style>
   </head>
@@ -110,7 +111,7 @@ class CRM_Utils_PDF_Utils {
     spl_autoload_register('DOMPDF_autoload');
     $dompdf = new DOMPDF();
     $dompdf->set_paper($paper_size, $orientation);
-    $dompdf->load_html(utf8_decode($html));
+    $dompdf->load_html($html);
     $dompdf->render();
 
     if ($output) {
@@ -129,7 +130,7 @@ class CRM_Utils_PDF_Utils {
     $snappy->setOption("page-width", $paper_size[2] . "pt");
     $snappy->setOption("page-height", $paper_size[3] . "pt");
     $snappy->setOption("orientation", $orientation);
-    $pdf = $snappy->getOutputFromHtml(utf8_decode($html));
+    $pdf = $snappy->getOutputFromHtml($html);
     if ($output) {
       return $pdf;
     }
