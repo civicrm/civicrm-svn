@@ -1040,7 +1040,7 @@ abstract class CRM_Utils_Hook {
    * @param string $op         the type of operation being performed; 'check' or 'enqueue'
    * @param string $queue      (for 'enqueue') the modifiable list of pending up upgrade tasks
    *
-   * @return mixed             based on op. 'check' returns a boolean (TRUE if upgrades are pending)
+   * @return mixed             based on op. 'check' returns a array(boolean) (TRUE if upgrades are pending)
    *                           'enqueue' returns void
    * @access public
    */
