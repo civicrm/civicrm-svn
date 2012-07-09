@@ -496,11 +496,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->verifyText("xpath=id('contactTopBar')/table/tbody/tr/td[4]/a[text()]", $currentEmployer);
 
     //make sure both shared address are set.
-    $this->verifyText("xpath=id('contact-summary')/div[2]/div[2]/div[1]/table/tbody/tr/td[2]/strong", 'Shared with:');
-    $this->verifyText("xpath=id('contact-summary')/div[2]/div[2]/div[1]/table/tbody/tr/td[2]/a[text()]", $currentEmployer);
-
-    $this->verifyText("xpath=id('contact-summary')/div[2]/div[2]/div[2]/table/tbody/tr/td[2]/strong", 'Shared with:');
-    $this->verifyText("xpath=id('contact-summary')/div[2]/div[2]/div[2]/table/tbody/tr/td[2]/a[text()]", $sharedHousehold);
+    $this->assertTrue($this->isTextPresent("Address belongs to $currentEmployer"));
+    $this->assertTrue($this->isTextPresent("Address belongs to $sharedHousehold"));
 
     // make sure relationships are created
     $this->click("xpath=id('tab_rel')/a");
