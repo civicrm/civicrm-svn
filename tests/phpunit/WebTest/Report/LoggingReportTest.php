@@ -52,7 +52,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->waitForTextPresent("Your changes have been saved");
 
     //add new contact
-    $firstName = 'Anthony' . substr(sha1(rand()), 0, 7);
+    $orginalFirstName = $firstName = 'Anthony' . substr(sha1(rand()), 0, 7);
     $lastName  = 'Anderson' . substr(sha1(rand()), 0, 7);
     
     $this->webtestAddContact($firstName, $lastName);
@@ -175,6 +175,34 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
             );
     $this->verifyReportData($data);
     
+    //update link (logging details report check)
+    $contactInfo = array();
+    $contactInfo['data'] = array(
+      array('field' => 'Sort Name', 'changed_from' => "{$lastName}, {$orginalFirstName}", 'changed_to' => "{$lastName}, {$firstName}"),
+      array('field' => 'Display Name', 'changed_from' => "{$orginalFirstName} {$lastName}", 'changed_to' => "{$firstName} {$lastName}"),
+      array('field' => 'First Name', 'changed_from' => $orginalFirstName, 'changed_to' => $firstName),
+      // array('field' => 'Email Greeting', 'changed_from' => "Dear {$orginalFirstName}", 'changed_to' => "Dear {$firstName}"),
+      // array('field' => 'Postal Greeting', 'changed_from' => "Dear {$orginalFirstName}", 'changed_to' => "Dear {$firstName}"),
+      // array('field' => 'Addressee', 'changed_from' => "{$orginalFirstName} {$lastName}", 'changed_to' => "{$firstName} {$lastName}"),
+    );
+    $contactInfo = array_merge($contactInfo, $data[0]);
+    
+    $relationshipInfo = array();
+    $relationshipInfo['data'] = array(
+       array('field' => 'is_active', 'changed_from' => 'true', 'changed_to' => 'false')                            
+    );
+    $relationshipInfo = array_merge($relationshipInfo, $data[2]);
+
+    $noteInfo = array();
+    $noteInfo['data'] = array(
+      array('field' => 'Note', 'changed_from' => $noteText, 'changed_to' => "{$noteText}_edited"),
+      array('field' => 'Subject', 'changed_from' => $noteSubject, 'changed_to' => "{$noteSubject}_edited"),
+    );
+    $noteInfo = array_merge($noteInfo, $data[7]);
+    
+    $dataForReportDetail = array($contactInfo, $relationshipInfo, $noteInfo);
+    $this->detailReportCheck($dataForReportDetail);
+    
     //delete contact check
     $this->open($this->sboxPath . "civicrm/contact/view/delete?&reset=1&delete=1&cid={$cid[1]}");
     $this->click("_qf_Delete_done");
@@ -204,6 +232,25 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
       if ($value['action'] == 'Update') {
         $this->assertTrue( ($value['action'] == $this->getText("xpath=//table/tbody//tr/td[contains(text(), '{$value['log_type']}')]/../td[3]/a[contains(text(), '{$value['altered_contact']}')]/../../{$actionPath}")), "The proper record action  {$value['action']} not present for (log type : {$value['log_type']}, altered contact : {$value['altered_contact']} record)");
       }
+    }
+  }
+  
+  function detailReportCheck($dataForReportDetail) {
+    foreach ($dataForReportDetail as $value) {
+      $this->click("xpath=//table/tbody//tr/td[contains(text(), '{$value['log_type']}')]/../td[3]/a[contains(text(), '{$value['altered_contact']}')]/../../td[4]/a");
+      $this->waitForPageToLoad("30000");
+
+      foreach ($value['data'] as $key => $data) {
+        $position = $key + 1;
+        $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$position}]/td[@class='crm-report-field']", preg_quote($data['field']));
+        $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$position}]/td[@class='crm-report-from']", preg_quote($data['changed_from']));
+        $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$position}]/td[@class='crm-report-to']", preg_quote($data['changed_to']));
+      }
+
+    //visit the logging contact summary report
+    $this->open($this->sboxPath . "civicrm/report/logging/contact/summary?reset=1");
+    $this->click("_qf_LoggingSummary_submit");
+    $this->waitForPageToLoad("30000");  
     }
   }
 }
