@@ -1618,8 +1618,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
    * @static
    * @access public
    */
-  static
-  function addToErrorMsg($errorName, &$errorMessage) {
+  static function addToErrorMsg($errorName, &$errorMessage) {
     if ($errorMessage) {
       $errorMessage .= "; $errorName";
     }
@@ -2052,7 +2051,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
         if (!$name) {
           continue;
         }
-        if (!is_array($relatedContactFields[$name])) {
+
+        if ( CRM_Utils_Array::value($name, $relatedContactFields) && !is_array($relatedContactFields[$name])) {
           $relatedContactFields[$name] = array();
         }
         $fldName = CRM_Utils_Array::value($key, $this->_mapperRelatedContactDetails);
