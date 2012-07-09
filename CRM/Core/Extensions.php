@@ -599,15 +599,25 @@ class CRM_Core_Extensions {
    */
   public function upgrade($id, $key) {
     $this->populate();
-    // get installed and uninstall
+    
     $e = $this->getExtensionsByKey(TRUE);
     $ext = $e[$key];
-    $ext->uninstall();
+    if (! $ext->isUpgradeable()) {
+      $ext->uninstall();
 
-    // get fresh scope and install
-    $e = $this->getExtensions();
-    $ext = $e[$key];
-    $ext->install();
+      // get fresh scope and install
+      $e = $this->getExtensions();
+      $ext = $e[$key];
+      $ext->install();
+    } else {
+      // get the info.xml with newest downloadUrl
+      $remotes = $this->getRemoteByKey();
+      $remoteExt = $remotes[$key];
+      $remoteExt->upgrade();
+
+      // refresh
+      $e = $this->getExtensions();
+    }
   }
 
 

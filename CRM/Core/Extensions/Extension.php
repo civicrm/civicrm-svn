@@ -59,6 +59,18 @@ class CRM_Core_Extensions_Extension {
     $this->path = $config->extensionsDir . DIRECTORY_SEPARATOR . $key . DIRECTORY_SEPARATOR;
   }
 
+  /**
+   * Determine whether this extension supports special upgrade logic.
+   * If not, then the implication is that an "upgrade" would
+   * mean "uninstall and reinstall".
+   *
+   * @return bool
+   */
+  public function isUpgradeable() {
+    $upgradeableTypes = array('module'); // FIXME
+    return in_array($this->type, $upgradeableTypes);
+  }
+
   public function setId($id) {
     $this->id = $id;
   }
@@ -184,9 +196,17 @@ class CRM_Core_Extensions_Extension {
     if ($this->type == 'payment') {
       $this->_runPaymentHook('uninstall');
     }
-    $this->removeFiles();
     $this->_removeExtensionByType();
     $this->_removeExtensionEntry();
+    // remove files *after* invoking hook_civicrm_uninstall
+    $this->removeFiles();
+  }
+  
+  public function upgrade() {
+    $this->download();
+    $this->removeFiles();
+    $this->installFiles();
+    //TODO// $this->_updateExtensionEntry();
   }
 
   public function removeFiles() {
