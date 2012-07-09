@@ -65,7 +65,13 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
     // Visit contact summary page.
     $this->click("css=div.ac_results-inner li");
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent('This is a test field'));
+  
+    for($i = 1;$i <= 11;$i++ ){
+      foreach($customDataParams['customFields'] as $key => $value){
+        $this->assertTrue($this->isElementPresent("xpath=//div[@class='crm-accordion-body']/div/div/div['$i'][contains(text(), '$key')]"));
+        $this->assertTrue($this->isTextPresent("$value"));
+      }
+    }
   }
 
 
@@ -262,6 +268,19 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
                                    "custom_{$customFieldId10}" => "2009-12-31",
                                    ),
                         ),
+                 'customFields' => array(
+                                          $customField  => 'This is a test field',
+                                          $customField3 => 'label1',
+                                          $customField4 => 'label1',
+                                          $customField5 => 'label1',
+                                          $customField6 => 'label1',
+                                          $customField7 => 'label1',
+                                          $customField8 => 'label1',
+                                          $customField1 => '1',
+                                          $customField2 => '12345',
+                                          $customField9 => '123,456.00',
+                                          $customField10 => 'December 31st, 2009',
+                                         ),
                  );
   }
   
