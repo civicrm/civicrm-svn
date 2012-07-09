@@ -121,12 +121,12 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
     $pay_later_text = "";
     $this->pay_later_receipt = "";
     foreach ($this->cart->get_main_events_in_carts() as $event_in_cart) {
-      if ($payment_processor_id == NULL && $event_in_cart->event->payment_processor_id != NULL) {
-        $payment_processor_id = $event_in_cart->event->payment_processor_id;
+      if ($payment_processor_id == NULL && $event_in_cart->event->payment_processor != NULL) {
+        $payment_processor_id = $event_in_cart->event->payment_processor;
         $this->contribution_type_id = $event_in_cart->event->contribution_type_id;
       }
       else {
-        if ($event_in_cart->event->payment_processor_id != NULL && $event_in_cart->event->payment_processor_id != $payment_processor_id) {
+        if ($event_in_cart->event->payment_processor != NULL && $event_in_cart->event->payment_processor != $payment_processor_id) {
           CRM_Core_Error::statusBounce(ts('When registering for multiple events all events must use the same payment processor. '));
         }
       }
