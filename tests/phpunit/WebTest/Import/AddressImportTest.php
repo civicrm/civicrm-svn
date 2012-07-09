@@ -74,55 +74,36 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
      */
   function _individualCustomCSVData($customDataParams, $firstName1) {
   
-                          
     $headers = array(
-      'first_name' => 'First Name',
-      'last_name' => 'Last Name',
-      'address_1' => 'Additional Address 1',
-      'address_2' => 'Additional Address 2',
-      'city' => 'City',
-      'state' => 'State',
-      'country' => 'Country',
-      "custom_{$customDataParams['addressCustom']['alphanumeric']['text'][0]}" => "{$customDataParams['addressCustom']['alphanumeric']['text'][1]} :: {$customDataParams['addressCustom']['alphanumeric']['text'][2]}",
-     "custom_{$customDataParams['addressCustom']['integer'][0]}" => "{$customDataParams['addressCustom']['integer'][1]} :: {$customDataParams['addressCustom']['integer'][2]}",
-      "custom_{$customDataParams['addressCustom']['number'][0]}" => "{$customDataParams['addressCustom']['number'][1]} :: {$customDataParams['addressCustom']['number'][2]}",
-       "custom_{$customDataParams['addressCustom']['alphanumeric']['select'][0]}" => "{$customDataParams['addressCustom']['alphanumeric']['select'][1]} :: {$customDataParams['addressCustom']['alphanumeric']['select'][2]}",
-       "custom_{$customDataParams['addressCustom']['alphanumeric']['radio'][0]}" => "{$customDataParams['addressCustom']['alphanumeric']['radio'][1]} :: {$customDataParams['addressCustom']['alphanumeric']['radio'][2]}",
-       "custom_{$customDataParams['addressCustom']['alphanumeric']['checkbox'][0]}" => "{$customDataParams['addressCustom']['alphanumeric']['checkbox'][1]} :: {$customDataParams['addressCustom']['alphanumeric']['checkbox'][2]}",
-       "custom_{$customDataParams['addressCustom']['alphanumeric']['multi-select'][0]}" => "{$customDataParams['addressCustom']['alphanumeric']['multi-select'][1]} :: {$customDataParams['addressCustom']['alphanumeric']['multi-select'][2]}",
-       "custom_{$customDataParams['addressCustom']['alphanumeric']['advmulti-select'][0]}" => "{$customDataParams['addressCustom']['alphanumeric']['advmulti-select'][1]} :: {$customDataParams['addressCustom']['alphanumeric']['advmulti-select'][2]}",
-       "custom_{$customDataParams['addressCustom']['alphanumeric']['autocomplete-select'][0]}" => "{$customDataParams['addressCustom']['alphanumeric']['autocomplete-select'][1]} :: {$customDataParams['addressCustom']['alphanumeric']['autocomplete-select'][2]}",
-      "custom_{$customDataParams['addressCustom']['money'][0]}" => "{$customDataParams['addressCustom']['money'][1]} :: {$customDataParams['addressCustom']['money'][2]}",
-       "custom_{$customDataParams['addressCustom']['date'][0]}" => "{$customDataParams['addressCustom']['date'][1]} :: {$customDataParams['addressCustom']['date'][2]}",
+                     'first_name' => 'First Name',
+                     'last_name' => 'Last Name',
+                     'address_1' => 'Additional Address 1',
+                     'address_2' => 'Additional Address 2',
+                     'city' => 'City',
+                     'state' => 'State',
+                     'country' => 'Country',
+                     );
+    foreach( $customDataParams['headers'] as $key =>$value){
+      $headers[$key] = $value;
+    }
     
-    );
-
-    $rows = array(
-      array('first_name' => $firstName1,
-        'last_name' => 'Anderson',
-        'address_1' => 'Add 1',
-        'address_2' => 'Add 2',
-        'city' => 'Watson',
-        'state' => 'NY',
-        'country' => 'United States',
-        "custom_{$customDataParams['addressCustom']['alphanumeric']['text'][0]}" => 'This is a test field',
-        "custom_{$customDataParams['addressCustom']['integer'][0]}" => 1,
-        "custom_{$customDataParams['addressCustom']['number'][0]}" => 12345,
-        "custom_{$customDataParams['addressCustom']['alphanumeric']['select'][0]}" => 'label1',
-        "custom_{$customDataParams['addressCustom']['alphanumeric']['radio'][0]}" => 'label1',
-        "custom_{$customDataParams['addressCustom']['alphanumeric']['checkbox'][0]}" => 'label1',
-        "custom_{$customDataParams['addressCustom']['alphanumeric']['multi-select'][0]}" => 'label1',
-        "custom_{$customDataParams['addressCustom']['alphanumeric']['advmulti-select'][0]}" => 'label1',
-        "custom_{$customDataParams['addressCustom']['alphanumeric']['autocomplete-select'][0]}" => 'label1',
-        "custom_{$customDataParams['addressCustom']['money'][0]}" => 123456,
-        "custom_{$customDataParams['addressCustom']['date'][0]}" => '2009-12-31',
-       
-      ),
-    );
-
+    $rows = array( 0 => 
+                   array(
+                         'first_name' => $firstName1,
+                         'last_name' => 'Anderson',
+                         'address_1' => 'Add 1',
+                         'address_2' => 'Add 2',
+                         'city' => 'Watson',
+                         'state' => 'NY',
+                         'country' => 'United States',
+                         ),
+                   );
+    foreach ($customDataParams['rows'][0] as $key => $values) {
+      $rows[0][$key] = $values;
+    }
     return array($headers, $rows);
   }
-
+  
   function _addCustomData() {
     // Go directly to the URL of the screen that you will be testing (New Custom Group).
     $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
@@ -253,24 +234,35 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("Your custom field '{$customField10}' has been saved."));
     $customFieldId10 = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td/span[text()='$customField10']/../../td[8]/span/a@href"));
     $customFieldId10 = $customFieldId10[1];
-    
-    return array('addressCustom' =>
-                 array( 'alphanumeric' => 
-                        array('text' => array("custom_{$customFieldId}", $customField, $customGroupTitle),
-                              'select' => array("custom_{$customFieldId3}", $customField3, $customGroupTitle),
-                              'radio' => array("custom_{$customFieldId4}", $customField4, $customGroupTitle),
-                              'checkbox' => array("custom_{$customFieldId5}", $customField5, $customGroupTitle),
-                              'multi-select' => array("custom_{$customFieldId6}", $customField6, $customGroupTitle),
-                              'advmulti-select' => array("custom_{$customFieldId7}", $customField7, $customGroupTitle),
-                              'autocomplete-select' => array("custom_{$customFieldId8}", $customField8, $customGroupTitle),
-                              ),
-                        'integer'      => array("custom_{$customFieldId1}", $customField1, $customGroupTitle),
-                        'number'       => array("custom_{$customFieldId2}", $customField2, $customGroupTitle),
-                        'money'        => array("custom_{$customFieldId9}", $customField9, $customGroupTitle),
-                        'date'         => array("custom_{$customFieldId10}", $customField10, $customGroupTitle),
-                        )
+
+    return array('headers' => 
+                    array("custom_{$customFieldId}" => "$customField :: $customGroupTitle",
+                          "custom_{$customFieldId3}" => "$customField3 :: $customGroupTitle",
+                          "custom_{$customFieldId4}" => "$customField4 :: $customGroupTitle",
+                          "custom_{$customFieldId5}" => "$customField5 :: $customGroupTitle",
+                          "custom_{$customFieldId6}" => "$customField6 :: $customGroupTitle",
+                          "custom_{$customFieldId7}" => "$customField7 :: $customGroupTitle",
+                          "custom_{$customFieldId8}" => "$customField8 :: $customGroupTitle",
+                          "custom_{$customFieldId1}" => "$customField1 :: $customGroupTitle",
+                          "custom_{$customFieldId2}" => "$customField2 :: $customGroupTitle",
+                          "custom_{$customFieldId9}" => "$customField9 :: $customGroupTitle",
+                          "custom_{$customFieldId10}" => "$customField10 :: $customGroupTitle",
+                          ),
+                 'rows' =>
+                 array( 0 => array("custom_{$customFieldId}" => "This is a test field",
+                                   "custom_{$customFieldId3}" => "label1",
+                                   "custom_{$customFieldId4}" => "label1",
+                                   "custom_{$customFieldId5}" => "label1",
+                                   "custom_{$customFieldId6}" => "label1",
+                                   "custom_{$customFieldId7}" => "label1",
+                                   "custom_{$customFieldId8}" => "label1",
+                                   "custom_{$customFieldId1}" => 1,
+                                   "custom_{$customFieldId2}" => 12345,
+                                   "custom_{$customFieldId9}" => 123456,
+                                   "custom_{$customFieldId10}" => "2009-12-31",
+                                   ),
+                        ),
                  );
-    
   }
   
   function _createMultipleValueCustomField( $customFieldName, $type ){
