@@ -2050,7 +2050,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
           }
           elseif ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($name)) {
             //fix for custom fields
-            $customFields = CRM_Core_BAO_CustomField::getFields(CRM_Utils_Array::value('Individual', $values));
+            $customFields = CRM_Core_BAO_CustomField::getFields(CRM_Utils_Array::value('contact_type', $details));
 
             // hack to add custom data for components
             $components = array('Contribution', 'Participant', 'Membership', 'Activity');
