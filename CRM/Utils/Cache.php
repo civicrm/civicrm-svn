@@ -51,8 +51,13 @@ class CRM_Utils_Cache {
   /**
    * Constructor
    *
+   * @param array   $config  an array of configuration params
+   *
    * @return void
-   */ function __construct() {}
+   */
+  function __construct(&$config) {
+    CRM_Core_Error::fatal(ts('this is just an interface and should not be called directly'));
+  }
 
   /**
    * singleton function used to manage this object
@@ -127,22 +132,6 @@ class CRM_Utils_Cache {
     }
 
     return $defaults;
-  }
-
-  function set($key, &$value) {
-    return FALSE;
-  }
-
-  function get($key) {
-    return NULL;
-  }
-
-  function delete($key) {
-    return FALSE;
-  }
-
-  function flush() {
-    return FALSE;
   }
 }
 
