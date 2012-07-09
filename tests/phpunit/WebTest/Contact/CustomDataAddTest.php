@@ -277,7 +277,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     
     //enable logging
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_6");
     $this->click("_qf_Miscellaneous_next-top");
     $this->waitForPageToLoad("30000");
 
@@ -368,6 +368,12 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='LoggingDetail']/div[2]/table/tbody/tr/td[2][contains(text(), '$value')]"));
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='LoggingDetail']/div[2]/table/tbody/tr/td[3][contains(text(), '$value1')]"));
+
+    //disable logging
+    $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
+    $this->click("CIVICRM_QFID_0_8");
+    $this->click("_qf_Miscellaneous_next-top");
+    $this->waitForPageToLoad("30000");
   }
   
 }
