@@ -154,7 +154,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
       'CiviEvent' => array('participant_fee_amount_high', 'addParticipantSearchDetail'),
       'CiviMember' => array('member_end_date_high', 'addMemberSearchDetail'),
       'CiviPledge' => array('pledge_in_honor_of', 'addPledgeSearchDetail'),
-      'relationship' => array('CIVICRM_QFID_2_All', ''),
+      'relationship' => array("xpath=//div[@id='relationship']/table/tbody/tr//td/label[text()='Relationship Status']/../label[text()='All']", ''),
     );
 
     foreach ($searchBlockValues as $block => $blockValues) {
@@ -362,9 +362,9 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     // fill event type
     $this->fillAutoComplete("Fundraiser", "event_type");
     // check participant status (registered)
-    $this->click("xpath=//div[@id='participantForm']/table/tbody/tr[3]/td[1]/div[1]//div/label[text()='Registered']");
+    $this->click("xpath=//div[@id='participantForm']/table/tbody//tr/td/label[text()='Participant Status']/../div//div/label[text()='Registered']");
     // check participant role (Volunteer)
-    $this->click("xpath=//div[@id='participantForm']/table/tbody/tr[3]/td[2]/div[1]//div/label[text()='Volunteer']");
+    $this->click("xpath=//div[@id='participantForm']/table/tbody//tr/td/label[text()='Participant Role']/../div//div/label[text()='Volunteer']");
     // fill participant fee level (couple)
     $this->fillAutoComplete("Couple", "participant_fee_level");
     // fill amount range
@@ -400,14 +400,14 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("pledge_payment_date_low", "-1 day");
     $this->webtestFillDate("pledge_payment_date_high", "+1 day");
     // fill Pledge payment status
-    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[2]/td[1]//label[text()='Completed']");
-    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[2]/td[1]//label[text()='Pending']");
+    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[5]/td[2]//label[text()='Completed']");
+    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[5]/td[2]//label[text()='Pending']");
     // fill pledge amount range
     $this->type("pledge_amount_low", "100");
     $this->type("pledge_amount_high", "300");
     // fill plegde status
-    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[3]/td[2]//label[text()='Completed']");
-    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[3]/td[2]//label[text()='Pending']");
+    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[4]/td//label[text()='Completed']");
+    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[4]/td//label[text()='Pending']");
     // fill pledge created date range
     $this->webtestFillDate("pledge_create_date_low", "-5 day");
     $this->webtestFillDate("pledge_create_date_high", "+5 day");
@@ -415,7 +415,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("pledge_start_date_low", "-2 day");
     $this->webtestFillDate("pledge_start_date_high", "+2 day");
     // fill contribution type
-    $this->select("pledge_contribution_type_id", "Donation");
+    $this->select("pledge_contribution_type_id", "label=Donation");
   }
 
   // function to create contact with details (contact details, address, Constituent information ...)
