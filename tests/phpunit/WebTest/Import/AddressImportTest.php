@@ -66,11 +66,9 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
     $this->click("css=div.ac_results-inner li");
     $this->waitForPageToLoad("30000");
   
-    for($i = 1;$i <= 11;$i++ ){
-      foreach($customDataParams['customFields'] as $key => $value){
-        $this->assertTrue($this->isElementPresent("xpath=//div[@class='crm-accordion-body']/div/div/div['$i'][contains(text(), '$key')]"));
-        $this->assertTrue($this->isTextPresent("$value"));
-      }
+    foreach($customDataParams['customFields'] as $key => $value){
+      $this->assertTrue($this->isElementPresent("xpath=//div[@class='crm-accordion-body']/div/div/div[@class='crm-label'][contains(text(), '$key')]"));
+      $this->assertTrue($this->isTextPresent("$value"));
     }
   }
 
