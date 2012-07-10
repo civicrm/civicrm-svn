@@ -135,7 +135,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    *
    * @param  int  $optionGroupId     Id of the Option Group to be deleted.
    *
-   * @return void
+   * @return boolean
    *
    * @access public
    * @static
@@ -151,11 +151,11 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
   }
 
   /**
-   * Function to retrieve activity type label and decription
+   * Function to retrieve activity type label and description
    *
    * @param int     $activityTypeId  activity type id
    *
-   * @return array     lable and decription
+   * @return array  label and description
    * @static
    * @access public
    */

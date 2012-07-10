@@ -7,6 +7,8 @@
 
   <civicrm_domain />
 
+  <civicrm_extension />
+
   <civicrm_file />
 
   <civicrm_financial_account />

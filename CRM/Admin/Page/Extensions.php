@@ -75,7 +75,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
    * @return string Classname of BAO.
    */
   function getBAOName() {
-    return 'CRM_Core_BAO_OptionValue';
+    return 'CRM_Core_BAO_Extension';
   }
 
   /**
@@ -151,21 +151,22 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
       return;
     }
 
+    $this->assign('extDbUpgrades', CRM_Core_Extensions_Upgrades::hasPending());
+    $this->assign('extDbUpgradeUrl', CRM_Utils_System::url('civicrm/admin/extensions/upgrade', 'reset=1'));
+
     $extensionRows = array();
     $em = self::$_extensions;
 
     $fid = 1;
     foreach ($em as $key => $obj) {
 
-      // rewrite ids to be numeric, but keep those which are
-      // installed (they have option_value table id)
-      // It's totally unlikely, that installed extensions will
-      // have ids below 50.
+      // for extensions which aren't installed, create a
+      // dummy/placeholder id
       if (isset($obj->id)) {
         $id = $obj->id;
       }
       else {
-        $id = $fid++;
+        $id = 'x'. $fid++;
       }
 
       $extensionRows[$id] = (array) $obj;

@@ -90,6 +90,8 @@ class CRM_Core_Extensions_Report {
     $cr          = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, FALSE, FALSE, FALSE, NULL, 'id', FALSE);
     $id          = $cr[$this->customReports[$this->ext->key]];
     $optionValue = CRM_Core_BAO_OptionValue::del($id);
+
+    return $optionValue ? TRUE : FALSE;
   }
 
   public function disable() {
