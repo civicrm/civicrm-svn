@@ -46,7 +46,7 @@ class CRM_Core_Extensions_Extension {
   public $upgradable = FALSE;
 
   public $upgradeVersion = NULL;
-  
+
   function __construct($key, $type = NULL, $name = NULL, $label = NULL, $file = NULL, $is_active = 1) {
     $this->key       = $key;
     $this->type      = $type;
@@ -175,7 +175,7 @@ class CRM_Core_Extensions_Extension {
       );
     }
     else {
-      CRM_Core_Error::fatal('Extension file ' . $file . ' does not exist.');
+      CRM_Core_Error::fatal('Extension file ' . $file . ' does not exist. The download may have failed.');
     }
     return array();
   }
@@ -193,6 +193,11 @@ class CRM_Core_Extensions_Extension {
     if ($this->status != self::STATUS_LOCAL) {
       if ($this->download()) {
         $this->installFiles();
+      } else {
+        // CRM-10322 If download fails but files exist anyway, continue with install
+        // using local version. If no local version exists, then it's OK
+        // to raise a fatal error.
+        $this->readXMLInfo();
       }
     }
     if ($this->_registerExtensionByType()) {
@@ -221,7 +226,7 @@ class CRM_Core_Extensions_Extension {
       }
     }
   }
-  
+
   public function upgrade() {
     $this->download();
     $this->removeFiles();
