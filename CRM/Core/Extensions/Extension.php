@@ -180,26 +180,46 @@ class CRM_Core_Extensions_Extension {
     return array();
   }
 
+  /**
+   * Attempt to download and install an extension.
+   *
+   * @return boolean Whether all tasks completed successfully.
+   *
+   * It's possible to install extensions locally, so this function
+   * permits installation if extension is installed locally and
+   * fails to download.
+   */
   public function install() {
     if ($this->status != self::STATUS_LOCAL) {
-      $this->download();
-      $this->installFiles();
+      if ($this->download()) {
+        $this->installFiles();
+      }
     }
-    $this->_registerExtensionByType();
-    $this->_createExtensionEntry();
-    if ($this->type == 'payment') {
-      $this->_runPaymentHook('install');
+    if ($this->_registerExtensionByType()) {
+      $this->_createExtensionEntry();
+      if ($this->type == 'payment') {
+        $this->_runPaymentHook('install');
+      }
     }
   }
 
+  /**
+   * Uninstall an extension.
+   *
+   * @return boolean Whether all tasks completed successfully.
+   */
   public function uninstall() {
     if ($this->type == 'payment') {
       $this->_runPaymentHook('uninstall');
     }
-    $this->_removeExtensionByType();
-    $this->_removeExtensionEntry();
-    // remove files *after* invoking hook_civicrm_uninstall
-    $this->removeFiles();
+    if ($this->_removeExtensionByType()) {
+      if ($this->_removeExtensionEntry()) {
+        // remove files *after* invoking hook_civicrm_uninstall
+        if ($this->removeFiles()) {
+          return TRUE;
+        }
+      }
+    }
   }
   
   public function upgrade() {
@@ -209,9 +229,16 @@ class CRM_Core_Extensions_Extension {
     //TODO// $this->_updateExtensionEntry();
   }
 
+  /**
+   * Remove extension files.
+   *
+   * @return boolean Whether the extension directory was removed.
+   */
   public function removeFiles() {
     $config = CRM_Core_Config::singleton();
-    CRM_Utils_File::cleanDir($config->extensionsDir . DIRECTORY_SEPARATOR . $this->key, TRUE);
+    if (!CRM_Utils_File::cleanDir($config->extensionsDir . DIRECTORY_SEPARATOR . $this->key, TRUE)) {
+      return TRUE;
+    }
   }
 
   public function installFiles() {
@@ -225,22 +252,23 @@ class CRM_Core_Extensions_Extension {
       $zip->close();
     }
     else {
-      CRM_Core_Error::fatal('Unable to extract the extension.');
+      CRM_Core_Session::setStatus('Unable to extract the extension.');
+      return;
     }
 
     $filename = $path . DIRECTORY_SEPARATOR . $this->key . DIRECTORY_SEPARATOR . 'info.xml';
     $newxml = file_get_contents($filename);
 
     if (empty($newxml)) {
-
-      CRM_Core_Error::fatal(ts('Failed reading data from %1 during installation', array(1 => $filename)));
-
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
+      return;
     }
 
     $check = new CRM_Core_Extensions_Extension($this->key . ".newversion");
     $check->readXMLInfo($newxml);
     if ($check->version != $this->version) {
-      CRM_Core_Error::fatal('Cannot install - there are differences between extdir XML file and archive XML file!');
+      CRM_Core_Session::setStatus('Cannot install - there are differences between extdir XML file and archive XML file!');
+      return;
     }
 
     CRM_Utils_File::copyDir($path . DIRECTORY_SEPARATOR . $this->key,
@@ -248,8 +276,12 @@ class CRM_Core_Extensions_Extension {
     );
   }
 
+  /**
+   * Download the remote zipfile.
+   *
+   * @return boolean Whether the download was successful.
+   */
   public function download() {
-
     $config = CRM_Core_Config::singleton();
 
     $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
@@ -269,7 +301,6 @@ class CRM_Core_Extensions_Extension {
     $response_code = substr($headers[0], 9, 3);
 
     if ($response_code == 200) {
-
       $context = stream_context_create(array(
           'http' => array(
             // Timeout if no reply after 20 seconds
@@ -279,12 +310,15 @@ class CRM_Core_Extensions_Extension {
 
       // Attempt to download file
       if (!$zipfile = file_get_contents($this->downloadUrl, FALSE, $context)) {
-        CRM_Core_Error::fatal(ts('Unable to download extension from %1', array(1 => $this->downloadUrl)));
+        // CRM_Core_Error::fatal(ts('Unable to download extension from %1', array(1 => $this->downloadUrl)));
+        CRM_Core_Session::setStatus(ts('Unable to download extension from %1', array(1 => $this->downloadUrl)));
+        return;
       }
 
       // Attempt to save file
       if (@file_put_contents($filename, $zipfile) === FALSE) {
-        CRM_Core_Error::fatal(ts('Unable to write to %1.<br />Is the location writable?', array(1 => $filename)));
+        CRM_Core_Session::setStatus(ts('Unable to write to %1.<br />Is the location writable?', array(1 => $filename)));
+        return;
       }
     }
     else {
@@ -292,17 +326,24 @@ class CRM_Core_Extensions_Extension {
       // Bail and inform user ...
       $error = 'Unable to download extension from %1.';
       if ($response_code >= 100 && $response_code < 300) {
-        CRM_Core_Error::fatal(ts("$error<br />Server returned an HTTP %2 response code.", array(1 => $this->downloadUrl, 2 => $response_code)));
+        CRM_Core_Session::setStatus(ts("$error<br />Server returned an HTTP %2 response code.", array(1 => $this->downloadUrl, 2 => $response_code)));
+        return;
       }
-      elseif ($response_code >= 300 && $response_code < 400) {  CRM_Core_Error::fatal(ts("$error<br />URL is redirecting.", array(
-        1 => $this->downloadUrl)));}
-      else CRM_Core_Error::fatal(ts("$error<br />Server returned an HTTP %2 error.", array(1 => $this->downloadUrl, 2 => $response_code)));
+      elseif ($response_code >= 300 && $response_code < 400) {
+        CRM_Core_Session::setStatus(ts("$error<br />URL is redirecting.", array(1 => $this->downloadUrl)));
+        return;
+      }
+      else {
+        CRM_Core_Session::setStatus(ts("$error<br />Server returned an HTTP %2 error.", array(1 => $this->downloadUrl, 2 => $response_code)));
+        return;
+      }
     }
 
     @ini_restore('user_agent');
     @ini_restore('allow_url_fopen');
 
     $this->tmpFile = $filename;
+    return TRUE;
   }
 
   public function enable() {
@@ -321,7 +362,6 @@ class CRM_Core_Extensions_Extension {
     CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 0);
   }
 
-
   private function _setActiveByType($state) {
     $hcName = "CRM_Core_Extensions_" . ucwords($this->type);
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
@@ -334,18 +374,22 @@ class CRM_Core_Extensions_Extension {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
     $ext = new $hcName($this);
     $ext->install();
+    // @TODO check return of $dao->save() in $ext->install()
+    return TRUE;
   }
 
   private function _removeExtensionByType() {
     $hcName = "CRM_Core_Extensions_" . ucwords($this->type);
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $hcName) . '.php');
     $ext = new $hcName($this);
-    $ext->uninstall();
+    return $ext->uninstall();
   }
 
   private function _removeExtensionEntry() {
-    CRM_Core_BAO_Extension::del($this->id);
-    CRM_Core_Session::setStatus(ts('Selected extension has been deleted.'));
+    if (CRM_Core_BAO_Extension::del($this->id)) {
+      CRM_Core_Session::setStatus(ts('Selected option value has been deleted.'));
+      return TRUE;
+    }
   }
 
   /**
@@ -356,18 +400,11 @@ class CRM_Core_Extensions_Extension {
    * @private
    */
   private function _runPaymentHook($method) {
-
     // Not concerned about performance at this stage, as these are seldomly performed tasks
     // (payment processor enable/disable/install/uninstall). May wish to implement some
     // kind of registry/caching system if more hooks are added.
-
-
     if (!isset($this->id) || empty($this->id)) {
-
-
       $this->id = 0;
-
-
     }
 
     $ext = new CRM_Core_Extensions();
@@ -462,9 +499,9 @@ class CRM_Core_Extensions_Extension {
     $dao->type = $this->type;
     $dao->file = $this->file;
     $dao->is_active = 1;
-    $dao->insert();
-    
-    $this->id = $dao->id;
+    if ($dao->insert()) {
+      $this->id = $dao->id;
+      return $this->id;
+    }
   }
 }
-

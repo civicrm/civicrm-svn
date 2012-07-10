@@ -581,7 +581,9 @@ class CRM_Core_Extensions {
     $this->populate();
     $e = $this->getExtensions();
     $ext = $e[$key];
-    $ext->uninstall();
+    if ($ext->uninstall()) {
+      return TRUE;
+    }
   }
 
   /**

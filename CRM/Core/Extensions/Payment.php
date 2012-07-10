@@ -50,7 +50,6 @@ class CRM_Core_Extensions_Payment {
       CRM_Core_Error::fatal('This payment processor type already exists.');
     }
 
-
     $dao = new CRM_Core_DAO_PaymentProcessorType();
 
     $dao->is_active   = 1;
@@ -113,12 +112,12 @@ class CRM_Core_Extensions_Payment {
       $dao->find();
       while ($dao->fetch()) {
         if ($dao->payment_processor_type == $this->ext->name) {
-          CRM_Core_Error::fatal('Cannot uninstall this extension - there is at least one payment processor using payment processor type provided by it.');
+          CRM_Core_Session::setStatus('Cannot uninstall this extension - there is at least one payment processor using payment processor type provided by it.');
+          return;
         }
       }
     }
-
-    CRM_Core_BAO_PaymentProcessorType::del($this->paymentProcessorTypes[$this->ext->key]);
+    return CRM_Core_BAO_PaymentProcessorType::del($this->paymentProcessorTypes[$this->ext->key]);
   }
 
   public function disable() {
