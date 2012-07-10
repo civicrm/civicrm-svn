@@ -41,7 +41,7 @@ class CRM_Core_Extensions {
   /**
    * An URL for public extensions repository
    */
-  CONST PUBLIC_EXTENSIONS_REPOSITORY = 'http://extdir.civicrm.org/';
+  CONST DEFAULT_EXTENSIONS_REPOSITORY = 'http://extdir.civicrm.org/';
 
   /**
    * Extension info file name
@@ -126,6 +126,10 @@ class CRM_Core_Extensions {
         $this->_extDir = NULL;
       }
     }
+  }
+  
+  public function getRepositoryUrl() {
+    return CRM_Core_BAO_Setting::getItem('Extension Preferences', 'ext_repo_url', NULL, self::DEFAULT_EXTENSIONS_REPOSITORY);
   }
 
   /**
@@ -653,10 +657,10 @@ class CRM_Core_Extensions {
       ini_set('allow_url_fopen', 1);
     }
 
-    $extdir = file_get_contents(self::PUBLIC_EXTENSIONS_REPOSITORY);
+    $extdir = file_get_contents($this->getRepositoryUrl());
 
     if ($extdir === FALSE) {
-      CRM_Core_Session::setStatus(ts('The CiviCRM public extensions directory at %1 could not be contacted - please check your webserver can make external HTTP requests or contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => self::PUBLIC_EXTENSIONS_REPOSITORY)));
+      CRM_Core_Session::setStatus(ts('The CiviCRM public extensions directory at %1 could not be contacted - please check your webserver can make external HTTP requests or contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => $this->getRepositoryUrl())));
     }
 
     $lines = explode("\n", $extdir);
@@ -674,7 +678,7 @@ class CRM_Core_Extensions {
 
     if (empty($exts)) {
       if ($extdir !== FALSE) {
-        CRM_Core_Session::setStatus(ts('Could not retrieve a list of extensions from the CiviCRM public directory at %1 - please contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => self::PUBLIC_EXTENSIONS_REPOSITORY)));
+        CRM_Core_Session::setStatus(ts('Could not retrieve a list of extensions from the CiviCRM public directory at %1 - please contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => $this->getRepositoryUrl())));
       }
       $exts = array();
     }
@@ -703,7 +707,7 @@ class CRM_Core_Extensions {
 
     $path     = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache';
     $filename = $path . DIRECTORY_SEPARATOR . $key . '.xml';
-    $url      = self::PUBLIC_EXTENSIONS_REPOSITORY . '/' . $key . '.xml';
+    $url      = $this->getRepositoryUrl() . '/' . $key . '.xml';
 
     if (!$cached || !file_exists($filename)) {
       file_put_contents($filename, file_get_contents($url));
