@@ -71,5 +71,5 @@ class CRM_Core_Extensions_Upgrades {
 
     return $queue;
   }
-  
+
 }

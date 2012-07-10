@@ -70,6 +70,8 @@ class CRM_Core_Extensions_Search {
 
     $ids = array();
     $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
+
+    return $optionValue ? TRUE : FALSE;
   }
 
   public function uninstall() {
@@ -80,6 +82,8 @@ class CRM_Core_Extensions_Search {
     $cs          = CRM_Core_OptionGroup::values(self::CUSTOM_SEARCH_GROUP_NAME, FALSE, FALSE, FALSE, NULL, 'id', FALSE);
     $id          = $cs[$this->customSearches[$this->ext->key]];
     $optionValue = CRM_Core_BAO_OptionValue::del($id);
+
+    return TRUE;
   }
 
   public function disable() {

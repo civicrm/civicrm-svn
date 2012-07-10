@@ -71,6 +71,7 @@ class CRM_Core_Extensions_Module {
 
   public function uninstall() {
     $this->commonUNInstall('uninstall');
+    return TRUE;
   }
 
   private function commonUNInstall($type = 'uninstall') {

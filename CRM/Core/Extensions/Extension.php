@@ -241,7 +241,7 @@ class CRM_Core_Extensions_Extension {
    */
   public function removeFiles() {
     $config = CRM_Core_Config::singleton();
-    if (!CRM_Utils_File::cleanDir($config->extensionsDir . DIRECTORY_SEPARATOR . $this->key, TRUE)) {
+    if (CRM_Utils_File::cleanDir($config->extensionsDir . DIRECTORY_SEPARATOR . $this->key, TRUE)) {
       return TRUE;
     }
   }
