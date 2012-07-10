@@ -218,6 +218,10 @@
           $i.addClass ('crm-editable-saving');
           var params = {};
           var entity = null;
+          params['field']=getFieldName(this);
+          if (!params['field'])
+            return false;
+          params['value']=value;
           if  (!getEntityID (this,function (e,id) {
             entity=e;
             params.id = id;
@@ -228,14 +232,11 @@
           }
 
           if ($i.data('action')) {
+            params[params['field']]=value;//format for create at least
             action=$i.data('action');
           } else {
             action="setvalue";
           }
-          params['field']=getFieldName(this);
-          if (!params['field'])
-            return false;
-          params['value']=value;
           $().crmAPI.call(this,entity,action,params,{
           //cj().crmAPI.call(this,entity,'setvalue/create',params,{
               error: function (data) {
