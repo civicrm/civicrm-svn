@@ -248,8 +248,8 @@ INNER JOIN civicrm_contribution co ON co.contribution_recur_id = cr.id
      LIMIT 1";
     $ids['contributionRecur'] = CRM_Core_DAO::singleValueQuery($sql);
     if (!$ids['contributionRecur']) {
-      CRM_Core_Error::debug_log_message("Could not find contributionRecur id");
-      echo "Failure: Missing Parameter<p>";
+      CRM_Core_Error::debug_log_message("Could not find contributionRecur id: ".print_r($input, TRUE));
+      echo "Failure: Could not find contributionRecur<p>";
       exit();
     }
 
