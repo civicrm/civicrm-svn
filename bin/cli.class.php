@@ -82,6 +82,7 @@ class civicrm_cli {
       trigger_error("cli.php can only be run from command line.", E_USER_ERROR);
     }
   }
+
   public function callApi() {
     require_once 'api/api.php';
 
