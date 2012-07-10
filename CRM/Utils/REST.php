@@ -314,6 +314,7 @@ class CRM_Utils_REST {
       if (empty($key)) {
         return self::error("FATAL: mandatory param 'key' missing. More info at: " . $docLink);
       }
+      return self::error("FATAL: 'key' is incorrect. More info at: " . $docLink);
     }
     require_once 'CRM/Utils/Request.php';
 
@@ -342,7 +343,7 @@ class CRM_Utils_REST {
     if (!$valid_user) {
       require_once 'CRM/Core/DAO.php';
       $api_key = CRM_Utils_Request::retrieve('api_key', 'String', $store, FALSE, NULL, 'REQUEST');
-      if (!$api_key) {
+      if (!$api_key || strtolower($api_key) == 'null') {
         return ("FATAL:mandatory param 'api_key' (user key) missing");
       }
       $valid_user = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
