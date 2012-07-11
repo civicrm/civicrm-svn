@@ -208,6 +208,8 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->type("value_1", "250.00");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
+      //set default
+      $this->click("xpath=//table[@id='map-field-table']/tbody/tr[2]/td[3]/input");
     }
 
     if ($discount) {
