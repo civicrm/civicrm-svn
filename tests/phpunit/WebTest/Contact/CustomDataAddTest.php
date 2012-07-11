@@ -279,7 +279,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("CIVICRM_QFID_1_6");
     $this->click("_qf_Miscellaneous_next-top");
-    $this->waitForPageToLoad("30000");
+    $this->waitForTextPresent("Your changes have been saved");
 
     // Create new Custom Field Set
     $this->open($this->sboxPath . 'civicrm/admin/custom/group?reset=1');
@@ -373,7 +373,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("CIVICRM_QFID_0_8");
     $this->click("_qf_Miscellaneous_next-top");
-    $this->waitForPageToLoad("30000");
+    $this->waitForTextPresent("Your changes have been saved");
   }
   
 }
