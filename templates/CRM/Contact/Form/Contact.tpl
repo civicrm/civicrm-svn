@@ -35,6 +35,10 @@
 <div class="crm-submit-buttons">
    {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
+
+{* include overlay js *}
+{include file="CRM/common/overlay.tpl"}
+
 <div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 

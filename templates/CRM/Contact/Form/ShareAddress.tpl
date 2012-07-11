@@ -97,6 +97,9 @@ cj( function( ) {
 
       var addressHTML = '';	    
       var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' q='class_name=CRM_Contact_Page_AJAX::getAddressDisplay' }"{literal};	
+      
+      addCiviOverlay('div.crm-address_' + blockNo);   
+ 
       cj.post( postUrl, { 'contact_id': sharedContactId , 'type': 'method' }, 
         function( response ) {
           if ( response ) {
@@ -129,9 +132,12 @@ cj( function( ) {
               cj( '#shared-address-' + blockNo + ' .shared-address-list' ).remove( );
               cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + helpText + '</td></tr>');
             }
+
+            removeCiviOverlay('div.crm-address_' + blockNo);   
           }
         },'json');            
     });
+
 
     // continuous check for changed value
     setInterval(function( ) {
@@ -144,7 +150,6 @@ cj( function( ) {
         }  
 
     }, 500);
-
     // end of code to add onchange event for hidden element
 });
 </script>

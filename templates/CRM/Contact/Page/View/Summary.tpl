@@ -30,6 +30,9 @@
 
 {include file="CRM/common/wysiwyg.tpl" includeWysiwygEditor=true}
 
+{* include overlay js *}
+{include file="CRM/common/overlay.tpl"}
+
 <div class="crm-actions-ribbon">
     <ul id="actions">
         {assign var='urlParams' value="reset=1"}

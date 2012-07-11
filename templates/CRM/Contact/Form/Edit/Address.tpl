@@ -36,7 +36,7 @@
  <div class="crm-accordion-body" id="addressBlock">
 {/if}
 
- <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-address-block" {/if}>
+ <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-address-block crm-address_{$blockId}"{/if}>
   {if $blockId gt 1}<fieldset><legend>{ts}Additional Address{/ts}</legend>{/if}
   <table class="form-layout-compressed crm-edit-address-form">
      {if $masterAddress.$blockId gt 0 }
