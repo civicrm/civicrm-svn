@@ -386,14 +386,14 @@ cj(function(){
     var cgId   = cj(this).attr('cgId');
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&groupID=' + cgId;
 
-    var response = cj.ajax({
-                    type: "GET",
-                    data: {'class_name':'CRM_Contact_Form_Inline_CustomData'},
-                    url: dataUrl,
-                    async: false
-    }).responseText;
+    cj.ajax({
+      data: {'class_name':'CRM_Contact_Form_Inline_CustomData'},
+      url: dataUrl,
+      async: false
+    }).done( function( response ) {
+      cj('#custom-set-block-'+ cgId).html( response );
+    });
 
-    cj( '#custom-set-block-'+ cgId ).html( response );
   });
   /* end of js for inline custom data */
 
@@ -416,17 +416,16 @@ cj(function(){
     var aid   = cj(this).attr('aid');
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&locno=' + locno + '&aid=' + aid ;
    
-    addCiviOverlay( 'div.crm-address_' + locno );   
-    var response = cj.ajax({
-                    type: "GET",
-                    data: {'class_name':'CRM_Contact_Form_Inline_Address'},
-                    url: dataUrl,
-                    async: false
-    }).responseText;
-
-    cj( '#address-block-'+ locno ).html( response );
+    addCiviOverlay('div.crm-address_' + locno);   
+    cj.ajax({ 
+      data: {'class_name':'CRM_Contact_Form_Inline_Address'},
+      url: dataUrl,
+      async: false
+    }).done( function(response) {
+      cj('#address-block-'+ locno).html(response);
+    });
     
-    removeCiviOverlay( 'div.crm-address_' + locno );   
+    removeCiviOverlay('div.crm-address_' + locno);   
   });
   /* end of js for inline address data */
 });
