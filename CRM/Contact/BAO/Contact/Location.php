@@ -107,7 +107,7 @@ LEFT JOIN civicrm_phone ON ( civicrm_phone.contact_id = civicrm_contact.id )
     if ($dao->fetch()) {
       return array($dao->display_name, $dao->phone, $dao->do_not_sms);
     }
-    return array(NULL, NULL);
+    return array(NULL, NULL, NULL);
   }
 
   /**
