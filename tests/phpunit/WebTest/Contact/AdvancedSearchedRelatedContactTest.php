@@ -112,7 +112,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->select("event_id", "value={$eventId}");
     $this->click("_qf_Participant_upload-bottom");
     $this->waitForPageToLoad("300000");
-
+     
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
     $this->waitForPageToLoad('30000');
 
@@ -212,6 +212,8 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
       $this->type("value_1", "250.00");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
+      //set default
+      $this->click("xpath=//table[@id='map-field-table']/tbody/tr[2]/td[3]/input");
     }
 
     if ($discount) {
