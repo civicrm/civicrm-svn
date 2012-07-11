@@ -59,6 +59,9 @@
   </div> <!-- end of main -->
 </div>
 
+{* include overlay js *}
+{include file="CRM/common/overlay.tpl"}
+
 {literal}
 <script type="text/javascript">
 cj(function(){

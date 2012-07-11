@@ -415,7 +415,8 @@ cj(function(){
     var locno = cj(this).attr('locno');
     var aid   = cj(this).attr('aid');
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&locno=' + locno + '&aid=' + aid ;
-
+   
+    addCiviOverlay( 'div.crm-address_' + locno );   
     var response = cj.ajax({
                     type: "GET",
                     data: {'class_name':'CRM_Contact_Form_Inline_Address'},
@@ -424,6 +425,8 @@ cj(function(){
     }).responseText;
 
     cj( '#address-block-'+ locno ).html( response );
+    
+    removeCiviOverlay( 'div.crm-address_' + locno );   
   });
   /* end of js for inline address data */
 });
