@@ -368,8 +368,11 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
 
       if (empty($membership->contact_id) && (!empty($membership->owner_membership_id))) {
         $membership->contact_id = $realMembershipContactId;
-      }
+      } 
+
       if (CRM_Utils_Array::value('membership', $ids) && $activityType != 'Membership Signup') {
+        CRM_Activity_BAO_Activity::addActivity($membership, $activityType, $targetContactID);
+      } elseif (!CRM_Utils_Array::value('membership', $ids)) {
         CRM_Activity_BAO_Activity::addActivity($membership, $activityType, $targetContactID);
       }
 
