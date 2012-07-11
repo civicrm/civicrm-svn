@@ -1024,10 +1024,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
         $this->_params, $lineItem[$priceSetId]);
-      //unset LineItem is the priceset is quick config
-      if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
-        $lineItem = NULL;
-      }
       $params['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
     }
 
