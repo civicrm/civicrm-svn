@@ -84,7 +84,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("link=Add Event Registration");
     $this->waitForElementPresent("note");
     // fall fundraiser dinner event label is variable
-    $this->select("event_id", "index=1");
+    $this->select("event_id", "value=1");
     $this->waitForElementPresent("receipt_text");
     $this->click("role_id[2]");
     $this->check("record_contribution");
