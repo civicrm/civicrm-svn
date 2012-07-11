@@ -72,11 +72,13 @@
             {include file=CRM/Contact/Form/Edit/Address/geo_code.tpl}
           </table>
         </td>
+        <td colspan="2">
+           <div class="crm-edit-address-custom_data crm-address-custom-set-block-{$blockId}"> 
+            {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
+            </div> 
+        </td>
      </tr>
   </table>
-  <div class="crm-edit-address-custom_data crm-address-custom-set-block-{$blockId}"> 
-    {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
-  </div> 
 
   {if $className eq 'CRM_Contact_Form_Contact'}
       <div id="addMoreAddress{$blockId}" class="crm-add-address-wrapper">
