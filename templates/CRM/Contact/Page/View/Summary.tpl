@@ -397,6 +397,7 @@ cj(function(){
     var cgId   = cj(this).attr('cgId');
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&groupID=' + cgId;
 
+    addCiviOverlay('.crm-custom-set-block-' + cgId);   
     cj.ajax({
       data: {'class_name':'CRM_Contact_Form_Inline_CustomData'},
       url: dataUrl,
@@ -405,6 +406,7 @@ cj(function(){
       cj('#custom-set-block-'+ cgId).html( response );
     });
 
+    removeCiviOverlay('.crm-custom-set-block-' + cgId);   
   });
   /* end of js for inline custom data */
 
