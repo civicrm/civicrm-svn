@@ -83,6 +83,8 @@ cj(function(){
 
     cj('#edit-communication-pref').click( function() {
       var dataUrl  = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+      
+      addCiviOverlay('.crm-summary-comm-pref-block');
       cj.ajax({
         data: { 'class_name':'CRM_Contact_Form_Inline_CommunicationPreferences' },
         url: dataUrl,
@@ -90,6 +92,8 @@ cj(function(){
       }).done( function(response) {
         cj( '#communication-pref-block' ).html( response );
       });
+
+      removeCiviOverlay('.crm-summary-comm-pref-block');
     });
 });
 

@@ -67,6 +67,8 @@ cj(function(){
 
     cj('#edit-phone').click( function() {
         var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+        
+        addCiviOverlay('.crm-summary-phone-block');
         cj.ajax({ 
           data: { 'class_name':'CRM_Contact_Form_Inline_Phone' },
           url: dataUrl,
@@ -74,6 +76,8 @@ cj(function(){
         }).done( function(response) {
           cj('#phone-block').html( response );
         });
+        
+        removeCiviOverlay('.crm-summary-phone-block');
     });
 });
 

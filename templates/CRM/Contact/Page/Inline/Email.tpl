@@ -73,7 +73,9 @@ cj(function(){
     });
 
     cj('#edit-email').click( function() {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal};
+
+        addCiviOverlay('.crm-summary-email-block');
         cj.ajax({ 
           data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
           url: dataUrl,
@@ -81,6 +83,8 @@ cj(function(){
         }).done( function(response) {
           cj('#email-block').html( response );
         });
+
+        removeCiviOverlay('.crm-summary-email-block');
     });
 });
 

@@ -200,8 +200,10 @@
                     <div class="contact_panel">
                         <div class="contactCardLeft">
                            <div class="crm-table2div-layout">
-                              <div class="crm-clear crm-summary-block" id="email-block">
+                              <div class="crm-clear crm-summary-email-block">
+                                <div class="crm-summary-block" id="email-block">
                                   {include file="CRM/Contact/Page/Inline/Email.tpl"}
+                                </div>
                               </div>
 
                               {if $website}
@@ -226,10 +228,12 @@
 
                         <div class="contactCardRight">
                             <div class="crm-table2div-layout">
-                                <div class="crm-clear crm-summary-block" id="phone-block">
+                              <div class="crm-clear crm-summary-phone-block">
+                                <div class="crm-summary-block" id="phone-block">
                                   {include file="CRM/Contact/Page/Inline/Phone.tpl"}
                                 </div>
-                                {if $im}
+                              </div>  
+                              {if $im}
                                 <div class="crm-clear crm-summary-block" id="im-block">
                                 {foreach from=$im item=item}
                                     {if $item.name or $item.provider}
@@ -292,14 +296,18 @@
           
           <div class="contact_panel">
             <div class="contactCardLeft">
-              <div class="crm-summary-block" id="communication-pref-block" >
-                {include file="CRM/Contact/Page/Inline/CommunicationPreferences.tpl"}
+              <div class="crm-summary-comm-pref-block">
+                <div class="crm-summary-block" id="communication-pref-block" >
+                  {include file="CRM/Contact/Page/Inline/CommunicationPreferences.tpl"}
+                </div>
               </div>
             </div> <!-- contactCardLeft -->
             {if $contact_type eq 'Individual' AND $showDemographics}
               <div class="contactCardRight">
-                <div class="crm-summary-block" id="demographic-block">
-                  {include file="CRM/Contact/Page/Inline/Demographics.tpl"}
+                <div class="crm-summary-demographic-block">
+                  <div class="crm-summary-block" id="demographic-block">
+                    {include file="CRM/Contact/Page/Inline/Demographics.tpl"}
+                  </div>
                 </div>
               </div> <!-- contactCardRight -->
             {/if}
