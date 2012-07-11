@@ -74,8 +74,8 @@
         </td>
      </tr>
   </table>
-  <div class="crm-edit-address-custom_data"> 
-  {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
+  <div class="crm-edit-address-custom_data crm-address-custom-set-block-{$blockId}"> 
+    {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
   </div> 
 
   {if $className eq 'CRM_Contact_Form_Contact'}

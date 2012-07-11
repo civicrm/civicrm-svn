@@ -60,14 +60,14 @@
       cj( '#shared-address-display-' + blockNo ).show( );
       cj( '#shared-address-display-name-' + blockNo ).show( );
       cj( '#shared-address-display-cancel-' + blockNo ).hide( );
-      cj( '.crm-edit-address-custom_data').hide();
+      cj( '.crm-address-custom-set-block-' + blockNo).hide( );
     } else {
       cj( '#shared-address-' + blockNo ).hide( );
       cj( 'table#address_' + blockNo ).show( );
       cj( '#shared-address-display-' + blockNo ).hide( );
       cj( '#shared-address-display-name-' + blockNo ).hide( );
       cj( '#shared-address-display-cancel-' + blockNo ).hide( );
-      cj( '.crm-edit-address-custom_data').show();
+      cj( '.crm-address-custom-set-block-' + blockNo).show( );
     }
   }
 
