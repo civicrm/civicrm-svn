@@ -32,7 +32,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     parent::setUp();
   }
   
-  function testMultipleEvent(){
+  function testAuthenticatedMultipleEvent(){
     // This is the path where our testing install resides.
     // The rest of URL is defined in CiviSeleniumTestCase base class, in
     // class attributes.
@@ -113,104 +113,124 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     
     $eventInfoStrings3 = array($eventTitle3, $eventDescription3, $streetAddress3);
     $this->_AddEventToCart($eventTitle3, $eventInfoStrings3);
-
-    //View the Cart
-    $this->click("xpath=//div[@id='messages']/div/div/a[text()='View your cart.']");
     
-    //Click on Checkout
-    $this->waitForElementPresent("xpath=//a[@class='button crm-check-out-button']/span");
-    $this->click("xpath=//a[@class='button crm-check-out-button']/span");
-    $this->waitForPageToLoad("30000");
-        
-    $firstName = "AB".substr(sha1(rand()), 0, 7);
-    $lastName = "XY".substr(sha1(rand()), 0, 7);
-    for( $i = 1; $i <= 3; $i++ ){
-      $this->type("xpath=//form[@id='ParticipantsAndPrices']/fieldset[$i]/div/fieldset/div/div/fieldset/div/div[2]/input","{$firstName}.{$lastName}@home.com");
-      $this->type("xpath=//form[@id='ParticipantsAndPrices']/fieldset[$i]/div/fieldset/div/div[2]/div[2]/input","{$firstName}.{$lastName}@example.com");
-      $this->click("xpath=//form[@id='ParticipantsAndPrices']/fieldset[$i]/div[2]/div[2]/input[2]");
-    }
-    $this->click("_qf_ParticipantsAndPrices_upload-bottom");
-    $this->waitForPageToLoad("30000");
-
-    $this->select("credit_card_type", "value=Visa");
-    $this->type("credit_card_number", "4111111111111111");
-    $this->type("cvv2", "000");
-    $this->select("credit_card_exp_date[M]", "value=1");
-    $this->select("credit_card_exp_date[Y]", "value=2020");
-    $this->type("billing_first_name", $firstName);
-    $this->type("billing_last_name", $lastName);
-    $this->type("billing_street_address-5", "15 Main St.");
-    $this->type(" billing_city-5", "San Jose");
-    $this->select("billing_country_id-5", "value=1228");
-    $this->select("billing_state_province_id-5", "value=1004");
-    $this->type("billing_postal_code-5", "94129");
-    $this->type("billing_contact_email", "{$firstName}.{$lastName}@example.com");
-
-    $this->click("_qf_Payment_next-bottom");
-    $this->waitForPageToLoad("30000");
+    //Checkout
+    $value = $this->_testCheckOut();
     
-    $this->assertTrue($this->isTextPresent("This is your receipt of payment made for the following event registration."));
-    
-    //Type the registered participant's email in autocomplete.
-    $this->click('sort_name_navigation');
-    $this->type('css=input#sort_name_navigation',"{$firstName}.{$lastName}@home.com" );
-    $this->typeKeys('css=input#sort_name_navigation', "{$firstName}.{$lastName}@home.com");
-    
-    // Wait for result list.
-    $this->waitForElementPresent("css=div.ac_results-inner li");
-    
-    // Visit contact summary page.
-    $this->click("css=div.ac_results-inner li");
-    $this->waitForPageToLoad("30000");
-    
-    //click on Events Tab
-    $this->click("xpath=//li[@id='tab_participant']/a");
-    //check if the participant is registered for all the three events
+    //three event names
     $events = array( 1 => $eventTitle1,
                      2 => $eventTitle2,
                      3 => $eventTitle3,
                      );
-    foreach($events as $key => $value){
-      $this->waitForElementPresent("link=$value");
-      $this->assertTrue($this->isElementPresent("link=$value"));
-    }
-    for( $i = 1; $i <= 3; $i++ ){
-      $this->waitForElementPresent("xpath=//table[@class='selector']/tbody/tr[$i]/td[6][text()='Registered']");
-      $this->assertTrue($this->isElementPresent("xpath=//table[@class='selector']/tbody/tr[$i]/td[6][text()='Registered']"));
-    }
-        
-    //Type the billing email in autocomplete.
-    $this->click('sort_name_navigation');
-    $this->type('css=input#sort_name_navigation',"{$firstName}.{$lastName}@example.com" );
-    $this->typeKeys('css=input#sort_name_navigation', "{$firstName}.{$lastName}@example.com");
+    //check the existence of the contacts who were registered and the one who did the contribution 
+    $this->_checkContributionsandEventRegistration($value[0],$value[1],$events);
+  }
+  
+  function testAnonymousMultipleEvent(){
+      // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
     
-    // Wait for result list.
-    $this->waitForElementPresent("css=div.ac_results-inner li");
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
+ 
+    // We need a payment processor
+    $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+    $this->webtestAddPaymentProcessor($processorName);
     
-    // Visit contact summary page.
-    $this->click("css=div.ac_results-inner li");
-    $this->waitForPageToLoad("30000");
+    //event 1
+    // Go directly to the URL of the screen that you will be testing (New Event).
+    $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
     
-    //click on Contributions Tab
-    $this->click("xpath=//li[@id='tab_contribute']/a");
-    //check for the three contributions
-    $events = array( 1 => $eventTitle1,
-                     2 => $eventTitle2,
-                     3 => $eventTitle3,
-                     );
-    foreach($events as $key => $value){
-      $this->waitForElementPresent("xpath=//table[@class='selector']/tbody/tr/td[3][contains(text(),'$value')]");
-      $this->assertTrue($this->isElementPresent("xpath=//table[@class='selector']/tbody/tr/td[3][contains(text(),'$value')]"));
-    }
+    $eventTitle1 = 'My Conference1 - ' . substr(sha1(rand()), 0, 7);
+    $eventDescription1 = "Here is a description for this conference 1.";
+    $this->_testAddEventInfo($eventTitle1, $eventDescription1);
     
-    //Disable shopping cart style
+    $streetAddress1 = "100 Main Street";
+    $this->_testAddLocation($streetAddress1);
+    
+    $this->_testAddFees(FALSE, FALSE, $processorName);
+    
+    // intro text for registration page
+    $registerIntro = "Fill in all the fields below and click Continue.";
+    $multipleRegistrations = TRUE;
+    $this->_testAddOnlineRegistration($registerIntro, $multipleRegistrations);
+   
+    $eventInfoStrings1 = array($eventTitle1, $eventDescription1, $streetAddress1);
+    $registerUrl1 = $this->_testVerifyEventInfo($eventTitle1, $eventInfoStrings1);
+
+    //event 2
+    // Go directly to the URL of the screen that you will be testing (New Event).
+    $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
+    
+    $eventTitle2 = 'My Conference2 - ' . substr(sha1(rand()), 0, 7);
+    $eventDescription2 = "Here is a description for this conference 2.";
+    $this->_testAddEventInfo($eventTitle2, $eventDescription2);
+    
+    $streetAddress2 = "101 Main Street";
+    $this->_testAddLocation($streetAddress2);
+    
+    $this->_testAddFees(FALSE, FALSE, $processorName);
+    
+    // intro text for registration page
+    $registerIntro = "Fill in all the fields below and click Continue.";
+    $multipleRegistrations = TRUE;
+    $this->_testAddOnlineRegistration($registerIntro, $multipleRegistrations);
+    
+    $eventInfoStrings2 = array($eventTitle2, $eventDescription2, $streetAddress2);
+    $registerUrl2 = $this->_testVerifyEventInfo($eventTitle2, $eventInfoStrings2);
+
+    //event 3
+    // Go directly to the URL of the screen that you will be testing (New Event).
+    $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
+    
+    $eventTitle3 = 'My Conference3 - ' . substr(sha1(rand()), 0, 7);
+    $eventDescription3 = "Here is a description for this conference 3.";
+    $this->_testAddEventInfo($eventTitle3, $eventDescription3);
+    
+    $streetAddress3 = "102 Main Street";
+    $this->_testAddLocation($streetAddress3);
+    
+    $this->_testAddFees(FALSE, FALSE, $processorName);
+    
+    // intro text for registration page
+    $registerIntro = "Fill in all the fields below and click Continue.";
+    $multipleRegistrations = TRUE;
+    $this->_testAddOnlineRegistration($registerIntro, $multipleRegistrations);
+    
+    $eventInfoStrings3 = array($eventTitle3, $eventDescription3, $streetAddress3);
+    $registerUrl3 = $this->_testVerifyEventInfo($eventTitle3, $eventInfoStrings3);
+
+    //Enable shopping cart style
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/event?reset=1");
     $this->waitForPageToLoad("30000");
-    $this->click("enable_cart");
+    $this->check("enable_cart");
     $this->click("_qf_Event_next-top");
-   }
-   
-     function _testAddEventInfo($eventTitle, $eventDescription) {
+
+    $numberRegistrations = 1;
+    $anonymous = TRUE;
+    $this->_testOnlineRegistration($registerUrl1, $numberRegistrations, $anonymous);
+    $this->_testOnlineRegistration($registerUrl2, $numberRegistrations, $anonymous);
+    $this->_testOnlineRegistration($registerUrl3, $numberRegistrations, $anonymous);
+
+    //Checkout
+    $value = $this->_testCheckOut();
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
+
+    $this->open($this->sboxPath."civicrm/dashboard");    
+    
+    //three event names
+    $events = array( 1 => $eventTitle1,
+                     2 => $eventTitle2,
+                     3 => $eventTitle3,
+                     );
+    //check the existence of the contacts who were registered and the one who did the contribution 
+    $this->_checkContributionsandEventRegistration($value[0],$value[1],$events);
+  }
+  
+  function _testAddEventInfo($eventTitle, $eventDescription) {
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
     // button at the end of this page to show up, to make sure it's fully loaded.
     $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
@@ -237,11 +257,12 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->click("is_map");
     $this->click("_qf_EventInfo_upload-bottom");
   }
-     function _testAddLocation($streetAddress) {
+
+  function _testAddLocation($streetAddress) {
     // Wait for Location tab form to load
     $this->waitForPageToLoad("30000");
     $this->waitForElementPresent("_qf_Location_upload-bottom");
-
+    
     $this->type("address_1_street_address", $streetAddress);
     $this->type("address_1_city", "San Francisco");
     $this->type("address_1_postal_code", "94117");
@@ -318,7 +339,8 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->waitForPageToLoad("30000");
     $this->waitForTextPresent("'Registration' information has been saved.");
   }
-   function _AddEventToCart($eventTitle, $eventInfoStrings, $eventFees = NULL) {
+
+  function _AddEventToCart($eventTitle, $eventInfoStrings, $eventFees = NULL) {
     // verify event input on info page
     // start at Manage Events listing
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
@@ -330,5 +352,126 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->click("link=Add to Cart");
     $this->waitForPageToLoad('30000');
     $this->assertTrue($this->isTextPresent("$eventTitle has been added to your cart"));
+  }
+  
+  function _testVerifyEventInfo($eventTitle, $eventInfoStrings, $eventFees = NULL) {
+    // verify event input on info page
+    // start at Manage Events listing
+    $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
+    $this->click("link=$eventTitle");
+    $this->waitForPageToLoad('30000');
+    
+    // Check for correct event info strings
+    $this->assertStringsPresent($eventInfoStrings);
+    
+    // Optionally verify event fees (especially for discounts)
+    if ($eventFees) {
+      $this->assertStringsPresent($eventFees);      
+    }
+    return $this->getLocation();
+  }
+  
+  function _testOnlineRegistration($registerUrl, $numberRegistrations = 1, $anonymous = TRUE) {
+    if ($anonymous) {
+      $this->open($this->sboxPath . "civicrm/logout?reset=1");
+      $this->waitForPageToLoad('30000');
+    }
+    $this->open($registerUrl);
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("link=Add to Cart");
+    $this->click("link=Add to Cart");
+    $this->waitForPageToLoad('30000');  
+  }
+  
+  function _testCheckOut(){
+    //View the Cart
+    $this->click("xpath=//div[@id='messages']/div/div/a[text()='View your cart.']");
+    
+    //Click on Checkout
+    $this->waitForElementPresent("xpath=//a[@class='button crm-check-out-button']/span");
+    $this->click("xpath=//a[@class='button crm-check-out-button']/span");
+    $this->waitForPageToLoad("30000");
+    
+    $firstName = "AB".substr(sha1(rand()), 0, 7);
+    $lastName = "XY".substr(sha1(rand()), 0, 7);
+    for( $i = 1; $i <= 3; $i++ ){
+      $this->type("xpath=//form[@id='ParticipantsAndPrices']/fieldset[$i]/div/fieldset/div/div/fieldset/div/div[2]/input","{$firstName}.{$lastName}@home.com");
+      $this->type("xpath=//form[@id='ParticipantsAndPrices']/fieldset[$i]/div/fieldset/div/div[2]/div[2]/input","{$firstName}.{$lastName}@example.com");
+      $this->click("xpath=//form[@id='ParticipantsAndPrices']/fieldset[$i]/div[2]/div[2]/input[2]");
+    }
+    $this->click("_qf_ParticipantsAndPrices_upload-bottom");
+    $this->waitForPageToLoad("30000");
+    
+    $this->select("credit_card_type", "value=Visa");
+    $this->type("credit_card_number", "4111111111111111");
+    $this->type("cvv2", "000");
+    $this->select("credit_card_exp_date[M]", "value=1");
+    $this->select("credit_card_exp_date[Y]", "value=2020");
+    $this->type("billing_first_name", $firstName);
+    $this->type("billing_last_name", $lastName);
+    $this->type("billing_street_address-5", "15 Main St.");
+    $this->type(" billing_city-5", "San Jose");
+    $this->select("billing_country_id-5", "value=1228");
+    $this->select("billing_state_province_id-5", "value=1004");
+    $this->type("billing_postal_code-5", "94129");
+    $this->type("billing_contact_email", "{$firstName}.{$lastName}@example.com");
+    
+    $this->click("_qf_Payment_next-bottom");
+    $this->waitForPageToLoad("30000");
+    
+    $this->assertTrue($this->isTextPresent("This is your receipt of payment made for the following event registration."));
+    return array($firstName,$lastName);
+  }
+
+  function _checkContributionsandEventRegistration($firstName,$lastName,$events){
+    //Type the registered participant's email in autocomplete.
+    $this->click('sort_name_navigation');
+    $this->type('css=input#sort_name_navigation',"{$firstName}.{$lastName}@home.com" );
+    $this->typeKeys('css=input#sort_name_navigation', "{$firstName}.{$lastName}@home.com");
+    
+    // Wait for result list.
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    
+    // Visit contact summary page.
+    $this->click("css=div.ac_results-inner li");
+    $this->waitForPageToLoad("30000");
+    
+    //click on Events Tab
+    $this->click("xpath=//li[@id='tab_participant']/a");
+    //check if the participant is registered for all the three events
+    foreach($events as $key => $value){
+      $this->waitForElementPresent("link=$value");
+      $this->assertTrue($this->isElementPresent("link=$value"));
+    }
+    for( $i = 1; $i <= 3; $i++ ){
+      $this->waitForElementPresent("xpath=//table[@class='selector']/tbody/tr[$i]/td[6][text()='Registered']");
+      $this->assertTrue($this->isElementPresent("xpath=//table[@class='selector']/tbody/tr[$i]/td[6][text()='Registered']"));
+    }
+    
+    //Type the billing email in autocomplete.
+    $this->click('sort_name_navigation');
+    $this->type('css=input#sort_name_navigation',"{$firstName}.{$lastName}@example.com" );
+    $this->typeKeys('css=input#sort_name_navigation', "{$firstName}.{$lastName}@example.com");
+    
+    // Wait for result list.
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    
+    // Visit contact summary page.
+    $this->click("css=div.ac_results-inner li");
+    $this->waitForPageToLoad("30000");
+    
+    //click on Contributions Tab
+    $this->click("xpath=//li[@id='tab_contribute']/a");
+    //check for the three contributions
+    foreach($events as $key => $value){
+      $this->waitForElementPresent("xpath=//table[@class='selector']/tbody/tr/td[3][contains(text(),'$value')]");
+      $this->assertTrue($this->isElementPresent("xpath=//table[@class='selector']/tbody/tr/td[3][contains(text(),'$value')]"));
+    }
+    
+    //Disable shopping cart style
+    $this->open($this->sboxPath . "civicrm/admin/setting/preferences/event?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->click("enable_cart");
+    $this->click("_qf_Event_next-top");
   }
 }
