@@ -414,7 +414,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('link=Add Membership Type');
     $this->assertTrue($this->isTextPresent("The membership type 'Membership Type $title' has been saved."));
 
-    $url = $this->getAttribute("xpath=//div[@id='membership_type']//div[@class='dataTables_wrapper']//table/tbody//tr/td[1][text()='{$membershipTypeTitle}']/../td[10]/span/a[3][text()='Delete']/@href");
+    $url = $this->getAttribute("xpath=//div[@id='membership_type']//div[@class='dataTables_wrapper']//table/tbody//tr/td[1][text()='{$membershipTypeTitle}']/../td[11]/span/a[3][text()='Delete']/@href");
 
     $matches = array();
     preg_match('/id=([0-9]+)/', $url, $matches);
