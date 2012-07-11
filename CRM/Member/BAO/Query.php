@@ -34,8 +34,7 @@
  */
 class CRM_Member_BAO_Query {
 
-  static
-  function &getFields() {
+  static function &getFields() {
     $fields = CRM_Member_BAO_Membership::exportableFields();
     return $fields;
   }
@@ -46,8 +45,7 @@ class CRM_Member_BAO_Query {
    * @return void
    * @access public
    */
-  static
-  function select(&$query) {
+  static function select(&$query) {
     // if membership mode add membership id
     if ($query->_mode & CRM_Contact_BAO_Query::MODE_MEMBER ||
       CRM_Utils_Array::value('membership_id', $query->_returnProperties)
@@ -123,8 +121,7 @@ class CRM_Member_BAO_Query {
     }
   }
 
-  static
-  function where(&$query) {
+  static function where(&$query) {
     $isTest = FALSE;
     $grouping = NULL;
     foreach (array_keys($query->_params) as $id) {
@@ -151,8 +148,7 @@ class CRM_Member_BAO_Query {
     }
   }
 
-  static
-  function whereClauseSingle(&$values, &$query) {
+  static function whereClauseSingle(&$values, &$query) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
     switch ($name) {
       case 'member_join_date_low':
@@ -323,8 +319,7 @@ class CRM_Member_BAO_Query {
     }
   }
 
-  static
-  function from($name, $mode, $side) {
+  static function from($name, $mode, $side) {
     $from = NULL;
     switch ($name) {
       case 'civicrm_membership':
@@ -357,8 +352,7 @@ class CRM_Member_BAO_Query {
     return $from;
   }
 
-  static
-  function defaultReturnProperties($mode,
+  static function defaultReturnProperties($mode,
     $includeCustomFields = TRUE
   ) {
     $properties = NULL;
@@ -396,8 +390,7 @@ class CRM_Member_BAO_Query {
     return $properties;
   }
 
-  static
-  function buildSearchForm(&$form) {
+  static function buildSearchForm(&$form) {
     foreach (CRM_Member_PseudoConstant::membershipType() as $id => $Name) {
       $form->_membershipType = &$form->addElement('checkbox', "member_membership_type_id[$id]", NULL, $Name);
     }
@@ -446,17 +439,14 @@ class CRM_Member_BAO_Query {
     $form->assign('validCiviMember', TRUE);
   }
 
-  static
-  function searchAction(&$row, $id) {}
+  static function searchAction(&$row, $id) {}
 
-  static
-  function addShowHide(&$showHide) {
+  static function addShowHide(&$showHide) {
     $showHide->addHide('memberForm');
     $showHide->addShow('memberForm_show');
   }
 
-  static
-  function tableNames(&$tables) {
+  static function tableNames(&$tables) {
     //add membership table
     if (CRM_Utils_Array::value('civicrm_membership_log', $tables) || CRM_Utils_Array::value('civicrm_membership_status', $tables) || CRM_Utils_Array::value('civicrm_membership_type', $tables)) {
       $tables = array_merge(array('civicrm_membership' => 1), $tables);

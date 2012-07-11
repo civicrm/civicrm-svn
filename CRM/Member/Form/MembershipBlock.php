@@ -50,15 +50,13 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
    * @access public
    *
    * @return void
-   */ function setDefaultValues() {
+   */ 
+  function setDefaultValues() {
     //parent::setDefaultValues();
     $defaults = array();
     if (isset($this->_id)) {
       $defaults = CRM_Member_BAO_Membership::getMembershipBlock($this->_id);
     }
-
-
-
     $defaults['member_is_active'] = $defaults['is_active'];
 
     // Set Display Minimum Fee default to true if we are adding a new membership block
@@ -208,8 +206,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
    * @access public
    * @static
    */
-  static
-  function formRule($params, $files, $contributionPageId = NULL) {
+  static function formRule($params, $files, $contributionPageId = NULL) {
     $errors = array();
     if (CRM_Utils_Array::value('member_is_active', $params)) {
 
