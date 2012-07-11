@@ -252,7 +252,7 @@ FROM   {$this->_componentTable}
       $this->addGroup($postalMailing, 'postal_mailing_export', ts('Postal Mailing Export'), '<br/>');
 
       $this->addElement('select', 'additional_group', ts('Additional Group for Export'),
-        array('' => ts('- select group -')) + CRM_Core_PseudoConstant::staticGroup()
+        array('' => ts('- select group -')) + CRM_Core_PseudoConstant::group()
       );
     }
 
