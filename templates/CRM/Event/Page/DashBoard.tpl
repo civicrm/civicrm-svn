@@ -113,7 +113,7 @@
 			    <li><a title="Schedule Reminders" class="action-item-wrap {if NOT $values.reminder} disabled{/if}" href="{crmURL p='civicrm/event/manage/reminder' q="reset=1&action=update&id=`$id`"}">{ts}Schedule Reminders{/ts}</a></li>
         		    <li><a title="Conference Slots" class="action-item-wrap {if NOT $values.is_subevent} disabled{/if}" href="{crmURL p='civicrm/event/manage/conference' q="reset=1&action=update&id=`$id`"}">{ts}Conference Slots{/ts}</a></li>
         		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $values.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$id`"}">{ts}Tell a Friend{/ts}</a></li>
-			    <li><a title="{ts}Personal Campaign Pages{/ts}" class="action-item-wrap {if NOT $row.is_pcp_enabled} disabled{/if}" href="{crmURL p='civicrm/event/manage/pcp' q="reset=1&action=update&id=`$id`"}">{ts}Personal Campaign Pages{/ts}</a></li>
+			    <li><a title="{ts}Personal Campaign Pages{/ts}" class="action-item-wrap {if NOT $values.is_pcp_enabled} disabled{/if}" href="{crmURL p='civicrm/event/manage/pcp' q="reset=1&action=update&id=`$id`"}">{ts}Personal Campaign Pages{/ts}</a></li>
         	      </span>
         	    </div>
             {/if}
