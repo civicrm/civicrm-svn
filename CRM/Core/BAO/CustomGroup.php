@@ -1782,7 +1782,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
           if (!is_array($value)) {
             $customData = explode(CRM_Core_DAO::VALUE_SEPARATOR, $value);
           }
-          
+
           $query = "
             SELECT id as value, name as label
             FROM civicrm_state_province";
