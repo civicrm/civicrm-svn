@@ -19,11 +19,19 @@ CREATE TABLE `civicrm_extension` (
     )
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
-INSERT INTO civicrm_extension (label, full_name, name, type, file, is_active)
-SELECT ov.label, ov.value, ov.name, ov.grouping, ov.description, ov.is_active
-FROM civicrm_option_group og
-INNER JOIN civicrm_option_value ov ON og.id = ov.option_group_id
-WHERE og.name = "system_extensions";
-
+-- assuming first value of array $locales is always en_US
+{if $multilingual}
+    INSERT INTO civicrm_extension (label, full_name, name, type, file, is_active)
+    SELECT ov.label_{$locales.0}, ov.value, ov.name, ov.grouping, ov.description_{$locales.0}, ov.is_active
+    FROM civicrm_option_group og
+    INNER JOIN civicrm_option_value ov ON og.id = ov.option_group_id
+    WHERE og.name = "system_extensions";
+{else}
+    INSERT INTO civicrm_extension (label, full_name, name, type, file, is_active)
+    SELECT ov.label, ov.value, ov.name, ov.grouping, ov.description, ov.is_active
+    FROM civicrm_option_group og
+    INNER JOIN civicrm_option_value ov ON og.id = ov.option_group_id
+    WHERE og.name = "system_extensions";
+{/if}
 DELETE FROM civicrm_option_group WHERE name = "system_extensions";
 -- Note: Deletion cascades to civicrm_option_value
