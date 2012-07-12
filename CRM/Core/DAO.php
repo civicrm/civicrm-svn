@@ -711,8 +711,12 @@ FROM   civicrm_domain
    * @access public
    */
   static function getFieldValue($daoName, $searchValue, $returnColumn = 'name', $searchColumn = 'id', $force = false) {
-    if (empty($searchValue)) {
+    if (
+      empty($searchValue) ||
+      trim(strtolower($searchValue)) == 'null'
+    ) {
       // adding this year since developers forget to check for an id
+      // or for the 'null' (which is a bad DAO kludge)
       // and hence we get the first value in the db
       CRM_Core_Error::fatal();
     }
@@ -1382,7 +1386,7 @@ SELECT contact_id
     }
 
     $object->delete();
-    
+
     foreach ($deletions as $deletion) {
       CRM_Core_DAO::deleteTestObjects($deletion[0], $deletion[1]);
     }
