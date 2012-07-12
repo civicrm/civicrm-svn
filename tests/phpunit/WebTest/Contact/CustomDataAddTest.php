@@ -231,7 +231,12 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$moneyTextFieldLabel' has been saved."));
-
+    
+    //Get the customFieldsetID
+    $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
+    $this->waitForPageToLoad("30000");
+    $customFieldsetId = explode('&gid=', $this->getAttribute("xpath=//div[@id='custom_group']//table/tbody//tr/td/span[text()='$customGroupTitle']/../../td[7]/span/a@href"));
+    $customFieldsetId =  $customFieldsetId[1];
 
     //create Individual contact
     $this->click("//ul[@id='civicrm-menu']/li[4]");
@@ -256,10 +261,10 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->type("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]/../following-sibling::td/input", "12345678.98");
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-
+   
     //verify the money custom field value in the proper format
-    $this->assertTrue($this->isElementPresent("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle']/table/tbody/tr[2]/td/div/div"));
-    $this->verifyText("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle']/table/tbody/tr[2]/td/div/div/div/div[3]", '12,345,678.98');
+    $this->assertTrue($this->isElementPresent("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle crm-custom-set-block-{$customFieldsetId}']/table/tbody/tr[2]/td/div/div/div/div[3]"));
+    $this->verifyText("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle crm-custom-set-block-{$customFieldsetId}']/table/tbody/tr[2]/td/div/div/div/div[3]", '12,345,678.98');
   }
   
   function testCustomDataChangeLog(){
