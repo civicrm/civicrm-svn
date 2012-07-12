@@ -344,6 +344,9 @@ WHERE  civicrm_group_contact.status = 'Added'
     self::remove($groupIDs);
 
     foreach (array($sql, $sqlB) as $selectSql) {
+      if (!$selectSql) {
+        continue;
+      }
       $insertSql = "INSERT IGNORE INTO civicrm_group_contact_cache (group_id,contact_id) ($selectSql);";
       // CRM_Core_Error::debug_var('insertSql', $insertSql);
       $processed = TRUE; // FIXME
