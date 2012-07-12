@@ -61,7 +61,8 @@ function civicrm_wp_add_menu_items() {
   $settingsFile = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'civicrm.settings.php';
 
   if (file_exists($settingsFile)) {
-    add_menu_page('CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke');
+    $civilogo = WP_PLUGIN_URL . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'civicrm' . DIRECTORY_SEPARATOR . 'i' . DIRECTORY_SEPARATOR . 'logo16px.png'; 
+    add_menu_page('CiviCRM', 'CiviCRM', 'access_civicrm_nav_link', 'CiviCRM', 'civicrm_wp_invoke', $civilogo);
   }
 
   add_options_page('CiviCRM Settings', 'CiviCRM Settings', 'manage_options', 'civicrm-settings', 'civicrm_db_settings');
