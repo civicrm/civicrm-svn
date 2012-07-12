@@ -239,6 +239,9 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
     if ($config->userFramework == 'Joomla') {
       $profile = str_replace('/administrator/', '/index.php', $profile);
     }
+    else if ($config->userFramework == 'WordPress') {
+      $profile = str_replace('/wp-admin/admin.php', '/index.php', $profile);
+    }
 
     // add jquery files
     $profile = CRM_Utils_String::addJqueryFiles($profile);
