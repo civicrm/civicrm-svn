@@ -1519,8 +1519,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @static
    * @access public
    */
-  static
-  function buildProfile(&$form, &$field, $mode, $contactId = NULL, $online = FALSE, $onBehalf = FALSE, $rowNumber = NULL , $prefix = '') {
+  static function buildProfile(&$form, &$field, $mode, $contactId = NULL, $online = FALSE, $onBehalf = FALSE, $rowNumber = NULL , $prefix = '') {
     $defaultValues = array();
     $fieldName     = $field['name'];
     $title         = $field['title'];
