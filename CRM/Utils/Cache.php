@@ -68,24 +68,20 @@ class CRM_Utils_Cache {
    */
   static function &singleton() {
     if (self::$_singleton === NULL) {
+      $className = 'ArrayCache';   // default to ArrayCache for now
+
       // Maintain backward compatibility for now.
       // Setting CIVICRM_USE_MEMCACHE or CIVICRM_USE_ARRAYCACHE will
       // override the CIVICRM_DB_CACHE_CLASS setting.
       // Going forward, CIVICRM_USE_xxxCACHE should be deprecated.
       if (defined('CIVICRM_USE_MEMCACHE') && CIVICRM_USE_MEMCACHE) {
-        define('CIVICRM_DB_CACHE_CLASS', 'Memcache');
+        $className = 'Memcache';
       }
       else if (defined('CIVICRM_USE_ARRAYCACHE') && CIVICRM_USE_ARRAYCACHE) {
-        define('CIVICRM_DB_CACHE_CLASS', 'ArrayCache');
-      }
-
-      if (!defined('CIVICRM_DB_CACHE_CLASS')) {
-        define('CIVICRM_DB_CACHE_CLASS', 'ArrayCache');
-      }
-
-      $className = CIVICRM_DB_CACHE_CLASS;
-      if (empty($className)) {
         $className = 'ArrayCache';
+      }
+      else if (defined('CIVICRM_DB_CACHE_CLASS') && CIVICRM_DB_CACHE_CLASS) {
+        $className = CIVICRM_DB_CACHE_CLASS;
       }
 
       // a generic method for utilizing any of the available db caches.
