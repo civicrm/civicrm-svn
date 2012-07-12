@@ -424,7 +424,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   }
   // http://issues.civicrm.org/jira/browse/CRM-9150 - stick with 'simple' operators for now
   // support for other syntaxes is discussed in ticket but being put off for now
-  $acceptedSQLOperators = array('=', '<=', '>=', '>', '<', 'LIKE', "<>", "!=", "NOT LIKE", 'IN', 'NOT IN');
+  $acceptedSQLOperators = array('=', '<=', '>=', '>', '<', 'LIKE', "<>", "!=", "NOT LIKE", 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN');
   if (!$fields) {
     return;
   }
@@ -448,7 +448,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
               if (empty($criteria[0]) || empty($criteria[1])) {
                 throw new exception("invalid criteria for $operator");
               }
-              $dao->whereAdd(sprintf('%s BETWEEN "%s" AND "%s"', $field, CRM_Core_DAO::escapeString($criteria[0]), CRM_Core_DAO::escapeString($criteria[1])));
+              $dao->whereAdd(sprintf('%s ' . $operator . ' "%s" AND "%s"', $field, CRM_Core_DAO::escapeString($criteria[0]), CRM_Core_DAO::escapeString($criteria[1])));
               break;
 
             // n-ary operators
@@ -520,7 +520,7 @@ function _civicrm_api3_apply_filters_to_dao($filterField, $filterValue, &$dao) {
   if($filterField == 'is_current' && $filterValue == 1){
     $todayStart = date('Ymd000000', strtotime(now));
     $todayEnd = date('Ymd235959', strtotime(now));
-    $dao->whereAdd("(start_date <= '$todayStart' OR start_date IS NULL) AND (end_date >= '$todayEnd' OR end_date IS NULL)");   
+    $dao->whereAdd("(start_date <= '$todayStart' OR start_date IS NULL) AND (end_date >= '$todayEnd' OR end_date IS NULL)");
     if(property_exists($dao, 'is_active')){
       $dao->whereAdd('is_active = 1');
     }
