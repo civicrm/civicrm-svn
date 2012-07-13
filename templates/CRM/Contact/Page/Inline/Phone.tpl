@@ -26,18 +26,20 @@
 {* template for building phone block*}
 <div class="crm-table2div-layout" id="crm-phone-content">
   <div class="crm-clear"> <!-- start of main -->
-     {if $phone}
-     <div class="crm-config-option">
-      <a id="edit-phone" class="hiddenElement crm-link-action" title="{ts}click to add or edit phone numbers{/ts}">
-        <span class="batch-edit"></span>{ts}add or edit phone{/ts}
-      </a>
-    </div>
-    {else}
-      <div>
-        <a id="edit-phone" class="crm-link-action empty-phone" title="{ts}click to add a phone number{/ts}">
-          <span class="batch-edit"></span>{ts}add phone{/ts}
+    {if $permission EQ 'edit'}
+      {if $phone}
+       <div class="crm-config-option">
+        <a id="edit-phone" class="hiddenElement crm-link-action" title="{ts}click to add or edit phone numbers{/ts}">
+          <span class="batch-edit"></span>{ts}add or edit phone{/ts}
         </a>
       </div>
+      {else}
+        <div>
+          <a id="edit-phone" class="crm-link-action empty-phone" title="{ts}click to add a phone number{/ts}">
+            <span class="batch-edit"></span>{ts}add phone{/ts}
+          </a>
+        </div>
+      {/if}
     {/if}
     {foreach from=$phone item=item}
       {if $item.phone}
