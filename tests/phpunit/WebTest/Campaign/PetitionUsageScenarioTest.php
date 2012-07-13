@@ -284,7 +284,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     // click Sign the petition.
     $this->click("_qf_Signature_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("thankyou_text");
     
     // check that thank-you page has appropriate title and message
     $this->assertTrue($this->isTextPresent("Awesome $title donation"));
