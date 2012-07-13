@@ -116,6 +116,8 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("link=Add Membership");
     $this->waitForElementPresent("send_receipt");
     //let the organisation be default (inner City Arts)
+    $this->select("membership_type_id[0]", "label=Inner City Arts");
+    $this->click("membership_type_id[1]");
     $this->select("membership_type_id[1]", "Student");
     $this->type("source", "membership source$firstName");
     $this->click("_qf_Membership_upload-bottom");
@@ -480,6 +482,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("//form[@id='Contact']/div[2]/div[7]/div[1]");
     $this->waitForElementPresent("is_deceased");
     $this->click("civicrm_gender_Male_2");
+        
     $this->webtestFillDate("birth_date", "-1 year");
     $this->click("is_deceased");
     $this->waitForElementPresent("deceased_date");
