@@ -1946,8 +1946,20 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
 
   function orderBy() {
     $this->_orderBy  = "";
-    $orderBys        = array();
     $this->_sections = array();
+    $this->storeOrderByArray();
+    if(!empty($this->_orderByArray)){
+      $this->_orderBy = "ORDER BY " . implode(', ', $this->_orderByArray);
+    }
+    $this->assign('sections', $this->_sections);
+  }
+  /*
+   * In some cases other functions want to know which fields are selected for ordering by
+   * Separating this into a separate function allows it to be called separately from constructing 
+   * the order by clause
+   */
+  function storeOrderByArray() {
+    $orderBys = array();
 
     if (CRM_Utils_Array::value('order_bys', $this->_params) &&
       is_array($this->_params['order_bys']) &&
@@ -1987,10 +1999,9 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
         }
       }
     }
-
-    if (!empty($orderBys)) {
-      $this->_orderBy = "ORDER BY " . implode(', ', $orderBys);
-    }
+    
+    $this->_orderByArray = $orderBys;
+    
     $this->assign('sections', $this->_sections);
   }
 
