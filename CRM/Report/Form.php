@@ -1948,7 +1948,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
     $this->_orderBy  = "";
     $this->_sections = array();
     $this->storeOrderByArray();
-    if(!empty($this->_orderByArray)){
+    if(!empty($this->_orderByArray) && !$this->_rollup == 'WITH ROLLUP'){
       $this->_orderBy = "ORDER BY " . implode(', ', $this->_orderByArray);
     }
     $this->assign('sections', $this->_sections);
