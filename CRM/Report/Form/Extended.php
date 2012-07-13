@@ -430,7 +430,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
         ),
         'grouping' => 'event-fields',
         'filters' => array(
-          'eid' => array(
+          'event_type_id' => array(
             'name' => 'event_type_id',
             'title' => ts('Event Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -514,6 +514,9 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'payment_instrument_id' =>
           array('title' => ts('Payment Instrument'),
           ),
+         'contribution_type_id' =>
+          array('title' => ts('Contribution Type'),
+          ),
         ),
         'group_bys' =>
         array(
@@ -576,7 +579,8 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
       ),
     );
   }
-  function getCaseColumns() {
+
+  function getCaseColumns() {
     return array(
       'civicrm_case' => array(
         'dao' => 'CRM_Case_DAO_Case',
