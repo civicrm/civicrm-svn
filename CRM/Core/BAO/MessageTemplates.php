@@ -50,8 +50,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $messageTemplates = new CRM_Core_DAO_MessageTemplates();
     $messageTemplates->copyValues($params);
     if ($messageTemplates->find(TRUE)) {
@@ -70,8 +69,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Core_DAO_MessageTemplates', $id, 'is_active', $is_active);
   }
 
@@ -85,8 +83,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
    *
    * @return object
    */
-  static
-  function add(&$params) {
+  static function add(&$params) {
     $params['is_active'] = CRM_Utils_Array::value('is_active', $params, FALSE);
 
     $messageTemplates = new CRM_Core_DAO_MessageTemplates();
@@ -104,8 +101,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
    *
    * @return object
    */
-  static
-  function del($messageTemplatesID) {
+  static function del($messageTemplatesID) {
     // make sure messageTemplatesID is an integer
     if (!CRM_Utils_Rule::positiveInteger($messageTemplatesID)) {
       CRM_Core_Error::fatal(ts('Invalid Message template'));
@@ -137,8 +133,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
    *
    * @return object
    */
-  static
-  function getMessageTemplates($all = TRUE) {
+  static function getMessageTemplates($all = TRUE) {
     $msgTpls = array();
 
     $messageTemplates = new CRM_Core_DAO_MessageTemplates();
@@ -155,8 +150,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
     return $msgTpls;
   }
 
-  static
-  function sendReminder($contactId, $email, $messageTemplateID, $from) {
+  static function sendReminder($contactId, $email, $messageTemplateID, $from) {
 
     $messageTemplates = new CRM_Core_DAO_MessageTemplates();
     $messageTemplates->id = $messageTemplateID;
@@ -273,8 +267,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
    *
    * @return void
    */
-  static
-  function revert($id) {
+  static function revert($id) {
     $diverted = new self;
     $diverted->id = (int) $id;
     $diverted->find(1);
@@ -306,8 +299,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
    *
    * @return array  of four parameters: a boolean whether the email was sent, and the subject, text and HTML templates
    */
-  static
-  function sendTemplate($params) {
+  static function sendTemplate($params) {
     $defaults = array(
       // option group name of the template
       'groupName' => NULL,

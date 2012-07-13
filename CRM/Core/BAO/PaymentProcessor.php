@@ -73,8 +73,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $paymentProcessor = new CRM_Core_DAO_PaymentProcessor();
     $paymentProcessor->copyValues($params);
     if ($paymentProcessor->find(TRUE)) {
@@ -95,8 +94,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
    * @access public
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Core_DAO_PaymentProcessor', $id, 'is_active', $is_active);
   }
 
@@ -110,8 +108,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
    * @static
    * @access public
    */
-  static
-  function &getDefault() {
+  static function &getDefault() {
     if (self::$_defaultPaymentProcessor == NULL) {
       $params = array('is_default' => 1);
       $defaults = array();

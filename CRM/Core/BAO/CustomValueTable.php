@@ -34,8 +34,7 @@
  */
 class CRM_Core_BAO_CustomValueTable {
 
-  static
-  function create(&$customParams) {
+  static function create(&$customParams) {
     if (empty($customParams) ||
       !is_array($customParams)
     ) {
@@ -301,8 +300,7 @@ class CRM_Core_BAO_CustomValueTable {
     }
   }
 
-  static
-  function store(&$params, $entityTable, $entityID) {
+  static function store(&$params, $entityTable, $entityID) {
     $cvParams = array();
     foreach ($params as $fieldID => $param) {
       foreach ($param as $index => $customValue) {
@@ -454,8 +452,7 @@ AND    $cond
    * @return array
    * @static
    */
-  static
-  function setValues(&$params) {
+  static function setValues(&$params) {
 
     if (!isset($params['entityID']) ||
       CRM_Utils_Type::escape($params['entityID'],
@@ -599,8 +596,7 @@ AND    cf.id IN ( $fieldIDList )
    * @return array
    * @static
    */
-  static
-  function &getValues(&$params) {
+  static function &getValues(&$params) {
     if (empty($params)) {
       return NULL;
     }
