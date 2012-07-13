@@ -342,7 +342,6 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
     $this->click("link=$eventTitle");
 
-    $this->waitForTextPresent("$eventTitle");
     // Look for Register button
     $this->waitForElementPresent("link=Register Now");
 
