@@ -62,6 +62,18 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->click('_qf_Amount_next');
     $this->waitForPageToLoad();
 
+    // go to Membership block
+    $this->click('css=#tab_membership a');
+    $this->waitForElementPresent("member_is_active");
+    $this->check("member_is_active");
+    $this->waitForElementPresent("member_price_set_id"); 
+    $this->select("member_price_set_id", "label=- none -");
+    $this->waitForElementPresent("membership_type-block");
+    $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='General']/../input[2]");
+    $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='Student']/../input[2]");
+    $this->click("_qf_MembershipBlock_next-bottom");
+    $this->waitForTextPresent("'MembershipBlock' information has been saved");
+    
     // go to Profiles
     $this->click('css=#tab_custom a');
 
@@ -72,7 +84,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     // save
     $this->click('_qf_Custom_upload_done');
     $this->waitForPageToLoad();
-
+    
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
     $lastName  = 'An' . substr(sha1(rand()), 0, 7);
     $email     = $firstName . "@example.com";
@@ -84,6 +96,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     //Go to online membership signup page
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=2");
     $this->waitForElementPresent("_qf_Main_upload-bottom");
+    
     $this->click("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]");
 
     //Type first name and last name and email
@@ -152,7 +165,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Main_upload-bottom");
 
     $this->click("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]");
-
+    
     //Type first name and last name and email
     $this->type("first_name", $firstName);
     $this->type("last_name", $lastName);
@@ -239,7 +252,19 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Amount_next');
     $this->click('_qf_Amount_next');
     $this->waitForPageToLoad();
-
+    
+    // go to Membership block
+    $this->click('css=#tab_membership a');
+    $this->waitForElementPresent("member_is_active");
+    $this->check("member_is_active");
+    $this->waitForElementPresent("member_price_set_id"); 
+    $this->select("member_price_set_id", "label=- none -");
+    $this->waitForElementPresent("membership_type-block");
+    $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='General']/../input[2]");
+    $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='Student']/../input[2]");
+    $this->click("_qf_MembershipBlock_next-bottom");
+    $this->waitForTextPresent("'MembershipBlock' information has been saved");
+    
     // go to Profiles
     $this->click('css=#tab_custom a');
 
