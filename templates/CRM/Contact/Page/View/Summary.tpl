@@ -281,6 +281,7 @@
                 <div class="contactCardRight crm-address_{$locationIndex} crm-address-block">
               {/if}
 
+              {if $permission EQ 'edit'}
                 <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                   <div class="crm-table2div-layout">
                     <div class="crm-clear">
@@ -289,7 +290,8 @@
                       </a>
                     </div>
                   </div>
-                </div>
+                 </div>
+                {/if}
               </div>
               <div class="clear"></div>
             </div> <!-- end of contact panel -->
@@ -379,6 +381,7 @@
 <div class="clear"></div>
 </div><!-- /.crm-content-block -->
 
+{if $permission EQ 'edit'}
 {literal}
 <script type="text/javascript">
 
@@ -445,4 +448,4 @@ cj(function(){
 
 </script>
 {/literal}
-
+{/if}

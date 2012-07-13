@@ -52,6 +52,7 @@
    </div> <!-- end of main -->
 </div>
 
+{if $permission EQ 'edit'}
 {literal}
 <script type="text/javascript">
 cj(function(){
@@ -80,6 +81,6 @@ cj(function(){
         removeCiviOverlay('.crm-summary-phone-block');
     });
 });
-
 </script>
 {/literal}
+{/if}

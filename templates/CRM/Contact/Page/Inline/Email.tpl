@@ -61,8 +61,10 @@
 
 {literal}
 <script type="text/javascript">
+
+{/literal}{if $permission EQ 'edit'}{literal}
 cj(function(){
-    cj('#email-block').mouseenter( function() {
+  cj('#email-block').mouseenter( function() {
       cj(this).addClass('crm-inline-edit-hover');
       cj('#edit-email').show();
     }).mouseleave( function() {
@@ -87,7 +89,7 @@ cj(function(){
         removeCiviOverlay('.crm-summary-email-block');
     });
 });
-
+{/literal}{/if}{literal}
 function showHideSignature( blockId ) {
   cj("#Email_Block_" + blockId + "_signature").show( );   
 

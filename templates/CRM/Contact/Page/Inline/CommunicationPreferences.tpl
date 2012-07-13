@@ -70,6 +70,7 @@
   </div> <!-- end of main -->
 </div> <!-- end of table layout -->
  
+{if $permission EQ 'edit'}
 {literal}
 <script type="text/javascript">
 cj(function(){
@@ -96,6 +97,6 @@ cj(function(){
       removeCiviOverlay('.crm-summary-comm-pref-block');
     });
 });
-
 </script>
 {/literal}
+{/if}

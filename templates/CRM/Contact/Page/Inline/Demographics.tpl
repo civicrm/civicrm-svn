@@ -63,6 +63,7 @@
     </div> <!-- end of main -->
   </div>
 
+{if $permission EQ 'edit'}
 {literal}
 <script type="text/javascript">
 cj(function(){
@@ -91,3 +92,4 @@ cj(function(){
 });
 </script>
 {/literal}
+{/if}
