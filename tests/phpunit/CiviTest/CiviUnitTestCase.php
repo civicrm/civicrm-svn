@@ -90,6 +90,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   public static $populateOnce = FALSE;
 
+  /*
+   * Allow classes to state E-notice compliance
+   */
+  public $_eNoticeCompliant = FALSE;
   /**
    *  @var boolean DBResetRequired allows skipping DB reset
    *               in specific test case. If you still need
@@ -307,6 +311,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     $tablesToTruncate = array('civicrm_contact');
     $this->quickCleanup($tablesToTruncate);
+    if($this->_eNoticeCompliant ){
+      error_reporting(E_ALL);
+    }
   }
 
   /**
@@ -337,7 +344,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   /**
    *  Common teardown functions for all unit tests
    */
-  protected function tearDown() {}
+  protected function tearDown() {
+    error_reporting(E_ALL & ~E_NOTICE);
+  }
 
   /**
    *  FIXME: Maybe a better way to do it
