@@ -93,8 +93,7 @@ require_once '../civicrm.config.php';
 
 // autoload
 require_once 'CRM/Core/ClassLoader.php';
-$classLoader = new CRM_Core_ClassLoader();
-$classLoader->register();
+CRM_Core_ClassLoader::singleton()->register();
 class CRM_GCD {
 
   /*******************************************************

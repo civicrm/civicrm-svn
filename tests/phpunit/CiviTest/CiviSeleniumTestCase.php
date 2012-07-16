@@ -66,8 +66,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // autoload
     require_once 'CRM/Core/ClassLoader.php';
-    $classLoader = new CRM_Core_ClassLoader();
-    $classLoader->register();
+    CRM_Core_ClassLoader::singleton()->register();
 
     // also initialize a connection to the db
     $config = CRM_Core_Config::singleton();

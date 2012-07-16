@@ -999,8 +999,7 @@ function _civicrm_init($fail = TRUE) {
 
   if (substr($codeVer, 0, 3) >= '4.2') {
     require_once $civicrm_root . '/CRM/Core/ClassLoader.php';
-    $classLoader = new CRM_Core_ClassLoader();
-    $classLoader->register();
+    CRM_Core_ClassLoader::singleton()->register();
   }
 
   // also initialize config object

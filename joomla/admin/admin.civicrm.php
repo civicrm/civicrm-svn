@@ -39,8 +39,7 @@ include_once 'civicrm.settings.php';
 civicrm_invoke();
 function civicrm_init() {
   require_once 'CRM/Core/ClassLoader.php';
-  $classLoader = new CRM_Core_ClassLoader();
-  $classLoader->register();
+  CRM_Core_ClassLoader::singleton()->register();
 
   require_once 'PEAR.php';
 

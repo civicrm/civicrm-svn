@@ -139,8 +139,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     // also load the class loader
     require_once 'CRM/Core/ClassLoader.php';
-    $classLoader = new CRM_Core_ClassLoader();
-    $classLoader->register();
+    CRM_Core_ClassLoader::singleton()->register();
   }
 
   function requireDBReset() {

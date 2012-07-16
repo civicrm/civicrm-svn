@@ -122,8 +122,7 @@ require_once '$configFile';
     civicrm_source($sqlPath . DIRECTORY_SEPARATOR . 'civicrm_data.mysql');
 
     require_once 'CRM/Core/ClassLoader.php';
-    $classLoader = new CRM_Core_ClassLoader();
-    $classLoader->register();
+    CRM_Core_ClassLoader::singleton()->register();
 
     require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton();
