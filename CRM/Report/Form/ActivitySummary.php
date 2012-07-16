@@ -495,7 +495,8 @@ class CRM_Report_Form_ActivitySummary extends CRM_Report_Form {
           }
           else {
             $url = CRM_Utils_System::url('civicrm/contact/view',
-              'reset=1&cid=' . $value
+              'reset=1&cid=' . $value,
+              $this->_absoluteUrl
             );
 
             $rows[$rowNum]['civicrm_contact_sort_name'] = "<a href='$url'>" . $row['civicrm_contact_sort_name'] . '</a>';

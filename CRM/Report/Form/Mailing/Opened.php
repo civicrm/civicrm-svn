@@ -294,7 +294,8 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
         array_key_exists('civicrm_contact_id', $row)
       ) {
         $url = CRM_Utils_System::url('civicrm/contact/view',
-          'reset=1&cid=' . $row['civicrm_contact_id']
+          'reset=1&cid=' . $row['civicrm_contact_id'],
+          $this->_absoluteUrl
         );
         $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
         $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Contact details for this contact.");
