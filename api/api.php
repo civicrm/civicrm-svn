@@ -450,7 +450,7 @@ function _civicrm_api_replace_variables($entity, $action, &$params, &$parentResu
         $count = count($stringParts);
         while ($count > 0) {
           $fieldname .= "." . array_shift($stringParts);
-          if (is_array($parentResult[$fieldname])) {
+          if (array_key_exists($fieldname, $parentResult) && is_array($parentResult[$fieldname])) {
             $arrayLocation = $parentResult[$fieldname];
             foreach ($stringParts as $key => $value) {
               $arrayLocation = $arrayLocation[$value];
