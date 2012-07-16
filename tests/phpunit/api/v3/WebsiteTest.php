@@ -7,6 +7,7 @@ class api_v3_WebsiteTest extends CiviUnitTestCase {
   protected $params;
   protected $id;
   protected $_entity;
+  public $_eNoticeCompliant = TRUE;
   public $DBResetRequired = FALSE; function setUp() {
     parent::setUp();
 
