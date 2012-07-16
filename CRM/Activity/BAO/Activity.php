@@ -532,7 +532,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
     }
     else {
       // at worst, take source for recently viewed display
-      $recentContactId = $params['source_contact_id'];
+      $recentContactId = CRM_Utils_Array::value('source_contact_id',$params);
     }
 
     if (isset($params['assignee_contact_id'])) {
@@ -2212,7 +2212,7 @@ AND cl.modified_id  = c.id
     if (!in_array('CiviCampaign', $config->enableComponents)) {
       $skipFields[] = 'activity_engagement_level';
     }
-    
+
     foreach ($skipFields as $field) {
       if (isset($exportableFields[$field])) {
         unset($exportableFields[$field]);
