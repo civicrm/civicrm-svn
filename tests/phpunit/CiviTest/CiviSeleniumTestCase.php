@@ -31,7 +31,8 @@ require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 /**
  *  Include configuration
  */
-require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+define('CIVICRM_SETTINGS_PATH', 'tests/phpunit/CiviTest/civicrm.settings.php');
+require_once CIVICRM_SETTINGS_PATH;
 
 /**
  *  Base class for CiviCRM Selenium tests

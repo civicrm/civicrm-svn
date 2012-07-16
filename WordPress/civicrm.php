@@ -115,6 +115,7 @@ function civicrm_wp_initialize() {
       $error = FALSE;
     }
     else {
+      define('CIVICRM_SETTINGS_PATH', $settingsFile);
       $error = include_once ($settingsFile);
     }
 

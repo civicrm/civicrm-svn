@@ -29,7 +29,8 @@
 /**
  *  Include configuration
  */
-require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+define('CIVICRM_SETTINGS_PATH', 'tests/phpunit/CiviTest/civicrm.settings.php');
+require_once CIVICRM_SETTINGS_PATH;
 
 /**
  *  Include class definitions

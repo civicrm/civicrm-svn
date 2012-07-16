@@ -68,7 +68,8 @@ class plgUserCivicrm extends JPlugin {
     $app = JFactory::getApplication();
 
     // Instantiate CiviCRM
-    require_once JPATH_ROOT . '/' . 'administrator/components/com_civicrm/civicrm.settings.php';
+    define('CIVICRM_SETTINGS_PATH', JPATH_ROOT . '/' . 'administrator/components/com_civicrm/civicrm.settings.php');
+    require_once CIVICRM_SETTINGS_PATH;
 
     require_once 'CRM/Core/ClassLoader.php';
     CRM_Core_ClassLoader::singleton()->register();
@@ -84,7 +85,8 @@ class plgUserCivicrm extends JPlugin {
   // Reset CiviCRM user/contact navigation cache
   public function civicrmResetNavigation() {
     // Instantiate CiviCRM
-    require_once JPATH_ROOT . '/' . 'administrator/components/com_civicrm/civicrm.settings.php';
+    define('CIVICRM_SETTINGS_PATH', JPATH_ROOT . '/' . 'administrator/components/com_civicrm/civicrm.settings.php');
+    require_once CIVICRM_SETTINGS_PATH;
 
     require_once 'CRM/Core/ClassLoader.php';
     CRM_Core_ClassLoader::singleton()->register();

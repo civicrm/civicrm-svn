@@ -112,7 +112,8 @@ require_once '$configFile';
     $string
   );
 
-  include_once $configFile;
+  define('CIVICRM_SETTINGS_PATH', $configFile);
+  include_once CIVICRM_SETTINGS_PATH;
 
   // for install case only
   if (!$civicrmUpgrade) {

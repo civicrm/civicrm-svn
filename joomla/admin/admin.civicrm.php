@@ -34,7 +34,8 @@ if ((int ) substr(PHP_VERSION, 0, 1) < 5) {
   exit();
 }
 
-include_once 'civicrm.settings.php';
+define('CIVICRM_SETTINGS_PATH', 'civicrm.settings.php');
+include_once CIVICRM_SETTINGS_PATH;
 
 civicrm_invoke();
 

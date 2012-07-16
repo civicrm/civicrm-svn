@@ -54,7 +54,8 @@ ini_set('memory_limit', '2G');
 
 error_reporting(E_ALL);
 
-require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+define('CIVICRM_SETTINGS_PATH', 'tests/phpunit/CiviTest/civicrm.settings.php');
+require_once CIVICRM_SETTINGS_PATH;
 
 if (empty($argv[1])) {
   $_SERVER['argv'][1] = "api_v3_AllTests";

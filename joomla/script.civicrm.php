@@ -119,7 +119,8 @@ class Com_CiviCRMInstallerScript {
     $uninstall = FALSE;
     // makes it easier if folks want to really uninstall
     if ($uninstall) {
-      require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm.settings.php';
+      define('CIVICRM_SETTINGS_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm.settings.php');
+      require_once CIVICRM_SETTINGS_PATH;
 
       require_once 'CRM/Core/Config.php';
       $config = CRM_Core_Config::singleton();
