@@ -43,7 +43,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
   protected $_customGroupId = NULL;
   protected $_customFieldId = NULL;
   protected $_params;
-  public $_eNoticeCompliant = TRUE;
+  public $_eNoticeCompliant = FALSE;
   protected $_entity;
   function get_info() {
     return array(
@@ -333,7 +333,6 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
    */
   function testRelationshipCreateWithCustomData() {
     $customGroup = $this->createCustomGroup();
-    $this->_customGroupId = $customGroup['id'];
     $this->_ids = $this->createCustomField();
     //few custom Values for comparing
     $custom_params = array(
@@ -393,7 +392,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
 
   function createCustomGroup() {
     $params = array(
-      'title' => 'Test Custom Group',
+      'title' => 'Custom Group',
       'extends' => array('Relationship'),
       'weight' => 5,
       'style' => 'Inline',
@@ -403,7 +402,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     );
     $customGroup = civicrm_api('custom_group', 'create', $params);
     $this->_customGroupId = $customGroup['id'];
-    return NULL;
+    return $customGroup['id'];
   }
 
   function createCustomField() {
@@ -456,7 +455,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'is_active' => 1,
       'option_values' => $optionValue,
       'custom_group_id' => $this->_customGroupId,
-       'version' => $this->_apiversion,
+      'version' => $this->_apiversion,
     );
 
     $customField = civicrm_api('custom_field', 'create', $params);
@@ -473,11 +472,12 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'is_required' => 1,
       'is_searchable' => 0,
       'is_active' => 1,
+      'version' => $this->_apiversion,
     );
 
     $customField = civicrm_api('custom_field', 'create', $params);
 
-    $ids[] = $customField['result']['customFieldId'];
+    $ids[] = $customField['id'];
     $params = array(
       'custom_group_id' => $this->_customGroupId,
       'name' => 'test_link',
@@ -489,10 +489,11 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'is_required' => 1,
       'is_searchable' => 0,
       'is_active' => 1,
+      'version' => $this->_apiversion,
     );
 
     $customField = civicrm_api('custom_field', 'create', $params);
-    $ids[] = $customField['result']['customFieldId'];
+    $ids[] = $customField['id'];
     return $ids;
   }
 
@@ -717,7 +718,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('relationship', 'get', $params);
-    $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
   }
 
   function testGetIsCurrent() {
