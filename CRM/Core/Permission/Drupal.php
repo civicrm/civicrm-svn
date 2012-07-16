@@ -249,8 +249,7 @@ class CRM_Core_Permission_Drupal {
    * @static
    * @access public
    */
-  static
-  function check($str, $contactID = NULL) {
+  static function check($str, $contactID = NULL) {
     if (function_exists('user_access')) {
       return user_access($str) ? TRUE : FALSE;
     }
@@ -276,8 +275,7 @@ class CRM_Core_Permission_Drupal {
    * @static
    * @access public
    */
-  static
-  function checkGroupRole($array) {
+  static function checkGroupRole($array) {
     if (function_exists('user_load') && isset($array)) {
       $user = user_load(array('uid' => $GLOBALS['user']->uid));
       //if giver roles found in user roles - return true
@@ -357,8 +355,7 @@ AND        {users}.status = 1
     return $_cache[$roleName];
   }
 
-  static
-  function getContactEmails($uids) {
+  static function getContactEmails($uids) {
     if (empty($uids)) {
       return '';
     }
