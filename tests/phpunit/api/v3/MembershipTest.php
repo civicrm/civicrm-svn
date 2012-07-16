@@ -507,7 +507,13 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
     $result = civicrm_api('membership', 'create', $params);
     $this->assertEquals('contact_id is not valid : 999', $result['error_message']);
   }
-
+  function testMembershipCreateWithInvalidStatus() {
+    $params = $this->_params;
+    $params['status_id'] = 999;
+  
+    $result = civicrm_api('membership', 'create', $params);
+    $this->assertEquals('status_id is not valid : 999', $result['error_message']);
+  }
   /**
    * check with complete array + custom field
    * Note that the test is written on purpose without any

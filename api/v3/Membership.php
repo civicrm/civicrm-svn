@@ -319,14 +319,6 @@ function _civicrm_api3_membership_format_params($params, &$values, $create = FAL
         }
         $values['membership_type_id'] = $membershipTypeId;
         break;
-      case 'status_id':
-        // @todo we can remove this because it will fail on an FK constraint
-        // after it fails the 'create_error action will do some investigation
-        if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipStatus( ) ) ) {
-          return civicrm_api3_create_error( 'Invalid Membership Status Id' );
-        }
-        $values[$key] = $value;
-        break;
       default:
         break;
     }
