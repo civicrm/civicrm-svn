@@ -27,11 +27,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
-require_once 'api/v3/Relationship.php';
-require_once 'api/v3/RelationshipType.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -42,7 +37,9 @@ class api_v3_RelationshipTypeTest extends CiviUnitTestCase {
   protected $_cId_a;
   protected $_cId_b;
   protected $_relTypeID;
-  protected $_apiversion; function get_info() {
+  protected $_apiversion;
+  public $_eNoticeCompliant = TRUE;
+  function get_info() {
     return array(
       'name' => 'RelationshipType Create',
       'description' => 'Test all RelationshipType Create API methods.',

@@ -38,7 +38,7 @@ class api_v3_SystemTest extends CiviUnitTestCase {
 
   const TEST_CACHE_GROUP = 'SystemTest';
   const TEST_CACHE_PATH = 'api/v3/system';
-
+  public $_eNoticeCompliant = TRUE;
   /**
    *  Constructor
    *
@@ -74,12 +74,12 @@ class api_v3_SystemTest extends CiviUnitTestCase {
     // Note: this operation actually flushes several different caches; we don't
     // check all of them -- just enough to make sure that the API is doing
     // something
-  
+
     $this->assertTrue(NULL === CRM_Core_BAO_Cache::getItem(self::TEST_CACHE_GROUP, self::TEST_CACHE_PATH));
-    
+
     $data = 'abc';
     CRM_Core_BAO_Cache::setItem($data, self::TEST_CACHE_GROUP, self::TEST_CACHE_PATH);
-    
+
     $this->assertEquals('abc', CRM_Core_BAO_Cache::getItem(self::TEST_CACHE_GROUP, self::TEST_CACHE_PATH));
 
     $params = array(
@@ -88,7 +88,7 @@ class api_v3_SystemTest extends CiviUnitTestCase {
     $result = civicrm_api('system', 'flush', $params);
     $this->assertAPISuccess($result);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, "Flush all system caches", 'Flush', 'flush');
-    
+
     $this->assertTrue(NULL === CRM_Core_BAO_Cache::getItem(self::TEST_CACHE_GROUP, self::TEST_CACHE_PATH));
   }
 }
