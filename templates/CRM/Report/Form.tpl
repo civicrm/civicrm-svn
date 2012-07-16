@@ -36,9 +36,11 @@
         {include file="CRM/Report/Form/Layout/Table.tpl"}
   </div>
     {else}
+    {if $criteriaForm OR $instanceForm OR $instanceFormError}
     <div class="crm-block crm-form-block crm-report-field-form-block">
         {include file="CRM/Report/Form/Fields.tpl"}
     </div>
+    {/if}
 
     <div class="crm-block crm-content-block crm-report-form-block">
         {*include actions*}
