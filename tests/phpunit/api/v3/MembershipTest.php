@@ -41,7 +41,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
   protected $_entity;
   protected $_params;
   public $_eNoticeCompliant = TRUE;
-  
+
   public function setUp() {
     //  Connect to the database
     parent::setUp();
@@ -71,7 +71,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
 
   function tearDown() {
     $this->quickCleanup(array(
-      'civicrm_membership', 
+      'civicrm_membership',
       'civicrm_membership_payment')
     );
     $this->membershipStatusDelete($this->_membershipStatusID);
@@ -96,6 +96,12 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
 
   function testMembershipDeleteEmpty() {
     $params = array();
+    $result = civicrm_api('membership', 'delete', $params);
+    $this->assertEquals($result['is_error'], 1);
+  }
+
+  function testMembershipDeleteInvalidID() {
+    $params = array('version' => $this->_apiversion, 'id' => 'blah');
     $result = civicrm_api('membership', 'delete', $params);
     $this->assertEquals($result['is_error'], 1);
   }
@@ -263,7 +269,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
     $this->assertEquals($result['is_override'], 1, "In line " . __LINE__);
   }
 
-  
+
   /**
    * Test civicrm_membership_get with proper params.
    * Memberships expected.
@@ -293,7 +299,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
         'version' => $this->_apiversion,
       ));
   }
-  
+
   /**
    * Test civicrm_membership_get for only active.
    * Memberships expected.
@@ -440,6 +446,17 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
       "In line " . __LINE__
     );
   }
+  /*
+   * If is_overide is passed in status must also be passed in
+   */
+  function testCreateOverrideNoStatus() {
+    $params = $this->_params;
+    unset($params['status_id']);
+    $result = civicrm_api('membership', 'create', $params);
+    $this->assertEquals($result['is_error'], 1,
+        "In line " . __LINE__
+    );
+  }
 
   function testMembershipCreateMissingRequired() {
     $params = array(
@@ -499,19 +516,19 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
   function testMembershipCreateWithInvalidStatus() {
     $params = $this->_params;
     $params['status_id'] = 999;
-  
+
     $result = civicrm_api('membership', 'create', $params);
     $this->assertEquals('status_id is not valid : 999', $result['error_message']);
   }
-  
+
   function testMembershipCreateWithInvalidType() {
     $params = $this->_params;
     $params['membership_type_id'] = 999;
-  
+
     $result = civicrm_api('membership', 'create', $params);
     $this->assertEquals('membership_type_id is not valid : 999', $result['error_message']);
   }
-  
+
   /**
    * check with complete array + custom field
    * Note that the test is written on purpose without any
