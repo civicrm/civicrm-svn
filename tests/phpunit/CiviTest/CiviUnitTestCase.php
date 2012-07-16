@@ -314,6 +314,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if($this->_eNoticeCompliant ){
       error_reporting(E_ALL);
     }
+    else{
+      error_reporting(E_ALL & ~E_NOTICE);
+    }
   }
 
   /**
@@ -629,6 +632,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   function membershipTypeCreate($contactID, $contributionTypeID = 1, $version = 3) {
     require_once 'CRM/Member/PseudoConstant.php';
     CRM_Member_PseudoConstant::flush('membershipType');
+    CRM_Core_Config::clearDBCache( );
     $params = array(
       'name' => 'General',
       'duration_unit' => 'year',
@@ -650,6 +654,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $result = civicrm_api('MembershipType', 'Create', $params);
     require_once 'CRM/Member/PseudoConstant.php';
     CRM_Member_PseudoConstant::flush('membershipType');
+    CRM_Utils_Cache::singleton()->flush();
     if (CRM_Utils_Array::value('is_error', $result) ||
       (!CRM_Utils_Array::value('id', $result) && !CRM_Utils_Array::value('id', $result['values'][0]))
     ) {
@@ -680,7 +685,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       !CRM_Utils_Array::value('id', $result)
     ) {
       if (CRM_Utils_Array::value('error_message', $result)) {
-        throw new Exception('Could not created membership, with message: ' . CRM_Utils_Array::value('error_message', $result));
+        throw new Exception('Could not create membership, with message: ' . CRM_Utils_Array::value('error_message', $result));
       }
       else {
         throw new Exception('Could not create membership' . ' - in line: ' . __LINE__);
@@ -1753,7 +1758,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     //unset hash field if it's in the values array because it changes every time so it makes the examples
     // change too often if we leave it there. Alternative is just to set it to something random I guess
-    if (is_array($result['values'])) {
+    if (isset($result['values']) && is_array($result['values'])) {
       foreach ($result['values'] as $key => $value) {
         if (is_array($value) && array_key_exists('hash', $value)) {
           unset($result['values'][$key]['hash']);
