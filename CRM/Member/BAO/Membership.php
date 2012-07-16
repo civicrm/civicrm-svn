@@ -159,7 +159,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
         );
         $activityResult = civicrm_api('activity', 'create', $activityParam);
       }
-      if ($membership->membership_type_id != $oldType) {
+      if (isset($membership->membership_type_id) && $membership->membership_type_id != $oldType) {
         $session = CRM_Core_Session::singleton();
         $membershipTypes = CRM_Member_PseudoConstant::membershipType();
         $activityParam = array(
@@ -391,7 +391,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       $url = CRM_Utils_System::url('civicrm/contact/view/membership',
         "action=view&reset=1&id={$membership->id}&cid={$membership->contact_id}&context=home"
       );
-
+      if(empty($membership->membership_type_id)){// ie in an update situation
+        $membership->find(TRUE);
+      }
       $membershipTypes = CRM_Member_PseudoConstant::membershipType();
       $title = CRM_Contact_BAO_Contact::displayName($membership->contact_id) . ' - ' . ts('Membership Type:') . ' ' . $membershipTypes[$membership->membership_type_id];
 
