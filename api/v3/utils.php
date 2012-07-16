@@ -521,8 +521,8 @@ function _civicrm_api3_apply_filters_to_dao($filterField, $filterValue, &$dao) {
     $dao->whereAdd("($fieldName >= $filterValue )");
   }
   if($filterField == 'is_current' && $filterValue == 1){
-    $todayStart = date('Ymd000000', strtotime(now));
-    $todayEnd = date('Ymd235959', strtotime(now));
+    $todayStart = date('Ymd000000', strtotime('now'));
+    $todayEnd = date('Ymd235959', strtotime('now'));
     $dao->whereAdd("(start_date <= '$todayStart' OR start_date IS NULL) AND (end_date >= '$todayEnd' OR end_date IS NULL)");
     if(property_exists($dao, 'is_active')){
       $dao->whereAdd('is_active = 1');
