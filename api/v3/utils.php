@@ -304,12 +304,15 @@ function _civicrm_api3_get_BAO($name) {
  */
 function _civicrm_api3_separate_values(&$values) {
   $sp = CRM_Core_DAO::VALUE_SEPARATOR;
-  foreach ($values as & $value) {
+  foreach ($values as $key => & $value) {
     if (is_array($value)) {
       _civicrm_api3_separate_values($value);
     }
     elseif (is_string($value)) {
-      if (strpos($value, $sp) !== FALSE) {
+      if($key == 'case_type_id'){// this is to honor the way case API was originally written
+        $value = trim(str_replace($sp, ',', $value), ',');
+      }
+      elseif (strpos($value, $sp) !== FALSE) {
         $value = explode($sp, trim($value, $sp));
       }
     }

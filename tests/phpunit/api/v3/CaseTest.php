@@ -32,9 +32,6 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/Case.php';
-require_once 'CRM/Core/BAO/CustomGroup.php';
-require_once 'Utils.php';
 
 /**
  *  Test APIv3 civicrm_case_* functions
@@ -50,7 +47,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
   protected $caseStatusGroup;
   protected $caseTypeGroup;
   protected $optionValues;
-
+  public $_eNoticeCompliant = TRUE;
   /**
    *  Test setup for every test
    *
@@ -290,12 +287,13 @@ class api_v3_CaseTest extends CiviUnitTestCase {
 
     $params = $this->_params;
     $result = civicrm_api('case', 'create', $params);
+    $id = $result['id'];
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
+    $this->assertEquals($result['values'][$id]['id'], 1, 'in line ' . __LINE__);
+    $this->assertEquals($result['values'][$id]['case_type_id'], $params['case_type_id'], 'in line ' . __LINE__);
+    $this->assertEquals($result['values'][$id]['subject'], $params['subject'], 'in line ' . __LINE__);
 
-    $result = civicrm_api('case', 'get', $params);
-    // TODO: There's more things we could check
-    $this->assertEquals($result['values'][$result['id']]['id'], 1, 'in line ' . __LINE__);
-    $this->assertEquals($result['values'][$result['id']]['case_type_id'], $params['case_type_id'], 'in line ' . __LINE__);
   }
 
   /**
