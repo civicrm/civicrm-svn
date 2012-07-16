@@ -43,7 +43,9 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
   protected $_customGroupId = NULL;
   protected $_customFieldId = NULL;
   protected $_params;
-  protected $_entity; function get_info() {
+  public $_eNoticeCompliant = TRUE;
+  protected $_entity;
+  function get_info() {
     return array(
       'name' => 'Relationship Create',
       'description' => 'Test all Relationship Create API methods.',
@@ -215,7 +217,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $this->assertEquals($result['is_error'], 1);
     $this->assertEquals($result['error_message'], 'Relationship already exists');
 
-    $params['id'] = $relationship['result']['id'];
+    $params['id'] = $relationship['id'];
     $result = civicrm_api('relationship', 'delete', $params);
   }
 
@@ -244,7 +246,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $result = civicrm_api('relationship', 'get', $params);
     $this->assertEquals(0, $result['values'][$result['id']]['is_active'], 'in line ' . __LINE__);
-    $params['id'] = $relationship['result']['id'];
+    $params['id'] = $relationship['id'];
     $result = civicrm_api('relationship', 'delete', $params);
   }
 
@@ -281,7 +283,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       }
       $this->assertEquals($value, $values[$key], $key . " doesn't match " . print_r($values, TRUE) . 'in line' . __LINE__);
     }
-    $params['id'] = $result['values']['id'];
+    $params['id'] = $result['id'];
     civicrm_api('relationship', 'delete', $params);
   }
 
@@ -316,9 +318,13 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       if ($key == 'version' || $key == 'note') {
         continue;
       }
+      if($key == 'end_date'){
+        $this->assertTrue(empty($values[$key]));
+        continue;
+      }
       $this->assertEquals($value, $values[$key], $key . " doesn't match " . print_r($values, TRUE) . 'in line' . __LINE__);
     }
-    $params['id'] = $result['values']['id'];
+    $params['id'] = $result['id'];
     civicrm_api('relationship', 'delete', $params);
   }
 
@@ -375,7 +381,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $result = civicrm_api($this->_entity, 'create', $params);
     $this->assertEquals($result['id'], $result['values'][$result['id']]['id']);
 
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
     $getParams = array('version' => 3, 'id' => $result['id']);
     $check = civicrm_api($this->_entity, 'get', $getParams);
     $this->documentMe($getParams, $check, __FUNCTION__, __FILE__);
@@ -396,6 +402,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
     $customGroup = civicrm_api('custom_group', 'create', $params);
+    $this->_customGroupId = $customGroup['id'];
     return NULL;
   }
 
@@ -449,11 +456,11 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'is_active' => 1,
       'option_values' => $optionValue,
       'custom_group_id' => $this->_customGroupId,
+       'version' => $this->_apiversion,
     );
 
     $customField = civicrm_api('custom_field', 'create', $params);
-
-    $ids[] = $customField['result']['customFieldId'];
+    $ids[] = $customField['id'];
 
     $params = array(
       'custom_group_id' => $this->_customGroupId,
@@ -940,7 +947,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $this->assertEquals($result['is_error'], 0, 'in line ' . __LINE__);
 
     $params = array(
-      'id' => $relationship['result']['id'],
+      'id' => $relationship['id'],
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('relationship', 'delete', $params);
