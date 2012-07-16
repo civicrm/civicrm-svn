@@ -169,8 +169,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    * @return object
    * @static
    */
-  static
-  function &singleton($loadFromDB = TRUE, $force = FALSE) {
+  static function &singleton($loadFromDB = TRUE, $force = FALSE) {
     if (self::$_singleton === NULL || $force) {
       // goto a simple error handler
       $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
@@ -496,8 +495,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    *
    * @return object
    */
-  static
-  function &getMailer($persist = FALSE) {
+  static function &getMailer($persist = FALSE) {
     if (!isset(self::$_mail)) {
       $mailingInfo = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
         'mailing_backend'
@@ -599,8 +597,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    * @static
    * @access public
    */
-  static
-  function check(&$config, &$required) {
+  static function check(&$config, &$required) {
     foreach ($required as $name) {
       if (CRM_Utils_System::isNull($config->$name)) {
         return FALSE;
@@ -621,8 +618,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
   /**
    * one function to get domain ID
    */
-  static
-  function domainID() {
+  static function domainID() {
     return defined('CIVICRM_DOMAIN_ID') ? CIVICRM_DOMAIN_ID : 1;
   }
 

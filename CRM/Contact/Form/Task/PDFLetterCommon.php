@@ -45,8 +45,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
    * @return void
    * @access public
    */
-  static
-  function preProcess(&$form) {
+  static function preProcess(&$form) {
     $messageText    = array();
     $messageSubject = array();
     $dao            = new CRM_Core_BAO_MessageTemplates();
@@ -61,8 +60,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
     $form->assign('messageSubject', $messageSubject);
   }
 
-  static
-  function preProcessSingle(&$form, $cid) {
+  static function preProcessSingle(&$form, $cid) {
     $form->_contactIds = array($cid);
     // put contact display name in title for single contact mode
     CRM_Contact_Page_View::setTitle($cid);
@@ -75,8 +73,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
    *
    * @return void
    */
-  static
-  function buildQuickForm(&$form) {
+  static function buildQuickForm(&$form) {
     $form->add('static', 'pdf_format_header', NULL, ts('Page Format'));
     $form->add('select', 'format_id', ts('Select Format'),
       array(
@@ -161,8 +158,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
   /**
    * Set default values
    */
-  static
-  function setDefaultValues() {
+  static function setDefaultValues() {
     $defaultFormat = CRM_Core_BAO_PdfFormat::getDefaultValues();
     $defaultFormat['format_id'] = $defaultFormat['id'];
     return $defaultFormat;
@@ -179,8 +175,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
    * @access public
    *
    */
-  static
-  function formRule($fields, $dontCare, $self) {
+  static function formRule($fields, $dontCare, $self) {
     $errors = array();
     $template = CRM_Core_Smarty::singleton();
 
@@ -283,8 +278,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
    *
    * @return None
    */
-  static
-  function postProcess(&$form) {
+  static function postProcess(&$form) {
     list($formValues, $categories, $html_message, $messageToken, $returnProperties) = self::processMessageTemplate($form);
 
     $skipOnHold = isset($form->skipOnHold) ? $form->skipOnHold : FALSE;
@@ -329,7 +323,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
 
     CRM_Utils_System::civiExit(1);
   }
-  //end of function
+
   function createActivities($form, $html_message, $contactIds) {
 
     $session        = CRM_Core_Session::singleton();

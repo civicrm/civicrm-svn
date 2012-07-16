@@ -34,8 +34,7 @@
  */
 class CRM_Utils_PDF_Utils {
 
-  static
-  function html2pdf(&$text, $fileName = 'civicrm.pdf', $output = FALSE, $pdfFormat = NULL) {
+  static function html2pdf(&$text, $fileName = 'civicrm.pdf', $output = FALSE, $pdfFormat = NULL) {
     if (is_array($text)) {
       $pages = &$text;
     }
@@ -105,8 +104,7 @@ class CRM_Utils_PDF_Utils {
     }
   }
 
-  static
-  function _html2pdf_dompdf($paper_size, $orientation, $html, $output, $fileName) {
+  static function _html2pdf_dompdf($paper_size, $orientation, $html, $output, $fileName) {
     require_once 'packages/dompdf/dompdf_config.inc.php';
     spl_autoload_register('DOMPDF_autoload');
     $dompdf = new DOMPDF();
@@ -122,8 +120,7 @@ class CRM_Utils_PDF_Utils {
     }
   }
 
-  static
-  function _html2pdf_wkhtmltopdf($paper_size, $orientation, $html, $output, $fileName) {
+  static function _html2pdf_wkhtmltopdf($paper_size, $orientation, $html, $output, $fileName) {
     require_once 'packages/snappy/src/autoload.php';
     $config = CRM_Core_Config::singleton();
     $snappy = new Knp\Snappy\Pdf($config->wkhtmltopdfPath);
@@ -145,8 +142,7 @@ class CRM_Utils_PDF_Utils {
      * function to convert value from one metric to another
      */
 
-  static
-  function convertMetric($value, $from, $to, $precision = NULL) {
+  static function convertMetric($value, $from, $to, $precision = NULL) {
     switch ($from . $to) {
       case 'incm':
         $value *= 2.54;
@@ -202,8 +198,7 @@ class CRM_Utils_PDF_Utils {
     return $value;
   }
 
-  static
-  function &pdflib($fileName,
+  static function &pdflib($fileName,
     $searchPath,
     &$values,
     $numPages = 1,

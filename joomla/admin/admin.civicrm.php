@@ -37,6 +37,7 @@ if ((int ) substr(PHP_VERSION, 0, 1) < 5) {
 include_once 'civicrm.settings.php';
 
 civicrm_invoke();
+
 function civicrm_init() {
   require_once 'CRM/Core/ClassLoader.php';
   CRM_Core_ClassLoader::singleton()->register();

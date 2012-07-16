@@ -20,17 +20,17 @@ jimport('joomla.plugin.plugin');
 class plgUserCivicrm extends JPlugin {
 
   /* resetNavigation after user is saved
-	 * Method is called after user data is stored in the database
-	 *
-	 * @param	array		$user		Holds the new user data.
-	 * @param	boolean		$isnew		True if a new user is stored.
-	 * @param	boolean		$success	True if user was succesfully stored in the database.
-	 * @param	string		$msg		Message.
-	 *
-	 * @return	void
-	 * @since	1.6
-	 * @throws	Exception on error.
-	 */
+   * Method is called after user data is stored in the database
+   *
+   * @param	array		$user		Holds the new user data.
+   * @param	boolean		$isnew		True if a new user is stored.
+   * @param	boolean		$success	True if user was succesfully stored in the database.
+   * @param	string		$msg		Message.
+   *
+   * @return	void
+   * @since	1.6
+   * @throws	Exception on error.
+   */
   function onUserAfterSave($user, $isnew, $success, $msg) {
 
     $app = JFactory::getApplication();
@@ -38,12 +38,12 @@ class plgUserCivicrm extends JPlugin {
   }
 
   /* resetNavigation after group is saved (parent/child may impact acl)
-	 * Method is called after group is stored in the database
-	 *
-	 * @var		string	The event to trigger after saving the data.
-	 *
-	 * @return	void
-	 * @since	1.6
+   * Method is called after group is stored in the database
+   *
+   * @var		string	The event to trigger after saving the data.
+   *
+   * @return	void
+   * @since	1.6
 	 * @throws	Exception on error.
 	 */
   function onUserAfterSaveGroup($var) {
@@ -53,16 +53,16 @@ class plgUserCivicrm extends JPlugin {
   }
 
   /* delete uf_match record after user is deleted
-	 * Method is called after user is deleted from the database
-	 *
-	 * @param	array		$user		Holds the user data.
-	 * @param	boolean		$success	True if user was succesfully removed from the database.
-	 * @param	string		$msg		Message.
-	 *
-	 * @return	void
-	 * @since	1.6
-	 * @throws	Exception on error.
-	 */
+   * Method is called after user is deleted from the database
+   *
+   * @param	array		$user		Holds the user data.
+   * @param	boolean		$success	True if user was succesfully removed from the database.
+   * @param	string		$msg		Message.
+   *
+   * @return	void
+   * @since	1.6
+   * @throws	Exception on error.
+   */
   function onUserAfterDelete($user, $succes, $msg) {
 
     $app = JFactory::getApplication();
