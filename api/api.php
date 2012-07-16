@@ -122,7 +122,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       return 0;
     }
     $data = $e->getExtraParams();
-    $err = civicrm_api3_create_error($e->getMessage(), $data, CRM_Utils_Array::value('params',$apiRequest), $e->getCode());
+    $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest, $e->getCode());
     if (CRM_Utils_Array::value('debug', CRM_Utils_Array::value('params',$apiRequest))) {
       $err['trace'] = $e->getTraceAsString();
     }
