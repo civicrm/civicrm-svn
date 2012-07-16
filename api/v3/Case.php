@@ -363,9 +363,6 @@ function _api_case_update($params) {
  */
 function civicrm_api3_case_delete($params) {
 
-  require_once 'CRM/Core/Transaction.php';
-  $tx = new CRM_Core_Transaction();
-
   //check parameters
   $errors = _civicrm_api3_case_check_params($params, 'delete');
 
