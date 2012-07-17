@@ -217,6 +217,9 @@ class CRM_Contact_Form_Task_SMSCommon {
             $contactPhones = CRM_Core_BAO_Phone::allPhones($contactId, FALSE, 'Mobile', $filter);
             if (count($contactPhones) > 0) {
               $mobilePhone = CRM_Utils_Array::retrieveValueRecursive($contactPhones, 'phone');
+              $form->_contactDetails[$contactId]['phone_id'] =  CRM_Utils_Array::retrieveValueRecursive($contactPhones, 'id');
+              $form->_contactDetails[$contactId]['phone'] = $mobilePhone;
+              $form->_contactDetails[$contactId]['phone_type_id'] = CRM_Utils_Array::key('Mobile', $phoneTypes);
             }
             else {
               $suppressedSms++;
