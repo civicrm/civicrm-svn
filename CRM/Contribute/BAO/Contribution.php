@@ -70,7 +70,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
 
   /*
    * construct method
-   */ 
+   */
   function __construct() {
     parent::__construct();
   }
@@ -1972,7 +1972,7 @@ SELECT source_contact_id
       $this->_relatedObjects['contact']->find(TRUE);
     }
     $this->_relatedObjects['contributionType'] = $contributionType;
-    if ($input['component'] == 'contribute') {
+    if ($this->_component == 'contribute') {
 
       // retrieve the other optional objects first so
       // stuff down the line can use this info and do things
