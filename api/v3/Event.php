@@ -129,7 +129,7 @@ function civicrm_api3_event_get($params) {
   $eventDAO = new CRM_Event_BAO_Event();
   _civicrm_api3_dao_set_filter($eventDAO, $params, TRUE, 'Event');
 
-  if (CRM_Utils_Array::value('isTemplate', $params)) {
+  if (CRM_Utils_Array::value('is_template', $params)) {
     $eventDAO->whereAdd( '( is_template = 1 )' )
   }
   else {
