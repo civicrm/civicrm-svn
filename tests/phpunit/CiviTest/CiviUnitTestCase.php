@@ -2047,7 +2047,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
    * Empty mail log in preparation for test
    */
   function prepareMailLog(){
-    if(!defined(CIVICRM_MAIL_LOG)){
+    if(!defined('CIVICRM_MAIL_LOG')){
       define( 'CIVICRM_MAIL_LOG', CIVICRM_TEMPLATE_COMPILEDIR . '/mail.log' );
     }
     $this->assertFalse(is_numeric(CIVICRM_MAIL_LOG) ,'we need to be able to log email to check receipt');
