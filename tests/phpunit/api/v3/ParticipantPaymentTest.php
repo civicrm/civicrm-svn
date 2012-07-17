@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -27,12 +26,8 @@
  +--------------------------------------------------------------------+
  */
 
-
-
-
-require_once 'api/v3/Participant.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/ParticipantPayment.php';
+
 class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
 
   protected $_apiversion;
@@ -41,7 +36,10 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
   protected $_participantID;
   protected $_eventID;
   protected $_participantPaymentID;
-  protected $_contributionTypeId; function get_info() {
+  protected $_contributionTypeId;
+  public $_eNoticeCompliant = TRUE;
+
+  function get_info() {
     return array(
       'name' => 'Participant Create',
       'description' => 'Test all Participant Create API methods.',

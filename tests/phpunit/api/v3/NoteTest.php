@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -27,10 +26,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
-require_once 'api/v3/Note.php';
 require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -43,7 +38,10 @@ class api_v3_NoteTest extends CiviUnitTestCase {
   protected $_contactID;
   protected $_params;
   protected $_noteID;
-  protected $_note; function __construct() {
+  protected $_note;
+  public $_eNoticeCompliant = TRUE;
+
+  function __construct() {
     parent::__construct();
   }
 
