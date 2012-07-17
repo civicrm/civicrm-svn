@@ -62,7 +62,8 @@ class CRM_Report_Form extends CRM_Core_Form {
    * @var string
    */
   protected $_title;
-
+  protected $_noFields = FALSE;
+  
   /**
    * The set of all columns in the report. An associative array
    * with column name as the key and attribues as the value
@@ -1886,19 +1887,20 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
 
   function beginPostProcess() {
     $this->_params = $this->controller->exportValues($this->_name);
+
     if (empty($this->_params) &&
       $this->_force
     ) {
       $this->_params = $this->_formValues;
     }
-
+    
     // hack to fix params when submitted from dashboard, CRM-8532
     // fields array is missing because form building etc is skipped
     // in dashboard mode for report
-    if (!CRM_Utils_Array::value('fields', $this->_params)) {
+    if (!CRM_Utils_Array::value('fields', $this->_params) && !$this->_noFields) {
       $this->_params = $this->_formValues;
     }
-
+    
     $this->_formValues = $this->_params;
     if (CRM_Core_Permission::check('administer Reports') &&
       isset($this->_id) &&
