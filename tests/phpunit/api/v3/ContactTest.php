@@ -32,7 +32,7 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/DeprecatedUtils.php';
+
 
 /**
  *  Test APIv3 civicrm_activity_* functions
@@ -44,6 +44,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_entity;
   protected $_params;
+  public $_eNoticeCompliant = TRUE;
   protected $_contributionTypeId;
 
   /**
@@ -345,7 +346,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $subfile = "CustomFieldCreate";
     $result = civicrm_api($this->_entity, 'create', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
 
     $check = civicrm_api($this->_entity, 'get', array('return.custom_' . $ids['custom_field_id'] => 1, 'version' => 3, 'id' => $result['id']));
     $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' . $ids['custom_field_id']], ' in line ' . __LINE__);
@@ -456,7 +457,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $description = "/*this demonstrates setting a custom field through the API ";
     $subfile = "CustomFieldGet";
     $result = civicrm_api($this->_entity, 'create', $params);
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
 
     $check = civicrm_api($this->_entity, 'get', array('return.custom_' . $ids['custom_field_id'] => 1, 'version' => 3, 'id' => $result['id']));
     $this->documentMe($params, $check, __FUNCTION__, __FILE__, $description, $subfile);
@@ -481,7 +482,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $description = "/*this demonstrates setting a custom field through the API ";
     $subfile = "CustomFieldGetReturnSyntaxVariation";
     $result = civicrm_api($this->_entity, 'create', $params);
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
     $params = array('return' => 'custom_' . $ids['custom_field_id'], 'version' => 3, 'id' => $result['id']);
     $check = civicrm_api($this->_entity, 'get', $params);
     $this->documentMe($params, $check, __FUNCTION__, __FILE__, $description, $subfile);
@@ -753,15 +754,6 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $result = civicrm_api('contact', 'create', $params);
     $this->assertEquals(1, $result['is_error'], 'should fail due to missing household name on line ' . __LINE__);
   }
-  /**
-   *  Test civicrm_contact_check_params with check for required
-   *  params and no params
-   */
-  function testCheckParamsWithNoParams() {
-    $params = array();
-    $contact = _civicrm_api3_deprecated_contact_check_params($params, FALSE);
-    $this->assertEquals(1, $contact['is_error'], "In line " . __LINE__);
-  }
 
   /**
    *  Test civicrm_contact_check_params with params and no checkss
@@ -772,75 +764,6 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->assertNull($contact, "In line " . __LINE__);
   }
 
-  /**
-   *  Test civicrm_contact_check_params with no contact type
-   */
-  function testCheckParamsWithNoContactType() {
-    $params = array('foo' => 'bar');
-    $contact = _civicrm_api3_deprecated_contact_check_params($params, FALSE);
-    $this->assertEquals(1, $contact['is_error'], "In line " . __LINE__);
-  }
-
-  /**
-   *  Test civicrm_contact_check_params with a duplicate
-   */
-  function testCheckParamsWithDuplicateContact() {
-    //  Insert a row in civicrm_contact creating individual contact
-    $op = new PHPUnit_Extensions_Database_Operation_Insert();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/dataset/contact_17.xml'
-      )
-    );
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/dataset/email_contact_17.xml'
-      )
-    );
-
-    $params = array(
-      'first_name' => 'Test',
-      'last_name' => 'Contact',
-      'email' => 'TestContact@example.com',
-      'contact_type' => 'Individual',
-    );
-    $contact = _civicrm_api3_deprecated_contact_check_params($params, TRUE);
-    $this->assertEquals(1, $contact['is_error']);
-    $this->assertRegexp("/matching contacts.*17/s",
-      CRM_Utils_Array::value('error_message', $contact)
-    );
-  }
-
-  /**
-   *  Test civicrm_contact_check_params with a duplicate
-   *  and request the error in array format
-   */
-  function testCheckParamsWithDuplicateContact2() {
-    //  Insert a row in civicrm_contact creating individual contact
-    $op = new PHPUnit_Extensions_Database_Operation_Insert();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/dataset/contact_17.xml'
-      )
-    );
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/dataset/email_contact_17.xml'
-      )
-    );
-
-    $params = array(
-      'first_name' => 'Test',
-      'last_name' => 'Contact',
-      'email' => 'TestContact@example.com',
-      'contact_type' => 'Individual',
-    );
-    $contact = _civicrm_api3_deprecated_contact_check_params($params, TRUE, TRUE);
-    $this->assertEquals(1, $contact['is_error']);
-    $this->assertRegexp("/matching contacts.*17/s",
-      $contact['error_message']['message']
-    );
-  }
 
   /**
    *  Verify successful update of individual contact
@@ -1489,8 +1412,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->customGroupDelete($ids['custom_group_id']);
     $this->customGroupDelete($moreids['custom_group_id']);
     $this->customGroupDelete($andmoreids['custom_group_id']);
-    $this->assertEquals(0, $result['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $result)
-    );
+    $this->assertAPISuccess($result, "In line " . __LINE__);
     $this->assertEquals(1, $result['id'], "In line " . __LINE__);
     $this->assertEquals(0, $result['values'][$result['id']]['api.CustomValue.get']['is_error'], "In line " . __LINE__);
     $this->assertEquals('http://civicrm.org', $result['values'][$result['id']]['api.website.getValue'], "In line " . __LINE__);

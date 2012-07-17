@@ -34,7 +34,10 @@ require_once 'api/v3/ActivityType.php';
  *  @package   CiviCRM
  */
 class api_v3_ActivityTypeTest extends CiviUnitTestCase {
-  protected $_apiversion; function get_info() {
+  protected $_apiversion;
+  public $_eNoticeCompliant = TRUE;
+
+  function get_info() {
     return array(
       'name' => 'Activity Type',
       'description' => 'Test all ActivityType Get/Create/Delete methods.',
