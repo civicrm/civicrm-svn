@@ -43,8 +43,7 @@ class CRM_Core_ClassLoader {
    */
   private static $_singleton = NULL;
 
-  static
-  function &singleton($force = FALSE) {
+  static function &singleton($force = FALSE) {
     if ($force || self::$_singleton === NULL) {
       self::$_singleton = new CRM_Core_ClassLoader();
     }

@@ -90,8 +90,18 @@ function civicrm_main() {
   // generate backend config file
   $string = "
 <?php
-require_once '$configFile';
+define('CIVICRM_SETTINGS_PATH', $configFile);
+\$error = @include_once( $configFile );
+if ( \$error == false ) {
+    echo \"Could not load the settings file at: {$configFile}\n\";
+    exit( );
+}
+
+// Load class loader
+require_once \$civicrm_root . '/CRM/Core/ClassLoader.php';
+CRM_Core_ClassLoader::singleton()->register();
 ";
+
   $string = trim($string);
   civicrm_write_file($adminPath . DIRECTORY_SEPARATOR .
     'civicrm' . DIRECTORY_SEPARATOR .

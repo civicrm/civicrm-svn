@@ -34,7 +34,7 @@ if ((int ) substr(PHP_VERSION, 0, 1) < 5) {
   exit();
 }
 
-define('CIVICRM_SETTINGS_PATH', 'civicrm.settings.php');
+define('CIVICRM_SETTINGS_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm.settings.php');
 include_once CIVICRM_SETTINGS_PATH;
 
 civicrm_invoke();
