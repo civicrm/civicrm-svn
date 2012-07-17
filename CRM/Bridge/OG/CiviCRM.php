@@ -34,8 +34,7 @@
  */
 class CRM_Bridge_OG_CiviCRM {
 
-  static
-  function group($groupID, $group, $op) {
+  static function group($groupID, $group, $op) {
     if ($op == 'add') {
       self::groupAdd($groupID, $group);
     }
@@ -44,8 +43,7 @@ class CRM_Bridge_OG_CiviCRM {
     }
   }
 
-  static
-  function groupAdd($groupID, $group) {
+  static function groupAdd($groupID, $group) {
     $ogID = CRM_Bridge_OG_Utils::ogID($groupID, FALSE);
 
     $node = new StdClass();
@@ -75,8 +73,7 @@ class CRM_Bridge_OG_CiviCRM {
     );
   }
 
-  static
-  function groupDelete($groupID, $group) {
+  static function groupDelete($groupID, $group) {
     $ogID = CRM_Bridge_OG_Utils::ogID($groupID, FALSE);
     if (!$ogID) {
       return;
@@ -85,8 +82,7 @@ class CRM_Bridge_OG_CiviCRM {
     node_delete($ogID);
   }
 
-  static
-  function groupContact($groupID, $contactIDs, $op) {
+  static function groupContact($groupID, $contactIDs, $op) {
     $ogID = CRM_Bridge_OG_Utils::ogID($groupID, FALSE);
     if (!$ogID) {
       return;
