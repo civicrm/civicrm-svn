@@ -38,7 +38,8 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
   CONST ROW_COUNT_LIMIT = 2;
 
   protected $_summary = NULL;
-
+  protected $_noFields = TRUE;
+  
   protected $_add2groupSupported = FALSE; function __construct() {
 
     $this->_columns = array(
@@ -58,9 +59,6 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
         ),
       ),
     );
-    
-    //fields are not needed for this report
-    $this->_noFields = TRUE;
     
     parent::__construct();
   }
