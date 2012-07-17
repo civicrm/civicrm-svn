@@ -53,8 +53,6 @@
 </div>
 {/if}
 
-{*{include file="CRM/common/langSwitch.tpl"}*}
-
 <div class="clear"></div>
 
 {if isset($localTasks) and $localTasks}
@@ -77,7 +75,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmtooltip(); 
+   cj().crmtooltip();
 });
 
 cj(document).ready(function() {
