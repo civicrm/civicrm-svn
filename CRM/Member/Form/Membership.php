@@ -939,7 +939,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       if (!$params['contribution_type_id']) {
         $errors['contribution_type_id'] = ts('Please enter the contribution Type.');
       }
-      if (!$params['total_amount']) {
+      if (!isset($params['total_amount'])) {
         $errors['total_amount'] = ts('Please enter the contribution.');
       }
     }
