@@ -460,7 +460,7 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
         'line_total' => $dao->fee_amount,
         'participant_count' => 1,
       );
-      if ($dao->is_monetary) {
+      if ($dao->is_monetary && $dao->price_field_id) {
         $lineParams += array(
           'price_field_id' => $dao->price_field_id,
           'price_field_value_id' => $dao->price_field_value_id,
