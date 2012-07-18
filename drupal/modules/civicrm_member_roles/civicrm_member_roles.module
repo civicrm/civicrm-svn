@@ -500,13 +500,14 @@ function _civicrm_member_roles_sync($ext_uid = NULL, $cid = NULL) {
     }
 
     //Get all memberships of contact
-    require_once 'api/v2/MembershipContact.php';
-    $memberships        = civicrm_contact_memberships_get($cid);
-    $contactMemberships = CRM_Utils_Array::value($cid, $memberships, array());
+
+    $memberships = civicrm_api('membership','get',array('version' => 3, 'contact_id' => $cid));
+
+    $contactMemberships = CRM_Utils_Array::value($cid, $memberships['values'], array());
     $addRoles           = array();
     $expRoles           = array();
 
-    if (empty($contactMemberships) && !empty($rid)) {
+    if (empty($contactMemberships['count']) && !empty($rid)) {
       if (is_array($rid)) {
         $rid = implode(",", $rid);
       }
