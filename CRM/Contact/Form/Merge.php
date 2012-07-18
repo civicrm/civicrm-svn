@@ -267,6 +267,10 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form {
           'name' => ts('Merge and Goto Listing'),
         ),
         array(
+          'type' => 'done',
+          'name' => ts('Merge and View Result'),
+        ),
+        array(
           'type' => 'cancel',
           'name' => ts('Cancel'),
         ),
@@ -291,7 +295,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form {
 
   public function postProcess() {
     $formValues = $this->exportValues();
-
+ 
     // reset all selected contact ids from session
     // when we came from search context, CRM-3526
     $session = CRM_Core_Session::singleton();
@@ -317,6 +321,9 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form {
         $listParamsURL
       );
       CRM_Utils_System::redirect($lisitingURL);
+    }
+     if (CRM_Utils_Array::value('_qf_Merge_done', $formValues)) {
+      CRM_Utils_System::redirect($url);
     }
 
     if ($this->next && $this->_mergeId) {

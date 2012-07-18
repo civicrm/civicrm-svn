@@ -832,10 +832,11 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         CRM_Utils_array::value('preferred_communication_method', $contact),
       );
 
+      if (CRM_Utils_array::value('preferred_communication_method', $contact)){
       // api 3 returns pref_comm_method as an array, which breaks the lookup; so we reconstruct
-      $prefCommList = implode(CRM_Core_DAO::VALUE_SEPARATOR, $specialValues[$moniker]['preferred_communication_method']);
-      $specialValues[$moniker]['preferred_communication_method'] = CRM_Core_DAO::VALUE_SEPARATOR . $prefCommList . CRM_Core_DAO::VALUE_SEPARATOR;
-
+        $prefCommList = implode(CRM_Core_DAO::VALUE_SEPARATOR, $specialValues[$moniker]['preferred_communication_method']);
+        $specialValues[$moniker]['preferred_communication_method'] = CRM_Core_DAO::VALUE_SEPARATOR . $prefCommList . CRM_Core_DAO::VALUE_SEPARATOR;
+      }
       $names = array(
         'preferred_communication_method' =>
         array(
