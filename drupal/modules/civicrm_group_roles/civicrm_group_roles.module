@@ -118,7 +118,7 @@ function civicrm_group_roles_form_alter(&$form, &$form_state, $form_id) {
   ) {
     // make sure there is a civicrm record
     civicrm_initialize(TRUE);
-    $contactid = civicrm_api('uf_match', 'getvalue',array('version' => 3, 'uf_id' => $form['#uid'], 'return' => 'contact_id'));
+    $contact_id = civicrm_api('uf_match', 'getvalue',array('version' => 3, 'uf_id' => $form['#uid'], 'return' => 'contact_id'));
     if (!$contact_id) {
       return;
     }
