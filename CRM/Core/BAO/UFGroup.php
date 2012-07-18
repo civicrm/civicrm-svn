@@ -2201,7 +2201,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
               if ($fieldName === 'url') {
                 if (!empty($details['website'])) {
                   foreach ($details['website'] as $val) {
-                    $defaults[$fldName] = $val['url'];
+                    $defaults[$fldName] = CRM_Utils_Array::value('url', $val);
                     $defaults[$fldName . '-website_type_id'] = $val['website_type_id'];
                   }
                 }
