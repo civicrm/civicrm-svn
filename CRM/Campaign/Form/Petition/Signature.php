@@ -322,8 +322,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
    * @see valid_date
    */
 
-  static
-  function formRule($fields, $files, $errors) {
+  static function formRule($fields, $files, $errors) {
     $errors = array();
 
     return empty($errors) ? TRUE : $errors;
@@ -463,7 +462,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
 
         // check if user has already signed this petition - redirects to Thank You if true
         $this->redirectIfSigned($params);
-        
+
         if ($this->petition['bypass_confirm']) {
           // send thank you email directly, bypassing confirmation
           $this->_sendEmailMode = self::EMAIL_THANK;
@@ -471,7 +470,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
           $params['statusId'] = 2;
           break;
         }
-        
+
         if ($tag_name) {
           $tag            = new CRM_Core_DAO_EntityTag();
           $tag->entity_id = $this->_contactId;
