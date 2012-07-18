@@ -124,8 +124,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
    * @static
    * @access public
    */
-  static
-  function formRule($values) {
+  static function formRule($values) {
     if (CRM_Utils_Array::value('addMore', $values) || CRM_Utils_Array::value('addBlock', $values)) {
       return TRUE;
     }
@@ -149,7 +148,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
         // CRM-10338
         $v[2] = self::checkArrayKeyEmpty($v[2]);
 
-        if (in_array($v[1], array('IS NULL', 'IS NOT NULL')) &&
+        if (in_array($v[1], array('IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY')) &&
           !empty($v[2])) {
           $errorMsg["value[$v[3]][$v[4]]"] = ts('Please clear your value if you want to use %1 operator.', array(1 => $v[1]));
         }
@@ -223,8 +222,8 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
             $fldType = CRM_Utils_Array::value('type', $fldValue);
             $type = CRM_Utils_Type::typeToString($fldType);
             // Check Empty values for Integer Or Boolean Or Date type For operators other than IS NULL and IS NOT NULL.
-            if (!in_array($v[1], array(
-              'IS NULL', 'IS NOT NULL'))) {
+            if (!in_array($v[1],
+                array('IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY'))) {
               if ((($type == 'Int' || $type == 'Boolean') && !trim($v[2])) && $v[2] != '0') {
                 $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter the value.");
               }

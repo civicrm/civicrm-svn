@@ -825,9 +825,20 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
         if ($mappingType == 'Search Builder') {
           //CRM -2292, restricted array set
           $operatorArray = array(
-            '' => ts('-operator-'), '=' => '=', '!=' => '!=', '>' => '>', '<' => '<',
-            '>=' => '>=', '<=' => '<=', 'IN' => 'IN',
-            'LIKE' => 'LIKE', 'RLIKE' => 'RLIKE', 'IS NULL' => 'IS NULL', 'IS NOT NULL' => 'IS NOT NULL',
+            ''             => ts('-operator-'),
+            '='            => '=',
+            '!='           => '!=',
+            '>'            => '>',
+            '<'            => '<',
+            '>='           => '>=',
+            '<='           => '<=',
+            'IN'           => 'IN',
+            'LIKE'         => 'LIKE',
+            'RLIKE'        => 'RLIKE',
+            'IS EMPTY'     => 'IS EMPTY',
+            'IS NOT EMPTY' => 'IS NOT EMPTY',
+            'IS NULL'      => 'IS NULL',
+            'IS NOT NULL'  => 'IS NOT NULL',
           );
 
           $form->add('select', "operator[$x][$i]", '', $operatorArray);
@@ -884,10 +895,10 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
       $js .= "]";
       $js .= "
                 for(var i=0;i<noneArray.length;i++) {
-                    if ( {$formName}['mapper['+noneArray[i][0]+']['+noneArray[i][1]+']['+noneArray[i][2]+']'] ) {  
-  {$formName}['mapper['+noneArray[i][0]+']['+noneArray[i][1]+']['+noneArray[i][2]+']'].style.display = 'none';  
+                    if ( {$formName}['mapper['+noneArray[i][0]+']['+noneArray[i][1]+']['+noneArray[i][2]+']'] ) {
+  {$formName}['mapper['+noneArray[i][0]+']['+noneArray[i][1]+']['+noneArray[i][2]+']'].style.display = 'none';
                     }
-                } 
+                }
 ";
     }
     $js .= "</script>\n";

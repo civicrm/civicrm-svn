@@ -2664,8 +2664,9 @@ WHERE  id IN ( $groupIDs )
 
     $this->_useDistinct = TRUE;
 
-    $this->_tables['civicrm_note'] = $this->_whereTables['civicrm_note'] = " LEFT JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_contact' AND
-                                          contact_a.id = civicrm_note.entity_id ) ";
+    $this->_tables['civicrm_note'] =
+      $this->_whereTables['civicrm_note'] =
+      " LEFT JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_contact' AND contact_a.id = civicrm_note.entity_id ) ";
 
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
     $n          = trim($value);
@@ -2686,7 +2687,6 @@ WHERE  id IN ( $groupIDs )
     else {
       $value = "'$value'";
     }
-    $sub = " ( civicrm_email.email $op $value )";
     $this->_where[$grouping][] = " ( civicrm_note.note $op $value ) ";
     $this->_qill[$grouping][] = ts('Note') . " $op - '$n'";
   }
@@ -4335,6 +4335,14 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
     switch ($op) {
       case 'IS NULL':
       case 'IS NOT NULL':
+        return $clause;
+
+      case 'IS EMPTY':
+        $clause = " ( $field IS NULL OR $field = '' ) ";
+        return $clause;
+
+      case 'IS NOT EMPTY':
+        $clause = " ( $field IS NOT NULL AND $field <> '' ) ";
         return $clause;
 
       case 'IN':
