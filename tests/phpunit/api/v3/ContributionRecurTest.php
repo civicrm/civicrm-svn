@@ -62,8 +62,9 @@ class api_v3_ContributionRecurTest extends CiviUnitTestCase {
 
   public function testDeleteContributionRecur() {
     $result = civicrm_api($this->_entity, 'create', $this->params);
-    $result = civicrm_api($this->_entity, 'delete', array('version' => 3, 'id' => $result['id']));
-    $this->documentMe(array('version' => 3, 'id' => $result['id']), $result, __FUNCTION__, __FILE__);
+    $deleteParams = array('version' => 3, 'id' => $result['id']);
+    $result = civicrm_api($this->_entity, 'delete', $deleteParams);
+    $this->documentMe($deleteParams, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
     $checkDeleted = civicrm_api($this->_entity, 'get', array(
       'version' => 3,
