@@ -1,9 +1,9 @@
 name = CiviCRM
-description = Constituent Relationship Management CRM - v4.2. Allows sites to manage contacts, relationships and groups, and track contact activities, contributions, memberships and events. 
-version = 4.2
+description = Constituent Relationship Management CRM - v4.2. Allows sites to manage contacts, relationships and groups, and track contact activities, contributions, memberships and events.
+version = 4.3
 package = CiviCRM
 core = 7.x
-php = 5.2
+php = 5.3
 files[] = civicrm.module
 files[] = civicrm.install
 files[] = civicrm_user.inc
