@@ -82,16 +82,15 @@ function civicrm_group_roles_user($op, $edit, &$user, $category = NULL) {
       $roles = array_diff($all = user_roles(TRUE), array('anonymous user', 'authenticated user'));
 
       //find the contact record
-      require_once 'api/v2/UFGroup.php';
-      $contact = civicrm_uf_match_id_get($user->uid);
+      $contactid = civicrm_api('uf_match', 'getvalue',array('version' => 3, 'uf_id' => $user->uid, 'return' => 'contact_id'));
 
       if (empty($contact)) {
         return;
       }
-      require_once 'api/v2/GroupContact.php';
-      $params = array('version' => '2', 'contact_id' => $contact);
-      //find the groups for contact
-      $groups = civicrm_group_contact_get($params);
+
+      $params = array('version' => '3', 'contact_id' => $contactid);
+      $groups = civicrm_api('group_contact','get',$params);
+      $groups = $groups['values'];
 
       foreach ($groups as $key) {
         $rid = db_result(db_query("SELECT role_id FROM {civicrm_group_roles_rules} WHERE group_id IN (%d)", $key['group_id']));
@@ -119,8 +118,7 @@ function civicrm_group_roles_form_alter(&$form, &$form_state, $form_id) {
   ) {
     // make sure there is a civicrm record
     civicrm_initialize(TRUE);
-    require_once 'api/v2/UFGroup.php';
-    $contact_id = civicrm_uf_match_id_get($form['#uid']);
+    $contactid = civicrm_api('uf_match', 'getvalue',array('version' => 3, 'uf_id' => $form['#uid'], 'return' => 'contact_id'));
     if (!$contact_id) {
       return;
     }
@@ -175,8 +173,7 @@ function civicrm_group_roles_civicrm_post($op, $objectName, $objectId, &$objectR
     foreach ($objectRef AS $contact_id) {
 
       //Do we have a Drupal Account?
-      require_once 'api/v2/UFGroup.php';
-      $uid = civicrm_uf_id_get($contact_id);
+      $uid = civicrm_api('uf_match', 'getvalue',array('version' => 3, 'contact_id' => $contact_id, 'return' => 'uf_id'));
       // make sure we have an actual user account
       if (!$uid) {
         continue;
@@ -245,21 +242,21 @@ function civicrm_role_granted_by_other_group($contact_id, $rid, $group_id) {
   }
   require_once 'api/v2/GroupContact.php';
   //get all the groups this contact belongs to
-  $params = array('version' => '2', 'contact_id' => $contact_id);
-  $result =  civicrm_group_contact_get($params);
+  $params = array('version' => '3', 'contact_id' => $contact_id);
+  $result =  civicrm_api('group_contact','get',$params);
 
   if (civicrm_error($result)) {
     drupal_set_message($result['error_message']);
   }
   else {
     //contact is not in *any* other groups so delete the role
-    if (count($result) == 0) {
+    if ($result['count'] == 0) {
       return (FALSE);
     }
     //contact is in some groups, determine if any of them grant this role
     else {
       //get ids of the groups as , delim list
-      foreach ($result as $grpid => $grp) {
+      foreach ($result['values'] as $grpid => $grp) {
         $grpsuserin .= $grp["group_id"] . ',';
       }
       $grpsuserin = drupal_substr($grpsuserin, 0, -1);
@@ -334,11 +331,12 @@ function civicrm_group_roles_show_rules($action = NULL, $id = NULL) {
   $roles = user_roles(TRUE);
 
   // get civicrm groups
-  $params = array('version' => '2',
+  $params = array(
+    'version' => '3',
   );
-  require_once 'api/v2/GroupContact.php';
-  $groups = civicrm_group_contact_get($params);
 
+  $groups = civicrm_api('group_contact','get',$params);
+  $groups = $groups['values'];
   //Begin building main output table.
   $header = array(t('Rule ID'), t('Rule Name (\'CiviCRM Group\' <--> \'Drupal Role\')'), t('Operation'));
   $data = array();
@@ -507,14 +505,10 @@ function civicrm_group_roles_add_remove_groups($roles, $user, $op) {
   if ($roles) {
 
     //find the contact record
-    $params  = array('version' => '2', 'email' => $user->mail);
-    require_once 'api/v2/GroupContact.php';
-    $contact = civicrm_group_contact_get($params);
-    $contact = array_pop($contact);
-
-    $contact_id = $contact['contact_id'];
-
-    if (!empty($contact) && isset($contact['contact_id'])) {
+    $params  = array('version' => '3', 'email' => $user->mail, 'sequential' => 1, 'options' => array('limit' => 1));
+    $contact = civicrm_api('contact','get',$params);
+    if($contact['count'] > 0){
+      $contact_id = $contact['values'][0]['id'];
 
       //loop over user's roles
       foreach ($roles as $rid => $role) {
@@ -525,14 +519,13 @@ function civicrm_group_roles_add_remove_groups($roles, $user, $op) {
         while ($gid = db_result($query)) {
 
           //add the contact
-          $contacts = array($contact);
-          require_once 'api/v3/GroupContact.php';
-          $gparams = array('version' => '2', 'group_id' => $gid, 'contact_id' => $contact_id);
+
+          $gparams = array('version' => '3', 'group_id' => $gid, 'contact_id' => $contact_id);
           if ($op == 'add') {
-            $result = civicrm_group_contact_add($gparams);
+            $result = civicrm_api('group_contact','create',$gparams + array('status' => 'Added'));
           }
           else {
-            $result = civicrm_group_contact_remove($gparams);
+            $result = civicrm_api('group_contact','create',$gparams + array('status' => 'Removed'));
           }
 
           if ($result['is_error'] > 0) {
