@@ -529,12 +529,12 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
     // this is what we going to display in first selector
     $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements(FALSE, FALSE);
 
-    $sel1 = array(
-      '' => ts('- select record type -')) + $contactTypes + $compArray;
+    $sel1 =
+      array('' => ts('- select record type -')) + $contactTypes + $compArray;
 
     foreach ($sel1 as $key => $sel) {
       if ($key) {
-        $sel2[$key] = $mapperFields[$key];
+        $sel2[$key] = array('' => ts('- select field -')) + $mapperFields[$key];
       }
     }
 

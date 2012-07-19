@@ -38,18 +38,33 @@
                     {$form.mapper[$x][$i].html}
                     {$form.operator[$x][$i].html}
                     &nbsp;&nbsp;{$form.value[$x][$i].html}
+                   &nbsp;&nbsp;&nbsp;<a href="javascript:resetBuilderValues({$x},{$i});"><img title="reset the values for this row" src="{$config->resourceBase}i/close.png" class="action-icon" alt="{ts}reset this row{/ts}" /></a>
                 </td>
             </tr>
         {/section}
-    
+
          <tr>
            <td class="form-item even-row underline-effect">
                {$form.addMore[$x].html}
            </td>
-         </tr>            
+         </tr>
        </table>
       </div>
     {/section}
-    <div class="underline-effect">{$form.addBlock.html}</div> 
+    <div class="underline-effect">{$form.addBlock.html}</div>
   {/strip}
  </div>
+
+<script type="text/javascript">
+{literal}
+  function resetBuilderValues(x, i) {
+    cj('#mapper_'   + x + '_' + i + '_0').val('');
+    cj('#mapper_'   + x + '_' + i + '_1').val('');
+    cj('#mapper_'   + x + '_' + i + '_2').val('');
+    cj('#mapper_'   + x + '_' + i + '_3').val('');
+    cj('#mapper_'   + x + '_' + i + '_4').val('');
+    cj('#operator_' + x + '_' + i).val('');
+    cj('#value_'    + x + '_' + i).val('');
+  }
+{/literal}
+</script>
