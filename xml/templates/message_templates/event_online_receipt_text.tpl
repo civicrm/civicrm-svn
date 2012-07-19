@@ -170,15 +170,6 @@ You were registered by: {$payer.name}
 {ts}Total Participants{/ts}: {$count}
 {/if}
   
-{if $is_pay_later}
-
-==========================================================={if $pricesetFieldsCount }===================={/if}
-
-{$pay_later_receipt}
-==========================================================={if $pricesetFieldsCount }===================={/if}
-
-{/if}
-
 {if $register_date}
 {ts}Registration Date{/ts}: {$register_date|crmDate}
 {/if}

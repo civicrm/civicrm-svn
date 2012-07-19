@@ -278,13 +278,6 @@ registration process.{/ts}</p>
      {$count}
      </td> </tr>
       {/if}
-       {if $is_pay_later}
-        <tr>
-         <td colspan="2" {$labelStyle}>
-          {$pay_later_receipt}
-         </td>
-        </tr>
-       {/if}
 
        {if $register_date}
         <tr>
