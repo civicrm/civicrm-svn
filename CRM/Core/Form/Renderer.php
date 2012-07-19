@@ -79,8 +79,7 @@ class CRM_Core_Form_Renderer extends HTML_QuickForm_Renderer_ArraySmarty {
    *
    * Method providing static instance of as in Singleton pattern.
    */
-  static
-  function &singleton() {
+  static function &singleton() {
     if (!isset(self::$_singleton)) {
       self::$_singleton = new CRM_Core_Form_Renderer();
     }
@@ -133,8 +132,7 @@ class CRM_Core_Form_Renderer extends HTML_QuickForm_Renderer_ArraySmarty {
    * @return array
    * @static
    */
-  static
-  function updateAttributes(&$element, $required, $error) {
+  static function updateAttributes(&$element, $required, $error) {
     // lets create an id for all input elements, so we can generate nice label tags
     // to make it nice and clean, we'll just use the elementName if it is non null
     $attributes = array();
