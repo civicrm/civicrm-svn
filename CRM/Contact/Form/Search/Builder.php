@@ -112,7 +112,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
    * @return void
    */
   function addRules() {
-    $this->addFormRule(array('CRM_Contact_Form_Search_Builder', 'formRule'));
+    $this->addFormRule(array('CRM_Contact_Form_Search_Builder', 'formRule'), $this);
   }
 
   /**
@@ -124,7 +124,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
    * @static
    * @access public
    */
-  static function formRule($values) {
+  static function formRule($values, $files, $self) {
     if (CRM_Utils_Array::value('addMore', $values) || CRM_Utils_Array::value('addBlock', $values)) {
       return TRUE;
     }
@@ -274,6 +274,8 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
     }
 
     if (!empty($errorMsg)) {
+      $self->set('showSearchForm', TRUE);
+      $self->assign('rows', NULL);
       return $errorMsg;
     }
 

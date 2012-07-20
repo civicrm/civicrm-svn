@@ -446,7 +446,11 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
           $title .= " ($loc)";
         }
         else {
-          $title = $this->_query->_fields[$prop]['title'];
+          if (isset($this->_query->_fields[$prop])) {
+            $title = $this->_query->_fields[$prop]['title'];
+          } else {
+            $title = '';
+          }
         }
 
         self::$_columnHeaders[] = array('name' => $title, 'sort' => $prop);
