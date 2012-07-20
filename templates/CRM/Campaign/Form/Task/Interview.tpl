@@ -63,7 +63,7 @@
         <th> Order</th>
         </tr>
 
-	{section name=rowLoop start=1 loop=4}
+	{section name=rowLoop start=1 loop=5}
 	{assign var=index value=$smarty.section.rowLoop.index}
 	<tr id="optionField_{$index}" class="form-item {cycle values="odd-row,even-row"}">
         <td>
@@ -84,7 +84,7 @@
 
   <script type="text/javascript">
             var showRows   = new Array('optionField_1');
-            var hideBlocks = new Array('optionField_2','optionField_3');
+            var hideBlocks = new Array('optionField_2','optionField_3','optionField_4');
             var rowcounter = 0;
             {literal}
             if (navigator.appName == "Microsoft Internet Explorer") {
@@ -102,6 +102,9 @@
 	    }
 	    if(cj("#order_bys_3_column").val()){
 	    	  cj("#optionField_3").show();
+	    }
+	    if(cj("#order_bys_4_column").val()){
+	    	  cj("#optionField_4").show();
 	    }
 
             function hideRow(i) {
