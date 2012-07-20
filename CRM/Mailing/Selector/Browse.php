@@ -350,8 +350,12 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
           }
         }
         else {
-          if ($allAccess || ($showCreateLinks || $showScheduleLinks)) {
-            $actionMask = CRM_Core_Action::PREVIEW;
+          //FIXME : currently we are hiding continue action for
+          //search base mailing, we should handle it when we fix CRM-3876
+          if (!in_array($row['id'], $searchMailings)) {
+            if ($allAccess || ($showCreateLinks || $showScheduleLinks)) {
+              $actionMask = CRM_Core_Action::PREVIEW;
+            }
           }
         }
         if (in_array($row['status'], array(
