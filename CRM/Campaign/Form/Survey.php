@@ -657,8 +657,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
       // for WalkList or default
       $displayFields = array('id', 'sort_name', 'result', 'street_number','street_name','street_unit','survey_response');
       if ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $params['activity_type_id'] ) {
-        $this->_params['group_bys']['street_name']   = 1;
-        $this->_params['group_bys']['street_number'] = 1;
+        $this->_params['order_bys']['street_name']   = 1;
+        $this->_params['order_bys']['street_number_odd_even'] = 1;
+        $this->_params['order_bys']['street_number'] = 1;
       }
       elseif ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $params['activity_type_id'] ) {
         array_push($displayFields, 'phone');

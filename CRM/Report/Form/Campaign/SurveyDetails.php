@@ -41,7 +41,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
   protected $_phoneField = FALSE;
 
   protected $_summary = NULL;
-  protected $_customGroupGroupBy = TRUE;
+  protected $_customGroupGroupBy = FALSE;
   protected $_customGroupExtends = array('Contact', 'Individual', 'Household', 'Organization', 'Activity');
 
   private static $_surveyRespondentStatus; function __construct() {
@@ -190,12 +190,15 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             CRM_Core_PseudoConstant::country(),
           ),
         ),
-        'group_bys' => array('street_name' => array('title' => ts('Street Name')),
-          'street_number' => array('title' => 'Odd / Even Street Number'),
-        ),
-        'order_bys' => array('street_name' => array('title' => ts('Street Name')),
-          'street_number' => array('title' => 'Odd / Even Street Number'),
-        ),
+        'order_bys' => 
+        array('street_name' => array('title' => ts('Street Name')),
+              'street_number_odd_even' => 
+              array('title' => ts('Odd / Even Street Number'),
+                    'name'  =>'street_number',
+                    'dbAlias' => 'address_civireport.street_number%2',
+                    ),
+              'street_number' => array('title' => 'Street Number'),                   
+              ),
         'grouping' => 'location-fields',
       ),
       'civicrm_email' =>
@@ -260,29 +263,6 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
   }
 
   function preProcess() {
-    $output = CRM_Utils_Request::retrieve('output', 'String', CRM_Core_DAO::$_nullObject);
-    if ( $output == 'create_report' ) {
-      $title = CRM_Utils_Request::retrieve('name', 'String', CRM_Core_DAO::$_nullObject);
-      $activityType = CRM_Utils_Request::retrieve('activity', 'Integer', CRM_Core_DAO::$_nullObject, true);
-   
-      $this->_defaults['title'] = $title;
-      // for WalkList or default
-      $displayFields = array('street_number','street_name','street_unit','survey_response');
-      if ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $activityType ) {
-        $this->_defaults['group_bys']['street_name']   = 1;
-        $this->_defaults['group_bys']['street_number'] = 1;
-      }
-      elseif ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $activityType ) {
-        array_push($displayFields, 'phone');
-      }
-      elseif ((CRM_Core_OptionGroup::getValue('activity_type','Survey')  == $activityType) || 
-              (CRM_Core_OptionGroup::getValue('activity_type','Canvass') == $activityType) ) {
-        array_push($displayFields, 'phone','city','state_province_id','postal_code','email');
-      }
-      foreach($displayFields as $key){
-        $this->_defaults['fields'][$key] = 1;
-      } 
-    }
     parent::preProcess();
   }
   
@@ -397,76 +377,6 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     }
   }
 
-  function groupBy() {
-    $this->_groupBy = NULL;
-    if (CRM_Utils_Array::value('group_bys', $this->_params) &&
-      is_array($this->_params['group_bys'])
-    ) {
-      foreach ($this->_columns as $tableName => $table) {
-        if (array_key_exists('group_bys', $table)) {
-          foreach ($table['group_bys'] as $fieldName => $field) {
-            if (!in_array($fieldName, array(
-              'street_name', 'street_number')) &&
-              CRM_Utils_Array::value($fieldName, $this->_params['group_bys'])
-            ) {
-              $this->_groupBy[] = $field['dbAlias'];
-            }
-          }
-        }
-      }
-    }
-    if (is_array($this->_groupBy) && !empty($this->_groupBy)) {
-      $this->_groupBy = ' GROUP BY ' . implode(', ', $this->_groupBy);
-    }
-  }
-
-  function orderBy() {
-    $this->_orderBy = NULL;
-
-    //group by as per street name and odd/even street number.
-    $groupBys = CRM_Utils_Array::value('group_bys', $this->_params, array());
-
-    $specialOrderFields = array('street_name', 'street_number');
-    $hasSpecialGrouping = FALSE;
-    foreach ($specialOrderFields as $fldName) {
-      if (CRM_Utils_Array::value($fldName, $groupBys)) {
-        $field = CRM_Utils_Array::value($fldName, $this->_columns['civicrm_address']['group_bys'], array());
-        if ($fldName == 'street_number') {
-          $this->_orderBy[]   = "{$field['dbAlias']}%2";
-          $this->_orderBy[]   = "{$field['dbAlias']}";
-          $hasSpecialGrouping = TRUE;
-        }
-        else {
-          $this->_orderBy[] = "{$field['dbAlias']}";
-          $hasSpecialGrouping = TRUE;
-        }
-      }
-    }
-
-    //in case of special grouping, lets bypass all orders.
-    if (!$hasSpecialGrouping) {
-      foreach ($this->_columns as $tableName => $table) {
-        if (array_key_exists('order_bys', $table)) {
-          foreach ($table['order_bys'] as $fieldName => $field) {
-            if (!in_array($fieldName, $specialOrderFields)) {
-              $this->_orderBy[] = $field['dbAlias'];
-            }
-          }
-        }
-      }
-    }
-
-    //if user does not select any survey, make order by survey.
-    if (CRM_Utils_System::isNull($this->_params['survey_id_value'])) {
-      $this->_orderBy[] = " {$this->_aliases['civicrm_activity']}.source_record_id ";
-    }
-
-    if (is_array($this->_orderBy) && !empty($this->_orderBy)) {
-      $this->_orderBy[] = " {$this->_aliases['civicrm_activity']}.id desc ";
-      $this->_orderBy = "ORDER BY " . implode(', ', $this->_orderBy) . " ";
-    }
-  }
-
   function postProcess() {
     // get the acl clauses built before we assemble the query
     $this->buildACLClause($this->_aliases['civicrm_contact']);
@@ -486,44 +396,42 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
 
     //call local post process for only print and pdf.
     //we do need special formatted o/p only when we do have grouping
-    $groupBys = CRM_Utils_Array::value('group_bys', $this->_params, array());
+    $orderBys = CRM_Utils_Array::value('order_bys', $this->_params, array());
     if (in_array($this->_outputMode, array(
       'print', 'pdf'))) {
 
-      //prepare grouping if data.
       $outPut = array();
       $templateFile = parent::getTemplateFileName();
-      if (array_key_exists('street_name', $groupBys) ||
-        array_key_exists('street_number', $groupBys)
-      ) {
-
-        $grpBySteertName = CRM_Utils_Array::value('street_name', $groupBys);
-        $grpBySteertNum = CRM_Utils_Array::value('street_number', $groupBys);
-
+      if (array_key_exists('street_name', $orderBys) ||
+          array_key_exists('street_number', $orderBys)
+          ) {
+        $orderByStreetName = CRM_Utils_Array::value('street_name', $orderBys);
+        $orderByStreetNum = CRM_Utils_Array::value('street_number', $orderBys);
+        
         $pageCnt        = 0;
         $dataPerPage    = array();
         $lastStreetName = $lastStreetNum = NULL;
         foreach ($rows as $row) {
           //do we need to take new page.
-          if ($grpBySteertName &&
-            ($lastStreetName != CRM_Utils_Array::value('civicrm_address_street_name', $row))
-          ) {
+          if ($orderByStreetName &&
+              ($lastStreetName != CRM_Utils_Array::value('civicrm_address_street_name', $row))
+              ) {
             $pageCnt++;
           }
-          elseif ($grpBySteertNum &&
-            ($lastStreetNum !=
-              CRM_Utils_Array::value('civicrm_address_street_number', $row) % 2
-            )
-          ) {
+          elseif ($orderByStreetNum &&
+                  ($lastStreetNum !=
+                   CRM_Utils_Array::value('civicrm_address_street_number', $row) % 2
+                   )
+                  ) {
             $pageCnt++;
           }
-
+          
           //get the data per page.
           $dataPerPage[$pageCnt][] = $row;
           $lastStreetName = CRM_Utils_Array::value('civicrm_address_street_name', $row);
           $lastStreetNum = CRM_Utils_Array::value('civicrm_address_street_number', $row) % 2;
         }
-
+        
         foreach ($dataPerPage as $page) {
           // assign variables to templates
           $this->doTemplateAssignment($page);
