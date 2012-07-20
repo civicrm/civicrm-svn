@@ -194,12 +194,6 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
             $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter the value.");
           }
         }
-        elseif (($v[0] === 'sort_name' || $v[0] === 'display_name')) {
-          $v2 = trim($v[2]);
-          if (empty($v2)) {
-            $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter the value.");
-          }
-        }
         else {
           if (substr($v[0], 0, 7) == 'custom_') {
             $type = $fields[$v[0]]['data_type'];

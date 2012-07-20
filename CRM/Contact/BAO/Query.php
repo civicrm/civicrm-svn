@@ -2691,6 +2691,29 @@ WHERE  id IN ( $groupIDs )
     $this->_qill[$grouping][] = ts('Note') . " $op - '$n'";
   }
 
+  function nameNullOrEmptyOp($name, $op, $grouping) {
+    switch ( $op ) {
+      case 'IS NULL':
+      case 'IS NOT NULL':
+        $this->_where[$grouping][] = "contact_a.$name $op";
+        $this->_qill[$grouping][]  = ts('Name') . ' ' . $op;
+        return true;
+
+      case 'IS EMPTY':
+        $this->_where[$grouping][] = "(contact_a.$name IS NULL OR contact_a.$name = '')";
+        $this->_qill[$grouping][]  = ts('Name') . ' ' . $op;
+        return true;
+
+      case 'IS NOT EMPTY':
+        $this->_where[$grouping][] = "(contact_a.$name IS NOT NULL AND contact_a.$name <> '')";
+        $this->_qill[$grouping][]  = ts('Name') . ' ' . $op;
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
   /**
    * where / qill clause for sort_name
    *
@@ -2699,6 +2722,12 @@ WHERE  id IN ( $groupIDs )
    */
   function sortName(&$values) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
+
+    // handle IS NULL / IS NOT NULL / IS EMPTY / IS NOT EMPTY
+    if ( $this->nameNullOrEmptyOp( $name, $op, $grouping ) ) {
+      return;
+    }
+
     $newName = $name;
     $name = trim($value);
 
@@ -2758,10 +2787,13 @@ WHERE  id IN ( $groupIDs )
       }
     }
     else {
-      //Else, the string should be treated as a series of keywords to be matched with match ANY/ match ALL depending on Civi config settings (see CiviAdmin)
+      // the string should be treated as a series of keywords to be matched with match ANY OR
+      // match ALL depending on Civi config settings (see CiviAdmin)
 
-      // The Civi configuration setting can be overridden if the string *starts* with the case insenstive strings 'AND:' or 'OR:'
-      // TO THINK ABOUT: what happens when someone searches for the following "AND: 'a string in quotes'"? - probably nothing - it would make the AND OR variable reduntant because there is only one search string?
+      // The Civi configuration setting can be overridden if the string *starts* with the case
+      // insenstive strings 'AND:' or 'OR:'TO THINK ABOUT: what happens when someone searches
+      // for the following "AND: 'a string in quotes'"? - probably nothing - it would make the
+      // AND OR variable reduntant because there is only one search string?
 
       // Check to see if the $subGlue is overridden in the search text
       if (strtolower(substr($name, 0, 4)) == 'and:') {
