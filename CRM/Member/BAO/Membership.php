@@ -1746,12 +1746,11 @@ AND civicrm_membership.is_test = %2";
     }
 
     $status = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate(
-      $currentMembership['start_date'],
-      $currentMembership['end_date'],
-      $currentMembership['join_date'],
+      CRM_Utils_Array::value('start_date', $currentMembership),
+      CRM_Utils_Array::value('end_date', $currentMembership),
+      CRM_Utils_Array::value('join_date', $currentMembership),
       $today
     );
-
 
     if (empty($status) ||
       empty($status['id'])
