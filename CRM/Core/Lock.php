@@ -54,7 +54,8 @@ class CRM_Core_Lock {
    *
    * @return object the lock object
    *
-   */ function __construct($name, $timeout = NULL, $serverWideLock = FALSE) {
+   */
+ function __construct($name, $timeout = NULL, $serverWideLock = FALSE) {
     $config   = CRM_Core_Config::singleton();
     $dsnArray = DB::parseDSN($config->dsn);
     $database = $dsnArray['database'];
