@@ -156,7 +156,7 @@ class CRM_Core_I18n_Schema {
    * @return void
    */
   static
-  function makeSinglelingualTable($retain, $table, $class = 'CRM_Core_I18n_SchemaStructure') {
+    function makeSinglelingualTable($retain, $table, $class = 'CRM_Core_I18n_SchemaStructure', $triggers = array()) {
     $domain = new CRM_Core_DAO_Domain;
     $domain->find(TRUE);
     $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
@@ -165,11 +165,11 @@ class CRM_Core_I18n_Schema {
     if (!$locales) {
       return;
     }
-
+    
     eval("\$columns =& $class::columns();");
     eval("\$indices =& $class::indices();");
     $queries = array();
-
+    $dropQueries = array();
     // drop indices
     if (isset($indices[$table])) {
       foreach ($indices[$table] as $index) {
@@ -184,7 +184,7 @@ class CRM_Core_I18n_Schema {
       $queries[] = "ALTER TABLE {$table} ADD {$column} {$type}";
       $queries[] = "UPDATE {$table} SET {$column} = {$column}_{$retain}";
       foreach ($locales as $loc) {
-        $queries[] = "ALTER TABLE {$table} DROP {$column}_{$loc}";
+        $dropQueries[] = "ALTER TABLE {$table} DROP {$column}_{$loc}";
       }
     }
 
@@ -200,6 +200,19 @@ class CRM_Core_I18n_Schema {
     $dao = new CRM_Core_DAO;
     foreach ($queries as $query) {
       $dao->query($query, FALSE);
+    }
+    
+    foreach ($dropQueries as $query) {
+      $dao->query($query, FALSE);
+    }
+
+    if (CRM_Core_Config::isUpgradeMode() && !empty($triggers)) {
+      foreach ($triggers as $triggerInfo) {
+        $when = $triggerInfo['when'];
+        $event = $triggerInfo['event'];
+        $triggerName = "{$table}_{$when}_{$event}";
+        CRM_Core_DAO::executeQuery("DROP TRIGGER IF EXISTS {$triggerName}");
+      }
     }
 
     // invoke the meta trigger creation call
@@ -475,9 +488,9 @@ class CRM_Core_I18n_Schema {
     if (count($locales) == 0) {
       return;
     }
-
+    
     $currentVer = CRM_Core_BAO_Domain::version();
-      
+    
     if ($currentVer && CRM_Core_Config::isUpgradeMode()) {
       // take exact version so that proper schema structure file in invoked
       $latest = self::getLatestSchema($currentVer);
@@ -489,7 +502,7 @@ class CRM_Core_I18n_Schema {
     }
     
     eval("\$columns =& $class::columns();");
-    
+
     foreach ($columns as $table => $hash) {
       if ($tableName &&
         $tableName != $table
