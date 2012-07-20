@@ -224,7 +224,7 @@ INNER JOIN civicrm_temp_civireport_logsummary temp
         ON (entity_log_civireport.{$detail['fk']} = temp.contact_id)
 INNER JOIN civicrm_contact modified_contact_civireport 
         ON (entity_log_civireport.{$detail['fk']} = modified_contact_civireport.id {$clause})
-INNER JOIN civicrm_contact altered_by_contact_civireport 
+LEFT  JOIN civicrm_contact altered_by_contact_civireport 
         ON (entity_log_civireport.log_user_id = altered_by_contact_civireport.id)";
   }
 }
