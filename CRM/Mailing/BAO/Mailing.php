@@ -2062,7 +2062,7 @@ AND civicrm_contact.is_opt_out =0";
 
     // get all the groups that this user can access
     // if they dont have universal access
-    $groups = CRM_Core_PseudoConstant::group();
+    $groups = CRM_Core_PseudoConstant::group(null, false);
     if (!empty($groups)) {
       $groupIDs = implode(',',
         array_keys($groups)
