@@ -178,7 +178,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
     $this->addElement('checkbox', 'dedupe_email', ts('Remove duplicate emails?'));
 
     //get the mailing groups.
-    $groups = CRM_Core_PseudoConstant::group('Mailing');
+    $groups = CRM_Core_PseudoConstant::group('Mailing', false);
 
     $mailings = CRM_Mailing_PseudoConstant::completed();
     if (!$mailings) {
@@ -277,19 +277,6 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
       ),
     );
 
-    if ($this->_searchBasedMailing) {
-      $buttons = array(
-        array('type' => 'next',
-          'name' => ts('Next >>'),
-          'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
-          'isDefault' => TRUE,
-        ),
-        array(
-          'type' => 'cancel',
-          'name' => ts('Cancel'),
-        ),
-      );
-    }
     $this->addButtons($buttons);
 
     $this->assign('groupCount', count($groups));
