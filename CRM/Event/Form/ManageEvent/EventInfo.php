@@ -329,51 +329,9 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent {
 
     // now that we have the event’s id, do some more template-based stuff
     if (CRM_Utils_Array::value('template_id', $params)) {
-      // copy price sets if any
-      $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_event', $params['template_id']);
-      if ($priceSetId) {
-        CRM_Price_BAO_Set::addTo('civicrm_event', $event->id, $priceSetId);
-      }
-
-      // link profiles if none linked
-      $ufParams = array('entity_table' => 'civicrm_event', 'entity_id' => $event->id);
-      if (!CRM_Core_BAO_UFJoin::findUFGroupId($ufParams)) {
-        CRM_Core_DAO::copyGeneric('CRM_Core_DAO_UFJoin',
-          array('entity_id' => $params['template_id'], 'entity_table' => 'civicrm_event'),
-          array('entity_id' => $event->id)
-        );
-      }
-
-      // if no Tell-a-Friend defined, check whether there’s one for template and copy if so
-      $tafParams = array('entity_table' => 'civicrm_event', 'entity_id' => $event->id);
-      if (!CRM_Friend_BAO_Friend::getValues($tafParams)) {
-        $tafParams['entity_id'] = $params['template_id'];
-        if (CRM_Friend_BAO_Friend::getValues($tafParams)) {
-          $tafParams['entity_id'] = $event->id;
-          if (isset($tafParams['id'])) {
-            unset($tafParams['id']);
-          }
-          CRM_Friend_BAO_Friend::addTellAFriend($tafParams);
-        }
-      }
-
-      //copy pcp settings
-      CRM_Core_DAO::copyGeneric('CRM_PCP_DAO_PCPBlock',
-        array(
-          'entity_id' => $params['template_id'],
-          'entity_table' => 'civicrm_event',
-        ),
-        array('entity_id' => $event->id),
-        array('replace' => array('target_entity_id' => $event->id))
-      );
-
-      //copy event schedule remainder
-      CRM_Core_DAO::copyGeneric('CRM_Core_DAO_ActionSchedule',
-        array('entity_value' => $params['template_id']),
-        array('entity_value' => $event->id)
-      );
+      CRM_Event_BAO_Event::copy($params['template_id'], $event, TRUE);
     }
-
+    
     $this->set('id', $event->id);
 
     if ($this->_action & CRM_Core_Action::ADD) {

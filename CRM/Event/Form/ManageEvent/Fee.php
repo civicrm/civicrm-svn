@@ -615,7 +615,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
             $params['default_fee_id'] = NULL;
             if (!CRM_Utils_Array::value('price_set_id', $params)) {
               if (!CRM_Utils_Array::value('price_field_id', $params)) {
-                $eventTitle = $this->_defaultValues['title'];
+                $eventTitle = ($this->_isTemplate) ? $this->_defaultValues['template_title'] : $this->_defaultValues['title'];
                 if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $eventTitle, 'id', 'title')) {
                   $setParams['name'] = $setParams['title'] = $eventTitle;
                 }

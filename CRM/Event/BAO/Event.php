@@ -838,12 +838,14 @@ WHERE civicrm_event.is_active = 1
    * This function is to make a copy of a Event, including
    * all the fields in the event Wizard
    *
-   * @param int $id the event id to copy
-   *
+   * @param int     $id          the event id to copy
+   *        obj     $newEvent    object of CRM_Event_DAO_Event
+   *        boolean $afterCreate call to copy after the create function
    * @return void
    * @access public
    */
-  static function copy($id) {
+  static function copy($id, $newEvent = NULL, $afterCreate = FALSE) {
+
     $defaults = $eventValues = array();
 
     //get the require event values.
@@ -855,20 +857,25 @@ WHERE civicrm_event.is_active = 1
     // since the location is sharable, lets use the same loc_block_id.
     $locBlockId = CRM_Utils_Array::value('loc_block_id', $eventValues);
 
-    $fieldsFix = array('prefix' => array('title' => ts('Copy of') . ' '));
+    $fieldsFix = ($afterCreate) ? array( ) : array('prefix' => array('title' => ts('Copy of') . ' '));
     if (!CRM_Utils_Array::value('is_show_location', $eventValues)) {
       $fieldsFix['prefix']['is_show_location'] = 0;
     }
-
-    $copyEvent = &CRM_Core_DAO::copyGeneric('CRM_Event_DAO_Event',
-      array('id' => $id),
-      array(
-        'loc_block_id' =>
-        ($locBlockId) ? $locBlockId : NULL,
-      ),
-      $fieldsFix
-    );
-
+    
+    if ($newEvent && is_a($newEvent, 'CRM_Event_DAO_Event')) {
+      $copyEvent = $newEvent;
+    }
+    
+    if (!isset($copyEvent)) {
+      $copyEvent = &CRM_Core_DAO::copyGeneric('CRM_Event_DAO_Event',
+        array('id' => $id),
+          array(
+            'loc_block_id' =>
+            ($locBlockId) ? $locBlockId : NULL,
+          ),
+         $fieldsFix
+       );
+    }
     $copyPriceSet = &CRM_Core_DAO::copyGeneric('CRM_Price_DAO_SetEntity',
       array(
         'entity_id' => $id,
@@ -909,35 +916,38 @@ WHERE civicrm_event.is_active = 1
       ),
       array('entity_value' => $copyEvent->id)
     );
-
-    //copy custom data
-    $extends = array('event');
-    $groupTree = CRM_Core_BAO_CustomGroup::getGroupDetail(NULL, NULL, $extends);
-    if ($groupTree) {
-      foreach ($groupTree as $groupID => $group) {
-        $table[$groupTree[$groupID]['table_name']] = array('entity_id');
-        foreach ($group['fields'] as $fieldID => $field) {
-          $table[$groupTree[$groupID]['table_name']][] = $groupTree[$groupID]['fields'][$fieldID]['column_name'];
+    
+    if (!$afterCreate) {
+      //copy custom data
+      $extends = array('event');
+      $groupTree = CRM_Core_BAO_CustomGroup::getGroupDetail(NULL, NULL, $extends);
+      if ($groupTree) {
+        foreach ($groupTree as $groupID => $group) {
+          $table[$groupTree[$groupID]['table_name']] = array('entity_id');
+          foreach ($group['fields'] as $fieldID => $field) {
+            $table[$groupTree[$groupID]['table_name']][] = $groupTree[$groupID]['fields'][$fieldID]['column_name'];
+          }
         }
-      }
-
-      foreach ($table as $tableName => $tableColumns) {
-        $insert          = 'INSERT INTO ' . $tableName . ' (' . implode(', ', $tableColumns) . ') ';
-        $tableColumns[0] = $copyEvent->id;
-        $select          = 'SELECT ' . implode(', ', $tableColumns);
-        $from            = ' FROM ' . $tableName;
-        $where           = " WHERE {$tableName}.entity_id = {$id}";
-        $query           = $insert . $select . $from . $where;
-        $dao             = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+        
+        foreach ($table as $tableName => $tableColumns) {
+          $insert          = 'INSERT INTO ' . $tableName . ' (' . implode(', ', $tableColumns) . ') ';
+          $tableColumns[0] = $copyEvent->id;
+          $select          = 'SELECT ' . implode(', ', $tableColumns);
+          $from            = ' FROM ' . $tableName;
+          $where           = " WHERE {$tableName}.entity_id = {$id}";
+          $query           = $insert . $select . $from . $where;
+          $dao             = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+        }
       }
     }
     $copyEvent->save();
-
-    CRM_Utils_Hook::copy('Event', $copyEvent);
-
+    
+    if (!$afterCreate) {
+      CRM_Utils_Hook::copy('Event', $copyEvent);   
+    }
     return $copyEvent;
   }
-
+  
   /**
    * This is sometimes called in a loop (during event search)
    * hence we cache the values to prevent repeated calls to the db
