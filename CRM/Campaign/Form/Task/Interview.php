@@ -126,7 +126,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                     ),
                 4 =>
               array(
-                    'column' => 'civicrm_contact.sort_name',
+                    'column' => 'contact_a.sort_name',
                     'order' => 'ASC'
                     ),
               );
@@ -414,6 +414,16 @@ WHERE {$clause}
               2 =>
               array(
                     'column' => 'civicrm_address.street_number%2',
+                    'order' => 'ASC'
+                    ),
+              3 =>
+              array(
+                    'column' => 'civicrm_address.street_number',
+                    'order' => 'ASC'
+                    ),
+              4 =>
+              array(
+                    'column' => 'contact_a.sort_name',
                     'order' => 'ASC'
                     ),
               );
