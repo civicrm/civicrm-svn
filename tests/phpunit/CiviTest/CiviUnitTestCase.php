@@ -198,11 +198,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     $dbName = self::getDBName();
     $pdo    = self::$utils->pdo;
-    $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$dbName}'");
+    // only consider real tables and not views
+    $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$dbName}' AND TABLE_TYPE = 'BASE TABLE'");
 
     $truncates = array();
     $drops = array();
     foreach ($tables as $table) {
+      // skip log tables
+      if (substr($table['table_name'], 0, 4) == 'log_') {
+        continue;
+      }
+
       if (substr($table['table_name'], 0, 14) == 'civicrm_value_') {
         $drops[] = 'DROP TABLE ' . $table['table_name'] . ';';
       }
