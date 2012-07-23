@@ -37,13 +37,17 @@ require_once 'CRM/Core/Payment/BaseIPN.php';
 class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
 
   static $_paymentProcessor = NULL;
+
   function __construct() {
     parent::__construct();
+
+    require_once 'CRM/Core/Error.php';
   }
 
   static
   function retrieve($name, $type, $location = 'POST', $abort = TRUE) {
     static $store = NULL;
+    require_once 'CRM/Utils/Request.php';
     $value = CRM_Utils_Request::retrieve($name, $type, $store,
       FALSE, NULL, $location
     );
@@ -87,6 +91,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
     foreach ($dates as $date) {
       $name = "{$date}_date";
       if ($recur->$name) {
+      	require_once 'CRM/Utils/Date.php';
         $recur->$name = CRM_Utils_Date::isoToMysql($recur->$name);
       }
     }
@@ -100,6 +105,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
         $recur->create_date = $now;
         //some times subscr_signup response come after the
         //subscr_payment and set to pending mode.
+        require_once 'CRM/Core/DAO.php';
         $statusID = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionRecur',
           $recur->id, 'contribution_status_id'
         );
@@ -164,6 +170,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
       }
 
       //send recurring Notification email for user
+      require_once 'CRM/Contribute/BAO/ContributionPage.php';
       CRM_Contribute_BAO_ContributionPage::recurringNofify($subscriptionPaymentStatus,
         $ids['contact'],
         $ids['contributionPage'],
@@ -178,6 +185,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
 
     if (!$first) {
       // create a contribution and then get it processed
+      require_once 'CRM/Contribute/DAO/Contribution.php';
       $contribution = new CRM_Contribute_DAO_Contribution();
       $contribution->contact_id = $ids['contact'];
       $contribution->contribution_type_id = $objects['contributionType']->id;
@@ -262,9 +270,6 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
   }
 
   function main($component = 'contribute') {
-    // CRM_Core_Error::debug_var( 'GET' , $_GET , true, true );
-    // CRM_Core_Error::debug_var( 'POST', $_POST, true, true );
-
     require_once 'CRM/Utils/Request.php';
 
     $objects = $ids = $input = array();
