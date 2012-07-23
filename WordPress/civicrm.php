@@ -795,8 +795,8 @@ function civicrm_shortcode_handler($atts) {
       switch ($action) {
         case 'register':
           $args['q'] = 'civicrm/event/register';
-          if ($mode == 'preview') {
-            $args['action'] = $mode;
+          if ($mode == 'preview' || $mode == 'test') {
+            $args['action'] = 'preview';
           }
           break;
 
