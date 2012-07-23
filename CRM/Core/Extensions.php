@@ -87,6 +87,13 @@ class CRM_Core_Extensions {
 
 
   private $_remotesDiscovered = NULL;
+  
+  /**
+   * The URL of the remote extensions repository
+   *
+   * @var string
+   */
+  private $_repoUrl;
 
   /**
    * Constructor - we're not initializing information here
@@ -129,7 +136,17 @@ class CRM_Core_Extensions {
   }
   
   public function getRepositoryUrl() {
-    return CRM_Core_BAO_Setting::getItem('Extension Preferences', 'ext_repo_url', NULL, self::DEFAULT_EXTENSIONS_REPOSITORY);
+    if (empty($this->_repoUrl)) {
+      $config = CRM_Core_Config::singleton();
+      $url = CRM_Core_BAO_Setting::getItem('Extension Preferences', 'ext_repo_url', NULL, self::DEFAULT_EXTENSIONS_REPOSITORY);
+      $vars = array(
+        '{ver}' => CRM_Utils_System::version(),
+        '{uf}' => $config->userFramework,
+        '{php}' => phpversion(),
+      );
+      $this->_repoUrl = strtr($url, $vars);
+    }
+    return $this->_repoUrl;
   }
 
   /**
