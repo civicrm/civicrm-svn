@@ -37,6 +37,7 @@
  * this class builds custom data
  */
 class CRM_Custom_Form_CustomData {
+
   static function preProcess(&$form, $subName = NULL, $subType = NULL,
     $groupCount = NULL, $type = NULL, $entityID = NULL
   ) {

@@ -117,8 +117,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
 
     //validate group title as well as name.
@@ -532,14 +531,12 @@ class CRM_Custom_Form_Group extends CRM_Core_Form {
   }
 
   /*
-     * Function to return a formatted list of relationship name.
-     * @param $list array array of relationship name.
-     * @static 
-     * return array array of relationship name.
-     */
-
-  static
-  function getFormattedList(&$list) {
+   * Function to return a formatted list of relationship name.
+   * @param $list array array of relationship name.
+   * @static 
+   * return array array of relationship name.
+   */
+  static function getFormattedList(&$list) {
     $relName = array();
 
     foreach ($list as $k => $v) {

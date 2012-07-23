@@ -58,7 +58,8 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form {
    *
    * @access public
    *
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     $this->_mode = CRM_Profile_Form::MODE_CREATE;
 
     //set the context for the profile

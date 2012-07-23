@@ -241,8 +241,7 @@ class CRM_Custom_Form_Option extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields, $files, $form) {
+  static function formRule($fields, $files, $form) {
     $optionLabel   = CRM_Utils_Type::escape($fields['label'], 'String');
     $optionValue   = CRM_Utils_Type::escape($fields['value'], 'String');
     $fieldId       = $form->_fid;
@@ -387,7 +386,6 @@ SELECT count(*)
    * @return void
    * @access public
    */
-
   public function postProcess() {
     // store the submitted values in an array
     $params = $this->controller->exportValues('Option');
