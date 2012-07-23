@@ -164,16 +164,19 @@ class CRM_Core_Payment_BaseIPN {
       $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
     }
 
-    foreach ($memberships as $membership) {
-      if ($membership) {
-        $membership->status_id = 4;
-        $membership->save();
+    if (!empty($memberships)) {
+      foreach ($memberships as $membership) {
+        if ($membership) {
+          $membership->status_id = 4;
+          $membership->save();
 
-        //update related Memberships.
-        $params = array('status_id' => 4);
-        CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+          //update related Memberships.
+          $params = array('status_id' => 4);
+          CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+        }
       }
     }
+
     if ($participant) {
       $participant->status_id = 4;
       $participant->save();
@@ -214,14 +217,16 @@ class CRM_Core_Payment_BaseIPN {
       $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
     }
 
-    foreach ($memberships as $membership) {
-      if ($membership) {
-        $membership->status_id = 6;
-        $membership->save();
+    if (!empty($memberships)) {
+      foreach ($memberships as $membership) {
+        if ($membership) {
+          $membership->status_id = 6;
+          $membership->save();
 
-        //update related Memberships.
-        $params = array('status_id' => 6);
-        CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+          //update related Memberships.
+          $params = array('status_id' => 6);
+          CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+        }
       }
     }
 
@@ -271,10 +276,12 @@ class CRM_Core_Payment_BaseIPN {
         $values['receipt_from_name'] = $domainValues[0];
         $values['receipt_from_email'] = $domainValues[1];
       }
+
       $contribution->source = $source;
       if (CRM_Utils_Array::value('is_email_receipt', $values)) {
         $contribution->receipt_date = self::$_now;
       }
+
       if (!empty($memberships)) {
         foreach ($memberships as $membership) {
           if ($membership) {
@@ -389,11 +396,11 @@ LIMIT 1;";
         'entity_id'    => $ids['event'],
         'module'       => 'CiviEvent',
       );
-      
+
       list($custom_pre_id,
            $custom_post_ids
            ) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
-            
+
       $values['custom_pre_id'] = $custom_pre_id;
       $values['custom_post_id'] = $custom_post_ids;
 
