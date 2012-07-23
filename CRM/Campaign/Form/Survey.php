@@ -654,6 +654,15 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
                'survey_id_value' => array($surveyId->id), 
                'description'     => ts('Detailed report for canvassing, phone-banking, walk lists or other surveys.'),
                );
+      //Default value of order by
+      $this->_params['order_bys'] =
+        array(
+              1 =>
+              array(
+                    'column' => 'sort_name',
+                    'order' => 'ASC'
+                    ),
+              );
       // for WalkList or default
       $displayFields = array('id', 'sort_name', 'result', 'street_number','street_name','street_unit','survey_response');
       if ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $params['activity_type_id'] ) {

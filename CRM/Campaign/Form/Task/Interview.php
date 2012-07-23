@@ -427,6 +427,16 @@ WHERE {$clause}
                     'order' => 'ASC'
                     ),
               );
+    } 
+    else {
+      $defaults['order_bys'] = 
+        array(
+              1 =>
+              array(
+                    'column' => 'contact_a.sort_name',
+                    'order' => 'ASC'
+                    ),
+              );
     }
     return $defaults;
   }
