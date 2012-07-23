@@ -634,7 +634,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             if (in_array($fld, array(
               'contribution_campaign_id', 'member_campaign_id'))) {
               $fld = 'campaign_id';
-            }
+            } 
+            else {
+              $behalfOrganization[$fld] = $values;
+            } 
             $this->_params[$fld] = $values;
           }
         }
