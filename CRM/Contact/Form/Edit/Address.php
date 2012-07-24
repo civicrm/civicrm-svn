@@ -321,7 +321,7 @@ class CRM_Contact_Form_Edit_Address {
               array(
                 1 => $stateProvinces[$stateProvinceId],
                 2 => $countries[$countryId],
-                3 => $countries[$stateProvinceDAO->country_id],
+                3 => $countries[$stateProvinceDAO->country_id]
               )
             );
           }
@@ -340,7 +340,7 @@ class CRM_Contact_Form_Edit_Address {
               array(
                 1 => $counties[$countyId],
                 2 => $stateProvinces[$stateProvinceId],
-                3 => $stateProvinces[$countyDAO->state_province_id],
+                3 => $stateProvinces[$countyDAO->state_province_id]
               )
             );
           }

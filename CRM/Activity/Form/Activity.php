@@ -1145,7 +1145,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
         array(
           1 => $params['subject'],
           2 => $followupStatus,
-          3 => $mailStatus,
+          3 => $mailStatus
         )
       ));
 

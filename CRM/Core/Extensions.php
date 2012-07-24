@@ -127,7 +127,7 @@ class CRM_Core_Extensions {
         CRM_Core_Session::setStatus(ts('Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.',
             array(
               1 => $this->_extDir,
-              2 => $url,
+              2 => $url
             )
           ));
         $this->_extDir = NULL;

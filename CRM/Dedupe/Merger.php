@@ -990,7 +990,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
             array(
               1 => $block,
               2 => $count,
-              3 => $allLocationTypes[$locTypeId],
+              3 => $allLocationTypes[$locTypeId]
             )
           );
 

@@ -541,7 +541,7 @@ AND    cf.id IN ( $fieldIDList )
           return CRM_Core_Error::createAPIError(ts('value: %1 is not of the right field data type: %2',
               array(
                 1 => $fieldValue['value'],
-                2 => $dao->data_type,
+                2 => $dao->data_type
               )
             ));
         }
