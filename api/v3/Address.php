@@ -100,13 +100,14 @@ function civicrm_api3_address_create(&$params) {
 }
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * @param array $params array or parameters determined by getfields
  */
 function _civicrm_api3_address_create_spec(&$params) {
   $params['location_type_id']['api.required'] = 1;
   $params['contact_id']['api.required'] = 1;
   $params['country'] = array('title' => 'Name or 2-letter abbreviation of country. Looked up in civicrm_country table');
+  $params['street_parsing'] = array('title' => 'optional param to indicate you want the street_address field parsed into individual params');
 }
 
 /**

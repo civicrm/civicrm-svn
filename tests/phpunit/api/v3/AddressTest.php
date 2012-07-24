@@ -83,7 +83,10 @@ class api_v3_AddressTest extends CiviUnitTestCase {
       'location_type_id' => $this->_locationType->id,
       'contact_id' => $this->_contactID,
     );
+    $subfile     = "AddressParse";
+    $description = "Demonstrates Use of address parsing param";
     $result = civicrm_api('address', 'create', $params);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
     $this->assertEquals(54, $result['values'][$result['id']]['street_number'], 'In line ' . __LINE__);
     $this->assertEquals('A', $result['values'][$result['id']]['street_number_suffix'], 'In line ' . __LINE__);

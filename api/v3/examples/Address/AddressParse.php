@@ -3,17 +3,19 @@
 
 
 /*
- 
+ Demonstrates Use of address parsing param
  */
-function address_get_example(){
+function address_create_example(){
 $params = array( 
-  'contact_id' => 1,
-  'street_name' => 'Ambachtstraat',
   'version' => 3,
+  'street_parsing' => 1,
+  'street_address' => '54A Excelsior Ave. Apt 1C',
+  'location_type_id' => 7,
+  'contact_id' => 1,
 );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'address','get',$params );
+  $result = civicrm_api( 'address','create',$params );
 
   return $result;
 }
@@ -21,26 +23,25 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function address_get_expectedresult(){
+function address_create_expectedresult(){
 
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 7,
+  'id' => 3,
   'values' => array( 
-      '7' => array( 
-          'id' => '7',
+      '3' => array( 
+          'id' => '3',
           'contact_id' => '1',
-          'location_type_id' => '12',
+          'location_type_id' => '7',
           'is_primary' => '1',
           'is_billing' => 0,
-          'street_address' => 'Ambachtstraat 23',
-          'street_number' => '23',
-          'street_name' => 'Ambachtstraat',
-          'city' => 'Brummen',
-          'postal_code' => '6971 BN',
-          'country_id' => '1152',
+          'street_address' => '54A Excelsior Ave. Apt 1C',
+          'street_number' => '54',
+          'street_number_suffix' => 'A',
+          'street_name' => 'Excelsior Ave.',
+          'street_unit' => 'Apt 1C',
         ),
     ),
 );
@@ -54,7 +55,7 @@ function address_get_expectedresult(){
 /*
 * This example has been generated from the API test suite. The test that created it is called
 * 
-* testGetAddress and can be found in 
+* testCreateAddressParsing and can be found in 
 * http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/AddressTest.php
 * 
 * You can see the outcome of the API tests at 
