@@ -61,7 +61,7 @@ class CRM_Contact_Form_Task_SMSCommon {
     $providersCount = CRM_SMS_BAO_Provider::activeProviderCount();
 
     if (!$providersCount) {
-      CRM_Core_Error::statusBounce(ts('There are no providers configured or no providers are set active'));
+      CRM_Core_Error::statusBounce(ts('There are no SMS providers configured, or no SMS providers are set active'));
     }
 
     if ($className == 'CRM_Activity_Form_Task_SMS') {

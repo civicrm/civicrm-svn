@@ -234,6 +234,7 @@ class CRM_SMS_Form_Upload extends CRM_Core_Form {
     $msgTemplate = NULL;
     //mail template is composed
     if ($formValues['upload_type']) {
+      $composeParams = array();
       foreach ($composeFields as $key) {
         if (CRM_Utils_Array::value($key, $formValues)) {
           $composeParams[$key] = $formValues[$key];
