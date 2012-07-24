@@ -1,29 +1,29 @@
 <?php
 
-/* 
- +--------------------------------------------------------------------+ 
- | CiviCRM version 4.2                                                | 
- +--------------------------------------------------------------------+ 
- | Copyright CiviCRM LLC (c) 2004-2012                                | 
- +--------------------------------------------------------------------+ 
- | This file is a part of CiviCRM.                                    | 
- |                                                                    | 
- | CiviCRM is free software; you can copy, modify, and distribute it  | 
- | under the terms of the GNU Affero General Public License           | 
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   | 
- |                                                                    | 
- | CiviCRM is distributed in the hope that it will be useful, but     | 
- | WITHOUT ANY WARRANTY; without even the implied warranty of         | 
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               | 
- | See the GNU Affero General Public License for more details.        | 
- |                                                                    | 
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
  | License and the CiviCRM Licensing Exception along                  |
  | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+ 
+ +--------------------------------------------------------------------+
 */
 
 /**
@@ -161,12 +161,12 @@ SELECT f.id, f.label, f.data_type,
        f.html_type, f.is_search_range,
        f.option_group_id, f.custom_group_id,
        f.column_name, g.table_name,
-       f.date_format,f.time_format 
+       f.date_format,f.time_format
   FROM civicrm_custom_field f,
        civicrm_custom_group g
  WHERE f.custom_group_id = g.id
    AND g.is_active = 1
-   AND f.is_active = 1 
+   AND f.is_active = 1
    AND f.id IN ( $idString )";
 
     $dao = CRM_Core_DAO::executeQuery($query);
@@ -565,6 +565,13 @@ SELECT label, value
                 $this->_where[$grouping][] = " ( " . implode($sqlOP, $sqlValue) . " ) ";
                 $this->_qill[$grouping][] = "$field[label] $op $qillValue ( $sqlOPlabel )";
               }
+            }
+            continue;
+
+          case 'File':
+            if ( $op == 'IS NULL' || $op == 'IS NOT NULL' ) {
+              $this->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause($fieldName, $op);
+              $this->_qill[$grouping][] = $field['label'] . " {$op} ";
             }
             continue;
         }
