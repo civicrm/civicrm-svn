@@ -1622,7 +1622,7 @@ class CRM_Contact_BAO_Query {
         $where = $field['where'];
       }
 
-      $wc = ($op != 'LIKE') ? "LOWER($where)" : $where;
+      $wc = self::caseImportant($op) ? "LOWER($where)" : $where;
 
       if (is_numeric($value)) {
         $where = str_replace('.name', '.id', $where);
@@ -1631,7 +1631,7 @@ class CRM_Contact_BAO_Query {
         $value = $states[(int ) $value];
       }
       else {
-        $wc = ($op != 'LIKE') ? "LOWER($where)" : $where;
+        $wc = self::caseImportant($op) ? "LOWER($where)" : $where;
         $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       }
       if (!$lType) {
@@ -1664,7 +1664,7 @@ class CRM_Contact_BAO_Query {
         $value = $countries[(int ) $value];
       }
       else {
-        $wc = ($op != 'LIKE') ? "LOWER($where)" : $where;
+        $wc = self::caseImportant($op) ? "LOWER($where)" : $where;
         $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       }
       if (!$lType) {
@@ -1696,7 +1696,7 @@ class CRM_Contact_BAO_Query {
         $value = $counties[(int ) $value];
       }
       else {
-        $wc = ($op != 'LIKE') ? "LOWER($where)" : $where;
+        $wc = self::caseImportant($op) ? "LOWER($where)" : $where;
         $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       }
 
@@ -1712,7 +1712,7 @@ class CRM_Contact_BAO_Query {
       if (is_numeric($value)) {
         $value = $worldRegions[(int ) $value];
       }
-      $wc = ($op != 'LIKE') ? "LOWER({$field['where']})" : "{$field['where']}";
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
       $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       $this->_qill[$grouping][] = ts('World Region') . " $op '$value'";
     }
@@ -1721,7 +1721,7 @@ class CRM_Contact_BAO_Query {
       if (is_numeric($value)) {
         $value = $individualPrefixs[(int ) $value];
       }
-      $wc = ($op != 'LIKE') ? "LOWER({$field['where']})" : "{$field['where']}";
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
       $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       $this->_qill[$grouping][] = ts('Individual Prefix') . " $op '$value'";
     }
@@ -1730,7 +1730,7 @@ class CRM_Contact_BAO_Query {
       if (is_numeric($value)) {
         $value = $individualSuffixs[(int ) $value];
       }
-      $wc = ($op != 'LIKE') ? "LOWER({$field['where']})" : "{$field['where']}";
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
       $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       $this->_qill[$grouping][] = ts('Individual Suffix') . " $op '$value'";
     }
@@ -1739,7 +1739,7 @@ class CRM_Contact_BAO_Query {
       if (is_numeric($value)) {
         $value = $genders[(int ) $value];
       }
-      $wc = ($op != 'LIKE') ? "LOWER({$field['where']})" : "{$field['where']}";
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
       $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       $this->_qill[$grouping][] = ts('Gender') . " $op '$value'";
       self::$_openedPanes['Demographics'] = TRUE;
@@ -1786,7 +1786,7 @@ class CRM_Contact_BAO_Query {
         $value = "%$value%";
         $op = 'LIKE';
       }
-      $wc = ($op != 'LIKE') ? "LOWER({$field['where']})" : "{$field['where']}";
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
       $this->_where[$grouping][] = self::buildClause($wc, $op, "'$value'");
       $this->_qill[$grouping][] = "$field[title] $op \"$value\"";
     }
@@ -1796,7 +1796,7 @@ class CRM_Contact_BAO_Query {
         $value = "%$value%";
         $op = 'LIKE';
       }
-      $wc = ($op != 'LIKE') ? "LOWER(contact_a.organization_name)" : "contact_a.organization_name";
+      $wc = self::caseImportant($op) ? "LOWER(contact_a.organization_name)" : "contact_a.organization_name";
       $this->_where[$grouping][] = self::buildClause($wc, $op,
         "'$value' AND contact_a.contact_type ='Individual'"
       );
@@ -1808,7 +1808,7 @@ class CRM_Contact_BAO_Query {
       if (is_numeric($value)) {
         $value = $emailGreetings[(int ) $value];
       }
-      $wc = ($op != 'LIKE') ? "LOWER({$field['where']})" : "{$field['where']}";
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
       $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       $this->_qill[$grouping][] = ts('Email Greeting') . " $op '$value'";
     }
@@ -1818,7 +1818,7 @@ class CRM_Contact_BAO_Query {
       if (is_numeric($value)) {
         $value = $postalGreetings[(int ) $value];
       }
-      $wc = ($op != 'LIKE') ? "LOWER({$field['where']})" : "{$field['where']}";
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
       $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       $this->_qill[$grouping][] = ts('Postal Greeting') . " $op '$value'";
     }
@@ -1828,7 +1828,7 @@ class CRM_Contact_BAO_Query {
       if (is_numeric($value)) {
         $value = $addressee[(int ) $value];
       }
-      $wc = ($op != 'LIKE') ? "LOWER({$field['where']})" : "{$field['where']}";
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
       $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
       $this->_qill[$grouping][] = ts('Addressee') . " $op '$value'";
     }
@@ -1911,7 +1911,7 @@ class CRM_Contact_BAO_Query {
       }
     }
 
-    if ($setTables) {
+    if ($setTables && isset($field['where'])) {
       list($tableName, $fieldName) = explode('.', $field['where'], 2);
       if (isset($tableName)) {
         $this->_tables[$tableName] = 1;
@@ -1921,8 +1921,7 @@ class CRM_Contact_BAO_Query {
   }
 
 
-  static
-  function getLocationTableName(&$where, &$locType) {
+  static function getLocationTableName(&$where, &$locType) {
     if (isset($locType[1]) && is_numeric($locType[1])) {
       list($tbName, $fldName) = explode(".", $where);
 
@@ -2772,14 +2771,14 @@ WHERE  id IN ( $groupIDs )
         $value = "'$value'";
       }
       if ($newName == 'sort_name') {
-        $wc = ($op != 'LIKE') ? "LOWER(contact_a.sort_name)" : "contact_a.sort_name";
+        $wc = self::caseImportant($op) ? "LOWER(contact_a.sort_name)" : "contact_a.sort_name";
       }
       else {
-        $wc = ($op != 'LIKE') ? "LOWER(contact_a.display_name)" : "contact_a.display_name";
+        $wc = self::caseImportant($op) ? "LOWER(contact_a.display_name)" : "contact_a.display_name";
       }
       $sub[] = " ( $wc $op $value )";
       if ($config->includeNickNameInName) {
-        $wc = ($op != 'LIKE') ? "LOWER(contact_a.nick_name)" : "contact_a.nick_name";
+        $wc = self::caseImportant($op) ? "LOWER(contact_a.nick_name)" : "contact_a.nick_name";
         $sub[] = " ( $wc $op $value )";
       }
       if ($config->includeEmailInName) {
@@ -2839,14 +2838,14 @@ WHERE  id IN ( $groupIDs )
             $value = "'$value'";
           }
           if ($newName == 'sort_name') {
-            $wc = ($op != 'LIKE') ? "LOWER(contact_a.sort_name)" : "contact_a.sort_name";
+            $wc = self::caseImportant($op) ? "LOWER(contact_a.sort_name)" : "contact_a.sort_name";
           }
           else {
-            $wc = ($op != 'LIKE') ? "LOWER(contact_a.display_name)" : "contact_a.display_name";
+            $wc = self::caseImportant($op) ? "LOWER(contact_a.display_name)" : "contact_a.display_name";
           }
           $fieldsub[] = " ( $wc $op $value )";
           if ($config->includeNickNameInName) {
-            $wc = ($op != 'LIKE') ? "LOWER(contact_a.nick_name)" : "contact_a.nick_name";
+            $wc = self::caseImportant($op) ? "LOWER(contact_a.nick_name)" : "contact_a.nick_name";
             $fieldsub[] = " ( $wc $op $value )";
           }
           if ($config->includeEmailInName) {
@@ -4517,6 +4516,11 @@ AND   displayRelType.is_active = 1
     }
 
     $having = NULL;
+  }
+
+  static function caseImportant( $op ) {
+    return
+      in_array($op, array('LIKE', 'IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY')) ? FALSE : TRUE;
   }
 }
 
