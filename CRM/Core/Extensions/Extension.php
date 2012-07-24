@@ -329,17 +329,18 @@ class CRM_Core_Extensions_Extension {
     else {
       // Response code != 200?
       // Bail and inform user ...
-      $error = 'Unable to download extension from %1.';
+      $error = ts('Unable to download extension from %1.', array(1 => $this->downloadUrl));
+
       if ($response_code >= 100 && $response_code < 300) {
-        CRM_Core_Session::setStatus(ts("$error<br />Server returned an HTTP %2 response code.", array(1 => $this->downloadUrl, 2 => $response_code)));
+        CRM_Core_Session::setStatus($error . '<br />' . ts('Server returned an HTTP %1 response code.', array(1 => $response_code)));
         return;
       }
       elseif ($response_code >= 300 && $response_code < 400) {
-        CRM_Core_Session::setStatus(ts("$error<br />URL is redirecting.", array(1 => $this->downloadUrl)));
+        CRM_Core_Session::setStatus($error . '<br />' . ts('URL is redirecting.'));
         return;
       }
       else {
-        CRM_Core_Session::setStatus(ts("$error<br />Server returned an HTTP %2 error.", array(1 => $this->downloadUrl, 2 => $response_code)));
+        CRM_Core_Session::setStatus($error . '<br />' . ts('Server returned an HTTP %1 error.', array(1 => $response_code)));
         return;
       }
     }

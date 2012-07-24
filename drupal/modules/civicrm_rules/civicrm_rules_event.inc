@@ -119,23 +119,23 @@ function civicrm_rules_get_event() {
       if (!$enabled == 0) {
         //todo consider building the entity name into the argument rather than calling the same argument for each
         $events['civicrm_' . $entity . '_create'] = $defaults + array(
-          'label' => t("%1 has been created", array(1 => $entity)),
+          'label' => t("%entity has been created", array('%entity' => $entity)),
           'group' => 'CiviCRM ' . $entity,
           'variables' => civicrm_rules_rules_events_variables(t('Created %entity', array('%entity' => $entity)), $entity),
         );
         $events['civicrm_' . $entity . '_edit'] = $defaults + array(
           'group' => 'CiviCRM ' . $entity,
-          'label' => t("$entity has been updated"),
+          'label' => t("%entity has been updated", array('%entity' => $entity)),
           'variables' => civicrm_rules_rules_events_variables(t('Updated %entity', array('%entity' => $entity)), $entity),
         );
         $events['civicrm_' . $entity . '_view'] = $defaults + array(
           'group' => 'CiviCRM ' . $entity,
-          'label' => t("$entity has been viewed"),
+          'label' => t("%entity has been viewed", array('%entity' => $entity)),
           'variables' => civicrm_rules_rules_events_variables(t('Viewed %entity', array('%entity' => $entity)), $entity),
         );
         $events['civicrm_' . $entity . '_delete'] = $defaults + array(
           'group' => 'CiviCRM ' . $entity,
-          'label' => t("$entity has been deleted"),
+          'label' => t("%entity has been deleted", array('%entity' => $entity)),
           'variables' => civicrm_rules_rules_events_variables(t('Deleted %entity', array('%entity' => $entity)), $entity),
         );
       }

@@ -160,13 +160,17 @@ class CRM_Contact_Form_Task_SMSCommon {
       if (!$validActivities) {
         $errorMess = "";
         if ($extendTargetContacts) {
-          $errorMess = $extendTargetContacts > 1 ? 'Activities' : 'Activity';
-          $errorMess = $extendTargetContacts . " Selected " . $errorMess . " consists of more than one target contact ";
+          $errorMess = ts('One selected activity consists of more than one target contact.', array(
+                           'count' => $extendTargetContacts,
+                           'plural' => '%count selected activities consist of more than one target contact.'));
         }
         if ($invalidActivity) {
-          $errorMess = empty($errorMess) ? $invalidActivity . " Selected Activities are invalid " : $errorMess . " and " . $invalidActivity . " Selected Activities are invalid ";
+          $errorMess = ($errorMess ? ' ' : '');
+          $errorMess .= ts('The selected activity is invalid.', array(
+                          'count' => $invalidActivity,
+                          'plural' => '%count selected activities are invalid.'));
         }
-        CRM_Core_Error::statusBounce(ts($errorMess . " so SMS Reply would not be send."));
+        CRM_Core_Error::statusBounce(ts("%1: SMS Reply will not be sent.", array(1 => $errorMess)));
       }
     }
 
@@ -320,8 +324,7 @@ class CRM_Contact_Form_Task_SMSCommon {
       if (CRM_Utils_Array::value('text_message', $fields)) {
         $messageCheck = CRM_Utils_Array::value('text_message', $fields);
         if ($messageCheck && (strlen($messageCheck) > CRM_SMS_Provider::MAX_SMS_CHAR)) {
-          $errors['text_message'] = ts("You can configure the SMS message body upto" . CRM_SMS_Provider::MAX_SMS_CHAR . " characters"
-          );
+          $errors['text_message'] = ts("You can configure the SMS message body up to %1 characters", array(1 => CRM_SMS_Provider::MAX_SMS_CHAR));
         }
       }
     }
