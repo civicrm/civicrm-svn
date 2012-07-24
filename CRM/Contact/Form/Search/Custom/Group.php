@@ -159,7 +159,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
     );
 
     // Select box for Activity Type
-    $activityType = array('' => ts(' - select activity - ')) + CRM_Core_PseudoConstant::activityType();
+    $activityType = array('' => ts('- select activity -')) + CRM_Core_PseudoConstant::activityType();
 
     $form->add('select', 'activity_type_id', ts('Activity Type'),
       $activityType,
@@ -167,7 +167,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
     );
 
     // textbox for Activity Status
-    $activityStatus = array('' => ts(' - select status - ')) + CRM_Core_PseudoConstant::activityStatus();
+    $activityStatus = array('' => ts('- select status -')) + CRM_Core_PseudoConstant::activityStatus();
 
     $form->add('select', 'activity_status_id', ts('Activity Status'),
       $activityStatus,
