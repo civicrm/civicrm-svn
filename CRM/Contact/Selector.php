@@ -670,7 +670,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
           $row[$property] = CRM_Utils_Array::value($result->state_province_id, $provinces);
         }
         elseif ($property == 'world_region') {
-          $row[$property] = $regions[$result->world_region_id];
+          $row[$property] = CRM_Utils_Array::value($result->worldregion_id, $regions);
         }
         elseif (strpos($property, '-url') !== FALSE) {
           $websiteUrl = '';
