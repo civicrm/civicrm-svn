@@ -531,13 +531,15 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
         if ( ! defined( '_JEXEC' ) ) {
     define('_JEXEC', 1);
             define('DS', DIRECTORY_SEPARATOR);
-            define('JPATH_BASE', $joomlaBase . '/administrator/' );
+      define('JPATH_BASE', $joomlaBase . '/administrator');
             require $joomlaBase . '/administrator/includes/defines.php';
         }
 
     // Get the framework.
     require $joomlaBase . '/libraries/import.php';
+    require $joomlaBase . '/libraries/joomla/environment/uri.php';
     require $joomlaBase . '/configuration.php';
+
     jimport('joomla.application.cli');
 
     return TRUE;
