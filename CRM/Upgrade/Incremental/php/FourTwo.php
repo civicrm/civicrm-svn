@@ -460,6 +460,7 @@ WHERE     cpf.price_set_id = %1
    * @param $endId int, the last/highest participant ID to convert
    */
   static function task_4_2_alpha1_convertParticipants(CRM_Queue_TaskContext $ctx, $startId, $endId) {
+    $upgrade = new CRM_Upgrade_Form();
     //create lineitems for participant in edge cases using default price set for contribution.
     $query = "
 SELECT    cp.id as participant_id, cp.fee_amount, cp.fee_level,ce.is_monetary,
