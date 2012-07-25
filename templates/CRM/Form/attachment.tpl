@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $form.attachFile_1}
+{if $form.attachFile_1 OR $currentAttachmentURL}
 {if $action EQ 4 AND $currentAttachmentURL} {* For View action we exclude the form fields and just show any current attachments. *}
     <tr>
         <td class="label"><label>{ts}Current Attachment(s){/ts}</label></td>
@@ -40,12 +40,13 @@
     {if !$noexpand}
     <div class="crm-accordion-wrapper crm-accordion_title-accordion {$openCloseStyle}">
  		<div class="crm-accordion-header">
-  			<div class="icon crm-accordion-pointer"></div> 
+  			<div class="icon crm-accordion-pointer"></div>
   			{$attachTitle}
 			</div><!-- /.crm-accordion-header -->
- 		<div class="crm-accordion-body">    
+ 		<div class="crm-accordion-body">
  	{/if}
     <div id="attachments">
+      {if $form.attachFile_1}
         {if $context EQ 'pcpCampaign'}
             <div class="description">{ts}You can upload a picture or image to include on your page. Your file should be in .jpg, .gif, or .png format. Recommended image size is 250 x 250 pixels. Maximum size is 360 x 360 pixels.{/ts}</div>
         {/if}
@@ -56,14 +57,15 @@
                     <span class="description">{ts}Browse to the <strong>file</strong> you want to upload.{/ts}{if $numAttachments GT 1} {ts 1=$numAttachments}You can have a maximum of %1 attachment(s).{/ts}{/if}</span>
                 </td>
             </tr>
-    {section name=attachLoop start=2 loop=$numAttachments+1}
-        {assign var=index value=$smarty.section.attachLoop.index}
-        {assign var=attachName value="attachFile_"|cat:$index}
+        {section name=attachLoop start=2 loop=$numAttachments+1}
+          {assign var=index value=$smarty.section.attachLoop.index}
+          {assign var=attachName value="attachFile_"|cat:$index}
             <tr>
                 <td class="label"></td>
                 <td>{$form.$attachName.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#{$attachName}' );">{ts}clear{/ts}</a>)</span></td>
             </tr>
-    {/section}
+        {/section}
+      {/if}
     {if $currentAttachmentURL}
         <tr>
             <td class="label">{ts}Current Attachment(s){/ts}</td>
@@ -85,7 +87,7 @@
     <script type="text/javascript">
         var attachmentUrl = {/literal}'{$currentAttachmentURL}'{literal};
 		cj(function() {
-		   cj().crmaccordions(); 
+		   cj().crmaccordions();
 		});
     </script>
     {/literal}
@@ -96,7 +98,7 @@
             cj(element).val('');
         }
     </script>
-    {/literal}   
+    {/literal}
     {/if}
 {/if}
 

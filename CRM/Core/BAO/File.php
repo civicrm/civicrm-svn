@@ -277,8 +277,7 @@ AND       CEF.entity_id    = %2";
     return array($sql, $params);
   }
 
-  static
-  function buildAttachment(&$form, $entityTable, $entityID = NULL, $numAttachments = NULL) {
+  static function buildAttachment(&$form, $entityTable, $entityID = NULL, $numAttachments = NULL) {
 
     $config = CRM_Core_Config::singleton();
 
@@ -288,6 +287,24 @@ AND       CEF.entity_id    = %2";
 
     // set default max file size as 2MB
     $maxFileSize = $config->maxFileSize ? $config->maxFileSize : 2;
+
+    list($attachmentInfo, $totalAttachments) = self::attachmentInfo($entityTable, $entityID);
+    if ($attachmentInfo) {
+      $form->add('checkbox', 'is_delete_attachment', ts('Delete Current Attachment(s)'));
+      $form->assign('currentAttachmentURL', $attachmentInfo);
+    }
+    else {
+      $form->assign('currentAttachmentURL', NULL);
+    }
+
+    if ( $totalAttachments ) {
+      if ($totalAttachments >= $numAttachments) {
+        $numAttachments = 0;
+      }
+      else {
+        $numAttachments -= $totalAttachments;
+      }
+    }
 
     $form->assign('numAttachments', $numAttachments);
     // add attachments
@@ -303,51 +320,44 @@ AND       CEF.entity_id    = %2";
       );
     }
 
-    $attachmentInfo = self::attachmentInfo($entityTable, $entityID);
-    if ($attachmentInfo) {
-      $form->add('checkbox', 'is_delete_attachment', ts('Delete Current Attachment(s)'));
-      $form->assign('currentAttachmentURL',
-        $attachmentInfo
-      );
-    }
-    else {
-      $form->assign('currentAttachmentURL', NULL);
-    }
   }
 
-  static
-  function attachmentInfo($entityTable, $entityID, $separator = '<br />') {
+  /**
+   * Function to return a clean url string and the number of attachment for a
+   * given entityTable, entityID
+   *
+   * @param $entityTable string The entityTable to which the file is attached
+   * @param $entityID    int    The id of the object in the above entityTable
+   * @param $separator   string The string separator where to implode the urls
+   *
+   * @return array              An array with 2 elements. The string and the number of attachments
+   * @static
+   */
+  static function attachmentInfo($entityTable, $entityID, $separator = '<br />') {
     if (!$entityID) {
-      return NULL;
+      return array(NULL, 0);
     }
 
-    $currentAttachments = self::getEntityFile($entityTable,
-      $entityID
-    );
+    $currentAttachments = self::getEntityFile($entityTable, $entityID);
     if (!empty($currentAttachments)) {
       $currentAttachmentURL = array();
       foreach ($currentAttachments as $fileID => $attach) {
         $currentAttachmentURL[] = $attach['href'];
       }
-      return implode($separator, $currentAttachmentURL);
+      return array(implode($separator, $currentAttachmentURL), count($currentAttachments));
     }
-    return NULL;
+    return array(NULL, 0);
   }
 
-  static
-  function formatAttachment(&$formValues,
+  static function formatAttachment(&$formValues,
     &$params,
     $entityTable,
     $entityID = NULL
   ) {
 
     // delete current attachments if applicable
-    if ($entityID &&
-      CRM_Utils_Array::value('is_delete_attachment', $formValues)
-    ) {
-      CRM_Core_BAO_File::deleteEntityFile($entityTable,
-        $entityID
-      );
+    if ($entityID && CRM_Utils_Array::value('is_delete_attachment', $formValues)) {
+      CRM_Core_BAO_File::deleteEntityFile($entityTable, $entityID);
     }
 
     $config = CRM_Core_Config::singleton();
@@ -358,9 +368,7 @@ AND       CEF.entity_id    = %2";
     // setup all attachments
     for ($i = 1; $i <= $numAttachments; $i++) {
       $attachName = "attachFile_$i";
-      if (isset($formValues[$attachName]) &&
-        !empty($formValues[$attachName])
-      ) {
+      if (isset($formValues[$attachName]) && !empty($formValues[$attachName])) {
         // we dont care if the file is empty or not
         // CRM-7448
         $fileParams = array(
@@ -374,8 +382,7 @@ AND       CEF.entity_id    = %2";
     }
   }
 
-  static
-  function processAttachment(&$params,
+  static function processAttachment(&$params,
     $entityTable,
     $entityID
   ) {
@@ -400,8 +407,7 @@ AND       CEF.entity_id    = %2";
     }
   }
 
-  static
-  function uploadNames() {
+  static function uploadNames() {
     $config = CRM_Core_Config::singleton();
     $numAttachments = $config->maxAttachments;
 
@@ -418,8 +424,7 @@ AND       CEF.entity_id    = %2";
      * table and id.
      */
 
-  static
-  function copyEntityFile($oldEntityTable, $oldEntityId, $newEntityTable, $newEntityId) {
+  static function copyEntityFile($oldEntityTable, $oldEntityId, $newEntityTable, $newEntityId) {
     $oldEntityFile = new CRM_Core_DAO_EntityFile();
     $oldEntityFile->entity_id = $oldEntityId;
     $oldEntityFile->entity_table = $oldEntityTable;

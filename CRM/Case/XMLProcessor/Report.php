@@ -247,7 +247,7 @@ FROM       civicrm_activity a
 {$joinCaseActivity}
 LEFT JOIN civicrm_activity_target at ON a.id = at.activity_id
 LEFT JOIN civicrm_activity_assignment aa ON a.id = aa.activity_id
-WHERE      a.id = %1 
+WHERE      a.id = %1
     ";
       $params = array(1 => array($activityID, 'Integer'));
       $dao = CRM_Core_DAO::executeQuery($query, $params);
@@ -525,7 +525,7 @@ WHERE      a.id = %1
             }
             elseif (CRM_Utils_Array::value('type', $typeValue) == 'File') {
               $tableName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $typeValue, 'entity_table');
-              $value = CRM_Core_BAO_File::attachmentInfo($tableName, $activityDAO->id);
+              list($value, $dontCare) = CRM_Core_BAO_File::attachmentInfo($tableName, $activityDAO->id);
             }
             elseif (CRM_Utils_Array::value('type', $typeValue) == 'Link') {
               $value = CRM_Utils_System::formatWikiURL($value);
@@ -554,7 +554,7 @@ WHERE      a.id = %1
 
     if (!isset($cache[$activityTypeID])) {
       $query = "
-SELECT cg.title           as groupTitle, 
+SELECT cg.title           as groupTitle,
        cg.table_name      as tableName ,
        cf.column_name     as columnName,
        cf.label           as label     ,

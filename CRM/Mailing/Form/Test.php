@@ -147,9 +147,8 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
       $preview['html_link'] = CRM_Utils_System::url('civicrm/mailing/preview', "type=html&qfKey=$qfKey");
     }
 
-    $preview['attachment'] = CRM_Core_BAO_File::attachmentInfo('civicrm_mailing',
-      $mailingID
-    );
+    list($preview['attachment'], $dontCare) =
+      CRM_Core_BAO_File::attachmentInfo('civicrm_mailing', $mailingID);
     $this->assign('preview', $preview);
     //Token Replacement of Subject in preview mailing
     $options = array();
@@ -303,8 +302,8 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
     $session = CRM_Core_Session::singleton();
     if (!empty($testParams['emails'])) {
       $query = "
-                      SELECT id, contact_id, email  
-                      FROM civicrm_email  
+                      SELECT id, contact_id, email
+                      FROM civicrm_email
                       WHERE civicrm_email.email IN ($emails)";
 
       $dao = CRM_Core_DAO::executeQuery($query);

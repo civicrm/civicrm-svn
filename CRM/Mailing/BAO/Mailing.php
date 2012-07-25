@@ -2521,9 +2521,8 @@ SELECT  $mailing.id as mailing_id
     }
 
     if (!$isSMS) {
-      $report['mailing']['attachment'] = CRM_Core_BAO_File::attachmentInfo('civicrm_mailing',
-        $form->_mailing_id
-      );
+      list($report['mailing']['attachment'], $dontCare) =
+        CRM_Core_BAO_File::attachmentInfo('civicrm_mailing', $form->_mailing_id);
     }
     return $report;
   }

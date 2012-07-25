@@ -101,9 +101,8 @@ class CRM_Activity_Form_ActivityView extends CRM_Core_Form {
       $values['engagement_level'] = CRM_Utils_Array::value($engagementLevel, $engagementLevels, $engagementLevel);
     }
 
-    $values['attachment'] = CRM_Core_BAO_File::attachmentInfo('civicrm_activity',
-      $activityId
-    );
+    list($values['attachment'], $dontCare) =
+      CRM_Core_BAO_File::attachmentInfo('civicrm_activity', $activityId);
     $this->assign('values', $values);
   }
 

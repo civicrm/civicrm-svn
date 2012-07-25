@@ -171,9 +171,8 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form {
       );
       $preview['viewURL'] = CRM_Utils_System::url('civicrm/mailing/view', "reset=1&id={$this->_mailingID}");
 
-      $preview['attachment'] = CRM_Core_BAO_File::attachmentInfo('civicrm_mailing',
-        $this->_mailingID
-      );
+      list($preview['attachment'], $dontCare) =
+        CRM_Core_BAO_File::attachmentInfo('civicrm_mailing', $this->_mailingID);
 
       $this->assign_by_ref('preview', $preview);
     }
