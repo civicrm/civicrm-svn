@@ -26,6 +26,7 @@
 {* template for building phone block*}
 <div class="crm-table2div-layout" id="crm-phone-content">
   <div class="crm-clear"> <!-- start of main -->
+    {if $permission EQ 'edit'}
      {if $phone}
      <div class="crm-config-option">
       <a id="edit-phone" class="hiddenElement crm-link-action" title="{ts}click to add or edit phone numbers{/ts}">
@@ -39,11 +40,12 @@
         </a>
       </div>
     {/if}
+    {/if}
     {foreach from=$phone item=item}
       {if $item.phone}
         <div class="crm-label">{$item.location_type}&nbsp;{$item.phone_type}</div>
         <div class="crm-content {if $item.is_primary eq 1}primary{/if}">
-          <span {if $privacy.do_not_phone} class="do-not-phone" title={ts}"Privacy flag: Do Not Phone"{/ts} {/if}>
+          <span {if $privacy.do_not_phone} class="do-not-phone" title="{ts}Privacy flag: Do Not Phone{/ts}"{/if}>
     {$item.phone}{if $item.phone_ext}&nbsp;&nbsp;{ts}ext.{/ts} {$item.phone_ext}{/if}
           </span>
         </div>
@@ -52,6 +54,7 @@
    </div> <!-- end of main -->
 </div>
 
+{if $permission EQ 'edit'}
 {literal}
 <script type="text/javascript">
 cj(function(){
@@ -67,16 +70,19 @@ cj(function(){
 
     cj('#edit-phone').click( function() {
         var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-        var response = cj.ajax({
-                        type: "GET",
+        
+        addCiviOverlay('.crm-summary-phone-block');
+        cj.ajax({ 
                         data: { 'class_name':'CRM_Contact_Form_Inline_Phone' },
                         url: dataUrl,
                         async: false
-					}).responseText;
-
+        }).done( function(response) {
 	    cj( '#phone-block' ).html( response );
     });
+        
+        removeCiviOverlay('.crm-summary-phone-block');
 });
-
+});
 </script>
 {/literal}
+{/if}

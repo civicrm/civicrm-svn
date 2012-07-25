@@ -35,6 +35,10 @@
 <div class="crm-submit-buttons">
    {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
+
+{* include overlay js *}
+{include file="CRM/common/overlay.tpl"}
+
 <div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
@@ -203,17 +207,14 @@ function removeDefaultCustomFields( ) {
      }
 
      var values = cj("#contact_sub_type").val();
+     var contactType = {/literal}"{$contactType}"{literal};
      if ( values ) {
-        var contactType = {/literal}"{$contactType}"{literal};
         buildCustomData(contactType, values);
      }
+     else{
+        buildCustomData(contactType);
 }
-
-cj(document).ready(function() {
-     if ( cj("#contact_sub_type").val() ) {
-        removeDefaultCustomFields( );
      }
-});
  
 function warnSubtypeDataLoss( )
 {
@@ -239,6 +240,7 @@ cj("select#contact_sub_type").crmasmSelect({
   highlight: true,
   respectParents: true
 });
+
 
 </script>
 {/literal}

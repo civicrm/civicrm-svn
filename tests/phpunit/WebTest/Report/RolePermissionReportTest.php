@@ -184,6 +184,7 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
     
     $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
     $this->waitForPageToLoad('30000');
+
     //make the report reserved
     $this->click("is_reserved");
     $this->click("_qf_Summary_submit_save");
@@ -229,7 +230,13 @@ class WebTest_Report_RolePermissionReportTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/report/instance/1?reset=1");
     $this->waitForPageToLoad('30000');
     
-    $this->assertTrue($this->isElementPresent("xpath=//form[@id='Summary']/div[2]/div[@style='display: none;']"));
+    if ($this->isElementPresent("xpath=//form[@id='Summary']/div[2]/div/div/div")) {
+      $this->verifyNotText("xpath=//form[@id='Summary']/div[2]/div/div/div", "Report Criteria");  
+    }
+    if ($this->isElementPresent("xpath=//form[@id='Summary']/div[2]/div[2]/div")) {
+      $this->verifyNotText("xpath=//form[@id='Summary']/div[2]/div[2]/div", "Report Settings");  
+    }
+    
     $this->assertFalse($this->isElementPresent("xpath=//form[@id='Summary']//div[@id='instanceForm']//input[@id='title']"));
 
     //login as admin and turn the is_reserved flag off for the instance

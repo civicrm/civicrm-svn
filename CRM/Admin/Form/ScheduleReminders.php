@@ -93,6 +93,9 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
     $selectionOptions = CRM_Core_BAO_ActionSchedule::getSelection($mappingID);
     extract($selectionOptions);
 
+    if (empty($sel1)) {
+        CRM_Core_Error::fatal('Could not find mapping for scheduled reminders.');
+    }
     $this->assign('entityMapping', json_encode($entityMapping));
     $this->assign('recipientMapping', json_encode($recipientMapping));
 

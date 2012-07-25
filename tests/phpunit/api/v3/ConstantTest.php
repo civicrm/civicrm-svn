@@ -44,7 +44,8 @@ require_once 'CRM/Utils/Cache.php';
  *  @subpackage API_Constant
  */
 class api_v3_ConstantTest extends CiviUnitTestCase {
-  protected $_apiversion;
+  protected $_apiversion = 3;
+  public $_eNoticeCompliant = TRUE;
 
   /**
    *  Constructor

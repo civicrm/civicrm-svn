@@ -63,6 +63,7 @@
     </div> <!-- end of main -->
   </div>
 
+{if $permission EQ 'edit'}
 {literal}
 <script type="text/javascript">
 cj(function(){
@@ -76,16 +77,19 @@ cj(function(){
 
     cj('#edit-demographic').click( function() {
         var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-        var response = cj.ajax({
-                        type: "GET",
+        
+        addCiviOverlay('.crm-summary-demographic-block');
+        cj.ajax({
                         data: { 'class_name':'CRM_Contact_Form_Inline_Demographics' },
                         url: dataUrl,
                         async: false
-					}).responseText;
-
+        }).done( function(response) {
 	    cj( '#demographic-block' ).html( response );
     });
+        
+        removeCiviOverlay('.crm-summary-demographic-block');
 });
-
+});
 </script>
 {/literal}
+{/if}

@@ -1519,8 +1519,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @static
    * @access public
    */
-  static
-  function buildProfile(&$form, &$field, $mode, $contactId = NULL, $online = FALSE, $onBehalf = FALSE, $rowNumber = NULL , $prefix = '') {
+  static function buildProfile(&$form, &$field, $mode, $contactId = NULL, $online = FALSE, $onBehalf = FALSE, $rowNumber = NULL , $prefix = '') {
     $defaultValues = array();
     $fieldName     = $field['name'];
     $title         = $field['title'];
@@ -2050,7 +2049,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
           }
           elseif ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($name)) {
             //fix for custom fields
-            $customFields = CRM_Core_BAO_CustomField::getFields(CRM_Utils_Array::value('Individual', $values));
+            $customFields = CRM_Core_BAO_CustomField::getFields(CRM_Utils_Array::value('contact_type', $details));
 
             // hack to add custom data for components
             $components = array('Contribution', 'Participant', 'Membership', 'Activity');
@@ -2202,7 +2201,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
               if ($fieldName === 'url') {
                 if (!empty($details['website'])) {
                   foreach ($details['website'] as $val) {
-                    $defaults[$fldName] = $val['url'];
+                    $defaults[$fldName] = CRM_Utils_Array::value('url', $val);
                     $defaults[$fldName . '-website_type_id'] = $val['website_type_id'];
                   }
                 }
@@ -2514,9 +2513,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @return array
    * @access public
    */
-  function checkFieldsEmptyValues($gid, $cid, $params) {
+  function checkFieldsEmptyValues($gid, $cid, $params, $skipCheck = false) {
     if ($gid) {
-      if (CRM_Core_BAO_UFGroup::filterUFGroups($gid, $cid)) {
+      if (CRM_Core_BAO_UFGroup::filterUFGroups($gid, $cid) || $skipCheck) {
         $values = array();
         $fields = CRM_Core_BAO_UFGroup::getFields($gid, FALSE, CRM_Core_Action::VIEW);
         CRM_Core_BAO_UFGroup::getValues($cid, $fields, $values, FALSE, $params, TRUE);

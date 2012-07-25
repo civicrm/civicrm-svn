@@ -312,9 +312,6 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
     
     // edit the default Fuzzy rule
-    
-    
-     // edit the default Fuzzy rule
     $this->open($this->sboxPath . "civicrm/contact/deduperules?action=update&id=1");
     $this->waitForElementPresent('threshold');
     $this->click("threshold");
@@ -521,5 +518,208 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[5]/span[contains(text(), '9876543210')]"));
 }
 
+  function testBatchMerge(){
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+    
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+    
+    // edit the default Fuzzy rule
+    $this->open($this->sboxPath . "civicrm/contact/deduperules?action=update&id=1");
+    $this->waitForElementPresent('threshold');
+    $this->click("threshold");
+    $this->type("threshold", "10");
+    $this->click("_qf_DedupeRules_next-bottom");
+    $this->waitForPageToLoad("30000");
+    
+    // add contact1 and its duplicate
+    //first name
+    $firstName = "Kerry".substr(sha1(rand()), 0, 7);
+    //last name
+    $lastName = "King".substr(sha1(rand()), 0, 7);
+    $this->_createContacts($firstName,$lastName);
+    
+    //add contact2 and its duplicate 
+    //These are the contacts with conflicts in communication preference.these contacts will be skipped during merge.
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    $this->waitForPageToLoad("30000");
+    
+    //fill in first name
+    $firstName1 = "Kurt".substr(sha1(rand()), 0, 7);
+    $this->type('first_name', $firstName1);
+    
+    //fill in last name
+    $lastName1 = "Cobain".substr(sha1(rand()), 0, 7);
+    $this->type('last_name', $lastName1);
+    
+    //fill in email id
+    $this->type('email_1_email', "{$firstName1}.{$lastName1}@example.com");
+    
+    //fill in billing email id
+    $this->click('addEmail');
+    $this->waitForElementPresent('email_2_email');
+    $this->type('email_2_email', "$firstName1.$lastName1@billing.com");
+    $this->select('email_2_location_type_id', 'value=5');
+    
+    //fill in home phone no
+    $this->type('phone_1_phone', "9876543210");
+    
+    //fill in billing phone id
+    $this->click('addPhone');
+    $this->waitForElementPresent('phone_2_phone');
+    $this->type('phone_2_phone', "9876543120");
+    $this->select('phone_2_location_type_id', 'value=5');
+    
+    //select communication preference
+    $this->check("privacy[do_not_phone]");
+    
+    //Clicking save.
+    $this->click("_qf_Contact_upload_view");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    
+    //duplicate of contact2.
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    
+    //fill in first name
+    $this->type("first_name", $firstName1);
+    
+    //fill in last name
+    $this->type("last_name", $lastName1);
+    
+    //fill in email
+    $this->type("email_1_email", "{$firstName1}.{$lastName1}@example.com");
+    
+    //fill in home phone no
+    $this->type('phone_1_phone', "9876543211");
+    
+    //select communication preference
+    $this->check("preferred_communication_method[1]");
+    
+    // Clicking save.
+    $this->click("_qf_Contact_refresh_dedupe");
+    $this->waitForPageToLoad("30000");
+    
+    $this->assertTrue($this->isTextPresent("One matching contact was found. You can View or Edit the existing contact."));
+    $this->click("_qf_Contact_upload_duplicate");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    
+    // add contact3 and its duplicate
+    //fill in first name
+    $firstName2 = "David".substr(sha1(rand()), 0, 7);
+    //fill in last name
+    $lastName2 = "Gilmour".substr(sha1(rand()), 0, 7);
+    $this->_createContacts($firstName2,$lastName2);
+    
+    // add contact4 and its duplicate
+    //fill in first name
+    $firstName3 = "Dave".substr(sha1(rand()), 0, 7);
+    //fill in last name
+    $lastName3 = "Mustaine".substr(sha1(rand()), 0, 7);
+    $this->_createContacts($firstName3,$lastName3);
+    
+    $this->open($this->sboxPath . "civicrm/contact/deduperules?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->click("xpath=//div[@id='browseValues']//table/tbody//tr/td[2][text()='Individual']/../td[3][text()='Fuzzy']/../td[5]/span/a[text()='Use Rule']");
+    $this->waitForPageToLoad("30000");
+    $this->click("_qf_DedupeFind_next-top");
+    $this->waitForPageToLoad("30000");
+    sleep(2);
+    $this->click("xpath=//form[@id='DedupeFind']/a");
+    // Check confirmation alert.
+    $this->assertTrue((bool)preg_match("/^This will run batch merge process on the listed duplicates. The operation will run in safe mode; only records with no direct data conflicts will be merged. Click OK to proceed if you are sure you wish to run this operation./",
+                                       $this->getConfirmation()
+                                       ));
+    $this->chooseOkOnNextConfirmation();
+    $this->waitForPageToLoad("30000");
+    sleep(5);
+    $this->assertTrue($this->isTextPresent("3 pairs of duplicates were merged and 1 pairs of duplicates were skipped due to conflict during the batch merge process with safe mode."));
+    
+    $this->waitForElementPresent("xpath=//form[@id='DedupeFind']/div[2]/div/table/tbody//tr/td[1]/a[text()='$firstName1 $lastName1']/../../td[2]/a[text()='$firstName1 $lastName1']");
+    $this->click("xpath=//form[@id='DedupeFind']/div[2]/div/table/tbody//tr/td[1]/a[text()='$firstName1 $lastName1']/../../td[2]/a[text()='$firstName1 $lastName1']/../../td[4]/a[text()='merge']");
+    $this->waitForPageToLoad("30000");
+    $this->click("toggleSelect");
+    $this->click("_qf_Merge_next-bottom");
+    $this->waitForPageToLoad("30000");
+    
+    $this->click("xpath=//a[@class='delete button']");
+    $this->waitForPageToLoad("30000");
+    $this->click("_qf_Delete_done");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Selected contact was deleted successfully."));
+    $this->click("xpath=//div[@class='crm-actions-ribbon']/ul/li[2]/a[@class='delete button']");
+    $this->waitForPageToLoad("30000");
+    $this->click("_qf_Delete_done");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Selected contact was deleted successfully."));
+    
+    //check the existence of merged contacts
+    $contactEmails = array( 1 => "{$firstName}.{$lastName}@example.com", 2 => "{$firstName2}.{$lastName2}@example.com", 3 => "{$firstName3}.{$lastName3}@example.com");
+    //contact 1
+    foreach( $contactEmails as $key => $value ) {
+      $this->click('sort_name_navigation');
+      $this->type('css=input#sort_name_navigation', $value);
+      $this->typeKeys('css=input#sort_name_navigation', $value);
+      // Wait for result list.
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      
+      // Visit contact summary page.
+      $this->click("css=div.ac_results-inner li");
+      $this->waitForPageToLoad("30000");
+      sleep(2);
+}
+  }
+  function _createContacts($firstName,$lastName){
+    // add contact
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    //fill in first name
+    $this->type('first_name', $firstName);
+
+    //fill in last name
+    $this->type('last_name', $lastName);
+    
+    //fill in email id
+    $this->type('email_1_email', "{$firstName}.{$lastName}@example.com");
+    
+    //fill in billing email id
+    $this->click('addEmail');
+    $this->waitForElementPresent('email_2_email');
+    $this->type('email_2_email', "$firstName.$lastName@billing.com");
+    $this->select('email_2_location_type_id', 'value=5');
+    
+    // Clicking save.
+    $this->click("_qf_Contact_upload_view");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    
+    //duplicate of above contact.
+    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    
+    //fill in first name
+    $this->type("first_name", $firstName);
+    
+    //fill in last name
+    $this->type("last_name", $lastName);
+    
+      //fill in email
+    $this->type("email_1_email", "{$firstName}.{$lastName}@example.com");
+    
+      // Clicking save.
+    $this->click("_qf_Contact_refresh_dedupe");
+    $this->waitForPageToLoad("30000");
+    
+    $this->assertTrue($this->isTextPresent("One matching contact was found. You can View or Edit the existing contact."));
+    $this->click("_qf_Contact_upload_duplicate");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+  }
 }
 

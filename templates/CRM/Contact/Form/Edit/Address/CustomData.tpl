@@ -26,7 +26,7 @@
 
 {foreach from=$address_groupTree.$blockId item=cd_edit key=group_id}
 <div id="{$cd_edit.name}_{$group_id}_{$blockId}" class="form-item">
-    <div class="crm-accordion-wrapper crm-accordion-inner crm-{$cd_edit.name}_{$group_id}_{$blockId}-accordion {if $cd_edit.collapse_display eq 0 }crm-accordion-open{else}crm-accordion-closed{/if}">
+    <div class="crm-accordion-wrapper crm-{$cd_edit.name}_{$group_id}_{$blockId}-accordion {if $cd_edit.collapse_display eq 0 }crm-accordion-open{else}crm-accordion-closed{/if}">
         <div class="crm-accordion-header">
             <div class="icon crm-accordion-pointer"></div> 
                 {$cd_edit.title}

@@ -23,6 +23,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
   CONST AUTH_APPROVED = 1;
   CONST AUTH_DECLINED = 2;
   CONST AUTH_ERROR = 3;
+  CONST TIMEZONE = 'America/Denver';
 
   static protected $_mode = NULL;
 
@@ -251,11 +252,14 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
     $firstPaymentDate = $this->_getParam('receive_date');
     if (!empty($firstPaymentDate)) {
       //allow for post dated payment if set in form
-      $template->assign('startDate', date('Y-m-d', strtotime($firstPaymentDate)));
+      $startDate = date_create($firstPaymentDate);
     }
     else {
-      $template->assign('startDate', date('Y-m-d'));
+      $startDate = date_create();
     }
+    // Format start date in Mountain Time to avoid Authorize.net error E00017
+    $startDate->setTimezone(new DateTimeZone(self::TIMEZONE));
+    $template->assign( 'startDate', $startDate->format('Y-m-d') );
     // for open ended subscription totalOccurrences has to be 9999
     $installments = $this->_getParam('installments');
     $template->assign('totalOccurrences', $installments ? $installments : 9999);

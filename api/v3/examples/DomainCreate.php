@@ -10,7 +10,8 @@ $params = array(
   'name' => 'A-team domain',
   'description' => 'domain of chaos',
   'version' => 3,
-  'domain_version' => '3.4.1',
+  'domain_version' => '4.2',
+  'loc_block_id' => '2',
 );
 
   require_once 'api/api.php';
@@ -35,8 +36,8 @@ function domain_create_expectedresult(){
           'name' => 'A-team domain',
           'description' => 'domain of chaos',
           'config_backend' => '',
-          'version' => '3.4.1',
-          'loc_block_id' => '',
+          'version' => '4.2',
+          'loc_block_id' => '2',
           'locales' => '',
           'locale_custom_strings' => '',
         ),

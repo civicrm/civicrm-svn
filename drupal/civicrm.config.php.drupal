@@ -102,6 +102,7 @@ function civicrm_conf_init() {
 }
 
 $settingsFile = civicrm_conf_init( ) . '/civicrm.settings.php';
+define('CIVICRM_SETTINGS_PATH', $settingsFile);
 $error = @include_once( $settingsFile );
 if ( $error == false ) {
     echo "Could not load the settings file at: {$settingsFile}\n";
@@ -110,5 +111,4 @@ if ( $error == false ) {
 
 // Load class loader
 require_once $civicrm_root . '/CRM/Core/ClassLoader.php';
-$classLoader = new CRM_Core_ClassLoader();
-$classLoader->register();
+CRM_Core_ClassLoader::singleton()->register();

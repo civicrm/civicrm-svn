@@ -279,8 +279,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($params) {
+  static function formRule($params) {
     $errors = array();
     if (!isset($params['_qf_MembershipType_refresh']) || !$params['_qf_MembershipType_refresh']) {
       if (!$params['name']) {

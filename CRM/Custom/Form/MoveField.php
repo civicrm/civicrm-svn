@@ -78,7 +78,8 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
    *
    * @return void
    * @acess protected
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     $this->_srcFID = CRM_Utils_Request::retrieve('fid', 'Positive',
       $this, TRUE
     );
@@ -140,8 +141,7 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
     $this->addFormRule(array('CRM_Custom_Form_MoveField', 'formRule'), $this);
   }
 
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $self->_dstGID = $fields['dst_group_id'];
     $tmp           = CRM_Core_BAO_CustomField::_moveFieldValidate($self->_srcFID, $self->_dstGID);
     $errors        = array();
@@ -165,10 +165,11 @@ class CRM_Custom_Form_MoveField extends CRM_Core_Form {
       'title'
     );
     $srcUrl = CRM_Utils_System::url('civicrm/admin/custom/group/field', "reset=1&action=browse&gid={$this->_dstGID}");
-    CRM_Core_Session::setStatus(ts("%1 has been moved to the custom set <a href='%3'>%2</a>.", array(
+    CRM_Core_Session::setStatus(ts("%1 has been moved to the custom set <a href='%3'>%2</a>.",
+      array(
       1 => $this->_srcFieldLabel,
           2 => $dstGroup,
-          3 => $srcUrl,
+        3 => $srcUrl
         )));
   }
 }

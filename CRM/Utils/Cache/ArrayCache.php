@@ -4,7 +4,16 @@ class CRM_Utils_Cache_Arraycache {
   /**
    * The cache storage container, an in memory array by default
    */
-  private $_cache; function __construct() {
+  private $_cache;
+
+  /**
+   * Constructor
+   *
+   * @param array   $config  an array of configuration params
+   *
+   * @return void
+   */
+  function __construct(&$config) {
     $this->_cache = array();
   }
 

@@ -361,12 +361,14 @@ SELECT     civicrm_event.id as id, civicrm_event.title as event_title, civicrm_e
            civicrm_event.max_participants as max_participants, civicrm_event.start_date as start_date,
            civicrm_event.end_date as end_date, civicrm_event.is_online_registration, civicrm_event.is_monetary, civicrm_event.is_show_location,civicrm_event.is_map as is_map, civicrm_option_value.label as event_type, civicrm_tell_friend.is_active as is_friend_active,
            civicrm_event.slot_label_id,
-           civicrm_event.summary as summary
+           civicrm_event.summary as summary,
+           civicrm_pcp_block.id as is_pcp_enabled
 FROM       civicrm_event
 LEFT JOIN  civicrm_option_value ON (
            civicrm_event.event_type_id = civicrm_option_value.value AND
            civicrm_option_value.option_group_id = %1 )
 LEFT JOIN  civicrm_tell_friend ON ( civicrm_tell_friend.entity_id = civicrm_event.id  AND civicrm_tell_friend.entity_table = 'civicrm_event' )
+LEFT JOIN  civicrm_pcp_block ON ( civicrm_pcp_block.entity_id = civicrm_event.id AND civicrm_pcp_block.entity_table = 'civicrm_event')
 WHERE      civicrm_event.is_active = 1 AND
            ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0) AND
            civicrm_event.start_date >= DATE_SUB( NOW(), INTERVAL 7 day )
@@ -376,8 +378,6 @@ ORDER BY   civicrm_event.start_date ASC
 LIMIT      0, 10
 ";
     $eventParticipant = array();
-
-
 
     $properties = array(
       'eventTitle' => 'event_title', 'isPublic' => 'is_public',
@@ -389,8 +389,8 @@ LIMIT      0, 10
       'notCountedParticipants' => 'notCountedParticipants',
     );
 
-
     $params = array(1 => array($optionGroupId, 'Integer'));
+
     $dao = CRM_Core_DAO::executeQuery($query, $params);
     while ($dao->fetch()) {
       foreach ($properties as $property => $name) {
@@ -494,6 +494,8 @@ LIMIT      0, 10
       $eventSummary['events'][$dao->id]['is_online_registration'] = $dao->is_online_registration;
       $eventSummary['events'][$dao->id]['is_show_location'] = $dao->is_show_location;
       $eventSummary['events'][$dao->id]['is_subevent'] = $dao->slot_label_id;
+      $eventSummary['events'][$dao->id]['is_pcp_enabled'] = $dao->is_pcp_enabled;
+      $eventSummary['events'][$dao->id]['reminder'] = CRM_Core_BAO_ActionSchedule::isConfigured($dao->id, 3);
 
       $statusTypes = CRM_Event_PseudoConstant::participantStatus();
       foreach ($statusValues as $statusId => $statusValue) {

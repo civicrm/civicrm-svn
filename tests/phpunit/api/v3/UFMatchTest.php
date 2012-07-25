@@ -44,6 +44,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
   protected $_ufFieldId;
   protected $_contactId = 69;
   protected $_apiversion;
+  public $_eNoticeCompliant = TRUE;
   protected function setUp() {
     parent::setUp();
     $this->_apiversion = 3;

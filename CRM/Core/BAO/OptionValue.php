@@ -55,8 +55,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $optionValue = new CRM_Core_DAO_OptionValue();
     $optionValue->copyValues($params);
     if ($optionValue->find(TRUE)) {
@@ -75,8 +74,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Core_DAO_OptionValue', $id, 'is_active', $is_active);
   }
 
@@ -91,8 +89,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    *
    * @return object
    */
-  static
-  function add(&$params, &$ids) {
+  static function add(&$params, &$ids) {
     $params['is_active'] = CRM_Utils_Array::value('is_active', $params, FALSE);
     $params['is_default'] = CRM_Utils_Array::value('is_default', $params, FALSE);
     $params['is_optgroup'] = CRM_Utils_Array::value('is_optgroup', $params, FALSE);
@@ -135,13 +132,12 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    *
    * @param  int  $optionGroupId     Id of the Option Group to be deleted.
    *
-   * @return void
+   * @return boolean
    *
    * @access public
    * @static
    */
-  static
-  function del($optionValueId) {
+  static function del($optionValueId) {
     $optionValue = new CRM_Core_DAO_OptionValue();
     $optionValue->id = $optionValueId;
     if (self::updateRecords($optionValueId, CRM_Core_Action::DELETE)) {
@@ -151,16 +147,15 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
   }
 
   /**
-   * Function to retrieve activity type label and decription
+   * Function to retrieve activity type label and description
    *
    * @param int     $activityTypeId  activity type id
    *
-   * @return array     lable and decription
+   * @return array  label and description
    * @static
    * @access public
    */
-  static
-  function getActivityTypeDetails($activityTypeId) {
+  static function getActivityTypeDetails($activityTypeId) {
     $query = "SELECT civicrm_option_value.label, civicrm_option_value.description
    FROM civicrm_option_value
         LEFT JOIN civicrm_option_group ON ( civicrm_option_value.option_group_id = civicrm_option_group.id )
@@ -185,7 +180,6 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    * @static
    *
    */
-
   public static function getTitle($id) {
     return CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $id, 'label');
   }
@@ -198,8 +192,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    *
    * @return void
    */
-  static
-  function updateRecords(&$optionValueId, $action) {
+  static function updateRecords(&$optionValueId, $action) {
     //finding group name
     $optionValue = new CRM_Core_DAO_OptionValue();
     $optionValue->id = $optionValueId;
@@ -328,8 +321,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    * @access public
    * @static
    */
-  static
-  function updateOptionWeights($opGroupId, $opWeights) {
+  static function updateOptionWeights($opGroupId, $opWeights) {
     if (!is_array($opWeights) || empty($opWeights)) {
       return;
     }
@@ -357,8 +349,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    * @static
    * @public
    */
-  static
-  function getOptionValuesArray($optionGroupID) {
+  static function getOptionValuesArray($optionGroupID) {
     // check if we can get the field values from the system cache
     $cacheKey     = "CRM_Core_BAO_OptionValue_OptionGroupID_{$optionGroupID}";
     $cache        = CRM_Utils_Cache::singleton();
@@ -391,8 +382,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    * @static
    * @public
    */
-  static
-  function getOptionValuesAssocArray($optionGroupID) {
+  static function getOptionValuesAssocArray($optionGroupID) {
     $optionValues = self::getOptionValuesArray($optionGroupID);
 
     $options = array();

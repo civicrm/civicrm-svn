@@ -67,7 +67,7 @@
      </tr>
   </table>
   
-  <div class="crm-edit-address-custom_data crm-inline-edit-form"> 
+  <div class="crm-edit-address-custom_data crm-inline-edit-form crm-address-custom-set-block-{$blockId}"> 
     {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
   </div> 
 </div>

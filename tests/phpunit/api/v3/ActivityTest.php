@@ -45,7 +45,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
   protected $_entity = 'activity';
   protected $_apiversion = 3;
   protected $test_activity_type_value;
-
+  public $_eNoticeCompliant = TRUE;
   /**
    *  Test setup for every test
    *
@@ -533,7 +533,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $params = $this->_params;
     $params['custom_' . $ids['custom_field_id']] = "custom string";
     $result = civicrm_api($this->_entity, 'create', $params);
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
     $result = civicrm_api($this->_entity, 'get', array('return.custom_' . $ids['custom_field_id'] => 1, 'version' => 3, 'id' => $result['id']));
     $this->assertEquals("custom string", $result['values'][$result['id']]['custom_' . $ids['custom_field_id']], ' in line ' . __LINE__);
 
@@ -569,7 +569,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
 
     $result = civicrm_api($this->_entity, 'create', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
     $result = civicrm_api($this->_entity, 'get', array('return.custom_' . $customField => 1, 'version' => 3, 'id' => $result['id']));
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, 'Get with Contact Ref Custom Field', 'ContactRefCustomFieldGet');
 
@@ -657,7 +657,8 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $activity   = civicrm_api('activity', 'create', $this->_params);
 
     $contact = civicrm_api('Contact', 'Create', array(
-      'display_name' => "The Rock",
+      'first_name' => "The Rock",
+       'last_name' =>'roccky',
         'contact_type' => 'Individual',
         'version' => 3,
         'api.activity.create' => array(
@@ -730,21 +731,21 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     );
     civicrm_api('Activity', 'Create', $params);
     $result = civicrm_api('Activity', 'Get', array(
-      'version' => 3, 
+      'version' => $this->_apiversion,
       'activity_status_id' => '1'));
     $this->assertEquals(1, $result['count'], 'one activity of status 1 should exist');
 
     $result = civicrm_api('Activity', 'Get', array(
-      'version' => 3, 
+      'version' => $this->_apiversion,
       'status_id' => '1'));
     $this->assertEquals(1, $result['count'], 'status_id should also work');
     
     $result = civicrm_api('Activity', 'Get', array(
-      'version' => 3, 
+      'version' => $this->_apiversion,
       'activity_status_id' => '2'));
     $this->assertEquals(0, $result['count'], 'No activities of status 1 should exist');
      $result = civicrm_api('Activity', 'Get', array(
-      'version' => 3, 
+      'version' => $this->_apiversion,
       'status_id' => '2'));
     $this->assertEquals(0, $result['count'], 'No activities of status 1 should exist');
  
@@ -1067,7 +1068,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $result = civicrm_api($this->_entity, 'get', array('return.custom_' . $ids['custom_field_id'] => 1, 'version' => 3, 'id' => $result['id']));
     $this->assertEquals("custom string", $result['values'][$result['id']]['custom_' . $ids['custom_field_id']], ' in line ' . __LINE__);
     $this->assertEquals("2009-10-18 00:00:00", $result['values'][$result['id']]['activity_date_time'], ' in line ' . __LINE__);
-    $fields = (civicrm_api('activity', 'getfields', $params));
+    $fields = civicrm_api('activity', 'getfields', array('version' => $this->_apiversion));
     $this->assertTrue(is_array($fields['values']['custom_' . $ids['custom_field_id']]));
 
     //  Update the activity with custom data
@@ -1130,7 +1131,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $getParams = array(
       'return.assignee_contact_id' => 1,
       'return.target_contact_id' => 1, 
-      'version' => 3, 
+      'version' => $this->_apiversion,
       'id' => $activityId,
     );
     $result = civicrm_api($this->_entity, 'get',$getParams );
@@ -1313,8 +1314,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
           'is_active' => 1,
           'is_optgroup' => 1,
           'is_default' => 0,
-        ), 'api.activity.create' => array('activity_type_id' => '$values.api.activity_type.create.'),
+        ), 'api.activity.create' => array('subject' => 'send letter', 'activity_type_id' => '$value.api.activity_type.create.values.0.value'),
       ));
+
+    $this->assertAPISuccess($activity, 'in line ' . __LINE__);
     $result = civicrm_api('Activity', 'Get', array(
         'version' => 3,
         'id' => $activity['id'],

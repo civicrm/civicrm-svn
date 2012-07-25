@@ -129,7 +129,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
      * @access public
      * @return array
      */
-    function &links( ) {ldelim}
+    function links( ) {ldelim}
 	if ( ! ( self::$_links ) ) {ldelim}
 	     self::$_links = array(
 {foreach from=$table.foreignKey item=foreign}

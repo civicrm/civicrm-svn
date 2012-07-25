@@ -184,7 +184,7 @@ class CRM_Core_JobManager {
     $this->_source = $source;
     $key = strtolower($entity . '_' . $job);
     $this->singleRunParams[$key] = $params;
-    $this->singleRunParams[$key]['version'] = '3';
+    $this->singleRunParams[$key]['version'] = 3;
   }
 
 

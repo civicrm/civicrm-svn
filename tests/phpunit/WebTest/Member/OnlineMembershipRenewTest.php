@@ -62,6 +62,18 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->click('_qf_Amount_next');
     $this->waitForPageToLoad();
 
+    // go to Membership block
+    $this->click('css=#tab_membership a');
+    $this->waitForElementPresent("member_is_active");
+    $this->check("member_is_active");
+    $this->waitForElementPresent("member_price_set_id"); 
+    $this->select("member_price_set_id", "label=- none -");
+    $this->waitForElementPresent("membership_type-block");
+    $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='General']/../input[2]");
+    $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='Student']/../input[2]");
+    $this->click("_qf_MembershipBlock_next-bottom");
+    $this->waitForTextPresent("'MembershipBlock' information has been saved");
+    
     // go to Profiles
     $this->click('css=#tab_custom a');
 
@@ -84,6 +96,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     //Go to online membership signup page
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=2");
     $this->waitForElementPresent("_qf_Main_upload-bottom");
+    
     $this->click("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'Student')]");
 
     //Type first name and last name and email
@@ -240,6 +253,18 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->click('_qf_Amount_next');
     $this->waitForPageToLoad();
 
+    // go to Membership block
+    $this->click('css=#tab_membership a');
+    $this->waitForElementPresent("member_is_active");
+    $this->check("member_is_active");
+    $this->waitForElementPresent("member_price_set_id"); 
+    $this->select("member_price_set_id", "label=- none -");
+    $this->waitForElementPresent("membership_type-block");
+    $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='General']/../input[2]");
+    $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='Student']/../input[2]");
+    $this->click("_qf_MembershipBlock_next-bottom");
+    $this->waitForTextPresent("'MembershipBlock' information has been saved");
+    
     // go to Profiles
     $this->click('css=#tab_custom a');
 
@@ -414,7 +439,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('link=Add Membership Type');
     $this->assertTrue($this->isTextPresent("The membership type 'Membership Type $title' has been saved."));
 
-    $url = $this->getAttribute("xpath=//div[@id='membership_type']//div[@class='dataTables_wrapper']//table/tbody//tr/td[1][text()='{$membershipTypeTitle}']/../td[10]/span/a[3][text()='Delete']/@href");
+    $url = $this->getAttribute("xpath=//div[@id='membership_type']//div[@class='dataTables_wrapper']//table/tbody//tr/td[1][text()='{$membershipTypeTitle}']/../td[11]/span/a[3][text()='Delete']/@href");
 
     $matches = array();
     preg_match('/id=([0-9]+)/', $url, $matches);

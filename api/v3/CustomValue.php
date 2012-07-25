@@ -177,29 +177,34 @@ function civicrm_api3_custom_value_get($params) {
   else {
     $entity_id = $result['entityID'];
     unset($result['is_error'], $result['entityID']);
-
     // Convert multi-value strings to arrays
     $sp = CRM_Core_DAO::VALUE_SEPARATOR;
     foreach ($result as $id => $value) {
       if (strpos($value, $sp) !== FALSE) {
         $value = explode($sp, trim($value, $sp));
       }
-      list($c, $i, $n) = explode('_', $id);
-      if ($c != 'custom') {
+
+      $idArray = explode('_', $id);
+      if ($idArray[0] != 'custom') {
         continue;
       }
-      $info = array_pop(CRM_Core_BAO_CustomField::getNameFromID($i));
+      $fieldNumber = $idArray[1];
+      $info = array_pop(CRM_Core_BAO_CustomField::getNameFromID($fieldNumber));
       // id is the index for returned results
-      $id = $i . "." . $n;
-      if (!$n) {
+
+      if (empty($idArray[2])) {
         $n = 0;
-        $id = $i;
+        $id = $fieldNumber;
+      }
+      else{
+        $n = $idArray[2];
+        $id = $fieldNumber . "." . $idArray[2];
       }
       if (CRM_Utils_Array::value('format.field_names', $params)) {
         $id = $info['field_name'];
       }
       else {
-        $id = $i;
+        $id = $fieldNumber;
       }
       $values[$id]['entity_id'] = $getParams['entityID'];
       if (CRM_Utils_Array::value('entityType', $getParams)) {

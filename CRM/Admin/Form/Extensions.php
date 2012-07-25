@@ -157,8 +157,9 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form {
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       $ext = new CRM_Core_Extensions();
-      $ext->uninstall($this->_id, $this->_key);
+      if ($ext->uninstall($this->_id, $this->_key)) {
       CRM_Core_Session::setStatus(ts('Extension has been uninstalled.'));
+    }
     }
 
     if ($this->_action & CRM_Core_Action::ADD) {

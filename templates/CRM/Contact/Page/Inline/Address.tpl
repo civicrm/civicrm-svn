@@ -44,8 +44,7 @@
     </div>
     <div class="crm-content">
       {if !empty($sharedAddresses.$locationIndex.shared_address_display.name)}
-        <strong>{ts}Shared with:{/ts}</strong><br />
-        {$sharedAddresses.$locationIndex.shared_address_display.name}<br />
+        <strong>{ts 1=$sharedAddresses.$locationIndex.shared_address_display.name}Address belongs to %1{/ts}</strong><br />
       {/if}
       {$add.display|nl2br}
     </div>

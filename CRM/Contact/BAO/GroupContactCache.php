@@ -42,8 +42,7 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
    *
    * @return boolean true if we did not regenerate, false if we did
    */
-  static
-  function check($groupID) {
+  static function check($groupID) {
     if (empty($groupID)) {
       return TRUE;
     }
@@ -91,8 +90,7 @@ AND     ( g.cache_date IS NULL OR
     }
   }
 
-  static
-  function add($groupID) {
+  static function add($groupID) {
     // first delete the current cache
     self::remove($groupID);
     if (!is_array($groupID)) {
@@ -107,8 +105,7 @@ AND     ( g.cache_date IS NULL OR
     }
   }
 
-  static
-  function store(&$groupID, &$values) {
+  static function store(&$groupID, &$values) {
     $processed = FALSE;
 
     // sort the values so we put group IDs in front and hence optimize
@@ -133,7 +130,6 @@ AND     ( g.cache_date IS NULL OR
    * @param $processed bool, whether the cache data was recently modified
    */
   static function updateCacheTime($groupID, $processed) {
-
     // only update cache entry if we had any values
     if ($processed) {
       // also update the group with cache date information
@@ -158,8 +154,7 @@ WHERE  id IN ( $groupIDs )
     );
   }
 
-  static
-  function remove($groupID = NULL, $onceOnly = TRUE) {
+  static function remove($groupID = NULL, $onceOnly = TRUE) {
     static $invoked = FALSE;
 
     // typically this needs to happy only once per instance
@@ -252,8 +247,7 @@ WHERE  id = %1
   /**
    * load the smart group cache for a saved search
    */
-  static
-  function load(&$group, $fresh = FALSE) {
+  static function load(&$group, $fresh = FALSE) {
     $groupID = $group->id;
     $savedSearchID = $group->saved_search_id;
         static $alreadyLoaded = array();
@@ -344,6 +338,9 @@ WHERE  civicrm_group_contact.status = 'Added'
     self::remove($groupIDs);
 
     foreach (array($sql, $sqlB) as $selectSql) {
+      if (!$selectSql) {
+        continue;
+      }
       $insertSql = "INSERT IGNORE INTO civicrm_group_contact_cache (group_id,contact_id) ($selectSql);";
       // CRM_Core_Error::debug_var('insertSql', $insertSql);
       $processed = TRUE; // FIXME

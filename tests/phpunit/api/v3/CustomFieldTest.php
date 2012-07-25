@@ -5,8 +5,7 @@
  *  Include class definitions
  */
 require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
-//require_once 'api/v3/CustomGroup.php';
-require_once 'api/v3/CustomField.php';
+
 
 /**
  *  Test APIv3 civicrm_create_custom_group
@@ -14,7 +13,9 @@ require_once 'api/v3/CustomField.php';
  *  @package   CiviCRM
  */
 class api_v3_CustomFieldTest extends CiviUnitTestCase {
-  protected $_apiversion; function get_info() {
+  protected $_apiversion;
+  public $_eNoticeCompliant = TRUE;
+  function get_info() {
     return array(
       'name' => 'Custom Field Create',
       'description' => 'Test all Custom Field Create API methods.',

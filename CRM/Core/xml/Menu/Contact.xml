@@ -404,4 +404,10 @@
      <page_callback>CRM_Contact_Page_AJAX::selectUnselectContacts</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
 </item>
+<item>
+  <path>civicrm/activity/sms/add</path>
+  <path_arguments>action=add</path_arguments>
+  <title>Activities</title>
+  <page_callback>CRM_Contact_Form_Task_SMS</page_callback>
+</item>
 </menu>

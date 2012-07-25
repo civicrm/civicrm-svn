@@ -40,7 +40,7 @@ function civicrmtheme_install() {
   db_query("UPDATE {system} SET weight = 11 WHERE name = 'civicrm_theme'");
 
   $link = array('!link' => l(t('Administer > Appearance > Administration theme'), 'admin/appearance'));
-  drupal_set_message(t("CiviCRM theme configuration setting is available under !link", $link));
+  drupal_set_message(t("CiviCRM theme configuration setting is available under !link", array('!link' => $link)));
 }
 
 /**

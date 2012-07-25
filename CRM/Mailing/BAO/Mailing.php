@@ -373,7 +373,7 @@ ORDER BY   e.is_bulkmail
 INSERT IGNORE INTO I_$job_id (phone_id, contact_id)
 SELECT     p.id as phone_id, c.id as contact_id
 FROM       civicrm_contact c
-INNER JOIN civicrm_phone e                ON p.contact_id         = c.id
+INNER JOIN civicrm_phone p                ON p.contact_id         = c.id
 INNER JOIN civicrm_group_contact_cache gc ON gc.contact_id        = c.id
 LEFT  JOIN X_$job_id                      ON X_$job_id.contact_id = c.id
 WHERE      gc.group_id = {$groupDAO->id}

@@ -1042,5 +1042,23 @@ abstract class CRM_Utils_Hook {
       'civicrm_alterReportVar'
     );
   }
+  
+  /**
+   * This hook is called to drive database upgrades for extension-modules.
+   *
+   * @param string $op         the type of operation being performed; 'check' or 'enqueue'
+   * @param string $queue      (for 'enqueue') the modifiable list of pending up upgrade tasks
+   *
+   * @return mixed             based on op. 'check' returns a array(boolean) (TRUE if upgrades are pending)
+   *                           'enqueue' returns void
+   * @access public
+   */
+  static
+  function upgrade($op, CRM_Queue_Queue $queue = NULL) {
+    return self::singleton()->invoke(2, $op, $queue,
+      self::$_nullObject, self::$_nullObject,
+      self::$_nullObject,
+      'civicrm_upgrade'
+    );
+  }
 }
-

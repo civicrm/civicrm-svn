@@ -40,7 +40,15 @@ class CRM_Report_Form extends CRM_Core_Form {
   /**
    * Operator types - used for displaying filter elements
    */
-  CONST OP_INT = 1, OP_STRING = 2, OP_DATE = 4, OP_FLOAT = 8, OP_SELECT = 64, OP_MULTISELECT = 65, OP_MULTISELECT_SEPARATOR = 66, OP_MONTH = 128;
+  CONST
+    OP_INT    = 1,
+    OP_STRING = 2,
+    OP_DATE   = 4,
+    OP_FLOAT  = 8,
+    OP_SELECT = 64,
+    OP_MULTISELECT = 65,
+    OP_MULTISELECT_SEPARATOR = 66,
+    OP_MONTH = 128;
 
   /**
    * The id of the report instance
@@ -87,12 +95,11 @@ class CRM_Report_Form extends CRM_Core_Form {
   protected $_options = array();
 
   protected $_defaults = array();
+
   /*
    * By default most reports hide contact id.
    * Setting this to true makes it available
    */
-
-
   protected $_exposeContactID = TRUE;
 
   /**
@@ -186,6 +193,7 @@ class CRM_Report_Form extends CRM_Core_Form {
   protected $_limit = NULL;
   protected $_sections = NULL;
   protected $_autoIncludeIndexedFieldsAsOrderBys = 0;
+  protected $_absoluteUrl = FALSE;
 
   /**
    * To what frequency group-by a date column
@@ -1837,10 +1845,12 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
               CRM_Core_DAO::$_nullObject
     );
 
-    $this->_sendmail = CRM_Utils_Request::retrieve('sendmail',
+    $this->_sendmail =
+      CRM_Utils_Request::retrieve('sendmail',
                        'Boolean',
                        CRM_Core_DAO::$_nullObject
     );
+
     $this->_absoluteUrl = FALSE;
     $printOnly = FALSE;
     $this->assign('printOnly', FALSE);
@@ -1850,6 +1860,9 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
       $printOnly = TRUE;
       $this->assign('outputMode', 'print');
       $this->_outputMode = 'print';
+      if ($this->_sendmail) {
+        $this->_absoluteUrl = TRUE;
+    }
     }
     elseif ($this->_pdfButtonName == $buttonName || $output == 'pdf') {
       $this->assign('printOnly', TRUE);
@@ -1960,8 +1973,20 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
 
   function orderBy() {
     $this->_orderBy  = "";
-    $orderBys        = array();
     $this->_sections = array();
+    $this->storeOrderByArray();
+    if(!empty($this->_orderByArray) && !$this->_rollup == 'WITH ROLLUP'){
+      $this->_orderBy = "ORDER BY " . implode(', ', $this->_orderByArray);
+    }
+    $this->assign('sections', $this->_sections);
+  }
+  /*
+   * In some cases other functions want to know which fields are selected for ordering by
+   * Separating this into a separate function allows it to be called separately from constructing
+   * the order by clause
+   */
+  function storeOrderByArray() {
+    $orderBys        = array();
 
     if (CRM_Utils_Array::value('order_bys', $this->_params) &&
       is_array($this->_params['order_bys']) &&
@@ -2002,9 +2027,8 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
       }
     }
 
-    if (!empty($orderBys)) {
-      $this->_orderBy = "ORDER BY " . implode(', ', $orderBys);
-    }
+    $this->_orderByArray = $orderBys;
+
     $this->assign('sections', $this->_sections);
   }
 

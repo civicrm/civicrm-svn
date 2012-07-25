@@ -228,12 +228,15 @@ abstract class CRM_Import_Parser {
    *
    * @var int
    */
-  public $_dedupeRuleGroupID = NULL; function __construct() {
+  public $_dedupeRuleGroupID = NULL; 
+
+  function __construct() {
     $this->_maxLinesToProcess = 0;
     $this->_maxErrorCount = self::MAX_ERRORS;
   }
 
   abstract function init();
+
   function run($tableName,
     &$mapper,
     $mode              = self::MODE_PREVIEW,
@@ -895,8 +898,7 @@ abstract class CRM_Import_Parser {
    * @return void
    * @access public
    */
-  static
-  function exportCSV($fileName, $header, $data) {
+  static function exportCSV($fileName, $header, $data) {
 
     if (file_exists($fileName) && !is_writable($fileName)) {
       CRM_Core_Error::movedSiteError($fileName);

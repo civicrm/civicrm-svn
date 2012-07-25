@@ -17,6 +17,7 @@
 <xi:include href="EntityFile.xml"           parse="xml" />
 <xi:include href="EntityFinancialTrxn.xml"  parse="xml" />
 <xi:include href="EntityTag.xml"            parse="xml" />
+<xi:include href="Extension.xml"            parse="xml" />
 <xi:include href="File.xml"                 parse="xml" />
 <xi:include href="FinancialAccount.xml"     parse="xml" />
 <xi:include href="FinancialTrxn.xml"        parse="xml" />

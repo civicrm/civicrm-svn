@@ -415,7 +415,8 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
           }
           else {
             $url = CRM_Utils_System::url('civicrm/contact/view',
-              'reset=1&cid=' . $rows[$rowNum]['civicrm_contact_household_id']
+              'reset=1&cid=' . $rows[$rowNum]['civicrm_contact_household_id'],
+              $this->_absoluteUrl
             );
 
             $rows[$rowNum]['civicrm_contact_household_household_name'] = "<a href='$url' title='" . ts('View contact summary for this househould') . "'>" . $value . '</a>';

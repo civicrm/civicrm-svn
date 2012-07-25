@@ -74,10 +74,8 @@ function civicrm_api3_relationship_create($params) {
   $ids['contact'] = $params['contact_id_a'];
 
   $relationshipBAO = CRM_Contact_BAO_Relationship::create($values, $ids);
-  if (is_a($relationshipBAO, 'CRM_Core_Error')) {
-    return civicrm_api3_create_error('Relationship can not be created');
-  }
-  elseif ($relationshipBAO[1]) {
+
+  if ($relationshipBAO[1]) {
     return civicrm_api3_create_error('Relationship is not valid');
   }
   elseif ($relationshipBAO[2]) {

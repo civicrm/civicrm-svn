@@ -30,6 +30,9 @@
 
 {include file="CRM/common/wysiwyg.tpl" includeWysiwygEditor=true}
 
+{* include overlay js *}
+{include file="CRM/common/overlay.tpl"}
+
 <div class="crm-actions-ribbon">
     <ul id="actions">
         {assign var='urlParams' value="reset=1"}
@@ -197,8 +200,10 @@
                     <div class="contact_panel">
                         <div class="contactCardLeft">
                            <div class="crm-table2div-layout">
-                              <div class="crm-clear crm-summary-block" id="email-block">
+                              <div class="crm-clear crm-summary-email-block">
+                                <div class="crm-summary-block" id="email-block">
                                   {include file="CRM/Contact/Page/Inline/Email.tpl"}
+                              </div>
                               </div>
 
                               {if $website}
@@ -223,9 +228,11 @@
 
                         <div class="contactCardRight">
                             <div class="crm-table2div-layout">
-                                <div class="crm-clear crm-summary-block" id="phone-block">
+                              <div class="crm-clear crm-summary-phone-block">
+                                <div class="crm-summary-block" id="phone-block">
                                   {include file="CRM/Contact/Page/Inline/Phone.tpl"}
                                 </div>
+                              </div>  
                                 {if $im}
                                 <div class="crm-clear crm-summary-block" id="im-block">
                                 {foreach from=$im item=item}
@@ -274,6 +281,7 @@
                 <div class="contactCardRight crm-address_{$locationIndex} crm-address-block">
                                         {/if}
 
+              {if $permission EQ 'edit'}
                 <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                   <div class="crm-table2div-layout">
                     <div class="crm-clear">
@@ -283,20 +291,25 @@
                         </div>
                   </div>
                 </div>
+                {/if}
               </div>
                         <div class="clear"></div>
             </div> <!-- end of contact panel -->
 
           <div class="contact_panel">
             <div class="contactCardLeft">
+              <div class="crm-summary-comm-pref-block">
               <div class="crm-summary-block" id="communication-pref-block" >
                 {include file="CRM/Contact/Page/Inline/CommunicationPreferences.tpl"} 
+              </div>
               </div>
             </div> <!-- contactCardLeft -->
             {if $contact_type eq 'Individual' AND $showDemographics}
               <div class="contactCardRight">
+                <div class="crm-summary-demographic-block">
                 <div class="crm-summary-block" id="demographic-block">
                   {include file="CRM/Contact/Page/Inline/Demographics.tpl"} 
+                </div>
                 </div>
               </div> <!-- contactCardRight -->
             {/if}
@@ -368,6 +381,7 @@
 <div class="clear"></div>
 </div><!-- /.crm-content-block -->
 
+{if $permission EQ 'edit'}
 {literal}
 <script type="text/javascript">
 
@@ -386,15 +400,17 @@ cj(function(){
     var cgId   = cj(this).attr('cgId');
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&groupID=' + cgId;
 
-    var response = cj.ajax({
-                    type: "GET",
+    addCiviOverlay('.crm-custom-set-block-' + cgId);   
+    cj.ajax({
                     data: {'class_name':'CRM_Contact_Form_Inline_CustomData'},
                     url: dataUrl,
                     async: false
-    }).responseText;
-
+    }).done( function( response ) {
     cj( '#custom-set-block-'+ cgId ).html( response );
 });
+
+    removeCiviOverlay('.crm-custom-set-block-' + cgId);   
+  });
   /* end of js for inline custom data */
 
   /* start of js for inline address */
@@ -416,18 +432,20 @@ cj(function(){
     var aid   = cj(this).attr('aid');
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&locno=' + locno + '&aid=' + aid ;
 
-    var response = cj.ajax({
-                    type: "GET",
+    addCiviOverlay('div.crm-address_' + locno);   
+    cj.ajax({ 
                     data: {'class_name':'CRM_Contact_Form_Inline_Address'},
                     url: dataUrl,
                     async: false
-    }).responseText;
-
+    }).done( function(response) {
     cj( '#address-block-'+ locno ).html( response );
+  });
+    
+    removeCiviOverlay('div.crm-address_' + locno);   
   });
   /* end of js for inline address data */
 });
 
 </script>
 {/literal}
-
+{/if}

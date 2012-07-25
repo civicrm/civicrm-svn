@@ -204,7 +204,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         $versionObject = $upgrade->incrementalPhpObject($rev);
         if (is_callable(array(
           $versionObject, 'setPreUpgradeMessage'))) {
-          $versionObject->setPreUpgradeMessage($preUpgradeMessage, $currentVer, $latestVer);
+          $versionObject->setPreUpgradeMessage($preUpgradeMessage, $rev);
         }
       }
     }

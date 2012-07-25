@@ -45,6 +45,7 @@
 
 require_once 'HTML/QuickForm/Controller.php';
 require_once 'HTML/QuickForm/Action/Direct.php';
+
 class CRM_Core_Controller extends HTML_QuickForm_Controller {
 
   /**
@@ -145,7 +146,9 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
    *
    * @return void
    *
-   */ function __construct($title = NULL, $modal = TRUE,
+   */
+
+  function __construct($title = NULL, $modal = TRUE,
     $mode = NULL, $scope = NULL,
     $addSequence = FALSE, $ignoreKey = FALSE
   ) {

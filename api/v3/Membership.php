@@ -125,14 +125,13 @@ function civicrm_api3_membership_create($params) {
 
   $action = CRM_Core_Action::ADD;
   // we need user id during add mode
-  $ids = array('userId' => $params['contact_id']);
-
+    $ids = array ();
+    if(CRM_Utils_Array::value('contact_id',$params)){
+      $ids['userId'] = $params['contact_id'];
+    }
   //for edit membership id should be present
   if (CRM_Utils_Array::value('id', $params)) {
-    $ids = array(
-      'membership' => $params['id'],
-      'userId' => $params['contact_id'],
-    );
+      $ids['membership'] = $params['id'];
     $action = CRM_Core_Action::UPDATE;
   }
 
@@ -289,15 +288,6 @@ function _civicrm_api3_membership_format_params($params, &$values, $create = FAL
 
     switch ($key) {
 
-      case 'membership_type_id':
-      	// @todo we can remove this because it will fail on an FK constraint
-      	// after it fails the 'create_error action will do some investigation
-      	// & return a useful message
-        if (!CRM_Utils_Array::value($value, CRM_Member_PseudoConstant::membershipType())) {
-          return civicrm_api3_create_error('Invalid Membership Type Id');
-        }
-        $values[$key] = $value;
-        break;
       case 'membership_type':
       	// @todo we still need to adequately figure out how to handle this @ the API layer.
       	// it is an FK & a pseudoconstant - we should probably alias it onto membership_type_id & 
@@ -318,14 +308,6 @@ function _civicrm_api3_membership_format_params($params, &$values, $create = FAL
           return civicrm_api3_create_error('Invalid Membership Type');
         }
         $values['membership_type_id'] = $membershipTypeId;
-        break;
-      case 'status_id':
-      	// @todo we can remove this because it will fail on an FK constraint
-      	// after it fails the 'create_error action will do some investigation
-        if (!CRM_Utils_Array::value($value, CRM_Member_PseudoConstant::membershipStatus())) {
-          return civicrm_api3_create_error('Invalid Membership Status Id');
-        }
-        $values[$key] = $value;
         break;
       default:
         break;

@@ -12,14 +12,15 @@ if ((int ) substr(PHP_VERSION, 0, 1) < 5) {
   exit();
 }
 
-include_once 'civicrm.settings.php';
+define('CIVICRM_SETTINGS_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm.settings.php');
+include_once CIVICRM_SETTINGS_PATH;
 
 civicrm_invoke();
+
 function civicrm_init() {
 
   require_once 'CRM/Core/ClassLoader.php';
-  $classLoader = new CRM_Core_ClassLoader();
-  $classLoader->register();
+  CRM_Core_ClassLoader::singleton()->register();
 
   require_once 'PEAR.php';
 

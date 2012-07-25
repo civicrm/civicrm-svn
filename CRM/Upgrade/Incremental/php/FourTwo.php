@@ -34,9 +34,37 @@
  */
 class CRM_Upgrade_Incremental_php_FourTwo {
   const BATCH_SIZE = 5000;
+  const SETTINGS_SNIPPET_PATTERN = '/CRM_Core_ClassLoader::singleton\(\)-\>register/';
+  const SETTINGS_SNIPPET = "\nrequire_once 'CRM/Core/ClassLoader.php';\nCRM_Core_ClassLoader::singleton()->register();\n";
 
   function verifyPreDBstate(&$errors) {
     return TRUE;
+  }
+
+  /**
+   * Compute any messages which should be displayed beforeupgrade
+   *
+   * @param $postUpgradeMessage string, alterable
+   * @param $currentVer the schema version according the database
+   * @param $latestVer the final, targetted schema version based on the codebase
+   * @return void
+   */
+  function setPreUpgradeMessage(&$preUpgradeMessage, $rev) {
+    if ($rev == '4.2.beta2') {  
+      // note: error conditions are also checked in upgrade_4_2_beta2()
+      if (!defined('CIVICRM_SETTINGS_PATH')) {
+        $preUpgradeMessage .= '<br />' . ts('Could not determine path to civicrm.settings.php. Please manually locate it and add these lines:<pre>%1</pre>', array(
+          1 => self::SETTINGS_SNIPPET,
+        ));
+      } elseif (preg_match(self::SETTINGS_SNIPPET_PATTERN, file_get_contents(CIVICRM_SETTINGS_PATH))) {
+        // OK, nothing to do
+      } elseif (!is_writable(CIVICRM_SETTINGS_PATH)) {
+        $preUpgradeMessage .= '<br />' . ts('The settings file (%1) must be updated. Please make it writable or manually add these lines:<pre>%2</pre>', array(
+          1 => CIVICRM_SETTINGS_PATH,
+          2 => self::SETTINGS_SNIPPET,
+        ));
+      }
+    }
   }
 
   /**
@@ -65,6 +93,17 @@ class CRM_Upgrade_Incremental_php_FourTwo {
       $this->addTask($title, 'task_4_2_alpha1_convertContributions', $startId, $endId);
     }
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: Event Profile'), 'task_4_2_alpha1_eventProfile');
+  }
+
+  function upgrade_4_2_beta2($rev) {
+    // note: error conditions are also checked in setPreUpgradeMessage()
+    if (defined('CIVICRM_SETTINGS_PATH')) {
+      if (!preg_match(self::SETTINGS_SNIPPET_PATTERN, file_get_contents(CIVICRM_SETTINGS_PATH))) {
+        if (is_writable(CIVICRM_SETTINGS_PATH)) {
+          file_put_contents(CIVICRM_SETTINGS_PATH, self::SETTINGS_SNIPPET, FILE_APPEND);
+        }
+      }
+    }
   }
 
   /**
@@ -421,7 +460,7 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
         'line_total' => $dao->fee_amount,
         'participant_count' => 1,
       );
-      if ($dao->is_monetary) {
+      if ($dao->is_monetary && $dao->price_field_id) {
         $lineParams += array(
           'price_field_id' => $dao->price_field_id,
           'price_field_value_id' => $dao->price_field_value_id,

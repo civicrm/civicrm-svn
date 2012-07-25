@@ -29,7 +29,8 @@
 /**
  *  Include configuration
  */
-require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+define('CIVICRM_SETTINGS_PATH', 'tests/phpunit/CiviTest/civicrm.settings.php');
+require_once CIVICRM_SETTINGS_PATH;
 
 /**
  *  Include class definitions
@@ -90,6 +91,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   public static $populateOnce = FALSE;
 
+  /*
+   * Allow classes to state E-notice compliance
+   */
+  public $_eNoticeCompliant = FALSE;
   /**
    *  @var boolean DBResetRequired allows skipping DB reset
    *               in specific test case. If you still need
@@ -135,8 +140,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     // also load the class loader
     require_once 'CRM/Core/ClassLoader.php';
-    $classLoader = new CRM_Core_ClassLoader();
-    $classLoader->register();
+    CRM_Core_ClassLoader::singleton()->register();
   }
 
   function requireDBReset() {
@@ -194,11 +198,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     $dbName = self::getDBName();
     $pdo    = self::$utils->pdo;
-    $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$dbName}'");
+    // only consider real tables and not views
+    $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$dbName}' AND TABLE_TYPE = 'BASE TABLE'");
 
     $truncates = array();
     $drops = array();
     foreach ($tables as $table) {
+      // skip log tables
+      if (substr($table['table_name'], 0, 4) == 'log_') {
+        continue;
+      }
+
       if (substr($table['table_name'], 0, 14) == 'civicrm_value_') {
         $drops[] = 'DROP TABLE ' . $table['table_name'] . ';';
       }
@@ -307,6 +317,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     $tablesToTruncate = array('civicrm_contact');
     $this->quickCleanup($tablesToTruncate);
+    if($this->_eNoticeCompliant ){
+      error_reporting(E_ALL);
+  }
+    else{
+      error_reporting(E_ALL & ~E_NOTICE);
+    }
   }
 
   /**
@@ -337,7 +353,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   /**
    *  Common teardown functions for all unit tests
    */
-  protected function tearDown() {}
+  protected function tearDown() {
+    error_reporting(E_ALL & ~E_NOTICE);
+  }
 
   /**
    *  FIXME: Maybe a better way to do it
@@ -620,6 +638,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   function membershipTypeCreate($contactID, $contributionTypeID = 1, $version = 3) {
     require_once 'CRM/Member/PseudoConstant.php';
     CRM_Member_PseudoConstant::flush('membershipType');
+    CRM_Core_Config::clearDBCache( );
     $params = array(
       'name' => 'General',
       'duration_unit' => 'year',
@@ -641,6 +660,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $result = civicrm_api('MembershipType', 'Create', $params);
     require_once 'CRM/Member/PseudoConstant.php';
     CRM_Member_PseudoConstant::flush('membershipType');
+    CRM_Utils_Cache::singleton()->flush();
     if (CRM_Utils_Array::value('is_error', $result) ||
       (!CRM_Utils_Array::value('id', $result) && !CRM_Utils_Array::value('id', $result['values'][0]))
     ) {
@@ -671,7 +691,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       !CRM_Utils_Array::value('id', $result)
     ) {
       if (CRM_Utils_Array::value('error_message', $result)) {
-        throw new Exception('Could not created membership, with message: ' . CRM_Utils_Array::value('error_message', $result));
+        throw new Exception('Could not create membership, with message: ' . CRM_Utils_Array::value('error_message', $result));
       }
       else {
         throw new Exception('Could not create membership' . ' - in line: ' . __LINE__);
@@ -1744,7 +1764,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     //unset hash field if it's in the values array because it changes every time so it makes the examples
     // change too often if we leave it there. Alternative is just to set it to something random I guess
-    if (is_array($result['values'])) {
+    if (isset($result['values']) && is_array($result['values'])) {
       foreach ($result['values'] as $key => $value) {
         if (is_array($value) && array_key_exists('hash', $value)) {
           unset($result['values'][$key]['hash']);
@@ -1849,6 +1869,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'option_value' => array('value1', 'value2'),
       'option_name' => array($name . '_1', $name . '_2'),
       'option_weight' => array(1, 2),
+      'option_status' => 1,
     );
 
     $params = array_merge($fieldParams, $optionGroup, $optionValue);
@@ -2033,7 +2054,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
    * Empty mail log in preparation for test
    */
   function prepareMailLog(){
-    if(!defined(CIVICRM_MAIL_LOG)){
+    if(!defined('CIVICRM_MAIL_LOG')){
       define( 'CIVICRM_MAIL_LOG', CIVICRM_TEMPLATE_COMPILEDIR . '/mail.log' );
     }
     $this->assertFalse(is_numeric(CIVICRM_MAIL_LOG) ,'we need to be able to log email to check receipt');

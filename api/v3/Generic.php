@@ -33,7 +33,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
   }
   if (empty($action)) {
     if (CRM_Utils_Array::value($entity . $subentity, $results) &&
-      CRM_Utils_Array::value('values', $results['entity'])
+      CRM_Utils_Array::value('values', $results[$entity . $subentity])
     ) {
       return $results[$entity . $subentity];
     }

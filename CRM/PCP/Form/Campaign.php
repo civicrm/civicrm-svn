@@ -77,6 +77,9 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
       if (isset($defaults['goal_amount'])) {
         $defaults['goal_amount'] = CRM_Utils_Money::format($defaults['goal_amount'], NULL, '%a');
       }
+
+      $defaults['pcp_title'] = CRM_Utils_Array::value('title', $defaults);
+      $defaults['pcp_intro_text'] = CRM_Utils_Array::value('intro_text', $defaults);
     }
 
     if ($this->get('action') & CRM_Core_Action::ADD) {

@@ -26,6 +26,7 @@
 {* template for building email block*}
 <div class="crm-table2div-layout" id="crm-email-content">
   <div class="crm-clear"> <!-- start of main -->
+     {if $permission EQ 'edit'}
      {if $email}
      <div class="crm-config-option">
       <a id="edit-email" class="hiddenElement crm-link-action" title="{ts}click to add or edit email addresses{/ts}">
@@ -39,7 +40,7 @@
         </a>
       </div>
     {/if}
- 
+     {/if}
   {foreach from=$email key="blockId" item=item}
     {if $item.email}
       <div class="crm-label">{$item.location_type}&nbsp;{ts}Email{/ts}</div>
@@ -61,6 +62,8 @@
 
 {literal}
 <script type="text/javascript">
+
+{/literal}{if $permission EQ 'edit'}{literal}
 cj(function(){
     cj('#email-block').mouseenter( function() {
       cj(this).addClass('crm-inline-edit-hover');
@@ -74,17 +77,20 @@ cj(function(){
 
     cj('#edit-email').click( function() {
         var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-        var response = cj.ajax({
-                        type: "GET",
+
+        addCiviOverlay('.crm-summary-email-block');
+        cj.ajax({ 
                         data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
                         url: dataUrl,
                         async: false
-					}).responseText;
-
+        }).done( function(response) {
 	    cj( '#email-block' ).html( response );
     });
-});
 
+        removeCiviOverlay('.crm-summary-email-block');
+});
+});
+{/literal}{/if}{literal}
 function showHideSignature( blockId ) {
   cj("#Email_Block_" + blockId + "_signature").show( );   
 

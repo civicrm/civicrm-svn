@@ -35,8 +35,7 @@
 class CRM_Bridge_OG_Utils {
   CONST aclEnabled = 1, syncFromCiviCRM = 1;
 
-  static
-  function aclEnabled() {
+  static function aclEnabled() {
     return self::aclEnabled;
   }
 
@@ -45,26 +44,22 @@ class CRM_Bridge_OG_Utils {
    * This was always false before, and is always true
    * now.  Most likely, this needs to be a setting.
    */
-  static
-  function syncFromCiviCRM() {
+  static function syncFromCiviCRM() {
     // make sure that acls are not enabled
     //RMT -- the following makes no f**king sense...
     //return ! self::aclEnabled & self::syncFromCiviCRM;
     return TRUE;
   }
 
-  static
-  function ogSyncName($ogID) {
+  static function ogSyncName($ogID) {
     return "OG Sync Group :{$ogID}:";
   }
 
-  static
-  function ogSyncACLName($ogID) {
+  static function ogSyncACLName($ogID) {
     return "OG Sync Group ACL :{$ogID}:";
   }
 
-  static
-  function ogID($groupID, $abort = TRUE) {
+  static function ogID($groupID, $abort = TRUE) {
     $source = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Group',
       $groupID,
       'source'
@@ -82,8 +77,7 @@ class CRM_Bridge_OG_Utils {
     return NULL;
   }
 
-  static
-  function contactID($ufID) {
+  static function contactID($ufID) {
     $contactID = CRM_Core_BAO_UFMatch::getContactId($ufID);
     if ($contactID) {
       return $contactID;
@@ -100,8 +94,7 @@ class CRM_Bridge_OG_Utils {
     return $contactID;
   }
 
-  static
-  function groupID($source, $title = NULL, $abort = FALSE) {
+  static function groupID($source, $title = NULL, $abort = FALSE) {
     $query = "
 SELECT id
   FROM civicrm_group

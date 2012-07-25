@@ -322,8 +322,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
    * @see valid_date
    */
 
-  static
-  function formRule($fields, $files, $errors) {
+  static function formRule($fields, $files, $errors) {
     $errors = array();
 
     return empty($errors) ? TRUE : $errors;
@@ -561,8 +560,16 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
     $transaction->commit();
 
     if ($result) {
+      // call the hook before we redirect
+      $this->postProcessHook();
+
       // set the template to thank you
-      CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'pid=' . $this->_surveyId . '&id=' . $this->_sendEmailMode . '&reset=1'));
+      $url =
+        CRM_Utils_System::url(
+          'civicrm/petition/thankyou',
+          'pid=' . $this->_surveyId . '&id=' . $this->_sendEmailMode . '&reset=1'
+        );
+      CRM_Utils_System::redirect($url);
     }
   }
 

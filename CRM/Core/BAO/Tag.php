@@ -55,8 +55,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $tag = new CRM_Core_DAO_Tag();
     $tag->copyValues($params);
     if ($tag->find(TRUE)) {
@@ -183,8 +182,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
     return $tags;
   }
 
-  static
-  function getTags($usedFor = 'civicrm_contact',
+  static function getTags($usedFor = 'civicrm_contact',
     &$tags = array(),
     $parentId  = NULL,
     $separator = '&nbsp;&nbsp;',
@@ -262,8 +260,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
    * @static
    *
    */
-  static
-  function del($id) {
+  static function del($id) {
     // delete all crm_entity_tag records with the selected tag id
     $entityTag = new CRM_Core_DAO_EntityTag();
     $entityTag->tag_id = $id;
@@ -301,8 +298,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
    * @access public
    * @static
    */
-  static
-  function add(&$params, &$ids) {
+  static function add(&$params, &$ids) {
     if (!self::dataExists($params)) {
       return NULL;
     }
@@ -363,8 +359,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
    * @access public
    * @static
    */
-  static
-  function dataExists(&$params) {
+  static function dataExists(&$params) {
     if (!empty($params['name'])) {
       return TRUE;
     }
@@ -381,8 +376,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
    * @access public
    * @static
    */
-  static
-  function getTagSet($entityTable) {
+  static function getTagSet($entityTable) {
     $tagSets = array();
     $query   = "SELECT name FROM civicrm_tag WHERE is_tagset=1 AND parent_id IS NULL and used_for LIKE '%{$entityTable}%'";
     $dao     = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray, TRUE, NULL, FALSE, FALSE);
@@ -399,8 +393,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
    * @access public
    * @static
    */
-  static
-  function getTagsNotInTagset() {
+  static function getTagsNotInTagset() {
     $tags = $tagSets = array();
     // first get all the tag sets
     $query = "SELECT id FROM civicrm_tag WHERE is_tagset=1 AND parent_id IS NULL";

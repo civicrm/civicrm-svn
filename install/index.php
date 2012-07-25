@@ -74,8 +74,7 @@ elseif ($installType == 'wordpress') {
 set_include_path(get_include_path() . PATH_SEPARATOR . $crmPath);
 
 require_once $crmPath . '/CRM/Core/ClassLoader.php';
-$classLoader = new CRM_Core_ClassLoader();
-$classLoader->register();
+CRM_Core_ClassLoader::singleton()->register();
 
 $docLink = CRM_Utils_System::docURL2('Installation and Upgrades', FALSE, 'Installation Guide');
 

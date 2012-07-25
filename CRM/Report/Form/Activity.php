@@ -531,7 +531,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
           if ($viewLinks) {
             foreach ($assigneeContactIds as $id => $value) {
               $url = CRM_Utils_System::url("civicrm/contact/view",
-                'reset=1&cid=' . $value
+                'reset=1&cid=' . $value,
+                $this->_absoluteUrl
               );
               $link[] = "<a title='" . $onHover . "' href='" . $url . "'>{$assigneeNames[$id]}</a>";
             }
@@ -549,7 +550,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
           if ($viewLinks) {
             foreach ($targetContactIds as $id => $value) {
               $url = CRM_Utils_System::url("civicrm/contact/view",
-                'reset=1&cid=' . $value
+                'reset=1&cid=' . $value,
+                $this->_absoluteUrl
               );
               $link[] = "<a title='" . $onHover . "' href='" . $url . "'>{$targetNames[$id]}</a>";
             }

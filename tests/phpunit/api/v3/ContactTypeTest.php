@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -33,7 +32,9 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_ContactTypeTest extends CiviUnitTestCase {
-  protected $_apiversion; function setUp() {
+  protected $_apiversion;
+  public $_eNoticeCompliant = TRUE;
+  function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
     $params = array(

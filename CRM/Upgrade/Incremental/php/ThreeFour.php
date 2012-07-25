@@ -120,8 +120,13 @@ class CRM_Upgrade_Incremental_php_ThreeFour {
       // turn a set of columns singlelingual
       $config = CRM_Core_Config::singleton();
       $tables = array('civicrm_address', 'civicrm_contact', 'civicrm_mailing', 'civicrm_mailing_component');
+      $triggers = array(array('when' => 'before', 'event' => 'update'), array('when' => 'before', 'event' => 'insert'));
+      
+      // FIXME: Doing require_once is a must here because a call like CRM_Core_I18n_SchemaStructure_3_4_beta2 makes
+      // class loader look for file like - CRM/Core/I18n/SchemaStructure/3/4/beta2.php which is not what we want to be loaded
+      require_once "CRM/Core/I18n/SchemaStructure_3_4_beta2.php";
       foreach ($tables as $table) {
-        CRM_Core_I18n_Schema::makeSinglelingualTable($config->lcMessages, $table, 'CRM_Core_I18n_SchemaStructure_3_4_beta2');
+        CRM_Core_I18n_Schema::makeSinglelingualTable($config->lcMessages, $table, 'CRM_Core_I18n_SchemaStructure_3_4_beta2', $triggers);
       }
     }
   }

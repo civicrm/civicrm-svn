@@ -75,6 +75,47 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     $this->_testOnlineRegistration($registerUrl, $numberRegistrations, $anonymous);
   }
 
+  function testAddPaidEventDiscount() {
+    $this->open($this->sboxPath);
+
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
+
+    // We need a payment processor
+    $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+    $this->webtestAddPaymentProcessor($processorName);
+
+    // Go directly to the URL of the screen that you will be testing (New Event).
+    $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
+
+    $eventTitle = 'My Conference - ' . substr(sha1(rand()), 0, 7);
+    $eventDescription = "Here is a description for this conference.";
+    $this->_testAddEventInfo($eventTitle, $eventDescription);
+
+    $streetAddress = "100 Main Street";
+    $this->_testAddLocation($streetAddress);
+
+    $this->_testAddReminder($eventTitle);
+
+    $this->_testAddFees(TRUE, FALSE, $processorName);
+
+    // intro text for registration page
+    $registerIntro = "Fill in all the fields below and click Continue.";
+    $multipleRegistrations = TRUE;
+    $this->_testAddOnlineRegistration($registerIntro, $multipleRegistrations);
+
+    $discountFees = array("225.00", "300.00"); 
+    $eventInfoStrings = array($eventTitle, $eventDescription, $streetAddress);
+    $this->_testVerifyEventInfo($eventTitle, $eventInfoStrings, $discountFees);
+
+    $registerStrings = array_push($discountFees, "Member", "Non-member", $registerIntro);
+    $registerUrl = $this->_testVerifyRegisterPage($registerStrings);
+
+    $numberRegistrations = 3;
+    $anonymous = TRUE;
+    $this->_testOnlineRegistration($registerUrl, $numberRegistrations, $anonymous);
+  }
+
   function testAddPaidEventWithTemplate() {
     $this->open($this->sboxPath);
 
@@ -250,7 +291,18 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     }
 
     if ($discount) {
-      // enter early bird discounts TBD
+      // enter early bird discount fees
+      $this->click("is_discount");
+      $this->waitForElementPresent("discount_name_1");
+      $this->type("discount_name_1", "Early-bird" . substr(sha1(rand()), 0, 7));
+      $this->webtestFillDate("discount_start_date_1", "-1 week");
+      $this->webtestFillDate("discount_end_date_1", "+2 week");
+      $this->click("_qf_Fee_submit");
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("discounted_value_2_1");
+      $this->type("discounted_value_1_1","225.00");
+      $this->type("discounted_value_2_1","300.00");
+      $this->click("xpath=//fieldset[@id='discount']/fieldset/table/tbody/tr[2]/td[3]/input");
     }
 
     $this->click("_qf_Fee_upload-bottom");
@@ -284,18 +336,22 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     $this->waitForTextPresent("'Registration' information has been saved.");
   }
 
-  function _testVerifyEventInfo($eventTitle, $eventInfoStrings) {
+  function _testVerifyEventInfo($eventTitle, $eventInfoStrings, $eventFees = NULL) {
     // verify event input on info page
     // start at Manage Events listing
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
     $this->click("link=$eventTitle");
 
-    $this->waitForPageToLoad('30000');
     // Look for Register button
     $this->waitForElementPresent("link=Register Now");
 
     // Check for correct event info strings
     $this->assertStringsPresent($eventInfoStrings);
+    
+    // Optionally verify event fees (especially for discounts)
+    if ($eventFees) {
+      $this->assertStringsPresent($eventFees);      
+  }
   }
 
   function _testVerifyRegisterPage($registerStrings) {

@@ -90,7 +90,8 @@ class civicrm_api3 {
       return;
     }
     if (isset($config) && isset($config['conf_path'])) {
-      require_once ($config['conf_path'] . '/civicrm.settings.php');
+      define('CIVICRM_SETTINGS_PATH', $config['conf_path'] . '/civicrm.settings.php');
+      require_once CIVICRM_SETTINGS_PATH;
       require_once 'CRM/Core/Config.php';
       require_once 'api/api.php';
       require_once "api/v3/utils.php";

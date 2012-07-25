@@ -98,7 +98,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
       }
       else {
         if (!empty($addresses) && array_key_exists(CRM_Utils_Array::value('location_type_id', $value), $addresses)) {
-          $value['id'] = $addresses[$value['location_type_id']];
+            $value['id'] = $addresses[CRM_Utils_Array::value('location_type_id', $value)];
         }
       }
 

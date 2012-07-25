@@ -164,6 +164,7 @@ class CRM_Core_Payment_BaseIPN {
       $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
     }
 
+    if (!empty($memberships)) {
     foreach ($memberships as $membership) {
       if ($membership) {
         $membership->status_id = 4;
@@ -174,6 +175,8 @@ class CRM_Core_Payment_BaseIPN {
         CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
       }
     }
+    }
+
     if ($participant) {
       $participant->status_id = 4;
       $participant->save();
@@ -214,6 +217,7 @@ class CRM_Core_Payment_BaseIPN {
       $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
     }
 
+    if (!empty($memberships)) {
     foreach ($memberships as $membership) {
       if ($membership) {
         $membership->status_id = 6;
@@ -223,6 +227,7 @@ class CRM_Core_Payment_BaseIPN {
         $params = array('status_id' => 6);
         CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
       }
+    }
     }
 
     if ($participant) {
@@ -271,10 +276,12 @@ class CRM_Core_Payment_BaseIPN {
         $values['receipt_from_name'] = $domainValues[0];
         $values['receipt_from_email'] = $domainValues[1];
       }
+
       $contribution->source = $source;
       if (CRM_Utils_Array::value('is_email_receipt', $values)) {
         $contribution->receipt_date = self::$_now;
       }
+
       if (!empty($memberships)) {
         foreach ($memberships as $membership) {
           if ($membership) {

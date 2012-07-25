@@ -36,7 +36,7 @@
  <div class="crm-accordion-body" id="addressBlock">
 {/if}
 
- <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-address-block" {/if}>
+ <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-address-block crm-address_{$blockId}"{/if}>
   {if $blockId gt 1}<fieldset><legend>{ts}Additional Address{/ts}</legend>{/if}
   <table class="form-layout-compressed crm-edit-address-form">
      {if $masterAddress.$blockId gt 0 }
@@ -72,11 +72,13 @@
          {include file=CRM/Contact/Form/Edit/Address/geo_code.tpl}
      </table>
         </td>
+        <td colspan="2">
+           <div class="crm-edit-address-custom_data crm-address-custom-set-block-{$blockId}"> 
+            {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
+            </div> 
+        </td>
      </tr>
   </table>
-  <div class="crm-edit-address-custom_data"> 
-  {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
-  </div> 
 
   {if $className eq 'CRM_Contact_Form_Contact'}
       <div id="addMoreAddress{$blockId}" class="crm-add-address-wrapper">

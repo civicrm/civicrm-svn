@@ -158,7 +158,7 @@ function civicrm_api3_create_error($msg, $data = array(
   }
   $data['is_error'] = 1;
   $data['error_message'] = $msg;
-  if (is_array($dao) && CRM_Utils_Array::value('api.has_parent', $dao['params'])) {
+  if (is_array($dao) && isset($dao['params']) && is_array($dao['params']) && CRM_Utils_Array::value('api.has_parent', $dao['params'])) {
     throw new Exception('Error in call to ' . $dao['entity'] . '_' . $dao['action'] . ' : ' . $msg);
   }
   return $data;
@@ -304,12 +304,15 @@ function _civicrm_api3_get_BAO($name) {
  */
 function _civicrm_api3_separate_values(&$values) {
   $sp = CRM_Core_DAO::VALUE_SEPARATOR;
-  foreach ($values as & $value) {
+  foreach ($values as $key => & $value) {
     if (is_array($value)) {
       _civicrm_api3_separate_values($value);
     }
     elseif (is_string($value)) {
-      if (strpos($value, $sp) !== FALSE) {
+      if($key == 'case_type_id'){// this is to honor the way case API was originally written
+        $value = trim(str_replace($sp, ',', $value), ',');
+      }
+      elseif (strpos($value, $sp) !== FALSE) {
         $value = explode($sp, trim($value, $sp));
       }
     }
@@ -424,7 +427,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   }
   // http://issues.civicrm.org/jira/browse/CRM-9150 - stick with 'simple' operators for now
   // support for other syntaxes is discussed in ticket but being put off for now
-  $acceptedSQLOperators = array('=', '<=', '>=', '>', '<', 'LIKE', "<>", "!=", "NOT LIKE", 'IN', 'NOT IN');
+  $acceptedSQLOperators = array('=', '<=', '>=', '>', '<', 'LIKE', "<>", "!=", "NOT LIKE", 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN');
   if (!$fields) {
     return;
   }
@@ -448,7 +451,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
               if (empty($criteria[0]) || empty($criteria[1])) {
                 throw new exception("invalid criteria for $operator");
               }
-              $dao->whereAdd(sprintf('%s BETWEEN "%s" AND "%s"', $field, CRM_Core_DAO::escapeString($criteria[0]), CRM_Core_DAO::escapeString($criteria[1])));
+              $dao->whereAdd(sprintf('%s ' . $operator . ' "%s" AND "%s"', $field, CRM_Core_DAO::escapeString($criteria[0]), CRM_Core_DAO::escapeString($criteria[1])));
               break;
 
             // n-ary operators
@@ -518,7 +521,9 @@ function _civicrm_api3_apply_filters_to_dao($filterField, $filterValue, &$dao) {
     $dao->whereAdd("($fieldName >= $filterValue )");
   }
   if($filterField == 'is_current' && $filterValue == 1){
-    $dao->whereAdd('(start_date <= NOW() OR start_date IS NULL) AND (end_date >= NOW() OR end_date IS NULL)');
+    $todayStart = date('Ymd000000', strtotime('now'));
+    $todayEnd = date('Ymd235959', strtotime('now'));
+    $dao->whereAdd("(start_date <= '$todayStart' OR start_date IS NULL) AND (end_date >= '$todayEnd' OR end_date IS NULL)");
     if(property_exists($dao, 'is_active')){
       $dao->whereAdd('is_active = 1');
     }
@@ -896,7 +901,7 @@ function _civicrm_api3_basic_create($bao_name, &$params) {
   else {
     $values = array();
     _civicrm_api3_object_to_array($bao, $values[$bao->id]);
-    return civicrm_api3_create_success($values, $params, $bao, 'create');
+    return civicrm_api3_create_success($values, $params, null, 'create', $bao);
   }
 }
 

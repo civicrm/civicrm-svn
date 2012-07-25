@@ -57,7 +57,8 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser {
 
   /**
    * class constructor
-   */ function __construct(&$mapperKeys, $mapperLocType = NULL, $mapperPhoneType = NULL) {
+   */ 
+  function __construct(&$mapperKeys, $mapperLocType = NULL, $mapperPhoneType = NULL) {
     parent::__construct();
     $this->_mapperKeys = &$mapperKeys;
   }
@@ -257,7 +258,6 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser {
    * @access public
    */
   function import($onDuplicate, &$values) {
-
 
     // first make sure this is a valid line
     $response = $this->summary($values);
@@ -562,16 +562,16 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser {
         $excludeIsAdmin
       );
       if (!CRM_Utils_Array::value('status_id', $formatted)) {
-        $formatted['status_id'] = $calcStatus['id'];
+        $formatted['status_id'] = CRM_Utils_Array::value('id', $calcStatus);
       }
       elseif (!CRM_Utils_Array::value('is_override', $formatted)) {
         if (empty($calcStatus)) {
-          array_unshift($values, "Status in import row (" . $formatValues['status_id'] . ") does not match calculated status based on your configured Membership Status Rules. Record was not imported.");
+          array_unshift($values, "Status in import row (" . CRM_Utils_Array::value('status_id', $formatValues) . ") does not match calculated status based on your configured Membership Status Rules. Record was not imported.");
           return CRM_Member_Import_Parser::ERROR;
         }
         elseif ($formatted['status_id'] != $calcStatus['id']) {
           //Status Hold" is either NOT mapped or is FALSE
-          array_unshift($values, "Status in import row (" . $formatValues['status_id'] . ") does not match calculated status based on your configured Membership Status Rules (" . $calcStatus['name'] . "). Record was not imported.");
+          array_unshift($values, "Status in import row (" . CRM_Utils_Array::value('status_id', $formatValues) . ") does not match calculated status based on your configured Membership Status Rules (" . $calcStatus['name'] . "). Record was not imported.");
           return CRM_Member_Import_Parser::ERROR;
         }
       }

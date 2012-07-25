@@ -388,11 +388,11 @@ class CRM_Core_PseudoConstant {
    * @access public
    * @static
    */
-  public static function populate(&$var, $name, $all = FALSE, $retrieve = 'name', $filter = 'is_active', $condition = NULL, $orderby = NULL, $key = 'id') {
+  public static function populate(&$var, $name, $all = FALSE, $retrieve = 'name', $filter = 'is_active', $condition = NULL, $orderby = NULL, $key = 'id', $force = NULL) {
     $cacheKey = "CRM_PC_{$name}_{$all}_{$key}_{$retrieve}_{$filter}_{$condition}_{$orderby}";
     $cache    = CRM_Utils_Cache::singleton();
     $var      = $cache->get($cacheKey);
-    if ($var) {
+    if ($var && empty($force)) {
       return $var;
     }
 
@@ -1941,11 +1941,20 @@ ORDER BY name";
    * @access public
    * @static
    *
-   * @return array - array reference of all system extensions
+   * @return array - array($fullyQualifiedName => $label) list of extensions
    */
   public static function &getExtensions() {
     if (!self::$extensions) {
-      self::$extensions = CRM_Core_OptionGroup::values('system_extensions');
+      self::$extensions = array();
+      $sql = '
+        SELECT full_name, label
+        FROM civicrm_extension
+        WHERE is_active = 1
+      ';
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      while ($dao->fetch()) {
+        self::$extensions[$dao->full_name] = $dao->label;
+    }
     }
 
     return self::$extensions;

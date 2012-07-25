@@ -53,8 +53,6 @@
 </div>
 {/if}
 
-{*{include file="CRM/common/langSwitch.tpl"}*}
-
 <div class="clear"></div>
 
 {if isset($localTasks) and $localTasks}

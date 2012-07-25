@@ -53,6 +53,11 @@ class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form {
       'Print PDF Letter',
       'name'
     );
+    $SMSId = CRM_Core_OptionGroup::getValue('activity_type',
+      'Text Message (SMS)',
+      'label'
+    );
+   
     if (CRM_Utils_Mail::validOutBoundMail() && $contactId) {
       list($name, $email, $doNotEmail, $onHold, $isDeseased) = CRM_Contact_BAO_Contact::getContactDetails($contactId);
       if (!$doNotEmail && $email && !$isDeseased) {
@@ -60,6 +65,13 @@ class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form {
       }
     }
 
+    if ($contactId && CRM_SMS_BAO_Provider::activeProviderCount()) {
+      list($name, $phone, $doNotSMS) = CRM_Contact_BAO_Contact_Location::getPhoneDetails($contactId);
+      if (!$doNotSMS && $phone) {
+        $sendSMS = array($SMSId  => ts('Send SMS'));
+        $activityTypes += $sendSMS;
+      }
+    }
     // this returns activity types sorted by weight
     $otherTypes = CRM_Core_PseudoConstant::activityType(FALSE);
 
@@ -71,6 +83,11 @@ class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form {
           "{$urlParams}{$typeId}", FALSE, NULL, FALSE
         );
       }
+       elseif ($typeId == $SMSId) {
+        $urls[$typeId] = CRM_Utils_System::url('civicrm/activity/sms/add',
+          "{$urlParams}{$typeId}", FALSE, NULL, FALSE
+        );
+        }
       elseif ($typeId == $letterTypeId) {
         $urls[$typeId] = CRM_Utils_System::url('civicrm/activity/pdf/add',
           "{$urlParams}{$typeId}", FALSE, NULL, FALSE

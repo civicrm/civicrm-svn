@@ -217,7 +217,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         if ($gId) {
           $email = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $gId, 'notify');
           if ($email) {
-            $val = CRM_Core_BAO_UFGroup::checkFieldsEmptyValues($gId, $contactID, $params[$key]);
+            $val = CRM_Core_BAO_UFGroup::checkFieldsEmptyValues($gId, $contactID, CRM_Utils_Array::value($key, $params), true );
             CRM_Core_BAO_UFGroup::commonSendMail($contactID, $val);
           }
         }
@@ -249,9 +249,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
       if (!$email) {
         list($displayName, $email) = CRM_Contact_BAO_Contact_Location::getEmailDetails($contactID);
       }
-
       if (empty($displayName)) {
-        $displayName = CRM_Contact_BAO_Contact::displayName($contactID);
+        list($displayName, $email) = CRM_Contact_BAO_Contact_Location::getEmailDetails($contactID);
       }
 
       //for display profile need to get individual contact id,
@@ -291,7 +290,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         'receiptFromEmail' => CRM_Utils_Array::value('receipt_from_email', $values),
         'contactID' => $contactID,
         'displayName' => $displayName,
-        'contributionID' => $values['contribution_id'],
+        'contributionID' => CRM_Utils_Array::value('contribution_id', $values),
         'contributionOtherID' => CRM_Utils_Array::value('contribution_other_id', $values),
         'membershipID' => CRM_Utils_Array::value('membership_id', $values),
         // CRM-5095

@@ -153,15 +153,23 @@ class CRM_Utils_File {
             CRM_Utils_File::cleanDir($object, $rmdir);
           }
           elseif (is_file($object)) {
-            $result = @unlink($object);
+            if (!unlink($object)) {
+              CRM_Core_Session::setStatus(ts('Unable to remove file %1', array(1 => $object)) . '<br/>');
           }
         }
+      }
       }
       closedir($sourcedir);
 
       if ($rmdir) {
-        $result = @rmdir($target);
+        if (rmdir($target)) {
+          CRM_Core_Session::setStatus(ts('Removed directory %1', array(1 => $target)) . '<br/>');
+          return TRUE;
       }
+        else {
+          CRM_Core_Session::setStatus(ts('Unable to remove directory %1', array(1 => $target)) . '<br/>');
+    }
+  }
     }
   }
 

@@ -41,12 +41,7 @@ class CRM_Core_Extensions {
   /**
    * An URL for public extensions repository
    */
-  CONST PUBLIC_EXTENSIONS_REPOSITORY = 'http://extdir.civicrm.org/';
-
-  /**
-   * The option group name
-   */
-  CONST OPTION_GROUP_NAME = 'system_extensions';
+  CONST DEFAULT_EXTENSIONS_REPOSITORY = 'http://extdir.civicrm.org/';
 
   /**
    * Extension info file name
@@ -94,6 +89,13 @@ class CRM_Core_Extensions {
   private $_remotesDiscovered = NULL;
 
   /**
+   * The URL of the remote extensions repository
+   *
+   * @var string
+   */
+  private $_repoUrl;
+
+  /**
    * Constructor - we're not initializing information here
    * since we don't want any database hits upon object
    * initialization.
@@ -125,12 +127,26 @@ class CRM_Core_Extensions {
         CRM_Core_Session::setStatus(ts('Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.',
             array(
               1 => $this->_extDir,
-              2 => $url,
+              2 => $url
             )
           ));
         $this->_extDir = NULL;
       }
     }
+  }
+
+  public function getRepositoryUrl() {
+    if (empty($this->_repoUrl)) {
+      $config = CRM_Core_Config::singleton();
+      $url = CRM_Core_BAO_Setting::getItem('Extension Preferences', 'ext_repo_url', NULL, self::DEFAULT_EXTENSIONS_REPOSITORY);
+      $vars = array(
+        '{ver}' => CRM_Utils_System::version(),
+        '{uf}' => $config->userFramework,
+        '{php}' => phpversion(),
+      );
+      $this->_repoUrl = strtr($url, $vars);
+    }
+    return $this->_repoUrl;
   }
 
   /**
@@ -296,19 +312,18 @@ class CRM_Core_Extensions {
    */
   private function _discoverInstalled($fullInfo = FALSE) {
     $result      = array();
-    $groupParams = array('name' => self::OPTION_GROUP_NAME);
-    $links       = array();
-    $ov          = CRM_Core_OptionValue::getRows($groupParams, $links);
-    foreach ($ov as $id => $entry) {
-      $ext = new CRM_Core_Extensions_Extension($entry['value'], $entry['grouping'], $entry['name'],
-        $entry['label'], $entry['description'], $entry['is_active']
+    $dao         = new CRM_Core_DAO_Extension();
+    $dao->find(); // TODO need bool?
+    while ($dao->fetch()) {
+      $ext = new CRM_Core_Extensions_Extension($dao->full_name, $dao->type, $dao->name,
+        $dao->label, $dao->file, $dao->is_active
       );
       $ext->setInstalled();
-      $ext->setId($id);
+      $ext->setId((integer)$dao->id);
       if ($fullInfo) {
         $ext->readXMLInfo();
       }
-      $result[$id] = $ext;
+      $result[(integer)$dao->id] = $ext;
     }
     return $result;
   }
@@ -522,7 +537,7 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of option value record
+   * @param int $id id of the extension record
    * @param boolean $is_active active state
    *
    * @return mixed result of CRM_Core_DAO::setFieldValue
@@ -547,7 +562,7 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of option value record
+   * @param int $id id of the extension record
    * @param string $key extension key
    *
    * @return void
@@ -578,7 +593,7 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of option value record
+   * @param int $id id of the extension record
    * @param string $key extension key
    *
    * @return void
@@ -587,7 +602,9 @@ class CRM_Core_Extensions {
     $this->populate();
     $e = $this->getExtensions();
     $ext = $e[$key];
-    $ext->uninstall();
+    if ($ext->uninstall()) {
+      return TRUE;
+  }
   }
 
   /**
@@ -598,22 +615,32 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of option value record
+   * @param int $id id of the extension record
    * @param string $key extension key
    *
    * @return void
    */
   public function upgrade($id, $key) {
     $this->populate();
-    // get installed and uninstall
+    
     $e = $this->getExtensionsByKey(TRUE);
     $ext = $e[$key];
+    if (! $ext->isUpgradeable()) {
     $ext->uninstall();
 
     // get fresh scope and install
     $e = $this->getExtensions();
     $ext = $e[$key];
     $ext->install();
+    } else {
+      // get the info.xml with newest downloadUrl
+      $remotes = $this->getRemoteByKey();
+      $remoteExt = $remotes[$key];
+      $remoteExt->upgrade();
+
+      // refresh
+      $e = $this->getExtensions();
+  }
   }
 
 
@@ -647,10 +674,10 @@ class CRM_Core_Extensions {
       ini_set('allow_url_fopen', 1);
     }
 
-    $extdir = file_get_contents(self::PUBLIC_EXTENSIONS_REPOSITORY);
+    $extdir = file_get_contents($this->getRepositoryUrl());
 
     if ($extdir === FALSE) {
-      CRM_Core_Session::setStatus(ts('The CiviCRM public extensions directory at %1 could not be contacted - please check your webserver can make external HTTP requests or contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => self::PUBLIC_EXTENSIONS_REPOSITORY)));
+      CRM_Core_Session::setStatus(ts('The CiviCRM public extensions directory at %1 could not be contacted - please check your webserver can make external HTTP requests or contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => $this->getRepositoryUrl())));
     }
 
     $lines = explode("\n", $extdir);
@@ -668,7 +695,7 @@ class CRM_Core_Extensions {
 
     if (empty($exts)) {
       if ($extdir !== FALSE) {
-        CRM_Core_Session::setStatus(ts('Could not retrieve a list of extensions from the CiviCRM public directory at %1 - please contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => self::PUBLIC_EXTENSIONS_REPOSITORY)));
+        CRM_Core_Session::setStatus(ts('Could not retrieve a list of extensions from the CiviCRM public directory at %1 - please contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => $this->getRepositoryUrl())));
       }
       $exts = array();
     }
@@ -697,7 +724,7 @@ class CRM_Core_Extensions {
 
     $path     = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache';
     $filename = $path . DIRECTORY_SEPARATOR . $key . '.xml';
-    $url      = self::PUBLIC_EXTENSIONS_REPOSITORY . '/' . $key . '.xml';
+    $url      = $this->getRepositoryUrl() . '/' . $key . '.xml';
 
     if (!$cached || !file_exists($filename)) {
       file_put_contents($filename, file_get_contents($url));

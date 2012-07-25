@@ -72,7 +72,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
     // go to tag tab and add to new tag
     $this->click("css=li#tab_tag a");
-    $this->waitForElementPresent("css=ul#tagtree");
+    $this->waitForElementPresent("css=div#tagtree");
     $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");
     $this->waitForElementPresent("css=.msgok");
     // is status message correct?
@@ -84,9 +84,9 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("link=Add Event Registration");
     $this->waitForElementPresent("note");
     // fall fundraiser dinner event label is variable
-    $this->select("event_id", "index=1");
+    $this->select("event_id", "value=1");
     $this->waitForElementPresent("receipt_text");
-    $this->select("role_id", "Volunteer");
+    $this->click("role_id[2]");
     $this->check("record_contribution");
     $this->waitForElementPresent("contribution_status_id");
     $this->select("payment_instrument_id", "Check");
@@ -107,6 +107,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->select("frequency_unit", "month(s)");
     $this->click("_qf_Pledge_upload-bottom");
     $this->waitForPageToLoad("30000");
+
     $this->assertTrue($this->isTextPresent("Pledge has been recorded and the payment schedule has been created."));
 
     // go to Membership tab and add membership
@@ -115,10 +116,13 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("link=Add Membership");
     $this->waitForElementPresent("send_receipt");
     //let the organisation be default (inner City Arts)
+    $this->select("membership_type_id[0]", "label=Inner City Arts");
+    $this->click("membership_type_id[1]");
     $this->select("membership_type_id[1]", "Student");
     $this->type("source", "membership source$firstName");
     $this->click("_qf_Membership_upload-bottom");
     $this->waitForPageToLoad("30000");
+  
     $this->assertTrue($this->isTextPresent("Student membership for $firstName adv$firstName has been added"));
 
     // go to relationship tab and add relationship
@@ -127,14 +131,9 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("link=Add Relationship");
     $this->waitForElementPresent("_qf_Relationship_cancel");
     $this->select("relationship_type_id", "Employee of");
-    $this->fillAutoComplete("Compasspoint", "rel_contact");
+    $this->fillAutoComplete("Compasspoint", "contact_1");
     $this->waitForElementPresent("details-save");
     $this->click("details-save");
-    $this->waitForElementPresent("css=div.dataTables_paginate");
-    $this->waitForElementPresent("xpath=//table/tbody//tr[1]/td[1]/input");
-    $this->click("xpath=//table/tbody//tr[1]/td[1]/input");
-    $this->waitForElementPresent("_qf_Relationship_upload");
-    $this->click("_qf_Relationship_upload");
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent("1 new relationship record created."));
 
@@ -150,18 +149,17 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $searchBlockValues = array(
       'basic' => array('', 'addBasicSearchDetail'),
       'location' => array('state_province', 'addAddressSearchDetail'),
-      'demographics' => array('CIVICRM_QFID_3_Transge', 'addDemographicSearchDetail'),
+      'demographics' => array('civicrm_gender_Transgender_3', 'addDemographicSearchDetail'),
       'notes' => array('note', ''),
       'activity' => array('activity_status[5]', 'addActivitySearchDetail'),
       'CiviContribute' => array('contribution_currency_type', 'addContributionSearchDetail'),
       'CiviEvent' => array('participant_fee_amount_high', 'addParticipantSearchDetail'),
       'CiviMember' => array('member_end_date_high', 'addMemberSearchDetail'),
       'CiviPledge' => array('pledge_in_honor_of', 'addPledgeSearchDetail'),
-      'relationship' => array('CIVICRM_QFID_2_All', ''),
+      'relationship' => array("xpath=//div[@id='relationship']/table/tbody/tr//td/label[text()='Relationship Status']/../label[text()='All']", ''),
     );
 
     foreach ($searchBlockValues as $block => $blockValues) {
-
       switch ($block) {
         case 'basic':
           $this->$blockValues[1]($firstName, $groupName, $tagName);
@@ -249,9 +247,9 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad("30000");
     // verify unique name
-    $this->verifyText("xpath=//table//tr/descendant::td[3]/a", preg_quote("adv$firstName, $firstName"));
+    $this->verifyText("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a", preg_quote("adv$firstName, $firstName"));
     // should give 1 result only as we are searching with unique name
-    $this->waitForText("xpath=//div[@id='search-status']/table/tbody/tr[1]/descendant::td[1]", preg_quote("1 Result"));
+    $this->waitForText("xpath=//div[@id='search-status']/table/tbody/tr/td", preg_quote("1 Contact"));
     // click to edit search
     $this->click("xpath=//form[@id='Advanced']//div[2]/div/div[1]");
   }
@@ -268,10 +266,8 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     );
   }
 
-
   // function to fill basic search detail
   function addBasicSearchDetail($firstName, $groupName, $tagName) {
-
     // fill partial sort name
     $this->type("sort_name", "$firstName");
     // select subtype
@@ -281,9 +277,10 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     // select tag
     $this->select("crmasmSelect2", "label=$tagName");
     // select prefered language
-    $this->select("preferred_language", "English");
+    $this->select("preferred_language", "value=en_US");
     // select privacy
-    $this->check("privacy[do_not_email]");
+    $this->select("privacy_options", "value=do_not_email");
+    
     // select preferred communication method
     // phone
     $this->check("preferred_communication_method[1]");
@@ -293,7 +290,6 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
   // function to fill address search block values in advance search
   function addAddressSearchDetail($firstName) {
-
     // select location type (home and main)
     $this->click("xpath=//div[@id='location']/table/tbody/tr[1]/td[1]//label[text()='Home']");
     $this->click("xpath=//div[@id='location']/table/tbody/tr[1]/td[1]//label[text()='Main']");
@@ -312,7 +308,6 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
   // function to fill activity search block in advance search
   function addActivitySearchDetail($firstName) {
-
     // check activity types
     $checkActivityTypes = array("Contribution", "Event Registration", "Membership Signup");
     foreach ($checkActivityTypes as $labels) {
@@ -323,26 +318,26 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("activity_date_high", "+1 day");
     $this->type("activity_subject", "Student - membership source$firstName - Status: New");
     // fill activity status
-    $this->click("xpath=//div[@id='activity']/table/tbody/tr[4]/td[2]//label[text()='Scheduled']");
-    $this->click("xpath=//div[@id='activity']/table/tbody/tr[4]/td[2]//label[text()='Completed']");
+ 
+    $this->click("xpath=//div[@id='activity']/table/tbody//tr/td[2]/label[text()='Activity Status']/../label[text()='Scheduled']");
+    $this->click("xpath=//div[@id='activity']/table/tbody//tr/td[2]/label[text()='Activity Status']/../label[text()='Completed']");
   }
 
   // function to fill demographic search details
   function addDemographicSearchDetail() {
-
     // fill birth date range
     $this->webtestFillDate("birth_date_low", "-3 year");
-    $this->webtestFillDate("birth_date_high", "+1 year");
+    $this->webtestFillDate("birth_date_high", "now");
     // fill deceased date range
+    $this->click("xpath=//div[@id='demographics']/table/tbody//tr/td/label[text()='Deceased']/../label[text()='Yes']");
     $this->webtestFillDate("deceased_date_low", "-1 month");
     $this->webtestFillDate("deceased_date_high", "+1 month");
     // fill gender (male)
-    $this->check("CIVICRM_QFID_2_Male");
+    $this->check("civicrm_gender_Male_2"); 
   }
 
   //function to fill contribution search details
   function addContributionSearchDetail($firstName) {
-
     // fill contribution date range
     $this->webtestFillDate("contribution_date_low", "-1 day");
     $this->webtestFillDate("contribution_date_high", "+1 day");
@@ -364,15 +359,14 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
   // function to fill participant search details
   function addParticipantSearchDetail() {
-
     // fill event name
     $this->fillAutoComplete("Fall Fundraiser Dinner", "event_name");
     // fill event type
     $this->fillAutoComplete("Fundraiser", "event_type");
     // check participant status (registered)
-    $this->click("xpath=//div[@id='participantForm']/table/tbody/tr[3]/td[1]/div[1]//div/label[text()='Registered']");
+    $this->click("xpath=//div[@id='participantForm']/table/tbody//tr/td/label[text()='Participant Status']/../div//div/label[text()='Registered']");
     // check participant role (Volunteer)
-    $this->click("xpath=//div[@id='participantForm']/table/tbody/tr[3]/td[2]/div[1]//div/label[text()='Volunteer']");
+    $this->click("xpath=//div[@id='participantForm']/table/tbody//tr/td/label[text()='Participant Role']/../div//div/label[text()='Volunteer']");
     // fill participant fee level (couple)
     $this->fillAutoComplete("Couple", "participant_fee_level");
     // fill amount range
@@ -382,7 +376,6 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
   // function to fill member search details
   function addMemberSearchDetail($firstName) {
-
     // check membership type (Student)
     $this->click("xpath=//div[@id='memberForm']/table/tbody/tr[1]/td[1]/div[1]//div/label[text()='Student']");
     // check membership status (completed)
@@ -405,19 +398,18 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
   // function to fill member search details
   function addPledgeSearchDetail($firstName) {
-
     // fill pledge schedule date range
     $this->webtestFillDate("pledge_payment_date_low", "-1 day");
     $this->webtestFillDate("pledge_payment_date_high", "+1 day");
     // fill Pledge payment status
-    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[2]/td[1]//label[text()='Completed']");
-    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[2]/td[1]//label[text()='Pending']");
+    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[5]/td[2]//label[text()='Completed']");
+    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[5]/td[2]//label[text()='Pending']");
     // fill pledge amount range
     $this->type("pledge_amount_low", "100");
     $this->type("pledge_amount_high", "300");
     // fill plegde status
-    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[3]/td[2]//label[text()='Completed']");
-    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[3]/td[2]//label[text()='Pending']");
+    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[4]/td//label[text()='Completed']");
+    $this->click("xpath=//div[@id='pledgeForm']/table/tbody/tr[4]/td//label[text()='Pending']");
     // fill pledge created date range
     $this->webtestFillDate("pledge_create_date_low", "-5 day");
     $this->webtestFillDate("pledge_create_date_high", "+5 day");
@@ -425,13 +417,11 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("pledge_start_date_low", "-2 day");
     $this->webtestFillDate("pledge_start_date_high", "+2 day");
     // fill contribution type
-    $this->select("pledge_contribution_type_id", "Donation");
+    $this->select("pledge_contribution_type_id", "label=Donation");
   }
-
 
   // function to create contact with details (contact details, address, Constituent information ...)
   function createDetailContact($firstName = NULL) {
-
     if (!$firstName) {
       $firstName = substr(sha1(rand()), 0, 7);
     }
@@ -456,7 +446,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("customData1");
     $this->waitForElementPresent("custom_3_-1");
 
-    $this->check("CIVICRM_QFID_Edu_Educati");
+    $this->click("CIVICRM_QFID_Edu_2");    
     $this->select("custom_2_-1", "label=Single");
 
     // --- fill few values in address
@@ -480,7 +470,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->check("preferred_communication_method[1]");
     // email
     $this->check("preferred_communication_method[2]");
-    $this->select("preferred_language", "label=English");
+    $this->select("preferred_language", "value=en_US");
 
     // --- fill few value in notes
     $this->click("//form[@id='Contact']/div[2]/div[6]/div[1]");
@@ -491,10 +481,12 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     // --- fill few values in demographics
     $this->click("//form[@id='Contact']/div[2]/div[7]/div[1]");
     $this->waitForElementPresent("is_deceased");
-    $this->check("CIVICRM_QFID_2_Male");
+    $this->click("civicrm_gender_Male_2");
+        
     $this->webtestFillDate("birth_date", "-1 year");
-    $this->check("is_deceased");
-    $this->webtestFillDate("deceased_date", "0 months");
+    $this->click("is_deceased");
+    $this->waitForElementPresent("deceased_date");
+    $this->webtestFillDate("deceased_date", "now");
 
     // save contact
     $this->click("_qf_Contact_upload_view");

@@ -532,7 +532,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
     }
     else {
       // at worst, take source for recently viewed display
-      $recentContactId = $params['source_contact_id'];
+      $recentContactId = CRM_Utils_Array::value('source_contact_id',$params);
     }
 
     if (isset($params['assignee_contact_id'])) {
@@ -2598,7 +2598,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
       }
 
       foreach ($customValues as $key => $value) {
-        if ($value) {
+        if ($value !== NULL) { // CRM-10542
           if (in_array($key, $htmlType)) {
             $fileValues = CRM_Core_BAO_File::path($value, $params['activityID']);
             $customParams["custom_{$key}_-1"] = array(

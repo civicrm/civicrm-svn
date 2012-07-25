@@ -47,8 +47,9 @@ class api_v3_DomainTest extends CiviUnitTestCase {
 
   public $DBResetRequired = FALSE;
 
-  protected $_apiversion;
+  protected $_apiversion = 3;
   protected $params;
+  public $_eNoticeCompliant = TRUE;
 
   /**
    *  Constructor
@@ -66,12 +67,29 @@ class api_v3_DomainTest extends CiviUnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
+
+    // taken from form code - couldn't find good method to use
+    $params['entity_id'] = 1;
+    $params['entity_table'] = CRM_Core_BAO_Domain::getTableName();
+    $domain = 1;    
+    $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
+    $location = array();
+    $params['address'][1]['location_type_id'] = $defaultLocationType->id;
+    $params['phone'][1]['location_type_id'] = $defaultLocationType->id;
+    $params['phone'][1]['phone_type_id'] = 1;
+    $params['email'][1]['location_type_id'] = $defaultLocationType->id;
+    $params['email'][1]['email'] = 'my@email.com';
+    $params['phone'][1]['phone'] = '456-456';
+    $params['address'][1]['street_address'] = '45 Penny Lane';
+    $location = CRM_Core_BAO_Location::create($params, TRUE, 'domain');
+    $domUpdate = civicrm_api('domain','create',array('id' => 1, 'loc_block_id' => $location['id'], 'version' => $this->_apiversion));
     $this->_apiversion = 3;
     $this->params = array(
       'name' => 'A-team domain',
       'description' => 'domain of chaos',
-      'version' => 3,
-      'domain_version' => '3.4.1',
+      'version' => $this->_apiversion,
+      'domain_version' => '4.2',
+      'loc_block_id' => $location['id'],
     );
   }
 
@@ -81,7 +99,9 @@ class api_v3_DomainTest extends CiviUnitTestCase {
    *
    * @access protected
    */
-  protected function tearDown() {}
+  protected function tearDown() {
+
+  }
 
   ///////////////// civicrm_domain_get methods
 
@@ -90,7 +110,7 @@ class api_v3_DomainTest extends CiviUnitTestCase {
    * Testing mainly for format.
    */
   public function testGet() {
-    $this->cleanDB();
+
 
     $params = array('version' => 3);
     $result = civicrm_api('domain', 'get', $params);
@@ -119,7 +139,6 @@ class api_v3_DomainTest extends CiviUnitTestCase {
   public function testGetCurrentDomain() {
     $params = array('version' => 3, 'current_domain' => 1);
     $result = civicrm_api('domain', 'get', $params);
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
 
     $this->assertType('array', $result, 'In line' . __LINE__);
 
@@ -138,6 +157,9 @@ class api_v3_DomainTest extends CiviUnitTestCase {
       $this->assertArrayHasKey('domain_email', $domain, 'In line' . __LINE__);
       $this->assertArrayHasKey('domain_phone', $domain, 'In line' . __LINE__);
       $this->assertArrayHasKey('domain_address', $domain, 'In line' . __LINE__);
+      $this->assertEquals("my@email.com",$domain['domain_email']);
+      $this->assertEquals("456-456",$domain['domain_phone']['phone']);
+      $this->assertEquals("45 Penny Lane",$domain['domain_address']['street_address']);
     }
   }
 

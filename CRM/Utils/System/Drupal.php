@@ -77,12 +77,6 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
     $config->inCiviCRM = TRUE;
 
     $form = drupal_retrieve_form('user_register_form', $form_state);
-
-    drupal_prepare_form('user_register_form', $form, $form_state);
-
-    // remove the captcha element from the form prior to processing
-    unset($form['captcha']);
-
     $form_state['process_input'] = 1;
     $form_state['submitted'] = 1;
 
@@ -93,14 +87,9 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
     if (form_get_errors()) {
       return FALSE;
     }
-
-    //Fetch id of newly added user
-    $uid = db_query(
-      "SELECT uid FROM {users} WHERE name = :name",
-      array(':name' => $params['cms_name'])
-    )->fetchField();
-
-    return $uid;
+    else {
+      return $form_state['user']->uid;
+  }
   }
 
   /*

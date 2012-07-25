@@ -39,8 +39,7 @@
  */
 class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
 
-  static
-  function getMapping($id = NULL) {
+  static function getMapping($id = NULL) {
     static $_action_mapping;
 
     if ($id && !is_null($_action_mapping) && isset($_action_mapping[$id])) {
@@ -73,8 +72,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
    * @static
    * @access public
    */
-  static
-  function getSelection($id = NULL) {
+  static function getSelection($id = NULL) {
     $mapping = self::getMapping($id);
 
     $activityStatus = CRM_Core_PseudoConstant::activityStatus();
@@ -231,8 +229,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     );
   }
 
-  static
-  function getSelection1($id = NULL) {
+  static function getSelection1($id = NULL) {
     $mapping = self::getMapping($id);
     $sel4    = $sel5 = array();
     $options = array('manual' => ts('Choose Recipient(s)'),
@@ -287,8 +284,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
    * @static
    * @access public
    */
-  static
-  function &getList($namesOnly = FALSE, $entityValue = NULL, $id = NULL) {
+  static function &getList($namesOnly = FALSE, $entityValue = NULL, $id = NULL) {
     $activity_type = CRM_Core_PseudoConstant::activityType(FALSE) + CRM_Core_PseudoConstant::activityType(FALSE, TRUE);
     $activity_status = CRM_Core_PseudoConstant::activityStatus();
 
@@ -374,8 +370,7 @@ WHERE   cas.entity_value = $id AND
     return $list;
   }
 
-  static
-  function sendReminder($contactId, $email, $scheduleID, $from, $tokenParams) {
+  static function sendReminder($contactId, $email, $scheduleID, $from, $tokenParams) {
 
     $schedule = new CRM_Core_DAO_ActionSchedule();
     $schedule->id = $scheduleID;
@@ -502,8 +497,7 @@ WHERE   cas.entity_value = $id AND
    * @static
    *
    */
-  static
-  function add(&$params, &$ids) {
+  static function add(&$params, &$ids) {
     $actionSchedule = new CRM_Core_DAO_ActionSchedule();
     $actionSchedule->copyValues($params);
 
@@ -522,8 +516,7 @@ WHERE   cas.entity_value = $id AND
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$values) {
+  static function retrieve(&$params, &$values) {
     if (empty($params)) {
       return NULL;
     }
@@ -549,8 +542,7 @@ WHERE   cas.entity_value = $id AND
    * @access public
    * @static
    */
-  static
-  function del($id) {
+  static function del($id) {
     if ($id) {
       $dao = new CRM_Core_DAO_ActionSchedule();
       $dao->id = $id;
@@ -571,13 +563,11 @@ WHERE   cas.entity_value = $id AND
    * @return Object             DAO object on success, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Core_DAO_ActionSchedule', $id, 'is_active', $is_active);
   }
 
-  static
-  function sendMailings($mappingID, $now) {
+  static function sendMailings($mappingID, $now) {
     $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
     $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
 
@@ -735,8 +725,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
     }
   }
 
-  static
-  function buildRecipientContacts($mappingID, $now) {
+  static function buildRecipientContacts($mappingID, $now) {
     $actionSchedule = new CRM_Core_DAO_ActionSchedule();
     $actionSchedule->mapping_id = $mappingID;
     $actionSchedule->is_active = 1;
@@ -955,8 +944,7 @@ INNER JOIN {$reminderJoinClause}
     }
   }
 
-  static
-  function processQueue($now = NULL) {
+  static function processQueue($now = NULL) {
     $now = $now ? CRM_Utils_Time::setTime($now) : CRM_Utils_Time::getTime();
 
     $mappings = self::getMapping();
@@ -972,8 +960,7 @@ INNER JOIN {$reminderJoinClause}
     return $result;
   }
 
-  static
-  function isConfigured($id, $mappingID) {
+  static function isConfigured($id, $mappingID) {
     $queryString = "SELECT count(id) FROM civicrm_action_schedule
                         WHERE  mapping_id = %1 AND
                                entity_value = %2";
@@ -984,8 +971,7 @@ INNER JOIN {$reminderJoinClause}
     return CRM_Core_DAO::singleValueQuery($queryString, $params);
   }
 
-  static
-  function getRecipientListing($mappingID, $recipientType) {
+  static function getRecipientListing($mappingID, $recipientType) {
     $options = array();
     if (!$mappingID || !$recipientType) {
       return $options;

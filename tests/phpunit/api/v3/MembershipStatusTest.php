@@ -27,13 +27,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
-
-require_once 'api/v3/Membership.php';
-require_once 'api/v3/MembershipStatus.php';
-require_once 'api/v3/MembershipType.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_MembershipStatusTest extends CiviUnitTestCase {
 
@@ -41,7 +34,10 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
   protected $_contributionTypeID;
   protected $_membershipTypeID;
   protected $_membershipStatusID;
-  protected $_apiversion; function get_info() {
+  public $_eNoticeCompliant = TRUE;
+  protected $_apiversion; 
+  
+  function get_info() {
     return array(
       'name' => 'MembershipStatus Calc',
       'description' => 'Test all MembershipStatus Calc API methods.',
@@ -56,7 +52,6 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
     $this->_membershipTypeID = $this->membershipTypeCreate($this->_contactID);
     $this->_membershipStatusID = $this->membershipStatusCreate('test status');
 
-    require_once 'CRM/Member/PseudoConstant.php';
     CRM_Member_PseudoConstant::membershipType($this->_membershipTypeID, TRUE);
     CRM_Member_PseudoConstant::membershipStatus(NULL, NULL, 'name', TRUE);
   }
@@ -241,10 +236,7 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
      */
   function testDeleteWithMembershipError() {
     $membershipStatusID = $this->membershipStatusCreate();
-
     $this->_contactID = $this->individualCreate();
-
-
     $this->_entity = 'membership';
     $params = array(
       'contact_id' => $this->_contactID,
@@ -257,7 +249,6 @@ class api_v3_MembershipStatusTest extends CiviUnitTestCase {
       'status_id' => $membershipStatusID,
       'version' => 3,
     );
-
 
     $result = civicrm_api('membership', 'create', $params);
     $membershipID = $result['id'];

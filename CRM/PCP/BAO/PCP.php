@@ -55,8 +55,7 @@ class CRM_PCP_BAO_PCP extends CRM_PCP_DAO_PCP {
    *
    * @return object
    */
-  static
-  function add(&$params, $pcpBlock = TRUE) {
+  static function add(&$params, $pcpBlock = TRUE) {
     if ($pcpBlock) {
       // action is taken depending upon the mode
       $dao = new CRM_PCP_DAO_PCPBlock();
@@ -96,8 +95,7 @@ class CRM_PCP_BAO_PCP extends CRM_PCP_DAO_PCP {
    * @static
    * @access public
    */
-  static
-  function displayName($id) {
+  static function displayName($id) {
     $id = CRM_Utils_Type::escape($id, 'Integer');
 
     $query = "
@@ -116,8 +114,7 @@ WHERE  civicrm_pcp.contact_id = civicrm_contact.id
    * @access public
    * @static
    */
-  static
-  function getPcpDashboardInfo($contactId) {
+  static function getPcpDashboardInfo($contactId) {
     $links = self::pcpLinks();
 
     $query = "                                                                                                                                                                                                  SELECT * FROM civicrm_pcp pcp                                                                                                                                                                              WHERE pcp.is_active = 1 AND                                                                                                                                                                                      pcp.contact_id = %1                                                                                                                                                                                  ORDER BY page_type, page_id";
@@ -229,8 +226,7 @@ ORDER BY target_entity_type, target_entity_id
    *
    * @return total amount
    */
-  static
-  function thermoMeter($pcpId) {
+  static function thermoMeter($pcpId) {
     $query = "
 SELECT SUM(cc.total_amount) as total
 FROM civicrm_pcp pcp 
@@ -252,8 +248,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    *
    * @return array $honor
    */
-  static
-  function honorRoll($pcpId) {
+  static function honorRoll($pcpId) {
     $query = "
             SELECT cc.id, cs.pcp_roll_nickname, cs.pcp_personal_note,
                    cc.total_amount, cc.currency
@@ -279,8 +274,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    * @return array (reference) of action links
    * @static
    */
-  static
-  function &pcpLinks() {
+  static function &pcpLinks() {
     if (!(self::$_pcpLinks)) {
       $deleteExtra = ts('Are you sure you want to delete this Personal Campaign Page?') . '\n' . ts('This action cannot be undone.');
 
@@ -552,8 +546,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    * @static
    *
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     switch ($is_active) {
       case 0:
         $is_active = 3;
@@ -594,8 +587,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    * @static
    *
    */
-  static
-  function sendStatusUpdate($pcpId, $newStatus, $isInitial = FALSE, $component = 'contribute') {
+  static function sendStatusUpdate($pcpId, $newStatus, $isInitial = FALSE, $component = 'contribute') {
     $pcpStatus = CRM_PCP_PseudoConstant::pcpStatus();
     $config = CRM_Core_Config::singleton();
 
@@ -696,8 +688,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    * @static
    *
    */
-  static
-  function setDisable($id, $is_active) {
+  static function setDisable($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_PCP_DAO_PCP', $id, 'is_active', $is_active);
   }
 
@@ -711,8 +702,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    * @static
    *
    */
-  static
-  function getStatus($pcpId, $component) {
+  static function getStatus($pcpId, $component) {
     $query = "
          SELECT pb.is_active
          FROM civicrm_pcp pcp
@@ -736,8 +726,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    * @static
    *
    */
-  static
-  function getPcpBlockStatus($pageId, $component) {
+  static function getPcpBlockStatus($pageId, $component) {
     $query = "
      SELECT pb.link_text as linkText
      FROM civicrm_contribution_page cp 
@@ -760,8 +749,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    * @static
    *
    */
-  static
-  function getPcpBlockInUse($id) {
+  static function getPcpBlockInUse($id) {
     $query = "
      SELECT count(*)
      FROM civicrm_pcp pcp
@@ -782,8 +770,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
    * @static
    *
    */
-  static
-  function checkEmailProfile($profileId) {
+  static function checkEmailProfile($profileId) {
     $query = "
 SELECT field_name
 FROM civicrm_uf_field
@@ -807,8 +794,7 @@ WHERE field_name like 'email%' And is_active = 1 And uf_group_id = %1";
    * @static
    *
    */
-  static
-  function getPcpPageTitle($pcpId, $component) {
+  static function getPcpPageTitle($pcpId, $component) {
     if ($component == 'contribute') {
       $query = "
   SELECT cp.title
@@ -838,8 +824,7 @@ WHERE field_name like 'email%' And is_active = 1 And uf_group_id = %1";
    * @static
    *
    */
-  static
-  function getPcpBlockEntityId($pcpId, $component) {
+  static function getPcpBlockEntityId($pcpId, $component) {
     $entity_table = self::getPcpEntityTable($component);
 
     $query = "
@@ -867,8 +852,7 @@ WHERE pcp.id = %1";
    * @static
    *
    */
-  static
-  function getPcpEntityTable($component) {
+  static function getPcpEntityTable($component) {
     $entity_table_map = array(
       'event' => 'civicrm_event',
       'civicrm_event' => 'civicrm_event',

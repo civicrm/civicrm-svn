@@ -412,7 +412,8 @@ LEFT  JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
         array_key_exists('civicrm_contact_id', $row)
       ) {
         $url = CRM_Utils_System::url('civicrm/report/member/detail',
-          'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id']
+          'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
+          $this->_absoluteUrl
         );
         $rows[$rowNum]['civicrm_contact_sort_name'] = "<a href='$url'>" . $row["civicrm_contact_sort_name"] . '</a>';
         $entryFound = TRUE;

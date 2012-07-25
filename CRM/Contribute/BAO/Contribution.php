@@ -1972,7 +1972,7 @@ SELECT source_contact_id
       $this->_relatedObjects['contact']->find(TRUE);
     }
     $this->_relatedObjects['contributionType'] = $contributionType;
-    if ($input['component'] == 'contribute') {
+    if ($this->_component == 'contribute') {
 
       // retrieve the other optional objects first so
       // stuff down the line can use this info and do things

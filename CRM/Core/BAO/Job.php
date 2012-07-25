@@ -57,8 +57,7 @@ class CRM_Core_BAO_Job extends CRM_Core_DAO_Job {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $job = new CRM_Core_DAO_Job();
     $job->copyValues($params);
     if ($job->find(TRUE)) {
@@ -79,8 +78,7 @@ class CRM_Core_BAO_Job extends CRM_Core_DAO_Job {
    * @access public
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Job', $id, 'is_active', $is_active);
   }
 
@@ -92,8 +90,7 @@ class CRM_Core_BAO_Job extends CRM_Core_DAO_Job {
    * @access public
    * @static
    */
-  static
-  function del($jobID) {
+  static function del($jobID) {
     if (!$jobID) {
       CRM_Core_Error::fatal(ts('Invalid value passed to delete function'));
     }
@@ -106,5 +103,26 @@ class CRM_Core_BAO_Job extends CRM_Core_DAO_Job {
 
     $dao->delete();
   }
+
+  /**
+   * Trim job table on a regular basis to keep it at a good size
+   *
+   * CRM-10513
+   */
+  static function cleanup($maxEntriesToKeep = 1000, $minDaysToKeep = 30) {
+    // Prevent the job log from getting too big
+    // For now, keep last minDays days and at least maxEntries records
+    $query = 'SELECT COUNT(*) FROM civicrm_job_log';
+    $count = CRM_Core_DAO::singleValueQuery($query);
+
+    if ( $count <= $maxEntriesToKeep) {
+      return;
 }
 
+    $count = $count - $maxEntriesToKeep;
+
+    $query = "DELETE FROM civicrm_job_log WHERE run_time < SUBDATE(NOW(), $minDaysToKeep) LIMIT $count";
+    CRM_Core_DAO::executeQuery($query);
+  }
+
+}

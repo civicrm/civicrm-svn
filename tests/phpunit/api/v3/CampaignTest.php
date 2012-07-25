@@ -1,12 +1,13 @@
 <?php
 // $Id$
 
-require_once 'api/v3/Campaign.php';
+
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_CampaignTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $params;
   protected $id;
+  public $_eNoticeCompliant = TRUE;
   public $DBResetRequired = FALSE; function setUp() {
     $this->_apiversion = 3;
     $this->params = array(

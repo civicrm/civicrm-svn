@@ -293,7 +293,8 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
    * @access public
    * @static
    */
-  function setMessage($message) {}
+  function setMessage($message) {
+  }
 
     function loadUser( $user ) {
         return true;

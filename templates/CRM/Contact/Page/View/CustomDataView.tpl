@@ -29,7 +29,7 @@
     {assign var="count" value=$customGroupCount%2}
   {if ($count eq $side) or $skipTitle }
         {foreach from=$customValues item=cd_edit key=cvID}
-            <div class="customFieldGroup ui-corner-all {$cd_edit.name}">
+      <div class="customFieldGroup ui-corner-all {$cd_edit.name} crm-custom-set-block-{$customGroupId}">
                 <table id="{$cd_edit.name}_{$count}" >
                   <tr class="columnheader">
                     <td colspan="2" class="grouplabel">

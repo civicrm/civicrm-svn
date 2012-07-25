@@ -103,18 +103,21 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
    * @access public
    */
   public function buildQuickForm() {
-    parent::buildQuickForm();
+    $this->_mappingID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionMapping', 'civicrm_event', 'id', 'entity_value');
+    if (!$this->_mappingID) {
+      CRM_Core_Error::fatal('Could not find mapping for event scheduled reminders.');
+    }
 
+    parent::buildQuickForm();
     $this->add('text', 'title', ts('Reminder Name'),
       array(
         'size' => 45, 'maxlength' => 128), TRUE
     );
 
-    $mappingID = 3;
-    $selectionOptions = CRM_Core_BAO_ActionSchedule::getSelection($mappingID);
+    $selectionOptions = CRM_Core_BAO_ActionSchedule::getSelection($this->_mappingID);
     extract($selectionOptions);
 
-    $entity = $this->add('select', 'entity', ts('Recipient(s)'), $sel3[$mappingID][0], TRUE);
+    $entity = $this->add('select', 'entity', ts('Recipient(s)'), $sel3[$this->_mappingID][0], TRUE);
     $entity->setMultiple(TRUE);
 
     //get the frequency units.
@@ -160,7 +163,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
       FALSE, array('onClick' => "showHideByValue('recipient','manual','recipientManual','table-row','select',false); showHideByValue('recipient','group','recipientGroup','table-row','select',false);")
     );
     $recipientListing = $this->add('select', 'recipient_listing', ts('Recipient Listing'),
-      $sel3[$mappingID][0]
+      $sel3[$this->_mappingID][0]
     );
     $recipientListing->setMultiple(TRUE);
 
@@ -203,8 +206,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
    * @static
    * @access public
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
     if (CRM_Utils_Array::value('is_active', $fields) &&
       CRM_Utils_System::isNull($fields['subject'])
@@ -297,7 +299,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
       $params['group_id'] = $params['recipient_manual'] = $params['recipient_listing'] = 'null';
     }
 
-    $params['mapping_id'] = 3;
+    $params['mapping_id']   = $this->_mappingID;
     $params['entity_value'] = $this->_id;
     $params['entity_status'] = implode(CRM_Core_DAO::VALUE_SEPARATOR, $values['entity']);
     $params['is_active'] = CRM_Utils_Array::value('is_active', $values, 0);

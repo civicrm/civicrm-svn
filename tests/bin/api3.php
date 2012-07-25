@@ -54,7 +54,8 @@ ini_set('memory_limit', '2G');
 
 error_reporting(E_ALL);
 
-require_once 'tests/phpunit/CiviTest/civicrm.settings.php';
+define('CIVICRM_SETTINGS_PATH', 'tests/phpunit/CiviTest/civicrm.settings.php');
+require_once CIVICRM_SETTINGS_PATH;
 
 if (empty($argv[1])) {
   $_SERVER['argv'][1] = "api_v3_AllTests";
@@ -86,8 +87,7 @@ require 'PHPUnit/TextUI/Command.php';
 define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
 
 require_once 'CRM/Core/ClassLoader.php';
-$classLoader = new CRM_Core_ClassLoader();
-$classLoader->register();
+CRM_Core_ClassLoader::singleton()->register();
 $command = new PHPUnit_TextUI_Command;
 $command->run($_SERVER['argv'], TRUE);
 

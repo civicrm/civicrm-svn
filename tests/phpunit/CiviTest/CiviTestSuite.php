@@ -55,8 +55,7 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
 
     // also load the class loader
     require_once 'CRM/Core/ClassLoader.php';
-    $classLoader = new CRM_Core_ClassLoader();
-    $classLoader->register();
+    CRM_Core_ClassLoader::singleton()->register();
   }
 
   /**

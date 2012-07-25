@@ -90,8 +90,18 @@ function civicrm_main() {
   // generate backend config file
   $string = "
 <?php
-require_once '$configFile';
+define('CIVICRM_SETTINGS_PATH', $configFile);
+\$error = @include_once( $configFile );
+if ( \$error == false ) {
+    echo \"Could not load the settings file at: {$configFile}\n\";
+    exit( );
+}
+
+// Load class loader
+require_once \$civicrm_root . '/CRM/Core/ClassLoader.php';
+CRM_Core_ClassLoader::singleton()->register();
 ";
+
   $string = trim($string);
   civicrm_write_file($adminPath . DIRECTORY_SEPARATOR .
     'civicrm' . DIRECTORY_SEPARATOR .
@@ -112,7 +122,8 @@ require_once '$configFile';
     $string
   );
 
-  include_once $configFile;
+  define('CIVICRM_SETTINGS_PATH', $configFile);
+  include_once CIVICRM_SETTINGS_PATH;
 
   // for install case only
   if (!$civicrmUpgrade) {
@@ -122,8 +133,7 @@ require_once '$configFile';
     civicrm_source($sqlPath . DIRECTORY_SEPARATOR . 'civicrm_data.mysql');
 
     require_once 'CRM/Core/ClassLoader.php';
-    $classLoader = new CRM_Core_ClassLoader();
-    $classLoader->register();
+    CRM_Core_ClassLoader::singleton()->register();
 
     require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton();

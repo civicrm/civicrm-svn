@@ -157,7 +157,7 @@ CREATE TEMPORARY TABLE
       $clause = $clause ? "entity_table = 'civicrm_contact' AND" : null;
       $sql    = "
 INSERT IGNORE INTO civicrm_temp_civireport_logsummary ( contact_id ) 
-SELECT DISTINCT {$detail['fk']} FROM {$entity}
+SELECT DISTINCT {$detail['fk']} FROM `{$this->loggingDB}`.{$entity}
 WHERE {$clause} log_action != 'Initialization' {$logDateClause} LIMIT {$rowCount}";
       CRM_Core_DAO::executeQuery($sql);
     }
@@ -204,7 +204,7 @@ WHERE {$clause} log_action != 'Initialization' {$logDateClause} LIMIT {$rowCount
   function getEntityValue( $id, $entity ) {
     if (CRM_Utils_Array::value('dao', $this->_logTables[$entity])) {
       if (CRM_Utils_Array::value('entity_column', $this->_logTables[$entity])) {
-        $sql = "select {$this->_logTables[$entity]['entity_column']} from {$entity} where id = %1";
+        $sql = "select {$this->_logTables[$entity]['entity_column']} from `{$this->loggingDB}`.{$entity} where id = %1";
         $entityID = CRM_Core_DAO::singleValueQuery($sql, array(1 => array($id, 'Integer')));
       } else {
         $entityID = $id;
@@ -216,7 +216,7 @@ WHERE {$clause} log_action != 'Initialization' {$logDateClause} LIMIT {$rowCount
 
   function getEntityAction( $id, $connId, $entity ) {
     if (CRM_Utils_Array::value('action_column', $this->_logTables[$entity])) {
-      $sql = "select {$this->_logTables[$entity]['action_column']} from {$entity} where id = %1 AND log_conn_id = %2";
+      $sql = "select {$this->_logTables[$entity]['action_column']} from `{$this->loggingDB}`.{$entity} where id = %1 AND log_conn_id = %2";
       return CRM_Core_DAO::singleValueQuery($sql, array(1 => array($id, 'Integer'), 2 => array($connId, 'Integer')));
     }
     return null;

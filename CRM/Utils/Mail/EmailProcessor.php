@@ -45,8 +45,7 @@ class CRM_Utils_Mail_EmailProcessor {
    * @return boolean always returns true (for the api). at a later stage we should
    *                 fix this to return true on success / false on failure etc
    */
-  static
-  function processBounces() {
+  static function processBounces() {
     $dao             = new CRM_Core_DAO_MailSettings;
     $dao->domain_id  = CRM_Core_Config::domainID();
     $dao->is_default = TRUE;
@@ -68,8 +67,7 @@ class CRM_Utils_Mail_EmailProcessor {
    *
    * @return void
    */
-  static
-  function cleanupDir($dir, $age = 5184000) {
+  static function cleanupDir($dir, $age = 5184000) {
     // return early if we can’t read/write the dir
     if (!is_writable($dir) or !is_readable($dir) or !is_dir($dir)) {
       return;
@@ -95,8 +93,7 @@ class CRM_Utils_Mail_EmailProcessor {
    *
    * @return void
    */
-  static
-  function processActivities() {
+  static function processActivities() {
     $dao             = new CRM_Core_DAO_MailSettings;
     $dao->domain_id  = CRM_Core_Config::domainID();
     $dao->is_default = FALSE;
@@ -119,8 +116,7 @@ class CRM_Utils_Mail_EmailProcessor {
    *
    * @return void
    */
-  static
-  function process($civiMail = TRUE) {
+  static function process($civiMail = TRUE) {
     $dao = new CRM_Core_DAO_MailSettings;
     $dao->domain_id = CRM_Core_Config::domainID();
     $dao->find();
@@ -130,15 +126,19 @@ class CRM_Utils_Mail_EmailProcessor {
     }
   }
 
-  static
-  function _process($civiMail, $dao) {
+  static function _process($civiMail, $dao) {
     // 0 = activities; 1 = bounce;
     $usedfor = $dao->is_default;
 
-    $emailActivityTypeId = (defined('EMAIL_ACTIVITY_TYPE_ID') && EMAIL_ACTIVITY_TYPE_ID) ? EMAIL_ACTIVITY_TYPE_ID : CRM_Core_OptionGroup::getValue('activity_type',
+    $emailActivityTypeId =
+      (defined('EMAIL_ACTIVITY_TYPE_ID') && EMAIL_ACTIVITY_TYPE_ID) ?
+      EMAIL_ACTIVITY_TYPE_ID :
+      CRM_Core_OptionGroup::getValue(
+        'activity_type',
       'Inbound Email',
       'name'
     );
+
     if (!$emailActivityTypeId) {
       CRM_Core_Error::fatal(ts('Could not find a valid Activity Type ID for Inbound Email'));
     }
@@ -216,7 +216,7 @@ class CRM_Utils_Mail_EmailProcessor {
           require_once 'api/v2/Activity.php';
           $params            = _civicrm_activity_buildmailparams($mailParams, $emailActivityTypeId);
           $params['version'] = 2;
-          $result            = civicrm_api('activity', 'create', $params);
+          $result            = civicrm_activity_create($params);
 
           if ($result['is_error']) {
             $matches = FALSE;

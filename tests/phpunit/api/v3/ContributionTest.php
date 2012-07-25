@@ -37,7 +37,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_entity = 'Contribution';
   public $debug = 0;
-  protected $_params; function setUp() {
+  protected $_params;
+  public $_eNoticeCompliant = FALSE;
+  function setUp() {
     parent::setUp();
 
     $this->_apiversion = 3;
@@ -230,7 +232,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $result = civicrm_api($this->_entity, 'create', $params);
     $this->assertEquals($result['id'], $result['values'][$result['id']]['id']);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
     $check = civicrm_api($this->_entity, 'get', array(
         'return.custom_' . $ids['custom_field_id'] => 1,
         'version' => 3,
@@ -656,7 +658,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertAPISuccess($contribution);
     $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
       'version' => $this->_apiversion,
-      'id' => $contribution['id']) );
+      'id' => $contribution['id'])
+    );
     $this->assertAPISuccess($apiResult);
     $this->checkMailLog(array(
         '$ 100.00',

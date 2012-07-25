@@ -3787,6 +3787,20 @@ civicrm_relationship.start_date > {$today}
       $where = $where . ' AND ' . $additionalWhereClause;
     }
 
+    // building the query string
+    $groupBy = NULL;
+    if (!$count) {
+      if (isset($this->_groupByComponentClause)) {
+        $groupBy = $this->_groupByComponentClause;
+      }
+      elseif ($this->_useGroupBy) {
+        $groupBy = ' GROUP BY contact_a.id';
+      }
+    }
+    if ($this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY && (!$count)) {
+      $groupBy = 'GROUP BY civicrm_activity.id ';
+    }
+
     $order = $orderBy = $limit = '';
     if (!$count) {
       $config = CRM_Core_Config::singleton();
@@ -3900,7 +3914,7 @@ civicrm_relationship.start_date > {$today}
             $this->filterRelatedContacts($this->_simpleFromClause, $where, $having);
           }
 
-          $limitQuery = "$limitSelect {$this->_simpleFromClause} $where $order $limit";
+          $limitQuery = "$limitSelect {$this->_simpleFromClause} $where $groupBy $order $limit";
           $limitDAO   = CRM_Core_DAO::executeQuery($limitQuery);
           $limitIDs   = array();
           while ($limitDAO->fetch()) {
@@ -3923,20 +3937,6 @@ civicrm_relationship.start_date > {$today}
           $limit = NULL;
         }
       }
-    }
-
-    // building the query string
-    $groupBy = NULL;
-    if (!$count) {
-      if (isset($this->_groupByComponentClause)) {
-        $groupBy = $this->_groupByComponentClause;
-      }
-      elseif ($this->_useGroupBy) {
-        $groupBy = ' GROUP BY contact_a.id';
-      }
-    }
-    if ($this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY && (!$count)) {
-      $groupBy = 'GROUP BY civicrm_activity.id ';
     }
 
     // if we are doing a transform, do it here

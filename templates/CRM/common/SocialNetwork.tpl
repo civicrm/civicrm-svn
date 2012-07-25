@@ -28,8 +28,9 @@
 <div class="crm-section crm-socialnetwork help">
     <h3 class="nobackground">{ts}Help spread the word{/ts}</h3>
     <div class="description">
-        {ts}Please help us and let your friends, colleagues and followers know about our page{/ts}
-        {if $title}: <span class="bold"><a href="{$pageURL}">{$title}</a></span>{else}.{/if}
+        {ts}Please help us and let your friends, colleagues and followers know about our page{/ts}{if $title}: 
+        <span class="bold"><a href="{$pageURL}">{$title}</a></span>
+        {else}.{/if}
     </div>
     <div class="crm-fb-tweet-buttons">
         {if $emailMode eq true}

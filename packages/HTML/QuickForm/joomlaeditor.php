@@ -41,11 +41,15 @@ class HTML_QuickForm_JoomlaEditor extends HTML_QuickForm_textarea
      */
     function HTML_QuickForm_JoomlaEditor( $elementName=null, $elementLabel=null, $attributes=null, $options=array() )
     {
+
         HTML_QuickForm_element::HTML_QuickForm_element( $elementName, $elementLabel, $attributes );
         $this->_persistantFreeze = true;
         $this->_type = 'JoomlaEditor';
         // set editor height smaller if schema defines rows as 4 or less
-        if ( is_array( $attributes ) && array_key_exists( 'rows', $attributes ) && $attributes['rows'] <= 4 ) {
+    if ( is_array( $attributes ) &&
+      array_key_exists( 'rows', $attributes ) &&
+      $attributes['rows'] <= 4
+    ) {
             $this->height = 200;
         }
     }    
@@ -69,14 +73,15 @@ class HTML_QuickForm_JoomlaEditor extends HTML_QuickForm_textarea
 			
 			//tinymce and its relatives require 'double-loading' when inside jquery tab
             $editorName = $editor->get( '_name' );
-			if ( $editorName == 'jce' || $editorName == 'tinymce' ) {
-                if( !empty( $this->_value ) ) {
+      if ( $editorName == 'jce' ||
+        $editorName == 'tinymce'
+      ) {
                     $html .= sprintf( '<script type="text/javascript">
 					//reset the controls if called in jquery tab or via ajax 
         			tinyMCE.execCommand( "mceRemoveControl", false,"' . $this->_attributes['id'] .'" );
         			tinyMCE.execCommand( "mceAddControl"   , true, "' . $this->_attributes['id'] .'" );
 					</script>' );
-                }
+
 				$html .= sprintf( '<style type="text/css"> <!--
 					#crm-container table.mceLayout td { border: none; } .button2-left { display:none; }
 					--> </style> ' );
@@ -98,5 +103,3 @@ class HTML_QuickForm_JoomlaEditor extends HTML_QuickForm_textarea
         return $this->getValue();
     }
 }
-
-?>

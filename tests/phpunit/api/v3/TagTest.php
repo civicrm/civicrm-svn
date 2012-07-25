@@ -29,7 +29,9 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_TagTest extends CiviUnitTestCase {
-  protected $_apiversion; function setUp() {
+  protected $_apiversion;
+  public $_eNoticeCompliant = TRUE;
+  function setUp() {
     $this->_apiversion = 3;
     parent::setUp();
   }

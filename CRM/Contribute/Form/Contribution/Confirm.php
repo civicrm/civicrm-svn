@@ -137,7 +137,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $this->_params['amount'] = $this->get('amount');
 
       $this->_useForMember = $this->get('useForMember');
-      if ($this->_params['amount']) {
+      
+      if (isset($this->_params['amount'])) {
         $priceField = new CRM_Price_DAO_Field();
         $priceField->price_set_id = $this->_params['priceSetId'];
         $priceField->orderBy('weight');
@@ -658,6 +659,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
               'contribution_campaign_id', 'member_campaign_id'))) {
               $fld = 'campaign_id';
             }
+            else {
+              $behalfOrganization[$fld] = $values;
+            } 
             $this->_params[$fld] = $values;
           }
         }
@@ -786,7 +790,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       ) ||
       $this->_useForMember
     ) {
-      if (CRM_Utils_Array::value('selectMembership', $membershipParams))
       $processMembership = TRUE;
 
       if (!$this->_useForMember) {

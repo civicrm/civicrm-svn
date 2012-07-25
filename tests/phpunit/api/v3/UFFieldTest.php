@@ -46,6 +46,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_params;
   protected $_entity = 'UFField';
+  public $_eNoticeCompliant = TRUE;
   protected function setUp() {
     parent::setUp();
     $this->quickCleanup(

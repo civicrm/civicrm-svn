@@ -92,20 +92,31 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     $.fn.crmAutocomplete = function (params,options) {
       if (typeof params == 'undefined') params = {};
       if (typeof options == 'undefined') options = {};
-      $().extend(params, {
+      params = $().extend( {
         rowCount:35,
         json:1,
         entity:'Contact',
         action:'quicksearch',
         sequential:1
-      });
+      },params);
         //'return':'sort_name,email'
 
       options = $().extend({}, {
+          field :'name',
+          skip : ['id','contact_id','contact_type','contact_is_deleted',"email_id",'address_id', 'country_id'],
           result: function(data){
                console.log(data);
           return false;
         },
+    	  formatItem: function(data,i,max,value,term){
+          var tmp = [];
+          for (attr in data) {
+            if ($.inArray (attr, options.skip) == -1 && data[attr]) {
+              tmp.push(data[attr]);
+            }
+    		  }
+          return  tmp.join(' :: '); 
+        },    			
         parse: function (data){
     			     var acd = new Array();
     			     for(cid in data.values){
@@ -127,23 +138,18 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
 		  var selector = this;
 		  if (typeof $.fn.autocomplete != 'function') 
 		      $.fn.autocomplete = cj.fn.autocomplete;//to work around the fubar cj
+          var extraP = {};
+          extraP [options.field] = function () {return $(selector).val();};
 		      $(this).autocomplete( contactUrl, {
-    			  dataType:"json",
-    			      extraParams:{name:function () {
-    				  return $(selector).val();}
-    			  },
+    			  extraParams:extraP,
     			  formatItem: function(data,i,max,value,term){
-              var tmp = [];
-              for (attr in data) {
-                if (attr != "id")
-                 tmp.push(data[attr]);
-              }
-              return  tmp.join(' :: '); 
+              return options.formatItem(data,i,max,value,term);
     			  },    			
     			  parse: function(data){ return options.parse(data);},
     			  width: 250,
     			  delay:options.delay,
     			  max:25,
+            dataType:'json',
     			  minChars:options.minChars,
     			  selectFirst: true
     		 }).result(function(event, data, formatted) {

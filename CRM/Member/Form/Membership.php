@@ -939,7 +939,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       if (!$params['contribution_type_id']) {
         $errors['contribution_type_id'] = ts('Please enter the contribution Type.');
       }
-      if (!$params['total_amount']) {
+      if (CRM_Utils_System::isNull($params['total_amount'])) {
         $errors['total_amount'] = ts('Please enter the contribution.');
       }
     }
@@ -1024,10 +1024,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
         $this->_params, $lineItem[$priceSetId]);
-      //unset LineItem is the priceset is quick config
-      if (CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config')) {
-        $lineItem = NULL;
-      }
       $params['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
     }
 

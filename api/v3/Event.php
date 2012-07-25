@@ -66,15 +66,8 @@ function civicrm_api3_event_create($params) {
   require_once 'CRM/Event/BAO/Event.php';
 
   $eventBAO = CRM_Event_BAO_Event::create($params);
-
-  if (is_a($eventBAO, 'CRM_Core_Error')) {
-    return civicrm_api3_create_error("Event is not created");
-  }
-  else {
     $event = array();
     _civicrm_api3_object_to_array($eventBAO, $event[$eventBAO->id]);
-  }
-
   return civicrm_api3_create_success($event, $params);
 }
 /*
@@ -135,7 +128,13 @@ function civicrm_api3_event_get($params) {
 
   $eventDAO = new CRM_Event_BAO_Event();
   _civicrm_api3_dao_set_filter($eventDAO, $params, TRUE, 'Event');
+
+  if (CRM_Utils_Array::value('is_template', $params)) {
+    $eventDAO->whereAdd( '( is_template = 1 )' );
+  }
+  else {
   $eventDAO->whereAdd('( is_template IS NULL ) OR ( is_template = 0 )');
+  }
 
   if (CRM_Utils_Array::value('isCurrent', $params)) {
     $eventDAO->whereAdd('(start_date >= CURDATE() || end_date >= CURDATE())');

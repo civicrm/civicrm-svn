@@ -169,8 +169,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    * @return object
    * @static
    */
-  static
-  function &singleton($loadFromDB = TRUE, $force = FALSE) {
+  static function &singleton($loadFromDB = TRUE, $force = FALSE) {
     if (self::$_singleton === NULL || $force) {
       // goto a simple error handler
       $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
@@ -264,9 +263,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       //format url for language negotiation, CRM-7803
       $this->userFrameworkBaseURL = CRM_Utils_System::languageNegotiationURL($this->userFrameworkBaseURL);
 
-      if (isset($_SERVER['HTTPS']) &&
-        strtolower($_SERVER['HTTPS']) != 'off'
-      ) {
+      if (CRM_Utils_System::isSSL()) {
         $this->userFrameworkBaseURL = str_replace('http://', 'https://',
           $this->userFrameworkBaseURL
         );
@@ -458,9 +455,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
 
     if ($this->userFrameworkResourceURL) {
       // we need to do this here so all blocks also load from an ssl server
-      if (isset($_SERVER['HTTPS']) &&
-        strtolower($_SERVER['HTTPS']) != 'off'
-      ) {
+      if (CRM_Utils_System::isSSL()) {
         CRM_Utils_System::mapConfigToSSL();
       }
       $rrb = parse_url($this->userFrameworkResourceURL);
@@ -500,8 +495,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    *
    * @return object
    */
-  static
-  function &getMailer($persist = FALSE) {
+  static function &getMailer($persist = FALSE) {
     if (!isset(self::$_mail)) {
       $mailingInfo = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
         'mailing_backend'
@@ -603,8 +597,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    * @static
    * @access public
    */
-  static
-  function check(&$config, &$required) {
+  static function check(&$config, &$required) {
     foreach ($required as $name) {
       if (CRM_Utils_System::isNull($config->$name)) {
         return FALSE;
@@ -625,8 +618,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
   /**
    * one function to get domain ID
    */
-  static
-  function domainID() {
+  static function domainID() {
     return defined('CIVICRM_DOMAIN_ID') ? CIVICRM_DOMAIN_ID : 1;
   }
 

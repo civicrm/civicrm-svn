@@ -90,12 +90,12 @@ WHERE     civicrm_contact.id = %1";
 
     $cond = NULL;
     if ($type) {
-      $cond = " AND civicrm_phone.phone_type = '$type'";
+      $cond = " AND civicrm_phone.phone_type_id = '$type'";
     }
 
 
     $sql = "
-   SELECT civicrm_contact.display_name, civicrm_phone.phone
+   SELECT civicrm_contact.display_name, civicrm_phone.phone, civicrm_contact.do_not_sms
      FROM civicrm_contact
 LEFT JOIN civicrm_phone ON ( civicrm_phone.contact_id = civicrm_contact.id )
     WHERE civicrm_phone.is_primary = 1
@@ -105,9 +105,9 @@ LEFT JOIN civicrm_phone ON ( civicrm_phone.contact_id = civicrm_contact.id )
     $params = array(1 => array($id, 'Integer'));
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
     if ($dao->fetch()) {
-      return array($dao->display_name, $dao->phone);
+      return array($dao->display_name, $dao->phone, $dao->do_not_sms);
     }
-    return array(NULL, NULL);
+    return array(NULL, NULL, NULL);
   }
 
   /**

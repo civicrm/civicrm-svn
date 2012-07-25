@@ -212,6 +212,10 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant {
     );
 
     $grantTypes = CRM_Grant_PseudoConstant::grantType();
+    if (!CRM_Utils_Array::value('skipRecentView', $params)) {
+      if(!isset($grant->contact_id) || !isset($grant->grant_type_id)){
+        $grant->find(TRUE);
+      }
     $title = CRM_Contact_BAO_Contact::displayName($grant->contact_id) . ' - ' . ts('Grant') . ': ' . $grantTypes[$grant->grant_type_id];
 
     $recentOther = array();
@@ -235,6 +239,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant {
       NULL,
       $recentOther
     );
+    }
 
     if (CRM_Utils_Array::value('grant', $ids)) {
       CRM_Utils_Hook::post('edit', 'Grant', $grant->id, $grant);
@@ -269,9 +274,9 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant {
     $session = CRM_Core_Session::singleton();
     $id = $session->get('userID');
     if (!$id) {
-      $id = $params['contact_id'];
+      $id = CRM_Utils_Array::value('contact_id', $params);
     }
-    if (CRM_Utils_Array::value('note', $params) || CRM_Utils_Array::value('id', $ids['note'])) {
+    if (CRM_Utils_Array::value('note', $params) || CRM_Utils_Array::value('id', CRM_Utils_Array::value('note',$ids))) {
       $noteParams = array(
         'entity_table' => 'civicrm_grant',
         'note' => $params['note'] = $params['note'] ? $params['note'] : "null",

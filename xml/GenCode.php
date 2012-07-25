@@ -5,8 +5,7 @@ ini_set('memory_limit', '512M');
 define('CIVICRM_UF', 'Drupal');
 
 require_once 'CRM/Core/ClassLoader.php';
-$classLoader = new CRM_Core_ClassLoader();
-$classLoader->register();
+CRM_Core_ClassLoader::singleton()->register();
 
 
 

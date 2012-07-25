@@ -804,12 +804,12 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     if ($this->_force) {
 
       $this->postProcess();
+
       /*
              * Note that we repeat this, since the search creates and stores
              * values that potentially change the controller behavior. i.e. things
              * like totalCount etc
              */
-
       $sortID = NULL;
       if ($this->get(CRM_Utils_Sort::SORT_ID)) {
         $sortID = CRM_Utils_Sort::sortIDValue($this->get(CRM_Utils_Sort::SORT_ID),

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /*
  +--------------------------------------------------------------------+
@@ -27,15 +26,14 @@
  +--------------------------------------------------------------------+
  */
 
-
-
-
-require_once 'api/v3/MembershipType.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   protected $_contactID;
   protected $_contributionTypeID;
-  protected $_apiversion; function get_info() {
+  protected $_apiversion;
+  public $_eNoticeCompliant = TRUE;
+
+  function get_info() {
     return array(
       'name' => 'MembershipType Create',
       'description' => 'Test all Membership Type Create API methods.',

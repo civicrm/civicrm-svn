@@ -234,6 +234,7 @@ class CRM_SMS_Form_Upload extends CRM_Core_Form {
     $msgTemplate = NULL;
     //mail template is composed
     if ($formValues['upload_type']) {
+      $composeParams = array();
       foreach ($composeFields as $key) {
         if (CRM_Utils_Array::value($key, $formValues)) {
           $composeParams[$key] = $formValues[$key];
@@ -346,8 +347,7 @@ class CRM_SMS_Form_Upload extends CRM_Core_Form {
         if (CRM_Utils_Array::value('text_message', $params)) {
           $messageCheck = CRM_Utils_Array::value('text_message', $params);
           if ($messageCheck && (strlen($messageCheck) > CRM_SMS_Provider::MAX_SMS_CHAR)) {
-            $errors['text_message'] = ts("You can configure the SMS message body upto" . CRM_SMS_Provider::MAX_SMS_CHAR . " characters"
-            );
+            $errors['text_message'] = ts("You can configure the SMS message body up to %1 characters", array(1 => CRM_SMS_Provider::MAX_SMS_CHAR));
           }
         }
       }
@@ -403,9 +403,7 @@ class CRM_SMS_Form_Upload extends CRM_Core_Form {
         }
       }
       if (strlen($contentCheck) > CRM_SMS_Provider::MAX_SMS_CHAR) {
-        $dataErrors[] = '<li>' . ts('The body of the SMS cannot exceed more than ' .
-          CRM_SMS_Provider::MAX_SMS_CHAR . ' characters'
-        ) . '</li>';
+        $dataErrors[] = '<li>' . ts('The body of the SMS cannot exceed %1 characters.', array(1 => CRM_SMS_Provider::MAX_SMS_CHAR)) . '</li>';
       }
       if (!empty($dataErrors)) {
         $errors['textFile'] = ts('The following errors were detected in %1:', array(
