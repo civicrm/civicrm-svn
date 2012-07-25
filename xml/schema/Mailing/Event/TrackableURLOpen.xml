@@ -5,6 +5,7 @@
     <class>TrackableURLOpen</class>
     <name>civicrm_mailing_event_trackable_url_open</name>
     <comment>Tracks when a TrackableURL is clicked by a recipient.</comment>
+    <archive>true</archive>
     <field>
         <name>id</name>
         <type>int unsigned</type>

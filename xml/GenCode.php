@@ -7,32 +7,28 @@ define('CIVICRM_UF', 'Drupal');
 require_once 'CRM/Core/ClassLoader.php';
 CRM_Core_ClassLoader::singleton()->register();
 
-
-
 $genCode = new CRM_GenCode_Main('../CRM/Core/DAO/', '../sql/', '../', '../templates/');
 $genCode->main(
   @$argv[2],
   @$argv[3],
   empty($argv[1]) ? 'schema/Schema.xml' : $argv[1]
 );
+
 class CRM_GenCode_Util_File {
-  static
-  function createDir($dir, $perm = 0755) {
+  static function createDir($dir, $perm = 0755) {
     if (!is_dir($dir)) {
       mkdir($dir, $perm, TRUE);
     }
   }
 
-  static
-  function removeDir($dir) {
+  static function removeDir($dir) {
     foreach (glob("$dir/*") as $tempFile) {
       unlink($tempFile);
     }
     rmdir($dir);
   }
 
-  static
-  function createTempDir($prefix) {
+  static function createTempDir($prefix) {
     if (isset($_SERVER['TMPDIR'])) {
       $tempDir = $_SERVER['TMPDIR'];
     }
@@ -62,6 +58,7 @@ class CRM_GenCode_Main {
   var $tplCodePath;
 
   var $smarty;
+
   function __construct($CoreDAOCodePath, $sqlCodePath, $phpCodePath, $tplCodePath) {
     $this->CoreDAOCodePath = $CoreDAOCodePath;
     $this->sqlCodePath = $sqlCodePath;
@@ -147,13 +144,39 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
 
     echo "Extracting table information\n";
     $tables = &$this->getTables($dbXML, $database);
+
     $this->resolveForeignKeys($tables, $this->classNames);
     $tables = $this->orderTables($tables);
 
+    // add archive tables here
+    $archiveTables = array( );
+    foreach ($tables as $name => $table ) {
+      if ( $table['archive'] == 'true' ) {
+        $name = 'archive_' . $table['name'];
+        $table['name'] = $name;
+        $table['archive'] = 'false';
+        if ( isset($table['foreignKey']) ) {
+          foreach ($table['foreignKey'] as $fkName => $fkValue) {
+            if ($tables[$fkValue['table']]['archive'] == 'true') {
+              $table['foreignKey'][$fkName]['table'] = 'archive_' . $table['foreignKey'][$fkName]['table'];
+              $table['foreignKey'][$fkName]['uniqName'] =
+                str_replace( 'FK_', 'FK_archive_', $table['foreignKey'][$fkName]['uniqName'] );
+            }
+          }
+          $archiveTables[$name] = $table;
+        }
+      }
+    }
+
     $this->generateListAll($tables);
     $this->generateCiviTestTruncate($tables);
-    $this->generateCreateSql($database, $tables);
-    $this->generateDropSql($tables);
+    $this->generateCreateSql($database, $tables, 'civicrm.mysql');
+    $this->generateDropSql($tables, 'civicrm_drop.mysql');
+
+    // also create the archive tables
+    // $this->generateCreateSql($database, $archiveTables, 'civicrm_archive.mysql' );
+    // $this->generateDropSql($archiveTables, 'civicrm_archive_drop.mysql');
+
     $this->generateNavigation();
     $this->generateLocalDataSql($db_version, $this->findLocales());
     $this->generateSample();
@@ -197,7 +220,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     unset($truncate);
   }
 
-  function generateCreateSql($database, $tables) {
+  function generateCreateSql($database, $tables, $fileName = 'civicrm.mysql') {
     echo "Generating sql file\n";
     $this->smarty->clear_all_assign();
     $this->smarty->assign_by_ref('database', $database);
@@ -205,14 +228,14 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     $dropOrder = array_reverse(array_keys($tables));
     $this->smarty->assign_by_ref('dropOrder', $dropOrder);
     $this->smarty->assign('mysql', 'modern');
-    file_put_contents($this->sqlCodePath . "civicrm.mysql", $this->smarty->fetch('schema.tpl'));
+    file_put_contents($this->sqlCodePath . $fileName, $this->smarty->fetch('schema.tpl'));
   }
 
-  function generateDropSql($tables) {
+  function generateDropSql($tables, $fileName = 'civicrm_drop.mysql') {
     echo "Generating sql drop tables file\n";
     $dropOrder = array_reverse(array_keys($tables));
     $this->smarty->assign_by_ref('dropOrder', $dropOrder);
-    file_put_contents($this->sqlCodePath . "civicrm_drop.mysql", $this->smarty->fetch('drop.tpl'));
+    file_put_contents($this->sqlCodePath . $fileName, $this->smarty->fetch('drop.tpl'));
   }
 
   function generateNavigation() {
@@ -511,6 +534,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
       'comment' => $this->value('comment', $tableXML),
       'localizable' => $localizable,
       'log' => $this->value('log', $tableXML, 'false'),
+      'archive' => $this->value('archive', $tableXML, 'false'),
     );
 
     $fields = array();
@@ -525,8 +549,6 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     }
 
     $table['fields'] = &$fields;
-    // print_r($table['fields' ]);
-    //Anil
     $table['hasEnum'] = FALSE;
     foreach ($table['fields'] as $field) {
       if ($field['crmType'] == 'CRM_Utils_Type::T_ENUM') {
@@ -539,7 +561,6 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
       $this->getPrimaryKey($tableXML->primaryKey, $fields, $table);
     }
 
-    require_once 'CRM/Core/Config.php';
     // some kind of refresh?
     CRM_Core_Config::singleton(FALSE);
     if ($this->value('index', $tableXML)) {

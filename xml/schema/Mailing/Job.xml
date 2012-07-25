@@ -5,6 +5,7 @@
   <class>Job</class>
   <name>civicrm_mailing_job</name>
   <comment>Stores information about the job that executes this mailing</comment>
+  <archive>true</archive>
   <field>
       <name>id</name>
       <type>int unsigned</type>

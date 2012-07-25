@@ -20,7 +20,7 @@
        <type>varchar</type>
        <length>64</length>
        <comment>The name of this component</comment>
-  </field>  
+  </field>
   <field>
        <name>component_type</name>
        <type>enum</type>
@@ -31,7 +31,7 @@
        <name>subject</name>
        <type>varchar</type>
        <length>255</length>
-  </field>  
+  </field>
   <field>
        <name>body_html</name>
        <type>text</type>

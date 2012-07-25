@@ -5,6 +5,7 @@
   <class>Mailing</class>
   <name>civicrm_mailing</name>
   <comment>Stores information about a mailing.</comment>
+  <archive>true</archive>
   <field>
       <name>id</name>
       <type>int unsigned</type>

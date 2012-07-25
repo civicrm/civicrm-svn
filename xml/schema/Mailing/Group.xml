@@ -5,6 +5,7 @@
   <class>Group</class>
   <name>civicrm_mailing_group</name>
   <comment>Stores information about the groups that participate in this mailing..</comment>
+  <archive>true</archive>
   <field>
       <name>id</name>
       <type>int unsigned</type>
