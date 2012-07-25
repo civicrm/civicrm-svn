@@ -3789,11 +3789,12 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (NULL, 1050, "20", "Tanganyika"),
 
 -- CRM-8009 Added Missing Provinces for Spain
-(NULL, 1198, 'TO', 'Toledo' ),
-(NULL, 1198, 'CO', 'Córdoba' ),
+(NULL, 1198, "TO", "Toledo" ),
+(NULL, 1198, "CO", "Córdoba" ),
 
 -- CRM-8769 Added Missing Province for Philippines
-(NULL, 1170, 'MNL', 'Metropolitan Manila' ),
+(NULL, 1170, "MNL", "Metropolitan Manila" ),
 
 -- CRM-9686 Added Missing Province for Honduras
-(NULL, 1097, 'LP', 'La Paz');
+(NULL, 1097, "LP", "La Paz");
+
