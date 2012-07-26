@@ -160,7 +160,7 @@ abstract class CRM_Utils_Hook {
   function requireCiviModules(&$moduleList) {
     $civiModules = CRM_Core_PseudoConstant::getModuleExtensions();
     foreach ($civiModules as $civiModule) {
-      include_once $civiModule['file'];
+      include_once $civiModule['filePath'];
       $moduleList[$civiModule['prefix']] = $civiModule['prefix'];
     }
   }

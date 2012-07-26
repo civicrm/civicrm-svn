@@ -332,13 +332,6 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults {
   public $enableComponentIDs = array(1, 6, 2, 3, 4, 8);
 
   /**
-   * Array of enabled civiModules
-   *
-   * @var array
-   */
-  public $civiModules = array();
-
-  /**
    * Should payments be accepted only via SSL?
    *
    * @var boolean
