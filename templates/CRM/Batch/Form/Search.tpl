@@ -73,9 +73,9 @@ function buildBatchSelector( filterSearch ) {
     crmBatchSelector.fnDestroy();
     var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
   } else if ( status == 1 ) {
-    var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">You do not have any Open batches.{/ts}</div>'{literal};
+    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}You do not have any Open batches.{/ts}</div>'{literal};
   } else {
-    var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Batches have been created for this site.{/ts}</div>'{literal};
+    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}No Batches have been created for this site.{/ts}</div>'{literal};
   }
 
     var columns = '';
