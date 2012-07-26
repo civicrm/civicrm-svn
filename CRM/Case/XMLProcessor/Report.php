@@ -525,7 +525,7 @@ WHERE      a.id = %1
             }
             elseif (CRM_Utils_Array::value('type', $typeValue) == 'File') {
               $tableName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $typeValue, 'entity_table');
-              list($value, $dontCare) = CRM_Core_BAO_File::attachmentInfo($tableName, $activityDAO->id);
+              $value = CRM_Core_BAO_File::attachmentInfo($tableName, $activityDAO->id);
             }
             elseif (CRM_Utils_Array::value('type', $typeValue) == 'Link') {
               $value = CRM_Utils_System::formatWikiURL($value);

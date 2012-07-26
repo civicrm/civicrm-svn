@@ -442,17 +442,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     }
 
     // add attachments part
-    CRM_Core_BAO_File::buildAttachment($this,
-      'civicrm_activity',
-      $this->_activityId
-    );
+    CRM_Core_BAO_File::buildAttachment($this, 'civicrm_activity', $this->_activityId, NULL, TRUE);
 
     // figure out the file name for activity type, if any
     if ($this->_activityTypeId &&
       $this->_activityTypeFile =
       CRM_Activity_BAO_Activity::getFileForActivityTypeId($this->_activityTypeId, $this->_crmDir)
     ) {
-
       $this->assign('activityTypeFile', $this->_activityTypeFile);
       $this->assign('crmDir', $this->_crmDir);
     }

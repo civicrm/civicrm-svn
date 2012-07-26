@@ -73,8 +73,7 @@ class CRM_Case_Form_ActivityView extends CRM_Core_Form {
     $xmlProcessor = new CRM_Case_XMLProcessor_Report();
     $report = $xmlProcessor->getActivityInfo($contactID, $activityID, TRUE);
 
-    list($attachmentUrl, $dontCare) =
-      CRM_Core_BAO_File::attachmentInfo('civicrm_activity', $activityID);
+    $attachmentUrl = CRM_Core_BAO_File::attachmentInfo('civicrm_activity', $activityID);
     if ($attachmentUrl) {
       $report['fields'][] = array(
         'label' => 'Attachment(s)',

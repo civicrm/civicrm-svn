@@ -84,7 +84,7 @@ class CRM_Core_Page_AJAX {
       $priceSetId = null;
     }
     echo json_encode($priceSetId);
-      
+
     CRM_Utils_System::civiExit();
   }
 

@@ -23,11 +23,22 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $form.attachFile_1 OR $currentAttachmentURL}
-{if $action EQ 4 AND $currentAttachmentURL} {* For View action we exclude the form fields and just show any current attachments. *}
+{if $form.attachFile_1 OR $currentAttachmentInfo}
+{if $action EQ 4 AND $currentAttachmentInfo} {* For View action we exclude the form fields and just show any current attachments. *}
     <tr>
         <td class="label"><label>{ts}Current Attachment(s){/ts}</label></td>
-        <td class="view-value"><strong>{$currentAttachmentURL}</strong></td>
+        <td class="view-value">
+          {foreach from=$currentAttachmentInfo key=attKey item=attVal}
+                <div id="attachStatusMesg"></div>
+                <div id="attachFileRecord_{$attVal.fileID}">
+                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
+                  {if $attVal.deleteURLArgs}
+                   &nbsp;&nbsp;<a href="javascript:showDelete('{$attVal.cleanName}', '{$attVal.deleteURLArgs}', {$attVal.fileID})"><img src="{$config->resourceBase}/i/delete.png" title="{ts}Delete this attachment{/ts}"></a>
+                  {/if}
+                  <br/>
+                </div>
+          {/foreach}
+        </td>
     </tr>
 {elseif $action NEQ 4}
     {if $context EQ 'pcpCampaign'}
@@ -66,10 +77,16 @@
             </tr>
         {/section}
       {/if}
-    {if $currentAttachmentURL}
+    {if $currentAttachmentInfo}
         <tr>
             <td class="label">{ts}Current Attachment(s){/ts}</td>
-            <td class="view-value"><strong>{$currentAttachmentURL}</strong></td>
+            <td class="view-value">
+              <div id="attachStatusMesg"></div>
+              {foreach from=$currentAttachmentInfo key=attKey item=attVal}
+                <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
+                <br/>
+              {/foreach}
+            </td>
         </tr>
         <tr>
             <td class="label">&nbsp;</td>
@@ -82,16 +99,15 @@
     </div>
 	</div><!-- /.crm-accordion-body -->
 	</div><!-- /.crm-accordion-wrapper -->
-{if !$noexpand}
+  {if !$noexpand}
     {literal}
     <script type="text/javascript">
-        var attachmentUrl = {/literal}'{$currentAttachmentURL}'{literal};
-		cj(function() {
-		   cj().crmaccordions();
-		});
+	cj(function() {
+	   cj().crmaccordions();
+	});
     </script>
     {/literal}
-{/if}
+  {/if}
     {literal}
     <script type="text/javascript">
         function clearAttachment( element ) {
@@ -99,6 +115,33 @@
         }
     </script>
     {/literal}
-    {/if}
+ {/if} {* edit/add if*}
+{if $currentAttachmentInfo}
+<script type="text/javascript">
+    {literal}
+    function hideStatus( ) {
+        cj( '#attachStatusMesg' ).hide( );
+    }
+    function showDelete( fileName, postURLData, fileID ) {
+        var confirmMsg = '{/literal}{ts escape="js"}Are you sure you want to delete attachment: {/ts}{literal}' + fileName + '&nbsp; <a href="javascript:deleteAttachment( \'' + postURLData + '\',' + fileID + ' );" style="text-decoration: underline;">{/literal}{ts}Yes{/ts}{literal}</a>&nbsp;&nbsp;&nbsp;<a href="javascript:hideStatus( );" style="text-decoration: underline;">{/literal}{ts}No{/ts}{literal}</a>';
+        cj( '#attachStatusMesg' ).show( ).html( confirmMsg );
+    }
+    function deleteAttachment( postURLData, fileID ) {
+        var postUrl = {/literal}"{crmURL p='civicrm/file/delete' h=0 }"{literal};
+        cj.ajax({
+          type: "GET",
+          data:  postURLData,
+          url: postUrl,
+          success: function(html){
+              var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
+              var successMsg = '{/literal}{ts escape="js"}The selected attachment has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( );"><img title="{/literal}{ts}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
+              cj( '#attachFileRecord_' + fileID ).hide( );
+              cj( '#attachStatusMesg' ).show( ).html( successMsg );
+          }
+        });
+    }
+    {/literal}
+</script>
 {/if}
+{/if} {* top level if *}
 
