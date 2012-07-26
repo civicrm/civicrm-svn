@@ -70,7 +70,7 @@ class CRM_Utils_Signer {
     $this->paramNames = $paramNames;
     $this->signDelim = "_"; // chosen to be valid in URLs but not in salt or md5
     $this->defaultSalt = '';
-    
+
     $alphabet = self::SALT_ALPHABET;
     $alphabetSize = strlen(self::SALT_ALPHABET);
     for ($i = 0; $i < self::SALT_LEN; $i++) {
@@ -99,7 +99,7 @@ class CRM_Utils_Signer {
       if (isset($params[$paramName])) {
         if (is_numeric($params[$paramName])) {
           $params[$paramName] = (string) $params[$paramName];
-        } 
+        }
       } else { // $paramName is not included or ===NULL
         $params[$paramName] = '';
       }
@@ -108,7 +108,7 @@ class CRM_Utils_Signer {
     $token = $message['salt'] . $this->signDelim . md5(serialize($message));
     return $token;
   }
-  
+
   /**
    * Determine whether a token represents a proper signature for $params
    *
@@ -124,7 +124,7 @@ class CRM_Utils_Signer {
     $newToken = $this->sign($params, $salt);
     return ($token == $newToken);
   }
-  
+
   function createSalt() {
     // It would be more secure to generate a new value but liable to run this
     // many times on certain admin pages; so instead we'll re-use the hash.
