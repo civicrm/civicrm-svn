@@ -1961,6 +1961,30 @@ ORDER BY name";
   }
 
   /**
+   * Fetch the list of active extensions of type 'module'
+   *
+   * @access public
+   * @static
+   *
+   * @return array - array(array('prefix' => $, 'file' => $))
+   */
+  public static function getModuleExtensions() {
+    $config = CRM_Core_Config::singleton();
+    $result = array();
+    if (isset($config->extensionsDir) &&
+      !empty($config->civiModules)
+    ) {
+      foreach ($config->civiModules as $moduleName => $modulePath) {
+        $result[$moduleName] = array(
+          'prefix' => $moduleName,
+          'file' => $config->extensionsDir . DIRECTORY_SEPARATOR. $modulePath,
+        );
+      }
+    }
+    return $result;
+  }
+
+  /**
    * Get all Activity Contacts
    *
    * The static array activityContacts is returned
