@@ -29,7 +29,7 @@
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout">
     <tr>
-        <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_group' field='title' id=$gid}{/if}</td> 
+        <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_group' field='title' id=$gid}{/if}</td>
         <td class="html-adjust">{$form.title.html} {help id="id-title"}</td>
     </tr>
     <tr>
@@ -44,7 +44,7 @@
         <td></td>
         <td class="html-adjust">{$form.is_multiple.html}&nbsp;{$form.is_multiple.label} {help id="id-is_multiple"}</td>
     </tr>
-    <tr id="multiple" class="hiddenElement">	
+    <tr id="multiple" class="hiddenElement">
         {*<dt>{$form.min_multiple.label}</dt><dd>{$form.min_multiple.html}</dd>*}
         <td class="label">{$form.max_multiple.label}</td>
         <td>{$form.max_multiple.html} {help id="id-max_multiple"}</td>
@@ -92,23 +92,23 @@ var  isGroupEmpty = "{/literal}{$isGroupEmpty}{literal}";
 
 if ( isGroupEmpty ) {
      showRange( true );
-}	
+}
 
 function showHideStyle()
-{   	     
+{
 	var isShow          = false;
-	var extend          = document.getElementById("extends[0]").value;
+	var extend          = document.getElementById("extends_0").value;
     var contactTypes    = {/literal}'{$contactTypes}'{literal};
     var showStyle       = "{/literal}{$showStyle}{literal}";
     var showMultiple    = "{/literal}{$showMultiple}{literal}";
     var showMaxMultiple = "{/literal}{$showMaxMultiple}{literal}";
-  
+
     eval('var contactTypes = ' + contactTypes);
-    
+
     if ( cj.inArray(extend, contactTypes) >= 0 ) {
         isShow  = true;
     }
-	if( isShow  ) {	
+	if( isShow  ) {
         cj("tr#style").show();
         cj("tr#is_multiple").show();
 	} else {
@@ -137,17 +137,17 @@ function showRange( onFormLoad )
     if( cj("#is_multiple :checked").length ) {
         cj("tr#multiple").show();
         cj("select#style option[value='Tab']").attr("selected", "selected");
-    } else { 
+    } else {
         cj("tr#multiple").hide();
         if ( !onFormLoad ) {
             cj("select#style option[value='Inline']").attr("selected", "selected");
         }
-    } 
+    }
 }
 
-// In update mode, when 'extends' is set to an option which doesn't have 
+// In update mode, when 'extends' is set to an option which doesn't have
 // any options in 2nd selector (for subtypes)  -
-var subtypes = document.getElementById('extends[1]');
+var subtypes = document.getElementById('extends_1');
 if ( subtypes ) {
      if ( subtypes.options.length <= 0 ) {
           subtypes.style.display = 'none';
