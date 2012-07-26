@@ -509,7 +509,8 @@ function wp_civicrm_capability() {
   $roles = array('super admin', 'administrator', 'editor');
 
   foreach ($roles as $role) {
-    if (is_array($wp_roles->get_role($role)->capabilities) &&
+    $roleObj = $wp_roles->get_role($role);
+    if (is_object($roleObj) && is_array($roleObj->capabilities) &&
       !array_key_exists('access_civicrm_nav_link',
         $wp_roles->get_role($role)->capabilities
       )
