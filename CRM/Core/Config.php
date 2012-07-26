@@ -652,7 +652,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       'TRUNCATE TABLE civicrm_group_contact_cache',
       'TRUNCATE TABLE civicrm_menu',
       'UPDATE civicrm_setting SET value = NULL WHERE name="navigation" AND contact_id IS NOT NULL',
-      'DELETE civicrm_setting WHERE name="modulePaths"', // CRM-10543
+      'DELETE FROM civicrm_setting WHERE name="modulePaths"', // CRM-10543
     );
 
     foreach ($queries as $query) {
