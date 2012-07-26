@@ -94,13 +94,16 @@ class CRM_Core_Permission_WordPress {
       return TRUE;
     }
 
+    if (current_user_can('author')) {
+      return FALSE;
+    }
+    
     if (current_user_can('super admin') ||
-      current_user_can('administrator') ||
-      current_user_can('editor')
+      current_user_can('administrator')
     ) {
       return TRUE;
     }
-
+    
     static $otherPerms = NULL;
     if (!$otherPerms) {
       $otherPerms = array(
@@ -114,17 +117,34 @@ class CRM_Core_Permission_WordPress {
         'register for events' => 1,
         'view event info' => 1,
         'access Contact Dashboard' => 1,
-                                 'sign CiviCRM Petition'                       => 1,
+        'sign CiviCRM Petition' => 1,
         'view public CiviMail content' => 1,
       );
     }
+    
+    static $editPerms = NULL;
+    if (!$editPerms) {
+      $editPerms = array(
+        'access CiviCRM' => 1,
+      );
+      $editPerms = array_merge($editPerms, $otherPerms);
+    }
+    
+    $permissions = NULL;
 
-    // for everyone else, give them permission only for
-    // some public pages
-    if (array_key_exists($str, $otherPerms)) {
+    if (current_user_can('editor')) {
+      //assign editor permissions
+      $permissions = $editPerms;
+    } else {
+      // for everyone else, give them permission only for
+      // some public pages
+      $permissions = $otherPerms;
+    }
+    
+    if (array_key_exists($str, $permissions)) {
       return TRUE;
     }
-
+    
     return FALSE;
   }
 
