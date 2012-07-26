@@ -41,7 +41,7 @@ class CRM_Core_Extensions {
   /**
    * An URL for public extensions repository
    */
-  CONST DEFAULT_EXTENSIONS_REPOSITORY = 'http://extdir.civicrm.org/';
+  CONST DEFAULT_EXTENSIONS_REPOSITORY = 'http://civicrm.org/extdir/ver={ver}|cms={uf}';
 
   /**
    * Extension info file name
