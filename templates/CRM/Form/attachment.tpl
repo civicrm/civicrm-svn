@@ -81,11 +81,16 @@
         <tr>
             <td class="label">{ts}Current Attachment(s){/ts}</td>
             <td class="view-value">
-              <div id="attachStatusMesg"></div>
-              {foreach from=$currentAttachmentInfo key=attKey item=attVal}
-                <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
-                <br/>
-              {/foreach}
+          {foreach from=$currentAttachmentInfo key=attKey item=attVal}
+                <div id="attachStatusMesg"></div>
+                <div id="attachFileRecord_{$attVal.fileID}">
+                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
+                  {if $attVal.deleteURLArgs}
+                   &nbsp;&nbsp;<a href="javascript:showDelete('{$attVal.cleanName}', '{$attVal.deleteURLArgs}', {$attVal.fileID})"><img src="{$config->resourceBase}/i/delete.png" title="{ts}Delete this attachment{/ts}"></a>
+                  {/if}
+                  <br/>
+                </div>
+          {/foreach}
             </td>
         </tr>
         <tr>
