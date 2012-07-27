@@ -197,7 +197,6 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
         self::processSharedAddressRelationship($address->master_id, $params);
       }
 
-
       // lets call the post hook only after we've done all the follow on processing
       if ($isEdit) {
         CRM_Utils_Hook::post('edit', 'Address', $params['id'], $address);
@@ -1156,6 +1155,25 @@ SELECT is_primary,
         'count' => $addressCount,
       );
     }
+  }
+
+  /**
+   * Get total addresses
+   *
+   * @param int $contactId contact Id
+   *
+   * @return int $addressCount address count
+   * @access public
+   * @static
+   */
+  static function getAddressCount( $contactId ) {
+    $query = '
+      SELECT count(id)
+      FROM civicrm_address 
+      WHERE contact_id = %1';
+    
+    $params = array( 1 => array( $contactId, 'Positive' ) );
+    return CRM_Core_DAO::singleValueQuery($query, $params);
   }
 }
 

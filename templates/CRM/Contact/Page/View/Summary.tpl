@@ -275,25 +275,26 @@
               
                 {assign var='locationIndex' value=$locationIndex+1}
               {/if}
-              {if $locationIndex eq 1 or $locationIndex is odd}
-                <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block">
-              {else}
-                <div class="contactCardRight crm-address_{$locationIndex} crm-address-block">
-              {/if}
-
+              
               {if $permission EQ 'edit'}
-                <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
-                  <div class="crm-table2div-layout">
-                    <div class="crm-clear">
-                      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
-                      <span class="batch-edit"></span>{ts}add address{/ts}
-                      </a>
+                {if $locationIndex eq 1 or $locationIndex is odd}
+                  <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block appendAddLink">
+                {else}
+                  <div class="contactCardRight crm-address_{$locationIndex} crm-address-block appendAddLink">
+                {/if}
+
+                    <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
+                      <div class="crm-table2div-layout">
+                        <div class="crm-clear">
+                          <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
+                          <span class="batch-edit"></span>{ts}add address{/ts}
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                 </div>
-                {/if}
-              </div>
-              <div class="clear"></div>
+              {/if}
+
             </div> <!-- end of contact panel -->
           
           <div class="contact_panel">

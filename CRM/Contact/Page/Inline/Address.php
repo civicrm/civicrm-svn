@@ -104,6 +104,13 @@ class CRM_Contact_Page_Inline_Address {
     $template->assign('locationIndex', $locBlockNo);
     $template->assign('addressId', $addressId);
 
+    $appendBlockIndex = CRM_Core_BAO_Address::getAddressCount($contactId);
+  
+    if ( $appendBlockIndex ) {
+      $appendBlockIndex++;
+      $template->assign('appendBlockIndex', $appendBlockIndex);
+    }
+
     // check logged in user permission
     $page = new CRM_Core_Page();
     CRM_Contact_Page_View::checkUserPermission($page, $contactId);
