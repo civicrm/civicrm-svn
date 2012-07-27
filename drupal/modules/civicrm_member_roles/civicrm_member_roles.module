@@ -502,18 +502,17 @@ function _civicrm_member_roles_sync($ext_uid = NULL, $cid = NULL) {
     //Get all memberships of contact
 
     $memberships = civicrm_api('membership','get',array('version' => 3, 'contact_id' => $cid));
-
-    $contactMemberships = CRM_Utils_Array::value($cid, $memberships['values'], array());
     $addRoles           = array();
     $expRoles           = array();
 
-    if (empty($contactMemberships['count']) && !empty($rid)) {
+    if ($memberships['count'] == 0 && !empty($rid)) {
       if (is_array($rid)) {
         $rid = implode(",", $rid);
       }
       db_query('DELETE  FROM {users_roles} WHERE uid = ' . $uid . ' AND rid IN( ' . $rid . ' )');
     }
     else {
+      $contactMemberships = $memberships['values'];
       foreach ($contactMemberships as $membership) {
         if (!empty($rid)) {
           if (is_array($rid)) {
