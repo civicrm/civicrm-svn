@@ -197,14 +197,30 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
 
         if (in_array($field, $addressBlocks)) {
+          if ($locType == 'Primary') {
+            require_once 'CRM/Core/BAO/LocationType.php';
+            $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
+            $locType = $defaultLocationType->id;
+          }        
+          
           if ($field == 'country') {
             $value = CRM_Core_PseudoConstant::countryIsoCode($value);
           }
           elseif ($field == 'state_province') {
             $value = CRM_Core_PseudoConstant::stateProvinceAbbreviation($value);
           }
+          
+          $isPrimary = 1;
+          if (isset($this->_params['onbehalf_location']['address'])
+               && count($this->_params['onbehalf_location']['address']) > 0) {
+            $isPrimary = 0;
+          }
+                    
           $this->_params['onbehalf_location']['address'][$locType][$field] = $value;
-          $this->_params['onbehalf_location']['address'][$locType]['is_primary'] = 1;
+          if (!CRM_Utils_Array::value('is_primary', $this->_params['onbehalf_location']['address'][$locType])) {
+            $this->_params['onbehalf_location']['address'][$locType]['is_primary'] = $isPrimary;
+        }
+          $this->_params['onbehalf_location']['address'][$locType]['location_type_id'] = $locType;
         }
         elseif (in_array($field, $blocks)) {
           if (!$typeId || is_numeric($typeId)) {
@@ -675,7 +691,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
           // fix the index of block elements
           foreach ( $vals as $key => $val ) {
-            $behalfOrganization[$block][++$key] = $val;
+            //dont adjust the index of address block as 
+            //it's index is WRT to location type
+            $newKey = ($block == 'address') ? $key : ++$key;
+            $behalfOrganization[$block][$newKey] = $val;
           }
         }
         unset($params['onbehalf_location']);
