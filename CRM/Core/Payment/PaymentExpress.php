@@ -156,9 +156,9 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
          */
 
     $privateData = "a={$params['contactID']},b={$params['contributionID']},c={$params['contributionTypeID']},d={$params['invoiceID']}";
-    // we need to be careful the total string isn't too long
-    $merchantRef = substr($params['contactID'] . "-" . $params['contributionID'] . " " . substr($params['description'], 27, 20), 0, 24);
+
     if ($component == 'event') {
+    $merchantRef = substr($params['contactID'] . "-" . $params['contributionID'] . " " . substr($params['description'], 27, 20), 0, 24);
       $privateData .= ",f={$params['participantID']},g={$params['eventID']}";
     }
     elseif ($component == 'contribute') {
@@ -166,6 +166,8 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
       if ($membershipID) {
         $privateData .= ",e=$membershipID";
       }
+      $merchantRef = substr($params['contactID'] . "-" . $params['contributionID'] . " " . substr($params['description'], 20, 20), 0, 24);
+
     }
 
     $dpsParams = array(

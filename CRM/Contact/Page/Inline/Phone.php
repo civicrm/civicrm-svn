@@ -79,6 +79,11 @@ class CRM_Contact_Page_Inline_Phone {
     $template->assign('phone', $phones);
     $template->assign('privacy', $privacy);
 
+    // check logged in user permission
+    $page = new CRM_Core_Page();
+    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
+    $template->assign($page);
+    
     echo $content = $template->fetch('CRM/Contact/Page/Inline/Phone.tpl');
     CRM_Utils_System::civiExit();
   }

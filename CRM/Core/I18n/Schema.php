@@ -489,7 +489,7 @@ class CRM_Core_I18n_Schema {
       return;
     }
 
-    $currentVer = CRM_Core_BAO_Domain::version();
+    $currentVer = CRM_Core_BAO_Domain::version(TRUE);
 
     if ($currentVer && CRM_Core_Config::isUpgradeMode()) {
       // take exact version so that proper schema structure file in invoked

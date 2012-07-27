@@ -92,6 +92,14 @@ class CRM_Upgrade_Incremental_php_FourTwo {
       $title = ts('Upgrade DB to 4.2.alpha1: Contributions (%1 => %2)', array(1 => $startId, 2 => $endId));
       $this->addTask($title, 'task_4_2_alpha1_convertContributions', $startId, $endId);
     }
+    $minParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_participant');
+    $maxParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_participant');
+    
+    for ($startId = $minParticipantId; $startId <= $maxParticipantId; $startId += self::BATCH_SIZE) {
+      $endId = $startId + self::BATCH_SIZE - 1;
+      $title = ts('Upgrade DB to 4.2.alpha1: Participant (%1 => %2)', array(1 => $startId, 2 => $endId));
+      $this->addTask($title, 'task_4_2_alpha1_convertParticipants', $startId, $endId);
+    }
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: Event Profile'), 'task_4_2_alpha1_eventProfile');
   }
 
@@ -104,6 +112,18 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         }
       }
     }
+  }
+
+  function upgrade_4_2_beta3($rev) {
+    $this->addTask(ts('Upgrade DB to 4.2.beta3: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    $minParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_participant');
+    $maxParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_participant');
+    
+    for ($startId = $minParticipantId; $startId <= $maxParticipantId; $startId += self::BATCH_SIZE) {
+      $endId = $startId + self::BATCH_SIZE - 1;
+      $title = ts('Upgrade DB to 4.2.alpha1: Participant (%1 => %2)', array(1 => $startId, 2 => $endId));
+      $this->addTask($title, 'task_4_2_alpha1_convertParticipants', $startId, $endId);
+    } 
   }
 
   /**
@@ -427,6 +447,20 @@ WHERE     cpf.price_set_id = %1
       CRM_Price_BAO_LineItem::create($lineParams);
     }
 
+    return TRUE;
+  }
+  
+  /**
+   * (Queue Task Callback)
+   *
+   * Find any participant records and create corresponding line-item
+   * records.
+   *
+   * @param $startId int, the first/lowest participant ID to convert
+   * @param $endId int, the last/highest participant ID to convert
+   */
+  static function task_4_2_alpha1_convertParticipants(CRM_Queue_TaskContext $ctx, $startId, $endId) {
+    $upgrade = new CRM_Upgrade_Form();
     //create lineitems for participant in edge cases using default price set for contribution.
     $query = "
 SELECT    cp.id as participant_id, cp.fee_amount, cp.fee_level,ce.is_monetary,
@@ -472,7 +506,6 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
       }
       CRM_Price_BAO_LineItem::create($lineParams);
     }
-
     return TRUE;
   }
 

@@ -25,11 +25,13 @@
 *}
 <div class="crm-table2div-layout" id="crm-demographic-content">
     <div class="crm-clear"> <!-- start of main -->
+      {if $permission EQ 'edit'}
       <div class="crm-config-option">
         <a id="edit-demographic" class="hiddenElement crm-link-action" title="{ts}click to add or edit demographic{/ts}">
         <span class="batch-edit"></span>{ts}add or edit demographic{/ts}
         </a>
       </div>
+      {/if}
 
       <div class="crm-label">{ts}Gender{/ts}</div>
       <div class="crm-content crm-contact-gender_display">{$gender_display}</div>

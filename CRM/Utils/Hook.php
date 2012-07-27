@@ -158,19 +158,12 @@ abstract class CRM_Utils_Hook {
   }
 
   function requireCiviModules(&$moduleList) {
-    $config = CRM_Core_Config::singleton();
-    if (isset($config->extensionsDir) &&
-      !empty($config->civiModules)
-    ) {
-      foreach ($config->civiModules as $moduleName => $modulePath) {
-        include_once (
-          $config->extensionsDir . DIRECTORY_SEPARATOR .
-          $modulePath
-        );
-        $moduleList[$moduleName] = $moduleName;
+    $civiModules = CRM_Core_PseudoConstant::getModuleExtensions();
+    foreach ($civiModules as $civiModule) {
+      include_once $civiModule['filePath'];
+      $moduleList[$civiModule['prefix']] = $civiModule['prefix'];
       }
     }
-  }
 
   /**
    * This hook is called before a db write on some core objects.
