@@ -73,11 +73,16 @@ class CRM_Contact_Page_Inline_Phone {
         $privacy[$name] = $contact->$name;
       }
     }
-   
+
     $template = CRM_Core_Smarty::singleton();
     $template->assign('contactId', $contactId);
     $template->assign('phone', $phones);
     $template->assign('privacy', $privacy);
+
+    // check logged in user permission
+    $page = new CRM_Core_Page();
+    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
+    $template->assign($page);
     
     echo $content = $template->fetch('CRM/Contact/Page/Inline/Phone.tpl');
     CRM_Utils_System::civiExit();
