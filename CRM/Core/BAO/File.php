@@ -243,7 +243,8 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
    */
   public function &getEntityFile($entityTable, $entityID, $addDeleteArgs = false) {
     if (empty($entityTable) || !$entityID) {
-      return NULL;
+      $results = NULL;
+      return $results;
     }
 
     $config = CRM_Core_Config::singleton();
@@ -312,7 +313,7 @@ AND       CEF.entity_id    = %2";
     $totalAttachments = 0;
     if ($currentAttachmentInfo) {
       $totalAttachments = count($currentAttachmentInfo);
-      $form->add('checkbox', 'is_delete_attachment', ts('Delete Current Attachment(s)'));
+      $form->add('checkbox', 'is_delete_attachment', ts('Delete All Attachment(s)'));
       $form->assign('currentAttachmentInfo', $currentAttachmentInfo);
     }
     else {

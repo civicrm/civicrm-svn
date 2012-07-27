@@ -29,7 +29,7 @@
         <td class="label"><label>{ts}Current Attachment(s){/ts}</label></td>
         <td class="view-value">
           {foreach from=$currentAttachmentInfo key=attKey item=attVal}
-                <div id="attachStatusMesg"></div>
+                <div id="attachStatusMesg" class="status hiddenElement"></div>
                 <div id="attachFileRecord_{$attVal.fileID}">
                   <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
                   {if $attVal.deleteURLArgs}
@@ -50,18 +50,18 @@
     {/if}
     {if !$noexpand}
     <div class="crm-accordion-wrapper crm-accordion_title-accordion {$openCloseStyle}">
- 		<div class="crm-accordion-header">
-  			<div class="icon crm-accordion-pointer"></div>
-  			{$attachTitle}
+	 		<div class="crm-accordion-header">
+	  			<div class="icon crm-accordion-pointer"></div>
+	  			{$attachTitle}
 			</div><!-- /.crm-accordion-header -->
  		<div class="crm-accordion-body">
- 	{/if}
+ 		{/if}
     <div id="attachments">
+			<table class="form-layout-compressed">
       {if $form.attachFile_1}
         {if $context EQ 'pcpCampaign'}
             <div class="description">{ts}You can upload a picture or image to include on your page. Your file should be in .jpg, .gif, or .png format. Recommended image size is 250 x 250 pixels. Maximum size is 360 x 360 pixels.{/ts}</div>
         {/if}
-        <table class="form-layout-compressed">
             <tr>
                 <td class="label">{$form.attachFile_1.label}</td>
                 <td>{$form.attachFile_1.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#attachFile_1' );">{ts}clear{/ts}</a>)</span><br />
@@ -82,7 +82,7 @@
             <td class="label">{ts}Current Attachment(s){/ts}</td>
             <td class="view-value">
           {foreach from=$currentAttachmentInfo key=attKey item=attVal}
-                <div id="attachStatusMesg"></div>
+                <div id="attachStatusMesg" class="status hiddenElement"></div>
                 <div id="attachFileRecord_{$attVal.fileID}">
                   <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
                   {if $attVal.deleteURLArgs}
@@ -96,11 +96,11 @@
         <tr>
             <td class="label">&nbsp;</td>
             <td>{$form.is_delete_attachment.html}&nbsp;{$form.is_delete_attachment.label}<br />
-                <span class="description">{ts}Check this box and click Save to delete all current attachments.{/ts}</span>
+                <span class="description">{ts}Click the red X next to a file name to delete a specific attachment. If you want to delete ALL attachments, check the box above and click Save.{/ts}</span>
             </td>
         </tr>
     {/if}
-        </table>
+			</table>
     </div>
 	</div><!-- /.crm-accordion-body -->
 	</div><!-- /.crm-accordion-wrapper -->
