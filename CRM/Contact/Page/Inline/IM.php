@@ -23,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  *
@@ -34,44 +34,47 @@
  */
 
 /**
- * form helper class for an IM object
+ * Dummy page for details for IM
+ *
  */
-class CRM_Contact_Form_Edit_IM {
+class CRM_Contact_Page_Inline_IM {
 
   /**
-   * build the form elements for an IM object
+   * Run the page.
    *
-   * @param CRM_Core_Form $form       reference to the form object
-   * @param int           $blockCount block number to build
-   * @param boolean       $blockEdit  is it block edit
+   * This method is called after the page is created.
    *
    * @return void
    * @access public
-   * @static
+   *
    */
-  static function buildQuickForm(&$form, $blockCount = NULL, $blockEdit = FALSE) {
-    if (!$blockCount) {
-      $blockId = ($form->get('IM_Block_Count')) ? $form->get('IM_Block_Count') : 1;
+  function run() {
+    // get the emails for this contact
+    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
+
+    $locationTypes = CRM_Core_PseudoConstant::locationDisplayName();
+    $IMProviders = CRM_Core_PseudoConstant::IMProvider();
+
+    $entityBlock = array('contact_id' => $contactId);
+    $ims = CRM_Core_BAO_IM::getValues($entityBlock);
+    if (!empty($ims)) {
+      foreach ($ims as $key => & $value) {
+        $value['location_type'] = $locationTypes[$value['location_type_id']];
+        $value['provider'] = $IMProviders[$value['provider_id']];
+      }
     }
-    else {
-      $blockId = $blockCount;
-    }
-    $form->applyFilter('__ALL__', 'trim');
 
-    //IM provider select
-    $form->addElement('select', "im[$blockId][provider_id]", '', CRM_Core_PseudoConstant::IMProvider());
+    $page = new CRM_Core_Page();
+    // check logged in user permission
+    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
+    
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign('contactId', $contactId);
+    $template->assign('im', $ims);
+    $template->assign($page);
 
-    //Block type select
-    $form->addElement('select', "im[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
-
-    //IM box
-    $form->addElement('text', "im[$blockId][name]", ts('Instant Messenger'),
-      CRM_Core_DAO::getAttribute('CRM_Core_DAO_IM', 'name')
-    );
-
-    //is_Primary radio
-    $js = array('id' => 'IM_' . $blockId . '_IsPrimary', 'onClick' => 'singleSelect( this.id );');
-    $form->addElement('radio', "im[$blockId][is_primary]", '', '', '1', $js);
+    echo $content = $template->fetch('CRM/Contact/Page/Inline/IM.tpl');
+    CRM_Utils_System::civiExit();
   }
 }
 

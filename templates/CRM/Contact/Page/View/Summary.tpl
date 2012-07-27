@@ -233,19 +233,13 @@
                                   {include file="CRM/Contact/Page/Inline/Phone.tpl"}
                                 </div>
                               </div>  
-                                {if $im}
-                                <div class="crm-clear crm-summary-block" id="im-block">
-                                {foreach from=$im item=item}
-                                    {if $item.name or $item.provider}
-                                      {if $item.name}
-                                        <div class="crm-label">{$item.provider}&nbsp;({$item.location_type})</div>
-                                        <div class="crm-content crm-contact_im {if $item.is_primary eq 1} primary{/if}">{$item.name}</div>
-                                      {/if}
-                                    {/if}
-                                {/foreach}
+                              <div class="crm-clear crm-summary-im-block">
+                                <div class="crm-summary-block" id="im-block">
+                                  {include file="CRM/Contact/Page/Inline/IM.tpl"}
                                 </div>
-                                {/if}
-                                {if $openid}
+                              </div>  
+                              
+                              {if $openid}
                                 <div class="crm-clear crm-summary-block" id="openid-block">
                                 {foreach from=$openid item=item}
                                     {if $item.openid}
