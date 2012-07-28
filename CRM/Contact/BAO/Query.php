@@ -3410,19 +3410,19 @@ WHERE  id IN ( $groupIDs )
     $rel = explode('_', $value);
 
     self::$_relType = $rel[1];
+
+    $params = array('id' => $rel[0]);
+    $rTypeValues = array();
+    $rType = CRM_Contact_BAO_RelationshipType::retrieve($params, $rTypeValues);
+    if (!$rType) {
+      return;
+    }
+
+    if ($rTypeValues['name_a_b'] == $rTypeValues['name_b_a']) {
+      self::$_relType = 'reciprocal';
+    }
+
     if ($nameClause) {
-
-      $params = array('id' => $rel[0]);
-      $rTypeValues = array();
-
-      $rType = CRM_Contact_BAO_RelationshipType::retrieve($params, $rTypeValues);
-      if (!$rType) {
-        return;
-      }
-      // for relatinship search we always do wildcard
-      if ($rTypeValues['name_a_b'] == $rTypeValues['name_b_a']) {
-        self::$_relType = 'reciprocal';
-      }
       $this->_where[$grouping][] = "( contact_b.sort_name $nameClause AND contact_b.id != contact_a.id )";
     }
 
@@ -3441,7 +3441,9 @@ WHERE  id IN ( $groupIDs )
     //check to see if the target contact is in specified group
     if ($targetGroup) {
       //add contacts from static groups
-      $this->_tables['civicrm_relationship_group_contact'] = $this->_whereTables['civicrm_relationship_group_contact'] = " LEFT JOIN civicrm_group_contact civicrm_relationship_group_contact ON civicrm_relationship_group_contact.contact_id = contact_b.id";
+      $this->_tables['civicrm_relationship_group_contact'] =
+        $this->_whereTables['civicrm_relationship_group_contact'] =
+        " LEFT JOIN civicrm_group_contact civicrm_relationship_group_contact ON civicrm_relationship_group_contact.contact_id = contact_b.id";
       $groupWhere[] = "( civicrm_relationship_group_contact.group_id IN  (" . implode(",", $targetGroup[2]) . ") )";
 
       //add contacts from saved searches
