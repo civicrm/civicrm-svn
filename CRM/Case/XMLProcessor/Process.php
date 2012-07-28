@@ -389,6 +389,16 @@ AND        a.is_deleted = 0
       if (array_key_exists('custom', $params) && is_array($params['custom'])) {
         $activityParams['custom'] = $params['custom'];
       }
+
+      // Add parameters for attachments
+      $config = CRM_Core_Config::singleton( );
+      $numAttachments = $config->maxAttachments;
+      for ( $i = 1; $i <= $numAttachments; $i++ ) {
+        $attachName = "attachFile_$i";
+        if ( isset( $params[$attachName] ) && !empty( $params[$attachName] ) ) {
+          $activityParams[$attachName] = $params[$attachName];
+        }
+      }
     }
     else {
       $activityDate = NULL;

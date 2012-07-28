@@ -68,6 +68,9 @@ class CRM_Case_Form_Activity_OpenCase {
     $form->_context = CRM_Utils_Request::retrieve('context', 'String', $form);
     $form->_contactID = CRM_Utils_Request::retrieve('cid', 'Positive', $form);
     $form->assign('context', $form->_context);
+
+    // Add attachments
+    CRM_Core_BAO_File::buildAttachment( $form, 'civicrm_activity', $form->_activityId );
   }
 
   /**
@@ -205,6 +208,15 @@ class CRM_Case_Form_Activity_OpenCase {
 
     // rename activity_location param to the correct column name for activity DAO
     $params['location'] = CRM_Utils_Array::value('activity_location', $params);
+
+    // Add attachments
+    CRM_Core_BAO_File::formatAttachment(
+      $params,
+      $params,
+      'civicrm_activity',
+      $form->_activityId
+    );
+
   }
 
   /**
@@ -307,6 +319,16 @@ class CRM_Case_Form_Activity_OpenCase {
 
     if (array_key_exists('custom', $params) && is_array($params['custom'])) {
       $xmlProcessorParams['custom'] = $params['custom'];
+    }
+
+    // Add parameters for attachments
+    $config = CRM_Core_Config::singleton( );
+    $numAttachments = $config->maxAttachments;
+    for ( $i = 1; $i <= $numAttachments; $i++ ) {
+      $attachName = "attachFile_$i";
+      if ( isset( $params[$attachName] ) && !empty( $params[$attachName] ) ) {
+        $xmlProcessorParams[$attachName] = $params[$attachName];
+      }
     }
 
     $xmlProcessor->run($params['case_type'], $xmlProcessorParams);

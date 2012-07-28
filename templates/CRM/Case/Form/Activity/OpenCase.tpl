@@ -38,4 +38,15 @@
             {include file="CRM/common/jcalendar.tpl" elementName=start_date}       
         </td>
     </tr>
+
+    {* Add fields for attachments *}
+    {if $action eq 4 AND $currentAttachmentURL}
+        {include file="CRM/Form/attachment.tpl"}{* For view action the include provides the row and cells. *}
+    {elseif $action eq 1 OR $action eq 2}
+         <tr class="crm-activity-form-block-attachment">
+            <td colspan="2">
+                {include file="CRM/Form/attachment.tpl"}
+            </td>
+         </tr>
+    {/if}
 {/if}
