@@ -1932,7 +1932,7 @@ class CRM_Contact_BAO_Query {
         $locType[0] == 'phone' ||
         $locType[0] == 'openid'
       ) {
-        if ($locType[2]) {
+        if (isset($locType[2]) && $locType[2]) {
           $tName = "{$locationType[$locType[1]]}-{$locType[0]}-{$locType[2]}";
         }
         else {
@@ -4391,9 +4391,13 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         return "$clause $value";
 
       default:
-        if (isset($dataType)) {
-          $value = CRM_Utils_Type::escape($value, $dataType);
+        if (!isset($dataType)) {
+          $dataType = 'String';
         }
+
+        $value = CRM_Utils_Type::escape($value, $dataType);
+
+        // if we dont have a dataType we should assume
         if ($dataType == 'String') {
           $value = "'" . strtolower($value) . "'";
         }
