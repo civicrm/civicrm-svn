@@ -216,7 +216,7 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
         if (array_key_exists($values['status_id'], $waitingStatuses) &&
           !array_key_exists($values['event_id'], $fullEvents)
         ) {
-
+          require_once 'CRM/Event/BAO/Event.php';
           if ($waitingStatuses[$values['status_id']] == 'On waitlist' &&
             CRM_Event_BAO_Event::validRegistrationDate($values)
           ) {
