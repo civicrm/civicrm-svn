@@ -78,7 +78,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
    * @return void
    * @access public
    *
-   */ 
+   */
   function preProcess() {
     // process url params
     $this->_id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
@@ -340,8 +340,14 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
 
     switch ($context) {
       case 'custom':
+        $urlString = 'civicrm/contact/search/custom';
+        break;
+
       case 'fulltext':
         $urlString = 'civicrm/contact/search/custom';
+        if ( $qfKey ) {
+          $urlParams = '_qf_Custom_display=true';
+        }
         break;
 
       case 'advanced':
