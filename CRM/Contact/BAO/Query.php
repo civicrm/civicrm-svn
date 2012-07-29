@@ -4391,7 +4391,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         return "$clause $value";
 
       default:
-        if (!isset($dataType)) {
+        if (empty($dataType)) {
           $dataType = 'String';
         }
 
