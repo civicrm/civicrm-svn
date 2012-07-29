@@ -81,6 +81,8 @@ class CRM_Utils_Type {
         $string = 'Blob';
         break;
 
+        // CRM-10404
+      case 12:
       case 256:
         $string = 'Timestamp';
         break;
