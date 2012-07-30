@@ -261,10 +261,10 @@
         });
 				
 	var checkBoxField = 'field['+ voterId +'][custom_';		
-	cj( 'input:checkbox[id^="'+ checkBoxField +'"]' ).each( function( ) {
+	cj( 'input:checkbox[name^="'+ checkBoxField +'"]' ).each( function( ) {
 	     value = '';
 	     if ( cj(this).is(':checked') == true ) value = 1;
-	     data[cj(this).attr( 'id' )] = value;
+	     data[cj(this).attr( 'name' )] = value;
         });
 	
 	var allRadios   = new Object;
