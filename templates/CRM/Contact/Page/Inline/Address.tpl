@@ -99,7 +99,7 @@
   </div>
 {/if}
 
-{if $appendBlockIndex and $permission EQ 'edit' && $addressId gt 0}
+{if $appendBlockIndex and $permission EQ 'edit'}
   {if $appendBlockIndex is odd}
     <div class="contactCardLeft crm-address_{$appendBlockIndex} crm-address-block appendAddLink">
   {else}
