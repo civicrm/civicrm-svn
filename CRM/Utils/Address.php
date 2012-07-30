@@ -48,8 +48,7 @@ class CRM_Utils_Address {
    *
    * @static
    */
-  static
-  function format($fields,
+  static function format($fields,
     $format           = NULL,
     $microformat      = FALSE,
     $mailing          = FALSE,
@@ -211,6 +210,7 @@ class CRM_Utils_Address {
         $formatted = preg_replace("/{[^{}]*\b{$token}\b[^{}]*}/u", '', $formatted);
       }
     }
+
     // drop any {...} constructs from lines' ends
     if (!$microformat) {
       $formatted = "\n$formatted\n";
@@ -266,8 +266,7 @@ class CRM_Utils_Address {
     return $finalFormatted;
   }
 
-  static
-  function sequence($format) {
+  static function sequence($format) {
     // also compute and store the address sequence
     $addressSequence = array(
       'address_name',
