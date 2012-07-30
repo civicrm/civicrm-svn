@@ -84,6 +84,25 @@ cj(function(){
       cj('#edit-communication-pref').hide();
     });
 
+    // update email and phone block based on privacy settings
+    var doNotEmail = {/literal}{$do_not_email}{literal};
+    
+    if (doNotEmail) {
+      cj('.crm-contact_email span').addClass('do-not-email');
+    }
+    else {
+      cj('.crm-contact_email span').removeClass('do-not-email');
+    }
+
+    var doNotPhone = {/literal}{$do_not_phone}{literal};
+    
+    if (doNotPhone) {
+      cj('.crm-contact_phone span').addClass('do-not-phone');
+    }
+    else {
+      cj('.crm-contact_phone span').removeClass('do-not-phone');
+    }
+
     cj('#edit-communication-pref').click( function() {
       var dataUrl  = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
       
