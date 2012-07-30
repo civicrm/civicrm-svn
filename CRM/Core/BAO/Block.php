@@ -40,10 +40,11 @@ class CRM_Core_BAO_Block {
   /**
    * Fields that are required for a valid block
    */
-  static $requiredBlockFields = array('email' => array('email'),
+  static $requiredBlockFields = array(
+    'email' => array('email'),
     'phone' => array('phone'),
     'im' => array('name'),
-    'openid' => array('openid'),
+    'openid' => array('openid')
   );
 
   /**
@@ -59,8 +60,7 @@ class CRM_Core_BAO_Block {
    * @access public
    * @static
    */
-  static
-  function &getValues($blockName, $params) {
+  static function &getValues($blockName, $params) {
     if (empty($params)) {
       return NULL;
     }
@@ -105,8 +105,7 @@ class CRM_Core_BAO_Block {
    * @access public
    * @static
    */
-  static
-  function retrieveBlock(&$block, $blockName) {
+  static function retrieveBlock(&$block, $blockName) {
     // we first get the primary location due to the order by clause
     $block->orderBy('is_primary desc, id');
     $block->find();
@@ -136,8 +135,7 @@ class CRM_Core_BAO_Block {
    * @access public
    * @static
    */
-  static
-  function dataExists($blockFields, &$params) {
+  static function dataExists($blockFields, &$params) {
     foreach ($blockFields as $field) {
       if (CRM_Utils_System::isNull(CRM_Utils_Array::value($field, $params))) {
         return FALSE;
@@ -156,8 +154,7 @@ class CRM_Core_BAO_Block {
    * @access public
    * @static
    */
-  static
-  function blockExists($blockName, &$params) {
+  static function blockExists($blockName, &$params) {
     // return if no data present
     if (!CRM_Utils_Array::value($blockName, $params) || !is_array($params[$blockName])) {
       return FALSE;
@@ -177,8 +174,7 @@ class CRM_Core_BAO_Block {
    * @access public
    * @static
    */
-  static
-  function getBlockIds($blockName, $contactId = NULL, $entityElements = NULL, $updateBlankLocInfo = FALSE) {
+  static function getBlockIds($blockName, $contactId = NULL, $entityElements = NULL, $updateBlankLocInfo = FALSE) {
     $allBlocks = array();
     $name = ucfirst($blockName);
     if ($blockName == 'im') {
@@ -209,8 +205,7 @@ class CRM_Core_BAO_Block {
    * @access public
    * @static
    */
-  static
-  function create($blockName, &$params, $entity = NULL) {
+  static function create($blockName, &$params, $entity = NULL) {
     if (!self::blockExists($blockName, $params)) {
       return NULL;
     }
@@ -339,7 +334,7 @@ class CRM_Core_BAO_Block {
       // $updateBlankLocInfo will help take appropriate decision. CRM-5969
       if (CRM_Utils_Array::value('id', $value) && !$dataExits && $updateBlankLocInfo) {
         //delete the existing record
-        self::blockDelete($name, array('id' => $value['id']));
+        self::blockDelete($blockName, array('id' => $value['id']));
         continue;
       }
       elseif (!$dataExits) {
@@ -372,7 +367,7 @@ class CRM_Core_BAO_Block {
         if (!CRM_Utils_Array::value('id', $deleteBlock)) {
           continue;
         }
-        self::blockDelete($name, array('id' => $deleteBlock['id']));
+        self::blockDelete($blockName, array('id' => $deleteBlock['id']));
       }
     }
 
@@ -388,13 +383,19 @@ class CRM_Core_BAO_Block {
    * @return void
    * @static
    */
-  static
-  function blockDelete($blockName, $params) {
-        require_once "CRM/Core/DAO/{$blockName}.php";
-    eval('$block = new CRM_Core_DAO_' . $blockName . '( );');
+  static function blockDelete($blockName, $params) {
+    $name = ucfirst($blockName);
+    if ($blockName == 'im') {
+      $name = 'IM';
+    }
+    elseif ($blockName == 'openid') {
+      $name = 'OpenID';
+    }
+
+    require_once "CRM/Core/DAO/{$name}.php";
+    eval('$block = new CRM_Core_DAO_' . $name . '( );');
 
     $block->copyValues($params);
-
     $block->delete();
   }
 
