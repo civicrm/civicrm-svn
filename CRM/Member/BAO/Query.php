@@ -48,7 +48,7 @@ class CRM_Member_BAO_Query {
   static function select(&$query) {
     // if membership mode add membership id
     if ($query->_mode & CRM_Contact_BAO_Query::MODE_MEMBER ||
-      CRM_Utils_Array::value('membership_id', $query->_returnProperties)
+      CRM_Contact_BAO_Query::componentPresent($query->_returnProperties, 'membership_')
     ) {
 
       $query->_select['membership_id'] = "civicrm_membership.id as membership_id";
