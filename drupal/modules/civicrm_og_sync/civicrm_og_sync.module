@@ -53,6 +53,7 @@
  * mirroring OG for most organizations.
  */
 
+
 /**
  * Implementation of hook_node_update
  * Implementation of hook_node_insert
@@ -178,6 +179,8 @@ function civicrm_og_sync_civicrm_post($op, $objectName, $objectID, $objectRef) {
  * @return
  */
 function civicrm_og_sync_enable() {
+  db_query("UPDATE {system} SET weight = 110 WHERE name = 'civicrm_og_sync'");
+  
   if (!civicrm_initialize()) {
     return;
   }

@@ -37,6 +37,7 @@
  *
  */
 function civicrm_engage_enable() {
+  db_query("UPDATE {system} SET weight = 110 WHERE name = 'civicrm_engage'");
   civicrm_initialize();
   // functions that should run repeatedly
   // every time the module is re-enabled.
