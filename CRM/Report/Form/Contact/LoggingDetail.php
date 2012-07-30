@@ -55,6 +55,9 @@ class CRM_Report_Form_Contact_LoggingDetail extends CRM_Logging_ReportDetail {
   }
 
   function buildQuickForm() {
+    $layout = CRM_Utils_Request::retrieve('layout', 'String', $this);
+    $this->assign('layout', $layout);
+
     parent::buildQuickForm();
 
     if ($this->cid) {

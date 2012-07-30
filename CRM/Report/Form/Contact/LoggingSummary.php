@@ -190,10 +190,9 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
           $q .= '&cid=' . $this->cid;
         }
 
-        $url = CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', $q, FALSE, TRUE);
-        $row['log_civicrm_entity_log_action_link'] = $url;
-        $row['log_civicrm_entity_log_action_hover'] = ts("View details for this update");
-        $row['log_civicrm_entity_log_action'] = '<div class="icon details-icon"></div> ' . ts('Update');
+        $url1 = CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', "{$q}&snippet=4&layout=overlay", FALSE, TRUE);
+        $url2 = CRM_Report_Utils_Report::getNextUrl('logging/contact/detail', "{$q}", FALSE, TRUE);
+        $row['log_civicrm_entity_log_action'] = "<a href='{$url1}' class='crm-summary-link'><div class='icon details-icon'></div></a>&nbsp;<a title='View details for this update' href='{$url2}'>" . ts('Update') . '</a>';
       }
 
       $date = CRM_Utils_Date::isoToMysql($row['log_civicrm_entity_log_date']);
