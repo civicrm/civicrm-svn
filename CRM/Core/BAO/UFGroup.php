@@ -1519,7 +1519,16 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @static
    * @access public
    */
-  static function buildProfile(&$form, &$field, $mode, $contactId = NULL, $online = FALSE, $onBehalf = FALSE, $rowNumber = NULL , $prefix = '') {
+  static function buildProfile(
+    &$form,
+    &$field,
+    $mode,
+    $contactId = NULL,
+    $online = FALSE,
+    $onBehalf = FALSE,
+    $rowNumber = NULL ,
+    $prefix = ''
+  ) {
     $defaultValues = array();
     $fieldName     = $field['name'];
     $title         = $field['title'];
@@ -1529,7 +1538,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     $required      = ($mode == CRM_Profile_Form::MODE_SEARCH) ? FALSE : $field['is_required'];
     $search        = ($mode == CRM_Profile_Form::MODE_SEARCH) ? TRUE : FALSE;
     $isShared      = CRM_Utils_Array::value('is_shared', $field, 0);
-    
+
     // do not display view fields in drupal registration form
     // CRM-4632
     if ($view && $mode == CRM_Profile_Form::MODE_REGISTER) {

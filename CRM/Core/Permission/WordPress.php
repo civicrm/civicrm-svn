@@ -97,13 +97,13 @@ class CRM_Core_Permission_WordPress {
     if (current_user_can('author')) {
       return FALSE;
     }
-    
+
     if (current_user_can('super admin') ||
       current_user_can('administrator')
     ) {
       return TRUE;
     }
-    
+
     static $otherPerms = NULL;
     if (!$otherPerms) {
       $otherPerms = array(
@@ -121,7 +121,7 @@ class CRM_Core_Permission_WordPress {
         'view public CiviMail content' => 1,
       );
     }
-    
+
     static $editPerms = NULL;
     if (!$editPerms) {
       $editPerms = array(
@@ -129,7 +129,7 @@ class CRM_Core_Permission_WordPress {
       );
       $editPerms = array_merge($editPerms, $otherPerms);
     }
-    
+
     $permissions = NULL;
 
     if (current_user_can('editor')) {
@@ -140,11 +140,11 @@ class CRM_Core_Permission_WordPress {
       // some public pages
       $permissions = $otherPerms;
     }
-    
+
     if (array_key_exists($str, $permissions)) {
       return TRUE;
     }
-    
+
     return FALSE;
   }
 
