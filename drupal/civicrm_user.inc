@@ -189,7 +189,9 @@ function civicrm_user_view($user, $view_mode) {
 	'</span>';
     }
 
-    if (CRM_Core_Permission::check('access Contact Dashboard')) {
+    if (CRM_Core_Permission::check('access Contact Dashboard') &&
+      CRM_Contact_BAO_Contact_Permission::allow($userID)
+    ) {
       if (!empty($contactURL)) {
         $contactURL .= '<br/>';
       }
