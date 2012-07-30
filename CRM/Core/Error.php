@@ -439,6 +439,20 @@ class CRM_Core_Error extends PEAR_ErrorStack {
   }
 
   /**
+   * Append to the query log (if enabled)
+   */
+  static
+  function debug_query($string) {
+    if ( defined( 'CIVICRM_DEBUG_LOG_QUERY' ) ) {
+      if ( CIVICRM_DEBUG_LOG_QUERY == 'backtrace' ) {
+        CRM_Core_Error::backtrace( $string, true );
+      } else if ( CIVICRM_DEBUG_LOG_QUERY ) {
+        CRM_Core_Error::debug_var( 'Query', $string, false, true );
+      }
+    }
+  }
+
+  /**
    * Obtain a reference to the error log
    *
    * @return Log
