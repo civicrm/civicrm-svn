@@ -1261,11 +1261,9 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
     // CRM-4575
     // token replacement of addressee/email/postal greetings
     // get the tokens added in subject and message
-    $messageToken = CRM_Utils_Token::getTokens($text);
     $subjectToken = CRM_Utils_Token::getTokens($subject);
-    $messageToken = array_merge($messageToken,
-      CRM_Utils_Token::getTokens($html)
-    );
+    $messageToken = CRM_Utils_Token::getTokens($text);
+    $messageToken = array_merge($messageToken, CRM_Utils_Token::getTokens($html));
 
     if (!$from) {
       $from = "$fromDisplayName <$fromEmail>";
@@ -1474,9 +1472,14 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
       }
     }
 
+    // call token hook
+    $tokens = array();
+    CRM_Utils_Hook::tokens($tokens);
+    $categories = array_keys($tokens);
+
     // get token details for contacts, call only if tokens are used
     $details = array();
-    if (!empty($returnProperties)) {
+    if (!empty($returnProperties) || !empty($tokens)) {
       list($details) = CRM_Utils_Token::getTokenDetails($contactIds,
         $returnProperties,
         NULL, NULL, FALSE,
@@ -1484,11 +1487,6 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         'CRM_Activity_BAO_Activity'
       );
     }
-
-    // call token hook
-    $tokens = array();
-    CRM_Utils_Hook::tokens($tokens);
-    $categories = array_keys($tokens);
 
     $escapeSmarty = $sent = FALSE;
     foreach ($contactDetails as $values) {
@@ -2212,7 +2210,7 @@ AND cl.modified_id  = c.id
     if (!in_array('CiviCampaign', $config->enableComponents)) {
       $skipFields[] = 'activity_engagement_level';
     }
-    
+
     foreach ($skipFields as $field) {
       if (isset($exportableFields[$field])) {
         unset($exportableFields[$field]);
