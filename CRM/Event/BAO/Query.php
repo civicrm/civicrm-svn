@@ -57,9 +57,8 @@ class CRM_Event_BAO_Query {
    */
   static function select(&$query) {
     if (($query->_mode & CRM_Contact_BAO_Query::MODE_EVENT) ||
-      CRM_Utils_Array::value('participant_id', $query->_returnProperties)
+      CRM_Contact_BAO_Query::componentPresent($query->_returnProperties, 'participant_')
     ) {
-
       $query->_select['participant_id'] = "civicrm_participant.id as participant_id";
       $query->_element['participant_id'] = 1;
       $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
@@ -485,7 +484,7 @@ class CRM_Event_BAO_Query {
 
       case 'participant_role':
         $from = " $side JOIN civicrm_option_group option_group_participant_role ON (option_group_participant_role.name = 'participant_role')";
-        $from .= " $side JOIN civicrm_option_value participant_role ON (civicrm_participant.role_id = participant_role.value 
+        $from .= " $side JOIN civicrm_option_value participant_role ON (civicrm_participant.role_id = participant_role.value
                                AND option_group_participant_role.id = participant_role.option_group_id ) ";
         break;
 

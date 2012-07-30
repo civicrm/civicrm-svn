@@ -4150,8 +4150,9 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
     return self::$_defaultHierReturnProperties;
   }
 
-  function dateQueryBuilder(&$values,
-    $tableName, $fieldName, $dbFieldName, $fieldTitle,
+  function dateQueryBuilder(
+    &$values, $tableName, $fieldName,
+    $dbFieldName, $fieldTitle,
     $appendTimeStamp = TRUE
   ) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
@@ -4240,8 +4241,8 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
     }
 
     if ($name == $fieldName) {
-      $op = '=';
-      $phrase = '=';
+      // $op = '=';
+      $phrase = $op;
 
       $date = CRM_Utils_Date::processDate($value);
 
@@ -4525,6 +4526,15 @@ AND   displayRelType.is_active = 1
   static function caseImportant( $op ) {
     return
       in_array($op, array('LIKE', 'IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY')) ? FALSE : TRUE;
+  }
+
+  static function componentPresent( &$returnProperties, $prefix ) {
+    foreach ($returnProperties as $name => $dontCare ) {
+      if (substr($name, 0, strlen($prefix)) == $prefix) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 }
 
