@@ -40,6 +40,13 @@
 class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
 
   /**
+   * the mailing ID of the mailing if we are resuming a mailing
+   *
+   * @var integer
+   */
+  protected $_mailingID;
+
+  /**
    * Function to set variables up before form is built
    *
    * @return void
@@ -49,7 +56,10 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
     if (CRM_Core_BAO_MailSettings::defaultDomain() == "FIXME.ORG") {
       CRM_Core_Error::fatal(ts('The <a href="%1">default mailbox</a> has not been configured. You will find <a href="%2">more info in our online user and administrator guide.</a>', array(1 => CRM_Utils_System::url('civicrm/admin/mailSettings', 'reset=1'), 2 => "http://book.civicrm.org/user/initial-set-up/email-system-configuration")));
     }
-    //when user come from search context.
+
+    $this->_mailingID = CRM_Utils_Request::retrieve('mid', 'Integer', $this, FALSE, NULL);
+
+    // when user come from search context.
     $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext($this->get('context'));
     if ($this->_searchBasedMailing) {
       $searchParams = $this->controller->exportValues();
@@ -76,17 +86,15 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
    * @return None
    */
   function setDefaultValues() {
-    $mailingID = CRM_Utils_Request::retrieve('mid', 'Integer', $this, FALSE, NULL);
     $continue = CRM_Utils_Request::retrieve('continue', 'String', $this, FALSE, NULL);
 
-    // check that the user has permission to access mailing id
-    CRM_Mailing_BAO_Mailing::checkPermission($mailingID);
-
     $defaults = array();
+    if ($this->_mailingID) {
+      // check that the user has permission to access mailing id
+      CRM_Mailing_BAO_Mailing::checkPermission($this->_mailingID);
 
-    if ($mailingID) {
       $mailing = new CRM_Mailing_DAO_Mailing();
-      $mailing->id = $mailingID;
+      $mailing->id = $this->_mailingID;
       $mailing->addSelect('name', 'campaign_id');
       $mailing->find(TRUE);
 
@@ -96,7 +104,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
       }
       else {
         // CRM-7590, reuse same mailing ID if we are continuing
-        $this->set('mailing_id', $mailingID);
+        $this->set('mailing_id', $this->_mailingID);
       }
 
       $defaults['campaign_id'] = $mailing->campaign_id;
@@ -104,8 +112,8 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
 
       $dao = new CRM_Mailing_DAO_Group();
 
-      $mailingGroups = array();
-      $dao->mailing_id = $mailingID;
+      $mailingGroups = array( 'civicrm_group' => array( ), 'civicrm_mailing' => array( ));
+      $dao->mailing_id = $this->_mailingID;
       $dao->find();
       while ($dao->fetch()) {
         $mailingGroups[$dao->entity_table][$dao->group_type][] = $dao->entity_id;
@@ -114,8 +122,10 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
       $defaults['includeGroups'] = $mailingGroups['civicrm_group']['Include'];
       $defaults['excludeGroups'] = CRM_Utils_Array::value('Exclude', $mailingGroups['civicrm_group']);
 
-      $defaults['includeMailings'] = CRM_Utils_Array::value('Include', $mailingGroups['civicrm_mailing']);
-      $defaults['excludeMailings'] = $mailingGroups['civicrm_mailing']['Exclude'];
+      if (!empty($mailingGroups['civicrm_mailing'])) {
+        $defaults['includeMailings'] = CRM_Utils_Array::value('Include', $mailingGroups['civicrm_mailing']);
+        $defaults['excludeMailings'] = $mailingGroups['civicrm_mailing']['Exclude'];
+      }
     }
 
     //when the context is search hide the mailing recipients.
@@ -166,11 +176,13 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
       TRUE
     );
 
-    //CRM-7362 --add campaigns.
-    $mailingId = CRM_Utils_Request::retrieve('mid', 'Integer', $this, FALSE, NULL);
+    $searchBasedMailing = false;
     $campaignId = NULL;
-    if ($mailingId) {
-      $campaignId = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $mailingId, 'campaign_id');
+
+    //CRM-7362 --add campaigns.
+    if ($this->_mailingID) {
+      $campaignId = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $this->_mailingID, 'campaign_id');
+      $searchBasedMailing = CRM_Mailing_BAO_Mailing::isSearchBasedMailing($this->_mailingID);
     }
     CRM_Campaign_BAO_Campaign::addCampaign($this, $campaignId);
 
@@ -178,7 +190,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
     $this->addElement('checkbox', 'dedupe_email', ts('Remove duplicate emails?'));
 
     //get the mailing groups.
-    $groups = CRM_Core_PseudoConstant::group('Mailing', false);
+    $groups = CRM_Core_PseudoConstant::group('Mailing', ! $searchBasedMailing);
 
     $mailings = CRM_Mailing_PseudoConstant::completed();
     if (!$mailings) {

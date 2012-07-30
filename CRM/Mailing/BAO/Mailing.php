@@ -934,8 +934,7 @@ AND civicrm_contact.is_opt_out =0";
    *
    * @return void
    */
-  static
-  function addMessageIdHeader(&$headers, $prefix, $job_id, $event_queue_id, $hash) {
+  static function addMessageIdHeader(&$headers, $prefix, $job_id, $event_queue_id, $hash) {
     $config           = CRM_Core_Config::singleton();
     $localpart        = CRM_Core_BAO_MailSettings::defaultLocalpart();
     $emailDomain      = CRM_Core_BAO_MailSettings::defaultDomain();
@@ -963,8 +962,7 @@ AND civicrm_contact.is_opt_out =0";
    *
    * @return (reference) array    array ref that hold array refs to the verp info and urls
    */
-  static
-  function getVerpAndUrls($job_id, $event_queue_id, $hash, $email) {
+  static function getVerpAndUrls($job_id, $event_queue_id, $hash, $email) {
     // create a skeleton object and set its properties that are required by getVerpAndUrlsAndHeaders()
     $config         = CRM_Core_Config::singleton();
     $bao            = new CRM_Mailing_BAO_Mailing();
@@ -1440,8 +1438,7 @@ AND civicrm_contact.is_opt_out =0";
    *
    * @return object
    */
-  static
-  function add(&$params, &$ids) {
+  static function add(&$params, &$ids) {
 
     if (CRM_Utils_Array::value('mailing', $ids)) {
       CRM_Utils_Hook::pre('edit', 'Mailing', $ids['mailing_id'], $params);
@@ -2028,8 +2025,7 @@ AND civicrm_contact.is_opt_out =0";
   }
 
 
-  static
-  function checkPermission($id) {
+  static function checkPermission($id) {
     if (!$id) {
       return;
     }
@@ -2043,8 +2039,7 @@ AND civicrm_contact.is_opt_out =0";
     return;
   }
 
-  static
-  function mailingACL($alias = NULL) {
+  static function mailingACL($alias = NULL) {
     $mailingACL = " ( 0 ) ";
 
     $mailingIDs = self::mailingACLIDs();
@@ -2056,8 +2051,7 @@ AND civicrm_contact.is_opt_out =0";
     return $mailingACL;
   }
 
-  static
-  function &mailingACLIDs($count = FALSE, $condition = NULL) {
+  static function &mailingACLIDs($count = FALSE, $condition = NULL) {
     $mailingIDs = array();
 
     // get all the groups that this user can access
@@ -2187,8 +2181,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
    * @access public
    */
 
-  static
-  function showEmailDetails($id) {
+  static function showEmailDetails($id) {
     return CRM_Utils_System::url('civicrm/mailing/report', "mid=$id");
   }
 
@@ -2526,8 +2519,7 @@ SELECT  $mailing.id as mailing_id
     return $report;
   }
 
-  static
-  function overrideVerp($jobID) {
+  static function overrideVerp($jobID) {
     static $_cache = array();
 
     if (!isset($_cache[$jobID])) {
@@ -2543,8 +2535,7 @@ WHERE  civicrm_mailing_job.id = %1
     return $_cache[$jobID];
   }
 
-  static
-  function processQueue($mode = NULL) {
+  static function processQueue($mode = NULL) {
     $config = &CRM_Core_Config::singleton();
     CRM_Core_Error::debug_log_message("Beginning processQueue run: {$config->mailerJobsMax}, {$config->mailerJobSize}");
 
@@ -2638,6 +2629,20 @@ ORDER BY civicrm_mailing.name";
     }
 
     return $list;
+  }
+
+  static function isSearchBasedMailing($mid) {
+    $sql = "
+SELECT     count(g.id)
+FROM       civicrm_mailing m
+INNER JOIN civicrm_mailing_group mg ON mg.mailing_id = m.id
+INNER JOIN civicrm_group g ON mg.entity_id = g.id AND mg.entity_table = 'civicrm_group'
+WHERE      g.is_hidden = 1
+AND        mg.group_type = 'Include'
+AND        m.id = %1
+";
+    $params = array( 1 => array( $mid, 'Integer' ) );
+    return CRM_Core_DAO::singleValueQuery($sql, $params);
   }
 }
 
