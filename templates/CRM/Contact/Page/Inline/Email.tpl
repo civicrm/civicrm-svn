@@ -44,7 +44,7 @@
   {foreach from=$email key="blockId" item=item}
     {if $item.email}
       <div class="crm-label">{$item.location_type}&nbsp;{ts}Email{/ts}</div>
-      <div class="crm-content crm-contact_email"> <!-- start of content -->
+      <div class="crm-content crm-contact_email {if $item.is_primary eq 1}primary{/if}"> <!-- start of content -->
         <span class={if $privacy.do_not_email}"do-not-email" title="{ts}Privacy flag: Do Not Email{/ts}" {elseif $item.on_hold}"email-hold" title="{ts}Email on hold - generally due to bouncing.{/ts}" {elseif $item.is_primary eq 1}"primary"{/if}><a href="mailto:{$item.email}">{$item.email}</a>{if $item.on_hold == 2}&nbsp;({ts}On Hold - Opt Out{/ts}){elseif $item.on_hold}&nbsp;({ts}On Hold{/ts}){/if}{if $item.is_bulkmail}&nbsp;({ts}Bulk{/ts}){/if}</span>
         {if $item.signature_text OR $item.signature_html}
         <span class="signature-link description">

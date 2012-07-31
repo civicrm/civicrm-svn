@@ -2356,13 +2356,7 @@ class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT, $queries, $user;
         $this->_connect();
 
-        if ( defined( 'CIVICRM_DEBUG_LOG_QUERY' ) ) {
-            if ( CIVICRM_DEBUG_LOG_QUERY == 'backtrace' ) {
-                CRM_Core_Error::backtrace( $string, true );
-            } else if ( CIVICRM_DEBUG_LOG_QUERY ) {
-                CRM_Core_Error::debug_var( 'Query', $string, false, true );
-            }
-        }
+        CRM_Core_Error::debug_query($string);
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
         $options = &$_DB_DATAOBJECT['CONFIG'];

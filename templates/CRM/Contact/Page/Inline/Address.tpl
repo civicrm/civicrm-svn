@@ -98,3 +98,23 @@ cj( function() {
   </div>
 </div>
 {/if}
+
+{if $appendBlockIndex and $permission EQ 'edit'}
+  {if $appendBlockIndex is odd}
+    <div class="contactCardLeft crm-address_{$appendBlockIndex} crm-address-block appendAddLink">
+  {else}
+    <div class="contactCardRight crm-address_{$appendBlockIndex} crm-address-block appendAddLink">
+  {/if}
+
+      <div class="crm-summary-block" id="address-block-{$appendBlockIndex}" locno="{$appendBlockIndex}">
+        <div class="crm-table2div-layout">
+          <div class="crm-clear">
+            <a id="edit-address-block-{$appendBlockIndex}" class="crm-link-action empty-address-block-{$appendBlockIndex}" title="{ts}click to add address{/ts}" locno="{$appendBlockIndex}" aid=0>
+            <span class="batch-edit"></span>{ts}add address{/ts}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+{/if}
+

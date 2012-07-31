@@ -27,8 +27,8 @@
     <div class="crm-clear"> <!-- start of main -->
       {if $permission EQ 'edit'}
       <div class="crm-config-option">
-        <a id="edit-demographic" class="hiddenElement crm-link-action" title="{ts}click to add or edit demographic{/ts}">
-        <span class="batch-edit"></span>{ts}add or edit demographic{/ts}
+          <a id="edit-demographic" class="hiddenElement crm-link-action" title="{ts}click to add or edit demographics{/ts}">
+          <span class="batch-edit"></span>{ts}add or edit demographics{/ts}
         </a>
       </div>
       {/if}

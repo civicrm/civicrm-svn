@@ -262,13 +262,14 @@
               
                 {assign var='locationIndex' value=$locationIndex+1}
               {/if}
+              
+              {if $permission EQ 'edit'}
               {if $locationIndex eq 1 or $locationIndex is odd}
-                <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block">
+                  <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block appendAddLink">
                                         {else}
-                <div class="contactCardRight crm-address_{$locationIndex} crm-address-block">
+                  <div class="contactCardRight crm-address_{$locationIndex} crm-address-block appendAddLink">
                                         {/if}
 
-              {if $permission EQ 'edit'}
                 <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                   <div class="crm-table2div-layout">
                     <div class="crm-clear">
@@ -278,9 +279,9 @@
                         </div>
                   </div>
                 </div>
+                  </div>
                 {/if}
-              </div>
-                        <div class="clear"></div>
+
             </div> <!-- end of contact panel -->
 
           <div class="contact_panel">

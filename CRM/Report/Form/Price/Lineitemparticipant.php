@@ -73,7 +73,7 @@ class CRM_Report_Form_Price_Lineitemparticipant extends CRM_Report_Form_Extended
       'priceFieldValue_from_lineItem',
       'priceField_from_lineItem',
       'participant_from_lineItem',
-      'contribution_from_lineItem',
+      'contribution_from_participant',
       'contact_from_participant',
       'event_from_participant',
     );

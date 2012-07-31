@@ -403,6 +403,151 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
   }
 
+  function testOnBehalfOfOrganizationWithOrgData()
+  {
+
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+
+    $this->open($this->sboxPath . "civicrm/profile/edit?reset=1&gid=4");
+    $firstName     = 'John_x_' . substr(sha1(rand()), 0, 7);
+    $lastName      = 'Anderson_c_' . substr(sha1(rand()), 0, 7);
+
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("_qf_Edit_next");
+    $this->type("first_name", $firstName);
+    $this->type("last_name", $lastName);
+    $this->click("_qf_Edit_next");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("profilewrap4");
+
+    $urlElements = $this->parseURL();
+    print_r($urlElements);
+    $cid = $urlElements['queryString']['id'];
+    $this->assertType('numeric', $cid);
+    // Is status message correct?                                                                                                                                                                          
+    $this->assertTextPresent("Thank you. Your information has been saved.", "Save successful status message didn't show up after saving profile to update testUserName!");
+
+    
+    //add org fields to profile
+    $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->click("link=Reserved Profiles");
+
+    $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
+    $this->waitForPageToLoad("30000");
+
+    $this->click("link=Add Field");
+    $this->waitForElementPresent('_qf_Field_next-bottom');
+    
+    $this->select('field_name[0]', 'value=Organization');
+    $this->select('field_name[1]', 'label=Legal Identifier');
+    $this->click('field_name[1]');
+    $this->click('_qf_Field_next_new-bottom');
+    $this->waitForPageToLoad("30000");
+
+    $this->select('field_name[0]', 'value=Organization');
+    $this->select('field_name[1]', 'label=Legal Name');
+    $this->click('field_name[1]');
+    $this->click('_qf_Field_next-bottom');
+    $this->waitForPageToLoad("30000");
+    
+    //yash
+    //create organisation
+    $orgName = "Org WebAccess ". substr(sha1(rand()), 0, 7);
+    $orgEmail = "org". substr(sha1(rand()), 0, 7) . "@web.com";
+    $this->webtestAddOrganization($orgName, $orgEmail);
+
+    $this->waitForPageToLoad("30000");
+    $this->click("css=li#tab_rel a");
+
+    $this->waitForElementPresent('link=Add Relationship');
+    $this->click('link=Add Relationship');
+
+    $this->waitForElementPresent('relationship_type_id');
+    $this->click("relationship_type_id");
+    $this->select("relationship_type_id", "label=Employer of");
+    // search organization                                                                                                                                                                                  
+    $this->type('contact_1', $firstName);
+    $this->click("contact_1");
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
+    $this->assertContains($firstName, $this->getValue('contact_1'), "autocomplete expected $firstName but didn’t find it in " . $this->getValue('contact_1'));
+
+    // give permission                                                                                                                                                                                      
+    $this->click("is_permission_a_b");
+    $this->click("is_permission_b_a");
+
+    // save relationship                                                                                                                                                                                    
+    $this->click("details-save");
+
+    // We need a payment processor
+    $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+    $processorType = 'Dummy';
+    $pageTitle = substr(sha1(rand()), 0, 7);
+    $rand = 100;
+    $hash = substr(sha1(rand()), 0, 7);
+    $amountSection = TRUE;
+    $payLater = TRUE;
+    $onBehalf = TRUE;
+    $pledges = FALSE;
+    $recurring = FALSE;
+    $memberships = TRUE;
+    $memPriceSetId = NULL;
+    $friend = TRUE;
+    $profilePreId = NULL;
+    $profilePostId = NULL;
+    $premiums = FALSE;
+    $widget = FALSE;
+    $pcp = FALSE;
+    $honoreeSection = FALSE;
+    $isAddPaymentProcessor = TRUE;
+    $isPcpApprovalNeeded = FALSE;
+    $isSeparatePayment = FALSE;
+
+    // create a new online contribution page
+    // create contribution page with randomized title and default params
+    $pageId = $this->webtestAddContributionPage($hash,
+      $rand,
+      $pageTitle,
+      array($processorName => $processorType),
+      $amountSection,
+      $payLater,
+      $onBehalf,
+      $pledges,
+      $recurring,
+      $memberships,
+      $memPriceSetId,
+      $friend,
+      $profilePreId,
+      $profilePostId,
+      $premiums,
+      $widget,
+      $pcp,
+      $isAddPaymentProcessor,
+      $isPcpApprovalNeeded,
+      $isSeparatePayment,
+      $honoreeSection
+    );
+
+    //logout
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->waitForPageToLoad('30000');
+
+    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->waitForPageToLoad('30000');
+    $this->_testAnomoyousOganization($pageId, $cid, $pageTitle);  
+  }
+
   function _testAnomoyousOganization($pageId, $cid, $pageTitle) {
     //Open Live Contribution Page
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
@@ -499,7 +644,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $groupName = $this->WebtestAddGroup();
     $this->open($this->sboxPath . "civicrm/group?reset=1");
     $this->waitForPageToLoad('30000');
-                                     //table[@id="crm-group-selector"]/tbody//tr/td[text()='Administrators']/../td[2]x
+    $this->waitForElementPresent("_qf_Search_refresh");
     $groupId = $this->getText("xpath=//table[@id='crm-group-selector']/tbody//tr/td[text()='{$groupName}']/../td[2]");
 
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");

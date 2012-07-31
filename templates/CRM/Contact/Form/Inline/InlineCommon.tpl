@@ -107,7 +107,15 @@ function inlineEditForm( formName, blockName, contactId, cgId, locNo, addId ) {
           }).responseText;
     }
 
-    cj('#' + blockName ).html( response );
+    var blockSelector = cj('#' + blockName);
+
+    blockSelector.html( response );
+    
+    // hack to append add link properly.
+    if ( formName == 'Address' ) {
+      var addLinkBlock = cj('#' + blockName + ' div.appendAddLink');
+      blockSelector.parents('.contact_panel').append(addLinkBlock);
+    }
 
     // here we could return false to prevent the form from being submitted; 
     // returning anything other than false will allow the form submit to continue 

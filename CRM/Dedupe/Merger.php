@@ -821,12 +821,13 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
     }
 
     // FIXME: there must be a better way
-    foreach (array(
-      'main', 'other') as $moniker) {
+    $monikers = array('main', 'other');
+    foreach ($monikers as $moniker) {
       $contact = &$$moniker;
+      $preferred_communication_method = CRM_Utils_array::value('preferred_communication_method', $contact);
+      $value = empty($preferred_communication_method) ? array() : $preferred_communication_method;
       $specialValues[$moniker] = array(
-        'preferred_communication_method' =>
-        CRM_Utils_array::value('preferred_communication_method', $contact),
+        'preferred_communication_method' => $value,
       );
 
       if (CRM_Utils_array::value('preferred_communication_method', $contact)){

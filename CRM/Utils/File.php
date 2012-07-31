@@ -281,6 +281,7 @@ class CRM_Utils_File {
     foreach ($queries as $query) {
       $query = trim($query);
       if (!empty($query)) {
+        CRM_Core_Error::debug_query($query);
         $res = &$db->query($query);
         if (PEAR::isError($res)) {
           if ($dieOnErrors) {
