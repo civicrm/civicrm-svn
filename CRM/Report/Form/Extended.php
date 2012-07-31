@@ -1141,12 +1141,12 @@ WHERE 	line_item_civireport.id IS NOT NULL
 
   function joinContactFromParticipant() {
     $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
-                          ON {$this->_aliases[civicrm_participant]}.contact_id = {$this->_aliases['civicrm_contact']}.id";
+                          ON {$this->_aliases['civicrm_participant']}.contact_id = {$this->_aliases['civicrm_contact']}.id";
   }
 
   function joinContactFromMembership() {
     $this->_from .= " LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
-                          ON {$this->_aliases[civicrm_membership]}.contact_id = {$this->_aliases['civicrm_contact']}.id";
+                          ON {$this->_aliases['civicrm_membership']}.contact_id = {$this->_aliases['civicrm_contact']}.id";
   }
 
   function joinContactFromContribution() {
