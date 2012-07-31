@@ -55,13 +55,6 @@
    <tr><td class="label">{$form.activity_subject.label}</td>
         <td class="value">{$form.activity_subject.html}</td>
    </tr>
-   <tr><td class="label">{$form.send_at.label}</td>
-        <td class="value">{include file="CRM/common/jcalendar.tpl" elementName=send_at}</td>
-   </tr>
-   <tr>     
-        <td class="label">{$form.invalid_after.label}</td>
-        <td class="value">{include file="CRM/common/jcalendar.tpl" elementName=invalid_after}</td>
-   </tr>
 
 
 {if $SMSTask}

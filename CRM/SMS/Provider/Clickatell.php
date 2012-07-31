@@ -65,6 +65,8 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
    */
   protected $_fp;
 
+  public $_apiURL = "https://api.clickatell.com";
+
   protected $_messageType = array(
     'SMS_TEXT',
     'SMS_FLASH',
@@ -229,8 +231,8 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
       if (array_key_exists('mo', $this->_providerInfo['api_params'])) {
         $postData .= "&mo=" . $this->_providerInfo['api_params']['mo'];
       }
-      // sendmsg with delivery acknowledgment and callback request:
-      $postData .= "&callback=3&deliv_ack=1";
+      // sendmsg with callback request:
+      $postData .= "&callback=3";
 
       $isTest = 0;
       if (array_key_exists('is_test', $this->_providerInfo['api_params']) &&
@@ -247,42 +249,6 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
         if (in_array($header['queue'], range(1, 3))) {
           $postData .= "&queue=" . $header['queue'];
         }
-      }
-
-      $reqFeat = 0;
-
-      /**
-       * Normal text message
-       */
-      if (CRM_Utils_Array::value('Type', $header) == 'SMS_TEXT') {
-        $reqFeat += 1;
-      }
-
-      /**
-       * We set the sender id is alpha numeric or numeric
-       * then we change the sender from data.
-       */
-      if (is_numeric(CRM_Utils_Array::value('From', $header))) {
-        $reqFeat += 32;
-      }
-      elseif (is_string($header['From'])) {
-        $reqFeat += 16;
-      }
-
-      /**
-       * Flash Messaging
-       */
-      if (CRM_Utils_Array::value('msg_type', $header) == 'SMS_FLASH') {
-        $reqFeat += 512;
-      }
-
-      /**
-       * Delivery Acknowledgments
-       */
-      $reqFeat += 8192;
-
-      if (!empty($reqFeat)) {
-        $postData .= "&req_feat=" . $reqFeat;
       }
 
       /**
