@@ -379,7 +379,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         $sendTemplateParams['valueName'] = 'contribution_dupalert';
         $sendTemplateParams['from'] = ts('Automatically Generated') . " <{$values['receipt_from_email']}>";
         $sendTemplateParams['toName'] = CRM_Utils_Array::value('receipt_from_name', $values);
-        $sendTemplateParams['toEmail'] = $values['receipt_from_email'];
+        $sendTemplateParams['toEmail'] = CRM_Utils_Array::value('receipt_from_email', $values);
         $sendTemplateParams['tplParams']['onBehalfID'] = $contactID;
         $sendTemplateParams['tplParams']['receiptMessage'] = $message;
 
