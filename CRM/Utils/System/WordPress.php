@@ -182,8 +182,9 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
 
     $path = CRM_Utils_String::stripPathChars($path);
 
+    $permlinkStructure = get_option('permalink_structure');
     if ($config->userFrameworkFrontend) {
-      if (get_option('permalink_structure') != '') {
+      if ($permlinkStructure != '') {
         global $post;
         $script = get_permalink($post->ID);
       }
@@ -217,7 +218,6 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
       $base .= 'wp-admin/admin.php';
     }
 
-    $permlinkStructure = get_option('permalink_structure');
     if (isset($path)) {
       if (isset($query)) {
         if ( $permlinkStructure != '' && $pageID ) {
