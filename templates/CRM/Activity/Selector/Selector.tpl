@@ -3,7 +3,7 @@
 <div class="crm-accordion-wrapper crm-search_filters-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
-	{ts}Filter by Activity Type{/ts}</a>
+  {ts}Filter by Activity Type{/ts}</a>
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
 
@@ -13,8 +13,8 @@
             {$form.activity_type_filter_id.html}
         </td>
         <!--td style="vertical-align: bottom;">
-		<span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildContactActivities( true )"; /></span>
-	</td-->
+    <span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildContactActivities( true )"; /></span>
+  </td-->
     </tr>
   </table>
  </div><!-- /.crm-accordion-body -->
@@ -116,8 +116,8 @@ function buildContactActivities{/literal}{$context}{literal}( filterSearch ) {
                 "url": sSource,
                 "data": aoData,
                 "success": fnCallback,
-		// CRM-10244
-		"dataFilter": function(data, type) { return data.replace(/[\n\v\t]/g, " "); }
+    // CRM-10244
+    "dataFilter": function(data, type) { return data.replace(/[\n\v\t]/g, " "); }
             } );
         }
     });
