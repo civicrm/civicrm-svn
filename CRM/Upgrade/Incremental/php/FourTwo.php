@@ -42,11 +42,13 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   }
   
   /**
-   * Compute any messages which should be displayed beforeupgrade
+   * Compute any messages which should be displayed before upgrade
+   *
+   * Note: This function is called iteratively for each upcoming
+   * revision to the database.
    *
    * @param $postUpgradeMessage string, alterable
-   * @param $currentVer the schema version according the database
-   * @param $latestVer the final, targetted schema version based on the codebase
+   * @param $rev string, a version number, e.g. '4.2.alpha1', '4.2.beta3', '4.2.0'
    * @return void
    */
   function setPreUpgradeMessage(&$preUpgradeMessage, $rev) {
