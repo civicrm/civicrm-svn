@@ -63,14 +63,14 @@ class CRM_Contact_Page_Inline_IM {
         $value['provider'] = $IMProviders[$value['provider_id']];
       }
     }
-
-    $page = new CRM_Core_Page();
-    // check logged in user permission
-    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
-    
+   
     $template = CRM_Core_Smarty::singleton();
     $template->assign('contactId', $contactId);
     $template->assign('im', $ims);
+
+    // check logged in user permission
+    $page = new CRM_Core_Page();
+    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
     $template->assign($page);
 
     echo $content = $template->fetch('CRM/Contact/Page/Inline/IM.tpl');

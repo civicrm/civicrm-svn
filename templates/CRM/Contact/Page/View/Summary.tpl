@@ -227,30 +227,23 @@
                         </div><!-- #contactCardLeft -->
 
                         <div class="contactCardRight">
-                            <div class="crm-table2div-layout">
-                              <div class="crm-clear crm-summary-phone-block">
-                                <div class="crm-summary-block" id="phone-block">
-                                  {include file="CRM/Contact/Page/Inline/Phone.tpl"}
-                                </div>
-                              </div>  
-                              <div class="crm-clear crm-summary-im-block">
-                                <div class="crm-summary-block" id="im-block">
-                                  {include file="CRM/Contact/Page/Inline/IM.tpl"}
-                                </div>
-                              </div>  
-                              
-                              {if $openid}
-                                <div class="crm-clear crm-summary-block" id="openid-block">
-                                {foreach from=$openid item=item}
-                                    {if $item.openid}
-                                      <div class="crm-label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</div>
-                                      <div class="crm-content crm-contact_openid {if $item.is_primary eq 1} primary{/if}"><a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>
-                                       </div>
-                                    {/if}
-                                {/foreach}
-                                </div>
-                                {/if}
-                            </div>
+                          <div class="crm-table2div-layout">
+                            <div class="crm-clear crm-summary-phone-block">
+                              <div class="crm-summary-block" id="phone-block">
+                                {include file="CRM/Contact/Page/Inline/Phone.tpl"}
+                              </div>
+                            </div>  
+                            <div class="crm-clear crm-summary-im-block">
+                              <div class="crm-summary-block" id="im-block">
+                                {include file="CRM/Contact/Page/Inline/IM.tpl"}
+                              </div>
+                            </div>  
+                            <div class="crm-clear crm-summary-openid-block">
+                              <div class="crm-summary-block" id="openid-block">
+                                {include file="CRM/Contact/Page/Inline/OpenID.tpl"}
+                              </div>
+                            </div>  
+                          </div>
                         </div><!-- #contactCardRight -->
 
                         <div class="clear"></div>

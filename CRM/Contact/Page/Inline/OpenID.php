@@ -23,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  *
@@ -34,45 +34,45 @@
  */
 
 /**
- * form helper class for an OpenID object
+ * Dummy page for details for OpenID
+ *
  */
-class CRM_Contact_Form_Edit_OpenID {
+class CRM_Contact_Page_Inline_OpenID {
 
   /**
-   * build the form elements for an open id object
+   * Run the page.
    *
-   * @param CRM_Core_Form $form       reference to the form object
-   * @param int           $blockCount block number to build
-   * @param boolean       $blockEdit  is it block edit
+   * This method is called after the page is created.
    *
    * @return void
    * @access public
-   * @static
+   *
    */
-  static function buildQuickForm(&$form, $blockCount = NULL, $blockEdit = FALSE) {
-    if (!$blockCount) {
-      $blockId = ($form->get('OpenID_Block_Count')) ? $form->get('OpenID_Block_Count') : 1;
+  function run() {
+    // get the emails for this contact
+    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
+
+    $locationTypes = CRM_Core_PseudoConstant::locationDisplayName();
+
+    $entityBlock = array('contact_id' => $contactId);
+    $openids = CRM_Core_BAO_OpenID::getValues($entityBlock);
+    if (!empty($openids)) {
+      foreach ($openids as $key => & $value) {
+        $value['location_type'] = $locationTypes[$value['location_type_id']];
+      }
     }
-    else {
-      $blockId = $blockCount;
-    }
-    $form->applyFilter('__ALL__', 'trim');
+   
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign('contactId', $contactId);
+    $template->assign('openid', $openids);
 
-    $form->addElement('text', "openid[$blockId][openid]", ts('OpenID'),
-      CRM_Core_DAO::getAttribute('CRM_Core_DAO_OpenID', 'openid')
-    );
-    $form->addRule("openid[$blockId][openid]", ts('OpenID is not a valid URL.'), 'url');
+    // check logged in user permission
+    $page = new CRM_Core_Page();
+    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
+    $template->assign($page);
 
-    //Block type
-    $form->addElement('select', "openid[$blockId][location_type_id]", '', CRM_Core_PseudoConstant::locationType());
-
-    //is_Primary radio
-    $js = array('id' => "OpenID_" . $blockId . "_IsPrimary");
-    if (!$blockEdit) {
-      $js['onClick'] = 'singleSelect( this.id );';
-    }
-
-    $form->addElement('radio', "openid[$blockId][is_primary]", '', '', '1', $js);
+    echo $content = $template->fetch('CRM/Contact/Page/Inline/OpenID.tpl');
+    CRM_Utils_System::civiExit();
   }
 }
 
