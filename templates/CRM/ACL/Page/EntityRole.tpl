@@ -40,9 +40,9 @@
 {if $rows}
 <div id="ltype">
     {strip}
-	{* handle enable/disable actions*}
- 	{include file="CRM/common/enableDisable.tpl"}
-    {include file="CRM/common/jsortable.tpl"}   
+  {* handle enable/disable actions*}
+   {include file="CRM/common/enableDisable.tpl"}
+    {include file="CRM/common/jsortable.tpl"}
     <table id="options" class="display">
         <thead>
         <tr class="columnheader">
@@ -54,11 +54,11 @@
         </thead>
         <tbody>
         {foreach from=$rows item=row}
-	    <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class} crm-acl_entity_role {if NOT $row.is_active} disabled{/if}">
-	        <td class="crm-acl_entity_role-acl_role">{$row.acl_role}</td>	
-	        <td class="crm-acl_entity_role-entity">{$row.entity}</td>	
-	        <td class="crm-acl_entity_role-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{$row.action|replace:'xx':$row.id}</td>
+      <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class} crm-acl_entity_role {if NOT $row.is_active} disabled{/if}">
+          <td class="crm-acl_entity_role-acl_role">{$row.acl_role}</td>
+          <td class="crm-acl_entity_role-entity">{$row.entity}</td>
+          <td class="crm-acl_entity_role-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td>{$row.action|replace:'xx':$row.id}</td>
             </tr>
         {/foreach}
         </tbody>
@@ -66,7 +66,7 @@
     {/strip}
 
         {if $action ne 1 and $action ne 2}
-	    <div class="crm-submit-buttons">
+      <div class="crm-submit-buttons">
             <a href="{crmURL q="action=add&reset=1"}" id="newACL" class="button"><span><div class="icon add-icon"></div>{ts}Add Role Assignment{/ts}</span></a>
         </div>
         {/if}
@@ -76,6 +76,6 @@
          <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
         {ts 1=$crmURL}There are no Role Assignments. You can <a href='%1'>add one</a> now.{/ts}
-    </div>    
+    </div>
 {/if}
 </div>
