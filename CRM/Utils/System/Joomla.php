@@ -1,28 +1,28 @@
 <?php
 /*
- +--------------------------------------------------------------------+
- | CiviCRM version 4.2                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2012                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
+  +--------------------------------------------------------------------+
+  | CiviCRM version 4.2                                                |
+  +--------------------------------------------------------------------+
+  | Copyright CiviCRM LLC (c) 2004-2012                                |
+  +--------------------------------------------------------------------+
+  | This file is a part of CiviCRM.                                    |
+  |                                                                    |
+  | CiviCRM is free software; you can copy, modify, and distribute it  |
+  | under the terms of the GNU Affero General Public License           |
+  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+  |                                                                    |
+  | CiviCRM is distributed in the hope that it will be useful, but     |
+  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+  | See the GNU Affero General Public License for more details.        |
+  |                                                                    |
+  | You should have received a copy of the GNU Affero General Public   |
+  | License and the CiviCRM Licensing Exception along                  |
+  | with this program; if not, contact CiviCRM LLC                     |
+  | at info[AT]civicrm[DOT]org. If you have questions about the        |
+  | GNU Affero General Public License or the licensing of CiviCRM,     |
+  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+  +--------------------------------------------------------------------+
 */
 
 /**
@@ -91,11 +91,11 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
   }
 
   /*
-     *  Change user name in host CMS
-     *  
-     *  @param integer $ufID User ID in CMS
-     *  @param string $ufName User name
-     */
+   *  Change user name in host CMS
+   *
+   *  @param integer $ufID User ID in CMS
+   *  @param string $ufName User name
+   */
   function updateCMSName($ufID, $ufName) {
     $ufID = CRM_Utils_Type::escape($ufID, 'Integer');
     $ufName = CRM_Utils_Type::escape($ufName, 'String');
@@ -152,12 +152,12 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
       $dbEmail = CRM_Utils_Array::value('email', $row);
       if (strtolower($dbName) == strtolower($name)) {
         $errors['cms_name'] = ts('The username %1 is already taken. Please select another username.',
-          array(1 => $name)
+                              array(1 => $name)
         );
       }
       if (strtolower($dbEmail) == strtolower($email)) {
         $errors[$emailName] = ts('This email %1 is already registered. Please select another email.',
-          array(1 => $email)
+                              array(1 => $email)
         );
       }
     }
@@ -205,7 +205,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
           $args = array('cid', 'mid');
           foreach ($args as $a) {
             $val = CRM_Utils_Request::retrieve($a, 'Positive', CRM_Core_DAO::$_nullObject,
-              FALSE, NULL, $_GET
+                   FALSE, NULL, $_GET
             );
             if ($val) {
               $crumbs['url'] = str_ireplace("%%{$a}%%", $val, $crumbs['url']);
@@ -399,7 +399,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
    *
    * @return mixed false if no auth
    *               array(
-      contactID, ufID, unique string ) if success
+   contactID, ufID, unique string ) if success
    * @access public
    */
   function authenticate($name, $password, $loadCMSBootstrap = FALSE) {
@@ -428,7 +428,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     $query->select('id, username, email, password');
     $query->from($JUserTable->getTableName());
     $query->where('(LOWER(username) = LOWER(\'' . $name . '\')) AND (block = 0)');
-        $db->setQuery($query, 0, 0);
+    $db->setQuery($query, 0, 0);
     $users = $db->loadAssocList();
 
     $row = array();;
@@ -514,29 +514,29 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     }
   }
 
-  /* 
-     * load joomla bootstrap
-     *
-     * @param $params array with uid or name and password 
-     * @param $loadUser boolean load cms user?
-     * @param $throwError throw error on failure?
-     */
-  function loadBootStrap($params = array(
-    ), $loadUser = TRUE, $throwError = TRUE) {
-        // Setup the base path related constant.
-        $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
+  /*
+   * load joomla bootstrap
+   *
+   * @param $params array with uid or name and password
+   * @param $loadUser boolean load cms user?
+   * @param $throwError throw error on failure?
+   */
+  function loadBootStrap($params = array(), $loadUser = TRUE, $throwError = TRUE) {
+    // Setup the base path related constant.
+    $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
 
     // load BootStrap here if needed
     // We are a valid Joomla entry point.
-        if ( ! defined( '_JEXEC' ) ) {
-    define('_JEXEC', 1);
-            define('DS', DIRECTORY_SEPARATOR);
+    if ( ! defined( '_JEXEC' ) ) {
+      define('_JEXEC', 1);
+      define('DS', DIRECTORY_SEPARATOR);
       define('JPATH_BASE', $joomlaBase . '/administrator');
-            require $joomlaBase . '/administrator/includes/defines.php';
-        }
+      require $joomlaBase . '/administrator/includes/defines.php';
+    }
 
     // Get the framework.
     require $joomlaBase . '/libraries/import.php';
+    require $joomlaBase . '/libraries/joomla/environment/uri.php';
     require $joomlaBase . '/libraries/joomla/environment/uri.php';
     require $joomlaBase . '/configuration.php';
 
