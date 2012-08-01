@@ -55,7 +55,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     if ($rev == '4.2.beta2') {  
       // note: error conditions are also checked in upgrade_4_2_beta2()
       if (!defined('CIVICRM_SETTINGS_PATH')) {
-        $preUpgradeMessage .= '<br />' . ts('Could not determine path to civicrm.settings.php. Please manually locate it and add these lines:<pre>%1</pre>', array(
+        $preUpgradeMessage .= '<br />' . ts('Could not determine path to civicrm.settings.php. Please manually locate it and add these lines at the bottom: <pre>%1</pre>', array(
           1 => self::SETTINGS_SNIPPET,
         ));
       } elseif (preg_match(self::SETTINGS_SNIPPET_PATTERN, file_get_contents(CIVICRM_SETTINGS_PATH))) {
