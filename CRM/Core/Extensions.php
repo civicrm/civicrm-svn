@@ -136,15 +136,23 @@ class CRM_Core_Extensions {
   }
   
   public function getRepositoryUrl() {
-    if (empty($this->_repoUrl)) {
+    if (empty($this->_repoUrl) && $this->_repoUrl !== FALSE) {
       $config = CRM_Core_Config::singleton();
       $url = CRM_Core_BAO_Setting::getItem('Extension Preferences', 'ext_repo_url', NULL, self::DEFAULT_EXTENSIONS_REPOSITORY);
-      $vars = array(
-        '{ver}' => CRM_Utils_System::version(),
-        '{uf}' => $config->userFramework,
-        '{php}' => phpversion(),
-      );
-      $this->_repoUrl = strtr($url, $vars);
+
+      // boolean false means don't try to check extensions
+      // http://issues.civicrm.org/jira/browse/CRM-10575
+      if($url === false) {
+        $this->_repoUrl = false;
+      } 
+      else { 
+        $vars = array(
+          '{ver}' => CRM_Utils_System::version(),
+          '{uf}' => $config->userFramework,
+          '{php}' => phpversion(),
+        );
+        $this->_repoUrl = strtr($url, $vars);
+      }
     }
     return $this->_repoUrl;
   }
@@ -672,6 +680,13 @@ class CRM_Core_Extensions {
 
     if (!ini_get('allow_url_fopen')) {
       ini_set('allow_url_fopen', 1);
+    }
+
+    if(FALSE === $this->getRepositoryUrl()) {
+      // don't check if the user has configured civi not to check an external
+      // url for extensions. See CRM-10575.
+      CRM_Core_Session::setStatus(ts('Not checking remote URL for extensions since ext_repo_url is set to false.'));
+      return array();
     }
 
     $extdir = file_get_contents($this->getRepositoryUrl());
