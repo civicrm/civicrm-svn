@@ -1100,7 +1100,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       return $errors;
     }
 
-    foreach ($self->_fields as $name => $fld) {
+    foreach ($self->_paymentFields as $name => $fld) {
       if ($fld['is_required'] &&
         CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))
       ) {
