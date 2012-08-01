@@ -58,8 +58,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $event = new CRM_Event_DAO_Event();
     $event->copyValues($params);
     if ($event->find(TRUE)) {
@@ -78,8 +77,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Event_DAO_Event', $id, 'is_active', $is_active);
   }
 
@@ -93,8 +91,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    *
    * @return object
    */
-  static
-  function add(&$params) {
+  static function add(&$params) {
     require_once 'CRM/Utils/System.php';
     CRM_Utils_System::flushCache();
 
@@ -191,8 +188,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    * @static
    *
    */
-  static
-  function del($id) {
+  static function del($id) {
     if (!$id) {
       return NULL;
     }
@@ -280,8 +276,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    * @static
    *
    */
-  static
-  function deleteEventLocBlock($locBlockId, $eventId = NULL) {
+  static function deleteEventLocBlock($locBlockId, $eventId = NULL) {
     $query = "SELECT count(ce.id) FROM civicrm_event ce WHERE ce.loc_block_id = $locBlockId";
 
     if ($eventId) {
@@ -306,15 +301,14 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event {
    *
    * @static
    */
-  static
-  function getEvents($all = FALSE,
+  static function getEvents($all = FALSE,
     $id              = FALSE,
     $isActive        = TRUE,
     $checkPermission = TRUE
   ) {
     $query = "
-SELECT `id`, `title`, `start_date` 
-FROM   `civicrm_event` 
+SELECT `id`, `title`, `start_date`
+FROM   `civicrm_event`
 WHERE  ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 )";
 
     if ($id) {
@@ -352,8 +346,7 @@ WHERE  ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0 )";
    *
    * @return array Array of event summary values
    */
-  static
-  function getEventSummary() {
+  static function getEventSummary() {
     $eventSummary = $eventIds = array();
     require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton();
@@ -658,31 +651,30 @@ LIMIT      0, 10
    * @access public
    */
 
-  static
-  function &getMapInfo(&$id) {
+  static function &getMapInfo(&$id) {
 
     $sql = "
-SELECT 
-   civicrm_event.id AS event_id, 
-   civicrm_event.title AS display_name, 
-   civicrm_address.street_address AS street_address, 
-   civicrm_address.city AS city, 
-   civicrm_address.postal_code AS postal_code, 
-   civicrm_address.postal_code_suffix AS postal_code_suffix, 
-   civicrm_address.geo_code_1 AS latitude, 
-   civicrm_address.geo_code_2 AS longitude, 
-   civicrm_state_province.abbreviation AS state, 
-   civicrm_country.name AS country, 
+SELECT
+   civicrm_event.id AS event_id,
+   civicrm_event.title AS display_name,
+   civicrm_address.street_address AS street_address,
+   civicrm_address.city AS city,
+   civicrm_address.postal_code AS postal_code,
+   civicrm_address.postal_code_suffix AS postal_code_suffix,
+   civicrm_address.geo_code_1 AS latitude,
+   civicrm_address.geo_code_2 AS longitude,
+   civicrm_state_province.abbreviation AS state,
+   civicrm_country.name AS country,
    civicrm_location_type.name AS location_type
-FROM 
+FROM
    civicrm_event
    LEFT JOIN civicrm_loc_block ON ( civicrm_event.loc_block_id = civicrm_loc_block.id )
    LEFT JOIN civicrm_address ON ( civicrm_loc_block.address_id = civicrm_address.id )
    LEFT JOIN civicrm_state_province ON ( civicrm_address.state_province_id = civicrm_state_province.id )
    LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
    LEFT JOIN civicrm_location_type ON ( civicrm_location_type.id = civicrm_address.location_type_id )
-WHERE civicrm_address.geo_code_1 IS NOT NULL 
-  AND civicrm_address.geo_code_2 IS NOT NULL 
+WHERE civicrm_address.geo_code_1 IS NOT NULL
+  AND civicrm_address.geo_code_2 IS NOT NULL
   AND civicrm_event.id = " . CRM_Utils_Type::escape($id, 'Integer');
 
     $dao = new CRM_Core_DAO();
@@ -736,8 +728,7 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
    * @static
    * @access public
    */
-  static
-  function &getCompleteInfo($start = NULL, $type = NULL, $eventId = NULL, $end = NULL) {
+  static function &getCompleteInfo($start = NULL, $type = NULL, $eventId = NULL, $end = NULL) {
     $dateCondition = '';
     // if start and end date are NOT passed, return all events with start_date OR end_date >= today CRM-5133
     if ($start) {
@@ -776,27 +767,27 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
 
     $query = "
 SELECT
-  civicrm_event.id as event_id, 
-  civicrm_email.email as email, 
-  civicrm_event.title as title, 
-  civicrm_event.summary as summary, 
-  civicrm_event.start_date as start, 
-  civicrm_event.end_date as end, 
-  civicrm_event.description as description, 
-  civicrm_event.is_show_location as is_show_location, 
+  civicrm_event.id as event_id,
+  civicrm_email.email as email,
+  civicrm_event.title as title,
+  civicrm_event.summary as summary,
+  civicrm_event.start_date as start,
+  civicrm_event.end_date as end,
+  civicrm_event.description as description,
+  civicrm_event.is_show_location as is_show_location,
   civicrm_event.is_online_registration as is_online_registration,
   civicrm_event.registration_link_text as registration_link_text,
   civicrm_event.registration_start_date as registration_start_date,
   civicrm_event.registration_end_date as registration_end_date,
-  civicrm_option_value.label as event_type, 
-  civicrm_address.name as address_name, 
-  civicrm_address.street_address as street_address, 
-  civicrm_address.supplemental_address_1 as supplemental_address_1, 
-  civicrm_address.supplemental_address_2 as supplemental_address_2, 
-  civicrm_address.city as city, 
-  civicrm_address.postal_code as postal_code, 
-  civicrm_address.postal_code_suffix as postal_code_suffix, 
-  civicrm_state_province.abbreviation as state, 
+  civicrm_option_value.label as event_type,
+  civicrm_address.name as address_name,
+  civicrm_address.street_address as street_address,
+  civicrm_address.supplemental_address_1 as supplemental_address_1,
+  civicrm_address.supplemental_address_2 as supplemental_address_2,
+  civicrm_address.city as city,
+  civicrm_address.postal_code as postal_code,
+  civicrm_address.postal_code_suffix as postal_code_suffix,
+  civicrm_state_province.abbreviation as state,
   civicrm_country.name AS country
 FROM civicrm_event
 LEFT JOIN civicrm_loc_block ON civicrm_event.loc_block_id = civicrm_loc_block.id
@@ -807,7 +798,7 @@ LEFT JOIN civicrm_email ON civicrm_loc_block.email_id = civicrm_email.id
 LEFT JOIN civicrm_option_value ON (
                                     civicrm_event.event_type_id = civicrm_option_value.value AND
                                     civicrm_option_value.option_group_id = %1 )
-WHERE civicrm_event.is_active = 1 
+WHERE civicrm_event.is_active = 1
       AND civicrm_event.is_public = 1
       AND (is_template = 0 OR is_template IS NULL)
       {$dateCondition}";
@@ -909,8 +900,7 @@ WHERE civicrm_event.is_active = 1
    * @return void
    * @access public
    */
-  static
-  function copy($id) {
+  static function copy($id) {
     $defaults = $eventValues = array();
 
     //get the require event values.
@@ -1041,8 +1031,7 @@ WHERE civicrm_event.is_active = 1
    * This is sometimes called in a loop (during event search)
    * hence we cache the values to prevent repeated calls to the db
    */
-  static
-  function isMonetary($id) {
+  static function isMonetary($id) {
     static $isMonetary = array();
     if (!array_key_exists($id, $isMonetary)) {
       $isMonetary[$id] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event',
@@ -1057,8 +1046,7 @@ WHERE civicrm_event.is_active = 1
    * This is sometimes called in a loop (during event search)
    * hence we cache the values to prevent repeated calls to the db
    */
-  static
-  function usesPriceSet($id) {
+  static function usesPriceSet($id) {
     require_once 'CRM/Price/BAO/Set.php';
     static $usesPriceSet = array();
     if (!array_key_exists($id, $usesPriceSet)) {
@@ -1073,8 +1061,7 @@ WHERE civicrm_event.is_active = 1
    * @return void
    * @access public
    */
-  static
-  function sendMail($contactID, &$values, $participantId, $isTest = FALSE, $returnMessageText = FALSE) {
+  static function sendMail($contactID, &$values, $participantId, $isTest = FALSE, $returnMessageText = FALSE) {
     require_once 'CRM/Core/BAO/UFGroup.php';
 
     $template = CRM_Core_Smarty::singleton();
@@ -1785,12 +1772,10 @@ WHERE  id = $cfID
   }
 
   /* Function to retrieve all events those having location block set.
-     * 
+     *
      * @return array $events array of all events.
      */
-
-  static
-  function getLocationEvents() {
+  static function getLocationEvents() {
     $events = array();
 
     $query = "
@@ -1810,8 +1795,7 @@ ORDER BY sp.name, ca.city, ca.street_address ASC
     return $events;
   }
 
-  static
-  function countEventsUsingLocBlockId($locBlockId) {
+  static function countEventsUsingLocBlockId($locBlockId) {
     if (!$locBlockId) {
       return 0;
     }
@@ -1825,8 +1809,7 @@ WHERE  ce.loc_block_id = $locBlockId";
     return CRM_Core_DAO::singleValueQuery($query);
   }
 
-  static
-  function validRegistrationRequest($values, $contactID) {
+  static function validRegistrationRequest($values, $contactID) {
     // check that the user has permission to register for this event
     $hasPermission = CRM_Core_Permission::event(CRM_Core_Permission::EDIT,
       $contactID
@@ -1835,8 +1818,7 @@ WHERE  ce.loc_block_id = $locBlockId";
     return $hasPermission && self::validRegistrationDate($values);
   }
 
-  static
-  function validRegistrationDate(&$values) {
+  static function validRegistrationDate(&$values) {
     // make sure that we are between  registration start date and registration end date
     $startDate = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('registration_start_date', $values));
     $endDate   = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('registration_end_date', $values));
@@ -1858,13 +1840,12 @@ WHERE  ce.loc_block_id = $locBlockId";
 
   /* Function to Show - Hide the Registration Link.
      *
-     * @param  array   $values key/value event info     
+     * @param  array   $values key/value event info
      * @return boolean true if allow registration otherwise false
      * @access public
      */
 
-  static
-  function showHideRegistrationLink($values) {
+  static function showHideRegistrationLink($values) {
 
     $session           = CRM_Core_Session::singleton();
     $contactID         = $session->get('userID');
@@ -1892,7 +1873,7 @@ WHERE  ce.loc_block_id = $locBlockId";
 
   /* Function to check if given contact is already registered.
      *
-     * @param  array   $params key/value participant info     
+     * @param  array   $params key/value participant info
      * @return boolean $alreadyRegistered true/false
      * @access public
      */
@@ -1928,8 +1909,7 @@ WHERE  ce.loc_block_id = $locBlockId";
    * @access public
    * @static
    */
-  static
-  function checkPermission($eventId = NULL, $type = CRM_Core_Permission::VIEW) {
+  static function checkPermission($eventId = NULL, $type = CRM_Core_Permission::VIEW) {
     static $permissions = NULL;
 
     if (empty($permissions)) {
@@ -1994,8 +1974,7 @@ WHERE  ce.loc_block_id = $locBlockId";
    * @access public
    * @static
    */
-  static
-  function getFromEmailIds($eventId = NULL) {
+  static function getFromEmailIds($eventId = NULL) {
     require_once 'CRM/Core/BAO/Email.php';
     $fromEmailValues['from_email_id'] = CRM_Core_BAO_Email::getFromEmail();
 
@@ -2050,23 +2029,23 @@ WHERE  ce.loc_block_id = $locBlockId";
 
     $query = "
     SELECT  IF ( SUM( value.count*lineItem.qty ),
-                 SUM( value.count*lineItem.qty ) + 
+                 SUM( value.count*lineItem.qty ) +
                  COUNT( DISTINCT participant.id ) -
                  COUNT( DISTINCT IF ( value.count, participant.id, NULL ) ),
-                 COUNT( DISTINCT participant.id ) ) 
+                 COUNT( DISTINCT participant.id ) )
       FROM  civicrm_participant participant
-INNER JOIN  civicrm_contact contact ON ( contact.id = participant.contact_id AND contact.is_deleted = 0 ) 
-INNER JOIN  civicrm_event event ON ( event.id = participant.event_id ) 
-LEFT  JOIN  civicrm_line_item lineItem ON ( lineItem.entity_id    = participant.id 
-                                       AND  lineItem.entity_table = 'civicrm_participant' ) 
-LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field_value_id AND value.count )    
+INNER JOIN  civicrm_contact contact ON ( contact.id = participant.contact_id AND contact.is_deleted = 0 )
+INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
+LEFT  JOIN  civicrm_line_item lineItem ON ( lineItem.entity_id    = participant.id
+                                       AND  lineItem.entity_table = 'civicrm_participant' )
+LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field_value_id AND value.count )
      WHERE  ( participant.event_id = %1 )
             {$extraWhereClause}
   GROUP BY  participant.event_id";
 
     return (int)CRM_Core_DAO::singleValueQuery($query, array(1 => array($eventId, 'Positive')));
   }
-  /* 
+  /*
      * Retrieve event template default values to be set
      *  as default values for current new event.
      *
@@ -2096,8 +2075,8 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
     $defaults = array_diff_key($defaults, array_flip($fieldsToExclude));
     return $defaults;
   }
-  static
-  function get_sub_events($event_id) {
+
+  static function get_sub_events($event_id) {
     $params = array('parent_event_id' => $event_id);
     $defaults = array();
     return CRM_Event_BAO_Event::retrieve($params, $defaults);
