@@ -2770,10 +2770,13 @@ WHERE id IN (' . implode(',', $copiedActivityIds) . ')';
       $allowEditNames = array('Open Case');
 
       // do not allow File on Case
-      $doNotFileNames = array('Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date');
+      $doNotFileNames = array('Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date','Reassigned Case', 'Merge Case', 'Link Cases', 'Assign Case Role');
 
       if (in_array($actTypeName, $singletonNames)) {
         $allow = FALSE;
+        if ($operation == 'File On Case') {
+          $allow = (in_array($actTypeName, $doNotFileNames)) ? FALSE : TRUE;
+        }
         if (in_array($operation, $actionOperations)) {
           $allow = TRUE;
           if ($operation == 'edit') {
