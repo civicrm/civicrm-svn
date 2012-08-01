@@ -884,7 +884,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         return empty($errors) ? TRUE : $errors;
       }
 
-      foreach ($self->_fields as $name => $fld) {
+      foreach ($self->_paymentFields as $name => $fld) {
         if ($fld['is_required'] &&
           CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))
         ) {
