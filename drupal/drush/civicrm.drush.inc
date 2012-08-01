@@ -832,6 +832,7 @@ function _civicrm_init() {
     }
   }
   // include settings file
+  define('CIVICRM_SETTINGS_PATH', $civicrmSettingsFile);
   include_once $civicrmSettingsFile;
   global $civicrm_root;
   if (!is_dir($civicrm_root)) {
