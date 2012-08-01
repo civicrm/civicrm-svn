@@ -3796,5 +3796,12 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (NULL, 1170, "MNL", "Metropolitan Manila" ),
 
 -- CRM-9686 Added Missing Province for Honduras
-(NULL, 1097, "LP", "La Paz");
+(NULL, 1097, "LP", "La Paz"),
+
+-- CRM-10473 Added Missing Provinces of Ningxia Autonomous Region of China
+(NULL, 1045, "YN", "Yinchuan"),
+(NULL, 1045, "SZ", "Shizuishan"),
+(NULL, 1045, "WZ", "Wuzhong"),
+(NULL, 1045, "GY", "Guyuan"),
+(NULL, 1045, "ZW", "Zhongwei");
 
