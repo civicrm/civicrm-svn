@@ -23,7 +23,7 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
+ */
 
 /**
  *
@@ -34,45 +34,45 @@
  */
 
 /**
- * form helper class for an Website object
+ * Dummy page for details of website 
+ *
  */
-class CRM_Contact_Form_Edit_Website {
+class CRM_Contact_Page_Inline_Website {
 
   /**
-   * build the form elements for an Website object
+   * Run the page.
    *
-   * @param CRM_Core_Form $form       reference to the form object
-   * @param int           $blockCount block number to build
+   * This method is called after the page is created.
    *
    * @return void
    * @access public
-   * @static
+   *
    */
-  static function buildQuickForm(&$form, $blockCount = NULL) {
-    if (!$blockCount) {
-      $blockId = ($form->get('Website_Block_Count')) ? $form->get('Website_Block_Count') : 1;
+  function run() {
+    // get the emails for this contact
+    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
+
+    $websiteTypes = CRM_Core_PseudoConstant::websiteType();
+
+    $params   = array('contact_id' => $contactId);
+    $websites = CRM_Core_BAO_Website::getValues($params, CRM_Core_DAO::$_nullArray);
+    if (!empty($websites)) {
+      foreach ($websites as $key => & $value) {
+        $value['website_type'] = $websiteTypes[$value['website_type_id']];
+      }
     }
-    else {
-      $blockId = $blockCount;
-    }
 
-    $form->applyFilter('__ALL__', 'trim');
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign('contactId', $contactId);
+    $template->assign('website', $websites);
 
-    //Website type select
-    $form->addElement('select', "website[$blockId][website_type_id]", '', CRM_Core_PseudoConstant::websiteType());
-
-    //Website box
-    $form->addElement('text', "website[$blockId][url]", ts('Website'),
-      array_merge(
-        CRM_Core_DAO::getAttribute('CRM_Core_DAO_Website', 'url'),
-        array(
-          'onfocus' => "if (!this.value) {  this.value='http://';} else return false",
-          'onblur' => "if ( this.value == 'http://') {  this.value='';} else return false",
-        )
-      )
-    );
-
-    $form->addRule("website[$blockId][url]", ts('Enter a valid web location beginning with \'http://\' or \'https://\'. EXAMPLE: http://www.mysite.org/'), 'url');
+    // check logged in user permission
+    $page = new CRM_Core_Page();
+    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
+    $template->assign($page);
+    
+    echo $content = $template->fetch('CRM/Contact/Page/Inline/Website.tpl');
+    CRM_Utils_System::civiExit();
   }
 }
 

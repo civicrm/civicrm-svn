@@ -119,7 +119,6 @@
 </div><!-- .crm-actions-ribbon -->
 
 <div class="crm-block crm-content-block crm-contact-page">
-
     <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
         <ul class="crm-contact-tabs-list">
             <li id="tab_summary" class="crm-tab-button">
@@ -153,136 +152,124 @@
 
                 {if !empty($contact_type_label) OR !empty($current_employer_id) OR !empty($job_title) OR !empty($legal_name) OR $sic_code OR !empty($nick_name) OR !empty($contactTag) OR !empty($source)}
                 <div id="contactTopBar">
-                    <table>
-                        {if !empty($contact_type_label) OR !empty($userRecordUrl) OR !empty($current_employer_id) OR !empty($job_title) OR !empty($legal_name) OR $sic_code OR !empty($nick_name)}
-                        <tr>
-                            <td class="label">{ts}Contact Type{/ts}</td>
-                            <td class="crm-contact_type_label">{if isset($contact_type_label)}{$contact_type_label}{/if}</td>
-                            {if !empty($current_employer_id)}
-                            <td class="label">{ts}Employer{/ts}</td>
-                            <td class="crm-contact-current_employer"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$current_employer_id`"}" title="{ts}view current employer{/ts}">{$current_employer}</a></td>
-                            {/if}
-                            {if !empty($job_title)}
-                            <td class="label">{ts}Position{/ts}</td>
-                            <td class="crm-contact-job_title">{$job_title}</td>
-                            {/if}
-                            {if !empty($legal_name)}
-                            <td class="label">{ts}Legal Name{/ts}</td>
-                            <td class="crm-contact-legal_name">{$legal_name}</td>
-                            {if $sic_code}
-                            <td class="label">{ts}SIC Code{/ts}</td>
-                            <td class="crm-contact-sic_code">{$sic_code}</td>
-                            {/if}
-                            {elseif !empty($nick_name)}
-                            <td class="label">{ts}Nickname{/ts}</td>
-                            <td class="crm-contact-nick_name">{$nick_name}</td>
-                            {/if}
-                        </tr>
-                        {/if}
-                        <tr>
-                            {if !empty($contactTag)}
-                            <td class="label" id="tagLink"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a></td><td id="tags">{$contactTag}</td>
-                            {/if}
-                            <td class="label">{ts}CiviCRM ID{/ts}</td><td class="crm-contact-contact_id">{$contactId}</td>
-                            {if !empty($userRecordUrl)}
-                            <td class="label">{ts}User ID{/ts}</td><td class="crm-contact-user_record_id"><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></td>
-                            {/if}
-                            {if !empty($source)}
-                            <td class="label">{ts}Source{/ts}</td><td class="crm-contact_source">{$source}</td>
-                            {/if}
-                        </tr>
-                    </table>
+                  <table>
+                    {if !empty($contact_type_label) OR !empty($userRecordUrl) OR !empty($current_employer_id) OR !empty($job_title) OR !empty($legal_name) OR $sic_code OR !empty($nick_name)}
+                    <tr>
+                      <td class="label">{ts}Contact Type{/ts}</td>
+                      <td class="crm-contact_type_label">{if isset($contact_type_label)}{$contact_type_label}{/if}</td>
+                      {if !empty($current_employer_id)}
+                      <td class="label">{ts}Employer{/ts}</td>
+                      <td class="crm-contact-current_employer"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$current_employer_id`"}" title="{ts}view current employer{/ts}">{$current_employer}</a></td>
+                      {/if}
+                      {if !empty($job_title)}
+                      <td class="label">{ts}Position{/ts}</td>
+                      <td class="crm-contact-job_title">{$job_title}</td>
+                      {/if}
+                      {if !empty($legal_name)}
+                      <td class="label">{ts}Legal Name{/ts}</td>
+                      <td class="crm-contact-legal_name">{$legal_name}</td>
+                      {if $sic_code}
+                      <td class="label">{ts}SIC Code{/ts}</td>
+                      <td class="crm-contact-sic_code">{$sic_code}</td>
+                      {/if}
+                      {elseif !empty($nick_name)}
+                      <td class="label">{ts}Nickname{/ts}</td>
+                      <td class="crm-contact-nick_name">{$nick_name}</td>
+                      {/if}
+                    </tr>
+                    {/if}
+                    <tr>
+                      {if !empty($contactTag)}
+                      <td class="label" id="tagLink"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a></td><td id="tags">{$contactTag}</td>
+                      {/if}
+                      <td class="label">{ts}CiviCRM ID{/ts}</td><td class="crm-contact-contact_id">{$contactId}</td>
+                      {if !empty($userRecordUrl)}
+                      <td class="label">{ts}User ID{/ts}</td><td class="crm-contact-user_record_id"><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></td>
+                      {/if}
+                      {if !empty($source)}
+                      <td class="label">{ts}Source{/ts}</td><td class="crm-contact_source">{$source}</td>
+                      {/if}
+                    </tr>
+                  </table>
 
-                    <div class="clear"></div>
+                  <div class="clear"></div>
                 </div><!-- #contactTopBar -->
                 {/if}
+
                 <div class="contact_details">
                     <div class="contact_panel">
-                        <div class="contactCardLeft">
-                           <div class="crm-table2div-layout">
-                              <div class="crm-clear crm-summary-email-block">
-                                <div class="crm-summary-block" id="email-block">
-                                  {include file="CRM/Contact/Page/Inline/Email.tpl"}
-                              </div>
-                              </div>
-
-                              {if $website}
-                              <div class="crm-clear crm-summary-block">
-                                {foreach from=$website item=item}
-                                    {if !empty($item.url)}
-                                        <div class="crm-label">{$item.website_type} {ts}Website{/ts}</div>
-                                        <div class="crm-content crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></div>
-                                    {/if}
-                                {/foreach}
-                              </div>
-                              {/if}
-                              {if $user_unique_id}
-                                  <br/>
-                                  <div class="crm-clear crm-summary-block">
-                                      <div class="crm-label">{ts}Unique Id{/ts}</div>
-                                      <div class="crm-content crm-contact-user_unique_id">{$user_unique_id}</div>
-                                  </div>
-                              {/if}
-                           </div>
-                        </div><!-- #contactCardLeft -->
-
-                        <div class="contactCardRight">
-                          <div class="crm-table2div-layout">
-                            <div class="crm-clear crm-summary-phone-block">
-                              <div class="crm-summary-block" id="phone-block">
-                                {include file="CRM/Contact/Page/Inline/Phone.tpl"}
-                              </div>
-                            </div>  
-                            <div class="crm-clear crm-summary-im-block">
-                              <div class="crm-summary-block" id="im-block">
-                                {include file="CRM/Contact/Page/Inline/IM.tpl"}
-                              </div>
-                            </div>  
-                            <div class="crm-clear crm-summary-openid-block">
-                              <div class="crm-summary-block" id="openid-block">
-                                {include file="CRM/Contact/Page/Inline/OpenID.tpl"}
-                              </div>
-                            </div>  
+                      <div class="contactCardLeft">
+                       <div class="crm-table2div-layout">
+                        <div class="crm-clear crm-summary-email-block">
+                          <div class="crm-summary-block" id="email-block">
+                            {include file="CRM/Contact/Page/Inline/Email.tpl"}
                           </div>
-                        </div><!-- #contactCardRight -->
+                        </div>
+                        <div class="crm-clear crm-summary-website-block">
+                          <div class="crm-summary-block" id="website-block">
+                            {include file="CRM/Contact/Page/Inline/Website.tpl"}
+                          </div>
+                        </div>
+                       </div>
+                      </div><!-- #contactCardLeft -->
 
-                        <div class="clear"></div>
+                      <div class="contactCardRight">
+                        <div class="crm-table2div-layout">
+                          <div class="crm-clear crm-summary-phone-block">
+                            <div class="crm-summary-block" id="phone-block">
+                              {include file="CRM/Contact/Page/Inline/Phone.tpl"}
+                            </div>
+                          </div>  
+                          <div class="crm-clear crm-summary-im-block">
+                            <div class="crm-summary-block" id="im-block">
+                              {include file="CRM/Contact/Page/Inline/IM.tpl"}
+                            </div>
+                          </div>  
+                          <div class="crm-clear crm-summary-openid-block">
+                            <div class="crm-summary-block" id="openid-block">
+                              {include file="CRM/Contact/Page/Inline/OpenID.tpl"}
+                            </div>
+                          </div>  
+                        </div>
+                      </div><!-- #contactCardRight -->
+
+                      <div class="clear"></div>
                     </div><!-- #contact_panel -->
 
-            <div class="contact_panel">
-              {assign var='locationIndex' value=1}
-					{if $address}
-                        {foreach from=$address item=add key=locationIndex}
-                        <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
+          <div class="contact_panel">
+            {assign var='locationIndex' value=1}
+            {if $address}
+            {foreach from=$address item=add key=locationIndex}
+                <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
                   <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                     {include file="CRM/Contact/Page/Inline/Address.tpl"}
-			                </div>
-			                </div>
-                {/foreach} {* end of address foreach *}
-              
-                {assign var='locationIndex' value=$locationIndex+1}
-              {/if}
-              
-              {if $permission EQ 'edit'}
-              {if $locationIndex eq 1 or $locationIndex is odd}
-                  <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block appendAddLink">
-                                        {else}
-                  <div class="contactCardRight crm-address_{$locationIndex} crm-address-block appendAddLink">
-                                        {/if}
-
-                <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
-                  <div class="crm-table2div-layout">
-                    <div class="crm-clear">
-                      <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
-                      <span class="batch-edit"></span>{ts}add address{/ts}
-                      </a>
-                        </div>
                   </div>
                 </div>
-                  </div>
-                {/if}
+              {/foreach} {* end of address foreach *}
+            
+              {assign var='locationIndex' value=$locationIndex+1}
+            {/if}
+            
+            {if $permission EQ 'edit'}
+            {if $locationIndex eq 1 or $locationIndex is odd}
+                <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block appendAddLink">
+                                      {else}
+                <div class="contactCardRight crm-address_{$locationIndex} crm-address-block appendAddLink">
+                                      {/if}
 
-            </div> <!-- end of contact panel -->
+              <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
+                <div class="crm-table2div-layout">
+                  <div class="crm-clear">
+                    <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
+                    <span class="batch-edit"></span>{ts}add address{/ts}
+                    </a>
+                      </div>
+                </div>
+              </div>
+                </div>
+              {/if}
+
+          </div> <!-- end of contact panel -->
 
           <div class="contact_panel">
             <div class="contactCardLeft">

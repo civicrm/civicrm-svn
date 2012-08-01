@@ -93,7 +93,9 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website {
         }
       }
       $values['contact_id'] = $contactID;
-      self::add($values);
+      if ( CRM_Utils_Array::value('url', $values) ) {
+        self::add($values);
+      }
     }
 
     if ($skipDelete && !empty($ids)) {
