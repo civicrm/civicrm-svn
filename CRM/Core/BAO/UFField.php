@@ -689,9 +689,14 @@ SELECT  id
     $billing_id = CRM_Core_BAO_LocationType::getBilling();
     list($prefixName, $index) = CRM_Utils_System::explode('-', $key, 2);
     
-    //ignore fields that are present in billing block
-    $ignoreFields = array('email');
-    if ( in_array( $prefixName, $ignoreFields) ) {
+    //check for valid fields ( fields that are present in billing block )
+    $validBillingFields = array(
+      'first_name','middle_name','last_name','street_address',
+      'supplemental_address_1','city','state_province',
+      'postal_code','country'
+    );
+
+    if ( !in_array($prefixName, $validBillingFields) ) {
       return;
     }
     
