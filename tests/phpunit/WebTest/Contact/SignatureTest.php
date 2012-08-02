@@ -201,13 +201,18 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
    */
   function _checkActivity($subject, $signature) {
     $this->open($this->sboxPath . 'civicrm/activity/search?reset=1');
+    $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_Search_refresh');
+
     $this->type('activity_subject', $subject);
+
     $this->click('_qf_Search_refresh');
+    $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_Search_next_print');
 
     // View your Activity
     $this->click("xpath=id('Search')/div[3]/div/div[2]/table/tbody/tr[2]/td[9]/span/a[text()='View']");
+    $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_ActivityView_next-bottom');
 
     // Is signature correct? in Activity
