@@ -670,7 +670,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
       if (is_array($params['onbehalf']) && !empty($params['onbehalf'])) {
         foreach ($params['onbehalf'] as $fld => $values) {
-          if (!(strstr($fld, '-') || strstr($fld, 'custom_'))) {
+          if (strstr($fld, 'custom_')) {
+            $behalfOrganization[$fld] = $values;
+          }  
+          elseif (!(strstr($fld, '-'))) {
             if (in_array($fld, array(
               'contribution_campaign_id', 'member_campaign_id'))) {
               $fld = 'campaign_id';
@@ -685,17 +688,19 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
       if (array_key_exists('onbehalf_location', $params) && is_array($params['onbehalf_location'])) {
         foreach ($params['onbehalf_location'] as $block => $vals) {
-          if ( !is_array( $vals ) ) {
+          //fix for custom data (of type checkbox, multi-select)
+          if ( substr($block, 0, 7) == 'custom_' ) {
             continue;
         }
-
           // fix the index of block elements
+          if (is_array($vals) ) {
           foreach ( $vals as $key => $val ) {
             //dont adjust the index of address block as 
             //it's index is WRT to location type
             $newKey = ($block == 'address') ? $key : ++$key;
             $behalfOrganization[$block][$newKey] = $val;
           }
+        }
         }
         unset($params['onbehalf_location']);
       }

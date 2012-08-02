@@ -437,7 +437,7 @@ SELECT name, mail
       contactID, ufID, unique string ) if success
    * @access public
    */
-  function authenticate($name, $password) {
+  function authenticate($name, $password, $loadCMSBootstrap = FALSE, $realPath = NULL) {
     require_once 'DB.php';
 
     $config = CRM_Core_Config::singleton();
@@ -448,9 +448,9 @@ SELECT name, mail
     }
 
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-    $password   = md5($password);
+    $dbpassword   = md5($password);
     $name       = $dbDrupal->escapeSimple($strtolower($name));
-    $sql        = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName . " u WHERE LOWER(u.name) = '$name' AND u.pass = '$password' AND u.status = 1";
+    $sql        = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName . " u WHERE LOWER(u.name) = '$name' AND u.pass = '$dbpassword' AND u.status = 1";
     $query      = $dbDrupal->query($sql);
 
     $user = NULL;
@@ -461,7 +461,19 @@ SELECT name, mail
       if (!$contactID) {
         return FALSE;
       }
+      else{//success
+        if ($loadCMSBootstrap) {
+          $bootStrapParams = array();
+          if ($name && $password) {
+            $bootStrapParams = array(
+                'name' => $name,
+                'pass' => $password,
+            );
+          }
+          CRM_Utils_System::loadBootStrap($bootStrapParams, TRUE, TRUE, $realPath);
+        }
       return array($contactID, $row['uid'], mt_rand());
+    }
     }
     return FALSE;
   }

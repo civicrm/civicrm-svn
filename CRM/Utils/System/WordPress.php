@@ -419,6 +419,25 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     return $uid;
   }
 
+  /*
+   * Change user name in host CMS
+   *
+   * @param integer $ufID User ID in CMS
+   * @param string $ufName User name
+   */
+  function updateCMSName($ufID, $ufName) {
+    // CRM-10620
+    if (function_exists('wp_update_user')) {
+      $ufID   = CRM_Utils_Type::escape($ufID, 'Integer');
+      $ufName = CRM_Utils_Type::escape($ufName, 'String');
+
+      $values = array ('ID' => $ufID, 'user_email' => $ufName);
+      if( $ufID ) {
+        wp_update_user( $values ) ;
+      }
+    }
+  }
+
   function checkUserNameEmailExists(&$params, &$errors, $emailName = 'email') {
     $config = CRM_Core_Config::singleton();
 
