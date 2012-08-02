@@ -91,4 +91,4 @@
   <script type="text/javascript" src="{$l10nURL}"></script>
 {/if}
 
-<script type="text/javascript">var cj = jQuery.noConflict(true);</script>
+<script type="text/javascript">var cj = jQuery.noConflict();</script>
