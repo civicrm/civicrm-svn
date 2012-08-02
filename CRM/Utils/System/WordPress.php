@@ -118,7 +118,25 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
    * @access public
    * @static
    */
-  function addHTMLHead($head) {}
+  function addHTMLHead($head) {
+    static $registered = FALSE;
+    if (!$registered) {
+      // front-end view
+      add_action('wp_head', array(__CLASS__, '_showHTMLHead'));
+      // back-end views
+      add_action('admin_head', array(__CLASS__, '_showHTMLHead'));
+    }
+    CRM_Core_Region::instance('wp_head')->add(array(
+      'markup' => $head,
+    ));
+  }
+
+  static function _showHTMLHead() {
+    $region = CRM_Core_Region::instance('wp_head', FALSE);
+    if ($region) {
+      echo $region->render('');
+    }
+  }
 
   /**
    * rewrite various system urls to https

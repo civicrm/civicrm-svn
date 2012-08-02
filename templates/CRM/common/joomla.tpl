@@ -72,6 +72,9 @@
 	</div>    
 {/if}
 
+    {crmRegion name='page-header'}
+    {/crmRegion}
+
 {*{include file="CRM/common/langSwitch.tpl"}*}
 
     <div class="clear"></div>
@@ -83,15 +86,19 @@
     {include file="CRM/common/status.tpl"}
 
     <!-- .tpl file invoked: {$tplFile}. Call via form.tpl if we have a form in the page. -->
+    {crmRegion name='page-body'}
     {if $isForm}
         {include file="CRM/Form/$formTpl.tpl"}
     {else}
         {include file=$tplFile}
     {/if}
+    {/crmRegion}
 
+    {crmRegion name='page-footer'}
     {if ! $urlIsPublic}
     {include file="CRM/common/footer.tpl"}
     {/if}
+    {/crmRegion}
 
     </td>
 

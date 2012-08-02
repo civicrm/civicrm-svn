@@ -273,8 +273,14 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
    * @todo Not Drupal 7 compatible
    */
   function addHTMLHead($header) {
+    static $count = 0;
     if (!empty($header)) {
-      drupal_add_html_head($header);
+      $key = 'civi_' . ++$count;
+      $data = array(
+        '#type' => 'markup',
+        '#markup' => $header,
+      );
+      drupal_add_html_head($data, $key);
     }
   }
 

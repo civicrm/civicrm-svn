@@ -518,6 +518,9 @@ class CRM_Utils_REST {
         $config = CRM_Core_Config::singleton();
         $content = $smarty->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' );
 
+        if ($region = CRM_Core_Region::instance('html-header', FALSE)) {
+          CRM_Utils_System::addHTMLHead($region->render(''));
+        }
         CRM_Utils_System::appendTPLFile( $tpl, $content );
 
         return CRM_Utils_System::theme( 'page', $content, true);

@@ -188,6 +188,9 @@ class CRM_Core_Page {
     $config = CRM_Core_Config::singleton();
     $content = self::$_template->fetch('CRM/common/' . strtolower($config->userFramework) . '.tpl');
 
+    if ($region = CRM_Core_Region::instance('html-header', FALSE)) {
+      CRM_Utils_System::addHTMLHead($region->render(''));
+    }
     CRM_Utils_System::appendTPLFile($pageTemplateFile, $content);
 
     //its time to call the hook.
