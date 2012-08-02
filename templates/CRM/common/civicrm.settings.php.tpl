@@ -47,8 +47,8 @@
  *      define( 'CIVICRM_UF'        , 'WordPress' );
  *
  * You may have issues with images in CiviCRM. If this is the case, be sure
- * to update the CiviCRM Resource URL field (in Administer CRM: Global
- * Settings: Resource URLs) to your CiviCRM root directory.
+ * to update the CiviCRM Resource URL field to your CiviCRM root directory
+ * (Administer::System Settings::Resource URLs).
  */
 define( 'CIVICRM_UF'               , '%%cms%%'        );
 
