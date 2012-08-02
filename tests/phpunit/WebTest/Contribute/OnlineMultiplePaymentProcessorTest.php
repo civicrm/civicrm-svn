@@ -37,7 +37,6 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     // Log in using webtestLogin() method
     $this->webtestLogin();
 
-
     $proProcessorName = "Pro " . substr(sha1(rand()), 0, 7);
     $standardProcessorName = "Standard " . substr(sha1(rand()), 0, 7);
     $donationPageTitle = "Donation" . substr(sha1(rand()), 0, 7);
@@ -65,10 +64,8 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
       $allowOtherAmmount = TRUE
     );
 
-
-
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id=$pageId");
-    $this->waitForElementPresent('page-title');
+    $this->waitForPageToLoad('30000');
     $this->assertTrue($this->isTextPresent($donationPageTitle));
 
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
@@ -161,7 +158,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
 
 
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id=$pageId");
-    $this->waitForElementPresent('page-title');
+    $this->waitForPageToLoad('30000');
     $this->assertTrue($this->isTextPresent($donationPageTitle));
 
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
