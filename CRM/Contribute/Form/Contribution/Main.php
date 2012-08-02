@@ -509,8 +509,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $profileAddressFields = array();
       foreach( $this->_fields as $key => $value ) {
         CRM_Core_BAO_UFField::assignAddressField($key, $profileAddressFields);
-        $this->set('profileAddressFields', $profileAddressFields);
       }
+      $this->set('profileAddressFields', $profileAddressFields);
     }
 
     //to create an cms user
