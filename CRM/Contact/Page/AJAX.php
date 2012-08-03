@@ -36,8 +36,7 @@
  * This class contains all contact related functions that are called using AJAX (jQuery)
  */
 class CRM_Contact_Page_AJAX {
-  static
-  function getContactList() {
+  static function getContactList() {
     // if context is 'customfield'
     if (CRM_Utils_Array::value('context', $_GET) == 'customfield') {
       return self::contactReference();
@@ -103,8 +102,7 @@ class CRM_Contact_Page_AJAX {
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function contactReference() {
+  static function contactReference() {
     $name = CRM_Utils_Array::value('s', $_GET);
     $name = CRM_Utils_Type::escape($name, 'String');
     $cfID = CRM_Utils_Type::escape($_GET['id'], 'Positive');
@@ -207,8 +205,7 @@ class CRM_Contact_Page_AJAX {
   /**
    * Function to fetch PCP ID by PCP Supporter sort_name, also displays PCP title and associated Contribution Page title
    */
-  static
-  function getPCPList() {
+  static function getPCPList() {
     $name  = CRM_Utils_Array::value('s', $_GET);
     $name  = CRM_Utils_Type::escape($name, 'String');
     $limit = '10';
@@ -263,8 +260,7 @@ class CRM_Contact_Page_AJAX {
   /**
    * Function to fetch the values
    */
-  static
-  function autocomplete() {
+  static function autocomplete() {
     $fieldID       = CRM_Utils_Type::escape($_GET['cfid'], 'Integer');
     $optionGroupID = CRM_Utils_Type::escape($_GET['ogid'], 'Integer');
     $label         = CRM_Utils_Type::escape($_GET['s'], 'String');
@@ -280,8 +276,7 @@ class CRM_Contact_Page_AJAX {
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function relationship() {
+  static function relationship() {
     $relType         = CRM_Utils_Array::value('rel_type', $_POST);
     $relContactID    = CRM_Utils_Array::value('rel_contact', $_POST);
     $sourceContactID = CRM_Utils_Array::value('contact_id', $_POST);
@@ -331,8 +326,7 @@ class CRM_Contact_Page_AJAX {
   /**
    * Function to fetch the custom field help
    */
-  static
-  function customField() {
+  static function customField() {
     $fieldId          = CRM_Utils_Type::escape($_POST['id'], 'Integer');
     $params           = array('id' => $fieldId);
     $returnProperties = array('help_pre', 'help_post');
@@ -346,8 +340,7 @@ class CRM_Contact_Page_AJAX {
   /**
    * Function to obtain list of permissioned employer for the given contact-id.
    */
-  static
-  function getPermissionedEmployer() {
+  static function getPermissionedEmployer() {
     $cid  = CRM_Utils_Type::escape($_GET['cid'], 'Integer');
     $name = trim(CRM_Utils_Type::escape($_GET['s'], 'String'));
     $name = str_replace('*', '%', $name);
@@ -363,8 +356,7 @@ class CRM_Contact_Page_AJAX {
   }
 
 
-  static
-  function groupTree() {
+  static function groupTree() {
     $gids = CRM_Utils_Type::escape($_GET['gids'], 'String');
     echo CRM_Contact_BAO_GroupNestingCache::json($gids);
     CRM_Utils_System::civiExit();
@@ -373,8 +365,7 @@ class CRM_Contact_Page_AJAX {
   /**
    * Function for building contact combo box
    */
-  static
-  function search() {
+  static function search() {
     $json = TRUE;
     $name = CRM_Utils_Array::value('name', $_GET, '');
     if (!array_key_exists('name', $_GET)) {
@@ -550,13 +541,12 @@ ORDER BY sort_name ";
     CRM_Utils_System::civiExit();
   }
 
-  /*                                                                                                                                                                                            
-     * Function to check how many contact exits in db for given criteria, 
-     * if one then return contact id else null                                                                                  
-     */
-
-  static
-  function contact() {
+  /**
+   *
+   * Function to check how many contact exits in db for given criteria, 
+   * if one then return contact id else null                                                                                  
+   */
+  static function contact() {
     $name = CRM_Utils_Type::escape($_GET['name'], 'String');
 
     $query = "
@@ -577,8 +567,7 @@ WHERE sort_name LIKE '%$name%'";
    * Function to delete custom value
    *
    */
-  static
-  function deleteCustomValue() {
+  static function deleteCustomValue() {
     $customValueID = CRM_Utils_Type::escape($_POST['valueID'], 'Positive');
     $customGroupID = CRM_Utils_Type::escape($_POST['groupID'], 'Positive');
 
@@ -596,8 +585,7 @@ WHERE sort_name LIKE '%$name%'";
    * Function to perform enable / disable actions on record.
    *
    */
-  static
-  function enableDisable() {
+  static function enableDisable() {
     $op        = CRM_Utils_Type::escape($_POST['op'], 'String');
     $recordID  = CRM_Utils_Type::escape($_POST['recordID'], 'Positive');
     $recordBAO = CRM_Utils_Type::escape($_POST['recordBAO'], 'String');
@@ -638,11 +626,10 @@ WHERE sort_name LIKE '%$name%'";
     }
   }
 
-  /*
-     *Function to check the CMS username
-     *
-    */
-
+  /**
+   *Function to check the CMS username
+   *
+   */
   static public function checkUserName() {
     $config = CRM_Core_Config::singleton();
     $username = trim(htmlentities($_POST['cms_name']));
@@ -668,8 +655,7 @@ WHERE sort_name LIKE '%$name%'";
   /**
    *  Function to get email address of a contact
    */
-  static
-  function getContactEmail() {
+  static function getContactEmail() {
     if (CRM_Utils_Array::value('contact_id', $_POST)) {
       $contactID = CRM_Utils_Type::escape($_POST['contact_id'], 'Positive');
       list($displayName,
@@ -770,8 +756,7 @@ LIMIT {$offset}, {$rowCount}
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function getContactPhone() {
+  static function getContactPhone() {
 
     $queryString = NULL;
     //check for mobile type
@@ -834,8 +819,7 @@ LIMIT {$offset}, {$rowCount}
   }
 
 
-  static
-  function buildSubTypes() {
+  static function buildSubTypes() {
     $parent = CRM_Utils_Array::value('parentId', $_POST);
 
     switch ($parent) {
@@ -858,8 +842,7 @@ LIMIT {$offset}, {$rowCount}
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function buildDedupeRules() {
+  static function buildDedupeRules() {
     $parent = CRM_Utils_Array::value('parentId', $_POST);
 
     switch ($parent) {
@@ -885,8 +868,7 @@ LIMIT {$offset}, {$rowCount}
   /**
    * Function used for CiviCRM dashboard operations
    */
-  static
-  function dashboard() {
+  static function dashboard() {
     $operation = CRM_Utils_Type::escape($_REQUEST['op'], 'String');
 
     switch ($operation) {
@@ -919,8 +901,7 @@ LIMIT {$offset}, {$rowCount}
   /**
    * Function to retrieve signature based on email id
    */
-  static
-  function getSignature() {
+  static function getSignature() {
     $emailID = CRM_Utils_Type::escape($_POST['emailID'], 'Positive');
     $query   = "SELECT signature_text, signature_html FROM civicrm_email WHERE id = {$emailID}";
     $dao     = CRM_Core_DAO::executeQuery($query);
@@ -937,8 +918,7 @@ LIMIT {$offset}, {$rowCount}
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function relationshipContacts() {
+  static function relationshipContacts() {
     $data = $searchValues = $searchRows = array();
     $addCount = 0;
 
@@ -1058,8 +1038,7 @@ LIMIT {$offset}, {$rowCount}
    * Function to process dupes.
    *
    */
-  static
-  function processDupes() {
+  static function processDupes() {
     $oper = CRM_Utils_Type::escape($_POST['op'], 'String');
     $cid  = CRM_Utils_Type::escape($_POST['cid'], 'Positive');
     $oid  = CRM_Utils_Type::escape($_POST['oid'], 'Positive');
@@ -1091,8 +1070,7 @@ LIMIT {$offset}, {$rowCount}
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function getDedupes() {
+  static function getDedupes() {
 
     $sEcho     = CRM_Utils_Type::escape($_POST['sEcho'], 'Integer');
     $offset    = isset($_POST['iDisplayStart']) ? CRM_Utils_Type::escape($_POST['iDisplayStart'], 'Integer') : 0;
@@ -1167,8 +1145,7 @@ LIMIT {$offset}, {$rowCount}
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function relationshipContactTypeList() {
+  static function relationshipContactTypeList() {
     $relType = CRM_Utils_Array::value('relType', $_POST);
 
     $types = CRM_Contact_BAO_Relationship::getValidContactTypeList($relType);
@@ -1185,8 +1162,7 @@ LIMIT {$offset}, {$rowCount}
     CRM_Utils_System::civiExit();  
   }
 
-  static
-  function selectUnselectContacts() {
+  static function selectUnselectContacts() {
     $name         = CRM_Utils_Array::value('name', $_POST);
     $cacheKey     = CRM_Utils_Array::value('qfKey', $_POST);
     $state        = CRM_Utils_Array::value('state', $_POST, 'checked');
@@ -1229,8 +1205,7 @@ LIMIT {$offset}, {$rowCount}
     return $cId;
   }
 
-  static
-  function getAddressDisplay() {
+  static function getAddressDisplay() {
     $contactId = CRM_Utils_Array::value('contact_id', $_POST);
     if (!$contactId) {
       $addressVal["error_message"] = "no contact id found";
@@ -1245,6 +1220,4 @@ LIMIT {$offset}, {$rowCount}
     echo json_encode($addressVal);
     CRM_Utils_System::civiExit();  
   }
-
 }
-
