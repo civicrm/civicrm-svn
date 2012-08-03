@@ -398,9 +398,9 @@
                     for ( var i in roleGroupMapper ) {
                         if ( i != 0 ) {
                             if ( i == response.role ) {
-                                document.getElementById("role_id[" +i+ "]"  ).checked = true;
+                                document.getElementById("role_id_" +i  ).checked = true;
                             } else {
-                                document.getElementById("role_id[" +i+ "]"  ).checked = false;
+                                document.getElementById("role_id_" +i  ).checked = false;
                             }  
                             showCustomData( 'Participant', i, {/literal} {$roleCustomDataTypeID} {literal} );
                         }
@@ -415,7 +415,7 @@
     {
         var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type;
        	
-        var roleid = "role_id["+subType+"]";
+        var roleid = "role_id_"+subType;
                
         var loadData = false;
      
@@ -452,7 +452,7 @@
             }
 
             for ( var i in roleGroupMapper ) {
-                if ( ( i > 0 ) && ( document.getElementById( "role_id["+i+"]" ).checked ) ) {
+                if ( ( i > 0 ) && ( document.getElementById( "role_id_"+i ).checked ) ) {
                     var splitGroup = roleGroupMapper[i].split(",");
                     for ( j = 0; j < splitGroup.length; j++ ) {
                         groupUnload[x+j+1] = splitGroup[j];
@@ -528,7 +528,7 @@
 		buildCustomData( '{$customDataType}', 'null', 'null' );
 		{literal}
         for ( var i in roleGroupMapper ) {
-            if ( ( i > 0 ) && ( document.getElementById( "role_id["+i+"]" ).checked ) ) {
+            if ( ( i > 0 ) && ( document.getElementById( "role_id_"+i ).checked ) ) {
                {/literal}
                showCustomData( '{$customDataType}', i, {$roleCustomDataTypeID} );
                {literal}  
