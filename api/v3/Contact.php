@@ -725,19 +725,24 @@ LIMIT    0, {$limit}
       $listCurrentEmployer = FALSE;
     }
   }
-
+  
   //return organization name if doesn't exist in db
   if (empty($contactList)) {
     if (CRM_Utils_Array::value('org', $params)) {
       if ($listCurrentEmployer && !empty($currEmpDetails)) {
         $contactList = array(
-          'data' => $currEmpDetails['data'],
-          'id' => $currEmpDetails['id'],
+          array(
+            'data' => $currEmpDetails['data'],
+            'id'   => $currEmpDetails['id']
+          )
         );
       }
       else {
-        $contactList = array('data' => CRM_Utils_Array::value('s', $params),
-          'id' => CRM_Utils_Array::value('s', $params),
+        $contactList = array(
+          array(
+            'data' => $name,
+            'id'   => $name
+          )
         );
       }
     }
