@@ -127,6 +127,9 @@ class CRM_Contact_Task {
         22 => array('title' => ts('Unhold Emails'),
           'class' => 'CRM_Contact_Form_Task_Unhold',
         ),
+        25 => array('title' => ts('Alter Contact Communication Preferences'),
+          'class' => 'CRM_Contact_Form_Task_AlterPreferences',
+        ),
         self::RESTORE => array(
           'title' => ts('Restore Contacts'),
           'class' => 'CRM_Contact_Form_Task_Delete',
