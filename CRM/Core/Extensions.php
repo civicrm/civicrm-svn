@@ -132,6 +132,10 @@ class CRM_Core_Extensions {
           ));
         $this->_extDir = NULL;
       }
+      if (!class_exists('ZipArchive')) {
+        // everyone else is dumping messages wily-nily, why can't I?
+        CRM_Core_Session::setStatus(ts('Your installation of PHP does not support ZIP archives. Please install the standard PHP-ZIP extension.'));
+      }
     }
   }
   
