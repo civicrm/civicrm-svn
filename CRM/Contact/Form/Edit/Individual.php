@@ -45,7 +45,8 @@ class CRM_Contact_Form_Edit_Individual {
    * to the Individual Contact Type
    *
    * @param object $form form object
-   * @param int $inlineEditMode ( 1 for form and 2 for name edit )
+   * @param int $inlineEditMode ( 1 for contact summary 
+   * top bar form and 2 for display name edit )
    *
    * @access public
    * @return void 
@@ -95,7 +96,7 @@ class CRM_Contact_Form_Edit_Individual {
 
       $form->addElement('text', 'current_employer', ts('Current Employer'), '');
       $form->addElement('hidden', 'current_employer_id', '', array('id' => 'current_employer_id'));
-      $form->addElement('text', 'contact_source', ts('Source'));
+      $form->addElement('text', 'contact_source', ts('Source'), CRM_Utils_Array::value('source', $attributes));
     }
 
     if ( !$inlineEditMode ) {

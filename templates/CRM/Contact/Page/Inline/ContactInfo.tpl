@@ -33,6 +33,7 @@
       </div>
       {/if}
 
+      {if $contact_type eq 'Individual'}
       <div class="crm-label">{ts}Employer{/ts}</div>
       <div class="crm-content crm-contact-current_employer">
         {if !empty($current_employer_id)} 
@@ -41,14 +42,13 @@
       </div>
       <div class="crm-label">{ts}Position{/ts}</div>
       <div class="crm-content crm-contact-job_title">{$job_title}</div>
+      {/if}
       <div class="crm-label">{ts}Nickname{/ts}</div>
       <div class="crm-content crm-contact-nick_name">{$nick_name}</div>
 
-      {if !empty($legal_name)}
+      {if $contact_type eq 'Organization'}
       <div class="crm-label">{ts}Legal Name{/ts}</div>
       <div class="crm-content crm-contact-legal_name">{$legal_name}</div>
-      {/if}
-      {if $sic_code}
       <div class="crm-label">{ts}SIC Code{/ts}</div>
       <div class="crm-content crm-contact-sic_code">{$sic_code}</div>
       {/if}

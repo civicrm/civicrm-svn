@@ -40,46 +40,54 @@
  */
 class CRM_Contact_Form_Edit_Organization {
 
-  /**
-   * This function provides the HTML form elements that are specific to this Contact Type
+ /**
+   * This function provides the HTML form elements that are specific 
+   * to the Organization Contact Type
+   *
+   * @param object $form form object
+   * @param int $inlineEditMode ( 1 for contact summary
+   * top bar form and 2 for display name edit )
    *
    * @access public
-   *
-   * @return None
+   * @return void 
    */
-  public function buildQuickForm(&$form) {
+  public function buildQuickForm(&$form, $inlineEditMode = NULL) {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact');
 
     $form->applyFilter('__ALL__', 'trim');
 
-    // Organization_name
-    $form->add('text', 'organization_name', ts('Organization Name'), $attributes['organization_name']);
+    if ( !$inlineEditMode || $inlineEditMode == 1 ) {
+      // Organization_name
+      $form->add('text', 'organization_name', ts('Organization Name'), $attributes['organization_name']);
+    }
+    
+    if ( !$inlineEditMode || $inlineEditMode == 2 ) {
+      // legal_name
+      $form->addElement('text', 'legal_name', ts('Legal Name'), $attributes['legal_name']);
 
-    // legal_name
-    $form->addElement('text', 'legal_name', ts('Legal Name'), $attributes['legal_name']);
+      // nick_name
+      $form->addElement('text', 'nick_name', ts('Nick Name'),
+        CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'nick_name')
+      );
 
-    // nick_name
-    $form->addElement('text', 'nick_name', ts('Nick Name'),
-      CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'nick_name')
-    );
+      // sic_code
+      $form->addElement('text', 'sic_code', ts('SIC Code'), $attributes['sic_code']);
 
-    // sic_code
-    $form->addElement('text', 'sic_code', ts('SIC Code'), $attributes['sic_code']);
+      $form->addElement('text', 'contact_source', ts('Source'), CRM_Utils_Array::value('source', $attributes));
+    }
 
-    $form->addElement('text', 'contact_source', ts('Source'));
-    $form->add('text', 'external_identifier', ts('External Id'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'external_identifier'), FALSE);
-    $form->addRule('external_identifier',
-      ts('External ID already exists in Database.'),
-      'objectExists',
-      array('CRM_Contact_DAO_Contact', $form->_contactId, 'external_identifier')
-    );
+    if ( !$inlineEditMode ) {
+      $form->add('text', 'external_identifier', ts('External Id'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'external_identifier'), FALSE);
+      $form->addRule('external_identifier',
+        ts('External ID already exists in Database.'),
+        'objectExists',
+        array('CRM_Contact_DAO_Contact', $form->_contactId, 'external_identifier')
+      );
+    }
   }
 
-  static
-  function formRule($fields, $files, $contactID = NULL) {
-
+  static function formRule($fields, $files, $contactID = NULL) {
     $errors = array();
-
     $primaryID = CRM_Contact_Form_Contact::formRule($fields, $errors, $contactID);
 
     // make sure that organization name is set
