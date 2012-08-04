@@ -705,7 +705,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     }
 
     //build contact type specific fields
-    eval('CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, $this->_action );');
+    eval('CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this );');
 
     // build Custom data if Custom data present in edit option
     $buildCustomData = NULL;

@@ -1804,31 +1804,18 @@ div.grippie {
     font-size: 12px;
 }
 
-#crm-container div.contactTopBar {
-    padding          : 4px;
-    LINE-HEIGHT      : 1.4em;
-    MARGIN           : 8px 0pt 0px;
-    /*FONT-SIZE: 1.1em;*/
-    background-color : #eee;
-}
-#crm-container div.contact_details,
-#crm-container div#contactTopBar {
+#crm-container div.contact_details {
     padding          : 4px;
     LINE-HEIGHT      : 1.4em;
     clear:both;
 }
 
-#crm-container div#contactTopBar {
-	float: left;
-	clear: none;
-}
 #crm-container div#crm-contact-thumbnail {
 	padding: 4px;
 	float: right;
 }
 
-#crm-container div.contact_panel, 
-#crm-container div#contactTopBar {
+#crm-container div.contact_panel { 
     display:block;
 }
 
@@ -1850,8 +1837,7 @@ div.grippie {
     border: 2px dashed lightgrey;
 }
 
-#crm-container div.contact_panel *, 
-#crm-container div#contactTopBar * {
+#crm-container div.contact_panel * { 
     border:0px;
 }
 
@@ -1868,12 +1854,16 @@ div.grippie {
   float   : right;
 }
 
-#crm-container div#contactTopBar table,
+#crm-container div.contactTopBarRight {
+  width : 49%; 
+  display : block; 
+  float   : right;
+}
+
 #crm-container div.contact_panel table {
 	margin-bottom: 0px;
 }
 
-#crm-container div#contactTopBar .label, 
 #crm-container div.contactCardLeft .label, 
 #crm-container div.contactCardRight .label {
     FONT-SIZE      : 11px; 
@@ -1894,8 +1884,7 @@ div.grippie {
     padding:8px;
 }
 
-#crm-container div.contact_panel td, 
-#crm-container div#contactTopBar td  {
+#crm-container div.contact_panel td { 
     padding:4px;
     vertical-align : top;
     border-bottom: 1px solid #E2E2E2;
@@ -2975,18 +2964,15 @@ tbody.scrollContent tr.alternateRow {
 #mainTabContainer li.ui-state-active { background-color:#FFF; }
 
 #crm-container div.contact_details, 
-#crm-container div#contactTopBar,
 #crm-container #customFields .contact_panel .customFieldGroup {
     background-color:transparent;
 }
 
 #crm-container div.contact_panel td, 
-#crm-container div#contactTopBar td,
 table.crm-info-panel td {
     border-bottom:1px solid #FFF;
 }
 
-#crm-container div#contactTopBar .label, 
 #crm-container div.contactCardLeft .label, 
 #crm-container div.contactCardRight .label,
 table.crm-info-panel .label  {
@@ -3014,13 +3000,11 @@ table.crm-info-panel .label  {
     vertical-align:top;
 }
 
-#crm-container div#contactTopBar td,
 #crm-container div.contact_panel td,
 table.crm-info-panel td {
     background-color: #f4f4ed; 
 }
 
-#crm-container div#contactTopBar td.label,
 #crm-container div.contact_panel td.label,
 #crm-container #customFields div.contact_panel td.label,
 table.crm-info-panel td.label {
@@ -3428,7 +3412,6 @@ div#crm-toolTip
   width: 75%;
 }
 
-#crm-container #mainTabContainer.narrowpage #contactTopBar,
 #crm-container #mainTabContainer.narrowpage #contact-summary div.customFieldGroup,
 #crm-container #mainTabContainer.narrowpage #contact-summary div.contactCardLeft,
 #crm-container #mainTabContainer.narrowpage #contact-summary div.contactCardRight {

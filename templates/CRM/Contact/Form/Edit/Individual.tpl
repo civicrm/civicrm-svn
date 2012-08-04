@@ -71,101 +71,54 @@ var checkSimilar =  {$checkSimilar};
 {/literal}
 
 <table class="form-layout-compressed">
-    <tr>
-        {if $form.prefix_id}
-	    <td>
-                {$form.prefix_id.label}<br/>
-                {$form.prefix_id.html}
-            </td>    
-        {/if}
-        <td>
-            {$form.first_name.label}<br /> 
-	    {$form.first_name.html}
-        </td>
-        <td>
-            {$form.middle_name.label}<br />
-            {$form.middle_name.html}
-        </td>
-        <td>
-            {$form.last_name.label}<br />
-            {$form.last_name.html}
-        </td>
-	{if $form.suffix_id}
-            <td>
-                {$form.suffix_id.label}<br/>
-                {$form.suffix_id.html}
-            </td>
-	{/if}
-    </tr>
-    
-    <tr>
-        <td colspan="2">
-            {$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}<br />
-            {$form.current_employer.html|crmReplace:class:twenty}
-            <div id="employer_address" style="display:none;"></div>
-        </td>
-        <td>
-            {$form.job_title.label}<br />
-            {$form.job_title.html}
-        </td>
-        <td>
-            {$form.nick_name.label}<br />
-            {$form.nick_name.html|crmReplace:class:big}
-        </td>
-        <td>
-            {if $buildContactSubType}
-              {$form.contact_sub_type.label}<br />
-              {$form.contact_sub_type.html}
-            {/if}
-        </td>
-    </tr>
+  <tr>
+    {if $form.prefix_id}
+    <td>
+      {$form.prefix_id.label}<br/>
+      {$form.prefix_id.html}
+    </td>    
+    {/if}
+    <td>
+      {$form.first_name.label}<br /> 
+      {$form.first_name.html}
+    </td>
+    <td>
+      {$form.middle_name.label}<br />
+      {$form.middle_name.html}
+    </td>
+    <td>
+      {$form.last_name.label}<br />
+      {$form.last_name.html}
+    </td>
+    {if $form.suffix_id}
+    <td>
+      {$form.suffix_id.label}<br/>
+      {$form.suffix_id.html}
+    </td>
+    {/if}
+  </tr>
+
+  <tr>
+    <td colspan="2">
+      {$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}<br />
+      {$form.current_employer.html|crmReplace:class:twenty}
+      <div id="employer_address" style="display:none;"></div>
+    </td>
+    <td>
+      {$form.job_title.label}<br />
+      {$form.job_title.html}
+    </td>
+    <td>
+      {$form.nick_name.label}<br />
+      {$form.nick_name.html|crmReplace:class:big}
+    </td>
+    <td>
+      {if $buildContactSubType}
+      {$form.contact_sub_type.label}<br />
+      {$form.contact_sub_type.html}
+      {/if}
+    </td>
+  </tr>
 </table>
-{literal}
-<script type="text/javascript">
-var dataUrl        = "{/literal}{$employerDataURL}{literal}";
-var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
-cj('#current_employer').attr("title","Current employer auto complete");
-cj('#current_employer').autocomplete( dataUrl, { 
-                                      width        : 250, 
-                                      selectFirst  : false,
-                                      matchCase    : true, 
-                                      matchContains: true
-    }).result( function(event, data, formatted) {
-        var foundContact   = ( parseInt( data[1] ) ) ? cj( "#current_employer_id" ).val( data[1] ) : cj( "#current_employer_id" ).val('');
-        if ( ! foundContact.val() ) {
-            cj('div#employer_address').html(newContactText).show();    
-        } else {
-            cj('div#employer_address').html('').hide();    
-        }
-    }).bind('change blur', function() {
-        if ( !cj( "#current_employer_id" ).val( ) ) {
-            cj('div#employer_address').html(newContactText).show();    
-        }
-});
 
-// remove current employer id when current employer removed.
-cj("form").submit(function() {
-  if ( !cj('#current_employer').val() ) cj( "#current_employer_id" ).val('');
-});
-
-//current employer default setting
-var employerId = "{/literal}{$currentEmployer}{literal}";
-if ( employerId ) {
-    var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&id=" }{literal}" + employerId + "&employee_id=" + cid ;
-    cj.ajax({ 
-        url     : dataUrl,   
-        async   : false,
-        success : function(html){
-            //fixme for showing address in div
-            htmlText = html.split( '|' , 2);
-            cj('input#current_employer').val(htmlText[0]);
-            cj('input#current_employer_id').val(htmlText[1]);
-        }
-    }); 
-}
-
-cj("input#current_employer").click( function( ) {
-    cj("input#current_employer_id").val('');
-});
-</script>
-{/literal}
+{include file="CRM/Contact/Form/CurrentEmployer.tpl"}

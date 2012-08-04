@@ -144,58 +144,47 @@
                     {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
                 {/if}
 
-                {if !empty($imageURL)}
-                    <div id="crm-contact-thumbnail">
-                        {include file="CRM/Contact/Page/ContactImage.tpl"}
+                <div class="contactTopBar contact_panel">
+                  <div class="contactCardLeft">
+                    <div class="crm-summary-contactinfo-block">
+                      <div class="crm-summary-block" id="contactinfo-block">
+                      {include file="CRM/Contact/Page/Inline/ContactInfo.tpl"}
+                      </div>
                     </div>
-                {/if}
-
-                {if !empty($contact_type_label) OR !empty($current_employer_id) OR !empty($job_title) OR !empty($legal_name) OR $sic_code OR !empty($nick_name) OR !empty($contactTag) OR !empty($source)}
-                <div id="contactTopBar">
-                  <table>
-                    {if !empty($contact_type_label) OR !empty($userRecordUrl) OR !empty($current_employer_id) OR !empty($job_title) OR !empty($legal_name) OR $sic_code OR !empty($nick_name)}
-                    <tr>
-                      <td class="label">{ts}Contact Type{/ts}</td>
-                      <td class="crm-contact_type_label">{if isset($contact_type_label)}{$contact_type_label}{/if}</td>
-                      {if !empty($current_employer_id)}
-                      <td class="label">{ts}Employer{/ts}</td>
-                      <td class="crm-contact-current_employer"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$current_employer_id`"}" title="{ts}view current employer{/ts}">{$current_employer}</a></td>
-                      {/if}
-                      {if !empty($job_title)}
-                      <td class="label">{ts}Position{/ts}</td>
-                      <td class="crm-contact-job_title">{$job_title}</td>
-                      {/if}
-                      {if !empty($legal_name)}
-                      <td class="label">{ts}Legal Name{/ts}</td>
-                      <td class="crm-contact-legal_name">{$legal_name}</td>
-                      {if $sic_code}
-                      <td class="label">{ts}SIC Code{/ts}</td>
-                      <td class="crm-contact-sic_code">{$sic_code}</td>
-                      {/if}
-                      {elseif !empty($nick_name)}
-                      <td class="label">{ts}Nickname{/ts}</td>
-                      <td class="crm-contact-nick_name">{$nick_name}</td>
-                      {/if}
-                    </tr>
-                    {/if}
-                    <tr>
+                  </div> <!-- end of left side -->
+                  <div class="contactTopBarRight">
+                    <div class="crm-table2div-layout">
+                      <div class="crm-clear">
                       {if !empty($contactTag)}
-                      <td class="label" id="tagLink"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a></td><td id="tags">{$contactTag}</td>
+                        <div class="crm-label" id="tagLink">
+                          <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a>
+                        </div>
+                        <div class="crm-content" id="tags">{$contactTag}</div>
                       {/if}
-                      <td class="label">{ts}CiviCRM ID{/ts}</td><td class="crm-contact-contact_id">{$contactId}</td>
-                      {if !empty($userRecordUrl)}
-                      <td class="label">{ts}User ID{/ts}</td><td class="crm-contact-user_record_id"><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></td>
-                      {/if}
-                      {if !empty($source)}
-                      <td class="label">{ts}Source{/ts}</td><td class="crm-contact_source">{$source}</td>
-                      {/if}
-                    </tr>
-                  </table>
+                        <div class="crm-label">{ts}Contact Type{/ts}</div>
+                        <div class="crm-content crm-contact_type_label">{if isset($contact_type_label)}{$contact_type_label}{/if}</div>
 
-                  <div class="clear"></div>
-                </div><!-- #contactTopBar -->
-                {/if}
+                        <div class="crm-label">
+                          {ts}CiviCRM ID{/ts}{if !empty($userRecordUrl)} / {ts}User ID{/ts}{/if}
+                        </div>
+                        <div class="crm-content">
+                          <span class="crm-contact-contact_id">{$contactId}</span>
+                          {if !empty($userRecordUrl)}
+                          <span class="crm-contact-user_record_id">
+                            &nbsp;/&nbsp;<a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a>
+                          </span>
+                          {/if}
+                        </div>
+                      </div>
+                    </div>
+                  {if !empty($imageURL)}
+                  <div id="crm-contact-thumbnail">
+                    {include file="CRM/Contact/Page/ContactImage.tpl"}
+                  </div>
+                  {/if}
 
+                  </div> <!-- end of right side -->
+                </div>
                 <div class="contact_details">
                     <div class="contact_panel">
                       <div class="contactCardLeft">
