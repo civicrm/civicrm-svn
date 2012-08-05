@@ -58,6 +58,12 @@
 {ts}URL of the location for uploaded image files.{/ts}
 {/htxt}
 
+{htxt id='id-extensions_url'}
+{ts}Base URL for extension resources (images, stylesheets, etc).{/ts}<br/>
+{capture assign=civicrmAdminSettingPath}{crmURL p="civicrm/admin/setting/path" q="reset=1"}{/capture}
+{ts 1=$civicrmAdminSettingPath 2=`$config->extensionsDir`}This should match the <a href="%1">"CiviCRM Extensions Directory"</a> ("%2").{/ts}
+{/htxt}
+
 {htxt id='id-css_url'}
 {ts}If you want to modify the look and feel of CiviCRM screens beyond what your CMS theme does, you can replace CiviCRM's primary CSS file (css/civicrm.css) with a customized version. Use this field to specify the URL of the replacement CSS file.{/ts}
 <p>{ts}You can also define additional CSS styles to be applied to all or specific page elements by adding CSS styles to the 'extra CSS' file: <em>css/extras.css</em>. This file is included in the downloaded codebase, but is empty by default. If you can accomplish required theming results with this approach, you can avoid the work of merging your custom CSS file changes with upgraded versions.{/ts}</p>

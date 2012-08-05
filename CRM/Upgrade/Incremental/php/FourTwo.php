@@ -80,6 +80,14 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     if ($rev == '4.2.alpha1') {
       $postUpgradeMessage .= '<br />' . ts('Default versions of the following System Workflow Message Templates have been modified to handle new functionality: <ul><li>Events - Registration Confirmation and Receipt (on-line)</li><li>Pledges - Acknowledgement</li><li>Pledges - Payment Reminder</li></ul>. If you have modified these templates, please review the new default versions and implement updates as needed to your copies (Administer > Communications > Message Templates > System Workflow Messages).');
     }
+    if ($rev == '4.2.beta5') {
+      $config = CRM_Core_Config::singleton();
+      if (!empty($config->extensionsDir)) {
+        $postUpgradeMessage .= '<br />' . ts('Please <a href="%1" target="_blank">configure the Extesion Resource URL</a>.', array(
+          1 => CRM_Utils_system::url('civicrm/admin/setting/url', 'reset=1')
+        ));
+      }
+    }
   }
 
   function upgrade_4_2_alpha1($rev) {
@@ -126,6 +134,15 @@ class CRM_Upgrade_Incremental_php_FourTwo {
       $title = ts('Upgrade DB to 4.2.alpha1: Participant (%1 => %2)', array(1 => $startId, 2 => $endId));
       $this->addTask($title, 'task_4_2_alpha1_convertParticipants', $startId, $endId);
     } 
+  }
+
+  function upgrade_4_2_beta5($rev) {
+    // CRM-10629 Create a setting for extension URLs
+    // For some reason, this isn't working when placed in the .sql file
+    CRM_Core_DAO::executeQuery("
+      INSERT INTO civicrm_setting(group_name,name,value,domain_id,is_domain)
+      VALUES ('URL Preferences', 'extensionsURL',NULL,1,1);
+    ");
   }
 
   /**

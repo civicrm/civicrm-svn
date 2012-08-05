@@ -85,6 +85,11 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults {
   public $imageUploadURL = NULL;
 
   /**
+   * The url for resources defined by extensions
+   */
+  public $extensionsURL = NULL;
+
+  /**
    * Are we generating clean url's and using mod_rewrite
    * @var string
    */

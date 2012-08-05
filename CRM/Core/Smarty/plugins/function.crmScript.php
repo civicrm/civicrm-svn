@@ -28,64 +28,37 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2012
+ * @copyright CiviCRM LLC
  * $Id$
  *
  */
 
 /**
- * This class generates form components for Site Url
+ * Add a Javascript file to a specific part of the page
  *
+ * @param $params array with keys:
+ *  - ext: string, extension name. see CRM_Core_Resources::addScriptFile
+ *  - file: string, relative file path. see CRM_Core_Resources::addScriptFile
+ *  - url: string. see CRM_Core_Resources::addScriptURL
+ *  - weight: int; default: CRM_Core_Resources::DEFAULT_WEIGHT (0)
+ *  - region: string; default: CRM_Core_Resources::DEFAULT_REGION ('html-header')
  */
-class CRM_Admin_Form_Setting_Url extends CRM_Admin_Form_Setting {
+function smarty_function_crmScript($params, &$smarty) {
+  $res = CRM_Core_Resources::singleton();
 
-  /**
-   * Function to build the form
-   *
-   * @return None
-   * @access public
-   */
-  public function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Settings - Resource URLs'));
-
-    $this->addElement('text', 'userFrameworkResourceURL', ts('CiviCRM Resource URL'));
-    $this->addElement('text', 'imageUploadURL', ts('Image Upload URL'));
-    $this->addElement('text', 'customCSSURL', ts('Custom CiviCRM CSS URL'));
-    $this->addElement('text', 'extensionsURL', ts('Extension Resource URL'));
-    $this->addYesNo('enableSSL', ts('Force Secure URLs (SSL)'));
-    $this->addYesNo('verifySSL', ts('Verify SSL Certs'));
-
-    $this->addFormRule(array('CRM_Admin_Form_Setting_Url', 'formRule'));
-
-    parent::buildQuickForm();
+  if (empty($params['weight'])) {
+    $params['weight'] = CRM_Core_Resources::DEFAULT_WEIGHT;
+  }
+  if (empty($params['region'])) {
+    $params['region'] = CRM_Core_Resources::DEFAULT_REGION;
   }
 
-  static
-  function formRule($fields) {
-    if (isset($fields['enableSSL']) &&
-      $fields['enableSSL']
-    ) {
-      $config = CRM_Core_Config::singleton();
-      $url = str_replace('http://', 'https://',
-        CRM_Utils_System::url('civicrm/dashboard', 'reset=1', TRUE,
-          NULL, FALSE, FALSE
-        )
-      );
-      if (!CRM_Utils_System::checkURL($url, TRUE)) {
-        $errors = array(
-          'enableSSL' =>
-          ts('You need to set up a secure server before you can use the Force Secure URLs option'),
-        );
-        return $errors;
-      }
-    }
-    return TRUE;
-  }
-
-  public function postProcess() {
-    parent::postProcess();
-
-    parent::rebuildMenu();
+  if (array_key_exists('file', $params)) {
+    $res->addScriptFile($params['ext'], $params['file'], $params['weight'], $params['region']);
+  } elseif (array_key_exists('url', $params)) {
+    $res->addScriptUrl($params['url'], $params['weight'], $params['region']);
+  } else {
+    CRM_Core_Error::debug_var('crmScript_params', $params);
+    throw new Exception("crmScript requires url or ext+file");
   }
 }
-

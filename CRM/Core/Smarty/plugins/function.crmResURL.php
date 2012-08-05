@@ -28,64 +28,22 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2012
+ * @copyright CiviCRM LLC
  * $Id$
  *
  */
 
 /**
- * This class generates form components for Site Url
+ * Determine the URL of a resource file
  *
+ * @param $params array with keys:
+ *  - ext: string, extension name. see CRM_Core_Resources::getUrl
+ *  - file: string, relative file path. see CRM_Core_Resources::getUrl
  */
-class CRM_Admin_Form_Setting_Url extends CRM_Admin_Form_Setting {
-
-  /**
-   * Function to build the form
-   *
-   * @return None
-   * @access public
-   */
-  public function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Settings - Resource URLs'));
-
-    $this->addElement('text', 'userFrameworkResourceURL', ts('CiviCRM Resource URL'));
-    $this->addElement('text', 'imageUploadURL', ts('Image Upload URL'));
-    $this->addElement('text', 'customCSSURL', ts('Custom CiviCRM CSS URL'));
-    $this->addElement('text', 'extensionsURL', ts('Extension Resource URL'));
-    $this->addYesNo('enableSSL', ts('Force Secure URLs (SSL)'));
-    $this->addYesNo('verifySSL', ts('Verify SSL Certs'));
-
-    $this->addFormRule(array('CRM_Admin_Form_Setting_Url', 'formRule'));
-
-    parent::buildQuickForm();
+function smarty_function_crmResURL($params, &$smarty) {
+  $res = CRM_Core_Resources::singleton();
+  if (!array_key_exists('file', $params)) {
+    $params['file'] = NULL;
   }
-
-  static
-  function formRule($fields) {
-    if (isset($fields['enableSSL']) &&
-      $fields['enableSSL']
-    ) {
-      $config = CRM_Core_Config::singleton();
-      $url = str_replace('http://', 'https://',
-        CRM_Utils_System::url('civicrm/dashboard', 'reset=1', TRUE,
-          NULL, FALSE, FALSE
-        )
-      );
-      if (!CRM_Utils_System::checkURL($url, TRUE)) {
-        $errors = array(
-          'enableSSL' =>
-          ts('You need to set up a secure server before you can use the Force Secure URLs option'),
-        );
-        return $errors;
-      }
-    }
-    return TRUE;
-  }
-
-  public function postProcess() {
-    parent::postProcess();
-
-    parent::rebuildMenu();
-  }
+  return  $res->getUrl($params['ext'], $params['file']);
 }
-
