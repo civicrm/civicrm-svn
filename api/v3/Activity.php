@@ -199,7 +199,6 @@ function civicrm_api3_activity_create($params) {
  * @param array $params (reference) array of parameters determined by getfields
  */
 function _civicrm_api3_activity_create_spec(&$params) {
-  $params['subject']['api.required'] = 1;
   $params['assignee_contact_id'] = array(
     'name' => 'assignee_id',
     'title' => 'assigned to',
