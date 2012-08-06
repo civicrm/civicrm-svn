@@ -28,7 +28,7 @@
 {include file="CRM/common/pagerAToZ.tpl"}
 <a href="#" onclick=" return toggleContactSelection( 'resetSel', 'civicrm search {$qfKey}', 'reset' );">{ts}Reset all selections{/ts}<a>
 
-<table summary="{ts}Search results listings.{/ts}" class="selector">
+<table summary="{ts}Search results listings.{/ts}" class="selector row-highlight">
   <thead class="sticky">
     <tr>
       <th scope="col" title="Select All Rows">{$form.toggleSelect.html}</th>
@@ -198,7 +198,6 @@ cj(".selector tr").contextMenu({
     var formName = "{/literal}{$form.formName}{literal}";	
     on_load_init_checkboxes(formName);
     toggleTaskAction( false );
-    cj('.selector').crmrowhighlighter( );
 });
 
 cj('ul#contactMenu').mouseup( function(e){ 

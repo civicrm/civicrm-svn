@@ -27,10 +27,8 @@
 	if ($('.crm-accordion-processed').length == 0 ||
 	    $('.crm-accordion-processed').length < $('.crm-accordion-wrapper').length ){
 	  var crmAccordionWrapper = $('.crm-accordion-wrapper');  
-	  crmAccordionWrapper.delegate('div.crm-accordion-header', 'mouseover', function() {$(this).addClass('crm-accordion-header-hover')});
-	  crmAccordionWrapper.delegate('div.crm-accordion-header', 'mouseout', function() {$(this).removeClass('crm-accordion-header-hover')});
 	  crmAccordionWrapper.undelegate('click');
-	  crmAccordionWrapper.delegate('div.crm-accordion-header', 'click', function () {
+	  crmAccordionWrapper.on('click', 'div.crm-accordion-header', function () {
 		$(this).parent().toggleClass('crm-accordion-open');
 		$(this).parent().toggleClass('crm-accordion-closed');
 		//return false to prevent wiring of click event
