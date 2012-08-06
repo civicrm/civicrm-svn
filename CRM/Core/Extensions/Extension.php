@@ -272,8 +272,7 @@ class CRM_Core_Extensions_Extension {
     $check = new CRM_Core_Extensions_Extension($this->key . ".newversion");
     $check->readXMLInfo($newxml);
     if ($check->version != $this->version) {
-      CRM_Core_Session::setStatus('Cannot install - there are differences between extdir XML file and archive XML file!');
-      return;
+      CRM_Core_Error::fatal('Cannot install - there are differences between extdir XML file and archive XML file!');
     }
 
     CRM_Utils_File::copyDir($path . DIRECTORY_SEPARATOR . $this->key,
