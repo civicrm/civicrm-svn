@@ -165,12 +165,8 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     $contactID    = NULL
   ) {
 
-    global $civicrm_setting;
-    if ($group &&
-      $name &&
-      isset($civicrm_setting[$group][$name])
-    ) {
-      return $civicrm_setting[$group][$name];
+    if (NULL !== ($override = self::getOverride($group, $name, NULL))) {
+      return $override;
     }
 
     $cacheKey = self::inCache($group, $name, $componentID, $contactID, TRUE);
@@ -180,7 +176,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
 
       $values = array();
       while ($dao->fetch()) {
-        if ($dao->value) {
+        if (NULL !== ($override = self::getOverride($group, $dao->name, NULL))) {
+          $values[$dao->name] = $override;
+        }
+        elseif ($dao->value) {
           $values[$dao->name] = unserialize($dao->value);
         }
         else {
@@ -461,9 +460,9 @@ OR       group_name = %2 )
     if ($setInConfig) {
       $config = CRM_Core_Config::singleton();
     }
-    
+
     $isJoomla = (defined('CIVICRM_UF') && CIVICRM_UF == 'Joomla') ? TRUE : FALSE;
-    
+
     if (CRM_Core_Config::isUpgradeMode() && !$isJoomla) {
       $currentVer = CRM_Core_BAO_Domain::version();
       if (version_compare($currentVer, '4.1.alpha1') < 0) {
@@ -507,14 +506,9 @@ AND domain_id = %3
       }
     }
 
-
     while ($dao->fetch()) {
-      $value = NULL;
-      // overwrite value from settings file
-      if (defined("{$dao->group_name}.{$dao->name}")) {
-        $value = constant("{$dao->group_name}.{$dao->name}");
-      }
-      elseif ($dao->value) {
+      $value = self::getOverride($dao->group_name, $dao->name, NULL);
+      if ($value === NULL && $dao->value) {
         $value = unserialize($dao->value);
         if ($dao->group_name == self::DIRECTORY_PREFERENCES_NAME) {
           $value = CRM_Utils_File::absoluteDirectory($value);
@@ -529,6 +523,21 @@ AND domain_id = %3
       if ($setInConfig) {
         $config->{$dao->name} = $value;
       }
+    }
+  }
+
+  /**
+   * Determine what, if any, overrides have been provided
+   * for a setting.
+   *
+   * @return mixed, NULL or an overriden value
+   */
+  protected static function getOverride($group, $name, $default) {
+    global $civicrm_setting;
+    if ($group && $name && isset($civicrm_setting[$group][$name])) {
+      return $civicrm_setting[$group][$name];
+    } else {
+      return $default;
     }
   }
 }
