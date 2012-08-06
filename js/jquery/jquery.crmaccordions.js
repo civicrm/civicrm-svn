@@ -24,7 +24,7 @@
 * +--------------------------------------------------------------------+
 */ 
 (function($){ $.fn.crmaccordions = function(){
-  var crmAccordionWrapper = $('.crm-accordion-wrapper').not('.crm-accordion-processed, .crm-accordion-processed div');  
+  var crmAccordionWrapper = $('.crm-accordion-wrapper').not('.crm-accordion-processed, .crm-accordion-wrapper div');  
     crmAccordionWrapper.on('click', 'div.crm-accordion-header', function () {
       $(this).parent().toggleClass('crm-accordion-open').toggleClass('crm-accordion-closed');
       //return false to prevent wiring of click event
