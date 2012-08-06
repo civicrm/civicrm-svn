@@ -44,8 +44,7 @@ class CRM_Utils_Weight {
    *
    * @return bool
    */
-  static
-  function correctDuplicateWeights($daoName, $fieldValues = NULL, $weightField = 'weight') {
+  static function correctDuplicateWeights($daoName, $fieldValues = NULL, $weightField = 'weight') {
     $selectField = "MIN(id) AS dupeId, count(id) as dupeCount, $weightField as dupeWeight";
     $groupBy = "$weightField having dupeCount>1";
 
@@ -88,8 +87,7 @@ class CRM_Utils_Weight {
    *
    * @return bool
    */
-  static
-  function delWeight($daoName, $fieldID, $fieldValues = NULL, $weightField = 'weight') {
+  static function delWeight($daoName, $fieldID, $fieldValues = NULL, $weightField = 'weight') {
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
     eval('$object   = new ' . $daoName . '( );');
     $object->id = $fieldID;
@@ -124,8 +122,7 @@ class CRM_Utils_Weight {
    *
    * @return bool
    */
-  static
-  function updateOtherWeights($daoName, $oldWeight, $newWeight, $fieldValues = NULL, $weightField = 'weight') {
+  static function updateOtherWeights($daoName, $oldWeight, $newWeight, $fieldValues = NULL, $weightField = 'weight') {
     $oldWeight = (int ) $oldWeight;
     $newWeight = (int ) $newWeight;
 
@@ -188,8 +185,7 @@ class CRM_Utils_Weight {
    *
    * @return integer
    */
-  static
-  function getNewWeight($daoName, $fieldValues = NULL, $weightField = 'weight') {
+  static function getNewWeight($daoName, $fieldValues = NULL, $weightField = 'weight') {
     $selectField     = "id AS fieldID, $weightField AS weight";
     $field           = CRM_Utils_Weight::query('SELECT', $daoName, $fieldValues, $selectField);
     $sameWeightCount = 0;
@@ -228,8 +224,7 @@ class CRM_Utils_Weight {
    *
    * @return integer
    */
-  static
-  function getMax($daoName, $fieldValues = NULL, $weightField = 'weight') {
+  static function getMax($daoName, $fieldValues = NULL, $weightField = 'weight') {
     $selectField = "MAX(ROUND($weightField)) AS max_weight";
     $weightDAO = CRM_Utils_Weight::query('SELECT', $daoName, $fieldValues, $selectField);
     $weightDAO->fetch();
@@ -249,8 +244,7 @@ class CRM_Utils_Weight {
    *
    * @return integer
    */
-  static
-  function getDefaultWeight($daoName, $fieldValues = NULL, $weightField = 'weight') {
+  static function getDefaultWeight($daoName, $fieldValues = NULL, $weightField = 'weight') {
     $maxWeight = CRM_Utils_Weight::getMax($daoName, $fieldValues, $weightField);
     return $maxWeight + 1;
   }
@@ -266,8 +260,7 @@ class CRM_Utils_Weight {
    *
    * @return Object CRM_Core_DAO objet that holds the results of the query
    */
-  static
-  function &query($queryType,
+  static function &query($queryType,
     $daoName,
     $fieldValues = NULL,
     $queryData,
@@ -336,8 +329,7 @@ class CRM_Utils_Weight {
     return $resultDAO;
   }
 
-  static
-  function addOrder(&$rows, $daoName, $idName, $returnURL, $filter = NULL) {
+  static function addOrder(&$rows, $daoName, $idName, $returnURL, $filter = NULL) {
     if (empty($rows)) {
       return;
     }
@@ -355,18 +347,17 @@ class CRM_Utils_Weight {
     $config    = CRM_Core_Config::singleton();
     $imageURL  = $config->userFrameworkResourceURL . 'i/arrow';
 
-        $queryParams = array(
-          'reset' => 1,
-          'dao' => $daoName,
-          'idName' => $idName,
-          'url' => $returnURL,
-          'filter' => $filter,
-        );
-        require_once 'CRM/Core/Key.php';
-        require_once 'CRM/Utils/Signer.php';
-        $signer = new CRM_Utils_Signer(CRM_Core_Key::privateKey(), self::$SIGNABLE_FIELDS);
-        $queryParams['_sgn'] = $signer->sign($queryParams);
-        $baseURL = CRM_Utils_System::url('civicrm/admin/weight', $queryParams);
+    $queryParams = array(
+      'reset' => 1,
+      'dao' => $daoName,
+      'idName' => $idName,
+      'url' => $returnURL,
+      'filter' => $filter,
+    );
+    
+    $signer = new CRM_Utils_Signer(CRM_Core_Key::privateKey(), self::$SIGNABLE_FIELDS);
+    $queryParams['_sgn'] = $signer->sign($queryParams);
+    $baseURL = CRM_Utils_System::url('civicrm/admin/weight', $queryParams);
 
     for ($i = 1; $i <= $numIDs; $i++) {
       $id     = $ids[$i];
@@ -403,18 +394,15 @@ class CRM_Utils_Weight {
     }
   }
 
-  static
-  function fixOrder() {
-        $signature = CRM_Utils_Request::retrieve( '_sgn', 'String', CRM_Core_DAO::$_nullObject);
-        require_once 'CRM/Core/Key.php';
-        require_once 'CRM/Utils/Signer.php';
-        $signer = new CRM_Utils_Signer(CRM_Core_Key::privateKey(), self::$SIGNABLE_FIELDS);
-        // Validate $_GET values b/c subsequent code reads $_GET (via CRM_Utils_Request::retrieve)
-        if (! $signer->validate($signature, $_GET)) { 
-            CRM_Core_Error::fatal('Request signature is invalid');
-        }
+  static function fixOrder() {
+    $signature = CRM_Utils_Request::retrieve( '_sgn', 'String', CRM_Core_DAO::$_nullObject);
+    $signer = new CRM_Utils_Signer(CRM_Core_Key::privateKey(), self::$SIGNABLE_FIELDS);
+    // Validate $_GET values b/c subsequent code reads $_GET (via CRM_Utils_Request::retrieve)
+    if (! $signer->validate($signature, $_GET)) { 
+      CRM_Core_Error::fatal('Request signature is invalid');
+    }
 
-        // Note: Ensure this list matches self::$SIGNABLE_FIELDS
+    // Note: Ensure this list matches self::$SIGNABLE_FIELDS
     $daoName = CRM_Utils_Request::retrieve('dao', 'String', CRM_Core_DAO::$_nullObject);
     $id      = CRM_Utils_Request::retrieve('id', 'Integer', CRM_Core_DAO::$_nullObject);
     $idName  = CRM_Utils_Request::retrieve('idName', 'String', CRM_Core_DAO::$_nullObject);
