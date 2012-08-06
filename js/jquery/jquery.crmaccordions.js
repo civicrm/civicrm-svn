@@ -24,17 +24,12 @@
 * +--------------------------------------------------------------------+
 */ 
 (function($){ $.fn.crmaccordions = function(){
-	if ($('.crm-accordion-processed').length == 0 ||
-	    $('.crm-accordion-processed').length < $('.crm-accordion-wrapper').length ){
-	  var crmAccordionWrapper = $('.crm-accordion-wrapper');  
-	  crmAccordionWrapper.undelegate('click');
-	  crmAccordionWrapper.on('click', 'div.crm-accordion-header', function () {
-		$(this).parent().toggleClass('crm-accordion-open');
-		$(this).parent().toggleClass('crm-accordion-closed');
-		//return false to prevent wiring of click event
-		return false;
-		});
-	$('.crm-accordion-wrapper').addClass('crm-accordion-processed'); // only attached to accordions processed during first run
-	};
+  var crmAccordionWrapper = $('.crm-accordion-wrapper').not('.crm-accordion-processed');  
+    crmAccordionWrapper.on('click', 'div.crm-accordion-header', function () {
+      $(this).parent().toggleClass('crm-accordion-open').toggleClass('crm-accordion-closed');
+      //return false to prevent wiring of click event
+      return false;
+    });
+  crmAccordionWrapper.addClass('crm-accordion-processed');
 };
 })(jQuery);
