@@ -1978,7 +1978,7 @@ ORDER BY name";
    */
   public static function getModuleExtensions($fresh = FALSE) {
     $config = CRM_Core_Config::singleton();
-    if (!isset($config->extensionsDir)) {
+    if ($config->isUpgradeMode() || !isset($config->extensionsDir)) {
       return array(); // hmm, ok
     }
 
