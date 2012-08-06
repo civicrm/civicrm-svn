@@ -96,7 +96,7 @@
       {else}
         <div class="messages status">
              <div class="icon inform-icon"></div>
-            {ts}You have no locally available extensions and didn't download any information about publically available extensions from our server. Please click "Refresh" to update information about available extensions.{/ts}
+            {ts}There are no local or publicly available extensions to display. Please click "Refresh" to update information about available extensions.{/ts}
         </div>    
       {/if}
 
