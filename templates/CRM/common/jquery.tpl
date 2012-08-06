@@ -23,10 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* 
+{*
  * If you MODIFY this file, please make sure you also modify jquery.files.tpl.
- * Cannot get rid of this since we use it for joomla, standalone, print
- * html profile etc
+ * Cannot get rid of this since we use it for print html, standalone profile etc
  *}
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui-1.8.16/js/jquery-ui-1.8.16.custom.min.js"></script>
@@ -39,7 +38,7 @@
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/plugins/jstree/themes/default/jstree.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.menu.pack.js"></script>
-<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/menu.css");</style>
+`<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/menu.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.chainedSelects.js"></script>
 
