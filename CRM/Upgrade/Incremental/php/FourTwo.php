@@ -67,6 +67,50 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         ));
       }
     }
+    if ($rev == '4.2.alpha1') { 
+      $query = "
+ SELECT cc.id,GROUP_CONCAT(cm.id) as membership_id 
+ FROM civicrm_membership_payment cmp
+ LEFT JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
+ LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+ LEFT JOIN civicrm_membership cm ON cm.id=cmp.membership_id
+ LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
+ WHERE cli.entity_id IS NULL 
+ GROUP BY cc.id, cm.membership_type_id
+ HAVING count(cc.id) > 1 and count(cm.membership_type_id) > 1 ";
+
+      $dao = CRM_Core_DAO::executeQuery($query);
+      if ($dao->N) {
+        $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
+        $activityid = array(
+          array_search('Membership Signup', $activityTypes),
+          array_search('Membership Renewal', $activityTypes),
+          array_search('Membership Renewal Reminder', $activityTypes),
+        );
+        if (array_search('Change Membership Type', $activityTypes)) {
+          $activityid[] = array_search('Change Membership Type', $activityTypes); 
+        }
+        if (array_search('Change Membership Status', $activityTypes)) {
+          $activityid[] = array_search('Change Membership Type', $activityTypes); 
+        }
+      }
+      while ($dao->fetch()) {
+        $membershiIds = explode(',', $dao->membership_id);
+        sort($membershiIds);
+        array_pop($membershiIds);
+        foreach($membershiIds as $id){
+          $params = array(
+            'source_record_id' => $id,
+            'activity_type_id' => $activityid,
+          );
+          CRM_Activity_BAO_Activity::deleteActivity($params);
+          
+          $membership     = new CRM_Member_DAO_Membership();
+          $membership->id = $id;
+          $membership->delete();
+        }
+      }
+    } 
   }
 
   /**
