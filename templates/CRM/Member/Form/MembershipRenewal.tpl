@@ -177,6 +177,7 @@
     </table>
     {if $membershipMode}
      {if $context neq 'standalone'}
+			<table class="form-layout-compressed">
      	<tr class="crm-membership-form-block-contribution-contact">
        	<td class="label">{$form.contribution_contact.label}</td>
       	<td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
@@ -184,7 +185,7 @@
      	<tr id="record-different-contact">
        <td>&nbsp;</td>
        <td>
-         <table class="compressed">
+         <table class="form-layout-compressed">
            <tr class="crm-membership-form-block-honor-type">
              <td class="label">{$form.honor_type_id.label}</td>
              <td>{$form.honor_type_id.html}</td>
@@ -195,8 +196,8 @@
          </table>
        </td>
      	</tr>
+    	</table>
      {/if}
-     </table>
        <div class="spacer"></div>
        {include file='CRM/Core/BillingBlock.tpl'}
      {else}
