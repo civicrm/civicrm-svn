@@ -383,6 +383,18 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
       }
     }
 
+    if ($mappingType == 'Search Builder') {
+      //build the common contact fields array.
+      $fields['Contact'] = array();
+      foreach ($fields['Individual'] as $key => $value) {
+        if (CRM_Utils_Array::value($key, $fields['Household']) &&
+            CRM_Utils_Array::value($key, $fields['Organization'])
+            ) {
+          $fields['Contact'][$key] = $value;
+        }
+      }
+    }
+
     if (($mappingType == 'Search Builder') || ($exportMode == CRM_Export_Form_Select::CONTRIBUTE_EXPORT)) {
       if (CRM_Core_Permission::access('CiviContribute')) {
         $fields['Contribution'] = CRM_Contribute_BAO_Contribution::exportableFields();
@@ -528,6 +540,9 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
     // since we need a hierarchical list to display contact types & subtypes,
     // this is what we going to display in first selector
     $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements(FALSE, FALSE);
+    if ($mappingType == 'Search Builder') {
+      $contactTypes = array('Contact' => ts('Contacts')) + $contactTypes;
+    }
 
     $sel1 =
       array('' => ts('- select record type -')) + $contactTypes + $compArray;
