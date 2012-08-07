@@ -580,7 +580,9 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
                          WHERE    ({$this->_aliases['civicrm_contact']}.id IN ( $selectedContacts )
                                   OR 
                                   contact_a.id IN ( $selectedContacts ) ) AND
-                                  {$this->_aliases['civicrm_relationship']}.is_active = 1
+                                  {$this->_aliases['civicrm_relationship']}.is_active = 1 AND
+                                  contact_a.is_deleted = 0 AND
+                                  {$this->_aliases['civicrm_contact']}.is_deleted = 0 
                          GROUP BY {$this->_aliases['civicrm_relationship']}.id";
 
       $dao = CRM_Core_DAO::executeQuery($sql);
