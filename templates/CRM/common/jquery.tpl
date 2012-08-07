@@ -38,7 +38,7 @@
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/plugins/jstree/themes/default/jstree.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.menu.pack.js"></script>
-`<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/menu.css");</style>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/menu.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.chainedSelects.js"></script>
 
