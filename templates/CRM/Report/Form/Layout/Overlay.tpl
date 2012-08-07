@@ -29,20 +29,20 @@
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
     {/if}
-    <div class="crm-summary-group form-layout-compressed">
+    <div class="crm-report-overlay form-layout-compressed">
     <table class="crm-table-group-summary form-layout-compressed">
         {capture assign="tableHeader"}
         <tr>
             {foreach from=$columnHeaders item=header key=field}
                 {if !$skip}
                    {if $header.colspan}
-                       <td colspan={$header.colspan}>{$header.title}</td>
+                      <td colspan={$header.colspan}>{$header.title}</td>
                       {assign var=skip value=true}
                       {assign var=skipCount value=`$header.colspan`}
                       {assign var=skipMade  value=1}
                    {else}
-                       <td>{$header.title}</td> 
-                   {assign var=skip value=false}
+                      <td>{$header.title}</td> 
+                   		{assign var=skip value=false}
                    {/if}
                 {else} {* for skip case *}
                    {assign var=skipMade value=`$skipMade+1`}
@@ -53,11 +53,11 @@
         {/capture}
 
         {if !$sections} {* section headers and sticky headers aren't playing nice yet *}
-            <thead>
+        	<thead>
             <tr>
                 {$tableHeader}
-        </tr>          
-        </thead>
+        		</tr>          
+        	</thead>
         {/if}
        
         {* pre-compile section header here, rather than doing it every time under foreach *}
