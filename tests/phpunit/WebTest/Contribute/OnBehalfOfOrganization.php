@@ -461,7 +461,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->click('_qf_Field_next-bottom');
     $this->waitForPageToLoad("30000");
     
-    //yash
+
     //create organisation
     $orgName = "Org WebAccess ". substr(sha1(rand()), 0, 7);
     $orgEmail = "org". substr(sha1(rand()), 0, 7) . "@web.com";
@@ -488,11 +488,10 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->click("is_permission_b_a");
 
     // save relationship                                                                                                                                                                                    
+    $this->waitForElementPresent("details-save");
     $this->click("details-save");
+    $this->waitForElementPresent("Relationships");
 
-    // We need a payment processor
-    $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
-    $processorType = 'Dummy';
     $pageTitle = substr(sha1(rand()), 0, 7);
     $rand = 100;
     $hash = substr(sha1(rand()), 0, 7);
@@ -510,7 +509,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $widget = FALSE;
     $pcp = FALSE;
     $honoreeSection = FALSE;
-    $isAddPaymentProcessor = TRUE;
+    $isAddPaymentProcessor = FALSE;
     $isPcpApprovalNeeded = FALSE;
     $isSeparatePayment = FALSE;
 
@@ -519,7 +518,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $pageId = $this->webtestAddContributionPage($hash,
       $rand,
       $pageTitle,
-      array($processorName => $processorType),
+      null,
       $amountSection,
       $payLater,
       $onBehalf,
@@ -539,13 +538,40 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
       $honoreeSection
     );
 
-    //logout
-    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+     $this->_testOrganization($pageId, $cid, $pageTitle);  
+  }
+
+
+  function _testOrganization($pageId, $cid, $pageTitle) {
+    //Open Live Contribution Page
+    $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
+
+    $this->waitForElementPresent("_qf_Main_upload-bottom");
+
+    $this->waitForElementPresent("onbehalf_state_province-3");
+
+    $this->waitForElementPresent("onbehalf_phone-3-1");
+    $this->type("onbehalf_phone-3-1", 9999999999);
+    $this->waitForElementPresent("onbehalf_email-3");
+    $this->type("onbehalf_email-3", "org@example.com");
+    $this->type("onbehalf_street_address-3", "Test Street Address");
+    $this->type("onbehalf_city-3", "Test City");
+    $this->type("onbehalf_postal_code-3", substr(sha1(rand()), 0, 6));
+    $this->click("onbehalf_country-3");
+    $this->select("onbehalf_country-3", "label=United States");
+    $this->click("onbehalf_state_province-3");
+    $this->select("onbehalf_state_province-3", "label=Alabama");
+
+    $this->waitForElementPresent("_qf_Main_upload-bottom");
+    $this->click("_qf_Main_upload-bottom");
+
     $this->waitForPageToLoad('30000');
 
-    $this->open($this->sboxPath . "civicrm/logout?reset=1");
+    $this->waitForElementPresent("_qf_Confirm_next-bottom");
+
+    $this->click("_qf_Confirm_next-bottom");
     $this->waitForPageToLoad('30000');
-    $this->_testAnomoyousOganization($pageId, $cid, $pageTitle);  
+
   }
 
   function _testAnomoyousOganization($pageId, $cid, $pageTitle) {
@@ -825,11 +851,15 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->click("css=div.ac_results-inner li");
     $this->assertContains($orgName1, $this->getValue('contact_1'), "autocomplete expected $orgName1 but didn’t find it in " . $this->getValue('contact_1'));
 
+    $this->waitForElementPresent("add_current_employer");
+    $this->click("add_current_employer");
+
     // give permission
     $this->click("is_permission_a_b");
     $this->click("is_permission_b_a");
 
     // save relationship
+    $this->waitForElementPresent("details-save");
     $this->click("details-save");
 
     //Open Live Contribution Page

@@ -83,5 +83,4 @@ js/jquery/jquery.crmeditable.js
 js/jquery/jquery.crmaccordions.js
 js/jquery/jquery.crmasmselect.js
 js/jquery/jquery.crmtooltip.js
-js/jquery/jquery.crmrowhighlighter.js
 

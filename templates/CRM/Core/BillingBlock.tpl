@@ -225,7 +225,7 @@ function sameAddress( setValue ) {
     if ( stateId ) {
       setTimeout(function(){
         cj( 'select[id^="billing_state_province_id"]').val( stateId );
-      }, 250);
+      }, 500);
       }
 }
 }

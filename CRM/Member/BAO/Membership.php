@@ -583,6 +583,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       'source_record_id' => $membershipId,
       'activity_type_id' => array(array_search('Membership Signup', $activityTypes),
         array_search('Membership Renewal', $activityTypes),
+        array_search('Change Membership Status', $activityTypes),
+        array_search('Change Membership Type', $activityTypes),
+        array_search('Membership Renewal Reminder', $activityTypes),
       ),
     );
 

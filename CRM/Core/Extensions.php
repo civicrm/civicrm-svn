@@ -123,28 +123,53 @@ class CRM_Core_Extensions {
         }
       }
       else {
-        $url = CRM_Utils_System::url('civicrm/admin/setting/path', 'reset=1&civicrmDestination=/civicrm/admin/extensions?reset=1');
-        CRM_Core_Session::setStatus(ts('Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.',
+        $civicrmDestination = urlencode(CRM_Utils_System::url('civicrm/admin/extensions', 'reset=1'));
+        $url = CRM_Utils_System::url('civicrm/admin/setting/path', "reset=1&civicrmDestination=${civicrmDestination}");
+        CRM_Core_Session::setStatus(ts('Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.<br/>',
             array(
               1 => $this->_extDir,
-              2 => $url
+              2 => $url,
             )
           ));
         $this->_extDir = NULL;
       }
+
+      if (!class_exists('ZipArchive')) {
+        // everyone else is dumping messages wily-nily, why can't I?
+        CRM_Core_Session::setStatus(ts('You will not be able to install extensions at this time because your installation of PHP does not support ZIP archives. Please ask your system administrator to install the standard PHP-ZIP extension.'));
+    }
+
+      if (empty($config->extensionsURL)) {
+        $civicrmDestination = urlencode(CRM_Utils_System::url('civicrm/admin/extensions', 'reset=1'));
+        $url = CRM_Utils_System::url('civicrm/admin/setting/url', "reset=1&civicrmDestination=${civicrmDestination}");
+        CRM_Core_Session::setStatus(ts('Your Extensions Directory (%1) does not have a matching Extensions Resource URL. Please go to the <a href="%2">URL setting page</a> and correct it.<br/>',
+            array(
+              1 => $this->_extDir,
+              2 => $url,
+            )
+          ));
+  }
     }
   }
 
   public function getRepositoryUrl() {
-    if (empty($this->_repoUrl)) {
+    if (empty($this->_repoUrl) && $this->_repoUrl !== FALSE) {
       $config = CRM_Core_Config::singleton();
       $url = CRM_Core_BAO_Setting::getItem('Extension Preferences', 'ext_repo_url', NULL, self::DEFAULT_EXTENSIONS_REPOSITORY);
+
+      // boolean false means don't try to check extensions
+      // http://issues.civicrm.org/jira/browse/CRM-10575
+      if($url === false) {
+        $this->_repoUrl = false;
+      } 
+      else { 
       $vars = array(
         '{ver}' => CRM_Utils_System::version(),
         '{uf}' => $config->userFramework,
         '{php}' => phpversion(),
       );
       $this->_repoUrl = strtr($url, $vars);
+    }
     }
     return $this->_repoUrl;
   }
@@ -672,6 +697,13 @@ class CRM_Core_Extensions {
 
     if (!ini_get('allow_url_fopen')) {
       ini_set('allow_url_fopen', 1);
+    }
+
+    if(FALSE === $this->getRepositoryUrl()) {
+      // don't check if the user has configured civi not to check an external
+      // url for extensions. See CRM-10575.
+      CRM_Core_Session::setStatus(ts('Not checking remote URL for extensions since ext_repo_url is set to false.'));
+      return array();
     }
 
     $extdir = file_get_contents($this->getRepositoryUrl());

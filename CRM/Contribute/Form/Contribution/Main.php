@@ -509,9 +509,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $profileAddressFields = array();
       foreach( $this->_fields as $key => $value ) {
         CRM_Core_BAO_UFField::assignAddressField($key, $profileAddressFields);
+      }
         $this->set('profileAddressFields', $profileAddressFields);
             }
-    }
 
     //to create an cms user
     if (!$this->_userID) {
@@ -1100,7 +1100,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       return $errors;
     }
 
-    foreach ($self->_fields as $name => $fld) {
+    foreach ($self->_paymentFields as $name => $fld) {
       if ($fld['is_required'] &&
         CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))
       ) {

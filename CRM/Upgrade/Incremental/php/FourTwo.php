@@ -44,16 +44,18 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   /**
    * Compute any messages which should be displayed beforeupgrade
    *
+   * Note: This function is called iteratively for each upcoming
+   * revision to the database.
+   *
    * @param $postUpgradeMessage string, alterable
-   * @param $currentVer the schema version according the database
-   * @param $latestVer the final, targetted schema version based on the codebase
+   * @param $rev string, a version number, e.g. '4.2.alpha1', '4.2.beta3', '4.2.0'
    * @return void
    */
   function setPreUpgradeMessage(&$preUpgradeMessage, $rev) {
     if ($rev == '4.2.beta2') {  
       // note: error conditions are also checked in upgrade_4_2_beta2()
       if (!defined('CIVICRM_SETTINGS_PATH')) {
-        $preUpgradeMessage .= '<br />' . ts('Could not determine path to civicrm.settings.php. Please manually locate it and add these lines:<pre>%1</pre>', array(
+        $preUpgradeMessage .= '<br />' . ts('Could not determine path to civicrm.settings.php. Please manually locate it and add these lines at the bottom: <pre>%1</pre>', array(
           1 => self::SETTINGS_SNIPPET,
         ));
       } elseif (preg_match(self::SETTINGS_SNIPPET_PATTERN, file_get_contents(CIVICRM_SETTINGS_PATH))) {
@@ -65,6 +67,50 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         ));
       }
     }
+    if ($rev == '4.2.alpha1') { 
+      $query = "
+ SELECT cc.id,GROUP_CONCAT(cm.id) as membership_id 
+ FROM civicrm_membership_payment cmp
+ LEFT JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
+ LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+ LEFT JOIN civicrm_membership cm ON cm.id=cmp.membership_id
+ LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
+ WHERE cli.entity_id IS NULL 
+ GROUP BY cc.id, cm.membership_type_id
+ HAVING count(cc.id) > 1 and count(cm.membership_type_id) > 1 ";
+
+      $dao = CRM_Core_DAO::executeQuery($query);
+      if ($dao->N) {
+        $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
+        $activityid = array(
+          array_search('Membership Signup', $activityTypes),
+          array_search('Membership Renewal', $activityTypes),
+          array_search('Membership Renewal Reminder', $activityTypes),
+        );
+        if (array_search('Change Membership Type', $activityTypes)) {
+          $activityid[] = array_search('Change Membership Type', $activityTypes); 
+  }
+        if (array_search('Change Membership Status', $activityTypes)) {
+          $activityid[] = array_search('Change Membership Type', $activityTypes); 
+        }
+      }
+      while ($dao->fetch()) {
+        $membershiIds = explode(',', $dao->membership_id);
+        sort($membershiIds);
+        array_pop($membershiIds);
+        foreach($membershiIds as $id){
+          $params = array(
+            'source_record_id' => $id,
+            'activity_type_id' => $activityid,
+          );
+          CRM_Activity_BAO_Activity::deleteActivity($params);
+
+          $membership     = new CRM_Member_DAO_Membership();
+          $membership->id = $id;
+          $membership->delete();
+        }
+      }
+    } 
   }
 
   /**
@@ -77,6 +123,14 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   function setPostUpgradeMessage(&$postUpgradeMessage, $rev) {
     if ($rev == '4.2.alpha1') {
       $postUpgradeMessage .= '<br />' . ts('Default versions of the following System Workflow Message Templates have been modified to handle new functionality: <ul><li>Events - Registration Confirmation and Receipt (on-line)</li><li>Pledges - Acknowledgement</li><li>Pledges - Payment Reminder</li></ul>. If you have modified these templates, please review the new default versions and implement updates as needed to your copies (Administer > Communications > Message Templates > System Workflow Messages).');
+    }
+    if ($rev == '4.2.beta5') {
+      $config = CRM_Core_Config::singleton();
+      if (!empty($config->extensionsDir)) {
+        $postUpgradeMessage .= '<br />' . ts('Please <a href="%1" target="_blank">configure the Extesion Resource URL</a>.', array(
+          1 => CRM_Utils_system::url('civicrm/admin/setting/url', 'reset=1')
+        ));
+  }
     }
   }
 
@@ -124,6 +178,15 @@ class CRM_Upgrade_Incremental_php_FourTwo {
       $title = ts('Upgrade DB to 4.2.alpha1: Participant (%1 => %2)', array(1 => $startId, 2 => $endId));
       $this->addTask($title, 'task_4_2_alpha1_convertParticipants', $startId, $endId);
     } 
+  }
+
+  function upgrade_4_2_beta5($rev) {
+    // CRM-10629 Create a setting for extension URLs
+    // For some reason, this isn't working when placed in the .sql file
+    CRM_Core_DAO::executeQuery("
+      INSERT INTO civicrm_setting(group_name,name,value,domain_id,is_domain)
+      VALUES ('URL Preferences', 'extensionsURL',NULL,1,1);
+    ");
   }
 
   /**

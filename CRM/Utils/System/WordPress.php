@@ -118,7 +118,25 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
    * @access public
    * @static
    */
-  function addHTMLHead($head) {}
+  function addHTMLHead($head) {
+    static $registered = FALSE;
+    if (!$registered) {
+      // front-end view
+      add_action('wp_head', array(__CLASS__, '_showHTMLHead'));
+      // back-end views
+      add_action('admin_head', array(__CLASS__, '_showHTMLHead'));
+    }
+    CRM_Core_Region::instance('wp_head')->add(array(
+      'markup' => $head,
+    ));
+  }
+
+  static function _showHTMLHead() {
+    $region = CRM_Core_Region::instance('wp_head', FALSE);
+    if ($region) {
+      echo $region->render('');
+    }
+  }
 
   /**
    * rewrite various system urls to https
@@ -182,8 +200,9 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
 
     $path = CRM_Utils_String::stripPathChars($path);
 
+    $permlinkStructure = get_option('permalink_structure');
     if ($config->userFrameworkFrontend) {
-      if (get_option('permalink_structure') != '') {
+      if ($permlinkStructure != '') {
         global $post;
         $script = get_permalink($post->ID);
       }
@@ -217,7 +236,6 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
       $base .= 'wp-admin/admin.php';
     }
 
-    $permlinkStructure = get_option('permalink_structure');
     if (isset($path)) {
         if (isset($query)) {
         if ( $permlinkStructure != '' && $pageID ) {
@@ -399,6 +417,25 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
 
     wp_new_user_notification($uid, $user_data['user_pass']);
     return $uid;
+  }
+
+  /*
+   * Change user name in host CMS
+   *
+   * @param integer $ufID User ID in CMS
+   * @param string $ufName User name
+   */
+  function updateCMSName($ufID, $ufName) {
+    // CRM-10620
+    if (function_exists('wp_update_user')) {
+      $ufID   = CRM_Utils_Type::escape($ufID, 'Integer');
+      $ufName = CRM_Utils_Type::escape($ufName, 'String');
+
+      $values = array ('ID' => $ufID, 'user_email' => $ufName);
+      if( $ufID ) {
+        wp_update_user( $values ) ;
+      }
+    }
   }
 
   function checkUserNameEmailExists(&$params, &$errors, $emailName = 'email') {

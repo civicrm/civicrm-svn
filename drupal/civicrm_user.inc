@@ -177,9 +177,8 @@ function civicrm_user_view($user, $view_mode) {
     require_once 'CRM/Contact/BAO/Contact.php';
     require_once 'CRM/Contact/BAO/Contact/Permission.php';
     $contactURL = NULL;
-    if (CRM_Core_Permission::check('access CiviCRM') &&
-      CRM_Contact_BAO_Contact_Permission::allow($userID)
-    ) {
+    $civiPerm = CRM_Contact_BAO_Contact_Permission::allow($userID);
+    if (CRM_Core_Permission::check('access CiviCRM') && $civiPerm) {
       $contactURL =
 	'<span class="user-page-link" id="user-page-contact" ><span class="user-page-bullet">&raquo;</span> ' .
 	l(ts("View Contact Record"),
@@ -189,9 +188,7 @@ function civicrm_user_view($user, $view_mode) {
 	'</span>';
     }
 
-    if (CRM_Core_Permission::check('access Contact Dashboard') &&
-      CRM_Contact_BAO_Contact_Permission::allow($userID)
-    ) {
+    if (CRM_Core_Permission::check('access Contact Dashboard') && $civiPerm) {
       if (!empty($contactURL)) {
         $contactURL .= '<br/>';
       }

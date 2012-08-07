@@ -1,4 +1,76 @@
 ************************************************
+Sponsors and key contributors for 4.2
+************************************************
+The following people and organizations sponsored and/or contributed new and improved features for the 4.2 release.
+
+Abril Rocabert
+Adam Wight
+Alice Aguilar
+Allen Shaw
+Andres Spagarino
+Andrew Hunt
+Anthony Camilleri
+Ariel Gold
+Brian Shaughnessy
+Chris Ward
+Eileen McNaughton
+Eliet Henderson
+Erik Hommel
+Frank Gomez
+Graylin Kim
+Jamie McClelland
+Jane Hanley
+Jason Bertolacci
+Joe Murray
+John Derry
+Jon Goldberg
+Kasia Wakarecy
+Katie Horn
+Katy Jockelson
+Kellie Brownell
+Ken Zalewski
+Lisa Jervis
+Mathieu Lutfy
+Matt Neimayer
+Micah Lee
+Michael Daryabeygi
+Michael McAndrew
+Parvez Saleh
+Peter Gehres
+Peter McAndrew
+Robyn Perry
+Samuel Vanhove
+Simon West
+Stéphane Lussier
+Stuart Gaston
+Xavier Dutoit
+
+Art of Living
+Backoffice Thinking
+Community Builders
+DC Road Runners
+EE atWork
+Electronic Frontier Foundation
+Freeform Solutions
+Free Software Foundation
+Fuzion NZ
+Gingko Street Consulting
+JMA Consulting
+Korlon
+Koumbit
+Lighthouse Consulting
+National Democratic Institute
+New York State Senate
+NS Web Solutions
+Progressive Technology Project
+San Francisco Baykeeper
+Tech to the People
+The Monthly.com
+Veda Consulting
+Xstreme Media
+Zing
+
+************************************************
 Sponsors and key contributors for 4.1
 ************************************************
 The following people and organizations sponsored and/or contributed new and improved features for the 4.1 release.

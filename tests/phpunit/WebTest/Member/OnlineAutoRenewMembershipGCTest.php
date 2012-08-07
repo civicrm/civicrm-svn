@@ -56,17 +56,10 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
 
     $this->click("_qf_Confirm_next_checkout");
-    $this->waitForPageToLoad("30000");
+    sleep(5);
 
-    $this->waitForElementPresent("Email");
-    $this->type("Email", "custdeepak");
-    $this->type("Passwd", "deepak123");
-
-    $this->click("xpath=//input[@id='signIn']");
-    $this->waitForElementPresent("bottomBuyButton");
-
-    $this->click("bottomBuyButton");
-    $this->waitForPageToLoad("30000");
+    // FIXME: By this time pending records has already been created. Formatting for external page (google checkout in this case) 
+    // has changed a bit. No point in adding test for external page as we 'll test with fake transactions.
   }
 
   function testOnlineAutoRenewMembershipAuthenticated() {
@@ -98,17 +91,10 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
 
     $this->click("_qf_Confirm_next_checkout");
-    $this->waitForPageToLoad("30000");
+    sleep(5);
 
-    $this->waitForElementPresent("Email");
-    $this->type("Email", "custdeepak");
-    $this->type("Passwd", "deepak123");
-
-    $this->click("xpath=//input[@id='signIn']");
-    $this->waitForElementPresent("bottomBuyButton");
-
-    $this->click("bottomBuyButton");
-    $this->waitForPageToLoad("30000");
+    // FIXME: By this time pending records has already been created. Formatting for external page (google checkout in this case) 
+    // has changed a bit. No point in adding test for external page as we 'll test with fake transactions.
   }
 
   function _configureMembershipPage() {

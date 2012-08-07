@@ -127,6 +127,7 @@ class CRM_Contact_Form_Inline_Phone extends CRM_Core_Form {
   static function formRule( $fields, $errors ) {
     $hasData = $hasPrimary = $errors = array( );
     if ( CRM_Utils_Array::value( 'phone', $fields ) && is_array( $fields['phone'] ) ) {
+      $primaryID = null;
       foreach ( $fields['phone'] as $instance => $blockValues ) {
         $dataExists = CRM_Contact_Form_Contact::blockDataExists( $blockValues );
 

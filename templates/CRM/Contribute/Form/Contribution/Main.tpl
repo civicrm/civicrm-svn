@@ -100,7 +100,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
             {if $is_pledge_interval}
               {$form.pledge_frequency_interval.html}&nbsp;
             {/if}
-            {$form.pledge_frequency_unit.html}<span id="installments_num">&nbsp;{ts}for{/ts}&nbsp;{$form.pledge_installments.html}&nbsp;{ts}installments.{/ts}</span>
+            {$form.pledge_frequency_unit.html}<span id="pledge_installments_num">&nbsp;{ts}for{/ts}&nbsp;{$form.pledge_installments.html}&nbsp;{ts}installments.{/ts}</span>
           </div>
           <div class="clear"></div>
         </div>
@@ -112,7 +112,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
     <div class="crm-section {$form.is_recur.name}-section">
       <div class="label">&nbsp;</div>
       <div class="content">
-        <p><strong>{$form.is_recur.html} {ts}every{/ts} &nbsp;{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}&nbsp; {ts}for{/ts} &nbsp; {$form.installments.html} &nbsp;{$form.installments.label}</strong></p>
+        <p><strong>{$form.is_recur.html} {ts}every{/ts} &nbsp;{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}<span id="recur_installments_num">&nbsp; {ts}for{/ts} &nbsp; {$form.installments.html} &nbsp;{$form.installments.label}</span></strong></p>
         <p><span class="description">{ts}Your recurring contribution will be processed automatically for the number of installments you specify. You can leave the number of installments blank if you want to make an open-ended commitment. In either case, you can choose to cancel at any time.{/ts}
             {if $is_email_receipt}
                 {ts}You will receive an email receipt for each recurring contribution. The receipts will include a link you can use if you decide to modify or cancel your future contributions.{/ts}

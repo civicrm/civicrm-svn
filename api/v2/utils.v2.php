@@ -92,8 +92,7 @@ function civicrm_create_success($result = 1) {
   $values['is_error'] = 0;
   $values['result'] = $result;
 
-
-  return CRM_Core_Error::createAPISuccess($values);
+  return $values;
 }
 
 /**

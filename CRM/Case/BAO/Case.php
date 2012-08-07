@@ -619,23 +619,21 @@ LEFT JOIN civicrm_option_value aov ON (aov.option_group_id = aog.id AND aov.valu
     }
     elseif ($type == 'recent') {
       // Similarly, the most recent activity in the past 14 days, and exclude scheduled.
-
+      //improve query performance - CRM-10598
       $query .= " INNER JOIN
 (
-SELECT act3.case_id, act3.minid AS id, act_details.activity_date_time AS desired_date, act_details.activity_type_id, 
-act_details.status_id, aov.name AS act_type_name, aov.label AS act_type
-FROM civicrm_view_case_activity_recent act_details INNER JOIN
-(
-  SELECT t.case_id, MIN(act2.id) as minid FROM civicrm_view_case_activity_recent act2 INNER JOIN
-    (SELECT vr.case_id, MAX(vr.activity_date_time) AS mindate FROM civicrm_view_case_activity_recent vr
-     GROUP BY vr.case_id ORDER BY NULL
-    ) AS t
-  ON act2.activity_date_time = t.mindate
-  GROUP BY t.case_id ORDER BY NULL
-) AS act3
-ON act3.minid = act_details.id
+  SELECT case_id, act.id, activity_date_time AS desired_date, activity_type_id, status_id, aov.name AS act_type_name, aov.label AS act_type
+  FROM (
+    SELECT *
+    FROM (
+      SELECT *
+      FROM civicrm_view_case_activity_recent
+      ORDER BY activity_date_time DESC, id ASC
+      ) AS recentOrdered
+    GROUP BY case_id
+    ) AS act
 LEFT JOIN civicrm_option_group aog ON aog.name='activity_type'
-LEFT JOIN civicrm_option_value aov ON (aov.option_group_id = aog.id AND aov.value = act_details.activity_type_id)
+  LEFT JOIN civicrm_option_value aov ON ( aov.option_group_id = aog.id AND aov.value = act.activity_type_id )
 ) AS t_act ";
     }
 
@@ -2770,10 +2768,13 @@ WHERE id IN (' . implode(',', $copiedActivityIds) . ')';
       $allowEditNames = array('Open Case');
 
       // do not allow File on Case
-      $doNotFileNames = array('Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date');
+      $doNotFileNames = array('Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date','Reassigned Case', 'Merge Case', 'Link Cases', 'Assign Case Role');
 
       if (in_array($actTypeName, $singletonNames)) {
         $allow = FALSE;
+        if ($operation == 'File On Case') {
+          $allow = (in_array($actTypeName, $doNotFileNames)) ? FALSE : TRUE;
+        }
         if (in_array($operation, $actionOperations)) {
           $allow = TRUE;
           if ($operation == 'edit') {

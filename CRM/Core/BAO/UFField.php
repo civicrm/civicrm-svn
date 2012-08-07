@@ -688,6 +688,18 @@ SELECT  id
   static function assignAddressField($key, &$profileAddressFields) {
     $billing_id = CRM_Core_BAO_LocationType::getBilling();
     list($prefixName, $index) = CRM_Utils_System::explode('-', $key, 2);
+    
+    //check for valid fields ( fields that are present in billing block )
+    $validBillingFields = array(
+      'first_name','middle_name','last_name','street_address',
+      'supplemental_address_1','city','state_province',
+      'postal_code','country'
+    );
+
+    if ( !in_array($prefixName, $validBillingFields) ) {
+      return;
+    }
+    
     if (!empty($index) && (
         // it's empty so we set it OR
         !CRM_Utils_array::value($prefixName, $profileAddressFields)

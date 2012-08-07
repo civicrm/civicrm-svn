@@ -110,9 +110,6 @@ class CRM_Contact_Form_Task_SMSCommon {
     $to = $form->add('text', 'to', ts('To'), '', TRUE);
     $form->add('text', 'activity_subject', ts('Name The SMS'), '', TRUE);
 
-    $form->addDateTime('send_at', ts('Send At'), FALSE);
-    $form->addDateTime('invalid_after', ts('Invalid After'), FALSE);
-
     $toSetDefault = TRUE;
     if (property_exists($form, '_context') && $form->_context == 'standalone') {
       $toSetDefault = FALSE;
@@ -329,15 +326,6 @@ class CRM_Contact_Form_Task_SMSCommon {
       }
     }
 
-    $now = CRM_Utils_Date::format(date('YmdHi00'));
-    if (CRM_Utils_Array::value('send_at', $fields) && CRM_Utils_Date::format(CRM_Utils_Date::processDate($fields['send_at'], $fields['send_at_time'])) < $now) {
-      $errors['send_at'] = ts('Send At date cannot be earlier than the current time.');
-    }
-
-    if (CRM_Utils_Array::value('invalid_after', $fields) && CRM_Utils_Date::format(CRM_Utils_Date::processDate($fields['invalid_after'], $fields['invalid_after_time'])) < $now) {
-      $errors['invalid_after'] = ts('Invalid After date cannot be earlier than the current time.');
-    }
-
     //Added for CRM-1393
     if (CRM_Utils_Array::value('saveTemplate', $fields) && empty($fields['saveTemplateName'])) {
       $errors['saveTemplateName'] = ts("Enter name to save message template");
@@ -360,8 +348,6 @@ class CRM_Contact_Form_Task_SMSCommon {
     $thisValues = $form->controller->exportValues($form->getName());
 
     $fromSmsProviderId = $thisValues['sms_provider_id'];
-    $thisValues['send_at'] = CRM_Utils_Date::processDate($thisValues['send_at'], $thisValues['send_at_time']);
-    $thisValues['invalid_after'] = CRM_Utils_Date::processDate($thisValues['invalid_after'], $thisValues['invalid_after_time']);
 
     // process message template
     if (CRM_Utils_Array::value('saveTemplate', $thisValues)

@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,33 +23,42 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{* Displays recently viewed objects (contacts and other objects like groups, notes, etc. *}
-<div id="recently-viewed" class="left">
-    <ul>
-    {foreach from=$recentlyViewed item=item}
-         <li class="crm-recently-viewed" ><a  href="{$item.url}" title="{$item.title}">
-         {if $item.image_url}
-            <span class="icon crm-icon {if $item.subtype}{$item.subtype}{else}{$item.type}{/if}-icon" style="background: url('{$item.image_url}')"></span>
-         {else}
-            <span class="icon crm-icon {$item.type}{if $item.subtype}-subtype{/if}-icon"></span>
-         {/if}
-         {if $item.isDeleted}<del>{/if}{$item.title|mb_truncate:25:"..":true}{if $item.isDeleted}</del>{/if}</a>
-         <div class="crm-recentview-wrapper">
-           <a href='{$item.url}' class="crm-actions-view">{ts}View{/ts}</a>
-	       {if $item.edit_url}<a href='{$item.edit_url}' class="crm-actions-edit">{ts}Edit{/ts}</a>{/if}    
-		   {if $item.delete_url}<a href='{$item.delete_url}' class="crm-actions-delete">{ts}Delete{/ts}</a>{/if}
-         </div>
-	     </li>
-    {/foreach}
-   </ul>
-</div>
-{literal}
-<script type="text/javascript">
-    cj( function( ) {
-      if (cj('#recently-viewed').offset().left > 150) {
-        cj('#recently-viewed').removeClass('left').addClass('right');
-		      }
-    });
-</script>
-{/literal}
+*/
+
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC
+ * $Id$
+ *
+ */
+
+/**
+ * Add a stylesheet <LINK> to a specific part of the page
+ *
+ * @param $params array with keys:
+ *  - ext: string, extension name. see CRM_Core_Resources::addStyleFile
+ *  - file: string, relative file path. see CRM_Core_Resources::addStyleFile
+ *  - url: string. see CRM_Core_Resources::addStyleURL
+ *  - weight: int; default: CRM_Core_Resources::DEFAULT_WEIGHT (0)
+ *  - region: string; default: CRM_Core_Resources::DEFAULT_REGION ('html-header')
+ */
+function smarty_function_crmStyle($params, &$smarty) {
+  $res = CRM_Core_Resources::singleton();
+
+  if (empty($params['weight'])) {
+    $params['weight'] = CRM_Core_Resources::DEFAULT_WEIGHT;
+  }
+  if (empty($params['region'])) {
+    $params['region'] = CRM_Core_Resources::DEFAULT_REGION;
+  }
+
+  if (array_key_exists('file', $params)) {
+    $res->addStyleFile($params['ext'], $params['file'], $params['weight'], $params['region']);
+  } elseif (array_key_exists('url', $params)) {
+    $res->addStyleUrl($params['url'], $params['weight'], $params['region']);
+  } else {
+    CRM_Core_Error::debug_var('crmStyle_params', $params);
+    throw new Exception("crmStyle requires url or ext+file");
+  }
+}

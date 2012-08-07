@@ -521,8 +521,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
      * @param $loadUser boolean load cms user?
      * @param $throwError throw error on failure?
      */
-  function loadBootStrap($params = array(
-    ), $loadUser = TRUE, $throwError = TRUE) {
+  function loadBootStrap($params = array(), $loadUser = TRUE, $throwError = TRUE) {
         // Setup the base path related constant.
         $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
 
@@ -537,6 +536,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
     // Get the framework.
     require $joomlaBase . '/libraries/import.php';
+    require $joomlaBase . '/libraries/joomla/environment/uri.php';
     require $joomlaBase . '/libraries/joomla/environment/uri.php';
     require $joomlaBase . '/configuration.php';
 

@@ -51,6 +51,7 @@ class CRM_Admin_Form_Setting_Url extends CRM_Admin_Form_Setting {
     $this->addElement('text', 'userFrameworkResourceURL', ts('CiviCRM Resource URL'));
     $this->addElement('text', 'imageUploadURL', ts('Image Upload URL'));
     $this->addElement('text', 'customCSSURL', ts('Custom CiviCRM CSS URL'));
+    $this->addElement('text', 'extensionsURL', ts('Extension Resource URL'));
     $this->addYesNo('enableSSL', ts('Force Secure URLs (SSL)'));
     $this->addYesNo('verifySSL', ts('Verify SSL Certs'));
 

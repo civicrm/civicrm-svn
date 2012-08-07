@@ -731,13 +731,18 @@ LIMIT    0, {$limit}
     if (CRM_Utils_Array::value('org', $params)) {
       if ($listCurrentEmployer && !empty($currEmpDetails)) {
         $contactList = array(
+          array(
           'data' => $currEmpDetails['data'],
-          'id' => $currEmpDetails['id'],
+            'id'   => $currEmpDetails['id']
+          )
         );
       }
       else {
-        $contactList = array('data' => CRM_Utils_Array::value('s', $params),
-          'id' => CRM_Utils_Array::value('s', $params),
+        $contactList = array(
+          array(
+            'data' => $name,
+            'id'   => $name
+          )
         );
       }
     }

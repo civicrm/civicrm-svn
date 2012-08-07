@@ -1088,68 +1088,62 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 .block-civicrm div#recently-viewed ul {
     list-style-image: none;
     font-size: .9em;
-    /* overflow: hidden; */
     margin: 0px;
     padding: 0px;
 }
 
-.block-civicrm div#recently-viewed ul li {
+.block-civicrm div#recently-viewed li.crm-recently-viewed {
     margin: 1px;
     padding: 1px 1px 4px 3px;
     border: 1px solid #D7D7D0;
     background-color: #fff;
     white-space: nowrap;
     list-style-type:none;
-    -moz-border-radius: 4px; -webkit-border-radius: 4px;   -khtml-border-radius: 4px; border-radius:4px;
+    position: relative;
+    -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius:4px;
 }
 
-#crm-container #recently-viewed a,
+.block-civicrm div#recently-viewed ul li.crm-recently-viewed:hover,
+.block-civicrm #recently-viewed .crm-recentview-wrapper {
+    background-color:#FFFFCC;
+    border:1px solid #FFFF66;
+    -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius:4px;
+}
+
 .block-civicrm div#recently-viewed a {
     font-weight: normal;
-    /*color: #6e6e6e;*/
     color: #4A88DF;
     text-decoration:none;
     font-size: .95em
 }
 
-.block-civicrm div#recently-viewed ul li.crm-recentview-active {
-    background-color:#FFFFCC;
-    border:1px solid #FFFF66;
-    -moz-border-radius: 4px; -webkit-border-radius: 4px;   -khtml-border-radius: 4px; border-radius:4px;
-}
-
-.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul {
+.block-civicrm #recently-viewed .crm-recentview-wrapper {
+    display:none;
     position:absolute;
     z-index : 99;
-    background-color:#FFFFCC;
-    overflow:visible;
-    list-style-type:none;
-    margin:0px;
-}
-
-.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul li {
-    font-size:1.1em;
-    background-color:#FFFFCC;
-    margin:0px;
-    border:1px solid #FFFF66;
+    width: 10em;
+    overflow:hidden;
+    top: 0px;
     text-align:center;
-    -moz-border-radius: 0px 4px 4px 4px; 
-    -webkit-border-radius: 0px 4px 4px 4px;   
-    -khtml-border-radius: 0px 4px 4px 4px; 
-    border-radius:0px 4px 4px 4px;
     padding-top:1em;
 }
 
-.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul li a:hover {
-  color:#494949; 
-}
-
-.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul.crm-recentview-wrapper-left li {
+.block-civicrm div#recently-viewed.left .crm-recentview-wrapper {
     border-left:none;
+    right: -10em;
 }
 
-.block-civicrm div#recently-viewed ul li.crm-recently-viewed ul.crm-recentview-wrapper-right li {
+.block-civicrm div#recently-viewed.right .crm-recentview-wrapper {
     border-right:none;
+    left: -10em;
+}
+
+.block-civicrm div#recently-viewed li.crm-recently-viewed:hover .crm-recentview-wrapper {
+    display:block;
+}
+
+.block-civicrm div#recently-viewed .crm-recentview-wrapper a:hover {
+  color:#494949; 
 }
 
 /* alpha filter styles */
@@ -2534,7 +2528,7 @@ span.icon {
     background-image:url("../i/icons/jquery-ui-F5F6F1.png")
 }
 
-.crm-accordion-wrapper .crm-accordion-header-hover .crm-accordion-pointer {
+.crm-accordion-wrapper .crm-accordion-header:hover .crm-accordion-pointer {
     background-image:url("../i/icons/jquery-ui-FFFFFF.png");
     color: #FFF;
 }
@@ -3084,8 +3078,13 @@ table.crm-info-panel td.label {
     color:#F5F6F1;
 }
 
-.crm-accordion-header-hover {
+.crm-accordion-header:hover {
     background-color:#484E4C;
+}
+
+.crm-master-accordion-header.crm-accordion-header:hover {
+    background-color:transparent;
+    color: white;
 }
 
 #contact-summary .crm-accordion-header {
@@ -3259,7 +3258,7 @@ div#crm-toolTip
 }
 
 /* table row highlightng */
-#crm-container .crm-row-highlight {
+#crm-container table.row-highlight tr:hover {
     background-color: #FFFFCC !important;
 }
 #crm-container .civicrm-drupal-wysiwyg .collapsed {

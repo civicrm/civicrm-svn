@@ -71,7 +71,7 @@ class CRM_Contact_Page_Inline_Demographics {
     // check logged in user permission
     $page = new CRM_Core_Page();
     CRM_Contact_Page_View::checkUserPermission($page, $contactId);
-    $template->assign($page);
+    $template->append($page);
  
     //for birthdate format with respect to birth format set
     $template->assign('birthDateViewFormat', CRM_Utils_Array::value('qfMapping', CRM_Utils_Date::checkBirthDateFormat()));

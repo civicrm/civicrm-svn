@@ -354,8 +354,7 @@ class CRM_Utils_Weight {
       'url' => $returnURL,
       'filter' => $filter,
     );
-    require_once 'CRM/Core/Key.php';
-    require_once 'CRM/Utils/Signer.php';
+    
     $signer = new CRM_Utils_Signer(CRM_Core_Key::privateKey(), self::$SIGNABLE_FIELDS);
     $queryParams['_sgn'] = $signer->sign($queryParams);
     $baseURL = CRM_Utils_System::url('civicrm/admin/weight', $queryParams);
@@ -397,8 +396,6 @@ class CRM_Utils_Weight {
 
   static function fixOrder() {
     $signature = CRM_Utils_Request::retrieve( '_sgn', 'String', CRM_Core_DAO::$_nullObject);
-    require_once 'CRM/Core/Key.php';
-    require_once 'CRM/Utils/Signer.php';
     $signer = new CRM_Utils_Signer(CRM_Core_Key::privateKey(), self::$SIGNABLE_FIELDS);
 
     // Validate $_GET values b/c subsequent code reads $_GET (via CRM_Utils_Request::retrieve)

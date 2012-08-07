@@ -944,6 +944,7 @@ WHERE civicrm_event.is_active = 1
     }
     $copyEvent->save();
     
+    CRM_Utils_System::flushCache();
     if (!$afterCreate) {
       CRM_Utils_Hook::copy('Event', $copyEvent);   
     }

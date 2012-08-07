@@ -273,9 +273,45 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
    * @todo Not Drupal 7 compatible
    */
   function addHTMLHead($header) {
+    static $count = 0;
     if (!empty($header)) {
-      drupal_add_html_head($header);
+      $key = 'civi_' . ++$count;
+      $data = array(
+        '#type' => 'markup',
+        '#markup' => $header,
+      );
+      drupal_add_html_head($data, $key);
     }
+  }
+
+  /**
+   * Append a <SCRIPT SRC> to the <HEAD>
+   *
+   * On D7, drupal_add_html_head puts markup too high.
+   * It's better if scripts added this way load late in
+   * the process.
+   */
+  public function addHtmlHeadScriptUrl($url, $weight) {
+    $weightOffset = 1000;
+    drupal_add_js($url, array(
+     'type' => 'external',
+     'weight' => $weightOffset = $weight,
+    ));
+  }
+
+  /**
+   * Append a <SCRIPT>...</SCRIPT> to the <HEAD>
+   *
+   * On D7, drupal_add_html_head puts markup too high.
+   * It's better if scripts added this way load late in
+   * the process.
+   */
+  public function addHtmlHeadScriptCode($code, $weight) {
+    $weightOffset = 1000;
+    drupal_add_js($code, array(
+     'type' => 'inline',
+     'weight' => $weightOffset = $weight,
+    ));
   }
 
   /**

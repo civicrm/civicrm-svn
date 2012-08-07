@@ -48,6 +48,7 @@
     <link rel="stylesheet" href="{$config->resourceBase}css/extras.css" type="text/css" />
 {/if*}
 
+
 {include file="CRM/common/action.tpl"}
 {if $buildNavigation }
     {include file="CRM/common/Navigation.tpl" }
@@ -88,6 +89,9 @@
 		<h1 class="title">{if $isDeleted}<del>{/if}{$pageTitle}{if $isDeleted}</del>{/if}</h1>
 	</div>    
 {/if}
+
+{crmRegion name='page-header'}
+{/crmRegion}
 {*{include file="CRM/common/langSwitch.tpl"}*}
 
 <div class="clear"></div>
@@ -98,16 +102,22 @@
 
 {include file="CRM/common/status.tpl"}
 
+
+{crmRegion name='page-body'}
 <!-- .tpl file invoked: {$tplFile}. Call via form.tpl if we have a form in the page. -->
 {if isset($isForm) and $isForm}
     {include file="CRM/Form/$formTpl.tpl"}
 {else}
     {include file=$tplFile}
 {/if}
+{/crmRegion}
 
+
+{crmRegion name='page-footer'}
 {if ! $urlIsPublic}
 {include file="CRM/common/footer.tpl"}
 {/if}
+{/crmRegion}
 
 {literal}
 <script type="text/javascript">

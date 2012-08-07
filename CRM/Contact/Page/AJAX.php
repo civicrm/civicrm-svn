@@ -541,7 +541,8 @@ ORDER BY sort_name ";
     CRM_Utils_System::civiExit();
   }
 
-  /*
+  /**
+   *
    * Function to check how many contact exits in db for given criteria,
    * if one then return contact id else null
    */
@@ -625,11 +626,10 @@ WHERE sort_name LIKE '%$name%'";
     }
   }
 
-  /*
+  /**
      *Function to check the CMS username
      *
     */
-
   static public function checkUserName() {
     $config = CRM_Core_Config::singleton();
     $username = trim(htmlentities($_POST['cms_name']));
@@ -1220,6 +1220,4 @@ LIMIT {$offset}, {$rowCount}
     echo json_encode($addressVal);
     CRM_Utils_System::civiExit();
   }
-
 }
-

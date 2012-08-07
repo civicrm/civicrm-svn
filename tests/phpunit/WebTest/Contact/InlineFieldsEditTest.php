@@ -111,9 +111,6 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     $i = 1;
     foreach ($assertValues as $location => $value) {
       $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-label'][$i]", $location ." ". $ucFieldName);
-      if ($isEmail) {
-        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_email'][$i]/span/a", $value);
-      } else {
         $primaryClass = "";
         if($i == 1) {
           $key = 1;
@@ -121,7 +118,10 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
         } else {
           $key = $i - 1;  
         }
-        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content {$primaryClass}'][$key]/span", $value);
+      if ($isEmail) {
+        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_email {$primaryClass}'][$key]/span/a", $value);
+      } else {
+        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_phone {$primaryClass}'][$key]/span", $value);
       }
       $i++;
     }
@@ -141,14 +141,14 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
       $this->click('_qf_Email_upload');
       sleep(2);
       $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-label'][3]", "Main Email");
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_email'][3]/span[@class='email-hold']", preg_quote($assertValues[$loc[3]] .' (On Hold) (Bulk)'));
+      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_email '][2]/span[@class='email-hold']", preg_quote($assertValues[$loc[3]] .' (On Hold) (Bulk)'));
     } else {
       $this->type("{$field}_2_{$field}_ext", 543);
       $this->select("{$field}_1_{$field}_type_id", "label={$phoneType[2]}");
       $this->click('_qf_Phone_upload');
       sleep(2);
       $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-label'][1]", "Home " . $phoneType[2]);
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content '][1]/span", preg_quote($assertValues['Work'] ."  ext. ". 543));
+      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_phone '][1]/span", preg_quote($assertValues['Work'] ."  ext. ". 543));
     }
 
   }
@@ -225,7 +225,7 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
   }
 
   function addDemographics() {
-    $linkText = "add or edit demographic";
+    $linkText = "add or edit demographics";
     $field = "demographic";
 
     $this->_checkClickLink($linkText, $field);

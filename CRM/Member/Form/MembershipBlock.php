@@ -364,7 +364,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
           }
           $membetype = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($memType);
           $fieldParams['option_label'][$rowCount]       = CRM_Utils_Array::value('name', $membetype);
-          $fieldParams['option_amount'][$rowCount]      = CRM_Utils_Array::value('minimum_fee', $membetype);
+          $fieldParams['option_amount'][$rowCount]      = CRM_Utils_Array::value('minimum_fee', $membetype, 0);
           $fieldParams['option_weight'][$rowCount]      = CRM_Utils_Array::value('weight', $membetype);
           $fieldParams['option_description'][$rowCount] = CRM_Utils_Array::value('description', $membetype);
           $fieldParams['default_option']                = CRM_Utils_Array::value('membership_type_default', $params);

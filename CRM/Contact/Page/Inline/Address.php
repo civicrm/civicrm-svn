@@ -120,7 +120,7 @@ class CRM_Contact_Page_Inline_Address {
     // check logged in user permission
     $page = new CRM_Core_Page();
     CRM_Contact_Page_View::checkUserPermission($page, $contactId);
-    $template->assign($page);
+    $template->append($page);
 
     echo $content = $template->fetch('CRM/Contact/Page/Inline/Address.tpl');
     CRM_Utils_System::civiExit();
