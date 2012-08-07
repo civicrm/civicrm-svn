@@ -54,9 +54,11 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
   }
 
   function testAddScriptFile() {
-    $this->res->addScriptFile('com.example.ext', 'foo%20bar.js', 0, 'testAddScriptFile');
-    $this->res->addScriptFile('com.example.ext', 'foo%20bar.js', 0, 'testAddScriptFile'); // extra
-    $this->res->addScriptFile('civicrm', 'foo%20bar.js', 0, 'testAddScriptFile');
+    $this->res
+      ->addScriptFile('com.example.ext', 'foo%20bar.js', 0, 'testAddScriptFile')
+      ->addScriptFile('com.example.ext', 'foo%20bar.js', 0, 'testAddScriptFile') // extra
+      ->addScriptFile('civicrm', 'foo%20bar.js', 0, 'testAddScriptFile')
+      ;
 
     $smarty = CRM_Core_Smarty::singleton();
     $actual = $smarty->fetch('string:{crmRegion name=testAddScriptFile}{/crmRegion}');
@@ -68,9 +70,11 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
   }
 
   function testAddScriptURL() {
-    $this->res->addScriptUrl('/whiz/foo%20bar.js', 0, 'testAddScriptURL');
-    $this->res->addScriptUrl('/whiz/foo%20bar.js', 0, 'testAddScriptURL'); // extra
-    $this->res->addScriptUrl('/whizbang/foo%20bar.js', 0, 'testAddScriptURL');
+    $this->res
+      ->addScriptUrl('/whiz/foo%20bar.js', 0, 'testAddScriptURL')
+      ->addScriptUrl('/whiz/foo%20bar.js', 0, 'testAddScriptURL') // extra
+      ->addScriptUrl('/whizbang/foo%20bar.js', 0, 'testAddScriptURL')
+      ;
 
     $smarty = CRM_Core_Smarty::singleton();
     $actual = $smarty->fetch('string:{crmRegion name=testAddScriptURL}{/crmRegion}');
@@ -82,8 +86,10 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
   }
 
   function testAddScript() {
-    $this->res->addScript('alert("hi");', 0, 'testAddScript');
-    $this->res->addScript('alert("there");', 0, 'testAddScript');
+    $this->res
+      ->addScript('alert("hi");', 0, 'testAddScript')
+      ->addScript('alert("there");', 0, 'testAddScript')
+      ;
 
     $smarty = CRM_Core_Smarty::singleton();
     $actual = $smarty->fetch('string:{crmRegion name=testAddScript}{/crmRegion}');
@@ -112,9 +118,11 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
   }
 
   function testAddStyleFile() {
-    $this->res->addStyleFile('com.example.ext', 'foo%20bar.css', 0, 'testAddStyleFile');
-    $this->res->addStyleFile('com.example.ext', 'foo%20bar.css', 0, 'testAddStyleFile'); // extra
-    $this->res->addStyleFile('civicrm', 'foo%20bar.css', 0, 'testAddStyleFile');
+    $this->res
+      ->addStyleFile('com.example.ext', 'foo%20bar.css', 0, 'testAddStyleFile')
+      ->addStyleFile('com.example.ext', 'foo%20bar.css', 0, 'testAddStyleFile') // extra
+      ->addStyleFile('civicrm', 'foo%20bar.css', 0, 'testAddStyleFile')
+      ;
 
     $smarty = CRM_Core_Smarty::singleton();
     $actual = $smarty->fetch('string:{crmRegion name=testAddStyleFile}{/crmRegion}');
@@ -126,9 +134,11 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
   }
 
   function testAddStyleURL() {
-    $this->res->addStyleUrl('/whiz/foo%20bar.css', 0, 'testAddStyleURL');
-    $this->res->addStyleUrl('/whiz/foo%20bar.css', 0, 'testAddStyleURL'); // extra
-    $this->res->addStyleUrl('/whizbang/foo%20bar.css', 0, 'testAddStyleURL');
+    $this->res
+      ->addStyleUrl('/whiz/foo%20bar.css', 0, 'testAddStyleURL')
+      ->addStyleUrl('/whiz/foo%20bar.css', 0, 'testAddStyleURL') // extra
+      ->addStyleUrl('/whizbang/foo%20bar.css', 0, 'testAddStyleURL')
+      ;
 
     $smarty = CRM_Core_Smarty::singleton();
     $actual = $smarty->fetch('string:{crmRegion name=testAddStyleURL}{/crmRegion}');
@@ -140,8 +150,10 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
   }
 
   function testAddStyle() {
-    $this->res->addStyle('body { background: black; }', 0, 'testAddStyle');
-    $this->res->addStyle('body { text-color: black; }', 0, 'testAddStyle');
+    $this->res
+      ->addStyle('body { background: black; }', 0, 'testAddStyle')
+      ->addStyle('body { text-color: black; }', 0, 'testAddStyle')
+      ;
 
     $smarty = CRM_Core_Smarty::singleton();
     $actual = $smarty->fetch('string:{crmRegion name=testAddStyle}{/crmRegion}');
