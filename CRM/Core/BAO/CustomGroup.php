@@ -748,7 +748,7 @@ SELECT $select
 
       //include case activities customdata if case is enabled
       if (in_array('Activity', $extends)) {
-        $extendValues = implode(',', array_keys(CRM_Core_PseudoConstant::activityType(TRUE, TRUE)));
+        $extendValues = implode(',', array_keys(CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE)));
         $where .= " AND ( civicrm_custom_group.extends_entity_column_value IS NULL OR REPLACE( civicrm_custom_group.extends_entity_column_value, %2, ' ') IN ($extendValues) ) ";
         $params[2] = array(CRM_Core_DAO::VALUE_SEPARATOR, 'String');
       }
