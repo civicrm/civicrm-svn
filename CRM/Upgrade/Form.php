@@ -382,7 +382,7 @@ SET    version = '$version'
 
     $config = CRM_Core_Config::singleton();
     if ($config->logging == TRUE) {
-      $error = ts('Upgrade to CiviCRM %1 with logging feature enabled, is currently not supported.',
+      $error = ts('Upgrade to CiviCRM %1 with the logging feature enabled is currently not supported. You will need to disable logging (Administer > System Settings > Undelete, Logging and ReCAPTCHA), run the upgrade, and then re-enable logging. This should not affect existing log entries, but you should always test the upgrade on a COPY of your production database to verify.',
                   array(1 => $latestVer)
                   );
     }
