@@ -852,7 +852,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
   public function addParticipant($params, $contactID) {
 
     $transaction = new CRM_Core_Transaction();
-
+    
     $groupName = 'participant_role';
     $query = "
 SELECT  v.label as label ,v.value as value
@@ -893,7 +893,7 @@ WHERE  v.option_group_id = g.id
       ),
       'register_date' => ($registerDate) ? $registerDate : date('YmdHis'),
       'source' => isset($params['participant_source']) ?
-      $params['participant_source'] : $params['description'],
+        CRM_Utils_Array::value('participant_source', $params) : CRM_Utils_Array::value('description', $params),
       'fee_level' => CRM_Utils_Array::value('amount_level', $params),
       'is_pay_later' => CRM_Utils_Array::value('is_pay_later', $params, 0),
       'fee_amount' => CRM_Utils_Array::value('fee_amount', $params),
