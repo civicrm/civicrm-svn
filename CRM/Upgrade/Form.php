@@ -379,6 +379,13 @@ SET    version = '$version'
         array(1 => $latestVer)
       );
     }
+
+    $config = CRM_Core_Config::singleton();
+    if ($config->logging == TRUE) {
+      $error = ts('Upgrade to CiviCRM %1 with logging feature enabled, is currently not supported.',
+                  array(1 => $latestVer)
+                  );
+    }
     return $error;
   }
 
