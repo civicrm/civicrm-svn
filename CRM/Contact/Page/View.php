@@ -382,8 +382,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     return CRM_Utils_System::url($urlString, $urlParams);
   }
 
-  static
-  function checkUserPermission($page, $contactID = NULL) {
+  static function checkUserPermission($page, $contactID = NULL) {
     // check for permissions
     $page->_permission = NULL;
 
@@ -439,9 +438,11 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
       $title = "<del>{$title}</del>";
     }
 
-    return $title;
+    // set title null for now
+    CRM_Utils_System::setTitle('');
 
     //CRM_Utils_System::setTitle($displayName, $title);
+    return $title;
   }
 }
 
