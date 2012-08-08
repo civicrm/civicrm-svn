@@ -54,7 +54,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
 
     CRM_Contribute_BAO_Contribution::getValues($params, $values, $ids);
 
-    $softParams = array('contribution_id' => $values['contribution_id']);
+    $softParams = array('contribution_id' => CRM_Utils_Array::value('contribution_id', $values));
     if ($softContribution = CRM_Contribute_BAO_Contribution::getSoftContribution($softParams, TRUE)) {
       $values = array_merge($values, $softContribution);
     }
@@ -88,7 +88,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
       }
     }
 
-    $groupTree = CRM_Core_BAO_CustomGroup::getTree('Contribution', $this, $id, 0, $values['contribution_type_id']);
+    $groupTree = CRM_Core_BAO_CustomGroup::getTree('Contribution', $this, $id, 0, CRM_Utils_Array::value('contribution_type_id', $values));
     CRM_Core_BAO_CustomGroup::buildCustomDataView($this, $groupTree);
 
     $premiumId = NULL;
@@ -112,7 +112,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
     }
 
     // Get Note
-    $noteValue = CRM_Core_BAO_Note::getNote($values['id'], 'civicrm_contribution');
+    $noteValue = CRM_Core_BAO_Note::getNote(CRM_Utils_Array::value('id', $values), 'civicrm_contribution');
     $values['note'] = array_values($noteValue);
 
     // show billing address location details, if exists
