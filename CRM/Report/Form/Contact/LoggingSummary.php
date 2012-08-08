@@ -51,6 +51,10 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
             'no_display' => TRUE,
             'required' => TRUE,
           ),
+          'log_action' => array(
+            'default' => TRUE,
+            'title' => ts('Action'),
+          ),
           'log_type' => array(
             'required' => TRUE,
             'title' => ts('Log Type'),
@@ -80,10 +84,6 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
           'log_conn_id' => array(
             'no_display' => TRUE,
             'required' => TRUE,
-          ),
-          'log_action' => array(
-            'default' => TRUE,
-            'title' => ts('Action'),
           ),
           'is_deleted' => array(
             'no_display' => TRUE,
