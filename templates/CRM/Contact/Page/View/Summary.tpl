@@ -33,6 +33,12 @@
 {* include overlay js *}
 {include file="CRM/common/overlay.tpl"}
 
+<div class="crm-summary-contactname-block">
+  <div class="crm-summary-block" id="contactname-block">
+  {include file="CRM/Contact/Page/Inline/ContactName.tpl"}
+  </div>
+</div>
+
 <div class="crm-actions-ribbon">
     <ul id="actions">
         {assign var='urlParams' value="reset=1"}

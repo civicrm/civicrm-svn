@@ -1,6 +1,5 @@
 /* $Id$ */
 
-
 #crm-container label {
     font-weight: normal;
     display: inline;
@@ -1822,13 +1821,25 @@ div.grippie {
     text-transform: uppercase;
 }
 
+#crm-container div.crm-summary-block, 
 #crm-container div.contact_panel div.crm-summary-block {
     border: 2px dashed transparent;
     background: none;
 }
 
+#crm-container div.crm-inline-edit-hover, 
 #crm-container div.contact_panel div.crm-inline-edit-hover {
     border: 2px dashed lightgrey;
+}
+
+#crm-container div.crm-summary-contactname-block {
+ padding-bottom: 3px;
+}
+
+#crm-container div.crm-summary-display_name {
+ font-size: 16px;
+ padding-top: 6px;
+ padding-bottom: 6px;
 }
 
 #crm-container div.contact_panel * { 

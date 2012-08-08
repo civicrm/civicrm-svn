@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,49 +23,50 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-<div class="crm-inline-edit-form crm-table2div-layout">
-  <div class="crm-inline-button">
-    {include file="CRM/common/formButtons.tpl"}
-  </div>
+ */
 
- <div class="crm-clear">  
-  {if $contactType eq 'Individual'}
-  <div class="crm-label">{$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}</div>
-  <div class="crm-content">
-    {$form.current_employer.html|crmReplace:class:twenty}
-    <div id="employer_address" style="display:none;"></div>
-  </div>
-  <div class="crm-label">{$form.job_title.label}</div>
-  <div class="crm-content">{$form.job_title.html}</div>
-  {/if}
-  
-  <div class="crm-label">{$form.nick_name.label}</div>
-  <div class="crm-content">{$form.nick_name.html}</div>
-  
-  {if $contactType eq 'Organization'}
-  <div class="crm-label">{$form.legal_name.label}</div>
-  <div class="crm-content">{$form.legal_name.html}</div>
-  <div class="crm-label">{$form.sic_code.label}</div>
-  <div class="crm-content">{$form.sic_code.html}</div>
-  {/if}
-  
-  <div class="crm-label">{$form.contact_source.label}</div>
-  <div class="crm-content">{$form.contact_source.html}</div>
- </div> <!-- end of main -->
-</div>
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * $Id$
+ *
+ */
 
-{literal}
-<script type="text/javascript">
+/**
+ * Page to disply contact name on top of the summary 
+ *
+ */
+class CRM_Contact_Page_Inline_ContactName {
 
-cj( function() {
-  // add ajax form submitting
-  inlineEditForm( 'ContactInfo', 'contactinfo-block', {/literal}{$contactId}{literal} ); 
-});
-</script>
-{/literal}
+  /**
+   * Run the page.
+   *
+   * This method is called after the page is created.
+   *
+   * @return void
+   * @access public
+   *
+   */
+  function run() {
+    // get the emails for this contact
+    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
 
-{if $contactType eq 'Individual'}
-  {include file="CRM/Contact/Form/CurrentEmployer.tpl"}
-{/if}
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign('contactId', $contactId);
+    
+    $isDeleted = (bool) CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contactId, 'is_deleted');
+
+    $title = CRM_Contact_Page_View::setTitle($contactId, $isDeleted); 
+    $template->assign('title', $title);
+    
+    // check logged in user permission
+    $page = new CRM_Core_Page();
+    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
+    $template->assign($page);
+ 
+    echo $content = $template->fetch('CRM/Contact/Page/Inline/ContactName.tpl');
+    CRM_Utils_System::civiExit();
+  }
+}
+

@@ -244,7 +244,8 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     $this->assign('isDeleted', $isDeleted);
 
     // set page title
-    self::setTitle($this->_contactId, $isDeleted);
+    $title = self::setTitle($this->_contactId, $isDeleted);
+    $this->assign('title', $title);
 
     $config = CRM_Core_Config::singleton();
     $uid = CRM_Core_BAO_UFMatch::getUFId($this->_contactId);
@@ -437,7 +438,10 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     if ($isDeleted) {
       $title = "<del>{$title}</del>";
     }
-    CRM_Utils_System::setTitle($displayName, $title);
+
+    return $title;
+
+    //CRM_Utils_System::setTitle($displayName, $title);
   }
 }
 

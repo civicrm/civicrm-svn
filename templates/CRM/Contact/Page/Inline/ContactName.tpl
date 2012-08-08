@@ -23,48 +23,45 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-inline-edit-form crm-table2div-layout">
-  <div class="crm-inline-button">
-    {include file="CRM/common/formButtons.tpl"}
+<div id="crm-contactname-content">
+  {if $permission EQ 'edit'}
+  <div class="crm-config-option">
+      <a id="edit-contactname" class="hiddenElement crm-link-action" title="{ts}click to edit{/ts}">
+      <span class="batch-edit"></span>{ts}edit{/ts}
+    </a>
   </div>
+  {/if}
 
- <div class="crm-clear">  
-  {if $contactType eq 'Individual'}
-  <div class="crm-label">{$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}</div>
-  <div class="crm-content">
-    {$form.current_employer.html|crmReplace:class:twenty}
-    <div id="employer_address" style="display:none;"></div>
-  </div>
-  <div class="crm-label">{$form.job_title.label}</div>
-  <div class="crm-content">{$form.job_title.html}</div>
-  {/if}
-  
-  <div class="crm-label">{$form.nick_name.label}</div>
-  <div class="crm-content">{$form.nick_name.html}</div>
-  
-  {if $contactType eq 'Organization'}
-  <div class="crm-label">{$form.legal_name.label}</div>
-  <div class="crm-content">{$form.legal_name.html}</div>
-  <div class="crm-label">{$form.sic_code.label}</div>
-  <div class="crm-content">{$form.sic_code.html}</div>
-  {/if}
-  
-  <div class="crm-label">{$form.contact_source.label}</div>
-  <div class="crm-content">{$form.contact_source.html}</div>
- </div> <!-- end of main -->
+  <div class="crm-summary-display_name">{$title}</div>
 </div>
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
 
+{if $permission EQ 'edit'}
 {literal}
 <script type="text/javascript">
+cj(function(){
+    cj('#contactname-block').mouseenter( function() {
+      cj(this).addClass('crm-inline-edit-hover');
+      cj('#edit-contactname').show();
+    }).mouseleave( function() {
+      cj(this).removeClass('crm-inline-edit-hover');
+      cj('#edit-contactname').hide();
+    });
 
-cj( function() {
-  // add ajax form submitting
-  inlineEditForm( 'ContactInfo', 'contactinfo-block', {/literal}{$contactId}{literal} ); 
+    cj('#edit-contactname').click( function() {
+      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+      
+      addCiviOverlay('.crm-summary-contactname-block');
+      cj.ajax({
+        data: { 'class_name':'CRM_Contact_Form_Inline_ContactName' },
+        url: dataUrl,
+        async: false
+      }).done( function(response) {
+        cj( '#contactname-block' ).html( response );
+      });
+      
+      removeCiviOverlay('.crm-summary-contactname-block');
+   });
 });
 </script>
 {/literal}
-
-{if $contactType eq 'Individual'}
-  {include file="CRM/Contact/Form/CurrentEmployer.tpl"}
 {/if}
