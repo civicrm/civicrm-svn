@@ -145,13 +145,6 @@ class CRM_Contact_Form_Inline_Website extends CRM_Core_Form {
   public function postProcess() {
     $params = $this->exportValues();
 
-    // unset empty websites
-    foreach( $params['website'] as $key => $values ) {
-      if ( !CRM_Utils_Array::value('url', $values) ) {
-        unset($params['website'][$key]);
-      }
-    }
-
     // need to process / save websites
     CRM_Core_BAO_Website::create($params['website'], $this->_contactId, true);
 

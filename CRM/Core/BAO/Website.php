@@ -67,9 +67,8 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website {
     if (empty($params)) {
       return FALSE;
     }
-
+    
     $ids = self::allWebsites($contactID);
-
     foreach ($params as $key => $values) {
       $websiteId = CRM_Utils_Array::value('id', $values);
       if ($websiteId) {
@@ -85,7 +84,8 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website {
         is_array($ids) && !empty($ids)
       ) {
         foreach ($ids as $id => $value) {
-          if ($value['website_type_id'] == $values['website_type_id']) {
+          if (($value['website_type_id'] == $values['website_type_id']) 
+            && CRM_Utils_Array::value('url', $value)) {
             $values['id'] = $id;
             unset($ids[$id]);
             break;
@@ -97,7 +97,7 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website {
         self::add($values);
       }
     }
-
+    
     if ($skipDelete && !empty($ids)) {
       self::del(array_keys($ids));
     }
