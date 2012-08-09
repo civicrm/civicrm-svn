@@ -23,12 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-inline-edit-form crm-table2div-layout">
+{* This file builds html for Contact Display Name inline edit *}
+<div class="crm-table2div-layout crm-inline-edit-form">
   <div class="crm-inline-button">
     {include file="CRM/common/formButtons.tpl"}
   </div>
-  <br/><br/>
-  <table class="form-layout-compressed">
+  <table class="form-layout-compressed crm-inline-edit-form">
     <tr>
     {if $contactType eq 'Individual'}
       {if $form.prefix_id}
