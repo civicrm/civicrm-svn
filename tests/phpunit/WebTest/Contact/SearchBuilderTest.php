@@ -126,24 +126,24 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $streetName = "street $firstName";
     $this->_createContact('Individual', $firstName,"$firstName@advsearch.co.in", $streetName);
     // search using search builder and advanced search
-    $this->_searchBuilder('Street Address',$streetName,"$firstName adv$firstName",'=');
-    $this->_advancedSearch($streetName,"$firstName adv$firstName",'Individual');
+    $this->_searchBuilder('Street Address',$streetName,"$firstName adv$firstName",'=','1');
+    $this->_advancedSearch($streetName,"$firstName adv$firstName",'Individual','1','street_address');
     
     //Organization
     $orgName = substr(sha1(rand()), 0, 7)."org";
     $orgEmail = "ab".rand()."@{$orgName}.com";
     $this->_createContact('Organization', $orgName, $orgEmail,"street $orgName");
     // search using search builder and advanced search
-    $this->_searchBuilder('Email',$orgEmail, $orgName,'=');
-    $this->_advancedSearch($orgEmail, $orgName, 'Organization');
+    $this->_searchBuilder('Email',$orgEmail, $orgName,'=','1');
+    $this->_advancedSearch($orgEmail, $orgName, 'Organization','1','email');
 
     //Household 
     $householdName = "household".substr(sha1(rand()), 0, 7);
     $householdEmail = "h1".rand()."@{$householdName}.com";
     $this->_createContact('Household', $householdName, $householdEmail,"street $householdName");
     // search using search builder and advanced search
-    $this->_searchBuilder('Email',$householdEmail, $householdName,'=');
-    $this->_advancedSearch($householdEmail, $householdName, 'Household');
+    $this->_searchBuilder('Email',$householdEmail, $householdName,'=','1');
+    $this->_advancedSearch($householdEmail, $householdName, 'Household','1','email');
    
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
     $this->waitForPageToLoad("30000");
@@ -175,6 +175,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->_searchBuilder('Email',NULL,NULL,'IS NULL');
     $this->click("xpath=//div[@class='crm-search-results']/div[4]/a[2]");
+    $this->waitForPageToLoad("30000");
     $names = array( 1 => $firstName1,
                     2 => $firstName2,
                     3 => $firstName3,
@@ -190,11 +191,25 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     //searching contacts whose phone field is not empty
     $this->_searchBuilder('Phone',NULL,$firstName,'IS NOT EMPTY');
     $this->click("xpath=//div[@class='crm-search-results']/div[4]/a[2]");
+    $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent($firstName));
     
+    $firstName4 = "AB".substr(sha1(rand()), 0, 7);
+    $postalCode = rand();
+    $this->_createContact('Individual', $firstName4,"$firstName4@advsearch.co.in",NULL, $postalCode);
+    $firstName5 = "CD".substr(sha1(rand()), 0, 7);
+    $this->_createContact('Individual', $firstName5,"$firstName5@advsearch.co.in",NULL, $postalCode);
+    $firstName6 = "EF".substr(sha1(rand()), 0, 7);
+    $this->_createContact('Organization', $firstName6,"$firstName6@advsearch.co.in",NULL, $postalCode);
+    $firstName7 = "GH".substr(sha1(rand()), 0, 7);
+    $this->_createContact('Household', $firstName7,"$firstName7@advsearch.co.in",NULL, $postalCode);
+    
+    // check if the resultset of search builder and advanced search match for the postal code
+    $this->_searchBuilder('Postal Code',$postalCode,NULL,'LIKE','4');
+    $this->_advancedSearch($postalCode,NULL,NULL,'4','postal_code');
   }
 
-  function _searchBuilder($field, $fieldValue = NULL, $name = NULL, $op){
+  function _searchBuilder($field, $fieldValue = NULL, $name = NULL, $op, $count = NULL){
     // search builder using contacts(not using contactType)
     $this->open($this->sboxPath . "civicrm/contact/search/builder?reset=1");
     $this->waitForPageToLoad("30000");
@@ -205,7 +220,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->click("id=_qf_Builder_refresh");
     $this->waitForPageToLoad("30000");
     if(isset($fieldValue) && isset($name)){
-      $assertValues = array( 1 => "1 Contact",
+      $assertValues = array( 1 => ($count == 1)?"$count Contact":"$count Contacts",
                              2 => $name,
                              3 => $fieldValue,
                              );
@@ -215,23 +230,25 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     }
   }
   
-  function _advancedSearch($fieldValue = NULL, $name = NULL, $contactType){
+  function _advancedSearch($fieldValue = NULL, $name = NULL, $contactType = NULL, $count = NULL, $field){
     //advanced search by selecting the contactType
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
     $this->waitForPageToLoad("30000");
-    $this->select("id=crmasmSelect0", "value=$contactType");
+    if (isset($contactType)){
+      $this->select("id=crmasmSelect0", "value=$contactType");
+    }
+    $this->click("location"); 
+    sleep(4);
     if ($contactType == 'Individual'){ 
-      $this->click("location"); 
-      sleep(3); 
-      $this->type("street_address",$fieldValue );
+      $this->type("$field",$fieldValue );
     }
     else{
-      $this->type("email",$fieldValue);
+      $this->type("$field",$fieldValue);
     }
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad("30000");
     if(isset($fieldValue) && isset($name)){
-      $assertValues = array( 1 => "1 Contact",
+      $assertValues = array( 1 => ($count == 1)?"$count Contact":"$count Contacts",
                              2 => $name,
                              3 => $fieldValue,
                              );
@@ -242,7 +259,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
       }
     }
   }
-  function _createContact($contactType, $name, $email, $streetName){
+  function _createContact($contactType, $name, $email, $streetName = NULL, $postalCode = NULL){
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=$contactType");
     $this->waitForPageToLoad("30000");
     $this->waitForElementPresent("_qf_Contact_cancel");
@@ -262,6 +279,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->type("address_1_street_address", $streetName);
     $this->select("address_1_country_id", "United States");
     $this->select("address_1_state_province_id", "Alaska");
+    $this->type("address_1_postal_code",$postalCode);
     
     // save contact
     $this->click("_qf_Contact_upload_view");
