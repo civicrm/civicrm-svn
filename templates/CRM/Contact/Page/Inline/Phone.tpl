@@ -64,24 +64,24 @@ cj(function(){
     }).mouseleave( function() {
       cj(this).removeClass('crm-inline-edit-hover');
       if ( !cj('#edit-phone').hasClass('empty-phone') ) { 
-      cj('#edit-phone').hide();
+        cj('#edit-phone').hide();
       }
     });
 
     cj('#edit-phone').click( function() {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-        
-        addCiviOverlay('.crm-summary-phone-block');
-        cj.ajax({ 
-                        data: { 'class_name':'CRM_Contact_Form_Inline_Phone' },
-                        url: dataUrl,
-                        async: false
-        }).done( function(response) {
-	    cj( '#phone-block' ).html( response );
-    });
-        
-        removeCiviOverlay('.crm-summary-phone-block');
-});
+      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+      
+      addCiviOverlay('.crm-summary-phone-block');
+      cj.ajax({ 
+        data: { 'class_name':'CRM_Contact_Form_Inline_Phone' },
+        url: dataUrl,
+        async: false
+      }).done( function(response) {
+        cj( '#phone-block' ).html( response );
+      });
+      
+      removeCiviOverlay('.crm-summary-phone-block');
+   });
 });
 </script>
 {/literal}

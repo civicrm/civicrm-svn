@@ -71,24 +71,24 @@ cj(function(){
     }).mouseleave( function() {
       cj(this).removeClass('crm-inline-edit-hover');
       if ( !cj('#edit-email').hasClass('empty-email') ) { 
-      cj('#edit-email').hide();
+        cj('#edit-email').hide();
       }
     });
 
     cj('#edit-email').click( function() {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
+      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
 
-        addCiviOverlay('.crm-summary-email-block');
-        cj.ajax({ 
-                        data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
-                        url: dataUrl,
-                        async: false
-        }).done( function(response) {
-	    cj( '#email-block' ).html( response );
+      addCiviOverlay('.crm-summary-email-block');
+      cj.ajax({ 
+        data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
+        url: dataUrl,
+        async: false
+      }).done( function(response) {
+        cj( '#email-block' ).html( response );
+      });
+
+      removeCiviOverlay('.crm-summary-email-block');
     });
-
-        removeCiviOverlay('.crm-summary-email-block');
-});
 });
 {/literal}{/if}{literal}
 function showHideSignature( blockId ) {
