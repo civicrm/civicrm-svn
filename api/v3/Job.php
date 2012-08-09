@@ -45,7 +45,7 @@
 require_once 'api/v3/utils.php';
 
 /**
- * Dumb wrapper to exexute scheduled jobs. Always creates success - errors
+ * Dumb wrapper to execute scheduled jobs. Always creates success - errors
  * and results are handled in the job log.
  *
  * @param  array   	  $params (reference ) input parameters
