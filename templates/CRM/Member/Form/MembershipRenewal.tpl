@@ -337,11 +337,9 @@ function setPaymentBlock( ) {
 
     cj.post( dataUrl, {mtype: memType}, function( data ) {
         cj("#contribution_type_id").val( data.contribution_type_id );
-	var renewTotal = data.total_amount;
 	var terms = cj("#num_terms").val();
-	if (terms != 1) {
-          var renewTotal = data.total_amount_numeric * cj("#num_terms").val();
-	}	
+        var renewTotal = data.total_amount_numeric * cj("#num_terms").val();
+
         cj("#total_amount").val( renewTotal.toFixed(2) );
     }, 'json');
 }
