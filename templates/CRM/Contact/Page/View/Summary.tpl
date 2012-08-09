@@ -158,8 +158,13 @@
                       </div>
                     </div>
                   </div> <!-- end of left side -->
-                  <div class="contactTopBarRight">
-                    <div class="crm-table2div-layout">
+                  <div class="contactCardRight">
+	                  {if !empty($imageURL)}
+	                  <div id="crm-contact-thumbnail">
+	                    {include file="CRM/Contact/Page/ContactImage.tpl"}
+	                  </div>
+	                  {/if}
+                    <div class="crm-table2div-layout{if !empty($imageURL)} float-left{/if}">
                       <div class="crm-clear">
                       {if !empty($contactTag)}
                         <div class="crm-label" id="tagLink">
@@ -183,11 +188,6 @@
                         </div>
                       </div>
                     </div>
-                  {if !empty($imageURL)}
-                  <div id="crm-contact-thumbnail">
-                    {include file="CRM/Contact/Page/ContactImage.tpl"}
-                  </div>
-                  {/if}
 
                   </div> <!-- end of right side -->
                 </div>

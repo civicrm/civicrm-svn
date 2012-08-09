@@ -950,6 +950,11 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     margin-right: 30px;
 }
 
+#crm-container .float-left {
+    float: left;
+    padding: 4px 0px;
+    clear: none;
+}
 #crm-container .float-right {
     float: right;
     width: auto;
@@ -1854,12 +1859,6 @@ div.grippie {
 }
 
 #crm-container div.contactCardRight {
-  width : 49%; 
-  display : block; 
-  float   : right;
-}
-
-#crm-container div.contactTopBarRight {
   width : 49%; 
   display : block; 
   float   : right;
