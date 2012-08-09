@@ -1838,13 +1838,13 @@ div.grippie {
 }
 
 #crm-container div.crm-summary-contactname-block {
- padding-bottom: 3px;
+ padding-bottom: 8px;
+ margin-top: -10px;
 }
 
 #crm-container div.crm-summary-display_name {
- font-size: 20px;
- padding-top: 6px;
- padding-bottom: 6px;
+ font-size: 19px;
+ padding-bottom: 10px;
 }
 
 #crm-container div.contact_panel * { 
@@ -1984,6 +1984,13 @@ div.grippie {
 #crm-container table.crm-inline-edit-form td,
 #crm-container div.crm-inline-edit-form {
   background-color: #E6E6DC;
+}
+
+#crm-container div.crm-inline-edit-field {
+  float: left;
+  clear: none;
+  background-color: #E6E6DC;
+  padding: 4px 10px 4px 10px;
 }
 
 #crm-container div.buttons {

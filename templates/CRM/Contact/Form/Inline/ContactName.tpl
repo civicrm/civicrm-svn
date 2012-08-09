@@ -28,32 +28,30 @@
   <div class="crm-inline-button">
     {include file="CRM/common/formButtons.tpl"}
   </div>
-  <table class="form-layout-compressed crm-inline-edit-form">
-    <tr>
     {if $contactType eq 'Individual'}
       {if $form.prefix_id}
-      <td>
-        {$form.prefix_id.label}<br/>
-        {$form.prefix_id.html}
-      </td>    
+	      <div class="crm-inline-edit-field">
+	        {$form.prefix_id.label}<br/>
+	        {$form.prefix_id.html}
+	      </div>
       {/if}
-      <td>
+      <div class="crm-inline-edit-field">
         {$form.first_name.label}<br /> 
         {$form.first_name.html}
-      </td>
-      <td>
+      </div>
+      <div class="crm-inline-edit-field">
         {$form.middle_name.label}<br />
         {$form.middle_name.html}
-      </td>
-      <td>
+      </div>
+      <div class="crm-inline-edit-field">
         {$form.last_name.label}<br />
         {$form.last_name.html}
-      </td>
+      </div>
       {if $form.suffix_id}
-      <td>
-        {$form.suffix_id.label}<br/>
-        {$form.suffix_id.html}
-      </td>
+	      <div class="crm-inline-edit-field">
+	        {$form.suffix_id.label}<br/>
+	        {$form.suffix_id.html}
+	      </div>
       {/if}
     {elseif $contactType eq 'Organization'}
       <td>{$form.organization_name.label}</td>
@@ -62,9 +60,8 @@
       <td>{$form.household_name.label}</td>
       <td>{$form.household_name.html}</td>
     {/if}
-    </tr> 
-  </table>
 </div>
+<div class="clear"></div>
 {include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
 
 {literal}
