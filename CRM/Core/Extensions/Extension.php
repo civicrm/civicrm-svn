@@ -296,56 +296,43 @@ class CRM_Core_Extensions_Extension {
     }
 
     // Download extension zip file ...
+    if (!function_exists('curl_init')) {
+      CRM_Core_Error::fatal('Cannot install this extension - curl is not installed!');
+    }
 
-    @ini_set('allow_url_fopen', 1);
-    @ini_set('user_agent', 'CiviCRM v' . CRM_Utils_System::version());
+    //setting the curl parameters.
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $this->downloadUrl);
+    curl_setopt($session, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_VERBOSE, 1);
 
-    // Check response code on downloadUrl
-    $headers = get_headers($this->downloadUrl);
-    $response_code = substr($headers[0], 9, 3);
+    //turning off the server and peer verification(TrustManager Concept).
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 
-    if ($response_code == 200) {
-      $context = stream_context_create(array(
-          'http' => array(
-            // Timeout if no reply after 20 seconds
-            'timeout' => 20,
-          ),
-        ));
+    //follow redirects
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
 
-      // Attempt to download file
-      if (!$zipfile = file_get_contents($this->downloadUrl, FALSE, $context)) {
-        // CRM_Core_Error::fatal(ts('Unable to download extension from %1', array(1 => $this->downloadUrl)));
-        CRM_Core_Session::setStatus(ts('Unable to download extension from %1', array(1 => $this->downloadUrl)));
-        return;
-      }
+    $fp = fopen($filename, "w");
+    if (! $fp) {
+      CRM_Core_Session::setStatus(ts('Unable to write to %1.<br />Is the location writable?', array(1 => $filename)));
+      return;
+    }
+    curl_setopt($ch, CURLOPT_FILE, $fp);
 
-      // Attempt to save file
-      if (@file_put_contents($filename, $zipfile) === FALSE) {
-        CRM_Core_Session::setStatus(ts('Unable to write to %1.<br />Is the location writable?', array(1 => $filename)));
-        return;
-      }
+    curl_exec($ch);
+    if (curl_errno($ch)) {
+      CRM_Core_Error::debug(curl_error($ch));
+      CRM_Core_Error::debug(curl_errno($ch)); exit( );
+      CRM_Core_Session::setStatus(ts('Unable to download extension from %1. Error Message: %2',
+          array(1 => $this->downloadUrl, 2 => curl_error($ch))));
+      return;
     }
     else {
-      // Response code != 200?
-      // Bail and inform user ...
-      $error = ts('Unable to download extension from %1.', array(1 => $this->downloadUrl));
-
-      if ($response_code >= 100 && $response_code < 300) {
-        CRM_Core_Session::setStatus($error . '<br />' . ts('Server returned an HTTP %1 response code.', array(1 => $response_code)));
-        return;
-      }
-      elseif ($response_code >= 300 && $response_code < 400) {
-        CRM_Core_Session::setStatus($error . '<br />' . ts('URL is redirecting.'));
-        return;
-      }
-      else {
-        CRM_Core_Session::setStatus($error . '<br />' . ts('Server returned an HTTP %1 error.', array(1 => $response_code)));
-        return;
-      }
+      curl_close($ch);
     }
 
-    @ini_restore('user_agent');
-    @ini_restore('allow_url_fopen');
+    fclose($fp);
 
     $this->tmpFile = $filename;
     return TRUE;
