@@ -82,8 +82,13 @@ class CRM_Contact_BAO_Contact_Utils {
           $type = CRM_Utils_Array::value('name', $typeInfo);
         }
 
-
-        $imageInfo[$contactType]['image'] = "<div class=\"icon crm-icon {$type}-icon\" title=\"{$contactType}\"></div>";
+        // do not add title since it hides contact name
+        if ($addProfileOverlay) {
+          $imageInfo[$contactType]['image'] = "<div class=\"icon crm-icon {$type}-icon\"></div>";
+        }
+        else{
+          $imageInfo[$contactType]['image'] = "<div class=\"icon crm-icon {$type}-icon\" title=\"{$contactType}\"></div>";
+        }
         $imageInfo[$contactType]['url'] = NULL;
       }
     }
