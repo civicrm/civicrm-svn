@@ -1,0 +1,98 @@
+<?php
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * $Id$
+ *
+ */
+
+/**
+ * Utilities for working with zip files
+ */
+class CRM_Utils_Zip {
+
+  /**
+   * Given a zip file which contains a single root directory, determine the root's name.
+   *
+   * @return mixed; FALSE if #root level items !=1; otherwise, the name of base dir
+   */
+  static public function findBaseDirName(ZipArchive $zip) {
+    $cnt = $zip->numFiles;
+
+    $base = FALSE;
+    $baselen = FALSE;
+
+    for ($i = 0; $i < $cnt; $i++) {
+      $filename = $zip->getNameIndex($i);
+      if ($base === FALSE) {
+        if (preg_match('/^[^\/]+\/$/', $filename) && $filename != './' && $filename != '../') {
+          $base = $filename;
+          $baselen = strlen($filename);
+        } else {
+          return FALSE;
+        }
+      }  elseif (0 != substr_compare($base, $filename, 0, $baselen)) {
+        return FALSE;
+      }
+    }
+
+    return $base;
+  }
+
+  /**
+   * An inefficient helper for creating a ZIP file from data in memory.
+   * This is only intended for building temp files for unit-testing.
+   *
+   * @param $zipName string, file name
+   * @param $dirs array, list of directory paths
+   * @param $files array, keys are file names and values are file contents
+   * @return bool
+   */
+  static public function createTestZip($zipName, $dirs, $files) {
+    $zip = new ZipArchive();
+    $res = $zip->open($zipName, ZipArchive::CREATE);
+    if ($res === TRUE) {
+      foreach ($dirs as $dir) {
+        if (!$zip->addEmptyDir($dir)) {
+          return FALSE;
+        }
+      }
+      foreach ($files as $fileName => $fileData) {
+        if (!$zip->addFromString($fileName, $fileData)) {
+          return FALSE;
+        }
+      }
+      $zip->close();
+    } else {
+       return FALSE;
+    }
+    return TRUE;
+  }
+}

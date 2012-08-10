@@ -254,9 +254,21 @@ class CRM_Core_Extensions_Extension {
     $zip = new ZipArchive;
     $res = $zip->open($this->tmpFile);
     if ($res === TRUE) {
+      $zipSubDir = CRM_Utils_Zip::findBaseDirName($zip);
+      if ($zipSubDir === FALSE || !preg_match('/^[a-zA-Z0-9]/', $zipSubDir)) {
+        CRM_Core_Session::setStatus(ts('Unable to extract the extension: bad directory structure') . '<br/>');
+        return FALSE;
+      }
       $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
+      $extractedZipPath = $path . DIRECTORY_SEPARATOR . $zipSubDir;
+      if (is_dir($extractedZipPath)) {
+        if (!CRM_Utils_File::cleanDir($extractedZipPath, TRUE, FALSE)) {
+          CRM_Core_Session::setStatus(ts('Unable to extract the extension: %1 cannot be cleared', array(1 => $extractedZipPath)) . '<br/>');
+          return FALSE;
+        }
+      }
       if (!$zip->extractTo($path)) {
-        CRM_Core_Session::setStatus(ts('Unable to extract the extension to %1.', array(1 => $path)));
+        CRM_Core_Session::setStatus(ts('Unable to extract the extension to %1.', array(1 => $path)) . '<br/>');
         return FALSE;
       }
       $zip->close();
@@ -266,15 +278,15 @@ class CRM_Core_Extensions_Extension {
       return FALSE;
     }
 
-    $filename = $path . DIRECTORY_SEPARATOR . $this->key . DIRECTORY_SEPARATOR . 'info.xml';
+    $filename = $extractedZipPath . DIRECTORY_SEPARATOR . 'info.xml';
     if (!is_readable($filename)) {
-      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)) . '<br/>');
       return FALSE;
     }
     $newxml = file_get_contents($filename);
 
     if (empty($newxml)) {
-      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)) . '<br/>');
       return FALSE;
     }
 
@@ -284,9 +296,14 @@ class CRM_Core_Extensions_Extension {
       CRM_Core_Error::fatal('Cannot install - there are differences between extdir XML file and archive XML file!');
     }
 
-    CRM_Utils_File::copyDir($path . DIRECTORY_SEPARATOR . $this->key,
+    // Why is this a copy instead of a move?
+    CRM_Utils_File::copyDir($extractedZipPath,
       $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key
     );
+
+    if (!CRM_Utils_File::cleanDir($extractedZipPath, TRUE, FALSE)) {
+      CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $extractedZipPath)) . '<br/>');
+    }
     
     return TRUE;
   }
