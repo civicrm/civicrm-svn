@@ -286,6 +286,7 @@ class CRM_Core_Extensions_Extension {
    * @return boolean Whether the download was successful.
    */
   public function download() {
+    require_once 'CA/Config/Curl.php';
     $config = CRM_Core_Config::singleton();
 
     $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
@@ -299,16 +300,18 @@ class CRM_Core_Extensions_Extension {
     if (!function_exists('curl_init')) {
       CRM_Core_Error::fatal('Cannot install this extension - curl is not installed!');
     }
+    if (preg_match('/^https:/', $this->downloadUrl) && !CA_Config_Curl::singleton()->isEnableSSL()) {
+      CRM_Core_Error::fatal('Cannot install this extension - does not support SSL');
+    }
 
     //setting the curl parameters.
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $this->downloadUrl);
     curl_setopt($session, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
-
-    //turning off the server and peer verification(TrustManager Concept).
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    if (preg_match('/^https:/', $this->downloadUrl)) {
+      curl_setopt_array($ch, CA_Config_Curl::singleton()->toCurlOptions());
+    }
 
     //follow redirects
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
