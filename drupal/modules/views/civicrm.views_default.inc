@@ -115,15 +115,15 @@ function civicrm_views_default_views() {
     $handler->display->display_options['sorts']['start_date']['field'] = 'start_date';
     /* Contextual filter: Date: Date (civicrm_event) */
 
-    $handler->display->display_options['arguments']['date_argument']['id'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['table'] = 'civicrm_event';
-    $handler->display->display_options['arguments']['date_argument']['field'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['default_action'] = 'default';
-    $handler->display->display_options['arguments']['date_argument']['default_argument_skip_url'] = 0;
-    $handler->display->display_options['arguments']['date_argument']['summary']['format'] = 'default_summary';
-    $handler->display->display_options['arguments']['date_argument']['granularity'] = 'year';
-    $handler->display->display_options['arguments']['date_argument']['add_delta'] = 'yes';
-    $handler->display->display_options['arguments']['date_argument']['date_fields'] = array(
+    $handler->display->display_options['arguments']['start_date']['id'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['table'] = 'civicrm_event';
+    $handler->display->display_options['arguments']['start_date']['field'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['default_action'] = 'default';
+    $handler->display->display_options['arguments']['start_date']['default_argument_skip_url'] = 0;
+    $handler->display->display_options['arguments']['start_date']['summary']['format'] = 'default_summary';
+    $handler->display->display_options['arguments']['start_date']['granularity'] = 'year';
+    $handler->display->display_options['arguments']['start_date']['add_delta'] = 'yes';
+    $handler->display->display_options['arguments']['start_date']['date_fields'] = array(
       'civicrm_event.start_date' => 'civicrm_event.start_date',
     );
     /* Filter criterion: CiviCRM Events: Is Active */
@@ -167,14 +167,14 @@ function civicrm_views_default_views() {
     $handler->display->display_options['defaults']['arguments'] = FALSE;
     /* Contextual filter: Date: Date (civicrm_event) */
 
-    $handler->display->display_options['arguments']['date_argument']['id'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['table'] = 'civicrm_event';
-    $handler->display->display_options['arguments']['date_argument']['field'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['default_action'] = 'default';
-    $handler->display->display_options['arguments']['date_argument']['default_argument_skip_url'] = 0;
-    $handler->display->display_options['arguments']['date_argument']['summary']['format'] = 'default_summary';
-    $handler->display->display_options['arguments']['date_argument']['add_delta'] = 'yes';
-    $handler->display->display_options['arguments']['date_argument']['date_fields'] = array(
+    $handler->display->display_options['arguments']['start_date']['id'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['table'] = 'civicrm_event';
+    $handler->display->display_options['arguments']['start_date']['field'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['default_action'] = 'default';
+    $handler->display->display_options['arguments']['start_date']['default_argument_skip_url'] = 0;
+    $handler->display->display_options['arguments']['start_date']['summary']['format'] = 'default_summary';
+    $handler->display->display_options['arguments']['start_date']['add_delta'] = 'yes';
+    $handler->display->display_options['arguments']['start_date']['date_fields'] = array(
       'civicrm_event.start_date' => 'civicrm_event.start_date',
     );
     $handler->display->display_options['path'] = 'events/month';
@@ -206,15 +206,15 @@ function civicrm_views_default_views() {
     $handler->display->display_options['defaults']['arguments'] = FALSE;
     /* Contextual filter: Date: Date (civicrm_event) */
 
-    $handler->display->display_options['arguments']['date_argument']['id'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['table'] = 'civicrm_event';
-    $handler->display->display_options['arguments']['date_argument']['field'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['default_action'] = 'default';
-    $handler->display->display_options['arguments']['date_argument']['default_argument_skip_url'] = 0;
-    $handler->display->display_options['arguments']['date_argument']['summary']['format'] = 'default_summary';
-    $handler->display->display_options['arguments']['date_argument']['granularity'] = 'week';
-    $handler->display->display_options['arguments']['date_argument']['add_delta'] = 'yes';
-    $handler->display->display_options['arguments']['date_argument']['date_fields'] = array(
+    $handler->display->display_options['arguments']['start_date']['id'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['table'] = 'civicrm_event';
+    $handler->display->display_options['arguments']['start_date']['field'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['default_action'] = 'default';
+    $handler->display->display_options['arguments']['start_date']['default_argument_skip_url'] = 0;
+    $handler->display->display_options['arguments']['start_date']['summary']['format'] = 'default_summary';
+    $handler->display->display_options['arguments']['start_date']['granularity'] = 'week';
+    $handler->display->display_options['arguments']['start_date']['add_delta'] = 'yes';
+    $handler->display->display_options['arguments']['start_date']['date_fields'] = array(
       'civicrm_event.start_date' => 'civicrm_event.start_date',
     );
     $handler->display->display_options['path'] = 'events/week';
@@ -246,15 +246,15 @@ function civicrm_views_default_views() {
     $handler->display->display_options['defaults']['arguments'] = FALSE;
     /* Contextual filter: Date: Date (civicrm_event) */
 
-    $handler->display->display_options['arguments']['date_argument']['id'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['table'] = 'civicrm_event';
-    $handler->display->display_options['arguments']['date_argument']['field'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['default_action'] = 'default';
-    $handler->display->display_options['arguments']['date_argument']['default_argument_skip_url'] = 0;
-    $handler->display->display_options['arguments']['date_argument']['summary']['format'] = 'default_summary';
-    $handler->display->display_options['arguments']['date_argument']['granularity'] = 'day';
-    $handler->display->display_options['arguments']['date_argument']['add_delta'] = 'yes';
-    $handler->display->display_options['arguments']['date_argument']['date_fields'] = array(
+    $handler->display->display_options['arguments']['start_date']['id'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['table'] = 'civicrm_event';
+    $handler->display->display_options['arguments']['start_date']['field'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['default_action'] = 'default';
+    $handler->display->display_options['arguments']['start_date']['default_argument_skip_url'] = 0;
+    $handler->display->display_options['arguments']['start_date']['summary']['format'] = 'default_summary';
+    $handler->display->display_options['arguments']['start_date']['granularity'] = 'day';
+    $handler->display->display_options['arguments']['start_date']['add_delta'] = 'yes';
+    $handler->display->display_options['arguments']['start_date']['date_fields'] = array(
       'civicrm_event.start_date' => 'civicrm_event.start_date',
     );
     $handler->display->display_options['path'] = 'events/day';
@@ -286,15 +286,15 @@ function civicrm_views_default_views() {
     $handler->display->display_options['defaults']['arguments'] = FALSE;
     /* Contextual filter: Date: Date (civicrm_event) */
 
-    $handler->display->display_options['arguments']['date_argument']['id'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['table'] = 'civicrm_event';
-    $handler->display->display_options['arguments']['date_argument']['field'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['default_action'] = 'default';
-    $handler->display->display_options['arguments']['date_argument']['default_argument_skip_url'] = 0;
-    $handler->display->display_options['arguments']['date_argument']['summary']['format'] = 'default_summary';
-    $handler->display->display_options['arguments']['date_argument']['granularity'] = 'year';
-    $handler->display->display_options['arguments']['date_argument']['add_delta'] = 'yes';
-    $handler->display->display_options['arguments']['date_argument']['date_fields'] = array(
+    $handler->display->display_options['arguments']['start_date']['id'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['table'] = 'civicrm_event';
+    $handler->display->display_options['arguments']['start_date']['field'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['default_action'] = 'default';
+    $handler->display->display_options['arguments']['start_date']['default_argument_skip_url'] = 0;
+    $handler->display->display_options['arguments']['start_date']['summary']['format'] = 'default_summary';
+    $handler->display->display_options['arguments']['start_date']['granularity'] = 'year';
+    $handler->display->display_options['arguments']['start_date']['add_delta'] = 'yes';
+    $handler->display->display_options['arguments']['start_date']['date_fields'] = array(
       'civicrm_event.start_date' => 'civicrm_event.start_date',
     );
     $handler->display->display_options['path'] = 'events/year';
@@ -321,14 +321,14 @@ function civicrm_views_default_views() {
     $handler->display->display_options['defaults']['arguments'] = FALSE;
     /* Contextual filter: Date: Date (civicrm_event) */
 
-    $handler->display->display_options['arguments']['date_argument']['id'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['table'] = 'civicrm_event';
-    $handler->display->display_options['arguments']['date_argument']['field'] = 'date_argument';
-    $handler->display->display_options['arguments']['date_argument']['default_action'] = 'default';
-    $handler->display->display_options['arguments']['date_argument']['default_argument_skip_url'] = 0;
-    $handler->display->display_options['arguments']['date_argument']['summary']['format'] = 'default_summary';
-    $handler->display->display_options['arguments']['date_argument']['add_delta'] = 'yes';
-    $handler->display->display_options['arguments']['date_argument']['date_fields'] = array(
+    $handler->display->display_options['arguments']['start_date']['id'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['table'] = 'civicrm_event';
+    $handler->display->display_options['arguments']['start_date']['field'] = 'start_date';
+    $handler->display->display_options['arguments']['start_date']['default_action'] = 'default';
+    $handler->display->display_options['arguments']['start_date']['default_argument_skip_url'] = 0;
+    $handler->display->display_options['arguments']['start_date']['summary']['format'] = 'default_summary';
+    $handler->display->display_options['arguments']['start_date']['add_delta'] = 'yes';
+    $handler->display->display_options['arguments']['start_date']['date_fields'] = array(
       'civicrm_event.start_date' => 'civicrm_event.start_date',
     );
 

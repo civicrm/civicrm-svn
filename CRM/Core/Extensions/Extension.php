@@ -192,7 +192,9 @@ class CRM_Core_Extensions_Extension {
   public function install() {
     if ($this->status != self::STATUS_LOCAL) {
       if ($this->download()) {
-      $this->installFiles();
+        if (!$this->installFiles()) {
+          return FALSE;
+        }
       } else {
         // CRM-10322 If download fails but files exist anyway, continue with install
         // using local version. If no local version exists, then it's OK
@@ -253,20 +255,27 @@ class CRM_Core_Extensions_Extension {
     $res = $zip->open($this->tmpFile);
     if ($res === TRUE) {
       $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
-      $zip->extractTo($path);
+      if (!$zip->extractTo($path)) {
+        CRM_Core_Session::setStatus(ts('Unable to extract the extension to %1.', array(1 => $path)));
+        return FALSE;
+      }
       $zip->close();
     }
     else {
       CRM_Core_Session::setStatus('Unable to extract the extension.');
-      return;
+      return FALSE;
     }
 
     $filename = $path . DIRECTORY_SEPARATOR . $this->key . DIRECTORY_SEPARATOR . 'info.xml';
+    if (!is_readable($filename)) {
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
+      return FALSE;
+    }
     $newxml = file_get_contents($filename);
 
     if (empty($newxml)) {
       CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
-      return;
+      return FALSE;
     }
 
     $check = new CRM_Core_Extensions_Extension($this->key . ".newversion");
@@ -278,6 +287,8 @@ class CRM_Core_Extensions_Extension {
     CRM_Utils_File::copyDir($path . DIRECTORY_SEPARATOR . $this->key,
       $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key
     );
+    
+    return TRUE;
   }
 
   /**
@@ -286,6 +297,7 @@ class CRM_Core_Extensions_Extension {
    * @return boolean Whether the download was successful.
    */
   public function download() {
+    require_once 'CA/Config/Curl.php';
     $config = CRM_Core_Config::singleton();
 
     $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
@@ -296,56 +308,45 @@ class CRM_Core_Extensions_Extension {
     }
 
     // Download extension zip file ...
+    if (!function_exists('curl_init')) {
+      CRM_Core_Error::fatal('Cannot install this extension - curl is not installed!');
+    }
+    if (preg_match('/^https:/', $this->downloadUrl) && !CA_Config_Curl::singleton()->isEnableSSL()) {
+      CRM_Core_Error::fatal('Cannot install this extension - does not support SSL');
+    }
 
-    @ini_set('allow_url_fopen', 1);
-    @ini_set('user_agent', 'CiviCRM v' . CRM_Utils_System::version());
+    //setting the curl parameters.
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $this->downloadUrl);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_VERBOSE, 1);
+    if (preg_match('/^https:/', $this->downloadUrl)) {
+      curl_setopt_array($ch, CA_Config_Curl::singleton()->toCurlOptions());
+    }
 
-    // Check response code on downloadUrl
-    $headers = get_headers($this->downloadUrl);
-    $response_code = substr($headers[0], 9, 3);
+    //follow redirects
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
 
-    if ($response_code == 200) {
-      $context = stream_context_create(array(
-          'http' => array(
-            // Timeout if no reply after 20 seconds
-            'timeout' => 20,
-          ),
-        ));
-
-      // Attempt to download file
-      if (!$zipfile = file_get_contents($this->downloadUrl, FALSE, $context)) {
-        // CRM_Core_Error::fatal(ts('Unable to download extension from %1', array(1 => $this->downloadUrl)));
-        CRM_Core_Session::setStatus(ts('Unable to download extension from %1', array(1 => $this->downloadUrl)));
-        return;
-      }
-
-      // Attempt to save file
-      if (@file_put_contents($filename, $zipfile) === FALSE) {
+    $fp = fopen($filename, "w");
+    if (! $fp) {
         CRM_Core_Session::setStatus(ts('Unable to write to %1.<br />Is the location writable?', array(1 => $filename)));
         return;
       }
-    }
-    else {
-      // Response code != 200?
-      // Bail and inform user ...
-      $error = ts('Unable to download extension from %1.', array(1 => $this->downloadUrl));
+    curl_setopt($ch, CURLOPT_FILE, $fp);
 
-      if ($response_code >= 100 && $response_code < 300) {
-        CRM_Core_Session::setStatus($error . '<br />' . ts('Server returned an HTTP %1 response code.', array(1 => $response_code)));
+    curl_exec($ch);
+    if (curl_errno($ch)) {
+      CRM_Core_Error::debug(curl_error($ch));
+      CRM_Core_Error::debug(curl_errno($ch)); exit( );
+      CRM_Core_Session::setStatus(ts('Unable to download extension from %1. Error Message: %2',
+          array(1 => $this->downloadUrl, 2 => curl_error($ch))));
         return;
       }
-      elseif ($response_code >= 300 && $response_code < 400) {
-        CRM_Core_Session::setStatus($error . '<br />' . ts('URL is redirecting.'));
-        return;
-    }
       else {
-        CRM_Core_Session::setStatus($error . '<br />' . ts('Server returned an HTTP %1 error.', array(1 => $response_code)));
-        return;
+      curl_close($ch);
       }
-    }
 
-    @ini_restore('user_agent');
-    @ini_restore('allow_url_fopen');
+    fclose($fp);
 
     $this->tmpFile = $filename;
     return TRUE;

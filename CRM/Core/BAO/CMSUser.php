@@ -369,11 +369,10 @@ class CRM_Core_BAO_CMSUser {
     $errors = array();
     if ($isDrupal || $isJoomla || $isWordPress) {
       $emailName = NULL;
-      if (!empty($self->_bltID)) {
+      if (!empty($self->_bltID) && array_key_exists("email-{$self->_bltID}", $fields)) {
         // this is a transaction related page
         $emailName = 'email-' . $self->_bltID;
-      }
-      else {
+      } else {
         // find the email field in a profile page
         foreach ($fields as $name => $dontCare) {
           if (substr($name, 0, 5) == 'email') {

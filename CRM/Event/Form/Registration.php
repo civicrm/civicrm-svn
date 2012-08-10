@@ -823,7 +823,17 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
     // create CMS user
     if (CRM_Utils_Array::value('cms_create_account', $this->_params)) {
       $this->_params['contactID'] = $contactID;
+      
+      if (array_key_exists('email-5', $this->_params)) {
       $mail = 'email-5';
+      } else {
+        foreach ($this->_params as $name => $dontCare) {
+          if (substr($name, 0, 5) == 'email') {
+            $mail = $name;
+            break;
+          }
+        }
+      }
 
       // we should use primary email for
       // 1. free event registration.
@@ -893,7 +903,7 @@ WHERE  v.option_group_id = g.id
       ),
       'register_date' => ($registerDate) ? $registerDate : date('YmdHis'),
       'source' => isset($params['participant_source']) ?
-      $params['participant_source'] : $params['description'],
+        CRM_Utils_Array::value('participant_source', $params) : CRM_Utils_Array::value('description', $params),
       'fee_level' => CRM_Utils_Array::value('amount_level', $params),
       'is_pay_later' => CRM_Utils_Array::value('is_pay_later', $params, 0),
       'fee_amount' => CRM_Utils_Array::value('fee_amount', $params),

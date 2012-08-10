@@ -175,7 +175,6 @@ function civicrm_api3_activity_create($params) {
  * @param array $params (reference) array of parameters determined by getfields
  */
 function _civicrm_api3_activity_create_spec(&$params) {
-  $params['subject']['api.required'] = 1;
 
   //default for source_contact_id = currently logged in user
   $params['source_contact_id']['api.default'] = 'user_contact_id';

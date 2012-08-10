@@ -96,6 +96,7 @@ class CRM_Core_Resources {
    * @param $file string, file path -- relative to the extension base dir
    * @param $weight int, relative weight within a given region
    * @param $region string, location within the file; 'html-header', 'page-header', 'page-footer'
+   * @return CRM_Core_Resources
    */
   public function addScriptFile($ext, $file, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
     return $this->addScriptUrl($this->getUrl($ext, $file), $weight, $region);
@@ -107,13 +108,14 @@ class CRM_Core_Resources {
    * @param $url string
    * @param $weight int, relative weight within a given region
    * @param $region string, location within the file; 'html-header', 'page-header', 'page-footer'
+   * @return CRM_Core_Resources
    */
   public function addScriptUrl($url, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
     $config = CRM_Core_Config::singleton();
     if ($region == 'html-header' && is_callable(array($config->userSystem, 'addHtmlHeadScriptUrl'))) {
       $config->userSystem->addHtmlHeadScriptUrl($url, $weight);
     } else {
-      return CRM_Core_Region::instance($region)->add(array(
+      CRM_Core_Region::instance($region)->add(array(
         'name' => $url,
         'type' => 'scriptUrl',
         'scriptUrl' => $url,
@@ -121,6 +123,7 @@ class CRM_Core_Resources {
         'region' => $region,
       ));
     }
+    return $this;
   }
 
   /**
@@ -129,13 +132,14 @@ class CRM_Core_Resources {
    * @param $code string, JavaScript source code
    * @param $weight int, relative weight within a given region
    * @param $region string, location within the file; 'html-header', 'page-header', 'page-footer'
+   * @return CRM_Core_Resources
    */
   public function addScript($code, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
     $config = CRM_Core_Config::singleton();
     if ($region == 'html-header' && is_callable(array($config->userSystem, 'addHtmlHeadScriptCode'))) {
       $config->userSystem->addHtmlHeadScriptCode($code, $weight);
     } else {
-      return CRM_Core_Region::instance($region)->add(array(
+      CRM_Core_Region::instance($region)->add(array(
         // 'name' => automatic
         'type' => 'script',
         'script' => $code,
@@ -143,6 +147,7 @@ class CRM_Core_Resources {
         'region' => $region,
       ));
     }
+    return $this;
   }
 
   /**
@@ -152,6 +157,7 @@ class CRM_Core_Resources {
    * @param $file string, file path -- relative to the extension base dir
    * @param $weight int, relative weight within a given region
    * @param $region string, location within the file; 'html-header', 'page-header', 'page-footer'
+   * @return CRM_Core_Resources
    */
   public function addStyleFile($ext, $file, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
     return $this->addStyleUrl($this->getUrl($ext, $file), $weight, $region);
@@ -163,15 +169,17 @@ class CRM_Core_Resources {
    * @param $url string
    * @param $weight int, relative weight within a given region
    * @param $region string, location within the file; 'html-header', 'page-header', 'page-footer'
+   * @return CRM_Core_Resources
    */
   public function addStyleUrl($url, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
-    return CRM_Core_Region::instance($region)->add(array(
+    CRM_Core_Region::instance($region)->add(array(
       'name' => $url,
       'type' => 'styleUrl',
       'styleUrl' => $url,
       'weight' => $weight,
       'region' => $region,
     ));
+    return $this;
   }
 
   /**
@@ -180,15 +188,17 @@ class CRM_Core_Resources {
    * @param $code string, CSS source code
    * @param $weight int, relative weight within a given region
    * @param $region string, location within the file; 'html-header', 'page-header', 'page-footer'
+   * @return CRM_Core_Resources
    */
   public function addStyle($code, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
-    return CRM_Core_Region::instance($region)->add(array(
+    CRM_Core_Region::instance($region)->add(array(
       // 'name' => automatic
       'type' => 'style',
       'style' => $code,
       'weight' => $weight,
       'region' => $region,
     ));
+    return $this;
   }
 
   /**

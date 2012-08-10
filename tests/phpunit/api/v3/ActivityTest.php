@@ -155,28 +155,6 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
   }
 
   /**
-   *  Test civicrm_activity_create() with missing subject
-   */
-  function testActivityCreateMissingSubject() {
-    $params = array(
-      'source_contact_id' => 17,
-      'activity_date_time' => date('Ymd'),
-      'duration' => 120,
-      'location' => 'Pensulvania',
-      'details' => 'a test activity',
-      'status_id' => 1,
-      'activity_name' => 'Test activity type',
-      'scheduled_date_time' => date('Ymd'),
-      'version' => $this->_apiversion,
-    );
-
-    $result = civicrm_api('activity', 'create', $params);
-    $this->assertEquals($result['is_error'], 1,
-      "In line " . __LINE__
-    );
-  }
-
-  /**
    *  Test civicrm_activity_create() with mismatched activity_type_id
    *  and activity_name
    */

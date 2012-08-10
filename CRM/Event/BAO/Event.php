@@ -997,8 +997,13 @@ WHERE civicrm_event.is_active = 1
 
     if (!$returnMessageText) {
       //send notification email if field values are set (CRM-1941)
-      foreach ($gIds as $key => $gId) {
-        if ($gId) {
+      foreach ($gIds as $key => $gIdValues) {
+        if ($gIdValues) {
+          if (!is_array($gIdValues)) {
+            $gIdValues = array( $gIdValues );
+          }
+          
+          foreach ($gIdValues as $gId) {
           $email = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $gId, 'notify');
           if ($email) {
             //get values of corresponding profile fields for notification
@@ -1021,6 +1026,7 @@ WHERE civicrm_event.is_active = 1
           }
         }
       }
+    }
     }
 
     if ($values['event']['is_email_confirm'] || $returnMessageText) {

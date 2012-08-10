@@ -177,6 +177,7 @@
     </table>
     {if $membershipMode}
      {if $context neq 'standalone'}
+			<table class="form-layout-compressed">
      	<tr class="crm-membership-form-block-contribution-contact">
        	<td class="label">{$form.contribution_contact.label}</td>
       	<td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
@@ -184,7 +185,7 @@
      	<tr id="record-different-contact">
        <td>&nbsp;</td>
        <td>
-         <table class="compressed">
+         <table class="form-layout-compressed">
            <tr class="crm-membership-form-block-honor-type">
              <td class="label">{$form.honor_type_id.label}</td>
              <td>{$form.honor_type_id.html}</td>
@@ -195,8 +196,8 @@
          </table>
        </td>
      	</tr>
-     {/if}
      </table>
+     {/if}
      	<div class="spacer"></div>
      	{include file='CRM/Core/BillingBlock.tpl'}
      {else}
@@ -336,11 +337,9 @@ function setPaymentBlock( ) {
     
     cj.post( dataUrl, {mtype: memType}, function( data ) {
         cj("#contribution_type_id").val( data.contribution_type_id );
-	var renewTotal = data.total_amount;
 	var terms = cj("#num_terms").val();
-	if (terms != 1) {
           var renewTotal = data.total_amount_numeric * cj("#num_terms").val();
-	}	
+
         cj("#total_amount").val( renewTotal.toFixed(2) );
     }, 'json');    
 }

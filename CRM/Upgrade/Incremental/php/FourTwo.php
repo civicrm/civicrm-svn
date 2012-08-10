@@ -135,6 +135,28 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   }
 
   function upgrade_4_2_alpha1($rev) {
+
+    // Drop index UI_title for civicrm_price_set 
+    $domain = new CRM_Core_DAO_Domain;
+    $domain->find(TRUE);
+    if ($domain->locales) {
+      $params = array();
+      $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
+      foreach ($locales as $locale) {
+        $query = "SHOW KEYS FROM `civicrm_price_set` WHERE key_name = 'UI_title_{$locale}'";
+        $dao = CRM_Core_DAO::executeQuery($query, $params, TRUE, NULL, FALSE, FALSE);
+        if ($dao->N) {
+          CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title_{$locale}`", $params, TRUE, NULL, FALSE, FALSE);
+        }
+      }
+    } else {
+      $query = "SHOW KEYS FROM `civicrm_price_set` WHERE key_name = 'UI_title'";
+      $dao = CRM_Core_DAO::executeQuery($query);
+      if ($dao->N) {
+        CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_price_set` DROP INDEX `UI_title`");
+      }
+    }
+
     // Some steps take a long time, so we break them up into separate
     // tasks and enqueue them separately.
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: SQL'), 'task_4_2_alpha1_runSql', $rev);
@@ -189,6 +211,10 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     ");
   }
 
+  function upgrade_4_2_0($rev) {
+    $this->addTask(ts('Upgrade DB to 4.2.0: SQL'), 'task_4_2_alpha1_runSql', $rev);
+  }
+  
   /**
    * (Queue Task Callback)
    *
