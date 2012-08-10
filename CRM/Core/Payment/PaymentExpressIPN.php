@@ -315,10 +315,9 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
         $DPStxnRef         = _xmlElement($response, 'DpsTxnRef');
         $qfKey             = _xmlElement($response, "TxnData1");
         $privateData       = _xmlElement($response, "TxnData2");
-        list($component,$paymentProcessorID,)  =explode(',',$rsp->getTxnData3());
+        list($component,$paymentProcessorID,)  =explode(',', _xmlElement($response, "TxnData3"));
         $amount            = _xmlElement($response, "AmountSettlement");
         $merchantReference = _xmlElement($response, "MerchantReference");
-
       }
       else {
         // calling DPS failed
@@ -327,12 +326,14 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
       }
     }
     elseif ($dps_method == "pxaccess") {
+
       require_once ('PaymentExpress/pxaccess.inc.php');
       global $pxaccess;
       $pxaccess = new PxAccess($dps_url, $dps_user, $dps_key, $mac_key);
       #getResponse method in PxAccess object returns PxPayResponse object
       #which encapsulates all the response data
       $rsp = $pxaccess->getResponse($rawPostData);
+
       $qfKey             = $rsp->getTxnData1();
       $privateData       = $rsp->getTxnData2();
       list($component,$paymentProcessorID)  = explode(',',$rsp->getTxnData3());
@@ -342,8 +343,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
       $amount            = $rsp->getAmountSettlement();
       $MerchantReference = $rsp->getMerchantReference();
     }
-print_r($component);
-echo $paymentProcessorID;
+
     $privateData = $privateData ? self::stringToArray($privateData) : '';
 
     // Record the current count in array, before we start adding things (for later checks)
