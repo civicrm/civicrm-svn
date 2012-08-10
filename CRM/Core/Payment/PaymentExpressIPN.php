@@ -236,12 +236,6 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
         echo "Failure: Could not find contribution page for contribution record: $contributionID<p>";
         exit();
       }
-
-      // get the payment processor id from contribution page
-      $paymentProcessorID = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage',
-        $contribution->contribution_page_id,
-        'payment_processor_id'
-      );
     }
     else {
 
@@ -262,18 +256,9 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
         echo "Failure: Could not find event: $eventID<p>";
         exit();
       }
-
-      // get the payment processor id from contribution page
-      $paymentProcessorID = $event->payment_processor_id;
     }
 
-    if (!$paymentProcessorID) {
-      CRM_Core_Error::debug_log_message("Could not find payment processor for contribution record: $contributionID");
-      echo "Failure: Could not find payment processor for contribution record: $contributionID<p>";
-      exit();
-    }
-
-    return array($isTest, $component, $paymentProcessorID, $duplicateTransaction);
+    return array($isTest, $component, $duplicateTransaction);
   }
 
   /**
@@ -330,9 +315,10 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
         $DPStxnRef         = _xmlElement($response, 'DpsTxnRef');
         $qfKey             = _xmlElement($response, "TxnData1");
         $privateData       = _xmlElement($response, "TxnData2");
-        $component         = _xmlElement($response, "TxnData3");
+        list($component,$paymentProcessorID,)  =explode(',',$rsp->getTxnData3());
         $amount            = _xmlElement($response, "AmountSettlement");
         $merchantReference = _xmlElement($response, "MerchantReference");
+
       }
       else {
         // calling DPS failed
@@ -341,24 +327,23 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
       }
     }
     elseif ($dps_method == "pxaccess") {
-
       require_once ('PaymentExpress/pxaccess.inc.php');
       global $pxaccess;
       $pxaccess = new PxAccess($dps_url, $dps_user, $dps_key, $mac_key);
       #getResponse method in PxAccess object returns PxPayResponse object
       #which encapsulates all the response data
       $rsp = $pxaccess->getResponse($rawPostData);
-
       $qfKey             = $rsp->getTxnData1();
       $privateData       = $rsp->getTxnData2();
-      $component         = $rsp->getTxnData3();
+      list($component,$paymentProcessorID)  = explode(',',$rsp->getTxnData3());
       $success           = $rsp->getSuccess();
       $authCode          = $rsp->getAuthCode();
       $DPStxnRef         = $rsp->getDpsTxnRef();
       $amount            = $rsp->getAmountSettlement();
       $MerchantReference = $rsp->getMerchantReference();
     }
-
+print_r($component);
+echo $paymentProcessorID;
     $privateData = $privateData ? self::stringToArray($privateData) : '';
 
     // Record the current count in array, before we start adding things (for later checks)
@@ -383,7 +368,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 
     $transactionReference = $authCode . "-" . $DPStxnRef;
 
-    list($mode, $component, $paymentProcessorID, $duplicateTransaction) = self::getContext($privateData, $transactionReference);
+    list($mode, $component, $duplicateTransaction) = self::getContext($privateData, $transactionReference);
     $mode = $mode ? 'test' : 'live';
 
 
