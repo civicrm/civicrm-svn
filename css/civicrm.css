@@ -1987,8 +1987,7 @@ div.grippie {
 }
 
 #crm-container div.crm-inline-edit-field {
-  float: left;
-  clear: none;
+  display: inline-table;
   background-color: #E6E6DC;
   padding: 4px 10px 4px 10px;
 }
