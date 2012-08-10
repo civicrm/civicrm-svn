@@ -248,13 +248,7 @@
             });
            },settings);
     });
- }
-   
-})(jQuery);
-//})(cj);
-
-
-(function($){
+  }
 
   $.fn.crmForm = function (options ) {
     var settings = $.extend( {
@@ -320,5 +314,3 @@
   };
 
 })(jQuery);
-//})(cj);
-
