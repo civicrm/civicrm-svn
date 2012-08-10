@@ -192,7 +192,9 @@ class CRM_Core_Extensions_Extension {
   public function install() {
     if ($this->status != self::STATUS_LOCAL) {
       if ($this->download()) {
-        $this->installFiles();
+        if (!$this->installFiles()) {
+          return FALSE;
+        }
       } else {
         // CRM-10322 If download fails but files exist anyway, continue with install
         // using local version. If no local version exists, then it's OK
@@ -258,15 +260,19 @@ class CRM_Core_Extensions_Extension {
     }
     else {
       CRM_Core_Session::setStatus('Unable to extract the extension.');
-      return;
+      return FALSE;
     }
 
     $filename = $path . DIRECTORY_SEPARATOR . $this->key . DIRECTORY_SEPARATOR . 'info.xml';
+    if (!is_readable($filename)) {
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
+      return FALSE;
+    }
     $newxml = file_get_contents($filename);
 
     if (empty($newxml)) {
       CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
-      return;
+      return FALSE;
     }
 
     $check = new CRM_Core_Extensions_Extension($this->key . ".newversion");
@@ -278,6 +284,8 @@ class CRM_Core_Extensions_Extension {
     CRM_Utils_File::copyDir($path . DIRECTORY_SEPARATOR . $this->key,
       $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key
     );
+    
+    return TRUE;
   }
 
   /**
@@ -307,7 +315,7 @@ class CRM_Core_Extensions_Extension {
     //setting the curl parameters.
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $this->downloadUrl);
-    curl_setopt($session, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
     if (preg_match('/^https:/', $this->downloadUrl)) {
       curl_setopt_array($ch, CA_Config_Curl::singleton()->toCurlOptions());
