@@ -255,7 +255,10 @@ class CRM_Core_Extensions_Extension {
     $res = $zip->open($this->tmpFile);
     if ($res === TRUE) {
       $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
-      $zip->extractTo($path);
+      if (!$zip->extractTo($path)) {
+        CRM_Core_Session::setStatus(ts('Unable to extract the extension to %1.', array(1 => $path)));
+        return FALSE;
+      }
       $zip->close();
     }
     else {
@@ -315,7 +318,7 @@ class CRM_Core_Extensions_Extension {
     //setting the curl parameters.
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $this->downloadUrl);
-    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
     if (preg_match('/^https:/', $this->downloadUrl)) {
       curl_setopt_array($ch, CA_Config_Curl::singleton()->toCurlOptions());
