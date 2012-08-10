@@ -210,7 +210,11 @@ class CRM_Upgrade_Incremental_php_FourTwo {
       VALUES ('URL Preferences', 'extensionsURL',NULL,1,1);
     ");
   }
-
+  
+  function upgrade_4_2_0($rev) {
+    $this->addTask(ts('Upgrade DB to 4.2.0: SQL'), 'task_4_2_alpha1_runSql', $rev);
+  }
+  
   /**
    * (Queue Task Callback)
    *
