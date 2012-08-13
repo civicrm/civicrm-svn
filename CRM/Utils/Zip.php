@@ -67,6 +67,47 @@ class CRM_Utils_Zip {
   }
 
   /**
+   * Given a zip file, find all directory names in the root
+   *
+   * @return array(string), no trailing /
+   */
+  static public function findBaseDirs(ZipArchive $zip) {
+    $cnt = $zip->numFiles;
+    $basedirs = array();
+
+    for ($i = 0; $i < $cnt; $i++) {
+      $filename = $zip->getNameIndex($i);
+      // hypothetically, ./ or ../ would not be legit here
+      if (preg_match('/^[^\/]+\/$/', $filename) && $filename != './' && $filename != '../') {
+        $basedirs[] = rtrim($filename, '/');
+      }
+    }
+
+    return $basedirs;
+  }
+
+  /**
+   * Determine the name of the folder within a zip
+   *
+   * @return string or FALSE
+   */
+  static public function guessBasedir(ZipArchive $zip, $expected) {
+    $candidate = FALSE;
+    $basedirs = CRM_Utils_Zip::findBaseDirs($zip);
+    if (in_array($expected, $basedirs)) {
+      $candidate = $expected;
+    } elseif (count($basedirs) == 1) {
+      $candidate = array_shift($basedirs);
+    }
+    if ($candidate !== FALSE && preg_match('/^[a-zA-Z0-9]/', $candidate)) {
+      return $candidate;
+    } else {
+      return FALSE;
+    }
+  }
+
+
+  /**
    * An inefficient helper for creating a ZIP file from data in memory.
    * This is only intended for building temp files for unit-testing.
    *

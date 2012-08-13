@@ -254,8 +254,8 @@ class CRM_Core_Extensions_Extension {
     $zip = new ZipArchive;
     $res = $zip->open($this->tmpFile);
     if ($res === TRUE) {
-      $zipSubDir = CRM_Utils_Zip::findBaseDirName($zip);
-      if ($zipSubDir === FALSE || !preg_match('/^[a-zA-Z0-9]/', $zipSubDir)) {
+      $zipSubDir = CRM_Utils_Zip::guessBasedir($zip, $this->key);
+      if ($zipSubDir === FALSE) {
         CRM_Core_Session::setStatus(ts('Unable to extract the extension: bad directory structure') . '<br/>');
         return FALSE;
       }
