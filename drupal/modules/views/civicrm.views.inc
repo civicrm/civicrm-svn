@@ -525,6 +525,23 @@ function civicrm_views_data() {
     ),
   );
 
+  //Birth Date
+  $data['civicrm_contact']['birth_date'] = array(
+    'title' => t('Birth Date'),
+    'help' => t('The contact\'s birth date.'),
+    'field' => array(
+      'handler' => 'civicrm_handler_field_datetime',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'civicrm_handler_filter_datetime',
+      'is date' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'civicrm_handler_sort_date',
+    ),
+  );
+
   // add the other generic fields
   $objType = 'Individual';
   $fields = CRM_Contact_BAO_Contact::exportableFields($objType);
@@ -544,6 +561,7 @@ function civicrm_views_data() {
     'is_opt_out' => 1,
     'contact_type' => 1,
     'current_employer' => 1,
+    'birth_date' => 1,
   );
   civicrm_views_add_fields($fields, $data['civicrm_contact'], $skipFields, 'civicrm_contact');
 
