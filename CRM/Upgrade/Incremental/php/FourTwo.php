@@ -116,6 +116,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   function upgrade_4_2_alpha1($rev) {
     //checking whether the foreign key exists before dropping it
     //drop foreign key queries of CRM-9850
+    $params = array();
     $tables = array('civicrm_contribution_page' =>'FK_civicrm_contribution_page_payment_processor_id',
                     'civicrm_event' => 'FK_civicrm_event_payment_processor_id',
                     'civicrm_group' => 'FK_civicrm_group_saved_search_id', 
@@ -123,15 +124,14 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     foreach($tables as $tableName => $fKey){
       $foreignKeyExists = CRM_Core_DAO::checkConstraintExists($tableName,$fKey);
       if ($foreignKeyExists){
-        CRM_Core_DAO::executeQuery("ALTER TABLE {$tableName} DROP FOREIGN KEY {$fKey}");
-        CRM_Core_DAO::executeQuery("ALTER TABLE {$tableName} DROP INDEX {$fKey}");
+        CRM_Core_DAO::executeQuery("ALTER TABLE {$tableName} DROP FOREIGN KEY {$fKey}", $params, TRUE, NULL, FALSE, FALSE);
+        CRM_Core_DAO::executeQuery("ALTER TABLE {$tableName} DROP INDEX {$fKey}", $params, TRUE, NULL, FALSE, FALSE);
       } 
     }
     // Drop index UI_title for civicrm_price_set 
     $domain = new CRM_Core_DAO_Domain;
     $domain->find(TRUE);
     if ($domain->locales) {
-      $params = array();
       $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
       foreach ($locales as $locale) {
         $query = "SHOW KEYS FROM `civicrm_price_set` WHERE key_name = 'UI_title_{$locale}'";
