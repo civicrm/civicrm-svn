@@ -135,7 +135,19 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   }
 
   function upgrade_4_2_alpha1($rev) {
-
+    //checking whether the foreign key exists before dropping it
+    //drop foreign key queries of CRM-9850
+    $tables = array('civicrm_contribution_page' =>'FK_civicrm_contribution_page_payment_processor_id',
+                    'civicrm_event' => 'FK_civicrm_event_payment_processor_id',
+                    'civicrm_group' => 'FK_civicrm_group_saved_search_id', 
+                    );
+    foreach($tables as $tableName => $fKey){
+      $foreignKeyExists = CRM_Core_DAO::checkConstraintExists($tableName,$fKey);
+      if ($foreignKeyExists){
+        CRM_Core_DAO::executeQuery("ALTER TABLE {$tableName} DROP FOREIGN KEY {$fKey}");
+        CRM_Core_DAO::executeQuery("ALTER TABLE {$tableName} DROP INDEX {$fKey}");
+      } 
+    }
     // Drop index UI_title for civicrm_price_set 
     $domain = new CRM_Core_DAO_Domain;
     $domain->find(TRUE);
