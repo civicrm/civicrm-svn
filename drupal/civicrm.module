@@ -1058,13 +1058,6 @@ function civicrm_civicrm_merge($type, &$data, $mainId, $otherId, $tables) {
     $conflicts['move_custom_1'] = 'end_user';
     unset($conflicts['move_custom_8']);
   }
-  /*     CRM_Core_Error::debug_var('hook $type',$type); */
-
-  /*     CRM_Core_Error::debug_var('$data',$data); */
-
-  /*     CRM_Core_Error::debug_var('$mainId',$mainId); */
-
-  /*     CRM_Core_Error::debug_var('$otherId',$otherId); */
 }
 
 /**
