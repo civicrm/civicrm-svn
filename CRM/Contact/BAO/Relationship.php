@@ -1402,10 +1402,16 @@ cc.sort_name LIKE '%$name%'";
       $leftType = $allRelationshipType[$rel_parts[0]]['contact_type_a'];
     }
 
-    $contactTypes = array();
-    foreach ($contactProfiles as $key => $value) {
-      if (strpos($value, $leftType) !== FALSE) {
-        $contactTypes = array($key => $value);
+    // Handle 'All Contacts' contact type for left side of relationship ($leftType is empty in this case)
+    // In this case all reserved profiles are available
+    if ($leftType == '') {
+      $contactTypes = $contactProfiles;
+    } else {
+      $contactTypes = array();
+      foreach ($contactProfiles as $key => $value) {
+        if (strpos($value, $leftType) !== FALSE) {
+          $contactTypes = array($key => $value);
+        }
       }
     }
 
