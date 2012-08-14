@@ -5,6 +5,8 @@
 
   <civicrm_currency />
 
+  <civicrm_declared />
+
   <civicrm_domain />
 
   <civicrm_extension />
