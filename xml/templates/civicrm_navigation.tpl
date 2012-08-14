@@ -80,7 +80,8 @@ VALUES
   ( @domainID, NULL, 1, 'Directory Preferences', 'extensionsDir'      , NULL ),
   ( @domainID, NULL, 1, 'URL Preferences', 'userFrameworkResourceURL' , NULL ),
   ( @domainID, NULL, 1, 'URL Preferences', 'imageUploadURL'           , NULL ),
-  ( @domainID, NULL, 1, 'URL Preferences', 'customCSSURL'             , NULL );
+  ( @domainID, NULL, 1, 'URL Preferences', 'customCSSURL'             , NULL ),
+  ( @domainID, NULL, 1, 'URL Preferences', 'extensionsURL'            , NULL );
 
 -- mail settings 
 
