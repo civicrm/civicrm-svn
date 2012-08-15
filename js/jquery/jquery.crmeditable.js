@@ -324,7 +324,14 @@
       $.ajax({
         url: $.crmURL('civicrm/ajax/inline', data),
       }).done( function(response) {
-        o.removeAttr('style').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append( response );
+        o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append( response);
+        // Smooth resizing
+        var newHeight = $('.crm-container-snippet', o).height();
+        var diff = newHeight - parseInt(o.css('height'));
+        if (diff < 0) {
+          diff = 0 - diff;
+        }
+        o.animate({height: '' + newHeight + 'px'}, diff * 2, function(){o.removeAttr('style');});
         removeCiviOverlay(o);
         $('form', o).ajaxForm( {beforeSubmit: requestHandler} );
         $(':submit[name$=cancel]', o).click(function() {
