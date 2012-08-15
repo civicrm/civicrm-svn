@@ -116,8 +116,6 @@
     </div>
  </div>
 
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
 {literal}
 <script type="text/javascript">
 cj( function( ) {
@@ -136,11 +134,7 @@ cj( function( ) {
           cj( "#" + fldName.slice(0, -3) + "_custom" ).val('');
         }
       });
-    }          
-
-    // add ajax form submitting
-    inlineEditForm( 'CommunicationPreferences', 'communication-pref-block', {/literal}{$contactId}{literal} );
-
+    }
 });
 
 function showGreeting( element ) {
@@ -159,3 +153,4 @@ function showGreeting( element ) {
 
 </script>
 {/literal}
+

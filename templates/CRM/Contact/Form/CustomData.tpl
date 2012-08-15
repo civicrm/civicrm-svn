@@ -36,8 +36,8 @@
 	{if $customValueCount }
 		{literal}
 		<script type="text/javascript">
-			var customValueCount = {/literal}"{$customValueCount}"{literal}
-			var groupID = {/literal}"{$groupID}"{literal}
+			var customValueCount = {/literal}"{$customValueCount}"{literal};
+			var groupID = {/literal}"{$groupID}"{literal};
 			var contact_type = {/literal}"{$contact_type}"{literal};
 			var contact_subtype = {/literal}"{$contact_subtype}"{literal};
 			buildCustomData( contact_type, contact_subtype );

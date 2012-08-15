@@ -176,45 +176,47 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     item && console && console.log && console.log (item);
   }
 
-  /* you need to init this function first: cj.crmURL ('init', '{crmURL p="civicrm/example" q="placeholder"}');
-  * then you can call it almost like {crmAPI} but on the client side, eg: var url = cj.crmURL ('civicrm/contact/view', {reset:1,cid:42});
-  * or $('a.crmURL').crmURL();
-  */
+  /**
+   * Almost like {crmURL} but on the client side
+   * eg: var url = cj.crmURL ('civicrm/contact/view', {reset:1,cid:42});
+   * or: $('a.crmURL').crmURL();
+   */
   $.extend ({ 'crmURL':
     function (p, params) {
       if (p == "init") {
-        $(document).data('civicrm_templateURL',params); // storage and avoid polluting the global namespace
+        // storage and avoid polluting the global namespace
+        $(document).data('civicrm_templateURL', params);
         return;
       }
-      var tplURL = $(document).data('civicrm_templateURL');
-      if (!tplURL) {
-        console && console.log && console.log ("you need to init crmURL first");
-        return; // should we alert() or set to drupal clean (/civicrm/bla/bla?param)?
+      params = params || '';
+      var tplURL = $(document).data('civicrm_templateURL') || '/civicrm/example?placeholder';
+
+      var url = tplURL.replace("civicrm/example", p);
+      if (typeof(params) == 'string') {
+        url = url.replace("placeholder", params);
       }
-      var t= tplURL.replace("civicrm/example",p);
-      if (typeof(params)=='string') {
-        if (t[0]="/")
-          t= t.substring(1);
-        return t.replace("placeholder",params);
-      } else
-        return t.replace("placeholder",$.param(params));
-        
-    }});
+      else {
+        url = url.replace("placeholder", $.param(params));
+      }
+      // remove trailing "?"
+      if (url.indexOf('?') === (url.length - 1)) {
+        url = url.slice(0, (url.length - 1));
+      }
+      return url;
+    }
+  });
   
-    $.fn.crmURL = function (templateURL) { // you don't need to set templateURL each time, if you have init it with cj.crmURL ('init');
-      if (!templateURL && $(document).data('civicrm_templateURL'))
-        templateURL = $(document).data('civicrm_templateURL');
-      return this.each(function() {
-        var $this = $(this);
-        if (this.href) {
-          var frag = $this.attr('href').split ('?');
-          if (frag[1])
-            this.href=$.crmURL (frag[0],frag[1]);
-          else 
-            this.href=$.crmURL (frag[0]);
-        }
-      });      
-    };
+  $.fn.crmURL = function () {
+    return this.each(function() {
+      var $this = $(this);
+      if (this.href) {
+        var frag = $this.attr('href').split ('?');
+        if (frag[1])
+          this.href = $.crmURL (frag[0], frag[1]);
+        else 
+          this.href = $.crmURL (frag[0]);
+      }
+    });      
+  };
 
 })(jQuery);
-//})(cj);

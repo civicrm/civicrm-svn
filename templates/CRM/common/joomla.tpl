@@ -105,21 +105,8 @@
   </tr>
 </table>
 
-{literal}
-<script type="text/javascript">
-cj(function() {
-   cj().crmtooltip(); 
-});
+{include file="CRM/common/scripts.tpl"}
 
-cj(document).ready(function() {
-  advmultiselectResize();
-});
-
-cj(window).resize(function() {
-  advmultiselectResize();
-});
-</script>
-{/literal}
 {* We need to set jquery $ object back to $*}
 <script type="text/javascript">jQuery.noConflict(true);</script>
 </div> {* end crm-container div *}

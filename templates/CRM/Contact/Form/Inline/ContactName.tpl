@@ -62,15 +62,3 @@
   {/if}
 </div>
 <div class="clear"></div>
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
-{literal}
-<script type="text/javascript">
-
-cj( function() {
-// add ajax form submitting
-inlineEditForm( 'ContactName', 'contactname-block', {/literal}{$contactId}{literal} ); 
-});
-</script>
-{/literal}
-

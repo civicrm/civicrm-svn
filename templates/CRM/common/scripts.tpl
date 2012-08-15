@@ -23,57 +23,18 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $config->debug}
-{include file="CRM/common/debug.tpl"}
-{/if}
 
-<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-
-{include file="CRM/common/action.tpl"}
-{if $buildNavigation }
-    {include file="CRM/common/Navigation.tpl" }
-{/if}
-
-{* include wysiwyg related files*}
-{include file="CRM/common/wysiwyg.tpl"}
-
-{if isset($browserPrint) and $browserPrint}
-{* Javascript window.print link. Used for public pages where we can't do printer-friendly view. *}
-<div id="printer-friendly">
-<a href="javascript:window.print()" title="{ts}Print this page.{/ts}">
-	<div class="ui-icon ui-icon-print"></div>
-</a>
-</div>
-{else}
-{* Printer friendly link/icon. *}
-<div id="printer-friendly">
-<a href="{$printerFriendly}" title="{ts}Printer-friendly view of this page.{/ts}">
-	<div class="ui-icon ui-icon-print"></div>
-</a>
-</div>
-{/if}
-
-{*{include file="CRM/common/langSwitch.tpl"}*}
-
-<div class="clear"></div>
-
-{if isset($localTasks) and $localTasks}
-    {include file="CRM/common/localNav.tpl"}
-{/if}
-
-{include file="CRM/common/status.tpl"}
-
-<!-- .tpl file invoked: {$tplFile}. Call via form.tpl if we have a form in the page. -->
-{if isset($isForm) and $isForm}
-    {include file="CRM/Form/$formTpl.tpl"}
-{else}
-    {include file=$tplFile}
-{/if}
-
-{if ! $urlIsPublic}
-{include file="CRM/common/footer.tpl"}
-{/if}
-
-{include file="CRM/common/scripts.tpl"}
-
-</div> {* end crm-container div *}
+{literal}
+<script type="text/javascript">
+  cj(function() {
+     cj().crmtooltip();
+  });
+  cj(document).ready(function() {
+    advmultiselectResize();
+  });
+  cj(window).resize(function() {
+    advmultiselectResize();
+  });
+  cj.crmURL('init', '{/literal}{crmURL p="civicrm/example" q="placeholder"}{literal}');
+</script>
+{/literal}

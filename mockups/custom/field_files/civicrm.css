@@ -473,13 +473,16 @@ div.spacer,
 #crm-container .messages {
   margin: 1.0em 0em 1.0em;
   border: 1px solid #CCCCCC;
-	}	
-	#crm-container .messages table, #crm-container-snippet .messages table {width: auto;}
-	#crm-container .messages table td, #crm-container-snippet .messages table td { 
-		background-color: #F7F7F7;
-		border-bottom: 1px solid #DDDDDD;
-		}
-	
+}
+#crm-container .messages table,
+.crm-container-snippet .messages table {
+  width: auto;
+}
+#crm-container .messages table td,
+.crm-container-snippet .messages table td { 
+    background-color: #F7F7F7;
+    border-bottom: 1px solid #DDDDDD;
+}
 #crm-container .action-link {
   margin: 0.25em 0em 0.25em;
   font-weight: bold;

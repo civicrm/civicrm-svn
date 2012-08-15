@@ -24,23 +24,17 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building email block*}
-<div class="crm-table2div-layout" id="crm-email-content">
-  <div class="crm-clear"> <!-- start of main -->
-     {if $permission EQ 'edit'}
-     {if $email}
-     <div class="crm-config-option">
-      <a id="edit-email" class="hiddenElement crm-link-action" title="{ts}click to add or edit email addresses{/ts}">
-        <span class="batch-edit"></span>{ts}add or edit email{/ts}
-      </a>
+<div id="crm-email-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Email"{rdelim}' title="{ts}Add or edit email{/ts}{/if}">
+  <div class="crm-clear"><!-- start of main -->
+  {if $permission EQ 'edit'}
+    <div class="crm-edit-help">
+      <span class="batch-edit"></span>{if empty($email)}{ts}Add email{/ts}{else}{ts}Add or edit email{/ts}{/if}
     </div>
-    {else}
-      <div>
-        <a id="edit-email" class="crm-link-action empty-email" title="{ts}click to add email address{/ts}">
-          <span class="batch-edit"></span>{ts}add email{/ts}
-        </a>
-      </div>
-    {/if}
-     {/if}
+  {/if}
+  {if empty($email)}
+    <div class="crm-label">{ts}Email{/ts}</div>
+    <div class="crm-content"></div>
+  {/if}
   {foreach from=$email key="blockId" item=item}
     {if $item.email}
       <div class="crm-label">{$item.location_type}&nbsp;{ts}Email{/ts}</div>
@@ -63,34 +57,6 @@
 {literal}
 <script type="text/javascript">
 
-{/literal}{if $permission EQ 'edit'}{literal}
-cj(function(){
-    cj('#email-block').mouseenter( function() {
-      cj(this).addClass('crm-inline-edit-hover');
-      cj('#edit-email').show();
-    }).mouseleave( function() {
-      cj(this).removeClass('crm-inline-edit-hover');
-      if ( !cj('#edit-email').hasClass('empty-email') ) { 
-        cj('#edit-email').hide();
-      }
-    });
-
-    cj('#edit-email').click( function() {
-      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-
-      addCiviOverlay('.crm-summary-email-block');
-      cj.ajax({ 
-        data: { 'class_name':'CRM_Contact_Form_Inline_Email' },
-        url: dataUrl,
-        async: false
-      }).done( function(response) {
-        cj( '#email-block' ).html( response );
-      });
-
-      removeCiviOverlay('.crm-summary-email-block');
-    });
-});
-{/literal}{/if}{literal}
 function showHideSignature( blockId ) {
   cj("#Email_Block_" + blockId + "_signature").show( );   
 

@@ -24,13 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building communication preference block*}
-<div class="crm-table2div-layout" id="crm-communication-pref-content">
+<div id="crm-communication-pref-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_CommunicationPreferences"{rdelim}' data-dependent-fields='["#crm-phone-content", "#crm-email-content"]' title="{ts}Add or edit communication preferences{/ts}{/if}">
   <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
-    <div class="crm-config-option">
-      <a id="edit-communication-pref" class="hiddenElement crm-link-action" title="{ts}click to add or edit communication preferences{/ts}">
-      <span class="batch-edit"></span>{ts}add or edit communication preferences{/ts}
-      </a>
+    <div class="crm-edit-help">
+      <span class="batch-edit"></span>{ts}Add or edit communication preferences{/ts}
     </div>
     {/if}
     <div class="crm-label">{ts}Privacy{/ts}</div>
@@ -71,53 +69,3 @@
     </div>
   </div> <!-- end of main -->
 </div> <!-- end of table layout -->
- 
-{if $permission EQ 'edit'}
-{literal}
-<script type="text/javascript">
-cj(function(){
-    cj('#communication-pref-block').mouseenter( function() {
-      cj(this).addClass('crm-inline-edit-hover');
-      cj('#edit-communication-pref').show();
-    }).mouseleave( function() {
-      cj(this).removeClass('crm-inline-edit-hover');
-      cj('#edit-communication-pref').hide();
-    });
-
-    // update email and phone block based on privacy settings
-    var doNotEmail = {/literal}{$do_not_email}{literal};
-    
-    if (doNotEmail) {
-      cj('.crm-contact_email span').addClass('do-not-email');
-    }
-    else {
-      cj('.crm-contact_email span').removeClass('do-not-email');
-    }
-
-    var doNotPhone = {/literal}{$do_not_phone}{literal};
-    
-    if (doNotPhone) {
-      cj('.crm-contact_phone span').addClass('do-not-phone');
-    }
-    else {
-      cj('.crm-contact_phone span').removeClass('do-not-phone');
-    }
-
-    cj('#edit-communication-pref').click( function() {
-      var dataUrl  = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-      
-      addCiviOverlay('.crm-summary-comm-pref-block');
-      cj.ajax({
-                              data: { 'class_name':'CRM_Contact_Form_Inline_CommunicationPreferences' },
-                              url: dataUrl,
-                              async: false
-      }).done( function(response) {
-	    cj( '#communication-pref-block' ).html( response );
-    });
-
-      removeCiviOverlay('.crm-summary-comm-pref-block');
-});
-});
-</script>
-{/literal}
-{/if}

@@ -244,35 +244,20 @@
           <div class="contact_panel">
             {assign var='locationIndex' value=1}
             {if $address}
-            {foreach from=$address item=add key=locationIndex}
-                <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
-                  <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
-                    {include file="CRM/Contact/Page/Inline/Address.tpl"}
-                  </div>
+              {foreach from=$address item=add key=locationIndex}
+                <div class="{if $locationIndex is odd}contactCardLeft{else}contactCardRight{/if} crm-address_{$locationIndex} crm-address-block">
+                  {include file="CRM/Contact/Page/Inline/Address.tpl"}
                 </div>
-              {/foreach} {* end of address foreach *}
-            
+              {/foreach}
               {assign var='locationIndex' value=$locationIndex+1}
             {/if}
-            
+            {* add new link *}
             {if $permission EQ 'edit'}
-            {if $locationIndex eq 1 or $locationIndex is odd}
-                <div class="contactCardLeft crm-address_{$locationIndex} crm-address-block appendAddLink">
-                                      {else}
-                <div class="contactCardRight crm-address_{$locationIndex} crm-address-block appendAddLink">
-                                      {/if}
-
-              <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
-                <div class="crm-table2div-layout">
-                  <div class="crm-clear">
-                    <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
-                    <span class="batch-edit"></span>{ts}add address{/ts}
-                    </a>
-                      </div>
+              {assign var='add' value=0}
+                <div class="{if $locationIndex is odd}contactCardLeft{else}contactCardRight{/if} crm-address-block">
+                  {include file="CRM/Contact/Page/Inline/Address.tpl"}
                 </div>
-              </div>
-                </div>
-              {/if}
+            {/if}
 
           </div> <!-- end of contact panel -->
           {/if}
@@ -365,72 +350,3 @@
 {/if}
 <div class="clear"></div>
 </div><!-- /.crm-content-block -->
-
-{if $permission EQ 'edit'}
-{literal}
-<script type="text/javascript">
-
-cj(function(){
-  /* start of js for inline custom data */
-  var customBlock = cj('div[id^="custom-set-block-"]');
-  customBlock.mouseenter( function() {
-    cj(this).addClass('crm-inline-edit-hover');
-    cj(this).find('a[id^="edit-custom-set-block-"]').show();
-  }).mouseleave( function() {
-    cj(this).removeClass('crm-inline-edit-hover');
-    cj(this).find('a[id^="edit-custom-set-block-"]').hide();
-  });
-
-  cj('a[id^="edit-custom-set-block-"]').live( 'click', function() {
-    var cgId   = cj(this).attr('cgId');
-    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&groupID=' + cgId;
-
-    addCiviOverlay('.crm-custom-set-block-' + cgId);   
-    cj.ajax({
-      data: {'class_name':'CRM_Contact_Form_Inline_CustomData'},
-      url: dataUrl,
-      async: false
-    }).done( function( response ) {
-      cj( '#custom-set-block-'+ cgId ).html( response );
-    });
-
-    removeCiviOverlay('.crm-custom-set-block-' + cgId);   
-  });
-  /* end of js for inline custom data */
-
-  /* start of js for inline address */
-  var addressBlock = cj('div[id^="address-block-"]');
-  addressBlock.mouseenter( function() {
-    var locno   = cj(this).attr('locno');
-    cj(this).addClass('crm-inline-edit-hover');
-    cj('a[id^="edit-address-block-' + locno +'"]').show();
-  }).mouseleave( function() {
-    var locno   = cj(this).attr('locno');
-    cj(this).removeClass('crm-inline-edit-hover');
-    if ( !cj('a[id^="edit-address-block-' + locno +'"]').hasClass('empty-address-block-' + locno ) ) { 
-      cj('a[id^="edit-address-block-'+ locno +'"]').hide();
-    }
-  });
-
-  cj('a[id^="edit-address-block-"]').live( 'click', function() {
-    var locno = cj(this).attr('locno');
-    var aid   = cj(this).attr('aid');
-    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal} + '&locno=' + locno + '&aid=' + aid ;
-
-    addCiviOverlay('div.crm-address_' + locno);   
-    cj.ajax({ 
-      data: {'class_name':'CRM_Contact_Form_Inline_Address'},
-      url: dataUrl,
-      async: false
-    }).done( function(response) {
-      cj( '#address-block-'+ locno ).html( response );
-    });
-    
-    removeCiviOverlay('div.crm-address_' + locno);   
-  });
-  /* end of js for inline address data */
-});
-
-</script>
-{/literal}
-{/if}

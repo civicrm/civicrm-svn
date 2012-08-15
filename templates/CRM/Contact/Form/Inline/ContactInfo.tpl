@@ -53,17 +53,6 @@
   <div class="crm-content">{$form.contact_source.html}</div>
  </div> <!-- end of main -->
 </div>
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
-{literal}
-<script type="text/javascript">
-
-cj( function() {
-  // add ajax form submitting
-  inlineEditForm( 'ContactInfo', 'contactinfo-block', {/literal}{$contactId}{literal} ); 
-});
-</script>
-{/literal}
 
 {if $contactType eq 'Individual'}
   {include file="CRM/Contact/Form/CurrentEmployer.tpl"}

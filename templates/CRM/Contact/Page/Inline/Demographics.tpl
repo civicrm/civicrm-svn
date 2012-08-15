@@ -23,15 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-table2div-layout" id="crm-demographic-content">
-    <div class="crm-clear"> <!-- start of main -->
-      {if $permission EQ 'edit'}
-      <div class="crm-config-option">
-          <a id="edit-demographic" class="hiddenElement crm-link-action" title="{ts}click to add or edit demographics{/ts}">
-          <span class="batch-edit"></span>{ts}add or edit demographics{/ts}
-        </a>
-      </div>
-      {/if}
+<div id="crm-demographic-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Demographics"{rdelim}' title="{ts}Add or edit demographics{/ts}{/if}">
+  <div class="crm-clear"><!-- start of main -->
+    {if $permission EQ 'edit'}
+    <div class="crm-edit-help">
+      <span class="batch-edit"></span>{ts}Add or edit demographics{/ts}
+    </div>
+    {/if}
 
       <div class="crm-label">{ts}Gender{/ts}</div>
       <div class="crm-content crm-contact-gender_display">{$gender_display}</div>
@@ -64,34 +62,3 @@
        {/if}
     </div> <!-- end of main -->
   </div>
-
-{if $permission EQ 'edit'}
-{literal}
-<script type="text/javascript">
-cj(function(){
-    cj('#demographic-block').mouseenter( function() {
-      cj(this).addClass('crm-inline-edit-hover');
-      cj('#edit-demographic').show();
-    }).mouseleave( function() {
-      cj(this).removeClass('crm-inline-edit-hover');
-      cj('#edit-demographic').hide();
-    });
-
-    cj('#edit-demographic').click( function() {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-        
-        addCiviOverlay('.crm-summary-demographic-block');
-        cj.ajax({
-                        data: { 'class_name':'CRM_Contact_Form_Inline_Demographics' },
-                        url: dataUrl,
-                        async: false
-        }).done( function(response) {
-	    cj( '#demographic-block' ).html( response );
-    });
-        
-        removeCiviOverlay('.crm-summary-demographic-block');
-});
-});
-</script>
-{/literal}
-{/if}

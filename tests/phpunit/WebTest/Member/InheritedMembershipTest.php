@@ -149,7 +149,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     // visit relationship tab
     $this->click('css=li#tab_rel a');
     $this->waitForElementPresent('css=div.action-link');
-    $this->click("//div[@id='crm-container-snippet']/div/div[1]/div[1]/a/span");
+    $this->click("//div[@class='crm-container-snippet']/div/div[1]/div[1]/a/span");
     $this->waitForPageToLoad('30000');
     $this->click('relationship_type_id');
     $this->select('relationship_type_id', 'label=Employee of');
@@ -221,7 +221,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
 
     //verify inherited membership has been removed
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid=$id&selectedChild=member");
-    $this->waitForElementPresent("xpath=id('crm-container-snippet')/x:div/x:div[3]");
+    $this->waitForElementPresent("xpath=class('crm-container-snippet')/x:div/x:div[3]");
     $this->assertTrue($this->isTextPresent('No memberships have been recorded for this contact.'));
 
     // visit relationship tab and re-enable the relationship
@@ -258,7 +258,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
 
     //verify inherited membership has been removed
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid=$id&selectedChild=member");
-    $this->waitForElementPresent("xpath=id('crm-container-snippet')/x:div/x:div[3]");
+    $this->waitForElementPresent("xpath=class('crm-container-snippet')/x:div/x:div[3]");
     $this->assertTrue($this->isTextPresent('No memberships have been recorded for this contact.'));
 
     //enable relationship

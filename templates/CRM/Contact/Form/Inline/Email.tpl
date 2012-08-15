@@ -64,8 +64,6 @@
     {/section}
 </table>
 
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
 {literal}
 <script type="text/javascript">
     cj( function() {
@@ -120,10 +118,6 @@
             cj(this).removeClass('hiddenElement');
           } 
       });
-
-      // add ajax form submitting
-      inlineEditForm( 'Email', 'email-block', {/literal}{$contactId}{literal} );
-
     });
 
 </script>

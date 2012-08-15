@@ -24,22 +24,16 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building phone block*}
-<div class="crm-table2div-layout" id="crm-phone-content">
-  <div class="crm-clear"> <!-- start of main -->
+<div id="crm-phone-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Phone"{rdelim}' title="{ts}Add or edit phone{/ts}{/if}">
+  <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
-     {if $phone}
-     <div class="crm-config-option">
-      <a id="edit-phone" class="hiddenElement crm-link-action" title="{ts}click to add or edit phone numbers{/ts}">
-        <span class="batch-edit"></span>{ts}add or edit phone{/ts}
-      </a>
-    </div>
-    {else}
-      <div>
-        <a id="edit-phone" class="crm-link-action empty-phone" title="{ts}click to add a phone number{/ts}">
-          <span class="batch-edit"></span>{ts}add phone{/ts}
-        </a>
+      <div class="crm-edit-help">
+        <span class="batch-edit"></span>{if empty($phone)}{ts}Add phone{/ts}{else}{ts}Add or edit phone{/ts}{/if}
       </div>
     {/if}
+    {if empty($phone)}
+      <div class="crm-label">{ts}Phone{/ts}</div>
+      <div class="crm-content"></div>
     {/if}
     {foreach from=$phone item=item}
       {if $item.phone}
@@ -53,36 +47,3 @@
     {/foreach}
    </div> <!-- end of main -->
 </div>
-
-{if $permission EQ 'edit'}
-{literal}
-<script type="text/javascript">
-cj(function(){
-    cj('#phone-block').mouseenter( function() {
-      cj(this).addClass('crm-inline-edit-hover');
-      cj('#edit-phone').show();
-    }).mouseleave( function() {
-      cj(this).removeClass('crm-inline-edit-hover');
-      if ( !cj('#edit-phone').hasClass('empty-phone') ) { 
-        cj('#edit-phone').hide();
-      }
-    });
-
-    cj('#edit-phone').click( function() {
-      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-      
-      addCiviOverlay('.crm-summary-phone-block');
-      cj.ajax({ 
-        data: { 'class_name':'CRM_Contact_Form_Inline_Phone' },
-        url: dataUrl,
-        async: false
-      }).done( function(response) {
-        cj( '#phone-block' ).html( response );
-      });
-      
-      removeCiviOverlay('.crm-summary-phone-block');
-   });
-});
-</script>
-{/literal}
-{/if}

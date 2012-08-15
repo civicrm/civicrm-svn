@@ -23,13 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-table2div-layout" id="custom-set-content-{$customGroupId}">
-  <div class="crm-clear">
-    <div class="crm-config-option">
-      <a id="edit-custom-set-block-{$customGroupId}" class="hiddenElement crm-link-action" title="{ts}click to add or edit{/ts}" cgId="{$customGroupId}">
-      <span class="batch-edit"></span>{ts}add or edit custom set{/ts}
-      </a>
-    </div>
+<div id="custom-set-content-{$customGroupId}" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_CustomData", "groupID": "{$customGroupId}"{rdelim}' title="{ts}Edit{/ts}{/if}">
+  <div class="crm-clear"><!-- start of main -->
+    {if $permission EQ 'edit'}
+      <div class="crm-edit-help">
+        <span class="batch-edit"></span>{ts}Edit{/ts}
+      </div>
+    {/if}
 
   {foreach from=$cd_edit.fields item=element key=field_id}
   {if $element.options_per_line != 0}

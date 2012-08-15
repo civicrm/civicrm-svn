@@ -238,7 +238,6 @@
             action="setvalue";
           }
           $().crmAPI.call(this,entity,action,params,{
-          //cj().crmAPI.call(this,entity,'setvalue/create',params,{
               error: function (data) {
                 editableSettings.error.call(this,entity,fieldName,value,data);
               },
@@ -312,5 +311,107 @@
 
     });
   };
+
+  $.fn.crmFormInline = function() {
+    var o = $(this[0]);
+    var data = o.data('edit-params');
+    if (data) {
+      o.animate({height: '+=100px'}, 300);
+      data.snippet = 5;
+      data.reset = 1;
+      o.addClass('form');
+      addCiviOverlay(o);
+      $.ajax({
+        url: $.crmURL('civicrm/ajax/inline', data),
+      }).done( function(response) {
+        o.removeAttr('style').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append( response );
+        removeCiviOverlay(o);
+        $('form', o).ajaxForm( {beforeSubmit: requestHandler} );
+        $(':submit[name$=cancel]', o).click(function() {
+          var container = $(this).closest('.crm-inline-edit.form');
+          $('.inline-edit-hidden-content', container).nextAll().remove();
+          $('.inline-edit-hidden-content > *:first-child', container).unwrap();
+          container.removeClass('form');
+          return false;
+        });
+      });
+    }
+  };
+
+  function requestHandler(formData, jqForm, options) {
+    var o = jqForm.closest('div.crm-inline-edit.form');
+    var data = o.data('edit-params');
+    data.snippet = 5;
+    data.reset = 1;
+    var queryString = $.param(formData) + '&' + $.param(data); 
+    var postUrl = $.crmURL('civicrm/ajax/inline'); 
+    $.ajax({
+      type: "POST",
+      url: postUrl,
+      data: queryString,
+      dataType: "json",
+      success: function( response ) {
+        if (status = response.status) {
+          var data = o.data('edit-params');
+          var dependent = o.data('dependent-fields') || [];
+          // Clone the add-new link if replacing it
+          if (o.hasClass('add-new')) {
+            if (response.addressId) {
+              data.aid = response.addressId;
+            }
+            o.data('edit-params', data);
+            var clone = o.parent().clone();
+            o.attr('id', 'old-' + o.attr('id'));
+            $('.crm-container-snippet', clone).remove();
+            if (clone.hasClass('contactCardLeft')) {
+              clone.removeClass('contactCardLeft').addClass('contactCardRight');
+            }
+            else if (clone.hasClass('contactCardRight')) {
+              clone.removeClass('contactCardRight').addClass('contactCardLeft');
+            }
+            o.parent().after(clone);
+            $.merge(dependent, $('.crm-inline-edit', clone));
+          }
+          // Reload this block plus all dependent blocks
+          var update = $.merge([o], dependent);
+          for (var i in update) {
+            var block = $(update[i]);
+            var data = block.data('edit-params');
+            data.snippet = 1;
+            data.reset = 1;
+            data.class_name = data.class_name.replace('Form', 'Page');
+            data.type = 'page';
+            block.parent().load(postUrl, data);
+          }
+        }
+      },
+      error: function (obj, status) {
+        $('.crm-container-snippet', o).replaceWith(obj.responseText);
+        $('form', o).ajaxForm( {beforeSubmit: requestHandler} );
+      }
+    });
+    // disable ajaxForm submit
+    return false; 
+  };
+
+  $('document').ready(function() {
+    var clicking, timer;
+    $('#crm-container').on('mousedown', '.crm-inline-edit:not(.form)', function(button) {
+      if (button.which == 1) {
+        clicking = this;
+        setTimeout(function() {clicking = null;}, 500);
+      }
+    });
+    $('#crm-container').on('mouseup', '.crm-inline-edit:not(.form)', function(button) {
+      if (clicking === this && button.which == 1) {
+        $(this).crmFormInline();
+      }
+    });
+    $(document).keyup(function(key) {
+      if (key.which == 27) {
+        $('.crm-inline-edit.form .crm-button-type-cancel :submit').click();
+      }
+    });
+  });
 
 })(jQuery);

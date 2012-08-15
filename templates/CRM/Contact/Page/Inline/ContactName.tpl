@@ -23,45 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="crm-contactname-content">
+<div id="crm-contactname-content" {if $permission EQ 'edit'}class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_ContactName"{rdelim}' data-dependent-fields='["#crm-communication-pref-content"]' title="{ts}Edit name{/ts}{/if}">
   {if $permission EQ 'edit'}
-  <div class="crm-config-option">
-      <a id="edit-contactname" class="hiddenElement crm-link-action" title="{ts}click to edit{/ts}">
-      <span class="batch-edit"></span>{ts}edit{/ts}
-    </a>
-  </div>
+    <div class="crm-edit-help">
+      <span class="batch-edit"></span>{ts}Edit name{/ts}
+    </div>
   {/if}
 
   <div class="crm-summary-display_name">{$title}</div>
 </div>
-
-{if $permission EQ 'edit'}
-{literal}
-<script type="text/javascript">
-cj(function(){
-    cj('#contactname-block').mouseenter( function() {
-      cj(this).addClass('crm-inline-edit-hover');
-      cj('#edit-contactname').show();
-    }).mouseleave( function() {
-      cj(this).removeClass('crm-inline-edit-hover');
-      cj('#edit-contactname').hide();
-    });
-
-    cj('#edit-contactname').click( function() {
-      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-      
-      addCiviOverlay('.crm-summary-contactname-block');
-      cj.ajax({
-        data: { 'class_name':'CRM_Contact_Form_Inline_ContactName' },
-        url: dataUrl,
-        async: false
-      }).done( function(response) {
-        cj( '#contactname-block' ).html( response );
-      });
-      
-      removeCiviOverlay('.crm-summary-contactname-block');
-   });
-});
-</script>
-{/literal}
-{/if}

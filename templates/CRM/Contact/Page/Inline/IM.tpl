@@ -24,22 +24,16 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building IM block*}
-<div class="crm-table2div-layout" id="crm-im-content">
-  <div class="crm-clear"> <!-- start of main -->
+<div id="crm-im-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_IM"{rdelim}' title="{ts}Add or edit IM{/ts}{/if}">
+  <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
-     {if $im}
-     <div class="crm-config-option">
-      <a id="edit-im" class="hiddenElement crm-link-action" title="{ts}click to add or edit im{/ts}">
-        <span class="batch-edit"></span>{ts}add or edit im{/ts}
-      </a>
-    </div>
-    {else}
-      <div>
-        <a id="edit-im" class="crm-link-action empty-im" title="{ts}click to add a im{/ts}">
-          <span class="batch-edit"></span>{ts}add im{/ts}
-        </a>
+      <div class="crm-edit-help">
+        <span class="batch-edit"></span>{if empty($im)}{ts}Add IM{/ts}{else}{ts}Add or edit IM{/ts}{/if}
       </div>
-     {/if}
+    {/if}
+    {if empty($im)}
+      <div class="crm-label">{ts}IM{/ts}</div>
+      <div class="crm-content"></div>
     {/if}
     {foreach from=$im item=item}
       {if $item.name or $item.provider}
@@ -52,35 +46,3 @@
    </div> <!-- end of main -->
 </div>
 
-{if $permission EQ 'edit'}
-{literal}
-<script type="text/javascript">
-cj(function(){
-    cj('#im-block').mouseenter( function() {
-      cj(this).addClass('crm-inline-edit-hover');
-      cj('#edit-im').show();
-    }).mouseleave( function() {
-      cj(this).removeClass('crm-inline-edit-hover');
-      if ( !cj('#edit-im').hasClass('empty-im') ) { 
-      cj('#edit-im').hide();
-      }
-    });
-
-    cj('#edit-im').click( function() {
-        var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-        
-        addCiviOverlay('.crm-summary-im-block');
-        cj.ajax({ 
-          data: { 'class_name':'CRM_Contact_Form_Inline_IM' },
-          url: dataUrl,
-          async: false
-        }).done( function(response) {
-          cj( '#im-block' ).html( response );
-        });
-        
-        removeCiviOverlay('.crm-summary-im-block');
-    });
-});
-</script>
-{/literal}
-{/if}

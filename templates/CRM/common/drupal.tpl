@@ -79,19 +79,6 @@
 {/if}
 {/crmRegion}
 
-{literal}
-<script type="text/javascript">
-cj(function() {
-   cj().crmtooltip(); 
-});
+{include file="CRM/common/scripts.tpl"}
 
-cj(document).ready(function() {
-  advmultiselectResize();
-});
-
-cj(window).resize(function() {
-  advmultiselectResize();
-});
-</script>
-{/literal}
 </div> {* end crm-container div *}

@@ -5,7 +5,7 @@
     display: inline;
 }
 
-#crm-container .hiddenElement, #crm-container-snippet .hiddenElement {
+#crm-container .hiddenElement, .crm-container-snippet .hiddenElement {
     display   	    : none;
 }
 
@@ -593,9 +593,13 @@ div.spacer,
     margin: 1.0em 0em 1.0em;
     border: none;
     font-weight: normal;
-}	
-#crm-container .messages table, #crm-container-snippet .messages table {width: auto;}
-#crm-container .messages table td, #crm-container-snippet .messages table td { 
+}
+#crm-container .messages table,
+.crm-container-snippet .messages table {
+  width: auto;
+}
+#crm-container .messages table td,
+.crm-container-snippet .messages table td { 
     background-color: #F7F7F7;
     border-bottom: 1px solid #DDDDDD;
 }
@@ -1826,15 +1830,52 @@ div.grippie {
     text-transform: uppercase;
 }
 
-#crm-container div.crm-summary-block, 
-#crm-container div.contact_panel div.crm-summary-block {
-    border: 2px dashed transparent;
-    background: none;
+#crm-container div.contact_panel * { 
+    border:0px;
 }
 
-#crm-container div.crm-inline-edit-hover, 
-#crm-container div.contact_panel div.crm-inline-edit-hover {
-    border: 2px dashed lightgrey;
+#crm-container div.crm-inline-edit {
+  border: 2px dashed transparent;
+  background: none;
+  position: relative;
+}
+
+#crm-container div.crm-inline-edit:hover {
+  cursor: pointer;
+  border: 2px dashed lightgrey;
+}
+
+#crm-container div.crm-inline-edit.form {
+  cursor: default;
+  border: 2px dashed #6665BF;
+}
+
+#crm-container .crm-inline-edit.add-new {
+  min-height: 2.5em;
+}
+
+#crm-container div.crm-inline-edit .crm-edit-help {
+  display: none;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  opacity: .8;
+  padding: .4em;
+  border-bottom-left-radius: 1em;
+}
+
+#crm-container .crm-inline-edit.add-new .crm-edit-help {
+  display: block;
+  background-color: #EBEBEB;
+}
+
+#crm-container div.crm-inline-edit:hover .crm-edit-help {
+  display:block;
+  background-color: #DFE1FF;
+}
+
+#crm-container div.crm-inline-edit.form .crm-edit-help {
+  display: none !important;
 }
 
 #crm-container div.crm-summary-contactname-block {
@@ -1845,10 +1886,6 @@ div.grippie {
 #crm-container div.crm-summary-display_name {
  font-size: 19px;
  padding-bottom: 10px;
-}
-
-#crm-container div.contact_panel * { 
-    border:0px;
 }
 
 #crm-container div.contactCardLeft, #crm-container div#Top {

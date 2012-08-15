@@ -46,8 +46,6 @@
     </div>
   </div> <!-- end of main -->
 
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
 {literal}
 <script type="text/javascript">
 function showDeceasedDate( ) {
@@ -60,9 +58,7 @@ function showDeceasedDate( ) {
 }
 
 cj( function() {
-  showDeceasedDate( );    
-  // add ajax form submitting
-  inlineEditForm( 'Demographics', 'demographic-block', {/literal}{$contactId}{literal} ); 
+  showDeceasedDate( );
 });
 </script>
 {/literal}

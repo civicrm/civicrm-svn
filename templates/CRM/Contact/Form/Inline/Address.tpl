@@ -24,7 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {* This file builds html for address block inline edit *}
-<div id="Address_Block_{$blockId}"class="boxBlock crm-edit-address-block">
   <table class="form-layout crm-edit-address-form crm-inline-edit-form">
     <tr>
       <td>
@@ -56,7 +55,7 @@
  
      <tr>
       <td>
-        <table id="address_{$blockId}" class="form-layout-compressed">
+        <table id="address_table_{$blockId}" class="form-layout-compressed">
            {* build address block w/ address sequence. *}
            {foreach item=addressElement from=$addressSequence}
             {include file=CRM/Contact/Form/Edit/Address/$addressElement.tpl}
@@ -70,24 +69,8 @@
   <div class="crm-edit-address-custom_data crm-inline-edit-form crm-address-custom-set-block-{$blockId}"> 
     {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
   </div> 
-</div>
-
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
 {literal}
 <script type="text/javascript">
-cj( function() {
   cj().crmaccordions(); 
-  
-  var blockId   = {/literal}{$blockId}{literal};
-  var addressId = {/literal}{$addressId}{literal};
-  
-  // add ajax form submitting
-  inlineEditForm( 'Address', 'address-block-'+ blockId,
-    {/literal}{$contactId}{literal},
-    null, blockId, addressId );
-});
-
 </script>
 {/literal}
-

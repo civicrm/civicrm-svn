@@ -59,8 +59,6 @@
     {/section}
 </table>
 
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
 {literal}
 <script type="text/javascript">
     cj( function() {
@@ -99,10 +97,6 @@
           cj('#add-more-im').hide();
         }
       });
-
-      // add ajax form submitting
-      inlineEditForm( 'IM', 'im-block', {/literal}{$contactId}{literal} ); 
- 
     });
 
 </script>

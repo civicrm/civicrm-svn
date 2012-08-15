@@ -24,24 +24,17 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building OpenID block*}
-<div class="crm-table2div-layout" id="crm-openid-content">
-  <div class="crm-clear"> <!-- start of main -->
+<div id="crm-openid-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_OpenID"{rdelim}' title="{ts}Add or edit OpenID{/ts}{/if}">
+  <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
-      {if $openid}
-        <div class="crm-config-option">
-          <a id="edit-openid" class="hiddenElement crm-link-action" title="{ts}click to add or edit OpenID  {/ts}">
-            <span class="batch-edit"></span>{ts}add or edit OpenID{/ts}
-          </a>
-        </div>
-      {else}
-        <div>
-          <a id="edit-openid" class="crm-link-action empty-openid" title="{ts}click to add a OpenID{/ts}">
-            <span class="batch-edit"></span>{ts}add OpenID{/ts}
-          </a>
-        </div>
-      {/if}
+      <div class="crm-edit-help">
+        <span class="batch-edit"></span>{if empty($openid)}{ts}Add OpenID{/ts}{else}{ts}Add or edit OpenID{/ts}{/if}
+      </div>
     {/if}
-
+    {if empty($openid)}
+      <div class="crm-label">{ts}OpenID{/ts}</div>
+      <div class="crm-content"></div>
+    {/if}
     {foreach from=$openid item=item}
       {if $item.openid}
       <div class="crm-label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</div>
@@ -51,36 +44,3 @@
     {/foreach}
    </div> <!-- end of main -->
 </div>
-
-{if $permission EQ 'edit'}
-{literal}
-<script type="text/javascript">
-cj(function(){
-    cj('#openid-block').mouseenter( function() {
-      cj(this).addClass('crm-inline-edit-hover');
-      cj('#edit-openid').show();
-    }).mouseleave( function() {
-      cj(this).removeClass('crm-inline-edit-hover');
-      if ( !cj('#edit-openid').hasClass('empty-openid') ) { 
-      cj('#edit-openid').hide();
-      }
-    });
-
-    cj('#edit-openid').click( function() {
-      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-      
-      addCiviOverlay('.crm-summary-openid-block');
-      cj.ajax({ 
-        data: { 'class_name':'CRM_Contact_Form_Inline_OpenID' },
-        url: dataUrl,
-        async: false
-      }).done( function(response) {
-        cj( '#openid-block' ).html( response );
-      });
-      
-      removeCiviOverlay('.crm-summary-openid-block');
-    });
-});
-</script>
-{/literal}
-{/if}

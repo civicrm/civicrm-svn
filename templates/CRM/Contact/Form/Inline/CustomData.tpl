@@ -30,14 +30,3 @@
   </div>
   {include file="CRM/Custom/Form/CustomData.tpl" skipTitle=true}
 </div> <!-- end of main -->
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
-{literal}
-<script type="text/javascript">
-cj( function() {
-  var cgId = {/literal}{$customGroupId}{literal};
-  // add ajax form submitting
-  inlineEditForm( 'CustomData', 'custom-set-block-' + cgId, {/literal}{$contactId}{literal}, cgId ); 
-});
-</script>
-{/literal}

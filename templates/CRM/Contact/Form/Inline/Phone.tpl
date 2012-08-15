@@ -59,8 +59,6 @@
     {/section}
 </table>
 
-{include file="CRM/Contact/Form/Inline/InlineCommon.tpl"}
-
 {literal}
 <script type="text/javascript">
     cj( function() {
@@ -95,15 +93,10 @@
         rowSelector.removeClass('hiddenElement');
         var rowId = rowSelector.attr('id').replace('Phone_Block_', '');
         cj('#phone_' + rowId + '_phone').focus();
-        console.log(rowId);
         if ( cj('tr[id^="Phone_Block_"][class="hiddenElement"]').length == 0  ) {
           cj('#add-more-phone').hide();
         }
       });
-
-      // add ajax form submitting
-      inlineEditForm( 'Phone', 'phone-block', {/literal}{$contactId}{literal} ); 
- 
     });
 
 </script>

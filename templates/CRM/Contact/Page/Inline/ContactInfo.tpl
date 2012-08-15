@@ -23,15 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-table2div-layout" id="crm-contactinfo-content">
-    <div class="crm-clear"> <!-- start of main -->
-      {if $permission EQ 'edit'}
-      <div class="crm-config-option">
-          <a id="edit-contactinfo" class="hiddenElement crm-link-action" title="{ts}click to add or edit{/ts}">
-          <span class="batch-edit"></span>{ts}add or edit info{/ts}
-        </a>
-      </div>
-      {/if}
+<div id="crm-contactinfo-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_ContactInfo"{rdelim}' title="{ts}Add or edit info{/ts}{/if}">
+  <div class="crm-clear"><!-- start of main -->
+    {if $permission EQ 'edit'}
+    <div class="crm-edit-help">
+      <span class="batch-edit"></span>{ts}Add or edit info{/ts}
+    </div>
+    {/if}
 
       {if $contact_type eq 'Individual'}
       <div class="crm-label">{ts}Employer{/ts}</div>
@@ -56,35 +54,4 @@
       <div class="crm-content crm-contact_source">{$source}</div>
 
     </div> <!-- end of main -->
-  </div>
-
-{if $permission EQ 'edit'}
-{literal}
-<script type="text/javascript">
-cj(function(){
-    cj('#contactinfo-block').mouseenter( function() {
-      cj(this).addClass('crm-inline-edit-hover');
-      cj('#edit-contactinfo').show();
-    }).mouseleave( function() {
-      cj(this).removeClass('crm-inline-edit-hover');
-      cj('#edit-contactinfo').hide();
-    });
-
-    cj('#edit-contactinfo').click( function() {
-      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1&cid='}{$contactId}"{literal}; 
-      
-      addCiviOverlay('.crm-summary-contactinfo-block');
-      cj.ajax({
-        data: { 'class_name':'CRM_Contact_Form_Inline_ContactInfo' },
-        url: dataUrl,
-        async: false
-      }).done( function(response) {
-        cj( '#contactinfo-block' ).html( response );
-      });
-      
-      removeCiviOverlay('.crm-summary-contactinfo-block');
-   });
-});
-</script>
-{/literal}
-{/if}
+</div>
