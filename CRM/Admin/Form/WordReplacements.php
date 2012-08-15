@@ -209,7 +209,7 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form {
       if (CRM_Utils_Array::value($i, $params['new']) &&
         CRM_Utils_Array::value($i, $params['old'])
       ) {
-        if (CRM_Utils_Array::value($i, $params['enabled'])) {
+        if (isset($params['enabled']) && CRM_Utils_Array::value($i, $params['enabled'])) {
           if (CRM_Utils_Array::value('cb', $params) &&
             CRM_Utils_Array::value($i, $params['cb'])
           ) {
