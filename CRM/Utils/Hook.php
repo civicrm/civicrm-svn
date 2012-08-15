@@ -62,16 +62,27 @@ abstract class CRM_Utils_Hook {
   static private $_singleton = NULL;
 
   /**
+   * @var bool
+   */
+  private $commonIncluded = FALSE;
+
+  /**
+   * @var array(string)
+   */
+  private $commonCiviModules = array();
+
+  /**
    * Constructor and getter for the singleton instance
    *
    * @return instance of $config->userHookClass
    */
-  static function singleton() {
-    if (self::$_singleton == NULL) {
+  static function singleton($fresh = FALSE) {
+    if (self::$_singleton == NULL || $fresh) {
       $config = CRM_Core_Config::singleton();
       $class = $config->userHookClass;
       require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userHookClass) . '.php');
       self::$_singleton = new $class();
+      dpm(array("Hook: instantiate $class" => self::$_singleton));
     }
     return self::$_singleton;
   }
@@ -84,12 +95,9 @@ abstract class CRM_Utils_Hook {
     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
     $fnSuffix, $fnPrefix
   ) {
-    static $included = FALSE;
-    static $civiModules = array();
-
-    if (!$included) {
+    if (!$this->commonIncluded) {
       // include external file
-      $included = TRUE;
+      $this->commonIncluded = TRUE;
 
       $config = CRM_Core_Config::singleton();
       if (!empty($config->customPHPPathDir) &&
@@ -99,13 +107,13 @@ abstract class CRM_Utils_Hook {
       }
 
       if (!empty($fnPrefix)) {
-        $civiModules[$fnPrefix] = $fnPrefix;
+        $this->commonCiviModules[$fnPrefix] = $fnPrefix;
       }
 
-      $this->requireCiviModules($civiModules);
+      $this->requireCiviModules($this->commonCiviModules);
     }
 
-    return $this->runHooks($civiModules, $fnSuffix,
+    return $this->runHooks($this->commonCiviModules, $fnSuffix,
       $numParams, $arg1, $arg2, $arg3, $arg4, $arg5
     );
   }
