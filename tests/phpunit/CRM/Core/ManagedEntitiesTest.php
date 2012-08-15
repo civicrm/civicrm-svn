@@ -17,10 +17,14 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
       'one' => new CRM_Core_Module('com.example.one', TRUE),
       'two' => new CRM_Core_Module('com.example.two', TRUE),
     );
+    $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_managed');
+    $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value WHERE name like "CRM_Example_%"');
   }
 
   function tearDown() {
     parent::tearDown();
+    CRM_Core_DAO::singleValueQuery('DELETE FROM civicrm_managed');
+    CRM_Core_DAO::singleValueQuery('DELETE FROM civicrm_option_value WHERE name like "CRM_Example_%"');
   }
 
   /**
@@ -97,13 +101,17 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $me->reconcile();
     $foo = $me->get('com.example.one', 'foo');
     $this->assertEquals('CRM_Example_One_Foo', $foo['name']);
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
 
     // later on, hook specification changes
     $decls[0]['params']['class_name'] = 'CRM_Example_One_Foobar';
     $me = new CRM_Core_ManagedEntities($this->modules, $decls);
     $me->reconcile();
-    $foo = $me->get('com.example.one', 'foo');
-    $this->assertEquals('CRM_Example_One_Foobar', $foo['name']);
+    $foo2 = $me->get('com.example.one', 'foo');
+    $this->assertEquals('CRM_Example_One_Foobar', $foo2['name']);
+    $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_FooBar"');
+    $this->assertEquals($foo['id'], $foo2['id']);
   }
 
   /**
@@ -242,12 +250,14 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $me->reconcile();
     $foo = $me->get('com.example.one', 'foo');
     $this->assertEquals('CRM_Example_One_Foo', $foo['name']);
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
 
     // then destory module; note that decls go away
     unset($this->modules['one']);
     $me = new CRM_Core_ManagedEntities($this->modules, array());
     $me->reconcile();
-    $foo = $me->get('com.example.one', 'foo');
-    $this->assertTrue(NULL === $foo);
+    $fooNew = $me->get('com.example.one', 'foo');
+    $this->assertTrue(NULL === $fooNew);
+    $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
   }
 }

@@ -68,7 +68,7 @@ class api_v3_CustomSearchTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value
       WHERE name = "CRM_Contact_Form_Search_Custom_Examplez"
-      AND label = "CRM_Contact_Form_Search_Custom_Examplez"
-      AND option_group_id = 24');
+      OR label = "CRM_Contact_Form_Search_Custom_Examplez"
+      ');
   }
 }

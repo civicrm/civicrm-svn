@@ -79,6 +79,8 @@ class CRM_Core_ManagedEntities {
     foreach ($decls as $moduleName => $todos) {
       if (isset($this->moduleIndex[TRUE][$moduleName])) {
         $this->reconcileEnabledModule($this->moduleIndex[TRUE][$moduleName], $todos);
+      } elseif (isset($this->moduleIndex[FALSE][$moduleName])) {
+        // do nothing -- module should get swept up later
       } else {
         throw new Exception("Entity declaration references invalid or inactive module name [$moduleName]");
       }
@@ -156,6 +158,9 @@ class CRM_Core_ManagedEntities {
           'id' => $dao->entity_id,
           'is_active' => 0,
         ));
+        if ($result['is_error']) {
+          throw new Exception('API error: ' . $result['error_message']);
+        }
       }
     }
   }
@@ -177,7 +182,7 @@ class CRM_Core_ManagedEntities {
     }
     $dao->find();
     while ($dao->fetch()) {
-      $result = civicrm_api($dao->entity_type, 'create', array(
+      $result = civicrm_api($dao->entity_type, 'delete', array(
         'version' => 3,
         'id' => $dao->entity_id,
       ));

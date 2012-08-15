@@ -68,6 +68,6 @@ class api_v3_ReportTemplateTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value
       WHERE name = "CRM_Report_Form_Examplez"
-      AND option_group_id = 40');
+      ');
   }
 }
