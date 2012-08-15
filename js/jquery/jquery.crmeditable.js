@@ -409,7 +409,7 @@
     });
     $(document).keyup(function(key) {
       if (key.which == 27) {
-        $('.crm-inline-edit.form .crm-button-type-cancel :submit').click();
+        $('.crm-inline-edit.form :submit[name$=cancel]').click();
       }
     });
   });
