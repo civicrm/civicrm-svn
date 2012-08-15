@@ -634,6 +634,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
     $this->clearDBCache();
 
     CRM_Core_PseudoConstant::getModuleExtensions(TRUE);
+    CRM_Core_ManagedEntities::singleton(TRUE)->reconcile();
 
     $session = CRM_Core_Session::singleton();
     $session->reset(2);

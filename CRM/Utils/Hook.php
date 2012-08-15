@@ -340,6 +340,21 @@ abstract class CRM_Utils_Hook {
   }
 
   /**
+   * This hook is called for declaring managed entities via API
+   *
+   * @param array $entities List of pending entities
+   *
+   * @return null the return value is ignored
+   * @access public
+   */
+  static function managed(&$entities) {
+    return self::singleton()->invoke(1, $entities,
+      self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+      'civicrm_managed'
+    );
+  }
+
+  /**
    * This hook is called when rendering the dashboard (q=civicrm/dashboard)
    *
    * @param int $contactID - the contactID for whom the dashboard is being rendered
