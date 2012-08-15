@@ -208,6 +208,7 @@ class CRM_Core_Extensions_Extension {
         $this->_runPaymentHook('install');
       }
     }
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   /**
@@ -227,6 +228,7 @@ class CRM_Core_Extensions_Extension {
         }
       }
     }
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   public function upgrade() {
@@ -234,6 +236,7 @@ class CRM_Core_Extensions_Extension {
     $this->removeFiles();
     $this->installFiles();
     //TODO// $this->_updateExtensionEntry();
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   /**
@@ -375,6 +378,7 @@ class CRM_Core_Extensions_Extension {
     if ($this->type == 'payment') {
       $this->_runPaymentHook('enable');
     }
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   public function disable() {
@@ -383,6 +387,7 @@ class CRM_Core_Extensions_Extension {
     }
     $this->_setActiveByType(0);
     CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 0);
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   private function _setActiveByType($state) {
