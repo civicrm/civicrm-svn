@@ -25,8 +25,6 @@
  *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2012
- * $Id$
- *
  */
 require_once 'civicrm_user.inc';
 
@@ -103,19 +101,7 @@ function civicrm_html_head() {
 }
 
 /**
- * @file
- * This is an example outlining how a module can be used to display a
- * custom page at a given URL.
- */
-
-/**
- * Implementation of hook_help().
- *
- * Throughout Drupal, hook_help() is used to display help text at the top of
- * pages. Some other parts of Drupal pages get explanatory text from these hooks
- * as well. We use it here to provide a description of the module on the
- * module administration page. This example also illustrates how to add help
- * text to the pages your module defines.
+ * Implements hook_help().
  */
 function civicrm_help($section) {
   switch ($section) {
@@ -169,13 +155,7 @@ function civicrm_help($section) {
 }
 
 /**
- * Implementation of hook_permissions(). (D7 and after)
- g *
- * Since the access to our new custom pages will be granted based on
- * special permissions, we need to define what those permissions are here.
- * This ensures that they are available to enable on the user role
- * administration pages.
- *
+ * Implements hook_permissions().
  */
 function civicrm_permission() {
   // make sure the system is initialized
@@ -196,7 +176,7 @@ function civicrm_permission() {
 }
 
 /**
- * Implementation of hook_block_info (D7)
+ * Implements hook_block_info
  */
 function civicrm_block_info() {
   if (!civicrm_initialize()) {
@@ -208,7 +188,7 @@ function civicrm_block_info() {
 }
 
 /**
- * Implementation of hook_block_view (D7)
+ * Implements hook_block_view
  */
 function civicrm_block_view($delta = '0') {
   if (!civicrm_initialize()) {
@@ -220,20 +200,7 @@ function civicrm_block_view($delta = '0') {
 }
 
 /**
- * Implementation of hook_menu().
- *
- * You must implement hook_menu() to emit items to place in the main menu.
- * This is a required step for modules wishing to display their own pages,
- * because the process of creating the links also tells Drupal what
- * callback function to use for a given URL. The menu items returned
- * here provide this information to the menu system.
- *
- * With the below menu definitions, URLs will be interpreted as follows:
- *
- * If the user accesses http://example.com/?q=foo, then the menu system
- * will first look for a menu item with that path. In this case it will
- * find a match, and execute civicrm_foo().
- *
+ * Implements hook_menu().
  */
 function civicrm_menu() {
   if (!civicrm_initialize()) {
@@ -265,12 +232,11 @@ function civicrm_menu() {
 /**
  * Initialize CiviCRM. Call this function from other modules too if
  * they use the CiviCRM API.
- *
  */
 function civicrm_initialize() {
   // Check for php version and ensure its greater than 5.
-  // do a fatal exit if
-  if ((int ) substr(PHP_VERSION, 0, 1) < 5) {
+  // Do a fatal exit if not.
+  if ((int) substr(PHP_VERSION, 0, 1) < 5) {
     echo "CiviCRM requires PHP Version 5.2 or greater. You are running PHP Version " . PHP_VERSION . "<p>";
     exit();
   }
@@ -303,7 +269,6 @@ function civicrm_initialize() {
     $errorMsgAdd = t("Please review the <a href='!1'>Drupal Installation Guide</a> and the <a href='!2'>Trouble-shooting page</a> for assistance. If you still need help installing, you can often find solutions to your issue by searching for the error message in the <a href='!3'>installation support section of the community forum</a>.</strong></p>",
       array('!1' => $docLinkInstall, '!2' => $docLinkTrouble, '!3' => $forumLink)
     );
-
 
     if ($error == FALSE) {
       $failure = TRUE;
@@ -403,8 +368,7 @@ function civicrm_get_ctype($default = NULL) {
 }
 
 /**
- * This is the main function that is called on any civicrm click
- *
+ * This is the main function that is called on any civicrm page
  */
 function civicrm_invoke() {
   // check if this is a redirect and maybe a user login?
@@ -638,8 +602,8 @@ function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = FAL
   }
 
   if ($html) {
-    $html             = civicrm_add_jquery($html);
-    $index            = empty($category) ? 'civicrm-profile-my-account' : $category;
+    $html = civicrm_add_jquery($html);
+    $index = empty($category) ? 'civicrm-profile-my-account' : $category;
     $output[$index][] = array(
       '#title' => $category,
       '#value' => $html,
@@ -748,10 +712,10 @@ function civicrm_enable() {
 }
 
 /**
- * An implementation of hook_translated_menu_item_alter(). This is a hack
+ * An Implements hook_translated_menu_item_alter(). This is a hack
  * to hide the CiviCRM menu from the drupal navigation block for folks
  * who dont have access CiviCRM permissions
- **/
+ */
 function civicrm_translated_menu_link_alter(&$item) {
   if ($item['router_path'] == 'civicrm' &&
     $item['module'] == 'civicrm' &&
@@ -783,7 +747,7 @@ function civicrm_admin_menu_output_alter(&$content) {
 }
 
 /**
- * Implementation of hook_views_api().
+ * Implements hook_views_api().
  */
 function civicrm_views_api() {
   return array(
@@ -857,7 +821,7 @@ function civicrm_form_alter(&$form, $formValues, $formID) {
 
 /*
  *
- * Implementation of hook_theme_registry_alter().
+ * Implements hook_theme_registry_alter().
  * Based on the jquery_update module.
  *
  * Make sure this page preprocess function runs last
@@ -875,7 +839,7 @@ function civicrm_theme_registry_alter(&$theme_registry) {
 }
 
 /**
- * Implementation of moduleName_preprocess_hook().
+ * Implements moduleName_preprocess_hook().
  * Based on the jquery_update module functions.
  *
  * Strips out JS and CSS for a path.
@@ -892,9 +856,9 @@ function civicrm_preprocess_page(&$variables) {
      *
      * // Only do this for pages that have JavaScript on them.
      *  if (!empty($variables['scripts'])) {
-     *  	$path = drupal_get_path('module', 'date_popup');
-     *  	unset($scripts['module'][$path . '/lib/ui.datepicker.js']);
-     *  	$variables['scripts'] = drupal_get_js('header', $scripts);
+     *    $path = drupal_get_path('module', 'date_popup');
+     *    unset($scripts['module'][$path . '/lib/ui.datepicker.js']);
+     *    $variables['scripts'] = drupal_get_js('header', $scripts);
      *  }
      */
 
@@ -912,7 +876,6 @@ function civicrm_preprocess_page(&$variables) {
  * Supporting functions to allow using drupal input formats and WYSIWYG API
  * as a CiviCRM rich text editor. This code is in the Drupal module because it's
  * Drupal-version dependent.
- *
  */
 function civicrm_drupal_get_wysiwyg_html($attributes, $value = '', $format = NULL) {
   $form = drupal_get_form('civicrm_drupal_wysiwyg_form', $attributes, $value, $format);
@@ -991,7 +954,7 @@ function civicrm_drupal_wysiwyg_update_value($element, $caller) {
 }
 
 /**
- * Implementation of hook_filter_tips
+ * Implements hook_filter_tips
  */
 function civicrm_filter_info() {
   $filters = array();
@@ -1007,7 +970,7 @@ function civicrm_filter_info() {
 }
 
 /**
- * Implementation of hook_filter_FILTER_tips
+ * Implements hook_filter_FILTER_tips
  */
 function _civicrm_filter_tips($filter, $format, $long = FALSE) {
   return t('Evaluate <a target="_blank" href="@smarty">Smarty</a> and <a target="_blank" href="@civiapi">CiviCRM API</a> codes',
@@ -1019,7 +982,7 @@ function _civicrm_filter_tips($filter, $format, $long = FALSE) {
 }
 
 /**
- * Implementation of hook_filter_FILTER_process
+ * Implements hook_filter_FILTER_process
  */
 function _civicrm_filter_process($text, $filter, $format, $langcode, $cache, $cache_id) {
   civicrm_initialize();
@@ -1043,6 +1006,9 @@ function _civicrm_filter_process($text, $filter, $format, $langcode, $cache, $ca
   return $text;
 }
 
+/**
+ * Implements hook_civicrm_postProcess
+ */
 function civicrm_civicrm_postProcess($formName, $form) {
   // Reset Views Cache when CiviCRM components page is saved
   if ($form instanceof CRM_Admin_Form_Setting_Component) {
@@ -1052,19 +1018,15 @@ function civicrm_civicrm_postProcess($formName, $form) {
   }
 }
 
+/**
+ * Implements hook_civicrm_merge
+ */
 function civicrm_civicrm_merge($type, &$data, $mainId, $otherId, $tables) {
   if ($mainId == 2311 && $otherId == 5686 && $type == 'batch') {
     $conflicts = &$data['fields_in_conflict'];
     $conflicts['move_custom_1'] = 'end_user';
     unset($conflicts['move_custom_8']);
   }
-  /*     CRM_Core_Error::debug_var('hook $type',$type); */
-
-  /*     CRM_Core_Error::debug_var('$data',$data); */
-
-  /*     CRM_Core_Error::debug_var('$mainId',$mainId); */
-
-  /*     CRM_Core_Error::debug_var('$otherId',$otherId); */
 }
 
 /**
@@ -1220,4 +1182,3 @@ function civicrm_reviews() {
   );
   return array('civicrm_coder' => $review);
 }
-
