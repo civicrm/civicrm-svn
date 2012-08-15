@@ -82,7 +82,6 @@ abstract class CRM_Utils_Hook {
       $class = $config->userHookClass;
       require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userHookClass) . '.php');
       self::$_singleton = new $class();
-      dpm(array("Hook: instantiate $class" => self::$_singleton));
     }
     return self::$_singleton;
   }
