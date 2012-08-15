@@ -1,6 +1,6 @@
 -- FIXME: the final release version is uncertain -- could 4.2.0 or 4.2.1; make sure this fixed before merging
 -- CRM-10660
-CREATE TABLE `civicrm_declared` (
+CREATE TABLE `civicrm_managed` (
 
 
      `id` int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Surrogate Key',
@@ -10,11 +10,11 @@ CREATE TABLE `civicrm_declared` (
      `entity_id` int unsigned NOT NULL   COMMENT 'Foreign key to the referenced item.',
     PRIMARY KEY ( `id` )
  
-    ,     INDEX `UI_declared_module_name`(
+    ,     INDEX `UI_managed_module_name`(
         `module`
       , `name`
   )
-  ,     INDEX `UI_declared_entity`(
+  ,     INDEX `UI_managed_entity`(
         `entity_type`
       , `entity_id`
   )

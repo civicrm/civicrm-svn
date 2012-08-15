@@ -42,7 +42,7 @@ class CRM_Core_ManagedEntities {
    * Read the managed entity
    */
   public function get($moduleName, $name) {
-    $dao = new CRM_Core_DAO_Declared();
+    $dao = new CRM_Core_DAO_Managed();
     $dao->module = $moduleName;
     $dao->name = $name;
     if ($dao->find(TRUE)) {
@@ -92,7 +92,7 @@ class CRM_Core_ManagedEntities {
    * @param $todos array $name => array()
    */
   public function reconcileEnabledModule(CRM_Core_Module $module, $todos) {
-    $dao = new CRM_Core_DAO_Declared();
+    $dao = new CRM_Core_DAO_Managed();
     $dao->module = $module->name;
     $dao->find();
     while ($dao->fetch()) {
@@ -116,7 +116,7 @@ class CRM_Core_ManagedEntities {
           throw new Exception('API error: ' . $result['error_message']);
         }
 
-        CRM_Core_DAO::executeQuery('DELETE FROM civicrm_declared WHERE id = %1', array(
+        CRM_Core_DAO::executeQuery('DELETE FROM civicrm_managed WHERE id = %1', array(
           1 => array($dao->id, 'Integer')
         ));
       }
@@ -129,7 +129,7 @@ class CRM_Core_ManagedEntities {
         throw new Exception('API error: ' . $result['error_message']);
       }
 
-      $dao = new CRM_Core_DAO_Declared();
+      $dao = new CRM_Core_DAO_Managed();
       $dao->module = $todo['module'];
       $dao->name = $todo['name'];
       $dao->entity_type = $todo['entity'];
@@ -144,7 +144,7 @@ class CRM_Core_ManagedEntities {
     }
 
     $in = CRM_Core_DAO::escapeStrings(array_keys($this->moduleIndex[FALSE]));
-    $dao = new CRM_Core_DAO_Declared();
+    $dao = new CRM_Core_DAO_Managed();
     $dao->whereAdd("module in ($in)");
     $dao->find();
     while ($dao->fetch()) {
@@ -170,7 +170,7 @@ class CRM_Core_ManagedEntities {
 
     }
 
-    $dao = new CRM_Core_DAO_Declared();
+    $dao = new CRM_Core_DAO_Managed();
     if (!empty($knownModules)) {
       $in = CRM_Core_DAO::escapeStrings($knownModules);
       $dao->whereAdd("module NOT IN ($in)");
@@ -185,7 +185,7 @@ class CRM_Core_ManagedEntities {
         throw new Exception('API error: ' . $result['error_message']);
       }
 
-      CRM_Core_DAO::executeQuery('DELETE FROM civicrm_declared WHERE id = %1', array(
+      CRM_Core_DAO::executeQuery('DELETE FROM civicrm_managed WHERE id = %1', array(
         1 => array($dao->id, 'Integer')
       ));
     }

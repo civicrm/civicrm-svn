@@ -2,8 +2,8 @@
 
 <table>
   <base>CRM/Core</base>
-  <class>Declared</class>
-  <name>civicrm_declared</name>
+  <class>Managed</class>
+  <name>civicrm_managed</name>
   <comment>List of declaratively managed objects</comment>
   <add>4.2</add>
   <log>false</log>
@@ -36,7 +36,7 @@
     <add>4.2</add>
   </field>
   <index>
-    <name>UI_declared_module_name</name>
+    <name>UI_managed_module_name</name>
     <fieldName>module</fieldName>
     <fieldName>name</fieldName>
     <add>4.2</add>
@@ -57,7 +57,7 @@
     <add>4.2</add>
   </field>
   <index>
-    <name>UI_declared_entity</name>
+    <name>UI_managed_entity</name>
     <fieldName>entity_type</fieldName>
     <fieldName>entity_id</fieldName>
     <add>4.2</add>
