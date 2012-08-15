@@ -385,11 +385,11 @@ function civicrm_api3_job_cleanup( $params ) {
     CRM_Core_BAO_Cache::cleanup( $session, $tempTable, $prevNext );
   }
 
-  if ( $dbCacheCleanup ) {
+  if ( $dbCache ) {
     CRM_Core_Config::clearDBCache( );
   }
 
-  if ( $memCacheCleanup ) {
+  if ( $memCache ) {
     CRM_Utils_System::flushCache( );
   }
 
