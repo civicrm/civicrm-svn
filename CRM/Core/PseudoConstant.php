@@ -75,6 +75,13 @@ class CRM_Core_PseudoConstant {
   private static $activityType = array();
 
   /**
+   * component
+   * @var array
+   * @static
+   */
+  private static $component;
+
+  /**
    * individual prefix
    * @var array
    * @static
@@ -574,6 +581,23 @@ class CRM_Core_PseudoConstant {
     }
     return self::$activityType[$index];
   }
+
+  /**
+   * Get all component names
+   *
+   * @access public
+   * @static
+   *
+   * @return array - array reference of all location display names.
+   *
+   */
+  public static function &component() {
+    if (!self::$component) {
+      self::populate(self::$component, 'CRM_Core_DAO_Component', TRUE, 'name');
+    }
+    return self::$component;
+  }
+
 
   /**
    * Get all Individual Prefix.
