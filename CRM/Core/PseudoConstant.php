@@ -73,6 +73,13 @@ class CRM_Core_PseudoConstant {
    * @static
    */
   private static $activityType = array();
+  
+  /**
+   * payment processor billing modes
+   * @var array
+   * @static
+   */
+  private static $billingMode;
 
   /**
    * component
@@ -580,6 +587,25 @@ class CRM_Core_PseudoConstant {
       self::$activityType[$index] = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, $condition, $returnColumn);
     }
     return self::$activityType[$index];
+  }
+
+  /**
+   * Get all payment-processor billing modes
+   *
+   * @access public
+   * @static
+   *
+   * @return array ($id => $name)
+   */
+  public static function billingMode() {
+    if (!self::$billingMode) {
+      self::$billingMode = array(
+        CRM_Core_Payment::BILLING_MODE_FORM => 'form',
+        CRM_Core_Payment::BILLING_MODE_BUTTON => 'button',
+        CRM_Core_Payment::BILLING_MODE_NOTIFY => 'notify',
+      );
+    }
+    return self::$billingMode;
   }
 
   /**
