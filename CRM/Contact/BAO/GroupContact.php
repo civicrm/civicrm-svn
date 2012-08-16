@@ -284,7 +284,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
     $where  = " WHERE civicrm_group.is_active = 1 ";
     if ($contactId) {
       $from .= ' , civicrm_group_contact ';
-      $where .= " AND civicrm_group.id = civicrm_group_contact.group_id 
+      $where .= " AND civicrm_group.id = civicrm_group_contact.group_id
                         AND civicrm_group_contact.contact_id = " . CRM_Utils_Type::escape($contactId, 'Integer');
     }
 
@@ -334,11 +334,11 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
       $select = 'SELECT count(DISTINCT civicrm_group_contact.id)';
     }
     else {
-      $select = 'SELECT 
-                    civicrm_group_contact.id as civicrm_group_contact_id, 
+      $select = 'SELECT
+                    civicrm_group_contact.id as civicrm_group_contact_id,
                     civicrm_group.title as group_title,
                     civicrm_group.visibility as visibility,
-                    civicrm_group_contact.status as status, 
+                    civicrm_group_contact.status as status,
                     civicrm_group.id as group_id,
                     civicrm_group.is_hidden as is_hidden,
                     civicrm_subscription_history.date as date,
@@ -540,9 +540,9 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @static
    */
   function &getMembershipDetail($contactId, $groupID) {
-    $query = "SELECT * 
-FROM civicrm_group_contact 
-LEFT JOIN civicrm_subscription_history ON (civicrm_group_contact.contact_id = civicrm_subscription_history.contact_id) 
+    $query = "SELECT *
+FROM civicrm_group_contact
+LEFT JOIN civicrm_subscription_history ON (civicrm_group_contact.contact_id = civicrm_subscription_history.contact_id)
 WHERE civicrm_group_contact.contact_id = %1
 AND civicrm_group_contact.group_id = %2
 AND civicrm_subscription_history.method ='Email' ";
@@ -573,7 +573,7 @@ AND civicrm_subscription_history.method ='Email' ";
       return CRM_Core_Error::fatal("$contactId or $groupID should not empty");
     }
 
-    $query = "UPDATE civicrm_group_contact 
+    $query = "UPDATE civicrm_group_contact
 SET civicrm_group_contact.status = 'Added'
 WHERE civicrm_group_contact.contact_id = %1
 AND civicrm_group_contact.group_id = %2";
@@ -785,14 +785,14 @@ AND       group_id IN ( $groupIDString )
 
     // delete all the other group contacts
     $sql = "
-DELETE 
-FROM   civicrm_group_contact 
+DELETE
+FROM   civicrm_group_contact
 WHERE  contact_id = %2
 ";
     CRM_Core_DAO::executeQuery($sql, $params);
 
     $sql = "
-DELETE 
+DELETE
 FROM   civicrm_subscription_history
 WHERE  contact_id = %2
 ";
